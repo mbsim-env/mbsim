@@ -64,6 +64,8 @@ namespace MBSimGUI {
       virtual QString getType() const {return "Boolean";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
       virtual QWidget* getValidatedWidget() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QCheckBox *value;

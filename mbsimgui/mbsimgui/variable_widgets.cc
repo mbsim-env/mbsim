@@ -153,6 +153,24 @@ namespace MBSimGUI {
     return new BoolWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
   }
 
+  DOMElement* BoolWidget::initializeUsingXML(DOMElement *element) {
+    DOMText* text = E(element)->getFirstTextChild();
+    if(!text)
+      return 0;
+    string str = X()%text->getData();
+    if(str.find("\n")!=string::npos)
+      return 0;
+    setValue(QString::fromStdString(str));
+    return element;
+  }
+
+  DOMElement* BoolWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMText *text = doc->createTextNode(X()%getValue().toStdString());
+    parent->insertBefore(text, ref);
+    return 0;
+  }
+
   ExpressionWidget::ExpressionWidget(const QString &str) {
     QVBoxLayout *layout=new QVBoxLayout;
     layout->setMargin(0);

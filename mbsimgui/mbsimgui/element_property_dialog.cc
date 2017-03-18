@@ -590,16 +590,15 @@ namespace MBSimGUI {
     rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", rotation);
     connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
-//
-//    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
-//    addToTab("Kinematics", translationDependentRotation);
-//
-//    coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
-//    addToTab("Kinematics", coordinateTransformationForRotation);
-//
-//    bodyFixedRepresentationOfAngularVelocity = new ExtWidget("Body-fixed representation of angular velocity",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
-//    addToTab("Kinematics", bodyFixedRepresentationOfAngularVelocity);
-//
+
+    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationDependentRotation");
+    addToTab("Kinematics", translationDependentRotation);
+
+    coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"coordinateTransformationForRotation");
+    addToTab("Kinematics", coordinateTransformationForRotation);
+
+    bodyFixedRepresentationOfAngularVelocity = new ExtWidget("Body-fixed representation of angular velocity",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"bodyFixedRepresentationOfAngularVelocity");
+    addToTab("Kinematics", bodyFixedRepresentationOfAngularVelocity);
 
     ombv = new ExtWidget("Body",new ChoiceWidget2(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIM%"openMBVRigidBody");
     addToTab("Visualisation", ombv);
@@ -616,6 +615,9 @@ namespace MBSimGUI {
     frameForInertiaTensor->initializeUsingXML(element->getXMLElement());
     translation->initializeUsingXML(element->getXMLElement());
     rotation->initializeUsingXML(element->getXMLElement());
+    translationDependentRotation->initializeUsingXML(element->getXMLElement());
+    coordinateTransformationForRotation->initializeUsingXML(element->getXMLElement());
+    bodyFixedRepresentationOfAngularVelocity->initializeUsingXML(element->getXMLElement());
     ombv->initializeUsingXML(element->getXMLElement());
     ombvFrameRef->initializeUsingXML(element->getXMLElement());
     return parent;
@@ -629,38 +631,12 @@ namespace MBSimGUI {
     frameForInertiaTensor->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
     translation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
     rotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    translationDependentRotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    coordinateTransformationForRotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    bodyFixedRepresentationOfAngularVelocity->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
     DOMElement *ele =element->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(element->getXMLElement(),ele);
     ombvFrameRef->writeXMLFile(element->getXMLElement(),ele);
-
-//    translation.writeXMLFile(ele0);
-//    rotation.writeXMLFile(ele0);
-//    translationDependentRotation.writeXMLFile(ele0);
-//    coordinateTransformationForRotation.writeXMLFile(ele0);
-//    bodyFixedRepresentationOfAngularVelocity.writeXMLFile(ele0);
-//
-//    DOMDocument *doc=ele0->getOwnerDocument();
-//    DOMElement *ele1 = D(doc)->createElement( MBSIM%"frames" );
-//    for(size_t i=1; i<frame.size(); i++)
-//      Embed<Frame>::writeXML(frame[i],ele1);
-//    ele0->insertBefore( ele1, NULL );
-//
-//    ele1 = D(doc)->createElement( MBSIM%"contours" );
-//    for(size_t i=0; i<contour.size(); i++)
-//      Embed<Contour>::writeXML(contour[i],ele1);
-//    ele0->insertBefore( ele1, NULL );
-//
-//    ombvEditor.writeXMLFile(ele0);
-//
-//    Frame *C = getFrame(0);
-//    if(C->openMBVFrame()) {
-//      ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
-//      C->writeXMLFile2(ele1);
-//      ele0->insertBefore(ele1, NULL);
-//    }
-//
-//    C->writeXMLFile3(ele0);
-
     return NULL;
   }
 

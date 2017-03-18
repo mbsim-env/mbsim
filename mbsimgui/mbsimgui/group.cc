@@ -302,8 +302,6 @@ namespace MBSimGUI {
         }
     }
     removedElement.push_back(element);
-//    element->getXMLElement()->getParentNode()->removeChild(element->getXMLElement());
-
 //    element->deinitialize();
   }
 
@@ -330,11 +328,6 @@ namespace MBSimGUI {
     observers = D(doc)->createElement( MBSIM%"observers" );
     element->insertBefore( observers, getXMLConstraints()->getNextElementSibling() );
   }
-
-//  DOMElement* Group::getXMLFrame() {
-//    DOMElement *ele = E(element)->getFirstElementChildNamed(MBSIM%"environments");
-//    return ele;
-//  }
 
   void Group::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
