@@ -28,8 +28,11 @@
 #include <QtGui>
 #include "mainwindow.h"
 #include <mbxmlutils/eval.h>
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -43,32 +46,11 @@ namespace MBSimGUI {
 
   Widget *LimitedFunctionWidgetFactory::createWidget(int i) {
     ContainerWidget *widget = new ContainerWidget;
-    widget->addWidget(new ExtWidget("Function",new ChoiceWidget2(factory)));
+    widget->addWidget(new ExtWidget("Function",new ChoiceWidget2(factory),false,false,MBSIM%"LimitedFunction"));
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),QStringList(),1));
-    widget->addWidget(new ExtWidget("Limit",new ExtPhysicalVarWidget(input)));
+    widget->addWidget(new ExtWidget("Limit",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"limit"));
     return widget;
   }
-
-  //class LimitedFunctionWidgetFactory : public WidgetFactory {
-  //  public:
-  //    LimitedFunctionWidgetFactory() { }
-  //    Widget* createWidget(int i=0);
-  //};
-  //
-  //Widget* LimitedFunctionWidgetFactory::createWidget(int i) {
-  //  FunctionWidgetFactory factory("PiecewiseDefinedFunction","VS",1);
-  //
-  //  ContainerWidget *widget = new ContainerWidget;
-  //  widget->addWidget(new ExtWidget("Function",factory.createWidget()));
-  //
-  //  vector<PhysicalVariableWidget*> input;
-  //  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
-  //  widget->addWidget(new ExtWidget("Limit",new ExtPhysicalVarWidget(input)));
-  //  return widget;
-  //}
-
   class CoefficientWidgetFactory : public WidgetFactory {
     public:
       CoefficientWidgetFactory() { }
@@ -76,27 +58,26 @@ namespace MBSimGUI {
   };
 
   Widget* CoefficientWidgetFactory::createWidget(int i) {
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
-    return new ExtPhysicalVarWidget(input);
+    return new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5);
   }
 
   ConstantFunctionWidget::ConstantFunctionWidget(int m) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    a0 = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
+    a0 = new ExtWidget("a0",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a0");
     layout->addWidget(a0);
   }
 
-  void ConstantFunctionWidget::resize_(int m, int n) {
-    //  if(ext[0]=='V') {
-    //    if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
-    //      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    //    }
-    //  }
+  DOMElement* ConstantFunctionWidget::initializeUsingXML(DOMElement *element) {
+    a0->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ConstantFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    a0->writeXMLFile(ele0);
+    return ele0;
   }
 
   LinearFunctionWidget::LinearFunctionWidget(int m) {
@@ -104,24 +85,24 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    a0 = new ExtWidget("a0",new ExtPhysicalVarWidget(input),true);
+    a0 = new ExtWidget("a0",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
     layout->addWidget(a0);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),QStringList(),0));
-    a1 = new ExtWidget("a1",new ExtPhysicalVarWidget(input));
+    a1 = new ExtWidget("a1",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a1");
     layout->addWidget(a1);
   }
 
-  void LinearFunctionWidget::resize_(int m, int n) {
-    //  if(ext[0]=='V') {
-    //    if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a1->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
-    //      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a1->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    //      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    //    }
-    //  }
+  DOMElement* LinearFunctionWidget::initializeUsingXML(DOMElement *element) {
+    a0->initializeUsingXML(element);
+    a1->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LinearFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    a0->writeXMLFile(ele0);
+    a1->writeXMLFile(ele0);
+    return ele0;
   }
 
   QuadraticFunctionWidget::QuadraticFunctionWidget(int m) {
@@ -129,30 +110,29 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    a0 = new ExtWidget("a0",new ExtPhysicalVarWidget(input),true);
+    a0 = new ExtWidget("a0",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
     layout->addWidget(a0);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    a1 = new ExtWidget("a1",new ExtPhysicalVarWidget(input),true);
+    a1 = new ExtWidget("a1",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a1");
     layout->addWidget(a1);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    a2 = new ExtWidget("a2",new ExtPhysicalVarWidget(input));
+    a2 = new ExtWidget("a2",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a2");
     layout->addWidget(a2);
   }
 
-  void QuadraticFunctionWidget::resize_(int m, int n) {
-    //  if(ext[0]=='V') {
-    //    if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
-    //      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    //      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a1->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    //      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a2->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    //    }
-    //  }
+  DOMElement* QuadraticFunctionWidget::initializeUsingXML(DOMElement *element) {
+    a0->initializeUsingXML(element);
+    a1->initializeUsingXML(element);
+    a2->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* QuadraticFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    a0->writeXMLFile(ele0);
+    a1->writeXMLFile(ele0);
+    a2->writeXMLFile(ele0);
+    return ele0;
   }
 
   PolynomFunctionWidget::PolynomFunctionWidget(int m) {
@@ -160,16 +140,19 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    a = new ExtWidget("Coefficients",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
+    a = new ExtWidget("Coefficients",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"coefficients");
     layout->addWidget(a);
   }
 
-  void PolynomFunctionWidget::resize_(int m, int n) {
-    //  if(ext[0]=='V') {
-    //    if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
-    //      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    //    }
-    //  }
+  DOMElement* PolynomFunctionWidget::initializeUsingXML(DOMElement *element) {
+    a->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PolynomFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    a->writeXMLFile(ele0);
+    return ele0;
   }
 
   SinusoidalFunctionWidget::SinusoidalFunctionWidget(int m) {
@@ -177,25 +160,34 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    a = new ExtWidget("Amplitude",new ExtPhysicalVarWidget(input));
+    a = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"amplitude");
     layout->addWidget(a);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    f = new ExtWidget("Frequency",new ExtPhysicalVarWidget(input));
+    f = new ExtWidget("Frequency",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frequency");
     layout->addWidget(f);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    p = new ExtWidget("Phase",new ExtPhysicalVarWidget(input),true);
+    p = new ExtWidget("Phase",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"phase");
     layout->addWidget(p);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    o = new ExtWidget("Offset",new ExtPhysicalVarWidget(input),true);
+    o = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
     layout->addWidget(o);
+  }
+
+  DOMElement* SinusoidalFunctionWidget::initializeUsingXML(DOMElement *element) {
+    a->initializeUsingXML(element);
+    f->initializeUsingXML(element);
+    p->initializeUsingXML(element);
+    o->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* SinusoidalFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    a->writeXMLFile(ele0);
+    f->writeXMLFile(ele0);
+    p->writeXMLFile(ele0);
+    o->writeXMLFile(ele0);
+    return ele0;
   }
 
   ModuloFunctionWidget::ModuloFunctionWidget(int m) {
@@ -203,10 +195,19 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    denom = new ExtWidget("Denominator",new ExtPhysicalVarWidget(input),true);
+    denom = new ExtWidget("Denominator",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"denominator");
     layout->addWidget(denom);
+  }
+
+  DOMElement* ModuloFunctionWidget::initializeUsingXML(DOMElement *element) {
+    denom->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ModuloFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    denom->writeXMLFile(ele0);
+    return ele0;
   }
 
   BoundedFunctionWidget::BoundedFunctionWidget(int m) {
@@ -214,15 +215,24 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    lowerBound = new ExtWidget("Lower bound",new ExtPhysicalVarWidget(input),true);
+    lowerBound = new ExtWidget("Lower bound",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"lowerBound");
     layout->addWidget(lowerBound);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),QStringList(),0));
-    upperBound = new ExtWidget("Upper bound",new ExtPhysicalVarWidget(input),true);
+    upperBound = new ExtWidget("Upper bound",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"upperBound");
     layout->addWidget(upperBound);
+  }
+
+  DOMElement* BoundedFunctionWidget::initializeUsingXML(DOMElement *element) {
+    lowerBound->initializeUsingXML(element);
+    upperBound->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* BoundedFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    lowerBound->writeXMLFile(ele0);
+    upperBound->writeXMLFile(ele0);
+    return ele0;
   }
 
   VectorValuedFunctionWidget::VectorValuedFunctionWidget(Element *parent, int m, bool fixedSize) {
@@ -231,12 +241,23 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(parent)),"Function","",m,1));
+    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(parent)),"Function","",m,1),false,false,MBSIM%"components");
     layout->addWidget(functions);
   }
 
   void VectorValuedFunctionWidget::resize_(int m, int n) {
     static_cast<ListWidget*>(functions->getWidget())->setSize(m);
+  }
+
+  DOMElement* VectorValuedFunctionWidget::initializeUsingXML(DOMElement *element) {
+    functions->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* VectorValuedFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    functions->writeXMLFile(ele0);
+    return ele0;
   }
 
   CompositeFunctionWidget::CompositeFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi) {
@@ -245,9 +266,9 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    fo = new ExtWidget("Outer function",new ChoiceWidget2(factoryo));
+    fo = new ExtWidget("Outer function",new ChoiceWidget2(factoryo,QBoxLayout::TopToBottom,0),false,false,MBSIM%"outerFunction");
     layout->addWidget(fo);
-    fi = new ExtWidget("Inner function",new ChoiceWidget2(factoryi));
+    fi = new ExtWidget("Inner function",new ChoiceWidget2(factoryi,QBoxLayout::TopToBottom,0),false,false,MBSIM%"innerFunction");
     layout->addWidget(fi);
   }
 
@@ -266,30 +287,49 @@ namespace MBSimGUI {
     static_cast<ChoiceWidget2*>(fi->getWidget())->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size(),n);
   }
 
+  DOMElement* CompositeFunctionWidget::initializeUsingXML(DOMElement *element) {
+    fo->initializeUsingXML(element);
+    fi->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* CompositeFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    fo->writeXMLFile(ele0);
+    fi->writeXMLFile(ele0);
+    return ele0;
+  }
+
   PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(Element *parent, int n) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Limited functions",new ListWidget(new LimitedFunctionWidgetFactory(new FunctionWidgetFactory2(parent)),"Function","",n,1));
+    functions = new ExtWidget("Limited functions",new ListWidget(new LimitedFunctionWidgetFactory(new FunctionWidgetFactory2(parent)),"Function","",n,1),false,false,MBSIM%"limitedFunctions");
     layout->addWidget(functions);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-    shiftAbscissa = new ExtWidget("Shift abscissa",new ExtPhysicalVarWidget(input),true);
+    shiftAbscissa = new ExtWidget("Shift abscissa",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftAbscissa");
     layout->addWidget(shiftAbscissa);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-    shiftOrdinate = new ExtWidget("Shift ordinate",new ExtPhysicalVarWidget(input),true);
+    shiftOrdinate = new ExtWidget("Shift orientation",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftOrdinate");
     layout->addWidget(shiftOrdinate);
   }
 
   void PiecewiseDefinedFunctionWidget::resize_(int m, int n) {
     functions->resize_(m,n);
+  }
+
+  DOMElement* PiecewiseDefinedFunctionWidget::initializeUsingXML(DOMElement *element) {
+    shiftAbscissa->initializeUsingXML(element);
+    shiftOrdinate->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PiecewiseDefinedFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    shiftAbscissa->writeXMLFile(ele0);
+    shiftOrdinate->writeXMLFile(ele0);
+    return ele0;
   }
 
   SymbolicFunctionWidget::SymbolicFunctionWidget(const QStringList &var, int m, int max) {
@@ -306,9 +346,7 @@ namespace MBSimGUI {
         layout->addWidget(argdim[i],i,1);
       }
     }
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),1));
-    f = new ExtWidget("Function",new ExtPhysicalVarWidget(input));
+    f = new ExtWidget("Function",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,"");
     layout->addWidget(f,var.size(),0,1,2);
   }
 
@@ -325,7 +363,32 @@ namespace MBSimGUI {
   }
 
   void SymbolicFunctionWidget::resize_(int m, int n) {
-    static_cast<VecWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ExtPhysicalVarWidget*>(f->getWidget())->getCurrentPhysicalVariableWidget())->getWidget())->resize_(m);
+    f->resize_(m,n);
+  }
+
+  DOMElement* SymbolicFunctionWidget::initializeUsingXML(DOMElement *element) {
+    f->initializeUsingXML(element);
+    for(int i=1; i<static_cast<int>(argname.size()); i++) {
+      string str = "arg"+toStr(i);
+      if(E(element)->hasAttribute(str))
+        static_cast<TextWidget*>(argname[i-1]->getWidget())->setText(QString::fromStdString(E(element)->getAttribute(str.c_str())));
+      str = "arg"+toStr(i)+"Dim";
+      if(E(element)->hasAttribute(str))
+        static_cast<SpinBoxWidget*>(argdim[i-1]->getWidget())->setValue(boost::lexical_cast<int>(E(element)->getAttribute(str.c_str())));
+    }
+    return element;
+  }
+
+  DOMElement* SymbolicFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    for(int i=1; i<static_cast<int>(argname.size()); i++) {
+      string istr = toStr(i);
+      E(ele0)->setAttribute("arg"+istr, static_cast<TextWidget*>(argname[i-1]->getWidget())->getText().toStdString());
+//      if(ext[i]=='V')
+        E(ele0)->setAttribute("arg"+istr+"Dim",to_string(static_cast<SpinBoxWidget*>(argdim[i-1]->getWidget())->getValue()));
+    }
+    f->writeXMLFile(ele0);
+    return ele0;
   }
 
   TabularFunctionWidget::TabularFunctionWidget(int n) {
@@ -350,6 +413,17 @@ namespace MBSimGUI {
     }
   }
 
+  DOMElement* TabularFunctionWidget::initializeUsingXML(DOMElement *element) {
+    choice->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* TabularFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    choice->writeXMLFile(ele0);
+    return ele0;
+  }
+
   TwoDimensionalTabularFunctionWidget::TwoDimensionalTabularFunctionWidget(int n) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -366,6 +440,17 @@ namespace MBSimGUI {
       if(choice1_->getIndex()==0 && choice2_->getIndex()==0)
         choice->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->getWidget())->size(),static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->getWidget())->size());
     }
+  }
+
+  DOMElement* TwoDimensionalTabularFunctionWidget::initializeUsingXML(DOMElement *element) {
+    choice->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* TwoDimensionalTabularFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    choice->writeXMLFile(ele0);
+    return ele0;
   }
 
   PiecewisePolynomFunctionWidget::PiecewisePolynomFunctionWidget(int n) {
@@ -397,6 +482,17 @@ namespace MBSimGUI {
     }
   }
 
+  DOMElement* PiecewisePolynomFunctionWidget::initializeUsingXML(DOMElement *element) {
+    choice->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PiecewisePolynomFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    choice->writeXMLFile(ele0);
+    return ele0;
+  }
+
   TwoDimensionalPiecewisePolynomFunctionWidget::TwoDimensionalPiecewisePolynomFunctionWidget(int n) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -422,25 +518,32 @@ namespace MBSimGUI {
     }
   }
 
+  DOMElement* TwoDimensionalPiecewisePolynomFunctionWidget::initializeUsingXML(DOMElement *element) {
+    choice->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* TwoDimensionalPiecewisePolynomFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    choice->writeXMLFile(ele0);
+    return ele0;
+  }
+
   FourierFunctionWidget::FourierFunctionWidget(int n) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    f = new ExtWidget("Frequency",new ExtPhysicalVarWidget(input));
+    f = new ExtWidget("Frequency",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"frequency");
     layout->addWidget(f);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-    a0 = new ExtWidget("a0",new ExtPhysicalVarWidget(input),true);
+    a0 = new ExtWidget("a0",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
     layout->addWidget(a0);
 
     choice = new ChoiceWidget2(new FourierFunctionWidgetFactory);
     layout->addWidget(choice);
 
-    amplitudePhaseAngleForm = new ExtWidget("Amplitude phase angle form",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    amplitudePhaseAngleForm = new ExtWidget("Amplitude phase angle form",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"amplitudePhaseAngleForm");
     layout->addWidget(amplitudePhaseAngleForm);
   }
 
@@ -457,15 +560,32 @@ namespace MBSimGUI {
     }
   }
 
+  DOMElement* FourierFunctionWidget::initializeUsingXML(DOMElement *element) {
+    f->initializeUsingXML(element);
+    a0->initializeUsingXML(element);
+    choice->initializeUsingXML(element);
+    amplitudePhaseAngleForm->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FourierFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    f->writeXMLFile(ele0);
+    a0->writeXMLFile(ele0);
+    choice->writeXMLFile(ele0);
+    amplitudePhaseAngleForm->writeXMLFile(ele0);
+    return ele0;
+  }
+
   BidirectionalFunctionWidget::BidirectionalFunctionWidget() {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    fn = new ExtWidget("Negative directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)));
+    fn = new ExtWidget("Negative directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false,false,MBSIM%"negativeDirectionalFunction");
     layout->addWidget(fn);
-    fp = new ExtWidget("Positive directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)));
+    fp = new ExtWidget("Positive directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false,false,MBSIM%"positiveDirectionalFunction");
     layout->addWidget(fp);
   }
 
@@ -474,16 +594,29 @@ namespace MBSimGUI {
     static_cast<ChoiceWidget2*>(fp->getWidget())->resize_(m,n);
   }
 
+  DOMElement* BidirectionalFunctionWidget::initializeUsingXML(DOMElement *element) {
+    fn->initializeUsingXML(element);
+    fp->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* BidirectionalFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    fn->writeXMLFile(ele0);
+    fp->writeXMLFile(ele0);
+    return ele0;
+  }
+
   ContinuedFunctionWidget::ContinuedFunctionWidget(WidgetFactory *factoryf, WidgetFactory *factoryr) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    f = new ExtWidget("Function",new ChoiceWidget2(factoryf));
+    f = new ExtWidget("Function",new ChoiceWidget2(factoryf),false,false,MBSIM%"function");
     layout->addWidget(f);
 
-    r = new ExtWidget("Continuation rule",new ChoiceWidget2(factoryr));
+    r = new ExtWidget("Continuation rule",new ChoiceWidget2(factoryr),false,false,MBSIM%"continuationRule");
     layout->addWidget(r);
   }
 
@@ -492,20 +625,42 @@ namespace MBSimGUI {
     static_cast<ChoiceWidget2*>(r->getWidget())->resize_(n,n);
   }
 
+  DOMElement* ContinuedFunctionWidget::initializeUsingXML(DOMElement *element) {
+    f->initializeUsingXML(element);
+    r->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ContinuedFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    f->writeXMLFile(ele0);
+    r->writeXMLFile(ele0);
+    return ele0;
+  }
+
   LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),stiffnessUnits(),1));
-    c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
+    c = new ExtWidget("Stiffness coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessCoefficient");
     layout->addWidget(c);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),dampingUnits(),0));
-    d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
+    d = new ExtWidget("Damping coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingCoefficient");
     layout->addWidget(d);
+  }
+
+  DOMElement* LinearSpringDamperForceWidget::initializeUsingXML(DOMElement *element) {
+    c->initializeUsingXML(element);
+    d->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LinearSpringDamperForceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    c->writeXMLFile(ele0);
+    d->writeXMLFile(ele0);
+    return ele0;
   }
 
   NonlinearSpringDamperForceWidget::NonlinearSpringDamperForceWidget(Element *parent) {
@@ -513,11 +668,24 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    s = new ExtWidget("Force deflection function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
+    s = new ExtWidget("Force deflection function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)),false,false,MBSIM%"forceDeflectionFunction");
     layout->addWidget(s);
 
-    sd = new ExtWidget("Force velocity function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
+    sd = new ExtWidget("Force velocity function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)),false,false,MBSIM%"forceVelocityFunction");
     layout->addWidget(sd);
+  }
+
+  DOMElement* NonlinearSpringDamperForceWidget::initializeUsingXML(DOMElement *element) {
+    s->initializeUsingXML(element);
+    sd->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* NonlinearSpringDamperForceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    s->writeXMLFile(ele0);
+    sd->writeXMLFile(ele0);
+    return ele0;
   }
 
   LinearElasticFunctionWidget::LinearElasticFunctionWidget() {
@@ -525,10 +693,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    K = new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft));
+    K = new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix");
     layout->addWidget(K);
 
-    D = new ExtWidget("Generalized damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft),true);
+    D = new ExtWidget("Generalized damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingMatrix");
     layout->addWidget(D);
   }
 
@@ -537,20 +705,42 @@ namespace MBSimGUI {
     D->resize_(m,n);
   }
 
+  DOMElement* LinearElasticFunctionWidget::initializeUsingXML(DOMElement *element) {
+    K->initializeUsingXML(element);
+    D->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LinearElasticFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    K->writeXMLFile(ele0);
+    D->writeXMLFile(ele0);
+    return ele0;
+  }
+
   LinearRegularizedBilateralConstraintWidget::LinearRegularizedBilateralConstraintWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),stiffnessUnits(),1));
-    c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
+    c = new ExtWidget("Stiffness coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessCoefficient");
     layout->addWidget(c);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),dampingUnits(),0));
-    d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
+    d = new ExtWidget("Damping coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingCoefficient");
     layout->addWidget(d);
+  }
+
+  DOMElement* LinearRegularizedBilateralConstraintWidget::initializeUsingXML(DOMElement *element) {
+    c->initializeUsingXML(element);
+    d->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LinearRegularizedBilateralConstraintWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    c->writeXMLFile(ele0);
+    d->writeXMLFile(ele0);
+    return ele0;
   }
 
   LinearRegularizedUnilateralConstraintWidget::LinearRegularizedUnilateralConstraintWidget() {
@@ -558,15 +748,24 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),stiffnessUnits(),1));
-    c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
+    c = new ExtWidget("Stiffness coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessCoefficient");
     layout->addWidget(c);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),dampingUnits(),0));
-    d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
+    d = new ExtWidget("Damping coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingCoefficient");
     layout->addWidget(d);
+  }
+
+  DOMElement* LinearRegularizedUnilateralConstraintWidget::initializeUsingXML(DOMElement *element) {
+    c->initializeUsingXML(element);
+    d->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LinearRegularizedUnilateralConstraintWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    c->writeXMLFile(ele0);
+    d->writeXMLFile(ele0);
+    return ele0;
   }
 
   LinearRegularizedCoulombFrictionWidget::LinearRegularizedCoulombFrictionWidget() {
@@ -574,15 +773,24 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.01"),velocityUnits(),0));
-    gd = new ExtWidget("Marginal velocity",new ExtPhysicalVarWidget(input),true);
+    gd = new ExtWidget("Marginal velocity",new ChoiceWidget2(new ScalarWidgetFactory("0.01",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"marginalVelocity");
     layout->addWidget(gd);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    mu = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+    mu = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"frictionCoefficient");
     layout->addWidget(mu);
+  }
+
+  DOMElement* LinearRegularizedCoulombFrictionWidget::initializeUsingXML(DOMElement *element) {
+    gd->initializeUsingXML(element);
+    mu->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LinearRegularizedCoulombFrictionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    gd->writeXMLFile(ele0);
+    mu->writeXMLFile(ele0);
+    return ele0;
   }
 
   LinearRegularizedStribeckFrictionWidget::LinearRegularizedStribeckFrictionWidget() {
@@ -590,15 +798,24 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.01"),velocityUnits(),0));
-    gd = new ExtWidget("Marginal velocity",new ExtPhysicalVarWidget(input),true);
+    gd = new ExtWidget("Marginal velocity",new ChoiceWidget2(new ScalarWidgetFactory("0.01",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"marginalVelocity");
     layout->addWidget(gd);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    mu = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    mu = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"frictionCoefficient");
     layout->addWidget(mu);
+  }
+
+  DOMElement* LinearRegularizedStribeckFrictionWidget::initializeUsingXML(DOMElement *element) {
+    gd->initializeUsingXML(element);
+    mu->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LinearRegularizedStribeckFrictionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    gd->writeXMLFile(ele0);
+    mu->writeXMLFile(ele0);
+    return ele0;
   }
 
   SignalFunctionWidget::SignalFunctionWidget(Element *element) {
@@ -606,7 +823,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
     dummy = new Function("NoName",element); // Workaround for correct XML path. TODO: provide a consistent concept
-    sRef = new ExtWidget("Return signal",new SignalOfReferenceWidget(dummy,0));
+    sRef = new ExtWidget("Return signal",new SignalOfReferenceWidget(dummy,0),false,false,MBSIMCONTROL%"returnSignal");
     layout->addWidget(sRef);
   }
   
@@ -618,16 +835,35 @@ namespace MBSimGUI {
     sRef->updateWidget(); 
   }
 
+  DOMElement* SignalFunctionWidget::initializeUsingXML(DOMElement *element) {
+    sRef->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* SignalFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    sRef->writeXMLFile(ele0);
+    return ele0;
+  }
+
   PolarContourFunctionWidget::PolarContourFunctionWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)));
+    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false,false,MBSIM%"radiusFunction");
     layout->addWidget(radiusFunction);
   }
 
-  void PolarContourFunctionWidget::resize_(int m, int n) {
+  DOMElement* PolarContourFunctionWidget::initializeUsingXML(DOMElement *element) {
+    radiusFunction->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PolarContourFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    radiusFunction->writeXMLFile(ele0);
+    return ele0;
   }
 
 }

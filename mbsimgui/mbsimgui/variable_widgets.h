@@ -140,6 +140,7 @@ namespace MBSimGUI {
       int minSize, maxSize;
     public:
       VecSizeVarWidget(int size, int minSize, int maxSize, bool transpose=false);
+//      VecSizeVarWidget(const std::vector<QString> &x, int minSize, int maxSize, bool transpose=false);
       std::vector<QString> getVec() const {return widget->getVec();}
       void setVec(const std::vector<QString> &x);
       void resize_(int size);
@@ -462,9 +463,6 @@ namespace MBSimGUI {
 
   class VecWidgetFactory : public WidgetFactory {
     public:
-//      VecWidgetFactory(int m, bool transpose=false);
-//      VecWidgetFactory(int m, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit, bool transpose=false);
-      //VecWidgetFactory(int m, const std::vector<QStringList> &unit, bool transpose=false);
       VecWidgetFactory(int m, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
       VecWidgetFactory(const std::vector<QString> &x, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
       QWidget* createWidget(int i=0);
@@ -480,9 +478,8 @@ namespace MBSimGUI {
 
   class VecSizeVarWidgetFactory : public WidgetFactory {
     public:
-      VecSizeVarWidgetFactory(int m, bool transpose=false);
-      VecSizeVarWidgetFactory(int m, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit, bool transpose=false);
-      VecSizeVarWidgetFactory(int m, const std::vector<QStringList> &unit, bool transpose=false);
+      VecSizeVarWidgetFactory(int m, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
+//      VecSizeVarWidgetFactory(const std::vector<QString> &x, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }

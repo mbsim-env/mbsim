@@ -962,14 +962,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlotFeatureStatusWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMElement *e = static_cast<DOMElement*>(parent)->getFirstElementChild();
-    while(e && (E(e)->getTagName()==uri%"plotFeature" ||
-                E(e)->getTagName()==uri%"plotFeatureForChildren" ||
-                E(e)->getTagName()==uri%"plotFeatureRecursive")) {
-      DOMElement *en=e->getNextElementSibling();
-      parent->removeChild(e);
-      e = en;
-    }
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
@@ -994,12 +986,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlotFeatureStatusWidget::writeXMLFile2(DOMNode *parent) {
-    DOMElement *e = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(uri%type->itemText(0).toStdString());
-    while(e && E(e)->getTagName()==uri%type->itemText(0).toStdString()) {
-      DOMElement *en=e->getNextElementSibling();
-      parent->removeChild(e);
-      e = en;
-    }
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());

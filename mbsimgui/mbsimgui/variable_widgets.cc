@@ -996,18 +996,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* PhysicalVariableWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
- //   DOMElement *newele;
- //   if(xmlName!=FQN()) {
- //     DOMDocument *doc=parent->getOwnerDocument();
- //     newele = D(doc)->createElement(xmlName);
- //     DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
- //     if(ele)
- //       parent->replaceChild(newele, ele);
- //     else
- //       parent->insertBefore(newele, ref);
- //   }
- //   else
- //     newele = (DOMElement*)parent;
     if(getUnit()!="")
       E(static_cast<DOMElement*>(parent))->setAttribute("unit", getUnit().toStdString());
     widget->writeXMLFile(parent);
@@ -1118,20 +1106,17 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, bool transpose_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4), transpose(transpose_) {
+  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : m(m_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
     name[0] = "Vector";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, const vector<QStringList> &unit_, bool transpose_) : m(m_), name(3), unit(unit_), defaultUnit(3,0), transpose(transpose_) {
-    name[0] = "Vector";
-    name[1] = "File";
-    name[2] = "Editor";
-  }
-
-  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
-  }
+//  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(const vector<QString> &x_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : x(x_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
+//    name[0] = "Vector";
+//    name[1] = "File";
+//    name[2] = "Editor";
+//  }
 
   QWidget* VecSizeVarWidgetFactory::createWidget(int i) {
     if(i==0)

@@ -37,7 +37,6 @@ namespace MBSimGUI {
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=NULL);
-      void removeXMLElement(xercesc::DOMNode *parent);
     protected:
       public slots:
         virtual void resize_(int m, int n) {}

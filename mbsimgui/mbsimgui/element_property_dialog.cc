@@ -586,11 +586,11 @@ namespace MBSimGUI {
 
     translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", translation);
-    //connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
     rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", rotation);
-    //connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 //
 //    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
 //    addToTab("Kinematics", translationDependentRotation);
@@ -616,6 +616,7 @@ namespace MBSimGUI {
     inertia->initializeUsingXML(element->getXMLElement());
     frameForInertiaTensor->initializeUsingXML(element->getXMLElement());
     translation->initializeUsingXML(element->getXMLElement());
+    rotation->initializeUsingXML(element->getXMLElement());
     ombv->initializeUsingXML(element->getXMLElement());
     ombvFrameRef->initializeUsingXML(element->getXMLElement());
     return parent;
@@ -628,6 +629,7 @@ namespace MBSimGUI {
     inertia->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
     frameForInertiaTensor->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
     translation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    rotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
     DOMElement *ele =element->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(element->getXMLElement(),ele);
     ombvFrameRef->writeXMLFile(element->getXMLElement(),ele);

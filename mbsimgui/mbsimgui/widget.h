@@ -39,7 +39,6 @@ namespace MBSimGUI {
       virtual void resize_(int m, int n) {}
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) {return 0;}
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL) {return 0;}
-      virtual void removeXMLElement(xercesc::DOMNode *element) {}
   };
 
   class Widget : public QWidget, public WidgetInterface {

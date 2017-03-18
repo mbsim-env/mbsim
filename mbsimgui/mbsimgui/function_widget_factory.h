@@ -29,14 +29,16 @@ namespace MBSimGUI {
 
   class FunctionWidgetFactory2 : public WidgetFactory {
     public:
-      FunctionWidgetFactory2(Element *parent_) : parent(parent_), name(FunctionWidgetFactory2::getNames()) { }
+      FunctionWidgetFactory2(Element *parent_);
       QWidget* createWidget(int i=0);
       static std::vector<QString> getNames();
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       Element *parent;
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class TranslationWidgetFactory2 : public WidgetFactory {
@@ -54,38 +56,44 @@ namespace MBSimGUI {
 
   class TranslationWidgetFactory3 : public WidgetFactory {
     public:
-      TranslationWidgetFactory3(Element *parent_) : parent(parent_), name(TranslationWidgetFactory3::getNames()) { }
+      TranslationWidgetFactory3(Element *parent_);
       QWidget* createWidget(int i=0);
       static std::vector<QString> getNames();
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       Element *parent;
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class RotationWidgetFactory2 : public WidgetFactory {
     public:
-      RotationWidgetFactory2(Element *parent_) : parent(parent_), name(RotationWidgetFactory2::getNames())  { }
+      RotationWidgetFactory2(Element *parent_);
       QWidget* createWidget(int i=0);
       static std::vector<QString> getNames();
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       Element *parent;
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class RotationWidgetFactory3 : public WidgetFactory {
     public:
-      RotationWidgetFactory3(Element *parent_) : parent(parent_), name(RotationWidgetFactory3::getNames())  { }
+      RotationWidgetFactory3(Element *parent_);
       QWidget* createWidget(int i=0);
       static std::vector<QString> getNames();
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       Element *parent;
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class SymbolicFunctionWidgetFactory1 : public WidgetFactory {
@@ -141,13 +149,15 @@ namespace MBSimGUI {
 
   class RotationWidgetFactory4 : public WidgetFactory {
     public:
-      RotationWidgetFactory4(Element *parent_);
+      RotationWidgetFactory4(Element *parent_, const MBXMLUtils::NamespaceURI &uri=MBSIM);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       Element *parent;
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class TabularFunctionWidgetFactory : public WidgetFactory {

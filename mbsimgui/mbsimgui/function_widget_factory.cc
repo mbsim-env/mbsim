@@ -30,6 +30,47 @@ using namespace std;
 
 namespace MBSimGUI {
 
+  FunctionWidgetFactory2::FunctionWidgetFactory2(Element *parent_) : parent(parent_) {
+    name.push_back("Constant function");
+    name.push_back("Linear function");
+    name.push_back("Quadratic function");
+    name.push_back("Polynom function");
+    name.push_back("Sinusoidal function");
+    name.push_back("Absolute value function");
+    name.push_back("Vector valued function");
+    name.push_back("Piecewise defined function");
+    name.push_back("Composite function");
+    name.push_back("Symbolic function");
+    name.push_back("Tabular function");
+    name.push_back("Piecewise polynom function");
+    name.push_back("Signum function");
+    name.push_back("Modulo function");
+    name.push_back("Fourier function");
+    name.push_back("Signal function");
+    name.push_back("Identity function");
+    name.push_back("Bidirectional function");
+    name.push_back("Continued function");
+    xmlName.push_back(MBSIM%"ConstantFunction");
+    xmlName.push_back(MBSIM%"LinearFunction");
+    xmlName.push_back(MBSIM%"QuadraticFunction");
+    xmlName.push_back(MBSIM%"PolynomFunction");
+    xmlName.push_back(MBSIM%"SinusoidalFunction");
+    xmlName.push_back(MBSIM%"AbsoluteValueFunction");
+    xmlName.push_back(MBSIM%"VectorValuedFunction");
+    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
+    xmlName.push_back(MBSIM%"CompositeFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"TabularFunction");
+    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
+    xmlName.push_back(MBSIM%"SignumFunction");
+    xmlName.push_back(MBSIM%"ModuloFunction");
+    xmlName.push_back(MBSIM%"FourierFunction");
+    xmlName.push_back(MBSIMCONTROL%"SignalFunction");
+    xmlName.push_back(MBSIM%"IdentityFunction");
+    xmlName.push_back(MBSIM%"BidirectionalFunction");
+    xmlName.push_back(MBSIM%"ContinuedFunction");
+  }
+
   QWidget* FunctionWidgetFactory2::createWidget(int i) {
     if(i==0)
       return new ConstantFunctionWidget(1); 
@@ -72,28 +113,33 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  vector<QString> FunctionWidgetFactory2::getNames() {
-    vector<QString> name;
-    name.push_back("Constant function");
-    name.push_back("Linear function");
-    name.push_back("Quadratic function");
-    name.push_back("Polynom function");
-    name.push_back("Sinusoidal function");
-    name.push_back("Absolute value function");
-    name.push_back("Vector valued function");
-    name.push_back("Piecewise defined function");
-    name.push_back("Composite function");
+  TranslationWidgetFactory2::TranslationWidgetFactory2(Element *parent_) : parent(parent_) {
+    name.push_back("Translation along x axis");
+    name.push_back("Translation along y axis");
+    name.push_back("Translation along z axis");
+    name.push_back("Translation along axes x and y");
+    name.push_back("Translation along axes y and z");
+    name.push_back("Translation along axes x and z");
+    name.push_back("Translation along axes x,y and z");
+    name.push_back("Translation along fixed axis");
+    name.push_back("Linear translation");
     name.push_back("Symbolic function");
-    name.push_back("Tabular function");
+    name.push_back("Composite function");
     name.push_back("Piecewise polynom function");
-    name.push_back("Signum function");
-    name.push_back("Modulo function");
-    name.push_back("Fourier function");
-    name.push_back("Signal function");
-    name.push_back("Identity function");
-    name.push_back("Bidirectional function");
-    name.push_back("Continued function");
-    return name;
+    name.push_back("Piecewise defined function");
+    xmlName.push_back(MBSIM%"TranslationAlongXAxis");
+    xmlName.push_back(MBSIM%"TranslationAlongYAxis");
+    xmlName.push_back(MBSIM%"TranslationAlongZAxis");
+    xmlName.push_back(MBSIM%"TranslationAlongAxesXY");
+    xmlName.push_back(MBSIM%"TranslationAlongAxesYZ");
+    xmlName.push_back(MBSIM%"TranslationAlongAxesXZ");
+    xmlName.push_back(MBSIM%"TranslationAlongAxesXYZ");
+    xmlName.push_back(MBSIM%"TranslationAlongFixedAxis");
+    xmlName.push_back(MBSIM%"LinearTranslation");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"CompositeFunction");
+    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
+    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
   }
 
   QWidget* TranslationWidgetFactory2::createWidget(int i) {
@@ -126,33 +172,19 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  TranslationWidgetFactory2::TranslationWidgetFactory2(Element *parent_) : parent(parent_) {
-    name.push_back("Translation along x axis");
-    name.push_back("Translation along y axis");
-    name.push_back("Translation along z axis");
-    name.push_back("Translation along axes x and y");
-    name.push_back("Translation along axes y and z");
-    name.push_back("Translation along axes x and z");
-    name.push_back("Translation along axes x,y and z");
-    name.push_back("Translation along fixed axis");
-    name.push_back("Linear translation");
-    name.push_back("Symbolic function");
+  TranslationWidgetFactory3::TranslationWidgetFactory3(Element *parent_) {
+    name.push_back("Vector valued function");
     name.push_back("Composite function");
-    name.push_back("Piecewise polynom function");
+    name.push_back("Symbolic function");
+    name.push_back("Tabular function");
     name.push_back("Piecewise defined function");
-    xmlName.push_back(MBSIM%"TranslationAlongXAxis");
-    xmlName.push_back(MBSIM%"TranslationAlongYAxis");
-    xmlName.push_back(MBSIM%"TranslationAlongZAxis");
-    xmlName.push_back(MBSIM%"TranslationAlongAxesXY");
-    xmlName.push_back(MBSIM%"TranslationAlongAxesYZ");
-    xmlName.push_back(MBSIM%"TranslationAlongAxesXZ");
-    xmlName.push_back(MBSIM%"TranslationAlongAxesXYZ");
-    xmlName.push_back(MBSIM%"TranslationAlongFixedAxis");
-    xmlName.push_back(MBSIM%"LinearTranslation");
-    xmlName.push_back(MBSIM%"SymbolicFunction");
+    name.push_back("Piecewise polynom function");
+    xmlName.push_back(MBSIM%"VectorValuedFunction");
     xmlName.push_back(MBSIM%"CompositeFunction");
-    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"TabularFunction");
     xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
+    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
   }
 
   QWidget* TranslationWidgetFactory3::createWidget(int i) {
@@ -171,15 +203,31 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  vector<QString> TranslationWidgetFactory3::getNames() {
-    vector<QString> name;
-    name.push_back("Vector valued function");
+  RotationWidgetFactory2::RotationWidgetFactory2(Element *parent_) : parent(parent_) {
+    name.push_back("Rotation about x axis");
+    name.push_back("Rotation about y axis");
+    name.push_back("Rotation about z axis");
+    name.push_back("Rotation about axes x and y");
+    name.push_back("Rotation about axes y and z");
+    name.push_back("Rotation about axes x and z");
+    name.push_back("Rotation about axes x,y and z");
+    name.push_back("Rotation about axes z,x and z");
+    name.push_back("Rotation about axes z,y and x");
+    name.push_back("Rotation about fixed axis");
     name.push_back("Composite function");
     name.push_back("Symbolic function");
-    name.push_back("Tabular function");
-    name.push_back("Piecewise defined function");
-    name.push_back("Piecewise polynom function");
-    return name;
+    xmlName.push_back(MBSIM%"RotationAboutXAxis");
+    xmlName.push_back(MBSIM%"RotationAboutYAxis");
+    xmlName.push_back(MBSIM%"RotationAboutZAxis");
+    xmlName.push_back(MBSIM%"RotationAboutAxesXY");
+    xmlName.push_back(MBSIM%"RotationAboutAxesYZ");
+    xmlName.push_back(MBSIM%"RotationAboutAxesXZ");
+    xmlName.push_back(MBSIM%"RotationAboutAxesXYZ");
+    xmlName.push_back(MBSIM%"RotationAboutAxesZXZ");
+    xmlName.push_back(MBSIM%"RotationAboutAxesZYX");
+    xmlName.push_back(MBSIM%"RotationAboutFixedAxis");
+    xmlName.push_back(MBSIM%"CompositeFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
   }
 
   QWidget* RotationWidgetFactory2::createWidget(int i) {
@@ -211,21 +259,11 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  vector<QString> RotationWidgetFactory2::getNames() {
-    vector<QString> name;
-    name.push_back("Rotation about x axis");
-    name.push_back("Rotation about y axis");
-    name.push_back("Rotation about z axis");
-    name.push_back("Rotation about axes x and y");
-    name.push_back("Rotation about axes y and z");
-    name.push_back("Rotation about axes x and z");
-    name.push_back("Rotation about axes x,y and z");
-    name.push_back("Rotation about axes z,x and z");
-    name.push_back("Rotation about axes z,y and x");
-    name.push_back("Rotation about fixed axis");
+  RotationWidgetFactory3::RotationWidgetFactory3(Element *parent_) {
     name.push_back("Composite function");
     name.push_back("Symbolic function");
-    return name;
+    xmlName.push_back(MBSIM%"CompositeFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
   }
 
   QWidget* RotationWidgetFactory3::createWidget(int i) {
@@ -234,13 +272,6 @@ namespace MBSimGUI {
     if(i==1)
       return new SymbolicFunctionWidget(QStringList("t"),1,3);
     return NULL;
-  }
-
-  vector<QString> RotationWidgetFactory3::getNames() {
-    vector<QString> name;
-    name.push_back("Composite function");
-    name.push_back("Symbolic function");
-    return name;
   }
 
   QWidget* SymbolicFunctionWidgetFactory1::createWidget(int i) {
@@ -319,16 +350,18 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  RotationWidgetFactory4::RotationWidgetFactory4(Element *parent_) : parent(parent_) {
+  RotationWidgetFactory4::RotationWidgetFactory4(Element *parent_, const MBXMLUtils::NamespaceURI &uri) : parent(parent_) {
     name.push_back("State dependent rotation");
     name.push_back("Time dependent rotation");
+    xmlName.push_back(uri%"stateDependentRotation");
+    xmlName.push_back(uri%"timeDependentRotation");
   }
 
   QWidget* RotationWidgetFactory4::createWidget(int i) {
     if(i==0)
-      return new ExtWidget("Function A=A(q)",new ChoiceWidget2(new RotationWidgetFactory2(parent)));
+      return new ExtWidget("Function A=A(q)",new ChoiceWidget2(new RotationWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
     if(i==1)
-      return new ExtWidget("Function A=A(t)",new ChoiceWidget2(new RotationWidgetFactory3(parent)));
+      return new ExtWidget("Function A=A(t)",new ChoiceWidget2(new RotationWidgetFactory3(parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
     return NULL;
   }
 

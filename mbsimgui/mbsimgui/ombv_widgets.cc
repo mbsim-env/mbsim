@@ -89,11 +89,7 @@ namespace MBSimGUI {
     DOMDocument *doc = parent->getOwnerDocument();
     newele=D(doc)->createElement(xmlName);
     E(newele)->setAttribute("name",name.toStdString());
-    DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
-    if(ele)
-      parent->replaceChild(newele,ele);
-    else
-      parent->insertBefore(newele,ref);
+    parent->insertBefore(newele,ref);
     }
     else
       newele = (DOMElement*)parent;
@@ -151,11 +147,7 @@ namespace MBSimGUI {
     if(xmlName!=FQN()) {
     DOMDocument *doc = parent->getOwnerDocument();
     newele=D(doc)->createElement(xmlName);
-    DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
-    if(ele)
-      parent->replaceChild(newele,ele);
-    else
-      parent->insertBefore(newele,ref);
+    parent->insertBefore(newele,ref);
     }
     else
       newele = (DOMElement*)parent;
