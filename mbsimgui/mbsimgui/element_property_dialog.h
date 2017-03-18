@@ -135,7 +135,7 @@ namespace MBSimGUI {
   class InternalFramePropertyDialog : public ElementPropertyDialog {
 
     public:
-      InternalFramePropertyDialog(Frame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      InternalFramePropertyDialog(InternalFrame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:

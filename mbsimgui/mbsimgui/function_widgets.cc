@@ -368,24 +368,24 @@ namespace MBSimGUI {
 
   DOMElement* SymbolicFunctionWidget::initializeUsingXML(DOMElement *element) {
     f->initializeUsingXML(element);
-    for(int i=1; i<static_cast<int>(argname.size()); i++) {
-      string str = "arg"+toStr(i);
+    for(size_t i=0; i<argname.size(); i++) {
+      string str = "arg"+toStr(int(i+1));
       if(E(element)->hasAttribute(str))
-        static_cast<TextWidget*>(argname[i-1]->getWidget())->setText(QString::fromStdString(E(element)->getAttribute(str.c_str())));
-      str = "arg"+toStr(i)+"Dim";
+        static_cast<TextWidget*>(argname[i]->getWidget())->setText(QString::fromStdString(E(element)->getAttribute(str.c_str())));
+      str = "arg"+toStr(int(i+1))+"Dim";
       if(E(element)->hasAttribute(str))
-        static_cast<SpinBoxWidget*>(argdim[i-1]->getWidget())->setValue(boost::lexical_cast<int>(E(element)->getAttribute(str.c_str())));
+        static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->setValue(boost::lexical_cast<int>(E(element)->getAttribute(str.c_str())));
     }
     return element;
   }
 
   DOMElement* SymbolicFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
-    for(int i=1; i<static_cast<int>(argname.size()); i++) {
-      string istr = toStr(i);
-      E(ele0)->setAttribute("arg"+istr, static_cast<TextWidget*>(argname[i-1]->getWidget())->getText().toStdString());
+    for(size_t i=0; i<argname.size(); i++) {
+      string istr = toStr(int(i+1));
+      E(ele0)->setAttribute("arg"+istr, static_cast<TextWidget*>(argname[i]->getWidget())->getText().toStdString());
 //      if(ext[i]=='V')
-        E(ele0)->setAttribute("arg"+istr+"Dim",to_string(static_cast<SpinBoxWidget*>(argdim[i-1]->getWidget())->getValue()));
+        E(ele0)->setAttribute("arg"+istr+"Dim",to_string(static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->getValue()));
     }
     f->writeXMLFile(ele0);
     return ele0;

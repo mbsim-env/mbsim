@@ -67,18 +67,25 @@ namespace MBSimGUI {
   }
 
   void DynamicSystemSolver::removeXMLElements() {
-     DOMElement *e = element->getFirstElementChild();
-     DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
-     while(e) {
-       DOMElement *en=e->getNextElementSibling();
-       if(e == environments) {
-         DOMElement *env = E(e)->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
-         env->removeChild(env->getFirstElementChild());
-       }
-       else if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (e != ombvFrame))
-         element->removeChild(e);
-       e = en;
-     }
+    DOMNode *e = element->getFirstChild();
+    DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
+    while(e) {
+      DOMNode *en=e->getNextSibling();
+      if(e == environments) {
+        DOMElement *env = E(static_cast<DOMElement*>(e))->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
+        DOMElement *grav = E(env)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
+        DOMNode *ee = env->getFirstChild();
+        while(ee) {
+          DOMNode *een=ee->getNextSibling();
+          if(ee == grav)
+            env->removeChild(ee);
+          ee = een;
+        }
+      }
+      else if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (e != ombvFrame))
+        element->removeChild(e);
+      e = en;
+    }
   }
 
   DOMElement* DynamicSystemSolver::createXMLElement(DOMNode *parent) {

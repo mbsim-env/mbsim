@@ -144,7 +144,7 @@ namespace MBSimGUI {
 
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
-    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET",""),true,true,frame->getXMLName());
+    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET",""),true,true,MBSIM%"enableOpenMBV");
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
     setReadOnly(true);
@@ -163,9 +163,9 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  InternalFramePropertyDialog::InternalFramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
+  InternalFramePropertyDialog::InternalFramePropertyDialog(InternalFrame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
-    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET",""),true,true,frame->getXMLName());
+    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET",""),true,true,frame->getXMLFrameName());
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
     setReadOnly(true);
@@ -179,6 +179,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* InternalFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    element->removeXMLElements();
     visu->writeXMLFile(element->getParent()->getXMLElement(),element->getParent()->getXMLFrame());
     static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->writeXMLFile2(element->getParent()->getXMLElement());
     return NULL;
@@ -207,9 +208,9 @@ namespace MBSimGUI {
 
   DOMElement* FixedRelativeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     FramePropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
-    orientation->writeXMLFile(element->getXMLElement(),NULL);
-    position->writeXMLFile(element->getXMLElement(),NULL);
     refFrame->writeXMLFile(element->getXMLElement(),NULL);
+    position->writeXMLFile(element->getXMLElement(),NULL);
+    orientation->writeXMLFile(element->getXMLElement(),NULL);
     return NULL;
   }
 

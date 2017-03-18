@@ -39,8 +39,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false) {
-    InternalFrame *C = new InternalFrame("C",this,"plotFeatureFrameC");
-    C->setXMLName(MBSIM%"enableOpenMBVFrameC");
+    InternalFrame *C = new InternalFrame("C",this,MBSIM%"enableOpenMBVFrameC","plotFeatureFrameC");
     addFrame(C);
 
 //    K.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIM%"frameForKinematics"));
@@ -97,10 +96,10 @@ namespace MBSimGUI {
   }
 
   void RigidBody::removeXMLElements() {
-    DOMElement *e = element->getFirstElementChild();
+    DOMNode *e = element->getFirstChild();
     DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
     while(e) {
-      DOMElement *en=e->getNextElementSibling();
+      DOMNode *en=e->getNextSibling();
       if((e != frames) and (e != contours) and (e != ombvFrame))
         element->removeChild(e);
       e = en;

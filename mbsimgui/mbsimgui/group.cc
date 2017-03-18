@@ -48,8 +48,7 @@ namespace MBSimGUI {
 
   Group::Group(const string &str, Element *parent) : Element(str,parent), position(0,false), orientation(0,false), frameOfReference(0,false), constraints(NULL), observers(NULL) {
 
-    InternalFrame *I = new InternalFrame("I",this,"plotFeatureFrameI");
-    I->setXMLName(MBSIM%"enableOpenMBVFrameI");
+    InternalFrame *I = new InternalFrame("I",this,MBSIM%"enableOpenMBVFrameI","plotFeatureFrameI");
     addFrame(I);
 
     if(parent) {
@@ -303,7 +302,7 @@ namespace MBSimGUI {
         }
     }
     removedElement.push_back(element);
-    element->getXMLElement()->getParentNode()->removeChild(element->getXMLElement());
+//    element->getXMLElement()->getParentNode()->removeChild(element->getXMLElement());
 
 //    element->deinitialize();
   }
@@ -338,14 +337,14 @@ namespace MBSimGUI {
 //  }
 
   void Group::removeXMLElements() {
-     DOMElement *e = element->getFirstElementChild();
-     DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
-     while(e) {
-       DOMElement *en=e->getNextElementSibling();
-       if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (e != ombvFrame))
-         element->removeChild(e);
-       e = en;
-     }
+    DOMNode *e = element->getFirstChild();
+    DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
+    while(e) {
+      DOMNode *en=e->getNextSibling();
+      if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (e != ombvFrame))
+        element->removeChild(e);
+      e = en;
+    }
   }
 
   DOMElement* Group::createXMLElement(DOMNode *parent) {

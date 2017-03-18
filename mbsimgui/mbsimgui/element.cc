@@ -31,6 +31,7 @@
 #include "mainwindow.h"
 #include "embed.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <xercesc/dom/DOMNodeList.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -84,9 +85,9 @@ namespace MBSimGUI {
   }
 
   void Element::removeXMLElements() {
-    DOMElement *e = element->getFirstElementChild();
+    DOMNode *e = element->getFirstChild();
     while(e) {
-      DOMElement *en=e->getNextElementSibling();
+      DOMNode *en=e->getNextSibling();
       element->removeChild(e);
       e = en;
     }
