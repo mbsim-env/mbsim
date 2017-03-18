@@ -50,6 +50,7 @@
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <xercesc/dom/DOMException.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
+#include <xercesc/dom/DOMLSSerializer.hpp>
 #include "function_properties.h"
 
 using namespace std;
@@ -550,32 +551,17 @@ namespace MBSimGUI {
       MBSimObjectFactory::initialize();
       std::string message;
       try { 
-        xercesc::DOMImplementation * impl = xercesc::DOMImplementation::getImplementation();
+        xercesc::DOMImplementation *impl = xercesc::DOMImplementation::getImplementation();
         xercesc::DOMLSParser *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0);
-
-            //parser->parse(file.toStdString());
 
         xercesc::DOMDocument *doc_ = parser->parseURI(X()%file.toStdString());
         doc = shared_ptr<DOMDocument>(doc_);
-        //shared_ptr<DOMDocument> doc(parser->parseURI(X()%inputSource.string(CODECVT)), bind(&DOMDocument::release, _1));
-// doc=MainWindow::parser->parse(file.toStdString());
       }
       catch(const std::exception &ex) {
         message = ex.what();
       }
       catch(...) {
         message = "Unknown exception.";
-      }
-      if(not(message.empty())) {
-        QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Application"), QString("Model file not valid: ")+QString::fromStdString(message), QMessageBox::Ignore | QMessageBox::Cancel);
-        if(ret == QMessageBox::Ignore) {
-          shared_ptr<DOMParser> parser=DOMParser::create();
-          doc=parser->parse(file.toStdString());
-        }
-        else {
-          newProject(false); 
-          return;
-        }
       }
       DOMElement *ele0=doc->getDocumentElement();
       //setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
@@ -690,14 +676,25 @@ namespace MBSimGUI {
 
   bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
     if(modifyStatus) setProjectChanged(false);
-//    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-//    DOMElement *ele0=writeProject(doc);
-//    if(ele0) {
-//      DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
-      DOMParser::serialize(this->doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
+    string message;
+    try {
+      xercesc::DOMImplementation *impl = xercesc::DOMImplementation::getImplementation();
+      xercesc::DOMLSSerializer *serializer = ((xercesc::DOMImplementationLS*)impl)->createLSSerializer();
+      serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
+      serializer->writeToURI(this->doc.get(), X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
       return true;
-//    }
-//    return false;
+    }
+    catch(const std::exception &ex) {
+      message = ex.what();
+    }
+    catch(const DOMException &ex) {
+      message = "DOM exception: " + X()%ex.getMessage();
+    }
+    catch(...) {
+      message = "Unknown exception.";
+    }
+    cout << message << endl;
+    return false;
   }
 
   void MainWindow::selectIntegrator() {
@@ -1064,7 +1061,8 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    element->getXMLElement()->getParentNode()->removeChild(element->getXMLElement()->getPreviousSibling());
+    if(X()%element->getXMLElement()->getPreviousSibling()->getNodeName()=="#text")
+      element->getXMLElement()->getParentNode()->removeChild(element->getXMLElement()->getPreviousSibling());
     element->getXMLElement()->getParentNode()->removeChild(element->getXMLElement());
     element->getParent()->removeElement(element);
     model->removeRow(index.row(), index.parent());

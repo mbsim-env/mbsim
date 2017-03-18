@@ -147,8 +147,6 @@ namespace MBSimGUI {
     visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET",""),true,true,MBSIM%"enableOpenMBV");
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
-    setReadOnly(true);
-    setName(QString::fromStdString(frame->getName()));
   }
 
   DOMElement* FramePropertyDialog::initializeUsingXML(DOMElement *parent) {

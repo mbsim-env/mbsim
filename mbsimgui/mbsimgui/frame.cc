@@ -92,15 +92,15 @@ namespace MBSimGUI {
   void InternalFrame::removeXMLElements() {
     DOMElement *e = E(parent->getXMLElement())->getFirstElementChildNamed(getXMLFrameName());
     if(e) {
-      //parent->getXMLElement()->removeChild(e->getPreviousSibling());
-      cout << X()%e->getPreviousSibling()->getNodeName() << endl;
-      cout << X()%e->getPreviousSibling()->getNodeValue() << endl;
+      if(X()%e->getPreviousSibling()->getNodeName()=="#text")
+        parent->getXMLElement()->removeChild(e->getPreviousSibling());
       parent->getXMLElement()->removeChild(e);
     }
     e = E(parent->getXMLElement())->getFirstElementChildNamed(MBSIM%getPlotFeatureTypes());
     while (e and E(e)->getTagName()==MBSIM%getPlotFeatureTypes()) {
-      //parent->getXMLElement()->removeChild(e->getPreviousSibling());
       DOMElement *en = e->getNextElementSibling();
+      if(X()%e->getPreviousSibling()->getNodeName()=="#text")
+        parent->getXMLElement()->removeChild(e->getPreviousSibling());
       parent->getXMLElement()->removeChild(e);
       e = en;
     }

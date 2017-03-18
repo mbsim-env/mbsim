@@ -31,7 +31,6 @@
 #include "mainwindow.h"
 #include "embed.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
-#include <xercesc/dom/DOMNodeList.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
