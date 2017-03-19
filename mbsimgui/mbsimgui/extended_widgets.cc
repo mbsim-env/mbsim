@@ -173,71 +173,69 @@ namespace MBSimGUI {
   }
 
   DOMElement* ChoiceWidget2::initializeUsingXML(DOMElement *element) {
-//    if(element) {
-      if(mode<=1) {
-        DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
-        if(e) {
-          DOMElement* ee=(mode==0)?e->getFirstElementChild():e;
-          if(ee) {
-            for(int i=0; i<factory->getSize(); i++) {
-              if(E(ee)->getTagName() == factory->getXMLName(i)) {
-                blockSignals(true);
-                defineWidget(i);
-                blockSignals(false);
-                comboBox->blockSignals(true);
-                comboBox->setCurrentIndex(i);
-                comboBox->blockSignals(false);
-                return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee);
-              }
+    if(mode<=1) {
+      DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
+      if(e) {
+        DOMElement* ee=(mode==0)?e->getFirstElementChild():e;
+        if(ee) {
+          for(int i=0; i<factory->getSize(); i++) {
+            if(E(ee)->getTagName() == factory->getXMLName(i)) {
+              blockSignals(true);
+              defineWidget(i);
+              blockSignals(false);
+              comboBox->blockSignals(true);
+              comboBox->setCurrentIndex(i);
+              comboBox->blockSignals(false);
+              return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee);
             }
           }
         }
-        return 0;
       }
-      else if (mode<=3) {
-        DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
-        if(e) {
-          DOMElement* ee=(mode==2)?e->getFirstElementChild():e;
-          if(ee) {
-            for(int i=0; i<factory->getSize(); i++) {
-              DOMElement *eee=E(ee)->getFirstElementChildNamed(factory->getXMLName(i));
-              if(eee) {
-                blockSignals(true);
-                defineWidget(i);
-                blockSignals(false);
-                comboBox->blockSignals(true);
-                comboBox->setCurrentIndex(i);
-                comboBox->blockSignals(false);
-                return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee);
-              }
+      return 0;
+    }
+    else if (mode<=3) {
+      DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
+      if(e) {
+        DOMElement* ee=(mode==2)?e->getFirstElementChild():e;
+        if(ee) {
+          for(int i=0; i<factory->getSize(); i++) {
+            DOMElement *eee=E(ee)->getFirstElementChildNamed(factory->getXMLName(i));
+            if(eee) {
+              blockSignals(true);
+              defineWidget(i);
+              blockSignals(false);
+              comboBox->blockSignals(true);
+              comboBox->setCurrentIndex(i);
+              comboBox->blockSignals(false);
+              return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee);
             }
           }
         }
-        return 0;
       }
-      else {
-        DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
-        if(e) {
-          DOMElement* ee=e;
-          if(ee) {
-            for(int i=0; i<factory->getSize(); i++) {
-              DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;
-              if(eee) {
-                blockSignals(true);
-                defineWidget(i);
-                blockSignals(false);
-                comboBox->blockSignals(true);
-                comboBox->setCurrentIndex(i);
-                comboBox->blockSignals(false);
-                if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee))
-                  return eee;
-              }
+      return 0;
+    }
+    else {
+      DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
+      if(e) {
+        DOMElement* ee=e;
+        if(ee) {
+          for(int i=0; i<factory->getSize(); i++) {
+            DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;
+            if(eee) {
+              blockSignals(true);
+              defineWidget(i);
+              blockSignals(false);
+              comboBox->blockSignals(true);
+              comboBox->setCurrentIndex(i);
+              comboBox->blockSignals(false);
+              if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee))
+                return eee;
             }
           }
         }
-        return NULL;
       }
-//    }
+      return NULL;
+    }
     return NULL;
   }
 

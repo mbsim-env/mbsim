@@ -285,25 +285,25 @@ namespace MBSimGUI {
     return 0;
   }
 
-  Parameter* ObjectFactory::createParameter(DOMElement *element) {
+  Parameter* ObjectFactory::createParameter(DOMElement *element, Element *parent) {
     if(element==NULL) return NULL;
     for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      return (*i)->createParameter(element);
+      return (*i)->createParameter(element,parent);
     return 0;
   }
 
-  Parameter* MBSimObjectFactory::createParameter(DOMElement *element) {
+  Parameter* MBSimObjectFactory::createParameter(DOMElement *element, Element *parent) {
     if(element==0) return 0;
     if(E(element)->getTagName()==PV%"stringParameter")
-      return new StringParameter(E(element)->getAttribute("name"));
+      return new StringParameter(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==PV%"scalarParameter")
-      return new ScalarParameter(E(element)->getAttribute("name"));
+      return new ScalarParameter(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==PV%"vectorParameter")
-      return new VectorParameter(E(element)->getAttribute("name"));
+      return new VectorParameter(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==PV%"matrixParameter")
-      return new MatrixParameter(E(element)->getAttribute("name"));
+      return new MatrixParameter(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==PV%"import")
-      return new ImportParameter;
+      return new ImportParameter(parent);
     return 0;
   }
 

@@ -70,7 +70,7 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* getXMLObjects() { return NULL; }
       virtual xercesc::DOMElement* getXMLConstraints() { return NULL; }
       virtual xercesc::DOMElement* getXMLFrame() { return NULL; }
-      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement *element) { return element; }
+      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element) { return element; }
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -119,7 +119,7 @@ namespace MBSimGUI {
       void setID(const std::string &ID_) { ID = ID_; }
       Element* getParent() {return parent;}
       std::vector<Element*> getParents();
-      virtual void setParent(Element* parent_) {parent = parent_;}
+      void setParent(Element* parent_) {parent = parent_;}
       virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
       virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}

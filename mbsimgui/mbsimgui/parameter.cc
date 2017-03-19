@@ -34,22 +34,56 @@ namespace MBSimGUI {
   extern QDir mbsDir;
   extern bool absolutePath;
 
-  Parameter::Parameter(const string &name_) {
+  Parameter::Parameter(const string &name__, Element *parent_) : parent(parent_), name_(name__) {
     name.setProperty(new TextProperty(name_,""));
   }
 
+  void Parameter::setName(const std::string &str) {
+    name_ = str;
+//    static_cast<TextProperty*>(name.getProperty())->setText(str);
+    E(element)->setAttribute("name", str);
+  }
+
   void Parameter::initializeUsingXML(DOMElement *element) {
+    this->element = element;
   }
 
   DOMElement* Parameter::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(PV%getType());
-    E(ele0)->setAttribute("name", getName());
-    parent->insertBefore(ele0, NULL);
+//    E(ele0)->setAttribute("name", getName());
+//    parent->insertBefore(ele0, NULL);
     return ele0;
   }
 
-  StringParameter::StringParameter(const string &name) : Parameter(name) {
+  void Parameter::removeXMLElements() {
+    DOMNode *e = element->getFirstChild();
+    while(e) {
+      DOMNode *en=e->getNextSibling();
+      element->removeChild(e);
+      e = en;
+    }
+  }
+
+  DOMElement* Parameter::createXMLElement(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+//    static_cast<DOMElement*>(parent)->getTagName()
+    DOMElement* embed =  static_cast<DOMElement*>(parent->getParentNode());
+    if(X()%embed->getNodeName()!="Embed") {
+      DOMElement *ele=D(doc)->createElement(PV%"Embed");
+      embed->insertBefore(ele,parent);
+      embed = ele;
+      ele=D(doc)->createElement(PV%"Parameter");
+      embed->insertBefore(ele,NULL);
+      embed->insertBefore(parent,NULL);
+    }
+    element=D(doc)->createElement(PV%getType());
+    E(element)->setAttribute("name", getName());
+    embed->getFirstElementChild()->insertBefore(element,NULL);
+    return element;
+  }
+
+  StringParameter::StringParameter(const string &name, Element *parent) : Parameter(name,parent) {
     value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("'string'","",vector<string>(2,"")),"",5));
     setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
   }
@@ -66,10 +100,18 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  ScalarParameter::ScalarParameter(const string &name, const string &value_) : Parameter(name) {
+  ScalarParameter::ScalarParameter(const string &name, Element *parent, const string &value_) : Parameter(name,parent) {
 
     value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory(value_,"",vector<string>(2,"")),"",5));
     setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
+  }
+
+  DOMElement* ScalarParameter::createXMLElement(DOMNode *parent) {
+    Parameter::createXMLElement(parent);
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMText *text = doc->createTextNode(X()%"0");
+    element->insertBefore(text, NULL);
+    return element;
   }
 
   void ScalarParameter::initializeUsingXML(DOMElement *element) {
@@ -84,7 +126,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  VectorParameter::VectorParameter(const string &name) : Parameter(name) {
+  VectorParameter::VectorParameter(const string &name, Element *parent) : Parameter(name,parent) {
 
     value.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,"",vector<string>(3,"")),"",5));
     setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
@@ -102,7 +144,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  MatrixParameter::MatrixParameter(const string &name) : Parameter(name) {
+  MatrixParameter::MatrixParameter(const string &name, Element *parent) : Parameter(name,parent) {
 
     value.setProperty(new ChoiceProperty2(new MatPropertyFactory(getScalars<string>(3,3,"0"),"",vector<string>(3,"")),"",5));
     setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
@@ -120,7 +162,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  ImportParameter::ImportParameter() : Parameter("import") {
+  ImportParameter::ImportParameter(Element *parent) : Parameter("import",parent) {
     value.setProperty(new ExpressionProperty("'.'"));
     setValue(static_cast<ExpressionProperty*>(value.getProperty())->getValue());
   }
@@ -134,8 +176,8 @@ namespace MBSimGUI {
   DOMElement* ImportParameter::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(PV%getType());
-    parent->insertBefore(ele0, NULL);
-    value.writeXMLFile(ele0);
+//    parent->insertBefore(ele0, NULL);
+//    value.writeXMLFile(ele0);
     return ele0;
   }
 
@@ -163,7 +205,7 @@ namespace MBSimGUI {
     MBSimObjectFactory::initialize();
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    Parameters param;
+    Parameters param(NULL);
     param.initializeUsingXML(e);
     return param;
   }
@@ -171,7 +213,7 @@ namespace MBSimGUI {
   void Parameters::initializeUsingXML(DOMElement *element) {
     DOMElement *e=element->getFirstElementChild();
     while(e) {
-      Parameter *parameter=ObjectFactory::getInstance()->createParameter(e);
+      Parameter *parameter=ObjectFactory::getInstance()->createParameter(e,parent);
       parameter->initializeUsingXML(e);
       addParameter(parameter);
       e=e->getNextElementSibling();
@@ -181,9 +223,9 @@ namespace MBSimGUI {
   DOMElement* Parameters::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
-    parent->insertBefore(ele0, NULL);
-    for(size_t i=0; i<parameter.size(); i++)
-      parameter[i]->writeXMLFile(ele0);
+//    parent->insertBefore(ele0, NULL);
+//    for(size_t i=0; i<parameter.size(); i++)
+//      parameter[i]->writeXMLFile(ele0);
     return ele0;
   }
 

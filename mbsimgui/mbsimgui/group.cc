@@ -368,21 +368,21 @@ namespace MBSimGUI {
     // frames
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
     for(size_t i=1; i<frame.size(); i++) {
-      frame[i]->processFileID(ELE);
+      frame[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     // contours
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
     for(size_t i=0; i<contour.size(); i++) {
-      contour[i]->processFileID(ELE);
+      contour[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     // objects
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
     for(size_t i=0; i<object.size(); i++) {
-      object[i]->processFileID(ELE);
+      object[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 

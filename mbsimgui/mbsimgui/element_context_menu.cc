@@ -61,23 +61,23 @@ namespace MBSimGUI {
   }
 
   void EmbeddingContextMenu::addScalarParameter() {
-    mw->addParameter(new ScalarParameter("a"));
+    mw->addParameter(new ScalarParameter("a",element));
   }
 
   void EmbeddingContextMenu::addVectorParameter() {
-    mw->addParameter(new VectorParameter("a"));
+    mw->addParameter(new VectorParameter("a",element));
   }
 
   void EmbeddingContextMenu::addMatrixParameter() {
-    mw->addParameter(new MatrixParameter("a"));
+    mw->addParameter(new MatrixParameter("a",element));
   }
 
   void EmbeddingContextMenu::addStringParameter() {
-    mw->addParameter(new StringParameter("a"));
+    mw->addParameter(new StringParameter("a",element));
   }
 
   void EmbeddingContextMenu::addImportParameter() {
-    mw->addParameter(new ImportParameter);
+    mw->addParameter(new ImportParameter(element));
   }
 
   ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable) : QMenu(parent), element(element_) {

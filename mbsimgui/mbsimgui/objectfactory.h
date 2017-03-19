@@ -57,7 +57,7 @@ namespace MBSimGUI {
       virtual Constraint* createConstraint(xercesc::DOMElement *element, Element *parent) { return NULL; }
       virtual Observer* createObserver(xercesc::DOMElement *element, Element *parent) { return NULL; }
       virtual Solver* createSolver(xercesc::DOMElement *element) { return NULL; }
-      virtual Parameter* createParameter(xercesc::DOMElement *element) { return NULL; }
+      virtual Parameter* createParameter(xercesc::DOMElement *element, Element *parent) { return NULL; }
       virtual Environment *getEnvironment(xercesc::DOMElement *element) { return NULL; }
   };
 
@@ -81,7 +81,7 @@ namespace MBSimGUI {
       Constraint* createConstraint(xercesc::DOMElement *element, Element *parent);
       Observer* createObserver(xercesc::DOMElement *element, Element *parent);
       Solver* createSolver(xercesc::DOMElement *element);
-      Parameter* createParameter(xercesc::DOMElement *element);
+      Parameter* createParameter(xercesc::DOMElement *element, Element *parent);
       Environment *getEnvironment(xercesc::DOMElement *element);
   };
 
@@ -103,7 +103,7 @@ namespace MBSimGUI {
       Constraint* createConstraint(xercesc::DOMElement *element, Element *parent);
       Observer* createObserver(xercesc::DOMElement *element, Element *parent);
       Solver* createSolver(xercesc::DOMElement *element);
-      Parameter* createParameter(xercesc::DOMElement *element);
+      Parameter* createParameter(xercesc::DOMElement *element, Element *parent);
       Environment *getEnvironment(xercesc::DOMElement *element);
   };
 

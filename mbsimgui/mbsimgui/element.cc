@@ -44,7 +44,7 @@ namespace MBSimGUI {
 
   int Element::IDcounter=0;
 
-  Element::Element(const string &name__, Element *parent_, const string &plotFeatureTypes) : parent(parent_), embed(0,false), element(NULL), name_(name__) {
+  Element::Element(const string &name__, Element *parent_, const string &plotFeatureTypes) : parent(parent_), embed(0,false), parameters(this), element(NULL), name_(name__) {
     name.setProperty(new TextProperty(name_,""));
     embed.setProperty(new EmbedProperty(name_));
     plotFeature.setProperty(new PlotFeatureStatusProperty(plotFeatureTypes));
@@ -95,7 +95,7 @@ namespace MBSimGUI {
   DOMElement* Element::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(getNameSpace()%getType());
-    E(element)->setAttribute("name", static_cast<TextProperty*>(name.getProperty())->getText());
+    E(element)->setAttribute("name", getName());
     parent->insertBefore(element, NULL);
     return element;
   }

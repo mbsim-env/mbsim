@@ -747,14 +747,14 @@ namespace MBSimGUI {
   void MainWindow::updateParameters(Element *element) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     vector<Element*> parents = element->getParents();
-    Parameters param;
+    Parameters param(element);
     for(size_t i=0; i<parents.size(); i++)
       param.addParameters(parents[i]->getParameters());
     param.addParameters(element->getParameters());
     string counterName = element->getCounterName();
     ScalarParameter *counter = NULL;
     if(not(counterName.empty())) {
-      counter = new ScalarParameter(counterName,"1");
+      counter = new ScalarParameter(counterName,element,"1");
       param.addParameter(counter);
     }
     param.writeXMLFile(doc.get());
@@ -1173,6 +1173,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addParameter(Parameter *parameter) {
+    parameter->createXMLElement(parameter->getParent()->getXMLElement());
     setProjectChanged(true);
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());

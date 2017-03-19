@@ -73,7 +73,7 @@ namespace MBSimGUI {
       ~FixedRelativeFrame() { }
       virtual PropertyInterface* clone() const {return new FixedRelativeFrame(*this);}
       std::string getType() const { return "FixedRelativeFrame"; }
-      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       virtual void initialize();

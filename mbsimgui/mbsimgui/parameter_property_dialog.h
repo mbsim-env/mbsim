@@ -37,6 +37,8 @@ namespace MBSimGUI {
 
     public:
       ParameterPropertyDialog(Parameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0, bool readOnly=false);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
       virtual void toWidget(Parameter *parameter);
       virtual void fromWidget(Parameter *parameter);
       void toWidget() {toWidget(parameter);}
@@ -62,6 +64,8 @@ namespace MBSimGUI {
       ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
       virtual void toWidget(Parameter *parameter);
       virtual void fromWidget(Parameter *parameter);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *value;
   };
