@@ -1014,7 +1014,8 @@ def coverage(mainFD):
     "openmbv/openmbvcppinterface/swig/java/*", "openmbv/openmbvcppinterface/swig/octave/*",
     "openmbv/openmbvcppinterface/swig/python/*", "openmbv/mbxmlutils/mbxmlutils/swigpyrun.h",
     "openmbv/mbxmlutils/mbxmlutils/casadi_oct_swig_octave.cc", "mbsim/thirdparty/nurbs++/*",
-    "local/include/nurbs++/*", "mbsim/examples/*", "-o", pj(os.environ["GCOV_PREFIX"], "cov.trace2")], stdout=lcovFD, stderr=lcovFD))
+    "local/include/nurbs++/*", "mbsim/examples/*", "mbsim/modules/mbsimInterface/mbsimInterface/interface_messages.cc",
+    "-o", pj(os.environ["GCOV_PREFIX"], "cov.trace2")], stdout=lcovFD, stderr=lcovFD))
 
   # collect all header files in repos and hash it
   repoHeader={}
@@ -1052,7 +1053,6 @@ def coverage(mainFD):
     m=linesRE.match(line)
     if m!=None:
       covRate=int(float(m.group(1))+0.5)
-      break
   buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", str(covRate)+"%",
     "#5cb85c" if covRate>=90 else ("#f0ad4e" if covRate>=75 else "#d9534f"))
 
