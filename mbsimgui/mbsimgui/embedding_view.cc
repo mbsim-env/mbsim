@@ -32,13 +32,16 @@ namespace MBSimGUI {
   void EmbeddingView::openEditor() {
     if(!editor) {
       index = selectionModel()->currentIndex();
-      Parameter *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
+      parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
       if(parameter) {
 //        Element *element = static_cast<Element*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index.parent())->getItemData());
 //        mw->updateParameters(element);
         editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
-        editor->toWidget();
+        if(parameter->getConfig())
+          editor->toWidget();
+        else
+          editor->setCancel(false);
         editor->show();
         connect(editor,SIGNAL(apply()),this,SLOT(apply()));
         connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
@@ -70,7 +73,9 @@ namespace MBSimGUI {
     if(result != 0) {
       mw->setProjectChanged(true);
       mw->mbsimxml(1);
+      parameter->setConfig(true);
     }
+    parameter = 0;
     editor = 0;
   }
 
@@ -79,6 +84,8 @@ namespace MBSimGUI {
     update(index);
     update(index.sibling(index.row(),1));
     mw->mbsimxml(1);
+    parameter->setConfig(true);
+    editor->setCancel(true);
   }
 
 }

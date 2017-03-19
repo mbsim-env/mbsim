@@ -34,7 +34,7 @@ namespace MBSimGUI {
   extern QDir mbsDir;
   extern bool absolutePath;
 
-  Parameter::Parameter(const string &name__, Element *parent_) : parent(parent_), name_(name__) {
+  Parameter::Parameter(const string &name__, Element *parent_) : parent(parent_), name_(name__), config(false) {
     name.setProperty(new TextProperty(name_,""));
   }
 
@@ -46,6 +46,7 @@ namespace MBSimGUI {
 
   void Parameter::initializeUsingXML(DOMElement *element) {
     this->element = element;
+    config = true;
   }
 
   DOMElement* Parameter::writeXMLFile(DOMNode *parent) {
@@ -104,14 +105,6 @@ namespace MBSimGUI {
 
     value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory(value_,"",vector<string>(2,"")),"",5));
     setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
-  }
-
-  DOMElement* ScalarParameter::createXMLElement(DOMNode *parent) {
-    Parameter::createXMLElement(parent);
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMText *text = doc->createTextNode(X()%"0");
-    element->insertBefore(text, NULL);
-    return element;
   }
 
   void ScalarParameter::initializeUsingXML(DOMElement *element) {

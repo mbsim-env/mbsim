@@ -32,7 +32,7 @@ namespace MBSimGUI {
 
   ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, QWidget *parent, Qt::WindowFlags f, bool readOnly) : PropertyDialog(parent,f), parameter(parameter_) {
     addTab("General");
-    name=new ExtWidget("Name",new TextWidget("",readOnly));
+    name=new ExtWidget("Name",new TextWidget(QString::fromStdString(parameter->getName()),readOnly));
     addToTab("General",name);
   }
 

@@ -38,7 +38,10 @@ namespace MBSimGUI {
 //        mw->updateParameters(element);
         editor = element->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
-        editor->toWidget();
+        if(element->getConfig())
+          editor->toWidget();
+        else
+          editor->setCancel(false);
         editor->show();
         connect(editor,SIGNAL(apply()),this,SLOT(apply()));
         connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
@@ -59,6 +62,7 @@ namespace MBSimGUI {
     if(result != 0) {
       mw->setProjectChanged(true);
       mw->mbsimxml(1);
+      element->setConfig(true);
     }
     editor = 0;
     element = 0;
@@ -68,6 +72,8 @@ namespace MBSimGUI {
     update(index);
     mw->setProjectChanged(true);
     mw->mbsimxml(1);
+    element->setConfig(true);
+    editor->setCancel(true);
   }
 
 }

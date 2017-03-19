@@ -44,7 +44,7 @@ namespace MBSimGUI {
 
   int Element::IDcounter=0;
 
-  Element::Element(const string &name__, Element *parent_, const string &plotFeatureTypes) : parent(parent_), embed(0,false), parameters(this), element(NULL), name_(name__) {
+  Element::Element(const string &name__, Element *parent_, const string &plotFeatureTypes) : parent(parent_), embed(0,false), parameters(this), element(NULL), name_(name__), config(false) {
     name.setProperty(new TextProperty(name_,""));
     embed.setProperty(new EmbedProperty(name_));
     plotFeature.setProperty(new PlotFeatureStatusProperty(plotFeatureTypes));
@@ -102,6 +102,7 @@ namespace MBSimGUI {
 
   DOMElement* Element::initializeUsingXML(DOMElement *element) {
     this->element = element;
+    config = true;
     return element;
   }
 

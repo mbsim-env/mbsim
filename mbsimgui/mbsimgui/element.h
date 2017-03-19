@@ -58,6 +58,7 @@ namespace MBSimGUI {
       std::vector<std::string> plotFeatures;
       xercesc::DOMElement *element;
       std::string name_;
+      bool config;
     public:
       Element(const std::string &name, Element *parent, const std::string &plotFeatureTypes="");
       virtual ~Element() { parameters.removeParameters(); }
@@ -136,6 +137,8 @@ namespace MBSimGUI {
       std::string getCounterName() const;
       void addPlotFeature(const std::string &pf);
       const std::vector<std::string>& getPlotFeatures() const { return plotFeatures; }
+      bool getConfig() { return config; }
+      void setConfig(bool config_) { config = config_; }
   };
 
   template<class T>

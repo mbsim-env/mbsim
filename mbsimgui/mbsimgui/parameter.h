@@ -57,11 +57,14 @@ namespace MBSimGUI {
       virtual void removeXMLElements();
       Element* getParent() { return parent; }
       void setParent(Element* parent_) { parent = parent_; }
+      bool getConfig() { return config; }
+      void setConfig(bool config_) { config = config_; }
     protected:
       Element *parent;
       ExtProperty name, value;
       std::string name_, valuestr;
       xercesc::DOMElement *element;
+      bool config;
   };
 
   class StringParameter : public Parameter {
@@ -80,7 +83,6 @@ namespace MBSimGUI {
     public:
       ScalarParameter(const std::string &name, Element *parent, const std::string &value="0");
       virtual ~ScalarParameter() {}
-      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       virtual std::string getType() const { return "scalarParameter"; }

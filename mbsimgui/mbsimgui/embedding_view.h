@@ -26,12 +26,14 @@
 namespace MBSimGUI {
 
   class PropertyDialog;
+  class Parameter;
 
   class EmbeddingView : public QTreeView {
     Q_OBJECT
     private:
       QModelIndex index;
       PropertyDialog *editor;
+      Parameter *parameter;
     public:
       EmbeddingView(QWidget *parent=0) : QTreeView(parent), editor(0) {}
     protected:

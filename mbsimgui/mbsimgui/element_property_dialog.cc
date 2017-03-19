@@ -91,7 +91,7 @@ namespace MBSimGUI {
 
   ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), element(element_) {
     addTab("General");
-    name = new ExtWidget("Name",new TextWidget);
+    name = new ExtWidget("Name",new TextWidget(QString::fromStdString(element->getName())));
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
     addTab("Plot");

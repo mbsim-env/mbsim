@@ -95,4 +95,9 @@ namespace MBSimGUI {
       tabWidget->insertTab(i,tab,name);
   }
 
+  void PropertyDialog::setCancel(bool on) {
+    //buttonBox->button(QDialogButtonBox::Cancel)->setVisible(false);
+    buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(on);
+  }
+
 }
