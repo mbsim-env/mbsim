@@ -536,21 +536,35 @@ namespace MBSimGUI {
   }
 
   ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {
-  }
+    addTab("Initial conditions");
 
-  BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(body,parent,f) {
-    addTab("Kinematics",1);
-    addTab("Initial conditions",2);
-
-    q0 = new ExtWidget("Generalized initial position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
+    q0 = new ExtWidget("Generalized initial position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialPosition");
     addToTab("Initial conditions", q0);
 
-    u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
+    u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
     addToTab("Initial conditions", u0);
 
     connect(q0, SIGNAL(resize_()), this, SLOT(resizeVariables()));
     connect(u0, SIGNAL(resize_()), this, SLOT(resizeVariables()));
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+  }
+
+  DOMElement* ObjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
+    q0->initializeUsingXML(element->getXMLElement());
+    u0->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ObjectPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ElementPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    q0->writeXMLFile(element->getXMLElement(),ref);
+    u0->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
+  BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(body,parent,f) {
+    addTab("Kinematics");
 
     R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,body->getParent()->getFrame(0)),true,false,MBSIM%"frameOfReference");
     addToTab("Kinematics",R);
@@ -668,14 +682,16 @@ namespace MBSimGUI {
 
   void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
     int size =  body->isConstrained() ? 0 : getqRelSize();
-    q0->resize_(size,1);
-    translation->resize_(3,1);
-    rotation->resize_(3,1);
+    cout << size << endl;
+    //q0->resize_(size,1);
+    //translation->resize_(3,1);
+    //rotation->resize_(3,1);
     }
 
   void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
     int size =  body->isConstrained() ? 0 : getuRelSize();
-    u0->resize_(size,1);
+    cout << size << endl;
+    //u0->resize_(size,1);
   }
 
   FlexibleBodyFFRPropertyDialog::FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {

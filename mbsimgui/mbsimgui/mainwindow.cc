@@ -891,7 +891,9 @@ namespace MBSimGUI {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMNode *newDocElement = doc->importNode(this->doc->getDocumentElement(), true);
     doc->insertBefore(newDocElement, NULL);
-    DOMElement* ele = E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+    DOMElement* ele = doc->getDocumentElement()->getFirstElementChild();
+    if(E(ele)->getTagName()==PV%"Embed")
+      ele = E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
     dss->processFileID(ele);
     E(ele)->setAttribute("name","out"+sTask.toStdString());;
     QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+sTask+".mbsimprj.flat.xml";

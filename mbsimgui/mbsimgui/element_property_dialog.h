@@ -294,25 +294,27 @@ namespace MBSimGUI {
   };
 
   class ObjectPropertyDialog : public ElementPropertyDialog {
+    Q_OBJECT
 
     public:
       ObjectPropertyDialog(Object *object, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      virtual void resizeGeneralizedPosition() {}
+      virtual void resizeGeneralizedVelocity() {}
+    protected:
+      ExtWidget *q0, *u0, *R;
+      VecWidget *q0_, *u0_;
+    public slots:
+      void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
   };
 
   class BodyPropertyDialog : public ObjectPropertyDialog {
-    Q_OBJECT;
 
     public:
-    BodyPropertyDialog(Body *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
-    virtual void resizeGeneralizedPosition() {}
-    virtual void resizeGeneralizedVelocity() {}
-    protected:
-    ExtWidget *q0, *u0, *R;
-    VecWidget *q0_, *u0_;
-    public slots:
-      void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
+      BodyPropertyDialog(Body *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
   class RigidBodyPropertyDialog : public BodyPropertyDialog {

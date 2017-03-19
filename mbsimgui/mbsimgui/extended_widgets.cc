@@ -113,18 +113,19 @@ namespace MBSimGUI {
   }
 
   DOMElement* ExtWidget::initializeUsingXML(DOMElement *element) {
-    setActive(false);
-    if(element) {
-      if(xmlName!=FQN()) {
-        DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
-        if(e)
-          setActive(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e));
-        return e;
-      }
-      else
-        setActive(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(element));
+    bool active = false;
+    if(xmlName!=FQN()) {
+      DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+      if(e)
+        active = dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
     }
-    return isActive()?element:0;
+    else
+      active = dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(element);
+    blockSignals(true);
+    setActive(active);
+    widget->setVisible(active);
+    blockSignals(false);
+    return active?element:0;
   }
 
   DOMElement* ExtWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
@@ -180,7 +181,9 @@ namespace MBSimGUI {
           if(ee) {
             for(int i=0; i<factory->getSize(); i++) {
               if(E(ee)->getTagName() == factory->getXMLName(i)) {
+                blockSignals(true);
                 defineWidget(i);
+                blockSignals(false);
                 comboBox->blockSignals(true);
                 comboBox->setCurrentIndex(i);
                 comboBox->blockSignals(false);
@@ -199,7 +202,9 @@ namespace MBSimGUI {
             for(int i=0; i<factory->getSize(); i++) {
               DOMElement *eee=E(ee)->getFirstElementChildNamed(factory->getXMLName(i));
               if(eee) {
+                blockSignals(true);
                 defineWidget(i);
+                blockSignals(false);
                 comboBox->blockSignals(true);
                 comboBox->setCurrentIndex(i);
                 comboBox->blockSignals(false);
@@ -218,7 +223,9 @@ namespace MBSimGUI {
             for(int i=0; i<factory->getSize(); i++) {
               DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;
               if(eee) {
+                blockSignals(true);
                 defineWidget(i);
+                blockSignals(false);
                 comboBox->blockSignals(true);
                 comboBox->setCurrentIndex(i);
                 comboBox->blockSignals(false);
