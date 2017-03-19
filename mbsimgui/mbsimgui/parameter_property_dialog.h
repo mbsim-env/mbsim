@@ -52,8 +52,8 @@ namespace MBSimGUI {
 
     public:
       StringParameterPropertyDialog(StringParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Parameter *parameter);
-      virtual void fromWidget(Parameter *parameter);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *value;
   };
@@ -62,8 +62,6 @@ namespace MBSimGUI {
 
     public:
       ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Parameter *parameter);
-      virtual void fromWidget(Parameter *parameter);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
@@ -74,8 +72,8 @@ namespace MBSimGUI {
 
     public:
       VectorParameterPropertyDialog(VectorParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Parameter *parameter);
-      virtual void fromWidget(Parameter *parameter);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *value;
   };
@@ -84,8 +82,8 @@ namespace MBSimGUI {
 
     public:
       MatrixParameterPropertyDialog(MatrixParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Parameter *parameter);
-      virtual void fromWidget(Parameter *parameter);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *value;
   };
@@ -94,8 +92,8 @@ namespace MBSimGUI {
 
     public:
       ImportParameterPropertyDialog(ImportParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Parameter *parameter);
-      virtual void fromWidget(Parameter *parameter);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *value;
   };

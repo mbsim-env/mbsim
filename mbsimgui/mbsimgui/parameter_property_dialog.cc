@@ -60,31 +60,22 @@ namespace MBSimGUI {
     addToTab("General", value);
   }
 
-  void StringParameterPropertyDialog::toWidget(Parameter *parameter) {
-    ParameterPropertyDialog::toWidget(parameter);
-    static_cast<StringParameter*>(parameter)->value.toWidget(value);
+  DOMElement* StringParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ParameterPropertyDialog::initializeUsingXML(parameter->getXMLElement());
+    value->initializeUsingXML(parameter->getXMLElement());
+    return parent;
   }
 
-  void StringParameterPropertyDialog::fromWidget(Parameter *parameter) {
-    ParameterPropertyDialog::fromWidget(parameter);
-    static_cast<StringParameter*>(parameter)->value.fromWidget(value);
-    parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
+  DOMElement* StringParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
+    value->writeXMLFile(parameter->getXMLElement(),ref);
+    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue().toStdString());
+    return NULL;
   }
 
   ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
     value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
-  }
-
-  void ScalarParameterPropertyDialog::toWidget(Parameter *parameter) {
-    ParameterPropertyDialog::toWidget(parameter);
-//    static_cast<StringParameter*>(parameter)->value.toWidget(value);
-  }
-
-  void ScalarParameterPropertyDialog::fromWidget(Parameter *parameter) {
-    ParameterPropertyDialog::fromWidget(parameter);
-//    static_cast<StringParameter*>(parameter)->value.fromWidget(value);
-//    parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
   }
 
   DOMElement* ScalarParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -101,35 +92,39 @@ namespace MBSimGUI {
   }
 
   VectorParameterPropertyDialog::VectorParameterPropertyDialog(VectorParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-    value = new ExtWidget("Value",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
+    value = new ExtWidget("Value",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
 
-  void VectorParameterPropertyDialog::toWidget(Parameter *parameter) {
-    ParameterPropertyDialog::toWidget(parameter);
-    static_cast<VectorParameter*>(parameter)->value.toWidget(value);
+  DOMElement* VectorParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ParameterPropertyDialog::initializeUsingXML(parameter->getXMLElement());
+    value->initializeUsingXML(parameter->getXMLElement());
+    return parent;
   }
 
-  void VectorParameterPropertyDialog::fromWidget(Parameter *parameter) {
-    ParameterPropertyDialog::fromWidget(parameter);
-    static_cast<VectorParameter*>(parameter)->value.fromWidget(value);
-    parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<VectorParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
+  DOMElement* VectorParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
+    value->writeXMLFile(parameter->getXMLElement(),ref);
+    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue().toStdString());
+    return NULL;
   }
 
   MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(MatrixParameter *parameter,QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-    value = new ExtWidget("Value",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(3,3)));
+    value = new ExtWidget("Value",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
 
-  void MatrixParameterPropertyDialog::toWidget(Parameter *parameter) {
-    ParameterPropertyDialog::toWidget(parameter);
-    static_cast<MatrixParameter*>(parameter)->value.toWidget(value);
+  DOMElement* MatrixParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ParameterPropertyDialog::initializeUsingXML(parameter->getXMLElement());
+    value->initializeUsingXML(parameter->getXMLElement());
+    return parent;
   }
 
-  void MatrixParameterPropertyDialog::fromWidget(Parameter *parameter) {
-    ParameterPropertyDialog::fromWidget(parameter);
-    static_cast<MatrixParameter*>(parameter)->value.fromWidget(value);
-    parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<MatrixParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
+  DOMElement* MatrixParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
+    value->writeXMLFile(parameter->getXMLElement(),ref);
+    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue().toStdString());
+    return NULL;
   }
 
   ImportParameterPropertyDialog::ImportParameterPropertyDialog(ImportParameter *parameter,QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f,true) {
@@ -137,15 +132,17 @@ namespace MBSimGUI {
     addToTab("General", value);
   }
 
-  void ImportParameterPropertyDialog::toWidget(Parameter *parameter) {
-    ParameterPropertyDialog::toWidget(parameter);
-    static_cast<ImportParameter*>(parameter)->value.toWidget(value);
+  DOMElement* ImportParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ParameterPropertyDialog::initializeUsingXML(parameter->getXMLElement());
+    value->initializeUsingXML(parameter->getXMLElement());
+    return parent;
   }
 
-  void ImportParameterPropertyDialog::fromWidget(Parameter *parameter) {
-    ParameterPropertyDialog::fromWidget(parameter);
-    static_cast<ImportParameter*>(parameter)->value.fromWidget(value);
-    parameter->setValue(static_cast<ExpressionProperty*>(static_cast<ImportParameter*>(parameter)->value.getProperty())->getValue());
+  DOMElement* ImportParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
+    value->writeXMLFile(parameter->getXMLElement(),ref);
+    parameter->setValue(static_cast<ExpressionWidget*>(value->getWidget())->getValue().toStdString());
+    return NULL;
   }
 
 }

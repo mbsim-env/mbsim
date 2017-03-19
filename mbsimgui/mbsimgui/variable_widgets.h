@@ -108,6 +108,8 @@ namespace MBSimGUI {
       virtual std::vector<QString> getVec() const = 0;
       virtual void setVec(const std::vector<QString> &x) = 0;
       virtual QWidget* getValidatedWidget() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
   class VecWidget : public BasicVecWidget {
@@ -128,8 +130,6 @@ namespace MBSimGUI {
       int rows() const { return size(); }
       virtual QString getType() const {return "Vector";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
   class VecSizeVarWidget : public BasicVecWidget {
@@ -166,6 +166,8 @@ namespace MBSimGUI {
       virtual std::vector<std::vector<QString> > getMat() const = 0;
       virtual void setMat(const std::vector<std::vector<QString> > &A) = 0;
       virtual QWidget* getValidatedWidget() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
   class MatWidget : public BasicMatWidget {

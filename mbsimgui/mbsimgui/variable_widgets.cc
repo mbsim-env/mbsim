@@ -265,6 +265,33 @@ namespace MBSimGUI {
     return new VecWidget(x);
   }
 
+  DOMElement* BasicVecWidget::initializeUsingXML(DOMElement *parent) {
+   DOMElement *element=parent->getFirstElementChild();
+    if(!element || E(element)->getTagName() != PV%"xmlVector")
+      return 0;
+    DOMElement *ei=element->getFirstElementChild();
+    std::vector<QString> value;
+    while(ei && E(ei)->getTagName()==PV%"ele") {
+      value.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
+      ei=ei->getNextElementSibling();
+    }
+    setVec(value);
+    return element;
+  }
+
+  DOMElement* BasicVecWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(PV%"xmlVector");
+    for(int i=0; i<rows(); i++) {
+      DOMElement *elei = D(doc)->createElement(PV%"ele");
+      DOMText *text = doc->createTextNode(X()%getVec()[i].toStdString());
+      elei->insertBefore(text, NULL);
+      ele->insertBefore(elei, NULL);
+    }
+    parent->insertBefore(ele, NULL);
+    return NULL;
+  }
+
   VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
 
     QGridLayout *layout = new QGridLayout;
@@ -333,33 +360,6 @@ namespace MBSimGUI {
     return true;
   }
 
-  DOMElement* VecWidget::initializeUsingXML(DOMElement *parent) {
-   DOMElement *element=parent->getFirstElementChild();
-    if(!element || E(element)->getTagName() != PV%"xmlVector")
-      return 0;
-    DOMElement *ei=element->getFirstElementChild();
-    std::vector<QString> value;
-    while(ei && E(ei)->getTagName()==PV%"ele") {
-      value.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
-      ei=ei->getNextElementSibling();
-    }
-    setVec(value);
-    return element;
-  }
-
-  DOMElement* VecWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele = D(doc)->createElement(PV%"xmlVector");
-    for(int i=0; i<size(); i++) {
-      DOMElement *elei = D(doc)->createElement(PV%"ele");
-      DOMText *text = doc->createTextNode(X()%getVec()[i].toStdString());
-      elei->insertBefore(text, NULL);
-      ele->insertBefore(elei, NULL);
-    }
-    parent->insertBefore(ele, NULL);
-    return NULL;
-  }
-
   VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_, bool transpose) : minSize(minSize_), maxSize(maxSize_) {
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -416,6 +416,43 @@ namespace MBSimGUI {
         A[i][j] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(A[i][j].toStdString())));
     return new MatWidget(A);
   }
+
+  DOMElement* BasicMatWidget::initializeUsingXML(DOMElement *parent) {
+   DOMElement *element=parent->getFirstElementChild();
+    if(!element || E(element)->getTagName() != PV%"xmlMatrix")
+      return 0;
+    DOMElement *ei=element->getFirstElementChild();
+    std::vector<std::vector<QString> > value;
+    while(ei && E(ei)->getTagName()==PV%"row") {
+      DOMElement *ej=ei->getFirstElementChild();
+      value.push_back(vector<QString>());
+      while(ej && E(ej)->getTagName()==PV%"ele") {
+        value[value.size()-1].push_back(QString::fromStdString(X()%E(ej)->getFirstTextChild()->getData()));
+        ej=ej->getNextElementSibling();
+      }
+      ei=ei->getNextElementSibling();
+    }
+    setMat(value);
+    return element;
+  }
+
+  DOMElement* BasicMatWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(PV%"xmlMatrix");
+    for(int i=0; i<rows(); i++) {
+      DOMElement *elei = D(doc)->createElement(PV%"row");
+      for(int j=0; j<cols(); j++) {
+        DOMElement *elej = D(doc)->createElement(PV%"ele");
+        DOMText *text = doc->createTextNode(X()%getMat()[i][j].toStdString());
+        elej->insertBefore(text, NULL);
+        elei->insertBefore(elej, NULL);
+      }
+      ele->insertBefore(elei, NULL);
+    }
+    parent->insertBefore(ele, NULL);
+    return NULL;
+  }
+
 
   MatWidget::MatWidget(int rows, int cols) {
 

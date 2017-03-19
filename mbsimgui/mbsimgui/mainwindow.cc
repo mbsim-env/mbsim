@@ -1063,7 +1063,8 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    if(X()%element->getXMLElement()->getPreviousSibling()->getNodeName()=="#text")
+    DOMNode *ps = element->getXMLElement()->getPreviousSibling();
+    if(ps and X()%ps->getNodeName()=="#text")
       element->getXMLElement()->getParentNode()->removeChild(element->getXMLElement()->getPreviousSibling());
     element->getXMLElement()->getParentNode()->removeChild(element->getXMLElement());
     element->getParent()->removeElement(element);
@@ -1194,6 +1195,10 @@ namespace MBSimGUI {
     EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     QModelIndex pindex = embeddingList->selectionModel()->currentIndex();
     Parameter *parameter=static_cast<Parameter*>(pmodel->getItem(pindex)->getItemData());
+    DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
+    if(ps and X()%ps->getNodeName()=="#text")
+      parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement()->getPreviousSibling());
+    parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
     element->removeParameter(parameter);
     pmodel->removeRow(pindex.row(), pindex.parent());
   }
