@@ -261,14 +261,6 @@ namespace MBSimGUI {
   }
 
   template <class T>
-    void addElementText(xercesc::DOMElement *parent, std::string name, T value) {
-      std::ostringstream oss;
-      oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
-      xercesc::DOMDocument *doc=parent->getOwnerDocument();
-      parent->insertBefore(MBXMLUtils::D(doc)->createElement(name), NULL)->insertBefore(MBXMLUtils::D(doc)->createElement(oss.str()), NULL);
-    }
-
-  template <class T>
     void addElementAttributeAndText(xercesc::DOMElement *parent, std::string name, std::string attribute, std::string attributeName, T value) {
       std::ostringstream oss;
       oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
@@ -281,16 +273,6 @@ namespace MBSimGUI {
 
   std::vector<std::vector<double> > Cardan2AIK(const std::vector<std::vector<double> > &x);
   std::vector<std::vector<double> > AIK2Cardan(const std::vector<std::vector<double> > &x);
-
-  template<class T>
-    inline std::string funcExt() {
-      return "V";
-    }
-
-  template < >
-    inline std::string funcExt<double>() {
-      return "S";
-    }
 
   template <class T>
     inline T fromMatStr(const std::string &str) {

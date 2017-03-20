@@ -47,12 +47,6 @@ namespace MBSim {
       return oss.str(); 
     }
 
-  double degtorad(double alpha);
-  double radtodeg(double phi);
-  fmatvec::Vec degtorad(fmatvec::Vec alpha);
-  fmatvec::Vec radtodeg(fmatvec::Vec phi);
-  fmatvec::Vec tildetovec(const fmatvec::SqrMat &A);
-
   double sign(double x);
 
   /*!
@@ -73,80 +67,6 @@ namespace MBSim {
       std::stringstream s;
       s << std::setprecision(std::numeric_limits<double>::digits10+1) << val;
       return s.str();
-    }
-
-  inline xercesc::DOMNode* toXML(const std::string &str, xercesc::DOMNode* parent) {
-    return parent->getOwnerDocument()->createTextNode(MBXMLUtils::X()%str);
-  }
-
-  inline xercesc::DOMNode* toXML(int i, xercesc::DOMNode* parent) {
-    return parent->getOwnerDocument()->createTextNode(MBXMLUtils::X()%toStr(i));
-  }
-
-  inline xercesc::DOMNode* toXML(unsigned int i, xercesc::DOMNode* parent) {
-    return parent->getOwnerDocument()->createTextNode(MBXMLUtils::X()%toStr(i));
-  }
-
-  inline xercesc::DOMNode* toXML(double d, xercesc::DOMNode* parent) {
-    return parent->getOwnerDocument()->createTextNode(MBXMLUtils::X()%toStr(d));
-  }
-
-  template <class T>
-    inline xercesc::DOMNode* toXML(const std::vector<T> &x, xercesc::DOMNode* parent) {
-      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"xmlVector");
-      for(unsigned int i=0; i<x.size(); i++) {
-        xercesc::DOMElement *elei = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"ele");
-        xercesc::DOMText *text = new xercesc::DOMText(toStr(x[i]));
-        elei->insertBefore(text, NULL);
-        ele->insertBefore(elei, NULL);
-      }
-      return ele;
-    }
-
-  template <class Row>
-    inline xercesc::DOMNode* toXML(const fmatvec::Vector<Row,double> &x, xercesc::DOMNode* parent) {
-      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"xmlVector");
-      for(int i=0; i<x.size(); i++) {
-        xercesc::DOMDocument *doc=parent->getOwnerDocument();
-        xercesc::DOMElement *elei = MBXMLUtils::D(doc)->createElement(MBXMLUtils::PV%"ele");
-        xercesc::DOMText *text = doc->createTextNode(MBXMLUtils::X()%toStr(x.e(i)));
-        elei->insertBefore(text, NULL);
-        ele->insertBefore(elei, NULL);
-      }
-      return ele;
-    }
-
-  template <class Type, class Row, class Col>
-    inline xercesc::DOMNode* toXML(const fmatvec::Matrix<Type,Row,Col,double> &A, xercesc::DOMNode* parent) {
-      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"xmlMatrix");
-      for(int i=0; i<A.rows(); i++) {
-        xercesc::DOMElement *elei = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"row");
-        for(int j=0; j<A.cols(); j++) {
-          xercesc::DOMElement *elej = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"ele");
-          xercesc::DOMText *text = new xercesc::DOMText(toStr(A.e(i,j)));
-          elej->insertBefore(text, NULL);
-          elei->insertBefore(elej, NULL);
-        }
-        ele->insertBefore(elei, NULL);
-      }
-      return ele;
-    }
-
-  template<class T>
-    inline std::string funcExt() {
-      return "V";
-    }
-
-  template < >
-    inline std::string funcExt<double>() {
-      return "S";
-    }
-
-  template <class T>
-    void addElementText(xercesc::DOMElement *parent, const MBXMLUtils::FQN &name, const T &value) {
-      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(name);
-      ele->insertBefore(toXML(value,parent), NULL);
-      parent->insertBefore(ele, NULL);
     }
 
   template <class Arg>
