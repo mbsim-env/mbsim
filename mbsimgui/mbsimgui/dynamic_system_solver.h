@@ -57,7 +57,6 @@ namespace MBSimGUI {
 
     ElementPropertyDialog* createPropertyDialog() {return new DynamicSystemSolverPropertyDialog(this);}
     QMenu* createContextMenu() {return new DynamicSystemSolverContextMenu(this);}
-    void enablePlot(bool b);
   };
 
 }

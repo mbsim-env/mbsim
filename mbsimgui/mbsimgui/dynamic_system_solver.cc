@@ -172,12 +172,4 @@ namespace MBSimGUI {
     return solver;
   }
 
-  void DynamicSystemSolver::enablePlot(bool b) {
-    PlotFeatureStatusProperty *pf = static_cast<PlotFeatureStatusProperty*>(plotFeature.getProperty());
-    if(b)
-      pf->removeFeature();
-    else
-      pf->addFeature("plotFeatureRecursive","plotRecursive","-");
-  }
-
 }

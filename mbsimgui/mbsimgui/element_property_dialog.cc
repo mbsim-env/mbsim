@@ -530,7 +530,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GroupPropertyDialog::writeXMLFile(parent);
+    GroupPropertyDialog::writeXMLFile(parent,element->getXMLFrames());
     environment->writeXMLFile(static_cast<DynamicSystemSolver*>(element)->getXMLEnvironments()->getFirstElementChild());
     return NULL;
   }

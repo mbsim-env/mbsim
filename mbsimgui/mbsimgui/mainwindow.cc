@@ -903,11 +903,12 @@ namespace MBSimGUI {
     if(task==1) {
       if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
         static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
-      dss->enablePlot(false);
+      DOMElement *ele1 = D(doc)->createElement( MBSIM%"plotFeatureRecursive" );
+      E(ele1)->setAttribute("feature","-plotRecursive");
+      ele->insertBefore( ele1, ele->getFirstElementChild() );
     }
 
     absolutePath = false;
-    if(task==1) dss->enablePlot(true);
 
 //    if(ele0) {
       mbsimThread->setDocument(doc);

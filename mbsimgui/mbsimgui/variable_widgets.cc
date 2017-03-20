@@ -453,7 +453,6 @@ namespace MBSimGUI {
     return NULL;
   }
 
-
   MatWidget::MatWidget(int rows, int cols) {
 
     QGridLayout *layout = new QGridLayout;
@@ -1107,7 +1106,7 @@ namespace MBSimGUI {
     return 0;
   }
 
-  BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,4) {
+  BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,0) {
     name[0] = "Boolean";
     name[1] = "Editor";
   }
