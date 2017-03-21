@@ -48,6 +48,7 @@ namespace MBSimGUI {
       static int IDcounter;
       std::string ID;
       std::vector<Parameter*> parameter;
+      std::vector<Parameter*> removedParameter;
       std::vector<std::string> plotFeatures;
       xercesc::DOMElement *element;
       std::string name, counterName, value;

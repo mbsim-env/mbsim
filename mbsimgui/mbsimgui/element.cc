@@ -54,6 +54,8 @@ namespace MBSimGUI {
   Element::~Element() {
     for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++)
       delete (*it);
+    for(vector<Parameter*>::iterator i = removedParameter.begin(); i != removedParameter.end(); ++i)
+      delete *i;
   }
 
   string Element::getPath() {
@@ -199,10 +201,10 @@ namespace MBSimGUI {
     for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++) {
       if(*it == param) {
         parameter.erase(it);
-        delete param;
-        return;
+        break;
       }
     }
+    removedParameter.push_back(param);
   }
 
   void Element::addPlotFeature(const string &pf) {
