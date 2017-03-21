@@ -78,6 +78,10 @@ namespace MBSimGUI {
       embed->insertBefore(ele,NULL);
       embed->insertBefore(parent,NULL);
     }
+    else if(X()%embed->getFirstElementChild()->getNodeName()!="Parameter") {
+      DOMElement *ele=D(doc)->createElement(PV%"Parameter");
+      embed->insertBefore(ele,embed->getFirstElementChild());
+    }
     element=D(doc)->createElement(PV%getType());
     E(element)->setAttribute("name", getName());
     embed->getFirstElementChild()->insertBefore(element,NULL);

@@ -760,6 +760,7 @@ namespace MBSimGUI {
       ele0->insertBefore(node,NULL);
     }
     string counterName = element->getCounterName();
+    cout << "counterName = " << counterName << endl;
     if(not(counterName.empty())) {
       DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
       E(ele1)->setAttribute("name", counterName);

@@ -57,7 +57,7 @@ namespace MBSimGUI {
       Parameters parameters;
       std::vector<std::string> plotFeatures;
       xercesc::DOMElement *element;
-      std::string name_;
+      std::string name_, counterName, value;
       bool config;
     public:
       Element(const std::string &name, Element *parent, const std::string &plotFeatureTypes="");
@@ -85,8 +85,11 @@ namespace MBSimGUI {
       virtual void deinitialize() {}
       const std::string& getName() const { return name_; }
       void setName(const std::string &str);
-      virtual std::string getType() const { return "Element"; }
-      virtual std::string getValue() const;
+      std::string getType() const { return "Element"; }
+      std::string getValue() const { return value; }
+      void setValue(const std::string &str) { value = str; }
+      const std::string& getCounterName() const { return counterName; }
+      void setCounterName(const std::string &str) { counterName = str; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       //std::string newName(const std::string &type);
       virtual std::string getFileExtension() const { return ".xml"; }
@@ -134,7 +137,6 @@ namespace MBSimGUI {
       Parameter *getParameter(int i) { return parameters.getParameter(i); }
       void setParameters(const Parameters &param) { parameters = param; }
       const Parameters& getParameters() const { return parameters; }
-      std::string getCounterName() const;
       void addPlotFeature(const std::string &pf);
       const std::vector<std::string>& getPlotFeatures() const { return plotFeatures; }
       bool getConfig() { return config; }

@@ -796,6 +796,46 @@ namespace MBSimGUI {
     layout->addWidget(parameterList);
   }
 
+  QString EmbedWidget::getCounterName() const {
+    return counterName->isActive()?static_cast<TextWidget*>(counterName->getWidget())->getText():"";
+  }
+
+  QString EmbedWidget::getCount() const {
+    return count->isActive()?static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue():"";
+  }
+
+  DOMElement* EmbedWidget::initializeUsingXML(DOMElement *parent) {
+    if(E(parent)->hasAttribute("href")) {
+      href->setActive(true);
+      static_cast<FileWidget*>(href->getWidget())->setFile(QString::fromStdString(E(parent)->getAttribute("href")));
+    }
+    if(E(parent)->hasAttribute("count")) {
+      count->setActive(true);
+      static_cast<PhysicalVariableWidget*>(count->getWidget())->setValue(QString::fromStdString(E(parent)->getAttribute("count")));
+    }
+    if(E(parent)->hasAttribute("counterName")) {
+      counterName->setActive(true);
+      static_cast<TextWidget*>(counterName->getWidget())->setText(QString::fromStdString(E(parent)->getAttribute("counterName")));
+    }
+    if(E(parent)->hasAttribute("parameterHref")) {
+      parameterList->setActive(true);
+      static_cast<FileWidget*>(parameterList->getWidget())->setFile(QString::fromStdString(E(parent)->getAttribute("parameterHref")));
+    }
+    return parent;
+  }
+
+  DOMElement* EmbedWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    if(href->isActive())
+      E(static_cast<DOMElement*>(parent))->setAttribute("href", static_cast<FileWidget*>(href->getWidget())->getFile().toStdString());
+    if(count->isActive())
+      E(static_cast<DOMElement*>(parent))->setAttribute("count", static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue().toStdString());
+    if(counterName->isActive())
+      E(static_cast<DOMElement*>(parent))->setAttribute("counterName", static_cast<TextWidget*>(counterName->getWidget())->getText().toStdString());
+    if(parameterList->isActive())
+      E(static_cast<DOMElement*>(parent))->setAttribute("parameterHref", static_cast<FileWidget*>(parameterList->getWidget())->getFile().toStdString());
+    return NULL;
+  }
+
   SignalReferenceWidget::SignalReferenceWidget(Element *element) {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);

@@ -476,11 +476,14 @@ namespace MBSimGUI {
     friend class EmbedProperty;
 
     public:
-    EmbedWidget();
+      EmbedWidget();
+      QString getCounterName() const;
+      QString getCount() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
-    ExtWidget *href, *count, *counterName, *parameterList;
-
+      ExtWidget *href, *count, *counterName, *parameterList;
   };
 
   class SignalReferenceWidget : public Widget {

@@ -73,7 +73,8 @@ namespace MBSimGUI {
     if(result != 0) {
       mw->setProjectChanged(true);
       mw->mbsimxml(1);
-      parameter->setConfig(true);
+      if(parameter)
+        parameter->setConfig(true);
     }
     parameter = 0;
     editor = 0;
@@ -84,7 +85,8 @@ namespace MBSimGUI {
     update(index);
     update(index.sibling(index.row(),1));
     mw->mbsimxml(1);
-    parameter->setConfig(true);
+    if(parameter)
+      parameter->setConfig(true);
     editor->setCancel(true);
   }
 

@@ -23,6 +23,8 @@
 #include "basic_widgets.h"
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -36,19 +38,56 @@ namespace MBSimGUI {
     }
   }
 
-  void EmbeddingPropertyDialog::toWidget(Element *element) {
+  DOMElement* EmbeddingPropertyDialog::initializeUsingXML(DOMElement *ele) {
     if(embed) {
-      element->embed.toWidget(embed);
-      element->name.toWidget(name);
+      static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(element->getName()));
+      DOMElement *parent = static_cast<DOMElement*>(ele->getParentNode());
+      if(E(parent)->getTagName()==PV%"Embed")
+        embed->initializeUsingXML(parent);
     }
+    return NULL;
+  }
+
+  DOMElement* EmbeddingPropertyDialog::writeXMLFile(DOMNode *node, DOMNode *ref) {
+    if(embed) {
+      element->setName(static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+      element->setCounterName(static_cast<EmbedWidget*>(embed->getWidget())->getCounterName().toStdString());
+      element->setValue("counterName="+element->getCounterName()+"; count="+static_cast<EmbedWidget*>(embed->getWidget())->getCount().toStdString());
+      DOMNode* embedNode = node->getParentNode();
+      if(embed->isActive()) {
+        if(X()%embedNode->getNodeName()!="Embed") {
+          DOMDocument *doc=node->getOwnerDocument();
+          DOMNode *ele=D(doc)->createElement(PV%"Embed");
+          embedNode->insertBefore(ele,node);
+          embedNode = ele;
+          embedNode->insertBefore(node,NULL);
+        }
+        embed->writeXMLFile(embedNode,ref);
+      }
+      else {
+        if(X()%embedNode->getNodeName()=="Embed") {
+          if(element->getNumberOfParameters()) {
+            E(static_cast<DOMElement*>(embedNode))->removeAttribute("href");
+            E(static_cast<DOMElement*>(embedNode))->removeAttribute("count");
+            E(static_cast<DOMElement*>(embedNode))->removeAttribute("counterName");
+            E(static_cast<DOMElement*>(embedNode))->removeAttribute("parameterHref");
+          }
+          else {
+            embedNode->getParentNode()->insertBefore(node,embedNode);
+            embedNode->getParentNode()->removeChild(embedNode);
+          }
+        }
+      }
+    }
+    return NULL;
+  }
+
+  void EmbeddingPropertyDialog::toWidget(Element *element) {
+    initializeUsingXML(element->getXMLElement());
   }
 
   void EmbeddingPropertyDialog::fromWidget(Element *element) {
-    if(embed) {
-      element->embed.fromWidget(embed);
-      element->name.fromWidget(name);
-    }
+    writeXMLFile(element->getXMLElement());
   }
-
 
 }

@@ -59,10 +59,6 @@ namespace MBSimGUI {
     return parent?(parent->getPath()+"."+getName()):getName();
   }
 
-  std::string Element::getValue() const {
-    return isEmbedded()?("counterName="+static_cast<const EmbedProperty*>(embed.getProperty())->getCounterName()+"; count="+static_cast<const EmbedProperty*>(embed.getProperty())->getCount()):"";
-  }
-
   void Element::writeXMLFile(const string &name) {
     shared_ptr<DOMDocument> doc=mw->parser->createDocument();
     writeXMLFile(doc.get());
@@ -103,6 +99,11 @@ namespace MBSimGUI {
   DOMElement* Element::initializeUsingXML(DOMElement *element) {
     this->element = element;
     config = true;
+    DOMElement *parent = static_cast<DOMElement*>(element->getParentNode());
+    if(E(parent)->getTagName()==PV%"Embed") {
+      setCounterName(E(parent)->getAttribute("counterName"));
+      setValue("counterName="+getCounterName()+"; count="+E(parent)->getAttribute("count"));
+    }
     return element;
   }
 
@@ -122,7 +123,6 @@ namespace MBSimGUI {
 
   DOMElement* Element::writeXMLFileEmbed(DOMNode *parent) {
     parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-    //DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = embed.writeXMLFile(parent);
 
     if(not(absolutePath) and static_cast<const EmbedProperty*>(embed.getProperty())->hasParameterFile()) {
@@ -239,13 +239,6 @@ namespace MBSimGUI {
     }
   }
 
-  string Element::getCounterName() const {
-    const EmbedProperty *e = static_cast<const EmbedProperty*>(embed.getProperty());
-    if(e->hasCounter())
-      return e->getCounterName();
-    return "";
-  }
-
   vector<Element*> Element::getParents() {
     vector<Element*> parents;
     if(getParent()) {
@@ -264,15 +257,8 @@ namespace MBSimGUI {
       getParent()->addPlotFeature(pf);
   }
 
-//  string Element::getName() const {
-//    return name_;
-//    return E(element)->getAttribute("name");
-//    return static_cast<const TextProperty*>(name.getProperty())->getText();
-//  }
-
   void Element::setName(const string &str) {
     name_ = str;
-//    static_cast<TextProperty*>(name.getProperty())->setText(str);
     E(element)->setAttribute("name", str);
   }
 
