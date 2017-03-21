@@ -22,37 +22,17 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   object.cc \
 		   body.cc \
 		   rigid_body.cc \
-		   flexible_body_ffr.cc \
-		   constraint.cc \
 		   link.cc \
-		   kinetic_excitation.cc \
-		   spring_damper.cc \
-		   connection.cc \
-		   friction.cc \
-		   gear.cc \
-		   joint.cc \
-		   contact.cc \
-		   signal_.cc \
-		   sensor.cc \
-		   signal_processing_system.cc \
-		   linear_transfer_system.cc \
+		   constraint.cc \
 		   observer.cc \
+		   spring_damper.cc \
+		   signal_.cc \
 		   integrator.cc \
 		   analyser.cc \
 		   parameter.cc \
 		   objectfactory.cc \
 		   treeitem.cc \
 		   treemodel.cc \
-		   basic_properties.cc \
-		   variable_properties.cc \
-		   kinetics_properties.cc \
-		   function_property.cc \
-		   function_properties.cc \
-		   kinematic_functions_properties.cc \
-		   function_property_factory.cc \
-		   ombv_properties.cc \
-		   extended_properties.cc \
-		   special_properties.cc \
 		   basic_widgets.cc \
 		   variable_widgets.cc \
 		   function_widget.cc \

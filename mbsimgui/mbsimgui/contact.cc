@@ -50,11 +50,6 @@ namespace MBSimGUI {
   Contact::~Contact() {
   }
 
-  void Contact::initialize() {
-    MechanicalLink::initialize();
-    connections.initialize();
-  }
-
   DOMElement* Contact::initializeUsingXML(DOMElement *element) {
     MechanicalLink::initializeUsingXML(element);
     contactForceLaw.initializeUsingXML(element);
@@ -65,18 +60,6 @@ namespace MBSimGUI {
     searchAllContactPoints.initializeUsingXML(element);
     initialGuess.initializeUsingXML(element);
     return element;
-  }
-
-  DOMElement* Contact::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = MechanicalLink::writeXMLFile(parent);
-    connections.writeXMLFile(ele0);
-    contactForceLaw.writeXMLFile(ele0);
-    contactImpactLaw.writeXMLFile(ele0);
-    frictionForceLaw.writeXMLFile(ele0);
-    frictionImpactLaw.writeXMLFile(ele0);
-    searchAllContactPoints.writeXMLFile(ele0);
-    initialGuess.writeXMLFile(ele0);
-    return ele0;
   }
 
 }

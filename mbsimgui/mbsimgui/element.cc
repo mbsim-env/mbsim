@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "element.h"
-#include <QtGui/QFileDialog>
 #include <cmath>
 #include "frame.h"
 #include "contour.h"
@@ -45,12 +44,18 @@ namespace MBSimGUI {
   int Element::IDcounter=0;
 
   Element::Element(const string &name_) : parent(NULL), element(NULL), name(name_), config(false) {
-    parameters.setParent(this);
     ID=toStr(IDcounter++);
     addPlotFeature("plotRecursive");
     addPlotFeature("separateFilePerGroup");
     addPlotFeature("openMBV");
     addPlotFeature("debug");
+  }
+
+  Element::~Element() {
+    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++) {
+      parameter.erase(it);
+      delete (*it);
+    }
   }
 
   string Element::getPath() {
@@ -185,6 +190,21 @@ namespace MBSimGUI {
       parents.push_back(getParent());
     }
     return parents;
+  }
+
+  void Element::addParameter(Parameter *param) {
+    parameter.push_back(param);
+    param->setParent(this);
+  }
+
+  void Element::removeParameter(Parameter *param) {
+    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++) {
+      if(*it == param) {
+        parameter.erase(it);
+        delete param;
+        return;
+      }
+    }
   }
 
   void Element::addPlotFeature(const string &pf) {

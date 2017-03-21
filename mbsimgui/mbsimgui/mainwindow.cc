@@ -51,7 +51,6 @@
 #include <xercesc/dom/DOMException.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
-#include "function_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -73,12 +72,12 @@ namespace MBSimGUI {
   QDialog *MainWindow::helpDialog = NULL;
   QWebView *MainWindow::helpViewer = NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./"), debug(true), evalSelect(0,false) {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./"), debug(true) {
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_HTMLOUTPUT=1";
     putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
 
-    evalSelect.setProperty(new TextProperty("octave", PV%"evaluator", false));
+//    evalSelect.setProperty(new TextProperty("octave", PV%"evaluator", false));
     
     mw = this;
 
@@ -567,10 +566,10 @@ namespace MBSimGUI {
       //setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
       setWindowTitle(fileProject+"[*]");
 
-      evalSelect.initializeUsingXML(ele0);
+//      evalSelect.initializeUsingXML(ele0);
 
       DOMElement *ele1 = ele0->getFirstElementChild();
-      if(evalSelect.isActive()) ele1 = ele1->getNextElementSibling();
+//      if(evalSelect.isActive()) ele1 = ele1->getNextElementSibling();
 
       DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1);
 //      dss->initialize();
@@ -599,7 +598,6 @@ namespace MBSimGUI {
           ele2 = ele1->getFirstElementChild();
           solver=ObjectFactory::getInstance()->createSolver(ele2);
         }
-        solver->initializeUsingXMLEmbed(ele1);
         if(ele2)
           solver->initializeUsingXML(ele2);
       } else {
@@ -746,7 +744,7 @@ namespace MBSimGUI {
       // create a new empty evaluator
       // Note: do not use "eval.reset(); eval=..." or something like this here since this will possibly deinit
       // static part of the evaluator and then reinit these and will be time consuming.
-      eval=Eval::createEvaluator(evalSelect.isActive()?static_cast<TextProperty*>(evalSelect.getProperty())->getText():"octave", &dependencies);
+      eval=Eval::createEvaluator("octave", &dependencies);
 
       // add parameter
       eval->addParamSet(doc->getDocumentElement());
@@ -886,7 +884,7 @@ namespace MBSimGUI {
 //    if(ele0) {
       mbsimThread->setDocument(doc);
       mbsimThread->setProjectFile(projectFile);
-      mbsimThread->setEvaluator(evalSelect.isActive()?static_cast<TextProperty*>(evalSelect.getProperty())->getText():"octave");
+      mbsimThread->setEvaluator("octave");
       mbsimThread->start();
 //    }
   }

@@ -24,22 +24,22 @@
 #include "dynamic_system_solver.h"
 #include "group.h"
 #include "rigid_body.h"
-#include "flexible_body_ffr.h"
+//#include "flexible_body_ffr.h"
 #include "constraint.h"
-#include "linear_transfer_system.h"
-#include "kinetic_excitation.h"
-#include "joint.h"
+//#include "linear_transfer_system.h"
+//#include "kinetic_excitation.h"
+//#include "joint.h"
 #include "spring_damper.h"
-#include "contact.h"
-#include "sensor.h"
-#include "widget.h"
-#include "parameter.h"
+//#include "contact.h"
+//#include "sensor.h"
+//#include "widget.h"
+//#include "friction.h"
+//#include "gear.h"
+//#include "connection.h"
 #include "observer.h"
+#include "parameter.h"
 #include "integrator.h"
 #include "analyser.h"
-#include "friction.h"
-#include "gear.h"
-#include "connection.h"
 #include <string>
 
 using namespace std;
@@ -145,8 +145,8 @@ namespace MBSimGUI {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"RigidBody")
       return new RigidBody;
-    if(E(element)->getTagName()==MBSIMFLEX%"FlexibleBodyFFR")
-      return new FlexibleBodyFFR(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMFLEX%"FlexibleBodyFFR")
+//      return new FlexibleBodyFFR(E(element)->getAttribute("name"));
     return 0;
   }
 
@@ -158,54 +158,54 @@ namespace MBSimGUI {
   }
   Link* MBSimObjectFactory::createLink(DOMElement *element) {
     if(element==0) return 0;
-    if(E(element)->getTagName()==MBSIM%"KineticExcitation")
-      return new KineticExcitation(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIM%"KineticExcitation")
+//      return new KineticExcitation(E(element)->getAttribute("name"));
     if(E(element)->getTagName()==MBSIM%"SpringDamper")
       return new SpringDamper(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIM%"DirectionalSpringDamper")
-      return new DirectionalSpringDamper(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIM%"GeneralizedSpringDamper")
-      return new GeneralizedSpringDamper(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")
-      return new GeneralizedFriction(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIM%"GeneralizedGear")
-      return new GeneralizedGear(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIM%"Joint")
-      return new Joint(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIM%"ElasticJoint")
-      return new ElasticJoint(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIM%"Contact")
-      return new Contact(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIM%"GeneralizedElasticConnection")
-      return new GeneralizedElasticConnection(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedPositionSensor")
-      return new GeneralizedPositionSensor(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")
-      return new GeneralizedVelocitySensor(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"AbsolutePositionSensor")
-      return new AbsolutePositionSensor(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteVelocitySensor")
-      return new AbsoluteVelocitySensor(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularPositionSensor")
-      return new AbsoluteAngularPositionSensor(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularVelocitySensor")
-      return new AbsoluteAngularVelocitySensor(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"FunctionSensor")
-      return new FunctionSensor(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"SignalProcessingSystemSensor")
-      return new SignalProcessingSystemSensor(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"PIDController")
-      return new PIDController(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"UnarySignalOperation")
-      return new UnarySignalOperation(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"BinarySignalOperation")
-      return new BinarySignalOperation(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"LinearTransferSystem")
-      return new LinearTransferSystem(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSource")
-      return new ExternSignalSource(E(element)->getAttribute("name"));
-    if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")
-      return new ExternSignalSink(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIM%"DirectionalSpringDamper")
+//      return new DirectionalSpringDamper(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIM%"GeneralizedSpringDamper")
+//      return new GeneralizedSpringDamper(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")
+//      return new GeneralizedFriction(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIM%"GeneralizedGear")
+//      return new GeneralizedGear(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIM%"Joint")
+//      return new Joint(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIM%"ElasticJoint")
+//      return new ElasticJoint(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIM%"Contact")
+//      return new Contact(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIM%"GeneralizedElasticConnection")
+//      return new GeneralizedElasticConnection(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedPositionSensor")
+//      return new GeneralizedPositionSensor(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")
+//      return new GeneralizedVelocitySensor(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"AbsolutePositionSensor")
+//      return new AbsolutePositionSensor(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteVelocitySensor")
+//      return new AbsoluteVelocitySensor(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularPositionSensor")
+//      return new AbsoluteAngularPositionSensor(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularVelocitySensor")
+//      return new AbsoluteAngularVelocitySensor(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"FunctionSensor")
+//      return new FunctionSensor(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"SignalProcessingSystemSensor")
+//      return new SignalProcessingSystemSensor(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"PIDController")
+//      return new PIDController(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"UnarySignalOperation")
+//      return new UnarySignalOperation(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"BinarySignalOperation")
+//      return new BinarySignalOperation(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"LinearTransferSystem")
+//      return new LinearTransferSystem(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSource")
+//      return new ExternSignalSource(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")
+//      return new ExternSignalSink(E(element)->getAttribute("name"));
     return 0;
   }  
 

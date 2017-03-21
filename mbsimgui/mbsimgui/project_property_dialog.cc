@@ -37,11 +37,11 @@ namespace MBSimGUI {
   }
 
   void ProjectPropertyDialog::toWidget(MainWindow *mw) {
-    mw->evalSelect.toWidget(evalSelect);
+//    mw->evalSelect.toWidget(evalSelect);
   }
 
   void ProjectPropertyDialog::fromWidget(MainWindow *mw) {
-    mw->evalSelect.fromWidget(evalSelect);
+//    mw->evalSelect.fromWidget(evalSelect);
   }
 
 }

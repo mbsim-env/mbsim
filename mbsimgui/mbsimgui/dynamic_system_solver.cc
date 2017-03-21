@@ -21,6 +21,7 @@
 #include "dynamic_system_solver.h"
 #include "mainwindow.h"
 #include "objectfactory.h"
+#include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
@@ -106,7 +107,6 @@ namespace MBSimGUI {
     DOMElement *e=doc->getDocumentElement();
     DynamicSystemSolver *solver=static_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
     solver->initializeUsingXML(e);
-    solver->initialize();
     return solver;
   }
 

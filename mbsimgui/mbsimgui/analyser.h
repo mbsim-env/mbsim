@@ -21,7 +21,6 @@
 #define _ANALYSER__H_
 
 #include "solver.h"
-#include "extended_properties.h"
 #include "solver_property_dialog.h"
 
 namespace XERCES_CPP_NAMESPACE {
@@ -32,16 +31,11 @@ namespace XERCES_CPP_NAMESPACE {
 namespace MBSimGUI {
 
   class Eigenanalyser : public Solver {
-    friend class EigenanalyserPropertyDialog;
-    protected:
-    ExtProperty startTime, endTime, plotStepSize, initialState, task, amplitude, mode, determineEquilibriumState, autoUpdate;
     public:
-    Eigenanalyser();
-    virtual ~Eigenanalyser();
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    virtual std::string getType() const { return "Eigenanalyser"; }
-    virtual EigenanalyserPropertyDialog* createPropertyDialog() {return new EigenanalyserPropertyDialog(this);}
+      Eigenanalyser();
+      virtual ~Eigenanalyser();
+      virtual std::string getType() const { return "Eigenanalyser"; }
+      virtual EigenanalyserPropertyDialog* createPropertyDialog() {return new EigenanalyserPropertyDialog(this);}
   };
 
 

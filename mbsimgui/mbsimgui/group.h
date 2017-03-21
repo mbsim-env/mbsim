@@ -47,7 +47,7 @@ namespace MBSimGUI {
     Group(const Group &g);
     ~Group();
     Group& operator=(const Group &g);
-    virtual PropertyInterface* clone() const {return new Group(*this);}
+//    virtual PropertyInterface* clone() const {return new Group(*this);}
     std::string getType() const { return "Group"; }
     static Group* readXMLFile(const std::string &filename);
     void createXMLConstraints();
@@ -64,7 +64,6 @@ namespace MBSimGUI {
     xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual Element *getChildByContainerAndName(const std::string &container, const std::string &name) const;
     void setActionPasteDisabled(bool flag);
-    void initialize();
     int getNumberOfFrames() {return frame.size();}
     int getNumberOfContours() {return contour.size();}
     int getNumberOfGroups() {return group.size();}

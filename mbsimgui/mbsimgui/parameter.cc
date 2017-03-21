@@ -19,10 +19,10 @@
 
 #include <config.h>
 #include "parameter.h"
-#include "basic_properties.h"
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include <QtGui/QFileDialog>
+#include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;

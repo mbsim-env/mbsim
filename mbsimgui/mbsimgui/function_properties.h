@@ -28,14 +28,14 @@ namespace MBSimGUI {
   class IdentityFunction : public Function {
     public:
       IdentityFunction(const std::string &name="", int m=1) : Function(name) { }
-      virtual PropertyInterface* clone() const {return new IdentityFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new IdentityFunction(*this);}
       inline std::string getType() const { return "IdentityFunction"; }
   };
 
   class ConstantFunction : public Function {
     public:
       ConstantFunction(const std::string &name="", int m=1);
-      virtual PropertyInterface* clone() const {return new ConstantFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new ConstantFunction(*this);}
       inline std::string getType() const { return "ConstantFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -48,7 +48,7 @@ namespace MBSimGUI {
   class LinearFunction : public Function {
     public:
       LinearFunction(const std::string &name="", int m=1);
-      virtual PropertyInterface* clone() const {return new LinearFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new LinearFunction(*this);}
       inline std::string getType() const { return "LinearFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -61,7 +61,7 @@ namespace MBSimGUI {
   class QuadraticFunction : public Function {
     public:
       QuadraticFunction(const std::string &name="", int m=1);
-      virtual PropertyInterface* clone() const {return new QuadraticFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new QuadraticFunction(*this);}
       inline std::string getType() const { return "QuadraticFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -75,7 +75,7 @@ namespace MBSimGUI {
   class PolynomFunction : public Function {
     public:
       PolynomFunction(const std::string &name="", int m=1);
-      virtual PropertyInterface* clone() const {return new PolynomFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new PolynomFunction(*this);}
       inline std::string getType() const { return "PolynomFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -89,7 +89,7 @@ namespace MBSimGUI {
   class SinusoidalFunction : public Function {
     public:
       SinusoidalFunction(const std::string &name="", int m=1);
-      virtual PropertyInterface* clone() const {return new SinusoidalFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new SinusoidalFunction(*this);}
       inline std::string getType() const { return "SinusoidalFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -109,14 +109,14 @@ namespace MBSimGUI {
   class AbsoluteValueFunction : public Function {
     public:
       AbsoluteValueFunction(const std::string &name="") : Function(name) { }
-      virtual PropertyInterface* clone() const {return new AbsoluteValueFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new AbsoluteValueFunction(*this);}
       inline std::string getType() const { return "AbsoluteValueFunction"; }
   };
 
   class ModuloFunction : public Function {
     public:
       ModuloFunction(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new ModuloFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new ModuloFunction(*this);}
       inline std::string getType() const { return "ModuloFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -130,7 +130,7 @@ namespace MBSimGUI {
   class BoundedFunction : public Function {
     public:
       BoundedFunction(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new BoundedFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new BoundedFunction(*this);}
       inline std::string getType() const { return "BoundedFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -144,14 +144,14 @@ namespace MBSimGUI {
   class SignumFunction : public Function {
     public:
       SignumFunction(const std::string &name="") : Function(name) { }
-      virtual PropertyInterface* clone() const {return new SignumFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new SignumFunction(*this);}
       inline std::string getType() const { return "SignumFunction"; }
   };
 
   class VectorValuedFunction : public Function {
     public:
       VectorValuedFunction(const std::string &name="", int m=0);
-      virtual PropertyInterface* clone() const {return new VectorValuedFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new VectorValuedFunction(*this);}
       inline std::string getType() const { return "VectorValuedFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -164,7 +164,7 @@ namespace MBSimGUI {
   class CompositeFunction : public Function {
     public:
       CompositeFunction(const std::string &name="", PropertyFactory *factoryo=NULL, PropertyFactory *factoryi=NULL);
-      virtual PropertyInterface* clone() const {return new CompositeFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new CompositeFunction(*this);}
       int getArg1Size() const;
       inline std::string getType() const { return "CompositeFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -179,7 +179,7 @@ namespace MBSimGUI {
   class PiecewiseDefinedFunction : public Function {
     public:
       PiecewiseDefinedFunction(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new PiecewiseDefinedFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new PiecewiseDefinedFunction(*this);}
       inline std::string getType() const { return "PiecewiseDefinedFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -192,7 +192,7 @@ namespace MBSimGUI {
   class SymbolicFunction : public Function {
     public:
       SymbolicFunction(const std::string &name="", const std::string &ext="", const std::vector<std::string> &var=std::vector<std::string>(), int m=0);
-      virtual PropertyInterface* clone() const {return new SymbolicFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new SymbolicFunction(*this);}
       int getArg1Size() const;
       int getArg2Size() const;
       inline std::string getType() const { return "SymbolicFunction"; }
@@ -209,7 +209,7 @@ namespace MBSimGUI {
   class TabularFunction : public Function {
     public:
       TabularFunction(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new TabularFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new TabularFunction(*this);}
       inline std::string getType() const { return "TabularFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -223,7 +223,7 @@ namespace MBSimGUI {
   class TwoDimensionalTabularFunction : public Function {
     public:
       TwoDimensionalTabularFunction(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new TwoDimensionalTabularFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new TwoDimensionalTabularFunction(*this);}
       inline std::string getType() const { return "TwoDimensionalTabularFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -237,7 +237,7 @@ namespace MBSimGUI {
   class PiecewisePolynomFunction : public Function {
     public:
       PiecewisePolynomFunction(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new PiecewisePolynomFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new PiecewisePolynomFunction(*this);}
       inline std::string getType() const { return "PiecewisePolynomFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -252,7 +252,7 @@ namespace MBSimGUI {
   class TwoDimensionalPiecewisePolynomFunction : public Function {
     public:
       TwoDimensionalPiecewisePolynomFunction(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new TwoDimensionalPiecewisePolynomFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new TwoDimensionalPiecewisePolynomFunction(*this);}
       inline std::string getType() const { return "TwoDimensionalPiecewisePolynomFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -267,7 +267,7 @@ namespace MBSimGUI {
   class FourierFunction : public Function {
     public:
       FourierFunction(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new FourierFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new FourierFunction(*this);}
       inline std::string getType() const { return "FourierFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -282,7 +282,7 @@ namespace MBSimGUI {
   class BidirectionalFunction : public Function {
     public:
       BidirectionalFunction(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new BidirectionalFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new BidirectionalFunction(*this);}
       inline std::string getType() const { return "BidirectionalFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -295,7 +295,7 @@ namespace MBSimGUI {
   class ContinuedFunction : public Function {
     public:
       ContinuedFunction(const std::string &name="", PropertyFactory *factoryf=NULL, PropertyFactory *factoryr=NULL);
-      virtual PropertyInterface* clone() const {return new ContinuedFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new ContinuedFunction(*this);}
       inline std::string getType() const { return "ContinuedFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -308,7 +308,7 @@ namespace MBSimGUI {
   class LinearSpringDamperForce : public Function {
     public:
       LinearSpringDamperForce(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new LinearSpringDamperForce(*this);}
+//      virtual PropertyInterface* clone() const {return new LinearSpringDamperForce(*this);}
       inline std::string getType() const { return "LinearSpringDamperForce"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -322,7 +322,7 @@ namespace MBSimGUI {
   class NonlinearSpringDamperForce : public Function {
     public:
       NonlinearSpringDamperForce(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new NonlinearSpringDamperForce(*this);}
+//      virtual PropertyInterface* clone() const {return new NonlinearSpringDamperForce(*this);}
       inline std::string getType() const { return "NonlinearSpringDamperForce"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -336,7 +336,7 @@ namespace MBSimGUI {
   class LinearElasticFunction : public Function {
     public:
       LinearElasticFunction(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new LinearElasticFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new LinearElasticFunction(*this);}
       inline std::string getType() const { return "LinearElasticFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -350,7 +350,7 @@ namespace MBSimGUI {
   class LinearRegularizedBilateralConstraint: public Function {
     public:
       LinearRegularizedBilateralConstraint(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new LinearRegularizedBilateralConstraint(*this);}
+//      virtual PropertyInterface* clone() const {return new LinearRegularizedBilateralConstraint(*this);}
       std::string getType() const { return "LinearRegularizedBilateralConstraint"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -365,7 +365,7 @@ namespace MBSimGUI {
     public:
       LinearRegularizedUnilateralConstraint(const std::string &name="");
 
-      virtual PropertyInterface* clone() const {return new LinearRegularizedUnilateralConstraint(*this);}
+//      virtual PropertyInterface* clone() const {return new LinearRegularizedUnilateralConstraint(*this);}
       virtual std::string getType() const { return "LinearRegularizedUnilateralConstraint"; }
 
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -381,7 +381,7 @@ namespace MBSimGUI {
     public:
       LinearRegularizedCoulombFriction(const std::string &name="");
 
-      virtual PropertyInterface* clone() const {return new LinearRegularizedCoulombFriction(*this);}
+//      virtual PropertyInterface* clone() const {return new LinearRegularizedCoulombFriction(*this);}
       virtual std::string getType() const { return "LinearRegularizedCoulombFriction"; }
 
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -397,7 +397,7 @@ namespace MBSimGUI {
     public:
       LinearRegularizedStribeckFriction(const std::string &name="");
 
-      virtual PropertyInterface* clone() const {return new LinearRegularizedStribeckFriction(*this);}
+//      virtual PropertyInterface* clone() const {return new LinearRegularizedStribeckFriction(*this);}
       virtual std::string getType() const { return "LinearRegularizedStribeckFriction"; }
 
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -413,7 +413,7 @@ namespace MBSimGUI {
     public:
       SignalFunction(const std::string &name="");
 
-      virtual PropertyInterface* clone() const {return new SignalFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new SignalFunction(*this);}
       virtual std::string getType() const { return "SignalFunction"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
 
@@ -430,7 +430,7 @@ namespace MBSimGUI {
   class PolarContourFunction : public Function {
     public:
       PolarContourFunction(const std::string &name="");
-      virtual PropertyInterface* clone() const {return new PolarContourFunction(*this);}
+//      virtual PropertyInterface* clone() const {return new PolarContourFunction(*this);}
       inline std::string getType() const { return "PolarContourFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

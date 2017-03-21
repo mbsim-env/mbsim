@@ -33,93 +33,51 @@ namespace MBSimGUI {
   };
 
   class KinematicCoordinatesObserver : public Observer {
-    friend class KinematicCoordinatesObserverPropertyDialog;
     public:
-    KinematicCoordinatesObserver(const std::string &str="");
-    std::string getType() const { return "KinematicCoordinatesObserver"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new KinematicCoordinatesObserverPropertyDialog(this);}
-    protected:
-    ExtProperty frame, frameOfReference, position, velocity, acceleration;
+      KinematicCoordinatesObserver(const std::string &str="");
+      std::string getType() const { return "KinematicCoordinatesObserver"; }
+      ElementPropertyDialog* createPropertyDialog() {return new KinematicCoordinatesObserverPropertyDialog(this);}
   };
 
   class RelativeKinematicsObserver : public Observer {
-    friend class RelativeKinematicsObserverPropertyDialog;
     public:
-    RelativeKinematicsObserver(const std::string &str="");
-    std::string getType() const { return "RelativeKinematicsObserver"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new RelativeKinematicsObserverPropertyDialog(this);}
-    protected:
-    ExtProperty frame, refFrame, position, velocity, angularVelocity, acceleration, angularAcceleration;
+      RelativeKinematicsObserver(const std::string &str="");
+      std::string getType() const { return "RelativeKinematicsObserver"; }
+      ElementPropertyDialog* createPropertyDialog() {return new RelativeKinematicsObserverPropertyDialog(this);}
   };
 
   class MechanicalLinkObserver : public Observer {
-    friend class MechanicalLinkObserverPropertyDialog;
     public:
-    MechanicalLinkObserver(const std::string &str="");
-    std::string getType() const { return "MechanicalLinkObserver"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    protected:
-    ExtProperty link, forceArrow, momentArrow;
+      MechanicalLinkObserver(const std::string &str="");
+      std::string getType() const { return "MechanicalLinkObserver"; }
   };
 
   class MechanicalConstraintObserver : public Observer {
-    friend class MechanicalConstraintObserverPropertyDialog;
     public:
-    MechanicalConstraintObserver(const std::string &str="");
-    std::string getType() const { return "MechanicalConstraintObserver"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new MechanicalConstraintObserverPropertyDialog(this);}
-    protected:
-    ExtProperty constraint, forceArrow, momentArrow;
+      MechanicalConstraintObserver(const std::string &str="");
+      std::string getType() const { return "MechanicalConstraintObserver"; }
+      ElementPropertyDialog* createPropertyDialog() {return new MechanicalConstraintObserverPropertyDialog(this);}
   };
 
   class ContactObserver : public Observer {
-    friend class ContactObserverPropertyDialog;
     public:
-    ContactObserver(const std::string &str="");
-    std::string getType() const { return "ContactObserver"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new ContactObserverPropertyDialog(this);}
-    protected:
-    ExtProperty link, forceArrow, momentArrow, contactPoints, normalForceArrow, frictionArrow;
+      ContactObserver(const std::string &str="");
+      std::string getType() const { return "ContactObserver"; }
+      ElementPropertyDialog* createPropertyDialog() {return new ContactObserverPropertyDialog(this);}
   };
 
   class FrameObserver : public Observer {
-    friend class FrameObserverPropertyDialog;
     public:
-    FrameObserver(const std::string &str="");
-    std::string getType() const { return "FrameObserver"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new FrameObserverPropertyDialog(this);}
-    protected:
-    ExtProperty frame, position, velocity, angularVelocity, acceleration, angularAcceleration;
+      FrameObserver(const std::string &str="");
+      std::string getType() const { return "FrameObserver"; }
+      ElementPropertyDialog* createPropertyDialog() {return new FrameObserverPropertyDialog(this);}
   };
 
   class RigidBodyObserver : public Observer {
-    friend class RigidBodyObserverPropertyDialog;
     public:
-    RigidBodyObserver(const std::string &str="");
-    std::string getType() const { return "RigidBodyObserver"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new RigidBodyObserverPropertyDialog(this);}
-    protected:
-    ExtProperty body, weight, jointForce, jointMoment, axisOfRotation;
+      RigidBodyObserver(const std::string &str="");
+      std::string getType() const { return "RigidBodyObserver"; }
+      ElementPropertyDialog* createPropertyDialog() {return new RigidBodyObserverPropertyDialog(this);}
   };
 }
 

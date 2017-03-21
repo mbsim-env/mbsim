@@ -157,8 +157,6 @@ namespace MBSimGUI {
 
     public:
       NodeFramePropertyDialog(NodeFrame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *nodeNumber;
   };
@@ -167,8 +165,6 @@ namespace MBSimGUI {
 
     public:
       ContourPropertyDialog(Contour *contour, QWidget * parent = 0, Qt::WindowFlags f = 0); 
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *thickness;
   };
@@ -177,8 +173,6 @@ namespace MBSimGUI {
 
     public:
       RigidContourPropertyDialog(RigidContour *contour, QWidget * parent = 0, Qt::WindowFlags f = 0); 
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *refFrame;
   };
@@ -187,8 +181,6 @@ namespace MBSimGUI {
 
     public:
       PointPropertyDialog(Point *point, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *visu;
   };
@@ -197,8 +189,6 @@ namespace MBSimGUI {
 
     public:
       LinePropertyDialog(Line *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *visu;
   };
@@ -207,8 +197,6 @@ namespace MBSimGUI {
 
     public:
       PlanePropertyDialog(Plane *plane, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *radius, *visu;
   };
@@ -217,8 +205,6 @@ namespace MBSimGUI {
 
     public:
       SpherePropertyDialog(Sphere *sphere, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *radius, *visu;
   };
@@ -227,8 +213,6 @@ namespace MBSimGUI {
 
     public:
       CirclePropertyDialog(Circle *circle, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *radius, *solid, *visu;
   };
@@ -237,8 +221,6 @@ namespace MBSimGUI {
 
     public:
       CuboidPropertyDialog(Cuboid *circle, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *length, *visu;
   };
@@ -247,8 +229,6 @@ namespace MBSimGUI {
 
     public:
       LineSegmentPropertyDialog(LineSegment *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *length, *visu;
   };
@@ -257,8 +237,6 @@ namespace MBSimGUI {
 
     public:
       PlanarContourPropertyDialog(PlanarContour *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *nodes, *contourFunction, *open, *visu;
   };
@@ -267,8 +245,6 @@ namespace MBSimGUI {
 
     public:
       SpatialContourPropertyDialog(SpatialContour *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *etaNodes, *xiNodes, *contourFunction, *open, *visu;
   };
@@ -337,8 +313,6 @@ namespace MBSimGUI {
 
     public:
       FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
       void resizeGeneralizedPosition();
       void resizeGeneralizedVelocity();
       int getqRelSize() const;
@@ -366,8 +340,6 @@ namespace MBSimGUI {
 
     public:
       GeneralizedConstraintPropertyDialog(GeneralizedConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *support;
   };
@@ -376,8 +348,6 @@ namespace MBSimGUI {
 
     public:
       GeneralizedGearConstraintPropertyDialog(GeneralizedGearConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *dependentBody, *independentBodies;
   };
@@ -386,8 +356,6 @@ namespace MBSimGUI {
 
     public:
       GeneralizedDualConstraintPropertyDialog(GeneralizedDualConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *dependentBody, *independentBody;
   };
@@ -397,8 +365,6 @@ namespace MBSimGUI {
 
     public:
       GeneralizedPositionConstraintPropertyDialog(GeneralizedPositionConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *constraintFunction;
     protected slots:
@@ -410,8 +376,6 @@ namespace MBSimGUI {
 
     public:
       GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *constraintFunction, *x0;
       VecWidget *x0_;
@@ -424,8 +388,6 @@ namespace MBSimGUI {
 
     public:
       GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *constraintFunction, *x0;
       VecWidget *x0_;
@@ -438,8 +400,6 @@ namespace MBSimGUI {
 
     public:
       JointConstraintPropertyDialog(JointConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *refFrameID, *force, *moment, *connections, *q0;
       VecWidget *q0_;
@@ -457,8 +417,6 @@ namespace MBSimGUI {
 
     public:
       LinkPropertyDialog(Link *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
   };
 
@@ -472,8 +430,6 @@ namespace MBSimGUI {
 
     public:
       FrameLinkPropertyDialog(FrameLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *connections;
   };
@@ -488,8 +444,6 @@ namespace MBSimGUI {
 
     public:
       FloatingFrameLinkPropertyDialog(FloatingFrameLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *refFrameID;
   };
@@ -498,8 +452,6 @@ namespace MBSimGUI {
 
     public:
       RigidBodyLinkPropertyDialog(RigidBodyLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *support;
   };
@@ -508,8 +460,6 @@ namespace MBSimGUI {
 
     public:
       DualRigidBodyLinkPropertyDialog(DualRigidBodyLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *connections;
   };
@@ -518,8 +468,6 @@ namespace MBSimGUI {
 
     public:
       SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *signalRef;
   };
@@ -529,8 +477,6 @@ namespace MBSimGUI {
 
     public:
       KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *forceDirection, *forceFunction, *momentDirection, *momentFunction, *arrow;
     protected slots:
@@ -541,8 +487,6 @@ namespace MBSimGUI {
 
     public:
       SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *forceFunction, *unloadedLength, *coilSpring;
   };
@@ -551,8 +495,6 @@ namespace MBSimGUI {
 
     public:
       DirectionalSpringDamperPropertyDialog(DirectionalSpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *forceDirection, *unloadedLength, *forceFunction, *coilSpring;
   };
@@ -561,8 +503,6 @@ namespace MBSimGUI {
 
     public:
       GeneralizedSpringDamperPropertyDialog(DualRigidBodyLink *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *function, *unloadedLength;
   };
@@ -571,8 +511,6 @@ namespace MBSimGUI {
 
     public:
       GeneralizedFrictionPropertyDialog(DualRigidBodyLink *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *function, *normalForce;
   };
@@ -581,8 +519,6 @@ namespace MBSimGUI {
 
     public:
       GeneralizedGearPropertyDialog(RigidBodyLink *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *function, *gearOutput, *gearInput;
   };
@@ -592,8 +528,6 @@ namespace MBSimGUI {
 
     public:
       GeneralizedElasticConnectionPropertyDialog(DualRigidBodyLink *connection, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *function;
     protected slots:
@@ -604,8 +538,6 @@ namespace MBSimGUI {
 
     public:
       JointPropertyDialog(Joint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *forceDirection, *forceLaw, *momentDirection, *momentLaw;
   };
@@ -614,8 +546,6 @@ namespace MBSimGUI {
 
     public:
       ElasticJointPropertyDialog(ElasticJoint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *forceDirection, *momentDirection, *function;
   };
@@ -624,8 +554,6 @@ namespace MBSimGUI {
 
     public:
       ContactPropertyDialog(Contact *contact, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *searchAllContactPoints, *initialGuess;
   };
@@ -640,8 +568,6 @@ namespace MBSimGUI {
 
     public:
       KinematicCoordinatesObserverPropertyDialog(KinematicCoordinatesObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *frame, *frameOfReference, *position, *velocity, *acceleration;
   };
@@ -650,8 +576,6 @@ namespace MBSimGUI {
 
     public:
       RelativeKinematicsObserverPropertyDialog(RelativeKinematicsObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *frame, *refFrame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
   };
@@ -660,8 +584,6 @@ namespace MBSimGUI {
 
     public:
       MechanicalLinkObserverPropertyDialog(MechanicalLinkObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *link, *forceArrow, *momentArrow;
   };
@@ -670,8 +592,6 @@ namespace MBSimGUI {
 
     public:
       MechanicalConstraintObserverPropertyDialog(MechanicalConstraintObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *constraint, *forceArrow, *momentArrow;
   };
@@ -680,8 +600,6 @@ namespace MBSimGUI {
 
     public:
       ContactObserverPropertyDialog(ContactObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *link, *forceArrow, *momentArrow, *contactPoints, *normalForceArrow, *frictionArrow;
   };
@@ -690,8 +608,6 @@ namespace MBSimGUI {
 
     public:
       FrameObserverPropertyDialog(FrameObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *frame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
   };
@@ -700,8 +616,6 @@ namespace MBSimGUI {
 
     public:
       RigidBodyObserverPropertyDialog(RigidBodyObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *body, *weight, *jointForce, *jointMoment, *axisOfRotation;
   };
@@ -722,8 +636,6 @@ namespace MBSimGUI {
 
     public:
       GeneralizedCoordinateSensorPropertyDialog(GeneralizedCoordinateSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *object, *index;
   };
@@ -744,8 +656,6 @@ namespace MBSimGUI {
 
     public:
       AbsoluteCoordinateSensorPropertyDialog(AbsoluteCoordinateSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *frame, *direction;
   };
@@ -778,8 +688,6 @@ namespace MBSimGUI {
 
     public:
       FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *function;
   };
@@ -788,8 +696,6 @@ namespace MBSimGUI {
 
     public:
       SignalProcessingSystemSensorPropertyDialog(SignalProcessingSystemSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *spsRef;
   };
@@ -798,8 +704,6 @@ namespace MBSimGUI {
 
     public:
       PIDControllerPropertyDialog(PIDController *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *sRef, *sdRef, *P, *I, *D;
   };
@@ -808,8 +712,6 @@ namespace MBSimGUI {
 
     public:
       UnarySignalOperationPropertyDialog(UnarySignalOperation *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *sRef, *f;
   };
@@ -818,8 +720,6 @@ namespace MBSimGUI {
 
     public:
       BinarySignalOperationPropertyDialog(BinarySignalOperation *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *s1Ref, *s2Ref, *f;
   };
@@ -828,8 +728,6 @@ namespace MBSimGUI {
 
     public:
       ExternSignalSourcePropertyDialog(ExternSignalSource *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *sourceSize;
   };
@@ -838,8 +736,6 @@ namespace MBSimGUI {
 
     public:
       ExternSignalSinkPropertyDialog(ExternSignalSink *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *inputSignal;
   };

@@ -24,7 +24,8 @@
 #include "element_property_dialog.h"
 #include "embedding_property_dialog.h"
 #include "element_context_menu.h"
-#include "parameter.h"
+#include "property.h"
+//#include "parameter.h"
 
 namespace MBSimGUI {
 
@@ -35,26 +36,27 @@ namespace MBSimGUI {
   class Link;
   class Constraint;
   class Observer;
+  class Parameter;
 
   namespace XERCES_CPP_NAMESPACE {
     class DOMElement;
     class DOMNode;
   }
 
-  class Element : public TreeItemData, public PropertyInterface {
+  class Element : public TreeItemData {
     protected:
       Element *parent;
       static int IDcounter;
       std::string ID;
-      Parameters parameters;
+      std::vector<Parameter*> parameter;
       std::vector<std::string> plotFeatures;
       xercesc::DOMElement *element;
       std::string name, counterName, value;
       bool config;
     public:
       Element(const std::string &name="");
-      virtual ~Element() { parameters.removeParameters(); }
-      virtual PropertyInterface* clone() const {return 0;}
+      virtual ~Element();
+      virtual Element* clone() const {return 0;}
       virtual std::string getPath();
       std::string getXMLPath(Element *ref=0, bool rel=false);
       xercesc::DOMElement* getXMLElement() { return element; }
@@ -114,12 +116,10 @@ namespace MBSimGUI {
       virtual QMenu* createEmbeddingContextMenu() {return new EmbeddingContextMenu(this);}
       virtual QMenu* createFrameContextMenu() {return NULL;}
       Element* getRoot() {return parent?parent->getRoot():this;}
-      int getNumberOfParameters() const { return parameters.getNumberOfParameters(); }
-      void addParameter(Parameter *param) { parameters.addParameter(param); }
-      void removeParameter(Parameter *param) { parameters.removeParameter(param); }
-      Parameter *getParameter(int i) { return parameters.getParameter(i); }
-      void setParameters(const Parameters &param) { parameters = param; }
-      const Parameters& getParameters() const { return parameters; }
+      void addParameter(Parameter *param);
+      void removeParameter(Parameter *param);
+      int getNumberOfParameters() const { return parameter.size(); }
+      Parameter *getParameter(int i) { return parameter[i]; }
       void addPlotFeature(const std::string &pf);
       const std::vector<std::string>& getPlotFeatures() const { return plotFeatures; }
       virtual std::string getPlotFeatureType() const { return ""; }

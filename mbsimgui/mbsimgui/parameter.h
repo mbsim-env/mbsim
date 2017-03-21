@@ -21,8 +21,6 @@
 #define _PARAMETER__H_
 
 #include "treeitemdata.h"
-#include "basic_properties.h"
-#include "extended_properties.h"
 #include "parameter_property_dialog.h"
 #include "parameter_context_menu.h"
 
@@ -33,13 +31,13 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
+  class Element;
   class PropertyWidget;
   class PropertyDialog;
   class ExtWidget;
   class TextWidget;
 
   class Parameter : public TreeItemData {
-    friend class ParameterPropertyDialog;
     public:
       Parameter(const std::string &name="");
       virtual ~Parameter() {}
@@ -67,7 +65,6 @@ namespace MBSimGUI {
   };
 
   class StringParameter : public Parameter {
-    friend class StringParameterPropertyDialog;
     public:
       StringParameter(const std::string &name="");
       virtual ~StringParameter() {}
@@ -76,7 +73,6 @@ namespace MBSimGUI {
   };
 
   class ScalarParameter : public Parameter {
-    friend class ScalarParameterPropertyDialog;
     public:
       ScalarParameter(const std::string &name="", const std::string &value="0");
       virtual ~ScalarParameter() {}
@@ -85,7 +81,6 @@ namespace MBSimGUI {
   };
 
   class VectorParameter : public Parameter {
-    friend class VectorParameterPropertyDialog;
     public:
       VectorParameter(const std::string &name="");
       virtual ~VectorParameter() {}
@@ -94,7 +89,6 @@ namespace MBSimGUI {
   };
 
   class MatrixParameter : public Parameter {
-    friend class MatrixParameterPropertyDialog;
     public:
       MatrixParameter(const std::string &name="");
       virtual ~MatrixParameter() {}
@@ -103,7 +97,6 @@ namespace MBSimGUI {
   };
 
   class ImportParameter : public Parameter {
-    friend class ImportParameterPropertyDialog;
     public:
       ImportParameter();
       virtual ~ImportParameter() {}
@@ -121,6 +114,7 @@ namespace MBSimGUI {
       void removeParameter(Parameter *param);
       void removeParameters();
       Parameter *getParameter(int i) const { return parameter[i]; }
+      const std::vector<Parameter*>& getParameters() const { return parameter; }
       int getNumberOfParameters() const { return parameter.size(); }
       Element* getParent() { return parent; }
       void setParent(Element* parent_) { parent = parent_; }

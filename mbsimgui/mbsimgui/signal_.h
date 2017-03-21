@@ -21,7 +21,6 @@
 #define _SIGNAL__H_
 
 #include "link.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 
@@ -33,68 +32,38 @@ namespace MBSimGUI {
   };
 
   class PIDController : public Signal {
-    friend class PIDControllerPropertyDialog;
     public:
     PIDController(const std::string &str="");
     std::string getType() const { return "PIDController"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new PIDControllerPropertyDialog(this);}
-    protected:
-    ExtProperty sRef, sdRef, P, I, D;
   };
 
   class UnarySignalOperation : public Signal {
-    friend class UnarySignalOperationPropertyDialog;
     public:
     UnarySignalOperation(const std::string &str="");
     std::string getType() const { return "UnarySignalOperation"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new UnarySignalOperationPropertyDialog(this);}
-    protected:
-    ExtProperty sRef, f;
   };
 
   class BinarySignalOperation : public Signal {
-    friend class BinarySignalOperationPropertyDialog;
     public:
     BinarySignalOperation(const std::string &str="");
     std::string getType() const { return "BinarySignalOperation"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new BinarySignalOperationPropertyDialog(this);}
-    protected:
-    ExtProperty s1Ref, s2Ref, f;
   };
 
   class ExternSignalSource : public Signal {
-    friend class ExternSignalSourcePropertyDialog;
     public:
       ExternSignalSource(const std::string &str="");
       virtual std::string getType() const { return "ExternSignalSource"; }
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      void initialize();
       ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSourcePropertyDialog(this);}
-    protected:
-      ExtProperty sourceSize;
   };
 
   class ExternSignalSink : public Signal {
-    friend class ExternSignalSinkPropertyDialog;
     public:
       ExternSignalSink(const std::string &str="");
       virtual std::string getType() const { return "ExternSignalSink"; }
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      void initialize();
       ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSinkPropertyDialog(this);}
-    protected:
-      ExtProperty inputSignal;
   };
 
 }

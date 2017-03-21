@@ -118,39 +118,6 @@ namespace MBSimGUI {
     ombvEditor.setProperty(new FlexibleBodyFFRMBSOMBVProperty("NOTSET",MBSIMFLEX%"enableOpenMBV",getID()));
   }
 
-  int FlexibleBodyFFR::getqRelSize() const {
-     int nqT=0, nqR=0;
-    if(translation.isActive()) {
-      const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(translation.getProperty())->getProperty());
-      const ChoiceProperty2 *trans = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
-      nqT = static_cast<Function*>(trans->getProperty())->getArg1Size();
-    }
-    if(rotation.isActive()) {
-      const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(rotation.getProperty())->getProperty());
-      const ChoiceProperty2 *rot = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
-      nqR = static_cast<Function*>(rot->getProperty())->getArg1Size();
-    }
-    int nq = nqT + nqR;
-    return nq;
-  }
-
-  int FlexibleBodyFFR::getuRelSize() const {
-    return getqRelSize();
-  }
-
-  int FlexibleBodyFFR::getqElSize() const {
-    return static_cast<PhysicalVariableProperty*>(static_cast<const ChoiceProperty2*>(Pdm.getProperty())->getProperty())->cols();
-  }
-
-  void FlexibleBodyFFR::initialize() {
-    Body::initialize();
-
-    for(size_t i=0; i<frame.size(); i++)
-      frame[i]->initialize();
-    for(size_t i=0; i<contour.size(); i++)
-      contour[i]->initialize();
-  }
-
   DOMElement* FlexibleBodyFFR::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Body::initializeUsingXML(element);

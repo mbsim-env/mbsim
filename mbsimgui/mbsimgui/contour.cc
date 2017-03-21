@@ -35,10 +35,10 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Contour::Contour(const string &str) : Element(str), thickness(0,false) {
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.01"), "m", MBSIM%"thickness"));
-    thickness.setProperty(new ExtPhysicalVarProperty(input));
+  Contour::Contour(const string &str) : Element(str) {
+//    vector<PhysicalVariableProperty> input;
+//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.01"), "m", MBSIM%"thickness"));
+//    thickness.setProperty(new ExtPhysicalVarProperty(input));
   }
 
   Contour* Contour::readXMLFile(const string &filename) {
@@ -46,254 +46,87 @@ namespace MBSimGUI {
     DOMElement *e=doc->getDocumentElement();
 //    Contour *contour=ObjectFactory::getInstance()->createContour(e);
     Contour *contour=Embed<Contour>::createAndInit(e);
-    if(contour) {
-//      contour->initializeUsingXML(e);
-      contour->initialize();
-    }
     return contour;
   }
 
-  DOMElement* Contour::initializeUsingXML(DOMElement *element) {
-    Element::initializeUsingXML(element);
-    thickness.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* Contour::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Element::writeXMLFile(parent);
-    thickness.writeXMLFile(ele0);
-    return ele0;
-  }
-
-  RigidContour::RigidContour(const string &str) : Contour(str), refFrame(0,false) {
-    refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
-  }
-
-  void RigidContour::initialize() {
-    Contour::initialize();
-    refFrame.initialize();
-  }
-
-  void RigidContour::setSavedFrameOfReference(const string &str) {
-    ((ParentFrameOfReferenceProperty*)(refFrame.getProperty()))->setFrame(str);
-  }
-
-  DOMElement* RigidContour::initializeUsingXML(DOMElement *element) {
-    Contour::initializeUsingXML(element);
-    refFrame.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* RigidContour::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Contour::writeXMLFile(parent);
-    refFrame.writeXMLFile(ele0);
-    return ele0;
+  RigidContour::RigidContour(const string &str) : Contour(str) {
+//    refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
   }
 
   Point::Point(const string &str) : RigidContour(str) {
-    visu.setProperty(new PointMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-  }
-
-  DOMElement* Point::initializeUsingXML(DOMElement *element) {
-    RigidContour::initializeUsingXML(element);
-    visu.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* Point::writeXMLFile(DOMNode *parent) {
-    DOMElement *e = RigidContour::writeXMLFile(parent);
-    visu.writeXMLFile(e);
-    return e;
+//    visu.setProperty(new PointMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
   Line::Line(const string &str) : RigidContour(str) {
-    visu.setProperty(new LineMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-  }
-
-  DOMElement* Line::initializeUsingXML(DOMElement *element) {
-    RigidContour::initializeUsingXML(element);
-    visu.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* Line::writeXMLFile(DOMNode *parent) {
-    DOMElement *e = RigidContour::writeXMLFile(parent);
-    visu.writeXMLFile(e);
-    return e;
+//    visu.setProperty(new LineMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
   Plane::Plane(const string &str) : RigidContour(str) {
 
-    visu.setProperty(new PlaneMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-  }
-
-  DOMElement* Plane::initializeUsingXML(DOMElement *element) {
-    RigidContour::initializeUsingXML(element);
-    visu.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* Plane::writeXMLFile(DOMNode *parent) {
-    DOMElement *e = RigidContour::writeXMLFile(parent);
-    visu.writeXMLFile(e);
-    return e;
+  //  visu.setProperty(new PlaneMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
   Sphere::Sphere(const string &str) : RigidContour(str) {
 
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
-    radius.setProperty(new ExtPhysicalVarProperty(input));
-
-    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
+//    vector<PhysicalVariableProperty> input;
+//    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
+//    radius.setProperty(new ExtPhysicalVarProperty(input));
+//
+//    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
 
   }
 
-  DOMElement* Sphere::initializeUsingXML(DOMElement *element) {
-    RigidContour::initializeUsingXML(element);
-    radius.initializeUsingXML(element);
-    visu.initializeUsingXML(element);
-    return element;
-  }
+  Circle::Circle(const string &str) : RigidContour(str) {
 
-  DOMElement* Sphere::writeXMLFile(DOMNode *parent) {
-    DOMElement *e = RigidContour::writeXMLFile(parent);
-    radius.writeXMLFile(e);
-    visu.writeXMLFile(e);
-    return e;
-  }
-
-  Circle::Circle(const string &str) : RigidContour(str), solid(0,false) {
-
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
-    radius.setProperty(new ExtPhysicalVarProperty(input));
-    solid.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"solid",vector<string>(2,"")),"",4));
-    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-  }
-
-  DOMElement* Circle::initializeUsingXML(DOMElement *element) {
-    RigidContour::initializeUsingXML(element);
-    radius.initializeUsingXML(element);
-    visu.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* Circle::writeXMLFile(DOMNode *parent) {
-    DOMElement *e = RigidContour::writeXMLFile(parent);
-    radius.writeXMLFile(e);
-    visu.writeXMLFile(e);
-    return e;
+//    vector<PhysicalVariableProperty> input;
+//    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
+//    radius.setProperty(new ExtPhysicalVarProperty(input));
+//    solid.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"solid",vector<string>(2,"")),"",4));
+//    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
   Cuboid::Cuboid(const string &str) : RigidContour(str) {
 
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", MBSIM%"length"));
-    length.setProperty(new ExtPhysicalVarProperty(input));
+//    vector<PhysicalVariableProperty> input;
+//    input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", MBSIM%"length"));
+//    length.setProperty(new ExtPhysicalVarProperty(input));
+//
+//    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
 
-    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-
-  }
-
-  DOMElement* Cuboid::initializeUsingXML(DOMElement *element) {
-    RigidContour::initializeUsingXML(element);
-    length.initializeUsingXML(element);
-    visu.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* Cuboid::writeXMLFile(DOMNode *parent) {
-    DOMElement *e = RigidContour::writeXMLFile(parent);
-    length.writeXMLFile(e);
-    visu.writeXMLFile(e);
-    return e;
   }
 
   LineSegment::LineSegment(const string &str) : RigidContour(str) {
 
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"length"));
-    length.setProperty(new ExtPhysicalVarProperty(input));
-
-    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
+//    vector<PhysicalVariableProperty> input;
+//    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"length"));
+//    length.setProperty(new ExtPhysicalVarProperty(input));
+//
+//    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
 
   }
 
-  DOMElement* LineSegment::initializeUsingXML(DOMElement *element) {
-    RigidContour::initializeUsingXML(element);
-    length.initializeUsingXML(element);
-    visu.initializeUsingXML(element);
-    return element;
+  PlanarContour::PlanarContour(const string &str) : RigidContour(str) {
+//
+//    nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"nodes",vector<string>(3,"")),"",4));
+//
+//    contourFunction.setProperty(new ChoiceProperty2(new PlanarContourFunctionPropertyFactory(this),MBSIM%"contourFunction"));
+//
+//    open.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"open",vector<string>(2,"")),"",4));
+//
+//    visu.setProperty(new PlanarContourMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
-  DOMElement* LineSegment::writeXMLFile(DOMNode *parent) {
-    DOMElement *e = RigidContour::writeXMLFile(parent);
-    length.writeXMLFile(e);
-    visu.writeXMLFile(e);
-    return e;
-  }
+  SpatialContour::SpatialContour(const string &str) : RigidContour(str) {
 
-  PlanarContour::PlanarContour(const string &str) : RigidContour(str), open(0,false) {
-
-    nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"nodes",vector<string>(3,"")),"",4));
-
-    contourFunction.setProperty(new ChoiceProperty2(new PlanarContourFunctionPropertyFactory(this),MBSIM%"contourFunction"));
-
-    open.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"open",vector<string>(2,"")),"",4));
-
-    visu.setProperty(new PlanarContourMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-  }
-
-  DOMElement* PlanarContour::initializeUsingXML(DOMElement *element) {
-    RigidContour::initializeUsingXML(element);
-    nodes.initializeUsingXML(element);
-    contourFunction.initializeUsingXML(element);
-    open.initializeUsingXML(element);
-    visu.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* PlanarContour::writeXMLFile(DOMNode *parent) {
-    DOMElement *e = RigidContour::writeXMLFile(parent);
-    nodes.writeXMLFile(e);
-    contourFunction.writeXMLFile(e);
-    open.writeXMLFile(e);
-    visu.writeXMLFile(e);
-    return e;
-  }
-
-  SpatialContour::SpatialContour(const string &str) : RigidContour(str), open(0,false) {
-
-    etaNodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"etaNodes",vector<string>(3,"")),"",4));
-
-    xiNodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"xiNodes",vector<string>(3,"")),"",4));
-
-    contourFunction.setProperty(new ChoiceProperty2(new SpatialContourFunctionPropertyFactory(this),MBSIM%"contourFunction"));
-
-    open.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"open",vector<string>(2,"")),"",4));
-
-    visu.setProperty(new SpatialContourMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-  }
-
-  DOMElement* SpatialContour::initializeUsingXML(DOMElement *element) {
-    RigidContour::initializeUsingXML(element);
-    etaNodes.initializeUsingXML(element);
-    xiNodes.initializeUsingXML(element);
-    contourFunction.initializeUsingXML(element);
-    open.initializeUsingXML(element);
-    visu.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* SpatialContour::writeXMLFile(DOMNode *parent) {
-    DOMElement *e = RigidContour::writeXMLFile(parent);
-    etaNodes.writeXMLFile(e);
-    xiNodes.writeXMLFile(e);
-    contourFunction.writeXMLFile(e);
-    open.writeXMLFile(e);
-    visu.writeXMLFile(e);
-    return e;
+//    etaNodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"etaNodes",vector<string>(3,"")),"",4));
+//
+//    xiNodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"xiNodes",vector<string>(3,"")),"",4));
+//
+//    contourFunction.setProperty(new ChoiceProperty2(new SpatialContourFunctionPropertyFactory(this),MBSIM%"contourFunction"));
+//
+//    open.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"open",vector<string>(2,"")),"",4));
+//
+//    visu.setProperty(new SpatialContourMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
 }

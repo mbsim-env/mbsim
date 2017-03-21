@@ -23,7 +23,6 @@
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include "embed.h"
-#include "function_property_factory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -44,88 +43,24 @@ namespace MBSimGUI {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
     Link *link=Embed<Link>::createAndInit(e);
-    if(link) link->initialize();
     return link;
   }
 
   FrameLink::FrameLink(const string &str) : MechanicalLink(str) {
-    connections.setProperty(new ConnectFramesProperty(2,this));
+//    connections.setProperty(new ConnectFramesProperty(2,this));
   }
 
-  void FrameLink::initialize() {
-    MechanicalLink::initialize();
-    connections.initialize();
+  FloatingFrameLink::FloatingFrameLink(const string &str) : FrameLink(str) {
+
+//    refFrameID.setProperty(new IntegerProperty(1,MBSIM%"frameOfReferenceID"));
   }
 
-  DOMElement* FrameLink::initializeUsingXML(DOMElement *element) {
-    MechanicalLink::initializeUsingXML(element);
-    connections.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* FrameLink::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = MechanicalLink::writeXMLFile(parent);
-    connections.writeXMLFile(ele0);
-    return ele0;
-  }
-
-  FloatingFrameLink::FloatingFrameLink(const string &str) : FrameLink(str), refFrameID(0,false) {
-
-    refFrameID.setProperty(new IntegerProperty(1,MBSIM%"frameOfReferenceID"));
-  }
-
-  DOMElement* FloatingFrameLink::initializeUsingXML(DOMElement *element) {
-    FrameLink::initializeUsingXML(element);
-    refFrameID.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* FloatingFrameLink::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FrameLink::writeXMLFile(parent);
-    refFrameID.writeXMLFile(ele0);
-    return ele0;
-  }
-
-  RigidBodyLink::RigidBodyLink(const string &str) : MechanicalLink(str), support(0,false) {
-    support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
-  }
-
-  void RigidBodyLink::initialize() {
-    MechanicalLink::initialize();
-    support.initialize();
-  }
-
-  DOMElement* RigidBodyLink::initializeUsingXML(DOMElement *element) {
-    MechanicalLink::initializeUsingXML(element);
-    support.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* RigidBodyLink::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = MechanicalLink::writeXMLFile(parent);
-    support.writeXMLFile(ele0);
-    return ele0;
+  RigidBodyLink::RigidBodyLink(const string &str) : MechanicalLink(str) {
+//    support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
   }
 
   DualRigidBodyLink::DualRigidBodyLink(const string &str) : RigidBodyLink(str) {
-    connections.setProperty(new ChoiceProperty2(new ConnectRigidBodiesPropertyFactory(this),"",4));
-  }
-
-  void DualRigidBodyLink::initialize() {
-    RigidBodyLink::initialize();
-    connections.initialize();
-  }
-
-  DOMElement* DualRigidBodyLink::initializeUsingXML(DOMElement *element) {
-    RigidBodyLink::initializeUsingXML(element);
-    connections.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* DualRigidBodyLink::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = RigidBodyLink::writeXMLFile(parent);
-    connections.writeXMLFile(ele0);
-    return ele0;
+//    connections.setProperty(new ChoiceProperty2(new ConnectRigidBodiesPropertyFactory(this),"",4));
   }
 
 }

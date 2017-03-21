@@ -22,6 +22,7 @@
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include "embed.h"
+#include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;

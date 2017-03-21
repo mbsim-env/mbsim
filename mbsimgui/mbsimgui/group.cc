@@ -133,31 +133,6 @@ namespace MBSimGUI {
     return *this;
   }
 
-  void Group::initialize() {
-    Element::initialize();
-
-    for(size_t i=0; i<frame.size(); i++)
-      frame[i]->initialize();
-
-    for(size_t i=0; i<contour.size(); i++)
-      contour[i]->initialize();
-
-    for(size_t i=0; i<group.size(); i++)
-      group[i]->initialize();
-
-    for(size_t i=0; i<object.size(); i++)
-      object[i]->initialize();
-
-    for(size_t i=0; i<link.size(); i++)
-      link[i]->initialize();
-
-    for(size_t i=0; i<constraint.size(); i++)
-      constraint[i]->initialize();
-
-    for(size_t i=0; i<observer.size(); i++)
-      observer[i]->initialize();
-  }
-
   void Group::addFrame(Frame* frame_) {
     frame.push_back(frame_);
     frame_->setParent(this);
@@ -266,10 +241,6 @@ namespace MBSimGUI {
     DOMElement *e=doc->getDocumentElement();
 //    Group *group=ObjectFactory::getInstance()->createGroup(e, parent);
     Group *group=Embed<Group>::createAndInit(e);
-    if(group) {
-//      group->initializeUsingXML(e);
-      group->initialize();
-    }
     return group;
   }
 

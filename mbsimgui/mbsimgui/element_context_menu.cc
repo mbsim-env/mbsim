@@ -21,21 +21,22 @@
 #include "element_context_menu.h"
 #include "mainwindow.h"
 #include "rigid_body.h"
-#include "flexible_body_ffr.h"
+//#include "flexible_body_ffr.h"
 #include "constraint.h"
-#include "linear_transfer_system.h"
-#include "kinetic_excitation.h"
+//#include "linear_transfer_system.h"
+//#include "kinetic_excitation.h"
 #include "spring_damper.h"
-#include "joint.h"
-#include "contact.h"
-#include "sensor.h"
+//#include "joint.h"
+//#include "contact.h"
+//#include "sensor.h"
 #include "observer.h"
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
-#include "friction.h"
-#include "gear.h"
-#include "connection.h"
+//#include "friction.h"
+//#include "gear.h"
+//#include "connection.h"
+#include "parameter.h"
 #include <QFileDialog>
 
 namespace MBSimGUI {
@@ -317,7 +318,7 @@ namespace MBSimGUI {
   }
 
   void BodyContextContextMenu::addFlexibleBodyFFR() {
-    mw->addObject(new FlexibleBodyFFR("FlexibleBodyFFR"));
+//    mw->addObject(new FlexibleBodyFFR("FlexibleBodyFFR"));
   }
 
   ConstraintContextContextMenu::ConstraintContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -404,7 +405,7 @@ namespace MBSimGUI {
   }
 
   void LinkContextContextMenu::addKineticExcitation() {
-    mw->addLink(new KineticExcitation("KineticExcitation"));
+//    mw->addLink(new KineticExcitation("KineticExcitation"));
   }
 
   void LinkContextContextMenu::addSpringDamper() {
@@ -412,23 +413,23 @@ namespace MBSimGUI {
   }
 
   void LinkContextContextMenu::addDirectionalSpringDamper() {
-    mw->addLink(new DirectionalSpringDamper("DirectionalSpringDamper"));
+//    mw->addLink(new DirectionalSpringDamper("DirectionalSpringDamper"));
   }
 
   void LinkContextContextMenu::addGeneralizedSpringDamper() {
-    mw->addLink(new GeneralizedSpringDamper("GeneralizedSpringDamper"));
+//    mw->addLink(new GeneralizedSpringDamper("GeneralizedSpringDamper"));
   }
 
   void LinkContextContextMenu::addJoint() {
-    mw->addLink(new Joint("Joint"));
+//    mw->addLink(new Joint("Joint"));
   }
 
   void LinkContextContextMenu::addElasticJoint() {
-    mw->addLink(new ElasticJoint("ElasticJoint"));
+//    mw->addLink(new ElasticJoint("ElasticJoint"));
   }
 
   void LinkContextContextMenu::addContact() {
-    mw->addLink(new Contact("Contact"));
+//    mw->addLink(new Contact("Contact"));
   }
 
   void LinkContextContextMenu::addSignal() {
@@ -437,19 +438,19 @@ namespace MBSimGUI {
   }
 
   void LinkContextContextMenu::addLinearTransferSystem() {
-    mw->addLink(new LinearTransferSystem("LTS"));
+//    mw->addLink(new LinearTransferSystem("LTS"));
   }
 
   void LinkContextContextMenu::addGeneralizedFriction() {
-    mw->addLink(new GeneralizedFriction("GeneralizedFriction"));
+//    mw->addLink(new GeneralizedFriction("GeneralizedFriction"));
   }
 
   void LinkContextContextMenu::addGeneralizedGear() {
-    mw->addLink(new GeneralizedGear("GeneralizedGear"));
+//    mw->addLink(new GeneralizedGear("GeneralizedGear"));
   }
 
   void LinkContextContextMenu::addGeneralizedElasticConnection() {
-    mw->addLink(new GeneralizedElasticConnection("GeneralizedElasticConnection"));
+//    mw->addLink(new GeneralizedElasticConnection("GeneralizedElasticConnection"));
   }
 
   ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -530,23 +531,23 @@ namespace MBSimGUI {
   }
 
   void SignalContextContextMenu::addPIDController() {
-    mw->addLink(new PIDController("PIDController"));
+//    mw->addLink(new PIDController("PIDController"));
   }
 
   void SignalContextContextMenu::addUnarySignalOperation() {
-    mw->addLink(new UnarySignalOperation("UnarySignalOperation"));
+//    mw->addLink(new UnarySignalOperation("UnarySignalOperation"));
   }
 
   void SignalContextContextMenu::addBinarySignalOperation() {
-    mw->addLink(new BinarySignalOperation("BinarySignalOperation"));
+//    mw->addLink(new BinarySignalOperation("BinarySignalOperation"));
   }
 
   void SignalContextContextMenu::addExternSignalSource() {
-    mw->addLink(new ExternSignalSource("ExternSignalSource"));
+//    mw->addLink(new ExternSignalSource("ExternSignalSource"));
   }
 
   void SignalContextContextMenu::addExternSignalSink() {
-    mw->addLink(new ExternSignalSink("ExternSignalSink"));
+//    mw->addLink(new ExternSignalSink("ExternSignalSink"));
   }
 
   SensorContextContextMenu::SensorContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -577,35 +578,35 @@ namespace MBSimGUI {
   }
 
   void SensorContextContextMenu::addGeneralizedPositionSensor() {
-    mw->addLink(new GeneralizedPositionSensor("GeneralizedPositionSensor"));
+//    mw->addLink(new GeneralizedPositionSensor("GeneralizedPositionSensor"));
   }
 
   void SensorContextContextMenu::addGeneralizedVelocitySensor() {
-    mw->addLink(new GeneralizedVelocitySensor("GeneralizedVelocitySensor"));
+//    mw->addLink(new GeneralizedVelocitySensor("GeneralizedVelocitySensor"));
   }
 
   void SensorContextContextMenu::addAbsolutePositionSensor() {
-    mw->addLink(new AbsolutePositionSensor("AbsolutePositionSensor"));
+//    mw->addLink(new AbsolutePositionSensor("AbsolutePositionSensor"));
   }
 
   void SensorContextContextMenu::addAbsoluteVelocitySensor() {
-    mw->addLink(new AbsoluteVelocitySensor("AbsoluteVelocitySensor"));
+//    mw->addLink(new AbsoluteVelocitySensor("AbsoluteVelocitySensor"));
   }
 
   void SensorContextContextMenu::addAbsoluteAngularPositionSensor() {
-    mw->addLink(new AbsoluteAngularPositionSensor("AbsoluteAngularPositionSensor"));
+//    mw->addLink(new AbsoluteAngularPositionSensor("AbsoluteAngularPositionSensor"));
   }
 
   void SensorContextContextMenu::addAbsoluteAngularVelocitySensor() {
-    mw->addLink(new AbsoluteAngularVelocitySensor("AbsoluteAngularVelocitySensor"));
+//    mw->addLink(new AbsoluteAngularVelocitySensor("AbsoluteAngularVelocitySensor"));
   }
 
   void SensorContextContextMenu::addFunctionSensor() {
-    mw->addLink(new FunctionSensor("FunctionSensor"));
+//    mw->addLink(new FunctionSensor("FunctionSensor"));
   }
 
   void SensorContextContextMenu::addSignalProcessingSystemSensor() {
-    mw->addLink(new SignalProcessingSystemSensor("SPS"));
+//    mw->addLink(new SignalProcessingSystemSensor("SPS"));
   }
 
 }

@@ -27,23 +27,23 @@ namespace MBSimGUI {
 
   class RigidBody;
 
-  class RigidBodyOfReferencePropertyFactory : public PropertyFactory {
-    public:
-      RigidBodyOfReferencePropertyFactory(Element *element_, const MBXMLUtils::FQN &xmlName_) : element(element_), xmlName(xmlName_) { }
-      Property* createProperty(int i=0);
-    protected:
-      Element *element;
-      MBXMLUtils::FQN xmlName;
-  };
-
-  class GeneralizedGearConstraintPropertyFactory : public PropertyFactory {
-    public:
-      GeneralizedGearConstraintPropertyFactory(Element *element_, const MBXMLUtils::FQN &xmlName_="") : element(element_), xmlName(xmlName_) { }
-      Property* createProperty(int i=0);
-    protected:
-      Element *element;
-      MBXMLUtils::FQN xmlName;
-  };
+  //  class RigidBodyOfReferencePropertyFactory : public PropertyFactory {
+  //    public:
+  //      RigidBodyOfReferencePropertyFactory(Element *element_, const MBXMLUtils::FQN &xmlName_) : element(element_), xmlName(xmlName_) { }
+  //      Property* createProperty(int i=0);
+  //    protected:
+  //      Element *element;
+  //      MBXMLUtils::FQN xmlName;
+  //  };
+  //
+  //  class GeneralizedGearConstraintPropertyFactory : public PropertyFactory {
+  //    public:
+  //      GeneralizedGearConstraintPropertyFactory(Element *element_, const MBXMLUtils::FQN &xmlName_="") : element(element_), xmlName(xmlName_) { }
+  //      Property* createProperty(int i=0);
+  //    protected:
+  //      Element *element;
+  //      MBXMLUtils::FQN xmlName;
+  //  };
 
   class Constraint : public Element {
     public:
@@ -57,107 +57,63 @@ namespace MBSimGUI {
   };
 
   class GeneralizedConstraint : public MechanicalConstraint {
-    friend class GeneralizedConstraintPropertyDialog;
     public:
       GeneralizedConstraint(const std::string &str="");
-      void initialize();
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    protected:
-      ExtProperty support;
   };
 
   class GeneralizedGearConstraint : public GeneralizedConstraint {
-    friend class GeneralizedGearConstraintPropertyDialog;
     public:
-    GeneralizedGearConstraint(const std::string &str="");
-    virtual PropertyInterface* clone() const {return new GeneralizedGearConstraint(*this);}
-    std::string getType() const { return "GeneralizedGearConstraint"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    void deinitialize();
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedGearConstraintPropertyDialog(this);}
-    protected:
-    ExtProperty dependentBody, independentBodies;
+      GeneralizedGearConstraint(const std::string &str="");
+      //    virtual PropertyInterface* clone() const {return new GeneralizedGearConstraint(*this);}
+      std::string getType() const { return "GeneralizedGearConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedGearConstraintPropertyDialog(this);}
   };
 
   class GeneralizedDualConstraint : public GeneralizedConstraint {
-    friend class GeneralizedDualConstraintPropertyDialog;
     public:
-    GeneralizedDualConstraint(const std::string &str="");
-    std::string getType() const { return "GeneralizedDualConstraint"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    void deinitialize();
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedDualConstraintPropertyDialog(this);}
-    protected:
-    ExtProperty dependentBody, independentBody;
+      GeneralizedDualConstraint(const std::string &str="");
+      std::string getType() const { return "GeneralizedDualConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedDualConstraintPropertyDialog(this);}
   };
 
   class GeneralizedPositionConstraint : public GeneralizedDualConstraint {
-    friend class GeneralizedPositionConstraintPropertyDialog;
     public:
-    GeneralizedPositionConstraint(const std::string &str="");
-    virtual PropertyInterface* clone() const {return new GeneralizedPositionConstraint(*this);}
-    std::string getType() const { return "GeneralizedPositionConstraint"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionConstraintPropertyDialog(this);}
-    protected:
-    ExtProperty constraintFunction;
+      GeneralizedPositionConstraint(const std::string &str="");
+      //    virtual PropertyInterface* clone() const {return new GeneralizedPositionConstraint(*this);}
+      std::string getType() const { return "GeneralizedPositionConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionConstraintPropertyDialog(this);}
   };
 
   class GeneralizedVelocityConstraint : public GeneralizedDualConstraint {
-    friend class GeneralizedVelocityConstraintPropertyDialog;
     public:
-    GeneralizedVelocityConstraint(const std::string &str="");
-    virtual PropertyInterface* clone() const {return new GeneralizedVelocityConstraint(*this);}
-    std::string getType() const { return "GeneralizedVelocityConstraint"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocityConstraintPropertyDialog(this);}
-    protected:
-    ExtProperty constraintFunction, x0;
+      GeneralizedVelocityConstraint(const std::string &str="");
+      //    virtual PropertyInterface* clone() const {return new GeneralizedVelocityConstraint(*this);}
+      std::string getType() const { return "GeneralizedVelocityConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocityConstraintPropertyDialog(this);}
   };
 
   class GeneralizedAccelerationConstraint : public GeneralizedDualConstraint {
-    friend class GeneralizedAccelerationConstraintPropertyDialog;
     public:
-    GeneralizedAccelerationConstraint(const std::string &str="");
-    virtual PropertyInterface* clone() const {return new GeneralizedAccelerationConstraint(*this);}
-    std::string getType() const { return "GeneralizedAccelerationConstraint"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedAccelerationConstraintPropertyDialog(this);}
-    protected:
-    ExtProperty constraintFunction, x0;
+      GeneralizedAccelerationConstraint(const std::string &str="");
+      //    virtual PropertyInterface* clone() const {return new GeneralizedAccelerationConstraint(*this);}
+      std::string getType() const { return "GeneralizedAccelerationConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedAccelerationConstraintPropertyDialog(this);}
   };
 
   class JointConstraint : public MechanicalConstraint {
-    friend class JointConstraintPropertyDialog;
     public:
-    JointConstraint(const std::string &str="");
-    virtual PropertyInterface* clone() const {return new JointConstraint(*this);}
-    std::string getType() const { return "JointConstraint"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    void deinitialize();
-    ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
-    protected:
-    ExtProperty independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide, refFrameID, force, moment, connections, q0;
-
+      JointConstraint(const std::string &str="");
+      //    virtual PropertyInterface* clone() const {return new JointConstraint(*this);}
+      std::string getType() const { return "JointConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   };
 
   class GeneralizedConnectionConstraint : public GeneralizedDualConstraint {
-    friend class GeneralizedConnectionConstraintPropertyDialog;
     public:
-    GeneralizedConnectionConstraint(const std::string &str="") : GeneralizedDualConstraint(str) { }
-    virtual PropertyInterface* clone() const {return new GeneralizedConnectionConstraint(*this);}
-    std::string getType() const { return "GeneralizedConnectionConstraint"; }
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedConnectionConstraintPropertyDialog(this);}
+      GeneralizedConnectionConstraint(const std::string &str="") : GeneralizedDualConstraint(str) { }
+      //    virtual PropertyInterface* clone() const {return new GeneralizedConnectionConstraint(*this);}
+      std::string getType() const { return "GeneralizedConnectionConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedConnectionConstraintPropertyDialog(this);}
   };
 
 }

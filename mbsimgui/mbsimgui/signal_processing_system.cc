@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "signal_processing_system.h"
+#include "basic_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -30,21 +31,10 @@ namespace MBSimGUI {
     signalRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
   }
 
-  void SignalProcessingSystem::initialize() {
-    Link::initialize();
-    signalRef.initialize();
-  }
-
   DOMElement* SignalProcessingSystem::initializeUsingXML(DOMElement *element) {
     Link::initializeUsingXML(element);
     signalRef.initializeUsingXML(element);
     return element;
-  }
-
-  DOMElement* SignalProcessingSystem::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
-    signalRef.writeXMLFile(ele0);
-    return ele0;
   }
 
 }

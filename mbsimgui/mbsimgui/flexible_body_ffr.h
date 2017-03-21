@@ -29,16 +29,10 @@ namespace MBSimGUI {
     friend class FlexibleBodyFFRPropertyDialog;
     public:
       FlexibleBodyFFR(const std::string &str="");
-      virtual PropertyInterface* clone() const {return new FlexibleBodyFFR(*this);}
+//      virtual PropertyInterface* clone() const {return new FlexibleBodyFFR(*this);}
       std::string getType() const { return "FlexibleBodyFFR"; }
       MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
-      int getqSize() const {return getqRelSize();}
-      int getquize() const {return getuRelSize();}
-      int getqRelSize() const;
-      int getuRelSize() const;
-      int getqElSize() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      void initialize();
       ElementPropertyDialog* createPropertyDialog() {return new FlexibleBodyFFRPropertyDialog(this);}
       QMenu* createContextMenu() {return new FlexibleBodyFFRContextMenu(this);}
       QMenu* createFrameContextMenu() {return new NodeFrameContextContextMenu(this);}

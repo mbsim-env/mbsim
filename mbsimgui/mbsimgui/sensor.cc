@@ -46,23 +46,11 @@ namespace MBSimGUI {
     index.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  void GeneralizedCoordinateSensor::initialize() {
-    Sensor::initialize();
-    object.initialize();
-  }
-
   DOMElement* GeneralizedCoordinateSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
     object.initializeUsingXML(element);
     index.initializeUsingXML(element);
     return element;
-  }
-
-  DOMElement* GeneralizedCoordinateSensor::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Sensor::writeXMLFile(parent);
-    object.writeXMLFile(ele0);
-    index.writeXMLFile(ele0);
-    return ele0;
   }
 
   AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str) : Sensor(str) {
@@ -72,23 +60,11 @@ namespace MBSimGUI {
     direction.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  void AbsoluteCoordinateSensor::initialize() {
-    Sensor::initialize();
-    frame.initialize();
-  }
-
   DOMElement* AbsoluteCoordinateSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
     frame.initializeUsingXML(element);
     direction.initializeUsingXML(element);
     return element;
-  }
-
-  DOMElement* AbsoluteCoordinateSensor::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Sensor::writeXMLFile(parent);
-    frame.writeXMLFile(ele0);
-    direction.writeXMLFile(ele0);
-    return ele0;
   }
 
   FunctionSensor::FunctionSensor(const string &str) : Sensor(str) {
@@ -111,31 +87,14 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* FunctionSensor::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Sensor::writeXMLFile(parent);
-    function.writeXMLFile(ele0);
-    return ele0;
-  }
-
   SignalProcessingSystemSensor::SignalProcessingSystemSensor(const string &str) : Sensor(str) {
     spsRef.setProperty(new LinkOfReferenceProperty("",this,MBSIMCONTROL%"signalProcessingSystem"));
-  }
-
-  void SignalProcessingSystemSensor::initialize() {
-    Sensor::initialize();
-    spsRef.initialize();
   }
 
   DOMElement* SignalProcessingSystemSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
     spsRef.initializeUsingXML(element);
     return element;
-  }
-
-  DOMElement* SignalProcessingSystemSensor::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Sensor::writeXMLFile(parent);
-    spsRef.writeXMLFile(ele0);
-    return ele0;
   }
 
 }

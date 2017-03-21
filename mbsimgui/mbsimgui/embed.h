@@ -37,9 +37,9 @@ namespace MBSimGUI {
 
         static T* createAndInit(xercesc::DOMElement *ele1) {
           T *object;
+          Parameters param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
             xercesc::DOMElement *ele2 = 0;
-            Parameters param;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"))));
               param = Parameters::readXMLFile(fileInfo.canonicalFilePath().toStdString());
@@ -63,8 +63,8 @@ namespace MBSimGUI {
             if(object) {
               if(ele2)
                 object->initializeUsingXML(ele2);
-              param.setParent(object);
-              object->setParameters(param);
+              for(size_t i=0; i<param.getNumberOfParameters(); i++)
+              object->addParameter(param.getParameter(i));
             }
           }
           else {

@@ -20,7 +20,6 @@
 #ifndef _SOLVER__H_
 #define _SOLVER__H_
 
-#include "extended_properties.h"
 #include "solver_property_dialog.h"
 
 namespace XERCES_CPP_NAMESPACE {
@@ -31,24 +30,16 @@ namespace XERCES_CPP_NAMESPACE {
 namespace MBSimGUI {
 
   class Solver {
-    friend class SolverPropertyDialog;
     protected:
-    ExtProperty embed;
-    std::string name;
+      std::string name;
     public:
-    Solver();
-    virtual ~Solver();
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    virtual void initializeUsingXMLEmbed(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFileEmbed(xercesc::DOMNode *element);
-    static Solver* readXMLFile(const std::string &filename);
-    virtual void writeXMLFile(const std::string &name);
-    virtual void writeXMLFile() { writeXMLFile(getType()); }
-    virtual std::string getType() const { return "Solver"; }
-    const std::string& getName() const { return name; }
-    virtual SolverPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
-    bool isEmbedded() const {return embed.isActive();}
+      Solver();
+      virtual ~Solver();
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      static Solver* readXMLFile(const std::string &filename);
+      virtual std::string getType() const { return "Solver"; }
+      const std::string& getName() const { return name; }
+      virtual SolverPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
   };
 
 }

@@ -26,39 +26,24 @@
 namespace MBSimGUI {
 
   class SpringDamper : public FrameLink {
-    friend class SpringDamperPropertyDialog;
     public:
-    SpringDamper(const std::string &str="");
-    std::string getType() const { return "SpringDamper"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
-    protected:
-    ExtProperty forceFunction, unloadedLength, coilSpring;
+      SpringDamper(const std::string &str="");
+      std::string getType() const { return "SpringDamper"; }
+      ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
   };
 
   class DirectionalSpringDamper : public FloatingFrameLink {
-    friend class DirectionalSpringDamperPropertyDialog;
     public:
-    DirectionalSpringDamper(const std::string &str="");
-    std::string getType() const { return "DirectionalSpringDamper"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
-    protected:
-    ExtProperty forceDirection, unloadedLength, forceFunction, coilSpring;
+      DirectionalSpringDamper(const std::string &str="");
+      std::string getType() const { return "DirectionalSpringDamper"; }
+      ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
   };
 
   class GeneralizedSpringDamper : public DualRigidBodyLink {
-    friend class GeneralizedSpringDamperPropertyDialog;
     public:
-    GeneralizedSpringDamper(const std::string &str="");
-    std::string getType() const { return "GeneralizedSpringDamper"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
-    protected:
-    ExtProperty function, unloadedLength;
+      GeneralizedSpringDamper(const std::string &str="");
+      std::string getType() const { return "GeneralizedSpringDamper"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
   };
 
 }
