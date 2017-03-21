@@ -21,84 +21,60 @@
 #define _FRAME__H_
 
 #include "element.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 
   class ExtWidget;
 
   class Frame : public Element {
-    friend class FramePropertyDialog;
     public:
-      Frame(const std::string &str, Element *parent, bool grey=true, const std::string &plotFeatureTypes="");
+      Frame(const std::string &str, Element *parent);
       ~Frame() { }
       virtual PropertyInterface* clone() const {return new Frame(*this);}
       std::string getType() const { return "Frame"; }
       static Frame* readXMLFile(const std::string &filename, Element *parent);
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      virtual void initializeUsingXML2(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element);
-      virtual void initializeUsingXML3(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile3(xercesc::DOMNode *element);
-      bool openMBVFrame() const {return visu.isActive();}
-      void setOpenMBVFrame(bool flag) {visu.setActive(flag);}
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this,false);}
       QMenu* createContextMenu() {return new FrameContextMenu(this);}
-    protected:
-      ExtProperty visu;
   };
 
   class InternalFrame : public Frame {
-    friend class InternalFramePropertyDialog;
     public:
-      InternalFrame(const std::string &str, Element *parent, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureTypes_="") : Frame(str,parent,true,plotFeatureTypes_), xmlFrameName(xmlFrameName_), plotFeatureTypes(plotFeatureTypes_) { }
+      InternalFrame(const std::string &str, Element *parent, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_="") : Frame(str,parent), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) { }
       virtual PropertyInterface* clone() const {return new InternalFrame(*this);}
       std::string getType() const { return "InternalFrame"; }
       ElementPropertyDialog* createPropertyDialog() {return new InternalFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
       void removeXMLElements();
       const MBXMLUtils::FQN& getXMLFrameName() const { return xmlFrameName; }
-      const std::string& getPlotFeatureTypes() const { return plotFeatureTypes; }
+      std::string getPlotFeatureType() const { return plotFeatureType; }
     protected:
       MBXMLUtils::FQN xmlFrameName;
-      std::string plotFeatureTypes;
+      std::string plotFeatureType;
   };
 
   class FixedRelativeFrame : public Frame {
-    friend class FixedRelativeFramePropertyDialog;
     public:
       FixedRelativeFrame(const std::string &str, Element *parent);
       ~FixedRelativeFrame() { }
       virtual PropertyInterface* clone() const {return new FixedRelativeFrame(*this);}
       std::string getType() const { return "FixedRelativeFrame"; }
-      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      virtual void initialize();
       ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
       QMenu* createContextMenu() {return new FixedRelativeFrameContextMenu(this);}
-    protected:
-      ExtProperty refFrame, position, orientation;
   };
 
   class NodeFrame : public Frame {
-    friend class NodeFramePropertyDialog;
     public:
       NodeFrame(const std::string &str, Element *parent);
       ~NodeFrame() { }
       virtual PropertyInterface* clone() const {return new NodeFrame(*this);}
       std::string getType() const { return "NodeFrame"; }
       MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       ElementPropertyDialog* createPropertyDialog() {return new NodeFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
       QMenu* createContextMenu() {return new NodeFrameContextMenu(this);}
-    protected:
-      ExtProperty nodeNumber;
   };
 
 }

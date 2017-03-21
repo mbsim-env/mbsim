@@ -21,7 +21,6 @@
 #include "body.h"
 #include "frame.h"
 #include "contour.h"
-#include "basic_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -29,15 +28,10 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Body::Body(const string &str, Element *parent) : Object(str,parent), q0(0,false), u0(0,false), R(0,false) {
-//    q0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"generalizedInitialPosition",vector<string>(3,"")),"",4));
-//
-//    u0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"generalizedInitialVelocity",vector<string>(3,"")),"",4));
-//
-//    R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
+  Body::Body(const string &str, Element *parent) : Object(str,parent) {
   }
 
-  Body::Body(const Body &b) : Object(b), R(b.R) {
+  Body::Body(const Body &b) : Object(b) {
     for(unsigned int i=0; i<b.frame.size(); i++)
       frame.push_back(static_cast<Frame*>(b.frame[i]->clone()));;
     for(unsigned int i=0; i<b.contour.size(); i++)
@@ -64,16 +58,11 @@ namespace MBSimGUI {
     frame.clear();
     contour.clear();
     removedElement.clear();
-    R=b.R;
     for(unsigned int i=0; i<b.frame.size(); i++)
       frame.push_back(static_cast<Frame*>(b.frame[i]->clone()));;
     for(unsigned int i=0; i<b.contour.size(); i++)
       contour.push_back(static_cast<Contour*>(b.contour[i]->clone()));;
     return *this;
-  }
-
-  void Body::initialize() {
-    R.initialize();
   }
 
   void Body::addFrame(Frame* frame_) {
@@ -88,18 +77,14 @@ namespace MBSimGUI {
     if(dynamic_cast<Frame*>(element)) {
       for (vector<Frame*>::iterator it = frame.begin() ; it != frame.end(); ++it)
         if(*it==element) {
-          //cout << "erase " << (*it)->getName() << endl;
           frame.erase(it);
-          //delete (*it);
           break;
         }
     }
     else if(dynamic_cast<Contour*>(element)) {
       for (vector<Contour*>::iterator it = contour.begin() ; it != contour.end(); ++it)
         if(*it==element) {
-          //cout << "erase " << (*it)->getName() << endl;
           contour.erase(it);
-          //delete (*it);
           break;
         }
     }
@@ -122,22 +107,6 @@ namespace MBSimGUI {
         return contour[i];
     }
     return NULL;
-  }
-
-  DOMElement* Body::initializeUsingXML(DOMElement *element) {
-    Object::initializeUsingXML(element);
-//    q0.initializeUsingXML(element);
-//    u0.initializeUsingXML(element);
-//    R.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* Body::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Object::writeXMLFile(parent);
-    q0.writeXMLFile(ele0);
-    u0.writeXMLFile(ele0);
-    R.writeXMLFile(ele0);
-    return ele0;
   }
 
   Element* Body::getChildByContainerAndName(const std::string &container, const std::string &name) const {

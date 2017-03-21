@@ -26,25 +26,18 @@
 namespace MBSimGUI {
 
   class RigidBody : public Body {
-    friend class RigidBodyPropertyDialog;
     public:
       RigidBody(const std::string &str, Element *parent);
       virtual PropertyInterface* clone() const {return new RigidBody(*this);}
       std::string getType() const { return "RigidBody"; }
-      int getqSize() const {return constrained?0:getqRelSize();}
-      int getquize() const {return constrained?0:getuRelSize();}
-      int getqRelSize() const;
-      int getuRelSize() const;
       xercesc::DOMElement* getXMLFrames() { return frames; }
       xercesc::DOMElement* getXMLContours() { return contours; }
       void removeXMLElements();
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       bool isConstrained() const {return constrained;}
       void setConstrained(bool b) {constrained = b;}
-      void initialize();
       ElementPropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
       QMenu* createContextMenu() {return new RigidBodyContextMenu(this);}
       QMenu* createFrameContextMenu() {return new FixedRelativeFrameContextContextMenu(this);}

@@ -168,9 +168,6 @@ namespace MBSimGUI {
       void settingsFinished(int result);
     protected:
       void closeEvent ( QCloseEvent * event );
-
-      // write parameter list to XML. The returned DOMNodes are owned by doc.
-      xercesc::DOMElement* writeProject(std::shared_ptr<xercesc::DOMDocument> &doc);
   };
 
 }

@@ -62,7 +62,6 @@ namespace MBSimGUI {
             else
               object=create(ele2,parent);
             if(object) {
-              object->initializeUsingXMLEmbed(ele1);
               if(ele2)
                 object->initializeUsingXML(ele2);
               object->setParameters(param);
@@ -73,13 +72,6 @@ namespace MBSimGUI {
             if(object) object->initializeUsingXML(ele1);
           }
           return object;
-        }
-
-        static void writeXML(T* object, xercesc::DOMNode *ele0) {
-          if(object->isEmbedded())
-            object->writeXMLFileEmbed(ele0);
-          else
-            object->writeXMLFile(ele0);
         }
 
     };

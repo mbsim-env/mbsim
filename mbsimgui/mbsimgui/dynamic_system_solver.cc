@@ -20,10 +20,7 @@
 #include <config.h>
 #include "dynamic_system_solver.h"
 #include "mainwindow.h"
-#include <QtGui/QMenu>
 #include "objectfactory.h"
-#include <string>
-#include "basic_properties.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
@@ -34,29 +31,10 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  DOMElement* Environment::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement* ele0 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
-
-    DOMElement *ele1 = D(doc)->createElement( MBSIM%"accelerationOfGravity" );
-    ele0->insertBefore( ele1, NULL );
-    parent->insertBefore(ele0, NULL);
-    return ele0;
-  }
-
-  Environment::Environment() {}
-  Environment::~Environment() {}
-
   Environment *Environment::instance=NULL;
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false), initialProjection(0,false), useConstraintSolverForPlot(0,false) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &str, Element *parent) : Group(str,parent) {
 
-//    vector<string> g(3);
-//    g[0] = "0";
-//    g[1] = "-9.81";
-//    g[2] = "0";
-//    environment.setProperty(new ChoiceProperty2(new VecPropertyFactory(g,MBSIM%"accelerationOfGravity",vector<string>(3,"m/s^2")),"",4));
-//
 //    solverParameters.setProperty(new DynamicSystemSolverParametersProperty);
 //
 //    inverseKinetics.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"inverseKinetics",vector<string>(2,"")),"",4));
@@ -118,48 +96,6 @@ namespace MBSimGUI {
     Group::initializeUsingXML(element);
     environments = E(element)->getFirstElementChildNamed(MBSIM%"environments");
     return element;
-
-//    DOMElement *e;
-//
-//    // search first Environment element
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild();
-//    Environment *env;
-//    while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
-//      env->initializeUsingXML(e);
-//      environment.initializeUsingXML(e);
-//      e=e->getNextElementSibling();
-//    }
-//
-//    solverParameters.initializeUsingXML(element);
-//
-//    inverseKinetics.initializeUsingXML(element);
-//
-//    initialProjection.initializeUsingXML(element);
-//
-//    useConstraintSolverForPlot.initializeUsingXML(element);
-//
-//    return element;
-  }
-
-  DOMElement* DynamicSystemSolver::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-    DOMElement *ele0 = Group::writeXMLFile(parent);
-
-    DOMElement *ele1 = D(doc)->createElement( MBSIM%"environments" );
-    DOMElement *ele2 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
-    environment.writeXMLFile(ele2);
-    ele1->insertBefore( ele2, NULL );
-    ele0->insertBefore( ele1, NULL );
-
-    solverParameters.writeXMLFile(ele0);
-
-    inverseKinetics.writeXMLFile(ele0);
-
-    initialProjection.writeXMLFile(ele0);
-
-    useConstraintSolverForPlot.writeXMLFile(ele0);
-
-    return ele0;
   }
 
   DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename, Element *parent) {

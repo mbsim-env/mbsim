@@ -21,20 +21,14 @@
 #define _OBJECT__H_
 
 #include "element.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 
   class Object : public Element {
-    friend class ObjectPropertyDialog;
     public:
-    Object(const std::string &str, Element *parent);
-    virtual int getqSize() {return 0;}
-    virtual int getuSize() {return 0;}
-    static Object* readXMLFile(const std::string &filename, Element *parent);
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
+      Object(const std::string &str, Element *parent);
+      static Object* readXMLFile(const std::string &filename, Element *parent);
+      ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
   };
 
 }

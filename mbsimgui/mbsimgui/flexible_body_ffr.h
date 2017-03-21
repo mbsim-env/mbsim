@@ -38,7 +38,6 @@ namespace MBSimGUI {
       int getuRelSize() const;
       int getqElSize() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void initialize();
       ElementPropertyDialog* createPropertyDialog() {return new FlexibleBodyFFRPropertyDialog(this);}
       QMenu* createContextMenu() {return new FlexibleBodyFFRContextMenu(this);}

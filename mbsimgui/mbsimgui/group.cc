@@ -19,20 +19,14 @@
 
 #include <config.h>
 #include "group.h"
-#include <QtGui/QMenu>
-#include <QtGui/QInputDialog>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
-#include <QVBoxLayout>
-#include "objectfactory.h"
 #include "frame.h"
 #include "contour.h"
 #include "object.h"
 #include "link.h"
 #include "constraint.h"
 #include "observer.h"
+#include "objectfactory.h"
 #include "mainwindow.h"
-#include "basic_properties.h"
 #include "utils.h"
 #include "embed.h"
 #include "mbxmlutilshelper/dom.h"
@@ -46,21 +40,21 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Group::Group(const string &str, Element *parent) : Element(str,parent), position(0,false), orientation(0,false), frameOfReference(0,false), constraints(NULL), observers(NULL) {
+  Group::Group(const string &str, Element *parent) : Element(str,parent), constraints(NULL), observers(NULL) {
 
     InternalFrame *I = new InternalFrame("I",this,MBSIM%"enableOpenMBVFrameI","plotFeatureFrameI");
     addFrame(I);
 
-    if(parent) {
-      position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"position"),"",4));
-
-      orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIM%"orientation"),"",4));
-
-      frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
-    }
+//    if(parent) {
+//      position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"position"),"",4));
+//
+//      orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIM%"orientation"),"",4));
+//
+//      frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
+//    }
   }
 
-  Group::Group(const Group &g) : Element(g), position(g.position), orientation(g.orientation), frameOfReference(g.frameOfReference) {
+  Group::Group(const Group &g) : Element(g) {
     for(unsigned int i=0; i<g.frame.size(); i++)
       frame.push_back(static_cast<Frame*>(g.frame[i]->clone()));;
     for(unsigned int i=0; i<g.contour.size(); i++)
@@ -122,9 +116,6 @@ namespace MBSimGUI {
     constraint.clear();
     observer.clear();
     removedElement.clear();
-    position=g.position; 
-    orientation=g.orientation; 
-    frameOfReference=g.frameOfReference;
     for(unsigned int i=0; i<g.frame.size(); i++)
       frame.push_back(static_cast<Frame*>(g.frame[i]->clone()));;
     for(unsigned int i=0; i<g.contour.size(); i++)
@@ -165,48 +156,6 @@ namespace MBSimGUI {
 
     for(size_t i=0; i<observer.size(); i++)
       observer[i]->initialize();
-
-    if(frameOfReference.getProperty())
-      frameOfReference.initialize();
-  }
-
-  int Group::getqSize() {
-    int qSize = 0;
-    //  if(getContainerGroup()) {
-    //    for(int i=0; i<getContainerGroup()->childCount(); i++)
-    //      qSize += getGroup(i)->getqSize();
-    //  }
-    //  if(getContainerObject()) {
-    //    for(int i=0; i<getContainerObject()->childCount(); i++)
-    //      qSize += getObject(i)->getqSize();
-    //  }
-    return qSize;
-  }
-
-  int Group::getuSize() {
-    int uSize = 0;
-    //  if(getContainerGroup()) {
-    //    for(int i=0; i<getContainerGroup()->childCount(); i++)
-    //      uSize += getGroup(i)->getuSize();
-    //  }
-    //  if(getContainerObject()) {
-    //    for(int i=0; i<getContainerObject()->childCount(); i++)
-    //      uSize += getObject(i)->getuSize();
-    //  }
-    return uSize;
-  }
-
-  int Group::getxSize() {
-    int xSize = 0;
-    //  if(getContainerGroup()) {
-    //    for(int i=0; i<getContainerGroup()->childCount(); i++)
-    //      xSize += getGroup(i)->getxSize();
-    //  }
-    //  if(getContainerLink()) {
-    //    for(int i=0; i<getContainerLink()->childCount(); i++)
-    //      xSize += getLink(i)->getxSize();
-    //  }
-    return xSize;
   }
 
   void Group::addFrame(Frame* frame_) {
@@ -491,79 +440,7 @@ namespace MBSimGUI {
       }
     }
 
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
-//    if(e)
-//      getFrame(0)->initializeUsingXML2(e);
-//    else
-//      getFrame(0)->setOpenMBVFrame(false);
-//
-//    getFrame(0)->initializeUsingXML3(element);
-
     return element;
-  }
-
-  DOMElement* Group::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Element::writeXMLFile(parent);
-
-    DOMElement *ele1;
-
-    if(position.getProperty()) {
-      frameOfReference.writeXMLFile(ele0);
-      position.writeXMLFile(ele0);
-      orientation.writeXMLFile(ele0);
-    }
-
-    DOMDocument *doc=ele0->getOwnerDocument();
-    //  DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-    ele1 = D(doc)->createElement( MBSIM%"frames" );
-    for(size_t i=1; i<frame.size(); i++)
-      Embed<Frame>::writeXML(frame[i],ele1);
-    ele0->insertBefore( ele1, NULL );
-
-    ele1 = D(doc)->createElement( MBSIM%"contours" );
-    for(size_t i=0; i<contour.size(); i++)
-      Embed<Contour>::writeXML(contour[i],ele1);
-    ele0->insertBefore( ele1, NULL );
-
-    ele1 = D(doc)->createElement( MBSIM%"groups" );
-    for(size_t i=0; i<group.size(); i++)
-      Embed<Group>::writeXML(group[i],ele1);
-    ele0->insertBefore( ele1, NULL );
-
-    ele1 = D(doc)->createElement( MBSIM%"objects" );
-    for(size_t i=0; i<object.size(); i++)
-      Embed<Object>::writeXML(object[i],ele1);
-    ele0->insertBefore( ele1, NULL );
-
-    ele1 = D(doc)->createElement( MBSIM%"links" );
-    for(size_t i=0; i<link.size(); i++)
-      Embed<Link>::writeXML(link[i],ele1);
-    ele0->insertBefore( ele1, NULL );
-
-    if(constraint.size()) {
-      ele1 = D(doc)->createElement( MBSIM%"constraints" );
-      for(size_t i=0; i<constraint.size(); i++)
-        Embed<Constraint>::writeXML(constraint[i],ele1);
-      ele0->insertBefore( ele1, NULL );
-    }
-
-    if(observer.size()) { 
-      ele1 = D(doc)->createElement( MBSIM%"observers" );
-      for(size_t i=0; i<observer.size(); i++)
-        Embed<Observer>::writeXML(observer[i],ele1);
-      ele0->insertBefore( ele1, NULL );
-    }
-
-    Frame *I = getFrame(0);
-    if(I->openMBVFrame()) {
-      ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameI" );
-      I->writeXMLFile2(ele1);
-      ele0->insertBefore(ele1, NULL);
-    }
-
-    I->writeXMLFile3(ele0);
-
-    return ele0;
   }
 
   Frame* Group::getFrame(const string &name) const {

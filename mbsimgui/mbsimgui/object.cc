@@ -43,18 +43,7 @@ namespace MBSimGUI {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
     Object *object=Embed<Object>::createAndInit(e,parent);
-    if(object)
-      object->initialize();
     return object;
-  }
-
-  DOMElement* Object::initializeUsingXML(DOMElement *element) {
-    return Element::initializeUsingXML(element);
-  }
-
-  DOMElement* Object::writeXMLFile(DOMNode *parent) {    
-    DOMElement *ele0 = Element::writeXMLFile(parent);
-    return ele0;
   }
 
 }

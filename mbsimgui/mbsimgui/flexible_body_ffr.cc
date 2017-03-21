@@ -39,7 +39,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   FlexibleBodyFFR::FlexibleBodyFFR(const string &str, Element *parent) : Body(str,parent), De(0,false), beta(0,false), Knl1(0,false), Knl2(0,false), ksigma0(0,false), ksigma1(0,false), K0t(0,false), K0r(0,false), K0om(0,false), r(0,false), A(0,false), Phi(0,false), sigmahel(0,false), sigmahen(0,false), sigma0(0,false), K0F(0,false), K0M(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true) {
-    Frame *K = new Frame("K",this,true,"plotFeatureFrameK");
+    InternalFrame *K = new InternalFrame("K",this,"plotFeatureFrameK");
     addFrame(K);
 
     mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMFLEX%"mass",vector<string>(2,"kg")),"",4));
@@ -206,76 +206,7 @@ namespace MBSimGUI {
 
     ombvEditor.initializeUsingXML(element);
 
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");
-    if(e)
-      getFrame(0)->initializeUsingXML2(e);
-    else
-      getFrame(0)->setOpenMBVFrame(false);
-
-    getFrame(0)->initializeUsingXML3(element);
-
     return element;
-  }
-
-  DOMElement* FlexibleBodyFFR::writeXMLFile(DOMNode *parent) {
-
-    DOMElement *ele0 = Body::writeXMLFile(parent);
-    DOMElement *ele1;
-
-    mass.writeXMLFile(ele0);
-    pdm.writeXMLFile(ele0);
-    ppdm.writeXMLFile(ele0);
-    Pdm.writeXMLFile(ele0);
-    rPdm.writeXMLFile(ele0);
-    PPdm.writeXMLFile(ele0);
-    Ke.writeXMLFile(ele0);
-    De.writeXMLFile(ele0);
-    beta.writeXMLFile(ele0);
-    Knl1.writeXMLFile(ele0);
-    Knl2.writeXMLFile(ele0);
-    ksigma0.writeXMLFile(ele0);
-    ksigma1.writeXMLFile(ele0);
-    K0t.writeXMLFile(ele0);
-    K0r.writeXMLFile(ele0);
-    K0om.writeXMLFile(ele0);
-    r.writeXMLFile(ele0);
-    A.writeXMLFile(ele0);
-    Phi.writeXMLFile(ele0);
-    Psi.writeXMLFile(ele0);
-    sigmahel.writeXMLFile(ele0);
-    sigmahen.writeXMLFile(ele0);
-    sigma0.writeXMLFile(ele0);
-    K0F.writeXMLFile(ele0);
-    K0M.writeXMLFile(ele0);
-
-    translation.writeXMLFile(ele0);
-    rotation.writeXMLFile(ele0);
-    translationDependentRotation.writeXMLFile(ele0);
-    coordinateTransformationForRotation.writeXMLFile(ele0);
-
-    DOMDocument *doc=ele0->getOwnerDocument();
-    ele1 = D(doc)->createElement( MBSIMFLEX%"frames" );
-    for(size_t i=1; i<frame.size(); i++)
-      Embed<Frame>::writeXML(frame[i],ele1);
-    ele0->insertBefore( ele1, NULL );
-
-    ele1 = D(doc)->createElement( MBSIMFLEX%"contours" );
-    for(size_t i=0; i<contour.size(); i++)
-      Embed<Contour>::writeXML(contour[i],ele1);
-    ele0->insertBefore( ele1, NULL );
-
-    ombvEditor.writeXMLFile(ele0);
-
-    Frame *K = getFrame(0);
-    if(K->openMBVFrame()) {
-      ele1 = D(doc)->createElement( MBSIMFLEX%"enableOpenMBVFrameK" );
-      K->writeXMLFile2(ele1);
-      ele0->insertBefore(ele1, NULL);
-    }
-
-    K->writeXMLFile3(ele0);
-
-    return ele0;
   }
 
 }

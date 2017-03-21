@@ -25,40 +25,25 @@
 namespace MBSimGUI {
 
   class Body : public Object {
-    friend class BodyPropertyDialog;
     public:
-    Body(const std::string &str, Element *parent);
-    Body(const Body &b);
-    ~Body();
-    Body& operator=(const Body &b);
-
-    virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name) const;
-
-    int getNumberOfFrames() {return frame.size();}
-    int getNumberOfContours() {return contour.size();}
-
-    Frame* getFrame(int i) const {return frame[i];}
-    Contour* getContour(int i) const {return contour[i];}
-
-    Frame* getFrame(const std::string &name) const;
-    Contour* getContour(const std::string &name) const;
-
-    void addFrame(Frame *frame);
-    void addContour(Contour *contour);
-    void removeElement(Element* element);
-
-    void initialize();
-
-    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-
-    ElementPropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
+      Body(const std::string &str, Element *parent);
+      Body(const Body &b);
+      ~Body();
+      Body& operator=(const Body &b);
+      virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name) const;
+      int getNumberOfFrames() {return frame.size();}
+      int getNumberOfContours() {return contour.size();}
+      Frame* getFrame(int i) const {return frame[i];}
+      Contour* getContour(int i) const {return contour[i];}
+      Frame* getFrame(const std::string &name) const;
+      Contour* getContour(const std::string &name) const;
+      void addFrame(Frame *frame);
+      void addContour(Contour *contour);
+      void removeElement(Element* element);
     protected:
-    std::vector<Frame*> frame;
-    std::vector<Contour*> contour;
-    std::vector<Element*> removedElement;
-    ExtProperty q0, u0, R;
-
+      std::vector<Frame*> frame;
+      std::vector<Contour*> contour;
+      std::vector<Element*> removedElement;
   };
 
 }

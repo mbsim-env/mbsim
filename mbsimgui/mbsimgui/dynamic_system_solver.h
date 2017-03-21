@@ -21,42 +21,37 @@
 #define _DYNAMIC_SYSTEM_SOLVER__H_
 
 #include "group.h"
-#include "extended_properties.h"
 #include <string>
 
 namespace MBSimGUI {
 
   class Environment : public QObject {
     public:
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       static Environment *getInstance() { return instance?instance:(instance=new Environment); }
 
     protected:
-      Environment();
-      virtual ~Environment();
+      Environment() { }
+      virtual ~Environment() { }
       static Environment *instance;
   };
 
   class DynamicSystemSolver : public Group {
-    friend class DynamicSystemSolverPropertyDialog;
     protected:
-    ExtProperty environment, solverParameters, inverseKinetics, initialProjection, useConstraintSolverForPlot;
-    xercesc::DOMElement *environments;
+      xercesc::DOMElement *environments;
     public:
-    DynamicSystemSolver(const std::string &str, Element *parent);
-    virtual PropertyInterface* clone() const {return new DynamicSystemSolver(*this);}
-    std::string getType() const { return "DynamicSystemSolver"; }
-    xercesc::DOMElement* getXMLEnvironments() { return environments; }
-    void removeXMLElements();
-    xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    std::string getFileExtension() const { return ".mbsim.xml"; }
+      DynamicSystemSolver(const std::string &str, Element *parent);
+      virtual PropertyInterface* clone() const {return new DynamicSystemSolver(*this);}
+      std::string getType() const { return "DynamicSystemSolver"; }
+      xercesc::DOMElement* getXMLEnvironments() { return environments; }
+      void removeXMLElements();
+      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      std::string getFileExtension() const { return ".mbsim.xml"; }
 
-    static DynamicSystemSolver* readXMLFile(const std::string &filename, Element *parent=0);
+      static DynamicSystemSolver* readXMLFile(const std::string &filename, Element *parent=0);
 
-    ElementPropertyDialog* createPropertyDialog() {return new DynamicSystemSolverPropertyDialog(this);}
-    QMenu* createContextMenu() {return new DynamicSystemSolverContextMenu(this);}
+      ElementPropertyDialog* createPropertyDialog() {return new DynamicSystemSolverPropertyDialog(this);}
+      QMenu* createContextMenu() {return new DynamicSystemSolverContextMenu(this);}
   };
 
 }

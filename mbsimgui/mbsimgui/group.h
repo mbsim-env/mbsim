@@ -21,7 +21,6 @@
 #define _GROUP__H_
 
 #include "element.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 
@@ -32,9 +31,7 @@ namespace MBSimGUI {
   class Observer;
 
   class Group : public Element {
-    friend class GroupPropertyDialog;
     protected:
-    ExtProperty position, orientation, frameOfReference; 
     std::vector<Frame*> frame;
     std::vector<Contour*> contour;
     std::vector<Group*> group;
@@ -52,9 +49,6 @@ namespace MBSimGUI {
     Group& operator=(const Group &g);
     virtual PropertyInterface* clone() const {return new Group(*this);}
     std::string getType() const { return "Group"; }
-    int getqSize();
-    int getuSize();
-    int getxSize();
     static Group* readXMLFile(const std::string &filename, Element *parent);
     void createXMLConstraints();
     void createXMLObservers();
@@ -68,7 +62,6 @@ namespace MBSimGUI {
     xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
     xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
     xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual Element *getChildByContainerAndName(const std::string &container, const std::string &name) const;
     void setActionPasteDisabled(bool flag);
     void initialize();

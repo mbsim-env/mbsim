@@ -95,7 +95,7 @@ namespace MBSimGUI {
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
     addTab("Plot");
-    plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget(QString::fromStdString(static_cast<PlotFeatureStatusProperty*>(element->plotFeature.getProperty())->getTypes())));
+    plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget(QString::fromStdString(element->getPlotFeatureType())));
     addToTab("Plot", plotFeature);
     for(unsigned int i=0; i<element->getPlotFeatures().size(); i++)
       static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->addFeature(QString::fromStdString(element->getPlotFeatures()[i]));
@@ -220,12 +220,12 @@ namespace MBSimGUI {
 
   void NodeFramePropertyDialog::toWidget(Element *element) {
     FramePropertyDialog::toWidget(element);
-    static_cast<NodeFrame*>(element)->nodeNumber.toWidget(nodeNumber);
+//    static_cast<NodeFrame*>(element)->nodeNumber.toWidget(nodeNumber);
   }
 
   void NodeFramePropertyDialog::fromWidget(Element *element) {
     FramePropertyDialog::fromWidget(element);
-    static_cast<NodeFrame*>(element)->nodeNumber.fromWidget(nodeNumber);
+//    static_cast<NodeFrame*>(element)->nodeNumber.fromWidget(nodeNumber);
   }
 
   ContourPropertyDialog::ContourPropertyDialog(Contour *contour, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(contour,parent,f) {
@@ -1110,9 +1110,9 @@ namespace MBSimGUI {
   }
 
   void GeneralizedPositionConstraintPropertyDialog::resizeVariables() {
-    RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
-    int size = refBody?refBody->getqRelSize():0;
-    constraintFunction->resize_(size,1);
+//    RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
+//    int size = refBody?refBody->getqRelSize():0;
+//    constraintFunction->resize_(size,1);
   }
 
   void GeneralizedPositionConstraintPropertyDialog::toWidget(Element *element) {
@@ -1180,12 +1180,12 @@ namespace MBSimGUI {
   }
 
   void GeneralizedAccelerationConstraintPropertyDialog::resizeVariables() {
-    RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
-    int size = refBody?(refBody->getqRelSize()+refBody->getuRelSize()):0;
-    static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->resize_(size,1);
-    if(x0_ && x0_->size() != size)
-      x0_->resize_(size);
-    static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
+//    RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
+//    int size = refBody?(refBody->getqRelSize()+refBody->getuRelSize()):0;
+//    static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->resize_(size,1);
+//    if(x0_ && x0_->size() != size)
+//      x0_->resize_(size);
+//    static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
   }
 
   void GeneralizedAccelerationConstraintPropertyDialog::toWidget(Element *element) {
@@ -1247,21 +1247,21 @@ namespace MBSimGUI {
   }
 
   void JointConstraintPropertyDialog::resizeVariables() {
-    int size = 0;
-    ListWidget *list = static_cast<ListWidget*>(dependentBodiesFirstSide->getWidget());
-    for(int i=0; i<list->getSize(); i++) {
-      RigidBody *body = static_cast<RigidBodyOfReferenceWidget*>(list->getWidget(i))->getSelectedBody();
-      if(body)
-        size += body->getqRelSize();
-    }
-    list = static_cast<ListWidget*>(dependentBodiesSecondSide->getWidget());
-    for(int i=0; i<list->getSize(); i++) {
-      RigidBody *body = static_cast<RigidBodyOfReferenceWidget*>(list->getWidget(i))->getSelectedBody();
-      if(body)
-        size += body->getqRelSize();
-    }
-    if(q0_->size() != size)
-      q0_->resize_(size);
+//    int size = 0;
+//    ListWidget *list = static_cast<ListWidget*>(dependentBodiesFirstSide->getWidget());
+//    for(int i=0; i<list->getSize(); i++) {
+//      RigidBody *body = static_cast<RigidBodyOfReferenceWidget*>(list->getWidget(i))->getSelectedBody();
+//      if(body)
+//        size += body->getqRelSize();
+//    }
+//    list = static_cast<ListWidget*>(dependentBodiesSecondSide->getWidget());
+//    for(int i=0; i<list->getSize(); i++) {
+//      RigidBody *body = static_cast<RigidBodyOfReferenceWidget*>(list->getWidget(i))->getSelectedBody();
+//      if(body)
+//        size += body->getqRelSize();
+//    }
+//    if(q0_->size() != size)
+//      q0_->resize_(size);
   }
 
   void JointConstraintPropertyDialog::toWidget(Element *element) {
@@ -1620,11 +1620,11 @@ namespace MBSimGUI {
   }
 
   void GeneralizedElasticConnectionPropertyDialog::resizeVariables() {
-    RigidBodyOfReferenceWidget* widget = static_cast<ConnectRigidBodiesWidget*>(static_cast<ChoiceWidget2*>(connections->getWidget())->getWidget())->getWidget(0);
-    if(not widget->getBody().isEmpty()) {
-      int size = element->getByPath<RigidBody>(widget->getBody().toStdString())->getuRelSize();
-      function->resize_(size,size);
-    }
+//    RigidBodyOfReferenceWidget* widget = static_cast<ConnectRigidBodiesWidget*>(static_cast<ChoiceWidget2*>(connections->getWidget())->getWidget())->getWidget(0);
+//    if(not widget->getBody().isEmpty()) {
+//      int size = element->getByPath<RigidBody>(widget->getBody().toStdString())->getuRelSize();
+//      function->resize_(size,size);
+//    }
   }
 
   void GeneralizedElasticConnectionPropertyDialog::toWidget(Element *element) {

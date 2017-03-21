@@ -639,41 +639,6 @@ namespace MBSimGUI {
     return false;
   }
 
-  DOMElement* MainWindow::writeProject(shared_ptr<xercesc::DOMDocument> &doc) {
-    string message;
-    try {
-      DOMElement *ele0=D(doc)->createElement(MBSIMXML%"MBSimProject");
-      doc->insertBefore(ele0, NULL);
-      E(ele0)->setAttribute("name", "Project");
-
-      evalSelect.writeXMLFile(ele0);
-
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      QModelIndex index = model->index(0,0);
-      DynamicSystemSolver *dss = static_cast<DynamicSystemSolver*>(model->getItem(index)->getItemData());
-
-      Embed<DynamicSystemSolver>::writeXML(dss,ele0);
-      Solver *solver = solverView->getSolver();
-      if(not(absolutePath) and solver->isEmbedded())
-        solver->writeXMLFileEmbed(ele0);
-      else
-        solver->writeXMLFile(ele0);
-
-      return ele0;
-    }
-    catch(const std::exception &ex) {
-      message = ex.what();
-    }
-    catch(const DOMException &ex) {
-      message = "DOM exception: " + X()%ex.getMessage();
-    }
-    catch(...) {
-      message = "Unknown exception.";
-    }
-    cout << message << endl;
-    return 0;
-  }
-
   bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
     if(modifyStatus) setProjectChanged(false);
     string message;
@@ -1076,11 +1041,12 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveElementAs() {
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
-    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".xml", "XML files (*.xml)");
-    if(file!="")
-      static_cast<Element*>(model->getItem(index)->getItemData())->writeXMLFileEmbed(file.toStdString());
+    throw;
+//    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+//    QModelIndex index = elementList->selectionModel()->currentIndex();
+//    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".xml", "XML files (*.xml)");
+//    if(file!="")
+//      static_cast<Element*>(model->getItem(index)->getItemData())->writeXMLFileEmbed(file.toStdString());
   }
 
   void MainWindow::addFrame(Frame *frame) {

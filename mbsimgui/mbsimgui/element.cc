@@ -44,10 +44,7 @@ namespace MBSimGUI {
 
   int Element::IDcounter=0;
 
-  Element::Element(const string &name__, Element *parent_, const string &plotFeatureTypes) : parent(parent_), embed(0,false), parameters(this), element(NULL), name_(name__), config(false) {
-    name.setProperty(new TextProperty(name_,""));
-    embed.setProperty(new EmbedProperty(name_));
-    plotFeature.setProperty(new PlotFeatureStatusProperty(plotFeatureTypes));
+  Element::Element(const string &name__, Element *parent_) : parent(parent_), parameters(this), element(NULL), name_(name__), config(false) {
     ID=toStr(IDcounter++);
     addPlotFeature("plotRecursive");
     addPlotFeature("separateFilePerGroup");
@@ -57,26 +54,6 @@ namespace MBSimGUI {
 
   string Element::getPath() {
     return parent?(parent->getPath()+"."+getName()):getName();
-  }
-
-  void Element::writeXMLFile(const string &name) {
-    shared_ptr<DOMDocument> doc=mw->parser->createDocument();
-    writeXMLFile(doc.get());
-    QFileInfo info(QString::fromStdString(name));
-    QDir dir;
-    if(!dir.exists(info.absolutePath()))
-      dir.mkpath(info.absolutePath());
-    DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
-  }
-
-  void Element::writeXMLFileEmbed(const string &name) {
-    shared_ptr<DOMDocument> doc=mw->parser->createDocument();
-    Embed<Element>::writeXML(this,doc.get());
-    QFileInfo info(QString::fromStdString(name));
-    QDir dir;
-    if(!dir.exists(info.absolutePath()))
-      dir.mkpath(info.absolutePath());
-    DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
   }
 
   void Element::removeXMLElements() {
@@ -105,45 +82,6 @@ namespace MBSimGUI {
       setValue("counterName="+getCounterName()+"; count="+E(parent)->getAttribute("count"));
     }
     return element;
-  }
-
-  DOMElement* Element::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-    DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType());
-    E(ele0)->setAttribute("name", getName());
-    plotFeature.writeXMLFile(ele0);
-    parent->insertBefore(ele0, NULL);
-    return ele0;
-  }
-
-  void Element::initializeUsingXMLEmbed(DOMElement *element) {
-    embed.initializeUsingXML(element);
-    embed.setActive(true);
-  }
-
-  DOMElement* Element::writeXMLFileEmbed(DOMNode *parent) {
-    parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-    DOMElement *ele = embed.writeXMLFile(parent);
-
-    if(not(absolutePath) and static_cast<const EmbedProperty*>(embed.getProperty())->hasParameterFile()) {
-      string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getParameterFile();
-      string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
-      string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;
-      parameters.writeXMLFile(name);
-    }
-    else
-      parameters.writeXMLFile(ele);
-
-    if(not(absolutePath) and static_cast<const EmbedProperty*>(embed.getProperty())->hasFile()) {
-      string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getFile();
-      string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
-      string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;
-      writeXMLFile(name);
-    }
-    else 
-      writeXMLFile(ele);
-
-    return ele;
   }
 
   string Element::getXMLPath(Element *ref, bool rel) {

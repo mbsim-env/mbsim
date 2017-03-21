@@ -21,8 +21,6 @@
 #define _ELEMENT__H_
 
 #include "treeitemdata.h"
-#include "basic_properties.h"
-#include "extended_properties.h"
 #include "element_property_dialog.h"
 #include "embedding_property_dialog.h"
 #include "element_context_menu.h"
@@ -30,16 +28,13 @@
 
 namespace MBSimGUI {
 
-  class Element;
   class Frame;
   class Contour;
   class Group;
   class Object;
-  class ExtraDynamic;
   class Link;
   class Constraint;
   class Observer;
-  class TextWidget;
 
   namespace XERCES_CPP_NAMESPACE {
     class DOMElement;
@@ -47,20 +42,17 @@ namespace MBSimGUI {
   }
 
   class Element : public TreeItemData, public PropertyInterface {
-    friend class ElementPropertyDialog;
-    friend class EmbeddingPropertyDialog;
     protected:
       Element *parent;
       static int IDcounter;
       std::string ID;
-      ExtProperty name, embed, plotFeature;
       Parameters parameters;
       std::vector<std::string> plotFeatures;
       xercesc::DOMElement *element;
       std::string name_, counterName, value;
       bool config;
     public:
-      Element(const std::string &name, Element *parent, const std::string &plotFeatureTypes="");
+      Element(const std::string &name, Element *parent);
       virtual ~Element() { parameters.removeParameters(); }
       virtual PropertyInterface* clone() const {return 0;}
       virtual std::string getPath();
@@ -75,14 +67,6 @@ namespace MBSimGUI {
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      virtual void initializeUsingXMLEmbed(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFileEmbed(xercesc::DOMNode *element);
-      virtual void writeXMLFile(const std::string &name);
-      virtual void writeXMLFile() { writeXMLFile(getName()); }
-      virtual void writeXMLFileEmbed(const std::string &name);
-      virtual void initialize() {}
-      virtual void deinitialize() {}
       const std::string& getName() const { return name_; }
       void setName(const std::string &str);
       std::string getType() const { return "Element"; }
@@ -130,15 +114,15 @@ namespace MBSimGUI {
       virtual QMenu* createEmbeddingContextMenu() {return new EmbeddingContextMenu(this);}
       virtual QMenu* createFrameContextMenu() {return NULL;}
       Element* getRoot() {return parent?parent->getRoot():this;}
-      bool isEmbedded() const {return embed.isActive();}
       int getNumberOfParameters() const { return parameters.getNumberOfParameters(); }
-      void addParameter(Parameter *param) { parameters.addParameter(param); embed.setActive(true); }
+      void addParameter(Parameter *param) { parameters.addParameter(param); }
       void removeParameter(Parameter *param) { parameters.removeParameter(param); }
       Parameter *getParameter(int i) { return parameters.getParameter(i); }
       void setParameters(const Parameters &param) { parameters = param; }
       const Parameters& getParameters() const { return parameters; }
       void addPlotFeature(const std::string &pf);
       const std::vector<std::string>& getPlotFeatures() const { return plotFeatures; }
+      virtual std::string getPlotFeatureType() const { return ""; }
       bool getConfig() { return config; }
       void setConfig(bool config_) { config = config_; }
   };
