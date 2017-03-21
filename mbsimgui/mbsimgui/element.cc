@@ -52,10 +52,8 @@ namespace MBSimGUI {
   }
 
   Element::~Element() {
-    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++) {
-      parameter.erase(it);
+    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++)
       delete (*it);
-    }
   }
 
   string Element::getPath() {
