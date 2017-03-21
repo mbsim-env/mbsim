@@ -129,7 +129,7 @@ namespace MBSimGUI {
   Group* MBSimObjectFactory::createGroup(DOMElement *element, Element *parent) {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"DynamicSystemSolver")
-      return new DynamicSystemSolver(E(element)->getAttribute("name"),parent);
+      return new DynamicSystemSolver(E(element)->getAttribute("name"));
     else if(E(element)->getTagName()==MBSIM%"Group")
       return new Group(E(element)->getAttribute("name"),parent);
     return 0;
@@ -144,7 +144,7 @@ namespace MBSimGUI {
   Object* MBSimObjectFactory::createObject(DOMElement *element, Element *parent) {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"RigidBody")
-      return new RigidBody(E(element)->getAttribute("name"),parent);
+      return new RigidBody("",parent);
     if(E(element)->getTagName()==MBSIMFLEX%"FlexibleBodyFFR")
       return new FlexibleBodyFFR(E(element)->getAttribute("name"),parent);
     return 0;

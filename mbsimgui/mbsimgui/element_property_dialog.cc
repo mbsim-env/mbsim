@@ -110,6 +110,7 @@ namespace MBSimGUI {
   DOMElement* ElementPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     element->removeXMLElements();
     element->setName(static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    E(element->getXMLElement())->setAttribute("name",element->getName());
     plotFeature->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }

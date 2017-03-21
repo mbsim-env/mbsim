@@ -44,7 +44,7 @@ namespace MBSimGUI {
 
   int Element::IDcounter=0;
 
-  Element::Element(const string &name__, Element *parent_) : parent(parent_), parameters(this), element(NULL), name_(name__), config(false) {
+  Element::Element(const string &name_, Element *parent_) : parent(parent_), parameters(this), element(NULL), name(name_), config(false) {
     ID=toStr(IDcounter++);
     addPlotFeature("plotRecursive");
     addPlotFeature("separateFilePerGroup");
@@ -68,7 +68,6 @@ namespace MBSimGUI {
   DOMElement* Element::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(getNameSpace()%getType());
-    E(element)->setAttribute("name", getName());
     parent->insertBefore(element, NULL);
     return element;
   }
@@ -76,6 +75,7 @@ namespace MBSimGUI {
   DOMElement* Element::initializeUsingXML(DOMElement *element) {
     this->element = element;
     config = true;
+    setName(E(element)->getAttribute("name"));
     DOMElement *parent = static_cast<DOMElement*>(element->getParentNode());
     if(E(parent)->getTagName()==PV%"Embed") {
       setCounterName(E(parent)->getAttribute("counterName"));
@@ -195,9 +195,9 @@ namespace MBSimGUI {
       getParent()->addPlotFeature(pf);
   }
 
-  void Element::setName(const string &str) {
-    name_ = str;
-    E(element)->setAttribute("name", str);
-  }
+//  void Element::setName(const string &str) {
+//    name_ = str;
+//    E(element)->setAttribute("name", str);
+//  }
 
 }

@@ -521,7 +521,7 @@ namespace MBSimGUI {
       if(model->rowCount(index))
         delete model->getItem(index)->getItemData();
       model->removeRow(index.row(), index.parent());
-      DynamicSystemSolver *dss = new DynamicSystemSolver("MBS",0);
+      DynamicSystemSolver *dss = new DynamicSystemSolver("MBS");
       model->createGroupItem(dss,QModelIndex());
 
       doc=MainWindow::parser->createDocument();

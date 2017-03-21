@@ -49,7 +49,7 @@ namespace MBSimGUI {
       Parameters parameters;
       std::vector<std::string> plotFeatures;
       xercesc::DOMElement *element;
-      std::string name_, counterName, value;
+      std::string name, counterName, value;
       bool config;
     public:
       Element(const std::string &name, Element *parent);
@@ -67,8 +67,8 @@ namespace MBSimGUI {
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      const std::string& getName() const { return name_; }
-      void setName(const std::string &str);
+      const std::string& getName() const { return name; }
+      void setName(const std::string &str) { name = str; }
       std::string getType() const { return "Element"; }
       std::string getValue() const { return value; }
       void setValue(const std::string &str) { value = str; }
