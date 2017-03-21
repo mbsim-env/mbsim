@@ -21,7 +21,7 @@
 #define _EMBED__H_
 
 #include <mbxmlutilshelper/dom.h>
-#include <parameter.h>
+#include "parameter.h"
 #include <QFileInfo>
 #include <QDir>
 
@@ -37,18 +37,18 @@ namespace MBSimGUI {
 
         static T* createAndInit(xercesc::DOMElement *ele1) {
           T *object;
-          Parameters param;
+          std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
             xercesc::DOMElement *ele2 = 0;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"))));
-              param = Parameters::readXMLFile(fileInfo.canonicalFilePath().toStdString());
+              param = Parameter::readXMLFile(fileInfo.canonicalFilePath().toStdString());
               ele2=ele1->getFirstElementChild();
             }
             else {
               ele2=MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
               if(ele2) {
-                param.initializeUsingXML(ele2);
+                param = Parameter::initializeParametersUsingXML(ele2);
                 ele2=ele2->getNextElementSibling();
               }
               else 
@@ -63,8 +63,8 @@ namespace MBSimGUI {
             if(object) {
               if(ele2)
                 object->initializeUsingXML(ele2);
-              for(size_t i=0; i<param.getNumberOfParameters(); i++)
-              object->addParameter(param.getParameter(i));
+              for(size_t i=0; i<param.size(); i++)
+              object->addParameter(param[i]);
             }
           }
           else {

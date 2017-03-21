@@ -83,6 +83,25 @@ namespace MBSimGUI {
     return element;
   }
 
+  vector<Parameter*> Parameter::initializeParametersUsingXML(DOMElement *element) {
+    vector<Parameter*> param;
+    DOMElement *e=element->getFirstElementChild();
+    while(e) {
+      Parameter *parameter=ObjectFactory::getInstance()->createParameter(e);
+      parameter->initializeUsingXML(e);
+      param.push_back(parameter);
+      e=e->getNextElementSibling();
+    }
+    return param;
+  }
+
+  vector<Parameter*> Parameter::readXMLFile(const string &filename) {
+    MBSimObjectFactory::initialize();
+    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
+    DOMElement *e=doc->getDocumentElement();
+    return Parameter::initializeParametersUsingXML(e);
+  }
+
   StringParameter::StringParameter(const string &name) : Parameter(name) {
   }
 
@@ -96,71 +115,6 @@ namespace MBSimGUI {
   }
 
   ImportParameter::ImportParameter() : Parameter("import") {
-  }
-
-  void Parameters::addParameter(Parameter *param) {
-    parameter.push_back(param);
-    param->setParent(parent);
-  }
-
-  void Parameters::addParameters(const Parameters &list) {
-    for(int i=0; i<list.getNumberOfParameters(); i++) {
-      addParameter(list.getParameter(i));
-      list.getParameter(i)->setParent(parent);
-    }
-  }
-
-  void Parameters::removeParameter(Parameter *param) {  
-    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++) {
-      if(*it == param) {
-        parameter.erase(it);
-        delete param;
-        return;
-      }
-    }
-  }
-
-  void Parameters::removeParameters() {
-    for(size_t i=0; i<parameter.size(); i++)
-      delete parameter[i];
-  }
-
-  Parameters Parameters::readXMLFile(const string &filename) {
-    MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
-    DOMElement *e=doc->getDocumentElement();
-    Parameters param;
-    param.initializeUsingXML(e);
-    return param;
-  }
-
-  void Parameters::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=element->getFirstElementChild();
-    while(e) {
-      Parameter *parameter=ObjectFactory::getInstance()->createParameter(e);
-      parameter->initializeUsingXML(e);
-      addParameter(parameter);
-      e=e->getNextElementSibling();
-    }
-  }
-
-  DOMElement* Parameters::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-    DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
-//    parent->insertBefore(ele0, NULL);
-//    for(size_t i=0; i<parameter.size(); i++)
-//      parameter[i]->writeXMLFile(ele0);
-    return ele0;
-  }
-
-  void Parameters::writeXMLFile(const string &name) {
-    shared_ptr<DOMDocument> doc=mw->parser->createDocument();
-    writeXMLFile(doc.get());
-    QFileInfo info(QString::fromStdString(name));
-    QDir dir;
-    if(!dir.exists(info.absolutePath()))
-      dir.mkpath(info.absolutePath());
-    DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
   }
 
 }

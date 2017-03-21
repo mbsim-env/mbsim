@@ -25,7 +25,6 @@
 #include "embedding_property_dialog.h"
 #include "element_context_menu.h"
 #include "property.h"
-//#include "parameter.h"
 
 namespace MBSimGUI {
 

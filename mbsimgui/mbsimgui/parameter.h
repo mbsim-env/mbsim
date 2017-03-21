@@ -57,6 +57,8 @@ namespace MBSimGUI {
       void setParent(Element* parent_) { parent = parent_; }
       bool getConfig() { return config; }
       void setConfig(bool config_) { config = config_; }
+      static std::vector<Parameter*> initializeParametersUsingXML(xercesc::DOMElement *element);
+      static std::vector<Parameter*> readXMLFile(const std::string &filename);
     protected:
       Element *parent;
       std::string name, valuestr;
@@ -102,28 +104,6 @@ namespace MBSimGUI {
       virtual ~ImportParameter() {}
       virtual std::string getType() const { return "import"; }
       virtual ParameterPropertyDialog* createPropertyDialog() {return new ImportParameterPropertyDialog(this);}
-  };
-
-  class Parameters {
-    protected:
-      std::vector<Parameter*> parameter;
-    public:
-      Parameters() { }
-      void addParameter(Parameter *param);
-      void addParameters(const Parameters &list); 
-      void removeParameter(Parameter *param);
-      void removeParameters();
-      Parameter *getParameter(int i) const { return parameter[i]; }
-      const std::vector<Parameter*>& getParameters() const { return parameter; }
-      int getNumberOfParameters() const { return parameter.size(); }
-      Element* getParent() { return parent; }
-      void setParent(Element* parent_) { parent = parent_; }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      static Parameters readXMLFile(const std::string &filename);
-      virtual void writeXMLFile(const std::string &name);
-    private:
-      Element *parent;
   };
 
 }

@@ -216,9 +216,4 @@ namespace MBSimGUI {
       getParent()->addPlotFeature(pf);
   }
 
-//  void Element::setName(const string &str) {
-//    name_ = str;
-//    E(element)->setAttribute("name", str);
-//  }
-
 }
