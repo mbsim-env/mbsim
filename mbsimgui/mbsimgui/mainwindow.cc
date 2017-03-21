@@ -552,7 +552,7 @@ namespace MBSimGUI {
       std::string message;
       try { 
         xercesc::DOMImplementation *impl = xercesc::DOMImplementation::getImplementation();
-        xercesc::DOMLSParser *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0);
+        xercesc::DOMLSParser *parser = impl->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0);
 
         xercesc::DOMDocument *doc_ = parser->parseURI(X()%file.toStdString());
         doc = shared_ptr<DOMDocument>(doc_);
@@ -679,7 +679,7 @@ namespace MBSimGUI {
     string message;
     try {
       xercesc::DOMImplementation *impl = xercesc::DOMImplementation::getImplementation();
-      xercesc::DOMLSSerializer *serializer = ((xercesc::DOMImplementationLS*)impl)->createLSSerializer();
+      xercesc::DOMLSSerializer *serializer = impl->createLSSerializer();
       serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
       serializer->writeToURI(this->doc.get(), X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
       return true;
@@ -746,25 +746,26 @@ namespace MBSimGUI {
   // update model parameters including additional paramters from paramList
   void MainWindow::updateParameters(Element *element) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
+    DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
+    doc->insertBefore(ele0,NULL);
     vector<Element*> parents = element->getParents();
-    Parameters param(element);
-    for(size_t i=0; i<parents.size(); i++)
-      param.addParameters(parents[i]->getParameters());
-    param.addParameters(element->getParameters());
-    string counterName = element->getCounterName();
-    ScalarParameter *counter = NULL;
-    if(not(counterName.empty())) {
-      counter = new ScalarParameter(counterName,element,"1");
-      param.addParameter(counter);
+    for(size_t i=0; i<parents.size(); i++) {
+      for(size_t j=0; j<parents[i]->getNumberOfParameters(); j++) {
+        DOMNode *node = doc->importNode(parents[i]->getParameter(j)->getXMLElement(),true);
+        ele0->insertBefore(node,NULL);
+      }
     }
-    param.writeXMLFile(doc.get());
-    if(counter) delete counter;
-
-    DOMElement *root = doc->getDocumentElement();
-    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
-      DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
-          X()%"MBS.mbsimparam.xml");
-      root->insertBefore(filenamePI, root->getFirstChild());
+    for(size_t j=0; j<element->getNumberOfParameters(); j++) {
+      DOMNode *node = doc->importNode(element->getParameter(j)->getXMLElement(),true);
+      ele0->insertBefore(node,NULL);
+    }
+    string counterName = element->getCounterName();
+    if(not(counterName.empty())) {
+      DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
+      E(ele1)->setAttribute("name", counterName);
+      DOMText *text = doc->createTextNode(X()%"1");
+      ele1->insertBefore(text,NULL);
+      ele0->insertBefore(ele1,NULL);
     }
 
     string message;
