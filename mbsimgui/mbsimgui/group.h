@@ -43,13 +43,13 @@ namespace MBSimGUI {
     xercesc::DOMElement *frames, *contours, *groups, *objects, *links, *constraints, *observers;
 
     public:
-    Group(const std::string &str, Element *parent);
+    Group(const std::string &str="");
     Group(const Group &g);
     ~Group();
     Group& operator=(const Group &g);
     virtual PropertyInterface* clone() const {return new Group(*this);}
     std::string getType() const { return "Group"; }
-    static Group* readXMLFile(const std::string &filename, Element *parent);
+    static Group* readXMLFile(const std::string &filename);
     void createXMLConstraints();
     void createXMLObservers();
     xercesc::DOMElement* getXMLFrames() { return frames; }

@@ -38,8 +38,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &str, Element *parent) : Body(str,parent), De(0,false), beta(0,false), Knl1(0,false), Knl2(0,false), ksigma0(0,false), ksigma1(0,false), K0t(0,false), K0r(0,false), K0om(0,false), r(0,false), A(0,false), Phi(0,false), sigmahel(0,false), sigmahen(0,false), sigma0(0,false), K0F(0,false), K0M(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true) {
-    InternalFrame *K = new InternalFrame("K",this,"plotFeatureFrameK");
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &str) : Body(str), De(0,false), beta(0,false), Knl1(0,false), Knl2(0,false), ksigma0(0,false), ksigma1(0,false), K0t(0,false), K0r(0,false), K0om(0,false), r(0,false), A(0,false), Phi(0,false), sigmahel(0,false), sigmahen(0,false), sigma0(0,false), K0F(0,false), K0M(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true) {
+    InternalFrame *K = new InternalFrame("K","plotFeatureFrameK");
     addFrame(K);
 
     mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMFLEX%"mass",vector<string>(2,"kg")),"",4));
@@ -159,7 +159,7 @@ namespace MBSimGUI {
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
     Frame *f;
     while(e) {
-      f = Embed<Frame>::createAndInit(e,this);
+      f = Embed<Frame>::createAndInit(e);
       if(f) addFrame(f);
       e=e->getNextElementSibling();
     }
@@ -168,7 +168,7 @@ namespace MBSimGUI {
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"contours")->getFirstElementChild();
     Contour *c;
     while(e) {
-      c = Embed<Contour>::createAndInit(e,this);
+      c = Embed<Contour>::createAndInit(e);
       if(c) addContour(c);
       e=e->getNextElementSibling();
     }

@@ -32,8 +32,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false) {
-    InternalFrame *C = new InternalFrame("C",this,MBSIM%"enableOpenMBVFrameC","plotFeatureFrameC");
+  RigidBody::RigidBody(const string &str) : Body(str), constrained(false) {
+    InternalFrame *C = new InternalFrame("C",MBSIM%"enableOpenMBVFrameC","plotFeatureFrameC");
     addFrame(C);
   }
 
@@ -111,7 +111,7 @@ namespace MBSimGUI {
     e=frames->getFirstElementChild();
     Frame *f;
     while(e) {
-      f = Embed<Frame>::createAndInit(e,this);
+      f = Embed<Frame>::createAndInit(e);
       if(f) addFrame(f);
       e=e->getNextElementSibling();
     }
@@ -120,7 +120,7 @@ namespace MBSimGUI {
     e=contours->getFirstElementChild();
     Contour *c;
     while(e) {
-      c = Embed<Contour>::createAndInit(e,this);
+      c = Embed<Contour>::createAndInit(e);
       if(c) addContour(c);
       e=e->getNextElementSibling();
     }

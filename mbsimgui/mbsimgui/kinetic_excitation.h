@@ -28,7 +28,7 @@ namespace MBSimGUI {
   class KineticExcitation : public FloatingFrameLink {
     friend class KineticExcitationPropertyDialog;
     public:
-    KineticExcitation(const std::string &str, Element *parent);
+    KineticExcitation(const std::string &str="");
     virtual PropertyInterface* clone() const {return new KineticExcitation(*this);}
     std::string getType() const { return "KineticExcitation"; }
 //    void initialize();

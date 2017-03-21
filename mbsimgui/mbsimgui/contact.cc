@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Contact::Contact(const string &str, Element *parent) : MechanicalLink(str, parent), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), searchAllContactPoints(0,false), initialGuess(0,false) {
+  Contact::Contact(const string &str) : MechanicalLink(str), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), searchAllContactPoints(0,false), initialGuess(0,false) {
 
     connections.setProperty(new ConnectContoursProperty(2,this));
 

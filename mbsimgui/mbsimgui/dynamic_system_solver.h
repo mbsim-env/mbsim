@@ -39,7 +39,7 @@ namespace MBSimGUI {
     protected:
       xercesc::DOMElement *environments;
     public:
-      DynamicSystemSolver(const std::string &str);
+      DynamicSystemSolver(const std::string &str="");
       virtual PropertyInterface* clone() const {return new DynamicSystemSolver(*this);}
       std::string getType() const { return "DynamicSystemSolver"; }
       xercesc::DOMElement* getXMLEnvironments() { return environments; }
@@ -48,7 +48,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       std::string getFileExtension() const { return ".mbsim.xml"; }
 
-      static DynamicSystemSolver* readXMLFile(const std::string &filename, Element *parent=0);
+      static DynamicSystemSolver* readXMLFile(const std::string &filename);
 
       ElementPropertyDialog* createPropertyDialog() {return new DynamicSystemSolverPropertyDialog(this);}
       QMenu* createContextMenu() {return new DynamicSystemSolverContextMenu(this);}

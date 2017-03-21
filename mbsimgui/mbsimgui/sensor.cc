@@ -33,13 +33,13 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Sensor::Sensor(const string &str, Element *parent) : Signal(str, parent) {
+  Sensor::Sensor(const string &str) : Signal(str) {
   }
 
   Sensor::~Sensor() {
   }
 
-  GeneralizedCoordinateSensor::GeneralizedCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
+  GeneralizedCoordinateSensor::GeneralizedCoordinateSensor(const string &str) : Sensor(str) {
     object.setProperty(new ObjectOfReferenceProperty("",this,MBSIMCONTROL%"object"));
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "", MBSIMCONTROL%"index"));
@@ -65,7 +65,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
+  AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str) : Sensor(str) {
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMCONTROL%"frame"));
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROL%"direction"));
@@ -91,7 +91,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str, parent) {
+  FunctionSensor::FunctionSensor(const string &str) : Sensor(str) {
     //  vector<Property*> property;
     //  property.push_back(new ConstantFunctionProperty);
     //  property.push_back(new LinearFunctionProperty);
@@ -117,7 +117,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  SignalProcessingSystemSensor::SignalProcessingSystemSensor(const string &str, Element *parent) : Sensor(str, parent) {
+  SignalProcessingSystemSensor::SignalProcessingSystemSensor(const string &str) : Sensor(str) {
     spsRef.setProperty(new LinkOfReferenceProperty("",this,MBSIMCONTROL%"signalProcessingSystem"));
   }
 

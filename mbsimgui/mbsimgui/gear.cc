@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  GeneralizedGear::GeneralizedGear(const string &str, Element *parent) : RigidBodyLink(str, parent) {
+  GeneralizedGear::GeneralizedGear(const string &str) : RigidBodyLink(str) {
 
     gearOutput.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"gearOutput"));
 

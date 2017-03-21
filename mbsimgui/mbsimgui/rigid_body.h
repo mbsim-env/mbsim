@@ -27,7 +27,7 @@ namespace MBSimGUI {
 
   class RigidBody : public Body {
     public:
-      RigidBody(const std::string &str="", Element *parent=NULL);
+      RigidBody(const std::string &str="");
       virtual PropertyInterface* clone() const {return new RigidBody(*this);}
       std::string getType() const { return "RigidBody"; }
       xercesc::DOMElement* getXMLFrames() { return frames; }

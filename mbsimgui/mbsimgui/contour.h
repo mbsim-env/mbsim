@@ -28,8 +28,8 @@ namespace MBSimGUI {
   class Contour : public Element {
     friend class ContourPropertyDialog;
     public:
-    Contour(const std::string &str, Element *parent);
-    static Contour* readXMLFile(const std::string &filename, Element *parent);
+    Contour(const std::string &str="");
+    static Contour* readXMLFile(const std::string &filename);
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new ContourPropertyDialog(this);}
@@ -40,7 +40,7 @@ namespace MBSimGUI {
   class RigidContour : public Contour {
     friend class RigidContourPropertyDialog;
     public:
-    RigidContour(const std::string &str, Element *parent);
+    RigidContour(const std::string &str="");
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void setSavedFrameOfReference(const std::string &str);
@@ -53,7 +53,7 @@ namespace MBSimGUI {
   class Point : public RigidContour {
     friend class PointPropertyDialog;
     public:
-    Point(const std::string &str, Element *parent);
+    Point(const std::string &str="");
     std::string getType() const { return "Point"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -65,7 +65,7 @@ namespace MBSimGUI {
   class Line : public RigidContour {
     friend class LinePropertyDialog;
     public:
-    Line(const std::string &str, Element *parent);
+    Line(const std::string &str="");
     std::string getType() const { return "Line"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -77,7 +77,7 @@ namespace MBSimGUI {
   class Plane : public RigidContour {
     friend class PlanePropertyDialog;
     public:
-    Plane(const std::string &str, Element *parent);
+    Plane(const std::string &str="");
     std::string getType() const { return "Plane"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -89,7 +89,7 @@ namespace MBSimGUI {
   class Sphere : public RigidContour {
     friend class SpherePropertyDialog;
     public:
-    Sphere(const std::string &str, Element *parent);
+    Sphere(const std::string &str="");
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getType() const { return "Sphere"; }
@@ -101,7 +101,7 @@ namespace MBSimGUI {
   class Circle : public RigidContour {
     friend class CirclePropertyDialog;
     public:
-    Circle(const std::string &str, Element *parent);
+    Circle(const std::string &str="");
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getType() const { return "Circle"; }
@@ -113,7 +113,7 @@ namespace MBSimGUI {
   class Cuboid : public RigidContour {
     friend class CuboidPropertyDialog;
     public:
-    Cuboid(const std::string &str, Element *parent);
+    Cuboid(const std::string &str="");
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getType() const { return "Cuboid"; }
@@ -125,7 +125,7 @@ namespace MBSimGUI {
   class LineSegment : public RigidContour {
     friend class LineSegmentPropertyDialog;
     public:
-    LineSegment(const std::string &str, Element *parent);
+    LineSegment(const std::string &str="");
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getType() const { return "LineSegment"; }
@@ -137,7 +137,7 @@ namespace MBSimGUI {
   class PlanarContour : public RigidContour {
     friend class PlanarContourPropertyDialog;
     public:
-    PlanarContour(const std::string &str, Element *parent);
+    PlanarContour(const std::string &str="");
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getType() const { return "PlanarContour"; }
@@ -149,7 +149,7 @@ namespace MBSimGUI {
   class SpatialContour : public RigidContour {
     friend class SpatialContourPropertyDialog;
     public:
-    SpatialContour(const std::string &str, Element *parent);
+    SpatialContour(const std::string &str="");
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getType() const { return "SpatialContour"; }

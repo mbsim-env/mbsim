@@ -52,7 +52,7 @@ namespace MBSimGUI {
       std::string name, counterName, value;
       bool config;
     public:
-      Element(const std::string &name, Element *parent);
+      Element(const std::string &name="");
       virtual ~Element() { parameters.removeParameters(); }
       virtual PropertyInterface* clone() const {return 0;}
       virtual std::string getPath();

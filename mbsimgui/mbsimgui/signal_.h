@@ -27,7 +27,7 @@ namespace MBSimGUI {
 
   class Signal : public Link {
     public:
-      Signal(const std::string &str, Element *parent);
+      Signal(const std::string &str="");
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
       ~Signal(); 
   };
@@ -35,7 +35,7 @@ namespace MBSimGUI {
   class PIDController : public Signal {
     friend class PIDControllerPropertyDialog;
     public:
-    PIDController(const std::string &str, Element *parent);
+    PIDController(const std::string &str="");
     std::string getType() const { return "PIDController"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -48,7 +48,7 @@ namespace MBSimGUI {
   class UnarySignalOperation : public Signal {
     friend class UnarySignalOperationPropertyDialog;
     public:
-    UnarySignalOperation(const std::string &str, Element *parent);
+    UnarySignalOperation(const std::string &str="");
     std::string getType() const { return "UnarySignalOperation"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -61,7 +61,7 @@ namespace MBSimGUI {
   class BinarySignalOperation : public Signal {
     friend class BinarySignalOperationPropertyDialog;
     public:
-    BinarySignalOperation(const std::string &str, Element *parent);
+    BinarySignalOperation(const std::string &str="");
     std::string getType() const { return "BinarySignalOperation"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -74,7 +74,7 @@ namespace MBSimGUI {
   class ExternSignalSource : public Signal {
     friend class ExternSignalSourcePropertyDialog;
     public:
-      ExternSignalSource(const std::string &str, Element *parent); 
+      ExternSignalSource(const std::string &str="");
       virtual std::string getType() const { return "ExternSignalSource"; }
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -87,7 +87,7 @@ namespace MBSimGUI {
   class ExternSignalSink : public Signal {
     friend class ExternSignalSinkPropertyDialog;
     public:
-      ExternSignalSink(const std::string &str, Element *parent); 
+      ExternSignalSink(const std::string &str="");
       virtual std::string getType() const { return "ExternSignalSink"; }
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

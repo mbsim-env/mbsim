@@ -315,7 +315,7 @@ namespace MBSimGUI {
   class ConnectRigidBodiesProperty : public Property {
 
     public:
-      ConnectRigidBodiesProperty(int n, Element* element, const MBXMLUtils::FQN &xmlName_=MBSIM%"connect");
+      ConnectRigidBodiesProperty(int n, const MBXMLUtils::FQN &xmlName_=MBSIM%"connect");
       virtual PropertyInterface* clone() const {return new ConnectRigidBodiesProperty(*this);}
 
       void initialize();

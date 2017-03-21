@@ -49,15 +49,15 @@ namespace MBSimGUI {
       typedef std::pair<double, P_NSPRE> P_PRINSPRE;
     public:
       typedef std::multimap<double, P_NSPRE> MM_PRINSPRE;
-      virtual Frame* createFrame(xercesc::DOMElement *element, Element *parent) { return NULL; }
-      virtual Contour* createContour(xercesc::DOMElement *element, Element *parent) { return NULL; }
-      virtual Group* createGroup(xercesc::DOMElement *element, Element *parent) { return NULL; }
-      virtual Object* createObject(xercesc::DOMElement *element, Element *parent) { return NULL; }
-      virtual Link* createLink(xercesc::DOMElement *element, Element *parent) { return NULL; }
-      virtual Constraint* createConstraint(xercesc::DOMElement *element, Element *parent) { return NULL; }
-      virtual Observer* createObserver(xercesc::DOMElement *element, Element *parent) { return NULL; }
+      virtual Frame* createFrame(xercesc::DOMElement *element) { return NULL; }
+      virtual Contour* createContour(xercesc::DOMElement *element) { return NULL; }
+      virtual Group* createGroup(xercesc::DOMElement *element) { return NULL; }
+      virtual Object* createObject(xercesc::DOMElement *element) { return NULL; }
+      virtual Link* createLink(xercesc::DOMElement *element) { return NULL; }
+      virtual Constraint* createConstraint(xercesc::DOMElement *element) { return NULL; }
+      virtual Observer* createObserver(xercesc::DOMElement *element) { return NULL; }
       virtual Solver* createSolver(xercesc::DOMElement *element) { return NULL; }
-      virtual Parameter* createParameter(xercesc::DOMElement *element, Element *parent) { return NULL; }
+      virtual Parameter* createParameter(xercesc::DOMElement *element) { return NULL; }
       virtual Environment *getEnvironment(xercesc::DOMElement *element) { return NULL; }
   };
 
@@ -73,15 +73,15 @@ namespace MBSimGUI {
       void registerObjectFactory(ObjectFactoryBase *fac) { factories.insert(fac); }
       void unregisterObjectFactory(ObjectFactory *fac) { factories.erase(fac); }
 
-      Frame* createFrame(xercesc::DOMElement *element, Element *parent);
-      Contour* createContour(xercesc::DOMElement *element, Element *parent);
-      Group* createGroup(xercesc::DOMElement *element, Element *parent);
-      Object* createObject(xercesc::DOMElement *element, Element *parent);
-      Link* createLink(xercesc::DOMElement *element, Element *parent);
-      Constraint* createConstraint(xercesc::DOMElement *element, Element *parent);
-      Observer* createObserver(xercesc::DOMElement *element, Element *parent);
+      Frame* createFrame(xercesc::DOMElement *element);
+      Contour* createContour(xercesc::DOMElement *element);
+      Group* createGroup(xercesc::DOMElement *element);
+      Object* createObject(xercesc::DOMElement *element);
+      Link* createLink(xercesc::DOMElement *element);
+      Constraint* createConstraint(xercesc::DOMElement *element);
+      Observer* createObserver(xercesc::DOMElement *element);
       Solver* createSolver(xercesc::DOMElement *element);
-      Parameter* createParameter(xercesc::DOMElement *element, Element *parent);
+      Parameter* createParameter(xercesc::DOMElement *element);
       Environment *getEnvironment(xercesc::DOMElement *element);
   };
 
@@ -95,15 +95,15 @@ namespace MBSimGUI {
       // objects from MBSimObjectFactory
       static void initialize();
     protected:
-      Frame* createFrame(xercesc::DOMElement *element, Element *parent);
-      Contour* createContour(xercesc::DOMElement *element, Element *parent);
-      Group* createGroup(xercesc::DOMElement *element, Element *parent);
-      Object* createObject(xercesc::DOMElement *element, Element *parent);
-      Link* createLink(xercesc::DOMElement *element, Element *parent);
-      Constraint* createConstraint(xercesc::DOMElement *element, Element *parent);
-      Observer* createObserver(xercesc::DOMElement *element, Element *parent);
+      Frame* createFrame(xercesc::DOMElement *element);
+      Contour* createContour(xercesc::DOMElement *element);
+      Group* createGroup(xercesc::DOMElement *element);
+      Object* createObject(xercesc::DOMElement *element);
+      Link* createLink(xercesc::DOMElement *element);
+      Constraint* createConstraint(xercesc::DOMElement *element);
+      Observer* createObserver(xercesc::DOMElement *element);
       Solver* createSolver(xercesc::DOMElement *element);
-      Parameter* createParameter(xercesc::DOMElement *element, Element *parent);
+      Parameter* createParameter(xercesc::DOMElement *element);
       Environment *getEnvironment(xercesc::DOMElement *element);
   };
 

@@ -26,7 +26,7 @@ namespace MBSimGUI {
 
   class Function : public Element {
     public:
-      Function(const std::string &name, Element *parent) : Element(name,parent) {}
+      Function(const std::string &name="") : Element(name) {}
       virtual ~Function() {}
       virtual int getArg1Size() const {return 0;}
       virtual int getArg2Size() const {return 0;}

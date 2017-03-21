@@ -26,21 +26,21 @@ namespace MBSimGUI {
 
   class Link : public Element {
     public:
-      Link(const std::string &str, Element *parent); 
-      static Link* readXMLFile(const std::string &filename, Element *parent);
+      Link(const std::string &str="");
+      static Link* readXMLFile(const std::string &filename);
       virtual int getxSize() {return 0;}
   };
 
   class MechanicalLink : public Link {
     friend class MechanicalLinkPropertyDialog;
     public:
-      MechanicalLink(const std::string &str, Element *parent) : Link(str, parent) { }
+      MechanicalLink(const std::string &str="") : Link(str) { }
   };
 
   class FrameLink : public MechanicalLink {
     friend class FrameLinkPropertyDialog;
     public:
-      FrameLink(const std::string &str, Element *parent);
+      FrameLink(const std::string &str="");
       void initialize();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -51,13 +51,13 @@ namespace MBSimGUI {
   class FixedFrameLink : public FrameLink {
     friend class FixedFrameLinkPropertyDialog;
     public:
-      FixedFrameLink(const std::string &str, Element *parent) : FrameLink(str,parent) { }
+      FixedFrameLink(const std::string &str="") : FrameLink(str) { }
  };
 
   class FloatingFrameLink : public FrameLink {
     friend class FloatingFrameLinkPropertyDialog;
     public:
-      FloatingFrameLink(const std::string &str, Element *parent);
+      FloatingFrameLink(const std::string &str="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     protected:
@@ -67,7 +67,7 @@ namespace MBSimGUI {
   class RigidBodyLink : public MechanicalLink {
     friend class RigidBodyLinkPropertyDialog;
     public:
-      RigidBodyLink(const std::string &str, Element *parent);
+      RigidBodyLink(const std::string &str="");
       void initialize();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -78,7 +78,7 @@ namespace MBSimGUI {
   class DualRigidBodyLink : public RigidBodyLink {
     friend class DualRigidBodyLinkPropertyDialog;
     public:
-      DualRigidBodyLink(const std::string &str, Element *parent);
+      DualRigidBodyLink(const std::string &str="");
       void initialize();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

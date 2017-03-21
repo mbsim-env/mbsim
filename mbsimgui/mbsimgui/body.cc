@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Body::Body(const string &str, Element *parent) : Object(str,parent) {
+  Body::Body(const string &str) : Object(str) {
   }
 
   Body::Body(const Body &b) : Object(b) {
@@ -67,10 +67,12 @@ namespace MBSimGUI {
 
   void Body::addFrame(Frame* frame_) {
     frame.push_back(frame_);
+    frame_->setParent(this);
   }
 
   void Body::addContour(Contour* contour_) {
     contour.push_back(contour_);
+    contour_->setParent(this);
   }
 
   void Body::removeElement(Element* element) {

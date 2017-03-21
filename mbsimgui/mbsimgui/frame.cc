@@ -32,7 +32,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Frame::Frame(const string &str, Element *parent) : Element(str,parent) {
+  Frame::Frame(const string &str) : Element(str) {
 
     addPlotFeature("position");
     addPlotFeature("angle");
@@ -42,10 +42,10 @@ namespace MBSimGUI {
     addPlotFeature("angularAcceleration");
   }
 
-  Frame* Frame::readXMLFile(const string &filename, Element *parent) {
+  Frame* Frame::readXMLFile(const string &filename) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    Frame *frame=Embed<Frame>::createAndInit(e,parent);
+    Frame *frame=Embed<Frame>::createAndInit(e);
     return frame;
   }
 
@@ -76,10 +76,10 @@ namespace MBSimGUI {
     }
   }
 
-  FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent) {
+  FixedRelativeFrame::FixedRelativeFrame(const string &str) : Frame(str) {
   }
 
-  NodeFrame::NodeFrame(const string &str, Element *parent) : Frame(str,parent) {
+  NodeFrame::NodeFrame(const string &str) : Frame(str) {
 
     //nodeNumber.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMFLEX%"nodeNumber",vector<string>(2,"-")),"",4));
   }

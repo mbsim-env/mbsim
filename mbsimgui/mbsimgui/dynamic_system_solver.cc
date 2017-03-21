@@ -33,7 +33,8 @@ namespace MBSimGUI {
 
   Environment *Environment::instance=NULL;
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &str) : Group(str,NULL) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &str) : Group(str) {
+    config = true;
 
 //    solverParameters.setProperty(new DynamicSystemSolverParametersProperty);
 //
@@ -99,11 +100,11 @@ namespace MBSimGUI {
     return element;
   }
 
-  DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename, Element *parent) {
+  DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
     MBSimObjectFactory::initialize();
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    DynamicSystemSolver *solver=static_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e, parent));
+    DynamicSystemSolver *solver=static_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
     solver->initializeUsingXML(e);
     solver->initialize();
     return solver;

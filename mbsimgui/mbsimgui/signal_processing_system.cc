@@ -26,7 +26,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  SignalProcessingSystem::SignalProcessingSystem(const string &str, Element *parent) : Link(str, parent) {
+  SignalProcessingSystem::SignalProcessingSystem(const string &str) : Link(str) {
     signalRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
   }
 

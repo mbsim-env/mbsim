@@ -91,7 +91,7 @@ namespace MBSimGUI {
     return new ExtPhysicalVarProperty(input);
   }
 
-  ConstantFunction::ConstantFunction(const string &name, Element *parent, int m) : Function(name,parent) {
+  ConstantFunction::ConstantFunction(const string &name, int m) : Function(name) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"a0"));
     a0.setProperty(new ExtPhysicalVarProperty(input));
@@ -116,7 +116,7 @@ namespace MBSimGUI {
     a0.toWidget(static_cast<ConstantFunctionWidget*>(widget)->a0);
   }
 
-  LinearFunction::LinearFunction(const string &name, Element *parent, int m) : Function(name,parent), a0(0,false) {
+  LinearFunction::LinearFunction(const string &name, int m) : Function(name), a0(0,false) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"a0"));
     a0.setProperty(new ExtPhysicalVarProperty(input));
@@ -149,7 +149,7 @@ namespace MBSimGUI {
     a1.toWidget(static_cast<LinearFunctionWidget*>(widget)->a1);
   }
 
-  QuadraticFunction::QuadraticFunction(const string &name, Element *parent, int m) : Function(name,parent), a0(0,false), a1(0,false) {
+  QuadraticFunction::QuadraticFunction(const string &name, int m) : Function(name), a0(0,false), a1(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"a0"));
@@ -191,7 +191,7 @@ namespace MBSimGUI {
     a2.toWidget(static_cast<QuadraticFunctionWidget*>(widget)->a2);
   }
 
-  PolynomFunction::PolynomFunction(const string &name, Element *parent, int m) : Function(name,parent) {
+  PolynomFunction::PolynomFunction(const string &name, int m) : Function(name) {
     a.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"coefficients",vector<string>(3,"")),"",4));
   }
 
@@ -214,7 +214,7 @@ namespace MBSimGUI {
     a.toWidget(static_cast<PolynomFunctionWidget*>(widget)->a);
   }
 
-  SinusoidalFunction::SinusoidalFunction(const string &name, Element *parent, int m) : Function(name,parent), p(0,false), o(0,false) {
+  SinusoidalFunction::SinusoidalFunction(const string &name, int m) : Function(name), p(0,false), o(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"amplitude"));
@@ -264,7 +264,7 @@ namespace MBSimGUI {
     o.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->o);
   }
 
-  ModuloFunction::ModuloFunction(const string &name, Element *parent) : Function(name,parent) {
+  ModuloFunction::ModuloFunction(const string &name) : Function(name) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"denominator"));
     denom.setProperty(new ExtPhysicalVarProperty(input));
@@ -289,7 +289,7 @@ namespace MBSimGUI {
     denom.toWidget(static_cast<ModuloFunctionWidget*>(widget)->denom);
   }
 
-  BoundedFunction::BoundedFunction(const string &name, Element *parent) : Function(name,parent) {
+  BoundedFunction::BoundedFunction(const string &name) : Function(name) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"lowerBound"));
     lowerBound.setProperty(new ExtPhysicalVarProperty(input));
@@ -321,7 +321,7 @@ namespace MBSimGUI {
     upperBound.toWidget(static_cast<BoundedFunctionWidget*>(widget)->upperBound);
   }
 
-  VectorValuedFunction::VectorValuedFunction(const string &name, Element *parent, int m) : Function(name,parent) {
+  VectorValuedFunction::VectorValuedFunction(const string &name, int m) : Function(name) {
     functions.setProperty(new ListProperty(new ChoicePropertyFactory(new FunctionPropertyFactory2(this),""),""));
     functions.setXMLName(MBSIM%"components");
   }
@@ -345,7 +345,7 @@ namespace MBSimGUI {
     functions.toWidget(static_cast<VectorValuedFunctionWidget*>(widget)->functions);
   }
 
-  CompositeFunction::CompositeFunction(const string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi) : Function(name,parent) {
+  CompositeFunction::CompositeFunction(const string &name, PropertyFactory *factoryo, PropertyFactory *factoryi) : Function(name) {
     fo.setProperty(new ChoiceProperty2(factoryo,MBSIM%"outerFunction",0));
     fi.setProperty(new ChoiceProperty2(factoryi,MBSIM%"innerFunction",0));
   }
@@ -378,7 +378,7 @@ namespace MBSimGUI {
     fi.toWidget(static_cast<CompositeFunctionWidget*>(widget)->fi);
   }
 
-  PiecewiseDefinedFunction::PiecewiseDefinedFunction(const string &name, Element *parent) : Function(name,parent) {
+  PiecewiseDefinedFunction::PiecewiseDefinedFunction(const string &name) : Function(name) {
     //  functions.setProperty(new ListProperty(new LimitedFunctionFunctionPropertyFactory(1),""));
     //  functions.setXMLName(MBSIM%"limitedFunctions");
     functions.setProperty(new ListProperty(new LimitedFunctionFunctionPropertyFactory(new FunctionPropertyFactory2(this),""),""));
@@ -419,7 +419,7 @@ namespace MBSimGUI {
     shiftOrdinate.toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->shiftOrdinate);
   }
 
-  SymbolicFunction::SymbolicFunction(const string &name, Element *parent, const string &ext_, const vector<string> &var, int m) : Function(name,parent), ext(ext_), argname(ext.size()-1), argdim(ext.size()-1) {
+  SymbolicFunction::SymbolicFunction(const string &name, const string &ext_, const vector<string> &var, int m) : Function(name), ext(ext_), argname(ext.size()-1), argdim(ext.size()-1) {
     for(size_t i=1; i<ext.size(); i++) {
       argname[i-1].setProperty(new TextProperty(var[i-1],""));
       argdim[i-1].setProperty(new IntegerProperty(1,""));
@@ -478,7 +478,7 @@ namespace MBSimGUI {
     return static_cast<const IntegerProperty*>(argdim[1].getProperty())->getValue();
   }
 
-  TabularFunction::TabularFunction(const string &name, Element *parent) : Function(name,parent), choice(new TabularFunctionPropertyFactory(this),"",3) {
+  TabularFunction::TabularFunction(const string &name) : Function(name), choice(new TabularFunctionPropertyFactory(this),"",3) {
   }
 
   DOMElement* TabularFunction::initializeUsingXML(DOMElement *element) {
@@ -500,7 +500,7 @@ namespace MBSimGUI {
     choice.toWidget(static_cast<TabularFunctionWidget*>(widget)->choice);
   }
 
-  TwoDimensionalTabularFunction::TwoDimensionalTabularFunction(const string &name, Element *parent) : Function(name,parent), choice(new TwoDimensionalTabularFunctionPropertyFactory(this),"",3) {
+  TwoDimensionalTabularFunction::TwoDimensionalTabularFunction(const string &name) : Function(name), choice(new TwoDimensionalTabularFunctionPropertyFactory(this),"",3) {
   }
 
   DOMElement* TwoDimensionalTabularFunction::initializeUsingXML(DOMElement *element) {
@@ -522,7 +522,7 @@ namespace MBSimGUI {
     choice.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->choice);
   }
 
-  PiecewisePolynomFunction::PiecewisePolynomFunction(const string &name, Element *parent) : Function(name,parent), choice(new TabularFunctionPropertyFactory(this),"",3), method(0,false) {
+  PiecewisePolynomFunction::PiecewisePolynomFunction(const string &name) : Function(name), choice(new TabularFunctionPropertyFactory(this),"",3), method(0,false) {
     
     method.setProperty(new TextProperty("\"cSplineNatural\"", MBSIM%"interpolationMethod"));
 
@@ -551,7 +551,7 @@ namespace MBSimGUI {
     method.toWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->method);
   }
 
-  TwoDimensionalPiecewisePolynomFunction::TwoDimensionalPiecewisePolynomFunction(const string &name, Element *parent) : Function(name,parent), choice(new TwoDimensionalTabularFunctionPropertyFactory(this),"",3), method(0,false) {
+  TwoDimensionalPiecewisePolynomFunction::TwoDimensionalPiecewisePolynomFunction(const string &name) : Function(name), choice(new TwoDimensionalTabularFunctionPropertyFactory(this),"",3), method(0,false) {
     method.setProperty(new TextProperty("\"cSplineNatural\"", MBSIM%"interpolationMethod"));
   }
 
@@ -578,7 +578,7 @@ namespace MBSimGUI {
     method.toWidget(static_cast<TwoDimensionalPiecewisePolynomFunctionWidget*>(widget)->method);
   }
 
-  FourierFunction::FourierFunction(const string &name, Element *parent) : Function(name,parent), a0(0,false), amplitudePhaseAngleForm(0,false), choice(new FourierFunctionPropertyFactory(this),"",3) {
+  FourierFunction::FourierFunction(const string &name) : Function(name), a0(0,false), amplitudePhaseAngleForm(0,false), choice(new FourierFunctionPropertyFactory(this),"",3) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"frequency"));
     f.setProperty(new ExtPhysicalVarProperty(input));
@@ -620,7 +620,7 @@ namespace MBSimGUI {
     amplitudePhaseAngleForm.toWidget(static_cast<FourierFunctionWidget*>(widget)->amplitudePhaseAngleForm);
   }
 
-  BidirectionalFunction::BidirectionalFunction(const string &name, Element *parent) : Function(name,parent) {
+  BidirectionalFunction::BidirectionalFunction(const string &name) : Function(name) {
     fn.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"negativeDirectionalFunction",0));
     fp.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"positiveDirectionalFunction",0));
   }
@@ -648,7 +648,7 @@ namespace MBSimGUI {
     fp.toWidget(static_cast<BidirectionalFunctionWidget*>(widget)->fp);
   }
 
-  ContinuedFunction::ContinuedFunction(const string &name, Element *parent, PropertyFactory *factoryf, PropertyFactory *factoryr) : Function(name,parent) {
+  ContinuedFunction::ContinuedFunction(const string &name, PropertyFactory *factoryf, PropertyFactory *factoryr) : Function(name) {
     f.setProperty(new ChoiceProperty2(factoryf,MBSIM%"function",0));
     r.setProperty(new ChoiceProperty2(factoryr,MBSIM%"continuationRule",0));
   }
@@ -676,7 +676,7 @@ namespace MBSimGUI {
     r.toWidget(static_cast<ContinuedFunctionWidget*>(widget)->r);
   }
 
-  LinearSpringDamperForce::LinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent) {
+  LinearSpringDamperForce::LinearSpringDamperForce(const string &name) : Function(name) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"N/m",MBSIM%"stiffnessCoefficient"));
@@ -710,7 +710,7 @@ namespace MBSimGUI {
     d.toWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->d);
   }
 
-  NonlinearSpringDamperForce::NonlinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent) {
+  NonlinearSpringDamperForce::NonlinearSpringDamperForce(const string &name) : Function(name) {
 
     s.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"forceDeflectionFunction",0));
 
@@ -740,7 +740,7 @@ namespace MBSimGUI {
     sd.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->sd);
   }
 
-  LinearElasticFunction::LinearElasticFunction(const string &name, Element *parent) : Function(name,parent), D(0,false) {
+  LinearElasticFunction::LinearElasticFunction(const string &name) : Function(name), D(0,false) {
 
     K.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0","0"),MBSIM%"stiffnessMatrix",vector<string>(3,"")),"",4));
 
@@ -770,7 +770,7 @@ namespace MBSimGUI {
     D.toWidget(static_cast<LinearElasticFunctionWidget*>(widget)->D);
   }
 
-  LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint(const string &name, Element *parent) : Function(name,parent) {
+  LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint(const string &name) : Function(name) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"N/m",MBSIM%"stiffnessCoefficient"));
@@ -804,7 +804,7 @@ namespace MBSimGUI {
     d.toWidget(static_cast<LinearRegularizedBilateralConstraintWidget*>(widget)->d);
   }
 
-  LinearRegularizedUnilateralConstraint::LinearRegularizedUnilateralConstraint(const string &name, Element *parent) : Function(name,parent) {
+  LinearRegularizedUnilateralConstraint::LinearRegularizedUnilateralConstraint(const string &name) : Function(name) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"N/m",MBSIM%"stiffnessCoefficient"));
@@ -838,7 +838,7 @@ namespace MBSimGUI {
     d.toWidget(static_cast<LinearRegularizedUnilateralConstraintWidget*>(widget)->d);
   }
 
-  LinearRegularizedCoulombFriction::LinearRegularizedCoulombFriction(const string &name, Element *parent) : Function(name,parent), gd(0,false) {
+  LinearRegularizedCoulombFriction::LinearRegularizedCoulombFriction(const string &name) : Function(name), gd(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0.01"),"m/s",MBSIM%"marginalVelocity"));
@@ -872,7 +872,7 @@ namespace MBSimGUI {
     mu.toWidget(static_cast<LinearRegularizedCoulombFrictionWidget*>(widget)->mu);
   }
 
-  LinearRegularizedStribeckFriction::LinearRegularizedStribeckFriction(const string &name, Element *parent) : Function(name,parent), gd(0,false) {
+  LinearRegularizedStribeckFriction::LinearRegularizedStribeckFriction(const string &name) : Function(name), gd(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0.01"),"m/s",MBSIM%"marginalVelocity"));
@@ -904,7 +904,7 @@ namespace MBSimGUI {
     mu.toWidget(static_cast<LinearRegularizedStribeckFrictionWidget*>(widget)->mu);
   }
 
-  SignalFunction::SignalFunction(const string &name, Element *parent) : Function(name,parent) {
+  SignalFunction::SignalFunction(const string &name) : Function(name) {
 
     sRef.setProperty(new SignalOfReferenceProperty("",this,MBSIMCONTROL%"returnSignal"));
 
@@ -929,7 +929,7 @@ namespace MBSimGUI {
     sRef.toWidget(static_cast<SignalFunctionWidget*>(widget)->sRef);
   }
 
-  PolarContourFunction::PolarContourFunction(const string &name, Element *parent) : Function(name,parent) {
+  PolarContourFunction::PolarContourFunction(const string &name) : Function(name) {
     radiusFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"radiusFunction"));
   }
 

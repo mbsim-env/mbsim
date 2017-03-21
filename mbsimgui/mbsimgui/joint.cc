@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Joint::Joint(const string &str, Element *parent) : FloatingFrameLink(str, parent), forceDirection(0,false), forceLaw(0,false), momentDirection(0,false), momentLaw(0,false) {
+  Joint::Joint(const string &str) : FloatingFrameLink(str), forceDirection(0,false), forceLaw(0,false), momentDirection(0,false), momentLaw(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));
@@ -61,7 +61,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  ElasticJoint::ElasticJoint(const string &str, Element *parent) : FloatingFrameLink(str, parent), forceDirection(0,false), momentDirection(0,false) {
+  ElasticJoint::ElasticJoint(const string &str) : FloatingFrameLink(str), forceDirection(0,false), momentDirection(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));

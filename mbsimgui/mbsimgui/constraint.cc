@@ -45,15 +45,15 @@ namespace MBSimGUI {
     return new GearInputReferenceProperty("",element,xmlName);
   }
 
-  Constraint* Constraint::readXMLFile(const string &filename, Element *parent) {
+  Constraint* Constraint::readXMLFile(const string &filename) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    Constraint *constraint=Embed<Constraint>::createAndInit(e,parent);
+    Constraint *constraint=Embed<Constraint>::createAndInit(e);
     if(constraint) constraint->initialize();
     return constraint;
   }
 
-  GeneralizedConstraint::GeneralizedConstraint(const string &str, Element *parent) : MechanicalConstraint(str, parent), support(0,false) {
+  GeneralizedConstraint::GeneralizedConstraint(const string &str) : MechanicalConstraint(str), support(0,false) {
     support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
   }
 
@@ -73,7 +73,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  GeneralizedGearConstraint::GeneralizedGearConstraint(const string &str, Element *parent) : GeneralizedConstraint(str, parent) {
+  GeneralizedGearConstraint::GeneralizedGearConstraint(const string &str) : GeneralizedConstraint(str) {
 
     dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
 
@@ -110,7 +110,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  GeneralizedDualConstraint::GeneralizedDualConstraint(const string &str, Element *parent) : GeneralizedConstraint(str, parent), independentBody(0,false) {
+  GeneralizedDualConstraint::GeneralizedDualConstraint(const string &str) : GeneralizedConstraint(str), independentBody(0,false) {
 
     dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
 
@@ -147,7 +147,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  GeneralizedPositionConstraint::GeneralizedPositionConstraint(const string &str, Element *parent) : GeneralizedDualConstraint(str, parent), constraintFunction(0,false) {
+  GeneralizedPositionConstraint::GeneralizedPositionConstraint(const string &str) : GeneralizedDualConstraint(str), constraintFunction(0,false) {
 
     constraintFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"constraintFunction"));
   }
@@ -166,7 +166,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, Element *parent) : GeneralizedDualConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
+  GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str) : GeneralizedDualConstraint(str), constraintFunction(0,false), x0(0,false) {
 
     constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory(this),"",3)); 
 
@@ -191,7 +191,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const string &str, Element *parent) : GeneralizedDualConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
+  GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const string &str) : GeneralizedDualConstraint(str), constraintFunction(0,false), x0(0,false) {
 
     constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory(this),"",3)); 
 
@@ -216,7 +216,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  JointConstraint::JointConstraint(const string &str, Element *parent) : MechanicalConstraint(str, parent), refFrameID(0,false), force(0,false), moment(0,false), q0(0,false) {
+  JointConstraint::JointConstraint(const string &str) : MechanicalConstraint(str), refFrameID(0,false), force(0,false), moment(0,false), q0(0,false) {
 
     dependentBodiesFirstSide.setProperty(new ListProperty(new RigidBodyOfReferencePropertyFactory(this,""),MBSIM%"dependentRigidBodyOnFirstSide"));
 

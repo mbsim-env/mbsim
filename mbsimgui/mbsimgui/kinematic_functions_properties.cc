@@ -32,7 +32,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  TranslationAlongFixedAxis::TranslationAlongFixedAxis(const string &name, Element *parent) : Function(name,parent) {
+  TranslationAlongFixedAxis::TranslationAlongFixedAxis(const string &name) : Function(name) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIM%"axisOfTranslation"));
     a.setProperty(new ExtPhysicalVarProperty(input));
@@ -57,7 +57,7 @@ namespace MBSimGUI {
     a.toWidget(static_cast<TranslationAlongFixedAxisWidget*>(widget)->a);
   }
 
-  LinearTranslation::LinearTranslation(const string &name, Element *parent, int m, int n) : Function(name,parent), b(0,false) {
+  LinearTranslation::LinearTranslation(const string &name, int m, int n) : Function(name), b(0,false) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIM%"translationVectors"));
     A.setProperty(new ExtPhysicalVarProperty(input));
@@ -96,7 +96,7 @@ namespace MBSimGUI {
     b.toWidget(static_cast<LinearTranslationWidget*>(widget)->b);
   }
 
-  RotationAboutFixedAxis::RotationAboutFixedAxis(const string &name, Element *parent) : Function(name,parent) {
+  RotationAboutFixedAxis::RotationAboutFixedAxis(const string &name) : Function(name) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIM%"axisOfRotation"));
     a.setProperty(new ExtPhysicalVarProperty(input));

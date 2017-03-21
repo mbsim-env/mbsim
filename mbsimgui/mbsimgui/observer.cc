@@ -33,14 +33,13 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Observer::Observer(const string &str, Element *parent) : Element(str, parent) {
+  Observer::Observer(const string &str) : Element(str) {
   }
 
-  Observer* Observer::readXMLFile(const string &filename, Element *parent) {
+  Observer* Observer::readXMLFile(const string &filename) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-//    Observer *observer=ObjectFactory::getInstance()->createObserver(e, parent);
-    Observer *observer=Embed<Observer>::createAndInit(e,parent);
+    Observer *observer=Embed<Observer>::createAndInit(e);
     if(observer) {
 //      observer->initializeUsingXML(e);
       observer->initialize();
@@ -48,7 +47,7 @@ namespace MBSimGUI {
     return observer;
   }
 
-  KinematicCoordinatesObserver::KinematicCoordinatesObserver(const string &str, Element *parent) : Observer(str, parent), frameOfReference(0,false), position(0,false), velocity(0,false), acceleration(0,false) {
+  KinematicCoordinatesObserver::KinematicCoordinatesObserver(const string &str) : Observer(str), frameOfReference(0,false), position(0,false), velocity(0,false), acceleration(0,false) {
 
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 
@@ -87,7 +86,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  RelativeKinematicsObserver::RelativeKinematicsObserver(const string &str, Element *parent) : Observer(str, parent), refFrame(0,false), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
+  RelativeKinematicsObserver::RelativeKinematicsObserver(const string &str) : Observer(str), refFrame(0,false), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
 
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 
@@ -135,7 +134,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  MechanicalLinkObserver::MechanicalLinkObserver(const string &str, Element *parent) : Observer(str, parent), forceArrow(0,false), momentArrow(0,false) {
+  MechanicalLinkObserver::MechanicalLinkObserver(const string &str) : Observer(str), forceArrow(0,false), momentArrow(0,false) {
 
     link.setProperty(new LinkOfReferenceProperty("",this,MBSIM%"mechanicalLink"));
 
@@ -165,7 +164,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  MechanicalConstraintObserver::MechanicalConstraintObserver(const string &str, Element *parent) : Observer(str, parent), forceArrow(0,false), momentArrow(0,false) {
+  MechanicalConstraintObserver::MechanicalConstraintObserver(const string &str) : Observer(str), forceArrow(0,false), momentArrow(0,false) {
 
     constraint.setProperty(new ConstraintOfReferenceProperty("",this,MBSIM%"mechanicalConstraint"));
 
@@ -195,7 +194,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  ContactObserver::ContactObserver(const string &str, Element *parent) : Observer(str, parent), forceArrow(0,false), momentArrow(0,false), contactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
+  ContactObserver::ContactObserver(const string &str) : Observer(str), forceArrow(0,false), momentArrow(0,false), contactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
 
     link.setProperty(new LinkOfReferenceProperty("",this,MBSIM%"contact"));
 
@@ -237,7 +236,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  FrameObserver::FrameObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
+  FrameObserver::FrameObserver(const string &str) : Observer(str), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
 
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 
@@ -280,7 +279,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  RigidBodyObserver::RigidBodyObserver(const string &str, Element *parent) : Observer(str, parent), weight(0,false), jointForce(0,false), jointMoment(0,false), axisOfRotation(0,false) {
+  RigidBodyObserver::RigidBodyObserver(const string &str) : Observer(str), weight(0,false), jointForce(0,false), jointMoment(0,false), axisOfRotation(0,false) {
 
     body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBody"));
 

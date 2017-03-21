@@ -44,7 +44,7 @@ namespace MBSimGUI {
     static_cast<LinearTransferSystem*>(element)->choice.fromWidget(choice);
   }
 
-  LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) : SignalProcessingSystem(str, parent) {
+  LinearTransferSystem::LinearTransferSystem(const string &str) : SignalProcessingSystem(str) {
 
     choice.setProperty(new ChoiceProperty2(new LinearTransferSystemPropertyFactory,"",3));
   }

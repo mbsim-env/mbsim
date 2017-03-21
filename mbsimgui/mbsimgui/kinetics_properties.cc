@@ -60,7 +60,7 @@ namespace MBSimGUI {
     index = index_;
     if(index==0) {
       delete forceFunc;
-      forceFunc = new LinearRegularizedBilateralConstraint("NoName",this);  
+      forceFunc = new LinearRegularizedBilateralConstraint("NoName");
     }
   }
 
@@ -92,7 +92,7 @@ namespace MBSimGUI {
     index = index_;
     if(index==0) {
       delete forceFunc;
-      forceFunc = new LinearRegularizedUnilateralConstraint("NoName",this);  
+      forceFunc = new LinearRegularizedUnilateralConstraint("NoName");
     }
   }
 
@@ -127,7 +127,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  UnilateralNewtonImpact::UnilateralNewtonImpact(const string &name, Element *parent) : GeneralizedImpactLaw(name,parent) {
+  UnilateralNewtonImpact::UnilateralNewtonImpact(const string &name) : GeneralizedImpactLaw(name) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"restitutionCoefficient"));
     restitutionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
@@ -177,7 +177,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PlanarCoulombFriction::PlanarCoulombFriction(const std::string &name, Element *parent) : FrictionForceLaw(name,parent) {
+  PlanarCoulombFriction::PlanarCoulombFriction(const std::string &name) : FrictionForceLaw(name) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
     frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
@@ -202,7 +202,7 @@ namespace MBSimGUI {
     frictionCoefficient.toWidget(static_cast<PlanarCoulombFrictionWidget*>(widget)->frictionCoefficient);
   }
 
-  SpatialCoulombFriction::SpatialCoulombFriction(const std::string &name, Element *parent) : FrictionForceLaw(name,parent) {
+  SpatialCoulombFriction::SpatialCoulombFriction(const std::string &name) : FrictionForceLaw(name) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
     frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
@@ -227,7 +227,7 @@ namespace MBSimGUI {
     frictionCoefficient.toWidget(static_cast<SpatialCoulombFrictionWidget*>(widget)->frictionCoefficient);
   }
 
-  PlanarStribeckFriction::PlanarStribeckFriction(const std::string &name, Element *parent) : FrictionForceLaw(name,parent) {
+  PlanarStribeckFriction::PlanarStribeckFriction(const std::string &name) : FrictionForceLaw(name) {
     frictionFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"frictionFunction",0));
   }
 
@@ -250,7 +250,7 @@ namespace MBSimGUI {
     frictionFunction.toWidget(static_cast<PlanarStribeckFrictionWidget*>(widget)->frictionFunction);
   }
 
-  SpatialStribeckFriction::SpatialStribeckFriction(const std::string &name, Element *parent) : FrictionForceLaw(name,parent) {
+  SpatialStribeckFriction::SpatialStribeckFriction(const std::string &name) : FrictionForceLaw(name) {
     frictionFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"frictionFunction",0));
   }
 
@@ -277,14 +277,14 @@ namespace MBSimGUI {
     index = index_;
     delete frictionForceFunc;
     if(index==0)
-      frictionForceFunc = new LinearRegularizedCoulombFriction("NoName",this);  
+      frictionForceFunc = new LinearRegularizedCoulombFriction("NoName");
     else if(index==1)
-      frictionForceFunc = new LinearRegularizedStribeckFriction("NoName",this);
+      frictionForceFunc = new LinearRegularizedStribeckFriction("NoName");
     else {
       vector<string> var;
       var.push_back("gd");
       var.push_back("laN");
-      frictionForceFunc = new SymbolicFunction("NoName",this,"VVS",var,1);
+      frictionForceFunc = new SymbolicFunction("NoName","VVS",var,1);
     }
   }
 
@@ -322,9 +322,9 @@ namespace MBSimGUI {
     index = index_;
     delete frictionForceFunc;
     if(index==0)
-      frictionForceFunc = new LinearRegularizedCoulombFriction("NoName",this);  
+      frictionForceFunc = new LinearRegularizedCoulombFriction("NoName");
     else
-      frictionForceFunc = new LinearRegularizedStribeckFriction("NoName",this);
+      frictionForceFunc = new LinearRegularizedStribeckFriction("NoName");
   }
 
   DOMElement* RegularizedSpatialFriction::initializeUsingXML(DOMElement *element) {
@@ -362,7 +362,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PlanarCoulombImpact::PlanarCoulombImpact(const std::string &name, Element *parent) : FrictionImpactLaw(name,parent) {
+  PlanarCoulombImpact::PlanarCoulombImpact(const std::string &name) : FrictionImpactLaw(name) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
     frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
@@ -387,7 +387,7 @@ namespace MBSimGUI {
     frictionCoefficient.toWidget(static_cast<PlanarCoulombImpactWidget*>(widget)->frictionCoefficient);
   }
 
-  SpatialCoulombImpact::SpatialCoulombImpact(const std::string &name, Element *parent) : FrictionImpactLaw(name,parent) {
+  SpatialCoulombImpact::SpatialCoulombImpact(const std::string &name) : FrictionImpactLaw(name) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
     frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
@@ -412,7 +412,7 @@ namespace MBSimGUI {
     frictionCoefficient.toWidget(static_cast<SpatialCoulombImpactWidget*>(widget)->frictionCoefficient);
   }
 
-  PlanarStribeckImpact::PlanarStribeckImpact(const std::string &name, Element *parent) : FrictionImpactLaw(name,parent) {
+  PlanarStribeckImpact::PlanarStribeckImpact(const std::string &name) : FrictionImpactLaw(name) {
     frictionFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"frictionFunction",0));
   }
 
@@ -435,7 +435,7 @@ namespace MBSimGUI {
     frictionFunction.toWidget(static_cast<PlanarStribeckImpactWidget*>(widget)->frictionFunction);
   }
 
-  SpatialStribeckImpact::SpatialStribeckImpact(const std::string &name, Element *parent) : FrictionImpactLaw(name,parent) {
+  SpatialStribeckImpact::SpatialStribeckImpact(const std::string &name) : FrictionImpactLaw(name) {
     frictionFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"frictionFunction",0));
   }
 
@@ -462,13 +462,13 @@ namespace MBSimGUI {
     index = index_;
     delete generalizedForceLaw;
     if(index==0)
-      generalizedForceLaw = new BilateralConstraint("NoName",parent);  
+      generalizedForceLaw = new BilateralConstraint("NoName");
     else if(index==1)
-      generalizedForceLaw = new RegularizedBilateralConstraint("NoName",parent);  
+      generalizedForceLaw = new RegularizedBilateralConstraint("NoName");
     else if(index==2)
-      generalizedForceLaw = new UnilateralConstraint("NoName",parent);  
+      generalizedForceLaw = new UnilateralConstraint("NoName");
     else if(index==3)
-      generalizedForceLaw = new RegularizedUnilateralConstraint("NoName",parent);  
+      generalizedForceLaw = new RegularizedUnilateralConstraint("NoName");
   }
 
   DOMElement* GeneralizedForceLawChoiceProperty::initializeUsingXML(DOMElement *element) {
@@ -518,9 +518,9 @@ namespace MBSimGUI {
     index = index_;
     delete generalizedImpactLaw;
     if(index==0)
-      generalizedImpactLaw = new BilateralImpact("NoName",parent);  
+      generalizedImpactLaw = new BilateralImpact("NoName");
     else if(index==1)
-      generalizedImpactLaw = new UnilateralNewtonImpact("NoName",parent);  
+      generalizedImpactLaw = new UnilateralNewtonImpact("NoName");
   }
 
   DOMElement* GeneralizedImpactLawChoiceProperty::initializeUsingXML(DOMElement *element) {
@@ -571,17 +571,17 @@ namespace MBSimGUI {
     index = index_;
     delete frictionForceLaw;
     if(index==0)
-      frictionForceLaw = new PlanarCoulombFriction("NoName",parent);  
+      frictionForceLaw = new PlanarCoulombFriction("NoName");
     else if(index==1)
-      frictionForceLaw = new PlanarStribeckFriction("NoName",parent);
+      frictionForceLaw = new PlanarStribeckFriction("NoName");
     else if(index==2)
-      frictionForceLaw = new RegularizedPlanarFriction("NoName",parent);  
+      frictionForceLaw = new RegularizedPlanarFriction("NoName");
     else if(index==3)
-      frictionForceLaw = new SpatialCoulombFriction("NoName",parent);  
+      frictionForceLaw = new SpatialCoulombFriction("NoName");
     else if(index==4)
-      frictionForceLaw = new SpatialStribeckFriction("NoName",parent);
+      frictionForceLaw = new SpatialStribeckFriction("NoName");
     else if(index==5)
-      frictionForceLaw = new RegularizedSpatialFriction("NoName",parent);  
+      frictionForceLaw = new RegularizedSpatialFriction("NoName");
   }
 
   DOMElement* FrictionForceLawChoiceProperty::initializeUsingXML(DOMElement *element) {
@@ -640,13 +640,13 @@ namespace MBSimGUI {
     index = index_;
     delete frictionImpactLaw;
     if(index==0)
-      frictionImpactLaw = new PlanarCoulombImpact("NoName",parent);  
+      frictionImpactLaw = new PlanarCoulombImpact("NoName");
     else if(index==1)
-      frictionImpactLaw = new PlanarStribeckImpact("NoName",parent);
+      frictionImpactLaw = new PlanarStribeckImpact("NoName");
     else if(index==2)
-      frictionImpactLaw = new SpatialCoulombImpact("NoName",parent);
+      frictionImpactLaw = new SpatialCoulombImpact("NoName");
     else if(index==3)
-      frictionImpactLaw = new SpatialStribeckImpact("NoName",parent);
+      frictionImpactLaw = new SpatialStribeckImpact("NoName");
   }
 
   DOMElement* FrictionImpactLawChoiceProperty::initializeUsingXML(DOMElement *element) {

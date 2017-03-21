@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  GeneralizedFriction::GeneralizedFriction(const string &str, Element *parent) : DualRigidBodyLink(str, parent) {
+  GeneralizedFriction::GeneralizedFriction(const string &str) : DualRigidBodyLink(str) {
 
     function.setProperty(new FrictionForceLawChoiceProperty(this,MBSIM%"generalizedFrictionForceLaw"));
 

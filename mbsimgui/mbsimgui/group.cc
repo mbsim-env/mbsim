@@ -40,9 +40,9 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Group::Group(const string &str, Element *parent) : Element(str,parent), constraints(NULL), observers(NULL) {
+  Group::Group(const string &str) : Element(str), constraints(NULL), observers(NULL) {
 
-    InternalFrame *I = new InternalFrame("I",this,MBSIM%"enableOpenMBVFrameI","plotFeatureFrameI");
+    InternalFrame *I = new InternalFrame("I",MBSIM%"enableOpenMBVFrameI","plotFeatureFrameI");
     addFrame(I);
 
 //    if(parent) {
@@ -160,30 +160,37 @@ namespace MBSimGUI {
 
   void Group::addFrame(Frame* frame_) {
     frame.push_back(frame_);
+    frame_->setParent(this);
   }
 
   void Group::addContour(Contour* contour_) {
     contour.push_back(contour_);
+    contour_->setParent(this);
   }
 
   void Group::addGroup(Group* group_) {
     group.push_back(group_);
+    group_->setParent(this);
   }
 
   void Group::addObject(Object* object_) {
     object.push_back(object_);
+    object_->setParent(this);
   }
 
   void Group::addLink(Link* link_) {
     link.push_back(link_);
+    link_->setParent(this);
   }
 
   void Group::addConstraint(Constraint* constraint_) {
     constraint.push_back(constraint_);
+    constraint_->setParent(this);
   }
 
   void Group::addObserver(Observer* observer_) {
     observer.push_back(observer_);
+    observer_->setParent(this);
   }
 
   void Group::removeElement(Element* element) {
@@ -254,11 +261,11 @@ namespace MBSimGUI {
 //    element->deinitialize();
   }
 
-  Group* Group::readXMLFile(const string &filename, Element *parent) {
+  Group* Group::readXMLFile(const string &filename) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
 //    Group *group=ObjectFactory::getInstance()->createGroup(e, parent);
-    Group *group=Embed<Group>::createAndInit(e,parent);
+    Group *group=Embed<Group>::createAndInit(e);
     if(group) {
 //      group->initializeUsingXML(e);
       group->initialize();
@@ -371,7 +378,7 @@ namespace MBSimGUI {
     DOMElement *ELE=frames->getFirstElementChild();
     Frame *f;
     while(ELE) {
-      f = Embed<Frame>::createAndInit(ELE,this);
+      f = Embed<Frame>::createAndInit(ELE);
       if(f) addFrame(f);
       ELE=ELE->getNextElementSibling();
     }
@@ -381,7 +388,7 @@ namespace MBSimGUI {
     ELE=contours->getFirstElementChild();
     Contour *c;
     while(ELE) {
-      c = Embed<Contour>::createAndInit(ELE,this);
+      c = Embed<Contour>::createAndInit(ELE);
       if(c) addContour(c);
       ELE=ELE->getNextElementSibling();
     }
@@ -391,7 +398,7 @@ namespace MBSimGUI {
     ELE=groups->getFirstElementChild();
     Group *g;
     while(ELE) {
-      g = Embed<Group>::createAndInit(ELE,this);
+      g = Embed<Group>::createAndInit(ELE);
       if(g) addGroup(g);
       ELE=ELE->getNextElementSibling();
     }
@@ -401,7 +408,7 @@ namespace MBSimGUI {
     ELE=objects->getFirstElementChild();
     Object *o;
     while(ELE) {
-      o = Embed<Object>::createAndInit(ELE,this);
+      o = Embed<Object>::createAndInit(ELE);
       if(o) addObject(o);
       ELE=ELE->getNextElementSibling();
     }
@@ -411,7 +418,7 @@ namespace MBSimGUI {
     ELE=links->getFirstElementChild();
     Link *l;
     while(ELE) {
-      l = Embed<Link>::createAndInit(ELE,this);
+      l = Embed<Link>::createAndInit(ELE);
       if(l) addLink(l);
       ELE=ELE->getNextElementSibling();
     }
@@ -422,7 +429,7 @@ namespace MBSimGUI {
       ELE=constraints->getFirstElementChild();
       Constraint *constraint;
       while(ELE) {
-        constraint = Embed<Constraint>::createAndInit(ELE,this);
+        constraint = Embed<Constraint>::createAndInit(ELE);
         if(constraint) addConstraint(constraint);
         ELE=ELE->getNextElementSibling();
       }
@@ -434,7 +441,7 @@ namespace MBSimGUI {
       ELE=observers->getFirstElementChild();
       Observer *obsrv;
       while(ELE) {
-        obsrv = Embed<Observer>::createAndInit(ELE,this);
+        obsrv = Embed<Observer>::createAndInit(ELE);
         if(obsrv) addObserver(obsrv);
         ELE=ELE->getNextElementSibling();
       }

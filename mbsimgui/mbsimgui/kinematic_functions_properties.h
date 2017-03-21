@@ -27,7 +27,7 @@ namespace MBSimGUI {
 
   class TranslationAlongXAxis: public Function {
     public:
-      TranslationAlongXAxis(const std::string &name, Element *parent) : Function(name,parent) { }
+      TranslationAlongXAxis(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new TranslationAlongXAxis(*this);}
       int getArg1Size() const {return 1;}
       inline std::string getType() const { return "TranslationAlongXAxis"; }
@@ -35,7 +35,7 @@ namespace MBSimGUI {
 
   class TranslationAlongYAxis: public Function {
     public:
-      TranslationAlongYAxis(const std::string &name, Element *parent) : Function(name,parent) { }
+      TranslationAlongYAxis(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new TranslationAlongYAxis(*this);}
       int getArg1Size() const {return 1;}
       inline std::string getType() const { return "TranslationAlongYAxis"; }
@@ -43,7 +43,7 @@ namespace MBSimGUI {
 
   class TranslationAlongZAxis: public Function {
     public:
-      TranslationAlongZAxis(const std::string &name, Element *parent) : Function(name,parent) { }
+      TranslationAlongZAxis(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new TranslationAlongZAxis(*this);}
       int getArg1Size() const {return 1;}
       inline std::string getType() const { return "TranslationAlongZAxis"; }
@@ -51,7 +51,7 @@ namespace MBSimGUI {
 
   class TranslationAlongAxesXY: public Function {
     public:
-      TranslationAlongAxesXY(const std::string &name, Element *parent) : Function(name,parent) { }
+      TranslationAlongAxesXY(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new TranslationAlongAxesXY(*this);}
       int getArg1Size() const {return 2;}
       inline std::string getType() const { return "TranslationAlongAxesXY"; }
@@ -59,7 +59,7 @@ namespace MBSimGUI {
 
   class TranslationAlongAxesYZ: public Function {
     public:
-      TranslationAlongAxesYZ(const std::string &name, Element *parent) : Function(name,parent) { }
+      TranslationAlongAxesYZ(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new TranslationAlongAxesYZ(*this);}
       int getArg1Size() const {return 2;}
       inline std::string getType() const { return "TranslationAlongAxesYZ"; }
@@ -67,7 +67,7 @@ namespace MBSimGUI {
 
   class TranslationAlongAxesXZ: public Function {
     public:
-      TranslationAlongAxesXZ(const std::string &name, Element *parent) : Function(name,parent) { }
+      TranslationAlongAxesXZ(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new TranslationAlongAxesXZ(*this);}
       int getArg1Size() const {return 2;}
       inline std::string getType() const { return "TranslationAlongAxesXZ"; }
@@ -75,7 +75,7 @@ namespace MBSimGUI {
 
   class TranslationAlongAxesXYZ: public Function {
     public:
-      TranslationAlongAxesXYZ(const std::string &name, Element *parent) : Function(name,parent) { }
+      TranslationAlongAxesXYZ(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new TranslationAlongAxesXYZ(*this);}
       int getArg1Size() const {return 3;}
       inline std::string getType() const { return "TranslationAlongAxesXYZ"; }
@@ -83,7 +83,7 @@ namespace MBSimGUI {
 
   class TranslationAlongFixedAxis : public Function {
     public:
-      TranslationAlongFixedAxis(const std::string &name, Element *parent); 
+      TranslationAlongFixedAxis(const std::string &name="");
       virtual PropertyInterface* clone() const {return new TranslationAlongFixedAxis(*this);}
       int getArg1Size() const {return 1;}
       inline std::string getType() const { return "TranslationAlongFixedAxis"; }
@@ -97,7 +97,7 @@ namespace MBSimGUI {
 
   class LinearTranslation : public Function {
     public:
-      LinearTranslation(const std::string &name, Element *parent, int m=1, int n=1);
+      LinearTranslation(const std::string &name="", int m=1, int n=1);
       virtual PropertyInterface* clone() const {return new LinearTranslation(*this);}
       int getArg1Size() const;
       inline std::string getType() const { return "LinearTranslation"; }
@@ -111,7 +111,7 @@ namespace MBSimGUI {
 
   class RotationAboutXAxis : public Function {
     public:
-      RotationAboutXAxis(const std::string &name, Element *parent) : Function(name,parent) { }
+      RotationAboutXAxis(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new RotationAboutXAxis(*this);}
       int getArg1Size() const {return 1;}
       inline std::string getType() const { return "RotationAboutXAxis"; }
@@ -119,7 +119,7 @@ namespace MBSimGUI {
 
   class RotationAboutYAxis : public Function {
     public:
-      RotationAboutYAxis(const std::string &name, Element *parent) : Function(name,parent) { }
+      RotationAboutYAxis(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new RotationAboutYAxis(*this);}
       int getArg1Size() const {return 1;}
       inline std::string getType() const { return "RotationAboutYAxis"; }
@@ -127,7 +127,7 @@ namespace MBSimGUI {
 
   class RotationAboutZAxis : public Function {
     public:
-      RotationAboutZAxis(const std::string &name, Element *parent) : Function(name,parent) { }
+      RotationAboutZAxis(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new RotationAboutZAxis(*this);}
       int getArg1Size() const {return 1;}
       inline std::string getType() const { return "RotationAboutZAxis"; }
@@ -135,7 +135,7 @@ namespace MBSimGUI {
 
   class RotationAboutAxesXY : public Function {
     public:
-      RotationAboutAxesXY(const std::string &name, Element *parent) : Function(name,parent) { }
+      RotationAboutAxesXY(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new RotationAboutAxesXY(*this);}
       int getArg1Size() const {return 2;}
       inline std::string getType() const { return "RotationAboutAxesXY"; }
@@ -143,7 +143,7 @@ namespace MBSimGUI {
 
   class RotationAboutAxesYZ : public Function {
     public:
-      RotationAboutAxesYZ(const std::string &name, Element *parent) : Function(name,parent) { }
+      RotationAboutAxesYZ(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new RotationAboutAxesYZ(*this);}
       int getArg1Size() const {return 2;}
       inline std::string getType() const { return "RotationAboutAxesYZ"; }
@@ -151,7 +151,7 @@ namespace MBSimGUI {
 
   class RotationAboutAxesXZ : public Function {
     public:
-      RotationAboutAxesXZ(const std::string &name, Element *parent) : Function(name,parent) { }
+      RotationAboutAxesXZ(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new RotationAboutAxesXZ(*this);}
       int getArg1Size() const {return 2;}
       inline std::string getType() const { return "RotationAboutAxesXZ"; }
@@ -159,7 +159,7 @@ namespace MBSimGUI {
 
   class RotationAboutAxesXYZ : public Function {
     public:
-      RotationAboutAxesXYZ(const std::string &name, Element *parent) : Function(name,parent) { }
+      RotationAboutAxesXYZ(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new RotationAboutAxesXYZ(*this);}
       int getArg1Size() const {return 3;}
       inline std::string getType() const { return "RotationAboutAxesXYZ"; }
@@ -167,7 +167,7 @@ namespace MBSimGUI {
 
   class RotationAboutAxesZXZ : public Function {
     public:
-      RotationAboutAxesZXZ(const std::string &name, Element *parent) : Function(name,parent) { }
+      RotationAboutAxesZXZ(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new RotationAboutAxesZXZ(*this);}
       int getArg1Size() const {return 3;}
       inline std::string getType() const { return "RotationAboutAxesZXZ"; }
@@ -175,7 +175,7 @@ namespace MBSimGUI {
 
   class RotationAboutAxesZYX : public Function {
     public:
-      RotationAboutAxesZYX(const std::string &name, Element *parent) : Function(name,parent) { }
+      RotationAboutAxesZYX(const std::string &name="") : Function(name) { }
       virtual PropertyInterface* clone() const {return new RotationAboutAxesZYX(*this);}
       int getArg1Size() const {return 3;}
       inline std::string getType() const { return "RotationAboutAxesZYX"; }
@@ -183,7 +183,7 @@ namespace MBSimGUI {
 
   class RotationAboutFixedAxis : public Function {
     public:
-      RotationAboutFixedAxis(const std::string &name, Element *parent); 
+      RotationAboutFixedAxis(const std::string &name="");
       virtual PropertyInterface* clone() const {return new RotationAboutFixedAxis(*this);}
       int getArg1Size() const {return 1;}
       inline std::string getType() const { return "RotationAboutFixedAxis"; }

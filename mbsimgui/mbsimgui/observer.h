@@ -27,15 +27,15 @@ namespace MBSimGUI {
 
   class Observer : public Element {
     public:
-      Observer(const std::string &str, Element *parent);
-      static Observer* readXMLFile(const std::string &filename, Element *parent);
+      Observer(const std::string &str="");
+      static Observer* readXMLFile(const std::string &filename);
       virtual int getxSize() {return 0;}
   };
 
   class KinematicCoordinatesObserver : public Observer {
     friend class KinematicCoordinatesObserverPropertyDialog;
     public:
-    KinematicCoordinatesObserver(const std::string &str, Element *parent);
+    KinematicCoordinatesObserver(const std::string &str="");
     std::string getType() const { return "KinematicCoordinatesObserver"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -48,7 +48,7 @@ namespace MBSimGUI {
   class RelativeKinematicsObserver : public Observer {
     friend class RelativeKinematicsObserverPropertyDialog;
     public:
-    RelativeKinematicsObserver(const std::string &str, Element *parent);
+    RelativeKinematicsObserver(const std::string &str="");
     std::string getType() const { return "RelativeKinematicsObserver"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -61,7 +61,7 @@ namespace MBSimGUI {
   class MechanicalLinkObserver : public Observer {
     friend class MechanicalLinkObserverPropertyDialog;
     public:
-    MechanicalLinkObserver(const std::string &str, Element *parent);
+    MechanicalLinkObserver(const std::string &str="");
     std::string getType() const { return "MechanicalLinkObserver"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -73,7 +73,7 @@ namespace MBSimGUI {
   class MechanicalConstraintObserver : public Observer {
     friend class MechanicalConstraintObserverPropertyDialog;
     public:
-    MechanicalConstraintObserver(const std::string &str, Element *parent);
+    MechanicalConstraintObserver(const std::string &str="");
     std::string getType() const { return "MechanicalConstraintObserver"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -86,7 +86,7 @@ namespace MBSimGUI {
   class ContactObserver : public Observer {
     friend class ContactObserverPropertyDialog;
     public:
-    ContactObserver(const std::string &str, Element *parent);
+    ContactObserver(const std::string &str="");
     std::string getType() const { return "ContactObserver"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -99,7 +99,7 @@ namespace MBSimGUI {
   class FrameObserver : public Observer {
     friend class FrameObserverPropertyDialog;
     public:
-    FrameObserver(const std::string &str, Element *parent);
+    FrameObserver(const std::string &str="");
     std::string getType() const { return "FrameObserver"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -112,7 +112,7 @@ namespace MBSimGUI {
   class RigidBodyObserver : public Observer {
     friend class RigidBodyObserverPropertyDialog;
     public:
-    RigidBodyObserver(const std::string &str, Element *parent);
+    RigidBodyObserver(const std::string &str="");
     std::string getType() const { return "RigidBodyObserver"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

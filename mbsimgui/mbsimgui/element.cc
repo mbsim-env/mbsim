@@ -44,7 +44,8 @@ namespace MBSimGUI {
 
   int Element::IDcounter=0;
 
-  Element::Element(const string &name_, Element *parent_) : parent(parent_), parameters(this), element(NULL), name(name_), config(false) {
+  Element::Element(const string &name_) : parent(NULL), element(NULL), name(name_), config(false) {
+    parameters.setParent(this);
     ID=toStr(IDcounter++);
     addPlotFeature("plotRecursive");
     addPlotFeature("separateFilePerGroup");

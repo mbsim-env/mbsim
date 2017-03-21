@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  KineticExcitation::KineticExcitation(const string &str, Element *parent) : FloatingFrameLink(str, parent), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false), arrow(0,false) {
+  KineticExcitation::KineticExcitation(const string &str) : FloatingFrameLink(str), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false), arrow(0,false) {
 
     static_cast<ConnectFramesProperty*>(connections.getProperty())->setDefaultFrame("../Frame[I]");
 

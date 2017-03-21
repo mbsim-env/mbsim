@@ -31,7 +31,7 @@ namespace MBSimGUI {
   class GeneralizedForceLaw : public Element {
 
     public:
-      GeneralizedForceLaw(const std::string &name, Element *parent) : Element(name,parent), forceFunc(0) {}
+      GeneralizedForceLaw(const std::string &name) : Element(name), forceFunc(0) {}
       GeneralizedForceLaw(const GeneralizedForceLaw &p);
       ~GeneralizedForceLaw();
       GeneralizedForceLaw& operator=(const GeneralizedForceLaw &p);
@@ -46,7 +46,7 @@ namespace MBSimGUI {
   class BilateralConstraint : public GeneralizedForceLaw {
 
     public:
-      BilateralConstraint(const std::string &name, Element *parent) : GeneralizedForceLaw(name,parent) {}
+      BilateralConstraint(const std::string &name="") : GeneralizedForceLaw(name) {}
       virtual PropertyInterface* clone() const {return new BilateralConstraint(*this);}
       std::string getType() const { return "BilateralConstraint"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return NULL; }
@@ -57,7 +57,7 @@ namespace MBSimGUI {
   class RegularizedBilateralConstraint : public GeneralizedForceLaw {
 
     public:
-      RegularizedBilateralConstraint(const std::string &name, Element *parent) : GeneralizedForceLaw(name,parent), index(0) {}
+      RegularizedBilateralConstraint(const std::string &name="") : GeneralizedForceLaw(name), index(0) {}
       virtual PropertyInterface* clone() const {return new RegularizedBilateralConstraint(*this);}
       std::string getType() const { return "RegularizedBilateralConstraint"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -71,7 +71,7 @@ namespace MBSimGUI {
   class UnilateralConstraint : public GeneralizedForceLaw {
 
     public:
-      UnilateralConstraint(const std::string &name, Element *parent) : GeneralizedForceLaw(name,parent) {}
+      UnilateralConstraint(const std::string &name="") : GeneralizedForceLaw(name) {}
       virtual PropertyInterface* clone() const {return new UnilateralConstraint(*this);}
       std::string getType() const { return "UnilateralConstraint"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return NULL; }
@@ -82,7 +82,7 @@ namespace MBSimGUI {
   class RegularizedUnilateralConstraint : public GeneralizedForceLaw {
 
     public:
-      RegularizedUnilateralConstraint(const std::string &name, Element *parent) : GeneralizedForceLaw(name,parent), index(0) {} 
+      RegularizedUnilateralConstraint(const std::string &name="") : GeneralizedForceLaw(name), index(0) {}
       virtual PropertyInterface* clone() const {return new RegularizedUnilateralConstraint(*this);}
       std::string getType() const { return "RegularizedUnilateralConstraint"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -96,7 +96,7 @@ namespace MBSimGUI {
   class GeneralizedImpactLaw : public Element {
 
     public:
-      GeneralizedImpactLaw(const std::string &name, Element *parent) : Element(name,parent) {} 
+      GeneralizedImpactLaw(const std::string &name="") : Element(name) {}
       virtual std::string getType() const { return "GeneralizedImpactLaw"; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget) { }
@@ -106,7 +106,7 @@ namespace MBSimGUI {
   class BilateralImpact : public GeneralizedImpactLaw {
 
     public:
-      BilateralImpact(const std::string &name, Element *parent) : GeneralizedImpactLaw(name,parent) {} 
+      BilateralImpact(const std::string &name="") : GeneralizedImpactLaw(name) {}
       virtual PropertyInterface* clone() const {return new BilateralImpact(*this);}
       std::string getType() const { return "BilateralImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return NULL; }
@@ -117,7 +117,7 @@ namespace MBSimGUI {
   class UnilateralNewtonImpact : public GeneralizedImpactLaw {
 
     public:
-      UnilateralNewtonImpact(const std::string &name, Element *parent);
+      UnilateralNewtonImpact(const std::string &name="");
       virtual PropertyInterface* clone() const {return new UnilateralNewtonImpact(*this);}
       std::string getType() const { return "UnilateralNewtonImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
@@ -131,7 +131,7 @@ namespace MBSimGUI {
   class FrictionForceLaw : public Element {
 
     public:
-      FrictionForceLaw(const std::string &name, Element *parent) : Element(name,parent), frictionForceFunc(0) {}
+      FrictionForceLaw(const std::string &name="") : Element(name), frictionForceFunc(0) {}
       FrictionForceLaw(const FrictionForceLaw &p);
       ~FrictionForceLaw();
       FrictionForceLaw& operator=(const FrictionForceLaw &p);
@@ -146,7 +146,7 @@ namespace MBSimGUI {
   class PlanarCoulombFriction : public FrictionForceLaw {
 
     public:
-      PlanarCoulombFriction(const std::string &name, Element *parent);
+      PlanarCoulombFriction(const std::string &name="");
       virtual PropertyInterface* clone() const {return new PlanarCoulombFriction(*this);}
       std::string getType() const { return "PlanarCoulombFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
@@ -161,7 +161,7 @@ namespace MBSimGUI {
   class SpatialCoulombFriction : public FrictionForceLaw {
 
     public:
-      SpatialCoulombFriction(const std::string &name, Element *parent);
+      SpatialCoulombFriction(const std::string &name="");
       virtual PropertyInterface* clone() const {return new SpatialCoulombFriction(*this);}
       std::string getType() const { return "SpatialCoulombFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
@@ -176,7 +176,7 @@ namespace MBSimGUI {
   class PlanarStribeckFriction : public FrictionForceLaw {
 
     public:
-      PlanarStribeckFriction(const std::string &name, Element *parent);
+      PlanarStribeckFriction(const std::string &name="");
       virtual PropertyInterface* clone() const {return new PlanarStribeckFriction(*this);}
       std::string getType() const { return "PlanarStribeckFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -191,7 +191,7 @@ namespace MBSimGUI {
   class SpatialStribeckFriction : public FrictionForceLaw {
 
     public:
-      SpatialStribeckFriction(const std::string &name, Element *parent);
+      SpatialStribeckFriction(const std::string &name="");
       virtual PropertyInterface* clone() const {return new SpatialStribeckFriction(*this);}
       std::string getType() const { return "SpatialStribeckFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -206,7 +206,7 @@ namespace MBSimGUI {
   class RegularizedPlanarFriction : public FrictionForceLaw {
 
     public:
-      RegularizedPlanarFriction(const std::string &name, Element *parent) : FrictionForceLaw(name,parent), index(0) {defineFunction(0);}
+      RegularizedPlanarFriction(const std::string &name="") : FrictionForceLaw(name), index(0) {defineFunction(0);}
       virtual PropertyInterface* clone() const {return new RegularizedPlanarFriction(*this);}
       std::string getType() const { return "RegularizedPlanarFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
@@ -221,7 +221,7 @@ namespace MBSimGUI {
   class RegularizedSpatialFriction : public FrictionForceLaw {
 
     public:
-      RegularizedSpatialFriction(const std::string &name, Element *parent) : FrictionForceLaw(name,parent), index(0) {defineFunction(0);}
+      RegularizedSpatialFriction(const std::string &name="") : FrictionForceLaw(name), index(0) {defineFunction(0);}
       virtual PropertyInterface* clone() const {return new RegularizedSpatialFriction(*this);}
       std::string getType() const { return "RegularizedSpatialFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
@@ -236,7 +236,7 @@ namespace MBSimGUI {
   class FrictionImpactLaw : public Element {
 
     public:
-      FrictionImpactLaw(const std::string &name, Element *parent) : Element(name,parent) {}
+      FrictionImpactLaw(const std::string &name="") : Element(name) {}
       virtual std::string getType() const { return "FrictionImpactLaw"; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget) { }
@@ -246,7 +246,7 @@ namespace MBSimGUI {
   class PlanarCoulombImpact : public FrictionImpactLaw {
 
     public:
-      PlanarCoulombImpact(const std::string &name, Element *parent); 
+      PlanarCoulombImpact(const std::string &name="");
       virtual PropertyInterface* clone() const {return new PlanarCoulombImpact(*this);}
       std::string getType() const { return "PlanarCoulombImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
@@ -261,7 +261,7 @@ namespace MBSimGUI {
   class SpatialCoulombImpact : public FrictionImpactLaw {
 
     public:
-      SpatialCoulombImpact(const std::string &name, Element *parent);
+      SpatialCoulombImpact(const std::string &name="");
       virtual PropertyInterface* clone() const {return new SpatialCoulombImpact(*this);}
       std::string getType() const { return "SpatialCoulombImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
@@ -276,7 +276,7 @@ namespace MBSimGUI {
   class PlanarStribeckImpact : public FrictionImpactLaw {
 
     public:
-      PlanarStribeckImpact(const std::string &name, Element *parent);
+      PlanarStribeckImpact(const std::string &name="");
       virtual PropertyInterface* clone() const {return new PlanarStribeckImpact(*this);}
       std::string getType() const { return "PlanarStribeckImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -291,7 +291,7 @@ namespace MBSimGUI {
   class SpatialStribeckImpact : public FrictionImpactLaw {
 
     public:
-      SpatialStribeckImpact(const std::string &name, Element *parent);
+      SpatialStribeckImpact(const std::string &name="");
       virtual PropertyInterface* clone() const {return new SpatialStribeckImpact(*this);}
       std::string getType() const { return "SpatialStribeckImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);

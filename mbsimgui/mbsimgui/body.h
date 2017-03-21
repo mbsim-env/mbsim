@@ -26,7 +26,7 @@ namespace MBSimGUI {
 
   class Body : public Object {
     public:
-      Body(const std::string &str, Element *parent);
+      Body(const std::string &str="");
       Body(const Body &b);
       ~Body();
       Body& operator=(const Body &b);

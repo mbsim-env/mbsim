@@ -33,22 +33,22 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Link::Link(const string &str, Element *parent) : Element(str,parent) {
+  Link::Link(const string &str) : Element(str) {
     addPlotFeature("generalizedRelativePosition");
     addPlotFeature("generalizedRelativeVelocity");
     addPlotFeature("generalizedForce");
     addPlotFeature("energy");
   }
 
-  Link* Link::readXMLFile(const string &filename, Element *parent) {
+  Link* Link::readXMLFile(const string &filename) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    Link *link=Embed<Link>::createAndInit(e,parent);
+    Link *link=Embed<Link>::createAndInit(e);
     if(link) link->initialize();
     return link;
   }
 
-  FrameLink::FrameLink(const string &str, Element *parent) : MechanicalLink(str, parent) {
+  FrameLink::FrameLink(const string &str) : MechanicalLink(str) {
     connections.setProperty(new ConnectFramesProperty(2,this));
   }
 
@@ -69,7 +69,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  FloatingFrameLink::FloatingFrameLink(const string &str, Element *parent) : FrameLink(str, parent), refFrameID(0,false) {
+  FloatingFrameLink::FloatingFrameLink(const string &str) : FrameLink(str), refFrameID(0,false) {
 
     refFrameID.setProperty(new IntegerProperty(1,MBSIM%"frameOfReferenceID"));
   }
@@ -86,7 +86,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  RigidBodyLink::RigidBodyLink(const string &str, Element *parent) : MechanicalLink(str, parent), support(0,false) {
+  RigidBodyLink::RigidBodyLink(const string &str) : MechanicalLink(str), support(0,false) {
     support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
   }
 
@@ -107,7 +107,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  DualRigidBodyLink::DualRigidBodyLink(const string &str, Element *parent) : RigidBodyLink(str, parent) {
+  DualRigidBodyLink::DualRigidBodyLink(const string &str) : RigidBodyLink(str) {
     connections.setProperty(new ChoiceProperty2(new ConnectRigidBodiesPropertyFactory(this),"",4));
   }
 

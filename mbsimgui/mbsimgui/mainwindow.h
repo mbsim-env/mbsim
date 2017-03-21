@@ -103,14 +103,14 @@ namespace MBSimGUI {
       ExtProperty evalSelect;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
-      void addParameter(Parameter *parameter);
-      void addFrame(Frame *frame);
-      void addContour(Contour *contour);
-      void addGroup(Group *group);
-      void addObject(Object *object);
-      void addLink(Link *link);
-      void addConstraint(Constraint *constraint);
-      void addObserver(Observer *observer);
+      void addParameter(Parameter *parameter, Element *parent=NULL);
+      void addFrame(Frame *frame, Element *parent=NULL);
+      void addContour(Contour *contour, Element *parent=NULL);
+      void addGroup(Group *group, Element *parent=NULL);
+      void addObject(Object *object, Element *parent=NULL);
+      void addLink(Link *link, Element *parent=NULL);
+      void addConstraint(Constraint *constraint, Element *parent=NULL);
+      void addObserver(Observer *observer, Element *parent=NULL);
       void highlightObject(const std::string &ID);
       const std::string& getHighlightedObject() const {return currentID;}
       void loadProject(const QString &file);

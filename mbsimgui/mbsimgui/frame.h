@@ -28,11 +28,11 @@ namespace MBSimGUI {
 
   class Frame : public Element {
     public:
-      Frame(const std::string &str, Element *parent);
+      Frame(const std::string &str="");
       ~Frame() { }
       virtual PropertyInterface* clone() const {return new Frame(*this);}
       std::string getType() const { return "Frame"; }
-      static Frame* readXMLFile(const std::string &filename, Element *parent);
+      static Frame* readXMLFile(const std::string &filename);
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this,false);}
@@ -41,7 +41,7 @@ namespace MBSimGUI {
 
   class InternalFrame : public Frame {
     public:
-      InternalFrame(const std::string &str, Element *parent, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_="") : Frame(str,parent), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) { }
+      InternalFrame(const std::string &str, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_="") : Frame(str), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) { }
       virtual PropertyInterface* clone() const {return new InternalFrame(*this);}
       std::string getType() const { return "InternalFrame"; }
       ElementPropertyDialog* createPropertyDialog() {return new InternalFramePropertyDialog(this);}
@@ -56,7 +56,7 @@ namespace MBSimGUI {
 
   class FixedRelativeFrame : public Frame {
     public:
-      FixedRelativeFrame(const std::string &str, Element *parent);
+      FixedRelativeFrame(const std::string &str="");
       ~FixedRelativeFrame() { }
       virtual PropertyInterface* clone() const {return new FixedRelativeFrame(*this);}
       std::string getType() const { return "FixedRelativeFrame"; }
@@ -67,7 +67,7 @@ namespace MBSimGUI {
 
   class NodeFrame : public Frame {
     public:
-      NodeFrame(const std::string &str, Element *parent);
+      NodeFrame(const std::string &str="");
       ~NodeFrame() { }
       virtual PropertyInterface* clone() const {return new NodeFrame(*this);}
       std::string getType() const { return "NodeFrame"; }

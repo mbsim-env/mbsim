@@ -572,7 +572,7 @@ namespace MBSimGUI {
       DOMElement *ele1 = ele0->getFirstElementChild();
       if(evalSelect.isActive()) ele1 = ele1->getNextElementSibling();
 
-      DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1,0);
+      DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1);
 //      dss->initialize();
 
       EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
@@ -725,13 +725,19 @@ namespace MBSimGUI {
       ele0->insertBefore(node,NULL);
     }
     string counterName = element->getCounterName();
-    cout << "counterName = " << counterName << endl;
     if(not(counterName.empty())) {
       DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
       E(ele1)->setAttribute("name", counterName);
       DOMText *text = doc->createTextNode(X()%"1");
       ele1->insertBefore(text,NULL);
       ele0->insertBefore(ele1,NULL);
+    }
+
+    DOMElement *root = doc->getDocumentElement();
+    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
+      DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
+          X()%"MBS.mbsimparam.xml");
+      root->insertBefore(filenamePI, root->getFirstChild());
     }
 
     string message;
@@ -1049,109 +1055,109 @@ namespace MBSimGUI {
 //      static_cast<Element*>(model->getItem(index)->getItemData())->writeXMLFileEmbed(file.toStdString());
   }
 
-  void MainWindow::addFrame(Frame *frame) {
-    frame->createXMLElement(frame->getParent()->getXMLFrames());
+  void MainWindow::addFrame(Frame *frame, Element *parent) {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = index.data().toString()=="frames"?index:index.child(0,0); 
     frame->setName(frame->getName()+toStr(model->getItem(containerIndex)->getID()));
-    frame->getParent()->addFrame(frame);
+    parent->addFrame(frame);
+    frame->createXMLElement(frame->getParent()->getXMLFrames());
     model->createFrameItem(frame,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
 
-  void MainWindow::addContour(Contour *contour) {
+  void MainWindow::addContour(Contour *contour, Element *parent) {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(1,0):index;
     contour->setName(contour->getName()+toStr(model->getItem(containerIndex)->getID()));
-    contour->getParent()->addContour(contour);
+    parent->addContour(contour);
     model->createContourItem(contour,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
 
-  void MainWindow::addGroup(Group *group) {
+  void MainWindow::addGroup(Group *group, Element *parent) {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(2,0):index;
     group->setName(group->getName()+toStr(model->getItem(containerIndex)->getID()));
-    group->getParent()->addGroup(group);
+    parent->addGroup(group);
     model->createGroupItem(group,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
 
-  void MainWindow::addObject(Object *object) {
-    object->createXMLElement(object->getParent()->getXMLObjects());
+  void MainWindow::addObject(Object *object, Element *parent) {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(3,0):index;
     object->setName(object->getName()+toStr(model->getItem(containerIndex)->getID()));
-    object->getParent()->addObject(object);
+    parent->addObject(object);
+    object->createXMLElement(object->getParent()->getXMLObjects());
     model->createObjectItem(object,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
 
-  void MainWindow::addLink(Link *link) {
+  void MainWindow::addLink(Link *link, Element *parent) {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(4,0):index;
     link->setName(link->getName()+toStr(model->getItem(containerIndex)->getID()));
-    link->getParent()->addLink(link);
+    parent->addLink(link);
     model->createLinkItem(link,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
 
-  void MainWindow::addConstraint(Constraint *constraint) {
+  void MainWindow::addConstraint(Constraint *constraint, Element *parent) {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(5,0):index;
     constraint->setName(constraint->getName()+toStr(model->getItem(containerIndex)->getID()));
-    constraint->getParent()->addConstraint(constraint);
+    parent->addConstraint(constraint);
     model->createConstraintItem(constraint,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
 
-  void MainWindow::addObserver(Observer *observer) {
+  void MainWindow::addObserver(Observer *observer, Element *parent) {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(6,0):index;
     observer->setName(observer->getName()+toStr(model->getItem(containerIndex)->getID()));
-    observer->getParent()->addObserver(observer);
+    parent->addObserver(observer);
     model->createObserverItem(observer,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
 
-  void MainWindow::addParameter(Parameter *parameter) {
-    parameter->createXMLElement(parameter->getParent()->getXMLElement());
+  void MainWindow::addParameter(Parameter *parameter, Element *parent) {
     setProjectChanged(true);
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-    Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
+//    Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
     if(parameter->getName()!="import")
       parameter->setName(parameter->getName()+toStr(model->getItem(index)->getID()));
+    parent->addParameter(parameter);
+    parameter->createXMLElement(parameter->getParent()->getXMLElement());
     QModelIndex newIndex = model->createParameterItem(parameter,index);
-    element->addParameter(parameter);
     embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
     embeddingList->openEditor();
   }

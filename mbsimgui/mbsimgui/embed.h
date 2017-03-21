@@ -33,13 +33,13 @@ namespace MBSimGUI {
   template <typename T>
     class Embed {
       public:
-        static T* create(xercesc::DOMElement *element, Element *parent);
+        static T* create(xercesc::DOMElement *element);
 
-        static T* createAndInit(xercesc::DOMElement *ele1, Element* parent) {
+        static T* createAndInit(xercesc::DOMElement *ele1) {
           T *object;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
             xercesc::DOMElement *ele2 = 0;
-            Parameters param(parent);
+            Parameters param;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"))));
               param = Parameters::readXMLFile(fileInfo.canonicalFilePath().toStdString());
@@ -56,19 +56,19 @@ namespace MBSimGUI {
             }
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"))));
-//              object=T::readXMLFile(MBXMLUtils::E(ele1)->getAttribute("href"),parent);
-              object=T::readXMLFile(fileInfo.canonicalFilePath().toStdString(),parent);
+              object=T::readXMLFile(fileInfo.canonicalFilePath().toStdString());
             }
             else
-              object=create(ele2,parent);
+              object=create(ele2);
             if(object) {
               if(ele2)
                 object->initializeUsingXML(ele2);
+              param.setParent(object);
               object->setParameters(param);
             }
           }
           else {
-            object=create(ele1,parent);
+            object=create(ele1);
             if(object) object->initializeUsingXML(ele1);
           }
           return object;

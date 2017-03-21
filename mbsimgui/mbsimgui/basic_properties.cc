@@ -657,13 +657,13 @@ namespace MBSimGUI {
     static_cast<ConnectContoursWidget*>(widget)->update();
   }
 
-  ConnectRigidBodiesProperty::ConnectRigidBodiesProperty(int n, Element *element, const FQN &xmlName_) : xmlName(xmlName_)  {
+  ConnectRigidBodiesProperty::ConnectRigidBodiesProperty(int n, const FQN &xmlName_) : xmlName(xmlName_)  {
 
     for(int i=0; i<n; i++) {
       FQN xmlName = MBSIM%"ref";
       if(n>1)
         xmlName.second += toStr(i+1);
-      body.push_back(RigidBodyOfReferenceProperty("",element,xmlName));
+      body.push_back(RigidBodyOfReferenceProperty("",NULL,xmlName));
     }
   }
 

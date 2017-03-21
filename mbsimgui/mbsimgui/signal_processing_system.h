@@ -27,7 +27,7 @@ namespace MBSimGUI {
   class SignalProcessingSystem : public Link {
     friend class SignalProcessingSystemPropertyDialog;
     public:
-    SignalProcessingSystem(const std::string &str, Element *parent);
+    SignalProcessingSystem(const std::string &str="");
     std::string getType() const { return "SignalProcessingSystem"; }
     virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);

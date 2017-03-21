@@ -28,7 +28,7 @@ namespace MBSimGUI {
   class Contact : public MechanicalLink {
     friend class ContactPropertyDialog;
     public:
-    Contact(const std::string &str, Element *parent);
+    Contact(const std::string &str="");
     ~Contact();
     std::string getType() const { return "Contact"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);

@@ -34,13 +34,13 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Signal::Signal(const string &str, Element *parent) : Link(str, parent) {
+  Signal::Signal(const string &str) : Link(str) {
   }
 
   Signal::~Signal() {
   }
 
-  PIDController::PIDController(const string &str, Element *parent) : Signal(str, parent) {
+  PIDController::PIDController(const string &str) : Signal(str) {
     sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
     sdRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"derivativeOfInputSignal"));
     vector<PhysicalVariableProperty> input;
@@ -82,7 +82,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  UnarySignalOperation::UnarySignalOperation(const string &str, Element *parent) : Signal(str, parent) {
+  UnarySignalOperation::UnarySignalOperation(const string &str) : Signal(str) {
     sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
 
     //  vector<Property*> property;
@@ -112,7 +112,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  BinarySignalOperation::BinarySignalOperation(const string &str, Element *parent) : Signal(str, parent) {
+  BinarySignalOperation::BinarySignalOperation(const string &str) : Signal(str) {
     s1Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"firstInputSignal"));
     s2Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"secondInputSignal"));
 
@@ -144,7 +144,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  ExternSignalSource::ExternSignalSource(const string &str, Element *parent) : Signal(str, parent) {
+  ExternSignalSource::ExternSignalSource(const string &str) : Signal(str) {
     sourceSize.setProperty(new IntegerProperty(1,MBSIMCONTROL%"sourceSize"));
   }
 
@@ -165,7 +165,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  ExternSignalSink::ExternSignalSink(const string &str, Element *parent) : Signal(str, parent) {
+  ExternSignalSink::ExternSignalSink(const string &str) : Signal(str) {
     inputSignal.setProperty(new SignalOfReferenceProperty("",this,MBSIMCONTROL%"inputSignal"));
   }
 

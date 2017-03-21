@@ -28,7 +28,7 @@ namespace MBSimGUI {
   class GeneralizedElasticConnection : public DualRigidBodyLink {
     friend class GeneralizedElasticConnectionPropertyDialog;
     public:
-    GeneralizedElasticConnection(const std::string &str, Element *element);
+    GeneralizedElasticConnection(const std::string &str="");
     std::string getType() const { return "GeneralizedElasticConnection"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

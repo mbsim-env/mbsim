@@ -31,7 +31,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Object::Object(const string &str, Element *parent) : Element(str,parent) {
+  Object::Object(const string &str) : Element(str) {
     addPlotFeature("generalizedPosition");
     addPlotFeature("generalizedVelocity");
     addPlotFeature("derivativeOfGeneralizedPosition");
@@ -39,10 +39,10 @@ namespace MBSimGUI {
     addPlotFeature("energy");
   }
 
-  Object* Object::readXMLFile(const string &filename, Element *parent) {
+  Object* Object::readXMLFile(const string &filename) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    Object *object=Embed<Object>::createAndInit(e,parent);
+    Object *object=Embed<Object>::createAndInit(e);
     return object;
   }
 

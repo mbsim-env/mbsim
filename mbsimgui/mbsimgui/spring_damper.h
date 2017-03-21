@@ -28,7 +28,7 @@ namespace MBSimGUI {
   class SpringDamper : public FrameLink {
     friend class SpringDamperPropertyDialog;
     public:
-    SpringDamper(const std::string &str, Element *element);
+    SpringDamper(const std::string &str="");
     std::string getType() const { return "SpringDamper"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -40,7 +40,7 @@ namespace MBSimGUI {
   class DirectionalSpringDamper : public FloatingFrameLink {
     friend class DirectionalSpringDamperPropertyDialog;
     public:
-    DirectionalSpringDamper(const std::string &str, Element *element);
+    DirectionalSpringDamper(const std::string &str="");
     std::string getType() const { return "DirectionalSpringDamper"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -52,7 +52,7 @@ namespace MBSimGUI {
   class GeneralizedSpringDamper : public DualRigidBodyLink {
     friend class GeneralizedSpringDamperPropertyDialog;
     public:
-    GeneralizedSpringDamper(const std::string &str, Element *element);
+    GeneralizedSpringDamper(const std::string &str="");
     std::string getType() const { return "GeneralizedSpringDamper"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

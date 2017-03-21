@@ -26,8 +26,8 @@ namespace MBSimGUI {
 
   class Object : public Element {
     public:
-      Object(const std::string &str, Element *parent);
-      static Object* readXMLFile(const std::string &filename, Element *parent);
+      Object(const std::string &str="");
+      static Object* readXMLFile(const std::string &filename);
       ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
   };
 

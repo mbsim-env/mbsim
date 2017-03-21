@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  GeneralizedElasticConnection::GeneralizedElasticConnection(const string &str, Element *parent) : DualRigidBodyLink(str, parent) {
+  GeneralizedElasticConnection::GeneralizedElasticConnection(const string &str) : DualRigidBodyLink(str) {
 
     function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this,"VVV"),MBSIM%"generalizedForceFunction"));
   }

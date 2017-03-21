@@ -35,17 +35,17 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Contour::Contour(const string &str, Element *parent) : Element(str,parent), thickness(0,false) {
+  Contour::Contour(const string &str) : Element(str), thickness(0,false) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0.01"), "m", MBSIM%"thickness"));
     thickness.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  Contour* Contour::readXMLFile(const string &filename, Element *parent) {
+  Contour* Contour::readXMLFile(const string &filename) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-//    Contour *contour=ObjectFactory::getInstance()->createContour(e, parent);
-    Contour *contour=Embed<Contour>::createAndInit(e,parent);
+//    Contour *contour=ObjectFactory::getInstance()->createContour(e);
+    Contour *contour=Embed<Contour>::createAndInit(e);
     if(contour) {
 //      contour->initializeUsingXML(e);
       contour->initialize();
@@ -65,7 +65,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  RigidContour::RigidContour(const string &str, Element *parent) : Contour(str,parent), refFrame(0,false) {
+  RigidContour::RigidContour(const string &str) : Contour(str), refFrame(0,false) {
     refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
   }
 
@@ -90,7 +90,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  Point::Point(const string &str, Element *parent) : RigidContour(str,parent) {
+  Point::Point(const string &str) : RigidContour(str) {
     visu.setProperty(new PointMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
@@ -106,7 +106,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  Line::Line(const string &str, Element *parent) : RigidContour(str,parent) {
+  Line::Line(const string &str) : RigidContour(str) {
     visu.setProperty(new LineMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
@@ -122,7 +122,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  Plane::Plane(const string &str, Element *parent) : RigidContour(str,parent) {
+  Plane::Plane(const string &str) : RigidContour(str) {
 
     visu.setProperty(new PlaneMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
@@ -139,7 +139,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  Sphere::Sphere(const string &str, Element *parent) : RigidContour(str,parent) {
+  Sphere::Sphere(const string &str) : RigidContour(str) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
@@ -163,7 +163,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  Circle::Circle(const string &str, Element *parent) : RigidContour(str,parent), solid(0,false) {
+  Circle::Circle(const string &str) : RigidContour(str), solid(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
@@ -186,7 +186,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  Cuboid::Cuboid(const string &str, Element *parent) : RigidContour(str,parent) {
+  Cuboid::Cuboid(const string &str) : RigidContour(str) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", MBSIM%"length"));
@@ -210,7 +210,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  LineSegment::LineSegment(const string &str, Element *parent) : RigidContour(str,parent) {
+  LineSegment::LineSegment(const string &str) : RigidContour(str) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"length"));
@@ -234,7 +234,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  PlanarContour::PlanarContour(const string &str, Element *parent) : RigidContour(str,parent), open(0,false) {
+  PlanarContour::PlanarContour(const string &str) : RigidContour(str), open(0,false) {
 
     nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"nodes",vector<string>(3,"")),"",4));
 
@@ -263,7 +263,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  SpatialContour::SpatialContour(const string &str, Element *parent) : RigidContour(str,parent), open(0,false) {
+  SpatialContour::SpatialContour(const string &str) : RigidContour(str), open(0,false) {
 
     etaNodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"etaNodes",vector<string>(3,"")),"",4));
 
