@@ -56,7 +56,6 @@ namespace MBSimGUI {
     public:
       Element(const std::string &name="");
       virtual ~Element();
-      virtual Element* clone() const {return 0;}
       virtual std::string getPath();
       std::string getXMLPath(Element *ref=0, bool rel=false);
       xercesc::DOMElement* getXMLElement() { return element; }

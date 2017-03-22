@@ -40,7 +40,6 @@ namespace MBSimGUI {
       xercesc::DOMElement *environments;
     public:
       DynamicSystemSolver(const std::string &str="");
-//      virtual PropertyInterface* clone() const {return new DynamicSystemSolver(*this);}
       std::string getType() const { return "DynamicSystemSolver"; }
       xercesc::DOMElement* getXMLEnvironments() { return environments; }
       void removeXMLElements();

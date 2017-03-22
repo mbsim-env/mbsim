@@ -44,10 +44,7 @@ namespace MBSimGUI {
 
     public:
     Group(const std::string &str="");
-    Group(const Group &g);
     ~Group();
-    Group& operator=(const Group &g);
-//    virtual PropertyInterface* clone() const {return new Group(*this);}
     std::string getType() const { return "Group"; }
     static Group* readXMLFile(const std::string &filename);
     void createXMLConstraints();

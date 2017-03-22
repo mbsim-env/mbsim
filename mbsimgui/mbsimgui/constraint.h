@@ -64,7 +64,6 @@ namespace MBSimGUI {
   class GeneralizedGearConstraint : public GeneralizedConstraint {
     public:
       GeneralizedGearConstraint(const std::string &str="");
-      //    virtual PropertyInterface* clone() const {return new GeneralizedGearConstraint(*this);}
       std::string getType() const { return "GeneralizedGearConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedGearConstraintPropertyDialog(this);}
   };
@@ -79,7 +78,6 @@ namespace MBSimGUI {
   class GeneralizedPositionConstraint : public GeneralizedDualConstraint {
     public:
       GeneralizedPositionConstraint(const std::string &str="");
-      //    virtual PropertyInterface* clone() const {return new GeneralizedPositionConstraint(*this);}
       std::string getType() const { return "GeneralizedPositionConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionConstraintPropertyDialog(this);}
   };
@@ -87,7 +85,6 @@ namespace MBSimGUI {
   class GeneralizedVelocityConstraint : public GeneralizedDualConstraint {
     public:
       GeneralizedVelocityConstraint(const std::string &str="");
-      //    virtual PropertyInterface* clone() const {return new GeneralizedVelocityConstraint(*this);}
       std::string getType() const { return "GeneralizedVelocityConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocityConstraintPropertyDialog(this);}
   };
@@ -95,7 +92,6 @@ namespace MBSimGUI {
   class GeneralizedAccelerationConstraint : public GeneralizedDualConstraint {
     public:
       GeneralizedAccelerationConstraint(const std::string &str="");
-      //    virtual PropertyInterface* clone() const {return new GeneralizedAccelerationConstraint(*this);}
       std::string getType() const { return "GeneralizedAccelerationConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedAccelerationConstraintPropertyDialog(this);}
   };
@@ -103,7 +99,6 @@ namespace MBSimGUI {
   class JointConstraint : public MechanicalConstraint {
     public:
       JointConstraint(const std::string &str="");
-      //    virtual PropertyInterface* clone() const {return new JointConstraint(*this);}
       std::string getType() const { return "JointConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   };
@@ -111,7 +106,6 @@ namespace MBSimGUI {
   class GeneralizedConnectionConstraint : public GeneralizedDualConstraint {
     public:
       GeneralizedConnectionConstraint(const std::string &str="") : GeneralizedDualConstraint(str) { }
-      //    virtual PropertyInterface* clone() const {return new GeneralizedConnectionConstraint(*this);}
       std::string getType() const { return "GeneralizedConnectionConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedConnectionConstraintPropertyDialog(this);}
   };

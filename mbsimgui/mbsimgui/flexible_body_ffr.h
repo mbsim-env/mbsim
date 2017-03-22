@@ -29,7 +29,6 @@ namespace MBSimGUI {
     friend class FlexibleBodyFFRPropertyDialog;
     public:
       FlexibleBodyFFR(const std::string &str="");
-//      virtual PropertyInterface* clone() const {return new FlexibleBodyFFR(*this);}
       std::string getType() const { return "FlexibleBodyFFR"; }
       MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);

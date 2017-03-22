@@ -30,7 +30,6 @@ namespace MBSimGUI {
     friend class GeneralizedGearPropertyDialog;
     public:
     GeneralizedGear(const std::string &str="");
-//    virtual PropertyInterface* clone() const {return new GeneralizedGear(*this);}
     std::string getType() const { return "GeneralizedGear"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

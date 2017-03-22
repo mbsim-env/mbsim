@@ -31,13 +31,6 @@ namespace MBSimGUI {
   Body::Body(const string &str) : Object(str) {
   }
 
-  Body::Body(const Body &b) : Object(b) {
-    for(unsigned int i=0; i<b.frame.size(); i++)
-      frame.push_back(static_cast<Frame*>(b.frame[i]->clone()));;
-    for(unsigned int i=0; i<b.contour.size(); i++)
-      contour.push_back(static_cast<Contour*>(b.contour[i]->clone()));;
-  }
-
   Body::~Body() {
     for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i) 
       delete *i;
@@ -45,24 +38,6 @@ namespace MBSimGUI {
       delete *i;
     for(vector<Element*>::iterator i = removedElement.begin(); i != removedElement.end(); ++i) 
       delete *i;
-  }
-
-  Body& Body::operator=(const Body &b) {
-    Object::operator=(b);
-    for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
-      delete *i;
-    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
-      delete *i;
-    for(vector<Element*>::iterator i = removedElement.begin(); i != removedElement.end(); ++i) 
-      delete *i;
-    frame.clear();
-    contour.clear();
-    removedElement.clear();
-    for(unsigned int i=0; i<b.frame.size(); i++)
-      frame.push_back(static_cast<Frame*>(b.frame[i]->clone()));;
-    for(unsigned int i=0; i<b.contour.size(); i++)
-      contour.push_back(static_cast<Contour*>(b.contour[i]->clone()));;
-    return *this;
   }
 
   void Body::addFrame(Frame* frame_) {

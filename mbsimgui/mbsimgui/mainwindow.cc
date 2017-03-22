@@ -59,9 +59,12 @@ namespace bfs=boost::filesystem;
 
 string saveName;
 
-shared_ptr<DOMImplementation> impl(xercesc::DOMImplementation::getImplementation());
-shared_ptr<DOMLSParser> parser(impl->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0));
-shared_ptr<DOMLSSerializer> serializer(impl->createLSSerializer());
+//shared_ptr<DOMImplementation> impl(xercesc::DOMImplementation::getImplementation());
+//shared_ptr<DOMLSParser> parser(impl->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0));
+//shared_ptr<DOMLSSerializer> serializer(impl->createLSSerializer());
+DOMImplementation *impl=xercesc::DOMImplementation::getImplementation();
+DOMLSParser *parser=impl->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0);
+DOMLSSerializer *serializer=impl->createLSSerializer();
 
 namespace MBSimGUI {
 

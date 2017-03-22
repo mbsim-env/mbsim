@@ -27,9 +27,7 @@ namespace MBSimGUI {
   class Body : public Object {
     public:
       Body(const std::string &str="");
-      Body(const Body &b);
       ~Body();
-      Body& operator=(const Body &b);
       virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name) const;
       int getNumberOfFrames() {return frame.size();}
       int getNumberOfContours() {return contour.size();}

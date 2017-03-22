@@ -19,13 +19,6 @@
 
 #include <config.h>
 #include "sensor.h"
-#include "basic_properties.h"
-#include "kinetics_properties.h"
-#include "function_properties.h"
-#include "basic_widgets.h"
-#include "kinetics_widgets.h"
-#include "extended_widgets.h"
-#include "function_property_factory.h"
 
 using namespace std;
 using namespace MBXMLUtils;

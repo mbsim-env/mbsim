@@ -28,7 +28,8 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-extern shared_ptr<DOMLSParser> parser;
+//extern shared_ptr<DOMLSParser> parser;
+extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 

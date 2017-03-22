@@ -19,8 +19,6 @@
 
 #include <config.h>
 #include "joint.h"
-#include "kinetics_properties.h"
-#include "function_property_factory.h"
 
 using namespace std;
 using namespace MBXMLUtils;

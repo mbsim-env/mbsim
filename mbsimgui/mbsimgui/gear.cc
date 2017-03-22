@@ -21,11 +21,6 @@
 #include "gear.h"
 #include "frame.h"
 #include "rigid_body.h"
-#include "basic_properties.h"
-#include "kinetics_properties.h"
-#include "function_properties.h"
-#include "function_property_factory.h"
-#include "ombv_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
