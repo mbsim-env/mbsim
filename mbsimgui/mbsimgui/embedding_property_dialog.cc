@@ -52,7 +52,7 @@ namespace MBSimGUI {
     if(embed) {
       element->setName(static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
       element->setCounterName(static_cast<EmbedWidget*>(embed->getWidget())->getCounterName().toStdString());
-      element->setValue("counterName="+element->getCounterName()+"; count="+static_cast<EmbedWidget*>(embed->getWidget())->getCount().toStdString());
+      element->setValue(static_cast<EmbedWidget*>(embed->getWidget())->getCount().toStdString());
       DOMNode* embedNode = node->getParentNode();
       if(embed->isActive()) {
         if(X()%embedNode->getNodeName()!="Embed") {

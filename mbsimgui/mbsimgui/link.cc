@@ -21,16 +21,15 @@
 #include "link.h"
 #include "frame.h"
 #include "objectfactory.h"
-#include "mainwindow.h"
 #include "embed.h"
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimGUI {
+extern DOMLSParser *parser;
 
-  extern MainWindow *mw;
+namespace MBSimGUI {
 
   Link::Link(const string &str) : Element(str) {
     addPlotFeature("generalizedRelativePosition");
@@ -40,7 +39,7 @@ namespace MBSimGUI {
   }
 
   Link* Link::readXMLFile(const string &filename) {
-    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
     DOMElement *e=doc->getDocumentElement();
     Link *link=Embed<Link>::createAndInit(e);
     return link;

@@ -29,9 +29,10 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
+extern DOMLSParser *parser;
+
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
   extern bool absolutePath;
   extern QDir mbsDir;
 
@@ -82,7 +83,7 @@ namespace MBSimGUI {
 
   Solver* Solver::readXMLFile(const string &filename) {
     MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
     DOMElement *e=doc->getDocumentElement();
     Solver *solver=ObjectFactory::getInstance()->createSolver(e);
     if(solver)

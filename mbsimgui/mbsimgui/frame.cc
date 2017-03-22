@@ -20,7 +20,6 @@
 #include <config.h>
 #include "frame.h"
 #include "objectfactory.h"
-#include "mainwindow.h"
 #include "embed.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
@@ -29,9 +28,9 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimGUI {
+extern DOMLSParser *parser;
 
-  extern MainWindow *mw;
+namespace MBSimGUI {
 
   Frame::Frame(const string &str) : Element(str) {
 
@@ -44,7 +43,7 @@ namespace MBSimGUI {
   }
 
   Frame* Frame::readXMLFile(const string &filename) {
-    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
     DOMElement *e=doc->getDocumentElement();
     Frame *frame=Embed<Frame>::createAndInit(e);
     return frame;
@@ -58,6 +57,10 @@ namespace MBSimGUI {
       ELE->insertBefore(id, NULL);
     }
     return element;
+  }
+
+  InternalFrame::InternalFrame(const std::string &str, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_) : Frame(str), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) {
+    config = true;
   }
 
   void InternalFrame::removeXMLElements() {

@@ -85,7 +85,7 @@ namespace MBSimGUI {
     DOMElement *parent = static_cast<DOMElement*>(element->getParentNode());
     if(E(parent)->getTagName()==PV%"Embed") {
       setCounterName(E(parent)->getAttribute("counterName"));
-      setValue("counterName="+getCounterName()+"; count="+E(parent)->getAttribute("count"));
+      setValue(E(parent)->getAttribute("count"));
     }
     return element;
   }

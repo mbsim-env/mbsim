@@ -20,22 +20,21 @@
 #include <config.h>
 #include "observer.h"
 #include "objectfactory.h"
-#include "mainwindow.h"
 #include "embed.h"
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimGUI {
+extern DOMLSParser *parser;
 
-  extern MainWindow *mw;
+namespace MBSimGUI {
 
   Observer::Observer(const string &str) : Element(str) {
   }
 
   Observer* Observer::readXMLFile(const string &filename) {
-    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
     DOMElement *e=doc->getDocumentElement();
     Observer *observer=Embed<Observer>::createAndInit(e);
     return observer;

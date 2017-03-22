@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "dynamic_system_solver.h"
-#include "mainwindow.h"
 #include "objectfactory.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
@@ -28,9 +27,9 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimGUI {
+extern DOMLSParser *parser;
 
-  extern MainWindow *mw;
+namespace MBSimGUI {
 
   Environment *Environment::instance=NULL;
 
@@ -103,7 +102,7 @@ namespace MBSimGUI {
 
   DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
     MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
     DOMElement *e=doc->getDocumentElement();
     DynamicSystemSolver *solver=static_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
     solver->initializeUsingXML(e);

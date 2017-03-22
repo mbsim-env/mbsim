@@ -20,7 +20,6 @@
 #include <config.h>
 #include "parameter.h"
 #include "objectfactory.h"
-#include "mainwindow.h"
 #include <QtGui/QFileDialog>
 #include <xercesc/dom/DOMDocument.hpp>
 
@@ -28,9 +27,10 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
+extern DOMLSParser *parser;
+
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
   extern QDir mbsDir;
   extern bool absolutePath;
 
@@ -97,7 +97,7 @@ namespace MBSimGUI {
 
   vector<Parameter*> Parameter::readXMLFile(const string &filename) {
     MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
     DOMElement *e=doc->getDocumentElement();
     return Parameter::initializeParametersUsingXML(e);
   }

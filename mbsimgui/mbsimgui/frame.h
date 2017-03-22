@@ -30,7 +30,6 @@ namespace MBSimGUI {
     public:
       Frame(const std::string &str="");
       ~Frame() { }
-//      virtual PropertyInterface* clone() const {return new Frame(*this);}
       std::string getType() const { return "Frame"; }
       static Frame* readXMLFile(const std::string &filename);
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
@@ -41,8 +40,7 @@ namespace MBSimGUI {
 
   class InternalFrame : public Frame {
     public:
-      InternalFrame(const std::string &str, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_="") : Frame(str), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) { }
-//      virtual PropertyInterface* clone() const {return new InternalFrame(*this);}
+      InternalFrame(const std::string &str, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_="");
       std::string getType() const { return "InternalFrame"; }
       ElementPropertyDialog* createPropertyDialog() {return new InternalFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
@@ -58,7 +56,6 @@ namespace MBSimGUI {
     public:
       FixedRelativeFrame(const std::string &str="");
       ~FixedRelativeFrame() { }
-//      virtual PropertyInterface* clone() const {return new FixedRelativeFrame(*this);}
       std::string getType() const { return "FixedRelativeFrame"; }
       ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
@@ -69,7 +66,6 @@ namespace MBSimGUI {
     public:
       NodeFrame(const std::string &str="");
       ~NodeFrame() { }
-//      virtual PropertyInterface* clone() const {return new NodeFrame(*this);}
       std::string getType() const { return "NodeFrame"; }
       MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
       ElementPropertyDialog* createPropertyDialog() {return new NodeFramePropertyDialog(this);}

@@ -59,6 +59,10 @@ namespace bfs=boost::filesystem;
 
 string saveName;
 
+xercesc::DOMImplementation *impl = xercesc::DOMImplementation::getImplementation();
+xercesc::DOMLSParser *parser = impl->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0);
+xercesc::DOMLSSerializer *serializer = impl->createLSSerializer();
+
 namespace MBSimGUI {
 
   bool currentTask;
@@ -76,6 +80,8 @@ namespace MBSimGUI {
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_HTMLOUTPUT=1";
     putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
+
+    serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
 
 //    evalSelect.setProperty(new TextProperty("octave", PV%"evaluator", false));
     
@@ -523,7 +529,8 @@ namespace MBSimGUI {
       DynamicSystemSolver *dss = new DynamicSystemSolver("MBS");
       model->createGroupItem(dss,QModelIndex());
 
-      doc=MainWindow::parser->createDocument();
+      doc = shared_ptr<DOMDocument>(impl->createDocument());
+
       DOMElement *ele0=D(doc)->createElement(MBSIMXML%"MBSimProject");
       doc->insertBefore(ele0, NULL);
       E(ele0)->setAttribute("name", "Project");
@@ -550,11 +557,7 @@ namespace MBSimGUI {
       MBSimObjectFactory::initialize();
       std::string message;
       try { 
-        xercesc::DOMImplementation *impl = xercesc::DOMImplementation::getImplementation();
-        xercesc::DOMLSParser *parser = impl->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0);
-
-        xercesc::DOMDocument *doc_ = parser->parseURI(X()%file.toStdString());
-        doc = shared_ptr<DOMDocument>(doc_);
+        doc = shared_ptr<DOMDocument>(::parser->parseURI(X()%file.toStdString()));
       }
       catch(const std::exception &ex) {
         message = ex.what();
@@ -641,10 +644,7 @@ namespace MBSimGUI {
     if(modifyStatus) setProjectChanged(false);
     string message;
     try {
-      xercesc::DOMImplementation *impl = xercesc::DOMImplementation::getImplementation();
-      xercesc::DOMLSSerializer *serializer = impl->createLSSerializer();
-      serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
-      serializer->writeToURI(this->doc.get(), X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
+      serializer->writeToURI(doc.get(), X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
       return true;
     }
     catch(const std::exception &ex) {
@@ -859,6 +859,7 @@ namespace MBSimGUI {
 
     QString sTask = QString::number(task); 
     saveName=dss->getName();
+//    shared_ptr<xercesc::DOMDocument> doc(static_cast<DOMDocument*>(this->doc->cloneNode(true)));
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMNode *newDocElement = doc->importNode(this->doc->getDocumentElement(), true);
     doc->insertBefore(newDocElement, NULL);
@@ -1151,10 +1152,10 @@ namespace MBSimGUI {
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
 //    Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    if(parameter->getName()!="import")
-      parameter->setName(parameter->getName()+toStr(model->getItem(index)->getID()));
     parent->addParameter(parameter);
     parameter->createXMLElement(parameter->getParent()->getXMLElement());
+    if(parameter->getName()!="import")
+      parameter->setName(parameter->getName()+toStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
     embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
     embeddingList->openEditor();

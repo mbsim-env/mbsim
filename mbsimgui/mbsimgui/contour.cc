@@ -24,16 +24,15 @@
 #include "ombv_properties.h"
 #include "function_property_factory.h"
 #include "objectfactory.h"
-#include "mainwindow.h"
 #include "embed.h"
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimGUI {
+extern DOMLSParser *parser;
 
-  extern MainWindow *mw;
+namespace MBSimGUI {
 
   Contour::Contour(const string &str) : Element(str) {
 //    vector<PhysicalVariableProperty> input;
@@ -42,7 +41,7 @@ namespace MBSimGUI {
   }
 
   Contour* Contour::readXMLFile(const string &filename) {
-    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
     DOMElement *e=doc->getDocumentElement();
 //    Contour *contour=ObjectFactory::getInstance()->createContour(e);
     Contour *contour=Embed<Contour>::createAndInit(e);
