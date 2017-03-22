@@ -21,7 +21,6 @@
 #include "solver.h"
 #include "dynamic_system_solver.h"
 #include "objectfactory.h"
-#include "mainwindow.h"
 #include <QDir>
 #include <xercesc/dom/DOMDocument.hpp>
 
@@ -29,7 +28,7 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-extern DOMLSParser *parser;
+extern shared_ptr<DOMLSParser> parser;
 
 namespace MBSimGUI {
 

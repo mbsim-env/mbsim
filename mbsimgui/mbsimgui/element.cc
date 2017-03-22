@@ -27,7 +27,6 @@
 #include "link.h"
 #include "constraint.h"
 #include "observer.h"
-#include "mainwindow.h"
 #include "embed.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
@@ -37,7 +36,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
   extern bool absolutePath;
   extern QDir mbsDir;
 
