@@ -1080,12 +1080,14 @@ namespace MBSimGUI {
   }
 
   QString FromFileWidget::getValue() const {
-    string file = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getFile().toStdString(),0,false));
-    return QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue("ret=load(" + file + ")")));
+    return getFile();
   }
 
   QWidget* FromFileWidget::getValidatedWidget() const {
-    return new MatWidget(strToMat(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString())))));
+    string file = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getFile().toStdString(),0,false));
+    QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue("ret=load(" + file + ")")));
+    str = removeWhiteSpace(str);
+    return new MatWidget(strToMat((str)));
   }
 
   DOMElement* FromFileWidget::initializeUsingXML(DOMElement *parent) {

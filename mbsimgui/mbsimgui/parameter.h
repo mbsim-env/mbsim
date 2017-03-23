@@ -45,7 +45,6 @@ namespace MBSimGUI {
       void setValue(const std::string &value) {valuestr = value;}
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       virtual std::string getType() const { return "Parameter"; }
       const std::string& getName() const { return name; }
       void setName(const std::string &str) { name = str; }
@@ -79,6 +78,7 @@ namespace MBSimGUI {
       ScalarParameter(const std::string &name="", const std::string &value="0");
       virtual ~ScalarParameter() {}
       virtual std::string getType() const { return "scalarParameter"; }
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog(this);}
   };
 
@@ -87,6 +87,7 @@ namespace MBSimGUI {
       VectorParameter(const std::string &name="");
       virtual ~VectorParameter() {}
       virtual std::string getType() const { return "vectorParameter"; }
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new VectorParameterPropertyDialog(this);}
   };
 

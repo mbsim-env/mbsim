@@ -20,7 +20,7 @@
 #include <config.h>
 #include "parameter.h"
 #include "objectfactory.h"
-#include <QtGui/QFileDialog>
+#include "utils.h"
 #include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
@@ -32,25 +32,13 @@ extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
-  extern QDir mbsDir;
-  extern bool absolutePath;
-
   Parameter::Parameter(const string &name_) : parent(NULL), name(name_), config(false) {
   }
 
   void Parameter::initializeUsingXML(DOMElement *element) {
     this->element = element;
     setName(E(element)->getAttribute("name"));
-    setValue(X()%E(element)->getFirstTextChild()->getData());
     config = true;
-  }
-
-  DOMElement* Parameter::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0=D(doc)->createElement(PV%getType());
-//    E(ele0)->setAttribute("name", getName());
-//    parent->insertBefore(ele0, NULL);
-    return ele0;
   }
 
   void Parameter::removeXMLElements() {
@@ -109,7 +97,35 @@ namespace MBSimGUI {
   ScalarParameter::ScalarParameter(const string &name, const string &value_) : Parameter(name) {
   }
 
+  void ScalarParameter::initializeUsingXML(DOMElement *element) {
+    Parameter::initializeUsingXML(element);
+    setValue(X()%E(element)->getFirstTextChild()->getData());
+  }
+
   VectorParameter::VectorParameter(const string &name) : Parameter(name) {
+  }
+
+  void VectorParameter::initializeUsingXML(DOMElement *element) {
+    Parameter::initializeUsingXML(element);
+    DOMElement *ele=element->getFirstElementChild();
+    if(ele) {
+      if(E(ele)->getTagName() == PV%"xmlVector") {
+        DOMElement *ei=ele->getFirstElementChild();
+        std::vector<string> value;
+        while(ei && E(ei)->getTagName()==PV%"ele") {
+          value.push_back(X()%E(ei)->getFirstTextChild()->getData());
+          ei=ei->getNextElementSibling();
+        }
+        setValue(toStr<string>(value));
+      }
+      else if(E(ele)->getTagName() == (PV%"fromFile"))
+        setValue((E(ele)->getAttribute("href")));
+    }
+    else {
+      DOMText *text=E(element)->getFirstTextChild();
+      if(text)
+      setValue(X()%text->getData());
+    }
   }
 
   MatrixParameter::MatrixParameter(const string &name) : Parameter(name) {
