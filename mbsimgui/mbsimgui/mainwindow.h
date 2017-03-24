@@ -155,7 +155,7 @@ namespace MBSimGUI {
       void saveElementAs();
       void projectSettings();
     protected slots:
-      void selectElement(const QString &ID);
+      void selectElement(std::string ID);
       void changeWorkingDir();
       void openOptionsMenu();
       void selectionChanged(const QModelIndex &current, const QModelIndex &previous);

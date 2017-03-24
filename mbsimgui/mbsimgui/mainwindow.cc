@@ -967,9 +967,9 @@ namespace MBSimGUI {
     edit->show();
   }
 
-  void MainWindow::selectElement(const QString &ID) {
+  void MainWindow::selectElement(string ID) {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    map<QString, QModelIndex>::iterator it=model->idEleMap.find(ID);
+    map<QString, QModelIndex>::iterator it=model->idEleMap.find(QString::fromStdString(ID));
     if(it!=model->idEleMap.end())
       elementList->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
   }
