@@ -29,18 +29,25 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
+  class Parameter;
+
   class Solver {
     protected:
       QString name, value;
+      xercesc::DOMElement *element;
     public:
       Solver();
       virtual ~Solver();
+      xercesc::DOMElement* getXMLElement() { return element; }
+      virtual void removeXMLElements();
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) { return NULL; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      static Solver* readXMLFile(const std::string &filename);
+      static Solver* readXMLFile(const QString &filename);
       virtual QString getType() const { return "Solver"; }
       const QString& getName() const { return name; }
       const QString& getValue() const { return value; }
       virtual SolverPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
+      void addParameter(Parameter *param) { }
   };
 
 }

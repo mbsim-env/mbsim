@@ -42,7 +42,17 @@ namespace MBSimGUI {
   Solver::~Solver() {
   }
 
+  void Solver::removeXMLElements() {
+    DOMNode *e = element->getFirstChild();
+    while(e) {
+      DOMNode *en=e->getNextSibling();
+      element->removeChild(e);
+      e = en;
+    }
+  }
+
   void Solver::initializeUsingXML(DOMElement *element) {
+    this->element = element;
   }
 
 //  DOMElement* Solver::writeXMLFileEmbed(DOMNode *parent) {
@@ -81,9 +91,9 @@ namespace MBSimGUI {
 //    return ele;
 //  }
 
-  Solver* Solver::readXMLFile(const string &filename) {
+  Solver* Solver::readXMLFile(const QString &filename) {
     MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
     DOMElement *e=doc->getDocumentElement();
     Solver *solver=ObjectFactory::getInstance()->createSolver(e);
     if(solver)

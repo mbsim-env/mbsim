@@ -65,4 +65,9 @@ namespace MBSimGUI {
       return static_cast<Observer*>(ObjectFactory::getInstance()->createObserver(element));
     }
 
+  template <>
+    Solver* Embed<Solver>::create(xercesc::DOMElement *element) {
+      return static_cast<Solver*>(ObjectFactory::getInstance()->createSolver(element));
+    }
+
 }

@@ -30,30 +30,14 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
-//  class TolerancePropertyFactory: public PropertyFactory {
-//    public:
-//      TolerancePropertyFactory(const std::string &type);
-//      Property* createProperty(int i=0);
-//      MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
-//      int getSize() const { return name.size(); }
-//    protected:
-//      std::vector<MBXMLUtils::FQN> name;
-//      std::string type;
-//  };
-
   class Integrator : public Solver {
-    protected:
-      xercesc::DOMElement *element;
     public:
-      Integrator();
-      virtual ~Integrator();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog(this);}
   };
 
   class DOPRI5Integrator : public Integrator {
     public:
-      DOPRI5Integrator();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual QString getType() const { return "DOPRI5Integrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new DOPRI5IntegratorPropertyDialog(this);}
@@ -61,42 +45,42 @@ namespace MBSimGUI {
 
   class RADAU5Integrator : public Integrator {
     public:
-      RADAU5Integrator();
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual QString getType() const { return "RADAU5Integrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new RADAU5IntegratorPropertyDialog(this);}
   };
 
   class LSODEIntegrator : public Integrator {
     public:
-      LSODEIntegrator();
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual QString getType() const { return "LSODEIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new LSODEIntegratorPropertyDialog(this);}
   };
 
   class LSODARIntegrator : public Integrator {
     public:
-      LSODARIntegrator();
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual QString getType() const { return "LSODARIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new LSODARIntegratorPropertyDialog(this);}
   };
 
   class TimeSteppingIntegrator : public Integrator {
     public:
-      TimeSteppingIntegrator();
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual QString getType() const { return "TimeSteppingIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new TimeSteppingIntegratorPropertyDialog(this);}
   };
 
   class EulerExplicitIntegrator : public Integrator {
     public:
-      EulerExplicitIntegrator();
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual QString getType() const { return "EulerExplicitIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new EulerExplicitIntegratorPropertyDialog(this);}
   };
 
   class RKSuiteIntegrator : public Integrator {
     public:
-      RKSuiteIntegrator();
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual QString getType() const { return "RKSuiteIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new RKSuiteIntegratorPropertyDialog(this);}
   };

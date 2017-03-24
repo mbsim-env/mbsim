@@ -40,18 +40,23 @@ namespace MBSimGUI {
 
   class ToleranceWidgetFactory : public WidgetFactory {
     public:
-      ToleranceWidgetFactory();
+      ToleranceWidgetFactory(const QString &type="");
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
+      QString type;
   };
 
   class SolverPropertyDialog : public PropertyDialog {
 
     public:
       SolverPropertyDialog(Solver *solver, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
       virtual void toWidget(Solver *solver);
       virtual void fromWidget(Solver *solver);
       void toWidget() {toWidget(solver);}
@@ -66,8 +71,8 @@ namespace MBSimGUI {
 
     public:
       IntegratorPropertyDialog(Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Solver *solver);
-      virtual void fromWidget(Solver *solver);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       VecWidget *z0;
       ExtWidget *startTime, *endTime, *plotStepSize, *initialState;
@@ -77,8 +82,8 @@ namespace MBSimGUI {
 
     public:
       DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Solver *solver);
-      virtual void fromWidget(Solver *solver);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       VecWidget *aTol, *rTol;
       ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
@@ -88,8 +93,6 @@ namespace MBSimGUI {
 
     public:
       RADAU5IntegratorPropertyDialog(RADAU5Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Solver *solver);
-      virtual void fromWidget(Solver *solver);
     protected:
       VecWidget *aTol, *rTol;
       ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
@@ -99,8 +102,6 @@ namespace MBSimGUI {
 
     public:
       LSODEIntegratorPropertyDialog(LSODEIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Solver *solver);
-      virtual void fromWidget(Solver *solver);
     protected:
       VecWidget *aTol;
       ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
@@ -110,8 +111,6 @@ namespace MBSimGUI {
 
     public:
       LSODARIntegratorPropertyDialog(LSODARIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Solver *solver);
-      virtual void fromWidget(Solver *solver);
     protected:
       VecWidget *aTol;
       ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *plotOnRoot, *gMax, *gdMax;
@@ -121,8 +120,6 @@ namespace MBSimGUI {
 
     public:
       TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Solver *solver);
-      virtual void fromWidget(Solver *solver);
     protected:
       ExtWidget *stepSize;
   };
@@ -131,8 +128,6 @@ namespace MBSimGUI {
 
     public:
       EulerExplicitIntegratorPropertyDialog(EulerExplicitIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Solver *solver);
-      virtual void fromWidget(Solver *solver);
     protected:
       ExtWidget *stepSize;
   };
@@ -141,8 +136,6 @@ namespace MBSimGUI {
 
     public:
       RKSuiteIntegratorPropertyDialog(RKSuiteIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Solver *solver);
-      virtual void fromWidget(Solver *solver);
     protected:
       ExtWidget *method, *relTol, *threshold, *initialStepSize;
   };
@@ -151,8 +144,6 @@ namespace MBSimGUI {
 
     public:
       EigenanalyserPropertyDialog(Eigenanalyser *eigenanalyser, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Solver *solver);
-      virtual void fromWidget(Solver *solver);
     protected:
       VecWidget *z0;
       ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *task, *amplitude, *mode, *determineEquilibriumState, *autoUpdate;

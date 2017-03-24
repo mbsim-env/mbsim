@@ -567,7 +567,6 @@ namespace MBSimGUI {
         message = "Unknown exception.";
       }
       DOMElement *ele0=doc->getDocumentElement();
-      //setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
       setWindowTitle(fileProject+"[*]");
 
 //      evalSelect.initializeUsingXML(ele0);
@@ -576,7 +575,6 @@ namespace MBSimGUI {
 //      if(evalSelect.isActive()) ele1 = ele1->getNextElementSibling();
 
       DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1);
-//      dss->initialize();
 
       EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
       QModelIndex index = pmodel->index(0,0);
@@ -593,21 +591,7 @@ namespace MBSimGUI {
 
       ele1 = ele1->getNextElementSibling();
 
-      Solver *solver;
-      if(E(ele1)->getTagName()==PV%"Embed") {
-        DOMElement *ele2 = 0;
-        if(E(ele1)->hasAttribute("href"))
-          solver=Solver::readXMLFile(E(ele1)->getAttribute("href"));
-        else {
-          ele2 = ele1->getFirstElementChild();
-          solver=ObjectFactory::getInstance()->createSolver(ele2);
-        }
-        if(ele2)
-          solver->initializeUsingXML(ele2);
-      } else {
-        solver=ObjectFactory::getInstance()->createSolver(ele1);
-        solver->initializeUsingXML(ele1);
-      }
+      Solver *solver=Embed<Solver>::createAndInit(ele1);
       solverView->setSolver(solver);
 
       actionSaveProject->setDisabled(false);
@@ -669,42 +653,58 @@ namespace MBSimGUI {
 
   void MainWindow::selectDOPRI5Integrator() {
     setProjectChanged(true);
+    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
     solverView->setSolver(0);
+    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
   }
 
   void MainWindow::selectRADAU5Integrator() {
     setProjectChanged(true);
+    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
     solverView->setSolver(1);
+    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
   }
 
   void MainWindow::selectLSODEIntegrator() {
     setProjectChanged(true);
+    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
     solverView->setSolver(2);
+    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
   }
 
   void MainWindow::selectLSODARIntegrator() {
     setProjectChanged(true);
+    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
     solverView->setSolver(3);
+    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
   }
 
   void MainWindow::selectTimeSteppingIntegrator() {
     setProjectChanged(true);
+    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
     solverView->setSolver(4);
+    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
   }
 
   void MainWindow::selectEulerExplicitIntegrator() {
     setProjectChanged(true);
+    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
     solverView->setSolver(5);
+    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
   }
 
   void MainWindow::selectRKSuiteIntegrator() {
     setProjectChanged(true);
+    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
     solverView->setSolver(6);
+    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
   }
 
   void MainWindow::selectEigenanalyser() {
     setProjectChanged(true);
+    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
     solverView->setSolver(7);
+    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
   }
 
   // update model parameters including additional paramters from paramList

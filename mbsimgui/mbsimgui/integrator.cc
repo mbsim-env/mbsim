@@ -47,26 +47,6 @@ namespace MBSimGUI {
 //    return NULL;
 //  }
 
-  Integrator::Integrator() {
-//
-//    vector<PhysicalVariableProperty> input;
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"startTime"));
-//    startTime.setProperty(new ExtPhysicalVarProperty(input));
-//
-//    input.clear();
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"s",MBSIMINT%"endTime"));
-//    endTime.setProperty(new ExtPhysicalVarProperty(input));
-//
-//    input.clear();
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-2"),"s",MBSIMINT%"plotStepSize"));
-//    plotStepSize.setProperty(new ExtPhysicalVarProperty(input));
-//
-//    initialState.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMINT%"initialState",vector<string>(3,"")),"",4));
-  }
-
-  Integrator::~Integrator() {
-  }
-
   DOMElement* Integrator::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(MBSIMINT%getType().toStdString());
@@ -89,8 +69,7 @@ namespace MBSimGUI {
     return element;
   }
 
-
-  DOPRI5Integrator::DOPRI5Integrator() {
+//  DOPRI5Integrator::DOPRI5Integrator() {
 //    absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3));
 //
 //    relTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("relative"),"",3));
@@ -106,7 +85,7 @@ namespace MBSimGUI {
 //    input.clear();
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"maximalNumberOfSteps"));
 //    maxSteps.setProperty(new ExtPhysicalVarProperty(input));
-  }
+//  }
 
   DOMElement* DOPRI5Integrator::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Integrator::createXMLElement(parent);
@@ -132,7 +111,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  RADAU5Integrator::RADAU5Integrator() {
+//  RADAU5Integrator::RADAU5Integrator() {
 //    absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3));
 //
 //    relTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("relative"),"",3));
@@ -148,9 +127,33 @@ namespace MBSimGUI {
 //    input.clear();
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"maximalNumberOfSteps"));
 //    maxSteps.setProperty(new ExtPhysicalVarProperty(input));
+//  }
+
+  DOMElement* RADAU5Integrator::createXMLElement(DOMNode *parent) {
+    DOMElement *ele0 = Integrator::createXMLElement(parent);
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"absoluteToleranceScalar" );
+    DOMText *text = doc->createTextNode(X()%"1e-6");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"relativeToleranceScalar" );
+    text = doc->createTextNode(X()%"1e-6");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"initialStepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"maximalStepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    return ele0;
   }
 
-  LSODEIntegrator::LSODEIntegrator() {
+//  LSODEIntegrator::LSODEIntegrator() {
 //    absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3));
 //
 //    vector<PhysicalVariableProperty> input;
@@ -176,9 +179,42 @@ namespace MBSimGUI {
 //    input.clear();
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"stiffModus"));
 //    stiff.setProperty(new ExtPhysicalVarProperty(input));
+//  }
+
+  DOMElement* LSODEIntegrator::createXMLElement(DOMNode *parent) {
+    DOMElement *ele0 = Integrator::createXMLElement(parent);
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"absoluteToleranceScalar" );
+    DOMText *text = doc->createTextNode(X()%"1e-6");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"relativeToleranceScalar" );
+    text = doc->createTextNode(X()%"1e-6");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"initialStepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"maximalStepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"minimalStepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"numberOfMaximalSteps" );
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    return ele0;
   }
 
-  LSODARIntegrator::LSODARIntegrator() {
+//  LSODARIntegrator::LSODARIntegrator() {
 //    absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3));
 //
 //    vector<PhysicalVariableProperty> input;
@@ -208,22 +244,81 @@ namespace MBSimGUI {
 //    input.clear();
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-5"),"",MBSIMINT%"toleranceForVelocityConstraints"));
 //    gdMax.setProperty(new ExtPhysicalVarProperty(input));
+//  }
+
+  DOMElement* LSODARIntegrator::createXMLElement(DOMNode *parent) {
+    DOMElement *ele0 = Integrator::createXMLElement(parent);
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"absoluteToleranceScalar" );
+    DOMText *text = doc->createTextNode(X()%"1e-6");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"relativeToleranceScalar" );
+    text = doc->createTextNode(X()%"1e-6");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"initialStepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"minimalStepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"maximalStepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"numberOfMaximalSteps" );
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"plotOnRoot" );
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    return ele0;
   }
 
-  TimeSteppingIntegrator::TimeSteppingIntegrator() {
+//  TimeSteppingIntegrator::TimeSteppingIntegrator() {
 //
 //    vector<PhysicalVariableProperty> input;
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-3"),"s",MBSIMINT%"stepSize"));
 //    stepSize.setProperty(new ExtPhysicalVarProperty(input));
+//  }
+
+  DOMElement* TimeSteppingIntegrator::createXMLElement(DOMNode *parent) {
+    DOMElement *ele0 = Integrator::createXMLElement(parent);
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"stepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    DOMText *text = doc->createTextNode(X()%"1e-3");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    return ele0;
   }
 
-  EulerExplicitIntegrator::EulerExplicitIntegrator() {
+//  EulerExplicitIntegrator::EulerExplicitIntegrator() {
 //    vector<PhysicalVariableProperty> input;
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-3"),"s",MBSIMINT%"stepSize"));
 //    stepSize.setProperty(new ExtPhysicalVarProperty(input));
+//  }
+
+  DOMElement* EulerExplicitIntegrator::createXMLElement(DOMNode *parent) {
+    DOMElement *ele0 = Integrator::createXMLElement(parent);
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"stepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    DOMText *text = doc->createTextNode(X()%"1e-3");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    return ele0;
   }
 
-  RKSuiteIntegrator::RKSuiteIntegrator() {
+//  RKSuiteIntegrator::RKSuiteIntegrator() {
 //
 //    method.setProperty(new TextProperty("RK45", MBSIMINT%"method", true));
 //
@@ -238,6 +333,20 @@ namespace MBSimGUI {
 //    input.clear();
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"initialStepSize"));
 //    initialStepSize.setProperty(new ExtPhysicalVarProperty(input));
+//  }
+
+  DOMElement* RKSuiteIntegrator::createXMLElement(DOMNode *parent) {
+    DOMElement *ele0 = Integrator::createXMLElement(parent);
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"relativeToleranceScalar" );
+    DOMText *text = doc->createTextNode(X()%"1e-6");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"thresholdScalar" );
+    text = doc->createTextNode(X()%"1e-6");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    return ele0;
   }
 
 }
