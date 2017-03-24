@@ -70,6 +70,7 @@ namespace MBSimGUI {
       StringParameter(const std::string &name="");
       virtual ~StringParameter() {}
       virtual std::string getType() const { return "stringParameter"; }
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new StringParameterPropertyDialog(this);}
   };
 
@@ -96,6 +97,7 @@ namespace MBSimGUI {
       MatrixParameter(const std::string &name="");
       virtual ~MatrixParameter() {}
       virtual std::string getType() const { return "matrixParameter"; }
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
   };
 

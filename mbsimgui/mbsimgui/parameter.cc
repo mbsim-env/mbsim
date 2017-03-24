@@ -94,6 +94,11 @@ namespace MBSimGUI {
   StringParameter::StringParameter(const string &name) : Parameter(name) {
   }
 
+  void StringParameter::initializeUsingXML(DOMElement *element) {
+    Parameter::initializeUsingXML(element);
+    setValue(X()%E(element)->getFirstTextChild()->getData());
+  }
+
   ScalarParameter::ScalarParameter(const string &name, const string &value_) : Parameter(name) {
   }
 
@@ -111,7 +116,7 @@ namespace MBSimGUI {
     if(ele) {
       if(E(ele)->getTagName() == PV%"xmlVector") {
         DOMElement *ei=ele->getFirstElementChild();
-        std::vector<string> value;
+        vector<string> value;
         while(ei && E(ei)->getTagName()==PV%"ele") {
           value.push_back(X()%E(ei)->getFirstTextChild()->getData());
           ei=ei->getNextElementSibling();
@@ -129,6 +134,34 @@ namespace MBSimGUI {
   }
 
   MatrixParameter::MatrixParameter(const string &name) : Parameter(name) {
+  }
+
+  void MatrixParameter::initializeUsingXML(DOMElement *element) {
+    Parameter::initializeUsingXML(element);
+    DOMElement *ele=element->getFirstElementChild();
+    if(ele) {
+      if(E(ele)->getTagName() == PV%"xmlMatrix") {
+        DOMElement *ei=ele->getFirstElementChild();
+        vector<vector<string> > value;
+        while(ei && E(ei)->getTagName()==PV%"row") {
+          DOMElement *ej=ei->getFirstElementChild();
+          value.push_back(vector<string>());
+          while(ej && E(ej)->getTagName()==PV%"ele") {
+            value[value.size()-1].push_back(X()%E(ej)->getFirstTextChild()->getData());
+            ej=ej->getNextElementSibling();
+          }
+          ei=ei->getNextElementSibling();
+        }
+        setValue(toStr<string>(value));
+      }
+      else if(E(ele)->getTagName() == (PV%"fromFile"))
+        setValue((E(ele)->getAttribute("href")));
+    }
+    else {
+      DOMText *text=E(element)->getFirstTextChild();
+      if(text)
+      setValue(X()%text->getData());
+    }
   }
 
   ImportParameter::ImportParameter() : Parameter("import") {
