@@ -19,9 +19,7 @@
 
 #include <config.h>
 #include "kinetic_excitation.h"
-#include "function_properties.h"
-#include "function_property_factory.h"
-#include "ombv_properties.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -29,40 +27,33 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  KineticExcitation::KineticExcitation(const string &str) : FloatingFrameLink(str), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false), arrow(0,false) {
+  KineticExcitation::KineticExcitation(const QString &str) : FloatingFrameLink(str) {
 
-    static_cast<ConnectFramesProperty*>(connections.getProperty())->setDefaultFrame("../Frame[I]");
-
-    forceDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"forceDirection",vector<string>(3,"-")),"",4));
-
-    forceFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"forceFunction",0));
-
-    momentDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"momentDirection",vector<string>(3,"-")),"",4));
-
-    momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"momentFunction",0));
-
-    arrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-    arrow.setActive(true);
+//    static_cast<ConnectFramesProperty*>(connections.getProperty())->setDefaultFrame("../Frame[I]");
+//
+//    forceDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"forceDirection",vector<string>(3,"-")),"",4));
+//
+//    forceFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"forceFunction",0));
+//
+//    momentDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"momentDirection",vector<string>(3,"-")),"",4));
+//
+//    momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"momentFunction",0));
+//
+//    arrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
+//    arrow.setActive(true);
   }
 
-  DOMElement* KineticExcitation::initializeUsingXML(DOMElement *element) {
-    FloatingFrameLink::initializeUsingXML(element);
-    forceDirection.initializeUsingXML(element);
-    forceFunction.initializeUsingXML(element);
-    momentDirection.initializeUsingXML(element);
-    momentFunction.initializeUsingXML(element);
-    arrow.initializeUsingXML(element);
-   return element;
-  }
+  DOMElement* KineticExcitation::processFileID(DOMElement *element) {
+    Link::processFileID(element);
 
-  DOMElement* KineticExcitation::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FloatingFrameLink::writeXMLFile(parent);
-    forceDirection.writeXMLFile(ele0);
-    forceFunction.writeXMLFile(ele0);
-    momentDirection.writeXMLFile(ele0);
-    momentFunction.writeXMLFile(ele0);
-    arrow.writeXMLFile(ele0);
-    return ele0;
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
   }
 
 }

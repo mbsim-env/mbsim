@@ -130,7 +130,7 @@ namespace MBSimGUI {
   DOMElement* MBSOMBVWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
     if(e) {
-      diffuseColor->initializeUsingXML(e);
+//      diffuseColor->initializeUsingXML(e);
       transparency->initializeUsingXML(e);
     }
     return e;
@@ -200,59 +200,89 @@ namespace MBSimGUI {
   }
 
   ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const QString &name, bool fromPoint) : MBSOMBVWidget(name) {
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
-    scaleLength = new ExtWidget("Scale length",new ExtPhysicalVarWidget(input),true);
+    scaleLength = new ExtWidget("Scale length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleLength");
     layout()->addWidget(scaleLength);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
-    scaleSize = new ExtWidget("Scale size",new ExtPhysicalVarWidget(input),true);
+    scaleSize = new ExtWidget("Scale size",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleSize");
     layout()->addWidget(scaleSize);
 
     vector<QString> list;
     list.push_back("toPoint");
     list.push_back("fromPoint");
     list.push_back("midPoint");
-    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,fromPoint?1:0),true);
+    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,fromPoint?1:0,false,true),true,false,MBSIM%"referencePoint");
     if(fromPoint)
       referencePoint->setChecked(true);
     layout()->addWidget(referencePoint);
   }
 
+  DOMElement* ArrowMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
+    scaleLength->initializeUsingXML(e);
+    scaleSize->initializeUsingXML(e);
+    referencePoint->initializeUsingXML(e);
+    return element;
+  }
+
+  DOMElement* ArrowMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
+    scaleLength->writeXMLFile(e);
+    scaleSize->writeXMLFile(e);
+    referencePoint->writeXMLFile(e);
+    return e;
+  }
+
   CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("3"), QStringList(), 1));
-    numberOfCoils= new ExtWidget("Number of coils",new ExtPhysicalVarWidget(input),true);
+    numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numberOfCoils");
     layout()->addWidget(numberOfCoils);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-    springRadius= new ExtWidget("Spring radius",new ExtPhysicalVarWidget(input),true);
+    springRadius = new ExtWidget("Spring radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"springRadius");
     layout()->addWidget(springRadius);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("-1"), lengthUnits(), 4));
-    crossSectionRadius = new ExtWidget("Cross section radius",new ExtPhysicalVarWidget(input),true);
+    crossSectionRadius = new ExtWidget("Cross section radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"crossSectionRadius");
     layout()->addWidget(crossSectionRadius);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("-1"), lengthUnits(), 4));
-    nominalLength= new ExtWidget("Nominal length",new ExtPhysicalVarWidget(input),true);
+    nominalLength = new ExtWidget("Nominal length",new ChoiceWidget2(new ScalarWidgetFactory("-1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nominalLength");
     layout()->addWidget(nominalLength);
 
     vector<QString> list;
     list.push_back("tube");
     list.push_back("scaledTube");
     list.push_back("polyline");
-    type = new ExtWidget("Type",new TextChoiceWidget(list,0),true);
+    type = new ExtWidget("Type",new TextChoiceWidget(list,0,false,true),true,false,MBSIM%"type");
     layout()->addWidget(type);
 
-    minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true);
+    minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimalColorValue");
     layout()->addWidget(minCol);
-    maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true);
+    maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximalColorValue");
     layout()->addWidget(maxCol);
   }
+
+  DOMElement* CoilSpringMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
+    numberOfCoils->initializeUsingXML(e);
+    springRadius->initializeUsingXML(e);
+    crossSectionRadius->initializeUsingXML(e);
+    nominalLength->initializeUsingXML(e);
+    type->initializeUsingXML(e);
+    minCol->initializeUsingXML(e);
+    maxCol->initializeUsingXML(e);
+    return element;
+  }
+
+  DOMElement* CoilSpringMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
+    numberOfCoils->writeXMLFile(e);
+    springRadius->writeXMLFile(e);
+    crossSectionRadius->writeXMLFile(e);
+    nominalLength->writeXMLFile(e);
+    type->writeXMLFile(e);
+//    writeProperties(e);
+    minCol->writeXMLFile(e);
+    maxCol->writeXMLFile(e);
+    return e;
+  }
+
 
   FrameMBSOMBVWidget::FrameMBSOMBVWidget(const QString &name, const FQN &xmlName) : MBSOMBVWidget(name,xmlName) {
     size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
@@ -295,31 +325,33 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-//    vector<PhysicalVariableWidget*> input;
-//    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"), noUnitUnits(), 1));
-//    minimalColorValue = new ExtWidget("Minimal color value",new ExtPhysicalVarWidget(input),true);
-//    layout->addWidget(minimalColorValue);
-//
-//    input.clear();
-//    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
-//    maximalColorValue = new ExtWidget("Maximal color value",new ExtPhysicalVarWidget(input),true);
-//    layout->addWidget(maximalColorValue);
-//
-//    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
-//    layout->addWidget(diffuseColor);
-//
+    minimalColorValue = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"minimalColorValue");
+    layout->addWidget(minimalColorValue);
+
+    maximalColorValue = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"maximalColorValue");
+    layout->addWidget(maximalColorValue);
+
+    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true,false,OPENMBV%"diffuseColor");
+    layout->addWidget(diffuseColor);
+
     transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,true,OPENMBV%"transparency");
     layout->addWidget(transparency);
   }
 
   DOMElement* OMBVDynamicColoredObjectWidget::initializeUsingXML(DOMElement *element) {
     OMBVObjectWidget::initializeUsingXML(element);
+    minimalColorValue->initializeUsingXML(element);
+    maximalColorValue->initializeUsingXML(element);
+    diffuseColor->initializeUsingXML(element);
     transparency->initializeUsingXML(element);
     return element;
   }
 
   DOMElement* OMBVDynamicColoredObjectWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=OMBVObjectWidget::writeXMLFile(parent);
+    minimalColorValue->writeXMLFile(e);
+    maximalColorValue->writeXMLFile(e);
+    diffuseColor->writeXMLFile(e);
     transparency->writeXMLFile(e);
     return e;
   }

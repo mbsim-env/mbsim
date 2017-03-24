@@ -58,8 +58,6 @@ namespace MBSimGUI {
 
   class MBSOMBVWidget : public OMBVObjectWidget {
 
-    friend class MBSOMBVProperty;
-
     public:
       MBSOMBVWidget(const QString &name, const MBXMLUtils::FQN &xmlName="");
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -73,8 +71,6 @@ namespace MBSimGUI {
 
   class PointMBSOMBVWidget : public MBSOMBVWidget {
 
-    friend class PointMBSOMBVProperty;
-
     public:
     PointMBSOMBVWidget(const QString &name="NOTSET");
     protected:
@@ -82,8 +78,6 @@ namespace MBSimGUI {
   };
 
   class LineMBSOMBVWidget : public MBSOMBVWidget {
-
-    friend class LineMBSOMBVProperty;
 
     public:
     LineMBSOMBVWidget(const QString &name="NOTSET");
@@ -93,8 +87,6 @@ namespace MBSimGUI {
 
   class PlaneMBSOMBVWidget : public MBSOMBVWidget {
 
-    friend class PlaneMBSOMBVProperty;
-
     public:
     PlaneMBSOMBVWidget(const QString &name="NOTSET");
     protected:
@@ -102,8 +94,6 @@ namespace MBSimGUI {
   };
 
   class PlanarContourMBSOMBVWidget : public MBSOMBVWidget {
-
-    friend class PlanarContourMBSOMBVProperty;
 
     public:
     PlanarContourMBSOMBVWidget(const QString &name="NOTSET");
@@ -113,8 +103,6 @@ namespace MBSimGUI {
 
   class SpatialContourMBSOMBVWidget : public MBSOMBVWidget {
 
-    friend class SpatialContourMBSOMBVProperty;
-
     public:
     SpatialContourMBSOMBVWidget(const QString &name="NOTSET");
     protected:
@@ -123,27 +111,25 @@ namespace MBSimGUI {
 
   class ArrowMBSOMBVWidget : public MBSOMBVWidget {
 
-    friend class ArrowMBSOMBVProperty;
-
     public:
-    ArrowMBSOMBVWidget(const QString &name="NOTSET", bool fromPoint=false);
+      ArrowMBSOMBVWidget(const QString &name="NOTSET", bool fromPoint=false);
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *scaleLength, *scaleSize, *referencePoint;
+      ExtWidget *scaleLength, *scaleSize, *referencePoint;
   };
 
   class CoilSpringMBSOMBVWidget : public MBSOMBVWidget {
 
-    friend class CoilSpringMBSOMBVProperty;
-
     public:
-    CoilSpringMBSOMBVWidget(const QString &name="NOTSET");
+      CoilSpringMBSOMBVWidget(const QString &name="NOTSET");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *minCol, *maxCol;
+      ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *minCol, *maxCol;
   };
 
   class FrameMBSOMBVWidget : public MBSOMBVWidget {
-
-    friend class FrameMBSOMBVProperty;
 
     public:
       FrameMBSOMBVWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
@@ -155,8 +141,6 @@ namespace MBSimGUI {
 
   class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
 
-    friend class OMBVDynamicColoredObjectProperty;
-
     public:
       OMBVDynamicColoredObjectWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -167,8 +151,6 @@ namespace MBSimGUI {
   };
 
   class OMBVRigidBodyWidget : public OMBVDynamicColoredObjectWidget {
-
-    friend class OMBVRigidBodyProperty;
 
     public:
       OMBVRigidBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
@@ -186,8 +168,6 @@ namespace MBSimGUI {
 
   class CubeWidget : public OMBVRigidBodyWidget {
 
-    friend class CubeProperty;
-
     public:
       CubeWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -197,8 +177,6 @@ namespace MBSimGUI {
   };
 
   class CuboidWidget : public OMBVRigidBodyWidget {
-
-    friend class CuboidProperty;
 
     public:
       CuboidWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
@@ -210,8 +188,6 @@ namespace MBSimGUI {
 
   class SphereWidget : public OMBVRigidBodyWidget {
 
-    friend class SphereProperty;
-
     public:
       SphereWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -221,8 +197,6 @@ namespace MBSimGUI {
   };
 
   class FrustumWidget : public OMBVRigidBodyWidget {
-
-    friend class FrustumProperty;
 
     public:
       FrustumWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
@@ -234,8 +208,6 @@ namespace MBSimGUI {
 
   class ExtrusionWidget : public OMBVRigidBodyWidget {
 
-    friend class ExtrusionProperty;
-
     public:
       ExtrusionWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -245,8 +217,6 @@ namespace MBSimGUI {
   };
 
   class IvBodyWidget : public OMBVRigidBodyWidget {
-
-    friend class IvBodyProperty;
 
     public:
       IvBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
@@ -258,8 +228,6 @@ namespace MBSimGUI {
 
   class CompoundRigidBodyWidget : public OMBVRigidBodyWidget {
 
-    friend class CompoundRigidBodyProperty;
-
     public:
       CompoundRigidBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -269,8 +237,6 @@ namespace MBSimGUI {
   };
 
   class FlexibleBodyFFRMBSOMBVWidget : public MBSOMBVWidget {
-
-    friend class FlexibleBodyFFRMBSOMBVProperty;
 
     public:
     FlexibleBodyFFRMBSOMBVWidget(const QString &name="NOTSET");

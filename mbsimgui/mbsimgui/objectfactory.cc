@@ -27,8 +27,8 @@
 //#include "flexible_body_ffr.h"
 #include "constraint.h"
 //#include "linear_transfer_system.h"
-//#include "kinetic_excitation.h"
 //#include "joint.h"
+#include "kinetic_excitation.h"
 #include "spring_damper.h"
 //#include "contact.h"
 //#include "sensor.h"
@@ -158,8 +158,8 @@ namespace MBSimGUI {
   }
   Link* MBSimObjectFactory::createLink(DOMElement *element) {
     if(element==0) return 0;
-//    if(E(element)->getTagName()==MBSIM%"KineticExcitation")
-//      return new KineticExcitation(E(element)->getAttribute("name"));
+    if(E(element)->getTagName()==MBSIM%"KineticExcitation")
+      return new KineticExcitation;
     if(E(element)->getTagName()==MBSIM%"SpringDamper")
       return new SpringDamper;
 //    if(E(element)->getTagName()==MBSIM%"DirectionalSpringDamper")

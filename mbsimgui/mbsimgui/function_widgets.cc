@@ -643,7 +643,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    c = new ExtWidget("Stiffness coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessCoefficient");
+    c = new ExtWidget("Stiffness coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessCoefficient");
     layout->addWidget(c);
 
     d = new ExtWidget("Damping coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingCoefficient");

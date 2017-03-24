@@ -217,10 +217,12 @@ namespace MBSimGUI {
       SpringDamperWidgetFactory(Element *parent_);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       Element *parent;
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class PlanarContourFunctionWidgetFactory : public WidgetFactory {

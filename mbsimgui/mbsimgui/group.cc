@@ -253,6 +253,13 @@ namespace MBSimGUI {
       ELE=ELE->getNextElementSibling();
     }
 
+    // links
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
+    for(size_t i=0; i<link.size(); i++) {
+      link[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();

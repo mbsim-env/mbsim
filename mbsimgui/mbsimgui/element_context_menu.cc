@@ -24,7 +24,7 @@
 //#include "flexible_body_ffr.h"
 #include "constraint.h"
 //#include "linear_transfer_system.h"
-//#include "kinetic_excitation.h"
+#include "kinetic_excitation.h"
 #include "spring_damper.h"
 //#include "joint.h"
 //#include "contact.h"
@@ -187,7 +187,7 @@ namespace MBSimGUI {
   } 
 
   void RigidBodyContextMenu::addFixedRelativeFrame() {
-    mw->addFrame(new FixedRelativeFrame("P"));
+    mw->addFrame(new FixedRelativeFrame("P"), element);
   }
 
   FlexibleBodyFFRContextMenu::FlexibleBodyFFRContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
@@ -210,7 +210,7 @@ namespace MBSimGUI {
   }
 
   void FixedRelativeFrameContextContextMenu::addFixedRelativeFrame() {
-    mw->addFrame(new FixedRelativeFrame("P"));
+    mw->addFrame(new FixedRelativeFrame("P"), element);
   }
 
   NodeFrameContextContextMenu::NodeFrameContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -405,11 +405,11 @@ namespace MBSimGUI {
   }
 
   void LinkContextContextMenu::addKineticExcitation() {
-//    mw->addLink(new KineticExcitation("KineticExcitation"));
+    mw->addLink(new KineticExcitation("KineticExcitation"), element);
   }
 
   void LinkContextContextMenu::addSpringDamper() {
-    mw->addLink(new SpringDamper("SpringDamper"));
+    mw->addLink(new SpringDamper("SpringDamper"), element);
   }
 
   void LinkContextContextMenu::addDirectionalSpringDamper() {

@@ -1020,6 +1020,7 @@ namespace MBSimGUI {
     QModelIndex containerIndex = (index.row()==0)?index.child(1,0):index;
     contour->setName(contour->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addContour(contour);
+    contour->createXMLElement(contour->getParent()->getXMLContours());
     model->createContourItem(contour,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1033,6 +1034,7 @@ namespace MBSimGUI {
     QModelIndex containerIndex = (index.row()==0)?index.child(2,0):index;
     group->setName(group->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addGroup(group);
+    group->createXMLElement(group->getParent()->getXMLGroups());
     model->createGroupItem(group,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1060,6 +1062,7 @@ namespace MBSimGUI {
     QModelIndex containerIndex = (index.row()==0)?index.child(4,0):index;
     link->setName(link->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addLink(link);
+    link->createXMLElement(link->getParent()->getXMLLinks());
     model->createLinkItem(link,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1073,6 +1076,7 @@ namespace MBSimGUI {
     QModelIndex containerIndex = (index.row()==0)?index.child(5,0):index;
     constraint->setName(constraint->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addConstraint(constraint);
+    constraint->createXMLElement(constraint->getParent()->getXMLConstraints());
     model->createConstraintItem(constraint,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1086,6 +1090,7 @@ namespace MBSimGUI {
     QModelIndex containerIndex = (index.row()==0)?index.child(6,0):index;
     observer->setName(observer->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addObserver(observer);
+    observer->createXMLElement(observer->getParent()->getXMLObservers());
     model->createObserverItem(observer,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);

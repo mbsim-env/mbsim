@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "spring_damper.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -26,13 +27,26 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  SpringDamper::SpringDamper(const QString &str) : FrameLink(str) {
+  SpringDamper::SpringDamper(const QString &str) : FixedFrameLink(str) {
 
 //    forceFunction.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"forceFunction"));
 //
 //    unloadedLength.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"unloadedLength",vector<string>(2,"m")),"",4));
 //
 //    coilSpring.setProperty(new CoilSpringMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVCoilSpring",getID()));
+  }
+
+  DOMElement* SpringDamper::processFileID(DOMElement *element) {
+    Link::processFileID(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
   }
 
   DirectionalSpringDamper::DirectionalSpringDamper(const QString &str) : FloatingFrameLink(str) {

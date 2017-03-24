@@ -25,10 +25,11 @@
 
 namespace MBSimGUI {
 
-  class SpringDamper : public FrameLink {
+  class SpringDamper : public FixedFrameLink {
     public:
       SpringDamper(const QString &str="");
       QString getType() const { return "SpringDamper"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
   };
 

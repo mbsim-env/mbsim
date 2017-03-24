@@ -126,6 +126,7 @@ namespace MBSimGUI {
     public:
       FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
 
+      void updateWidget();
       void setFrame(const QString &str);
       void setDefaultFrame(const QString &def);
       QString getFrame() const;
@@ -411,17 +412,18 @@ namespace MBSimGUI {
 
   class ConnectFramesWidget : public Widget {
 
-    friend class ConnectFramesProperty;
-
     public:
-    ConnectFramesWidget(int n, Element* element);
+      ConnectFramesWidget(int n, Element* element);
 
-    void setDefaultFrame(const QString &def) { widget[0]->setDefaultFrame(def); }
-    void updateWidget();
+      void setDefaultFrame(const QString &def_) { def = def_; widget[0]->setDefaultFrame(def); }
+      void updateWidget();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
-    std::vector<FrameOfReferenceWidget*> widget;
-    Element* element;
+      std::vector<FrameOfReferenceWidget*> widget;
+      QString def;
+      Element* element;
   };
 
   class ConnectContoursWidget : public Widget {

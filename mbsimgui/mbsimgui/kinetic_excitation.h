@@ -21,21 +21,15 @@
 #define _KINETIC_EXCITATION__H_
 
 #include "link.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 
   class KineticExcitation : public FloatingFrameLink {
-    friend class KineticExcitationPropertyDialog;
     public:
-    KineticExcitation(const QString &str="");
-    QString getType() const { return "KineticExcitation"; }
-//    void initialize();
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}
-    protected:
-    ExtProperty forceDirection, forceFunction, momentDirection, momentFunction, arrow;
+      KineticExcitation(const QString &str="");
+      QString getType() const { return "KineticExcitation"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
+      ElementPropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}
   };
 
 }

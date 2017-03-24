@@ -59,8 +59,11 @@ namespace MBSimGUI {
       xercesc::DOMElement* getXMLElement() { return element; }
       virtual xercesc::DOMElement* getXMLFrames() { return NULL; }
       virtual xercesc::DOMElement* getXMLContours() { return NULL; }
+      virtual xercesc::DOMElement* getXMLGroups() { return NULL; }
       virtual xercesc::DOMElement* getXMLObjects() { return NULL; }
+      virtual xercesc::DOMElement* getXMLLinks() { return NULL; }
       virtual xercesc::DOMElement* getXMLConstraints() { return NULL; }
+      virtual xercesc::DOMElement* getXMLObservers() { return NULL; }
       virtual xercesc::DOMElement* getXMLFrame() { return NULL; }
       virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element) { return element; }
       virtual void removeXMLElements();

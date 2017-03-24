@@ -25,6 +25,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   link.cc \
 		   constraint.cc \
 		   observer.cc \
+		   kinetic_excitation.cc \
 		   spring_damper.cc \
 		   signal_.cc \
 		   integrator.cc \

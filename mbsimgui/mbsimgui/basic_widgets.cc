@@ -215,6 +215,13 @@ namespace MBSimGUI {
     frame->setPlaceholderText(def);
   }
 
+  void FrameOfReferenceWidget::updateWidget() {
+    frameBrowser->updateWidget(selectedFrame);
+    if(selectedFrame) {
+      setFrame();
+    }
+  }
+
   void FrameOfReferenceWidget::setFrame() { 
     if(frameBrowser->getFrameList()->currentItem())
       selectedFrame = (Frame*)static_cast<ElementItem*>(frameBrowser->getFrameList()->currentItem())->getElement();
@@ -688,6 +695,28 @@ namespace MBSimGUI {
       widget[i]->updateWidget();
   }
 
+  DOMElement* ConnectFramesWidget::initializeUsingXML(DOMElement *element) {
+    for(unsigned int i=0; i<widget.size(); i++) {
+      string xmlName = "ref";
+      if(widget.size()>1)
+        xmlName += toStr(int(i+1));
+      if(E(element)->hasAttribute(xmlName))
+        widget[i]->setFrame(QString::fromStdString(E(element)->getAttribute(xmlName)));
+    }
+    return element;
+  }
+
+  DOMElement* ConnectFramesWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    for(unsigned int i=0; i<widget.size(); i++) {
+      string xmlName = "ref";
+      if(widget.size()>1)
+        xmlName += toStr(int(i+1));
+      if(i>0 or widget[i]->getFrame()!=def)
+        E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getFrame().toStdString());
+    }
+    return NULL;
+  }
+
   ConnectContoursWidget::ConnectContoursWidget(int n, Element *element_) : element(element_) {
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -871,8 +900,7 @@ namespace MBSimGUI {
 
     vector<QString> vec(3);
     vec[0] = "0.666667"; vec[1] = "1"; vec[2] = "1";
-    color = new ExtWidget("HSV",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft));
-    static_cast<VecWidget*>(static_cast<ChoiceWidget2*>(color->getWidget())->getWidget())->setVec(vec);
+    color = new ExtWidget("HSV",new ChoiceWidget2(new VecWidgetFactory(vec),QBoxLayout::RightToLeft,5),false,false,"");
     layout->addWidget(color);
 
     button = new QPushButton(tr("Select"));
@@ -882,13 +910,13 @@ namespace MBSimGUI {
   }
 
   void ColorWidget::updateWidget() { 
-    QString val = static_cast<ExtPhysicalVarWidget*>(color->getWidget())->getValue();
+    QString val = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(color->getWidget())->getWidget())->getValue();
     vector<QString> vec = strToVec(val);
     button->setPalette(QPalette(QColor::fromHsvF(vec[0].toDouble(),vec[1].toDouble(),vec[2].toDouble())));
   }
 
   void ColorWidget::setColor() { 
-    QString val = static_cast<ExtPhysicalVarWidget*>(color->getWidget())->getValue();
+    QString val = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(color->getWidget())->getWidget())->getValue();
     vector<QString> vec = strToVec(val);
     QColor col;
     if(vec.size()==3)
@@ -897,22 +925,18 @@ namespace MBSimGUI {
       col = QColorDialog::getColor(Qt::blue);
     if(col.isValid()) {
       QString str = "[" + QString::number(col.hueF()) + ";" + QString::number(col.saturationF()) + ";" + QString::number(col.valueF()) + "]";
-      static_cast<ExtPhysicalVarWidget*>(color->getWidget())->setValue(str);
+      static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(color->getWidget())->getWidget())->setValue(str);
       updateWidget();
     }
   }
 
   DOMElement* ColorWidget::initializeUsingXML(DOMElement *parent) {
- //   DOMElement *e = E(parent)->getFirstElementChildNamed(xmlName);
     color->initializeUsingXML(parent);
     return parent;
   }
 
   DOMElement* ColorWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-//    DOMDocument *doc=parent->getOwnerDocument();
-//    DOMElement *ele = D(doc)->createElement(xmlName);
     color->writeXMLFile(parent);
-//    parent->insertBefore(ele, NULL);
     return 0;
   }
  

@@ -1080,8 +1080,20 @@ namespace MBSimGUI {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
-    connections = new ExtWidget("Connections",new ConnectFramesWidget(2,link));
+    connections = new ExtWidget("Connections",new ConnectFramesWidget(2,link),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
+  }
+
+  DOMElement* FrameLinkPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
+    connections->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FrameLinkPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ElementPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    connections->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   FixedFrameLinkPropertyDialog::FixedFrameLinkPropertyDialog(FixedFrameLink *link, QWidget *parent, Qt::WindowFlags f) : FrameLinkPropertyDialog(link,parent,f) {
@@ -1113,19 +1125,19 @@ namespace MBSimGUI {
 
     static_cast<ConnectFramesWidget*>(connections->getWidget())->setDefaultFrame("../Frame[I]");
 
-    forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft),true);
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation)),true);
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation),QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceFunction");
     addToTab("Kinetics",forceFunction);
 
-    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft),true);
+    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
     addToTab("Kinetics",momentDirection);
 
-    momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation)),true);
+    momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentFunction");
     addToTab("Kinetics",momentFunction);
 
-    arrow = new ExtWidget("OpenMBV arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    arrow = new ExtWidget("OpenMBV arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBV");
     addToTab("Visualisation",arrow);
 
     connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
@@ -1148,16 +1160,52 @@ namespace MBSimGUI {
     }
   }
 
-  SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : FrameLinkPropertyDialog(springDamper,parent,f) {
+  DOMElement* KineticExcitationPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FloatingFrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    forceDirection->initializeUsingXML(element->getXMLElement());
+    forceFunction->initializeUsingXML(element->getXMLElement());
+    momentDirection->initializeUsingXML(element->getXMLElement());
+    momentFunction->initializeUsingXML(element->getXMLElement());
+    arrow->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
+  DOMElement* KineticExcitationPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FloatingFrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    forceDirection->writeXMLFile(element->getXMLElement(),ref);
+    forceFunction->writeXMLFile(element->getXMLElement(),ref);
+    momentDirection->writeXMLFile(element->getXMLElement(),ref);
+    momentFunction->writeXMLFile(element->getXMLElement(),ref);
+    arrow->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
+  SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : FixedFrameLinkPropertyDialog(springDamper,parent,f) {
+
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
     addToTab("Kinetics", forceFunction);
 
-    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft));
+    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedLength");
     addToTab("General",unloadedLength);
 
-    coilSpring = new ExtWidget("OpenMBV coil spring",new CoilSpringMBSOMBVWidget("NOTSET"),true);
+    coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", coilSpring);
+  }
+
+  DOMElement* SpringDamperPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FixedFrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    forceFunction->initializeUsingXML(element->getXMLElement());
+    unloadedLength->initializeUsingXML(element->getXMLElement());
+    coilSpring->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* SpringDamperPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FixedFrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    forceFunction->writeXMLFile(element->getXMLElement(),ref);
+    unloadedLength->writeXMLFile(element->getXMLElement(),ref);
+    coilSpring->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   DirectionalSpringDamperPropertyDialog::DirectionalSpringDamperPropertyDialog(DirectionalSpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : FloatingFrameLinkPropertyDialog(springDamper,parent,f) {
