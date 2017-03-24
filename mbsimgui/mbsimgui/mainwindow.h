@@ -115,6 +115,7 @@ namespace MBSimGUI {
       void loadProject(const QString &file);
       ElementView* getElementList() { return elementList; }
       void setProjectChanged(bool changed=true);
+      void selectSolver(int i);
     public slots:
       void elementListClicked();
       void parameterListClicked();
@@ -122,15 +123,6 @@ namespace MBSimGUI {
       void loadProject();
       bool saveProjectAs();
       bool saveProject(const QString &filename="", bool modifyStatus=true);
-      void selectIntegrator();
-      void selectDOPRI5Integrator();
-      void selectRADAU5Integrator();
-      void selectLSODEIntegrator();
-      void selectLSODARIntegrator();
-      void selectTimeSteppingIntegrator();
-      void selectEulerExplicitIntegrator();
-      void selectRKSuiteIntegrator();
-      void selectEigenanalyser();
       void saveDataAs();
       void saveMBSimH5DataAs();
       void saveMBSimH5Data(const QString &file);

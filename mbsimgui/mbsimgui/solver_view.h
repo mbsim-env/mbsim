@@ -29,9 +29,12 @@ namespace MBSimGUI {
   class SolverPropertyDialog;
 
   class SolverViewContextMenu : public QMenu {
+    Q_OBJECT
 
     public:
       SolverViewContextMenu(QWidget * parent = 0);
+    protected slots:
+      void selectSolver(QAction *action);
   };
 
   class SolverView : public QLineEdit {
@@ -49,8 +52,8 @@ namespace MBSimGUI {
       std::vector<Solver*> solver;
       std::vector<QString> type;
       int i;
-      protected slots:
-        void openContextMenu();
+    protected slots:
+      void openContextMenu();
   };
 
   class IntegratorMouseEvent : public QObject {

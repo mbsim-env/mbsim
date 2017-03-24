@@ -31,30 +31,31 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   SolverViewContextMenu::SolverViewContextMenu(QWidget *parent) : QMenu(parent) {
+    QActionGroup *actionGroup = new QActionGroup(this);
     QAction *action = new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5 integrator", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(selectDOPRI5Integrator()));
-    addAction(action);
+    actionGroup->addAction(action);
     action = new QAction(Utils::QIconCached("newobject.svg"),"RADAU5 integrator", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(selectRADAU5Integrator()));
-    addAction(action);
+    actionGroup->addAction(action);
     action = new QAction(Utils::QIconCached("newobject.svg"),"LSODE integrator", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(selectLSODEIntegrator()));
-    addAction(action);
+    actionGroup->addAction(action);
     action = new QAction(Utils::QIconCached("newobject.svg"),"LSODAR integrator", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(selectLSODARIntegrator()));
-    addAction(action);
+    actionGroup->addAction(action);
     action = new QAction(Utils::QIconCached("newobject.svg"),"Time stepping integrator", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(selectTimeSteppingIntegrator()));
-    addAction(action);
+    actionGroup->addAction(action);
     action = new QAction(Utils::QIconCached("newobject.svg"),"Euler explicit integrator", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(selectEulerExplicitIntegrator()));
-    addAction(action);
+    actionGroup->addAction(action);
     action = new QAction(Utils::QIconCached("newobject.svg"),"RKSuite integrator", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(selectRKSuiteIntegrator()));
-    addAction(action);
+    actionGroup->addAction(action);
     action = new QAction(Utils::QIconCached("newobject.svg"),"Eigenanalyser", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(selectEigenanalyser()));
-    addAction(action);
+    actionGroup->addAction(action);
+    addActions(actionGroup->actions());
+    connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(selectSolver(QAction*)));
+  }
+
+  void SolverViewContextMenu::selectSolver(QAction *action) {
+    QActionGroup *actionGroup = action->actionGroup();
+    QList<QAction*> list = actionGroup->actions();
+    mw->selectSolver(list.indexOf(action));
   }
 
   SolverView::SolverView() : i(0) {

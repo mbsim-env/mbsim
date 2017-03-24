@@ -645,65 +645,10 @@ namespace MBSimGUI {
     return false;
   }
 
-  void MainWindow::selectIntegrator() {
-    QMenu *menu = solverView->createContextMenu();
-    menu->exec(QCursor::pos());
-    delete menu;
-  }
-
-  void MainWindow::selectDOPRI5Integrator() {
+  void MainWindow::selectSolver(int i) {
     setProjectChanged(true);
     solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
-    solverView->setSolver(0);
-    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
-  }
-
-  void MainWindow::selectRADAU5Integrator() {
-    setProjectChanged(true);
-    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
-    solverView->setSolver(1);
-    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
-  }
-
-  void MainWindow::selectLSODEIntegrator() {
-    setProjectChanged(true);
-    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
-    solverView->setSolver(2);
-    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
-  }
-
-  void MainWindow::selectLSODARIntegrator() {
-    setProjectChanged(true);
-    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
-    solverView->setSolver(3);
-    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
-  }
-
-  void MainWindow::selectTimeSteppingIntegrator() {
-    setProjectChanged(true);
-    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
-    solverView->setSolver(4);
-    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
-  }
-
-  void MainWindow::selectEulerExplicitIntegrator() {
-    setProjectChanged(true);
-    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
-    solverView->setSolver(5);
-    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
-  }
-
-  void MainWindow::selectRKSuiteIntegrator() {
-    setProjectChanged(true);
-    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
-    solverView->setSolver(6);
-    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
-  }
-
-  void MainWindow::selectEigenanalyser() {
-    setProjectChanged(true);
-    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
-    solverView->setSolver(7);
+    solverView->setSolver(i);
     solverView->getSolver()->createXMLElement(doc->getDocumentElement());
   }
 
