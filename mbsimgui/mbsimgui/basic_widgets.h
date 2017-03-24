@@ -126,7 +126,6 @@ namespace MBSimGUI {
     public:
       FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
 
-      void updateWidget();
       void setFrame(const QString &str);
       void setDefaultFrame(const QString &def);
       QString getFrame() const;

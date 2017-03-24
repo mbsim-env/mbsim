@@ -57,8 +57,6 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 namespace bfs=boost::filesystem;
 
-string saveName;
-
 //shared_ptr<DOMImplementation> impl(xercesc::DOMImplementation::getImplementation());
 //shared_ptr<DOMLSParser> parser(impl->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0));
 //shared_ptr<DOMLSSerializer> serializer(impl->createLSSerializer());
@@ -629,7 +627,7 @@ namespace MBSimGUI {
   bool MainWindow::saveProjectAs() {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(0, "XML project files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
+    QString file=QFileDialog::getSaveFileName(0, "XML project files", QString("./")+model->getItem(index)->getItemData()->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
     if(not(file.isEmpty())) {
       file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
       mbsDir = QFileInfo(file).absolutePath();
@@ -783,7 +781,7 @@ namespace MBSimGUI {
   void MainWindow::saveMBSimH5DataAs() {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(0, "Export MBSim H5 file", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsim.h5", "H5 files (*.mbsim.h5)");
+    QString file=QFileDialog::getSaveFileName(0, "Export MBSim H5 file", QString("./")+model->getItem(index)->getItemData()->getName()+".mbsim.h5", "H5 files (*.mbsim.h5)");
     if(file!="") {
       saveMBSimH5Data(file);
     }
@@ -839,7 +837,7 @@ namespace MBSimGUI {
   void MainWindow::saveEigenanalysisAs() {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(0, "Export eigenanalysis file", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".eigenanalysis.mat", "mat files (*.eigenanalysis.mat)");
+    QString file=QFileDialog::getSaveFileName(0, "Export eigenanalysis file", QString("./")+model->getItem(index)->getItemData()->getName()+".eigenanalysis.mat", "mat files (*.eigenanalysis.mat)");
     if(file!="") {
       saveEigenanalysis(file);
     }
@@ -861,7 +859,6 @@ namespace MBSimGUI {
       return;
 
     QString sTask = QString::number(task); 
-    saveName=dss->getName();
 //    shared_ptr<xercesc::DOMDocument> doc(static_cast<DOMDocument*>(this->doc->cloneNode(true)));
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMNode *newDocElement = doc->importNode(this->doc->getDocumentElement(), true);
@@ -984,7 +981,7 @@ namespace MBSimGUI {
         );
   }
 
-  void MainWindow::xmlHelp(const string &url) {
+  void MainWindow::xmlHelp(const QString &url) {
     if(!helpDialog) {
       helpDialog=new QDialog();
       QGridLayout *layout=new QGridLayout(helpDialog);
@@ -1003,10 +1000,10 @@ namespace MBSimGUI {
       helpDialog->setWindowTitle("MBSimXML - Main MBSim XML Documentation");
       helpDialog->resize(700,500);
     }
-    if(url.empty())
+    if(url.isEmpty())
       helpViewer->load(QUrl(((MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string()+"/http___www_mbsim-env_de_MBSim/index.html").c_str()));
     else
-      helpViewer->load(QUrl(url.c_str()));
+      helpViewer->load(QUrl(url));
     helpDialog->show();
     helpDialog->raise();
     helpDialog->activateWindow();
@@ -1062,7 +1059,7 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = index.data().toString()=="frames"?index:index.child(0,0); 
-    frame->setName(frame->getName()+toStr(model->getItem(containerIndex)->getID()));
+    frame->setName(frame->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addFrame(frame);
     frame->createXMLElement(frame->getParent()->getXMLFrames());
     model->createFrameItem(frame,containerIndex);
@@ -1076,7 +1073,7 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(1,0):index;
-    contour->setName(contour->getName()+toStr(model->getItem(containerIndex)->getID()));
+    contour->setName(contour->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addContour(contour);
     model->createContourItem(contour,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
@@ -1089,7 +1086,7 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(2,0):index;
-    group->setName(group->getName()+toStr(model->getItem(containerIndex)->getID()));
+    group->setName(group->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addGroup(group);
     model->createGroupItem(group,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
@@ -1102,7 +1099,7 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(3,0):index;
-    object->setName(object->getName()+toStr(model->getItem(containerIndex)->getID()));
+    object->setName(object->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addObject(object);
     object->createXMLElement(object->getParent()->getXMLObjects());
     model->createObjectItem(object,containerIndex);
@@ -1116,7 +1113,7 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(4,0):index;
-    link->setName(link->getName()+toStr(model->getItem(containerIndex)->getID()));
+    link->setName(link->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addLink(link);
     model->createLinkItem(link,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
@@ -1129,7 +1126,7 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(5,0):index;
-    constraint->setName(constraint->getName()+toStr(model->getItem(containerIndex)->getID()));
+    constraint->setName(constraint->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addConstraint(constraint);
     model->createConstraintItem(constraint,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
@@ -1142,7 +1139,7 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(6,0):index;
-    observer->setName(observer->getName()+toStr(model->getItem(containerIndex)->getID()));
+    observer->setName(observer->getName()+toQStr(model->getItem(containerIndex)->getID()));
     parent->addObserver(observer);
     model->createObserverItem(observer,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
@@ -1158,7 +1155,7 @@ namespace MBSimGUI {
     parent->addParameter(parameter);
     parameter->createXMLElement(parameter->getParent()->getXMLElement());
     if(parameter->getName()!="import")
-      parameter->setName(parameter->getName()+toStr(model->getItem(index)->getID()));
+      parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
     embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
     embeddingList->openEditor();

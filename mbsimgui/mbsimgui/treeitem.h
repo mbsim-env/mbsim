@@ -31,19 +31,16 @@
 
 namespace MBSimGUI {
 
-  class Element;
-
   class BasicItemData : public TreeItemData {
     protected:
-      std::string name, value, type;
+      QString name, value;
     public:
-      BasicItemData(const std::string &name_, const std::string &value_, const std::string &type_="") : name(name_), value(value_), type(type_) {}
-      const std::string& getName() const {return name;}
-      std::string getValue() const {return value;}
-      std::string getType() const {return type;}
-      void setName(const std::string &name_) {name = name_;}
-      void setValue(const std::string &value_) {value = value_;}
-      void setType(const std::string &value_) {type = value_;}
+      BasicItemData(const QString &name_, const QString &value_) : name(name_), value(value_) {}
+      const QString& getName() const {return name;}
+      const QString& getValue() const {return value;}
+      QString getType() const {return "Type";}
+      void setName(const QString &name_) {name = name_;}
+      void setValue(const QString &value_) {value = value_;}
       virtual QMenu* createContextMenu() {return new QMenu;}
   };
 
@@ -52,6 +49,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       FrameItemData(Element *element_) : BasicItemData("frames",""), element(element_) {}
+      QString getType() const {return "";}
       virtual QMenu* createContextMenu() {return element->createFrameContextMenu();}
   };
 
@@ -60,6 +58,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       ContourItemData(Element *element_) : BasicItemData("contours",""), element(element_) {}
+      QString getType() const {return "";}
       virtual QMenu* createContextMenu() {return new ContourContextContextMenu(element);}
   };
 
@@ -68,6 +67,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       GroupItemData(Element *element_) : BasicItemData("groups",""), element(element_) {}
+      QString getType() const {return "";}
       virtual QMenu* createContextMenu() {return new GroupContextContextMenu(element);}
   };
 
@@ -77,6 +77,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       ObjectItemData(Element *element_) : BasicItemData("objects",""), element(element_) {}
+      QString getType() const {return "";}
       virtual QMenu* createContextMenu() {return new ObjectContextContextMenu(element);}
   };
 
@@ -85,6 +86,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       LinkItemData(Element *element_) : BasicItemData("links",""), element(element_) {}
+      QString getType() const {return "";}
       virtual QMenu* createContextMenu() {return new LinkContextContextMenu(element);}
   };
 
@@ -93,6 +95,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       ConstraintItemData(Element *element_) : BasicItemData("constraints",""), element(element_) {}
+      QString getType() const {return "";}
       virtual QMenu* createContextMenu() {return new ConstraintContextContextMenu(element);}
   };
 
@@ -101,6 +104,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       ObserverItemData(Element *element_) : BasicItemData("observers",""), element(element_) {}
+      QString getType() const {return "";}
       virtual QMenu* createContextMenu() {return new ObserverContextContextMenu(element);}
   };
 
@@ -131,12 +135,12 @@ namespace MBSimGUI {
         itemData = data_;
       }
       TreeItemData* getItemData() const {return itemData;}
-      QVariant getData0() const {return QString::fromStdString(itemData->getName());}
-      QVariant getData1() const {return QString::fromStdString(itemData->getValue());}
-      QVariant getData2() const {return QString::fromStdString(itemData->getType());}
-      void setData0(const QVariant &value) {itemData->setName(value.toString().toStdString());}
-      void setData1(const QVariant &value) {itemData->setValue(value.toString().toStdString());}
-      void setData2(const QVariant &value) {itemData->setType(value.toString().toStdString());}
+      QVariant getData0() const {return itemData->getName();}
+      QVariant getData1() const {return itemData->getValue();}
+      QVariant getData2() const {return itemData->getType();}
+      void setData0(const QVariant &value) {itemData->setName(value.toString());}
+      void setData1(const QVariant &value) {itemData->setValue(value.toString());}
+      void setData2(const QVariant &value) {itemData->setType(value.toString());}
       QVariant (TreeItem::*getData_[3])() const;
       void (TreeItem::*setData_[3])(const QVariant &value);
       QVariant getData(int column) const {return (this->*getData_[column])();}

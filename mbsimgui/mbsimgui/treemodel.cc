@@ -148,7 +148,7 @@ namespace MBSimGUI {
 
   ElementTreeModel::ElementTreeModel(QObject *parent) : TreeModel(parent) {
 
-    rootItem = new TreeItem(new BasicItemData("Name","Value","Type"));
+    rootItem = new TreeItem(new BasicItemData("Name","Value"));
   }
 
   void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
@@ -287,7 +287,7 @@ namespace MBSimGUI {
 
   EmbeddingTreeModel::EmbeddingTreeModel(QObject *parent) : TreeModel(parent) {
 
-    rootItem = new TreeItem(new BasicItemData("Name","Value","Type"));
+    rootItem = new TreeItem(new BasicItemData("Name","Value"));
   }
 
   void EmbeddingTreeModel::createElementItem(Element *element, const QModelIndex &parent) {

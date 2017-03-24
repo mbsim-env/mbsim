@@ -26,15 +26,15 @@ namespace MBSimGUI {
 
   class Sensor : public Signal {
     public:
-      Sensor(const std::string &str="");
+      Sensor(const QString &str="");
       ~Sensor(); 
   };
 
   class GeneralizedCoordinateSensor : public Sensor {
     friend class GeneralizedCoordinateSensorPropertyDialog;
     public:
-    GeneralizedCoordinateSensor(const std::string &str="");
-    virtual std::string getType() const { return "GeneralizedCoordinateSensor"; }
+    GeneralizedCoordinateSensor(const QString &str="");
+    QString getType() const { return "GeneralizedCoordinateSensor"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
@@ -44,24 +44,24 @@ namespace MBSimGUI {
 
   class GeneralizedPositionSensor : public GeneralizedCoordinateSensor {
     public:
-      GeneralizedPositionSensor(const std::string &str="") : GeneralizedCoordinateSensor(str) {}
-      virtual std::string getType() const { return "GeneralizedPositionSensor"; }
+      GeneralizedPositionSensor(const QString &str="") : GeneralizedCoordinateSensor(str) {}
+      QString getType() const { return "GeneralizedPositionSensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionSensorPropertyDialog(this);}
 
   };
 
   class GeneralizedVelocitySensor : public GeneralizedCoordinateSensor {
     public:
-      GeneralizedVelocitySensor(const std::string &str="") : GeneralizedCoordinateSensor(str) {}
-      virtual std::string getType() const { return "GeneralizedVelocitySensor"; }
+      GeneralizedVelocitySensor(const QString &str="") : GeneralizedCoordinateSensor(str) {}
+      QString getType() const { return "GeneralizedVelocitySensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocitySensorPropertyDialog(this);}
   };
 
   class AbsoluteCoordinateSensor : public Sensor {
     friend class AbsoluteCoordinateSensorPropertyDialog;
     public:
-    AbsoluteCoordinateSensor(const std::string &str="");
-    virtual std::string getType() const { return "AbsoluteCoordinateSensor"; }
+    AbsoluteCoordinateSensor(const QString &str="");
+    QString getType() const { return "AbsoluteCoordinateSensor"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
@@ -71,37 +71,37 @@ namespace MBSimGUI {
 
   class AbsolutePositionSensor : public AbsoluteCoordinateSensor {
     public:
-      AbsolutePositionSensor(const std::string &str="") : AbsoluteCoordinateSensor(str) {}
-      virtual std::string getType() const { return "AbsolutePositionSensor"; }
+      AbsolutePositionSensor(const QString &str="") : AbsoluteCoordinateSensor(str) {}
+      QString getType() const { return "AbsolutePositionSensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new AbsolutePositionSensorPropertyDialog(this);}
   };
 
   class AbsoluteVelocitySensor : public AbsoluteCoordinateSensor {
     public:
-      AbsoluteVelocitySensor(const std::string &str="") : AbsoluteCoordinateSensor(str) {}
-      virtual std::string getType() const { return "AbsoluteVelocitySensor"; }
+      AbsoluteVelocitySensor(const QString &str="") : AbsoluteCoordinateSensor(str) {}
+      QString getType() const { return "AbsoluteVelocitySensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new AbsoluteVelocitySensorPropertyDialog(this);}
   };
 
   class AbsoluteAngularPositionSensor : public AbsoluteCoordinateSensor {
     public:
-      AbsoluteAngularPositionSensor(const std::string &str="") : AbsoluteCoordinateSensor(str) {}
-      virtual std::string getType() const { return "AbsoluteAngularPositionSensor"; }
+      AbsoluteAngularPositionSensor(const QString &str="") : AbsoluteCoordinateSensor(str) {}
+      QString getType() const { return "AbsoluteAngularPositionSensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new AbsoluteAngularPositionSensorPropertyDialog(this);}
   };
 
   class AbsoluteAngularVelocitySensor : public AbsoluteCoordinateSensor {
     public:
-      AbsoluteAngularVelocitySensor(const std::string &str="") : AbsoluteCoordinateSensor(str) {}
-      virtual std::string getType() const { return "AbsoluteAngularVelocitySensor"; }
+      AbsoluteAngularVelocitySensor(const QString &str="") : AbsoluteCoordinateSensor(str) {}
+      QString getType() const { return "AbsoluteAngularVelocitySensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new AbsoluteAngularVelocitySensorPropertyDialog(this);}
   };
 
   class FunctionSensor : public Sensor {
     friend class FunctionSensorPropertyDialog;
     public:
-    FunctionSensor(const std::string &str="");
-    virtual std::string getType() const { return "FunctionSensor"; }
+    FunctionSensor(const QString &str="");
+    QString getType() const { return "FunctionSensor"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new FunctionSensorPropertyDialog(this);}
@@ -112,9 +112,9 @@ namespace MBSimGUI {
   class SignalProcessingSystemSensor : public Sensor {
     friend class SignalProcessingSystemSensorPropertyDialog;
     public:
-    SignalProcessingSystemSensor(const std::string &str="");
+    SignalProcessingSystemSensor(const QString &str="");
     void initialize();
-    virtual std::string getType() const { return "SignalProcessingSystemSensor"; }
+    QString getType() const { return "SignalProcessingSystemSensor"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new SignalProcessingSystemSensorPropertyDialog(this);}

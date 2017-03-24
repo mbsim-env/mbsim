@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Body::Body(const string &str) : Object(str) {
+  Body::Body(const QString &str) : Object(str) {
   }
 
   Body::~Body() {
@@ -68,7 +68,7 @@ namespace MBSimGUI {
     removedElement.push_back(element);
   }
 
-  Frame* Body::getFrame(const string &name) const {
+  Frame* Body::getFrame(const QString &name) const {
     size_t i;
     for(i=0; i<frame.size(); i++) {
       if(frame[i]->getName() == name)
@@ -77,7 +77,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Contour* Body::getContour(const string &name) const {
+  Contour* Body::getContour(const QString &name) const {
     size_t i;
     for(i=0; i<contour.size(); i++) {
       if(contour[i]->getName() == name)
@@ -86,7 +86,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Element* Body::getChildByContainerAndName(const std::string &container, const std::string &name) const {
+  Element* Body::getChildByContainerAndName(const QString &container, const QString &name) const {
     if (container=="Frame")
       return getFrame(name);
     else if (container=="Contour")

@@ -91,7 +91,7 @@ namespace MBSimGUI {
 
   ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), element(element_) {
     addTab("General");
-    name = new ExtWidget("Name",new TextWidget(QString::fromStdString(element->getName())));
+    name = new ExtWidget("Name",new TextWidget(element->getName()));
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
     addTab("Plot");
@@ -102,15 +102,15 @@ namespace MBSimGUI {
   }
 
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(element->getName()));
+    static_cast<TextWidget*>(name->getWidget())->setText(element->getName());
     plotFeature->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
   DOMElement* ElementPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     element->removeXMLElements();
-    element->setName(static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
-    E(element->getXMLElement())->setAttribute("name",element->getName());
+    element->setName(static_cast<TextWidget*>(name->getWidget())->getText());
+    E(element->getXMLElement())->setAttribute("name",element->getName().toStdString());
     plotFeature->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
@@ -130,9 +130,9 @@ namespace MBSimGUI {
     replace(ns.begin(), ns.end(), ':', '_');
     replace(ns.begin(), ns.end(), '.', '_');
     replace(ns.begin(), ns.end(), '/', '_');
-    url+="/"+ns+"/index.html#"+element->getType();
+    url+="/"+ns+"/index.html#"+element->getType().toStdString();
     // open in XML help dialog
-    mw->xmlHelp(url);
+    mw->xmlHelp(QString::fromStdString(url));
   }
 
   void ElementPropertyDialog::setName(const QString &str) {
@@ -168,7 +168,7 @@ namespace MBSimGUI {
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
     setReadOnly(true);
-    setName(QString::fromStdString(frame->getName()));
+    setName(frame->getName());
   }
 
   DOMElement* InternalFramePropertyDialog::initializeUsingXML(DOMElement *parent) {

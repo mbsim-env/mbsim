@@ -43,9 +43,9 @@ namespace MBSimGUI {
     xercesc::DOMElement *frames, *contours, *groups, *objects, *links, *constraints, *observers;
 
     public:
-    Group(const std::string &str="");
+    Group(const QString &str="");
     ~Group();
-    std::string getType() const { return "Group"; }
+    QString getType() const { return "Group"; }
     static Group* readXMLFile(const std::string &filename);
     void createXMLConstraints();
     void createXMLObservers();
@@ -59,7 +59,7 @@ namespace MBSimGUI {
     xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
     xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
     xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual Element *getChildByContainerAndName(const std::string &container, const std::string &name) const;
+    virtual Element *getChildByContainerAndName(const QString &container, const QString &name) const;
     void setActionPasteDisabled(bool flag);
     int getNumberOfFrames() {return frame.size();}
     int getNumberOfContours() {return contour.size();}
@@ -75,13 +75,13 @@ namespace MBSimGUI {
     Link* getLink(int i) const {return link[i];}
     Constraint* getConstraint(int i) const {return constraint[i];}
     Observer* getObserver(int i) const {return observer[i];}
-    Frame* getFrame(const std::string &name) const;
-    Contour* getContour(const std::string &name) const;
-    Object* getObject(const std::string &name) const;
-    Group* getGroup(const std::string &name) const;
-    Link* getLink(const std::string &name) const;
-    Constraint* getConstraint(const std::string &name) const;
-    Observer* getObserver(const std::string &name) const;
+    Frame* getFrame(const QString &name) const;
+    Contour* getContour(const QString &name) const;
+    Object* getObject(const QString &name) const;
+    Group* getGroup(const QString &name) const;
+    Link* getLink(const QString &name) const;
+    Constraint* getConstraint(const QString &name) const;
+    Observer* getObserver(const QString &name) const;
 
     void addFrame(Frame *frame);
     void addContour(Contour *contour);

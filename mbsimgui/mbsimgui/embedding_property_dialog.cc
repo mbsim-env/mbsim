@@ -40,7 +40,7 @@ namespace MBSimGUI {
 
   DOMElement* EmbeddingPropertyDialog::initializeUsingXML(DOMElement *ele) {
     if(embed) {
-      static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(element->getName()));
+      static_cast<TextWidget*>(name->getWidget())->setText(element->getName());
       DOMElement *parent = static_cast<DOMElement*>(ele->getParentNode());
       if(E(parent)->getTagName()==PV%"Embed")
         embed->initializeUsingXML(parent);
@@ -50,9 +50,9 @@ namespace MBSimGUI {
 
   DOMElement* EmbeddingPropertyDialog::writeXMLFile(DOMNode *node, DOMNode *ref) {
     if(embed) {
-      element->setName(static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+      element->setName(static_cast<TextWidget*>(name->getWidget())->getText());
       element->setCounterName(static_cast<EmbedWidget*>(embed->getWidget())->getCounterName().toStdString());
-      element->setValue(static_cast<EmbedWidget*>(embed->getWidget())->getCount().toStdString());
+      element->setValue(static_cast<EmbedWidget*>(embed->getWidget())->getCount());
       DOMNode* embedNode = node->getParentNode();
       if(embed->isActive()) {
         if(X()%embedNode->getNodeName()!="Embed") {

@@ -27,22 +27,22 @@ namespace MBSimGUI {
 
   class SpringDamper : public FrameLink {
     public:
-      SpringDamper(const std::string &str="");
-      std::string getType() const { return "SpringDamper"; }
+      SpringDamper(const QString &str="");
+      QString getType() const { return "SpringDamper"; }
       ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
   };
 
   class DirectionalSpringDamper : public FloatingFrameLink {
     public:
-      DirectionalSpringDamper(const std::string &str="");
-      std::string getType() const { return "DirectionalSpringDamper"; }
+      DirectionalSpringDamper(const QString &str="");
+      QString getType() const { return "DirectionalSpringDamper"; }
       ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
   };
 
   class GeneralizedSpringDamper : public DualRigidBodyLink {
     public:
-      GeneralizedSpringDamper(const std::string &str="");
-      std::string getType() const { return "GeneralizedSpringDamper"; }
+      GeneralizedSpringDamper(const QString &str="");
+      QString getType() const { return "GeneralizedSpringDamper"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
   };
 

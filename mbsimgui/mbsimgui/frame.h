@@ -28,9 +28,7 @@ namespace MBSimGUI {
 
   class Frame : public Element {
     public:
-      Frame(const std::string &str="");
-      ~Frame() { }
-      std::string getType() const { return "Frame"; }
+      Frame(const QString &str="");
       static Frame* readXMLFile(const std::string &filename);
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
@@ -40,8 +38,8 @@ namespace MBSimGUI {
 
   class InternalFrame : public Frame {
     public:
-      InternalFrame(const std::string &str, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_="");
-      std::string getType() const { return "InternalFrame"; }
+      InternalFrame(const QString &str, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_="");
+      QString getType() const { return "InternalFrame"; }
       ElementPropertyDialog* createPropertyDialog() {return new InternalFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
       void removeXMLElements();
@@ -54,9 +52,8 @@ namespace MBSimGUI {
 
   class FixedRelativeFrame : public Frame {
     public:
-      FixedRelativeFrame(const std::string &str="");
-      ~FixedRelativeFrame() { }
-      std::string getType() const { return "FixedRelativeFrame"; }
+      FixedRelativeFrame(const QString &str="");
+      QString getType() const { return "FixedRelativeFrame"; }
       ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
       QMenu* createContextMenu() {return new FixedRelativeFrameContextMenu(this);}
@@ -64,9 +61,8 @@ namespace MBSimGUI {
 
   class NodeFrame : public Frame {
     public:
-      NodeFrame(const std::string &str="");
-      ~NodeFrame() { }
-      std::string getType() const { return "NodeFrame"; }
+      NodeFrame(const QString &str="");
+      QString getType() const { return "NodeFrame"; }
       MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
       ElementPropertyDialog* createPropertyDialog() {return new NodeFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}

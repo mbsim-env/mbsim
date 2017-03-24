@@ -51,13 +51,13 @@ namespace MBSimGUI {
       std::vector<Parameter*> removedParameter;
       std::vector<std::string> plotFeatures;
       xercesc::DOMElement *element;
-      std::string name, counterName, value;
+      QString name, value;
+      std::string counterName;
       bool config;
     public:
-      Element(const std::string &name="");
+      Element(const QString &name="");
       virtual ~Element();
-      virtual std::string getPath();
-      std::string getXMLPath(Element *ref=0, bool rel=false);
+      QString getXMLPath(Element *ref=0, bool rel=false);
       xercesc::DOMElement* getXMLElement() { return element; }
       virtual xercesc::DOMElement* getXMLFrames() { return NULL; }
       virtual xercesc::DOMElement* getXMLContours() { return NULL; }
@@ -68,18 +68,17 @@ namespace MBSimGUI {
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      const std::string& getName() const { return name; }
-      void setName(const std::string &str) { name = str; }
-      std::string getType() const { return "Element"; }
-      std::string getValue() const { return value; }
-      void setValue(const std::string &str) { value = str; }
+      const QString& getName() const { return name; }
+      void setName(const QString &str) { name = str; }
+      const QString& getValue() const { return value; }
+      void setValue(const QString &str) { value = str; }
       const std::string& getCounterName() const { return counterName; }
       void setCounterName(const std::string &str) { counterName = str; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       //std::string newName(const std::string &type);
       virtual std::string getFileExtension() const { return ".xml"; }
-      template<class T> T* getByPath(const std::string &path, bool initialCaller=true) const;
-      virtual Element* getChildByContainerAndName(const std::string &container, const std::string &name) const { return 0; }
+      template<class T> T* getByPath(const QString &path, bool initialCaller=true) const;
+      virtual Element* getChildByContainerAndName(const QString &container, const QString &name) const { return 0; }
       virtual int getNumberOfFrames() {return 0;}
       virtual int getNumberOfContours() {return 0;}
       virtual int getNumberOfGroups() {return 0;}
@@ -95,7 +94,7 @@ namespace MBSimGUI {
       virtual Link* getLink(int i) const {return 0;}
       virtual Constraint* getConstraint(int i) const {return 0;}
       virtual Observer* getObserver(int i) const {return 0;}
-      virtual Frame* getFrame(const std::string &name) const {return 0;}
+      virtual Frame* getFrame(const QString &name) const {return 0;}
       virtual void addFrame(Frame *frame) {}
       virtual void addContour(Contour *contour) {}
       virtual void addGroup(Group *group) {}
@@ -127,33 +126,33 @@ namespace MBSimGUI {
   };
 
   template<class T>
-    T* Element::getByPath(const std::string &path, bool initialCaller) const {
-        if(path.substr(0, 1) == "/") { // if absolute path ...
+    T* Element::getByPath(const QString &path, bool initialCaller) const {
+        if(path.mid(0, 1) == "/") { // if absolute path ...
           if(parent) // .. and a parent exists ...
             return parent->getByPath<T>(path, false); // ... than call getByPath of the parent (walk to the top)
           else // .. and no parent exits ...
-            return getByPath<T>(path.substr(1), false); // ... we are at top and call getByPath again with the leading "/" removed (call relative to top)
+            return getByPath<T>(path.mid(1), false); // ... we are at top and call getByPath again with the leading "/" removed (call relative to top)
         }
-        else if (path.substr(0, 3) == "../") // if relative path to parent ...
-          return parent->getByPath<T>(path.substr(3), false); // ... call getByPath of the parent with the leading "../" removed
+        else if (path.mid(0, 3) == "../") // if relative path to parent ...
+          return parent->getByPath<T>(path.mid(3), false); // ... call getByPath of the parent with the leading "../" removed
         else { // if relative path to a child ...
           // extract the first path and all other paths (rest)
-          size_t idx=path.find('/');
-          std::string first=path.substr(0, idx);
-          std::string rest;
-          if(idx!=std::string::npos)
-            rest=path.substr(idx+1);
+          size_t idx=path.indexOf('/');
+          QString first=path.mid(0, idx);
+          QString rest;
+          if(idx!=-1)
+            rest=path.mid(idx+1);
           // get the object of the first child path by calling the virtual function getChildByContainerAndName
-          size_t pos0=first.find('[');
-          if(pos0==std::string::npos)
+          size_t pos0=first.indexOf('[');
+          if(pos0==-1)
             return 0;
-          std::string container=first.substr(0, pos0);
+          QString container=first.mid(0, pos0);
           if(first[first.size()-1]!=']')
             return 0;
-          std::string name=first.substr(pos0+1, first.size()-pos0-2);
+          QString name=first.mid(pos0+1, first.size()-pos0-2);
           Element *e=getChildByContainerAndName(container, name);
           // if their are other child paths call getByPath of e for this
-          if(e and not(rest.empty()))
+          if(e and not(rest.isEmpty()))
             return e->getByPath<T>(rest, false);
           // this is the last relative path -> check type and return
           return dynamic_cast<T*>(e);

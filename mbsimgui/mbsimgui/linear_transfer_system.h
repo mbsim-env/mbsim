@@ -38,8 +38,8 @@ namespace MBSimGUI {
   class LinearTransferSystem : public SignalProcessingSystem {
     friend class LinearTransferSystemPropertyDialog;
     public:
-    LinearTransferSystem(const std::string &str="");
-    std::string getType() const { return "LinearTransferSystem"; }
+    LinearTransferSystem(const QString &str="");
+    QString getType() const { return "LinearTransferSystem"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new LinearTransferSystemPropertyDialog(this);}

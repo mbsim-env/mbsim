@@ -47,18 +47,18 @@ namespace MBSimGUI {
     return constraint;
   }
 
-  GeneralizedConstraint::GeneralizedConstraint(const string &str) : MechanicalConstraint(str) {
+  GeneralizedConstraint::GeneralizedConstraint(const QString &str) : MechanicalConstraint(str) {
 //    support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
   }
 
-  GeneralizedGearConstraint::GeneralizedGearConstraint(const string &str) : GeneralizedConstraint(str) {
+  GeneralizedGearConstraint::GeneralizedGearConstraint(const QString &str) : GeneralizedConstraint(str) {
 
 //    dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
 //
 //    independentBodies.setProperty(new ListProperty(new GeneralizedGearConstraintPropertyFactory(this),MBSIM%"independentRigidBody"));
   }
 
-  GeneralizedDualConstraint::GeneralizedDualConstraint(const string &str) : GeneralizedConstraint(str) {
+  GeneralizedDualConstraint::GeneralizedDualConstraint(const QString &str) : GeneralizedConstraint(str) {
 
 //    dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
 //
@@ -74,12 +74,12 @@ namespace MBSimGUI {
 //      body->setConstrained(true);
 //  }
 
-  GeneralizedPositionConstraint::GeneralizedPositionConstraint(const string &str) : GeneralizedDualConstraint(str) {
+  GeneralizedPositionConstraint::GeneralizedPositionConstraint(const QString &str) : GeneralizedDualConstraint(str) {
 
 //    constraintFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"constraintFunction"));
   }
 
-  GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str) : GeneralizedDualConstraint(str) {
+  GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const QString &str) : GeneralizedDualConstraint(str) {
 
 //    constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory(this),"",3));
 //
@@ -88,7 +88,7 @@ namespace MBSimGUI {
 //    x0.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const string &str) : GeneralizedDualConstraint(str) {
+  GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const QString &str) : GeneralizedDualConstraint(str) {
 
 //    constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory(this),"",3));
 //
@@ -97,7 +97,7 @@ namespace MBSimGUI {
 //    x0.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  JointConstraint::JointConstraint(const string &str) : MechanicalConstraint(str) {
+  JointConstraint::JointConstraint(const QString &str) : MechanicalConstraint(str) {
 
 //    dependentBodiesFirstSide.setProperty(new ListProperty(new RigidBodyOfReferencePropertyFactory(this,""),MBSIM%"dependentRigidBodyOnFirstSide"));
 //

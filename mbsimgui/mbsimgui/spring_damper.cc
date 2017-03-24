@@ -26,7 +26,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  SpringDamper::SpringDamper(const string &str) : FrameLink(str) {
+  SpringDamper::SpringDamper(const QString &str) : FrameLink(str) {
 
 //    forceFunction.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"forceFunction"));
 //
@@ -35,7 +35,7 @@ namespace MBSimGUI {
 //    coilSpring.setProperty(new CoilSpringMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVCoilSpring",getID()));
   }
 
-  DirectionalSpringDamper::DirectionalSpringDamper(const string &str) : FloatingFrameLink(str) {
+  DirectionalSpringDamper::DirectionalSpringDamper(const QString &str) : FloatingFrameLink(str) {
 
 //    vector<PhysicalVariableProperty> input;
 //    input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIM%"forceDirection"));
@@ -48,7 +48,7 @@ namespace MBSimGUI {
 //    coilSpring.setProperty(new CoilSpringMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVCoilSpring",getID()));
   }
 
-  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str) : DualRigidBodyLink(str) {
+  GeneralizedSpringDamper::GeneralizedSpringDamper(const QString &str) : DualRigidBodyLink(str) {
 
 //    function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"generalizedForceFunction"));
 //

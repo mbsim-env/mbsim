@@ -26,78 +26,78 @@ namespace MBSimGUI {
 
   class Contour : public Element {
     public:
-      Contour(const std::string &str="");
+      Contour(const QString &str="");
       static Contour* readXMLFile(const std::string &filename);
       ElementPropertyDialog* createPropertyDialog() {return new ContourPropertyDialog(this);}
   };
 
   class RigidContour : public Contour {
     public:
-      RigidContour(const std::string &str="");
+      RigidContour(const QString &str="");
       void setSavedFrameOfReference(const std::string &str);
       ElementPropertyDialog* createPropertyDialog() {return new RigidContourPropertyDialog(this);}
   };
 
   class Point : public RigidContour {
     public:
-    Point(const std::string &str="");
-    std::string getType() const { return "Point"; }
+    Point(const QString &str="");
+    QString getType() const { return "Point"; }
     ElementPropertyDialog* createPropertyDialog() {return new PointPropertyDialog(this);}
   };
 
   class Line : public RigidContour {
     public:
-      Line(const std::string &str="");
-      std::string getType() const { return "Line"; }
+      Line(const QString &str="");
+      QString getType() const { return "Line"; }
       ElementPropertyDialog* createPropertyDialog() {return new LinePropertyDialog(this);}
   };
 
   class Plane : public RigidContour {
     public:
-      Plane(const std::string &str="");
-      std::string getType() const { return "Plane"; }
+      Plane(const QString &str="");
+      QString getType() const { return "Plane"; }
       ElementPropertyDialog* createPropertyDialog() {return new PlanePropertyDialog(this);}
   };
 
   class Sphere : public RigidContour {
     public:
-      Sphere(const std::string &str="");
-      std::string getType() const { return "Sphere"; }
+      Sphere(const QString &str="");
+      QString getType() const { return "Sphere"; }
       ElementPropertyDialog* createPropertyDialog() {return new SpherePropertyDialog(this);}
   };
 
   class Circle : public RigidContour {
     public:
-      Circle(const std::string &str="");
-      std::string getType() const { return "Circle"; }
+      Circle(const QString &str="");
+      QString getType() const { return "Circle"; }
       ElementPropertyDialog* createPropertyDialog() {return new CirclePropertyDialog(this);}
   };
 
   class Cuboid : public RigidContour {
     public:
-      Cuboid(const std::string &str="");
-      std::string getType() const { return "Cuboid"; }
+      Cuboid(const QString &str="");
+      QString getType() const { return "Cuboid"; }
       ElementPropertyDialog* createPropertyDialog() {return new CuboidPropertyDialog(this);}
   };
 
   class LineSegment : public RigidContour {
     public:
-      LineSegment(const std::string &str="");
-      std::string getType() const { return "LineSegment"; }
+      LineSegment(const QString &str="");
+      QString getType() const { return "LineSegment"; }
       ElementPropertyDialog* createPropertyDialog() {return new LineSegmentPropertyDialog(this);}
   };
 
   class PlanarContour : public RigidContour {
     public:
-      PlanarContour(const std::string &str="");
-      std::string getType() const { return "PlanarContour"; }
+      PlanarContour(const QString &str="");
+      QString getType() const { return "PlanarContour"; }
       ElementPropertyDialog* createPropertyDialog() {return new PlanarContourPropertyDialog(this);}
   };
 
   class SpatialContour : public RigidContour {
     public:
-      SpatialContour(const std::string &str="");
-      std::string getType() const { return "SpatialContour"; }
+      SpatialContour(const QString &str="");
+      QString getType() const { return "SpatialContour"; }
       ElementPropertyDialog* createPropertyDialog() {return new SpatialContourPropertyDialog(this);}
   };
 

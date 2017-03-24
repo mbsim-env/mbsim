@@ -34,7 +34,7 @@ namespace MBSimGUI {
     public:
       Eigenanalyser();
       virtual ~Eigenanalyser();
-      virtual std::string getType() const { return "Eigenanalyser"; }
+      virtual QString getType() const { return "Eigenanalyser"; }
       virtual EigenanalyserPropertyDialog* createPropertyDialog() {return new EigenanalyserPropertyDialog(this);}
   };
 

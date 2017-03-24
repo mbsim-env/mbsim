@@ -27,56 +27,56 @@ namespace MBSimGUI {
 
   class Observer : public Element {
     public:
-      Observer(const std::string &str="");
+      Observer(const QString &str="");
       static Observer* readXMLFile(const std::string &filename);
       virtual int getxSize() {return 0;}
   };
 
   class KinematicCoordinatesObserver : public Observer {
     public:
-      KinematicCoordinatesObserver(const std::string &str="");
-      std::string getType() const { return "KinematicCoordinatesObserver"; }
+      KinematicCoordinatesObserver(const QString &str="");
+      QString getType() const { return "KinematicCoordinatesObserver"; }
       ElementPropertyDialog* createPropertyDialog() {return new KinematicCoordinatesObserverPropertyDialog(this);}
   };
 
   class RelativeKinematicsObserver : public Observer {
     public:
-      RelativeKinematicsObserver(const std::string &str="");
-      std::string getType() const { return "RelativeKinematicsObserver"; }
+      RelativeKinematicsObserver(const QString &str="");
+      QString getType() const { return "RelativeKinematicsObserver"; }
       ElementPropertyDialog* createPropertyDialog() {return new RelativeKinematicsObserverPropertyDialog(this);}
   };
 
   class MechanicalLinkObserver : public Observer {
     public:
-      MechanicalLinkObserver(const std::string &str="");
-      std::string getType() const { return "MechanicalLinkObserver"; }
+      MechanicalLinkObserver(const QString &str="");
+      QString getType() const { return "MechanicalLinkObserver"; }
   };
 
   class MechanicalConstraintObserver : public Observer {
     public:
-      MechanicalConstraintObserver(const std::string &str="");
-      std::string getType() const { return "MechanicalConstraintObserver"; }
+      MechanicalConstraintObserver(const QString &str="");
+      QString getType() const { return "MechanicalConstraintObserver"; }
       ElementPropertyDialog* createPropertyDialog() {return new MechanicalConstraintObserverPropertyDialog(this);}
   };
 
   class ContactObserver : public Observer {
     public:
-      ContactObserver(const std::string &str="");
-      std::string getType() const { return "ContactObserver"; }
+      ContactObserver(const QString &str="");
+      QString getType() const { return "ContactObserver"; }
       ElementPropertyDialog* createPropertyDialog() {return new ContactObserverPropertyDialog(this);}
   };
 
   class FrameObserver : public Observer {
     public:
-      FrameObserver(const std::string &str="");
-      std::string getType() const { return "FrameObserver"; }
+      FrameObserver(const QString &str="");
+      QString getType() const { return "FrameObserver"; }
       ElementPropertyDialog* createPropertyDialog() {return new FrameObserverPropertyDialog(this);}
   };
 
   class RigidBodyObserver : public Observer {
     public:
-      RigidBodyObserver(const std::string &str="");
-      std::string getType() const { return "RigidBodyObserver"; }
+      RigidBodyObserver(const QString &str="");
+      QString getType() const { return "RigidBodyObserver"; }
       ElementPropertyDialog* createPropertyDialog() {return new RigidBodyObserverPropertyDialog(this);}
   };
 }

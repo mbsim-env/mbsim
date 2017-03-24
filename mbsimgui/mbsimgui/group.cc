@@ -40,7 +40,7 @@ extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
-  Group::Group(const string &str) : Element(str), constraints(NULL), observers(NULL) {
+  Group::Group(const QString &str) : Element(str), constraints(NULL), observers(NULL) {
 
     InternalFrame *I = new InternalFrame("I",MBSIM%"enableOpenMBVFrameI","plotFeatureFrameI");
     addFrame(I);
@@ -361,7 +361,7 @@ namespace MBSimGUI {
     return element;
   }
 
-  Frame* Group::getFrame(const string &name) const {
+  Frame* Group::getFrame(const QString &name) const {
     size_t i;
     for(i=0; i<frame.size(); i++) {
       if(frame[i]->getName() == name)
@@ -370,7 +370,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Contour* Group::getContour(const string &name) const {
+  Contour* Group::getContour(const QString &name) const {
     size_t i;
     for(i=0; i<contour.size(); i++) {
       if(contour[i]->getName() == name)
@@ -379,7 +379,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Group* Group::getGroup(const string &name) const {
+  Group* Group::getGroup(const QString &name) const {
     size_t i;
     for(i=0; i<group.size(); i++) {
       if(group[i]->getName() == name)
@@ -388,7 +388,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Object* Group::getObject(const string &name) const {
+  Object* Group::getObject(const QString &name) const {
     size_t i;
     for(i=0; i<object.size(); i++) {
       if(object[i]->getName() == name)
@@ -397,7 +397,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Link* Group::getLink(const string &name) const {
+  Link* Group::getLink(const QString &name) const {
     size_t i;
     for(i=0; i<link.size(); i++) {
       if(link[i]->getName() == name)
@@ -406,7 +406,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Constraint* Group::getConstraint(const string &name) const {
+  Constraint* Group::getConstraint(const QString &name) const {
     size_t i;
     for(i=0; i<constraint.size(); i++) {
       if(constraint[i]->getName() == name)
@@ -415,7 +415,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Observer* Group::getObserver(const string &name) const {
+  Observer* Group::getObserver(const QString &name) const {
     size_t i;
     for(i=0; i<observer.size(); i++) {
       if(observer[i]->getName() == name)
@@ -424,7 +424,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Element * Group::getChildByContainerAndName(const std::string &container, const std::string &name) const {
+  Element * Group::getChildByContainerAndName(const QString &container, const QString &name) const {
     if (container == "Object")
       return getObject(name);
     else if (container == "Link")

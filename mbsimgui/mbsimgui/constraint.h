@@ -47,66 +47,66 @@ namespace MBSimGUI {
 
   class Constraint : public Element {
     public:
-      Constraint(const std::string &str="") : Element(str) { }
+      Constraint(const QString &str="") : Element(str) { }
       static Constraint* readXMLFile(const std::string &filename);
   };
 
   class MechanicalConstraint : public Constraint {
     public:
-      MechanicalConstraint(const std::string &str="") : Constraint(str) { }
+      MechanicalConstraint(const QString &str="") : Constraint(str) { }
   };
 
   class GeneralizedConstraint : public MechanicalConstraint {
     public:
-      GeneralizedConstraint(const std::string &str="");
+      GeneralizedConstraint(const QString &str="");
   };
 
   class GeneralizedGearConstraint : public GeneralizedConstraint {
     public:
-      GeneralizedGearConstraint(const std::string &str="");
-      std::string getType() const { return "GeneralizedGearConstraint"; }
+      GeneralizedGearConstraint(const QString &str="");
+      QString getType() const { return "GeneralizedGearConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedGearConstraintPropertyDialog(this);}
   };
 
   class GeneralizedDualConstraint : public GeneralizedConstraint {
     public:
-      GeneralizedDualConstraint(const std::string &str="");
-      std::string getType() const { return "GeneralizedDualConstraint"; }
+      GeneralizedDualConstraint(const QString &str="");
+      QString getType() const { return "GeneralizedDualConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedDualConstraintPropertyDialog(this);}
   };
 
   class GeneralizedPositionConstraint : public GeneralizedDualConstraint {
     public:
-      GeneralizedPositionConstraint(const std::string &str="");
-      std::string getType() const { return "GeneralizedPositionConstraint"; }
+      GeneralizedPositionConstraint(const QString &str="");
+      QString getType() const { return "GeneralizedPositionConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionConstraintPropertyDialog(this);}
   };
 
   class GeneralizedVelocityConstraint : public GeneralizedDualConstraint {
     public:
-      GeneralizedVelocityConstraint(const std::string &str="");
-      std::string getType() const { return "GeneralizedVelocityConstraint"; }
+      GeneralizedVelocityConstraint(const QString &str="");
+      QString getType() const { return "GeneralizedVelocityConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocityConstraintPropertyDialog(this);}
   };
 
   class GeneralizedAccelerationConstraint : public GeneralizedDualConstraint {
     public:
-      GeneralizedAccelerationConstraint(const std::string &str="");
-      std::string getType() const { return "GeneralizedAccelerationConstraint"; }
+      GeneralizedAccelerationConstraint(const QString &str="");
+      QString getType() const { return "GeneralizedAccelerationConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedAccelerationConstraintPropertyDialog(this);}
   };
 
   class JointConstraint : public MechanicalConstraint {
     public:
-      JointConstraint(const std::string &str="");
-      std::string getType() const { return "JointConstraint"; }
+      JointConstraint(const QString &str="");
+      QString getType() const { return "JointConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   };
 
   class GeneralizedConnectionConstraint : public GeneralizedDualConstraint {
     public:
-      GeneralizedConnectionConstraint(const std::string &str="") : GeneralizedDualConstraint(str) { }
-      std::string getType() const { return "GeneralizedConnectionConstraint"; }
+      GeneralizedConnectionConstraint(const QString &str="") : GeneralizedDualConstraint(str) { }
+      QString getType() const { return "GeneralizedConnectionConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedConnectionConstraintPropertyDialog(this);}
   };
 

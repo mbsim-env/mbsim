@@ -31,7 +31,7 @@ extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
-  Observer::Observer(const string &str) : Element(str) {
+  Observer::Observer(const QString &str) : Element(str) {
   }
 
   Observer* Observer::readXMLFile(const string &filename) {
@@ -41,7 +41,7 @@ namespace MBSimGUI {
     return observer;
   }
 
-  KinematicCoordinatesObserver::KinematicCoordinatesObserver(const string &str) : Observer(str) {
+  KinematicCoordinatesObserver::KinematicCoordinatesObserver(const QString &str) : Observer(str) {
 //
 //    frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 //
@@ -54,7 +54,7 @@ namespace MBSimGUI {
 //    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAcceleration",getID(),true));
   }
 
-  RelativeKinematicsObserver::RelativeKinematicsObserver(const string &str) : Observer(str) {
+  RelativeKinematicsObserver::RelativeKinematicsObserver(const QString &str) : Observer(str) {
 
 //    frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 //
@@ -71,7 +71,7 @@ namespace MBSimGUI {
 //    angularAcceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularAcceleration",getID(),true));
   }
 
-  MechanicalLinkObserver::MechanicalLinkObserver(const string &str) : Observer(str) {
+  MechanicalLinkObserver::MechanicalLinkObserver(const QString &str) : Observer(str) {
 
 //    link.setProperty(new LinkOfReferenceProperty("",this,MBSIM%"mechanicalLink"));
 //
@@ -80,7 +80,7 @@ namespace MBSimGUI {
 //    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
   }
 
-  MechanicalConstraintObserver::MechanicalConstraintObserver(const string &str) : Observer(str) {
+  MechanicalConstraintObserver::MechanicalConstraintObserver(const QString &str) : Observer(str) {
 
 //    constraint.setProperty(new ConstraintOfReferenceProperty("",this,MBSIM%"mechanicalConstraint"));
 //
@@ -89,7 +89,7 @@ namespace MBSimGUI {
 //    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
   }
 
-  ContactObserver::ContactObserver(const string &str) : Observer(str) {
+  ContactObserver::ContactObserver(const QString &str) : Observer(str) {
 
 //    link.setProperty(new LinkOfReferenceProperty("",this,MBSIM%"contact"));
 //
@@ -104,7 +104,7 @@ namespace MBSimGUI {
 //    frictionArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVTangentialForce",getID()));
   }
 
-  FrameObserver::FrameObserver(const string &str) : Observer(str) {
+  FrameObserver::FrameObserver(const QString &str) : Observer(str) {
 
 //    frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 //
@@ -119,7 +119,7 @@ namespace MBSimGUI {
 //    angularAcceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularAcceleration",getID(),true));
   }
 
-  RigidBodyObserver::RigidBodyObserver(const string &str) : Observer(str) {
+  RigidBodyObserver::RigidBodyObserver(const QString &str) : Observer(str) {
 
 //    body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBody"));
 //

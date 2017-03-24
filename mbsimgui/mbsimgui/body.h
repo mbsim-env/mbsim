@@ -26,15 +26,15 @@ namespace MBSimGUI {
 
   class Body : public Object {
     public:
-      Body(const std::string &str="");
+      Body(const QString &str="");
       ~Body();
-      virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name) const;
+      virtual Element * getChildByContainerAndName(const QString &container, const QString &name) const;
       int getNumberOfFrames() {return frame.size();}
       int getNumberOfContours() {return contour.size();}
       Frame* getFrame(int i) const {return frame[i];}
       Contour* getContour(int i) const {return contour[i];}
-      Frame* getFrame(const std::string &name) const;
-      Contour* getContour(const std::string &name) const;
+      Frame* getFrame(const QString &name) const;
+      Contour* getContour(const QString &name) const;
       void addFrame(Frame *frame);
       void addContour(Contour *contour);
       void removeElement(Element* element);

@@ -31,14 +31,15 @@ namespace MBSimGUI {
 
   class Solver {
     protected:
-      std::string name;
+      QString name, value;
     public:
       Solver();
       virtual ~Solver();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       static Solver* readXMLFile(const std::string &filename);
-      virtual std::string getType() const { return "Solver"; }
-      const std::string& getName() const { return name; }
+      virtual QString getType() const { return "Solver"; }
+      const QString& getName() const { return name; }
+      const QString& getValue() const { return value; }
       virtual SolverPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
   };
 

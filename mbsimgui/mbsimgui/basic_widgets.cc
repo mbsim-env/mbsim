@@ -59,7 +59,7 @@ namespace MBSimGUI {
   void LocalFrameComboBox::highlightObject(const QString &frame) {
     if(oldID=="") 
       oldID = mw->getHighlightedObject();
-    Frame *selection = element->getFrame(frame.toStdString().substr(6, frame.length()-7));
+    Frame *selection = element->getFrame(frame.mid(6, frame.length()-7));
     if(selection)
       mw->highlightObject(selection->getID());
   }
@@ -84,7 +84,7 @@ namespace MBSimGUI {
   void ParentFrameComboBox::highlightObject(const QString &frame) {
     if(oldID=="") 
       oldID = mw->getHighlightedObject();
-    Frame *selection = element->getParent()->getFrame(frame.toStdString().substr(9, frame.length()-10));
+    Frame *selection = element->getParent()->getFrame(frame.mid(9, frame.length()-10));
     if(selection)
       mw->highlightObject(selection->getID());
   }
@@ -109,7 +109,7 @@ namespace MBSimGUI {
     QString oldText = frame->currentText();
     for(int i=0, k=0; i<element->getNumberOfFrames(); i++) {
       if(omitFrame!=element->getFrame(i)) {
-        frame->addItem("Frame["+QString::fromStdString(element->getFrame(i)->getName())+"]");
+        frame->addItem("Frame["+element->getFrame(i)->getName()+"]");
         if(element->getFrame(i) == selectedFrame)
           oldIndex = k;
         k++;
@@ -123,7 +123,7 @@ namespace MBSimGUI {
   }
 
   void LocalFrameOfReferenceWidget::setFrame(const QString &str) {
-    selectedFrame = element->getFrame(str.mid(6, str.length()-7).toStdString());
+    selectedFrame = element->getFrame(str.mid(6, str.length()-7));
     frame->setEditText(str);
   }
 
@@ -161,7 +161,7 @@ namespace MBSimGUI {
     QString oldText = frame->currentText();
     for(int i=0, k=0; i<element->getParent()->getNumberOfFrames(); i++) {
       if(omitFrame!=element->getParent()->getFrame(i)) {
-        frame->addItem("../Frame["+QString::fromStdString(element->getParent()->getFrame(i)->getName())+"]");
+        frame->addItem("../Frame["+element->getParent()->getFrame(i)->getName()+"]");
         if(element->getParent()->getFrame(i) == selectedFrame)
           oldIndex = k;
         k++;
@@ -175,7 +175,7 @@ namespace MBSimGUI {
   }
 
   void ParentFrameOfReferenceWidget::setFrame(const QString &str) {
-    selectedFrame = element->getParent()->getFrame(str.mid(9, str.length()-10).toStdString());
+    selectedFrame = element->getParent()->getFrame(str.mid(9, str.length()-10));
     frame->setEditText(str);
   }
 
@@ -200,7 +200,7 @@ namespace MBSimGUI {
 
     frame = new QLineEdit;
     if(selectedFrame)
-      frame->setText(QString::fromStdString(selectedFrame->getXMLPath(element,true)));
+      frame->setText(selectedFrame->getXMLPath(element,true));
     frameBrowser = new FrameBrowser(element->getRoot(),selectedFrame,this);
     connect(frameBrowser,SIGNAL(accepted()),this,SLOT(setFrame()));
     layout->addWidget(frame);
@@ -215,24 +215,18 @@ namespace MBSimGUI {
     frame->setPlaceholderText(def);
   }
 
-  void FrameOfReferenceWidget::updateWidget() {
-    frameBrowser->updateWidget(selectedFrame);
-    if(selectedFrame) {
-      setFrame();
-    }
-  }
-
   void FrameOfReferenceWidget::setFrame() { 
     if(frameBrowser->getFrameList()->currentItem())
       selectedFrame = (Frame*)static_cast<ElementItem*>(frameBrowser->getFrameList()->currentItem())->getElement();
     else
       selectedFrame = 0;
-    frame->setText(selectedFrame?QString::fromStdString(selectedFrame->getXMLPath(element,true)):"");
+    frame->setText(selectedFrame?selectedFrame->getXMLPath(element,true):"");
   }
 
   void FrameOfReferenceWidget::setFrame(const QString &str) {
     if(str!=def) {
-      selectedFrame = element->getByPath<Frame>(str.toStdString());
+      selectedFrame = element->getByPath<Frame>(str);
+      frameBrowser->updateWidget(selectedFrame);
       frame->setText(str);
     }
   }
@@ -258,7 +252,7 @@ namespace MBSimGUI {
 
     contour = new QLineEdit;
     if(selectedContour)
-      contour->setText(QString::fromStdString(selectedContour->getXMLPath(element,true)));
+      contour->setText(selectedContour->getXMLPath(element,true));
     contourBrowser = new ContourBrowser(element->getRoot(),selectedContour,this);
     connect(contourBrowser,SIGNAL(accepted()),this,SLOT(setContour()));
     layout->addWidget(contour);
@@ -279,7 +273,7 @@ namespace MBSimGUI {
       selectedContour = (Contour*)static_cast<ElementItem*>(contourBrowser->getContourList()->currentItem())->getElement();
     else
       selectedContour = 0;
-    contour->setText(selectedContour?QString::fromStdString(selectedContour->getXMLPath(element,true)):"");
+    contour->setText(selectedContour?selectedContour->getXMLPath(element,true):"");
   }
 
   void ContourOfReferenceWidget::setContour(const QString &str, Contour *contourPtr) {
@@ -298,7 +292,7 @@ namespace MBSimGUI {
 
     body = new QLineEdit;
     if(selectedBody)
-      body->setText(QString::fromStdString(selectedBody->getXMLPath(element,true)));
+      body->setText(selectedBody->getXMLPath(element,true));
     bodyBrowser = new RigidBodyBrowser(element->getRoot(),0,this);
     connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
     layout->addWidget(body);
@@ -319,7 +313,7 @@ namespace MBSimGUI {
       selectedBody = static_cast<RigidBody*>(static_cast<ElementItem*>(bodyBrowser->getRigidBodyList()->currentItem())->getElement());
     else
       selectedBody = 0;
-    body->setText(selectedBody?QString::fromStdString(selectedBody->getXMLPath(element,true)):"");
+    body->setText(selectedBody?selectedBody->getXMLPath(element,true):"");
     emit bodyChanged();
     emit Widget::resize_();
   }
@@ -342,7 +336,7 @@ namespace MBSimGUI {
 
     body = new QLineEdit;
     if(selectedBody)
-      body->setText(QString::fromStdString(selectedBody->getXMLPath(element,true)));
+      body->setText(selectedBody->getXMLPath(element,true));
     bodyBrowser = new RigidBodyBrowser(element->getRoot(),0,this);
     connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
     layout->addWidget(body);
@@ -368,7 +362,7 @@ namespace MBSimGUI {
       selectedBody = static_cast<RigidBody*>(static_cast<ElementItem*>(bodyBrowser->getRigidBodyList()->currentItem())->getElement());
     else
       selectedBody = 0;
-    body->setText(selectedBody?QString::fromStdString(selectedBody->getXMLPath(element,true)):"");
+    body->setText(selectedBody?selectedBody->getXMLPath(element,true):"");
     emit bodyChanged();
   }
 
@@ -389,7 +383,7 @@ namespace MBSimGUI {
 
     object = new QLineEdit;
     if(selectedObject)
-      object->setText(QString::fromStdString(selectedObject->getXMLPath(element,true)));
+      object->setText(selectedObject->getXMLPath(element,true));
     objectBrowser = new ObjectBrowser(element->getRoot(),0,this);
     connect(objectBrowser,SIGNAL(accepted()),this,SLOT(setObject()));
     layout->addWidget(object);
@@ -410,7 +404,7 @@ namespace MBSimGUI {
       selectedObject = static_cast<Object*>(static_cast<ElementItem*>(objectBrowser->getObjectList()->currentItem())->getElement());
     else
       selectedObject = 0;
-    object->setText(selectedObject?QString::fromStdString(selectedObject->getXMLPath(element,true)):"");
+    object->setText(selectedObject?selectedObject->getXMLPath(element,true):"");
     emit objectChanged();
   }
 
@@ -431,7 +425,7 @@ namespace MBSimGUI {
 
     link = new QLineEdit;
     if(selectedLink)
-      link->setText(QString::fromStdString(selectedLink->getXMLPath(element,true)));
+      link->setText(selectedLink->getXMLPath(element,true));
     linkBrowser = new LinkBrowser(element->getRoot(),0,this);
     connect(linkBrowser,SIGNAL(accepted()),this,SLOT(setLink()));
     layout->addWidget(link);
@@ -452,7 +446,7 @@ namespace MBSimGUI {
       selectedLink = static_cast<Link*>(static_cast<ElementItem*>(linkBrowser->getLinkList()->currentItem())->getElement());
     else
       selectedLink = 0;
-    link->setText(selectedLink?QString::fromStdString(selectedLink->getXMLPath(element,true)):"");
+    link->setText(selectedLink?selectedLink->getXMLPath(element,true):"");
     emit linkChanged();
   }
 
@@ -473,7 +467,7 @@ namespace MBSimGUI {
 
     constraint = new QLineEdit;
     if(selectedConstraint)
-      constraint->setText(QString::fromStdString(selectedConstraint->getXMLPath(element,true)));
+      constraint->setText(selectedConstraint->getXMLPath(element,true));
     constraintBrowser = new ConstraintBrowser(element->getRoot(),0,this);
     connect(constraintBrowser,SIGNAL(accepted()),this,SLOT(setConstraint()));
     layout->addWidget(constraint);
@@ -494,7 +488,7 @@ namespace MBSimGUI {
       selectedConstraint = static_cast<Constraint*>(static_cast<ElementItem*>(constraintBrowser->getConstraintList()->currentItem())->getElement());
     else
       selectedConstraint = 0;
-    constraint->setText(selectedConstraint?QString::fromStdString(selectedConstraint->getXMLPath(element,true)):"");
+    constraint->setText(selectedConstraint?selectedConstraint->getXMLPath(element,true):"");
     emit constraintChanged();
   }
 
@@ -515,7 +509,7 @@ namespace MBSimGUI {
 
     signal = new QLineEdit;
     if(selectedSignal)
-      signal->setText(QString::fromStdString(selectedSignal->getXMLPath(element,true)));
+      signal->setText(selectedSignal->getXMLPath(element,true));
     signalBrowser = new SignalBrowser(element->getRoot(),0,this);
     connect(signalBrowser,SIGNAL(accepted()),this,SLOT(setSignal()));
     layout->addWidget(signal);
@@ -536,7 +530,7 @@ namespace MBSimGUI {
       selectedSignal = static_cast<Signal*>(static_cast<ElementItem*>(signalBrowser->getSignalList()->currentItem())->getElement());
     else
       selectedSignal = 0;
-    signal->setText(selectedSignal?QString::fromStdString(selectedSignal->getXMLPath(element,true)):"");
+    signal->setText(selectedSignal?selectedSignal->getXMLPath(element,true):"");
     emit signalChanged();
   }
 

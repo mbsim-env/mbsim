@@ -84,9 +84,9 @@ namespace MBSimGUI {
   Frame* MBSimObjectFactory::createFrame(DOMElement *element) {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"FixedRelativeFrame")
-      return new FixedRelativeFrame(E(element)->getAttribute("name"));
+      return new FixedRelativeFrame;
     if(E(element)->getTagName()==MBSIMFLEX%"NodeFrame")
-      return new NodeFrame(E(element)->getAttribute("name"));
+      return new NodeFrame;
     return 0;
   }
 
@@ -99,23 +99,23 @@ namespace MBSimGUI {
   Contour* MBSimObjectFactory::createContour(DOMElement *element) {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"Point")
-      return new Point(E(element)->getAttribute("name"));
+      return new Point;
     else if(E(element)->getTagName()==MBSIM%"Line")
-      return new Line(E(element)->getAttribute("name"));
+      return new Line;
     else if(E(element)->getTagName()==MBSIM%"Plane")
-      return new Plane(E(element)->getAttribute("name"));
+      return new Plane;
     else if(E(element)->getTagName()==MBSIM%"Sphere")
-      return new Sphere(E(element)->getAttribute("name"));
+      return new Sphere;
     else if(E(element)->getTagName()==MBSIM%"Circle")
-      return new Circle(E(element)->getAttribute("name"));
+      return new Circle;
     else if(E(element)->getTagName()==MBSIM%"Cuboid")
-      return new Cuboid(E(element)->getAttribute("name"));
+      return new Cuboid;
     else if(E(element)->getTagName()==MBSIM%"LineSegment")
-      return new LineSegment(E(element)->getAttribute("name"));
+      return new LineSegment;
     else if(E(element)->getTagName()==MBSIM%"PlanarContour")
-      return new PlanarContour(E(element)->getAttribute("name"));
+      return new PlanarContour;
     else if(E(element)->getTagName()==MBSIM%"SpatialContour")
-      return new SpatialContour(E(element)->getAttribute("name"));
+      return new SpatialContour;
     return 0;
   }
 
@@ -129,9 +129,9 @@ namespace MBSimGUI {
   Group* MBSimObjectFactory::createGroup(DOMElement *element) {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"DynamicSystemSolver")
-      return new DynamicSystemSolver(E(element)->getAttribute("name"));
+      return new DynamicSystemSolver;
     else if(E(element)->getTagName()==MBSIM%"Group")
-      return new Group(E(element)->getAttribute("name"));
+      return new Group;
     return 0;
   }
 
@@ -161,7 +161,7 @@ namespace MBSimGUI {
 //    if(E(element)->getTagName()==MBSIM%"KineticExcitation")
 //      return new KineticExcitation(E(element)->getAttribute("name"));
     if(E(element)->getTagName()==MBSIM%"SpringDamper")
-      return new SpringDamper(E(element)->getAttribute("name"));
+      return new SpringDamper;
 //    if(E(element)->getTagName()==MBSIM%"DirectionalSpringDamper")
 //      return new DirectionalSpringDamper(E(element)->getAttribute("name"));
 //    if(E(element)->getTagName()==MBSIM%"GeneralizedSpringDamper")
@@ -218,17 +218,17 @@ namespace MBSimGUI {
   Constraint* MBSimObjectFactory::createConstraint(DOMElement *element) {
     if(element==0) return 0;
     else if(E(element)->getTagName()==MBSIM%"GeneralizedGearConstraint")
-      return new GeneralizedGearConstraint(E(element)->getAttribute("name"));
+      return new GeneralizedGearConstraint;
     else if(E(element)->getTagName()==MBSIM%"GeneralizedPositionConstraint")
-      return new GeneralizedPositionConstraint(E(element)->getAttribute("name"));
+      return new GeneralizedPositionConstraint;
     else if(E(element)->getTagName()==MBSIM%"GeneralizedVelocityConstraint")
-      return new GeneralizedVelocityConstraint(E(element)->getAttribute("name"));
+      return new GeneralizedVelocityConstraint;
     else if(E(element)->getTagName()==MBSIM%"GeneralizedAccelerationConstraint")
-      return new GeneralizedAccelerationConstraint(E(element)->getAttribute("name"));
+      return new GeneralizedAccelerationConstraint;
     else if(E(element)->getTagName()==MBSIM%"JointConstraint")
-      return new JointConstraint(E(element)->getAttribute("name"));
+      return new JointConstraint;
     else if(E(element)->getTagName()==MBSIM%"GeneralizedConnectionConstraint")
-      return new GeneralizedConnectionConstraint(E(element)->getAttribute("name"));
+      return new GeneralizedConnectionConstraint;
     return 0;
   }
 
@@ -241,19 +241,19 @@ namespace MBSimGUI {
   Observer* MBSimObjectFactory::createObserver(DOMElement *element) {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"KinematicCoordinatesObserver")
-      return new KinematicCoordinatesObserver(E(element)->getAttribute("name"));
+      return new KinematicCoordinatesObserver;
     if(E(element)->getTagName()==MBSIM%"RelativeKinematicsObserver")
-      return new RelativeKinematicsObserver(E(element)->getAttribute("name"));
+      return new RelativeKinematicsObserver;
     if(E(element)->getTagName()==MBSIM%"MechanicalLinkObserver")
-      return new MechanicalLinkObserver(E(element)->getAttribute("name"));
+      return new MechanicalLinkObserver;
     if(E(element)->getTagName()==MBSIM%"MechanicalConstraintObserver")
-      return new MechanicalConstraintObserver(E(element)->getAttribute("name"));
+      return new MechanicalConstraintObserver;
     if(E(element)->getTagName()==MBSIM%"ContactObserver")
-      return new ContactObserver(E(element)->getAttribute("name"));
+      return new ContactObserver;
     if(E(element)->getTagName()==MBSIM%"FrameObserver")
-      return new FrameObserver(E(element)->getAttribute("name"));
+      return new FrameObserver;
     if(E(element)->getTagName()==MBSIM%"RigidBodyObserver")
-      return new RigidBodyObserver(E(element)->getAttribute("name"));
+      return new RigidBodyObserver;
     return 0;
   }  
 
@@ -295,13 +295,13 @@ namespace MBSimGUI {
   Parameter* MBSimObjectFactory::createParameter(DOMElement *element) {
     if(element==0) return 0;
     if(E(element)->getTagName()==PV%"stringParameter")
-      return new StringParameter(E(element)->getAttribute("name"));
+      return new StringParameter;
     else if(E(element)->getTagName()==PV%"scalarParameter")
-      return new ScalarParameter(E(element)->getAttribute("name"));
+      return new ScalarParameter;
     else if(E(element)->getTagName()==PV%"vectorParameter")
-      return new VectorParameter(E(element)->getAttribute("name"));
+      return new VectorParameter;
     else if(E(element)->getTagName()==PV%"matrixParameter")
-      return new MatrixParameter(E(element)->getAttribute("name"));
+      return new MatrixParameter;
     else if(E(element)->getTagName()==PV%"import")
       return new ImportParameter;
     return 0;

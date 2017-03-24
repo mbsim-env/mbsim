@@ -32,7 +32,7 @@ extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
-  Link::Link(const string &str) : Element(str) {
+  Link::Link(const QString &str) : Element(str) {
     addPlotFeature("generalizedRelativePosition");
     addPlotFeature("generalizedRelativeVelocity");
     addPlotFeature("generalizedForce");
@@ -46,20 +46,20 @@ namespace MBSimGUI {
     return link;
   }
 
-  FrameLink::FrameLink(const string &str) : MechanicalLink(str) {
+  FrameLink::FrameLink(const QString &str) : MechanicalLink(str) {
 //    connections.setProperty(new ConnectFramesProperty(2,this));
   }
 
-  FloatingFrameLink::FloatingFrameLink(const string &str) : FrameLink(str) {
+  FloatingFrameLink::FloatingFrameLink(const QString &str) : FrameLink(str) {
 
 //    refFrameID.setProperty(new IntegerProperty(1,MBSIM%"frameOfReferenceID"));
   }
 
-  RigidBodyLink::RigidBodyLink(const string &str) : MechanicalLink(str) {
+  RigidBodyLink::RigidBodyLink(const QString &str) : MechanicalLink(str) {
 //    support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
   }
 
-  DualRigidBodyLink::DualRigidBodyLink(const string &str) : RigidBodyLink(str) {
+  DualRigidBodyLink::DualRigidBodyLink(const QString &str) : RigidBodyLink(str) {
 //    connections.setProperty(new ChoiceProperty2(new ConnectRigidBodiesPropertyFactory(this),"",4));
   }
 

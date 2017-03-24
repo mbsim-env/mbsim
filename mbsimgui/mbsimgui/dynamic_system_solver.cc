@@ -34,7 +34,7 @@ namespace MBSimGUI {
 
   Environment *Environment::instance=NULL;
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &str) : Group(str) {
+  DynamicSystemSolver::DynamicSystemSolver(const QString &str) : Group(str) {
     config = true;
 
 //    solverParameters.setProperty(new DynamicSystemSolverParametersProperty);
@@ -72,7 +72,7 @@ namespace MBSimGUI {
     DOMElement *ele0 = Group::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
 
-    E(ele0)->setAttribute("name", getName());
+    E(ele0)->setAttribute("name", getName().toStdString());
     environments = D(doc)->createElement( MBSIM%"environments" );
     DOMElement *ele2 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
     DOMElement *ele3 = D(doc)->createElement( MBSIM%"accelerationOfGravity" );

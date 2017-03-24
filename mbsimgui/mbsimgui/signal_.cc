@@ -26,13 +26,13 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Signal::Signal(const string &str) : Link(str) {
+  Signal::Signal(const QString &str) : Link(str) {
   }
 
   Signal::~Signal() {
   }
 
-  PIDController::PIDController(const string &str) : Signal(str) {
+  PIDController::PIDController(const QString &str) : Signal(str) {
 //    sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
 //    sdRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"derivativeOfInputSignal"));
 //    vector<PhysicalVariableProperty> input;
@@ -48,13 +48,13 @@ namespace MBSimGUI {
 //    D.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  UnarySignalOperation::UnarySignalOperation(const string &str) : Signal(str) {
+  UnarySignalOperation::UnarySignalOperation(const QString &str) : Signal(str) {
 //    sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
 
 //    f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory3(this,"VV",vector<string>(1,"x")),MBSIMCONTROL%"function"));
   }
 
-  BinarySignalOperation::BinarySignalOperation(const string &str) : Signal(str) {
+  BinarySignalOperation::BinarySignalOperation(const QString &str) : Signal(str) {
 //    s1Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"firstInputSignal"));
 //    s2Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"secondInputSignal"));
 //
@@ -64,11 +64,11 @@ namespace MBSimGUI {
 //    f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2(this,"VVV",var),MBSIMCONTROL%"function"));
   }
 
-  ExternSignalSource::ExternSignalSource(const string &str) : Signal(str) {
+  ExternSignalSource::ExternSignalSource(const QString &str) : Signal(str) {
 //    sourceSize.setProperty(new IntegerProperty(1,MBSIMCONTROL%"sourceSize"));
   }
 
-  ExternSignalSink::ExternSignalSink(const string &str) : Signal(str) {
+  ExternSignalSink::ExternSignalSink(const QString &str) : Signal(str) {
 //    inputSignal.setProperty(new SignalOfReferenceProperty("",this,MBSIMCONTROL%"inputSignal"));
   }
 

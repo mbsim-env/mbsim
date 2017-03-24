@@ -29,8 +29,8 @@ namespace MBSimGUI {
   class GeneralizedGear : public RigidBodyLink {
     friend class GeneralizedGearPropertyDialog;
     public:
-    GeneralizedGear(const std::string &str="");
-    std::string getType() const { return "GeneralizedGear"; }
+    GeneralizedGear(const QString &str="");
+    QString getType() const { return "GeneralizedGear"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();

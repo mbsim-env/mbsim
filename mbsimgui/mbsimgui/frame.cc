@@ -33,7 +33,7 @@ extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
-  Frame::Frame(const string &str) : Element(str) {
+  Frame::Frame(const QString &str) : Element(str) {
 
     addPlotFeature("position");
     addPlotFeature("angle");
@@ -60,7 +60,7 @@ namespace MBSimGUI {
     return element;
   }
 
-  InternalFrame::InternalFrame(const std::string &str, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_) : Frame(str), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) {
+  InternalFrame::InternalFrame(const QString &str, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_) : Frame(str), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) {
     config = true;
   }
 
@@ -81,10 +81,10 @@ namespace MBSimGUI {
     }
   }
 
-  FixedRelativeFrame::FixedRelativeFrame(const string &str) : Frame(str) {
+  FixedRelativeFrame::FixedRelativeFrame(const QString &str) : Frame(str) {
   }
 
-  NodeFrame::NodeFrame(const string &str) : Frame(str) {
+  NodeFrame::NodeFrame(const QString &str) : Frame(str) {
 
     //nodeNumber.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMFLEX%"nodeNumber",vector<string>(2,"-")),"",4));
   }

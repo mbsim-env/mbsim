@@ -28,8 +28,8 @@ namespace MBSimGUI {
   class KineticExcitation : public FloatingFrameLink {
     friend class KineticExcitationPropertyDialog;
     public:
-    KineticExcitation(const std::string &str="");
-    std::string getType() const { return "KineticExcitation"; }
+    KineticExcitation(const QString &str="");
+    QString getType() const { return "KineticExcitation"; }
 //    void initialize();
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

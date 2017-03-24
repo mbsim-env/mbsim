@@ -20,7 +20,7 @@
 #ifndef _TREEITEMDATA__H_
 #define _TREEITEMDATA__H_
 
-#include <string>
+#include <QString>
 
 class QMenu;
 
@@ -29,12 +29,12 @@ namespace MBSimGUI {
   class TreeItemData {
     public:
       virtual ~TreeItemData() {}
-      virtual const std::string& getName() const = 0;
-      virtual std::string getValue() const {return "";}
-      virtual std::string getType() const {return "";}
-      virtual void setName(const std::string &data) {}
-      virtual void setValue(const std::string &data) {}
-      virtual void setType(const std::string &data) {}
+      virtual const QString& getName() const = 0;
+      virtual const QString& getValue() const = 0;
+      virtual QString getType() const {return "";}
+      virtual void setName(const QString &data) {}
+      virtual void setValue(const QString &data) {}
+      virtual void setType(const QString &data) {}
       virtual QMenu* createContextMenu() = 0;
   };
 

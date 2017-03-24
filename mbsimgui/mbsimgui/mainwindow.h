@@ -148,7 +148,7 @@ namespace MBSimGUI {
       void h5plotserie();
       void eigenanalysis();
       void help();
-      void xmlHelp(const std::string &url="");
+      void xmlHelp(const QString &url="");
       void about();
       void updateParameters(Element *element);
       void removeElement();

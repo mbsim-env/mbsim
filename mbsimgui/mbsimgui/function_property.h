@@ -26,11 +26,11 @@ namespace MBSimGUI {
 
   class Function : public Element {
     public:
-      Function(const std::string &name="") : Element(name) {}
+      Function(const QString &name="") : Element(name) {}
       virtual ~Function() {}
       virtual int getArg1Size() const {return 0;}
       virtual int getArg2Size() const {return 0;}
-      virtual std::string getType() const { return "Function"; }
+      virtual QString getType() const { return "Function"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       void fromWidget(QWidget *widget) { }

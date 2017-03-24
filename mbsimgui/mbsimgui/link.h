@@ -27,38 +27,38 @@ namespace MBSimGUI {
 
   class Link : public Element {
     public:
-      Link(const std::string &str="");
+      Link(const QString &str="");
       static Link* readXMLFile(const std::string &filename);
   };
 
   class MechanicalLink : public Link {
     public:
-      MechanicalLink(const std::string &str="") : Link(str) { }
+      MechanicalLink(const QString &str="") : Link(str) { }
   };
 
   class FrameLink : public MechanicalLink {
     public:
-      FrameLink(const std::string &str="");
+      FrameLink(const QString &str="");
   };
 
   class FixedFrameLink : public FrameLink {
     public:
-      FixedFrameLink(const std::string &str="") : FrameLink(str) { }
+      FixedFrameLink(const QString &str="") : FrameLink(str) { }
  };
 
   class FloatingFrameLink : public FrameLink {
     public:
-      FloatingFrameLink(const std::string &str="");
+      FloatingFrameLink(const QString &str="");
  };
 
   class RigidBodyLink : public MechanicalLink {
     public:
-      RigidBodyLink(const std::string &str="");
+      RigidBodyLink(const QString &str="");
  };
 
   class DualRigidBodyLink : public RigidBodyLink {
     public:
-      DualRigidBodyLink(const std::string &str="");
+      DualRigidBodyLink(const QString &str="");
  };
 
 }

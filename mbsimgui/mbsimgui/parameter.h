@@ -39,15 +39,15 @@ namespace MBSimGUI {
 
   class Parameter : public TreeItemData {
     public:
-      Parameter(const std::string &name="");
+      Parameter(const QString &name="");
       virtual ~Parameter() {}
-      virtual std::string getValue() const {return valuestr;}
-      void setValue(const std::string &value) {valuestr = value;}
+      const QString& getValue() const {return valuestr;}
+      void setValue(const QString &value) {valuestr = value;}
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual std::string getType() const { return "Parameter"; }
-      const std::string& getName() const { return name; }
-      void setName(const std::string &str) { name = str; }
+      virtual QString getType() const { return "Parameter"; }
+      const QString& getName() const { return name; }
+      void setName(const QString &str) { name = str; }
       virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog(this);}
       virtual ParameterContextMenu* createContextMenu() {return new ParameterContextMenu;}
       xercesc::DOMElement* getXMLElement() { return element; }
@@ -60,43 +60,43 @@ namespace MBSimGUI {
       static std::vector<Parameter*> readXMLFile(const std::string &filename);
     protected:
       Element *parent;
-      std::string name, valuestr;
+      QString name, valuestr;
       xercesc::DOMElement *element;
       bool config;
   };
 
   class StringParameter : public Parameter {
     public:
-      StringParameter(const std::string &name="");
+      StringParameter(const QString &name="");
       virtual ~StringParameter() {}
-      virtual std::string getType() const { return "stringParameter"; }
+      virtual QString getType() const { return "stringParameter"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new StringParameterPropertyDialog(this);}
   };
 
   class ScalarParameter : public Parameter {
     public:
-      ScalarParameter(const std::string &name="", const std::string &value="0");
+      ScalarParameter(const QString &name="", const QString &value="0");
       virtual ~ScalarParameter() {}
-      virtual std::string getType() const { return "scalarParameter"; }
+      virtual QString getType() const { return "scalarParameter"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog(this);}
   };
 
   class VectorParameter : public Parameter {
     public:
-      VectorParameter(const std::string &name="");
+      VectorParameter(const QString &name="");
       virtual ~VectorParameter() {}
-      virtual std::string getType() const { return "vectorParameter"; }
+      virtual QString getType() const { return "vectorParameter"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new VectorParameterPropertyDialog(this);}
   };
 
   class MatrixParameter : public Parameter {
     public:
-      MatrixParameter(const std::string &name="");
+      MatrixParameter(const QString &name="");
       virtual ~MatrixParameter() {}
-      virtual std::string getType() const { return "matrixParameter"; }
+      virtual QString getType() const { return "matrixParameter"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
   };
@@ -105,7 +105,7 @@ namespace MBSimGUI {
     public:
       ImportParameter();
       virtual ~ImportParameter() {}
-      virtual std::string getType() const { return "import"; }
+      virtual QString getType() const { return "import"; }
       virtual ParameterPropertyDialog* createPropertyDialog() {return new ImportParameterPropertyDialog(this);}
   };
 

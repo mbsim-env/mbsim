@@ -48,7 +48,6 @@ namespace MBSimGUI {
       Integrator();
       virtual ~Integrator();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual std::string getType() const { return "Integrator"; }
       virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog(this);}
   };
 
@@ -56,49 +55,49 @@ namespace MBSimGUI {
     public:
       DOPRI5Integrator();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual std::string getType() const { return "DOPRI5Integrator"; }
+      virtual QString getType() const { return "DOPRI5Integrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new DOPRI5IntegratorPropertyDialog(this);}
   };
 
   class RADAU5Integrator : public Integrator {
     public:
       RADAU5Integrator();
-      virtual std::string getType() const { return "RADAU5Integrator"; }
+      virtual QString getType() const { return "RADAU5Integrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new RADAU5IntegratorPropertyDialog(this);}
   };
 
   class LSODEIntegrator : public Integrator {
     public:
       LSODEIntegrator();
-      virtual std::string getType() const { return "LSODEIntegrator"; }
+      virtual QString getType() const { return "LSODEIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new LSODEIntegratorPropertyDialog(this);}
   };
 
   class LSODARIntegrator : public Integrator {
     public:
       LSODARIntegrator();
-      virtual std::string getType() const { return "LSODARIntegrator"; }
+      virtual QString getType() const { return "LSODARIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new LSODARIntegratorPropertyDialog(this);}
   };
 
   class TimeSteppingIntegrator : public Integrator {
     public:
       TimeSteppingIntegrator();
-      virtual std::string getType() const { return "TimeSteppingIntegrator"; }
+      virtual QString getType() const { return "TimeSteppingIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new TimeSteppingIntegratorPropertyDialog(this);}
   };
 
   class EulerExplicitIntegrator : public Integrator {
     public:
       EulerExplicitIntegrator();
-      virtual std::string getType() const { return "EulerExplicitIntegrator"; }
+      virtual QString getType() const { return "EulerExplicitIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new EulerExplicitIntegratorPropertyDialog(this);}
   };
 
   class RKSuiteIntegrator : public Integrator {
     public:
       RKSuiteIntegrator();
-      virtual std::string getType() const { return "RKSuiteIntegrator"; }
+      virtual QString getType() const { return "RKSuiteIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() {return new RKSuiteIntegratorPropertyDialog(this);}
   };
 

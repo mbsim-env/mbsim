@@ -101,7 +101,7 @@ namespace MBSimGUI {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele)) {
 
       ElementItem *item = new ElementItem(ele);
-      item->setText(0,QString::fromStdString(ele->getName()));
+      item->setText(0,ele->getName());
 
       if(ele == selection)
         savedItem = item;
@@ -170,7 +170,7 @@ namespace MBSimGUI {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Object*>(ele)) {
 
       ElementItem *item = new ElementItem(ele);
-      item->setText(0,QString::fromStdString(ele->getName()));
+      item->setText(0,ele->getName());
 
       if(ele == selection)
         savedItem = item;
@@ -239,7 +239,7 @@ namespace MBSimGUI {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Link*>(ele)) {
 
       ElementItem *item = new ElementItem(ele);
-      item->setText(0,QString::fromStdString(ele->getName()));
+      item->setText(0,ele->getName());
 
       if(ele == selection)
         savedItem = item;
@@ -308,7 +308,7 @@ namespace MBSimGUI {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Constraint*>(ele)) {
 
       ElementItem *item = new ElementItem(ele);
-      item->setText(0,QString::fromStdString(ele->getName()));
+      item->setText(0,ele->getName());
 
       if(ele == selection)
         savedItem = item;
@@ -377,7 +377,7 @@ namespace MBSimGUI {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Object*>(ele) || dynamic_cast<Frame*>(ele)) {
 
       ElementItem *item = new ElementItem(ele);
-      item->setText(0,QString::fromStdString(ele->getName()));
+      item->setText(0,ele->getName());
 
       if(ele == selection)
         savedItem = item;
@@ -447,7 +447,7 @@ namespace MBSimGUI {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Object*>(ele)  || dynamic_cast<Contour*>(ele)) {
 
       ElementItem *item = new ElementItem(ele);
-      item->setText(0,QString::fromStdString(ele->getName()));
+      item->setText(0,ele->getName());
 
       if(ele == selection)
         savedItem = item;
@@ -506,7 +506,7 @@ namespace MBSimGUI {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Signal*>(ele)) {
 
       ElementItem *item = new ElementItem(ele);
-      item->setText(0,QString::fromStdString(ele->getName()));
+      item->setText(0,ele->getName());
 
       if(ele == selection)
         savedItem = item;

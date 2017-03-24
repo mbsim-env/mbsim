@@ -35,7 +35,7 @@ extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
-  Contour::Contour(const string &str) : Element(str) {
+  Contour::Contour(const QString &str) : Element(str) {
 //    vector<PhysicalVariableProperty> input;
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.01"), "m", MBSIM%"thickness"));
 //    thickness.setProperty(new ExtPhysicalVarProperty(input));
@@ -49,24 +49,24 @@ namespace MBSimGUI {
     return contour;
   }
 
-  RigidContour::RigidContour(const string &str) : Contour(str) {
+  RigidContour::RigidContour(const QString &str) : Contour(str) {
 //    refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
   }
 
-  Point::Point(const string &str) : RigidContour(str) {
+  Point::Point(const QString &str) : RigidContour(str) {
 //    visu.setProperty(new PointMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
-  Line::Line(const string &str) : RigidContour(str) {
+  Line::Line(const QString &str) : RigidContour(str) {
 //    visu.setProperty(new LineMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
-  Plane::Plane(const string &str) : RigidContour(str) {
+  Plane::Plane(const QString &str) : RigidContour(str) {
 
   //  visu.setProperty(new PlaneMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
-  Sphere::Sphere(const string &str) : RigidContour(str) {
+  Sphere::Sphere(const QString &str) : RigidContour(str) {
 
 //    vector<PhysicalVariableProperty> input;
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
@@ -76,7 +76,7 @@ namespace MBSimGUI {
 
   }
 
-  Circle::Circle(const string &str) : RigidContour(str) {
+  Circle::Circle(const QString &str) : RigidContour(str) {
 
 //    vector<PhysicalVariableProperty> input;
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
@@ -85,7 +85,7 @@ namespace MBSimGUI {
 //    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
-  Cuboid::Cuboid(const string &str) : RigidContour(str) {
+  Cuboid::Cuboid(const QString &str) : RigidContour(str) {
 
 //    vector<PhysicalVariableProperty> input;
 //    input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", MBSIM%"length"));
@@ -95,7 +95,7 @@ namespace MBSimGUI {
 
   }
 
-  LineSegment::LineSegment(const string &str) : RigidContour(str) {
+  LineSegment::LineSegment(const QString &str) : RigidContour(str) {
 
 //    vector<PhysicalVariableProperty> input;
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"length"));
@@ -105,7 +105,7 @@ namespace MBSimGUI {
 
   }
 
-  PlanarContour::PlanarContour(const string &str) : RigidContour(str) {
+  PlanarContour::PlanarContour(const QString &str) : RigidContour(str) {
 //
 //    nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"nodes",vector<string>(3,"")),"",4));
 //
@@ -116,7 +116,7 @@ namespace MBSimGUI {
 //    visu.setProperty(new PlanarContourMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
-  SpatialContour::SpatialContour(const string &str) : RigidContour(str) {
+  SpatialContour::SpatialContour(const QString &str) : RigidContour(str) {
 
 //    etaNodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"etaNodes",vector<string>(3,"")),"",4));
 //

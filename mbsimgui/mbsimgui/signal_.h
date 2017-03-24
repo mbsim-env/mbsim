@@ -26,43 +26,43 @@ namespace MBSimGUI {
 
   class Signal : public Link {
     public:
-      Signal(const std::string &str="");
+      Signal(const QString &str="");
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
       ~Signal(); 
   };
 
   class PIDController : public Signal {
     public:
-    PIDController(const std::string &str="");
-    std::string getType() const { return "PIDController"; }
+    PIDController(const QString &str="");
+    QString getType() const { return "PIDController"; }
     ElementPropertyDialog* createPropertyDialog() {return new PIDControllerPropertyDialog(this);}
   };
 
   class UnarySignalOperation : public Signal {
     public:
-    UnarySignalOperation(const std::string &str="");
-    std::string getType() const { return "UnarySignalOperation"; }
+    UnarySignalOperation(const QString &str="");
+    QString getType() const { return "UnarySignalOperation"; }
     ElementPropertyDialog* createPropertyDialog() {return new UnarySignalOperationPropertyDialog(this);}
   };
 
   class BinarySignalOperation : public Signal {
     public:
-    BinarySignalOperation(const std::string &str="");
-    std::string getType() const { return "BinarySignalOperation"; }
+    BinarySignalOperation(const QString &str="");
+    QString getType() const { return "BinarySignalOperation"; }
     ElementPropertyDialog* createPropertyDialog() {return new BinarySignalOperationPropertyDialog(this);}
   };
 
   class ExternSignalSource : public Signal {
     public:
-      ExternSignalSource(const std::string &str="");
-      virtual std::string getType() const { return "ExternSignalSource"; }
+      ExternSignalSource(const QString &str="");
+      QString getType() const { return "ExternSignalSource"; }
       ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSourcePropertyDialog(this);}
   };
 
   class ExternSignalSink : public Signal {
     public:
-      ExternSignalSink(const std::string &str="");
-      virtual std::string getType() const { return "ExternSignalSink"; }
+      ExternSignalSink(const QString &str="");
+      QString getType() const { return "ExternSignalSink"; }
       ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSinkPropertyDialog(this);}
   };
 

@@ -32,7 +32,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  RigidBody::RigidBody(const string &str) : Body(str), constrained(false) {
+  RigidBody::RigidBody(const QString &str) : Body(str), constrained(false) {
     InternalFrame *C = new InternalFrame("C",MBSIM%"enableOpenMBVFrameC","plotFeatureFrameC");
     addFrame(C);
   }

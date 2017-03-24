@@ -32,7 +32,7 @@ extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
-  Object::Object(const string &str) : Element(str) {
+  Object::Object(const QString &str) : Element(str) {
     addPlotFeature("generalizedPosition");
     addPlotFeature("generalizedVelocity");
     addPlotFeature("derivativeOfGeneralizedPosition");

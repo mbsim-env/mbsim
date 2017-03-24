@@ -28,8 +28,8 @@ namespace MBSimGUI {
   class Joint : public FloatingFrameLink {
     friend class JointPropertyDialog;
     public:
-    Joint(const std::string &str="");
-    std::string getType() const { return "Joint"; }
+    Joint(const QString &str="");
+    QString getType() const { return "Joint"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
@@ -40,8 +40,8 @@ namespace MBSimGUI {
   class ElasticJoint : public FloatingFrameLink {
     friend class ElasticJointPropertyDialog;
     public:
-    ElasticJoint(const std::string &str="");
-    std::string getType() const { return "ElasticJoint"; }
+    ElasticJoint(const QString &str="");
+    QString getType() const { return "ElasticJoint"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new ElasticJointPropertyDialog(this);}

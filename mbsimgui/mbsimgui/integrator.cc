@@ -69,7 +69,7 @@ namespace MBSimGUI {
 
   DOMElement* Integrator::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-    element=D(doc)->createElement(MBSIMINT%getType());
+    element=D(doc)->createElement(MBSIMINT%getType().toStdString());
     parent->insertBefore(element, NULL);
     DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"startTime" );
     E(ele1)->setAttribute("unit", "s");

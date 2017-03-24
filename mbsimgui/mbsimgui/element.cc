@@ -41,7 +41,7 @@ namespace MBSimGUI {
 
   int Element::IDcounter=0;
 
-  Element::Element(const string &name_) : parent(NULL), element(NULL), name(name_), config(false) {
+  Element::Element(const QString &name_) : parent(NULL), element(NULL), name(name_), config(false) {
     ID=toStr(IDcounter++);
     addPlotFeature("plotRecursive");
     addPlotFeature("separateFilePerGroup");
@@ -56,10 +56,6 @@ namespace MBSimGUI {
       delete *i;
   }
 
-  string Element::getPath() {
-    return parent?(parent->getPath()+"."+getName()):getName();
-  }
-
   void Element::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     while(e) {
@@ -71,7 +67,7 @@ namespace MBSimGUI {
 
   DOMElement* Element::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-    element=D(doc)->createElement(getNameSpace()%getType());
+    element=D(doc)->createElement(getNameSpace()%getType().toStdString());
     parent->insertBefore(element, NULL);
     return element;
   }
@@ -79,16 +75,16 @@ namespace MBSimGUI {
   DOMElement* Element::initializeUsingXML(DOMElement *element) {
     this->element = element;
     config = true;
-    setName(E(element)->getAttribute("name"));
+    setName(QString::fromStdString(E(element)->getAttribute("name")));
     DOMElement *parent = static_cast<DOMElement*>(element->getParentNode());
     if(E(parent)->getTagName()==PV%"Embed") {
       setCounterName(E(parent)->getAttribute("counterName"));
-      setValue(E(parent)->getAttribute("count"));
+      setValue(QString::fromStdString(E(parent)->getAttribute("count")));
     }
     return element;
   }
 
-  string Element::getXMLPath(Element *ref, bool rel) {
+  QString Element::getXMLPath(Element *ref, bool rel) {
     if(rel) {
       vector<Element*> e0, e1;
       Element* element = ref;
@@ -106,7 +102,7 @@ namespace MBSimGUI {
       int imatch=0;
       for(vector<Element*>::iterator i0 = e0.end()-1, i1 = e1.end()-1 ; (i0 != e0.begin()-1) && (i1 != e1.begin()-1) ; i0--, i1--) 
         if(*i0 == *i1) imatch++;
-      string type;
+      QString type;
       if(dynamic_cast<Frame*>(this))
         type = "Frame";
       else if(dynamic_cast<Contour*>(this))
@@ -123,18 +119,18 @@ namespace MBSimGUI {
         type = "Observer";
       else 
         type = getType();
-      string str = type + "[" + getName() + "]";
+      QString str = type + "[" + getName() + "]";
       for(vector<Element*>::iterator i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
         if(dynamic_cast<Group*>(*i1))
-          str = string("Group[") + (*i1)->getName() + "]/" + str;
+          str = QString("Group[") + (*i1)->getName() + "]/" + str;
         else if(dynamic_cast<Object*>(*i1))
-          str = string("Object[") + (*i1)->getName() + "]/" + str;
+          str = QString("Object[") + (*i1)->getName() + "]/" + str;
         else if(dynamic_cast<Link*>(*i1))
-          str = string("Link[") + (*i1)->getName() + "]/" + str;
+          str = QString("Link[") + (*i1)->getName() + "]/" + str;
         else if(dynamic_cast<Constraint*>(*i1))
-          str = string("Constraint[") + (*i1)->getName() + "]/" + str;
+          str = QString("Constraint[") + (*i1)->getName() + "]/" + str;
         else if(dynamic_cast<Observer*>(*i1))
-          str = string("Observer[") + (*i1)->getName() + "]/" + str;
+          str = QString("Observer[") + (*i1)->getName() + "]/" + str;
         else
           str = "";
       }
@@ -142,7 +138,7 @@ namespace MBSimGUI {
         str = "../" + str;
       return str;
     } else {
-      string type;
+      QString type;
       if(dynamic_cast<Frame*>(this))
         type = "Frame";
       else if(dynamic_cast<Contour*>(this))
@@ -159,19 +155,19 @@ namespace MBSimGUI {
         type = "Observer";
       else 
         type = getType();
-      string str = type + "[" + getName() + "]";
+      QString str = type + "[" + getName() + "]";
       Element* element = parent;
       while(!dynamic_cast<DynamicSystemSolver*>(element)) {
         if(dynamic_cast<Group*>(element))
-          str = string("Group[") + element->getName() + "]/" + str;
+          str = QString("Group[") + element->getName() + "]/" + str;
         else if(dynamic_cast<Object*>(element))
-          str = string("Object[") + element->getName() + "]/" + str;
+          str = QString("Object[") + element->getName() + "]/" + str;
         else if(dynamic_cast<Link*>(element))
-          str = string("Link[") + element->getName() + "]/" + str;
+          str = QString("Link[") + element->getName() + "]/" + str;
         else if(dynamic_cast<Constraint*>(element))
-          str = string("Constraint[") + element->getName() + "]/" + str;
+          str = QString("Constraint[") + element->getName() + "]/" + str;
         else if(dynamic_cast<Observer*>(element))
-          str = string("Observer[") + element->getName() + "]/" + str;
+          str = QString("Observer[") + element->getName() + "]/" + str;
         else
           str = "";
         element = element->getParent();
