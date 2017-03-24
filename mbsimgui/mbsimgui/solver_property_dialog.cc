@@ -148,26 +148,40 @@ namespace MBSimGUI {
     addTab("Tolerances");
     addTab("Step size");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory));
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absolute"),QBoxLayout::RightToLeft,3));
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory));
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relative"),QBoxLayout::RightToLeft,3));
     addToTab("Tolerances", relTol);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
-    initialStepSize = new ExtWidget("Initial step size",new ExtPhysicalVarWidget(input)); 
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
-    maximalStepSize = new ExtWidget("Maximal step size",new ExtPhysicalVarWidget(input)); 
+    maximalStepSize = new ExtWidget("Maximal step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"maximalStepSize");
     addToTab("Step size", maximalStepSize);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),1));
-    maxSteps = new ExtWidget("Number of maximal steps",new ExtPhysicalVarWidget(input),true); 
+    maxSteps = new ExtWidget("Number of maximal steps",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximalNumberOfSteps");
     addToTab("Step size", maxSteps);
+  }
+
+  DOMElement* RADAU5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
+    absTol->initializeUsingXML(solver->getXMLElement());
+    relTol->initializeUsingXML(solver->getXMLElement());
+    initialStepSize->initializeUsingXML(solver->getXMLElement());
+    maximalStepSize->initializeUsingXML(solver->getXMLElement());
+    maxSteps->initializeUsingXML(solver->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RADAU5IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
+    absTol->writeXMLFile(solver->getXMLElement());
+    relTol->writeXMLFile(solver->getXMLElement());
+    initialStepSize->writeXMLFile(solver->getXMLElement());
+    maximalStepSize->writeXMLFile(solver->getXMLElement());
+    maxSteps->writeXMLFile(solver->getXMLElement());
+    return NULL;
   }
 
   LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(LSODEIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
@@ -175,38 +189,50 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Extra");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory));
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absolute"),QBoxLayout::RightToLeft,3));
     addToTab("Tolerances", absTol);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
-    relTol = new ExtWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"relativeToleranceScalar");
     addToTab("Tolerances", relTol);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
-    initialStepSize = new ExtWidget("Initial step size",new ExtPhysicalVarWidget(input)); 
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
-    maximalStepSize = new ExtWidget("Maximal step size",new ExtPhysicalVarWidget(input)); 
+    maximalStepSize = new ExtWidget("Maximal step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"maximalStepSize");
     addToTab("Step size", maximalStepSize);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
-    minimalStepSize = new ExtWidget("Minimal step size",new ExtPhysicalVarWidget(input)); 
+    minimalStepSize = new ExtWidget("Minimal step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"minimalStepSize");
     addToTab("Step size", minimalStepSize);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),1));
-    maxSteps = new ExtWidget("Number of maximal steps",new ExtPhysicalVarWidget(input)); 
+    maxSteps = new ExtWidget("Number of maximal steps",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"numberOfMaximalSteps");
     addToTab("Step size", maxSteps);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-    stiff = new ExtWidget("Stiff modus",new ExtPhysicalVarWidget(input),true); 
+    stiff = new ExtWidget("Stiff modus",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stiffModus");
     addToTab("Extra", stiff);
+  }
+
+  DOMElement* LSODEIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
+    absTol->initializeUsingXML(solver->getXMLElement());
+    relTol->initializeUsingXML(solver->getXMLElement());
+    initialStepSize->initializeUsingXML(solver->getXMLElement());
+    maximalStepSize->initializeUsingXML(solver->getXMLElement());
+    minimalStepSize->initializeUsingXML(solver->getXMLElement());
+    maxSteps->initializeUsingXML(solver->getXMLElement());
+    stiff->initializeUsingXML(solver->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* LSODEIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
+    absTol->writeXMLFile(solver->getXMLElement());
+    relTol->writeXMLFile(solver->getXMLElement());
+    initialStepSize->writeXMLFile(solver->getXMLElement());
+    maximalStepSize->writeXMLFile(solver->getXMLElement());
+    minimalStepSize->writeXMLFile(solver->getXMLElement());
+    maxSteps->writeXMLFile(solver->getXMLElement());
+    stiff->writeXMLFile(solver->getXMLElement());
+    return NULL;
   }
 
   LSODARIntegratorPropertyDialog::LSODARIntegratorPropertyDialog(LSODARIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
@@ -214,56 +240,88 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Extra");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory));
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absolute"),QBoxLayout::RightToLeft,3));
     addToTab("Tolerances", absTol);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
-    relTol = new ExtWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"relativeToleranceScalar");
     addToTab("Tolerances", relTol);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
-    initialStepSize = new ExtWidget("Initial step size",new ExtPhysicalVarWidget(input)); 
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
-    maximalStepSize = new ExtWidget("Maximal step size",new ExtPhysicalVarWidget(input)); 
+    maximalStepSize = new ExtWidget("Maximal step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"maximalStepSize");
     addToTab("Step size", maximalStepSize);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-    plotOnRoot = new ExtWidget("Plot at root",new ExtPhysicalVarWidget(input)); 
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"plotOnRoot");
     addToTab("Extra", plotOnRoot);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-5"),QStringList(),1));
-    gMax = new ExtWidget("Tolerance for position constraints",new ExtPhysicalVarWidget(input),true);
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
     addToTab("Extra", gMax);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-5"),QStringList(),1));
-    gdMax = new ExtWidget("Tolerance for velocity constraints",new ExtPhysicalVarWidget(input),true);
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
     addToTab("Extra", gdMax);
+  }
+
+  DOMElement* LSODARIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
+    absTol->initializeUsingXML(solver->getXMLElement());
+    relTol->initializeUsingXML(solver->getXMLElement());
+    initialStepSize->initializeUsingXML(solver->getXMLElement());
+    maximalStepSize->initializeUsingXML(solver->getXMLElement());
+    plotOnRoot->initializeUsingXML(solver->getXMLElement());
+    gMax->initializeUsingXML(solver->getXMLElement());
+    gdMax->initializeUsingXML(solver->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* LSODARIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
+    absTol->writeXMLFile(solver->getXMLElement());
+    relTol->writeXMLFile(solver->getXMLElement());
+    initialStepSize->writeXMLFile(solver->getXMLElement());
+    maximalStepSize->writeXMLFile(solver->getXMLElement());
+    plotOnRoot->writeXMLFile(solver->getXMLElement());
+    gMax->writeXMLFile(solver->getXMLElement());
+    gdMax->writeXMLFile(solver->getXMLElement());
+    return NULL;
   }
 
   TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
     addTab("Step size");
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-3"),timeUnits(),2));
-    stepSize = new ExtWidget("Time step size",new ExtPhysicalVarWidget(input)); 
+    stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"stepSize");
     addToTab("Step size", stepSize);
+  }
+
+  DOMElement* TimeSteppingIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
+    stepSize->initializeUsingXML(solver->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* TimeSteppingIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
+    stepSize->writeXMLFile(solver->getXMLElement());
+    return NULL;
   }
 
   EulerExplicitIntegratorPropertyDialog::EulerExplicitIntegratorPropertyDialog(EulerExplicitIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
     addTab("Step size");
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-3"),timeUnits(),2));
-    stepSize = new ExtWidget("Time step size",new ExtPhysicalVarWidget(input)); 
+    stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"stepSize");
     addToTab("Step size", stepSize);
+  }
+
+  DOMElement* EulerExplicitIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
+    stepSize->initializeUsingXML(solver->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* EulerExplicitIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
+    stepSize->writeXMLFile(solver->getXMLElement());
+    return NULL;
   }
 
   RKSuiteIntegratorPropertyDialog::RKSuiteIntegratorPropertyDialog(RKSuiteIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
@@ -271,48 +329,54 @@ namespace MBSimGUI {
     addTab("Step size");
 
     vector<QString> list;
-    list.push_back("RK23");
-    list.push_back("RK45");
-    list.push_back("RK67");
-    method = new ExtWidget("Method",new TextChoiceWidget(list,1),true);
+    list.push_back("\"RK23\"");
+    list.push_back("\"RK45\"");
+    list.push_back("\"RK67\"");
+    method = new ExtWidget("Method",new TextChoiceWidget(list,1,false),true,false,MBSIMINT%"method");
     addToTab("General", method);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
-    relTol = new ExtWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"relativeToleranceScalar");
     addToTab("Tolerances", relTol);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
-    threshold = new ExtWidget("Threshold",new ExtPhysicalVarWidget(input)); 
+    threshold = new ExtWidget("Threshold",new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"thresholdScalar");
     addToTab("Tolerances", threshold);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
-    initialStepSize = new ExtWidget("Initial step size",new ExtPhysicalVarWidget(input),true); 
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
     addToTab("Step size", initialStepSize);
+  }
+
+  DOMElement* RKSuiteIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
+    method->initializeUsingXML(solver->getXMLElement());
+    relTol->initializeUsingXML(solver->getXMLElement());
+    threshold->initializeUsingXML(solver->getXMLElement());
+    initialStepSize->initializeUsingXML(solver->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RKSuiteIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
+    method->writeXMLFile(solver->getXMLElement());
+    relTol->writeXMLFile(solver->getXMLElement());
+    threshold->writeXMLFile(solver->getXMLElement());
+    initialStepSize->writeXMLFile(solver->getXMLElement());
+    return NULL;
   }
 
   EigenanalyserPropertyDialog::EigenanalyserPropertyDialog(Eigenanalyser *eigenanalyser, QWidget *parent, Qt::WindowFlags f) : SolverPropertyDialog(eigenanalyser,parent,f) {
     addTab("General");
     addTab("Initial conditions");
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
-    startTime= new ExtWidget("Start time",new ExtPhysicalVarWidget(input)); 
+    startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"startTime");
     addToTab("General", startTime);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),timeUnits(),2));
-    endTime= new ExtWidget("End time",new ExtPhysicalVarWidget(input)); 
+    endTime = new ExtWidget("End time",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"endTime");
     addToTab("General", endTime);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-2"),timeUnits(),2));
-    plotStepSize= new ExtWidget("Plot step size",new ExtPhysicalVarWidget(input)); 
+    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"plotStepSize");
     addToTab("General", plotStepSize);
 
-    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
+    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"initialState");
     addToTab("Initial conditions", initialState);
 
     vector<QString> list;
@@ -320,17 +384,43 @@ namespace MBSimGUI {
     list.push_back("\"eigenmodes\"");
     list.push_back("\"eigenmode\"");
     list.push_back("\"eigenmotion\"");
-    task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true);
+    task = new ExtWidget("Task",new TextChoiceWidget(list,1,false),true,false,MBSIMANALYSER%"task");
     addToTab("General",task);
 
-    amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,4)),QBoxLayout::RightToLeft),true);
+    amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"amplitude");
     addToTab("General",amplitude);
 
-    mode = new ExtWidget("Mode",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft),true);
+    mode = new ExtWidget("Mode",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"mode");
     addToTab("General",mode);
 
-    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft),true);
+    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"determineEquilibriumState");
     addToTab("General",determineEquilibriumState);
+  }
+
+  DOMElement* EigenanalyserPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SolverPropertyDialog::initializeUsingXML(solver->getXMLElement());
+    startTime->initializeUsingXML(solver->getXMLElement());
+    endTime->initializeUsingXML(solver->getXMLElement());
+    plotStepSize->initializeUsingXML(solver->getXMLElement());
+    initialState->initializeUsingXML(solver->getXMLElement());
+    task->initializeUsingXML(solver->getXMLElement());
+    amplitude->initializeUsingXML(solver->getXMLElement());
+    mode->initializeUsingXML(solver->getXMLElement());
+    determineEquilibriumState->initializeUsingXML(solver->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* EigenanalyserPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SolverPropertyDialog::writeXMLFile(solver->getXMLElement());
+    startTime->writeXMLFile(solver->getXMLElement());
+    endTime->writeXMLFile(solver->getXMLElement());
+    plotStepSize->writeXMLFile(solver->getXMLElement());
+    initialState->writeXMLFile(solver->getXMLElement());
+    task->writeXMLFile(solver->getXMLElement());
+    amplitude->writeXMLFile(solver->getXMLElement());
+    mode->writeXMLFile(solver->getXMLElement());
+    determineEquilibriumState->writeXMLFile(solver->getXMLElement());
+    return NULL;
   }
 
 }

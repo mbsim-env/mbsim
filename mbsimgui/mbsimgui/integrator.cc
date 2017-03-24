@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "integrator.h"
-#include "property.h"
 #include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
@@ -28,29 +27,9 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-//  TolerancePropertyFactory::TolerancePropertyFactory(const string &type_) : type(type_) {
-//    name.push_back(MBSIMINT%(type+"ToleranceScalar"));
-//    name.push_back(MBSIMINT%(type+"Tolerance"));
-//  }
-//
-//  Property* TolerancePropertyFactory::createProperty(int i) {
-//    if(i==0) {
-//      vector<PhysicalVariableProperty> input;
-//      input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINT%(type+"ToleranceScalar")));
-//      return new ExtPhysicalVarProperty(input);
-//    }
-//    if(i==1) {
-//      vector<PhysicalVariableProperty> input;
-//      input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINT%(type+"Tolerance")));
-//      return new ExtPhysicalVarProperty(input);
-//    }
-//    return NULL;
-//  }
-
   DOMElement* Integrator::createXMLElement(DOMNode *parent) {
-    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-    element=D(doc)->createElement(MBSIMINT%getType().toStdString());
-    parent->insertBefore(element, NULL);
+    DOMElement *element = Solver::createXMLElement(parent);
+    DOMDocument *doc=element->getOwnerDocument();
     DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"startTime" );
     E(ele1)->setAttribute("unit", "s");
     DOMText *text = doc->createTextNode(X()%"0");
@@ -68,24 +47,6 @@ namespace MBSimGUI {
     element->insertBefore( ele1, NULL );
     return element;
   }
-
-//  DOPRI5Integrator::DOPRI5Integrator() {
-//    absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3));
-//
-//    relTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("relative"),"",3));
-//
-//    vector<PhysicalVariableProperty> input;
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"initialStepSize"));
-//    initialStepSize.setProperty(new ExtPhysicalVarProperty(input));
-//
-//    input.clear();
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"maximalStepSize"));
-//    maximalStepSize.setProperty(new ExtPhysicalVarProperty(input));
-//
-//    input.clear();
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"maximalNumberOfSteps"));
-//    maxSteps.setProperty(new ExtPhysicalVarProperty(input));
-//  }
 
   DOMElement* DOPRI5Integrator::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Integrator::createXMLElement(parent);
@@ -110,24 +71,6 @@ namespace MBSimGUI {
     element->insertBefore( ele1, NULL );
     return ele0;
   }
-
-//  RADAU5Integrator::RADAU5Integrator() {
-//    absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3));
-//
-//    relTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("relative"),"",3));
-//
-//    vector<PhysicalVariableProperty> input;
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"initialStepSize"));
-//    initialStepSize.setProperty(new ExtPhysicalVarProperty(input));
-//
-//    input.clear();
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"maximalStepSize"));
-//    maximalStepSize.setProperty(new ExtPhysicalVarProperty(input));
-//
-//    input.clear();
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"maximalNumberOfSteps"));
-//    maxSteps.setProperty(new ExtPhysicalVarProperty(input));
-//  }
 
   DOMElement* RADAU5Integrator::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Integrator::createXMLElement(parent);

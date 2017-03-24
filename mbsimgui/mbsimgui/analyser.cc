@@ -26,8 +26,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Eigenanalyser::Eigenanalyser() {
-
+//  Eigenanalyser::Eigenanalyser() {
+//
 //    vector<PhysicalVariableProperty> input;
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMANALYSER%"startTime"));
 //    startTime.setProperty(new ExtPhysicalVarProperty(input));
@@ -49,9 +49,6 @@ namespace MBSimGUI {
 //    mode.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMANALYSER%"mode",vector<string>(2,"")),"",4));
 //
 //    determineEquilibriumState.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIMANALYSER%"determineEquilibriumState",vector<string>(2,"")),"",4));
-  }
-
-  Eigenanalyser::~Eigenanalyser() {
-  }
+//  }
 
 }

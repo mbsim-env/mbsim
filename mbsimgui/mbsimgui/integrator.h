@@ -34,6 +34,7 @@ namespace MBSimGUI {
     public:
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog(this);}
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMINT; }
   };
 
   class DOPRI5Integrator : public Integrator {

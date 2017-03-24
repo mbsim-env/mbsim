@@ -371,14 +371,19 @@ namespace MBSimGUI {
   class BasicTextWidget : public Widget {
 
     public:
+      BasicTextWidget(bool quote_=false) : quote(quote_) { }
       virtual QString getText() const = 0;
       virtual void setText(const QString &text) = 0;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+    protected:
+      bool quote;
   };
 
   class TextWidget : public BasicTextWidget {
 
     public:
-      TextWidget(const QString &text="", bool readOnly=false);
+      TextWidget(const QString &text="", bool readOnly=false, bool quote=false);
 
       QString getText() const {return text->text();}
       void setText(const QString &text_) {text->setText(text_);}
@@ -391,7 +396,7 @@ namespace MBSimGUI {
   class TextChoiceWidget : public BasicTextWidget {
 
     public:
-      TextChoiceWidget(const std::vector<QString> &list, int num=0, bool editable=false);
+      TextChoiceWidget(const std::vector<QString> &list, int num=0, bool editable=false, bool quote=false);
       QString getText() const {return text->currentText();}
       void setText(const QString &str) {
         if(text->isEditable())

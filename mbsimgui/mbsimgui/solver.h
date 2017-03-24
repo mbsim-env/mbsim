@@ -21,6 +21,7 @@
 #define _SOLVER__H_
 
 #include "solver_property_dialog.h"
+#include "property.h"
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -40,12 +41,13 @@ namespace MBSimGUI {
       virtual ~Solver();
       xercesc::DOMElement* getXMLElement() { return element; }
       virtual void removeXMLElements();
-      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) { return NULL; }
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       static Solver* readXMLFile(const QString &filename);
       virtual QString getType() const { return "Solver"; }
       const QString& getName() const { return name; }
       const QString& getValue() const { return value; }
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const = 0;
       virtual SolverPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
       void addParameter(Parameter *param) { }
   };

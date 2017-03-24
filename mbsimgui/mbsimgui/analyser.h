@@ -32,12 +32,10 @@ namespace MBSimGUI {
 
   class Eigenanalyser : public Solver {
     public:
-      Eigenanalyser();
-      virtual ~Eigenanalyser();
       virtual QString getType() const { return "Eigenanalyser"; }
       virtual EigenanalyserPropertyDialog* createPropertyDialog() {return new EigenanalyserPropertyDialog(this);}
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMANALYSER; }
   };
-
 
 }
 
