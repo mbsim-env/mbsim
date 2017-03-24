@@ -440,9 +440,9 @@ namespace MBSimGUI {
       event->ignore();
   }
 
-  void MainWindow::highlightObject(const string &ID) {
+  void MainWindow::highlightObject(const QString &ID) {
     currentID = ID;
-    inlineOpenMBVMW->highlightObject(ID);
+    inlineOpenMBVMW->highlightObject(ID.toStdString());
   }
 
   void MainWindow::selectionChanged(const QModelIndex &current, const QModelIndex &previous) {
@@ -723,10 +723,10 @@ namespace MBSimGUI {
       DOMNode *node = doc->importNode(element->getParameter(j)->getXMLElement(),true);
       ele0->insertBefore(node,NULL);
     }
-    string counterName = element->getCounterName();
-    if(not(counterName.empty())) {
+    QString counterName = element->getCounterName();
+    if(not(counterName.isEmpty())) {
       DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
-      E(ele1)->setAttribute("name", counterName);
+      E(ele1)->setAttribute("name", counterName.toStdString());
       DOMText *text = doc->createTextNode(X()%"1");
       ele1->insertBefore(text,NULL);
       ele0->insertBefore(ele1,NULL);
@@ -967,9 +967,9 @@ namespace MBSimGUI {
     edit->show();
   }
 
-  void MainWindow::selectElement(string ID) {
+  void MainWindow::selectElement(const QString &ID) {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    map<string, QModelIndex>::iterator it=model->idEleMap.find(ID);
+    map<QString, QModelIndex>::iterator it=model->idEleMap.find(ID);
     if(it!=model->idEleMap.end())
       elementList->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
   }

@@ -46,13 +46,11 @@ namespace MBSimGUI {
     protected:
       Element *parent;
       static int IDcounter;
-      std::string ID;
       std::vector<Parameter*> parameter;
       std::vector<Parameter*> removedParameter;
-      std::vector<std::string> plotFeatures;
+      std::vector<QString> plotFeatures;
       xercesc::DOMElement *element;
-      QString name, value;
-      std::string counterName;
+      QString ID, name, value, counterName;
       bool config;
     public:
       Element(const QString &name="");
@@ -72,11 +70,10 @@ namespace MBSimGUI {
       void setName(const QString &str) { name = str; }
       const QString& getValue() const { return value; }
       void setValue(const QString &str) { value = str; }
-      const std::string& getCounterName() const { return counterName; }
-      void setCounterName(const std::string &str) { counterName = str; }
+      const QString& getCounterName() const { return counterName; }
+      void setCounterName(const QString &str) { counterName = str; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
-      //std::string newName(const std::string &type);
-      virtual std::string getFileExtension() const { return ".xml"; }
+      virtual QString getFileExtension() const { return ".xml"; }
       template<class T> T* getByPath(const QString &path, bool initialCaller=true) const;
       virtual Element* getChildByContainerAndName(const QString &container, const QString &name) const { return 0; }
       virtual int getNumberOfFrames() {return 0;}
@@ -103,8 +100,8 @@ namespace MBSimGUI {
       virtual void addConstraint(Constraint *constraint) {}
       virtual void addObserver(Observer *observer) {}
       virtual void removeElement(Element *element) {}
-      const std::string& getID() const { return ID; }
-      void setID(const std::string &ID_) { ID = ID_; }
+      const QString& getID() const { return ID; }
+      void setID(const QString &ID_) { ID = ID_; }
       Element* getParent() {return parent;}
       std::vector<Element*> getParents();
       void setParent(Element* parent_) {parent = parent_;}
@@ -118,9 +115,9 @@ namespace MBSimGUI {
       void removeParameter(Parameter *param);
       int getNumberOfParameters() const { return parameter.size(); }
       Parameter *getParameter(int i) { return parameter[i]; }
-      void addPlotFeature(const std::string &pf);
-      const std::vector<std::string>& getPlotFeatures() const { return plotFeatures; }
-      virtual std::string getPlotFeatureType() const { return ""; }
+      void addPlotFeature(const QString &pf);
+      const std::vector<QString>& getPlotFeatures() const { return plotFeatures; }
+      virtual QString getPlotFeatureType() const { return ""; }
       bool getConfig() { return config; }
       void setConfig(bool config_) { config = config_; }
   };

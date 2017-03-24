@@ -39,8 +39,8 @@ namespace MBSimGUI {
     addPlotFeature("energy");
   }
 
-  Link* Link::readXMLFile(const string &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
+  Link* Link::readXMLFile(const QString &filename) {
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
     DOMElement *e=doc->getDocumentElement();
     Link *link=Embed<Link>::createAndInit(e);
     return link;

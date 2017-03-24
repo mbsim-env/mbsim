@@ -41,8 +41,8 @@ namespace MBSimGUI {
 //    thickness.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  Contour* Contour::readXMLFile(const string &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
+  Contour* Contour::readXMLFile(const QString &filename) {
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
     DOMElement *e=doc->getDocumentElement();
 //    Contour *contour=ObjectFactory::getInstance()->createContour(e);
     Contour *contour=Embed<Contour>::createAndInit(e);

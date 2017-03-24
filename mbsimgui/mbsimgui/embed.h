@@ -56,7 +56,7 @@ namespace MBSimGUI {
             }
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"))));
-              object=T::readXMLFile(fileInfo.canonicalFilePath().toStdString());
+              object=T::readXMLFile(fileInfo.canonicalFilePath());
             }
             else
               object=create(ele2);

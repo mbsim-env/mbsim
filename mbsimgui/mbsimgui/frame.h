@@ -29,7 +29,7 @@ namespace MBSimGUI {
   class Frame : public Element {
     public:
       Frame(const QString &str="");
-      static Frame* readXMLFile(const std::string &filename);
+      static Frame* readXMLFile(const QString &filename);
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this,false);}
@@ -38,16 +38,16 @@ namespace MBSimGUI {
 
   class InternalFrame : public Frame {
     public:
-      InternalFrame(const QString &str, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_="");
+      InternalFrame(const QString &str, const MBXMLUtils::FQN &xmlFrameName_, const QString &plotFeatureType_="");
       QString getType() const { return "InternalFrame"; }
       ElementPropertyDialog* createPropertyDialog() {return new InternalFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
       void removeXMLElements();
       const MBXMLUtils::FQN& getXMLFrameName() const { return xmlFrameName; }
-      std::string getPlotFeatureType() const { return plotFeatureType; }
+      QString getPlotFeatureType() const { return plotFeatureType; }
     protected:
       MBXMLUtils::FQN xmlFrameName;
-      std::string plotFeatureType;
+      QString plotFeatureType;
   };
 
   class FixedRelativeFrame : public Frame {

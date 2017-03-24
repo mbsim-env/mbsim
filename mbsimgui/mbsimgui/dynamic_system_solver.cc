@@ -101,9 +101,9 @@ namespace MBSimGUI {
     return element;
   }
 
-  DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
+  DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const QString &filename) {
     MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
     DOMElement *e=doc->getDocumentElement();
     DynamicSystemSolver *solver=static_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
     solver->initializeUsingXML(e);

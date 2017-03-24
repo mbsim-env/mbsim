@@ -135,19 +135,19 @@ namespace MBSimGUI {
   void GroupContextMenu::addModel() {
     QString file=QFileDialog::getOpenFileName(0, "XML model files", ".", "XML files (*.xml)");
     if(file!="") {
-      Frame *frame = Frame::readXMLFile(file.toStdString());
+      Frame *frame = Frame::readXMLFile(file);
       if(frame) return mw->addFrame(frame);
-      Contour *contour = Contour::readXMLFile(file.toStdString());
+      Contour *contour = Contour::readXMLFile(file);
       if(contour) return mw->addContour(contour);
-      Group *group = Group::readXMLFile(file.toStdString());
+      Group *group = Group::readXMLFile(file);
       if(group) return mw->addGroup(group);
-      Object *object = Object::readXMLFile(file.toStdString());
+      Object *object = Object::readXMLFile(file);
       if(object) return mw->addObject(object);
-      Link *link = Link::readXMLFile(file.toStdString());
+      Link *link = Link::readXMLFile(file);
       if(link) return mw->addLink(link);
-      Constraint *constraint = Constraint::readXMLFile(file.toStdString());
+      Constraint *constraint = Constraint::readXMLFile(file);
       if(constraint) return mw->addConstraint(constraint);
-      Observer *observer = Observer::readXMLFile(file.toStdString());
+      Observer *observer = Observer::readXMLFile(file);
       if(observer) return mw->addObserver(observer);
     }
   }

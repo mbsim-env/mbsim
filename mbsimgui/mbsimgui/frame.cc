@@ -43,8 +43,8 @@ namespace MBSimGUI {
     addPlotFeature("angularAcceleration");
   }
 
-  Frame* Frame::readXMLFile(const string &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
+  Frame* Frame::readXMLFile(const QString &filename) {
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
     DOMElement *e=doc->getDocumentElement();
     Frame *frame=Embed<Frame>::createAndInit(e);
     return frame;
@@ -54,13 +54,13 @@ namespace MBSimGUI {
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
       ELE->insertBefore(id, NULL);
     }
     return element;
   }
 
-  InternalFrame::InternalFrame(const QString &str, const MBXMLUtils::FQN &xmlFrameName_, const std::string &plotFeatureType_) : Frame(str), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) {
+  InternalFrame::InternalFrame(const QString &str, const MBXMLUtils::FQN &xmlFrameName_, const QString &plotFeatureType_) : Frame(str), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) {
     config = true;
   }
 
@@ -71,8 +71,8 @@ namespace MBSimGUI {
         parent->getXMLElement()->removeChild(e->getPreviousSibling());
       parent->getXMLElement()->removeChild(e);
     }
-    e = E(parent->getXMLElement())->getFirstElementChildNamed(MBSIM%getPlotFeatureType());
-    while (e and E(e)->getTagName()==MBSIM%getPlotFeatureType()) {
+    e = E(parent->getXMLElement())->getFirstElementChildNamed(MBSIM%getPlotFeatureType().toStdString());
+    while (e and E(e)->getTagName()==MBSIM%getPlotFeatureType().toStdString()) {
       DOMElement *en = e->getNextElementSibling();
       if(X()%e->getPreviousSibling()->getNodeName()=="#text")
         parent->getXMLElement()->removeChild(e->getPreviousSibling());

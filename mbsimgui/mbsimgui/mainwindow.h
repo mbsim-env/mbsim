@@ -81,7 +81,7 @@ namespace MBSimGUI {
       boost::filesystem::path uniqueTempDir;
       QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs;
       QTimer *autoSaveTimer;
-      std::string currentID;
+      QString currentID;
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
       void setCurrentProjectFile(const QString &fileName);
@@ -110,8 +110,8 @@ namespace MBSimGUI {
       void addLink(Link *link, Element *parent=NULL);
       void addConstraint(Constraint *constraint, Element *parent=NULL);
       void addObserver(Observer *observer, Element *parent=NULL);
-      void highlightObject(const std::string &ID);
-      const std::string& getHighlightedObject() const {return currentID;}
+      void highlightObject(const QString &ID);
+      const QString& getHighlightedObject() const {return currentID;}
       void loadProject(const QString &file);
       ElementView* getElementList() { return elementList; }
       void setProjectChanged(bool changed=true);
@@ -155,7 +155,7 @@ namespace MBSimGUI {
       void saveElementAs();
       void projectSettings();
     protected slots:
-      void selectElement(std::string);
+      void selectElement(const QString &ID);
       void changeWorkingDir();
       void openOptionsMenu();
       void selectionChanged(const QModelIndex &current, const QModelIndex &previous);

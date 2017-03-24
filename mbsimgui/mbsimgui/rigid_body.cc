@@ -88,7 +88,7 @@ namespace MBSimGUI {
       ELE = ELE->getFirstElementChild();
       if(ELE) {
         DOMDocument *doc=element->getOwnerDocument();
-        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
         ELE->insertBefore(id, NULL);
       }
     }
@@ -96,7 +96,7 @@ namespace MBSimGUI {
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID().toStdString());
       ELE->insertBefore(id, NULL);
     }
 

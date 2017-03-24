@@ -45,9 +45,9 @@ namespace MBSimGUI {
       void removeXMLElements();
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      std::string getFileExtension() const { return ".mbsim.xml"; }
+      QString getFileExtension() const { return ".mbsim.xml"; }
 
-      static DynamicSystemSolver* readXMLFile(const std::string &filename);
+      static DynamicSystemSolver* readXMLFile(const QString &filename);
 
       ElementPropertyDialog* createPropertyDialog() {return new DynamicSystemSolverPropertyDialog(this);}
       QMenu* createContextMenu() {return new DynamicSystemSolverContextMenu(this);}

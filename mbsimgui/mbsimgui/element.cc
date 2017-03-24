@@ -42,7 +42,7 @@ namespace MBSimGUI {
   int Element::IDcounter=0;
 
   Element::Element(const QString &name_) : parent(NULL), element(NULL), name(name_), config(false) {
-    ID=toStr(IDcounter++);
+    ID=toQStr(IDcounter++);
     addPlotFeature("plotRecursive");
     addPlotFeature("separateFilePerGroup");
     addPlotFeature("openMBV");
@@ -78,7 +78,7 @@ namespace MBSimGUI {
     setName(QString::fromStdString(E(element)->getAttribute("name")));
     DOMElement *parent = static_cast<DOMElement*>(element->getParentNode());
     if(E(parent)->getTagName()==PV%"Embed") {
-      setCounterName(E(parent)->getAttribute("counterName"));
+      setCounterName(QString::fromStdString(E(parent)->getAttribute("counterName")));
       setValue(QString::fromStdString(E(parent)->getAttribute("count")));
     }
     return element;
@@ -201,7 +201,7 @@ namespace MBSimGUI {
     removedParameter.push_back(param);
   }
 
-  void Element::addPlotFeature(const string &pf) {
+  void Element::addPlotFeature(const QString &pf) {
     for(unsigned int i=0; i<plotFeatures.size(); i++)
       if(plotFeatures[i]==pf)
         return;

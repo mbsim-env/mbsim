@@ -95,10 +95,10 @@ namespace MBSimGUI {
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
     addTab("Plot");
-    plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget(QString::fromStdString(element->getPlotFeatureType())));
+    plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget(element->getPlotFeatureType()));
     addToTab("Plot", plotFeature);
     for(unsigned int i=0; i<element->getPlotFeatures().size(); i++)
-      static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->addFeature(QString::fromStdString(element->getPlotFeatures()[i]));
+      static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->addFeature(element->getPlotFeatures()[i]);
   }
 
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {

@@ -27,14 +27,14 @@ namespace MBSimGUI {
   class Contour : public Element {
     public:
       Contour(const QString &str="");
-      static Contour* readXMLFile(const std::string &filename);
+      static Contour* readXMLFile(const QString &filename);
       ElementPropertyDialog* createPropertyDialog() {return new ContourPropertyDialog(this);}
   };
 
   class RigidContour : public Contour {
     public:
       RigidContour(const QString &str="");
-      void setSavedFrameOfReference(const std::string &str);
+//      void setSavedFrameOfReference(const QString &str);
       ElementPropertyDialog* createPropertyDialog() {return new RigidContourPropertyDialog(this);}
   };
 

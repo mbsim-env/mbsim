@@ -40,8 +40,8 @@ namespace MBSimGUI {
 //    return new GearInputReferenceProperty("",element,xmlName);
 //  }
 
-  Constraint* Constraint::readXMLFile(const string &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
+  Constraint* Constraint::readXMLFile(const QString &filename) {
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
     DOMElement *e=doc->getDocumentElement();
     Constraint *constraint=Embed<Constraint>::createAndInit(e);
     return constraint;

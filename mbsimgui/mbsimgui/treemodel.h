@@ -75,7 +75,7 @@ namespace MBSimGUI {
       void createConstraintItem(Constraint *observer, const QModelIndex &parent = QModelIndex());
       void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
 
-      std::map<std::string, QModelIndex> idEleMap;
+      std::map<QString, QModelIndex> idEleMap;
   };
 
   class EmbeddingTreeModel : public TreeModel {

@@ -51,7 +51,7 @@ namespace MBSimGUI {
   DOMElement* EmbeddingPropertyDialog::writeXMLFile(DOMNode *node, DOMNode *ref) {
     if(embed) {
       element->setName(static_cast<TextWidget*>(name->getWidget())->getText());
-      element->setCounterName(static_cast<EmbedWidget*>(embed->getWidget())->getCounterName().toStdString());
+      element->setCounterName(static_cast<EmbedWidget*>(embed->getWidget())->getCounterName());
       element->setValue(static_cast<EmbedWidget*>(embed->getWidget())->getCount());
       DOMNode* embedNode = node->getParentNode();
       if(embed->isActive()) {

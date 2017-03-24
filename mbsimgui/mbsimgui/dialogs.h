@@ -67,7 +67,7 @@ namespace MBSimGUI {
       Object *selection;
       ElementItem *savedItem;
       Element* element;
-      std::string oldID;
+      QString oldID;
       void mbs2ObjectTree(Element* item, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event);
       void hideEvent(QHideEvent *event);
@@ -89,7 +89,7 @@ namespace MBSimGUI {
       Link *selection;
       ElementItem *savedItem;
       Element* element;
-      std::string oldID;
+      QString oldID;
       void mbs2LinkTree(Element* item, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event);
       void hideEvent(QHideEvent *event);
@@ -111,7 +111,7 @@ namespace MBSimGUI {
       Constraint *selection;
       ElementItem *savedItem;
       Element* element;
-      std::string oldID;
+      QString oldID;
       void mbs2ConstraintTree(Element* item, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event);
       void hideEvent(QHideEvent *event);
@@ -133,7 +133,7 @@ namespace MBSimGUI {
       RigidBody *selection;
       ElementItem *savedItem;
       Element* element;
-      std::string oldID;
+      QString oldID;
       void mbs2RigidBodyTree(Element* item, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event);
       void hideEvent(QHideEvent *event);
@@ -155,7 +155,7 @@ namespace MBSimGUI {
       Frame *selection;
       ElementItem *savedItem;
       Element* element;
-      std::string oldID;
+      QString oldID;
       void mbs2FrameTree(Element* item, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event);
       void hideEvent(QHideEvent *event);
@@ -177,7 +177,7 @@ namespace MBSimGUI {
       Contour *selection;
       ElementItem *savedItem;
       Element* element;
-      std::string oldID;
+      QString oldID;
       void mbs2ContourTree(Element* item, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event);
       void hideEvent(QHideEvent *event);

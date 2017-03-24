@@ -60,7 +60,7 @@ namespace MBSimGUI {
       LocalFrameComboBox(Element *element, QWidget *parent = 0);
     protected:
       Element *element;
-      std::string oldID;
+      QString oldID;
       virtual void showPopup();
       virtual void hidePopup();
     protected slots:
@@ -73,7 +73,7 @@ namespace MBSimGUI {
       ParentFrameComboBox(Element *element, QWidget *parent = 0);
     protected:
       Element *element;
-      std::string oldID;
+      QString oldID;
       virtual void showPopup();
       virtual void hidePopup();
     protected slots:

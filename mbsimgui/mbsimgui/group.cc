@@ -176,8 +176,8 @@ namespace MBSimGUI {
 //    element->deinitialize();
   }
 
-  Group* Group::readXMLFile(const string &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
+  Group* Group::readXMLFile(const QString &filename) {
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
     DOMElement *e=doc->getDocumentElement();
 //    Group *group=ObjectFactory::getInstance()->createGroup(e, parent);
     Group *group=Embed<Group>::createAndInit(e);
@@ -256,7 +256,7 @@ namespace MBSimGUI {
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID().toStdString());
       ELE->insertBefore(id, NULL);
     }
 

@@ -28,7 +28,7 @@ namespace MBSimGUI {
   class Link : public Element {
     public:
       Link(const QString &str="");
-      static Link* readXMLFile(const std::string &filename);
+      static Link* readXMLFile(const QString &filename);
   };
 
   class MechanicalLink : public Link {

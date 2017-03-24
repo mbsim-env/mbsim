@@ -34,8 +34,8 @@ namespace MBSimGUI {
   Observer::Observer(const QString &str) : Element(str) {
   }
 
-  Observer* Observer::readXMLFile(const string &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
+  Observer* Observer::readXMLFile(const QString &filename) {
+    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
     DOMElement *e=doc->getDocumentElement();
     Observer *observer=Embed<Observer>::createAndInit(e);
     return observer;
