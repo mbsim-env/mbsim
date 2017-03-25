@@ -164,14 +164,14 @@ namespace MBSimGUI {
       return new SpringDamper;
     if(E(element)->getTagName()==MBSIM%"DirectionalSpringDamper")
       return new DirectionalSpringDamper;
-//    if(E(element)->getTagName()==MBSIM%"GeneralizedSpringDamper")
-//      return new GeneralizedSpringDamper(E(element)->getAttribute("name"));
     if(E(element)->getTagName()==MBSIM%"Joint")
       return new Joint;
 //    if(E(element)->getTagName()==MBSIM%"ElasticJoint")
 //      return new ElasticJoint(E(element)->getAttribute("name"));
 //    if(E(element)->getTagName()==MBSIM%"Contact")
 //      return new Contact(E(element)->getAttribute("name"));
+    if(E(element)->getTagName()==MBSIM%"GeneralizedSpringDamper")
+      return new GeneralizedSpringDamper;
 //    if(E(element)->getTagName()==MBSIM%"GeneralizedElasticConnection")
 //      return new GeneralizedElasticConnection(E(element)->getAttribute("name"));
 //    if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")

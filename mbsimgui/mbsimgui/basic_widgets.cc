@@ -28,6 +28,7 @@
 #include "dialogs.h"
 #include "mainwindow.h"
 #include <QtGui>
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -306,6 +307,7 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton(tr("Browse"));
     connect(button,SIGNAL(clicked(bool)),bodyBrowser,SLOT(show()));
     layout->addWidget(button);
+    updateWidget();
   }
 
   void RigidBodyOfReferenceWidget::updateWidget() {
@@ -325,8 +327,9 @@ namespace MBSimGUI {
     emit Widget::resize_();
   }
 
-  void RigidBodyOfReferenceWidget::setBody(const QString &str, RigidBody *bodyPtr) {
-    selectedBody = bodyPtr;
+  void RigidBodyOfReferenceWidget::setBody(const QString &str) {
+    selectedBody = element->getByPath<RigidBody>(str);
+    bodyBrowser->updateWidget(selectedBody);
     body->setText(str);
     emit bodyChanged();
     emit Widget::resize_();
@@ -334,6 +337,16 @@ namespace MBSimGUI {
 
   QString RigidBodyOfReferenceWidget::getBody() const {
     return body->text();
+  }
+
+  DOMElement* RigidBodyOfReferenceWidget::initializeUsingXML(DOMElement *element) {
+    setBody(QString::fromStdString(E(element)->getAttribute("ref")));
+    return element;
+  }
+
+  DOMElement* RigidBodyOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getBody().toStdString());
+    return NULL;
   }
 
   GearInputReferenceWidget::GearInputReferenceWidget(Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_) {
@@ -617,6 +630,24 @@ namespace MBSimGUI {
     connect(value,SIGNAL(valueChanged(int)),this,SIGNAL(valueChanged(int)));
   }
 
+  DOMElement* SpinBoxWidget::initializeUsingXML(DOMElement *element) {
+    DOMText *text = E(element)->getFirstTextChild();
+    if(text) {
+      value->blockSignals(true);
+      setValue(boost::lexical_cast<int>(X()%text->getData()));
+      value->blockSignals(false);
+      return element;
+    }
+    return NULL;
+  }
+
+  DOMElement* SpinBoxWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMText *text= doc->createTextNode(X()%toStr(getValue()));
+    parent->insertBefore(text, NULL);
+    return NULL;
+  }
+
   ComboBoxWidget::ComboBoxWidget(const QStringList &names, int currentIndex) {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
@@ -762,6 +793,29 @@ namespace MBSimGUI {
   void ConnectRigidBodiesWidget::updateWidget() {
     for(unsigned int i=0; i<widget.size(); i++)
       widget[i]->updateWidget();
+  }
+
+  DOMElement* ConnectRigidBodiesWidget::initializeUsingXML(DOMElement *element) {
+    for(unsigned int i=0; i<widget.size(); i++) {
+      string xmlName = "ref";
+      if(widget.size()>1)
+        xmlName += toStr(int(i+1));
+      if(!E(element)->hasAttribute(xmlName))
+        return NULL;
+      if(E(element)->hasAttribute(xmlName))
+        widget[i]->setBody(QString::fromStdString(E(element)->getAttribute(xmlName)));
+    }
+    return element;
+  }
+
+  DOMElement* ConnectRigidBodiesWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    for(unsigned int i=0; i<widget.size(); i++) {
+      string xmlName = "ref";
+      if(widget.size()>1)
+        xmlName += toStr(int(i+1));
+      E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getBody().toStdString());
+    }
+    return NULL;
   }
 
   DynamicSystemSolverTolerancesWidget::DynamicSystemSolverTolerancesWidget() {

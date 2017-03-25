@@ -446,6 +446,8 @@ namespace MBSimGUI {
 
     public:
       FloatingFrameLinkPropertyDialog(FloatingFrameLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *refFrameID;
   };
@@ -454,6 +456,8 @@ namespace MBSimGUI {
 
     public:
       RigidBodyLinkPropertyDialog(RigidBodyLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *support;
   };
@@ -462,6 +466,8 @@ namespace MBSimGUI {
 
     public:
       DualRigidBodyLinkPropertyDialog(DualRigidBodyLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *connections;
   };
@@ -529,6 +535,8 @@ namespace MBSimGUI {
 
     public:
       GeneralizedSpringDamperPropertyDialog(DualRigidBodyLink *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *function, *unloadedLength;
   };

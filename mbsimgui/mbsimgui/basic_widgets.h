@@ -171,9 +171,11 @@ namespace MBSimGUI {
       RigidBodyOfReferenceWidget(Element* element, RigidBody* selectedBody);
 
       void updateWidget();
-      void setBody(const QString &str, RigidBody *bodyPtr);
+      void setBody(const QString &str);
       QString getBody() const;
-      RigidBody* getSelectedBody() {return selectedBody;}
+//      RigidBody* getSelectedBody() {return selectedBody;}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QLineEdit* body;
@@ -346,6 +348,8 @@ namespace MBSimGUI {
       SpinBoxWidget(int val=0, int min=0, int max=99);
       int getValue() {return value->value();}
       void setValue(int val) {value->setValue(val);}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QSpinBox *value;
@@ -428,32 +432,29 @@ namespace MBSimGUI {
 
   class ConnectContoursWidget : public Widget {
 
-    friend class ConnectContoursProperty;
-
     public:
-    ConnectContoursWidget(int n, Element* element);
+      ConnectContoursWidget(int n, Element* element);
 
-    void updateWidget();
+      void updateWidget();
 
     protected:
-    std::vector<ContourOfReferenceWidget*> widget;
-    Element* element;
+      std::vector<ContourOfReferenceWidget*> widget;
+      Element* element;
   };
 
   class ConnectRigidBodiesWidget : public Widget {
 
-    friend class ConnectRigidBodiesProperty;
-
     public:
-    ConnectRigidBodiesWidget(int n, Element* element);
+      ConnectRigidBodiesWidget(int n, Element* element);
 
-//    void setDefaultRigidBody(const QString &def) { widget[0]->setDefaultRigidBody(def); }
-    void updateWidget();
-    RigidBodyOfReferenceWidget* getWidget(int i) { return widget[i]; }
+      void updateWidget();
+      RigidBodyOfReferenceWidget* getWidget(int i) { return widget[i]; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
-    std::vector<RigidBodyOfReferenceWidget*> widget;
-    Element* element;
+      std::vector<RigidBodyOfReferenceWidget*> widget;
+      Element* element;
   };
 
   class DynamicSystemSolverTolerancesWidget : public Widget {

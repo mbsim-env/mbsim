@@ -1098,25 +1098,58 @@ namespace MBSimGUI {
   }
 
   FloatingFrameLinkPropertyDialog::FloatingFrameLinkPropertyDialog(FloatingFrameLink *link, QWidget *parent, Qt::WindowFlags f) : FrameLinkPropertyDialog(link,parent,f) {
-    QStringList names;
-    names << "Frame 1" << "Frame 2";
-    //refFrameID = new ExtWidget("Frame of reference ID",new ComboBoxWidget(names,1),true);
-    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(1,1,2),true);
+    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(1,1,2),true,false,MBSIM%"frameOfReferenceID");
     addToTab("Kinetics", refFrameID);
+  }
+
+  DOMElement* FloatingFrameLinkPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    refFrameID->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FloatingFrameLinkPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    refFrameID->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   RigidBodyLinkPropertyDialog::RigidBodyLinkPropertyDialog(RigidBodyLink *link, QWidget *parent, Qt::WindowFlags f) : MechanicalLinkPropertyDialog(link,parent,f) {
     addTab("Visualisation",2);
 
-    support = new ExtWidget("Support frame",new FrameOfReferenceWidget(link,0),true);
+    support = new ExtWidget("Support frame",new FrameOfReferenceWidget(link,0),true,false,MBSIM%"supportFrame");
     addToTab("General",support);
+  }
+
+  DOMElement* RigidBodyLinkPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    MechanicalLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    support->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RigidBodyLinkPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    MechanicalLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    support->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   DualRigidBodyLinkPropertyDialog::DualRigidBodyLinkPropertyDialog(DualRigidBodyLink *link, QWidget *parent, Qt::WindowFlags f) : RigidBodyLinkPropertyDialog(link,parent,f) {
     addTab("Kinetics",1);
 
-    connections = new ExtWidget("Connections",new ChoiceWidget2(new ConnectRigidBodiesWidgetFactory(link)));
+    connections = new ExtWidget("Connections",new ChoiceWidget2(new ConnectRigidBodiesWidgetFactory(link),QBoxLayout::RightToLeft,5),false,false,MBSIM%"connect");
     addToTab("Kinetics",connections);
+  }
+
+  DOMElement* DualRigidBodyLinkPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidBodyLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    connections->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DualRigidBodyLinkPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidBodyLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    connections->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget *parent, Qt::WindowFlags wf) : FloatingFrameLinkPropertyDialog(kineticExcitation,parent,wf) {
@@ -1287,11 +1320,25 @@ namespace MBSimGUI {
 
   GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(DualRigidBodyLink *springDamper, QWidget *parent, Qt::WindowFlags f) : DualRigidBodyLinkPropertyDialog(springDamper,parent,f) {
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
 
-    unloadedLength = new ExtWidget("Generalized unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(3,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft));
+    unloadedLength = new ExtWidget("Generalized Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"generalizedUnloadedLength");
     addToTab("General",unloadedLength);
+  }
+
+  DOMElement* GeneralizedSpringDamperPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    DualRigidBodyLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    function->initializeUsingXML(element->getXMLElement());
+    unloadedLength->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedSpringDamperPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DualRigidBodyLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    function->writeXMLFile(element->getXMLElement(),ref);
+    unloadedLength->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(DualRigidBodyLink *friction, QWidget *parent, Qt::WindowFlags f) : DualRigidBodyLinkPropertyDialog(friction,parent,f) {

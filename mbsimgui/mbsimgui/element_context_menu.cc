@@ -376,9 +376,6 @@ namespace MBSimGUI {
     action = new QAction("Add directional spring damper", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addDirectionalSpringDamper()));
     addAction(action);
-    action = new QAction("Add generalized spring damper", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedSpringDamper()));
-    addAction(action);
     action = new QAction("Add joint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
     addAction(action);
@@ -392,6 +389,9 @@ namespace MBSimGUI {
     addMenu(menu);
     action = new QAction("Add linear transfer system", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
+    addAction(action);
+    action = new QAction("Add generalized spring damper", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedSpringDamper()));
     addAction(action);
     action = new QAction("Add generalized friction", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedFriction()));
@@ -416,10 +416,6 @@ namespace MBSimGUI {
     mw->addLink(new DirectionalSpringDamper("DirectionalSpringDamper"), element);
   }
 
-  void LinkContextContextMenu::addGeneralizedSpringDamper() {
-//    mw->addLink(new GeneralizedSpringDamper("GeneralizedSpringDamper"));
-  }
-
   void LinkContextContextMenu::addJoint() {
     mw->addLink(new Joint("Joint"), element);
   }
@@ -439,6 +435,10 @@ namespace MBSimGUI {
 
   void LinkContextContextMenu::addLinearTransferSystem() {
 //    mw->addLink(new LinearTransferSystem("LTS"));
+  }
+
+  void LinkContextContextMenu::addGeneralizedSpringDamper() {
+    mw->addLink(new GeneralizedSpringDamper("GeneralizedSpringDamper"), element);
   }
 
   void LinkContextContextMenu::addGeneralizedFriction() {
