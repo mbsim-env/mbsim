@@ -505,6 +505,24 @@ namespace MBSimGUI {
       ExtWidget *forceDirection, *unloadedLength, *forceFunction, *coilSpring;
   };
 
+  class JointPropertyDialog : public FloatingFrameLinkPropertyDialog {
+
+    public:
+      JointPropertyDialog(Joint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+    protected:
+      ExtWidget *forceDirection, *forceLaw, *momentDirection, *momentLaw;
+  };
+
+  class ElasticJointPropertyDialog : public FloatingFrameLinkPropertyDialog {
+
+    public:
+      ElasticJointPropertyDialog(ElasticJoint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    protected:
+      ExtWidget *forceDirection, *momentDirection, *function;
+  };
+
   class GeneralizedSpringDamperPropertyDialog : public DualRigidBodyLinkPropertyDialog {
 
     public:
@@ -538,22 +556,6 @@ namespace MBSimGUI {
       ExtWidget *function;
     protected slots:
       void resizeVariables();
-  };
-
-  class JointPropertyDialog : public FloatingFrameLinkPropertyDialog {
-
-    public:
-      JointPropertyDialog(Joint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    protected:
-      ExtWidget *forceDirection, *forceLaw, *momentDirection, *momentLaw;
-  };
-
-  class ElasticJointPropertyDialog : public FloatingFrameLinkPropertyDialog {
-
-    public:
-      ElasticJointPropertyDialog(ElasticJoint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    protected:
-      ExtWidget *forceDirection, *momentDirection, *function;
   };
 
   class ContactPropertyDialog : public MechanicalLinkPropertyDialog {

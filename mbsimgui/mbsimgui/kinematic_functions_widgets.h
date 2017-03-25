@@ -31,7 +31,7 @@ namespace MBSimGUI {
     public:
       TranslationAlongXAxisWidget() { }
       int getArg1Size() const {return 1;}
-      std::string getType() const { return "TranslationAlongXAxis"; }
+      QString getType() const { return "TranslationAlongXAxis"; }
   };
 
   class TranslationAlongYAxisWidget : public FunctionWidget {
@@ -39,7 +39,7 @@ namespace MBSimGUI {
     public:
       TranslationAlongYAxisWidget() { }
       int getArg1Size() const {return 1;}
-      std::string getType() const { return "TranslationAlongYAxis"; }
+      QString getType() const { return "TranslationAlongYAxis"; }
   };
 
   class TranslationAlongZAxisWidget : public FunctionWidget {
@@ -47,7 +47,7 @@ namespace MBSimGUI {
     public:
       TranslationAlongZAxisWidget() { }
       int getArg1Size() const {return 1;}
-      std::string getType() const { return "TranslationAlongZAxis"; }
+      QString getType() const { return "TranslationAlongZAxis"; }
   };
 
   class TranslationAlongAxesXYWidget : public FunctionWidget {
@@ -55,7 +55,7 @@ namespace MBSimGUI {
     public:
       TranslationAlongAxesXYWidget() { }
       int getArg1Size() const {return 2;}
-      std::string getType() const { return "TranslationAlongAxesXY"; }
+      QString getType() const { return "TranslationAlongAxesXY"; }
   };
 
   class TranslationAlongAxesYZWidget : public FunctionWidget {
@@ -63,7 +63,7 @@ namespace MBSimGUI {
     public:
       TranslationAlongAxesYZWidget() { }
       int getArg1Size() const {return 2;}
-      std::string getType() const { return "TranslationAlongAxesYZ"; }
+      QString getType() const { return "TranslationAlongAxesYZ"; }
   };
 
   class TranslationAlongAxesXZWidget : public FunctionWidget {
@@ -71,7 +71,7 @@ namespace MBSimGUI {
     public:
       TranslationAlongAxesXZWidget() { }
       int getArg1Size() const {return 2;}
-      std::string getType() const { return "TranslationAlongAxesXZ"; }
+      QString getType() const { return "TranslationAlongAxesXZ"; }
   };
 
   class TranslationAlongAxesXYZWidget : public FunctionWidget {
@@ -79,7 +79,7 @@ namespace MBSimGUI {
     public:
       TranslationAlongAxesXYZWidget() { }
       int getArg1Size() const {return 3;}
-      std::string getType() const { return "TranslationAlongAxesXYZ"; }
+      QString getType() const { return "TranslationAlongAxesXYZ"; }
   };
 
   class TranslationAlongFixedAxisWidget : public FunctionWidget {
@@ -89,7 +89,7 @@ namespace MBSimGUI {
     public:
       TranslationAlongFixedAxisWidget();
       int getArg1Size() const {return 1;}
-      std::string getType() const { return "TranslationAlongFixedAxis"; }
+      QString getType() const { return "TranslationAlongFixedAxis"; }
     protected:
       ExtWidget *a;
   };
@@ -102,7 +102,7 @@ namespace MBSimGUI {
       LinearTranslationWidget(int m=1, int n=1);
       int getArg1Size() const;
       void resize_(int m, int n);
-      std::string getType() const { return "LinearTranslation"; }
+      QString getType() const { return "LinearTranslation"; }
     protected:
       ExtWidget *A, *b;
   };
@@ -112,7 +112,7 @@ namespace MBSimGUI {
     public:
       RotationAboutXAxisWidget() { }
       int getArg1Size() const {return 1;}
-      std::string getType() const { return "RotationAboutXAxis"; }
+      QString getType() const { return "RotationAboutXAxis"; }
   };
 
   class RotationAboutYAxisWidget : public FunctionWidget {
@@ -120,7 +120,7 @@ namespace MBSimGUI {
     public:
       RotationAboutYAxisWidget() { }
       int getArg1Size() const {return 1;}
-      std::string getType() const { return "RotationAboutYAxis"; }
+      QString getType() const { return "RotationAboutYAxis"; }
   };
 
   class RotationAboutZAxisWidget : public FunctionWidget {
@@ -128,7 +128,7 @@ namespace MBSimGUI {
     public:
       RotationAboutZAxisWidget() { }
       int getArg1Size() const {return 1;}
-      std::string getType() const { return "RotationAboutZAxis"; }
+      QString getType() const { return "RotationAboutZAxis"; }
   };
 
   class RotationAboutAxesXYWidget : public FunctionWidget {
@@ -136,7 +136,7 @@ namespace MBSimGUI {
     public:
       RotationAboutAxesXYWidget() { }
       int getArg1Size() const {return 2;}
-      std::string getType() const { return "RotationAboutAxesXY"; }
+      QString getType() const { return "RotationAboutAxesXY"; }
   };
 
   class RotationAboutAxesYZWidget : public FunctionWidget {
@@ -144,7 +144,7 @@ namespace MBSimGUI {
     public:
       RotationAboutAxesYZWidget() { }
       int getArg1Size() const {return 2;}
-      std::string getType() const { return "RotationAboutAxesYZ"; }
+      QString getType() const { return "RotationAboutAxesYZ"; }
   };
 
   class RotationAboutAxesXZWidget : public FunctionWidget {
@@ -152,7 +152,7 @@ namespace MBSimGUI {
     public:
       RotationAboutAxesXZWidget() { }
       int getArg1Size() const {return 2;}
-      std::string getType() const { return "RotationAboutAxesXZ"; }
+      QString getType() const { return "RotationAboutAxesXZ"; }
   };
 
   class RotationAboutAxesXYZWidget : public FunctionWidget {
@@ -160,7 +160,7 @@ namespace MBSimGUI {
     public:
       RotationAboutAxesXYZWidget() { }
       int getArg1Size() const {return 3;}
-      std::string getType() const { return "RotationAboutAxesXYZ"; }
+      QString getType() const { return "RotationAboutAxesXYZ"; }
   };
 
   class RotationAboutAxesZXZWidget : public FunctionWidget {
@@ -168,7 +168,7 @@ namespace MBSimGUI {
     public:
       RotationAboutAxesZXZWidget() { }
       int getArg1Size() const {return 3;}
-      std::string getType() const { return "RotationAboutAxesZXZ"; }
+      QString getType() const { return "RotationAboutAxesZXZ"; }
   };
 
   class RotationAboutAxesZYXWidget : public FunctionWidget {
@@ -176,7 +176,7 @@ namespace MBSimGUI {
     public:
       RotationAboutAxesZYXWidget() { }
       int getArg1Size() const {return 3;}
-      std::string getType() const { return "RotationAboutAxesZYX"; }
+      QString getType() const { return "RotationAboutAxesZYX"; }
   };
 
   class RotationAboutFixedAxisWidget : public FunctionWidget {
@@ -186,7 +186,7 @@ namespace MBSimGUI {
     public:
       RotationAboutFixedAxisWidget();
       int getArg1Size() const {return 1;}
-      std::string getType() const { return "RotationAboutFixedAxis"; }
+      QString getType() const { return "RotationAboutFixedAxis"; }
     protected:
       ExtWidget *a;
   };

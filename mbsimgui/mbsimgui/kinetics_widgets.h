@@ -39,6 +39,9 @@ namespace MBSimGUI {
     public:
       GeneralizedForceLawWidget() : forceFunc(0) {}
       virtual QString getType() const { return "GeneralizedForceLaw"; }
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       FunctionWidget *forceFunc;
   };
@@ -244,6 +247,20 @@ namespace MBSimGUI {
     virtual QString getType() const { return "SpatialStribeckImpact"; }
     protected:
     ExtWidget* frictionFunction;
+  };
+
+  class GeneralizedForceLawWidgetFactory : public WidgetFactory {
+    public:
+      GeneralizedForceLawWidgetFactory(Element *parent_);
+      QWidget* createWidget(int i=0);
+      static std::vector<QString> getNames();
+      QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      Element *parent;
+      std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class GeneralizedForceLawChoiceWidget : public Widget {

@@ -27,9 +27,9 @@
 //#include "flexible_body_ffr.h"
 #include "constraint.h"
 //#include "linear_transfer_system.h"
-//#include "joint.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
+#include "joint.h"
 //#include "contact.h"
 //#include "sensor.h"
 //#include "widget.h"
@@ -166,18 +166,18 @@ namespace MBSimGUI {
 //      return new DirectionalSpringDamper(E(element)->getAttribute("name"));
 //    if(E(element)->getTagName()==MBSIM%"GeneralizedSpringDamper")
 //      return new GeneralizedSpringDamper(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")
-//      return new GeneralizedFriction(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIM%"GeneralizedGear")
-//      return new GeneralizedGear(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIM%"Joint")
-//      return new Joint(E(element)->getAttribute("name"));
+    if(E(element)->getTagName()==MBSIM%"Joint")
+      return new Joint;
 //    if(E(element)->getTagName()==MBSIM%"ElasticJoint")
 //      return new ElasticJoint(E(element)->getAttribute("name"));
 //    if(E(element)->getTagName()==MBSIM%"Contact")
 //      return new Contact(E(element)->getAttribute("name"));
 //    if(E(element)->getTagName()==MBSIM%"GeneralizedElasticConnection")
 //      return new GeneralizedElasticConnection(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")
+//      return new GeneralizedFriction(E(element)->getAttribute("name"));
+//    if(E(element)->getTagName()==MBSIM%"GeneralizedGear")
+//      return new GeneralizedGear(E(element)->getAttribute("name"));
 //    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedPositionSensor")
 //      return new GeneralizedPositionSensor(E(element)->getAttribute("name"));
 //    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")

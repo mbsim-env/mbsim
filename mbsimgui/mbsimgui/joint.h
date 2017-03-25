@@ -21,32 +21,21 @@
 #define _JOINT__H_
 
 #include "link.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 
   class Joint : public FloatingFrameLink {
-    friend class JointPropertyDialog;
     public:
-    Joint(const QString &str="");
-    QString getType() const { return "Joint"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
-    protected:
-    ExtProperty forceDirection, forceLaw, momentDirection, momentLaw;
+      Joint(const QString &str="");
+      QString getType() const { return "Joint"; }
+      ElementPropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
   };
 
   class ElasticJoint : public FloatingFrameLink {
-    friend class ElasticJointPropertyDialog;
     public:
-    ElasticJoint(const QString &str="");
-    QString getType() const { return "ElasticJoint"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new ElasticJointPropertyDialog(this);}
-    protected:
-    ExtProperty forceDirection, momentDirection, function;
+      ElasticJoint(const QString &str="");
+      QString getType() const { return "ElasticJoint"; }
+      ElementPropertyDialog* createPropertyDialog() {return new ElasticJointPropertyDialog(this);}
   };
 
 }

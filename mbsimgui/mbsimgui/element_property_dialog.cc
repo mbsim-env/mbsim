@@ -541,16 +541,14 @@ namespace MBSimGUI {
 
   void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
     int size =  body->isConstrained() ? 0 : getqRelSize();
-    cout << size << endl;
-    //q0->resize_(size,1);
+    q0->resize_(size,1);
     //translation->resize_(3,1);
     //rotation->resize_(3,1);
     }
 
   void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
     int size =  body->isConstrained() ? 0 : getuRelSize();
-    cout << size << endl;
-    //u0->resize_(size,1);
+    u0->resize_(size,1);
   }
 
   FlexibleBodyFFRPropertyDialog::FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
@@ -1225,6 +1223,51 @@ namespace MBSimGUI {
     addToTab("Visualisation", coilSpring);
   }
 
+  JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : FloatingFrameLinkPropertyDialog(joint,parent,f) {
+
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
+    addToTab("Kinetics",forceDirection);
+
+    forceLaw = new ExtWidget("Force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory(joint),QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceLaw");
+    addToTab("Kinetics",forceLaw);
+
+    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
+    addToTab("Kinetics",momentDirection);
+
+    momentLaw = new ExtWidget("Moment law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory(joint),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentLaw");
+    addToTab("Kinetics",momentLaw);
+  }
+
+  DOMElement* JointPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FloatingFrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    forceDirection->initializeUsingXML(element->getXMLElement());
+    forceLaw->initializeUsingXML(element->getXMLElement());
+    momentDirection->initializeUsingXML(element->getXMLElement());
+    momentLaw->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* JointPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FloatingFrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    forceDirection->writeXMLFile(element->getXMLElement(),ref);
+    forceLaw->writeXMLFile(element->getXMLElement(),ref);
+    momentDirection->writeXMLFile(element->getXMLElement(),ref);
+    momentLaw->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
+  ElasticJointPropertyDialog::ElasticJointPropertyDialog(ElasticJoint *joint, QWidget *parent, Qt::WindowFlags f) : FloatingFrameLinkPropertyDialog(joint,parent,f) {
+
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
+    addToTab("Kinetics", forceDirection);
+
+    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
+    addToTab("Kinetics", momentDirection);
+
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(joint),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
+    addToTab("Kinetics", function);
+  }
+
   GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(DualRigidBodyLink *springDamper, QWidget *parent, Qt::WindowFlags f) : DualRigidBodyLinkPropertyDialog(springDamper,parent,f) {
 
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
@@ -1275,41 +1318,6 @@ namespace MBSimGUI {
 //      int size = element->getByPath<RigidBody>(widget->getBody().toStdString())->getuRelSize();
 //      function->resize_(size,size);
 //    }
-  }
-
-  JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : FloatingFrameLinkPropertyDialog(joint,parent,f) {
-
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
-    forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
-    addToTab("Kinetics", forceDirection);
-
-    forceLaw = new ExtWidget("Force law",new GeneralizedForceLawChoiceWidget,true);
-    addToTab("Kinetics", forceLaw);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
-    momentDirection = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
-    addToTab("Kinetics", momentDirection);
-
-    momentLaw = new ExtWidget("Moment law",new GeneralizedForceLawChoiceWidget,true);
-    addToTab("Kinetics", momentLaw);
-  }
-
-  ElasticJointPropertyDialog::ElasticJointPropertyDialog(ElasticJoint *joint, QWidget *parent, Qt::WindowFlags f) : FloatingFrameLinkPropertyDialog(joint,parent,f) {
-
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
-    forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
-    addToTab("Kinetics", forceDirection);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
-    momentDirection = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
-    addToTab("Kinetics", momentDirection);
-
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(joint)));
-    addToTab("Kinetics", function);
   }
 
   ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, Qt::WindowFlags f) : MechanicalLinkPropertyDialog(contact,parent,f) {

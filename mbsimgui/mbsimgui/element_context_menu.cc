@@ -26,7 +26,7 @@
 //#include "linear_transfer_system.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
-//#include "joint.h"
+#include "joint.h"
 //#include "contact.h"
 //#include "sensor.h"
 #include "observer.h"
@@ -421,7 +421,7 @@ namespace MBSimGUI {
   }
 
   void LinkContextContextMenu::addJoint() {
-//    mw->addLink(new Joint("Joint"));
+    mw->addLink(new Joint("Joint"), element);
   }
 
   void LinkContextContextMenu::addElasticJoint() {

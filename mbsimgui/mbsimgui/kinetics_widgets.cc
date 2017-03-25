@@ -27,8 +27,17 @@
 #include <QtGui>
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
+
+  DOMElement* GeneralizedForceLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType().toStdString());
+    parent->insertBefore(ele0, ref);
+    return ele0;
+  }
 
   RegularizedBilateralConstraintWidget::RegularizedBilateralConstraintWidget() {
 
@@ -220,6 +229,29 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
     frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
     layout->addWidget(frictionFunction);
+  }
+
+  GeneralizedForceLawWidgetFactory::GeneralizedForceLawWidgetFactory(Element *parent_) : parent(parent_) {
+    name.push_back("Bilateral constraint");
+    name.push_back("Regularized bilateral constraint");
+    name.push_back("Unilateral constraint");
+    name.push_back("Regularized unilateral constraint");
+    xmlName.push_back(MBSIM%"BilateralConstraint");
+    xmlName.push_back(MBSIM%"RegularizedBilateralConstraint");
+    xmlName.push_back(MBSIM%"UnilateralConstraint");
+    xmlName.push_back(MBSIM%"RegularizedUnilateralConstraint");
+  }
+
+  QWidget* GeneralizedForceLawWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new BilateralConstraintWidget;
+    if(i==1)
+      return new RegularizedBilateralConstraintWidget;
+    if(i==2)
+      return new UnilateralConstraintWidget;
+    if(i==3)
+      return new RegularizedUnilateralConstraintWidget;
+    return NULL;
   }
 
   GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget() : generalizedForceLaw(0) {
