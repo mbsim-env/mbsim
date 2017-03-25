@@ -1208,20 +1208,37 @@ namespace MBSimGUI {
 
   DirectionalSpringDamperPropertyDialog::DirectionalSpringDamperPropertyDialog(DirectionalSpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : FloatingFrameLinkPropertyDialog(springDamper,parent,f) {
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new VecWidget(3),noUnitUnits(),1));
-    forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input));
-    addToTab("Kinetics", forceDirection);
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
+    addToTab("Kinetics",forceDirection);
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
     addToTab("Kinetics", forceFunction);
 
-    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft));
+    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedLength");
     addToTab("General",unloadedLength);
 
-    coilSpring = new ExtWidget("OpenMBV coil spring",new CoilSpringMBSOMBVWidget("NOTSET"),true);
+    coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", coilSpring);
   }
+
+  DOMElement* DirectionalSpringDamperPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FloatingFrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    forceDirection->initializeUsingXML(element->getXMLElement());
+    forceFunction->initializeUsingXML(element->getXMLElement());
+    unloadedLength->initializeUsingXML(element->getXMLElement());
+    coilSpring->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DirectionalSpringDamperPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FloatingFrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    forceDirection->writeXMLFile(element->getXMLElement(),ref);
+    forceFunction->writeXMLFile(element->getXMLElement(),ref);
+    unloadedLength->writeXMLFile(element->getXMLElement(),ref);
+    coilSpring->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
 
   JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : FloatingFrameLinkPropertyDialog(joint,parent,f) {
 
@@ -1296,7 +1313,7 @@ namespace MBSimGUI {
     gearInput = new ExtWidget("Gear inputs",new ListWidget(new GeneralizedGearConstraintWidgetFactory(constraint,0),"Gear input"));
     addToTab("General",gearInput);
 
-    function = new ExtWidget("Generalized force law",new GeneralizedForceLawChoiceWidget);
+    function = new ExtWidget("Generalized force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory(constraint),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
     addToTab("Kinetics",function);
 
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
@@ -1328,7 +1345,7 @@ namespace MBSimGUI {
     connections = new ExtWidget("Connections",new ConnectContoursWidget(2,contact));
     addToTab("Kinetics", connections);
 
-    contactForceLaw = new ExtWidget("Normal force law",new GeneralizedForceLawChoiceWidget);
+    contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory(contact),QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalForceLaw");
     addToTab("Kinetics", contactForceLaw);
 
     contactImpactLaw = new ExtWidget("Normal impact law",new GeneralizedImpactLawChoiceWidget,true);

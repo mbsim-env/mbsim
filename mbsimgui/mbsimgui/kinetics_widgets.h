@@ -263,25 +263,6 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> xmlName;
   };
 
-  class GeneralizedForceLawChoiceWidget : public Widget {
-    Q_OBJECT
-
-      friend class GeneralizedForceLawChoiceProperty;
-
-    public:
-    GeneralizedForceLawChoiceWidget();
-
-    int getForceLaw() {return comboBox->currentIndex();}
-
-    protected slots:
-      void defineForceLaw(int);
-
-    protected:
-    QComboBox *comboBox;
-    QVBoxLayout *layout;
-    GeneralizedForceLawWidget *generalizedForceLaw;
-  };
-
   class GeneralizedImpactLawChoiceWidget : public Widget {
     Q_OBJECT
 

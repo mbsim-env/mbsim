@@ -37,6 +37,7 @@ namespace MBSimGUI {
     public:
       DirectionalSpringDamper(const QString &str="");
       QString getType() const { return "DirectionalSpringDamper"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
   };
 

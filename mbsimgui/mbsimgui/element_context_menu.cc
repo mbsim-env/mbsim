@@ -413,7 +413,7 @@ namespace MBSimGUI {
   }
 
   void LinkContextContextMenu::addDirectionalSpringDamper() {
-//    mw->addLink(new DirectionalSpringDamper("DirectionalSpringDamper"));
+    mw->addLink(new DirectionalSpringDamper("DirectionalSpringDamper"), element);
   }
 
   void LinkContextContextMenu::addGeneralizedSpringDamper() {

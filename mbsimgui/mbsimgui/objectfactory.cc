@@ -162,8 +162,8 @@ namespace MBSimGUI {
       return new KineticExcitation;
     if(E(element)->getTagName()==MBSIM%"SpringDamper")
       return new SpringDamper;
-//    if(E(element)->getTagName()==MBSIM%"DirectionalSpringDamper")
-//      return new DirectionalSpringDamper(E(element)->getAttribute("name"));
+    if(E(element)->getTagName()==MBSIM%"DirectionalSpringDamper")
+      return new DirectionalSpringDamper;
 //    if(E(element)->getTagName()==MBSIM%"GeneralizedSpringDamper")
 //      return new GeneralizedSpringDamper(E(element)->getAttribute("name"));
     if(E(element)->getTagName()==MBSIM%"Joint")

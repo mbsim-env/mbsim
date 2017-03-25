@@ -37,7 +37,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* SpringDamper::processFileID(DOMElement *element) {
-    Link::processFileID(element);
+    FixedFrameLink::processFileID(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ELE) {
@@ -60,6 +60,19 @@ namespace MBSimGUI {
 //    unloadedLength.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"unloadedLength",vector<string>(2,"m")),"",4));
 //
 //    coilSpring.setProperty(new CoilSpringMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVCoilSpring",getID()));
+  }
+
+  DOMElement* DirectionalSpringDamper::processFileID(DOMElement *element) {
+    FloatingFrameLink::processFileID(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
   }
 
   GeneralizedSpringDamper::GeneralizedSpringDamper(const QString &str) : DualRigidBodyLink(str) {

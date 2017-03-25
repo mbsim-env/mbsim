@@ -254,36 +254,6 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget() : generalizedForceLaw(0) {
-
-    layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    comboBox = new CustomComboBox;
-    comboBox->addItem(tr("Bilateral constraint"));
-    comboBox->addItem(tr("Regularized bilateral constraint"));
-    comboBox->addItem(tr("Unilateral constraint"));
-    comboBox->addItem(tr("Regularized unilateral constraint"));
-    layout->addWidget(comboBox);
-    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
-    defineForceLaw(0);
-  }
-
-  void GeneralizedForceLawChoiceWidget::defineForceLaw(int index) {
-    layout->removeWidget(generalizedForceLaw);
-    delete generalizedForceLaw;
-    if(index==0)
-      generalizedForceLaw = new BilateralConstraintWidget;  
-    else if(index==1)
-      generalizedForceLaw = new RegularizedBilateralConstraintWidget;  
-    else if(index==2)
-      generalizedForceLaw = new UnilateralConstraintWidget;  
-    else if(index==3)
-      generalizedForceLaw = new RegularizedUnilateralConstraintWidget;  
-    layout->addWidget(generalizedForceLaw);
-  }
-
   GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget() : generalizedImpactLaw(0) {
 
     layout = new QVBoxLayout;
