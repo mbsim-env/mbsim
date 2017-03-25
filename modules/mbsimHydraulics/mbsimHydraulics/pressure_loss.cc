@@ -512,20 +512,16 @@ namespace MBSimHydraulics {
       if (((HLine*)(line))->getJacobian().rows())
         stateless=false;
       double rI;
-      double rO;
       double hGap;
       if (stateless) {
         rI=((const CircularLeakage0DOF*)(line))->getInnerRadius();
-        rO=((const CircularLeakage0DOF*)(line))->getOuterRadius();
         hGap=((const CircularLeakage0DOF*)(line))->getGapHeight();
       }
       else {
         rI=((const CircularLeakageLine*)(line))->getInnerRadius();
-        rO=((const CircularLeakageLine*)(line))->getOuterRadius();
         hGap=((const CircularLeakageLine*)(line))->getGapHeight();
       }
-      double area=M_PI*(rO*rO-rI*rI);
-      area=M_PI*2.*rI*hGap;
+      double area=M_PI*2.*rI*hGap;
       double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
       pVfac=-area*hGap*hGap*(1.+1.5*ecc*ecc*ecc)/12./eta;
       xdfac=area/2.;

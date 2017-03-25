@@ -236,9 +236,9 @@ namespace PLib {
     \date 14 May 1999
   */
   inline void Color::toYIQ(double &y, double &i, double &q){
-    double R= double(R)/255.0 ;
-    double G= double(R)/255.0 ;
-    double B= double(R)/255.0 ;
+    double R= double(1)/255.0 ;
+    double G= double(1)/255.0 ;
+    double B= double(1)/255.0 ;
     y = 0.299*R + 0.587*G + 0.114*B ;
     i = 0.596*R - 0.275*G - 0.321*B ;
     q = 0.212*R - 0.528*G + 0.311*B ;
