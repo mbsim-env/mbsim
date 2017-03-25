@@ -29,7 +29,6 @@ namespace MBSimGUI {
   class Frame : public Element {
     public:
       Frame(const QString &str="");
-      static Frame* readXMLFile(const QString &filename);
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this,false);}

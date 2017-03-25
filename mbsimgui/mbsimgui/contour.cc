@@ -19,19 +19,8 @@
 
 #include <config.h>
 #include "contour.h"
-#include "frame.h"
-#include "basic_properties.h"
-#include "ombv_properties.h"
-#include "function_property_factory.h"
-#include "objectfactory.h"
-#include "embed.h"
 
 using namespace std;
-using namespace MBXMLUtils;
-using namespace xercesc;
-
-//extern shared_ptr<DOMLSParser> parser;
-extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
@@ -39,14 +28,6 @@ namespace MBSimGUI {
 //    vector<PhysicalVariableProperty> input;
 //    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.01"), "m", MBSIM%"thickness"));
 //    thickness.setProperty(new ExtPhysicalVarProperty(input));
-  }
-
-  Contour* Contour::readXMLFile(const QString &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
-    DOMElement *e=doc->getDocumentElement();
-//    Contour *contour=ObjectFactory::getInstance()->createContour(e);
-    Contour *contour=Embed<Contour>::createAndInit(e);
-    return contour;
   }
 
   RigidContour::RigidContour(const QString &str) : Contour(str) {

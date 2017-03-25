@@ -19,16 +19,8 @@
 
 #include <config.h>
 #include "constraint.h"
-#include "frame.h"
-#include "rigid_body.h"
-#include "embed.h"
 
 using namespace std;
-using namespace MBXMLUtils;
-using namespace xercesc;
-
-//extern shared_ptr<DOMLSParser> parser;
-extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
@@ -39,13 +31,6 @@ namespace MBSimGUI {
 //  Property* GeneralizedGearConstraintPropertyFactory::createProperty(int i) {
 //    return new GearInputReferenceProperty("",element,xmlName);
 //  }
-
-  Constraint* Constraint::readXMLFile(const QString &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
-    DOMElement *e=doc->getDocumentElement();
-    Constraint *constraint=Embed<Constraint>::createAndInit(e);
-    return constraint;
-  }
 
   GeneralizedConstraint::GeneralizedConstraint(const QString &str) : MechanicalConstraint(str) {
 //    support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));

@@ -27,9 +27,6 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-//extern shared_ptr<DOMLSParser> parser;
-extern DOMLSParser *parser;
-
 namespace MBSimGUI {
 
   Environment *Environment::instance=NULL;
@@ -99,15 +96,6 @@ namespace MBSimGUI {
     Group::initializeUsingXML(element);
     environments = E(element)->getFirstElementChildNamed(MBSIM%"environments");
     return element;
-  }
-
-  DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const QString &filename) {
-    MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
-    DOMElement *e=doc->getDocumentElement();
-    DynamicSystemSolver *solver=static_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
-    solver->initializeUsingXML(e);
-    return solver;
   }
 
 }

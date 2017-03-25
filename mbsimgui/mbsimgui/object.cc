@@ -19,16 +19,8 @@
 
 #include <config.h>
 #include "object.h"
-#include "objectfactory.h"
-#include "embed.h"
-#include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
-using namespace MBXMLUtils;
-using namespace xercesc;
-
-//extern shared_ptr<DOMLSParser> parser;
-extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
@@ -38,13 +30,6 @@ namespace MBSimGUI {
     addPlotFeature("derivativeOfGeneralizedPosition");
     addPlotFeature("generalizedAcceleration");
     addPlotFeature("energy");
-  }
-
-  Object* Object::readXMLFile(const QString &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
-    DOMElement *e=doc->getDocumentElement();
-    Object *object=Embed<Object>::createAndInit(e);
-    return object;
   }
 
 }

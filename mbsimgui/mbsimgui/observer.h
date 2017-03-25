@@ -28,7 +28,6 @@ namespace MBSimGUI {
   class Observer : public Element {
     public:
       Observer(const QString &str="");
-      static Observer* readXMLFile(const QString &filename);
       virtual int getxSize() {return 0;}
   };
 

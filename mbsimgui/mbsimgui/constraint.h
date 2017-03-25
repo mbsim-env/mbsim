@@ -48,7 +48,6 @@ namespace MBSimGUI {
   class Constraint : public Element {
     public:
       Constraint(const QString &str="") : Element(str) { }
-      static Constraint* readXMLFile(const QString &filename);
   };
 
   class MechanicalConstraint : public Constraint {

@@ -46,7 +46,6 @@ namespace MBSimGUI {
     Group(const QString &str="");
     ~Group();
     QString getType() const { return "Group"; }
-    static Group* readXMLFile(const QString &filename);
     void createXMLConstraints();
     void createXMLObservers();
     xercesc::DOMElement* getXMLFrames() { return frames; }

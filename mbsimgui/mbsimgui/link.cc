@@ -19,16 +19,8 @@
 
 #include <config.h>
 #include "link.h"
-#include "frame.h"
-#include "objectfactory.h"
-#include "embed.h"
 
 using namespace std;
-using namespace MBXMLUtils;
-using namespace xercesc;
-
-//extern shared_ptr<DOMLSParser> parser;
-extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
@@ -37,13 +29,6 @@ namespace MBSimGUI {
     addPlotFeature("generalizedRelativeVelocity");
     addPlotFeature("generalizedForce");
     addPlotFeature("energy");
-  }
-
-  Link* Link::readXMLFile(const QString &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
-    DOMElement *e=doc->getDocumentElement();
-    Link *link=Embed<Link>::createAndInit(e);
-    return link;
   }
 
   FrameLink::FrameLink(const QString &str) : MechanicalLink(str) {

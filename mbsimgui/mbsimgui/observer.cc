@@ -19,26 +19,12 @@
 
 #include <config.h>
 #include "observer.h"
-#include "objectfactory.h"
-#include "embed.h"
 
 using namespace std;
-using namespace MBXMLUtils;
-using namespace xercesc;
-
-//extern shared_ptr<DOMLSParser> parser;
-extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
   Observer::Observer(const QString &str) : Element(str) {
-  }
-
-  Observer* Observer::readXMLFile(const QString &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
-    DOMElement *e=doc->getDocumentElement();
-    Observer *observer=Embed<Observer>::createAndInit(e);
-    return observer;
   }
 
   KinematicCoordinatesObserver::KinematicCoordinatesObserver(const QString &str) : Observer(str) {

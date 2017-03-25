@@ -24,6 +24,9 @@
 #include "parameter.h"
 #include <QFileInfo>
 #include <QDir>
+#include <xercesc/dom/DOMDocument.hpp>
+
+extern xercesc::DOMLSParser *parser;
 
 namespace MBSimGUI {
 
@@ -56,13 +59,14 @@ namespace MBSimGUI {
             }
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"))));
-              object=T::readXMLFile(fileInfo.canonicalFilePath());
+              std::shared_ptr<xercesc::DOMDocument> doc(parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString()));
+              ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+              ele1->insertBefore(ele2,NULL);
+              MBXMLUtils::E(ele1)->removeAttribute("href");
             }
-            else
-              object=create(ele2);
+            object=create(ele2);
             if(object) {
-              if(ele2)
-                object->initializeUsingXML(ele2);
+              object->initializeUsingXML(ele2);
               for(size_t i=0; i<param.size(); i++)
               object->addParameter(param[i]);
             }

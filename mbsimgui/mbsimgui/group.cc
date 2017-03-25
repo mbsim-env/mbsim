@@ -35,9 +35,6 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-//extern shared_ptr<DOMLSParser> parser;
-extern DOMLSParser *parser;
-
 namespace MBSimGUI {
 
   Group::Group(const QString &str) : Element(str), constraints(NULL), observers(NULL) {
@@ -174,14 +171,6 @@ namespace MBSimGUI {
     }
     removedElement.push_back(element);
 //    element->deinitialize();
-  }
-
-  Group* Group::readXMLFile(const QString &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
-    DOMElement *e=doc->getDocumentElement();
-//    Group *group=ObjectFactory::getInstance()->createGroup(e, parent);
-    Group *group=Embed<Group>::createAndInit(e);
-    return group;
   }
 
   void Group::createXMLConstraints() {

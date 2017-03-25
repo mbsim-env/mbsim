@@ -19,17 +19,12 @@
 
 #include <config.h>
 #include "frame.h"
-#include "objectfactory.h"
-#include "embed.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
-
-//extern shared_ptr<DOMLSParser> parser;
-extern DOMLSParser *parser;
 
 namespace MBSimGUI {
 
@@ -41,13 +36,6 @@ namespace MBSimGUI {
     addPlotFeature("angularVelocity");
     addPlotFeature("acceleration");
     addPlotFeature("angularAcceleration");
-  }
-
-  Frame* Frame::readXMLFile(const QString &filename) {
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename.toStdString()));
-    DOMElement *e=doc->getDocumentElement();
-    Frame *frame=Embed<Frame>::createAndInit(e);
-    return frame;
   }
 
   DOMElement* Frame::processFileID(DOMElement *element) {

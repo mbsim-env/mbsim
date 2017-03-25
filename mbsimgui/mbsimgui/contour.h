@@ -27,7 +27,6 @@ namespace MBSimGUI {
   class Contour : public Element {
     public:
       Contour(const QString &str="");
-      static Contour* readXMLFile(const QString &filename);
       ElementPropertyDialog* createPropertyDialog() {return new ContourPropertyDialog(this);}
   };
 
