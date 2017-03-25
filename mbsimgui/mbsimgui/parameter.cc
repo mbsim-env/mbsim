@@ -27,9 +27,6 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-//extern shared_ptr<DOMLSParser> parser;
-extern DOMLSParser *parser;
-
 namespace MBSimGUI {
 
   Parameter::Parameter(const QString &name_) : parent(NULL), name(name_), config(false) {
@@ -82,13 +79,6 @@ namespace MBSimGUI {
       e=e->getNextElementSibling();
     }
     return param;
-  }
-
-  vector<Parameter*> Parameter::readXMLFile(const string &filename) {
-    MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc(parser->parseURI(X()%filename));
-    DOMElement *e=doc->getDocumentElement();
-    return Parameter::initializeParametersUsingXML(e);
   }
 
   StringParameter::StringParameter(const QString &name) : Parameter(name) {

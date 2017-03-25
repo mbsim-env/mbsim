@@ -45,7 +45,8 @@ namespace MBSimGUI {
             xercesc::DOMElement *ele2 = 0;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"))));
-              param = Parameter::readXMLFile(fileInfo.canonicalFilePath().toStdString());
+              std::shared_ptr<xercesc::DOMDocument> doc(parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString()));
+              param = Parameter::initializeParametersUsingXML(doc->getDocumentElement());
               ele2=ele1->getFirstElementChild();
             }
             else {

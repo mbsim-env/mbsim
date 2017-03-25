@@ -57,7 +57,6 @@ namespace MBSimGUI {
       bool getConfig() { return config; }
       void setConfig(bool config_) { config = config_; }
       static std::vector<Parameter*> initializeParametersUsingXML(xercesc::DOMElement *element);
-      static std::vector<Parameter*> readXMLFile(const std::string &filename);
     protected:
       Element *parent;
       QString name, valuestr;
