@@ -227,7 +227,7 @@ namespace MBSimFMI {
     addPredefinedParameters(varSim, predefinedParameterStruct, false);
     
     // create output directory
-    create_directories(predefinedParameterStruct.outputDir);
+    create_directories(absolute(predefinedParameterStruct.outputDir));
 
     // add model parmeters to varSim and create the DynamicSystemSolver (set the dss varaible)
     addModelParametersAndCreateDSS(varSim);

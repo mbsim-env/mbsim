@@ -39,19 +39,6 @@ namespace MBSim {
     return oss.str();
   }
 
-  double degtorad(double alpha) {
-    return alpha / 180. * M_PI;
-  }
-  double radtodeg(double phi) {
-    return phi / M_PI * 180.;
-  }
-  fmatvec::Vec degtorad(fmatvec::Vec alpha) {
-    return alpha / 180. * M_PI;
-  }
-  fmatvec::Vec radtodeg(fmatvec::Vec phi) {
-    return phi / M_PI * 180.;
-  }
-
   double sign(double x) {
     if (x > 0.)
       return 1.;
@@ -59,14 +46,6 @@ namespace MBSim {
       return -1.;
     else
       return 0.;
-  }
-
-  Vec tildetovec(const SqrMat &A) {
-    Vec x(3, NONINIT);
-    x(0) = A(2, 1);
-    x(1) = A(0, 2);
-    x(2) = A(1, 0);
-    return x;
   }
 
   double ArcTan(double x, double y) {

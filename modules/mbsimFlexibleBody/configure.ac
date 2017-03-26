@@ -66,7 +66,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([cannot generate documentation. 'doxygen' required.])
 fi
 
-LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
+LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsimFlexibleBody/Makefile mbsimFlexibleBody/flexible_body/Makefile mbsimFlexibleBody/flexible_body/finite_elements/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_2s_13_mfr_mindlin/Makefile mbsimFlexibleBody/frames/Makefile mbsimFlexibleBody/contours/Makefile mbsimFlexibleBody/contact_kinematics/Makefile mbsimFlexibleBody/contours/neutral_contour/Makefile mbsimFlexibleBody/contours/neutral_contour/neutral_contour_components/Makefile mbsimFlexibleBody/utils/Makefile mbsimFlexibleBody.pc schema/Makefile xmldoc/Makefile doc/Makefile doc/doxyfile xmldoc/Doxyfile])

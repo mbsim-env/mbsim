@@ -21,7 +21,7 @@ try:
   import shutil
 
   # config file: this will lock the config file for the lifetime of this object
-  class ConfigFile:
+  class ConfigFile(object):
     def __init__(self, rw):
       self.rw=rw
     def __enter__(self):

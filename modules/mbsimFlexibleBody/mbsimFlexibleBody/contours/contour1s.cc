@@ -80,8 +80,6 @@ namespace MBSimFlexibleBody {
       data.push_back(pos(2)); // global z-position
       data.push_back(0.); // local twist
 
-      s += ds;
-
       openMBVSpineExtrusion->append(data);
     }
   }
