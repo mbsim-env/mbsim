@@ -96,11 +96,13 @@ namespace MBSimGUI {
   }
 
   void Group::addConstraint(Constraint* constraint_) {
+    if(not constraints) createXMLConstraints();
     constraint.push_back(constraint_);
     constraint_->setParent(this);
   }
 
   void Group::addObserver(Observer* observer_) {
+    if(not observers) createXMLObservers();
     observer.push_back(observer_);
     observer_->setParent(this);
   }
@@ -221,32 +223,46 @@ namespace MBSimGUI {
   DOMElement* Group::processFileID(DOMElement *element) {
     Element::processFileID(element);
 
-    // frames
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
     for(size_t i=1; i<frame.size(); i++) {
       frame[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 
-    // contours
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
     for(size_t i=0; i<contour.size(); i++) {
       contour[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 
-    // objects
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
     for(size_t i=0; i<object.size(); i++) {
       object[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 
-    // links
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
     for(size_t i=0; i<link.size(); i++) {
       link[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"constraints");
+    if(ELE) {
+      ELE=ELE->getFirstElementChild();
+      for(size_t i=0; i<constraint.size(); i++) {
+        constraint[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+        ELE=ELE->getNextElementSibling();
+      }
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"observers");
+    if(ELE) {
+      ELE=ELE->getFirstElementChild();
+      for(size_t i=0; i<observer.size(); i++) {
+        observer[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+        ELE=ELE->getNextElementSibling();
+      }
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");

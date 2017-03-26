@@ -478,31 +478,31 @@ namespace MBSimGUI {
   }
 
   void ObserverContextContextMenu::addMechanicalLinkObserver() {
-    mw->addObserver(new MechanicalLinkObserver("MechanicalLinkObserver"));
+    mw->addObserver(new MechanicalLinkObserver("MechanicalLinkObserver"), element);
   }
 
   void ObserverContextContextMenu::addMechanicalConstraintObserver() {
-    mw->addObserver(new MechanicalConstraintObserver("MechanicalConstraintObserver"));
+    mw->addObserver(new MechanicalConstraintObserver("MechanicalConstraintObserver"), element);
   }
 
   void ObserverContextContextMenu::addContactObserver() {
-    mw->addObserver(new ContactObserver("ContactObserver"));
+    mw->addObserver(new ContactObserver("ContactObserver"), element);
   }
 
   void ObserverContextContextMenu::addFrameObserver() {
-    mw->addObserver(new FrameObserver("FrameObserver"));
+    mw->addObserver(new FrameObserver("FrameObserver"), element);
   }
 
   void ObserverContextContextMenu::addRigidBodyObserver() {
-    mw->addObserver(new RigidBodyObserver("RigidBodyObserver"));
+    mw->addObserver(new RigidBodyObserver("RigidBodyObserver"), element);
   }
 
   void ObserverContextContextMenu::addKinematicCoordinatesObserver() {
-    mw->addObserver(new KinematicCoordinatesObserver("KinematicCoordinatesObserver"));
+    mw->addObserver(new KinematicCoordinatesObserver("KinematicCoordinatesObserver"), element);
   }
 
   void ObserverContextContextMenu::addRelativeKinematicsObserver() {
-    mw->addObserver(new RelativeKinematicsObserver("RelativeKinematicsObserver"));
+    mw->addObserver(new RelativeKinematicsObserver("RelativeKinematicsObserver"), element);
   }
 
   SignalContextContextMenu::SignalContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

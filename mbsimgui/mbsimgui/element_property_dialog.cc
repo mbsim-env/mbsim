@@ -1318,6 +1318,22 @@ namespace MBSimGUI {
     addToTab("Kinetics", function);
   }
 
+  DOMElement* ElasticJointPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FloatingFrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    forceDirection->initializeUsingXML(element->getXMLElement());
+    momentDirection->initializeUsingXML(element->getXMLElement());
+    function->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ElasticJointPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FloatingFrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    forceDirection->writeXMLFile(element->getXMLElement(),ref);
+    momentDirection->writeXMLFile(element->getXMLElement(),ref);
+    function->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
   GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(DualRigidBodyLink *springDamper, QWidget *parent, Qt::WindowFlags f) : DualRigidBodyLinkPropertyDialog(springDamper,parent,f) {
 
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
@@ -1479,14 +1495,30 @@ namespace MBSimGUI {
 
     addTab("Visualisation",1);
 
-    link = new ExtWidget("Mechanical link",new LinkOfReferenceWidget(observer,0));
+    link = new ExtWidget("Mechanical link",new LinkOfReferenceWidget(observer,0),true,false,MBSIM%"mechanicalLink");
     addToTab("General", link);
 
-    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
     addToTab("Visualisation",momentArrow);
+  }
+
+  DOMElement* MechanicalLinkObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
+    link->initializeUsingXML(element->getXMLElement());
+    forceArrow->initializeUsingXML(element->getXMLElement());
+    momentArrow->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* MechanicalLinkObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    link->writeXMLFile(element->getXMLElement(),ref);
+    forceArrow->writeXMLFile(element->getXMLElement(),ref);
+    momentArrow->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   MechanicalConstraintObserverPropertyDialog::MechanicalConstraintObserverPropertyDialog(MechanicalConstraintObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {

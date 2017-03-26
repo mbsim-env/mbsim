@@ -527,6 +527,8 @@ namespace MBSimGUI {
 
     public:
       ElasticJointPropertyDialog(ElasticJoint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *forceDirection, *momentDirection, *function;
   };
@@ -604,6 +606,8 @@ namespace MBSimGUI {
 
     public:
       MechanicalLinkObserverPropertyDialog(MechanicalLinkObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *link, *forceArrow, *momentArrow;
   };

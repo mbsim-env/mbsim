@@ -19,8 +19,11 @@
 
 #include <config.h>
 #include "observer.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -64,6 +67,26 @@ namespace MBSimGUI {
 //    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
 //
 //    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
+  }
+
+  DOMElement* MechanicalLinkObserver::processFileID(DOMElement *element) {
+    Observer::processFileID(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
   }
 
   MechanicalConstraintObserver::MechanicalConstraintObserver(const QString &str) : Observer(str) {

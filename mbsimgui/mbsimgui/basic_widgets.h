@@ -173,7 +173,6 @@ namespace MBSimGUI {
       void updateWidget();
       void setBody(const QString &str);
       QString getBody() const;
-//      RigidBody* getSelectedBody() {return selectedBody;}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
@@ -247,9 +246,10 @@ namespace MBSimGUI {
       LinkOfReferenceWidget(Element* element, Link* selectedLink);
 
       void updateWidget();
-      void setLink(const QString &str, Link *linkPtr);
+      void setLink(const QString &str);
       QString getLink() const;
-      Link* getSelectedLink() {return selectedLink;}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QLineEdit* link;

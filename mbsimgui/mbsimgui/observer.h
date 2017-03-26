@@ -28,7 +28,6 @@ namespace MBSimGUI {
   class Observer : public Element {
     public:
       Observer(const QString &str="");
-      virtual int getxSize() {return 0;}
   };
 
   class KinematicCoordinatesObserver : public Observer {
@@ -49,6 +48,8 @@ namespace MBSimGUI {
     public:
       MechanicalLinkObserver(const QString &str="");
       QString getType() const { return "MechanicalLinkObserver"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
+      ElementPropertyDialog* createPropertyDialog() {return new MechanicalLinkObserverPropertyDialog(this);}
   };
 
   class MechanicalConstraintObserver : public Observer {

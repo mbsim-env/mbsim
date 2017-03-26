@@ -452,6 +452,7 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton(tr("Browse"));
     connect(button,SIGNAL(clicked(bool)),linkBrowser,SLOT(show()));
     layout->addWidget(button);
+    updateWidget();
   }
 
   void LinkOfReferenceWidget::updateWidget() {
@@ -470,14 +471,25 @@ namespace MBSimGUI {
     emit linkChanged();
   }
 
-  void LinkOfReferenceWidget::setLink(const QString &str, Link *linkPtr) {
-    selectedLink = linkPtr;
+  void LinkOfReferenceWidget::setLink(const QString &str) {
+    selectedLink = element->getByPath<Link>(str);
+    linkBrowser->updateWidget(selectedLink);
     link->setText(str);
     emit linkChanged();
   }
 
   QString LinkOfReferenceWidget::getLink() const {
     return link->text();
+  }
+
+  DOMElement* LinkOfReferenceWidget::initializeUsingXML(DOMElement *element) {
+    setLink(QString::fromStdString(E(element)->getAttribute("ref")));
+    return element;
+  }
+
+  DOMElement* LinkOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getLink().toStdString());
+    return NULL;
   }
 
   ConstraintOfReferenceWidget::ConstraintOfReferenceWidget(Element *element_, Constraint* selectedConstraint_) : element(element_), selectedConstraint(selectedConstraint_) {
