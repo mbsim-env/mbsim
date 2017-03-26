@@ -82,7 +82,8 @@ def parseArguments():
   cfgOpts.add_argument("--openmbvBranch", default="", help='In the openmbv repo checkout the branch OPENMBVBRANCH')
   cfgOpts.add_argument("--mbsimBranch", default="", help='In the mbsim repo checkout the branch MBSIMBRANCH')
   cfgOpts.add_argument("--buildSystemRun", action="store_true", help='Run in build system mode: generate build system state files and run with simplesandbox.')
-  cfgOpts.add_argument("--coverage", action="store_true", help='Enable coverage analysis.')
+  cfgOpts.add_argument("--coverage", action="store_true", help='Enable coverage analyzis using gcov/lcov.')
+  cfgOpts.add_argument("--staticCodeAnalyzis", action="store_true", help='Enable static code analyzis using LLVM Clang Analyzer.')
   
   outOpts=argparser.add_argument_group('Output Options')
   outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
@@ -450,8 +451,10 @@ def main():
     print('<th><span class="glyphicon glyphicon-wrench"></span>&nbsp;Configure</th>', file=mainFD)
   if not args.disableMake:
     print('<th><span class="glyphicon glyphicon-repeat"></span>&nbsp;Make</th>', file=mainFD)
+    if args.staticCodeAnalyzis:
+      print('<th data-toggle="tooltip" data-placement="bottom" title="Static Code Analyzis"><span class="glyphicon glyphicon-search"></span>&nbsp;SCA</th>', file=mainFD)
   if not args.disableMakeCheck:
-    print('<th><span class="glyphicon glyphicon-ok-circle"></span>&nbsp;Check</th>', file=mainFD)
+    print('<th><span class="glyphicon glyphicon-ok-circle"></span>&nbsp;Make Check</th>', file=mainFD)
   if not args.disableDoxygen:
     print('<th><span class="glyphicon glyphicon-question-sign"></span>&nbsp;Doxygen Doc.</th>', file=mainFD)
   if not args.disableXMLDoc:
@@ -462,7 +465,7 @@ def main():
   for tool in set(toolDependencies)-set(orderedBuildTools):
     print('<tr>', file=mainFD)
     print('<td>'+tool.replace('/', u'/\u200B')+'</td>', file=mainFD)
-    for i in range(0, 5-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+    for i in range(0, 6-sum([args.disableConfigure, args.disableMake, not args.staticCodeAnalyzis, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
       print('<td>-</td>', file=mainFD)
     print('</tr>', file=mainFD)
   mainFD.flush()
@@ -488,10 +491,10 @@ def main():
     runExamplesErrorCode=runexamples(mainFD)
     os.chdir(savedDir)
 
-  # coverage analysis
+  # coverage analyzis
   if args.coverage:
     nrRun=nrRun+1
-    print("Create coverage analysis"); sys.stdout.flush()
+    print("Create coverage analyzis"); sys.stdout.flush()
     if coverage(mainFD)!=0:
       nrFailed=nrFailed+1
 
@@ -813,6 +816,12 @@ def make(tool, mainFD):
   try:
     if not args.disableMake:
       run=1
+      staticCodeAnalyzeDir=[]
+      staticCodeAnalyzeComm=[]
+      if args.staticCodeAnalyzis and tool != "mbsim/thirdparty/nurbs++": # skip nurbs++ being a 3rd party tool
+        staticCodeAnalyzeDir=[pj(args.reportOutDir, tool, "static-code-analyze")]
+        if not os.path.exists(staticCodeAnalyzeDir[0]): os.mkdir(staticCodeAnalyzeDir[0])
+        staticCodeAnalyzeComm=[scriptdir+"/scan-build", "-analyze-headers", "--exclude", "*_swig_python.cc", "--exclude", "*_swig_octave.cc", "--exclude", "*_swig_java.cc", "--exclude", "/usr/include/*", "--exclude", "/home/mbsim/3rdparty/*", "-o", staticCodeAnalyzeDir[0], "--html-title", tool+" - Static Code Analyzis"]
       # make
       errStr=""
       if not args.disableMakeClean:
@@ -821,7 +830,7 @@ def make(tool, mainFD):
                               stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
           errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make -k\n", file=makeFD); makeFD.flush()
-      if simplesandbox.call(["make", "-k", "-j", str(args.j)], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+      if simplesandbox.call(staticCodeAnalyzeComm+["make", "-k", "-j", str(args.j)], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix()+staticCodeAnalyzeDir,
                             stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
         errStr=errStr+"make failed; "
       if not args.disableMakeInstall:
@@ -837,12 +846,34 @@ def make(tool, mainFD):
     result="done"
   except RuntimeError as ex:
     result=str(ex)
+  makeFD.close()
   if not args.disableMake:
     print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if result=="done" else "danger",
       "ok-sign alert-success" if result=="done" else "exclamation-sign alert-danger"), file=mainFD)
     print('  <a href="'+myurllib.pathname2url(pj(tool, "make.txt"))+'">'+result+'</a>', file=mainFD)
     print('</td>', file=mainFD)
-  makeFD.close()
+    if args.staticCodeAnalyzis:
+      if tool != "mbsim/thirdparty/nurbs++": # skip nurbs++ being a 3rd party tool
+        d=""
+        numErr=0
+        try:
+          d=os.path.basename(glob.glob(pj(args.reportOutDir, tool, "static-code-analyze", "*"))[0])
+          # search "scan-build: 2 bugs found." in index.html
+          linesRE=re.compile("^scan-build: ([0-9]+) bugs found.$")
+          for line in fileinput.FileInput(pj(args.reportOutDir, tool, "make.txt")):
+            m=linesRE.match(line)
+            if m!=None:
+              numErr=int(m.group(1))
+              break
+        except:
+          pass
+        print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if numErr==0 else "warning",
+          "ok-sign alert-success" if numErr==0 else "warning-sign alert-warning"), file=mainFD)
+        print('  <a href="%s">%s</a>'%(myurllib.pathname2url(pj(tool, "static-code-analyze", d, "")),
+          "passed" if numErr==0 else 'error&nbsp;<span class="badge">%d</span>'%(numErr)), file=mainFD)
+        print('</td>', file=mainFD)
+      else:
+        print('<td>-</td>', file=mainFD)
   mainFD.flush()
 
   if result!="done":
@@ -981,7 +1012,7 @@ def runexamples(mainFD):
   else:
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '">examples failed</a></td>', file=mainFD)
-  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+  for i in range(0, 5-sum([args.disableConfigure, args.disableMake, not args.staticCodeAnalyzis, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
     print('<td>-</td>', file=mainFD)
   print('</tr>', file=mainFD)
 
@@ -992,7 +1023,7 @@ def runexamples(mainFD):
 
 
 def coverage(mainFD):
-  print('<tr><td>Coverage analysis</td>', file=mainFD); mainFD.flush()
+  print('<tr><td>Coverage analyzis</td>', file=mainFD); mainFD.flush()
 
   ret=0
   # copy .gcda files from coverage dir to build dir
@@ -1061,8 +1092,8 @@ def coverage(mainFD):
   else:
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
   print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
-        '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%d%</span></a></td>'%(covRate), file=mainFD)
-  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+        '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%d%%</span></a></td>'%(covRate), file=mainFD)
+  for i in range(0, 5-sum([args.disableConfigure, args.disableMake, not args.staticCodeAnalyzis, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
     print('<td>-</td>', file=mainFD)
   print('</tr>', file=mainFD); mainFD.flush()
   return ret
@@ -1092,7 +1123,7 @@ def createDistribution(mainFD):
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;'+
           '<a href="'+myurllib.pathname2url(pj("distribute", "log.txt"))+'">failed</a>'+
           '</td>', file=mainFD)
-  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+  for i in range(0, 5-sum([args.disableConfigure, args.disableMake, not args.staticCodeAnalyzis, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
     print('<td>-</td>', file=mainFD)
   print('</tr>', file=mainFD); mainFD.flush()
 
