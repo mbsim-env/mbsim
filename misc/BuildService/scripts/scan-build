@@ -15,6 +15,9 @@
 use strict;
 use warnings;
 use FindBin qw($RealBin);
+$RealBin = "/usr/libexec/clang-analyzer/scan-build";
+use Text::Glob;
+$Text::Glob::strict_wildcard_slash = 0;
 use Digest::MD5;
 use File::Basename;
 use File::Find;
@@ -343,6 +346,7 @@ sub AddStatLine {
 # multiple error reports.  We use a cache to solve this problem.
 
 my %AlreadyScanned;
+my @Excludes;
 
 sub ScanFile {
   
@@ -411,6 +415,13 @@ sub ScanFile {
   if ($BugCategory =~ /statistics/i) {
     AddStatLine($BugDescription, $Stats, $BugFile);
     return;
+  }
+
+  # Don't add excluded files
+  foreach my $ex (@Excludes) {
+    if (Text::Glob::match_glob( $ex, $BugFile )) {
+      return;
+    }
   }
   
   push @$Index,[ $FName, $BugCategory, $BugType, $BugFile, $BugLine,
@@ -1125,6 +1136,13 @@ OPTIONS:
  --use-c++=[compiler path]
  
    This is the same as "-use-cc" but for C++ code.
+
+ --exclude [glob pattern]   
+ --exclude=[glob pattern]
+  
+   Exclude all files matching the glob pattern from the summary table.
+   Multiple --exclude arguments can be provided.
+   The directory separator character / is matched by * or ?.
  
  -v
  
@@ -1538,6 +1556,17 @@ while (@ARGV) {
   if ($arg eq "--override-compiler") {
     shift @ARGV;
     $OverrideCompiler = 1;
+    next;
+  }
+
+  if ($arg eq "--exclude") {
+    shift @ARGV;
+    push @Excludes, shift @ARGV;
+    next;
+  }
+  if ($arg =~ /^--exclude=(.+)$/) {
+    shift @ARGV;
+    push @Excludes, $1;
     next;
   }
   
