@@ -30,10 +30,10 @@
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
 #include "joint.h"
+#include "friction.h"
 //#include "contact.h"
 //#include "sensor.h"
 //#include "widget.h"
-//#include "friction.h"
 //#include "gear.h"
 //#include "connection.h"
 #include "observer.h"
@@ -174,8 +174,8 @@ namespace MBSimGUI {
       return new GeneralizedSpringDamper;
 //    if(E(element)->getTagName()==MBSIM%"GeneralizedElasticConnection")
 //      return new GeneralizedElasticConnection(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")
-//      return new GeneralizedFriction(E(element)->getAttribute("name"));
+    if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")
+      return new GeneralizedFriction;
 //    if(E(element)->getTagName()==MBSIM%"GeneralizedGear")
 //      return new GeneralizedGear(E(element)->getAttribute("name"));
 //    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedPositionSensor")

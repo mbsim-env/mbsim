@@ -1278,13 +1278,13 @@ namespace MBSimGUI {
     forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
 
-    forceLaw = new ExtWidget("Force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory(joint),QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceLaw");
+    forceLaw = new ExtWidget("Force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceLaw");
     addToTab("Kinetics",forceLaw);
 
     momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
     addToTab("Kinetics",momentDirection);
 
-    momentLaw = new ExtWidget("Moment law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory(joint),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentLaw");
+    momentLaw = new ExtWidget("Moment law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentLaw");
     addToTab("Kinetics",momentLaw);
   }
 
@@ -1343,12 +1343,27 @@ namespace MBSimGUI {
 
   GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(DualRigidBodyLink *friction, QWidget *parent, Qt::WindowFlags f) : DualRigidBodyLinkPropertyDialog(friction,parent,f) {
 
-    function = new ExtWidget("Generalized friction force law",new FrictionForceLawChoiceWidget,true);
+    function = new ExtWidget("Generalized friction force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionForceLaw");
     addToTab("Kinetics", function);
 
-    normalForce = new ExtWidget("Generalized normal force function",new ChoiceWidget2(new FunctionWidgetFactory2(friction)),true);
+    normalForce = new ExtWidget("Generalized normal force function",new ChoiceWidget2(new FunctionWidgetFactory2(friction),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedNormalForceFunction");
     addToTab("Kinetics",normalForce);
   }
+
+  DOMElement* GeneralizedFrictionPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    DualRigidBodyLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    function->initializeUsingXML(element->getXMLElement());
+    normalForce->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedFrictionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DualRigidBodyLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    function->writeXMLFile(element->getXMLElement(),ref);
+    normalForce->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
 
   GeneralizedGearPropertyDialog::GeneralizedGearPropertyDialog(RigidBodyLink *constraint, QWidget *parent, Qt::WindowFlags f) : RigidBodyLinkPropertyDialog(constraint,parent,f) {
     addTab("Kinetics",1);
@@ -1360,7 +1375,7 @@ namespace MBSimGUI {
     gearInput = new ExtWidget("Gear inputs",new ListWidget(new GeneralizedGearConstraintWidgetFactory(constraint,0),"Gear input"));
     addToTab("General",gearInput);
 
-    function = new ExtWidget("Generalized force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory(constraint),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
+    function = new ExtWidget("Generalized force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
     addToTab("Kinetics",function);
 
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
@@ -1392,7 +1407,7 @@ namespace MBSimGUI {
     connections = new ExtWidget("Connections",new ConnectContoursWidget(2,contact));
     addToTab("Kinetics", connections);
 
-    contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory(contact),QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalForceLaw");
+    contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalForceLaw");
     addToTab("Kinetics", contactForceLaw);
 
     contactImpactLaw = new ExtWidget("Normal impact law",new GeneralizedImpactLawChoiceWidget,true);

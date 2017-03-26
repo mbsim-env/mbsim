@@ -21,20 +21,14 @@
 #define _FRICTION__H_
 
 #include "link.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 
   class GeneralizedFriction : public DualRigidBodyLink {
-    friend class GeneralizedFrictionPropertyDialog;
     public:
-    GeneralizedFriction(const QString &str="");
-    QString getType() const { return "GeneralizedFriction"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedFrictionPropertyDialog(this);}
-    protected:
-    ExtProperty function, normalForce;
+      GeneralizedFriction(const QString &str="");
+      QString getType() const { return "GeneralizedFriction"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedFrictionPropertyDialog(this);}
   };
 
 }

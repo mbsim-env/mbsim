@@ -35,6 +35,11 @@ namespace MBSimGUI {
   DOMElement* GeneralizedForceLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType().toStdString());
+    if(forceFunc) {
+      DOMElement *ele1 = D(doc)->createElement( MBSIM%"forceFunction" );
+      forceFunc->writeXMLFile(ele1);
+      ele0->insertBefore(ele1, NULL);
+    }
     parent->insertBefore(ele0, ref);
     return ele0;
   }
@@ -48,16 +53,16 @@ namespace MBSimGUI {
     layout->addWidget(funcList);
     setLayout(layout);
     connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-    forceFunc = new LinearRegularizedBilateralConstraintWidget;  
-    layout->addWidget(forceFunc);
+//    forceFunc = new LinearRegularizedBilateralConstraintWidget;
+//    layout->addWidget(forceFunc);
   }
 
   void RegularizedBilateralConstraintWidget::defineFunction(int index) {
     if(index==0) {
       layout->removeWidget(forceFunc);
       delete forceFunc;
-      forceFunc = new LinearRegularizedBilateralConstraintWidget;  
-      layout->addWidget(forceFunc);
+//      forceFunc = new LinearRegularizedBilateralConstraintWidget;
+//      layout->addWidget(forceFunc);
     }
   }
 
@@ -70,16 +75,16 @@ namespace MBSimGUI {
     layout->addWidget(funcList);
     setLayout(layout);
     connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-    forceFunc = new LinearRegularizedUnilateralConstraintWidget;  
-    layout->addWidget(forceFunc);
+//    forceFunc = new LinearRegularizedUnilateralConstraintWidget;
+//    layout->addWidget(forceFunc);
   }
 
   void RegularizedUnilateralConstraintWidget::defineFunction(int index) {
     if(index==0) {
       layout->removeWidget(forceFunc);
       delete forceFunc;
-      forceFunc = new LinearRegularizedUnilateralConstraintWidget;  
-      layout->addWidget(forceFunc);
+//      forceFunc = new LinearRegularizedUnilateralConstraintWidget;
+//      layout->addWidget(forceFunc);
     }
   }
 
@@ -90,6 +95,19 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
     restitutionCoefficient = new ExtWidget("Restitution coefficient",new ExtPhysicalVarWidget(input));
     layout->addWidget(restitutionCoefficient);
+  }
+
+  DOMElement* FrictionForceLawWidget::initializeUsingXML(DOMElement *element) {
+    if(frictionForceFunc) frictionForceFunc->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FrictionForceLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType().toStdString());
+    parent->insertBefore(ele0, ref);
+    if(frictionForceFunc) frictionForceFunc->writeXMLFile(ele0);
+    return ele0;
   }
 
   PlanarCoulombFrictionWidget::PlanarCoulombFrictionWidget() {
@@ -129,41 +147,10 @@ namespace MBSimGUI {
   }
 
   RegularizedPlanarFrictionWidget::RegularizedPlanarFrictionWidget() {
-
-    layout = new QVBoxLayout;
-    layout->setMargin(0);
-    funcList = new CustomComboBox;
-    funcList->addItem(tr("Linear regularized Coulomb friction"));
-    funcList->addItem(tr("Linear regularized Stribeck friction"));
-    funcList->addItem(tr("Symbolic friction function"));
-    layout->addWidget(funcList);
+    QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-    frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
+    frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget2(new FrictionFunctionFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
     layout->addWidget(frictionForceFunc);
-  }
-
-  void RegularizedPlanarFrictionWidget::defineFunction(int index) {
-    if(index==0) {
-      layout->removeWidget(frictionForceFunc);
-      delete frictionForceFunc;
-      frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
-      layout->addWidget(frictionForceFunc);
-    }
-    else if(index==1) {
-      layout->removeWidget(frictionForceFunc);
-      delete frictionForceFunc;
-      frictionForceFunc = new LinearRegularizedStribeckFrictionWidget;
-      layout->addWidget(frictionForceFunc);
-    }
-    else {
-      layout->removeWidget(frictionForceFunc);
-      delete frictionForceFunc;
-       QStringList var;
-      var << "gd" << "laN";
-      frictionForceFunc = new SymbolicFunctionWidget(var,1,1);
-      layout->addWidget(frictionForceFunc);
-    }
   }
 
   RegularizedSpatialFrictionWidget::RegularizedSpatialFrictionWidget() {
@@ -176,22 +163,22 @@ namespace MBSimGUI {
     layout->addWidget(funcList);
     setLayout(layout);
     connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-    frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
-    layout->addWidget(frictionForceFunc);
+//    frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;
+//    layout->addWidget(frictionForceFunc);
   }
 
   void RegularizedSpatialFrictionWidget::defineFunction(int index) {
     if(index==0) {
       layout->removeWidget(frictionForceFunc);
       delete frictionForceFunc;
-      frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
-      layout->addWidget(frictionForceFunc);
+//      frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;
+//      layout->addWidget(frictionForceFunc);
     }
     else {
       layout->removeWidget(frictionForceFunc);
       delete frictionForceFunc;
-      frictionForceFunc = new LinearRegularizedStribeckFrictionWidget;
-      layout->addWidget(frictionForceFunc);
+//      frictionForceFunc = new LinearRegularizedStribeckFrictionWidget;
+//      layout->addWidget(frictionForceFunc);
     }
   }
 
@@ -231,7 +218,7 @@ namespace MBSimGUI {
     layout->addWidget(frictionFunction);
   }
 
-  GeneralizedForceLawWidgetFactory::GeneralizedForceLawWidgetFactory(Element *parent_) : parent(parent_) {
+  GeneralizedForceLawWidgetFactory::GeneralizedForceLawWidgetFactory() {
     name.push_back("Bilateral constraint");
     name.push_back("Regularized bilateral constraint");
     name.push_back("Unilateral constraint");
@@ -251,6 +238,37 @@ namespace MBSimGUI {
       return new UnilateralConstraintWidget;
     if(i==3)
       return new RegularizedUnilateralConstraintWidget;
+    return NULL;
+  }
+
+  FrictionForceLawWidgetFactory::FrictionForceLawWidgetFactory() {
+    name.push_back("Planar Coulomb friction");
+    name.push_back("Planar Stribeck friction");
+    name.push_back("Regularized planar friction");
+    name.push_back("Spatial Coulomb friction");
+    name.push_back("Spatial Stribeck friction");
+    name.push_back("Regularized spatial friction");
+    xmlName.push_back(MBSIM%"PlanarCoulombFriction");
+    xmlName.push_back(MBSIM%"PlanarStribeckFriction");
+    xmlName.push_back(MBSIM%"RegularizedPlanarFriction");
+    xmlName.push_back(MBSIM%"SpatialCoulombFriction");
+    xmlName.push_back(MBSIM%"SpatialStribeckFriction");
+    xmlName.push_back(MBSIM%"RegularizedSpatialFriction");
+  }
+
+  QWidget* FrictionForceLawWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new PlanarCoulombFrictionWidget;
+    if(i==1)
+      return new PlanarStribeckFrictionWidget;
+    if(i==2)
+      return new RegularizedPlanarFrictionWidget;
+    if(i==3)
+      return new SpatialCoulombFrictionWidget;
+    if(i==4)
+      return new SpatialStribeckFrictionWidget;
+    if(i==5)
+      return new RegularizedSpatialFrictionWidget;
     return NULL;
   }
 
@@ -342,6 +360,28 @@ namespace MBSimGUI {
     else if(index==3)
       frictionImpactLaw = new SpatialStribeckImpactWidget;
     layout->addWidget(frictionImpactLaw);
+  }
+
+  FrictionFunctionFactory::FrictionFunctionFactory() {
+    name.push_back("Linear regularized Coulomb friction");
+    name.push_back("Linear regularized Stribeck friction");
+    name.push_back("Symbolic function");
+    xmlName.push_back(MBSIM%"LinearRegularizedCoulombFriction");
+    xmlName.push_back(MBSIM%"LinearRegularizedStribeckFriction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+  }
+
+  QWidget* FrictionFunctionFactory::createWidget(int i) {
+    if(i==0)
+      return new LinearRegularizedCoulombFrictionWidget;
+    if(i==1)
+      return new LinearRegularizedStribeckFrictionWidget;
+    if(i==2) {
+      QStringList var;
+      var << "gd" << "laN";
+      return new SymbolicFunctionWidget(var,1,1);
+    }
+    return NULL;
   }
 
 }

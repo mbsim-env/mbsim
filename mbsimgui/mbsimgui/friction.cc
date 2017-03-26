@@ -21,30 +21,14 @@
 #include "friction.h"
 
 using namespace std;
-using namespace MBXMLUtils;
-using namespace xercesc;
 
 namespace MBSimGUI {
 
-  GeneralizedFriction::GeneralizedFriction(const string &str) : DualRigidBodyLink(str) {
+  GeneralizedFriction::GeneralizedFriction(const QString &str) : DualRigidBodyLink(str) {
 
-    function.setProperty(new FrictionForceLawChoiceProperty(this,MBSIM%"generalizedFrictionForceLaw"));
-
-    normalForce.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"generalizedNormalForceFunction",0));
-  }
-
-  DOMElement* GeneralizedFriction::initializeUsingXML(DOMElement *element) {
-    DualRigidBodyLink::initializeUsingXML(element);
-    function.initializeUsingXML(element);
-    normalForce.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* GeneralizedFriction::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = DualRigidBodyLink::writeXMLFile(parent);
-    function.writeXMLFile(ele0);
-    normalForce.writeXMLFile(ele0);
-    return ele0;
+//    function.setProperty(new FrictionForceLawChoiceProperty(this,MBSIM%"generalizedFrictionForceLaw"));
+//
+//    normalForce.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"generalizedNormalForceFunction",0));
   }
 
 }

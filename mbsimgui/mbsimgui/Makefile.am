@@ -28,6 +28,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   kinetic_excitation.cc \
 		   spring_damper.cc \
 		   joint.cc \
+		   friction.cc \
 		   signal_.cc \
 		   integrator.cc \
 		   analyser.cc \

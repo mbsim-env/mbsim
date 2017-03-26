@@ -27,13 +27,13 @@
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
 #include "joint.h"
+#include "friction.h"
 //#include "contact.h"
 //#include "sensor.h"
 #include "observer.h"
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
-//#include "friction.h"
 //#include "gear.h"
 //#include "connection.h"
 #include "parameter.h"
@@ -442,7 +442,7 @@ namespace MBSimGUI {
   }
 
   void LinkContextContextMenu::addGeneralizedFriction() {
-//    mw->addLink(new GeneralizedFriction("GeneralizedFriction"));
+    mw->addLink(new GeneralizedFriction("GeneralizedFriction"), element);
   }
 
   void LinkContextContextMenu::addGeneralizedGear() {
