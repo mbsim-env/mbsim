@@ -27,13 +27,13 @@ namespace MBSimGUI {
   class Contour : public Element {
     public:
       Contour(const QString &str="");
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new ContourPropertyDialog(this);}
   };
 
   class RigidContour : public Contour {
     public:
       RigidContour(const QString &str="");
-//      void setSavedFrameOfReference(const QString &str);
       ElementPropertyDialog* createPropertyDialog() {return new RigidContourPropertyDialog(this);}
   };
 

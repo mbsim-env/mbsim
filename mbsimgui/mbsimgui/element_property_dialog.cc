@@ -145,7 +145,7 @@ namespace MBSimGUI {
 
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
-    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET",""),true,true,MBSIM%"enableOpenMBV");
+    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
   }
@@ -164,7 +164,7 @@ namespace MBSimGUI {
 
   InternalFramePropertyDialog::InternalFramePropertyDialog(InternalFrame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
-    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET",""),true,true,frame->getXMLFrameName());
+    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET"),true,true,frame->getXMLFrameName());
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
     setReadOnly(true);
@@ -220,48 +220,118 @@ namespace MBSimGUI {
   }
 
   ContourPropertyDialog::ContourPropertyDialog(Contour *contour, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(contour,parent,f) {
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.01"), lengthUnits(), 4));
-    thickness = new ExtWidget("Thickness",new ExtPhysicalVarWidget(input),true);
+    thickness = new ExtWidget("Thickness",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"thickness");
     addToTab("General", thickness);
   }
 
+  DOMElement* ContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
+    thickness->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ElementPropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    thickness->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
+  }
+
   RigidContourPropertyDialog::RigidContourPropertyDialog(RigidContour *contour, QWidget * parent, Qt::WindowFlags f) : ContourPropertyDialog(contour,parent,f) {
-    refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(contour,0),true);
+    refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(contour,NULL),true,false,MBSIM%"frameOfReference");
     addToTab("General", refFrame);
+  }
+
+  DOMElement* RigidContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ContourPropertyDialog::initializeUsingXML(element->getXMLElement());
+    refFrame->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RigidContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ContourPropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    refFrame->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
   }
 
   PointPropertyDialog::PointPropertyDialog(Point *point, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(point,parent,f) {
     addTab("Visualisation",1);
 
-    visu = new ExtWidget("OpenMBV Point",new PointMBSOMBVWidget("NOTSET"),true,true);
+    visu = new ExtWidget("OpenMBV point",new PointMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
+  }
+
+  DOMElement* PointPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
+    visu->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* PointPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    visu->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
   }
 
   LinePropertyDialog::LinePropertyDialog(Line *line, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(line,parent,f) {
     addTab("Visualisation",1);
 
-    visu = new ExtWidget("OpenMBV Line",new LineMBSOMBVWidget("NOTSET"),true,true);
+    visu = new ExtWidget("OpenMBV line",new LineMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
+  }
+
+  DOMElement* LinePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
+    visu->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* LinePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    visu->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
   }
 
   PlanePropertyDialog::PlanePropertyDialog(Plane *plane, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(plane,parent,f) {
     addTab("Visualisation",1);
 
-    visu = new ExtWidget("OpenMBV Plane",new PlaneMBSOMBVWidget("NOTSET"),true,true);
+    visu = new ExtWidget("OpenMBV plane",new PlaneMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
+  }
+
+  DOMElement* PlanePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
+    visu->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* PlanePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    visu->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
   }
 
   SpherePropertyDialog::SpherePropertyDialog(Sphere *sphere, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(sphere,parent,f) {
     addTab("Visualisation",1);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-    radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
+    radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"radius");
     addToTab("General", radius);
 
-    visu = new ExtWidget("OpenMBV Sphere",new MBSOMBVWidget("NOTSET"),true,true);
+    visu = new ExtWidget("OpenMBV sphere",new MBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
+  }
+
+  DOMElement* SpherePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
+    radius->initializeUsingXML(element->getXMLElement());
+    visu->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* SpherePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    radius->writeXMLFile(element->getXMLElement(),NULL);
+    visu->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
   }
 
   CirclePropertyDialog::CirclePropertyDialog(Circle *circle, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(circle,parent,f) {
@@ -1632,7 +1702,7 @@ namespace MBSimGUI {
     momentArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
     addToTab("Visualisation",momentArrow);
 
-    contactPoints = new ExtWidget("OpenMBV contact points",new FrameMBSOMBVWidget("NOTSET",""),true,true,MBSIM%"enableOpenMBVContactPoints");
+    contactPoints = new ExtWidget("OpenMBV contact points",new FrameMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBVContactPoints");
     addToTab("Visualisation",contactPoints);
 
     normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVNormalForce");

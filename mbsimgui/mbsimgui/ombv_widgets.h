@@ -72,41 +72,51 @@ namespace MBSimGUI {
   class PointMBSOMBVWidget : public MBSOMBVWidget {
 
     public:
-    PointMBSOMBVWidget(const QString &name="NOTSET");
+      PointMBSOMBVWidget(const QString &name="NOTSET");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *size;
+      ExtWidget *size;
   };
 
   class LineMBSOMBVWidget : public MBSOMBVWidget {
 
     public:
-    LineMBSOMBVWidget(const QString &name="NOTSET");
+      LineMBSOMBVWidget(const QString &name="NOTSET");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *length;
+      ExtWidget *length;
   };
 
   class PlaneMBSOMBVWidget : public MBSOMBVWidget {
 
     public:
-    PlaneMBSOMBVWidget(const QString &name="NOTSET");
+      PlaneMBSOMBVWidget(const QString &name="NOTSET");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *length;
+      ExtWidget *length;
   };
 
   class PlanarContourMBSOMBVWidget : public MBSOMBVWidget {
 
     public:
-    PlanarContourMBSOMBVWidget(const QString &name="NOTSET");
+      PlanarContourMBSOMBVWidget(const QString &name="NOTSET");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *nodes;
+      ExtWidget *nodes;
   };
 
   class SpatialContourMBSOMBVWidget : public MBSOMBVWidget {
 
     public:
-    SpatialContourMBSOMBVWidget(const QString &name="NOTSET");
+      SpatialContourMBSOMBVWidget(const QString &name="NOTSET");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *etaNodes, *xiNodes;
+      ExtWidget *etaNodes, *xiNodes;
   };
 
   class ArrowMBSOMBVWidget : public MBSOMBVWidget {
@@ -132,7 +142,7 @@ namespace MBSimGUI {
   class FrameMBSOMBVWidget : public MBSOMBVWidget {
 
     public:
-      FrameMBSOMBVWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
+      FrameMBSOMBVWidget(const QString &name="NOTSET");
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
@@ -239,9 +249,11 @@ namespace MBSimGUI {
   class FlexibleBodyFFRMBSOMBVWidget : public MBSOMBVWidget {
 
     public:
-    FlexibleBodyFFRMBSOMBVWidget(const QString &name="NOTSET");
+      FlexibleBodyFFRMBSOMBVWidget(const QString &name="NOTSET");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *minCol, *maxCol, *nodes, *indices;
+      ExtWidget *minCol, *maxCol, *nodes, *indices;
   };
 
 }

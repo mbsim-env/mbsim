@@ -19,19 +19,29 @@
 
 #include <config.h>
 #include "contour.h"
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
   Contour::Contour(const QString &str) : Element(str) {
-//    vector<PhysicalVariableProperty> input;
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.01"), "m", MBSIM%"thickness"));
-//    thickness.setProperty(new ExtPhysicalVarProperty(input));
+  }
+
+  DOMElement* Contour::processFileID(DOMElement *element) {
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+    return element;
   }
 
   RigidContour::RigidContour(const QString &str) : Contour(str) {
-//    refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
   }
 
   Point::Point(const QString &str) : RigidContour(str) {
