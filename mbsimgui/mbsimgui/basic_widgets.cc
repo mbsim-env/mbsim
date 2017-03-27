@@ -644,12 +644,12 @@ namespace MBSimGUI {
   DOMElement* FileWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0 = static_cast<DOMElement*>(parent);
-    string fileName = getFile().toStdString();
+    QString fileName = getFile();
     if(true) {
-      QFileInfo fileInfo = QString::fromStdString(fileName.substr(1,fileName.length()-2));
-      fileName = string("\"")+fileInfo.absoluteFilePath().toStdString()+"\"";
+      QFileInfo fileInfo = fileName.mid(1,fileName.length()-2);
+      fileName = QString("\"")+fileInfo.absoluteFilePath()+"\"";
     }
-    DOMText *text = doc->createTextNode(X()%fileName);
+    DOMText *text = doc->createTextNode(X()%fileName.toStdString());
     ele0->insertBefore(text, NULL);
     return 0;
   }

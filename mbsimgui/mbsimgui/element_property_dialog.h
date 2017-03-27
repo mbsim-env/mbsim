@@ -153,10 +153,11 @@ namespace MBSimGUI {
   };
 
   class NodeFramePropertyDialog : public FramePropertyDialog {
-    Q_OBJECT
 
     public:
       NodeFramePropertyDialog(NodeFrame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *nodeNumber;
   };
@@ -335,6 +336,8 @@ namespace MBSimGUI {
 
     public:
       FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
       void resizeGeneralizedPosition();
       void resizeGeneralizedVelocity();
       int getqRelSize() const;

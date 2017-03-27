@@ -524,14 +524,11 @@ namespace MBSimGUI {
 
   class MatColsVarWidgetFactory : public WidgetFactory {
     public:
-      MatColsVarWidgetFactory();
-      MatColsVarWidgetFactory(int m, int n, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
-      MatColsVarWidgetFactory(int m, int n, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+      MatColsVarWidgetFactory(int m, int n, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0));
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
-//      std::vector<std::vector<QString> > A;
       int m, n;
       std::vector<QString> name;
       std::vector<QStringList> unit;

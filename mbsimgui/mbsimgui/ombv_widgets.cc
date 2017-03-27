@@ -238,10 +238,10 @@ namespace MBSimGUI {
     layout()->addWidget(scaleSize);
 
     vector<QString> list;
-    list.push_back("toPoint");
-    list.push_back("fromPoint");
-    list.push_back("midPoint");
-    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,fromPoint?1:0,false,true),true,false,MBSIM%"referencePoint");
+    list.push_back("\"toPoint\"");
+    list.push_back("\"fromPoint\"");
+    list.push_back("\"midPoint\"");
+    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,fromPoint?1:0,true),true,false,MBSIM%"referencePoint");
     if(fromPoint)
       referencePoint->setChecked(true);
     layout()->addWidget(referencePoint);
@@ -277,10 +277,10 @@ namespace MBSimGUI {
     layout()->addWidget(nominalLength);
 
     vector<QString> list;
-    list.push_back("tube");
-    list.push_back("scaledTube");
-    list.push_back("polyline");
-    type = new ExtWidget("Type",new TextChoiceWidget(list,0,false,true),true,false,MBSIM%"type");
+    list.push_back("\"tube\"");
+    list.push_back("\"scaledTube\"");
+    list.push_back("\"polyline\"");
+    type = new ExtWidget("Type",new TextChoiceWidget(list,0,true),true,false,MBSIM%"type");
     layout()->addWidget(type);
 
     minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimalColorValue");
@@ -500,12 +500,12 @@ namespace MBSimGUI {
 
   ExtrusionWidget::ExtrusionWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
     vector<QString> list;
-    list.push_back("odd");
-    list.push_back("nonzero");
-    list.push_back("positive");
-    list.push_back("negative");
-    list.push_back("absGEqTwo");
-    windingRule = new ExtWidget("Winding rule",new TextChoiceWidget(list,0));
+    list.push_back("\"odd\"");
+    list.push_back("\"nonzero\"");
+    list.push_back("\"positive\"");
+    list.push_back("\"negative\"");
+    list.push_back("\"absGEqTwo\"");
+    windingRule = new ExtWidget("Winding rule",new TextChoiceWidget(list,1,true));
     layout->addWidget(windingRule);
 
     height = new ExtWidget("Height",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft));

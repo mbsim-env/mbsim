@@ -21,7 +21,6 @@
 #define _FLEXIBLE_BODY_FFR__H_
 
 #include "body.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 
@@ -31,12 +30,17 @@ namespace MBSimGUI {
       FlexibleBodyFFR(const QString &str="");
       QString getType() const { return "FlexibleBodyFFR"; }
       MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
+      xercesc::DOMElement* getXMLFrames() { return frames; }
+      xercesc::DOMElement* getXMLContours() { return contours; }
+      void removeXMLElements();
+      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       ElementPropertyDialog* createPropertyDialog() {return new FlexibleBodyFFRPropertyDialog(this);}
       QMenu* createContextMenu() {return new FlexibleBodyFFRContextMenu(this);}
       QMenu* createFrameContextMenu() {return new NodeFrameContextContextMenu(this);}
     protected:
-      ExtProperty mass, pdm, ppdm, Pdm, rPdm, PPdm, Ke, De, beta, Knl1, Knl2, ksigma0, ksigma1, K0t, K0r, K0om, r, A, Phi, Psi, sigmahel, sigmahen, sigma0, K0F, K0M, translation, rotation, translationDependentRotation, coordinateTransformationForRotation, ombvEditor;
+      xercesc::DOMElement *frames, *contours;
   };
 
 }

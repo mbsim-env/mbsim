@@ -214,7 +214,7 @@ namespace MBSimGUI {
       }
       return 0;
     }
-    else {
+    else if(mode<=5) {
       DOMElement *e=element;
       if(e) {
         DOMElement* ee=e;
@@ -228,6 +228,25 @@ namespace MBSimGUI {
               comboBox->blockSignals(true);
               comboBox->setCurrentIndex(i);
               comboBox->blockSignals(false);
+              if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee))
+                return eee;
+            }
+          }
+        }
+      }
+      return NULL;
+    }
+    else {
+      DOMElement *e=element;
+      if(e) {
+        DOMElement* ee=e;
+        if(ee) {
+          for(int i=0; i<factory->getSize(); i++) {
+            DOMElement *eee=(mode==6)?ee->getFirstElementChild():ee;
+            if(eee) {
+              blockSignals(true);
+              defineWidget(i);
+              blockSignals(false);
               if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee))
                 return eee;
             }

@@ -134,7 +134,6 @@ ret = 0;</scalarParameter>
                 <Parameter/>
                 <NodeFrame xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="P{n}">
                   <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                    <?OPENMBV_ID 11?>
                   </enableOpenMBV>
                   <nodeNumber unit="-">n</nodeNumber>
                 </NodeFrame>
@@ -142,7 +141,6 @@ ret = 0;</scalarParameter>
             </frames>
             <contours/>
             <enableOpenMBVFrameK>
-              <?OPENMBV_ID 3?>
             </enableOpenMBVFrameK>
           </FlexibleBodyFFR>
         </Embed>
@@ -169,14 +167,11 @@ ret = 0;</scalarParameter>
             </ConstantFunction>
           </forceFunction>
           <enableOpenMBV>
-            <?OPENMBV_ID 7?>
             <scaleLength unit="-">1e-6</scaleLength>
           </enableOpenMBV>
         </KineticExcitation>
       </links>
-      <enableOpenMBVFrameI>
-        <?OPENMBV_ID 1?>
-      </enableOpenMBVFrameI>
+      <enableOpenMBVFrameI/>
       <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">

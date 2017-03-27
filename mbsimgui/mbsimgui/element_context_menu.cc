@@ -21,7 +21,7 @@
 #include "element_context_menu.h"
 #include "mainwindow.h"
 #include "rigid_body.h"
-//#include "flexible_body_ffr.h"
+#include "flexible_body_ffr.h"
 #include "constraint.h"
 //#include "linear_transfer_system.h"
 #include "kinetic_excitation.h"
@@ -200,7 +200,7 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyFFRContextMenu::addNodeFrame() {
-    mw->addFrame(new NodeFrame("P"));
+    mw->addFrame(new NodeFrame("P"), element);
   }
 
   FixedRelativeFrameContextContextMenu::FixedRelativeFrameContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -220,7 +220,7 @@ namespace MBSimGUI {
   }
 
   void NodeFrameContextContextMenu::addNodeFrame() {
-    mw->addFrame(new NodeFrame("P"));
+    mw->addFrame(new NodeFrame("P"), element);
   }
 
   ContourContextContextMenu::ContourContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -318,7 +318,7 @@ namespace MBSimGUI {
   }
 
   void BodyContextContextMenu::addFlexibleBodyFFR() {
-//    mw->addObject(new FlexibleBodyFFR("FlexibleBodyFFR"));
+    mw->addObject(new FlexibleBodyFFR("FlexibleBodyFFR"), element);
   }
 
   ConstraintContextContextMenu::ConstraintContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

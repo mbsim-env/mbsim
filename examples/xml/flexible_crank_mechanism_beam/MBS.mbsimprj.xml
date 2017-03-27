@@ -57,7 +57,6 @@
           <frames>
             <FixedRelativeFrame name="K">
               <enableOpenMBV>
-                <?OPENMBV_ID 19?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -70,7 +69,6 @@
             </FixedRelativeFrame>
             <FixedRelativeFrame name="Q">
               <enableOpenMBV>
-                <?OPENMBV_ID 20?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -85,7 +83,6 @@
           <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 15?>
               <diffuseColor unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0.333333</ele>
@@ -119,7 +116,6 @@
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 16?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -639,14 +635,13 @@
               <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+position"/>
               <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+angle"/>
               <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                <?OPENMBV_ID 27?>
+                <size unit="cm">1</size>
               </enableOpenMBV>
               <nodeNumber unit="-">1</nodeNumber>
             </NodeFrame>
           </frames>
           <contours/>
           <enableOpenMBVFrameK>
-            <?OPENMBV_ID 24?>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
           </enableOpenMBVFrameK>
         </FlexibleBodyFFR>
@@ -685,7 +680,6 @@
           <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 30?>
               <diffuseColor unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0.166667</ele>
@@ -719,7 +713,6 @@
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 31?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -749,7 +742,6 @@
         </Joint>
       </links>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 14?>
         <size unit="cm">1</size>
       </enableOpenMBVFrameI>
       <environments>

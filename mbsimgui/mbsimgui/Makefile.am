@@ -22,6 +22,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   object.cc \
 		   body.cc \
 		   rigid_body.cc \
+		   flexible_body_ffr.cc \
 		   link.cc \
 		   constraint.cc \
 		   observer.cc \

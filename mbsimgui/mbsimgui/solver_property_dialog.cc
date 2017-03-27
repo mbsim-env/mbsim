@@ -329,10 +329,10 @@ namespace MBSimGUI {
     addTab("Step size");
 
     vector<QString> list;
-    list.push_back("RK23");
-    list.push_back("RK45");
-    list.push_back("RK67");
-    method = new ExtWidget("Method",new TextChoiceWidget(list,1,false,true),true,false,MBSIMINT%"method");
+    list.push_back("\"RK23\"");
+    list.push_back("\"RK45\"");
+    list.push_back("\"RK67\"");
+    method = new ExtWidget("Method",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"method");
     addToTab("General", method);
 
     relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"relativeToleranceScalar");
@@ -380,10 +380,10 @@ namespace MBSimGUI {
     addToTab("Initial conditions", initialState);
 
     vector<QString> list;
-    list.push_back("eigenfrequencies");
-    list.push_back("eigenmodes");
-    list.push_back("eigenmode");
-    list.push_back("eigenmotion");
+    list.push_back("\"eigenfrequencies\"");
+    list.push_back("\"eigenmodes\"");
+    list.push_back("\"eigenmode\"");
+    list.push_back("\"eigenmotion\"");
     task = new ExtWidget("Task",new TextChoiceWidget(list,1,false,true),true,false,MBSIMANALYSER%"task");
     addToTab("General",task);
 

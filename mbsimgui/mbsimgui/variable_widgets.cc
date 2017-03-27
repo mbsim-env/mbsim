@@ -1103,7 +1103,12 @@ namespace MBSimGUI {
   DOMElement* FromFileWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"fromFile");
-    E(ele)->setAttribute("href",getFile().toStdString());
+    QString fileName = getFile();
+    if(true) {
+      QFileInfo fileInfo = fileName;
+      fileName = fileInfo.absoluteFilePath();
+    }
+    E(ele)->setAttribute("href",fileName.toStdString());
     parent->insertBefore(ele, NULL);
     return 0;
   }
@@ -1210,19 +1215,10 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  MatColsVarWidgetFactory::MatColsVarWidgetFactory() : m(1), n(1), name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
-    name[0] = "Matrix";
-    name[1] = "File";
-    name[2] = "Editor";
-  }
-
   MatColsVarWidgetFactory::MatColsVarWidgetFactory(int m_, int n_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), n(n_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
-  }
-
-  MatColsVarWidgetFactory::MatColsVarWidgetFactory(int m_, int n_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), n(n_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
   }
 
   QWidget* MatColsVarWidgetFactory::createWidget(int i) {

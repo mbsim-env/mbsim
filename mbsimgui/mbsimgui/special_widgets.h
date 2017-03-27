@@ -35,10 +35,12 @@ namespace MBSimGUI {
       CustomSpinBox* sizeCombo;
       int m;
     public:
-      OneDimVecArrayWidget(int size=3, int m=3, bool var=false);
+      OneDimVecArrayWidget(int size=0, int m=0, bool var=false);
       const std::vector<ExtWidget*>& getArray() const { return ele; }
       void resize_(int size, int m, int n);
       void resize_(int m, int n);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     public slots:
       void currentIndexChanged(int);
   };
@@ -47,54 +49,64 @@ namespace MBSimGUI {
     protected:
       std::vector<ExtWidget*> ele;
     public:
-      OneDimMatArrayWidget(int size=3, int m=3, int n=1);
+      OneDimMatArrayWidget(int size=0, int m=0, int n=0);
       const std::vector<ExtWidget*>& getArray() const { return ele; }
       void resize_(int size, int m, int n);
       void resize_(int m, int n);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
   class TwoDimMatArrayWidget: public Widget {
     protected:
       std::vector<std::vector<ExtWidget*> > ele;
     public:
-      TwoDimMatArrayWidget(int size=3, int m=3, int n=1);
+      TwoDimMatArrayWidget(int size=0, int m=0, int n=0);
       const std::vector<std::vector<ExtWidget*> >& getArray() const { return ele; }
       void resize_(int rsize, int csize, int m, int n);
       void resize_(int m, int n);
- };
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+  };
 
   class OneDimVecArrayWidgetFactory : public WidgetFactory {
     public:
-      OneDimVecArrayWidgetFactory(int size=3, int m=3, bool var=false);
+      OneDimVecArrayWidgetFactory(int size=0, int m=0, bool var=false);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
       int size, m;
       bool var;
   };
 
   class OneDimMatArrayWidgetFactory : public WidgetFactory {
     public:
-      OneDimMatArrayWidgetFactory();
-      //OneDimMatArrayWidgetFactory(const std::vector<std::vector<QString> > &A);
+      OneDimMatArrayWidgetFactory(int size=0, int m=0, int n=0);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       std::vector<QString> name;
-      //std::vector<std::vector<QString> > A;
+      std::vector<MBXMLUtils::FQN> xmlName;
+      int size, m, n;
   };
 
   class TwoDimMatArrayWidgetFactory : public WidgetFactory {
     public:
-      TwoDimMatArrayWidgetFactory();
+      TwoDimMatArrayWidgetFactory(int size=0, int m=0, int n=0);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
+      int size, m, n;
   };
 
 }

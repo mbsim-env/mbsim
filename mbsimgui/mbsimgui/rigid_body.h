@@ -21,7 +21,6 @@
 #define _RIGID_BODY__H_
 
 #include "body.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 

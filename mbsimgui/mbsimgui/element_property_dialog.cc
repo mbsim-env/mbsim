@@ -215,8 +215,20 @@ namespace MBSimGUI {
 
   NodeFramePropertyDialog::NodeFramePropertyDialog(NodeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f) {
 
-    nodeNumber = new ExtWidget("Node number",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft));
+    nodeNumber = new ExtWidget("Node number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumber");
     addToTab("General", nodeNumber);
+  }
+
+  DOMElement* NodeFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FramePropertyDialog::initializeUsingXML(element->getXMLElement());
+    nodeNumber->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* NodeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FramePropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    nodeNumber->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
   }
 
   ContourPropertyDialog::ContourPropertyDialog(Contour *contour, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(contour,parent,f) {
@@ -711,111 +723,108 @@ namespace MBSimGUI {
     addTab("Visualisation",3);
     addTab("Nodal data");
 
-    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft));
+    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"mass");
     addToTab("General",mass);
 
-    pdm = new ExtWidget("Position integral",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3)),QBoxLayout::RightToLeft));
+    pdm = new ExtWidget("Position integral",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"positionIntegral");
     addToTab("General", pdm);
 
-    ppdm = new ExtWidget("Position position integral",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
+    ppdm = new ExtWidget("Position position integral",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"positionPositionIntegral");
     addToTab("General",ppdm);
 
-    Pdm = new ExtWidget("Shape function integral",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
+    Pdm = new ExtWidget("Shape function integral",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"shapeFunctionIntegral");
     addToTab("General",Pdm);
 
     //rPdm = new ExtWidget("Position shape function integral",new OneDimMatArrayWidget());
-    rPdm = new ExtWidget("Position shape function integral",new ChoiceWidget2(new OneDimMatArrayWidgetFactory));
+    rPdm = new ExtWidget("Position shape function integral",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(3,3,1),QBoxLayout::TopToBottom,5),false,false,MBSIMFLEX%"positionShapeFunctionIntegral");
     addToTab("General",rPdm);
 
     //PPdm = new ExtWidget("Shape function shape function integral",new TwoDimMatArrayWidget(3,1,1));
-    PPdm = new ExtWidget("Shape function shape function integral",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory));
+    PPdm = new ExtWidget("Shape function shape function integral",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory(3,1,1),QBoxLayout::TopToBottom,5),false,false,MBSIMFLEX%"shapeFunctionShapeFunctionIntegral");
     addToTab("General",PPdm);
 
-    Ke = new ExtWidget("Stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getMat<QString>(1,1,"0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft));
+    Ke = new ExtWidget("Stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getMat<QString>(1,1,"0")),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"stiffnessMatrix");
     addToTab("General",Ke);
 
-    De = new ExtWidget("Damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getMat<QString>(1,1,"0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft),true);
+    De = new ExtWidget("Damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getMat<QString>(1,1,"0")),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"dampingMatrix");
     addToTab("General",De);
 
-    beta = new ExtWidget("Proportional damping",new ChoiceWidget2(new VecWidgetFactory(2,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
+    beta = new ExtWidget("Proportional damping",new ChoiceWidget2(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
 
     //Knl1 = new ExtWidget("Nonlinear stiffness matrix of first order",new OneDimMatArrayWidget(1,1,1),true);
-    Knl1 = new ExtWidget("Nonlinear stiffness matrix of first order",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    Knl1 = new ExtWidget("Nonlinear stiffness matrix of first order",new ChoiceWidget2(new OneDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrder");
     addToTab("General",Knl1);
 
 //    Knl2 = new ExtWidget("Nonlinear stiffness matrix of second order",new TwoDimMatArrayWidget(1,1,1),true);
-    Knl2 = new ExtWidget("Nonlinear stiffness matrix of second order",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory),true);
+    Knl2 = new ExtWidget("Nonlinear stiffness matrix of second order",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrder");
     addToTab("General",Knl2);
 
-    ksigma0 = new ExtWidget("Initial stress integral",new ChoiceWidget2(new VecWidgetFactory(1,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
+    ksigma0 = new ExtWidget("Initial stress integral",new ChoiceWidget2(new VecWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"initialStressIntegral");
     addToTab("General", ksigma0);
 
-    ksigma1 = new ExtWidget("Nonlinear initial stress integral",new ChoiceWidget2(new MatWidgetFactory(1,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
+    ksigma1 = new ExtWidget("Nonlinear initial stress integral",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nonlinearInitialStressIntegral");
     addToTab("General", ksigma1);
 
     //K0t = new ExtWidget("Geometric stiffness matrix due to acceleration",new OneDimMatArrayWidget(3,1,1),true);
-    K0t = new ExtWidget("Geometric stiffness matrix due to acceleration",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    K0t = new ExtWidget("Geometric stiffness matrix due to acceleration",new ChoiceWidget2(new OneDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"geometricStiffnessMatrixDueToAcceleration");
     addToTab("General",K0t);
 
     //K0r = new ExtWidget("Geometric stiffness matrix due to angular acceleration",new OneDimMatArrayWidget(3,1,1),true);
-    K0r = new ExtWidget("Geometric stiffness matrix due to angular acceleration",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    K0r = new ExtWidget("Geometric stiffness matrix due to angular acceleration",new ChoiceWidget2(new OneDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration");
     addToTab("General",K0r);
 
     //K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new OneDimMatArrayWidget(3,1,1),true);
-    K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new ChoiceWidget2(new OneDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity");
     addToTab("General",K0om);
 
     //r = new ExtWidget("Relative nodal position",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
-    r = new ExtWidget("Nodal relative position",new ChoiceWidget2(new OneDimVecArrayWidgetFactory(1,3,true)),true);
+    r = new ExtWidget("Nodal relative position",new ChoiceWidget2(new OneDimVecArrayWidgetFactory(1,3,true),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodalRelativePosition");
     addToTab("Nodal data", r);
 
     //A = new ExtWidget("Relative nodal orientation",new ChoiceWidget2(new MatWidgetFactory(3,3,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
-    A = new ExtWidget("Nodal relative orientation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    A = new ExtWidget("Nodal relative orientation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodalRelativeOrientation");
     addToTab("Nodal data", A);
 
     //Phi = new ExtWidget("Shape matrix of translation",new ChoiceWidget2(new MatWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
-    Phi = new ExtWidget("Nodal shape matrix of translation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    Phi = new ExtWidget("Nodal shape matrix of translation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodalShapeMatrixOfTranslation");
     addToTab("Nodal data", Phi);
 
     //Psi = new ExtWidget("Shape matrix of rotation",new ChoiceWidget2(new MatWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
-    Psi = new ExtWidget("Nodal shape matrix of rotation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    Psi = new ExtWidget("Nodal shape matrix of rotation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodalShapeMatrixOfRotation");
     addToTab("Nodal data", Psi);
 
     //sigmahel = new ExtWidget("Stress matrix",new ChoiceWidget2(new MatWidgetFactory(6,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
-    sigmahel = new ExtWidget("Nodal stress matrix",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    sigmahel = new ExtWidget("Nodal stress matrix",new ChoiceWidget2(new OneDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodalStressMatrix");
     addToTab("Nodal data", sigmahel);
 
-    sigmahen = new ExtWidget("Nodal nonlinear stress matrix",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory),true);
+    sigmahen = new ExtWidget("Nodal nonlinear stress matrix",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodalNonlinearStressMatrix");
     addToTab("Nodal data", sigmahen);
 
-    sigma0 = new ExtWidget("Nodal initial stress",new ChoiceWidget2(new OneDimVecArrayWidgetFactory),true);
+    sigma0 = new ExtWidget("Nodal initial stress",new ChoiceWidget2(new OneDimVecArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodalInitialStress");
     addToTab("Nodal data", sigma0);
 
-    K0F = new ExtWidget("Nodal geometric stiffness matrix due to force",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory),true);
+    K0F = new ExtWidget("Nodal geometric stiffness matrix due to force",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToForce");
     addToTab("Nodal data", K0F);
 
-    K0M = new ExtWidget("Nodal geometric stiffness matrix due to moment",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory),true);
+    K0M = new ExtWidget("Nodal geometric stiffness matrix due to moment",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToMoment");
     addToTab("Nodal data", K0M);
 
-    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body)),true);
+    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body,MBSIMFLEX),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", translation);
     connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body)),true);
+    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body,MBSIMFLEX),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", rotation);
     connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ExtPhysicalVarWidget(input),true);
+    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"translationDependentRotation");
     addToTab("Kinematics", translationDependentRotation);
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-    coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ExtPhysicalVarWidget(input),true);
+
+    coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"coordinateTransformationForRotation");
     addToTab("Kinematics", coordinateTransformationForRotation);
 
-    ombvEditor = new ExtWidget("Enable openMBV",new FlexibleBodyFFRMBSOMBVWidget("NOTSET"),true);
+    ombvEditor = new ExtWidget("Enable openMBV",new FlexibleBodyFFRMBSOMBVWidget("NOTSET"),true,false,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualisation", ombvEditor);
 
     connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
@@ -954,13 +963,84 @@ namespace MBSimGUI {
   void FlexibleBodyFFRPropertyDialog::resizeGeneralizedPosition() {
     int size =  getqRelSize();
     q0->resize_(size,1);
-    translation->resize_(3,1);
-    rotation->resize_(3,1);
+//    translation->resize_(3,1);
+//    rotation->resize_(3,1);
     }
 
   void FlexibleBodyFFRPropertyDialog::resizeGeneralizedVelocity() {
     int size =  getuRelSize();
     u0->resize_(size,1);
+  }
+
+  DOMElement* FlexibleBodyFFRPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    BodyPropertyDialog::initializeUsingXML(element->getXMLElement());
+    mass->initializeUsingXML(element->getXMLElement());
+    pdm->initializeUsingXML(element->getXMLElement());
+    ppdm->initializeUsingXML(element->getXMLElement());
+    Pdm->initializeUsingXML(element->getXMLElement());
+    rPdm->initializeUsingXML(element->getXMLElement());
+    PPdm->initializeUsingXML(element->getXMLElement());
+    Ke->initializeUsingXML(element->getXMLElement());
+    De->initializeUsingXML(element->getXMLElement());
+    beta->initializeUsingXML(element->getXMLElement());
+    Knl1->initializeUsingXML(element->getXMLElement());
+    Knl2->initializeUsingXML(element->getXMLElement());
+    ksigma0->initializeUsingXML(element->getXMLElement());
+    ksigma1->initializeUsingXML(element->getXMLElement());
+    K0t->initializeUsingXML(element->getXMLElement());
+    K0r->initializeUsingXML(element->getXMLElement());
+    K0om->initializeUsingXML(element->getXMLElement());
+    r->initializeUsingXML(element->getXMLElement());
+    A->initializeUsingXML(element->getXMLElement());
+    Phi->initializeUsingXML(element->getXMLElement());
+    Psi->initializeUsingXML(element->getXMLElement());
+    sigmahel->initializeUsingXML(element->getXMLElement());
+    sigmahen->initializeUsingXML(element->getXMLElement());
+    sigma0->initializeUsingXML(element->getXMLElement());
+    K0F->initializeUsingXML(element->getXMLElement());
+    K0M->initializeUsingXML(element->getXMLElement());
+    translation->initializeUsingXML(element->getXMLElement());
+    rotation->initializeUsingXML(element->getXMLElement());
+    translationDependentRotation->initializeUsingXML(element->getXMLElement());
+    coordinateTransformationForRotation->initializeUsingXML(element->getXMLElement());
+    ombvEditor->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FlexibleBodyFFRPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    BodyPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    mass->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    pdm->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    ppdm->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    Pdm->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    rPdm->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    PPdm->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    Ke->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    De->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    beta->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    Knl1->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    Knl2->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    ksigma0->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    ksigma1->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    K0t->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    K0r->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    K0om->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    r->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    A->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    Phi->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    Psi->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    sigmahel->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    sigmahen->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    sigma0->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    K0F->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    K0M->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    translation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    rotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    translationDependentRotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    coordinateTransformationForRotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    DOMElement *ele =element->getXMLContours()->getNextElementSibling();
+    ombvEditor->writeXMLFile(element->getXMLElement(),ele);
+    return NULL;
   }
 
   ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(constraint,parent,f) {
