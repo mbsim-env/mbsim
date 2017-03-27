@@ -153,7 +153,7 @@ namespace MBSimGUI {
   }
 
   void GroupContextMenu::addGroup() {
-    mw->addGroup(new Group("Group"));
+    mw->addGroup(new Group("Group"), element);
   }
 
   void GroupContextMenu::addObject() {
@@ -296,7 +296,7 @@ namespace MBSimGUI {
   }
 
   void GroupContextContextMenu::addGroup() {
-    mw->addGroup(new Group("Group"));
+    mw->addGroup(new Group("Group"), element);
   }
 
   ObjectContextContextMenu::ObjectContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

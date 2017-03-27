@@ -176,9 +176,11 @@ namespace MBSimGUI {
       TwoDimensionalTabularFunctionWidgetFactory();
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class FourierFunctionWidgetFactory : public WidgetFactory {
@@ -186,9 +188,11 @@ namespace MBSimGUI {
       FourierFunctionWidgetFactory();
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class ConstraintWidgetFactory : public WidgetFactory {
@@ -196,10 +200,12 @@ namespace MBSimGUI {
       ConstraintWidgetFactory(Element *parent_);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       Element *parent;
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class ConnectRigidBodiesWidgetFactory : public WidgetFactory {
@@ -244,10 +250,12 @@ namespace MBSimGUI {
       SpatialContourFunctionWidgetFactory(Element *parent_);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
       Element *parent;
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
 }

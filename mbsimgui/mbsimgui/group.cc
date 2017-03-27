@@ -41,14 +41,6 @@ namespace MBSimGUI {
 
     InternalFrame *I = new InternalFrame("I",MBSIM%"enableOpenMBVFrameI","plotFeatureFrameI");
     addFrame(I);
-
-//    if(parent) {
-//      position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"position"),"",4));
-//
-//      orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIM%"orientation"),"",4));
-//
-//      frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
-//    }
   }
 
   Group::~Group() {
@@ -172,7 +164,6 @@ namespace MBSimGUI {
         }
     }
     removedElement.push_back(element);
-//    element->deinitialize();
   }
 
   void Group::createXMLConstraints() {
@@ -213,8 +204,6 @@ namespace MBSimGUI {
     ele0->insertBefore( links, NULL );
 
     DOMElement *ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameI" );
-//    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
-//    ele1->insertBefore(id, NULL);
     ele0->insertBefore( ele1, NULL );
 
     return ele0;
@@ -232,6 +221,12 @@ namespace MBSimGUI {
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
     for(size_t i=0; i<contour.size(); i++) {
       contour[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"groups")->getFirstElementChild();
+    for(size_t i=0; i<group.size(); i++) {
+      group[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 
@@ -276,25 +271,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* Group::initializeUsingXML(DOMElement *element) {
- //   DOMElement *e;
     Element::initializeUsingXML(element);
-//    e=element->getFirstElementChild();
-
-//    if(frameOfReference.getProperty())
-//      frameOfReference.initializeUsingXML(element);
-//
-//    // search first element known by Group
-//    while(e &&
-//        E(e)->getTagName()!=MBSIM%"position" &&
-//        E(e)->getTagName()!=MBSIM%"orientation" &&
-//        E(e)->getTagName()!=MBSIM%"frames")
-//      e=e->getNextElementSibling();
-//
-//    if(position.getProperty())
-//      position.initializeUsingXML(element);
-//
-//    if(orientation.getProperty())
-//      orientation.initializeUsingXML(element);
 
     // frames
     frames = E(element)->getFirstElementChildNamed(MBSIM%"frames");

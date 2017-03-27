@@ -278,9 +278,9 @@ namespace MBSimGUI {
     name.push_back("Symbolic function");
     name.push_back("Piecewise polynom function");
     name.push_back("Piecewise defined function");
-    xmlName.push_back("SymbolicFunction");
-    xmlName.push_back("PiecewisePolynomFunction");
-    xmlName.push_back("PiecewiseDefinedFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
+    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
   }
 
   QWidget* SymbolicFunctionWidgetFactory1::createWidget(int i) {
@@ -297,9 +297,9 @@ namespace MBSimGUI {
     name.push_back("Symbolic function");
     name.push_back("Two dimensional tabular function");
     name.push_back("Two dimensional piecewise polynom function");
-    xmlName.push_back("SymbolicFunction");
-    xmlName.push_back("TwoDimensionalTabularFunction");
-    xmlName.push_back("TwoDimensionalPiecewisePolynomFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"TwoDimensionalTabularFunction");
+    xmlName.push_back(MBSIM%"TwoDimensionalPiecewisePolynomFunction");
   }
 
   QWidget* SymbolicFunctionWidgetFactory2::createWidget(int i) {
@@ -390,50 +390,52 @@ namespace MBSimGUI {
   TwoDimensionalTabularFunctionWidgetFactory::TwoDimensionalTabularFunctionWidgetFactory() {
     name.push_back("x,y and z");
     name.push_back("xyz");
+    xmlName.push_back(MBSIM%"x");
+    xmlName.push_back(MBSIM%"xyz");
   }
 
   QWidget* TwoDimensionalTabularFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       ContainerWidget *widgetContainer = new ContainerWidget;
-      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList())))));
-      widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList())))));
-      widgetContainer->addWidget(new ExtWidget("z",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0)))));
+      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"x"));
+      widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
+      widgetContainer->addWidget(new ExtWidget("z",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,3,"0","0")),QBoxLayout::RightToLeft,5),false,false,MBSIM%"z"));
       return widgetContainer;
     }
-    if(i==1) {
-      return new ExtWidget("xyz",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(4,4)));
-    }
+    if(i==1)
+      return new ExtWidget("xyz",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xyz");
     return NULL;
   }
 
   FourierFunctionWidgetFactory::FourierFunctionWidgetFactory() {
     name.push_back("a and b");
     name.push_back("ab");
+    xmlName.push_back(MBSIM%"a");
+    xmlName.push_back(MBSIM%"ab");
   }
 
   QWidget* FourierFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       ContainerWidget *widgetContainer = new ContainerWidget;
-      widgetContainer->addWidget(new ExtWidget("a",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList())))));
-      widgetContainer->addWidget(new ExtWidget("b",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList())))));
+      widgetContainer->addWidget(new ExtWidget("a",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a"));
+      widgetContainer->addWidget(new ExtWidget("b",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"b"));
       return widgetContainer;
     }
-    if(i==1) {
-      return new ExtWidget("ab",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2,vector<QStringList>(3,QStringList()),vector<int>(3,0))));
-    }
+    if(i==1)
+      return new ExtWidget("ab",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"ab");
     return NULL;
   }
 
   ConstraintWidgetFactory::ConstraintWidgetFactory(Element *parent_) : parent(parent_) {
-    name.push_back("Time dependent constraint function");
-    name.push_back("State dependent constraint function");
+    xmlName.push_back(MBSIM%"timeDependentConstraintFunction");
+    xmlName.push_back(MBSIM%"stateDependentConstraintFunction");
   }
 
   QWidget* ConstraintWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
+      return new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
     if(i==1)
-      return new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(QStringList("q"),parent)));
+      return new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(QStringList("q"),parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
     return NULL;
   }
 
@@ -507,6 +509,9 @@ namespace MBSimGUI {
     name.push_back("Symbolic function");
     name.push_back("Continued function");
     name.push_back("Composite function");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"ContinuedFunction");
+    xmlName.push_back(MBSIM%"CompositeFunction");
   }
 
   QWidget* SpatialContourFunctionWidgetFactory::createWidget(int i) {
