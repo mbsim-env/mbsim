@@ -1134,12 +1134,6 @@ namespace MBSimGUI {
     return NULL;
   }
 
-//  VecWidgetFactory::VecWidgetFactory(int m_, bool transpose_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4), transpose(transpose_) {
-//    name[0] = "Vector";
-//    name[1] = "File";
-//    name[2] = "Editor";
-//  }
-
   VecWidgetFactory::VecWidgetFactory(int m, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : x(getVec<QString>(m,"0")), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
     name[0] = "Vector";
     name[1] = "File";
@@ -1168,12 +1162,6 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-//  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(const vector<QString> &x_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : x(x_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
-//    name[0] = "Vector";
-//    name[1] = "File";
-//    name[2] = "Editor";
-//  }
-
   QWidget* VecSizeVarWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new VecSizeVarWidget(m,1,100,transpose), unit[0], defaultUnit[0]);
@@ -1182,12 +1170,6 @@ namespace MBSimGUI {
     if(i==2)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
     return NULL;
-  }
-
-  MatWidgetFactory::MatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
-    name[0] = "Matrix";
-    name[1] = "File";
-    name[2] = "Editor";
   }
 
   MatWidgetFactory::MatWidgetFactory(int m, int n, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(getMat<QString>(m,n,"0")), name(3), unit(unit_), defaultUnit(defaultUnit_) {
@@ -1202,9 +1184,6 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  MatWidgetFactory::MatWidgetFactory(const vector<vector<QString> > &A_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
-  }
-
   QWidget* MatWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new MatWidget(A), unit[0], defaultUnit[0]);
@@ -1215,19 +1194,10 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory() : m(1), n(1), name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
-    name[0] = "Matrix";
-    name[1] = "File";
-    name[2] = "Editor";
-  }
-
   MatRowsVarWidgetFactory::MatRowsVarWidgetFactory(int m_, int n_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), n(n_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
-  }
-
-  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory(int m_, int n_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), n(n_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
   }
 
   QWidget* MatRowsVarWidgetFactory::createWidget(int i) {

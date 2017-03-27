@@ -66,8 +66,6 @@ namespace MBSimGUI {
   class ExtWidget : public QGroupBox, public WidgetInterface {
     Q_OBJECT
 
-    friend class ExtProperty;
-
     public:
       ExtWidget(const QString &name, QWidget *widget, bool deactivatable=false, bool active=false, const MBXMLUtils::FQN &xmlName="");
       QWidget* getWidget() const {return widget;}
@@ -91,8 +89,6 @@ namespace MBSimGUI {
   class ChoiceWidget2 : public Widget {
     Q_OBJECT
 
-    friend class ChoiceProperty2;
-
     public:
       ChoiceWidget2(WidgetFactory *factory, QBoxLayout::Direction dir=QBoxLayout::TopToBottom, int mode=4);
       QWidget* getWidget() const { return widget; }
@@ -112,7 +108,6 @@ namespace MBSimGUI {
       QComboBox *comboBox;
       QWidget *widget;
       WidgetFactory *factory;
-      MBXMLUtils::FQN xmlName;
       int mode;
 
     signals:
@@ -121,8 +116,6 @@ namespace MBSimGUI {
 
   class ContainerWidget : public Widget {
 
-    friend class ContainerProperty;
-
     public:
       ContainerWidget();
 
@@ -130,6 +123,8 @@ namespace MBSimGUI {
       void addWidget(QWidget *widget_);
       QWidget* getWidget(int i) const {return widget[i];}
       void updateWidget();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QVBoxLayout *layout;
@@ -139,10 +134,8 @@ namespace MBSimGUI {
   class ListWidget : public Widget {
     Q_OBJECT
 
-    friend class ListProperty;
-
     public:
-      ListWidget(WidgetFactory *factory, const QString &name="Element", const MBXMLUtils::FQN &xmlName="", int m=0, int mode=0, bool fixedSize=false);
+      ListWidget(WidgetFactory *factory, const QString &name="Element", int m=0, int mode=0, bool fixedSize=false);
       ~ListWidget();
       void resize_(int m, int n);
       int getSize() const;
@@ -157,7 +150,6 @@ namespace MBSimGUI {
       QListWidget *list;
       WidgetFactory *factory;
       QString name;
-      MBXMLUtils::FQN xmlName;
       int mode;
       void addElements(int n=1, bool emitSignals=true);
 

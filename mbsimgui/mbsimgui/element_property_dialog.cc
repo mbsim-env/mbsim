@@ -256,7 +256,7 @@ namespace MBSimGUI {
   PointPropertyDialog::PointPropertyDialog(Point *point, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(point,parent,f) {
     addTab("Visualisation",1);
 
-    visu = new ExtWidget("OpenMBV point",new PointMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
+    visu = new ExtWidget("Enable openMBV",new PointMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
   }
 
@@ -275,7 +275,7 @@ namespace MBSimGUI {
   LinePropertyDialog::LinePropertyDialog(Line *line, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(line,parent,f) {
     addTab("Visualisation",1);
 
-    visu = new ExtWidget("OpenMBV line",new LineMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
+    visu = new ExtWidget("Enable openMBV",new LineMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
   }
 
@@ -294,7 +294,7 @@ namespace MBSimGUI {
   PlanePropertyDialog::PlanePropertyDialog(Plane *plane, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(plane,parent,f) {
     addTab("Visualisation",1);
 
-    visu = new ExtWidget("OpenMBV plane",new PlaneMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
+    visu = new ExtWidget("Enable openMBV",new PlaneMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
   }
 
@@ -316,7 +316,7 @@ namespace MBSimGUI {
     radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"radius");
     addToTab("General", radius);
 
-    visu = new ExtWidget("OpenMBV sphere",new MBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
   }
 
@@ -337,73 +337,149 @@ namespace MBSimGUI {
   CirclePropertyDialog::CirclePropertyDialog(Circle *circle, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(circle,parent,f) {
     addTab("Visualisation",1);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-    radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
+    radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"radius");
     addToTab("General", radius);
-    solid = new ExtWidget("Solid",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    solid = new ExtWidget("Solid",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"solid");
     addToTab("General", solid);
-    visu = new ExtWidget("OpenMBV Circle",new MBSOMBVWidget("NOTSET"),true);
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
+  }
+
+  DOMElement* CirclePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
+    radius->initializeUsingXML(element->getXMLElement());
+    solid->initializeUsingXML(element->getXMLElement());
+    visu->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* CirclePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    radius->writeXMLFile(element->getXMLElement(),NULL);
+    solid->writeXMLFile(element->getXMLElement(),NULL);
+    visu->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
   }
 
   CuboidPropertyDialog::CuboidPropertyDialog(Cuboid *circle, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(circle,parent,f) {
     addTab("Visualisation",1);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new VecWidget(3), lengthUnits(), 4));
-    length = new ExtWidget("Length",new ExtPhysicalVarWidget(input));
+    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"length");
     addToTab("General", length);
 
-    visu = new ExtWidget("OpenMBV Cuboid",new MBSOMBVWidget("NOTSET"),true);
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
+  }
+
+  DOMElement* CuboidPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
+    length->initializeUsingXML(element->getXMLElement());
+    visu->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* CuboidPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    length->writeXMLFile(element->getXMLElement(),NULL);
+    visu->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
   }
 
   LineSegmentPropertyDialog::LineSegmentPropertyDialog(LineSegment *line, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(line,parent,f) {
     addTab("Visualisation",1);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-    length = new ExtWidget("Length",new ExtPhysicalVarWidget(input));
+    length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"length");
     addToTab("General", length);
 
-    visu = new ExtWidget("OpenMBV LineSegment",new MBSOMBVWidget("NOTSET"),true);
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
+  }
+
+  DOMElement* LineSegmentPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
+    length->initializeUsingXML(element->getXMLElement());
+    visu->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* LineSegmentPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    length->writeXMLFile(element->getXMLElement(),NULL);
+    visu->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
   }
 
   PlanarContourPropertyDialog::PlanarContourPropertyDialog(PlanarContour *contour, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(contour,parent,f) {
     addTab("Visualisation",1);
 
-    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2,vector<QStringList>(3,noUnitUnits())),QBoxLayout::RightToLeft));
+    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nodes");
     addToTab("General", nodes);
 
-    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new PlanarContourFunctionWidgetFactory(contour)));
+    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new PlanarContourFunctionWidgetFactory(contour),QBoxLayout::TopToBottom,0),false,false,MBSIM%"contourFunction");
     addToTab("General", contourFunction);
 
-    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
+    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"open");
     addToTab("General", open);
 
-    visu = new ExtWidget("OpenMBV PlanarContour",new PlanarContourMBSOMBVWidget("NOTSET"),true);
+    visu = new ExtWidget("Enable openMBV",new PlanarContourMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
+  }
+
+  DOMElement* PlanarContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
+    nodes->initializeUsingXML(element->getXMLElement());
+    contourFunction->initializeUsingXML(element->getXMLElement());
+    open->initializeUsingXML(element->getXMLElement());
+    visu->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* PlanarContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    nodes->writeXMLFile(element->getXMLElement(),NULL);
+    contourFunction->writeXMLFile(element->getXMLElement(),NULL);
+    open->writeXMLFile(element->getXMLElement(),NULL);
+    visu->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
   }
 
   SpatialContourPropertyDialog::SpatialContourPropertyDialog(SpatialContour *contour, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(contour,parent,f) {
     addTab("Visualisation",1);
 
-    etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2,vector<QStringList>(3,noUnitUnits())),QBoxLayout::RightToLeft));
+    etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaNodes");
     addToTab("General", etaNodes);
 
-    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2,vector<QStringList>(3,noUnitUnits())),QBoxLayout::RightToLeft));
+    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"xiNodes");
     addToTab("General", xiNodes);
 
-    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(contour)));
+    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(contour),QBoxLayout::TopToBottom,0),false,false,MBSIM%"contourFunction");
     addToTab("General", contourFunction);
 
-    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
+    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"open");
     addToTab("General", open);
 
-    visu = new ExtWidget("OpenMBV SpatialContour",new SpatialContourMBSOMBVWidget("NOTSET"),true);
+    visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
+  }
+
+  DOMElement* SpatialContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
+    etaNodes->initializeUsingXML(element->getXMLElement());
+    xiNodes->initializeUsingXML(element->getXMLElement());
+    contourFunction->initializeUsingXML(element->getXMLElement());
+    open->initializeUsingXML(element->getXMLElement());
+    visu->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* SpatialContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    etaNodes->writeXMLFile(element->getXMLElement(),NULL);
+    xiNodes->writeXMLFile(element->getXMLElement(),NULL);
+    contourFunction->writeXMLFile(element->getXMLElement(),NULL);
+    open->writeXMLFile(element->getXMLElement(),NULL);
+    visu->writeXMLFile(element->getXMLElement(),NULL);
+    return NULL;
   }
 
   GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f), position(0), orientation(0), frameOfReference(0) {

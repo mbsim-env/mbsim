@@ -241,7 +241,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(parent)),"Function","",m,1),false,false,MBSIM%"components");
+    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(parent)),"Function",m,1),false,false,MBSIM%"components");
     layout->addWidget(functions);
   }
 
@@ -305,7 +305,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Limited functions",new ListWidget(new LimitedFunctionWidgetFactory(new FunctionWidgetFactory2(parent)),"Function","",n,1),false,false,MBSIM%"limitedFunctions");
+    functions = new ExtWidget("Limited functions",new ListWidget(new LimitedFunctionWidgetFactory(new FunctionWidgetFactory2(parent)),"Function",n,1),false,false,MBSIM%"limitedFunctions");
     layout->addWidget(functions);
 
     shiftAbscissa = new ExtWidget("Shift abscissa",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftAbscissa");
@@ -458,14 +458,14 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    choice = new ChoiceWidget2(new TabularFunctionWidgetFactory);
+    choice = new ChoiceWidget2(new TabularFunctionWidgetFactory,QBoxLayout::TopToBottom,3);
     layout->addWidget(choice);
 
     vector<QString> list;
     list.push_back("\"cSplinePeriodic\"");
     list.push_back("\"cSplineNatural\"");
     list.push_back("\"piecewiseLinear\"");
-    method = new ExtWidget("Interpolation method",new TextChoiceWidget(list,1,true),true);
+    method = new ExtWidget("Interpolation method",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolationMethod");
     layout->addWidget(method);
   }
 
@@ -484,12 +484,14 @@ namespace MBSimGUI {
 
   DOMElement* PiecewisePolynomFunctionWidget::initializeUsingXML(DOMElement *element) {
     choice->initializeUsingXML(element);
+    method->initializeUsingXML(element);
     return element;
   }
 
   DOMElement* PiecewisePolynomFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
     choice->writeXMLFile(ele0);
+    method->writeXMLFile(ele0);
     return ele0;
   }
 
@@ -613,10 +615,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    f = new ExtWidget("Function",new ChoiceWidget2(factoryf),false,false,MBSIM%"function");
+    f = new ExtWidget("Function",new ChoiceWidget2(factoryf,QBoxLayout::TopToBottom,0),false,false,MBSIM%"function");
     layout->addWidget(f);
 
-    r = new ExtWidget("Continuation rule",new ChoiceWidget2(factoryr),false,false,MBSIM%"continuationRule");
+    r = new ExtWidget("Continuation rule",new ChoiceWidget2(factoryr,QBoxLayout::TopToBottom,0),false,false,MBSIM%"continuationRule");
     layout->addWidget(r);
   }
 
@@ -851,7 +853,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false,false,MBSIM%"radiusFunction");
+    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"radiusFunction");
     layout->addWidget(radiusFunction);
   }
 

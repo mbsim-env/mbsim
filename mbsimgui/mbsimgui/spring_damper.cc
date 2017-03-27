@@ -28,12 +28,6 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   SpringDamper::SpringDamper(const QString &str) : FixedFrameLink(str) {
-
-//    forceFunction.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"forceFunction"));
-//
-//    unloadedLength.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"unloadedLength",vector<string>(2,"m")),"",4));
-//
-//    coilSpring.setProperty(new CoilSpringMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVCoilSpring",getID()));
   }
 
   DOMElement* SpringDamper::processFileID(DOMElement *element) {
@@ -50,16 +44,6 @@ namespace MBSimGUI {
   }
 
   DirectionalSpringDamper::DirectionalSpringDamper(const QString &str) : FloatingFrameLink(str) {
-
-//    vector<PhysicalVariableProperty> input;
-//    input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIM%"forceDirection"));
-//    forceDirection.setProperty(new ExtPhysicalVarProperty(input));
-//
-//    forceFunction.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"forceFunction"));
-//
-//    unloadedLength.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"unloadedLength",vector<string>(2,"m")),"",4));
-//
-//    coilSpring.setProperty(new CoilSpringMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVCoilSpring",getID()));
   }
 
   DOMElement* DirectionalSpringDamper::processFileID(DOMElement *element) {
@@ -76,10 +60,6 @@ namespace MBSimGUI {
   }
 
   GeneralizedSpringDamper::GeneralizedSpringDamper(const QString &str) : DualRigidBodyLink(str) {
-
-//    function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"generalizedForceFunction"));
-//
-//    unloadedLength.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"generalizedUnloadedLength",vector<string>(2)),"",4));
   }
 
 }

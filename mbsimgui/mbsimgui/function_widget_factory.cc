@@ -274,6 +274,15 @@ namespace MBSimGUI {
     return NULL;
   }
 
+  SymbolicFunctionWidgetFactory1::SymbolicFunctionWidgetFactory1(const QStringList &var_, Element *parent_) : parent(parent_), var(var_)  {
+    name.push_back("Symbolic function");
+    name.push_back("Piecewise polynom function");
+    name.push_back("Piecewise defined function");
+    xmlName.push_back("SymbolicFunction");
+    xmlName.push_back("PiecewisePolynomFunction");
+    xmlName.push_back("PiecewiseDefinedFunction");
+  }
+
   QWidget* SymbolicFunctionWidgetFactory1::createWidget(int i) {
     if(i==0)
       return new SymbolicFunctionWidget(var,1,3);
@@ -284,12 +293,13 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  vector<QString> SymbolicFunctionWidgetFactory1::getNames() {
-    vector<QString> name;
+  SymbolicFunctionWidgetFactory2::SymbolicFunctionWidgetFactory2(const QStringList &var_, Element *parent_) : parent(parent_), var(var_)  {
     name.push_back("Symbolic function");
-    name.push_back("Piecewise polynom function");
-    name.push_back("Piecewise defined function");
-    return name;
+    name.push_back("Two dimensional tabular function");
+    name.push_back("Two dimensional piecewise polynom function");
+    xmlName.push_back("SymbolicFunction");
+    xmlName.push_back("TwoDimensionalTabularFunction");
+    xmlName.push_back("TwoDimensionalPiecewisePolynomFunction");
   }
 
   QWidget* SymbolicFunctionWidgetFactory2::createWidget(int i) {
@@ -302,12 +312,13 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  vector<QString> SymbolicFunctionWidgetFactory2::getNames() {
-    vector<QString> name;
+  SymbolicFunctionWidgetFactory3::SymbolicFunctionWidgetFactory3(const QStringList &var_) : var(var_) {
     name.push_back("Symbolic function");
-    name.push_back("Two dimensional tabular function");
-    name.push_back("Two dimensional piecewise polynom function");
-    return name;
+    name.push_back("Modulo function");
+    name.push_back("Bounded function");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"ModuloFunction");
+    xmlName.push_back(MBSIM%"BoundedFunction");
   }
 
   QWidget* SymbolicFunctionWidgetFactory3::createWidget(int i) {
@@ -318,14 +329,6 @@ namespace MBSimGUI {
     if(i==2)
       return new BoundedFunctionWidget;
     return NULL;
-  }
-
-  vector<QString> SymbolicFunctionWidgetFactory3::getNames() {
-    vector<QString> name;
-    name.push_back("Symbolic function");
-    name.push_back("Modulo function");
-    name.push_back("Bounded function");
-    return name;
   }
 
   TranslationWidgetFactory4::TranslationWidgetFactory4(Element *parent_, const MBXMLUtils::NamespaceURI &uri) : parent(parent_) {
@@ -368,18 +371,19 @@ namespace MBSimGUI {
   TabularFunctionWidgetFactory::TabularFunctionWidgetFactory() {
     name.push_back("x and y");
     name.push_back("xy");
+    xmlName.push_back(MBSIM%"x");
+    xmlName.push_back(MBSIM%"xy");
   }
 
   QWidget* TabularFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       ContainerWidget *widgetContainer = new ContainerWidget;
-      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList())))));
-      widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,1,"0","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0)))));
+      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"x"));
+      widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,1,"0","0")),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
       return widgetContainer;
     }
-    if(i==1) {
-      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2,vector<QStringList>(3,QStringList()),vector<int>(3,0))));
-    }
+    if(i==1)
+      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xy");
     return NULL;
   }
 
@@ -475,6 +479,12 @@ namespace MBSimGUI {
     name.push_back("Piecewise polynom function");
     name.push_back("Piecewise defined function");
     name.push_back("Composite function");
+    xmlName.push_back(MBSIM%"PolarContourFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"ContinuedFunction");
+    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
+    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
+    xmlName.push_back(MBSIM%"CompositeFunction");
   }
 
   QWidget* PlanarContourFunctionWidgetFactory::createWidget(int i) {

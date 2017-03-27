@@ -45,79 +45,30 @@ namespace MBSimGUI {
   }
 
   Point::Point(const QString &str) : RigidContour(str) {
-//    visu.setProperty(new PointMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
   Line::Line(const QString &str) : RigidContour(str) {
-//    visu.setProperty(new LineMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
   Plane::Plane(const QString &str) : RigidContour(str) {
-
-  //  visu.setProperty(new PlaneMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
   Sphere::Sphere(const QString &str) : RigidContour(str) {
-
-//    vector<PhysicalVariableProperty> input;
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
-//    radius.setProperty(new ExtPhysicalVarProperty(input));
-//
-//    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-
   }
 
   Circle::Circle(const QString &str) : RigidContour(str) {
-
-//    vector<PhysicalVariableProperty> input;
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
-//    radius.setProperty(new ExtPhysicalVarProperty(input));
-//    solid.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"solid",vector<string>(2,"")),"",4));
-//    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
   Cuboid::Cuboid(const QString &str) : RigidContour(str) {
-
-//    vector<PhysicalVariableProperty> input;
-//    input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", MBSIM%"length"));
-//    length.setProperty(new ExtPhysicalVarProperty(input));
-//
-//    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-
   }
 
   LineSegment::LineSegment(const QString &str) : RigidContour(str) {
-
-//    vector<PhysicalVariableProperty> input;
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"length"));
-//    length.setProperty(new ExtPhysicalVarProperty(input));
-//
-//    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-
   }
 
   PlanarContour::PlanarContour(const QString &str) : RigidContour(str) {
-//
-//    nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"nodes",vector<string>(3,"")),"",4));
-//
-//    contourFunction.setProperty(new ChoiceProperty2(new PlanarContourFunctionPropertyFactory(this),MBSIM%"contourFunction"));
-//
-//    open.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"open",vector<string>(2,"")),"",4));
-//
-//    visu.setProperty(new PlanarContourMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
   SpatialContour::SpatialContour(const QString &str) : RigidContour(str) {
-
-//    etaNodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"etaNodes",vector<string>(3,"")),"",4));
-//
-//    xiNodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"xiNodes",vector<string>(3,"")),"",4));
-//
-//    contourFunction.setProperty(new ChoiceProperty2(new SpatialContourFunctionPropertyFactory(this),MBSIM%"contourFunction"));
-//
-//    open.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"open",vector<string>(2,"")),"",4));
-//
-//    visu.setProperty(new SpatialContourMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
 }

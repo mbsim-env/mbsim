@@ -314,7 +314,6 @@ namespace MBSimGUI {
     return e;
   }
 
-
   FrameMBSOMBVWidget::FrameMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name,"") {
     size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
     size->setToolTip("Set the size of the frame");
@@ -561,7 +560,7 @@ namespace MBSimGUI {
   }
 
   CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
-    bodies = new ExtWidget("Bodies",new ListWidget(new ChoiceWidgetFactory(new OMBVRigidBodyWidgetFactory),"Body","",0,1));
+    bodies = new ExtWidget("Bodies",new ListWidget(new ChoiceWidgetFactory(new OMBVRigidBodyWidgetFactory),"Body",0,1));
     layout->addWidget(bodies);
   }
 
@@ -606,6 +605,5 @@ namespace MBSimGUI {
     writeProperties(e);
     return NULL;
   }
-
 
 }

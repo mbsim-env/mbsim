@@ -54,7 +54,6 @@
           <frames>
             <FixedRelativeFrame name="P1">
               <enableOpenMBV>
-                <?OPENMBV_ID 6?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -92,14 +91,12 @@
                 </ContinuedFunction>
               </contourFunction>
               <enableOpenMBV>
-                <?OPENMBV_ID 7?>
                 <nodes unit="-">[0:0.1:2*pi]'</nodes>
                 <transparency unit="-">0.3</transparency>
               </enableOpenMBV>
             </PlanarContour>
           </contours>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 3?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -137,12 +134,10 @@
             <Circle name="Circle1">
               <radius unit="m">r</radius>
               <enableOpenMBV>
-                <?OPENMBV_ID 22?>
               </enableOpenMBV>
             </Circle>
           </contours>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 19?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -165,13 +160,11 @@
         <ContactObserver name="ContactObserver1">
           <contact ref="../Link[Contact1]"/>
           <enableOpenMBVContactPoints>
-            <?OPENMBV_ID 25?>
             <size unit="cm">1</size>
           </enableOpenMBVContactPoints>
         </ContactObserver>
       </observers>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 1?>
         <size unit="cm">1</size>
       </enableOpenMBVFrameI>
       <environments>

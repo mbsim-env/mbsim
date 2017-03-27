@@ -174,7 +174,7 @@ namespace MBSimGUI {
 
   DOMElement* ChoiceWidget2::initializeUsingXML(DOMElement *element) {
     if(mode<=1) {
-      DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
+      DOMElement *e=element;
       if(e) {
         DOMElement* ee=(mode==0)?e->getFirstElementChild():e;
         if(ee) {
@@ -194,7 +194,7 @@ namespace MBSimGUI {
       return 0;
     }
     else if (mode<=3) {
-      DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
+      DOMElement *e=element;
       if(e) {
         DOMElement* ee=(mode==2)?e->getFirstElementChild():e;
         if(ee) {
@@ -215,7 +215,7 @@ namespace MBSimGUI {
       return 0;
     }
     else {
-      DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
+      DOMElement *e=element;
       if(e) {
         DOMElement* ee=e;
         if(ee) {
@@ -240,17 +240,9 @@ namespace MBSimGUI {
   }
 
   DOMElement* ChoiceWidget2::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMNode *ele0;
-    if(xmlName!=FQN()) {
-      DOMDocument *doc=parent->getOwnerDocument();
-      ele0 = D(doc)->createElement(xmlName);
-      parent->insertBefore(ele0, NULL);
-    }
-    else
-      ele0 = parent;
-    dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(ele0,ref);
+    dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
 
-    return 0;
+    return NULL;
   }
 
   ContainerWidget::ContainerWidget() {
@@ -274,7 +266,21 @@ namespace MBSimGUI {
       dynamic_cast<WidgetInterface*>(getWidget(i))->updateWidget();
   }
 
-  ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, const FQN &xmlName_, int m, int mode_, bool fixedSize) : factory(factory_), name(name_), xmlName(xmlName_), mode(mode_) {
+  DOMElement* ContainerWidget::initializeUsingXML(DOMElement *element) {
+    bool flag = false;
+    for(unsigned int i=0; i<widget.size(); i++)
+      if(dynamic_cast<WidgetInterface*>(getWidget(i))->initializeUsingXML(element))
+        flag = true;
+    return flag?element:0;
+  }
+
+  DOMElement* ContainerWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    for(unsigned int i=0; i<widget.size(); i++)
+      dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent);
+    return NULL;
+  }
+
+  ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, int m, int mode_, bool fixedSize) : factory(factory_), name(name_), mode(mode_) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -377,38 +383,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* ListWidget::initializeUsingXML(DOMElement *element) {
-    if(xmlName==FQN()) {
-      DOMElement *e=(mode==0)?element->getFirstElementChild():element;
-      while(e) {
-        addElements(1,false);
-        dynamic_cast<WidgetInterface*>(getWidget(getSize()-1))->initializeUsingXML(e);
-        e=e->getNextElementSibling();
-      }
-    }
-    else {
-      DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
-      while(e and E(e)->getTagName()==xmlName) {
-        addElements(1,false);
-        dynamic_cast<WidgetInterface*>(getWidget(getSize()-1))->initializeUsingXML(e);
-        e=e->getNextElementSibling();
-      }
+    DOMElement *e=(mode==0)?element->getFirstElementChild():element;
+    while(e) {
+      addElements(1,false);
+      dynamic_cast<WidgetInterface*>(getWidget(getSize()-1))->initializeUsingXML(e);
+      e=e->getNextElementSibling();
     }
     return element;
   }
 
   DOMElement* ListWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-   if(xmlName==FQN()) {
-      for(unsigned int i=0; i<getSize(); i++)
-        dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent);
-    }
-    else {
-      DOMDocument *doc=parent->getOwnerDocument();
-      for(unsigned int i=0; i<getSize(); i++) {
-        DOMElement *ele0 = D(doc)->createElement(xmlName);
-        dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(ele0);
-        parent->insertBefore(ele0, NULL);
-      }
-    }
+    for(unsigned int i=0; i<getSize(); i++)
+      dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent);
     return 0;
   }
 

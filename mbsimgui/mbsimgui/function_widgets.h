@@ -38,16 +38,12 @@ namespace MBSimGUI {
 
   class IdentityFunctionWidget : public FunctionWidget {
 
-    friend class IdentityFunction;
-
     public:
       IdentityFunctionWidget(int m=1) { }
       QString getType() const { return "IdentityFunction"; }
   };
 
   class ConstantFunctionWidget : public FunctionWidget {
-
-    friend class ConstantFunction;
 
     public:
       ConstantFunctionWidget(int m=1);
@@ -60,8 +56,6 @@ namespace MBSimGUI {
 
   class LinearFunctionWidget : public FunctionWidget {
 
-    friend class LinearFunction;
-
     public:
       LinearFunctionWidget(int m=1);
       QString getType() const { return "LinearFunction"; }
@@ -72,8 +66,6 @@ namespace MBSimGUI {
   };
 
   class QuadraticFunctionWidget : public FunctionWidget {
-
-    friend class QuadraticFunction;
 
     public:
       QuadraticFunctionWidget(int m=1);
@@ -86,8 +78,6 @@ namespace MBSimGUI {
 
   class PolynomFunctionWidget : public FunctionWidget {
 
-    friend class PolynomFunction;
-
     public:
       PolynomFunctionWidget(int m=1);
       QString getType() const { return "PolynomFunction"; }
@@ -98,8 +88,6 @@ namespace MBSimGUI {
   };
 
   class SinusoidalFunctionWidget : public FunctionWidget {
-
-    friend class SinusoidalFunction;
 
     public:
       SinusoidalFunctionWidget(int m=1);
@@ -112,16 +100,12 @@ namespace MBSimGUI {
 
   class AbsoluteValueFunctionWidget : public FunctionWidget {
 
-    friend class AbsoluteValueFunction;
-
     public:
       AbsoluteValueFunctionWidget(int m=0) { }
       QString getType() const { return "AbsoluteValueFunction"; }
   };
 
   class ModuloFunctionWidget : public FunctionWidget {
-
-    friend class ModuloFunction;
 
     public:
       ModuloFunctionWidget(int m=0);
@@ -134,8 +118,6 @@ namespace MBSimGUI {
 
   class BoundedFunctionWidget : public FunctionWidget {
 
-    friend class BoundedFunction;
-
     public:
       BoundedFunctionWidget(int m=0);
       QString getType() const { return "BoundedFunction"; }
@@ -147,16 +129,12 @@ namespace MBSimGUI {
 
   class SignumFunctionWidget : public FunctionWidget {
 
-    friend class SignumFunction;
-
     public:
       SignumFunctionWidget(int m=0) { }
       QString getType() const { return "SignumFunction"; }
   };
 
   class VectorValuedFunctionWidget : public FunctionWidget {
-
-    friend class VectorValuedFunction;
 
     public:
       VectorValuedFunctionWidget(Element *parent, int m=0, bool fixedSize=false);
@@ -170,8 +148,6 @@ namespace MBSimGUI {
 
   class CompositeFunctionWidget : public FunctionWidget {
     Q_OBJECT
-
-    friend class CompositeFunction;
 
     public:
       CompositeFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi);
@@ -189,8 +165,6 @@ namespace MBSimGUI {
 
   class PiecewiseDefinedFunctionWidget : public FunctionWidget {
 
-    friend class PiecewiseDefinedFunction;
-
     public:
       PiecewiseDefinedFunctionWidget(Element *parent, int n=0);
       QString getType() const { return "PiecewiseDefinedFunction"; }
@@ -203,8 +177,6 @@ namespace MBSimGUI {
 
   class SymbolicFunctionWidget : public FunctionWidget {
     Q_OBJECT
-
-    friend class SymbolicFunction;
 
     public:
       SymbolicFunctionWidget(const QStringList &var, int m, int max);
@@ -224,8 +196,6 @@ namespace MBSimGUI {
 
   class TabularFunctionWidget : public FunctionWidget {
 
-    friend class TabularFunction;
-
     public:
       TabularFunctionWidget(int n);
       QString getType() const { return "TabularFunction"; }
@@ -238,8 +208,6 @@ namespace MBSimGUI {
 
   class TwoDimensionalTabularFunctionWidget : public FunctionWidget {
 
-    friend class TwoDimensionalTabularFunction;
-
     public:
       TwoDimensionalTabularFunctionWidget(int n);
       QString getType() const { return "TwoDimensionalTabularFunction"; }
@@ -251,8 +219,6 @@ namespace MBSimGUI {
   };
 
   class PiecewisePolynomFunctionWidget : public FunctionWidget {
-
-    friend class PiecewisePolynomFunction;
 
     public:
       PiecewisePolynomFunctionWidget(int n);
@@ -267,8 +233,6 @@ namespace MBSimGUI {
 
   class TwoDimensionalPiecewisePolynomFunctionWidget : public FunctionWidget {
 
-    friend class TwoDimensionalPiecewisePolynomFunction;
-
     public:
       TwoDimensionalPiecewisePolynomFunctionWidget(int n);
       QString getType() const { return "TwoDimensionalPiecewisePolynomFunction"; }
@@ -281,8 +245,6 @@ namespace MBSimGUI {
   };
 
   class FourierFunctionWidget : public FunctionWidget {
-
-    friend class FourierFunction;
 
     public:
       FourierFunctionWidget(int n);
@@ -298,8 +260,6 @@ namespace MBSimGUI {
   class BidirectionalFunctionWidget : public FunctionWidget {
     Q_OBJECT
 
-    friend class BidirectionalFunction;
-
     public:
       BidirectionalFunctionWidget();
       QString getType() const { return "BidirectionalFunction"; }
@@ -313,8 +273,6 @@ namespace MBSimGUI {
   class ContinuedFunctionWidget : public FunctionWidget {
     Q_OBJECT
 
-    friend class ContinuedFunction;
-
     public:
       ContinuedFunctionWidget(WidgetFactory *factoryf, WidgetFactory *factoryr);
       QString getType() const { return "ContinuedFunction"; }
@@ -327,8 +285,6 @@ namespace MBSimGUI {
 
   class LinearSpringDamperForceWidget : public FunctionWidget {
 
-    friend class LinearSpringDamperForce;
-
     public:
       LinearSpringDamperForceWidget();
       QString getType() const { return "LinearSpringDamperForce"; }
@@ -340,8 +296,6 @@ namespace MBSimGUI {
 
   class NonlinearSpringDamperForceWidget : public FunctionWidget {
 
-    friend class NonlinearSpringDamperForce;
-
     public:
       NonlinearSpringDamperForceWidget(Element *parent);
       QString getType() const { return "NonlinearSpringDamperForce"; }
@@ -352,8 +306,6 @@ namespace MBSimGUI {
   };
 
   class LinearElasticFunctionWidget : public FunctionWidget {
-
-    friend class LinearElasticFunction;
 
     public:
       LinearElasticFunctionWidget();
@@ -367,8 +319,6 @@ namespace MBSimGUI {
 
   class LinearRegularizedBilateralConstraintWidget: public FunctionWidget {
 
-    friend class LinearRegularizedBilateralConstraint;
-
     public:
       LinearRegularizedBilateralConstraintWidget();
       QString getType() const { return "LinearRegularizedBilateralConstraint"; }
@@ -379,8 +329,6 @@ namespace MBSimGUI {
   };
 
   class LinearRegularizedUnilateralConstraintWidget: public FunctionWidget {
-
-    friend class LinearRegularizedUnilateralConstraint;
 
     public:
       LinearRegularizedUnilateralConstraintWidget();
@@ -393,8 +341,6 @@ namespace MBSimGUI {
 
   class LinearRegularizedCoulombFrictionWidget: public FunctionWidget {
 
-    friend class LinearRegularizedCoulombFriction;
-
     public:
       LinearRegularizedCoulombFrictionWidget();
       QString getType() const { return "LinearRegularizedCoulombFriction"; }
@@ -406,8 +352,6 @@ namespace MBSimGUI {
 
   class LinearRegularizedStribeckFrictionWidget: public FunctionWidget {
 
-    friend class LinearRegularizedStribeckFriction;
-
     public:
       LinearRegularizedStribeckFrictionWidget();
       QString getType() const { return "LinearRegularizedStribeckFriction"; }
@@ -418,8 +362,6 @@ namespace MBSimGUI {
   };
 
   class SignalFunctionWidget: public FunctionWidget {
-
-    friend class SignalFunction;
 
     public:
       SignalFunctionWidget(Element *element);
@@ -434,8 +376,6 @@ namespace MBSimGUI {
   };
 
   class PolarContourFunctionWidget : public FunctionWidget {
-
-    friend class PolarContourFunction;
 
     public:
       PolarContourFunctionWidget();
