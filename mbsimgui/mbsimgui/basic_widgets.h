@@ -151,8 +151,10 @@ namespace MBSimGUI {
       ContourOfReferenceWidget(Element* element, Contour* selectedContour);
 
       void updateWidget();
-      void setContour(const QString &str, Contour *contourPtr);
+      void setContour(const QString &str);
       QString getContour() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QLineEdit *contour;
@@ -271,9 +273,10 @@ namespace MBSimGUI {
       ConstraintOfReferenceWidget(Element* element, Constraint* selectedConstraint);
 
       void updateWidget();
-      void setConstraint(const QString &str, Constraint *constraintPtr);
+      void setConstraint(const QString &str);
       QString getConstraint() const;
-      Constraint* getSelectedConstraint() {return selectedConstraint;}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QLineEdit* constraint;
@@ -436,6 +439,8 @@ namespace MBSimGUI {
       ConnectContoursWidget(int n, Element* element);
 
       void updateWidget();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       std::vector<ContourOfReferenceWidget*> widget;

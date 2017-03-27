@@ -32,69 +32,63 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  DOMElement* GeneralizedForceLawWidget::initializeUsingXML(DOMElement *element) {
+    if(forceFunc) forceFunc->initializeUsingXML(element);
+    return element;
+  }
+
   DOMElement* GeneralizedForceLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType().toStdString());
-    if(forceFunc) {
-      DOMElement *ele1 = D(doc)->createElement( MBSIM%"forceFunction" );
-      forceFunc->writeXMLFile(ele1);
-      ele0->insertBefore(ele1, NULL);
-    }
     parent->insertBefore(ele0, ref);
+    if(forceFunc) forceFunc->writeXMLFile(ele0);
     return ele0;
   }
 
   RegularizedBilateralConstraintWidget::RegularizedBilateralConstraintWidget() {
 
-    layout = new QVBoxLayout;
-    layout->setMargin(0);
-    funcList = new CustomComboBox;
-    funcList->addItem(tr("Linear regularized bilateral constraint"));
-    layout->addWidget(funcList);
+    QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-//    forceFunc = new LinearRegularizedBilateralConstraintWidget;
-//    layout->addWidget(forceFunc);
-  }
-
-  void RegularizedBilateralConstraintWidget::defineFunction(int index) {
-    if(index==0) {
-      layout->removeWidget(forceFunc);
-      delete forceFunc;
-//      forceFunc = new LinearRegularizedBilateralConstraintWidget;
-//      layout->addWidget(forceFunc);
-    }
+    forceFunc = new ExtWidget("Force function",new ChoiceWidget2(new RegularizedBilateralConstraintFunctionFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
+    layout->addWidget(forceFunc);
   }
 
   RegularizedUnilateralConstraintWidget::RegularizedUnilateralConstraintWidget() {
 
-    layout = new QVBoxLayout;
-    layout->setMargin(0);
-    funcList = new CustomComboBox;
-    funcList->addItem(tr("Linear regularized unilateral constraint"));
-    layout->addWidget(funcList);
+    QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-//    forceFunc = new LinearRegularizedUnilateralConstraintWidget;
-//    layout->addWidget(forceFunc);
+    forceFunc = new ExtWidget("Force function",new ChoiceWidget2(new RegularizedUnilateralConstraintFunctionFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
+    layout->addWidget(forceFunc);
   }
 
-  void RegularizedUnilateralConstraintWidget::defineFunction(int index) {
-    if(index==0) {
-      layout->removeWidget(forceFunc);
-      delete forceFunc;
-//      forceFunc = new LinearRegularizedUnilateralConstraintWidget;
-//      layout->addWidget(forceFunc);
-    }
+  DOMElement* GeneralizedImpactLawWidget::initializeUsingXML(DOMElement *element) {
+    return element;
+  }
+
+  DOMElement* GeneralizedImpactLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType().toStdString());
+    parent->insertBefore(ele0, ref);
+    return ele0;
   }
 
   UnilateralNewtonImpactWidget::UnilateralNewtonImpactWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    restitutionCoefficient = new ExtWidget("Restitution coefficient",new ExtPhysicalVarWidget(input));
+    restitutionCoefficient = new ExtWidget("Restitution coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"restitutionCoefficient");
     layout->addWidget(restitutionCoefficient);
+  }
+
+  DOMElement* UnilateralNewtonImpactWidget::initializeUsingXML(DOMElement *element) {
+    GeneralizedImpactLawWidget::initializeUsingXML(element);
+    restitutionCoefficient->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* UnilateralNewtonImpactWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = GeneralizedImpactLawWidget::writeXMLFile(parent,ref);
+    restitutionCoefficient->writeXMLFile(ele0);
+    return ele0;
   }
 
   DOMElement* FrictionForceLawWidget::initializeUsingXML(DOMElement *element) {
@@ -113,37 +107,77 @@ namespace MBSimGUI {
   PlanarCoulombFrictionWidget::PlanarCoulombFrictionWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+    frictionCoefficient = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(frictionCoefficient);
+  }
+
+  DOMElement* PlanarCoulombFrictionWidget::initializeUsingXML(DOMElement *element) {
+    FrictionForceLawWidget::initializeUsingXML(element);
+    frictionCoefficient->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PlanarCoulombFrictionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FrictionForceLawWidget::writeXMLFile(parent,ref);
+    frictionCoefficient->writeXMLFile(ele0);
+    return ele0;
   }
 
   SpatialCoulombFrictionWidget::SpatialCoulombFrictionWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+    frictionCoefficient = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(frictionCoefficient);
+  }
+
+  DOMElement* SpatialCoulombFrictionWidget::initializeUsingXML(DOMElement *element) {
+    FrictionForceLawWidget::initializeUsingXML(element);
+    frictionCoefficient->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* SpatialCoulombFrictionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FrictionForceLawWidget::writeXMLFile(parent,ref);
+    frictionCoefficient->writeXMLFile(ele0);
+    return ele0;
   }
 
   PlanarStribeckFrictionWidget::PlanarStribeckFrictionWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
+  }
+
+  DOMElement* PlanarStribeckFrictionWidget::initializeUsingXML(DOMElement *element) {
+    FrictionForceLawWidget::initializeUsingXML(element);
+    frictionFunction->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PlanarStribeckFrictionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FrictionForceLawWidget::writeXMLFile(parent,ref);
+    frictionFunction->writeXMLFile(ele0);
+    return ele0;
   }
 
   SpatialStribeckFrictionWidget::SpatialStribeckFrictionWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
+  }
+
+  DOMElement* SpatialStribeckFrictionWidget::initializeUsingXML(DOMElement *element) {
+    FrictionForceLawWidget::initializeUsingXML(element);
+    frictionFunction->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* SpatialStribeckFrictionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FrictionForceLawWidget::writeXMLFile(parent,ref);
+    frictionFunction->writeXMLFile(ele0);
+    return ele0;
   }
 
   RegularizedPlanarFrictionWidget::RegularizedPlanarFrictionWidget() {
@@ -154,68 +188,97 @@ namespace MBSimGUI {
   }
 
   RegularizedSpatialFrictionWidget::RegularizedSpatialFrictionWidget() {
-
-    layout = new QVBoxLayout;
-    layout->setMargin(0);
-    funcList = new CustomComboBox;
-    funcList->addItem(tr("Linear regularized Coulomb friction"));
-    funcList->addItem(tr("Linear regularized Stribeck friction"));
-    layout->addWidget(funcList);
+    QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-//    frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;
-//    layout->addWidget(frictionForceFunc);
+    frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget2(new FrictionFunctionFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
+    layout->addWidget(frictionForceFunc);
   }
 
-  void RegularizedSpatialFrictionWidget::defineFunction(int index) {
-    if(index==0) {
-      layout->removeWidget(frictionForceFunc);
-      delete frictionForceFunc;
-//      frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;
-//      layout->addWidget(frictionForceFunc);
-    }
-    else {
-      layout->removeWidget(frictionForceFunc);
-      delete frictionForceFunc;
-//      frictionForceFunc = new LinearRegularizedStribeckFrictionWidget;
-//      layout->addWidget(frictionForceFunc);
-    }
+  DOMElement* FrictionImpactLawWidget::initializeUsingXML(DOMElement *element) {
+    return element;
+  }
+
+  DOMElement* FrictionImpactLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType().toStdString());
+    parent->insertBefore(ele0, ref);
+    return ele0;
   }
 
   PlanarCoulombImpactWidget::PlanarCoulombImpactWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+    frictionCoefficient = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(frictionCoefficient);
+  }
+
+  DOMElement* PlanarCoulombImpactWidget::initializeUsingXML(DOMElement *element) {
+    FrictionImpactLawWidget::initializeUsingXML(element);
+    frictionCoefficient->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PlanarCoulombImpactWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FrictionImpactLawWidget::writeXMLFile(parent,ref);
+    frictionCoefficient->writeXMLFile(ele0);
+    return ele0;
   }
 
   SpatialCoulombImpactWidget::SpatialCoulombImpactWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+    frictionCoefficient = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(frictionCoefficient);
+  }
+
+  DOMElement* SpatialCoulombImpactWidget::initializeUsingXML(DOMElement *element) {
+    FrictionImpactLawWidget::initializeUsingXML(element);
+    frictionCoefficient->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* SpatialCoulombImpactWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FrictionImpactLawWidget::writeXMLFile(parent,ref);
+    frictionCoefficient->writeXMLFile(ele0);
+    return ele0;
   }
 
   PlanarStribeckImpactWidget::PlanarStribeckImpactWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
+  }
+
+  DOMElement* PlanarStribeckImpactWidget::initializeUsingXML(DOMElement *element) {
+    FrictionImpactLawWidget::initializeUsingXML(element);
+    frictionFunction->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PlanarStribeckImpactWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FrictionImpactLawWidget::writeXMLFile(parent,ref);
+    frictionFunction->writeXMLFile(ele0);
+    return ele0;
   }
 
   SpatialStribeckImpactWidget::SpatialStribeckImpactWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
+  }
+
+  DOMElement* SpatialStribeckImpactWidget::initializeUsingXML(DOMElement *element) {
+    FrictionImpactLawWidget::initializeUsingXML(element);
+    frictionFunction->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* SpatialStribeckImpactWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FrictionImpactLawWidget::writeXMLFile(parent,ref);
+    frictionFunction->writeXMLFile(ele0);
+    return ele0;
   }
 
   GeneralizedForceLawWidgetFactory::GeneralizedForceLawWidgetFactory() {
@@ -272,94 +335,64 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget() : generalizedImpactLaw(0) {
-
-    layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    comboBox = new CustomComboBox;
-    comboBox->addItem(tr("Bilateral impact"));
-    comboBox->addItem(tr("Unilateral Newton impact"));
-    layout->addWidget(comboBox);
-    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineImpactLaw(int)));
-    defineImpactLaw(0);
+  GeneralizedImpactLawWidgetFactory::GeneralizedImpactLawWidgetFactory() {
+    name.push_back("Bilateral impact");
+    name.push_back("Unilateral Newton impact");
+    xmlName.push_back(MBSIM%"BilateralImpact");
+    xmlName.push_back(MBSIM%"UnilateralNewtonImpact");
   }
 
-  void GeneralizedImpactLawChoiceWidget::defineImpactLaw(int index) {
-    layout->removeWidget(generalizedImpactLaw);
-    delete generalizedImpactLaw;
-    if(index==0)
-      generalizedImpactLaw = new BilateralImpactWidget;  
-    else if(index==1)
-      generalizedImpactLaw = new UnilateralNewtonImpactWidget;  
-    layout->addWidget(generalizedImpactLaw);
+  QWidget* GeneralizedImpactLawWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new BilateralImpactWidget;
+    if(i==1)
+      return new UnilateralNewtonImpactWidget;
+    return NULL;
   }
 
-  FrictionForceLawChoiceWidget::FrictionForceLawChoiceWidget() : frictionForceLaw(0) {
-
-    layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    comboBox = new CustomComboBox;
-    comboBox->addItem(tr("Planar Coulomb friction"));
-    comboBox->addItem(tr("Planar Stribeck friction"));
-    comboBox->addItem(tr("Regularized planar friction"));
-    comboBox->addItem(tr("Spatial Coulomb friction"));
-    comboBox->addItem(tr("Spatial Stribeck friction"));
-    comboBox->addItem(tr("Regularized spatial friction"));
-    layout->addWidget(comboBox);
-    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionLaw(int)));
-    defineFrictionLaw(0);
+  FrictionImpactLawWidgetFactory::FrictionImpactLawWidgetFactory() {
+    name.push_back("Planar Coulomb impact");
+    name.push_back("Planar Stribeck impact");
+    name.push_back("Spatial Coulomb impact");
+    name.push_back("Spatial Stribeck impact");
+    xmlName.push_back(MBSIM%"PlanarCoulombImpact");
+    xmlName.push_back(MBSIM%"PlanarStribeckImpact");
+    xmlName.push_back(MBSIM%"SpatialCoulombImpact");
+    xmlName.push_back(MBSIM%"SpatialStribeckImpact");
   }
 
-  void FrictionForceLawChoiceWidget::defineFrictionLaw(int index) {
-    layout->removeWidget(frictionForceLaw);
-    delete frictionForceLaw;
-    if(index==0)
-      frictionForceLaw = new PlanarCoulombFrictionWidget;  
-    else if(index==1)
-      frictionForceLaw = new PlanarStribeckFrictionWidget;
-    else if(index==2)
-      frictionForceLaw = new RegularizedPlanarFrictionWidget;  
-    else if(index==3)
-      frictionForceLaw = new SpatialCoulombFrictionWidget;  
-    else if(index==4)
-      frictionForceLaw = new SpatialStribeckFrictionWidget;
-    else if(index==5)
-      frictionForceLaw = new RegularizedSpatialFrictionWidget;  
-    layout->addWidget(frictionForceLaw);
+  QWidget* FrictionImpactLawWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new PlanarCoulombImpactWidget;
+    if(i==1)
+      return new PlanarStribeckImpactWidget;
+    if(i==2)
+      return new SpatialCoulombImpactWidget;
+    if(i==3)
+      return new SpatialStribeckImpactWidget;
+    return NULL;
   }
 
-  FrictionImpactLawChoiceWidget::FrictionImpactLawChoiceWidget() : frictionImpactLaw(0) {
-
-    layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    comboBox = new CustomComboBox;
-    comboBox->addItem(tr("Planar Coloumb impact"));
-    comboBox->addItem(tr("Planar Stribeck impact"));
-    comboBox->addItem(tr("Spatial Coloumb impact"));
-    comboBox->addItem(tr("Spatial Stribeck impact"));
-    layout->addWidget(comboBox);
-    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionImpactLaw(int)));
-    defineFrictionImpactLaw(0);
+  RegularizedBilateralConstraintFunctionFactory::RegularizedBilateralConstraintFunctionFactory() {
+    name.push_back("Linear regularized bilateral constraint");
+    xmlName.push_back(MBSIM%"LinearRegularizedBilateralConstraint");
   }
 
-  void FrictionImpactLawChoiceWidget::defineFrictionImpactLaw(int index) {
-    layout->removeWidget(frictionImpactLaw);
-    delete frictionImpactLaw;
-    if(index==0)
-      frictionImpactLaw = new PlanarCoulombImpactWidget;  
-    else if(index==1)
-      frictionImpactLaw = new PlanarStribeckImpactWidget;
-    else if(index==2)
-      frictionImpactLaw = new SpatialCoulombImpactWidget;  
-    else if(index==3)
-      frictionImpactLaw = new SpatialStribeckImpactWidget;
-    layout->addWidget(frictionImpactLaw);
+  QWidget* RegularizedBilateralConstraintFunctionFactory::createWidget(int i) {
+    if(i==0)
+      return new LinearRegularizedBilateralConstraintWidget;
+    return NULL;
+  }
+
+  RegularizedUnilateralConstraintFunctionFactory::RegularizedUnilateralConstraintFunctionFactory() {
+    name.push_back("Linear regularized unilateral constraint");
+    xmlName.push_back(MBSIM%"LinearRegularizedUnilateralConstraint");
+  }
+
+  QWidget* RegularizedUnilateralConstraintFunctionFactory::createWidget(int i) {
+    if(i==0)
+      return new LinearRegularizedUnilateralConstraintWidget;
+    return NULL;
   }
 
   FrictionFunctionFactory::FrictionFunctionFactory() {

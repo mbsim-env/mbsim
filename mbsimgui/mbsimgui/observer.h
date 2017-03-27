@@ -34,6 +34,7 @@ namespace MBSimGUI {
     public:
       KinematicCoordinatesObserver(const QString &str="");
       QString getType() const { return "KinematicCoordinatesObserver"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new KinematicCoordinatesObserverPropertyDialog(this);}
   };
 
@@ -41,6 +42,7 @@ namespace MBSimGUI {
     public:
       RelativeKinematicsObserver(const QString &str="");
       QString getType() const { return "RelativeKinematicsObserver"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new RelativeKinematicsObserverPropertyDialog(this);}
   };
 
@@ -56,6 +58,7 @@ namespace MBSimGUI {
     public:
       MechanicalConstraintObserver(const QString &str="");
       QString getType() const { return "MechanicalConstraintObserver"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new MechanicalConstraintObserverPropertyDialog(this);}
   };
 
@@ -63,6 +66,7 @@ namespace MBSimGUI {
     public:
       ContactObserver(const QString &str="");
       QString getType() const { return "ContactObserver"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new ContactObserverPropertyDialog(this);}
   };
 
@@ -70,6 +74,7 @@ namespace MBSimGUI {
     public:
       FrameObserver(const QString &str="");
       QString getType() const { return "FrameObserver"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new FrameObserverPropertyDialog(this);}
   };
 
@@ -77,6 +82,7 @@ namespace MBSimGUI {
     public:
       RigidBodyObserver(const QString &str="");
       QString getType() const { return "RigidBodyObserver"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new RigidBodyObserverPropertyDialog(this);}
   };
 }

@@ -31,7 +31,7 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "friction.h"
-//#include "contact.h"
+#include "contact.h"
 //#include "sensor.h"
 //#include "widget.h"
 //#include "gear.h"
@@ -166,10 +166,10 @@ namespace MBSimGUI {
       return new DirectionalSpringDamper;
     if(E(element)->getTagName()==MBSIM%"Joint")
       return new Joint;
-//    if(E(element)->getTagName()==MBSIM%"ElasticJoint")
-//      return new ElasticJoint(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIM%"Contact")
-//      return new Contact(E(element)->getAttribute("name"));
+    if(E(element)->getTagName()==MBSIM%"ElasticJoint")
+      return new ElasticJoint;
+    if(E(element)->getTagName()==MBSIM%"Contact")
+      return new Contact;
     if(E(element)->getTagName()==MBSIM%"GeneralizedSpringDamper")
       return new GeneralizedSpringDamper;
 //    if(E(element)->getTagName()==MBSIM%"GeneralizedElasticConnection")

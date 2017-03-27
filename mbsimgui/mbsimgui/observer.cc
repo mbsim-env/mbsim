@@ -43,6 +43,33 @@ namespace MBSimGUI {
 //    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAcceleration",getID(),true));
   }
 
+  DOMElement* KinematicCoordinatesObserver::processFileID(DOMElement *element) {
+    Observer::processFileID(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
+  }
+
   RelativeKinematicsObserver::RelativeKinematicsObserver(const QString &str) : Observer(str) {
 
 //    frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
@@ -60,13 +87,48 @@ namespace MBSimGUI {
 //    angularAcceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularAcceleration",getID(),true));
   }
 
-  MechanicalLinkObserver::MechanicalLinkObserver(const QString &str) : Observer(str) {
+  DOMElement* RelativeKinematicsObserver::processFileID(DOMElement *element) {
+    Observer::processFileID(element);
 
-//    link.setProperty(new LinkOfReferenceProperty("",this,MBSIM%"mechanicalLink"));
-//
-//    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
-//
-//    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularVelocity");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularAcceleration");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
+  }
+
+  MechanicalLinkObserver::MechanicalLinkObserver(const QString &str) : Observer(str) {
   }
 
   DOMElement* MechanicalLinkObserver::processFileID(DOMElement *element) {
@@ -90,12 +152,26 @@ namespace MBSimGUI {
   }
 
   MechanicalConstraintObserver::MechanicalConstraintObserver(const QString &str) : Observer(str) {
+  }
 
-//    constraint.setProperty(new ConstraintOfReferenceProperty("",this,MBSIM%"mechanicalConstraint"));
-//
-//    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
-//
-//    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
+  DOMElement* MechanicalConstraintObserver::processFileID(DOMElement *element) {
+    Observer::processFileID(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
   }
 
   ContactObserver::ContactObserver(const QString &str) : Observer(str) {
@@ -113,6 +189,47 @@ namespace MBSimGUI {
 //    frictionArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVTangentialForce",getID()));
   }
 
+  DOMElement* ContactObserver::processFileID(DOMElement *element) {
+    Observer::processFileID(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVTangentialForce");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
+  }
+
   FrameObserver::FrameObserver(const QString &str) : Observer(str) {
 
 //    frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
@@ -128,6 +245,47 @@ namespace MBSimGUI {
 //    angularAcceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularAcceleration",getID(),true));
   }
 
+  DOMElement* FrameObserver::processFileID(DOMElement *element) {
+    Observer::processFileID(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularVelocity");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularAcceleration");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
+  }
+
   RigidBodyObserver::RigidBodyObserver(const QString &str) : Observer(str) {
 
 //    body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBody"));
@@ -141,4 +299,37 @@ namespace MBSimGUI {
 //    axisOfRotation.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAxisOfRotation",getID(),true));
   }
 
+  DOMElement* RigidBodyObserver::processFileID(DOMElement *element) {
+    Observer::processFileID(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointForce");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointMoment");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAxisOfRotation");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
+  }
 }

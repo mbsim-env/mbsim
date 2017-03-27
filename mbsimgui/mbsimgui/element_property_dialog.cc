@@ -1415,31 +1415,55 @@ namespace MBSimGUI {
 //    }
   }
 
-  ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, Qt::WindowFlags f) : MechanicalLinkPropertyDialog(contact,parent,f) {
+  ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(contact,parent,f) {
 
     addTab("Kinetics",1);
     addTab("Extra");
 
-    connections = new ExtWidget("Connections",new ConnectContoursWidget(2,contact));
+    connections = new ExtWidget("Connections",new ConnectContoursWidget(2,contact),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
 
     contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalForceLaw");
     addToTab("Kinetics", contactForceLaw);
 
-    contactImpactLaw = new ExtWidget("Normal impact law",new GeneralizedImpactLawChoiceWidget,true);
+    contactImpactLaw = new ExtWidget("Normal impact law",new ChoiceWidget2(new GeneralizedImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalImpactLaw");
     addToTab("Kinetics", contactImpactLaw);
 
-    frictionForceLaw = new ExtWidget("Tangential force law",new FrictionForceLawChoiceWidget,true);
+    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialForceLaw");
     addToTab("Kinetics", frictionForceLaw);
 
-    frictionImpactLaw = new ExtWidget("Tangential impact law",new FrictionImpactLawChoiceWidget,true);
+    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
-    searchAllContactPoints = new ExtWidget("Search all contact points",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
+    searchAllContactPoints = new ExtWidget("Search all contact points",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"searchAllContactPoints");
     addToTab("Extra", searchAllContactPoints);
 
-    initialGuess = new ExtWidget("Initial guess",new ChoiceWidget2(new VecSizeVarWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
-   addToTab("Extra", initialGuess);
+    initialGuess = new ExtWidget("Initial guess",new ChoiceWidget2(new VecSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
+    addToTab("Extra", initialGuess);
+  }
+
+  DOMElement* ContactPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    LinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    connections->initializeUsingXML(element->getXMLElement());
+    contactForceLaw->initializeUsingXML(element->getXMLElement());
+    contactImpactLaw->initializeUsingXML(element->getXMLElement());
+    frictionForceLaw->initializeUsingXML(element->getXMLElement());
+    frictionImpactLaw->initializeUsingXML(element->getXMLElement());
+    searchAllContactPoints->initializeUsingXML(element->getXMLElement());
+    initialGuess->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ContactPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    LinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    connections->writeXMLFile(element->getXMLElement(),ref);
+    contactForceLaw->writeXMLFile(element->getXMLElement(),ref);
+    contactImpactLaw->writeXMLFile(element->getXMLElement(),ref);
+    frictionForceLaw->writeXMLFile(element->getXMLElement(),ref);
+    frictionImpactLaw->writeXMLFile(element->getXMLElement(),ref);
+    searchAllContactPoints->writeXMLFile(element->getXMLElement(),ref);
+    initialGuess->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   ObserverPropertyDialog::ObserverPropertyDialog(Observer *observer, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(observer,parent,f) {
@@ -1449,46 +1473,90 @@ namespace MBSimGUI {
 
     addTab("Visualisation",1);
 
-    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0));
+    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frame");
     addToTab("General", frame);
 
-    frameOfReference = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(observer,0),true);
-    addToTab("General", frameOfReference);
+    frameOfReference = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frameOfReference");
+    addToTab("General", frame);
 
-    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
     addToTab("Visualisation",position);
 
-    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVVelocity");
     addToTab("Visualisation",velocity);
 
-    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAcceleration");
     addToTab("Visualisation",acceleration);
+  }
+
+  DOMElement* KinematicCoordinatesObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
+    frame->initializeUsingXML(element->getXMLElement());
+    frameOfReference->initializeUsingXML(element->getXMLElement());
+    position->initializeUsingXML(element->getXMLElement());
+    velocity->initializeUsingXML(element->getXMLElement());
+    acceleration->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* KinematicCoordinatesObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    frame->writeXMLFile(element->getXMLElement(),ref);
+    frameOfReference->writeXMLFile(element->getXMLElement(),ref);
+    position->writeXMLFile(element->getXMLElement(),ref);
+    velocity->writeXMLFile(element->getXMLElement(),ref);
+    acceleration->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   RelativeKinematicsObserverPropertyDialog::RelativeKinematicsObserverPropertyDialog(RelativeKinematicsObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
 
     addTab("Visualisation",1);
 
-    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0));
+    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frame");
     addToTab("General", frame);
 
-    refFrame = new ExtWidget("Reference frame",new FrameOfReferenceWidget(observer,0),true);
-    addToTab("General", refFrame);
+    refFrame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frameOfReference");
+    addToTab("General", frame);
 
-    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
     addToTab("Visualisation",position);
 
-    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVVelocity");
     addToTab("Visualisation",velocity);
 
-    angularVelocity = new ExtWidget("OpenMBV angular velocity arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    angularVelocity = new ExtWidget("OpenMBV angular velocity arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularVelocity");
     addToTab("Visualisation",angularVelocity);
 
-    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAcceleration");
     addToTab("Visualisation",acceleration);
 
-    angularAcceleration = new ExtWidget("OpenMBV angular acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    angularAcceleration = new ExtWidget("OpenMBV angular acceleration arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularAcceleration");
     addToTab("Visualisation",angularAcceleration);
+  }
+
+  DOMElement* RelativeKinematicsObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
+    frame->initializeUsingXML(element->getXMLElement());
+    refFrame->initializeUsingXML(element->getXMLElement());
+    position->initializeUsingXML(element->getXMLElement());
+    velocity->initializeUsingXML(element->getXMLElement());
+    angularVelocity->initializeUsingXML(element->getXMLElement());
+    acceleration->initializeUsingXML(element->getXMLElement());
+    angularAcceleration->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RelativeKinematicsObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    frame->writeXMLFile(element->getXMLElement(),ref);
+    refFrame->writeXMLFile(element->getXMLElement(),ref);
+    position->writeXMLFile(element->getXMLElement(),ref);
+    velocity->writeXMLFile(element->getXMLElement(),ref);
+    angularVelocity->writeXMLFile(element->getXMLElement(),ref);
+    acceleration->writeXMLFile(element->getXMLElement(),ref);
+    angularAcceleration->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   MechanicalLinkObserverPropertyDialog::MechanicalLinkObserverPropertyDialog(MechanicalLinkObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
@@ -1525,80 +1593,160 @@ namespace MBSimGUI {
 
     addTab("Visualisation",1);
 
-    constraint = new ExtWidget("Mechanical constraint",new ConstraintOfReferenceWidget(observer,0));
+    constraint = new ExtWidget("Mechanical constraint",new ConstraintOfReferenceWidget(observer,0),true,false,MBSIM%"mechanicalConstraint");
     addToTab("General", constraint);
 
-    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
     addToTab("Visualisation",momentArrow);
+  }
+
+  DOMElement* MechanicalConstraintObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
+    constraint->initializeUsingXML(element->getXMLElement());
+    forceArrow->initializeUsingXML(element->getXMLElement());
+    momentArrow->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* MechanicalConstraintObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    constraint->writeXMLFile(element->getXMLElement(),ref);
+    forceArrow->writeXMLFile(element->getXMLElement(),ref);
+    momentArrow->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   ContactObserverPropertyDialog::ContactObserverPropertyDialog(ContactObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
 
     addTab("Visualisation",1);
 
-    link = new ExtWidget("Contact",new LinkOfReferenceWidget(observer,0));
+    link = new ExtWidget("Mechanical link",new LinkOfReferenceWidget(observer,0),true,false,MBSIM%"contact");
     addToTab("General", link);
 
-    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    momentArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
     addToTab("Visualisation",momentArrow);
 
-    contactPoints = new ExtWidget("OpenMBV contact points",new FrameMBSOMBVWidget("NOTSET"),true,true);
+    contactPoints = new ExtWidget("OpenMBV contact points",new FrameMBSOMBVWidget("NOTSET",""),true,true,MBSIM%"enableOpenMBVContactPoints");
     addToTab("Visualisation",contactPoints);
 
-    normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVNormalForce");
     addToTab("Visualisation",normalForceArrow);
 
-    frictionArrow = new ExtWidget("OpenMBV tangential force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    frictionArrow = new ExtWidget("OpenMBV tangential force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVTangentialForce");
     addToTab("Visualisation",frictionArrow);
+  }
+
+  DOMElement* ContactObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
+    link->initializeUsingXML(element->getXMLElement());
+    forceArrow->initializeUsingXML(element->getXMLElement());
+    momentArrow->initializeUsingXML(element->getXMLElement());
+    contactPoints->initializeUsingXML(element->getXMLElement());
+    normalForceArrow->initializeUsingXML(element->getXMLElement());
+    frictionArrow->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ContactObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    link->writeXMLFile(element->getXMLElement(),ref);
+    forceArrow->writeXMLFile(element->getXMLElement(),ref);
+    momentArrow->writeXMLFile(element->getXMLElement(),ref);
+    contactPoints->writeXMLFile(element->getXMLElement(),ref);
+    normalForceArrow->writeXMLFile(element->getXMLElement(),ref);
+    frictionArrow->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   FrameObserverPropertyDialog::FrameObserverPropertyDialog(FrameObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
 
     addTab("Visualisation",1);
 
-    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0));
+    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frame");
     addToTab("General", frame);
 
-    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
     addToTab("Visualisation",position);
 
-    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVVelocity");
     addToTab("Visualisation",velocity);
 
-    angularVelocity = new ExtWidget("OpenMBV angular velocity arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    angularVelocity = new ExtWidget("OpenMBV angular velocity arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularVelocity");
     addToTab("Visualisation",angularVelocity);
 
-    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAcceleration");
     addToTab("Visualisation",acceleration);
 
-    angularAcceleration = new ExtWidget("OpenMBV angular acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    angularAcceleration = new ExtWidget("OpenMBV angular acceleration arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularAcceleration");
     addToTab("Visualisation",angularAcceleration);
+  }
+
+  DOMElement* FrameObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
+    frame->initializeUsingXML(element->getXMLElement());
+    position->initializeUsingXML(element->getXMLElement());
+    velocity->initializeUsingXML(element->getXMLElement());
+    angularVelocity->initializeUsingXML(element->getXMLElement());
+    acceleration->initializeUsingXML(element->getXMLElement());
+    angularAcceleration->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FrameObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    frame->writeXMLFile(element->getXMLElement(),ref);
+    position->writeXMLFile(element->getXMLElement(),ref);
+    velocity->writeXMLFile(element->getXMLElement(),ref);
+    angularVelocity->writeXMLFile(element->getXMLElement(),ref);
+    acceleration->writeXMLFile(element->getXMLElement(),ref);
+    angularAcceleration->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   RigidBodyObserverPropertyDialog::RigidBodyObserverPropertyDialog(RigidBodyObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
 
     addTab("Visualisation",1);
 
-    body = new ExtWidget("RigidBody",new RigidBodyOfReferenceWidget(observer,0));
+    body = new ExtWidget("Rigid body",new RigidBodyOfReferenceWidget(observer,0),true,false,MBSIM%"rigidBody");
     addToTab("General", body);
 
-    weight = new ExtWidget("OpenMBV weight arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    weight = new ExtWidget("OpenMBV weight arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVWeight");
     addToTab("Visualisation",weight);
 
-    jointForce = new ExtWidget("OpenMBV jointForce arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    jointForce = new ExtWidget("OpenMBV joint force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVJointForce");
     addToTab("Visualisation",jointForce);
 
-    jointMoment = new ExtWidget("OpenMBV jointMoment arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    jointMoment = new ExtWidget("OpenMBV joint moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVJointMoment");
     addToTab("Visualisation",jointMoment);
 
-    axisOfRotation = new ExtWidget("OpenMBV axis of rotation",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    axisOfRotation = new ExtWidget("OpenMBV axis of rotation",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAxisOfRotation");
     addToTab("Visualisation",axisOfRotation);
+  }
+
+  DOMElement* RigidBodyObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
+    body->initializeUsingXML(element->getXMLElement());
+    weight->initializeUsingXML(element->getXMLElement());
+    jointForce->initializeUsingXML(element->getXMLElement());
+    jointMoment->initializeUsingXML(element->getXMLElement());
+    axisOfRotation->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RigidBodyObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    body->writeXMLFile(element->getXMLElement(),ref);
+    weight->writeXMLFile(element->getXMLElement(),ref);
+    jointForce->writeXMLFile(element->getXMLElement(),ref);
+    jointMoment->writeXMLFile(element->getXMLElement(),ref);
+    axisOfRotation->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   SignalPropertyDialog::SignalPropertyDialog(Signal *signal, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(signal,parent,f) {

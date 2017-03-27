@@ -26,36 +26,21 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Contact::Contact(const string &str) : MechanicalLink(str), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), searchAllContactPoints(0,false), initialGuess(0,false) {
+  Contact::Contact(const QString &str) : Link(str) {
 
-    connections.setProperty(new ConnectContoursProperty(2,this));
-
-    contactForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(this,MBSIM%"normalForceLaw"));
-
-    contactImpactLaw.setProperty(new GeneralizedImpactLawChoiceProperty(this,MBSIM%"normalImpactLaw"));
-
-    frictionForceLaw.setProperty(new FrictionForceLawChoiceProperty(this,MBSIM%"tangentialForceLaw"));
-
-    frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(this,MBSIM%"tangentialImpactLaw"));
-
-    searchAllContactPoints.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"searchAllContactPoints",vector<string>(2,"")),"",4));
-
-    initialGuess.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"initialGuess",vector<string>(3,"")),"",4));
-  }
-
-  Contact::~Contact() {
-  }
-
-  DOMElement* Contact::initializeUsingXML(DOMElement *element) {
-    MechanicalLink::initializeUsingXML(element);
-    contactForceLaw.initializeUsingXML(element);
-    contactImpactLaw.initializeUsingXML(element);
-    frictionForceLaw.initializeUsingXML(element);
-    frictionImpactLaw.initializeUsingXML(element);
-    connections.initializeUsingXML(element);
-    searchAllContactPoints.initializeUsingXML(element);
-    initialGuess.initializeUsingXML(element);
-    return element;
+//    connections.setProperty(new ConnectContoursProperty(2,this));
+//
+//    contactForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(this,MBSIM%"normalForceLaw"));
+//
+//    contactImpactLaw.setProperty(new GeneralizedImpactLawChoiceProperty(this,MBSIM%"normalImpactLaw"));
+//
+//    frictionForceLaw.setProperty(new FrictionForceLawChoiceProperty(this,MBSIM%"tangentialForceLaw"));
+//
+//    frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(this,MBSIM%"tangentialImpactLaw"));
+//
+//    searchAllContactPoints.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"searchAllContactPoints",vector<string>(2,"")),"",4));
+//
+//    initialGuess.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"initialGuess",vector<string>(3,"")),"",4));
   }
 
 }

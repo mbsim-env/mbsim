@@ -572,10 +572,12 @@ namespace MBSimGUI {
       void resizeVariables();
   };
 
-  class ContactPropertyDialog : public MechanicalLinkPropertyDialog {
+  class ContactPropertyDialog : public LinkPropertyDialog {
 
     public:
       ContactPropertyDialog(Contact *contact, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *searchAllContactPoints, *initialGuess;
   };
@@ -590,6 +592,8 @@ namespace MBSimGUI {
 
     public:
       KinematicCoordinatesObserverPropertyDialog(KinematicCoordinatesObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *frame, *frameOfReference, *position, *velocity, *acceleration;
   };
@@ -598,6 +602,8 @@ namespace MBSimGUI {
 
     public:
       RelativeKinematicsObserverPropertyDialog(RelativeKinematicsObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *frame, *refFrame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
   };
@@ -616,6 +622,8 @@ namespace MBSimGUI {
 
     public:
       MechanicalConstraintObserverPropertyDialog(MechanicalConstraintObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *constraint, *forceArrow, *momentArrow;
   };
@@ -624,6 +632,8 @@ namespace MBSimGUI {
 
     public:
       ContactObserverPropertyDialog(ContactObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *link, *forceArrow, *momentArrow, *contactPoints, *normalForceArrow, *frictionArrow;
   };
@@ -632,6 +642,8 @@ namespace MBSimGUI {
 
     public:
       FrameObserverPropertyDialog(FrameObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *frame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
   };
@@ -640,6 +652,8 @@ namespace MBSimGUI {
 
     public:
       RigidBodyObserverPropertyDialog(RigidBodyObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *body, *weight, *jointForce, *jointMoment, *axisOfRotation;
   };

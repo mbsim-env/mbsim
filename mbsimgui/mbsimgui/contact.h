@@ -21,22 +21,14 @@
 #define _CONTACT__H_
 
 #include "link.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 
-  class Contact : public MechanicalLink {
-    friend class ContactPropertyDialog;
+  class Contact : public Link {
     public:
-    Contact(const QString &str="");
-    ~Contact();
-    QString getType() const { return "Contact"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
-    protected:
-    ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, searchAllContactPoints, initialGuess;
+      Contact(const QString &str="");
+      QString getType() const { return "Contact"; }
+      ElementPropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
   };
 
 }

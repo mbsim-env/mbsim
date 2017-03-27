@@ -37,7 +37,7 @@ namespace MBSimGUI {
       GeneralizedForceLawWidget() : forceFunc(0) {}
       virtual QString getType() const { return "GeneralizedForceLaw"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *forceFunc;
@@ -51,16 +51,10 @@ namespace MBSimGUI {
   };
 
   class RegularizedBilateralConstraintWidget : public GeneralizedForceLawWidget {
-    Q_OBJECT
 
     public:
       RegularizedBilateralConstraintWidget();
       virtual QString getType() const { return "RegularizedBilateralConstraint"; }
-    protected:
-      QVBoxLayout *layout;
-      QComboBox *funcList;
-    protected slots:
-      void defineFunction(int);
   };
 
   class UnilateralConstraintWidget : public GeneralizedForceLawWidget {
@@ -71,16 +65,10 @@ namespace MBSimGUI {
   };
 
   class RegularizedUnilateralConstraintWidget : public GeneralizedForceLawWidget {
-    Q_OBJECT
 
     public:
       RegularizedUnilateralConstraintWidget();
       virtual QString getType() const { return "RegularizedUnilateralConstraint"; }
-    protected:
-      QVBoxLayout *layout;
-      QComboBox *funcList;
-    protected slots:
-      void defineFunction(int);
   };
 
   class GeneralizedImpactLawWidget : public Widget {
@@ -88,6 +76,9 @@ namespace MBSimGUI {
     public:
       GeneralizedImpactLawWidget() {}
       virtual QString getType() const { return "GeneralizedImpactLaw"; }
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
   class BilateralImpactWidget : public GeneralizedImpactLawWidget {
@@ -102,6 +93,8 @@ namespace MBSimGUI {
     public:
       UnilateralNewtonImpactWidget();
       virtual QString getType() const { return "UnilateralNewtonImpact"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget* restitutionCoefficient;
   };
@@ -123,6 +116,8 @@ namespace MBSimGUI {
     public:
       PlanarCoulombFrictionWidget();
       virtual QString getType() const { return "PlanarCoulombFriction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget* frictionCoefficient;
   };
@@ -132,6 +127,8 @@ namespace MBSimGUI {
     public:
       SpatialCoulombFrictionWidget();
       virtual QString getType() const { return "SpatialCoulombFriction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget* frictionCoefficient;
   };
@@ -141,6 +138,8 @@ namespace MBSimGUI {
     public:
       PlanarStribeckFrictionWidget();
       virtual QString getType() const { return "PlanarStribeckFriction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget* frictionFunction;
   };
@@ -150,6 +149,8 @@ namespace MBSimGUI {
     public:
       SpatialStribeckFrictionWidget();
       virtual QString getType() const { return "SpatialStribeckFriction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget* frictionFunction;
   };
@@ -161,16 +162,9 @@ namespace MBSimGUI {
   };
 
   class RegularizedSpatialFrictionWidget : public FrictionForceLawWidget {
-    Q_OBJECT
-
     public:
       RegularizedSpatialFrictionWidget();
       virtual QString getType() const { return "RegularizedSpatialFriction"; }
-    protected:
-      QVBoxLayout *layout;
-      QComboBox *funcList;
-    protected slots:
-      void defineFunction(int);
   };
 
   class FrictionImpactLawWidget : public Widget {
@@ -178,6 +172,9 @@ namespace MBSimGUI {
     public:
       FrictionImpactLawWidget() {}
       virtual QString getType() const { return "FrictionImpactLaw"; }
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
   class PlanarCoulombImpactWidget : public FrictionImpactLawWidget {
@@ -185,6 +182,8 @@ namespace MBSimGUI {
     public:
       PlanarCoulombImpactWidget();
       virtual QString getType() const { return "PlanarCoulombImpact"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget* frictionCoefficient;
   };
@@ -194,6 +193,8 @@ namespace MBSimGUI {
     public:
       SpatialCoulombImpactWidget();
       virtual QString getType() const { return "SpatialCoulombImpact"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget* frictionCoefficient;
   };
@@ -203,6 +204,8 @@ namespace MBSimGUI {
     public:
       PlanarStribeckImpactWidget();
       virtual QString getType() const { return "PlanarStribeckImpact"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget* frictionFunction;
   };
@@ -212,6 +215,8 @@ namespace MBSimGUI {
     public:
       SpatialStribeckImpactWidget();
       virtual QString getType() const { return "SpatialStribeckImpact"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget* frictionFunction;
   };
@@ -242,55 +247,56 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> xmlName;
   };
 
-  class GeneralizedImpactLawChoiceWidget : public Widget {
-    Q_OBJECT
-
+  class GeneralizedImpactLawWidgetFactory : public WidgetFactory {
     public:
-      GeneralizedImpactLawChoiceWidget();
-
-      int getImpactLaw() {return comboBox->currentIndex();}
-
-    protected slots:
-      void defineImpactLaw(int);
-
+      GeneralizedImpactLawWidgetFactory();
+      QWidget* createWidget(int i=0);
+      static std::vector<QString> getNames();
+      QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
+      int getSize() const { return name.size(); }
     protected:
-      QComboBox *comboBox;
-      QVBoxLayout *layout;
-      GeneralizedImpactLawWidget *generalizedImpactLaw;
+      std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
-  class FrictionForceLawChoiceWidget : public Widget {
-    Q_OBJECT
-
+  class FrictionImpactLawWidgetFactory : public WidgetFactory {
     public:
-      FrictionForceLawChoiceWidget();
-
-      int getForceLaw() {return comboBox->currentIndex();}
-
-    protected slots:
-      void defineFrictionLaw(int);
-
+      FrictionImpactLawWidgetFactory();
+      QWidget* createWidget(int i=0);
+      static std::vector<QString> getNames();
+      QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
+      int getSize() const { return name.size(); }
     protected:
-      QComboBox *comboBox;
-      QVBoxLayout *layout;
-      FrictionForceLawWidget *frictionForceLaw;
+      std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
-  class FrictionImpactLawChoiceWidget : public Widget {
-    Q_OBJECT
-
+  class RegularizedBilateralConstraintFunctionFactory : public WidgetFactory {
     public:
-      FrictionImpactLawChoiceWidget();
-
-      int getImpactLaw() {return comboBox->currentIndex();}
-
-    protected slots:
-      void defineFrictionImpactLaw(int);
-
+      RegularizedBilateralConstraintFunctionFactory();
+      QWidget* createWidget(int i=0);
+      static std::vector<QString> getNames();
+      QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
+      int getSize() const { return name.size(); }
     protected:
-      QComboBox *comboBox;
-      QVBoxLayout *layout;
-      FrictionImpactLawWidget *frictionImpactLaw;
+      std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
+  };
+
+  class RegularizedUnilateralConstraintFunctionFactory : public WidgetFactory {
+    public:
+      RegularizedUnilateralConstraintFunctionFactory();
+      QWidget* createWidget(int i=0);
+      static std::vector<QString> getNames();
+      QString getName(int i=0) const { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class FrictionFunctionFactory : public WidgetFactory {

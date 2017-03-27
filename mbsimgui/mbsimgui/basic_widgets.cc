@@ -267,6 +267,7 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton(tr("Browse"));
     connect(button,SIGNAL(clicked(bool)),contourBrowser,SLOT(show()));
     layout->addWidget(button);
+    updateWidget();
   }
 
   void ContourOfReferenceWidget::updateWidget() {
@@ -284,13 +285,24 @@ namespace MBSimGUI {
     contour->setText(selectedContour?selectedContour->getXMLPath(element,true):"");
   }
 
-  void ContourOfReferenceWidget::setContour(const QString &str, Contour *contourPtr) {
-    selectedContour = contourPtr;
+  void ContourOfReferenceWidget::setContour(const QString &str) {
+    selectedContour = element->getByPath<Contour>(str);
+    contourBrowser->updateWidget(selectedContour);
     contour->setText(str);
   }
 
   QString ContourOfReferenceWidget::getContour() const {
     return contour->text();
+  }
+
+  DOMElement* ContourOfReferenceWidget::initializeUsingXML(DOMElement *element) {
+    setContour(QString::fromStdString(E(element)->getAttribute("ref")));
+    return element;
+  }
+
+  DOMElement* ContourOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getContour().toStdString());
+    return NULL;
   }
 
   RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_) {
@@ -506,6 +518,7 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton(tr("Browse"));
     connect(button,SIGNAL(clicked(bool)),constraintBrowser,SLOT(show()));
     layout->addWidget(button);
+    updateWidget();
   }
 
   void ConstraintOfReferenceWidget::updateWidget() {
@@ -524,8 +537,9 @@ namespace MBSimGUI {
     emit constraintChanged();
   }
 
-  void ConstraintOfReferenceWidget::setConstraint(const QString &str, Constraint *constraintPtr) {
-    selectedConstraint = constraintPtr;
+  void ConstraintOfReferenceWidget::setConstraint(const QString &str) {
+    selectedConstraint = element->getByPath<Constraint>(str);
+    constraintBrowser->updateWidget(selectedConstraint);
     constraint->setText(str);
     emit constraintChanged();
   }
@@ -533,6 +547,17 @@ namespace MBSimGUI {
   QString ConstraintOfReferenceWidget::getConstraint() const {
     return constraint->text();
   }
+
+  DOMElement* ConstraintOfReferenceWidget::initializeUsingXML(DOMElement *element) {
+    setConstraint(QString::fromStdString(E(element)->getAttribute("ref")));
+    return element;
+  }
+
+  DOMElement* ConstraintOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getConstraint().toStdString());
+    return NULL;
+  }
+
 
   SignalOfReferenceWidget::SignalOfReferenceWidget(Element *element_, Signal* selectedSignal_) : element(element_), selectedSignal(selectedSignal_) {
     QHBoxLayout *layout = new QHBoxLayout;
@@ -781,6 +806,27 @@ namespace MBSimGUI {
   void ConnectContoursWidget::updateWidget() {
     for(unsigned int i=0; i<widget.size(); i++)
       widget[i]->updateWidget();
+  }
+
+  DOMElement* ConnectContoursWidget::initializeUsingXML(DOMElement *element) {
+    for(unsigned int i=0; i<widget.size(); i++) {
+      string xmlName = "ref";
+      if(widget.size()>1)
+        xmlName += toStr(int(i+1));
+      if(E(element)->hasAttribute(xmlName))
+        widget[i]->setContour(QString::fromStdString(E(element)->getAttribute(xmlName)));
+    }
+    return element;
+  }
+
+  DOMElement* ConnectContoursWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    for(unsigned int i=0; i<widget.size(); i++) {
+      string xmlName = "ref";
+      if(widget.size()>1)
+        xmlName += toStr(int(i+1));
+      E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getContour().toStdString());
+    }
+    return NULL;
   }
 
   ConnectRigidBodiesWidget::ConnectRigidBodiesWidget(int n, Element *element_) : element(element_) {

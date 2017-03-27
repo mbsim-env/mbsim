@@ -28,7 +28,7 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "friction.h"
-//#include "contact.h"
+#include "contact.h"
 //#include "sensor.h"
 #include "observer.h"
 #include "frame.h"
@@ -421,11 +421,11 @@ namespace MBSimGUI {
   }
 
   void LinkContextContextMenu::addElasticJoint() {
-//    mw->addLink(new ElasticJoint("ElasticJoint"));
+    mw->addLink(new ElasticJoint("ElasticJoint"), element);
   }
 
   void LinkContextContextMenu::addContact() {
-//    mw->addLink(new Contact("Contact"));
+    mw->addLink(new Contact("Contact"), element);
   }
 
   void LinkContextContextMenu::addSignal() {
