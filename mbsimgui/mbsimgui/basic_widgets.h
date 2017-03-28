@@ -198,11 +198,13 @@ namespace MBSimGUI {
       GearInputReferenceWidget(Element* element, RigidBody* selectedBody);
 
       void updateWidget();
-      void setBody(const QString &str, RigidBody *bodyPtr);
+      void setBody(const QString &str);
       QString getBody() const;
       RigidBody* getSelectedBody() {return selectedBody;}
       QString getRatio() const {return ratio->text().isEmpty()?"0":ratio->text();}
       void setRatio(const QString &str) {ratio->setText(str=="0"?"":str);}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QLineEdit* body, *ratio;

@@ -343,27 +343,27 @@ namespace MBSimGUI {
   }
 
   void ConstraintContextContextMenu::addGeneralizedGearConstraint() {
-    mw->addConstraint(new GeneralizedGearConstraint("GeneralizedGearConstraint"));
+    mw->addConstraint(new GeneralizedGearConstraint("GeneralizedGearConstraint"), element);
   }
 
   void ConstraintContextContextMenu::addGeneralizedPositionConstraint() {
-    mw->addConstraint(new GeneralizedPositionConstraint("GeneralizedPositionConstraint"));
+    mw->addConstraint(new GeneralizedPositionConstraint("GeneralizedPositionConstraint"), element);
   }
 
   void ConstraintContextContextMenu::addGeneralizedVelocityConstraint() {
-    mw->addConstraint(new GeneralizedVelocityConstraint("GeneralizedVelocityConstraint"));
+    mw->addConstraint(new GeneralizedVelocityConstraint("GeneralizedVelocityConstraint"), element);
   }
 
   void ConstraintContextContextMenu::addGeneralizedAccelerationConstraint() {
-    mw->addConstraint(new GeneralizedAccelerationConstraint("GeneralizedAccelerationConstraint"));
+    mw->addConstraint(new GeneralizedAccelerationConstraint("GeneralizedAccelerationConstraint"), element);
   }
 
   void ConstraintContextContextMenu::addJointConstraint() {
-    mw->addConstraint(new JointConstraint("JointConstraint"));
+    mw->addConstraint(new JointConstraint("JointConstraint"), element);
   }
 
   void ConstraintContextContextMenu::addGeneralizedConnectionConstraint() {
-    mw->addConstraint(new GeneralizedConnectionConstraint("GeneralizedConnectionConstraint"));
+    mw->addConstraint(new GeneralizedConnectionConstraint("GeneralizedConnectionConstraint"), element);
   }
 
   LinkContextContextMenu::LinkContextContextMenu(Element *element_, const QString &title,  QWidget *parent) : QMenu(title,parent), element(element_) {

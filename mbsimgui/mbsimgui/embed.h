@@ -46,18 +46,17 @@ namespace MBSimGUI {
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"))));
               std::shared_ptr<xercesc::DOMDocument> doc(parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString()));
-              param = Parameter::initializeParametersUsingXML(doc->getDocumentElement());
+              ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+              ele1->insertBefore(ele2,NULL);
+              MBXMLUtils::E(ele1)->removeAttribute("parameterHref");
+            }
+            ele2=MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
+            if(ele2) {
+              param = Parameter::initializeParametersUsingXML(ele2);
+              ele2=ele2->getNextElementSibling();
+            }
+            else
               ele2=ele1->getFirstElementChild();
-            }
-            else {
-              ele2=MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
-              if(ele2) {
-                param = Parameter::initializeParametersUsingXML(ele2);
-                ele2=ele2->getNextElementSibling();
-              }
-              else 
-                ele2=ele1->getFirstElementChild();
-            }
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"))));
               std::shared_ptr<xercesc::DOMDocument> doc(parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString()));
@@ -69,7 +68,7 @@ namespace MBSimGUI {
             if(object) {
               object->initializeUsingXML(ele2);
               for(size_t i=0; i<param.size(); i++)
-              object->addParameter(param[i]);
+                object->addParameter(param[i]);
             }
           }
           else {

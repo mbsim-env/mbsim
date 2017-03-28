@@ -427,6 +427,8 @@ namespace MBSimGUI {
   }
 
   ConstraintWidgetFactory::ConstraintWidgetFactory(Element *parent_) : parent(parent_) {
+    name.push_back("Time dependent constraint function");
+    name.push_back("State dependent constraint function");
     xmlName.push_back(MBSIM%"timeDependentConstraintFunction");
     xmlName.push_back(MBSIM%"stateDependentConstraintFunction");
   }

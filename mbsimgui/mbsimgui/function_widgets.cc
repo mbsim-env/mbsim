@@ -462,7 +462,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    choice = new ChoiceWidget2(new TwoDimensionalTabularFunctionWidgetFactory);
+    choice = new ChoiceWidget2(new TwoDimensionalTabularFunctionWidgetFactory,QBoxLayout::TopToBottom,3);
     layout->addWidget(choice);
   }
 
@@ -533,7 +533,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    choice = new ChoiceWidget2(new TwoDimensionalTabularFunctionWidgetFactory);
+    choice = new ChoiceWidget2(new TwoDimensionalTabularFunctionWidgetFactory,QBoxLayout::TopToBottom,3);
     layout->addWidget(choice);
 
     vector<QString> list;
@@ -575,7 +575,7 @@ namespace MBSimGUI {
     a0 = new ExtWidget("a0",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
     layout->addWidget(a0);
 
-    choice = new ChoiceWidget2(new FourierFunctionWidgetFactory);
+    choice = new ChoiceWidget2(new FourierFunctionWidgetFactory,QBoxLayout::TopToBottom,3);
     layout->addWidget(choice);
 
     amplitudePhaseAngleForm = new ExtWidget("Amplitude phase angle form",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"amplitudePhaseAngleForm");
@@ -618,9 +618,9 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    fn = new ExtWidget("Negative directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false,false,MBSIM%"negativeDirectionalFunction");
+    fn = new ExtWidget("Negative directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"negativeDirectionalFunction");
     layout->addWidget(fn);
-    fp = new ExtWidget("Positive directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false,false,MBSIM%"positiveDirectionalFunction");
+    fp = new ExtWidget("Positive directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"positiveDirectionalFunction");
     layout->addWidget(fp);
   }
 
@@ -703,10 +703,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    s = new ExtWidget("Force deflection function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)),false,false,MBSIM%"forceDeflectionFunction");
+    s = new ExtWidget("Force deflection function",new ChoiceWidget2(new FunctionWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceDeflectionFunction");
     layout->addWidget(s);
 
-    sd = new ExtWidget("Force velocity function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)),false,false,MBSIM%"forceVelocityFunction");
+    sd = new ExtWidget("Force velocity function",new ChoiceWidget2(new FunctionWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceVelocityFunction");
     layout->addWidget(sd);
   }
 

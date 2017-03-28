@@ -56,7 +56,6 @@
             <contours />
             <openMBVRigidBody>
                 <ns_1:Cube name="NOTSET">
-                    <?OPENMBV_ID 4?>
                     <ns_1:initialTranslation unit="m">
                         <pv:xmlVector>
                             <pv:ele>0</pv:ele>
@@ -76,7 +75,6 @@
                 </ns_1:Cube>
             </openMBVRigidBody>
             <enableOpenMBVFrameC>
-                <?OPENMBV_ID 5?>
                 <size unit="m">1</size>
                 <offset unit="-">1</offset>
             </enableOpenMBVFrameC>
@@ -120,7 +118,6 @@
         </MechanicalConstraintObserver>
     </observers>
     <enableOpenMBVFrameI>
-        <?OPENMBV_ID 3?>
         <size unit="m">1</size>
         <offset unit="-">1</offset>
     </enableOpenMBVFrameI>

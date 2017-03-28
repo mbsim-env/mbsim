@@ -398,14 +398,28 @@ namespace MBSimGUI {
     emit bodyChanged();
   }
 
-  void GearInputReferenceWidget::setBody(const QString &str, RigidBody *bodyPtr) {
-    selectedBody = bodyPtr;
+  void GearInputReferenceWidget::setBody(const QString &str) {
+    selectedBody = element->getByPath<RigidBody>(str);
+    bodyBrowser->updateWidget(selectedBody);
     body->setText(str);
     emit bodyChanged();
+//    emit Widget::resize_();
   }
 
   QString GearInputReferenceWidget::getBody() const {
     return body->text();
+  }
+
+  DOMElement* GearInputReferenceWidget::initializeUsingXML(DOMElement *element) {
+    setBody(QString::fromStdString(E(element)->getAttribute("ref")));
+    setRatio(QString::fromStdString(E(element)->getAttribute("ratio")));
+    return element;
+  }
+
+  DOMElement* GearInputReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getBody().toStdString());
+    E(static_cast<DOMElement*>(parent))->setAttribute("ratio", getRatio().toStdString());
+    return NULL;
   }
 
   ObjectOfReferenceWidget::ObjectOfReferenceWidget(Element *element_, Object* selectedObject_) : element(element_), selectedObject(selectedObject_) {

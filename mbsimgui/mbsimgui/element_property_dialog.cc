@@ -63,14 +63,14 @@ namespace MBSimGUI {
   class GeneralizedGearConstraintWidgetFactory : public WidgetFactory {
     public:
       GeneralizedGearConstraintWidgetFactory(Element* element_, QWidget *parent_=0) : element(element_), parent(parent_) { }
-      Widget* createWidget(int i=0);
+      QWidget* createWidget(int i=0);
     protected:
       Element *element;
       QWidget *parent;
   };
 
-  Widget* GeneralizedGearConstraintWidgetFactory::createWidget(int i) {
-    return new GearInputReferenceWidget(element,0);
+  QWidget* GeneralizedGearConstraintWidgetFactory::createWidget(int i) {
+    return new ExtWidget("name",new GearInputReferenceWidget(element,0),false,false,MBSIM%"independentRigidBody");
   }
 
   class RigidBodyOfReferenceWidgetFactory : public WidgetFactory {
@@ -1053,19 +1053,45 @@ namespace MBSimGUI {
 
     addTab("Visualisation",2);
 
-    support = new ExtWidget("Support frame",new FrameOfReferenceWidget(constraint,0),true);
+    support = new ExtWidget("Support frame",new FrameOfReferenceWidget(constraint,NULL),true,false,MBSIM%"supportFrame");
     addToTab("General",support);
+  }
+
+  DOMElement* GeneralizedConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    MechanicalConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
+    support->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    MechanicalConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    support->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   GeneralizedGearConstraintPropertyDialog::GeneralizedGearConstraintPropertyDialog(GeneralizedGearConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedConstraintPropertyDialog(constraint,parent,f) {
 
-    dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
+    dependentBody = new ExtWidget("Dependent rigid body",new RigidBodyOfReferenceWidget(constraint,0),false,false,MBSIM%"dependentRigidBody");
     addToTab("General", dependentBody);
 
-    independentBodies = new ExtWidget("Independent bodies",new ListWidget(new GeneralizedGearConstraintWidgetFactory(constraint,0),"Independent body"));
+    independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new GeneralizedGearConstraintWidgetFactory(constraint,0),"Independent body",0,1),false,false,"");
     addToTab("General",independentBodies);
 
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+  }
+
+  DOMElement* GeneralizedGearConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    GeneralizedConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
+    dependentBody->initializeUsingXML(element->getXMLElement());
+    independentBodies->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedGearConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    GeneralizedConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    dependentBody->writeXMLFile(element->getXMLElement(),ref);
+    independentBodies->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
 //  void GeneralizedGearConstraintPropertyDialog::toWidget(Element *element) {
@@ -1088,11 +1114,25 @@ namespace MBSimGUI {
 
   GeneralizedDualConstraintPropertyDialog::GeneralizedDualConstraintPropertyDialog(GeneralizedDualConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedConstraintPropertyDialog(constraint,parent,f) {
 
-    dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
+    dependentBody = new ExtWidget("Dependent rigid body",new RigidBodyOfReferenceWidget(constraint,0),false,false,MBSIM%"dependentRigidBody");
     addToTab("General", dependentBody);
 
-    independentBody = new ExtWidget("Independent body",new RigidBodyOfReferenceWidget(constraint,0),true);
+    independentBody = new ExtWidget("Independent rigid body",new RigidBodyOfReferenceWidget(constraint,0),true,false,MBSIM%"independentRigidBody");
     addToTab("General", independentBody);
+  }
+
+  DOMElement* GeneralizedDualConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    GeneralizedConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
+    dependentBody->initializeUsingXML(element->getXMLElement());
+    independentBody->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedDualConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    GeneralizedConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    dependentBody->writeXMLFile(element->getXMLElement(),ref);
+    independentBody->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
 //  void GeneralizedDualConstraintPropertyDialog::toWidget(Element *element) {
@@ -1117,7 +1157,7 @@ namespace MBSimGUI {
 
   GeneralizedPositionConstraintPropertyDialog::GeneralizedPositionConstraintPropertyDialog(GeneralizedPositionConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedDualConstraintPropertyDialog(constraint,parent,f) {
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new FunctionWidgetFactory2(constraint)));
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new FunctionWidgetFactory2(constraint),QBoxLayout::TopToBottom,0),true,false,MBSIM%"constraintFunction");
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
@@ -1130,18 +1170,26 @@ namespace MBSimGUI {
 //    constraintFunction->resize_(size,1);
   }
 
+  DOMElement* GeneralizedPositionConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    GeneralizedDualConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
+    constraintFunction->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedPositionConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    constraintFunction->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
   GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedDualConstraintPropertyDialog(constraint,parent,f) {
     addTab("Initial conditions",1);
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint)));
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-    vector<PhysicalVariableWidget*> input;
-    x0_ = new VecWidget(0);
-    input.push_back(new PhysicalVariableWidget(x0_,QStringList(),1));
-    ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
-    x0 = new ExtWidget("Initial state",var,true);
+    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
     addToTab("Initial conditions", x0);
 
     connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
@@ -1150,6 +1198,20 @@ namespace MBSimGUI {
 
   void GeneralizedVelocityConstraintPropertyDialog::resizeVariables() {
     cout << "GeneralizedVelocityConstraintPropertyDialog::resizeVariables() not yet implemented" << endl;
+  }
+
+  DOMElement* GeneralizedVelocityConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    GeneralizedDualConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
+    x0->initializeUsingXML(element->getXMLElement());
+    constraintFunction->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedVelocityConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    x0->writeXMLFile(element->getXMLElement(),ref);
+    constraintFunction->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedDualConstraintPropertyDialog(constraint,parent,f) {
@@ -1161,12 +1223,12 @@ namespace MBSimGUI {
 
     //  connect((ChoiceWidget*)constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-    vector<PhysicalVariableWidget*> input;
-    x0_ = new VecWidget(0);
-    input.push_back(new PhysicalVariableWidget(x0_,QStringList(),1));
-    ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
-    x0 = new ExtWidget("Initial state",var,true);
-    addToTab("Initial conditions", x0);
+    //vector<PhysicalVariableWidget*> input;
+    //x0_ = new VecWidget(0);
+    //input.push_back(new PhysicalVariableWidget(x0_,QStringList(),1));
+    //ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);
+    //x0 = new ExtWidget("Initial state",var,true);
+    //addToTab("Initial conditions", x0);
 
     connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
@@ -1179,6 +1241,18 @@ namespace MBSimGUI {
 //    if(x0_ && x0_->size() != size)
 //      x0_->resize_(size);
 //    static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
+  }
+
+  DOMElement* GeneralizedAccelerationConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    GeneralizedDualConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
+    constraintFunction->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedAccelerationConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    constraintFunction->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : MechanicalConstraintPropertyDialog(constraint,parent,f) {
