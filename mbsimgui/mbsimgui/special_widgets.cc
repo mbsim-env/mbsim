@@ -61,7 +61,7 @@ namespace MBSimGUI {
       ele.resize(size);
       for(int i=0; i<size; i++) {
         QString name = QString("ele")+QString::number(i+1);
-        ele[i] = new ExtWidget(name,new ChoiceWidget2(new VecWidgetFactory(m),QBoxLayout::RightToLeft),7);
+        ele[i] = new ExtWidget(name,new ChoiceWidget2(new VecWidgetFactory(m),QBoxLayout::RightToLeft),5);
         layout()->addWidget(ele[i]);
       }
 //      for(int i=0; i<min((int)buf.size(),size); i++)
@@ -81,7 +81,7 @@ namespace MBSimGUI {
       int i=0;
       while(e) {
         QString name = QString("ele")+QString::number(i+1);
-        ele.push_back(new ExtWidget(name,new ChoiceWidget2(new VecWidgetFactory(m),QHBoxLayout::RightToLeft,7)));
+        ele.push_back(new ExtWidget(name,new ChoiceWidget2(new VecWidgetFactory(m),QHBoxLayout::RightToLeft,5)));
         layout()->addWidget(ele[i]);
         ele[i]->initializeUsingXML(e);
         e=e->getNextElementSibling();
@@ -126,7 +126,7 @@ namespace MBSimGUI {
       ele.resize(size);
       for(int i=0; i<size; i++) {
         QString name = QString("ele")+QString::number(i+1);
-        ele[i] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n),QBoxLayout::RightToLeft,7));
+        ele[i] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n),QBoxLayout::RightToLeft,5));
         layout()->addWidget(ele[i]);
       }
     }
@@ -144,7 +144,7 @@ namespace MBSimGUI {
       int i=0;
       while(e) {
         QString name = QString("ele")+QString::number(i+1);
-        ele.push_back(new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(0,0),QHBoxLayout::RightToLeft,7)));
+        ele.push_back(new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(0,0),QHBoxLayout::RightToLeft,5)));
         layout()->addWidget(ele[i]);
         ele[i]->initializeUsingXML(e);
         e=e->getNextElementSibling();
@@ -191,7 +191,7 @@ namespace MBSimGUI {
         ele[i].resize(csize);
         for(int j=0; j<csize; j++) {
           QString name = QString("ele")+QString::number(i+1)+QString::number(j+1);
-          ele[i][j] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n),QBoxLayout::RightToLeft,7));
+          ele[i][j] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n),QBoxLayout::RightToLeft,5));
           layout()->addWidget(ele[i][j]);
         }
       }
@@ -215,7 +215,7 @@ namespace MBSimGUI {
         ele.push_back(vector<ExtWidget*>());
         while(ee) {
           QString name = QString("ele")+QString::number(i+1)+QString::number(j+1);
-          ele[i].push_back(new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(0,0),QHBoxLayout::RightToLeft,7)));
+          ele[i].push_back(new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(0,0),QHBoxLayout::RightToLeft,5)));
           layout()->addWidget(ele[i][j]);
           ele[i][j]->initializeUsingXML(ee);
           ee=ee->getNextElementSibling();
@@ -253,48 +253,45 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  OneDimVecArrayWidgetFactory::OneDimVecArrayWidgetFactory(int size_, int m_, bool var_) : name(2), xmlName(2), size(size_), m(m_), var(var_) {
+  OneDimVecArrayWidgetFactory::OneDimVecArrayWidgetFactory(const FQN &xmlName_, int size_, int m_, bool var_) : name(2), xmlName(vector<FQN>(2,xmlName_)), size(size_), m(m_), var(var_) {
     name[0] = "Cell array";
     name[1] = "Vector";
-    xmlName[0] = MBSIMFLEX%"ele";
-    xmlName[1] = MBSIMFLEX%"eleVec";
+    xmlName[1].second = xmlName[1].second + "Array";
   }
 
   QWidget* OneDimVecArrayWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new OneDimVecArrayWidget(size,m,var);
+      return new ExtWidget(name[i],new OneDimVecArrayWidget(size,m,var),false,false,xmlName[i]);
     if(i==1)
-      return var?new ChoiceWidget2(new VecSizeVarWidgetFactory(size*m),QBoxLayout::RightToLeft,7):new ChoiceWidget2(new VecWidgetFactory(size*m),QBoxLayout::RightToLeft,7);
+      return new ExtWidget(name[i],var?new ChoiceWidget2(new VecSizeVarWidgetFactory(size*m),QBoxLayout::RightToLeft,5):new ChoiceWidget2(new VecWidgetFactory(size*m),QBoxLayout::RightToLeft,5),false,false,xmlName[i]);
     return NULL;
   }
 
-  OneDimMatArrayWidgetFactory::OneDimMatArrayWidgetFactory(int size_, int m_, int n_) : name(2), xmlName(2), size(size_), m(m_), n(n_) {
+  OneDimMatArrayWidgetFactory::OneDimMatArrayWidgetFactory(const FQN &xmlName_, int size_, int m_, int n_) : name(2), xmlName(vector<FQN>(2,xmlName_)), size(size_), m(m_), n(n_) {
     name[0] = "Cell array";
     name[1] = "Matrix";
-    xmlName[0] = MBSIMFLEX%"ele";
-    xmlName[1] = MBSIMFLEX%"eleMat";
+    xmlName[1].second = xmlName[1].second + "Array";
   }
 
   QWidget* OneDimMatArrayWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new OneDimMatArrayWidget(size,m,n);
+      return new ExtWidget(name[i],new OneDimMatArrayWidget(size,m,n),false,false,xmlName[i]);
     if(i==1)
-      return new ChoiceWidget2(new MatWidgetFactory(size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,7);
+      return new ExtWidget(name[i],new ChoiceWidget2(new MatWidgetFactory(size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,xmlName[i]);
     return NULL;
   }
 
-  TwoDimMatArrayWidgetFactory::TwoDimMatArrayWidgetFactory(int size_, int m_, int n_) : name(2), xmlName(2), size(size_), m(m_), n(n_) {
+  TwoDimMatArrayWidgetFactory::TwoDimMatArrayWidgetFactory(const FQN &xmlName_, int size_, int m_, int n_) : name(2), xmlName(vector<FQN>(2,xmlName_)), size(size_), m(m_), n(n_) {
     name[0] = "Cell array";
     name[1] = "Matrix";
-    xmlName[0] = MBSIMFLEX%"row";
-    xmlName[1] = MBSIMFLEX%"eleMat";
+    xmlName[1].second = xmlName[1].second + "Array";
   }
 
   QWidget* TwoDimMatArrayWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new TwoDimMatArrayWidget(size,m,n);
+      return new ExtWidget(name[i],new TwoDimMatArrayWidget(size,m,n),false,false,xmlName[i]);
     if(i==1)
-      return new ChoiceWidget2(new MatWidgetFactory(size*size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,7);
+      return new ExtWidget(name[i],new ChoiceWidget2(new MatWidgetFactory(size*size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,xmlName[i]);
     return NULL;
   }
 

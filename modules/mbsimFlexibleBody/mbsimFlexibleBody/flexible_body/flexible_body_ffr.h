@@ -203,22 +203,22 @@ namespace MBSimFlexibleBody {
       void setNodalGeometricStiffnessMatrixDueToForce(const std::vector<std::vector<fmatvec::SqrMatV> > &K0F_) { K0F = K0F_; }
       void setNodalGeometricStiffnessMatrixDueToMoment(const std::vector<std::vector<fmatvec::SqrMatV> > &K0M_) { K0M = K0M_; }
 
-      void setPositionShapeFunctionIntegral(const fmatvec::MatV &rPdm_);
-      void setShapeFunctionShapeFunctionIntegral(const fmatvec::MatV &PPdm_);
-      void setNonlinearStiffnessMatrixOfFirstOrder(const fmatvec::MatV &Knl1_);
-      void setNonlinearStiffnessMatrixOfSecondOrder(const fmatvec::MatV &Knl1_);
-      void setGeometricStiffnessMatrixDueToAcceleration(const fmatvec::MatV &K0t_);
-      void setGeometricStiffnessMatrixDueToAngularAcceleration(const fmatvec::MatV &K0r_);
-      void setGeometricStiffnessMatrixDueToAngularVelocity(const fmatvec::MatV &K0om_);
-      void setNodalRelativePosition(const fmatvec::VecV &r);
-      void setNodalRelativeOrientation(const fmatvec::MatVx3 &A);
-      void setNodalShapeMatrixOfTranslation(const fmatvec::MatV &Phi_);
-      void setNodalShapeMatrixOfRotation(const fmatvec::MatV &Psi_);
-      void setNodalStressMatrix(const fmatvec::MatV &sigmahel_);
-      void setNodalNonlinearStressMatrix(const fmatvec::MatV &sigmahen_);
-      void setNodalInitialStress(const fmatvec::VecV &sigma0_);
-      void setNodalGeometricStiffnessMatrixDueToForce(const fmatvec::MatV &K0F_);
-      void setNodalGeometricStiffnessMatrixDueToMoment(const fmatvec::MatV &K0M_);
+      void setPositionShapeFunctionIntegralArray(const fmatvec::MatV &rPdm_);
+      void setShapeFunctionShapeFunctionIntegralArray(const fmatvec::MatV &PPdm_);
+      void setNonlinearStiffnessMatrixOfFirstOrderArray(const fmatvec::MatV &Knl1_);
+      void setNonlinearStiffnessMatrixOfSecondOrderArray(const fmatvec::MatV &Knl1_);
+      void setGeometricStiffnessMatrixDueToAccelerationArray(const fmatvec::MatV &K0t_);
+      void setGeometricStiffnessMatrixDueToAngularAccelerationArray(const fmatvec::MatV &K0r_);
+      void setGeometricStiffnessMatrixDueToAngularVelocityArray(const fmatvec::MatV &K0om_);
+      void setNodalRelativePositionArray(const fmatvec::VecV &r);
+      void setNodalRelativeOrientationArray(const fmatvec::MatVx3 &A);
+      void setNodalShapeMatrixOfTranslationArray(const fmatvec::MatV &Phi_);
+      void setNodalShapeMatrixOfRotationArray(const fmatvec::MatV &Psi_);
+      void setNodalStressMatrixArray(const fmatvec::MatV &sigmahel_);
+      void setNodalNonlinearStressMatrixArray(const fmatvec::MatV &sigmahen_);
+      void setNodalInitialStressArray(const fmatvec::VecV &sigma0_);
+      void setNodalGeometricStiffnessMatrixDueToForceArray(const fmatvec::MatV &K0F_);
+      void setNodalGeometricStiffnessMatrixDueToMomentArray(const fmatvec::MatV &K0M_);
 
       using NodeBasedBody::addFrame;
       using NodeBasedBody::addContour;

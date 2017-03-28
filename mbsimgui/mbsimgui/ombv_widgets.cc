@@ -577,31 +577,31 @@ namespace MBSimGUI {
   }
 
   FlexibleBodyFFRMBSOMBVWidget::FlexibleBodyFFRMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
-    minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodes");
-    layout()->addWidget(minCol);
-    maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"indices");
-    layout()->addWidget(maxCol);
-    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"minimalColorValue");
+    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodes");
     layout()->addWidget(nodes);
-    indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"maximalColorValue");
+    indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"indices");
     layout()->addWidget(indices);
+    minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"minimalColorValue");
+    layout()->addWidget(minCol);
+    maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"maximalColorValue");
+    layout()->addWidget(maxCol);
   }
 
   DOMElement* FlexibleBodyFFRMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
-    minCol->initializeUsingXML(e);
-    maxCol->initializeUsingXML(e);
     nodes->initializeUsingXML(e);
     indices->initializeUsingXML(e);
+    minCol->initializeUsingXML(e);
+    maxCol->initializeUsingXML(e);
     return e;
   }
 
   DOMElement* FlexibleBodyFFRMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
-    minCol->writeXMLFile(e);
-    maxCol->writeXMLFile(e);
     nodes->writeXMLFile(e);
     indices->writeXMLFile(e);
+    minCol->writeXMLFile(e);
+    maxCol->writeXMLFile(e);
     writeProperties(e);
     return NULL;
   }

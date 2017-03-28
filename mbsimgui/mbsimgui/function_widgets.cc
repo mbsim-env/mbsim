@@ -38,19 +38,21 @@ namespace MBSimGUI {
 
   class LimitedFunctionWidgetFactory : public WidgetFactory {
     public:
-      LimitedFunctionWidgetFactory(WidgetFactory *factory_) : factory(factory_) { }
-      Widget* createWidget(int i=0);
+      LimitedFunctionWidgetFactory(Element *parent_) : parent(parent_) { }
+      QString getName(int i=0) const { return "Limited function"; }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return MBSIM%"LimitedFunction"; }
+      QWidget* createWidget(int i=0);
+      int getSize() const { return 1; }
     protected:
-      WidgetFactory *factory;
+      Element *parent;
   };
 
-  Widget *LimitedFunctionWidgetFactory::createWidget(int i) {
-    ContainerWidget *widget = new ContainerWidget;
-    widget->addWidget(new ExtWidget("Function",new ChoiceWidget2(factory),false,false,MBSIM%"LimitedFunction"));
-
-    widget->addWidget(new ExtWidget("Limit",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"limit"));
-    return widget;
+  QWidget* LimitedFunctionWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new LimitedFunctionWidget(parent);
+    return NULL;
   }
+
   class CoefficientWidgetFactory : public WidgetFactory {
     public:
       CoefficientWidgetFactory() { }
@@ -241,7 +243,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(parent)),"Function",m,1),false,false,MBSIM%"components");
+    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(parent)),"Function",0,0),false,false,MBSIM%"components");
     layout->addWidget(functions);
   }
 
@@ -305,7 +307,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Limited functions",new ListWidget(new LimitedFunctionWidgetFactory(new FunctionWidgetFactory2(parent)),"Function",n,1),false,false,MBSIM%"limitedFunctions");
+    functions = new ExtWidget("Limited functions",new ListWidget(new ChoiceWidgetFactory(new LimitedFunctionWidgetFactory(parent)),"Function",0,0),false,false,MBSIM%"limitedFunctions");
     layout->addWidget(functions);
 
     shiftAbscissa = new ExtWidget("Shift abscissa",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftAbscissa");
@@ -320,6 +322,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* PiecewiseDefinedFunctionWidget::initializeUsingXML(DOMElement *element) {
+    functions->initializeUsingXML(element);
     shiftAbscissa->initializeUsingXML(element);
     shiftOrdinate->initializeUsingXML(element);
     return element;
@@ -327,8 +330,38 @@ namespace MBSimGUI {
 
   DOMElement* PiecewiseDefinedFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    functions->writeXMLFile(ele0);
     shiftAbscissa->writeXMLFile(ele0);
     shiftOrdinate->writeXMLFile(ele0);
+    return ele0;
+  }
+
+  LimitedFunctionWidget::LimitedFunctionWidget(Element *parent) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"function");
+    layout->addWidget(function);
+
+    limit = new ExtWidget("Limit",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"limit");
+    layout->addWidget(limit);
+  }
+
+  void LimitedFunctionWidget::resize_(int m, int n) {
+    function->resize_(m,n);
+  }
+
+  DOMElement* LimitedFunctionWidget::initializeUsingXML(DOMElement *element) {
+    function->initializeUsingXML(element);
+    limit->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LimitedFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    function->writeXMLFile(ele0);
+    limit->writeXMLFile(ele0);
     return ele0;
   }
 

@@ -160,12 +160,9 @@ namespace MBSimGUI {
 
     ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(ELE) {
-      ELE = ELE->getFirstElementChild();
-      if(ELE) {
-        DOMDocument *doc=element->getOwnerDocument();
-        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
-        ELE->insertBefore(id, NULL);
-      }
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, NULL);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");

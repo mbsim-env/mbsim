@@ -214,7 +214,7 @@ namespace MBSimGUI {
       }
       return 0;
     }
-    else if(mode<=5) {
+    else {
       DOMElement *e=element;
       if(e) {
         DOMElement* ee=e;
@@ -228,25 +228,6 @@ namespace MBSimGUI {
               comboBox->blockSignals(true);
               comboBox->setCurrentIndex(i);
               comboBox->blockSignals(false);
-              if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee))
-                return eee;
-            }
-          }
-        }
-      }
-      return NULL;
-    }
-    else {
-      DOMElement *e=element;
-      if(e) {
-        DOMElement* ee=e;
-        if(ee) {
-          for(int i=0; i<factory->getSize(); i++) {
-            DOMElement *eee=(mode==6)?ee->getFirstElementChild():ee;
-            if(eee) {
-              blockSignals(true);
-              defineWidget(i);
-              blockSignals(false);
               if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee))
                 return eee;
             }
@@ -402,12 +383,17 @@ namespace MBSimGUI {
   }
 
   DOMElement* ListWidget::initializeUsingXML(DOMElement *element) {
+    list->blockSignals(true);
+    spinBox->blockSignals(true);
     DOMElement *e=(mode==0)?element->getFirstElementChild():element;
     while(e) {
       addElements(1,false);
       dynamic_cast<WidgetInterface*>(getWidget(getSize()-1))->initializeUsingXML(e);
       e=e->getNextElementSibling();
     }
+    spinBox->setValue(getSize());
+    list->blockSignals(false);
+    spinBox->blockSignals(false);
     return element;
   }
 
@@ -418,7 +404,7 @@ namespace MBSimGUI {
   }
 
   Widget* ChoiceWidgetFactory::createWidget(int i) {
-    return new ChoiceWidget2(factory);
+    return new ChoiceWidget2(factory,QBoxLayout::TopToBottom,1);
   }
 
 }

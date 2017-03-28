@@ -123,12 +123,8 @@ ret = 0;</scalarParameter>
               </row>
             </shapeFunctionShapeFunctionIntegral>
             <stiffnessMatrix>load('data.asc','Ke').Ke</stiffnessMatrix>
-            <nodalRelativePosition>
-              <eleVec unit="m">u0'(:)</eleVec>
-            </nodalRelativePosition>
-            <nodalShapeMatrixOfTranslation>
-              <eleMat>V(:,1:modes)</eleMat>
-            </nodalShapeMatrixOfTranslation>
+            <nodalRelativePositionArray unit="m">u0'(:)</nodalRelativePositionArray>
+            <nodalShapeMatrixOfTranslationArray>V(:,1:modes)</nodalShapeMatrixOfTranslationArray>
             <frames>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="nf" counterName="n">
                 <Parameter/>

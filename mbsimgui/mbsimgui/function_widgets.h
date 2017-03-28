@@ -163,6 +163,18 @@ namespace MBSimGUI {
       void resizeVariables();
   };
 
+  class LimitedFunctionWidget : public FunctionWidget {
+
+    public:
+      LimitedFunctionWidget(Element *parent);
+      QString getType() const { return "LimitedFunction"; }
+      void resize_(int m, int n);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+    protected:
+      ExtWidget *function, *limit;
+  };
+
   class PiecewiseDefinedFunctionWidget : public FunctionWidget {
 
     public:
