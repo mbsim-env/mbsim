@@ -84,25 +84,25 @@ namespace MBSimGUI {
 
   class TranslationAlongFixedAxisWidget : public FunctionWidget {
 
-    friend class TranslationAlongFixedAxis;
-
     public:
       TranslationAlongFixedAxisWidget();
       int getArg1Size() const {return 1;}
       QString getType() const { return "TranslationAlongFixedAxis"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *a;
   };
 
   class LinearTranslationWidget : public FunctionWidget {
 
-    friend class LinearTranslation;
-
     public:
       LinearTranslationWidget(int m=1, int n=1);
       int getArg1Size() const;
       void resize_(int m, int n);
       QString getType() const { return "LinearTranslation"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *A, *b;
   };
@@ -181,12 +181,12 @@ namespace MBSimGUI {
 
   class RotationAboutFixedAxisWidget : public FunctionWidget {
 
-    friend class RotationAboutFixedAxis;
-
     public:
       RotationAboutFixedAxisWidget();
       int getArg1Size() const {return 1;}
       QString getType() const { return "RotationAboutFixedAxis"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *a;
   };

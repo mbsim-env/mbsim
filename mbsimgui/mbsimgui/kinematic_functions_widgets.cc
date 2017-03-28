@@ -26,6 +26,8 @@
 #include <QtGui>
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -36,34 +38,30 @@ namespace MBSimGUI {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new VecWidget(3),QStringList(),0));
-    a = new ExtWidget("Axis of translation",new ExtPhysicalVarWidget(input));
+    a = new ExtWidget("Axis of translation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"axisOfTranslation");
     layout->addWidget(a);
   }
 
+  DOMElement* TranslationAlongFixedAxisWidget::initializeUsingXML(DOMElement *element) {
+    a->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* TranslationAlongFixedAxisWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    a->writeXMLFile(ele0);
+    return ele0;
+  }
+
   LinearTranslationWidget::LinearTranslationWidget(int m, int n) {
-    //  MatColsVarWidget* m = new MatColsVarWidget(3,1,1,3);
-    //  input.push_back(new PhysicalVariableWidget(m,noUnitUnits(),1));
-    //  ExtPhysicalVarWidget *mat_ = new ExtPhysicalVarWidget(input);
-    //  mat = new ExtWidget("Translation vectors",mat_);
-    //  layout->addWidget(mat);
-    //  QObject::connect(m, SIGNAL(sizeChanged(int)), this, SIGNAL(translationChanged()));
-    //  QObject::connect(mat_, SIGNAL(inputDialogChanged(int)), this, SIGNAL(translationChanged()));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    MatColsVarWidget *a_ = new MatColsVarWidget(m,1,1,3);
-    input.push_back(new PhysicalVariableWidget(a_,QStringList(),0));
-    connect(a_,SIGNAL(sizeChanged(int)),this,SIGNAL(arg1SizeChanged(int)));
-    A = new ExtWidget("Slope",new ExtPhysicalVarWidget(input));
+    A = new ExtWidget("Translation vectors",new ChoiceWidget2(new MatColsVarWidgetFactory(m,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationVectors");
     layout->addWidget(A);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),0));
-    b = new ExtWidget("Intercept",new ExtPhysicalVarWidget(input),true);
+    b = new ExtWidget("Offset",new ChoiceWidget2(new VecWidgetFactory(m),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
     layout->addWidget(b);
   }
 
@@ -78,15 +76,37 @@ namespace MBSimGUI {
     //    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
   }
 
+  DOMElement* LinearTranslationWidget::initializeUsingXML(DOMElement *element) {
+    A->initializeUsingXML(element);
+    b->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LinearTranslationWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    A->writeXMLFile(ele0);
+    b->writeXMLFile(ele0);
+    return ele0;
+  }
+
   RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget() {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new VecWidget(3),QStringList(),0));
-    a = new ExtWidget("Axis of rotation",new ExtPhysicalVarWidget(input));
+    a = new ExtWidget("Axis of rotation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"axisOfRotation");
     layout->addWidget(a);
+  }
+
+  DOMElement* RotationAboutFixedAxisWidget::initializeUsingXML(DOMElement *element) {
+    a->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* RotationAboutFixedAxisWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    a->writeXMLFile(ele0);
+    return ele0;
   }
 
 }
