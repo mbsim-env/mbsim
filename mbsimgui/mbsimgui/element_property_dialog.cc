@@ -75,15 +75,16 @@ namespace MBSimGUI {
 
   class RigidBodyOfReferenceWidgetFactory : public WidgetFactory {
     public:
-      RigidBodyOfReferenceWidgetFactory(Element* element_, QWidget *parent_=0) : element(element_), parent(parent_) { }
-      Widget* createWidget(int i=0);
+      RigidBodyOfReferenceWidgetFactory(const FQN &xmlName_, Element* element_, QWidget *parent_=0) : xmlName(xmlName_), element(element_), parent(parent_) { }
+      QWidget* createWidget(int i=0);
     protected:
+      FQN xmlName;
       Element *element;
       QWidget *parent;
   };
 
-  Widget* RigidBodyOfReferenceWidgetFactory::createWidget(int i) {
-    RigidBodyOfReferenceWidget *widget = new RigidBodyOfReferenceWidget(element,0);
+  QWidget* RigidBodyOfReferenceWidgetFactory::createWidget(int i) {
+    QWidget *widget = new ExtWidget("name",new RigidBodyOfReferenceWidget(element,0),false,false,xmlName);
     if(parent)
       QObject::connect(widget,SIGNAL(bodyChanged()),parent,SLOT(resizeVariables()));
     return widget;
@@ -1217,18 +1218,12 @@ namespace MBSimGUI {
   GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedDualConstraintPropertyDialog(constraint,parent,f) {
     addTab("Initial conditions",1);
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint)));
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-    //  connect((ChoiceWidget*)constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-
-    //vector<PhysicalVariableWidget*> input;
-    //x0_ = new VecWidget(0);
-    //input.push_back(new PhysicalVariableWidget(x0_,QStringList(),1));
-    //ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);
-    //x0 = new ExtWidget("Initial state",var,true);
-    //addToTab("Initial conditions", x0);
+    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
+    addToTab("Initial conditions", x0);
 
     connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
@@ -1245,12 +1240,14 @@ namespace MBSimGUI {
 
   DOMElement* GeneralizedAccelerationConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GeneralizedDualConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
+    x0->initializeUsingXML(element->getXMLElement());
     constraintFunction->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedAccelerationConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    x0->writeXMLFile(element->getXMLElement(),ref);
     constraintFunction->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
@@ -1261,40 +1258,30 @@ namespace MBSimGUI {
     addTab("Visualisation",2);
     addTab("Initial conditions",2);
 
-    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(constraint,this),"Body"));
+    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"dependentRigidBodyOnFirstSide",constraint,this),"Body",0,1),false,false,"");
     addToTab("General",dependentBodiesFirstSide);
     connect(dependentBodiesFirstSide->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(constraint,this),"Body"));
+    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"dependentRigidBodyOnSecondSide",constraint,this),"Body",0,1),false,false,"");
     addToTab("General",dependentBodiesSecondSide);
     connect(dependentBodiesSecondSide->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-    independentBody = new ExtWidget("Independent body",new RigidBodyOfReferenceWidget(constraint,0));
+    independentBody = new ExtWidget("Independent rigid body",new RigidBodyOfReferenceWidget(constraint,0),false,false,MBSIM%"independentRigidBody");
     addToTab("General", independentBody);
 
-    connections = new ExtWidget("Connections",new ConnectFramesWidget(2,constraint));
+    connections = new ExtWidget("Connections",new ConnectFramesWidget(2,constraint),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
 
-    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(1,1,2),true);
+    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(1,1,2),true,false,MBSIM%"frameOfReferenceID");
     addToTab("Kinetics", refFrameID);
 
-    vector<PhysicalVariableWidget*> input;
-    MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
-    input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
-    force = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
+    force = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics", force);
 
-    input.clear();
-    MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
-    input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
-    moment = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
+    moment = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
     addToTab("Kinetics", moment);
 
-    input.clear();
-    q0_ = new VecWidget(0);
-    input.push_back(new PhysicalVariableWidget(q0_,QStringList(),1));
-    ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
-    q0 = new ExtWidget("Initial guess",var,true);
+    q0 = new ExtWidget("Initial guess",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
     addToTab("Initial conditions", q0);
 
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
@@ -1368,6 +1355,32 @@ namespace MBSimGUI {
 //    }
 //    static_cast<JointConstraint*>(element)->q0.fromWidget(q0);
 //  }
+
+  DOMElement* JointConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    MechanicalConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
+    dependentBodiesFirstSide->initializeUsingXML(element->getXMLElement());
+    dependentBodiesSecondSide->initializeUsingXML(element->getXMLElement());
+    independentBody->initializeUsingXML(element->getXMLElement());
+    connections->initializeUsingXML(element->getXMLElement());
+    refFrameID->initializeUsingXML(element->getXMLElement());
+    force->initializeUsingXML(element->getXMLElement());
+    moment->initializeUsingXML(element->getXMLElement());
+    q0->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* JointConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    MechanicalConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    dependentBodiesFirstSide->writeXMLFile(element->getXMLElement(),ref);
+    dependentBodiesSecondSide->writeXMLFile(element->getXMLElement(),ref);
+    independentBody->writeXMLFile(element->getXMLElement(),ref);
+    connections->writeXMLFile(element->getXMLElement(),ref);
+    refFrameID->writeXMLFile(element->getXMLElement(),ref);
+    force->writeXMLFile(element->getXMLElement(),ref);
+    moment->writeXMLFile(element->getXMLElement(),ref);
+    q0->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
 
   GeneralizedConnectionConstraintPropertyDialog::GeneralizedConnectionConstraintPropertyDialog(GeneralizedConnectionConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedDualConstraintPropertyDialog(constraint,parent,f) {
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
@@ -1581,7 +1594,6 @@ namespace MBSimGUI {
     coilSpring->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
-
 
   JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : FloatingFrameLinkPropertyDialog(joint,parent,f) {
 
