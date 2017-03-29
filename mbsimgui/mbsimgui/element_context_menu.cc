@@ -34,8 +34,8 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
-//#include "gear.h"
-//#include "connection.h"
+#include "gear.h"
+#include "connection.h"
 #include "parameter.h"
 #include <QFileDialog>
 
@@ -446,11 +446,11 @@ namespace MBSimGUI {
   }
 
   void LinkContextContextMenu::addGeneralizedGear() {
-//    mw->addLink(new GeneralizedGear("GeneralizedGear"));
+    mw->addLink(new GeneralizedGear("GeneralizedGear"), element);
   }
 
   void LinkContextContextMenu::addGeneralizedElasticConnection() {
-//    mw->addLink(new GeneralizedElasticConnection("GeneralizedElasticConnection"));
+    mw->addLink(new GeneralizedElasticConnection("GeneralizedElasticConnection"), element);
   }
 
   ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

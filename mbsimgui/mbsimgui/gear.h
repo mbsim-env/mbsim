@@ -22,21 +22,14 @@
 
 #include "link.h"
 #include "constraint.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 
   class GeneralizedGear : public RigidBodyLink {
-    friend class GeneralizedGearPropertyDialog;
     public:
-    GeneralizedGear(const QString &str="");
-    QString getType() const { return "GeneralizedGear"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedGearPropertyDialog(this);}
-    protected:
-    ExtProperty function, gearOutput, gearInput;
+      GeneralizedGear(const QString &str="");
+      QString getType() const { return "GeneralizedGear"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedGearPropertyDialog(this);}
   };
 
 }

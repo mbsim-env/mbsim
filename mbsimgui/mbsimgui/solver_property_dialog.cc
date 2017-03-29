@@ -252,6 +252,9 @@ namespace MBSimGUI {
     maximalStepSize = new ExtWidget("Maximal step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"maximalStepSize");
     addToTab("Step size", maximalStepSize);
 
+    minimalStepSize = new ExtWidget("Minimal step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"minimalStepSize");
+    addToTab("Step size", minimalStepSize);
+
     plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"plotOnRoot");
     addToTab("Extra", plotOnRoot);
 
@@ -267,6 +270,7 @@ namespace MBSimGUI {
     absTol->initializeUsingXML(solver->getXMLElement());
     relTol->initializeUsingXML(solver->getXMLElement());
     initialStepSize->initializeUsingXML(solver->getXMLElement());
+    minimalStepSize->initializeUsingXML(solver->getXMLElement());
     maximalStepSize->initializeUsingXML(solver->getXMLElement());
     plotOnRoot->initializeUsingXML(solver->getXMLElement());
     gMax->initializeUsingXML(solver->getXMLElement());
@@ -279,6 +283,7 @@ namespace MBSimGUI {
     absTol->writeXMLFile(solver->getXMLElement());
     relTol->writeXMLFile(solver->getXMLElement());
     initialStepSize->writeXMLFile(solver->getXMLElement());
+    minimalStepSize->writeXMLFile(solver->getXMLElement());
     maximalStepSize->writeXMLFile(solver->getXMLElement());
     plotOnRoot->writeXMLFile(solver->getXMLElement());
     gMax->writeXMLFile(solver->getXMLElement());

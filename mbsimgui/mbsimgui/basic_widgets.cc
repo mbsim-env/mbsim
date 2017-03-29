@@ -454,14 +454,25 @@ namespace MBSimGUI {
     emit objectChanged();
   }
 
-  void ObjectOfReferenceWidget::setObject(const QString &str, Object *objectPtr) {
-    selectedObject = objectPtr;
+  void ObjectOfReferenceWidget::setObject(const QString &str) {
+    selectedObject = element->getByPath<Object>(str);
+    objectBrowser->updateWidget(selectedObject);
     object->setText(str);
     emit objectChanged();
   }
 
   QString ObjectOfReferenceWidget::getObject() const {
     return object->text();
+  }
+
+  DOMElement* ObjectOfReferenceWidget::initializeUsingXML(DOMElement *element) {
+    setObject(QString::fromStdString(E(element)->getAttribute("ref")));
+    return element;
+  }
+
+  DOMElement* ObjectOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getObject().toStdString());
+    return NULL;
   }
 
   LinkOfReferenceWidget::LinkOfReferenceWidget(Element *element_, Link* selectedLink_) : element(element_), selectedLink(selectedLink_) {
@@ -572,7 +583,6 @@ namespace MBSimGUI {
     return NULL;
   }
 
-
   SignalOfReferenceWidget::SignalOfReferenceWidget(Element *element_, Signal* selectedSignal_) : element(element_), selectedSignal(selectedSignal_) {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
@@ -605,14 +615,25 @@ namespace MBSimGUI {
     emit signalChanged();
   }
 
-  void SignalOfReferenceWidget::setSignal(const QString &str, Signal *signalPtr) {
-    selectedSignal = signalPtr;
+  void SignalOfReferenceWidget::setSignal(const QString &str) {
+    selectedSignal = element->getByPath<Signal>(str);
+    signalBrowser->updateWidget(selectedSignal);
     signal->setText(str);
     emit signalChanged();
   }
 
   QString SignalOfReferenceWidget::getSignal() const {
     return signal->text();
+  }
+
+  DOMElement* SignalOfReferenceWidget::initializeUsingXML(DOMElement *element) {
+    setSignal(QString::fromStdString(E(element)->getAttribute("ref")));
+    return element;
+  }
+
+  DOMElement* SignalOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getSignal().toStdString());
+    return NULL;
   }
 
   FileWidget::FileWidget(const QString &description_, const QString &extensions_, int mode_) : description(description_), extensions(extensions_), mode(mode_) {
@@ -895,35 +916,43 @@ namespace MBSimGUI {
     setLayout(layout);
     layout->setMargin(0);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-15"), noUnitUnits(), 1));
-    projection = new ExtWidget("Projection",new ExtPhysicalVarWidget(input),true);
+    projection = new ExtWidget("Projection",new ChoiceWidget2(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projection");
     layout->addWidget(projection);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-8"), noUnitUnits(), 1));
-    g = new ExtWidget("g",new ExtPhysicalVarWidget(input),true);
+    g = new ExtWidget("g",new ChoiceWidget2(new ScalarWidgetFactory("1e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"g");
     layout->addWidget(g);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
-    gd = new ExtWidget("gd",new ExtPhysicalVarWidget(input),true);
+    gd = new ExtWidget("gd",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"gd");
     layout->addWidget(gd);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
-    gdd = new ExtWidget("gdd",new ExtPhysicalVarWidget(input),true);
+    gdd = new ExtWidget("gdd",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"gdd");
     layout->addWidget(gdd);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
-    la = new ExtWidget("la",new ExtPhysicalVarWidget(input),true);
+    la = new ExtWidget("la",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"la");
     layout->addWidget(la);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
-    La = new ExtWidget("La",new ExtPhysicalVarWidget(input),true);
+    La = new ExtWidget("La",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"La");
     layout->addWidget(La);
+  }
+
+  DOMElement* DynamicSystemSolverTolerancesWidget::initializeUsingXML(DOMElement *parent) {
+    projection->initializeUsingXML(parent);
+    g->initializeUsingXML(parent);
+    gd->initializeUsingXML(parent);
+    gdd->initializeUsingXML(parent);
+    la->initializeUsingXML(parent);
+    La->initializeUsingXML(parent);
+    return NULL;
+  }
+
+  DOMElement* DynamicSystemSolverTolerancesWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    projection->writeXMLFile(parent);
+    g->writeXMLFile(parent);
+    gd->writeXMLFile(parent);
+    gdd->writeXMLFile(parent);
+    la->writeXMLFile(parent);
+    La->writeXMLFile(parent);
+    return NULL;
   }
 
   DynamicSystemSolverParametersWidget::DynamicSystemSolverParametersWidget() {
@@ -936,19 +965,33 @@ namespace MBSimGUI {
     list.push_back("\"GaussSeidel\"");
     list.push_back("\"LinearEquations\"");
     list.push_back("\"RootFinding\"");
-    constraintSolver = new ExtWidget("Constraint solver",new TextChoiceWidget(list,1,true),true);
+    constraintSolver = new ExtWidget("Constraint solver",new TextChoiceWidget(list,1,true),true,false,MBSIM%"constraintSolver");
     layout->addWidget(constraintSolver);
 
-    impactSolver = new ExtWidget("Imapct solver",new TextChoiceWidget(list,1,true),true);
+    impactSolver = new ExtWidget("Impact solver",new TextChoiceWidget(list,1,true),true,false,MBSIM%"impactSolver");
     layout->addWidget(impactSolver);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("10000"), QStringList(), 0));
-    numberOfMaximalIterations = new ExtWidget("Number of maximal iterations",new ExtPhysicalVarWidget(input),true);
+    numberOfMaximalIterations = new ExtWidget("Number of maximal iterations",new ChoiceWidget2(new ScalarWidgetFactory("10000"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfMaximalIterations");
     layout->addWidget(numberOfMaximalIterations);
 
-    tolerances = new ExtWidget("Tolerances",new DynamicSystemSolverTolerancesWidget,true);
+    tolerances = new ExtWidget("Tolerances",new DynamicSystemSolverTolerancesWidget,true,false,MBSIM%"tolerances");
     layout->addWidget(tolerances);
+  }
+
+  DOMElement* DynamicSystemSolverParametersWidget::initializeUsingXML(DOMElement *parent) {
+    constraintSolver->initializeUsingXML(parent);
+    impactSolver->initializeUsingXML(parent);
+    numberOfMaximalIterations->initializeUsingXML(parent);
+    tolerances->initializeUsingXML(parent);
+    return NULL;
+  }
+
+  DOMElement* DynamicSystemSolverParametersWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    constraintSolver->writeXMLFile(parent);
+    impactSolver->writeXMLFile(parent);
+    numberOfMaximalIterations->writeXMLFile(parent);
+    tolerances->writeXMLFile(parent);
+    return NULL;
   }
 
   EmbedWidget::EmbedWidget() {
@@ -1005,19 +1048,19 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  SignalReferenceWidget::SignalReferenceWidget(Element *element) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    setLayout(layout);
-    layout->setMargin(0);
-
-    refSignal = new SignalOfReferenceWidget(element,0);
-    layout->addWidget(refSignal);
-
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 1));
-    factor = new ExtWidget("Factor",new ExtPhysicalVarWidget(input));
-    layout->addWidget(factor);
-  }
+//  SignalReferenceWidget::SignalReferenceWidget(Element *element) {
+//    QVBoxLayout *layout = new QVBoxLayout;
+//    setLayout(layout);
+//    layout->setMargin(0);
+//
+//    refSignal = new SignalOfReferenceWidget(element,0);
+//    layout->addWidget(refSignal);
+//
+//    vector<PhysicalVariableWidget*> input;
+//    input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 1));
+//    factor = new ExtWidget("Factor",new ExtPhysicalVarWidget(input));
+//    layout->addWidget(factor);
+//  }
 
   ColorWidget::ColorWidget() {
     QHBoxLayout *layout = new QHBoxLayout;

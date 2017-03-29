@@ -19,44 +19,10 @@
 
 #include <config.h>
 #include "gear.h"
-#include "frame.h"
-#include "rigid_body.h"
-
-using namespace std;
-using namespace MBXMLUtils;
-using namespace xercesc;
 
 namespace MBSimGUI {
 
-  GeneralizedGear::GeneralizedGear(const string &str) : RigidBodyLink(str) {
-
-    gearOutput.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"gearOutput"));
-
-    gearInput.setProperty(new ListProperty(new GeneralizedGearConstraintPropertyFactory(this),MBSIM%"gearInput"));
-
-    function.setProperty(new GeneralizedForceLawChoiceProperty(this,MBSIM%"generalizedForceLaw"));
-  }
-
-  void GeneralizedGear::initialize() {
-    RigidBodyLink::initialize();
-    gearOutput.initialize();
-    gearInput.initialize();
-  }
-
-  DOMElement* GeneralizedGear::initializeUsingXML(DOMElement *element) {
-    RigidBodyLink::initializeUsingXML(element);
-    gearOutput.initializeUsingXML(element);
-    gearInput.initializeUsingXML(element);
-    function.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* GeneralizedGear::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = RigidBodyLink::writeXMLFile(parent);
-    gearOutput.writeXMLFile(ele0);
-    gearInput.writeXMLFile(ele0);
-    function.writeXMLFile(ele0);
-    return ele0;
+  GeneralizedGear::GeneralizedGear(const QString &str) : RigidBodyLink(str) {
   }
 
 }

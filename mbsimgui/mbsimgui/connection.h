@@ -21,20 +21,14 @@
 #define _CONNECTION__H_
 
 #include "link.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 
   class GeneralizedElasticConnection : public DualRigidBodyLink {
-    friend class GeneralizedElasticConnectionPropertyDialog;
     public:
-    GeneralizedElasticConnection(const QString &str="");
-    QString getType() const { return "GeneralizedElasticConnection"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedElasticConnectionPropertyDialog(this);}
-    protected:
-    ExtProperty function;
+      GeneralizedElasticConnection(const QString &str="");
+      QString getType() const { return "GeneralizedElasticConnection"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedElasticConnectionPropertyDialog(this);}
   };
 
 }

@@ -508,14 +508,6 @@ namespace MBSimGUI {
       ExtWidget *connections;
   };
 
-  class SignalProcessingSystemPropertyDialog : public LinkPropertyDialog {
-
-    public:
-      SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    protected:
-      ExtWidget *signalRef;
-  };
-
   class KineticExcitationPropertyDialog : public FloatingFrameLinkPropertyDialog {
     Q_OBJECT
 
@@ -593,6 +585,8 @@ namespace MBSimGUI {
 
     public:
       GeneralizedGearPropertyDialog(RigidBodyLink *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *function, *gearOutput, *gearInput;
   };
@@ -602,6 +596,8 @@ namespace MBSimGUI {
 
     public:
       GeneralizedElasticConnectionPropertyDialog(DualRigidBodyLink *connection, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *function;
     protected slots:
@@ -710,6 +706,8 @@ namespace MBSimGUI {
 
     public:
       GeneralizedCoordinateSensorPropertyDialog(GeneralizedCoordinateSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *object, *index;
   };
@@ -730,6 +728,8 @@ namespace MBSimGUI {
 
     public:
       AbsoluteCoordinateSensorPropertyDialog(AbsoluteCoordinateSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *frame, *direction;
   };
@@ -762,8 +762,20 @@ namespace MBSimGUI {
 
     public:
       FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *function;
+  };
+
+  class SignalProcessingSystemPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+    protected:
+      ExtWidget *signalRef;
   };
 
   class SignalProcessingSystemSensorPropertyDialog : public SensorPropertyDialog {
@@ -778,6 +790,8 @@ namespace MBSimGUI {
 
     public:
       PIDControllerPropertyDialog(PIDController *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *sRef, *sdRef, *P, *I, *D;
   };
@@ -786,6 +800,8 @@ namespace MBSimGUI {
 
     public:
       UnarySignalOperationPropertyDialog(UnarySignalOperation *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *sRef, *f;
   };
@@ -794,6 +810,8 @@ namespace MBSimGUI {
 
     public:
       BinarySignalOperationPropertyDialog(BinarySignalOperation *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *s1Ref, *s2Ref, *f;
   };
@@ -802,6 +820,8 @@ namespace MBSimGUI {
 
     public:
       ExternSignalSourcePropertyDialog(ExternSignalSource *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *sourceSize;
   };
@@ -810,6 +830,8 @@ namespace MBSimGUI {
 
     public:
       ExternSignalSinkPropertyDialog(ExternSignalSink *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *inputSignal;
   };

@@ -31,6 +31,8 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   joint.cc \
 		   friction.cc \
 		   contact.cc \
+		   gear.cc \
+		   connection.cc \
 		   signal_.cc \
 		   integrator.cc \
 		   analyser.cc \

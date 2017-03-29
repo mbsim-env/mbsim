@@ -19,31 +19,10 @@
 
 #include <config.h>
 #include "connection.h"
-#include "basic_properties.h"
-#include "ombv_properties.h"
-#include "function_property_factory.h"
-
-using namespace std;
-using namespace MBXMLUtils;
-using namespace xercesc;
 
 namespace MBSimGUI {
 
-  GeneralizedElasticConnection::GeneralizedElasticConnection(const string &str) : DualRigidBodyLink(str) {
-
-    function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this,"VVV"),MBSIM%"generalizedForceFunction"));
-  }
-
-  DOMElement* GeneralizedElasticConnection::initializeUsingXML(DOMElement *element) {
-    DualRigidBodyLink::initializeUsingXML(element);
-    function.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* GeneralizedElasticConnection::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = DualRigidBodyLink::writeXMLFile(parent);
-    function.writeXMLFile(ele0);
-    return ele0;
+  GeneralizedElasticConnection::GeneralizedElasticConnection(const QString &str) : DualRigidBodyLink(str) {
   }
 
 }

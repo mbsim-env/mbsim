@@ -62,15 +62,16 @@ namespace MBSimGUI {
 
   class GeneralizedGearConstraintWidgetFactory : public WidgetFactory {
     public:
-      GeneralizedGearConstraintWidgetFactory(Element* element_, QWidget *parent_=0) : element(element_), parent(parent_) { }
+      GeneralizedGearConstraintWidgetFactory(const FQN &xmlName_, Element* element_, QWidget *parent_=0) : xmlName(xmlName_), element(element_), parent(parent_) { }
       QWidget* createWidget(int i=0);
     protected:
+      FQN xmlName;
       Element *element;
       QWidget *parent;
   };
 
   QWidget* GeneralizedGearConstraintWidgetFactory::createWidget(int i) {
-    return new ExtWidget("name",new GearInputReferenceWidget(element,0),false,false,MBSIM%"independentRigidBody");
+    return new ExtWidget("name",new GearInputReferenceWidget(element,0),false,false,xmlName);
   }
 
   class RigidBodyOfReferenceWidgetFactory : public WidgetFactory {
@@ -538,28 +539,36 @@ namespace MBSimGUI {
     environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"accelerationOfGravity");
     addToTab("Environment", environment);
 
-    solverParameters = new ExtWidget("Solver parameters",new DynamicSystemSolverParametersWidget,true); 
+    solverParameters = new ExtWidget("Solver parameters",new DynamicSystemSolverParametersWidget,true,false,MBSIM%"solverParameters");
     addToTab("Solver parameters",solverParameters);
 
-    inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inverseKinetics");
     addToTab("Extra", inverseKinetics);
 
-    initialProjection = new ExtWidget("Initial projection",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    initialProjection = new ExtWidget("Initial projection",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialProjection");
     addToTab("Extra", initialProjection);
 
-    useConstraintSolverForPlot = new ExtWidget("Use constraint solver for plot",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    useConstraintSolverForPlot = new ExtWidget("Use constraint solver for plot",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForPlot");
     addToTab("Extra", useConstraintSolverForPlot);
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GroupPropertyDialog::initializeUsingXML(element->getXMLElement());
     environment->initializeUsingXML(static_cast<DynamicSystemSolver*>(element)->getXMLEnvironments()->getFirstElementChild());
+    solverParameters->initializeUsingXML(element->getXMLElement());
+    inverseKinetics->initializeUsingXML(element->getXMLElement());
+    initialProjection->initializeUsingXML(element->getXMLElement());
+    useConstraintSolverForPlot->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     GroupPropertyDialog::writeXMLFile(parent,element->getXMLFrames());
     environment->writeXMLFile(static_cast<DynamicSystemSolver*>(element)->getXMLEnvironments()->getFirstElementChild());
+    solverParameters->writeXMLFile(element->getXMLElement());
+    inverseKinetics->writeXMLFile(element->getXMLElement());
+    initialProjection->writeXMLFile(element->getXMLElement());
+    useConstraintSolverForPlot->writeXMLFile(element->getXMLElement());
     return NULL;
   }
 
@@ -1065,7 +1074,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    MechanicalConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    MechanicalConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     support->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
@@ -1075,7 +1084,7 @@ namespace MBSimGUI {
     dependentBody = new ExtWidget("Dependent rigid body",new RigidBodyOfReferenceWidget(constraint,0),false,false,MBSIM%"dependentRigidBody");
     addToTab("General", dependentBody);
 
-    independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new GeneralizedGearConstraintWidgetFactory(constraint,0),"Independent body",0,1),false,false,"");
+    independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new GeneralizedGearConstraintWidgetFactory(MBSIM%"independentRigidBody",constraint,0),"Independent body",0,1),false,false,"");
     addToTab("General",independentBodies);
 
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
@@ -1089,7 +1098,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedGearConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GeneralizedConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    GeneralizedConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     dependentBody->writeXMLFile(element->getXMLElement(),ref);
     independentBodies->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
@@ -1130,7 +1139,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedDualConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GeneralizedConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    GeneralizedConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     dependentBody->writeXMLFile(element->getXMLElement(),ref);
     independentBody->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
@@ -1178,7 +1187,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedPositionConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     constraintFunction->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
@@ -1209,7 +1218,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedVelocityConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     x0->writeXMLFile(element->getXMLElement(),ref);
     constraintFunction->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
@@ -1246,7 +1255,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedAccelerationConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     x0->writeXMLFile(element->getXMLElement(),ref);
     constraintFunction->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
@@ -1370,7 +1379,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* JointConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    MechanicalConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    MechanicalConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     dependentBodiesFirstSide->writeXMLFile(element->getXMLElement(),ref);
     dependentBodiesSecondSide->writeXMLFile(element->getXMLElement(),ref);
     independentBody->writeXMLFile(element->getXMLElement(),ref);
@@ -1384,11 +1393,6 @@ namespace MBSimGUI {
 
   GeneralizedConnectionConstraintPropertyDialog::GeneralizedConnectionConstraintPropertyDialog(GeneralizedConnectionConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedDualConstraintPropertyDialog(constraint,parent,f) {
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
-  }
-
-  SignalProcessingSystemPropertyDialog::SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(sps,parent,f) {
-    signalRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(sps,0));
-    addToTab("General", signalRef);
   }
 
   LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(link,parent,f) {
@@ -1703,14 +1707,14 @@ namespace MBSimGUI {
   }
 
 
-  GeneralizedGearPropertyDialog::GeneralizedGearPropertyDialog(RigidBodyLink *constraint, QWidget *parent, Qt::WindowFlags f) : RigidBodyLinkPropertyDialog(constraint,parent,f) {
+  GeneralizedGearPropertyDialog::GeneralizedGearPropertyDialog(RigidBodyLink *link, QWidget *parent, Qt::WindowFlags f) : RigidBodyLinkPropertyDialog(link,parent,f) {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
-    gearOutput = new ExtWidget("Gear output",new RigidBodyOfReferenceWidget(constraint,0));
+    gearOutput = new ExtWidget("Gear output",new RigidBodyOfReferenceWidget(link,0),false,false,MBSIM%"gearOutput");
     addToTab("General",gearOutput);
 
-    gearInput = new ExtWidget("Gear inputs",new ListWidget(new GeneralizedGearConstraintWidgetFactory(constraint,0),"Gear input"));
+    gearInput = new ExtWidget("Gear inputs",new ListWidget(new GeneralizedGearConstraintWidgetFactory(MBSIM%"gearInput",link,0),"Gear input",0,1),false,false,"");
     addToTab("General",gearInput);
 
     function = new ExtWidget("Generalized force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
@@ -1719,9 +1723,25 @@ namespace MBSimGUI {
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
   }
 
+  DOMElement* GeneralizedGearPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidBodyLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    gearOutput->initializeUsingXML(element->getXMLElement());
+    gearInput->initializeUsingXML(element->getXMLElement());
+    function->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedGearPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidBodyLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    gearOutput->writeXMLFile(element->getXMLElement(),ref);
+    gearInput->writeXMLFile(element->getXMLElement(),ref);
+    function->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
   GeneralizedElasticConnectionPropertyDialog::GeneralizedElasticConnectionPropertyDialog(DualRigidBodyLink *connection, QWidget *parent, Qt::WindowFlags f) : DualRigidBodyLinkPropertyDialog(connection,parent,f) {
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(connection)));
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(connection),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
 
     connect(function,SIGNAL(resize_()),this,SLOT(resizeVariables()));
@@ -1735,6 +1755,18 @@ namespace MBSimGUI {
 //      int size = element->getByPath<RigidBody>(widget->getBody().toStdString())->getuRelSize();
 //      function->resize_(size,size);
 //    }
+  }
+
+  DOMElement* GeneralizedElasticConnectionPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    DualRigidBodyLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    function->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedElasticConnectionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DualRigidBodyLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    function->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(contact,parent,f) {
@@ -1795,7 +1827,7 @@ namespace MBSimGUI {
 
     addTab("Visualisation",1);
 
-    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frame");
+    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0),false,false,MBSIM%"frame");
     addToTab("General", frame);
 
     frameOfReference = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frameOfReference");
@@ -1835,7 +1867,7 @@ namespace MBSimGUI {
 
     addTab("Visualisation",1);
 
-    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frame");
+    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0),false,false,MBSIM%"frame");
     addToTab("General", frame);
 
     refFrame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frameOfReference");
@@ -1885,7 +1917,7 @@ namespace MBSimGUI {
 
     addTab("Visualisation",1);
 
-    link = new ExtWidget("Mechanical link",new LinkOfReferenceWidget(observer,0),true,false,MBSIM%"mechanicalLink");
+    link = new ExtWidget("Mechanical link",new LinkOfReferenceWidget(observer,0),false,false,MBSIM%"mechanicalLink");
     addToTab("General", link);
 
     forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
@@ -1915,7 +1947,7 @@ namespace MBSimGUI {
 
     addTab("Visualisation",1);
 
-    constraint = new ExtWidget("Mechanical constraint",new ConstraintOfReferenceWidget(observer,0),true,false,MBSIM%"mechanicalConstraint");
+    constraint = new ExtWidget("Mechanical constraint",new ConstraintOfReferenceWidget(observer,0),false,false,MBSIM%"mechanicalConstraint");
     addToTab("General", constraint);
 
     forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
@@ -1945,7 +1977,7 @@ namespace MBSimGUI {
 
     addTab("Visualisation",1);
 
-    link = new ExtWidget("Mechanical link",new LinkOfReferenceWidget(observer,0),true,false,MBSIM%"contact");
+    link = new ExtWidget("Mechanical link",new LinkOfReferenceWidget(observer,0),false,false,MBSIM%"contact");
     addToTab("General", link);
 
     forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
@@ -1990,7 +2022,7 @@ namespace MBSimGUI {
 
     addTab("Visualisation",1);
 
-    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frame");
+    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0),false,false,MBSIM%"frame");
     addToTab("General", frame);
 
     position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
@@ -2035,7 +2067,7 @@ namespace MBSimGUI {
 
     addTab("Visualisation",1);
 
-    body = new ExtWidget("Rigid body",new RigidBodyOfReferenceWidget(observer,0),true,false,MBSIM%"rigidBody");
+    body = new ExtWidget("Rigid body",new RigidBodyOfReferenceWidget(observer,0),false,false,MBSIM%"rigidBody");
     addToTab("General", body);
 
     weight = new ExtWidget("OpenMBV weight arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVWeight");
@@ -2078,13 +2110,25 @@ namespace MBSimGUI {
   }
 
   GeneralizedCoordinateSensorPropertyDialog::GeneralizedCoordinateSensorPropertyDialog(GeneralizedCoordinateSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
-    object = new ExtWidget("Object of reference",new ObjectOfReferenceWidget(sensor,0));
+    object = new ExtWidget("Object of reference",new ObjectOfReferenceWidget(sensor,0),false,false,MBSIMCONTROL%"object");
     addToTab("General", object);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"), QStringList(), 0));
-    index = new ExtWidget("Index",new ExtPhysicalVarWidget(input));
+    index = new ExtWidget("Index",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"index");
     addToTab("General", index);
+  }
+
+  DOMElement* GeneralizedCoordinateSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
+    object->initializeUsingXML(element->getXMLElement());
+    index->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedCoordinateSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    object->writeXMLFile(element->getXMLElement(),ref);
+    index->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   GeneralizedPositionSensorPropertyDialog::GeneralizedPositionSensorPropertyDialog(GeneralizedPositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : GeneralizedCoordinateSensorPropertyDialog(sensor,parent,f) {
@@ -2094,14 +2138,25 @@ namespace MBSimGUI {
   }
 
   AbsoluteCoordinateSensorPropertyDialog::AbsoluteCoordinateSensorPropertyDialog(AbsoluteCoordinateSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
-    frame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(sensor,0));
+    frame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(sensor,0),false,false,MBSIMCONTROL%"frame");
     addToTab("General", frame);
 
-    vector<PhysicalVariableWidget*> input;
-    MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
-    input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
-    direction = new ExtWidget("Direction",new ExtPhysicalVarWidget(input),true);
+    direction = new ExtWidget("Direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"direction");
     addToTab("General", direction);
+  }
+
+  DOMElement* AbsoluteCoordinateSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SensorPropertyDialog::initializeUsingXML(element->getXMLElement());
+    frame->initializeUsingXML(element->getXMLElement());
+    direction->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* AbsoluteCoordinateSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SensorPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    frame->writeXMLFile(element->getXMLElement(),ref);
+    direction->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   AbsolutePositionSensorPropertyDialog::AbsolutePositionSensorPropertyDialog(AbsolutePositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
@@ -2117,8 +2172,38 @@ namespace MBSimGUI {
   }
 
   FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
-    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(sensor)));
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(sensor),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"function");
     addToTab("General", function);
+  }
+
+  DOMElement* FunctionSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SensorPropertyDialog::initializeUsingXML(element->getXMLElement());
+    function->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FunctionSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SensorPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    function->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
+  SignalProcessingSystemPropertyDialog::SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(sps,parent,f) {
+    signalRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(sps,0),false,false,MBSIMCONTROL%"inputSignal");
+
+    addToTab("General", signalRef);
+  }
+
+  DOMElement* SignalProcessingSystemPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    LinkPropertyDialog::initializeUsingXML(element->getXMLElement());
+    signalRef->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* SignalProcessingSystemPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    LinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    signalRef->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   SignalProcessingSystemSensorPropertyDialog::SignalProcessingSystemSensorPropertyDialog(SignalProcessingSystemSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
@@ -2127,56 +2212,125 @@ namespace MBSimGUI {
   }
 
   PIDControllerPropertyDialog::PIDControllerPropertyDialog(PIDController *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
-    sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0));
+    sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", sRef);
-    sdRef = new ExtWidget("Derivative of input signal",new SignalOfReferenceWidget(signal,0));
+
+    sdRef = new ExtWidget("Derivative of input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"derivativeOfInputSignal");
     addToTab("General", sdRef);
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
-    P = new ExtWidget("P",new ExtPhysicalVarWidget(input));
+
+    P = new ExtWidget("P",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"P");
     addToTab("General", P);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    I = new ExtWidget("I",new ExtPhysicalVarWidget(input));
+    I = new ExtWidget("I",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"I");
     addToTab("General", I);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    D = new ExtWidget("D",new ExtPhysicalVarWidget(input));
+    D = new ExtWidget("D",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"D");
     addToTab("General", D);
+  }
 
+  DOMElement* PIDControllerPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
+    sRef->initializeUsingXML(element->getXMLElement());
+    sdRef->initializeUsingXML(element->getXMLElement());
+    P->initializeUsingXML(element->getXMLElement());
+    I->initializeUsingXML(element->getXMLElement());
+    D->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* PIDControllerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    sRef->writeXMLFile(element->getXMLElement(),ref);
+    sdRef->writeXMLFile(element->getXMLElement(),ref);
+    P->writeXMLFile(element->getXMLElement(),ref);
+    I->writeXMLFile(element->getXMLElement(),ref);
+    D->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   UnarySignalOperationPropertyDialog::UnarySignalOperationPropertyDialog(UnarySignalOperation *signal, QWidget * parent, Qt::WindowFlags f_) : SignalPropertyDialog(signal,parent,f_) {
-    sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0));
+    sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", sRef);
 
-    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory3(QStringList("x"))));
+    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory3(QStringList("x")),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", f);
   }
 
+  DOMElement* UnarySignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
+    sRef->initializeUsingXML(element->getXMLElement());
+    f->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* UnarySignalOperationPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    sRef->writeXMLFile(element->getXMLElement(),ref);
+    f->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
   BinarySignalOperationPropertyDialog::BinarySignalOperationPropertyDialog(BinarySignalOperation *signal, QWidget * parent, Qt::WindowFlags f_) : SignalPropertyDialog(signal,parent,f_) {
-    s1Ref = new ExtWidget("Input 1 signal",new SignalOfReferenceWidget(signal,0));
+    s1Ref = new ExtWidget("First input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"firstInputSignal");
     addToTab("General", s1Ref);
 
-    s2Ref = new ExtWidget("Input 2 signal",new SignalOfReferenceWidget(signal,0));
+    s2Ref = new ExtWidget("Second input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"secondInputSignal");
     addToTab("General", s2Ref);
 
     QStringList var;
     var << "x1" << "x2";
-    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var,signal)));
+    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var,signal),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", f);
   }
 
+  DOMElement* BinarySignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
+    s1Ref->initializeUsingXML(element->getXMLElement());
+    s2Ref->initializeUsingXML(element->getXMLElement());
+    f->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* BinarySignalOperationPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    s1Ref->writeXMLFile(element->getXMLElement(),ref);
+    s2Ref->writeXMLFile(element->getXMLElement(),ref);
+    f->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
   ExternSignalSourcePropertyDialog::ExternSignalSourcePropertyDialog(ExternSignalSource *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
-    sourceSize = new ExtWidget("Lenght of input vector",new SpinBoxWidget(1, 1, 1000));
+    sourceSize = new ExtWidget("Length of input vector",new SpinBoxWidget(1,1,1000),false,false,MBSIMCONTROL%"sourceSize");
     addToTab("General", sourceSize);
   }
 
+  DOMElement* ExternSignalSourcePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
+    sourceSize->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ExternSignalSourcePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    sourceSize->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
   ExternSignalSinkPropertyDialog::ExternSignalSinkPropertyDialog(ExternSignalSink *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
-    inputSignal = new ExtWidget("Signal of reference",new SignalOfReferenceWidget(signal,0));
+    inputSignal = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
+  }
+
+  DOMElement* ExternSignalSinkPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
+    inputSignal->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ExternSignalSinkPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    inputSignal->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
 }

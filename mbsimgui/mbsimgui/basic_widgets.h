@@ -200,7 +200,6 @@ namespace MBSimGUI {
       void updateWidget();
       void setBody(const QString &str);
       QString getBody() const;
-      RigidBody* getSelectedBody() {return selectedBody;}
       QString getRatio() const {return ratio->text().isEmpty()?"0":ratio->text();}
       void setRatio(const QString &str) {ratio->setText(str=="0"?"":str);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -226,9 +225,10 @@ namespace MBSimGUI {
       ObjectOfReferenceWidget(Element* element, Object* selectedObject);
 
       void updateWidget();
-      void setObject(const QString &str, Object *objectPtr);
+      void setObject(const QString &str);
       QString getObject() const;
-      Object* getSelectedObject() {return selectedObject;}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QLineEdit* object;
@@ -300,9 +300,10 @@ namespace MBSimGUI {
       SignalOfReferenceWidget(Element* element, Signal* selectedSignal);
 
       void updateWidget();
-      void setSignal(const QString &str, Signal *signalPtr);
+      void setSignal(const QString &str);
       QString getSignal() const;
-      Signal* getSelectedSignal() {return selectedSignal;}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QLineEdit* signal;
@@ -465,29 +466,28 @@ namespace MBSimGUI {
   };
 
   class DynamicSystemSolverTolerancesWidget : public Widget {
-    friend class DynamicSystemSolverTolerancesProperty;
 
     public:
-    DynamicSystemSolverTolerancesWidget();
+      DynamicSystemSolverTolerancesWidget();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
-    ExtWidget *projection, *g, *gd, *gdd, *la, *La;
+      ExtWidget *projection, *g, *gd, *gdd, *la, *La;
   };
 
   class DynamicSystemSolverParametersWidget : public Widget {
 
-    friend class DynamicSystemSolverParametersProperty;
-
     public:
-    DynamicSystemSolverParametersWidget();
+      DynamicSystemSolverParametersWidget();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
-    ExtWidget *constraintSolver, *impactSolver, *numberOfMaximalIterations, *tolerances;
+      ExtWidget *constraintSolver, *impactSolver, *numberOfMaximalIterations, *tolerances;
   };
 
   class EmbedWidget : public Widget {
-
-    friend class EmbedProperty;
 
     public:
       EmbedWidget();
@@ -500,24 +500,19 @@ namespace MBSimGUI {
       ExtWidget *href, *count, *counterName, *parameterList;
   };
 
-  class SignalReferenceWidget : public Widget {
-
-    friend class SignalReferenceProperty;
-
-    public:
-    SignalReferenceWidget(Element* element);
-    Signal* getSelectedSignal() {return refSignal->getSelectedSignal();}
-    SignalOfReferenceWidget* getSignalOfReferenceWidget() {return refSignal;}
-    void updateWidget() {refSignal->updateWidget();}
-    protected:
-    SignalOfReferenceWidget* refSignal;
-    ExtWidget *factor;
-  };
+//  class SignalReferenceWidget : public Widget {
+//
+//    public:
+//    SignalReferenceWidget(Element* element);
+//    SignalOfReferenceWidget* getSignalOfReferenceWidget() {return refSignal;}
+//    void updateWidget() {refSignal->updateWidget();}
+//    protected:
+//    SignalOfReferenceWidget* refSignal;
+//    ExtWidget *factor;
+//  };
 
   class ColorWidget : public Widget {
     Q_OBJECT
-
-    friend class ColorProperty;
 
     public:
       ColorWidget();
@@ -535,8 +530,6 @@ namespace MBSimGUI {
 
   class PlotFeatureStatusWidget : public Widget {
     Q_OBJECT
-
-    friend class PlotFeatureStatusProperty;
 
     protected:
       QComboBox *type, *value, *status;
