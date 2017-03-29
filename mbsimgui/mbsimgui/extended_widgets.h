@@ -161,10 +161,11 @@ namespace MBSimGUI {
 
   class ChoiceWidgetFactory : public WidgetFactory {
     public:
-      ChoiceWidgetFactory(WidgetFactory *factory_) : factory(factory_) { }
+      ChoiceWidgetFactory(WidgetFactory *factory_, int mode_=1) : factory(factory_), mode(mode_) { }
       Widget* createWidget(int i=0);
     protected:
       WidgetFactory *factory;
+      int mode;
   };
 
 }

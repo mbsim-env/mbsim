@@ -404,7 +404,7 @@ namespace MBSimGUI {
   }
 
   Widget* ChoiceWidgetFactory::createWidget(int i) {
-    return new ChoiceWidget2(factory,QBoxLayout::TopToBottom,1);
+    return new ChoiceWidget2(factory,QBoxLayout::TopToBottom,mode);
   }
 
 }
