@@ -187,7 +187,7 @@ namespace MBSimIntegrator {
         istate=1;
         rWork(4)=dt0;
       }
-      if(istate<0) exit(istate);
+      if(istate<0) throw MBSimError("Integrator LSODAR failed with istate = "+to_string(istate));
     }
   }
 

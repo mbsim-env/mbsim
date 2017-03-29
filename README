@@ -1,0 +1,9 @@
+import xml.etree.cElementTree as ET
+import mbsim
+import mbxmlutils
+
+e1=ET.parse('MBS.mbsimprj.xml').getroot()
+e2=mbxmlutils.preprocess(e1)
+dss=mbsim.createDSS(e2)
+solver=mbsim.createSolver(e2)
+solver.execute(dss)

@@ -528,7 +528,7 @@ namespace MBSimFlexibleBody {
       myfile << endl;
       myfile.close();
 
-      exit(1);
+      THROW_MBSIMERROR("updateh failed");
     }
 
     if (0) {

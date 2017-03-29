@@ -129,7 +129,7 @@ namespace MBSimIntegrator {
         integPlot<< t << " " << rWork(10) << " " << time << endl;
         tPlot = min(tEnd,tPlot + dtPlot);
       }
-      if(istate<0) exit(istate);
+      if(istate<0) throw MBSimError("Integrator LSODE failed with istate = "+to_string(istate));
     }
 
     integPlot.close();
