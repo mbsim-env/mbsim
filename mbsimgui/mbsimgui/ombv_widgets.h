@@ -42,6 +42,7 @@ namespace MBSimGUI {
     protected:
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      int count;
   };
 
   class OMBVObjectWidget : public Widget {

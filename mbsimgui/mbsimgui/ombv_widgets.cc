@@ -35,7 +35,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  OMBVRigidBodyWidgetFactory::OMBVRigidBodyWidgetFactory() {
+  OMBVRigidBodyWidgetFactory::OMBVRigidBodyWidgetFactory() : count(1) {
     name.push_back("Cube");
     name.push_back("Cuboid");
     name.push_back("Frustum");
@@ -56,21 +56,21 @@ namespace MBSimGUI {
 
   QWidget* OMBVRigidBodyWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new CubeWidget("Cube",OPENMBV%"Cube");
+      return new CubeWidget("Cube"+toQStr(count++),OPENMBV%"Cube");
     if(i==1)
-      return new CuboidWidget("Cuboid",OPENMBV%"Cuboid");
+      return new CuboidWidget("Cuboid"+toQStr(count++),OPENMBV%"Cuboid");
     if(i==2)
-      return new FrustumWidget("Frustum",OPENMBV%"Frustum");
+      return new FrustumWidget("Frustum"+toQStr(count++),OPENMBV%"Frustum");
     if(i==3)
-      return new ExtrusionWidget("Extrusion",OPENMBV%"Extrusion");
+      return new ExtrusionWidget("Extrusion"+toQStr(count++),OPENMBV%"Extrusion");
     if(i==4)
-      return new SphereWidget("Sphere",OPENMBV%"Sphere");
+      return new SphereWidget("Sphere"+toQStr(count++),OPENMBV%"Sphere");
     if(i==5)
-      return new IvBodyWidget("IvBody",OPENMBV%"IvBody");
+      return new IvBodyWidget("IvBody"+toQStr(count++),OPENMBV%"IvBody");
     if(i==6)
-      return new CompoundRigidBodyWidget("CompoundRigidBody",OPENMBV%"CompoundRigidBody");
+      return new CompoundRigidBodyWidget("CompoundRigidBody"+toQStr(count++),OPENMBV%"CompoundRigidBody");
     if(i==7)
-      return new InvisibleBodyWidget("InvisibleBody",OPENMBV%"InvisibleBody");
+      return new InvisibleBodyWidget("InvisibleBody"+toQStr(count++),OPENMBV%"InvisibleBody");
     return NULL;
   }
 
