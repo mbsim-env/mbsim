@@ -14,77 +14,55 @@
 
   <xs:import namespace="http://www.mbsim-env.de/MBSim"/>
 
-  <xs:complexType name="vectorCellArray1D">
+  <xs:complexType name="lengthVectorCellArray1D">
     <xs:choice>
       <xs:sequence>
-        <xs:element name="ele" type="pv:vector" maxOccurs="unbounded"/>
+        <xs:element name="ele" type="pv:lengthVector" maxOccurs="unbounded"/>
       </xs:sequence>
-      <xs:element name="array" type="pv:vector"/>
+      <xs:element name="array" type="pv:lengthVector"/>
     </xs:choice>
   </xs:complexType>
 
-  <xs:complexType name="matrixCellArray1D">
+  <xs:complexType name="pressureVectorCellArray1D">
     <xs:choice>
       <xs:sequence>
-        <xs:element name="ele" type="pv:matrix" maxOccurs="unbounded"/>
+        <xs:element name="ele" type="pv:pressureVector" maxOccurs="unbounded"/>
       </xs:sequence>
-      <xs:element name="array" type="pv:matrix"/>
+      <xs:element name="array" type="pv:pressureVector"/>
     </xs:choice>
   </xs:complexType>
 
-  <xs:complexType name="matrixCellArray2D">
+  <xs:complexType name="rotationMatrixCellArray1D">
+    <xs:choice>
+      <xs:sequence>
+        <xs:element name="ele" type="pv:rotationMatrix" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:element name="array" type="pv:nounitMatrix"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="unknownMatrixCellArray1D">
+    <xs:choice>
+      <xs:sequence>
+        <xs:element name="ele" type="pv:unknownMatrix" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:element name="array" type="pv:unknownMatrix"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="unknownMatrixCellArray2D">
     <xs:choice>
       <xs:sequence>
         <xs:element name="row" maxOccurs="unbounded">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="ele" type="pv:matrix" maxOccurs="unbounded"/>
+              <xs:element name="ele" type="pv:unknownMatrix" maxOccurs="unbounded"/>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
       </xs:sequence>
-      <xs:element name="array" type="pv:matrix"/>
+      <xs:element name="array" type="pv:unknownMatrix"/>
     </xs:choice>
-  </xs:complexType>
-
-  <xs:complexType name="lengthVectorCellArray1D">
-    <xs:complexContent>
-      <xs:extension base="vectorCellArray1D">
-        <xs:attributeGroup ref="pv:lengthMeasure"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="pressureVectorCellArray1D">
-    <xs:complexContent>
-      <xs:extension base="vectorCellArray1D">
-        <xs:attributeGroup ref="pv:pressureMeasure"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="rotationMatrixCellArray1D">
-    <xs:complexContent>
-      <xs:extension base="matrixCellArray1D">
-        <xs:attributeGroup ref="pv:nounitMeasure"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="unknownMatrixCellArray1D">
-    <xs:complexContent>
-      <xs:extension base="matrixCellArray1D">
-        <xs:attribute name="convertUnit" type="xs:string"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="unknownMatrixCellArray2D">
-    <xs:complexContent>
-      <xs:extension base="matrixCellArray2D">
-        <xs:attribute name="convertUnit" type="xs:string"/>
-      </xs:extension>
-    </xs:complexContent>
   </xs:complexType>
 
   <xs:annotation>

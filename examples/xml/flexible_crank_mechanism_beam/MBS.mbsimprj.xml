@@ -528,8 +528,8 @@
               </row>
             </xmlMatrix>
           </stiffnessMatrix>
-          <nodalRelativePosition unit="m">
-            <ele>
+          <nodalRelativePosition>
+            <ele unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>2*l2/2</ele>
                 <ele>0</ele>

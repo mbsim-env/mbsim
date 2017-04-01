@@ -272,8 +272,8 @@
               </row>
             </xmlMatrix>
           </stiffnessMatrix>
-          <nodalRelativePosition unit="m">
-            <ele>
+          <nodalRelativePosition>
+            <ele unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>l</ele>
                 <ele>0</ele>
@@ -622,8 +622,8 @@
               </xmlMatrix>
             </ele>
           </geometricStiffnessMatrixDueToAngularVelocity>
-          <nodalRelativePosition unit="m">
-            <ele>
+          <nodalRelativePosition>
+            <ele unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>l</ele>
                 <ele>0</ele>
@@ -1014,8 +1014,8 @@
               </ele>
             </row>
           </nonlinearStiffnessMatrixOfSecondOrder>
-          <nodalRelativePosition unit="m">
-            <ele>
+          <nodalRelativePosition>
+            <ele unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>l</ele>
                 <ele>0</ele>
