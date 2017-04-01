@@ -16,10 +16,10 @@ int main (int argc, char* argv[]) {
   sys->setStrategy(DynamicSystemSolver::local);
   sys->initialize();
 
-  sys->setgdTol (1.0e-6);
-  sys->setgddTol(1.0e-8);
-  sys->setlaTol (1.0e-8);
-  sys->setLaTol (1.0e-6);
+  sys->setGeneralizedRelativeVelocityTolerance (1.0e-6);
+  sys->setGeneralizedRelativeAccelerationTolerance(1.0e-8);
+  sys->setGeneralizedForceTolerance (1.0e-8);
+  sys->setGeneralizedImpulseTolerance (1.0e-6);
   sys->setMaxIter(1000+0*pow(150*sys->getlaSize(),0.85));
 
   Integrator *integrator;

@@ -61,9 +61,7 @@
       <fluidTemperature unit="degC">50</fluidTemperature>
     </HydraulicEnvironment>
   </environments>
-  <solverParameters>
-    <constraintSolver>"FixedPointSingle"</constraintSolver>
-    <impactSolver>"FixedPointSingle"</impactSolver>
-    <numberOfMaximalIterations>100000</numberOfMaximalIterations>
-  </solverParameters>
+  <constraintSolver>"FixedPointSingle"</constraintSolver>
+  <impactSolver>"FixedPointSingle"</impactSolver>
+  <numberOfMaximalIterations>100000</numberOfMaximalIterations>
 </DynamicSystemSolver>

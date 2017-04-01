@@ -326,11 +326,11 @@ namespace MBSim {
        */
       virtual double evalPotentialEnergy() { return 0; }
 
-      virtual void setlaTol(double tol) { laTol = tol; }
-      virtual void setLaTol(double tol) { LaTol = tol; }
-      virtual void setgTol(double tol) { gTol = tol; }
-      virtual void setgdTol(double tol) { gdTol = tol; }
-      virtual void setgddTol(double tol) { gddTol = tol; }
+      virtual void setGeneralizedForceTolerance(double tol) { laTol = tol; }
+      virtual void setGeneralizedImpulseTolerance(double tol) { LaTol = tol; }
+      virtual void setGeneralizedRelativePositionTolerance(double tol) { gTol = tol; }
+      virtual void setGeneralizedRelativeVelocityTolerance(double tol) { gdTol = tol; }
+      virtual void setGeneralizedRelativeAccelerationTolerance(double tol) { gddTol = tol; }
       virtual void setrMax(double rMax_) { rMax = rMax_; }
       virtual void setLinkStatusInd(int LinkStatusInd_) { LinkStatusInd = LinkStatusInd_; };
       virtual void setLinkStatusRegInd(int LinkStatusRegInd_) { LinkStatusRegInd = LinkStatusRegInd_; };

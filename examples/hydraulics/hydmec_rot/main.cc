@@ -38,7 +38,7 @@ int main (int argc, char* argv[]) {
 
 //    dss->setConstraintSolver(DynamicSystemSolver::GaussSeidel);
 //    dss->setImpactSolver(DynamicSystemSolver::GaussSeidel);
-    dss->setgdTol(1e-9);
+    dss->setGeneralizedRelativeVelocityTolerance(1e-9);
     dss->initialize();
 
     double tEnd=1e-3;

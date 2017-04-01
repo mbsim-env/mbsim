@@ -539,8 +539,37 @@ namespace MBSimGUI {
     environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"accelerationOfGravity");
     addToTab("Environment", environment);
 
-    solverParameters = new ExtWidget("Solver parameters",new DynamicSystemSolverParametersWidget,true,false,MBSIM%"solverParameters");
-    addToTab("Solver parameters",solverParameters);
+    vector<QString> list;
+    list.push_back("\"FixedPointSingle\"");
+    list.push_back("\"GaussSeidel\"");
+    list.push_back("\"LinearEquations\"");
+    list.push_back("\"RootFinding\"");
+    constraintSolver = new ExtWidget("Constraint solver",new TextChoiceWidget(list,1,true),true,false,MBSIM%"constraintSolver");
+    addToTab("Solver parameters", constraintSolver);
+
+    impactSolver = new ExtWidget("Impact solver",new TextChoiceWidget(list,1,true),true,false,MBSIM%"impactSolver");
+    addToTab("Solver parameters", impactSolver);
+
+    numberOfMaximalIterations = new ExtWidget("Number of maximal iterations",new ChoiceWidget2(new ScalarWidgetFactory("10000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numberOfMaximalIterations");
+    addToTab("Solver parameters", numberOfMaximalIterations);
+
+    projection = new ExtWidget("Projection tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");
+    addToTab("Solver parameters", projection);
+
+    g = new ExtWidget("Generalized relative position tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionTolerance");
+    addToTab("Solver parameters", g);
+
+    gd = new ExtWidget("Generalized relative velocity tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityTolerance");
+    addToTab("Solver parameters", gd);
+
+    gdd = new ExtWidget("Generalized relative acceleration tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeAccelerationTolerance");
+    addToTab("Solver parameters", gdd);
+
+    la = new ExtWidget("Generalized force tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedForceTolerance");
+    addToTab("Solver parameters", la);
+
+    La = new ExtWidget("Generalized impulse tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedImpulseTolerance");
+    addToTab("Solver parameters", La);
 
     inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inverseKinetics");
     addToTab("Extra", inverseKinetics);
@@ -555,7 +584,15 @@ namespace MBSimGUI {
   DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GroupPropertyDialog::initializeUsingXML(element->getXMLElement());
     environment->initializeUsingXML(static_cast<DynamicSystemSolver*>(element)->getXMLEnvironments()->getFirstElementChild());
-    solverParameters->initializeUsingXML(element->getXMLElement());
+    constraintSolver->initializeUsingXML(element->getXMLElement());
+    impactSolver->initializeUsingXML(element->getXMLElement());
+    numberOfMaximalIterations->initializeUsingXML(element->getXMLElement());
+    projection->initializeUsingXML(element->getXMLElement());
+    g->initializeUsingXML(element->getXMLElement());
+    gd->initializeUsingXML(element->getXMLElement());
+    gdd->initializeUsingXML(element->getXMLElement());
+    la->initializeUsingXML(element->getXMLElement());
+    La->initializeUsingXML(element->getXMLElement());
     inverseKinetics->initializeUsingXML(element->getXMLElement());
     initialProjection->initializeUsingXML(element->getXMLElement());
     useConstraintSolverForPlot->initializeUsingXML(element->getXMLElement());
@@ -565,7 +602,15 @@ namespace MBSimGUI {
   DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     GroupPropertyDialog::writeXMLFile(parent,element->getXMLFrames());
     environment->writeXMLFile(static_cast<DynamicSystemSolver*>(element)->getXMLEnvironments()->getFirstElementChild());
-    solverParameters->writeXMLFile(element->getXMLElement());
+    constraintSolver->writeXMLFile(element->getXMLElement());
+    impactSolver->writeXMLFile(element->getXMLElement());
+    numberOfMaximalIterations->writeXMLFile(element->getXMLElement());
+    projection->writeXMLFile(element->getXMLElement());
+    g->writeXMLFile(element->getXMLElement());
+    gd->writeXMLFile(element->getXMLElement());
+    gdd->writeXMLFile(element->getXMLElement());
+    la->writeXMLFile(element->getXMLElement());
+    La->writeXMLFile(element->getXMLElement());
     inverseKinetics->writeXMLFile(element->getXMLElement());
     initialProjection->writeXMLFile(element->getXMLElement());
     useConstraintSolverForPlot->writeXMLFile(element->getXMLElement());

@@ -11,8 +11,8 @@ int main (int argc, char* argv[]) {
   double dt = 1e-4;
 
   System sys("MBS");
-  sys.setLaTol(1e-1*dt);
-  sys.setgdTol(1e-4);
+  sys.setGeneralizedImpulseTolerance(1e-1*dt);
+  sys.setGeneralizedRelativeVelocityTolerance(1e-4);
   sys.initialize();
 
   TimeSteppingIntegrator integrator;

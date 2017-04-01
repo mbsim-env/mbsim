@@ -15,9 +15,9 @@ int main (int argc, char* argv[])
 
   TimeSteppingIntegrator integrator;
   double dt = 1e-4;
-  sys->setgTol(0);
-  sys->setgdTol(1e-6);
-  sys->setLaTol(1e-2*dt);
+  sys->setGeneralizedRelativePositionTolerance(0);
+  sys->setGeneralizedRelativeVelocityTolerance(1e-6);
+  sys->setGeneralizedImpulseTolerance(1e-2*dt);
   integrator.setStepSize(dt);
   integrator.setEndTime(4.0);
   integrator.setPlotStepSize(1e-3);

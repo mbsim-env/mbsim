@@ -22,8 +22,8 @@ int main (int argc, char* argv[])
      integrator = new TimeSteppingIntegrator;
      double dt = 1e-6;
      static_cast<TimeSteppingIntegrator*>(integrator)->setStepSize(dt);
-     sys->setLaTol(1e-2*dt);
-     sys->setgdTol(1e-8);
+     sys->setGeneralizedImpulseTolerance(1e-2*dt);
+     sys->setGeneralizedRelativeVelocityTolerance(1e-8);
    }
    else {
 

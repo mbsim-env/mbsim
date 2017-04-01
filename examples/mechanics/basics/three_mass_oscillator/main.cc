@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 
   sys->setConstraintSolver(DynamicSystemSolver::LinearEquations);
   sys->setImpactSolver(DynamicSystemSolver::LinearEquations);
-  sys->setgdTol(1e-9);
+  sys->setGeneralizedRelativeVelocityTolerance(1e-9);
 
   sys->initialize();
 

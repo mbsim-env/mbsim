@@ -147,16 +147,12 @@
         <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
       </MBSimEnvironment>
     </environments>
-    <solverParameters>
-      <tolerances>
-        <projection>1e-15</projection>
-        <g>1e-6</g>
-        <gd>1e-6</gd>
-        <gdd>1e-8</gdd>
-        <la>1e-8</la>
-        <La>1e-6</La>
-      </tolerances>
-    </solverParameters>
+    <projectionTolerance unit="-">1e-15</projectionTolerance>
+    <generalizedRelativePositionTolerance unit="-">1e-6</generalizedRelativePositionTolerance>
+    <generalizedRelativeVelocityTolerance unit="-">1e-6</generalizedRelativeVelocityTolerance>
+    <generalizedRelativeAccelerationTolerance unit="-">1e-8</generalizedRelativeAccelerationTolerance>
+    <generalizedForceTolerance unit="-">1e-8</generalizedForceTolerance>
+    <generalizedImpulseTolerance unit="-">1e-6</generalizedImpulseTolerance>
   </DynamicSystemSolver>
   <LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime>0</startTime>

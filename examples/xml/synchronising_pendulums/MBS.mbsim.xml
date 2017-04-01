@@ -41,15 +41,11 @@
       <accelerationOfGravity>[0; -9.81; 0]</accelerationOfGravity>
     </MBSimEnvironment>
   </environments>
-  <solverParameters>
-    <numberOfMaximalIterations>1000000</numberOfMaximalIterations>
-    <tolerances>
-      <projection>eps*10</projection>
-      <gd>eps*10</gd>
-      <gdd>eps*10</gdd>
-      <la>eps*10</la>
-      <La>eps*10</La>
-    </tolerances>
-  </solverParameters>
+  <numberOfMaximalIterations>1000000</numberOfMaximalIterations>
+  <projectionTolerance>eps*10</projectionTolerance>
+  <generalizedRelativeVelocityTolerance>eps*10</generalizedRelativeVelocityTolerance>
+  <generalizedRelativeAccelerationTolerance>eps*10</generalizedRelativeAccelerationTolerance>
+  <generalizedForceTolerance>eps*10</generalizedForceTolerance>
+  <generalizedImpulseTolerance>eps*10</generalizedImpulseTolerance>
 </DynamicSystemSolver>
 

@@ -88,7 +88,7 @@ int main (int argc, char* argv[]) {
             dss->setConstraintSolver(DynamicSystemSolver::RootFinding);
             dss->setImpactSolver(DynamicSystemSolver::RootFinding);
           }
-          dss->setgdTol(1e-9);
+          dss->setGeneralizedRelativeVelocityTolerance(1e-9);
           dss->initialize();
 
           double tEnd=1.e-1;

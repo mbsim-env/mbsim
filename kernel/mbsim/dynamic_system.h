@@ -650,27 +650,27 @@ namespace MBSim {
       /**
        * \param tolerance for relative velocity
        */
-      virtual void setgTol(double tol);
+      virtual void setGeneralizedRelativePositionTolerance(double tol);
 
       /**
        * \param tolerance for relative velocity
        */
-      virtual void setgdTol(double tol);
+      virtual void setGeneralizedRelativeVelocityTolerance(double tol);
 
       /**
        * \param tolerance for relative acceleration
        */
-      virtual void setgddTol(double tol);
+      virtual void setGeneralizedRelativeAccelerationTolerance(double tol);
 
       /**
        * \param tolerance for contact force
        */
-      virtual void setlaTol(double tol);
+      virtual void setGeneralizedForceTolerance(double tol);
 
       /**
        * \param tolerance for impact
        */
-      virtual void setLaTol(double tol);
+      virtual void setGeneralizedImpulseTolerance(double tol);
 
       /**
        * \param maximum relaxation factor for contact equations

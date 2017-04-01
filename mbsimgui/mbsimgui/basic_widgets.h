@@ -465,28 +465,6 @@ namespace MBSimGUI {
       Element* element;
   };
 
-  class DynamicSystemSolverTolerancesWidget : public Widget {
-
-    public:
-      DynamicSystemSolverTolerancesWidget();
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
-
-    protected:
-      ExtWidget *projection, *g, *gd, *gdd, *la, *La;
-  };
-
-  class DynamicSystemSolverParametersWidget : public Widget {
-
-    public:
-      DynamicSystemSolverParametersWidget();
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
-
-    protected:
-      ExtWidget *constraintSolver, *impactSolver, *numberOfMaximalIterations, *tolerances;
-  };
-
   class EmbedWidget : public Widget {
 
     public:

@@ -113,11 +113,11 @@ namespace MBSim {
       virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination();
       virtual void checkActive(int j);
-      virtual void setlaTol(double tol);
-      virtual void setLaTol(double tol);
-      virtual void setgTol(double tol);
-      virtual void setgdTol(double tol);
-      virtual void setgddTol(double tol);
+      virtual void setGeneralizedForceTolerance(double tol);
+      virtual void setGeneralizedImpulseTolerance(double tol);
+      virtual void setGeneralizedRelativePositionTolerance(double tol);
+      virtual void setGeneralizedRelativeVelocityTolerance(double tol);
+      virtual void setGeneralizedRelativeAccelerationTolerance(double tol);
       virtual void setrMax(double rMax_);
       virtual void setLinkStatusInd(int LinkStatusInd_);
       virtual void setLinkStatusRegInd(int LinkStatusRegInd_);

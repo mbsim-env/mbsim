@@ -346,11 +346,11 @@ namespace MBSim {
           contacts[cK][k].plotFeatureForChildren = plotFeatureForChildren;
 
           //set the tolerances for the single contacts
-          contacts[cK][k].setgTol(gTol);
-          contacts[cK][k].setgdTol(gdTol);
-          contacts[cK][k].setgddTol(gddTol);
-          contacts[cK][k].setlaTol(laTol);
-          contacts[cK][k].setLaTol(LaTol);
+          contacts[cK][k].setGeneralizedRelativePositionTolerance(gTol);
+          contacts[cK][k].setGeneralizedRelativeVelocityTolerance(gdTol);
+          contacts[cK][k].setGeneralizedRelativeAccelerationTolerance(gddTol);
+          contacts[cK][k].setGeneralizedForceTolerance(laTol);
+          contacts[cK][k].setGeneralizedImpulseTolerance(LaTol);
           contacts[cK][k].setrMax(rMax);
         }
       }
@@ -712,47 +712,47 @@ namespace MBSim {
     }
   }
 
-  void Contact::setlaTol(double tol) {
-    Link::setlaTol(tol);
+  void Contact::setGeneralizedForceTolerance(double tol) {
+    Link::setGeneralizedForceTolerance(tol);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setlaTol(tol);
+        jter->setGeneralizedForceTolerance(tol);
       }
     }
   }
 
-  void Contact::setLaTol(double tol) {
-    Link::setLaTol(tol);
+  void Contact::setGeneralizedImpulseTolerance(double tol) {
+    Link::setGeneralizedImpulseTolerance(tol);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setLaTol(tol);
+        jter->setGeneralizedImpulseTolerance(tol);
       }
     }
   }
 
-  void Contact::setgTol(double tol) {
-    Link::setgTol(tol);
+  void Contact::setGeneralizedRelativePositionTolerance(double tol) {
+    Link::setGeneralizedRelativePositionTolerance(tol);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setgTol(tol);
+        jter->setGeneralizedRelativePositionTolerance(tol);
       }
     }
   }
 
-  void Contact::setgdTol(double tol) {
-    Link::setgdTol(tol);
+  void Contact::setGeneralizedRelativeVelocityTolerance(double tol) {
+    Link::setGeneralizedRelativeVelocityTolerance(tol);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setgdTol(tol);
+        jter->setGeneralizedRelativeVelocityTolerance(tol);
       }
     }
   }
 
-  void Contact::setgddTol(double tol) {
-    Link::setgddTol(tol);
+  void Contact::setGeneralizedRelativeAccelerationTolerance(double tol) {
+    Link::setGeneralizedRelativeAccelerationTolerance(tol);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setgddTol(tol);
+        jter->setGeneralizedRelativeAccelerationTolerance(tol);
       }
     }
   }

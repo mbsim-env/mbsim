@@ -23,11 +23,11 @@ int main (int argc, char* argv[]) {
   bool eventDriven = true;
    if(eventDriven) { // Event driven time integration
     sys->setProjectionTolerance(1e-15);
-    sys->setgTol(1e-6);
-    sys->setgdTol(1e-6);
-    sys->setLaTol(1e-6);
-    sys->setgddTol(1e-8);
-    sys->setlaTol(1e-8);
+    sys->setGeneralizedRelativePositionTolerance(1e-6);
+    sys->setGeneralizedRelativeVelocityTolerance(1e-6);
+    sys->setGeneralizedImpulseTolerance(1e-6);
+    sys->setGeneralizedRelativeAccelerationTolerance(1e-8);
+    sys->setGeneralizedForceTolerance(1e-8);
     integrator = new LSODARIntegrator;
     static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
     static_cast<LSODARIntegrator*>(integrator)->setMaximalStepSize(1e-3);
@@ -35,8 +35,8 @@ int main (int argc, char* argv[]) {
   } 
   else { // time stepping integration
     double dt = 1e-4;
-    sys->setLaTol(1e-2*dt);
-    sys->setgdTol(1e-8);
+    sys->setGeneralizedImpulseTolerance(1e-2*dt);
+    sys->setGeneralizedRelativeVelocityTolerance(1e-8);
     integrator = new TimeSteppingIntegrator;
     static_cast<TimeSteppingIntegrator*>(integrator)->setStepSize(dt);
   }

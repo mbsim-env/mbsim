@@ -210,10 +210,8 @@
       <accelerationOfGravity>[0; -9.81; 0]</accelerationOfGravity>
     </MBSimEnvironment>
   </environments>
-  <solverParameters> 
-    <constraintSolver>"FixedPointSingle"</constraintSolver>
-    <impactSolver>"FixedPointSingle"</impactSolver>
-    <numberOfMaximalIterations>10000</numberOfMaximalIterations> 
-  </solverParameters>
+  <constraintSolver>"FixedPointSingle"</constraintSolver>
+  <impactSolver>"FixedPointSingle"</impactSolver>
+  <numberOfMaximalIterations>10000</numberOfMaximalIterations>
 </DynamicSystemSolver>
 

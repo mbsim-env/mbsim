@@ -27,7 +27,6 @@
       <frames>
         <FixedRelativeFrame name="P1">
           <enableOpenMBV>
-            <?OPENMBV_ID 114?>
             <size unit="dm">1</size>
           </enableOpenMBV>
           <relativeOrientation>
@@ -39,14 +38,12 @@
         <Line name="Line1">
           <frameOfReference ref="../Frame[I]"/>
           <enableOpenMBV>
-            <?OPENMBV_ID 115?>
             <length unit="m">3</length>
           </enableOpenMBV>
         </Line>
         <Line name="Line2">
           <frameOfReference ref="../Frame[P1]"/>
           <enableOpenMBV>
-            <?OPENMBV_ID 116?>
             <length unit="m">3</length>
           </enableOpenMBV>
         </Line>
@@ -92,7 +89,6 @@
             <frames>
               <FixedRelativeFrame name="P1">
                 <enableOpenMBV>
-                  <?OPENMBV_ID 121?>
                   <size unit="dm">1</size>
                 </enableOpenMBV>
                 <relativePosition unit="m">
@@ -105,7 +101,6 @@
               </FixedRelativeFrame>
               <FixedRelativeFrame name="P2">
                 <enableOpenMBV>
-                  <?OPENMBV_ID 122?>
                   <size unit="dm">1</size>
                 </enableOpenMBV>
                 <relativePosition unit="m">
@@ -121,19 +116,16 @@
               <Point name="Point1">
                 <frameOfReference ref="../Frame[P1]"/>
                 <enableOpenMBV>
-                  <?OPENMBV_ID 123?>
                 </enableOpenMBV>
               </Point>
               <Point name="Point2">
                 <frameOfReference ref="../Frame[P2]"/>
                 <enableOpenMBV>
-                  <?OPENMBV_ID 124?>
                 </enableOpenMBV>
               </Point>
             </contours>
             <openMBVRigidBody>
               <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-                <?OPENMBV_ID 117?>
                 <transparency unit="-">0.3</transparency>
                 <initialTranslation unit="m">
                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -160,7 +152,6 @@
               </Cuboid>
             </openMBVRigidBody>
             <enableOpenMBVFrameC>
-              <?OPENMBV_ID 118?>
               <size unit="dm">1</size>
             </enableOpenMBVFrameC>
           </RigidBody>
@@ -203,7 +194,6 @@
           <contours/>
           <openMBVRigidBody>
             <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 129?>
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -224,7 +214,6 @@
             </Sphere>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 130?>
             <size unit="dm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -304,46 +293,38 @@
         <RigidBodyObserver name="RigidBodyObserver1">
           <rigidBody ref="../Object[Mass]"/>
           <enableOpenMBVWeight>
-            <?OPENMBV_ID 129?>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVWeight>
         </RigidBodyObserver>
         <ContactObserver name="ContactObserver1">
           <contact ref="../Link[Contact1]"/>
           <enableOpenMBVNormalForce>
-            <?OPENMBV_ID 139?>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVNormalForce>
           <enableOpenMBVTangentialForce>
-            <?OPENMBV_ID 139?>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVTangentialForce>
         </ContactObserver>
         <ContactObserver name="ContactObserver2">
           <contact ref="../Link[Contact2]"/>
           <enableOpenMBVNormalForce>
-            <?OPENMBV_ID 139?>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVNormalForce>
           <enableOpenMBVTangentialForce>
-            <?OPENMBV_ID 139?>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVTangentialForce>
         </ContactObserver>
         <ContactObserver name="ContactObserver3">
           <contact ref="../Link[Contact3]"/>
           <enableOpenMBVNormalForce>
-            <?OPENMBV_ID 139?>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVNormalForce>
           <enableOpenMBVTangentialForce>
-            <?OPENMBV_ID 139?>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVTangentialForce>
         </ContactObserver>
       </observers>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 113?>
         <size unit="dm">1</size>
       </enableOpenMBVFrameI>
       <environments>
@@ -356,17 +337,13 @@
             </xmlVector>
           </accelerationOfGravity>
         </MBSimEnvironment>
-      </environments>
-      <solverParameters>
-        <tolerances>
-          <projection unit="-">1e-15</projection>
-          <g unit="-">1e-6</g>
-          <gd unit="-">1e-8</gd>
-          <gdd unit="-">1e-10</gdd>
-          <la unit="-">1e-10</la>
-          <La unit="-">1e-8</La>
-        </tolerances>
-      </solverParameters>
+        </environments>
+        <projectionTolerance unit="-">1e-15</projectionTolerance>
+        <generalizedRelativePositionTolerance unit="-">1e-6</generalizedRelativePositionTolerance>
+        <generalizedRelativeVelocityTolerance unit="-">1e-8</generalizedRelativeVelocityTolerance>
+        <generalizedRelativeAccelerationTolerance unit="-">1e-10</generalizedRelativeAccelerationTolerance>
+        <generalizedForceTolerance unit="-">1e-10</generalizedForceTolerance>
+        <generalizedImpulseTolerance unit="-">1e-8</generalizedImpulseTolerance>
       <useConstraintSolverForPlot>1</useConstraintSolverForPlot>
     </DynamicSystemSolver>
   </Embed>

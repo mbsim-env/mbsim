@@ -1255,39 +1255,39 @@ namespace MBSim {
       (*i)->checkActive(j);
   }
 
-  void DynamicSystem::setgTol(double tol) {
+  void DynamicSystem::setGeneralizedRelativePositionTolerance(double tol) {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).setgTol(tol);
+      (**i).setGeneralizedRelativePositionTolerance(tol);
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).setgTol(tol);
+      (**i).setGeneralizedRelativePositionTolerance(tol);
   }
 
-  void DynamicSystem::setgdTol(double tol) {
+  void DynamicSystem::setGeneralizedRelativeVelocityTolerance(double tol) {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).setgdTol(tol);
+      (**i).setGeneralizedRelativeVelocityTolerance(tol);
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).setgdTol(tol);
+      (**i).setGeneralizedRelativeVelocityTolerance(tol);
   }
 
-  void DynamicSystem::setgddTol(double tol) {
+  void DynamicSystem::setGeneralizedRelativeAccelerationTolerance(double tol) {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).setgddTol(tol);
+      (**i).setGeneralizedRelativeAccelerationTolerance(tol);
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).setgddTol(tol);
+      (**i).setGeneralizedRelativeAccelerationTolerance(tol);
   }
 
-  void DynamicSystem::setlaTol(double tol) {
+  void DynamicSystem::setGeneralizedForceTolerance(double tol) {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).setlaTol(tol);
+      (**i).setGeneralizedForceTolerance(tol);
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).setlaTol(tol);
+      (**i).setGeneralizedForceTolerance(tol);
   }
 
-  void DynamicSystem::setLaTol(double tol) {
+  void DynamicSystem::setGeneralizedImpulseTolerance(double tol) {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).setLaTol(tol);
+      (**i).setGeneralizedImpulseTolerance(tol);
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).setLaTol(tol);
+      (**i).setGeneralizedImpulseTolerance(tol);
   }
 
   void DynamicSystem::setrMax(double rMax) {

@@ -178,16 +178,12 @@
           </accelerationOfGravity>
         </MBSimEnvironment>
       </environments>
-      <solverParameters>
-        <tolerances>
-          <projection unit="-">1e-15</projection>
-          <g unit="-">1e-6</g>
-          <gd unit="-">1e-6</gd>
-          <gdd unit="-">1e-8</gdd>
-          <la unit="-">1e-8</la>
-          <La unit="-">1e-6</La>
-        </tolerances>
-      </solverParameters>
+      <projectionTolerance unit="-">1e-15</projectionTolerance>
+      <generalizedRelativePositionTolerance unit="-">1e-6</generalizedRelativePositionTolerance>
+      <generalizedRelativeVelocityTolerance unit="-">1e-6</generalizedRelativeVelocityTolerance>
+      <generalizedRelativeAccelerationTolerance unit="-">1e-8</generalizedRelativeAccelerationTolerance>
+      <generalizedForceTolerance unit="-">1e-8</generalizedForceTolerance>
+      <generalizedImpulseTolerance unit="-">1e-6</generalizedImpulseTolerance>
     </DynamicSystemSolver>
   </Embed>
 

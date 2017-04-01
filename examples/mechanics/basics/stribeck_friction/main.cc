@@ -13,11 +13,11 @@ int main (int argc, char* argv[]) {
 
   if(eventDriven) {
     sys->setProjectionTolerance(1e-15);
-    sys->setgTol(1e-6);
-    sys->setgdTol(1e-6);
-    sys->setLaTol(1e-6);
-    sys->setlaTol(1e-8);
-    sys->setgddTol(1e-8);
+    sys->setGeneralizedRelativePositionTolerance(1e-6);
+    sys->setGeneralizedRelativeVelocityTolerance(1e-6);
+    sys->setGeneralizedImpulseTolerance(1e-6);
+    sys->setGeneralizedForceTolerance(1e-8);
+    sys->setGeneralizedRelativeAccelerationTolerance(1e-8);
     sys->initialize();
 
     LSODARIntegrator integrator;

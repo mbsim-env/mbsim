@@ -59,7 +59,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -1386,59 +1386,51 @@ namespace MBSim {
       e = e->getNextElementSibling();
     }
 
-    e = E(element)->getFirstElementChildNamed(MBSIM%"solverParameters");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"constraintSolver");
     if (e) {
-      DOMElement * ee;
-      ee = E(e)->getFirstElementChildNamed(MBSIM%"constraintSolver");
-      if (ee) {
-        Solver solver=FixedPointSingle;
-        std::string str=X()%E(ee)->getFirstTextChild()->getData();
-        str=str.substr(1,str.length()-2);
-        if(str=="FixedPointTotal") solver=FixedPointTotal;
-        else if(str=="FixedPointSingle") solver=FixedPointSingle;
-        else if(str=="GaussSeidel") solver=GaussSeidel;
-        else if(str=="LinearEquations") solver=LinearEquations;
-        else if(str=="RootFinding") solver=RootFinding;
-        setConstraintSolver(solver);
-      }
-      ee = E(e)->getFirstElementChildNamed(MBSIM%"impactSolver");
-      if (ee) {
-        Solver solver=FixedPointSingle;
-        std::string str=X()%E(ee)->getFirstTextChild()->getData();
-        str=str.substr(1,str.length()-2);
-        if(str=="FixedPointTotal") solver=FixedPointTotal;
-        else if(str=="FixedPointSingle") solver=FixedPointSingle;
-        else if(str=="GaussSeidel") solver=GaussSeidel;
-        else if(str=="LinearEquations") solver=LinearEquations;
-        else if(str=="RootFinding") solver=RootFinding;
-        setImpactSolver(solver);
-      }
-      ee = E(e)->getFirstElementChildNamed(MBSIM%"numberOfMaximalIterations");
-      if (ee)
-        setMaxIter(getInt(ee));
-      ee = E(e)->getFirstElementChildNamed(MBSIM%"tolerances");
-      if (ee) {
-        DOMElement * eee;
-        eee = E(ee)->getFirstElementChildNamed(MBSIM%"projection");
-        if (eee)
-          setProjectionTolerance(getDouble(eee));
-        eee = E(ee)->getFirstElementChildNamed(MBSIM%"g");
-        if (eee)
-          setgTol(getDouble(eee));
-        eee = E(ee)->getFirstElementChildNamed(MBSIM%"gd");
-        if (eee)
-          setgdTol(getDouble(eee));
-        eee = E(ee)->getFirstElementChildNamed(MBSIM%"gdd");
-        if (eee)
-          setgddTol(getDouble(eee));
-        eee = E(ee)->getFirstElementChildNamed(MBSIM%"la");
-        if (eee)
-          setlaTol(getDouble(eee));
-        eee = E(ee)->getFirstElementChildNamed(MBSIM%"La");
-        if (eee)
-          setLaTol(getDouble(eee));
-      }
+      Solver solver=FixedPointSingle;
+      std::string str=X()%E(e)->getFirstTextChild()->getData();
+      str=str.substr(1,str.length()-2);
+      if(str=="FixedPointTotal") solver=FixedPointTotal;
+      else if(str=="FixedPointSingle") solver=FixedPointSingle;
+      else if(str=="GaussSeidel") solver=GaussSeidel;
+      else if(str=="LinearEquations") solver=LinearEquations;
+      else if(str=="RootFinding") solver=RootFinding;
+      setConstraintSolver(solver);
     }
+    e = E(element)->getFirstElementChildNamed(MBSIM%"impactSolver");
+    if (e) {
+      Solver solver=FixedPointSingle;
+      std::string str=X()%E(e)->getFirstTextChild()->getData();
+      str=str.substr(1,str.length()-2);
+      if(str=="FixedPointTotal") solver=FixedPointTotal;
+      else if(str=="FixedPointSingle") solver=FixedPointSingle;
+      else if(str=="GaussSeidel") solver=GaussSeidel;
+      else if(str=="LinearEquations") solver=LinearEquations;
+      else if(str=="RootFinding") solver=RootFinding;
+      setImpactSolver(solver);
+    }
+    e = E(element)->getFirstElementChildNamed(MBSIM%"numberOfMaximalIterations");
+    if (e)
+      setMaxIter(getInt(e));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"projectionTolerance");
+    if (e)
+      setProjectionTolerance(getDouble(e));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedRelativePositionTolerance");
+    if (e)
+      setGeneralizedRelativePositionTolerance(getDouble(e));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedRelativeVelocityTolerance");
+    if (e)
+      setGeneralizedRelativeVelocityTolerance(getDouble(e));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedRelativeAccelerationTolerance");
+    if (e)
+      setGeneralizedRelativeAccelerationTolerance(getDouble(e));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceTolerance");
+    if (e)
+      setGeneralizedForceTolerance(getDouble(e));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedImpulseTolerance");
+    if (e)
+      setGeneralizedImpulseTolerance(getDouble(e));
     e = E(element)->getFirstElementChildNamed(MBSIM%"inverseKinetics");
     if (e)
       setInverseKinetics(Element::getBool(e));
