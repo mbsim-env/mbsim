@@ -10,7 +10,6 @@
     <frames>
       <FixedRelativeFrame name="P1">
         <enableOpenMBV>
-          <?OPENMBV_ID 4?>
         </enableOpenMBV>
         <relativeOrientation>
           <aboutZ xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutZ>
@@ -21,7 +20,6 @@
       <Plane name="Plane1">
         <frameOfReference ref="../Frame[P1]"/>
         <enableOpenMBV>
-          <?OPENMBV_ID 5?>
         </enableOpenMBV>
       </Plane>
     </contours>
@@ -58,7 +56,6 @@
         <frames>
           <FixedRelativeFrame name="P1">
             <enableOpenMBV>
-              <?OPENMBV_ID 8?>
             </enableOpenMBV>
             <relativePosition unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -73,13 +70,11 @@
           <Point name="Point1">
             <frameOfReference ref="../Frame[P1]"/>
             <enableOpenMBV>
-              <?OPENMBV_ID 9?>
             </enableOpenMBV>
           </Point>
         </contours>
         <openMBVRigidBody>
           <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-            <?OPENMBV_ID 6?>
             <transparency unit="-">0.3</transparency>
             <initialTranslation unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -100,7 +95,6 @@
           </Sphere>
         </openMBVRigidBody>
         <enableOpenMBVFrameC>
-          <?OPENMBV_ID 7?>
         </enableOpenMBVFrameC>
       </RigidBody>
     </objects>
@@ -128,7 +122,6 @@
       </Contact>
     </links>
     <enableOpenMBVFrameI>
-      <?OPENMBV_ID 3?>
     </enableOpenMBVFrameI>
     <environments>
       <MBSimEnvironment>

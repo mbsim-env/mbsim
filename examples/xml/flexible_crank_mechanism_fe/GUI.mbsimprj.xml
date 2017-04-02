@@ -52,7 +52,6 @@
           <frames>
             <FixedRelativeFrame name="K">
               <enableOpenMBV>
-                <?OPENMBV_ID 6?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -65,7 +64,6 @@
             </FixedRelativeFrame>
             <FixedRelativeFrame name="Q">
               <enableOpenMBV>
-                <?OPENMBV_ID 7?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -80,7 +78,6 @@
           <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 2?>
               <diffuseColor unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0.333333</ele>
@@ -114,7 +111,6 @@
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 3?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -292,14 +288,12 @@ ret = 0;
             <frames>
               <NodeFrame name="Q">
                 <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                  <?OPENMBV_ID 27?>
                 </enableOpenMBV>
                 <nodeNumber unit="-">1</nodeNumber>
               </NodeFrame>
             </frames>
             <contours/>
             <enableOpenMBVFrameK>
-              <?OPENMBV_ID 11?>
               <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
             </enableOpenMBVFrameK>
           </FlexibleBodyFFR>
@@ -338,7 +332,6 @@ ret = 0;
           <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 17?>
               <diffuseColor unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0.166667</ele>
@@ -372,7 +365,6 @@ ret = 0;
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 18?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -402,7 +394,6 @@ ret = 0;
         </Joint>
       </links>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 1?>
         <size unit="cm">1</size>
       </enableOpenMBVFrameI>
       <environments>

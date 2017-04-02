@@ -68,7 +68,6 @@
             </ContinuedFunction>
           </contourFunction>
           <enableOpenMBV>
-            <?OPENMBV_ID 4?>
             <nodes unit="-">[0:0.0005:2*l+2*pi*r]';
 </nodes>
           </enableOpenMBV>
@@ -116,12 +115,10 @@
           <contours>
             <Point name="Point1">
               <enableOpenMBV>
-                <?OPENMBV_ID 15?>
               </enableOpenMBV>
             </Point>
           </contours>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 12?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -141,7 +138,6 @@
         </Contact>
       </links>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 3?>
         <size unit="cm">1</size>
       </enableOpenMBVFrameI>
       <environments>

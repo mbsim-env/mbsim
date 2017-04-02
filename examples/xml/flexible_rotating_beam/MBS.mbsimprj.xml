@@ -24,7 +24,6 @@
       <frames>
         <FixedRelativeFrame name="P">
           <enableOpenMBV>
-            <?OPENMBV_ID 2?>
           </enableOpenMBV>
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -36,7 +35,6 @@
         </FixedRelativeFrame>
         <FixedRelativeFrame name="Q">
           <enableOpenMBV>
-            <?OPENMBV_ID 3?>
           </enableOpenMBV>
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -351,14 +349,12 @@
           <frames>
             <NodeFrame name="P1">
               <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                <?OPENMBV_ID 55?>
               </enableOpenMBV>
               <nodeNumber unit="-">1</nodeNumber>
             </NodeFrame>
           </frames>
           <contours/>
           <enableOpenMBVFrameK>
-            <?OPENMBV_ID 5?>
           </enableOpenMBVFrameK>
         </FlexibleBodyFFR>
         <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR2">
@@ -701,14 +697,12 @@
           <frames>
             <NodeFrame name="P1">
               <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                <?OPENMBV_ID 55?>
               </enableOpenMBV>
               <nodeNumber unit="-">1</nodeNumber>
             </NodeFrame>
           </frames>
           <contours/>
           <enableOpenMBVFrameK>
-            <?OPENMBV_ID 22?>
           </enableOpenMBVFrameK>
         </FlexibleBodyFFR>
         <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR3">
@@ -1093,20 +1087,17 @@
           <frames>
             <NodeFrame name="P1">
               <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                <?OPENMBV_ID 55?>
               </enableOpenMBV>
               <nodeNumber unit="-">1</nodeNumber>
             </NodeFrame>
           </frames>
           <contours/>
           <enableOpenMBVFrameK>
-            <?OPENMBV_ID 39?>
           </enableOpenMBVFrameK>
         </FlexibleBodyFFR>
       </objects>
       <links/>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 1?>
       </enableOpenMBVFrameI>
       <environments>
         <MBSimEnvironment>

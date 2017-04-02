@@ -25,7 +25,6 @@
       <frames>
         <FixedRelativeFrame name="P1">
           <enableOpenMBV>
-            <?OPENMBV_ID 2?>
           </enableOpenMBV>
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -37,7 +36,6 @@
         </FixedRelativeFrame>
         <FixedRelativeFrame name="P2">
           <enableOpenMBV>
-            <?OPENMBV_ID 3?>
           </enableOpenMBV>
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -49,7 +47,6 @@
         </FixedRelativeFrame>
         <FixedRelativeFrame name="P3">
           <enableOpenMBV>
-            <?OPENMBV_ID 4?>
           </enableOpenMBV>
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -91,7 +88,6 @@
           <frames>
             <FixedRelativeFrame name="P1">
               <enableOpenMBV>
-                <?OPENMBV_ID 7?>
               </enableOpenMBV>
               <relativePosition unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -103,7 +99,6 @@
             </FixedRelativeFrame>
             <FixedRelativeFrame name="P2">
               <enableOpenMBV>
-                <?OPENMBV_ID 8?>
               </enableOpenMBV>
               <relativePosition unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -117,7 +112,6 @@
           <contours/>
           <openMBVRigidBody>
             <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 5?>
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -138,7 +132,6 @@
             </Cube>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 6?>
           </enableOpenMBVFrameC>
         </RigidBody>
         <RigidBody name="Eccentric">
@@ -179,7 +172,6 @@
           <frames>
             <FixedRelativeFrame name="P1">
               <enableOpenMBV>
-                <?OPENMBV_ID 11?>
               </enableOpenMBV>
               <relativePosition unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -194,13 +186,11 @@
             <Circle name="Circle3">
               <radius unit="m">r</radius>
               <enableOpenMBV>
-                <?OPENMBV_ID 12?>
               </enableOpenMBV>
             </Circle>
           </contours>
           <openMBVRigidBody>
             <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 9?>
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -225,7 +215,6 @@
             </Frustum>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 10?>
           </enableOpenMBVFrameC>
         </RigidBody>
         <RigidBody name="RigidBody">
@@ -257,13 +246,11 @@
           <contours>
             <Line name="Line3">
               <enableOpenMBV>
-                <?OPENMBV_ID 15?>
               </enableOpenMBV>
             </Line>
           </contours>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 13?>
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -290,7 +277,6 @@
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 14?>
           </enableOpenMBVFrameC>
         </RigidBody>
       </objects>
@@ -305,7 +291,6 @@
           </forceFunction>
           <unloadedLength unit="m">l01</unloadedLength>
           <enableOpenMBV>
-            <?OPENMBV_ID 16?>
             <numberOfCoils unit="-">5</numberOfCoils>
             <springRadius unit="cm">5</springRadius>
           </enableOpenMBV>
@@ -320,7 +305,6 @@
           </forceFunction>
           <unloadedLength unit="m">l02</unloadedLength>
           <enableOpenMBV>
-            <?OPENMBV_ID 17?>
             <numberOfCoils unit="-">5</numberOfCoils>
             <springRadius unit="cm">5</springRadius>
           </enableOpenMBV>
@@ -336,7 +320,6 @@
         </Contact>
       </links>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 1?>
       </enableOpenMBVFrameI>
       <environments>
         <MBSimEnvironment>

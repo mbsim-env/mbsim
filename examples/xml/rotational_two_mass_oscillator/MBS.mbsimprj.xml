@@ -11,7 +11,6 @@
     <frames>
       <FixedRelativeFrame name="P1">
         <enableOpenMBV>
-          <?OPENMBV_ID 2?>
         </enableOpenMBV>
         <relativePosition unit="m">
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -58,7 +57,6 @@
         <contours/>
         <openMBVRigidBody>
           <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-            <?OPENMBV_ID 3?>
             <transparency unit="-">0.3</transparency>
             <initialTranslation unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -83,7 +81,6 @@
           </Frustum>
         </openMBVRigidBody>
         <enableOpenMBVFrameC>
-          <?OPENMBV_ID 4?>
         </enableOpenMBVFrameC>
       </RigidBody>
       <RigidBody name="RigidBody2">
@@ -115,7 +112,6 @@
         <contours/>
         <openMBVRigidBody>
           <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-            <?OPENMBV_ID 5?>
             <diffuseColor unit="-">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>0.277778</ele>
@@ -147,7 +143,6 @@
           </Frustum>
         </openMBVRigidBody>
         <enableOpenMBVFrameC>
-          <?OPENMBV_ID 6?>
         </enableOpenMBVFrameC>
       </RigidBody>
     </objects>
@@ -212,7 +207,6 @@
       </GeneralizedSpringDamper>
     </links>
     <enableOpenMBVFrameI>
-      <?OPENMBV_ID 1?>
     </enableOpenMBVFrameI>
     <environments>
       <MBSimEnvironment>

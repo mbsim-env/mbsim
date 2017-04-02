@@ -11,7 +11,6 @@
     <frames><?LineNr 5?>
       <FixedRelativeFrame name="P1"><?LineNr 6?>
         <enableOpenMBV><?LineNr 7?>
-          <?OPENMBV_ID 4?>
         </enableOpenMBV>
         <relativeOrientation><?LineNr 10?>
           
@@ -22,7 +21,6 @@
       <Plane name="Plane1"><?LineNr 16?>
         <frameOfReference ref="../Frame[P1]"><?LineNr 17?></frameOfReference>
         <enableOpenMBV><?LineNr 18?>
-          <?OPENMBV_ID 5?>
         </enableOpenMBV>
       </Plane>
     </contours>
@@ -43,7 +41,6 @@
         <frames><?LineNr 53?>
           <FixedRelativeFrame name="P1"><?LineNr 54?>
             <enableOpenMBV><?LineNr 55?>
-              <?OPENMBV_ID 8?>
             </enableOpenMBV>
             <relativePosition unit="m"><?LineNr 58?>
               
@@ -54,13 +51,11 @@
           <Point name="Point1"><?LineNr 68?>
             <frameOfReference ref="../Frame[P1]"><?LineNr 69?></frameOfReference>
             <enableOpenMBV><?LineNr 70?>
-              <?OPENMBV_ID 9?>
             </enableOpenMBV>
           </Point>
         </contours>
         <openMBVRigidBody><?LineNr 75?>
           <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" boundingBox="0" dragger="0" drawMethod="filled" enable="1" localFrame="0" name="Body1" outLine="1" path="0" referenceFrame="0" shilouetteEdge="0"><?LineNr 76?>
-            <?OPENMBV_ID 6?>
             <transparency unit="-"><?LineNr 78?>0.3</transparency>
             <initialTranslation unit="m"><?LineNr 79?>
               
@@ -73,7 +68,6 @@
           </Sphere>
         </openMBVRigidBody>
         <enableOpenMBVFrameC><?LineNr 97?>
-          <?OPENMBV_ID 7?>
         </enableOpenMBVFrameC>
       </RigidBody>
     </objects>
@@ -101,7 +95,6 @@
       </Contact>
     </links>
     <enableOpenMBVFrameI><?LineNr 125?>
-      <?OPENMBV_ID 3?>
     </enableOpenMBVFrameI>
     <environments><?LineNr 128?>
       <MBSimEnvironment><?LineNr 129?>

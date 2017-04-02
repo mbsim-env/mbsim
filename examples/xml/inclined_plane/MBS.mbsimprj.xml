@@ -55,7 +55,6 @@
           <frames>
             <FixedRelativeFrame name="P1">
               <enableOpenMBV>
-                <?OPENMBV_ID 6?>
               </enableOpenMBV>
               <relativePosition unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -67,7 +66,6 @@
             </FixedRelativeFrame>
             <FixedRelativeFrame name="P2">
               <enableOpenMBV>
-                <?OPENMBV_ID 7?>
               </enableOpenMBV>
               <relativePosition unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -82,13 +80,11 @@
             <Point name="Point1">
               <frameOfReference ref="../Frame[P1]"/>
               <enableOpenMBV>
-                <?OPENMBV_ID 8?>
               </enableOpenMBV>
             </Point>
           </contours>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 2?>
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -115,7 +111,6 @@
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 3?>
           </enableOpenMBVFrameC>
         </RigidBody>
         <RigidBody name="Plane">
@@ -156,7 +151,6 @@
           <frames>
             <FixedRelativeFrame name="P1">
               <enableOpenMBV>
-                <?OPENMBV_ID 15?>
               </enableOpenMBV>
               <relativeOrientation>
                 <aboutZ xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutZ>
@@ -167,13 +161,11 @@
             <Line name="Line1">
               <frameOfReference ref="../Frame[P1]"/>
               <enableOpenMBV>
-                <?OPENMBV_ID 16?>
                 <length unit="m">5</length>
               </enableOpenMBV>
             </Line>
           </contours>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 12?>
           </enableOpenMBVFrameC>
         </RigidBody>
       </objects>
@@ -216,31 +208,26 @@
         <FrameObserver name="FrameObserver">
           <frame ref="../Object[Mass]/Frame[C]"/>
           <enableOpenMBVVelocity>
-            <?OPENMBV_ID 38?>
             <referencePoint>"fromPoint"</referencePoint>
           </enableOpenMBVVelocity>
         </FrameObserver>
         <RigidBodyObserver name="RigidBodyObserver1">
           <rigidBody ref="../Object[Mass]"/>
           <enableOpenMBVWeight>
-            <?OPENMBV_ID 129?>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVWeight>
         </RigidBodyObserver>
         <ContactObserver name="ContactObserver1">
           <contact ref="../Link[Contact]"/>
           <enableOpenMBVNormalForce>
-            <?OPENMBV_ID 25?>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVNormalForce>
           <enableOpenMBVTangentialForce>
-            <?OPENMBV_ID 25?>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVTangentialForce>
         </ContactObserver>
       </observers>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 1?>
       </enableOpenMBVFrameI>
       <environments>
         <MBSimEnvironment>
