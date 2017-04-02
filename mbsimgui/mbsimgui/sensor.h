@@ -31,15 +31,9 @@ namespace MBSimGUI {
   };
 
   class GeneralizedCoordinateSensor : public Sensor {
-    friend class GeneralizedCoordinateSensorPropertyDialog;
     public:
-    GeneralizedCoordinateSensor(const QString &str="");
-    QString getType() const { return "GeneralizedCoordinateSensor"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    protected:
-    ExtProperty object, index;
+      GeneralizedCoordinateSensor(const QString &str="");
+      QString getType() const { return "GeneralizedCoordinateSensor"; }
   };
 
   class GeneralizedPositionSensor : public GeneralizedCoordinateSensor {
@@ -58,15 +52,9 @@ namespace MBSimGUI {
   };
 
   class AbsoluteCoordinateSensor : public Sensor {
-    friend class AbsoluteCoordinateSensorPropertyDialog;
     public:
-    AbsoluteCoordinateSensor(const QString &str="");
-    QString getType() const { return "AbsoluteCoordinateSensor"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    protected:
-    ExtProperty frame, direction;
+      AbsoluteCoordinateSensor(const QString &str="");
+      QString getType() const { return "AbsoluteCoordinateSensor"; }
   };
 
   class AbsolutePositionSensor : public AbsoluteCoordinateSensor {
@@ -98,28 +86,17 @@ namespace MBSimGUI {
   };
 
   class FunctionSensor : public Sensor {
-    friend class FunctionSensorPropertyDialog;
     public:
-    FunctionSensor(const QString &str="");
-    QString getType() const { return "FunctionSensor"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new FunctionSensorPropertyDialog(this);}
-    protected:
-    ExtProperty function;
+      FunctionSensor(const QString &str="");
+      QString getType() const { return "FunctionSensor"; }
+      ElementPropertyDialog* createPropertyDialog() {return new FunctionSensorPropertyDialog(this);}
   };
 
   class SignalProcessingSystemSensor : public Sensor {
-    friend class SignalProcessingSystemSensorPropertyDialog;
     public:
-    SignalProcessingSystemSensor(const QString &str="");
-    void initialize();
-    QString getType() const { return "SignalProcessingSystemSensor"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new SignalProcessingSystemSensorPropertyDialog(this);}
-    protected:
-    ExtProperty spsRef;
+      SignalProcessingSystemSensor(const QString &str="");
+      QString getType() const { return "SignalProcessingSystemSensor"; }
+      ElementPropertyDialog* createPropertyDialog() {return new SignalProcessingSystemSensorPropertyDialog(this);}
   };
 
 }

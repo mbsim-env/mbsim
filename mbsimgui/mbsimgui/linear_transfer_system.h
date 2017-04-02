@@ -29,22 +29,15 @@ namespace MBSimGUI {
 
     public:
       LinearTransferSystemPropertyDialog(LinearTransferSystem *lts, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *choice;
   };
 
   class LinearTransferSystem : public SignalProcessingSystem {
-    friend class LinearTransferSystemPropertyDialog;
     public:
-    LinearTransferSystem(const QString &str="");
-    QString getType() const { return "LinearTransferSystem"; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new LinearTransferSystemPropertyDialog(this);}
-    protected:
-    ExtProperty choice;
+      LinearTransferSystem(const QString &str="");
+      QString getType() const { return "LinearTransferSystem"; }
+      ElementPropertyDialog* createPropertyDialog() {return new LinearTransferSystemPropertyDialog(this);}
   };
 
   class LinearTransferSystemWidgetFactory : public WidgetFactory {
@@ -55,16 +48,6 @@ namespace MBSimGUI {
       int getSize() const { return name.size(); }
     protected:
       std::vector<QString> name;
-  };
-
-  class LinearTransferSystemPropertyFactory: public PropertyFactory {
-    public:
-      LinearTransferSystemPropertyFactory();
-      Property* createProperty(int i=0);
-      MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
-      int getSize() const { return name.size(); }
-    protected:
-      std::vector<MBXMLUtils::FQN> name;
   };
 
 }

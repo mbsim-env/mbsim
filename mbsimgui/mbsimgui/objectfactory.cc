@@ -26,17 +26,16 @@
 #include "rigid_body.h"
 #include "flexible_body_ffr.h"
 #include "constraint.h"
-//#include "linear_transfer_system.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
 #include "joint.h"
 #include "friction.h"
 #include "contact.h"
-//#include "sensor.h"
-//#include "widget.h"
 #include "gear.h"
 #include "connection.h"
 #include "observer.h"
+#include "sensor.h"
+//#include "linear_transfer_system.h"
 #include "parameter.h"
 #include "integrator.h"
 #include "analyser.h"
@@ -178,34 +177,34 @@ namespace MBSimGUI {
       return new GeneralizedFriction;
     if(E(element)->getTagName()==MBSIM%"GeneralizedGear")
       return new GeneralizedGear;
-//    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedPositionSensor")
-//      return new GeneralizedPositionSensor(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")
-//      return new GeneralizedVelocitySensor(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"AbsolutePositionSensor")
-//      return new AbsolutePositionSensor(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteVelocitySensor")
-//      return new AbsoluteVelocitySensor(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularPositionSensor")
-//      return new AbsoluteAngularPositionSensor(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularVelocitySensor")
-//      return new AbsoluteAngularVelocitySensor(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"FunctionSensor")
-//      return new FunctionSensor(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"SignalProcessingSystemSensor")
-//      return new SignalProcessingSystemSensor(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"PIDController")
-//      return new PIDController(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"UnarySignalOperation")
-//      return new UnarySignalOperation(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"BinarySignalOperation")
-//      return new BinarySignalOperation(E(element)->getAttribute("name"));
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedPositionSensor")
+      return new GeneralizedPositionSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")
+      return new GeneralizedVelocitySensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"AbsolutePositionSensor")
+      return new AbsolutePositionSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteVelocitySensor")
+      return new AbsoluteVelocitySensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularPositionSensor")
+      return new AbsoluteAngularPositionSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularVelocitySensor")
+      return new AbsoluteAngularVelocitySensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"FunctionSensor")
+      return new FunctionSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"SignalProcessingSystemSensor")
+      return new SignalProcessingSystemSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"PIDController")
+      return new PIDController;
+    if(E(element)->getTagName()==MBSIMCONTROL%"UnarySignalOperation")
+      return new UnarySignalOperation;
+    if(E(element)->getTagName()==MBSIMCONTROL%"BinarySignalOperation")
+      return new BinarySignalOperation;
 //    if(E(element)->getTagName()==MBSIMCONTROL%"LinearTransferSystem")
-//      return new LinearTransferSystem(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSource")
-//      return new ExternSignalSource(E(element)->getAttribute("name"));
-//    if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")
-//      return new ExternSignalSink(E(element)->getAttribute("name"));
+//      return new LinearTransferSystem;
+    if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSource")
+      return new ExternSignalSource;
+    if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")
+      return new ExternSignalSink;
     return 0;
   }  
 

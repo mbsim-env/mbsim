@@ -34,31 +34,7 @@ namespace MBSimGUI {
     addToTab("General", choice);
   }
 
-  void LinearTransferSystemPropertyDialog::toWidget(Element *element) {
-    SignalProcessingSystemPropertyDialog::toWidget(element);
-    static_cast<LinearTransferSystem*>(element)->choice.toWidget(choice);
-  }
-
-  void LinearTransferSystemPropertyDialog::fromWidget(Element *element) {
-    SignalProcessingSystemPropertyDialog::fromWidget(element);
-    static_cast<LinearTransferSystem*>(element)->choice.fromWidget(choice);
-  }
-
-  LinearTransferSystem::LinearTransferSystem(const string &str) : SignalProcessingSystem(str) {
-
-    choice.setProperty(new ChoiceProperty2(new LinearTransferSystemPropertyFactory,"",3));
-  }
-
-  DOMElement* LinearTransferSystem::initializeUsingXML(DOMElement *element) {
-    SignalProcessingSystem::initializeUsingXML(element);
-    choice.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* LinearTransferSystem::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = SignalProcessingSystem::writeXMLFile(parent);
-    choice.writeXMLFile(ele0);
-    return ele0;
+  LinearTransferSystem::LinearTransferSystem(const QString &str) : SignalProcessingSystem(str) {
   }
 
   LinearTransferSystemWidgetFactory::LinearTransferSystemWidgetFactory() {
@@ -129,78 +105,6 @@ namespace MBSimGUI {
 
       return widgetContainer;
     }
-    return NULL;
-  }
-
-  LinearTransferSystemPropertyFactory::LinearTransferSystemPropertyFactory() {
-    name.push_back(MBSIMCONTROL%"pidType");
-    name.push_back(MBSIMCONTROL%"abcdType");
-    name.push_back(MBSIMCONTROL%"integratorType");
-    name.push_back(MBSIMCONTROL%"pt1Type");
-  }
-
-  Property* LinearTransferSystemPropertyFactory::createProperty(int i) {
-    if(i==0) {
-      ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROL%"pidType",0);
-
-      vector<PhysicalVariableProperty> input;
-      input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROL%"P"));
-      propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-
-      input.clear();
-      input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"I"));
-      propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-
-      input.clear();
-      input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"D"));
-      propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-
-      return propertyContainer;
-    }
-    if(i==1) {
-      ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROL%"abcdType",0);
-
-      vector<PhysicalVariableProperty> input;
-      input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"A"));
-      propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-
-      input.clear();
-      input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"B"));
-      propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-
-      input.clear();
-      input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"C"));
-      propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-
-      input.clear();
-      input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"D"));
-      propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-
-      return propertyContainer;
-    }
-    if(i==2) {
-      ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROL%"integratorType",0);
-
-      vector<PhysicalVariableProperty> input;
-      input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROL%"gain"));
-      propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-
-      return propertyContainer;
-    }
-    if(i==3) {
-      ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROL%"pt1Type",0);
-
-      vector<PhysicalVariableProperty> input;
-      input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROL%"P"));
-      propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-
-      input.clear();
-      input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"-",MBSIMCONTROL%"T"));
-      propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-
-      return propertyContainer;
-    }
-
     return NULL;
   }
 

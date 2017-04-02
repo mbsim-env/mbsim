@@ -23,19 +23,19 @@
 #include "rigid_body.h"
 #include "flexible_body_ffr.h"
 #include "constraint.h"
-//#include "linear_transfer_system.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
 #include "joint.h"
 #include "friction.h"
 #include "contact.h"
-//#include "sensor.h"
 #include "observer.h"
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
 #include "gear.h"
 #include "connection.h"
+#include "sensor.h"
+//#include "linear_transfer_system.h"
 #include "parameter.h"
 #include <QFileDialog>
 
@@ -434,7 +434,7 @@ namespace MBSimGUI {
   }
 
   void LinkContextContextMenu::addLinearTransferSystem() {
-//    mw->addLink(new LinearTransferSystem("LTS"));
+//    mw->addLink(new LinearTransferSystem("LTS"), element);
   }
 
   void LinkContextContextMenu::addGeneralizedSpringDamper() {
@@ -531,23 +531,23 @@ namespace MBSimGUI {
   }
 
   void SignalContextContextMenu::addPIDController() {
-//    mw->addLink(new PIDController("PIDController"));
+    mw->addLink(new PIDController("PIDController"), element);
   }
 
   void SignalContextContextMenu::addUnarySignalOperation() {
-//    mw->addLink(new UnarySignalOperation("UnarySignalOperation"));
+    mw->addLink(new UnarySignalOperation("UnarySignalOperation"), element);
   }
 
   void SignalContextContextMenu::addBinarySignalOperation() {
-//    mw->addLink(new BinarySignalOperation("BinarySignalOperation"));
+    mw->addLink(new BinarySignalOperation("BinarySignalOperation"), element);
   }
 
   void SignalContextContextMenu::addExternSignalSource() {
-//    mw->addLink(new ExternSignalSource("ExternSignalSource"));
+    mw->addLink(new ExternSignalSource("ExternSignalSource"), element);
   }
 
   void SignalContextContextMenu::addExternSignalSink() {
-//    mw->addLink(new ExternSignalSink("ExternSignalSink"));
+    mw->addLink(new ExternSignalSink("ExternSignalSink"), element);
   }
 
   SensorContextContextMenu::SensorContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

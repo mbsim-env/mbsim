@@ -34,6 +34,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   gear.cc \
 		   connection.cc \
 		   signal_.cc \
+		   sensor.cc \
 		   integrator.cc \
 		   analyser.cc \
 		   parameter.cc \

@@ -26,68 +26,22 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Sensor::Sensor(const string &str) : Signal(str) {
+  Sensor::Sensor(const QString &str) : Signal(str) {
   }
 
   Sensor::~Sensor() {
   }
 
-  GeneralizedCoordinateSensor::GeneralizedCoordinateSensor(const string &str) : Sensor(str) {
-    object.setProperty(new ObjectOfReferenceProperty("",this,MBSIMCONTROL%"object"));
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "", MBSIMCONTROL%"index"));
-    index.setProperty(new ExtPhysicalVarProperty(input));
+  GeneralizedCoordinateSensor::GeneralizedCoordinateSensor(const QString &str) : Sensor(str) {
   }
 
-  DOMElement* GeneralizedCoordinateSensor::initializeUsingXML(DOMElement *element) {
-    Sensor::initializeUsingXML(element);
-    object.initializeUsingXML(element);
-    index.initializeUsingXML(element);
-    return element;
+  AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const QString &str) : Sensor(str) {
   }
 
-  AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str) : Sensor(str) {
-    frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMCONTROL%"frame"));
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROL%"direction"));
-    direction.setProperty(new ExtPhysicalVarProperty(input));
+  FunctionSensor::FunctionSensor(const QString &str) : Sensor(str) {
   }
 
-  DOMElement* AbsoluteCoordinateSensor::initializeUsingXML(DOMElement *element) {
-    Sensor::initializeUsingXML(element);
-    frame.initializeUsingXML(element);
-    direction.initializeUsingXML(element);
-    return element;
-  }
-
-  FunctionSensor::FunctionSensor(const string &str) : Sensor(str) {
-    //  vector<Property*> property;
-    //  property.push_back(new ConstantFunctionProperty);
-    //  property.push_back(new LinearFunctionProperty);
-    //  property.push_back(new QuadraticFunctionProperty);
-    //  property.push_back(new SinusoidalFunctionProperty);
-    //  property.push_back(new TabularFunctionProperty);
-    //  property.push_back(new SummationFunctionProperty);
-    //  vector<string> var;
-    //  var.push_back("t");
-    //  property.push_back(new SymbolicFunctionProperty("VS",var));
-    function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIMCONTROL%"function"));
-  }
-
-  DOMElement* FunctionSensor::initializeUsingXML(DOMElement *element) {
-    Sensor::initializeUsingXML(element);
-    function.initializeUsingXML(element);
-    return element;
-  }
-
-  SignalProcessingSystemSensor::SignalProcessingSystemSensor(const string &str) : Sensor(str) {
-    spsRef.setProperty(new LinkOfReferenceProperty("",this,MBSIMCONTROL%"signalProcessingSystem"));
-  }
-
-  DOMElement* SignalProcessingSystemSensor::initializeUsingXML(DOMElement *element) {
-    Sensor::initializeUsingXML(element);
-    spsRef.initializeUsingXML(element);
-    return element;
+  SignalProcessingSystemSensor::SignalProcessingSystemSensor(const QString &str) : Sensor(str) {
   }
 
 }
