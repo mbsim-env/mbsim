@@ -379,6 +379,7 @@ namespace MBSimGUI {
       SignalFunctionWidget(Element *element);
       ~SignalFunctionWidget();
       QString getType() const { return "SignalFunction"; }
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
       void updateWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
