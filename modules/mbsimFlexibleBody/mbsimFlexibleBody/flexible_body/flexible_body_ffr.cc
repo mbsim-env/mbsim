@@ -712,8 +712,9 @@ namespace MBSimFlexibleBody {
     // frames
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
     while(e) {
-      Frame *f=ObjectFactory::createAndInit<Frame>(e);
+      NodeFrame *f=new NodeFrame(E(e)->getAttribute("name"));
       addFrame(f);
+      f->initializeUsingXML(e);
       e=e->getNextElementSibling();
     }
 

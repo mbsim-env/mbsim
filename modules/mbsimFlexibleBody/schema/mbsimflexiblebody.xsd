@@ -673,7 +673,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="mbsim:Frame"/>
+                  <xs:element ref="NodeFrame"/>
                   <xs:element ref="pv:Embed"/>
                 </xs:choice>
               </xs:sequence>
