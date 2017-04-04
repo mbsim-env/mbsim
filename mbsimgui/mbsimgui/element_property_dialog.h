@@ -56,7 +56,6 @@ namespace MBSimGUI {
   class GeneralizedAccelerationConstraint;
   class JointConstraint;
   class GeneralizedConnectionConstraint;
-  class SignalProcessingSystem;
   class LinearTransferSystem;
   class Link;
   class MechanicalLink;
@@ -93,7 +92,6 @@ namespace MBSimGUI {
   class AbsoluteAngularPositionSensor;
   class AbsoluteAngularVelocitySensor;
   class FunctionSensor;
-  class SignalProcessingSystemSensor;
   class PIDController;
   class UnarySignalOperation;
   class BinarySignalOperation;
@@ -766,24 +764,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *function;
-  };
-
-  class SignalProcessingSystemPropertyDialog : public LinkPropertyDialog {
-
-    public:
-      SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
-    protected:
-      ExtWidget *signalRef;
-  };
-
-  class SignalProcessingSystemSensorPropertyDialog : public SensorPropertyDialog {
-
-    public:
-      SignalProcessingSystemSensorPropertyDialog(SignalProcessingSystemSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    protected:
-      ExtWidget *spsRef;
   };
 
   class PIDControllerPropertyDialog : public SignalPropertyDialog {

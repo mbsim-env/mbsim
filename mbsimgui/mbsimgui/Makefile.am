@@ -24,19 +24,10 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   rigid_body.cc \
 		   flexible_body_ffr.cc \
 		   link.cc \
-		   constraint.cc \
 		   observer.cc \
 		   kinetic_excitation.cc \
 		   spring_damper.cc \
-		   joint.cc \
-		   friction.cc \
-		   contact.cc \
-		   gear.cc \
-		   connection.cc \
-		   signal_.cc \
-		   sensor.cc \
 		   integrator.cc \
-		   analyser.cc \
 		   parameter.cc \
 		   objectfactory.cc \
 		   treeitem.cc \

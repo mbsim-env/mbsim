@@ -37,8 +37,8 @@ namespace MBSimGUI {
       QString name, value;
       xercesc::DOMElement *element;
     public:
-      Solver();
-      virtual ~Solver();
+      Solver() : name("Solver") { }
+      virtual ~Solver() { }
       xercesc::DOMElement* getXMLElement() { return element; }
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);

@@ -28,22 +28,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  KineticExcitation::KineticExcitation(const QString &str) : FloatingFrameLink(str) {
-
-//    static_cast<ConnectFramesProperty*>(connections.getProperty())->setDefaultFrame("../Frame[I]");
-//
-//    forceDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"forceDirection",vector<string>(3,"-")),"",4));
-//
-//    forceFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"forceFunction",0));
-//
-//    momentDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"momentDirection",vector<string>(3,"-")),"",4));
-//
-//    momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"momentFunction",0));
-//
-//    arrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-//    arrow.setActive(true);
-  }
-
   DOMElement* KineticExcitation::processFileID(DOMElement *element) {
     Link::processFileID(element);
 

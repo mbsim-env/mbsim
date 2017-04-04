@@ -31,18 +31,6 @@ namespace MBSimGUI {
 
   Environment *Environment::instance=NULL;
 
-  DynamicSystemSolver::DynamicSystemSolver(const QString &str) : Group(str) {
-    config = true;
-
-//    solverParameters.setProperty(new DynamicSystemSolverParametersProperty);
-//
-//    inverseKinetics.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"inverseKinetics",vector<string>(2,"")),"",4));
-//
-//    initialProjection.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"initialProjection",vector<string>(2,"")),"",4));
-//
-//    useConstraintSolverForPlot.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"useConstraintSolverForPlot",vector<string>(2,"")),"",4));
-  }
-
   void DynamicSystemSolver::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");

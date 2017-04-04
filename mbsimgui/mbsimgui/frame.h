@@ -51,7 +51,7 @@ namespace MBSimGUI {
 
   class FixedRelativeFrame : public Frame {
     public:
-      FixedRelativeFrame(const QString &str="");
+      FixedRelativeFrame(const QString &str="") : Frame(str) { }
       QString getType() const { return "FixedRelativeFrame"; }
       ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
@@ -60,7 +60,7 @@ namespace MBSimGUI {
 
   class NodeFrame : public Frame {
     public:
-      NodeFrame(const QString &str="");
+      NodeFrame(const QString &str="") : Frame(str) { }
       QString getType() const { return "NodeFrame"; }
       MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
       ElementPropertyDialog* createPropertyDialog() {return new NodeFramePropertyDialog(this);}

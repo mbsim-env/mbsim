@@ -31,21 +31,4 @@ namespace MBSimGUI {
     addPlotFeature("energy");
   }
 
-  FrameLink::FrameLink(const QString &str) : MechanicalLink(str) {
-//    connections.setProperty(new ConnectFramesProperty(2,this));
-  }
-
-  FloatingFrameLink::FloatingFrameLink(const QString &str) : FrameLink(str) {
-
-//    refFrameID.setProperty(new IntegerProperty(1,MBSIM%"frameOfReferenceID"));
-  }
-
-  RigidBodyLink::RigidBodyLink(const QString &str) : MechanicalLink(str) {
-//    support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
-  }
-
-  DualRigidBodyLink::DualRigidBodyLink(const QString &str) : RigidBodyLink(str) {
-//    connections.setProperty(new ChoiceProperty2(new ConnectRigidBodiesPropertyFactory(this),"",4));
-  }
-
 }

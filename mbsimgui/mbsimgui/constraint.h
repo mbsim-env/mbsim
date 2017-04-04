@@ -24,26 +24,6 @@
 
 namespace MBSimGUI {
 
-  class RigidBody;
-
-  //  class RigidBodyOfReferencePropertyFactory : public PropertyFactory {
-  //    public:
-  //      RigidBodyOfReferencePropertyFactory(Element *element_, const MBXMLUtils::FQN &xmlName_) : element(element_), xmlName(xmlName_) { }
-  //      Property* createProperty(int i=0);
-  //    protected:
-  //      Element *element;
-  //      MBXMLUtils::FQN xmlName;
-  //  };
-  //
-  //  class GeneralizedGearConstraintPropertyFactory : public PropertyFactory {
-  //    public:
-  //      GeneralizedGearConstraintPropertyFactory(Element *element_, const MBXMLUtils::FQN &xmlName_="") : element(element_), xmlName(xmlName_) { }
-  //      Property* createProperty(int i=0);
-  //    protected:
-  //      Element *element;
-  //      MBXMLUtils::FQN xmlName;
-  //  };
-
   class Constraint : public Element {
     public:
       Constraint(const QString &str="") : Element(str) { }
@@ -56,47 +36,47 @@ namespace MBSimGUI {
 
   class GeneralizedConstraint : public MechanicalConstraint {
     public:
-      GeneralizedConstraint(const QString &str="");
+      GeneralizedConstraint(const QString &str="") : MechanicalConstraint(str) { }
   };
 
   class GeneralizedGearConstraint : public GeneralizedConstraint {
     public:
-      GeneralizedGearConstraint(const QString &str="");
+      GeneralizedGearConstraint(const QString &str="") : GeneralizedConstraint(str) { }
       QString getType() const { return "GeneralizedGearConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedGearConstraintPropertyDialog(this);}
   };
 
   class GeneralizedDualConstraint : public GeneralizedConstraint {
     public:
-      GeneralizedDualConstraint(const QString &str="");
+      GeneralizedDualConstraint(const QString &str="") : GeneralizedConstraint(str) { }
       QString getType() const { return "GeneralizedDualConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedDualConstraintPropertyDialog(this);}
   };
 
   class GeneralizedPositionConstraint : public GeneralizedDualConstraint {
     public:
-      GeneralizedPositionConstraint(const QString &str="");
+      GeneralizedPositionConstraint(const QString &str="") : GeneralizedDualConstraint(str) { }
       QString getType() const { return "GeneralizedPositionConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionConstraintPropertyDialog(this);}
   };
 
   class GeneralizedVelocityConstraint : public GeneralizedDualConstraint {
     public:
-      GeneralizedVelocityConstraint(const QString &str="");
+      GeneralizedVelocityConstraint(const QString &str="") : GeneralizedDualConstraint(str) { }
       QString getType() const { return "GeneralizedVelocityConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocityConstraintPropertyDialog(this);}
   };
 
   class GeneralizedAccelerationConstraint : public GeneralizedDualConstraint {
     public:
-      GeneralizedAccelerationConstraint(const QString &str="");
+      GeneralizedAccelerationConstraint(const QString &str="") : GeneralizedDualConstraint(str) { }
       QString getType() const { return "GeneralizedAccelerationConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedAccelerationConstraintPropertyDialog(this);}
   };
 
   class JointConstraint : public MechanicalConstraint {
     public:
-      JointConstraint(const QString &str="");
+      JointConstraint(const QString &str="") : MechanicalConstraint(str) { }
       QString getType() const { return "JointConstraint"; }
       ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   };

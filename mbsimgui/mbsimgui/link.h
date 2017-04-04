@@ -36,7 +36,7 @@ namespace MBSimGUI {
 
   class FrameLink : public MechanicalLink {
     public:
-      FrameLink(const QString &str="");
+      FrameLink(const QString &str="") : MechanicalLink(str) { }
   };
 
   class FixedFrameLink : public FrameLink {
@@ -46,17 +46,17 @@ namespace MBSimGUI {
 
   class FloatingFrameLink : public FrameLink {
     public:
-      FloatingFrameLink(const QString &str="");
+      FloatingFrameLink(const QString &str="") : FrameLink(str) { }
  };
 
   class RigidBodyLink : public MechanicalLink {
     public:
-      RigidBodyLink(const QString &str="");
+      RigidBodyLink(const QString &str="") : MechanicalLink(str) { }
  };
 
   class DualRigidBodyLink : public RigidBodyLink {
     public:
-      DualRigidBodyLink(const QString &str="");
+      DualRigidBodyLink(const QString &str="") : RigidBodyLink(str) { }
  };
 
 }

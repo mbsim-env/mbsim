@@ -26,7 +26,7 @@ namespace MBSimGUI {
 
   class KineticExcitation : public FloatingFrameLink {
     public:
-      KineticExcitation(const QString &str="");
+      KineticExcitation(const QString &str="") : FloatingFrameLink(str) { }
       QString getType() const { return "KineticExcitation"; }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}

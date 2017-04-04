@@ -30,15 +30,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern bool absolutePath;
-  extern QDir mbsDir;
-
-  Solver::Solver() : name("Solver") {
-  }
-
-  Solver::~Solver() {
-  }
-
   void Solver::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     while(e) {

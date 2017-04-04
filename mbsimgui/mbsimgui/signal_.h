@@ -26,42 +26,41 @@ namespace MBSimGUI {
 
   class Signal : public Link {
     public:
-      Signal(const QString &str="");
+      Signal(const QString &str="") : Link(str) { }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
-      ~Signal(); 
   };
 
   class PIDController : public Signal {
     public:
-    PIDController(const QString &str="");
+    PIDController(const QString &str="") : Signal(str) { }
     QString getType() const { return "PIDController"; }
     ElementPropertyDialog* createPropertyDialog() {return new PIDControllerPropertyDialog(this);}
   };
 
   class UnarySignalOperation : public Signal {
     public:
-    UnarySignalOperation(const QString &str="");
+    UnarySignalOperation(const QString &str="") : Signal(str) { }
     QString getType() const { return "UnarySignalOperation"; }
     ElementPropertyDialog* createPropertyDialog() {return new UnarySignalOperationPropertyDialog(this);}
   };
 
   class BinarySignalOperation : public Signal {
     public:
-    BinarySignalOperation(const QString &str="");
+    BinarySignalOperation(const QString &str="") : Signal(str) { }
     QString getType() const { return "BinarySignalOperation"; }
     ElementPropertyDialog* createPropertyDialog() {return new BinarySignalOperationPropertyDialog(this);}
   };
 
   class ExternSignalSource : public Signal {
     public:
-      ExternSignalSource(const QString &str="");
+      ExternSignalSource(const QString &str="") : Signal(str) { }
       QString getType() const { return "ExternSignalSource"; }
       ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSourcePropertyDialog(this);}
   };
 
   class ExternSignalSink : public Signal {
     public:
-      ExternSignalSink(const QString &str="");
+      ExternSignalSink(const QString &str="") : Signal(str) { }
       QString getType() const { return "ExternSignalSink"; }
       ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSinkPropertyDialog(this);}
   };

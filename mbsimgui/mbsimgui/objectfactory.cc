@@ -191,16 +191,12 @@ namespace MBSimGUI {
       return new AbsoluteAngularVelocitySensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"FunctionSensor")
       return new FunctionSensor;
-    if(E(element)->getTagName()==MBSIMCONTROL%"SignalProcessingSystemSensor")
-      return new SignalProcessingSystemSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"PIDController")
       return new PIDController;
     if(E(element)->getTagName()==MBSIMCONTROL%"UnarySignalOperation")
       return new UnarySignalOperation;
     if(E(element)->getTagName()==MBSIMCONTROL%"BinarySignalOperation")
       return new BinarySignalOperation;
-//    if(E(element)->getTagName()==MBSIMCONTROL%"LinearTransferSystem")
-//      return new LinearTransferSystem;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSource")
       return new ExternSignalSource;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")

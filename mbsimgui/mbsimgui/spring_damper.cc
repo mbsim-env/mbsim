@@ -28,9 +28,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  SpringDamper::SpringDamper(const QString &str) : FixedFrameLink(str) {
-  }
-
   DOMElement* SpringDamper::processFileID(DOMElement *element) {
     FixedFrameLink::processFileID(element);
 
@@ -44,9 +41,6 @@ namespace MBSimGUI {
     return element;
   }
 
-  DirectionalSpringDamper::DirectionalSpringDamper(const QString &str) : FloatingFrameLink(str) {
-  }
-
   DOMElement* DirectionalSpringDamper::processFileID(DOMElement *element) {
     FloatingFrameLink::processFileID(element);
 
@@ -58,9 +52,6 @@ namespace MBSimGUI {
     }
 
     return element;
-  }
-
-  GeneralizedSpringDamper::GeneralizedSpringDamper(const QString &str) : DualRigidBodyLink(str) {
   }
 
 }

@@ -28,9 +28,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Body::Body(const QString &str) : Object(str) {
-  }
-
   Body::~Body() {
     for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i) 
       delete *i;

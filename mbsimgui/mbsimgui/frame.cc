@@ -69,12 +69,4 @@ namespace MBSimGUI {
     }
   }
 
-  FixedRelativeFrame::FixedRelativeFrame(const QString &str) : Frame(str) {
-  }
-
-  NodeFrame::NodeFrame(const QString &str) : Frame(str) {
-
-    //nodeNumber.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMFLEX%"nodeNumber",vector<string>(2,"-")),"",4));
-  }
-
 }

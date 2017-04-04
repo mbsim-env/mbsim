@@ -34,8 +34,6 @@
 #include "rigid_body.h"
 #include "flexible_body_ffr.h"
 #include "constraint.h"
-#include "signal_processing_system.h"
-#include "linear_transfer_system.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
 #include "joint.h"
@@ -2231,29 +2229,6 @@ namespace MBSimGUI {
     SensorPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     function->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
-  }
-
-  SignalProcessingSystemPropertyDialog::SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(sps,parent,f) {
-    signalRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(sps,0),false,false,MBSIMCONTROL%"inputSignal");
-
-    addToTab("General", signalRef);
-  }
-
-  DOMElement* SignalProcessingSystemPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    LinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    signalRef->initializeUsingXML(element->getXMLElement());
-    return parent;
-  }
-
-  DOMElement* SignalProcessingSystemPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    LinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    signalRef->writeXMLFile(element->getXMLElement(),ref);
-    return NULL;
-  }
-
-  SignalProcessingSystemSensorPropertyDialog::SignalProcessingSystemSensorPropertyDialog(SignalProcessingSystemSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
-    //spsRef = new ExtWidget("Signal processing system",new LinkOfReferenceWidget(sensor,0));
-    addToTab("General", spsRef);
   }
 
   PIDControllerPropertyDialog::PIDControllerPropertyDialog(PIDController *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {

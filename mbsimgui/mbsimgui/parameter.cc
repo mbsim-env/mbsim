@@ -29,9 +29,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Parameter::Parameter(const QString &name_) : parent(NULL), name(name_), config(false) {
-  }
-
   void Parameter::initializeUsingXML(DOMElement *element) {
     this->element = element;
     setName(QString::fromStdString(E(element)->getAttribute("name")));
@@ -81,23 +78,14 @@ namespace MBSimGUI {
     return param;
   }
 
-  StringParameter::StringParameter(const QString &name) : Parameter(name) {
-  }
-
   void StringParameter::initializeUsingXML(DOMElement *element) {
     Parameter::initializeUsingXML(element);
     setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
   }
 
-  ScalarParameter::ScalarParameter(const QString &name, const QString &value_) : Parameter(name) {
-  }
-
   void ScalarParameter::initializeUsingXML(DOMElement *element) {
     Parameter::initializeUsingXML(element);
     setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
-  }
-
-  VectorParameter::VectorParameter(const QString &name) : Parameter(name) {
   }
 
   void VectorParameter::initializeUsingXML(DOMElement *element) {
@@ -121,9 +109,6 @@ namespace MBSimGUI {
       if(text)
       setValue(QString::fromStdString(X()%text->getData()));
     }
-  }
-
-  MatrixParameter::MatrixParameter(const QString &name) : Parameter(name) {
   }
 
   void MatrixParameter::initializeUsingXML(DOMElement *element) {
@@ -152,9 +137,6 @@ namespace MBSimGUI {
       if(text)
       setValue(QString::fromStdString(X()%text->getData()));
     }
-  }
-
-  ImportParameter::ImportParameter() : Parameter("import") {
   }
 
 }

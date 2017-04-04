@@ -28,9 +28,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Contour::Contour(const QString &str) : Element(str) {
-  }
-
   DOMElement* Contour::processFileID(DOMElement *element) {
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ELE) {
@@ -39,36 +36,6 @@ namespace MBSimGUI {
       ELE->insertBefore(id, NULL);
     }
     return element;
-  }
-
-  RigidContour::RigidContour(const QString &str) : Contour(str) {
-  }
-
-  Point::Point(const QString &str) : RigidContour(str) {
-  }
-
-  Line::Line(const QString &str) : RigidContour(str) {
-  }
-
-  Plane::Plane(const QString &str) : RigidContour(str) {
-  }
-
-  Sphere::Sphere(const QString &str) : RigidContour(str) {
-  }
-
-  Circle::Circle(const QString &str) : RigidContour(str) {
-  }
-
-  Cuboid::Cuboid(const QString &str) : RigidContour(str) {
-  }
-
-  LineSegment::LineSegment(const QString &str) : RigidContour(str) {
-  }
-
-  PlanarContour::PlanarContour(const QString &str) : RigidContour(str) {
-  }
-
-  SpatialContour::SpatialContour(const QString &str) : RigidContour(str) {
   }
 
 }

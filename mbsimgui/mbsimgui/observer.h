@@ -26,12 +26,12 @@ namespace MBSimGUI {
 
   class Observer : public Element {
     public:
-      Observer(const QString &str="");
+      Observer(const QString &str="") : Element(str) { }
   };
 
   class KinematicCoordinatesObserver : public Observer {
     public:
-      KinematicCoordinatesObserver(const QString &str="");
+      KinematicCoordinatesObserver(const QString &str="") : Observer(str) { }
       QString getType() const { return "KinematicCoordinatesObserver"; }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new KinematicCoordinatesObserverPropertyDialog(this);}
@@ -39,7 +39,7 @@ namespace MBSimGUI {
 
   class RelativeKinematicsObserver : public Observer {
     public:
-      RelativeKinematicsObserver(const QString &str="");
+      RelativeKinematicsObserver(const QString &str="") : Observer(str) { }
       QString getType() const { return "RelativeKinematicsObserver"; }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new RelativeKinematicsObserverPropertyDialog(this);}
@@ -47,7 +47,7 @@ namespace MBSimGUI {
 
   class MechanicalLinkObserver : public Observer {
     public:
-      MechanicalLinkObserver(const QString &str="");
+      MechanicalLinkObserver(const QString &str="") : Observer(str) { }
       QString getType() const { return "MechanicalLinkObserver"; }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new MechanicalLinkObserverPropertyDialog(this);}
@@ -55,7 +55,7 @@ namespace MBSimGUI {
 
   class MechanicalConstraintObserver : public Observer {
     public:
-      MechanicalConstraintObserver(const QString &str="");
+      MechanicalConstraintObserver(const QString &str="") : Observer(str) { }
       QString getType() const { return "MechanicalConstraintObserver"; }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new MechanicalConstraintObserverPropertyDialog(this);}
@@ -63,7 +63,7 @@ namespace MBSimGUI {
 
   class ContactObserver : public Observer {
     public:
-      ContactObserver(const QString &str="");
+      ContactObserver(const QString &str="") : Observer(str) { }
       QString getType() const { return "ContactObserver"; }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new ContactObserverPropertyDialog(this);}
@@ -71,7 +71,7 @@ namespace MBSimGUI {
 
   class FrameObserver : public Observer {
     public:
-      FrameObserver(const QString &str="");
+      FrameObserver(const QString &str="") : Observer(str) { }
       QString getType() const { return "FrameObserver"; }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new FrameObserverPropertyDialog(this);}
@@ -79,7 +79,7 @@ namespace MBSimGUI {
 
   class RigidBodyObserver : public Observer {
     public:
-      RigidBodyObserver(const QString &str="");
+      RigidBodyObserver(const QString &str="") : Observer(str) { }
       QString getType() const { return "RigidBodyObserver"; }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new RigidBodyObserverPropertyDialog(this);}

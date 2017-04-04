@@ -26,7 +26,7 @@ namespace MBSimGUI {
 
   class GeneralizedElasticConnection : public DualRigidBodyLink {
     public:
-      GeneralizedElasticConnection(const QString &str="");
+      GeneralizedElasticConnection(const QString &str="") : DualRigidBodyLink(str) { }
       QString getType() const { return "GeneralizedElasticConnection"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedElasticConnectionPropertyDialog(this);}
   };

@@ -28,22 +28,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Observer::Observer(const QString &str) : Element(str) {
-  }
-
-  KinematicCoordinatesObserver::KinematicCoordinatesObserver(const QString &str) : Observer(str) {
-//
-//    frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
-//
-//    frameOfReference.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frameOfReference"));
-//
-//    position.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVPosition",getID(),true));
-//
-//    velocity.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVVelocity",getID(),true));
-//
-//    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAcceleration",getID(),true));
-  }
-
   DOMElement* KinematicCoordinatesObserver::processFileID(DOMElement *element) {
     Observer::processFileID(element);
 
@@ -69,23 +53,6 @@ namespace MBSimGUI {
     }
 
     return element;
-  }
-
-  RelativeKinematicsObserver::RelativeKinematicsObserver(const QString &str) : Observer(str) {
-
-//    frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
-//
-//    refFrame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frameOfReference"));
-//
-//    position.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVPosition",getID(),true));
-//
-//    velocity.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVVelocity",getID(),true));
-//
-//    angularVelocity.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularVelocity",getID(),true));
-//
-//    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAcceleration",getID(),true));
-//
-//    angularAcceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularAcceleration",getID(),true));
   }
 
   DOMElement* RelativeKinematicsObserver::processFileID(DOMElement *element) {
@@ -129,9 +96,6 @@ namespace MBSimGUI {
     return element;
   }
 
-  MechanicalLinkObserver::MechanicalLinkObserver(const QString &str) : Observer(str) {
-  }
-
   DOMElement* MechanicalLinkObserver::processFileID(DOMElement *element) {
     Observer::processFileID(element);
 
@@ -152,9 +116,6 @@ namespace MBSimGUI {
     return element;
   }
 
-  MechanicalConstraintObserver::MechanicalConstraintObserver(const QString &str) : Observer(str) {
-  }
-
   DOMElement* MechanicalConstraintObserver::processFileID(DOMElement *element) {
     Observer::processFileID(element);
 
@@ -173,21 +134,6 @@ namespace MBSimGUI {
     }
 
     return element;
-  }
-
-  ContactObserver::ContactObserver(const QString &str) : Observer(str) {
-
-//    link.setProperty(new LinkOfReferenceProperty("",this,MBSIM%"contact"));
-//
-//    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
-//
-//    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
-//
-//    contactPoints.setProperty(new FrameMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
-//
-//    normalForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVNormalForce",getID()));
-//
-//    frictionArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVTangentialForce",getID()));
   }
 
   DOMElement* ContactObserver::processFileID(DOMElement *element) {
@@ -231,21 +177,6 @@ namespace MBSimGUI {
     return element;
   }
 
-  FrameObserver::FrameObserver(const QString &str) : Observer(str) {
-
-//    frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
-//
-//    position.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVPosition",getID(),true));
-//
-//    velocity.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVVelocity",getID(),true));
-//
-//    angularVelocity.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularVelocity",getID(),true));
-//
-//    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAcceleration",getID(),true));
-//
-//    angularAcceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularAcceleration",getID(),true));
-  }
-
   DOMElement* FrameObserver::processFileID(DOMElement *element) {
     Observer::processFileID(element);
 
@@ -285,19 +216,6 @@ namespace MBSimGUI {
     }
 
     return element;
-  }
-
-  RigidBodyObserver::RigidBodyObserver(const QString &str) : Observer(str) {
-
-//    body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBody"));
-//
-//    weight.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVWeight",getID(),true));
-//
-//    jointForce.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVJointForce",getID(),true));
-//
-//    jointMoment.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVJointMoment",getID(),true));
-//
-//    axisOfRotation.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAxisOfRotation",getID(),true));
   }
 
   DOMElement* RigidBodyObserver::processFileID(DOMElement *element) {
