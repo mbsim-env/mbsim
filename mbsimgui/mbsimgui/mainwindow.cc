@@ -981,10 +981,7 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    DOMNode *ps = element->getXMLElement()->getPreviousSibling();
-    if(ps and X()%ps->getNodeName()=="#text")
-      element->getXMLElement()->getParentNode()->removeChild(element->getXMLElement()->getPreviousSibling());
-    element->getXMLElement()->getParentNode()->removeChild(element->getXMLElement());
+    element->removeXMLElement();
     element->getParent()->removeElement(element);
     model->removeRow(index.row(), index.parent());
     mbsimxml(1);

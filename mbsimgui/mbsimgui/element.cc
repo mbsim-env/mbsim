@@ -72,6 +72,25 @@ namespace MBSimGUI {
     return element;
   }
 
+  void Element::removeXMLElement() {
+    DOMNode *parent = element->getParentNode();
+    if(X()%parent->getNodeName()=="Embed") {
+      DOMNode *e = parent->getFirstChild();
+      while(e) {
+        DOMNode *en=e->getNextSibling();
+        parent->removeChild(e);
+        e = en;
+      }
+      parent->getParentNode()->removeChild(parent);
+    }
+    else {
+      DOMNode *ps = element->getPreviousSibling();
+      if(ps and X()%ps->getNodeName()=="#text")
+        parent->removeChild(ps);
+      parent->removeChild(element);
+    }
+  }
+
   DOMElement* Element::initializeUsingXML(DOMElement *element) {
     this->element = element;
     config = true;

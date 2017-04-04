@@ -68,6 +68,7 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element) { return element; }
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
+      void removeXMLElement();
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       const QString& getName() const { return name; }
       void setName(const QString &str) { name = str; }
