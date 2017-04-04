@@ -255,4 +255,6 @@
       <c:direction>[0;1;0]</c:direction>
     </c:AbsoluteVelocitySensor>
   </links>
+  <constraints/>
+  <observers/>
 </Group>

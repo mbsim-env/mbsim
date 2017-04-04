@@ -181,6 +181,7 @@
         </normalForceLaw>
       </Contact>
   </links>
+  <constraints/>
   <observers>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <ContactObserver name="ContactObserverBS{nr}" xmlns="http://www.mbsim-env.de/MBSim">

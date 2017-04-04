@@ -186,6 +186,8 @@
           </enableOpenMBV>
         </SpringDamper>
       </links>
+      <constraints/>
+      <observers/>
       <enableOpenMBVFrameI/>
       <environments>
         <MBSimEnvironment>

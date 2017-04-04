@@ -220,6 +220,7 @@
       </tangentialImpactLaw>
     </Contact>
   </links>
+  <constraints/>
   <observers>
     <ContactObserver name="Observer">
       <contact ref="../Link[jointContact]"/>

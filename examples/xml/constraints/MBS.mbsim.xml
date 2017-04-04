@@ -33,10 +33,10 @@
       </Parameter>
     </Embed>
   </groups>
-  <objects>
-</objects>
-  <links>
-</links>
+  <objects/>
+  <links/>
+  <constraints/>
+  <observers/>
   <environments>
     <MBSimEnvironment xmlns="http://www.mbsim-env.de/MBSim">
       <accelerationOfGravity>[0 0 0]'</accelerationOfGravity>

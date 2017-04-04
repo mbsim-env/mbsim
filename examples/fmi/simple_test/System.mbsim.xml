@@ -58,6 +58,7 @@
     </control:ExternSignalSink>
     <pv:Embed href="{extern}"/>
   </links>
+  <constraints/>
   <observers>
     <ContactObserver name="Observer">
       <contact ref="../Link[Contact]"/>

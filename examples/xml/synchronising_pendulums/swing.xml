@@ -222,5 +222,7 @@
       </forceLaw>
     </Joint>
   </links>
+  <constraints/>
+  <observers/>
 </Group>
 

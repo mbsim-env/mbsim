@@ -85,6 +85,8 @@
         </enableOpenMBV>
       </KineticExcitation>
     </links>
+    <constraints/>
+    <observers/>
     <environments>
       <MBSimEnvironment>
         <accelerationOfGravity>[0;0;0]</accelerationOfGravity>

@@ -126,6 +126,8 @@
                 </enableOpenMBV>
               </SpringDamper>
             </links>
+            <constraints/>
+            <observers/>
           </Group>
         </groups>
         <objects>
@@ -159,6 +161,8 @@
           </RigidBody>
         </objects>
         <links/>
+        <constraints/>
+        <observers/>
       </Group>
       <Group name="Hauptgruppe2">
         <plotFeatureRecursive feature="+stateDerivative"/>
@@ -277,6 +281,8 @@
                 </enableOpenMBV>
               </SpringDamper>
             </links>
+            <constraints/>
+            <observers/>
           </Group>
         </groups>
         <objects>
@@ -310,10 +316,14 @@
           </RigidBody>
         </objects>
         <links/>
+        <constraints/>
+        <observers/>
       </Group>
     </groups>
     <objects/>
     <links/>
+    <constraints/>
+    <observers/>
     <environments>
       <MBSimEnvironment>
         <accelerationOfGravity>[0;0;0]</accelerationOfGravity>

@@ -283,6 +283,7 @@
           </tangentialImpactLaw>
         </Contact>
       </links>
+      <constraints/>
       <observers>
         <FrameObserver name="FrameObserver1">
           <frame ref="../Object[Stepladder]/Frame[P1]"/>

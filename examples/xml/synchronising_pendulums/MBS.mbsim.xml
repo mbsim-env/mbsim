@@ -32,10 +32,10 @@
     <Embed href="metronome.xml" count="3" counterName="i" xmlns="http://www.mbsim-env.de/MBXMLUtils"/>
     <Embed href="control.xml" count="3" counterName="i" xmlns="http://www.mbsim-env.de/MBXMLUtils"/>
   </groups>
-  <objects>
-  </objects>
-  <links>
-  </links>
+  <objects/>
+  <links/>
+  <constraints/>
+  <observers/>
   <environments>
     <MBSimEnvironment xmlns="http://www.mbsim-env.de/MBSim">
       <accelerationOfGravity>[0; -9.81; 0]</accelerationOfGravity>

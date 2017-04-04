@@ -31,6 +31,8 @@
     </Joint>
     <pv:Embed href="Joint_n.xml" count="N" counterName="n"/>
   </links>
+  <constraints/>
+  <observers/>
   <environments>
     <MBSimEnvironment>
       <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>

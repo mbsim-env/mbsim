@@ -146,6 +146,7 @@ ret = [eta;xi]</SymbolicFunction>
           </initialGuess>
         </Contact>
       </links>
+      <constraints/>
       <observers>
        <ContactObserver name="ContactObserver1">
           <contact ref="../Link[Contact1]"/>

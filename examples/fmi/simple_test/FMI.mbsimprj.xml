@@ -21,6 +21,8 @@
       </groups>
       <objects/>
       <links/>
+      <constraints/>
+      <observers/>
       <environments/>
     </DynamicSystemSolver>
   </pv:Embed>

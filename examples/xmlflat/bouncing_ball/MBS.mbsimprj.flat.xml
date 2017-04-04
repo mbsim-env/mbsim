@@ -94,6 +94,8 @@
         </tangentialImpactLaw>
       </Contact>
     </links>
+    <constraints/>
+    <observers/>
     <enableOpenMBVFrameI><?LineNr 125?>
     </enableOpenMBVFrameI>
     <environments><?LineNr 128?>

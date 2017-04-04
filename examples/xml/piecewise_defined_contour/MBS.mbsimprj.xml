@@ -137,6 +137,8 @@
           <searchAllContactPoints>1</searchAllContactPoints>
         </Contact>
       </links>
+      <constraints/>
+      <observers/>
       <enableOpenMBVFrameI>
         <size unit="cm">1</size>
       </enableOpenMBVFrameI>

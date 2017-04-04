@@ -245,5 +245,7 @@
       </momentFunction>
     </KineticExcitation>
   </links>
+  <constraints/>
+  <observers/>
 </Group>
 

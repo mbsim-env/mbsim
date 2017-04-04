@@ -121,6 +121,8 @@
         </tangentialImpactLaw>
       </Contact>
     </links>
+    <constraints/>
+    <observers/>
     <enableOpenMBVFrameI>
     </enableOpenMBVFrameI>
     <environments>

@@ -206,6 +206,8 @@
         <generalizedUnloadedLength>0</generalizedUnloadedLength>
       </GeneralizedSpringDamper>
     </links>
+    <constraints/>
+    <observers/>
     <enableOpenMBVFrameI>
     </enableOpenMBVFrameI>
     <environments>

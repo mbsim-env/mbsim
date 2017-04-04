@@ -72,4 +72,6 @@
       </function>
     </UnarySignalOperation>
   </links>
+  <constraints/>
+  <observers/>
 </Group>

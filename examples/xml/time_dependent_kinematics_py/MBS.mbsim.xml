@@ -164,6 +164,8 @@
         </RigidBody>
     </objects>
     <links />
+    <constraints />
+    <observers />
     <environments>
         <MBSimEnvironment>
             <accelerationOfGravity>[0,-9.81,0]</accelerationOfGravity>

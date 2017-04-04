@@ -16,6 +16,8 @@
   </groups>
   <objects/>
   <links/>
+  <constraints/>
+  <observers/>
   <environments>
     <MBSimEnvironment>
       <accelerationOfGravity><pv:fromFile href="{grav}"/></accelerationOfGravity>

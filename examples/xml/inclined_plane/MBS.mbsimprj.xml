@@ -204,6 +204,7 @@
           </tangentialImpactLaw>
         </Contact>
       </links>
+      <constraints/>
       <observers>
         <FrameObserver name="FrameObserver">
           <frame ref="../Object[Mass]/Frame[C]"/>

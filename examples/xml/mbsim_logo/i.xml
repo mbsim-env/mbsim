@@ -124,5 +124,7 @@
       </normalForceLaw>
     </Contact>
   </links>
+  <constraints/>
+  <observers/>
 </Group>
 

@@ -87,6 +87,7 @@
         </RigidBody>
     </objects>
     <links />
+    <constraints/>
     <observers>
         <FrameObserver name="FrameObserver1">
             <frame ref="../Object[RigidBody1]/Frame[C]" />

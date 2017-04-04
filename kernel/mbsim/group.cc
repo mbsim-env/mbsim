@@ -155,26 +155,22 @@ namespace MBSim {
     e=e->getNextElementSibling();
 
     // constraints
-    if(e && MBXMLUtils::E(e)->getTagName()==MBSIM%"constraints") {
-      E=e->getFirstElementChild();
-      Constraint *crt;
-      while(E) {
-        crt=ObjectFactory::createAndInit<Constraint>(E);
-        addConstraint(crt);
-        E=E->getNextElementSibling();
-      }
-      e=e->getNextElementSibling();
+    E=e->getFirstElementChild();
+    Constraint *crt;
+    while(E) {
+      crt=ObjectFactory::createAndInit<Constraint>(E);
+      addConstraint(crt);
+      E=E->getNextElementSibling();
     }
+    e=e->getNextElementSibling();
 
     // observers
-    if(e && MBXMLUtils::E(e)->getTagName()==MBSIM%"observers") {
-      E=e->getFirstElementChild();
-      Observer *obsrv;
-      while(E) {
-        obsrv=ObjectFactory::createAndInit<Observer>(E);
-        addObserver(obsrv);
-        E=E->getNextElementSibling();
-      }
+    E=e->getFirstElementChild();
+    Observer *obsrv;
+    while(E) {
+      obsrv=ObjectFactory::createAndInit<Observer>(E);
+      addObserver(obsrv);
+      E=E->getNextElementSibling();
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");

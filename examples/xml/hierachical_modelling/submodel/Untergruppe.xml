@@ -142,6 +142,7 @@
       </enableOpenMBV>
     </SpringDamper>
   </links>
+  <constraints/>
   <observers>
     <MechanicalLinkObserver name="Observer">
       <mechanicalLink ref="../Link[Feder1]"/>

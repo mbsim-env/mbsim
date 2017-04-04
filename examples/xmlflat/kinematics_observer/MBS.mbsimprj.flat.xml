@@ -118,6 +118,7 @@
         </forceLaw>
       </Joint>
     </links>
+    <constraints/>
     <observers>
       <FrameObserver name="Observer">
         <frame ref="../Object[Stab2]/Frame[C]"/>

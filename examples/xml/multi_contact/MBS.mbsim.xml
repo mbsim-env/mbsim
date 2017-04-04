@@ -86,6 +86,7 @@
         </InfluenceFunction>
    </MaxwellContact>
   </links>
+  <constraints/>
   <observers>
     <ContactObserver name="ContactObserver1">
       <contact ref="../Link[Contact]"/>

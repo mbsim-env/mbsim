@@ -171,6 +171,8 @@ ret = 0;</scalarParameter>
           </enableOpenMBV>
         </KineticExcitation>
       </links>
+      <constraints/>
+      <observers/>
       <enableOpenMBVFrameI/>
       <environments>
         <MBSimEnvironment>

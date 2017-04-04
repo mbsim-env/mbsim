@@ -115,4 +115,6 @@
       <inflow ref="../Object[lineT]"/>
     </EnvironmentNode>
   </links>
+  <constraints/>
+  <observers/>
 </Group>

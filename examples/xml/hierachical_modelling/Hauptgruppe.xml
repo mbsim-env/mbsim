@@ -70,4 +70,6 @@
     </RigidBody>
   </objects>
   <links/>
+  <constraints/>
+  <observers/>
 </Group>

@@ -114,6 +114,7 @@
         </forceLaw>
       </Joint>
     </links>
+    <constraints/>
     <observers>
       <MechanicalLinkObserver name="MechanicalLinkObserver1">
         <mechanicalLink ref="../Link[Gelenk1]"/>

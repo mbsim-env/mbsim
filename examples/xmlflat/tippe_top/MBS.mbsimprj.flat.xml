@@ -116,6 +116,7 @@
         </tangentialImpactLaw>
       </Contact>
     </links>
+    <constraints/>
     <observers>
       <ContactObserver name="ContactObserver1">
         <contact ref="../Link[Contact1]"/>

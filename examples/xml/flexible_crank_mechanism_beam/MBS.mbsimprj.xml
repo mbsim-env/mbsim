@@ -741,6 +741,8 @@
           </forceLaw>
         </Joint>
       </links>
+      <constraints/>
+      <observers/>
       <enableOpenMBVFrameI>
         <size unit="cm">1</size>
       </enableOpenMBVFrameI>
