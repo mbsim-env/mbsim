@@ -327,19 +327,17 @@ namespace MBSim {
   }
 
   void RigidBody::updateqd() {
-    qd(iqT) = evaluTRel();
-    if(fTR)
-      qd(iqR) = (*fTR)(evalqRRel())*uRRel;
-    else
-      qd(iqR) = uRRel;
+    if(not constraint) {
+      qd(iqT) = evaluTRel();
+      qd(iqR) = fTR ? (*fTR)(evalqRRel())*uRRel : uRRel;
+    }
   }
 
   void RigidBody::updatedq() {
-    dq(iqT) = evaluTRel()*getStepSize();
-    if(fTR)
-      dq(iqR) = (*fTR)(evalqRRel())*uRRel*getStepSize();
-    else
-      dq(iqR) = uRRel*getStepSize();
+    if(not constraint) {
+      dq(iqT) = evaluTRel()*getStepSize();
+      dq(iqR) = fTR ? (*fTR)(evalqRRel())*uRRel*getStepSize() : uRRel*getStepSize();
+    }
   }
 
   void RigidBody::updateT() {
