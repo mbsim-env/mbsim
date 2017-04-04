@@ -154,12 +154,11 @@ namespace MBSimIntegrator {
       if(methodStr=="RK78") method=RK78;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-    setrTol(Element::getDouble(e));
+    if(e) setrTol(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"thresholdScalar");
-    setThreshold(Element::getDouble(e));
+    if(e) setThreshold(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepsize");
-    if (e)
-      setInitialStepSize(Element::getDouble(e));
+    if(e) setInitialStepSize(Element::getDouble(e));
   }
 
   void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {

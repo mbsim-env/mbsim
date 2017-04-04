@@ -68,13 +68,13 @@ namespace MBSimIntegrator {
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     if(e) setRelativeTolerance(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
-    setInitialStepSize(Element::getDouble(e));
+    if(e) setInitialStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimalStepSize");
-    setMinimalStepSize(Element::getDouble(e));
+    if(e) setMinimalStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    setMaximalStepSize(Element::getDouble(e));
+    if(e) setMaximalStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
-    setPlotOnRoot(Element::getBool(e));
+    if(e) setPlotOnRoot(Element::getBool(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");

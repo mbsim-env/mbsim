@@ -148,26 +148,21 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
-    if (e)
-      setAbsoluteTolerance(Element::getVec(e));
-    else {
-      e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
-      setAbsoluteTolerance(Element::getDouble(e));
-    }
+    if(e) setAbsoluteTolerance(Element::getVec(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+    if(e) setAbsoluteTolerance(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-    setRelativeTolerance(Element::getDouble(e));
+    if(e) setRelativeTolerance(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
-    setInitialStepSize(Element::getDouble(e));
+    if(e) setInitialStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    setMaximalStepSize(Element::getDouble(e));
+    if(e) setMaximalStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimalStepSize");
-    setMinimalStepSize(Element::getDouble(e));
+    if(e) setMinimalStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"numberOfMaximalSteps");
-    setmaxSteps(Element::getInt(e));
+    if(e) setmaxSteps(Element::getInt(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stiffModus");
-    if(e)
-      setStiff(Element::getBool(e));
-      
+    if(e) setStiff(Element::getBool(e));
   }
 
 }

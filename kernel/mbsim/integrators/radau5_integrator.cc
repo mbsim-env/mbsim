@@ -192,11 +192,11 @@ namespace MBSimIntegrator {
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     if(e) setRelativeTolerance(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
-    setInitialStepSize(Element::getDouble(e));
+    if(e) setInitialStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    setMaximalStepSize(Element::getDouble(e));
+    if(e) setMaximalStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalNumberOfSteps");
-    if (e) setMaxStepNumber(Element::getInt(e));
+    if(e) setMaxStepNumber(Element::getInt(e));
   }
 
 }

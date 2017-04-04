@@ -147,7 +147,7 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
-    setStepSize(Element::getDouble(e));
+    if(e) setStepSize(Element::getDouble(e));
   }
 
 }
