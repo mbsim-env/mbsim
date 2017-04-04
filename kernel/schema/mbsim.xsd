@@ -4620,7 +4620,7 @@
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="frameOfReference">
+          <xs:element name="frameOfReference" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd.
