@@ -88,13 +88,11 @@ namespace MBSimGUI {
   }
 
   void Group::addConstraint(Constraint* constraint_) {
-    if(not constraints) createXMLConstraints();
     constraint.push_back(constraint_);
     constraint_->setParent(this);
   }
 
   void Group::addObserver(Observer* observer_) {
-    if(not observers) createXMLObservers();
     observer.push_back(observer_);
     observer_->setParent(this);
   }
@@ -166,18 +164,6 @@ namespace MBSimGUI {
     removedElement.push_back(element);
   }
 
-  void Group::createXMLConstraints() {
-    DOMDocument *doc=element->getOwnerDocument();
-    constraints = D(doc)->createElement( MBSIM%"constraints" );
-    element->insertBefore( constraints, getXMLLinks()->getNextElementSibling() );
-  }
-
-  void Group::createXMLObservers() {
-    DOMDocument *doc=element->getOwnerDocument();
-    observers = D(doc)->createElement( MBSIM%"observers" );
-    element->insertBefore( observers, getXMLConstraints()->getNextElementSibling() );
-  }
-
   void Group::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
@@ -202,6 +188,10 @@ namespace MBSimGUI {
     ele0->insertBefore( objects, NULL );
     links = D(doc)->createElement( MBSIM%"links" );
     ele0->insertBefore( links, NULL );
+    constraints = D(doc)->createElement( MBSIM%"constraints" );
+    ele0->insertBefore( constraints, NULL );
+    observers = D(doc)->createElement( MBSIM%"observers" );
+    ele0->insertBefore( observers, NULL );
 
     DOMElement *ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameI" );
     ele0->insertBefore( ele1, NULL );
@@ -325,26 +315,22 @@ namespace MBSimGUI {
 
     // constraints
     constraints = E(element)->getFirstElementChildNamed(MBSIM%"constraints");
-    if(constraints) {
-      ELE=constraints->getFirstElementChild();
-      Constraint *constraint;
-      while(ELE) {
-        constraint = Embed<Constraint>::createAndInit(ELE);
-        if(constraint) addConstraint(constraint);
-        ELE=ELE->getNextElementSibling();
-      }
+    ELE=constraints->getFirstElementChild();
+    Constraint *constraint;
+    while(ELE) {
+      constraint = Embed<Constraint>::createAndInit(ELE);
+      if(constraint) addConstraint(constraint);
+      ELE=ELE->getNextElementSibling();
     }
 
     // observers
     observers = E(element)->getFirstElementChildNamed(MBSIM%"observers");
-    if(observers) {
-      ELE=observers->getFirstElementChild();
-      Observer *obsrv;
-      while(ELE) {
-        obsrv = Embed<Observer>::createAndInit(ELE);
-        if(obsrv) addObserver(obsrv);
-        ELE=ELE->getNextElementSibling();
-      }
+    ELE=observers->getFirstElementChild();
+    Observer *obsrv;
+    while(ELE) {
+      obsrv = Embed<Observer>::createAndInit(ELE);
+      if(obsrv) addObserver(obsrv);
+      ELE=ELE->getNextElementSibling();
     }
 
     return element;

@@ -53,8 +53,8 @@ namespace MBSimGUI {
     xercesc::DOMElement* getXMLGroups() { return groups; }
     xercesc::DOMElement* getXMLObjects() { return objects; }
     xercesc::DOMElement* getXMLLinks() { return links; }
-    xercesc::DOMElement* getXMLConstraints() { return constraints ? constraints : getXMLLinks(); }
-    xercesc::DOMElement* getXMLObservers() { return observers ? observers : getXMLConstraints(); }
+    xercesc::DOMElement* getXMLConstraints() { return constraints; }
+    xercesc::DOMElement* getXMLObservers() { return observers; }
     xercesc::DOMElement* getXMLFrame() { return getXMLObservers()->getNextElementSibling(); }
     void removeXMLElements();
     xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
