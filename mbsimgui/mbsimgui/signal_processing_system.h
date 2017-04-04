@@ -25,17 +25,11 @@
 namespace MBSimGUI {
 
   class SignalProcessingSystem : public Link {
-    friend class SignalProcessingSystemPropertyDialog;
     public:
-    SignalProcessingSystem(const QString &str="");
-    QString getType() const { return "SignalProcessingSystem"; }
-    virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new SignalProcessingSystemPropertyDialog(this);}
-    protected:
-    ExtProperty signalRef;
+      SignalProcessingSystem(const QString &str="");
+      QString getType() const { return "SignalProcessingSystem"; }
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
+      ElementPropertyDialog* createPropertyDialog() {return new SignalProcessingSystemPropertyDialog(this);}
   };
 
 }

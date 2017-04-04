@@ -21,7 +21,6 @@
 #define _SPRING_DAMPER__H_
 
 #include "link.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 

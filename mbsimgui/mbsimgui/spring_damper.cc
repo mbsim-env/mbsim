@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "spring_damper.h"
+#include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;

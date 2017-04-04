@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "kinetic_excitation.h"
+#include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;

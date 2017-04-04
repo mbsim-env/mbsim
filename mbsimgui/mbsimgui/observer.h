@@ -21,7 +21,6 @@
 #define _OBSERVER__H_
 
 #include "element.h"
-#include "extended_properties.h"
 
 namespace MBSimGUI {
 

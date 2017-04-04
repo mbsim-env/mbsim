@@ -40,6 +40,7 @@
 #include "mbsim_process.h"
 #include "project_property_dialog.h"
 #include "file_editor.h"
+#include "utils.h"
 #include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QtGui>

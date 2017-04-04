@@ -28,6 +28,7 @@
 #include "constraint.h"
 #include "observer.h"
 #include "embed.h"
+#include "utils.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
