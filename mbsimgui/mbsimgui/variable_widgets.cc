@@ -33,7 +33,6 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   extern MainWindow *mw;
-  extern bool absolutePath;
   extern QDir mbsDir;
 
   OctaveHighlighter::OctaveHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
@@ -1103,12 +1102,7 @@ namespace MBSimGUI {
   DOMElement* FromFileWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"fromFile");
-    QString fileName = getFile();
-    if(true) {
-      QFileInfo fileInfo = fileName;
-      fileName = fileInfo.absoluteFilePath();
-    }
-    E(ele)->setAttribute("href",fileName.toStdString());
+    E(ele)->setAttribute("href",getFile().toStdString());
     parent->insertBefore(ele, NULL);
     return 0;
   }
