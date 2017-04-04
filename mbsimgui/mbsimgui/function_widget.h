@@ -21,7 +21,7 @@
 #define _FUNCTION_WIDGET_H_
 
 #include "widget.h"
-#include "property.h"
+#include "namespace.h"
 
 namespace MBSimGUI {
 

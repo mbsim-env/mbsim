@@ -21,7 +21,7 @@
 #define _KINETICS_WIDGETS_H_
 
 #include "widget.h"
-#include "property.h"
+#include "namespace.h"
 #include <QComboBox>
 
 class QVBoxLayout;

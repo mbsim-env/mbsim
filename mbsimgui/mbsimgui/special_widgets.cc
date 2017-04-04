@@ -21,7 +21,7 @@
 #include "special_widgets.h"
 #include "extended_widgets.h"
 #include "variable_widgets.h"
-#include "property.h"
+#include "namespace.h"
 #include <vector>
 #include <QVBoxLayout>
 

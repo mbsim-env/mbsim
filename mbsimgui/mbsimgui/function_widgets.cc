@@ -23,7 +23,7 @@
 #include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "utils.h"
-#include "function_property.h"
+#include "function.h"
 #include "function_widget_factory.h"
 #include <QtGui>
 #include "mainwindow.h"

@@ -21,7 +21,7 @@
 #define _SOLVER__H_
 
 #include "solver_property_dialog.h"
-#include "property.h"
+#include "namespace.h"
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;

@@ -22,7 +22,7 @@
 
 #include "extended_widgets.h"
 #include "custom_widgets.h"
-#include "property.h"
+#include "namespace.h"
 #include <QLineEdit>
 #include <QSpinBox>
 #include <mbxmlutilshelper/dom.h>

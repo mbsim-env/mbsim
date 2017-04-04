@@ -17,8 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _FUNCTION_PROPERTY_H_
-#define _FUNCTION_PROPERTY_H_
+#ifndef _FUNCTION_H_
+#define _FUNCTION_H_
 
 #include "element.h"
 
@@ -26,15 +26,8 @@ namespace MBSimGUI {
 
   class Function : public Element {
     public:
-      Function(const QString &name="") : Element(name) {}
-      virtual ~Function() {}
-      virtual int getArg1Size() const {return 0;}
-      virtual int getArg2Size() const {return 0;}
+      Function(const QString &name="") : Element(name) { }
       virtual QString getType() const { return "Function"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
-      void fromWidget(QWidget *widget) { }
-      void toWidget(QWidget *widget) { }
   };
 
 }
