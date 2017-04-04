@@ -538,11 +538,10 @@ namespace MBSim {
   }
 
   void RigidBody::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
     Body::initializeUsingXML(element);
 
     // frames
-    e=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
     while(e) {
       FixedRelativeFrame *f=new FixedRelativeFrame(E(e)->getAttribute("name"));
       addFrame(f);

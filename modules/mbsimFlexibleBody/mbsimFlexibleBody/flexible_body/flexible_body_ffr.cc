@@ -707,11 +707,10 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
     NodeBasedBody::initializeUsingXML(element);
 
     // frames
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
     while(e) {
       Frame *f=ObjectFactory::createAndInit<Frame>(e);
       addFrame(f);

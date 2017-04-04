@@ -79,11 +79,10 @@ namespace MBSim {
   }
 
   void Group::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
     Element::initializeUsingXML(element);
-    e=element->getFirstElementChild();
 
     // search first element known by Group
+    DOMElement *e=element->getFirstElementChild();
     while(e && E(e)->getTagName()!=MBSIM%"frameOfReference" &&
         E(e)->getTagName()!=MBSIM%"position" &&
         E(e)->getTagName()!=MBSIM%"orientation" &&
