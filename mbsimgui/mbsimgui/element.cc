@@ -82,6 +82,9 @@ namespace MBSimGUI {
         parent->removeChild(e);
         e = en;
       }
+      DOMNode *ps = parent->getPreviousSibling();
+      if(ps and X()%ps->getNodeName()=="#text")
+        parent->getParentNode()->removeChild(ps);
       parent->getParentNode()->removeChild(parent);
     }
     else {
