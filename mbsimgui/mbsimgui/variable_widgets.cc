@@ -977,6 +977,155 @@ namespace MBSimGUI {
     return new VecWidget(x);
   }
 
+  DOMElement* CardanWidget::initializeUsingXML(DOMElement *parent) {
+    DOMElement *element=parent->getFirstElementChild();
+    if(!element || E(element)->getTagName() != (PV%"cardan"))
+      return NULL;
+    vector<QString> angles;
+    DOMElement *ei=E(element)->getFirstElementChildNamed(PV%"alpha");
+    angles.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
+    ei=ei->getNextElementSibling();
+    angles.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
+    ei=ei->getNextElementSibling();
+    angles.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
+    setAngles(angles);
+    if(E(element)->hasAttribute("unit"))
+      setUnit(QString::fromStdString(E(element)->getAttribute("unit")));
+    return element;
+  }
+
+  DOMElement* CardanWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(PV%"cardan");
+    DOMElement *elei = D(doc)->createElement(PV%"alpha");
+    vector<QString> angles = getAngles();
+    DOMText *text = doc->createTextNode(X()%angles[0].toStdString());
+    elei->insertBefore(text, NULL);
+    ele->insertBefore(elei, NULL);
+    elei = D(doc)->createElement(PV%"beta");
+    text = doc->createTextNode(X()%angles[1].toStdString());
+    elei->insertBefore(text, NULL);
+    ele->insertBefore(elei, NULL);
+    elei = D(doc)->createElement(PV%"gamma");
+    text = doc->createTextNode(X()%angles[2].toStdString());
+    elei->insertBefore(text, NULL);
+    ele->insertBefore(elei, NULL);
+    if(not getUnit().isEmpty())
+      E(ele)->setAttribute("unit", getUnit().toStdString());
+    parent->insertBefore(ele, NULL);
+    return NULL;
+  }
+
+  AboutXWidget::AboutXWidget() {
+
+    QHBoxLayout *mainlayout = new QHBoxLayout;
+    mainlayout->setMargin(0);
+    setLayout(mainlayout);
+    QGridLayout *layout = new QGridLayout;
+    mainlayout->addLayout(layout);
+    box = new QLineEdit(this);
+    box->setPlaceholderText("0");
+    layout->addWidget(box);
+    unit = new CustomComboBox;
+    unit->addItems(angleUnits());
+    unit->setCurrentIndex(1);
+    mainlayout->addWidget(unit);
+  }
+
+  bool AboutXWidget::validate(const vector<vector<QString> > &A) const {
+    if(A.size()!=1)
+      return false;
+    if(A[0].size()!=1)
+      return false;
+    return true;
+  }
+
+  QWidget* AboutXWidget::getValidatedWidget() const {
+    return new ScalarWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
+  }
+
+  DOMElement* AboutXWidget::initializeUsingXML(DOMElement *parent) {
+    DOMElement *element=parent->getFirstElementChild();
+    if(!element || E(element)->getTagName() != (PV%"aboutX"))
+      return NULL;
+    DOMText* text = E(element)->getFirstTextChild();
+    if(!text)
+      return NULL;
+    string str = X()%text->getData();
+    if(str.find("\n")!=string::npos)
+      return NULL;
+    setValue(QString::fromStdString(str));
+    if(E(element)->hasAttribute("unit"))
+      setUnit(QString::fromStdString(E(element)->getAttribute("unit")));
+    return element;
+  }
+
+  DOMElement* AboutXWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(PV%"aboutX");
+    DOMText *text = doc->createTextNode(X()%getValue().toStdString());
+    ele->insertBefore(text, NULL);
+    if(not getUnit().isEmpty())
+      E(ele)->setAttribute("unit", getUnit().toStdString());
+    parent->insertBefore(ele, NULL);
+    return NULL;
+  }
+
+  AboutYWidget::AboutYWidget() {
+
+    QHBoxLayout *mainlayout = new QHBoxLayout;
+    mainlayout->setMargin(0);
+    setLayout(mainlayout);
+    QGridLayout *layout = new QGridLayout;
+    mainlayout->addLayout(layout);
+    box = new QLineEdit(this);
+    box->setPlaceholderText("0");
+    layout->addWidget(box);
+    unit = new CustomComboBox;
+    unit->addItems(angleUnits());
+    unit->setCurrentIndex(1);
+    mainlayout->addWidget(unit);
+  }
+
+  bool AboutYWidget::validate(const vector<vector<QString> > &A) const {
+    if(A.size()!=1)
+      return false;
+    if(A[0].size()!=1)
+      return false;
+    return true;
+  }
+
+  QWidget* AboutYWidget::getValidatedWidget() const {
+    return new ScalarWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
+  }
+
+  DOMElement* AboutYWidget::initializeUsingXML(DOMElement *parent) {
+    DOMElement *element=parent->getFirstElementChild();
+    if(!element || E(element)->getTagName() != (PV%"aboutY"))
+      return NULL;
+    DOMText* text = E(element)->getFirstTextChild();
+    if(!text)
+      return NULL;
+    string str = X()%text->getData();
+    if(str.find("\n")!=string::npos)
+      return NULL;
+    setValue(QString::fromStdString(str));
+    if(E(element)->hasAttribute("unit"))
+      setUnit(QString::fromStdString(E(element)->getAttribute("unit")));
+    return element;
+  }
+
+  DOMElement* AboutYWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(PV%"aboutY");
+    DOMText *text = doc->createTextNode(X()%getValue().toStdString());
+    ele->insertBefore(text, NULL);
+    if(not getUnit().isEmpty())
+      E(ele)->setAttribute("unit", getUnit().toStdString());
+    parent->insertBefore(ele, NULL);
+    return NULL;
+  }
+
   AboutZWidget::AboutZWidget() {
 
     QHBoxLayout *mainlayout = new QHBoxLayout;
@@ -1003,6 +1152,33 @@ namespace MBSimGUI {
 
   QWidget* AboutZWidget::getValidatedWidget() const {
     return new ScalarWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
+  }
+
+  DOMElement* AboutZWidget::initializeUsingXML(DOMElement *parent) {
+    DOMElement *element=parent->getFirstElementChild();
+    if(!element || E(element)->getTagName() != (PV%"aboutZ"))
+      return NULL;
+    DOMText* text = E(element)->getFirstTextChild();
+    if(!text)
+      return NULL;
+    string str = X()%text->getData();
+    if(str.find("\n")!=string::npos)
+      return NULL;
+    setValue(QString::fromStdString(str));
+    if(E(element)->hasAttribute("unit"))
+      setUnit(QString::fromStdString(E(element)->getAttribute("unit")));
+    return element;
+  }
+
+  DOMElement* AboutZWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(PV%"aboutZ");
+    DOMText *text = doc->createTextNode(X()%getValue().toStdString());
+    ele->insertBefore(text, NULL);
+    if(not getUnit().isEmpty())
+      E(ele)->setAttribute("unit", getUnit().toStdString());
+    parent->insertBefore(ele, NULL);
+    return NULL;
   }
 
   PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {

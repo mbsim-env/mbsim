@@ -103,6 +103,8 @@ namespace MBSimGUI {
     if(E(parent)->getTagName()==PV%"Embed") {
       setCounterName(QString::fromStdString(E(parent)->getAttribute("counterName")));
       setValue(QString::fromStdString(E(parent)->getAttribute("count")));
+      setHref(QString::fromStdString(E(parent)->getAttribute("href")));
+      setParameterHref(QString::fromStdString(E(parent)->getAttribute("parameterHref")));
     }
     return element;
   }

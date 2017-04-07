@@ -104,28 +104,28 @@ namespace MBSimGUI {
   }
 
   GroupContextMenu::GroupContextMenu(Element *element, QWidget *parent, bool removable) : ElementContextMenu(element,parent,removable) {
-    QAction *action;
-    action = new QAction("Add frame", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
-    addAction(action);
-    QMenu *menu = new ContourContextContextMenu(element, "Add contour");
-    addMenu(menu);
-    action = new QAction("Add group", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGroup()));
-    //menu = new GroupContextContextMenu(element, "Add group");
-    //addMenu(menu);
-    addAction(action);
-    menu = new ObjectContextContextMenu(element, "Add object");
-    addMenu(menu);
-    menu = new LinkContextContextMenu(element, "Add link");
-    addMenu(menu);
-    menu = new ConstraintContextContextMenu(element, "Add constraint");
-    addMenu(menu);
-    menu = new ObserverContextContextMenu(element, "Add observer");
-    addMenu(menu);
-    action = new QAction("Add model", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addModel()));
-    addAction(action);
+//    QAction *action;
+//    action = new QAction("Add frame", this);
+//    connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
+//    addAction(action);
+//    QMenu *menu = new ContourContextContextMenu(element, "Add contour");
+//    addMenu(menu);
+//    action = new QAction("Add group", this);
+//    connect(action,SIGNAL(triggered()),this,SLOT(addGroup()));
+//    //menu = new GroupContextContextMenu(element, "Add group");
+//    //addMenu(menu);
+//    addAction(action);
+//    menu = new ObjectContextContextMenu(element, "Add object");
+//    addMenu(menu);
+//    menu = new LinkContextContextMenu(element, "Add link");
+//    addMenu(menu);
+//    menu = new ConstraintContextContextMenu(element, "Add constraint");
+//    addMenu(menu);
+//    menu = new ObserverContextContextMenu(element, "Add observer");
+//    addMenu(menu);
+//    action = new QAction("Add model", this);
+//    connect(action,SIGNAL(triggered()),this,SLOT(addModel()));
+//    addAction(action);
   } 
 
   void GroupContextMenu::addFixedRelativeFrame() {
@@ -178,12 +178,12 @@ namespace MBSimGUI {
   } 
 
   RigidBodyContextMenu::RigidBodyContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
-    QAction *action;
-    action = new QAction("Add frame", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
-    addAction(action);
-    QMenu *menu = new ContourContextContextMenu(element, "Add contour");
-    addMenu(menu);
+//    QAction *action;
+//    action = new QAction("Add frame", this);
+//    connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
+//    addAction(action);
+//    QMenu *menu = new ContourContextContextMenu(element, "Add contour");
+//    addMenu(menu);
   } 
 
   void RigidBodyContextMenu::addFixedRelativeFrame() {
@@ -254,39 +254,39 @@ namespace MBSimGUI {
   }
 
   void ContourContextContextMenu::addPoint() {
-    mw->addContour(new Point("Point"));
+    mw->addContour(new Point("Point"), element);
   }
 
   void ContourContextContextMenu::addLine() {
-    mw->addContour(new Line("Line"));
+    mw->addContour(new Line("Line"), element);
   }
 
   void ContourContextContextMenu::addPlane() {
-    mw->addContour(new Plane("Plane"));
+    mw->addContour(new Plane("Plane"), element);
   }
 
   void ContourContextContextMenu::addSphere() {
-    mw->addContour(new Sphere("Sphere"));
+    mw->addContour(new Sphere("Sphere"), element);
   }
 
   void ContourContextContextMenu::addCircle() {
-    mw->addContour(new Circle("Circle"));
+    mw->addContour(new Circle("Circle"), element);
   }
 
   void ContourContextContextMenu::addCuboid() {
-    mw->addContour(new Cuboid("Cuboid"));
+    mw->addContour(new Cuboid("Cuboid"), element);
   }
 
   void ContourContextContextMenu::addLineSegment() {
-    mw->addContour(new LineSegment("LineSegment"));
+    mw->addContour(new LineSegment("LineSegment"), element);
   }
 
   void ContourContextContextMenu::addPlanarContour() {
-    mw->addContour(new PlanarContour("PlanarContour"));
+    mw->addContour(new PlanarContour("PlanarContour"), element);
   }
 
   void ContourContextContextMenu::addSpatialContour() {
-    mw->addContour(new SpatialContour("SpatialContour"));
+    mw->addContour(new SpatialContour("SpatialContour"), element);
   }
 
   GroupContextContextMenu::GroupContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

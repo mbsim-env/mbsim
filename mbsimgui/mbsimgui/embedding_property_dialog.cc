@@ -31,7 +31,7 @@ namespace MBSimGUI {
   EmbeddingPropertyDialog::EmbeddingPropertyDialog(Element *element_, bool embedding, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), element(element_), embed(0) {
     addTab("Embedding");
     if(embedding) {
-      embed = new ExtWidget("Embed", new EmbedWidget, true);
+      embed = new ExtWidget("Embed", new EmbedWidget(element), true);
       addToTab("Embedding",embed);
       name = new ExtWidget("Name",new TextWidget);
       addToTab("Embedding",name);
@@ -49,8 +49,9 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbeddingPropertyDialog::writeXMLFile(DOMNode *node, DOMNode *ref) {
+    element->setName(static_cast<TextWidget*>(name->getWidget())->getText());
+    E(element->getXMLElement())->setAttribute("name",element->getName().toStdString());
     if(embed) {
-      element->setName(static_cast<TextWidget*>(name->getWidget())->getText());
       element->setCounterName(static_cast<EmbedWidget*>(embed->getWidget())->getCounterName());
       element->setValue(static_cast<EmbedWidget*>(embed->getWidget())->getCount());
       DOMNode* embedNode = node->getParentNode();
@@ -65,12 +66,12 @@ namespace MBSimGUI {
         embed->writeXMLFile(embedNode,ref);
       }
       else {
+        element->setCounterName("");
+        element->setValue("");
         if(X()%embedNode->getNodeName()=="Embed") {
           if(element->getNumberOfParameters()) {
-            E(static_cast<DOMElement*>(embedNode))->removeAttribute("href");
             E(static_cast<DOMElement*>(embedNode))->removeAttribute("count");
             E(static_cast<DOMElement*>(embedNode))->removeAttribute("counterName");
-            E(static_cast<DOMElement*>(embedNode))->removeAttribute("parameterHref");
           }
           else {
             embedNode->getParentNode()->insertBefore(node,embedNode);

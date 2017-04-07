@@ -326,7 +326,7 @@ namespace MBSimGUI {
     if(ret == QMessageBox::Ok) {
       QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
       QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
-      saveProject(projectFile);
+      saveProject(projectFile,false);
       QStringList arg;
       arg.append("--stopafterfirststep");
       arg.append(projectFile);
@@ -627,22 +627,41 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
-    if(modifyStatus) setProjectChanged(false);
-    string message;
+    if(modifyStatus) {
+      setProjectChanged(false);
+//      for(size_t i=0; i<elementsWithHref.size(); i++) {
+//        DOMElement *element = elementsWithHref[i]->getXMLElement();
+//        DOMDocument *edoc = impl->createDocument();
+//        DOMNode *node = edoc->importNode(element,true);
+//        edoc->insertBefore(node,NULL);
+//        serializer->writeToURI(edoc, X()%elementsWithHref[i]->getHref().toStdString());
+//        E(static_cast<DOMElement*>(element->getParentNode()))->setAttribute("href",elementsWithHref[i]->getHref().toStdString());
+//        DOMNode *ps = element->getPreviousSibling();
+//        if(ps and X()%ps->getNodeName()=="#text")
+//          element->getParentNode()->removeChild(ps);
+//        element->getParentNode()->removeChild(element);
+//      }
+    }
     try {
       serializer->writeToURI(doc.get(), X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
+//      if(modifyStatus) {
+//        for(size_t i=0; i<elementsWithHref.size(); i++) {
+//          DOMElement *element = elementsWithHref[i]->getXMLElement();
+//          E(static_cast<DOMElement*>(element->getParentNode()))->removeAttribute("href");
+//          element->getParentNode()->insertBefore(element,NULL);
+//        }
+      }
       return true;
     }
     catch(const std::exception &ex) {
-      message = ex.what();
+      cout << ex.what() << endl;
     }
     catch(const DOMException &ex) {
-      message = "DOM exception: " + X()%ex.getMessage();
+      cout << "DOM exception: " + X()%ex.getMessage() << endl;
     }
     catch(...) {
-      message = "Unknown exception.";
+      cout << "Unknown exception." << endl;
     }
-    cout << message << endl;
     return false;
   }
 
@@ -855,7 +874,7 @@ namespace MBSimGUI {
       if(ret == QMessageBox::Ok) {
         QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
         QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
-        saveProject(projectFile);
+        saveProject(projectFile,false);
         QStringList arg;
         arg.append("--stopafterfirststep");
         arg.append(projectFile);
@@ -989,24 +1008,27 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveElementAs() {
-    throw;
-//    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-//    QModelIndex index = elementList->selectionModel()->currentIndex();
-//    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".xml", "XML files (*.xml)");
-//    if(file!="")
-//      static_cast<Element*>(model->getItem(index)->getItemData())->writeXMLFileEmbed(file.toStdString());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
+    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+element->getName()+".xml", "XML files (*.xml)");
+    if(not file.isEmpty()) {
+      DOMDocument *edoc = impl->createDocument();
+      DOMNode *node = edoc->importNode(element->getXMLElement(),true);
+      edoc->insertBefore(node,NULL);
+      serializer->writeToURI(edoc, X()%file.toStdString());
+    }
   }
 
   void MainWindow::addFrame(Frame *frame, Element *parent) {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    QModelIndex containerIndex = index.data().toString()=="frames"?index:index.child(0,0); 
-    frame->setName(frame->getName()+toQStr(model->getItem(containerIndex)->getID()));
+    frame->setName(frame->getName()+toQStr(model->getItem(index)->getID()));
     parent->addFrame(frame);
     frame->createXMLElement(frame->getParent()->getXMLFrames());
-    model->createFrameItem(frame,containerIndex);
-    QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+    model->createFrameItem(frame,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
@@ -1015,12 +1037,11 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    QModelIndex containerIndex = (index.row()==0)?index.child(1,0):index;
-    contour->setName(contour->getName()+toQStr(model->getItem(containerIndex)->getID()));
+    contour->setName(contour->getName()+toQStr(model->getItem(index)->getID()));
     parent->addContour(contour);
     contour->createXMLElement(contour->getParent()->getXMLContours());
-    model->createContourItem(contour,containerIndex);
-    QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+    model->createContourItem(contour,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
@@ -1029,12 +1050,11 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    QModelIndex containerIndex = (index.row()==0)?index.child(2,0):index;
-    group->setName(group->getName()+toQStr(model->getItem(containerIndex)->getID()));
+    group->setName(group->getName()+toQStr(model->getItem(index)->getID()));
     parent->addGroup(group);
     group->createXMLElement(group->getParent()->getXMLGroups());
-    model->createGroupItem(group,containerIndex);
-    QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+    model->createGroupItem(group,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
@@ -1043,12 +1063,11 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    QModelIndex containerIndex = (index.row()==0)?index.child(3,0):index;
-    object->setName(object->getName()+toQStr(model->getItem(containerIndex)->getID()));
+    object->setName(object->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObject(object);
     object->createXMLElement(object->getParent()->getXMLObjects());
-    model->createObjectItem(object,containerIndex);
-    QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+    model->createObjectItem(object,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
@@ -1057,12 +1076,11 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    QModelIndex containerIndex = (index.row()==0)?index.child(4,0):index;
-    link->setName(link->getName()+toQStr(model->getItem(containerIndex)->getID()));
+    link->setName(link->getName()+toQStr(model->getItem(index)->getID()));
     parent->addLink(link);
     link->createXMLElement(link->getParent()->getXMLLinks());
-    model->createLinkItem(link,containerIndex);
-    QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+    model->createLinkItem(link,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
@@ -1071,12 +1089,11 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    QModelIndex containerIndex = (index.row()==0)?index.child(5,0):index;
-    constraint->setName(constraint->getName()+toQStr(model->getItem(containerIndex)->getID()));
+    constraint->setName(constraint->getName()+toQStr(model->getItem(index)->getID()));
     parent->addConstraint(constraint);
     constraint->createXMLElement(constraint->getParent()->getXMLConstraints());
-    model->createConstraintItem(constraint,containerIndex);
-    QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+    model->createConstraintItem(constraint,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
@@ -1085,12 +1102,11 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    QModelIndex containerIndex = (index.row()==0)?index.child(6,0):index;
-    observer->setName(observer->getName()+toQStr(model->getItem(containerIndex)->getID()));
+    observer->setName(observer->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObserver(observer);
     observer->createXMLElement(observer->getParent()->getXMLObservers());
-    model->createObserverItem(observer,containerIndex);
-    QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+    model->createObserverItem(observer,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
   }
@@ -1205,6 +1221,24 @@ namespace MBSimGUI {
   void MainWindow::applySettings() {
     setProjectChanged(true);
     mbsimxml(1);
+  }
+
+  void MainWindow::addElementWithHref(Element *element) {
+    bool found = false;
+    for(size_t i=0; i<elementsWithHref.size(); i++)
+      if(elementsWithHref[i] == element)
+        found = true;
+    if(not found)
+      elementsWithHref.push_back(element);
+  }
+
+  void MainWindow::addElementWithParameterHref(Element *element) {
+    bool found = false;
+    for(size_t i=0; i<elementsWithParameterHref.size(); i++)
+      if(elementsWithParameterHref[i] == element)
+        found = true;
+    if(not found)
+      elementsWithParameterHref.push_back(element);
   }
 
 }

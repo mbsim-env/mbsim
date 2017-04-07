@@ -368,6 +368,44 @@ namespace MBSimGUI {
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       virtual QWidget* getValidatedWidget() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+  };
+
+  class AboutXWidget : public VariableWidget {
+
+    private:
+      QLineEdit* box;
+      QComboBox* unit;
+    public:
+      AboutXWidget();
+      QString getValue() const {return box->text().isEmpty()?"0":box->text();}
+      void setValue(const QString &str) {box->setText(str=="0"?"":str);}
+      virtual QString getType() const {return "AboutX";}
+      bool validate(const std::vector<std::vector<QString> > &A) const;
+      QString getUnit() const {return unit->currentText();}
+      void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
+      virtual QWidget* getValidatedWidget() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+  };
+
+  class AboutYWidget : public VariableWidget {
+
+    private:
+      QLineEdit* box;
+      QComboBox* unit;
+    public:
+      AboutYWidget();
+      QString getValue() const {return box->text().isEmpty()?"0":box->text();}
+      void setValue(const QString &str) {box->setText(str=="0"?"":str);}
+      virtual QString getType() const {return "AboutY";}
+      bool validate(const std::vector<std::vector<QString> > &A) const;
+      QString getUnit() const {return unit->currentText();}
+      void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
+      virtual QWidget* getValidatedWidget() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
   class AboutZWidget : public VariableWidget {
@@ -384,6 +422,8 @@ namespace MBSimGUI {
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       virtual QWidget* getValidatedWidget() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
   class PhysicalVariableWidget : public VariableWidget {

@@ -34,7 +34,7 @@ namespace MBSimGUI {
 
   class Solver {
     protected:
-      QString name, value;
+      QString name, value, href, parameterHref;
       xercesc::DOMElement *element;
     public:
       Solver() : name("Solver") { }
@@ -46,6 +46,10 @@ namespace MBSimGUI {
       virtual QString getType() const { return "Solver"; }
       const QString& getName() const { return name; }
       const QString& getValue() const { return value; }
+      const QString& getHref() const { return href; }
+      void setHref(const QString &str) { href = str; }
+      const QString& getParameterHref() const { return parameterHref; }
+      void setParameterHref(const QString &str) { parameterHref = str; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const = 0;
       virtual SolverPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
       void addParameter(Parameter *param) { }

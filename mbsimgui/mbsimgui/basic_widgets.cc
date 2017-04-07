@@ -911,7 +911,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  EmbedWidget::EmbedWidget() {
+  EmbedWidget::EmbedWidget(Element *ele_) : ele(ele_) {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
     layout->setMargin(0);
@@ -921,8 +921,8 @@ namespace MBSimGUI {
     layout->addWidget(count);
     counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
     layout->addWidget(counterName);
-    parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.xml)", 1), true);
-    layout->addWidget(parameterList);
+    parameterHref = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.xml)", 1), true);
+    layout->addWidget(parameterHref);
   }
 
   QString EmbedWidget::getCounterName() const {
@@ -934,9 +934,9 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbedWidget::initializeUsingXML(DOMElement *parent) {
-    if(E(parent)->hasAttribute("href")) {
+    if(not ele->getHref().isEmpty()) {
       href->setActive(true);
-      static_cast<FileWidget*>(href->getWidget())->setFile(QString::fromStdString(E(parent)->getAttribute("href")));
+      static_cast<FileWidget*>(href->getWidget())->setFile(ele->getHref());
     }
     if(E(parent)->hasAttribute("count")) {
       count->setActive(true);
@@ -946,22 +946,26 @@ namespace MBSimGUI {
       counterName->setActive(true);
       static_cast<TextWidget*>(counterName->getWidget())->setText(QString::fromStdString(E(parent)->getAttribute("counterName")));
     }
-    if(E(parent)->hasAttribute("parameterHref")) {
-      parameterList->setActive(true);
-      static_cast<FileWidget*>(parameterList->getWidget())->setFile(QString::fromStdString(E(parent)->getAttribute("parameterHref")));
+    if(not ele->getParameterHref().isEmpty()) {
+      parameterHref->setActive(true);
+      static_cast<FileWidget*>(parameterHref->getWidget())->setFile(ele->getParameterHref());
     }
     return parent;
   }
 
   DOMElement* EmbedWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    if(href->isActive())
-      E(static_cast<DOMElement*>(parent))->setAttribute("href", static_cast<FileWidget*>(href->getWidget())->getFile().toStdString());
+    if(href->isActive()) {
+      ele->setHref(static_cast<FileWidget*>(href->getWidget())->getFile());
+      mw->addElementWithHref(ele);
+    }
     if(count->isActive())
       E(static_cast<DOMElement*>(parent))->setAttribute("count", static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue().toStdString());
     if(counterName->isActive())
       E(static_cast<DOMElement*>(parent))->setAttribute("counterName", static_cast<TextWidget*>(counterName->getWidget())->getText().toStdString());
-    if(parameterList->isActive())
-      E(static_cast<DOMElement*>(parent))->setAttribute("parameterHref", static_cast<FileWidget*>(parameterList->getWidget())->getFile().toStdString());
+    if(parameterHref->isActive()) {
+      ele->setParameterHref(static_cast<FileWidget*>(parameterHref->getWidget())->getFile());
+      mw->addElementWithParameterHref(ele);
+    }
     return NULL;
   }
 
