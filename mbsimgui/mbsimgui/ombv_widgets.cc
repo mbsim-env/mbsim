@@ -533,7 +533,7 @@ namespace MBSimGUI {
 
   IvBodyWidget::IvBodyWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
 
-    ivFileName = new ExtWidget("Iv file name",new FileWidget("XML model files", "iv files (*.iv *.wrl)"),false,false,OPENMBV%"ivFileName");
+    ivFileName = new ExtWidget("Iv file name",new FileWidget("", "XML model files", "iv files (*.iv *.wrl)", 0, true, false),false,false,OPENMBV%"ivFileName");
     layout->addWidget(ivFileName);
 
     creaseEdges = new ExtWidget("Crease edges",new ChoiceWidget2(new ScalarWidgetFactory("-1",vector<QStringList>(2,angleUnits())),QBoxLayout::RightToLeft),true,false,OPENMBV%"creaseEdges");

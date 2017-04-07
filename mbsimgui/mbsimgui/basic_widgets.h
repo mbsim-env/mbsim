@@ -322,16 +322,17 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      FileWidget(const QString &description, const QString &extensions, int mode=0);
-      QString getFile() const { return relativeFilePath->text(); }
-      void setFile(const QString &str) { relativeFilePath->setText(str); }
+      FileWidget(const QString &file, const QString &description, const QString &extensions, int mode=0, bool quote=false, bool relativeFilePath=false);
+      QString getFile() const { return filePath->text(); }
+      void setFile(const QString &str) { filePath->setText(str); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
-      QLineEdit *relativeFilePath;
+      QLineEdit *filePath;
       QString description, extensions;
       int mode;
+      bool quote, relativeFilePath;
 
     protected slots:
       void selectFile();

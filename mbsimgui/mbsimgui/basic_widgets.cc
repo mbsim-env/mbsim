@@ -636,57 +636,55 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  FileWidget::FileWidget(const QString &description_, const QString &extensions_, int mode_) : description(description_), extensions(extensions_), mode(mode_) {
+  FileWidget::FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_, bool quote_, bool relativeFilePath_) : description(description_), extensions(extensions_), mode(mode_), quote(quote_), relativeFilePath(relativeFilePath_) {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    relativeFilePath = new QLineEdit;
-    layout->addWidget(relativeFilePath);
+    filePath = new QLineEdit;
+    layout->addWidget(filePath);
+    setFile(file);
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
     connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
-    connect(relativeFilePath,SIGNAL(textChanged(const QString&)),this,SIGNAL(fileChanged(const QString&)));
+    connect(filePath,SIGNAL(textChanged(const QString&)),this,SIGNAL(fileChanged(const QString&)));
   }
 
   void FileWidget::selectFile() {
     QString file = getFile();
-    if(mode<3)
-      file = file.mid(1,file.length()-2);
+    if(quote) file = file.mid(1,file.length()-2);
     if(mode==0) 
       file = QFileDialog::getOpenFileName(0, description, file, extensions);
     else if(mode==1)
       file = QFileDialog::getSaveFileName(0, description, file, extensions);
     else
       file = QFileDialog::getExistingDirectory ( 0, description, file);
-    if(file!="") {
-      if(mode==3)
-        setFile(mbsDir.relativeFilePath(file));
+    if(not file.isEmpty()) {
+      if(relativeFilePath)
+        setFile(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
       else
-        setFile(QString("'")+mbsDir.relativeFilePath(file)+"'");
+        setFile(quote?("\""+mbsDir.absoluteFilePath(file)+"\""):mbsDir.absoluteFilePath(file));
     }
   }
 
   DOMElement* FileWidget::initializeUsingXML(DOMElement *parent) {
     DOMText *text = E(parent)->getFirstTextChild();
     if(text) {
+      //QString str = QString::fromStdString(X()%text->getData());
+      //setFile(quote?str.mid(1,str.length()-2):str);
       setFile(QString::fromStdString(X()%text->getData()));
       return parent;
     }
-    return 0;
+    return NULL;
   }
 
   DOMElement* FileWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0 = static_cast<DOMElement*>(parent);
-    QString fileName = getFile();
-    if(true) {
-      QFileInfo fileInfo = fileName.mid(1,fileName.length()-2);
-      fileName = QString("\"")+fileInfo.absoluteFilePath()+"\"";
-    }
-    DOMText *text = doc->createTextNode(X()%fileName.toStdString());
+    //DOMText *text = doc->createTextNode(X()%(quote?("\""+getFile().toStdString()+"\""):getFile().toStdString()));
+    DOMText *text = doc->createTextNode(X()%getFile().toStdString());
     ele0->insertBefore(text, NULL);
-    return 0;
+    return NULL;
   }
 
   SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
@@ -735,11 +733,8 @@ namespace MBSimGUI {
   DOMElement* BasicTextWidget::initializeUsingXML(DOMElement *element) {
     DOMText *text_ = E(element)->getFirstTextChild();
     if(text_) {
-      QString str = QString::fromStdString(X()%text_->getNodeValue());
-      if(quote)
-        setText(str.mid(1,str.length()-2));
-      else
-        setText(str);
+      QString str = QString::fromStdString(X()%text_->getData());
+      setText(quote?str.mid(1,str.length()-2):str);
       return element;
     }
     return NULL;
@@ -915,13 +910,13 @@ namespace MBSimGUI {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
     layout->setMargin(0);
-    href = new ExtWidget("File", new FileWidget("XML model files", "xml files (*.xml)", 1), true);
+    href = new ExtWidget("File", new FileWidget(ele->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false, true), true);
     layout->addWidget(href);
     count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")), true);
     layout->addWidget(count);
     counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
     layout->addWidget(counterName);
-    parameterHref = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.xml)", 1), true);
+    parameterHref = new ExtWidget("Parameter file", new FileWidget(ele->getName()+".parameter.xml", "XML parameter files", "xml files (*.xml)", 1, false, true), true);
     layout->addWidget(parameterHref);
   }
 
