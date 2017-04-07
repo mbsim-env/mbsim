@@ -50,16 +50,17 @@ namespace MBSimGUI {
               QFileInfo fileInfo(mbsDir.absoluteFilePath(parameterHref));
               std::shared_ptr<xercesc::DOMDocument> doc(parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString()));
               ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-              ele1->insertBefore(ele2,NULL);
+              ele1->insertBefore(ele2,ele1->getFirstElementChild());
               MBXMLUtils::E(ele1)->removeAttribute("parameterHref");
             }
-            ele2=MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
+            else
+              ele2 = MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
             if(ele2) {
               param = Parameter::initializeParametersUsingXML(ele2);
-              ele2=ele2->getNextElementSibling();
+              ele2 = ele2->getNextElementSibling();
             }
             else
-              ele2=ele1->getFirstElementChild();
+              ele2 = ele1->getFirstElementChild();
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               href = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"));
               QFileInfo fileInfo(mbsDir.absoluteFilePath(href));
