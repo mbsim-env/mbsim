@@ -29,7 +29,10 @@
 #include "observer.h"
 #include "embed.h"
 #include "utils.h"
+#include "mainwindow.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <xercesc/dom/DOMImplementation.hpp>
+#include <xercesc/dom/DOMLSSerializer.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -39,6 +42,9 @@ namespace MBSimGUI {
 
   extern bool absolutePath;
   extern QDir mbsDir;
+  extern DOMImplementation *impl;
+  extern DOMLSSerializer *serializer;
+  extern MainWindow *mw;
 
   int Element::IDcounter=0;
 
@@ -55,6 +61,21 @@ namespace MBSimGUI {
       delete (*it);
     for(vector<Parameter*>::iterator i = removedParameter.begin(); i != removedParameter.end(); ++i)
       delete *i;
+  }
+
+  DOMElement* Element::processHref(DOMElement *element) {
+    if(not getHref().isEmpty()) {
+      DOMDocument *edoc = impl->createDocument();
+      DOMNode *node = edoc->importNode(element,true);
+      edoc->insertBefore(node,NULL);
+      serializer->writeToURI(edoc, X()%getHref().toStdString());
+      E(static_cast<DOMElement*>(element->getParentNode()))->setAttribute("href",getHref().toStdString());
+      DOMNode *ps = element->getPreviousSibling();
+      if(ps and X()%ps->getNodeName()=="#text")
+        element->getParentNode()->removeChild(ps);
+      element->getParentNode()->removeChild(element);
+    }
+    return element;
   }
 
   void Element::removeXMLElements() {
@@ -103,8 +124,6 @@ namespace MBSimGUI {
     if(E(parent)->getTagName()==PV%"Embed") {
       setCounterName(QString::fromStdString(E(parent)->getAttribute("counterName")));
       setValue(QString::fromStdString(E(parent)->getAttribute("count")));
-      setHref(QString::fromStdString(E(parent)->getAttribute("href")));
-      setParameterHref(QString::fromStdString(E(parent)->getAttribute("parameterHref")));
     }
     return element;
   }

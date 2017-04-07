@@ -956,16 +956,20 @@ namespace MBSimGUI {
   DOMElement* EmbedWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     if(href->isActive()) {
       ele->setHref(static_cast<FileWidget*>(href->getWidget())->getFile());
-      mw->addElementWithHref(ele);
+      mw->addItemWithHref(ele);
     }
+    else
+      ele->setHref("");
     if(count->isActive())
       E(static_cast<DOMElement*>(parent))->setAttribute("count", static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue().toStdString());
     if(counterName->isActive())
       E(static_cast<DOMElement*>(parent))->setAttribute("counterName", static_cast<TextWidget*>(counterName->getWidget())->getText().toStdString());
-    if(parameterHref->isActive()) {
+    if(parameterHref->isActive())
       ele->setParameterHref(static_cast<FileWidget*>(parameterHref->getWidget())->getFile());
-      mw->addElementWithParameterHref(ele);
-    }
+    else
+      ele->setParameterHref("");
+    if(ele->getHref().isEmpty() and ele->getParameterHref().isEmpty())
+      mw->removeItemWithHref(ele);
     return NULL;
   }
 

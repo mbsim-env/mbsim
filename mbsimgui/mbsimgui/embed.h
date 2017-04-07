@@ -22,16 +22,17 @@
 
 #include <mbxmlutilshelper/dom.h>
 #include "parameter.h"
+#include "mainwindow.h"
 #include <QFileInfo>
 #include <QDir>
 #include <xercesc/dom/DOMDocument.hpp>
-
-extern xercesc::DOMLSParser *parser;
 
 namespace MBSimGUI {
 
   class Element;
   extern QDir mbsDir;
+  extern xercesc::DOMLSParser *parser;
+  extern MainWindow *mw;
 
   template <typename T>
     class Embed {
@@ -42,9 +43,11 @@ namespace MBSimGUI {
           T *object;
           std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
+            QString href, parameterHref;
             xercesc::DOMElement *ele2 = 0;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-              QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"))));
+              parameterHref = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"));
+              QFileInfo fileInfo(mbsDir.absoluteFilePath(parameterHref));
               std::shared_ptr<xercesc::DOMDocument> doc(parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString()));
               ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
               ele1->insertBefore(ele2,NULL);
@@ -58,13 +61,17 @@ namespace MBSimGUI {
             else
               ele2=ele1->getFirstElementChild();
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
-              QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"))));
+              href = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"));
+              QFileInfo fileInfo(mbsDir.absoluteFilePath(href));
               std::shared_ptr<xercesc::DOMDocument> doc(parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString()));
               ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
               ele1->insertBefore(ele2,NULL);
               MBXMLUtils::E(ele1)->removeAttribute("href");
             }
             object=create(ele2);
+            if(not href.isEmpty()) object->setHref(href);
+            if(not parameterHref.isEmpty()) object->setParameterHref(parameterHref);
+            if((not parameterHref.isEmpty()) or (not href.isEmpty())) mw->addItemWithHref(object);
             if(object) {
               object->initializeUsingXML(ele2);
               for(size_t i=0; i<param.size(); i++)

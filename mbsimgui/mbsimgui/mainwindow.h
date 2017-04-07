@@ -61,6 +61,7 @@ namespace MBSimGUI {
   class Observer;
   class Parameter;
   class ParameterList;
+  class TreeItemData;
 
   class MainWindow : public QMainWindow {
 
@@ -93,7 +94,7 @@ namespace MBSimGUI {
       static QWebView *helpViewer;
       bool debug;
       std::shared_ptr<xercesc::DOMDocument> doc;
-      std::vector<Element*> elementsWithHref, elementsWithParameterHref;
+      std::vector<TreeItemData*> itemsWithHref;
 
     public:
       MainWindow(QStringList &arg);
@@ -117,8 +118,8 @@ namespace MBSimGUI {
       ElementView* getElementList() { return elementList; }
       void setProjectChanged(bool changed=true);
       void selectSolver(int i);
-      void addElementWithHref(Element *element);
-      void addElementWithParameterHref(Element *element);
+      void addItemWithHref(TreeItemData *item);
+      void removeItemWithHref(TreeItemData *item);
     public slots:
       void elementListClicked();
       void parameterListClicked();

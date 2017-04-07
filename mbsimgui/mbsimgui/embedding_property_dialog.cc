@@ -21,12 +21,15 @@
 #include "embedding_property_dialog.h"
 #include "element.h"
 #include "basic_widgets.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   EmbeddingPropertyDialog::EmbeddingPropertyDialog(Element *element_, bool embedding, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), element(element_), embed(0) {
     addTab("Embedding");
@@ -68,6 +71,9 @@ namespace MBSimGUI {
       else {
         element->setCounterName("");
         element->setValue("");
+        element->setHref("");
+        element->setParameterHref("");
+        mw->removeItemWithHref(element);
         if(X()%embedNode->getNodeName()=="Embed") {
           if(element->getNumberOfParameters()) {
             E(static_cast<DOMElement*>(embedNode))->removeAttribute("count");

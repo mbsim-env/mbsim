@@ -58,14 +58,11 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 namespace bfs=boost::filesystem;
 
-//shared_ptr<DOMImplementation> impl(xercesc::DOMImplementation::getImplementation());
-//shared_ptr<DOMLSParser> parser(impl->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0));
-//shared_ptr<DOMLSSerializer> serializer(impl->createLSSerializer());
-DOMImplementation *impl=xercesc::DOMImplementation::getImplementation();
-DOMLSParser *parser=impl->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0);
-DOMLSSerializer *serializer=impl->createLSSerializer();
-
 namespace MBSimGUI {
+
+  DOMImplementation *impl=xercesc::DOMImplementation::getImplementation();
+  DOMLSParser *parser=impl->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0);
+  DOMLSSerializer *serializer=impl->createLSSerializer();
 
   bool currentTask;
   bool absolutePath = false;
@@ -559,7 +556,7 @@ namespace MBSimGUI {
       MBSimObjectFactory::initialize();
       std::string message;
       try { 
-        doc = shared_ptr<DOMDocument>(::parser->parseURI(X()%file.toStdString()));
+        doc = shared_ptr<DOMDocument>(MBSimGUI::parser->parseURI(X()%file.toStdString()));
       }
       catch(const std::exception &ex) {
         message = ex.what();
@@ -627,30 +624,23 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
-    if(modifyStatus) {
-      setProjectChanged(false);
-//      for(size_t i=0; i<elementsWithHref.size(); i++) {
-//        DOMElement *element = elementsWithHref[i]->getXMLElement();
-//        DOMDocument *edoc = impl->createDocument();
-//        DOMNode *node = edoc->importNode(element,true);
-//        edoc->insertBefore(node,NULL);
-//        serializer->writeToURI(edoc, X()%elementsWithHref[i]->getHref().toStdString());
-//        E(static_cast<DOMElement*>(element->getParentNode()))->setAttribute("href",elementsWithHref[i]->getHref().toStdString());
-//        DOMNode *ps = element->getPreviousSibling();
-//        if(ps and X()%ps->getNodeName()=="#text")
-//          element->getParentNode()->removeChild(ps);
-//        element->getParentNode()->removeChild(element);
-//      }
-    }
     try {
-      serializer->writeToURI(doc.get(), X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
-//      if(modifyStatus) {
-//        for(size_t i=0; i<elementsWithHref.size(); i++) {
-//          DOMElement *element = elementsWithHref[i]->getXMLElement();
-//          E(static_cast<DOMElement*>(element->getParentNode()))->removeAttribute("href");
-//          element->getParentNode()->insertBefore(element,NULL);
-//        }
-//      }
+      if(modifyStatus) {
+        setProjectChanged(false);
+        cout << itemsWithHref.size() << endl;
+        if(itemsWithHref.size()) {
+          QModelIndex index = elementList->model()->index(0,0);
+          DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
+          DOMDocument *ndoc = static_cast<DOMDocument*>(doc->cloneNode(true));
+          DOMElement* ele = ndoc->getDocumentElement()->getFirstElementChild();
+          if(E(ele)->getTagName()==PV%"Embed")
+            ele = E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+          dss->processHref(ele);
+          serializer->writeToURI(ndoc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
+        }
+        else
+          serializer->writeToURI(doc.get(), X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
+      }
       return true;
     }
     catch(const std::exception &ex) {
@@ -1223,22 +1213,19 @@ namespace MBSimGUI {
     mbsimxml(1);
   }
 
-  void MainWindow::addElementWithHref(Element *element) {
-    bool found = false;
-    for(size_t i=0; i<elementsWithHref.size(); i++)
-      if(elementsWithHref[i] == element)
-        found = true;
-    if(not found)
-      elementsWithHref.push_back(element);
+  void MainWindow::addItemWithHref(TreeItemData *item) {
+    for (vector<TreeItemData*>::iterator it = itemsWithHref.begin() ; it != itemsWithHref.end(); ++it)
+      if(*it==item)
+        return;
+    itemsWithHref.push_back(item);
   }
 
-  void MainWindow::addElementWithParameterHref(Element *element) {
-    bool found = false;
-    for(size_t i=0; i<elementsWithParameterHref.size(); i++)
-      if(elementsWithParameterHref[i] == element)
-        found = true;
-    if(not found)
-      elementsWithParameterHref.push_back(element);
+  void MainWindow::removeItemWithHref(TreeItemData *item) {
+    for (vector<TreeItemData*>::iterator it = itemsWithHref.begin() ; it != itemsWithHref.end(); ++it)
+      if(*it==item) {
+        itemsWithHref.erase(it);
+        break;
+      }
   }
 
 }

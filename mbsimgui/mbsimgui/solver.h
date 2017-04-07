@@ -20,6 +20,7 @@
 #ifndef _SOLVER__H_
 #define _SOLVER__H_
 
+#include "treeitemdata.h"
 #include "solver_property_dialog.h"
 #include "namespace.h"
 
@@ -32,7 +33,7 @@ namespace MBSimGUI {
 
   class Parameter;
 
-  class Solver {
+  class Solver : public TreeItemData {
     protected:
       QString name, value, href, parameterHref;
       xercesc::DOMElement *element;
@@ -53,6 +54,7 @@ namespace MBSimGUI {
       virtual MBXMLUtils::NamespaceURI getNameSpace() const = 0;
       virtual SolverPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
       void addParameter(Parameter *param) { }
+      virtual QMenu* createContextMenu() {return NULL;}
   };
 
 }
