@@ -58,7 +58,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([cannott generate documentation. 'doxygen' required.])
 fi
 
-LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
+LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsimPowertrain/Makefile doc/Makefile mbsimPowertrain.pc schema/Makefile doc/doxyfile xmldoc/Makefile xmldoc/Doxyfile])

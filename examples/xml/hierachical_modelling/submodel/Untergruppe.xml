@@ -139,6 +139,7 @@
           <numberOfCoils>5</numberOfCoils>
           <springRadius>0.1</springRadius>
           <crossSectionRadius>0.01</crossSectionRadius>
+          <type>'polyline'</type>
       </enableOpenMBV>
     </SpringDamper>
   </links>

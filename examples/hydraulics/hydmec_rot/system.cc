@@ -79,7 +79,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   double pRB=2e5;
   double cF=1e4;
   
-  double phiSolid=degtorad(20.);
+  double phiSolid=20.*M_PI/180.;
   double phiFree=(2.*M_PI-5.*phiSolid)/5.;
   double dphi=2.*M_PI/5.;
   

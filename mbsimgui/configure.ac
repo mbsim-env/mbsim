@@ -43,7 +43,6 @@ AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inl
   AC_DEFINE([INLINE_OPENMBV],[1],[Use inline openmbv])
 fi
 
-test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare -Wno-attributes"
 if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
@@ -71,7 +70,8 @@ AC_TRY_LINK(
   [],
   [AC_MSG_ERROR([Can not link with qwt >= 6!])])
 
-LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
+LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
+test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsimgui/Makefile])
 
