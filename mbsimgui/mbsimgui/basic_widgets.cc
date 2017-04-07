@@ -733,8 +733,7 @@ namespace MBSimGUI {
   DOMElement* BasicTextWidget::initializeUsingXML(DOMElement *element) {
     DOMText *text_ = E(element)->getFirstTextChild();
     if(text_) {
-      QString str = QString::fromStdString(X()%text_->getData());
-      setText(quote?str.mid(1,str.length()-2):str);
+      setText(QString::fromStdString(X()%text_->getData()));
       return element;
     }
     return NULL;
@@ -742,12 +741,12 @@ namespace MBSimGUI {
 
   DOMElement* BasicTextWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
-    DOMText *text_ = doc->createTextNode(X()%(quote?("\""+getText().toStdString()+"\""):getText().toStdString()));
+    DOMText *text_ = doc->createTextNode(X()%getText().toStdString());
     parent->insertBefore(text_, NULL);
     return NULL;
   }
 
-  TextWidget::TextWidget(const QString &text_, bool readOnly, bool quote) : BasicTextWidget(quote) {
+  TextWidget::TextWidget(const QString &text_, bool readOnly) {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -758,7 +757,7 @@ namespace MBSimGUI {
     layout->addWidget(text);
   }
 
-  TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num, bool editable, bool quote) : BasicTextWidget(quote) {
+  TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num, bool editable) {
     text = new CustomComboBox;
     text->setEditable(editable);
     for(unsigned int i=0; i<list.size(); i++)

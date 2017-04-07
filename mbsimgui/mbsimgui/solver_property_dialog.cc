@@ -389,7 +389,7 @@ namespace MBSimGUI {
     list.push_back("\"eigenmodes\"");
     list.push_back("\"eigenmode\"");
     list.push_back("\"eigenmotion\"");
-    task = new ExtWidget("Task",new TextChoiceWidget(list,1,false,true),true,false,MBSIMANALYSER%"task");
+    task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIMANALYSER%"task");
     addToTab("General",task);
 
     amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"amplitude");
