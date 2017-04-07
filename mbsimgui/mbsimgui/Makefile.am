@@ -71,16 +71,10 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   variable_widgets.moc.cc \
 		   function_widget.moc.cc \
 		   function_widgets.moc.cc \
-		   kinetics_widgets.moc.cc \
-		   ombv_widgets.moc.cc \
 		   extended_widgets.moc.cc \
 		   special_widgets.moc.cc \
 		   property_dialog.moc.cc  \
 		   element_property_dialog.moc.cc \
-		   solver_property_dialog.moc.cc \
-		   parameter_property_dialog.moc.cc \
-		   embedding_property_dialog.moc.cc \
-		   project_property_dialog.moc.cc \
 		   element_context_menu.moc.cc \
 		   element_view.moc.cc \
 		   embedding_view.moc.cc \
