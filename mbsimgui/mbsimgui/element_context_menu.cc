@@ -104,72 +104,7 @@ namespace MBSimGUI {
   }
 
   GroupContextMenu::GroupContextMenu(Element *element, QWidget *parent, bool removable) : ElementContextMenu(element,parent,removable) {
-//    QAction *action;
-//    action = new QAction("Add frame", this);
-//    connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
-//    addAction(action);
-//    QMenu *menu = new ContourContextContextMenu(element, "Add contour");
-//    addMenu(menu);
-//    action = new QAction("Add group", this);
-//    connect(action,SIGNAL(triggered()),this,SLOT(addGroup()));
-//    //menu = new GroupContextContextMenu(element, "Add group");
-//    //addMenu(menu);
-//    addAction(action);
-//    menu = new ObjectContextContextMenu(element, "Add object");
-//    addMenu(menu);
-//    menu = new LinkContextContextMenu(element, "Add link");
-//    addMenu(menu);
-//    menu = new ConstraintContextContextMenu(element, "Add constraint");
-//    addMenu(menu);
-//    menu = new ObserverContextContextMenu(element, "Add observer");
-//    addMenu(menu);
-//    action = new QAction("Add model", this);
-//    connect(action,SIGNAL(triggered()),this,SLOT(addModel()));
-//    addAction(action);
   } 
-
-  void GroupContextMenu::addFixedRelativeFrame() {
-    mw->addFrame(new FixedRelativeFrame("P"), element);
-  }
-
-  void GroupContextMenu::addModel() {
-    QString file=QFileDialog::getOpenFileName(0, "XML model files", ".", "XML files (*.xml)");
-    if(file!="") {
-//      Frame *frame = Frame::readXMLFile(file);
-//      if(frame) return mw->addFrame(frame);
-//      Contour *contour = Contour::readXMLFile(file);
-//      if(contour) return mw->addContour(contour);
-//      Group *group = Group::readXMLFile(file);
-//      if(group) return mw->addGroup(group);
-//      Object *object = Object::readXMLFile(file);
-//      if(object) return mw->addObject(object);
-//      Link *link = Link::readXMLFile(file);
-//      if(link) return mw->addLink(link);
-//      Constraint *constraint = Constraint::readXMLFile(file);
-//      if(constraint) return mw->addConstraint(constraint);
-//      Observer *observer = Observer::readXMLFile(file);
-//      if(observer) return mw->addObserver(observer);
-    }
-  }
-
-  void GroupContextMenu::addGroup() {
-    mw->addGroup(new Group("Group"), element);
-  }
-
-  void GroupContextMenu::addObject() {
-    ObjectContextContextMenu menu(element);
-    menu.exec(QCursor::pos());
-  }
-
-  void GroupContextMenu::addLink() {
-    LinkContextContextMenu menu(element);
-    menu.exec(QCursor::pos());
-  }
-
-  void GroupContextMenu::addObserver() {
-    ObserverContextContextMenu menu(element);
-    menu.exec(QCursor::pos());
-  }
 
   DynamicSystemSolverContextMenu::DynamicSystemSolverContextMenu(Element *solver, QWidget * parent) : GroupContextMenu(solver,parent,false) {
   }
@@ -178,17 +113,7 @@ namespace MBSimGUI {
   } 
 
   RigidBodyContextMenu::RigidBodyContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
-//    QAction *action;
-//    action = new QAction("Add frame", this);
-//    connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
-//    addAction(action);
-//    QMenu *menu = new ContourContextContextMenu(element, "Add contour");
-//    addMenu(menu);
   } 
-
-  void RigidBodyContextMenu::addFixedRelativeFrame() {
-    mw->addFrame(new FixedRelativeFrame("P"), element);
-  }
 
   FlexibleBodyFFRContextMenu::FlexibleBodyFFRContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
     QAction *action;

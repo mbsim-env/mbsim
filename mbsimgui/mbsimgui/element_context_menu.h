@@ -54,18 +54,8 @@ namespace MBSimGUI {
   };
 
   class GroupContextMenu : public ElementContextMenu {
-    Q_OBJECT
-
     public:
       GroupContextMenu(Element *group, QWidget * parent = 0, bool removable=true);
-
-    protected slots:
-      void addFixedRelativeFrame();
-      void addGroup();
-      void addObject();
-      void addLink();
-      void addObserver();
-      void addModel();
   };
 
   class FixedRelativeFrameContextContextMenu : public QMenu {
@@ -281,13 +271,8 @@ namespace MBSimGUI {
   };
 
   class RigidBodyContextMenu : public ObjectContextMenu {
-    Q_OBJECT
-
     public:
       RigidBodyContextMenu(Element *body, QWidget * parent = 0);
-
-      protected slots:
-        void addFixedRelativeFrame();
   };
 
   class FlexibleBodyFFRContextMenu : public ObjectContextMenu {

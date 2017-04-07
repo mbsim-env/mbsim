@@ -650,7 +650,7 @@ namespace MBSimGUI {
 //          E(static_cast<DOMElement*>(element->getParentNode()))->removeAttribute("href");
 //          element->getParentNode()->insertBefore(element,NULL);
 //        }
-      }
+//      }
       return true;
     }
     catch(const std::exception &ex) {
