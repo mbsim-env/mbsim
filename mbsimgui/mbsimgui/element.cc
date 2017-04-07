@@ -64,11 +64,25 @@ namespace MBSimGUI {
   }
 
   DOMElement* Element::processHref(DOMElement *element) {
+    if(not getParameterHref().isEmpty()) {
+      DOMDocument *doc = impl->createDocument();
+      DOMElement *parameter = E(static_cast<DOMElement*>(element->getParentNode()))->getFirstElementChildNamed(PV%"Parameter");
+      if(parameter) {
+        DOMNode *node = doc->importNode(parameter,true);
+        doc->insertBefore(node,NULL);
+        serializer->writeToURI(doc, X()%getParameterHref().toStdString());
+        E(static_cast<DOMElement*>(element->getParentNode()))->setAttribute("parameterHref",getParameterHref().toStdString());
+        DOMNode *ps = parameter->getPreviousSibling();
+        if(ps and X()%ps->getNodeName()=="#text")
+          parameter->getParentNode()->removeChild(ps);
+        parameter->getParentNode()->removeChild(parameter);
+      }
+    }
     if(not getHref().isEmpty()) {
-      DOMDocument *edoc = impl->createDocument();
-      DOMNode *node = edoc->importNode(element,true);
-      edoc->insertBefore(node,NULL);
-      serializer->writeToURI(edoc, X()%getHref().toStdString());
+      DOMDocument *doc = impl->createDocument();
+      DOMNode *node = doc->importNode(element,true);
+      doc->insertBefore(node,NULL);
+      serializer->writeToURI(doc, X()%getHref().toStdString());
       E(static_cast<DOMElement*>(element->getParentNode()))->setAttribute("href",getHref().toStdString());
       DOMNode *ps = element->getPreviousSibling();
       if(ps and X()%ps->getNodeName()=="#text")
