@@ -94,40 +94,6 @@ namespace MBSimGUI {
     }
   }
 
-  FrameContextMenu::FrameContextMenu(Element *frame, QWidget * parent, bool removable) : ElementContextMenu(frame,parent,removable) {
-  }
-
-  FixedRelativeFrameContextMenu::FixedRelativeFrameContextMenu(Element *frame, QWidget * parent) : FrameContextMenu(frame,parent,true) {
-  }
-
-  NodeFrameContextMenu::NodeFrameContextMenu(Element *frame, QWidget * parent) : FrameContextMenu(frame,parent,true) {
-  }
-
-  GroupContextMenu::GroupContextMenu(Element *element, QWidget *parent, bool removable) : ElementContextMenu(element,parent,removable) {
-  } 
-
-  DynamicSystemSolverContextMenu::DynamicSystemSolverContextMenu(Element *solver, QWidget * parent) : GroupContextMenu(solver,parent,false) {
-  }
-
-  ObjectContextMenu::ObjectContextMenu(Element *element, QWidget *parent) : ElementContextMenu(element,parent,true) {
-  } 
-
-  RigidBodyContextMenu::RigidBodyContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
-  } 
-
-  FlexibleBodyFFRContextMenu::FlexibleBodyFFRContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
-    QAction *action;
-    action = new QAction("Add frame", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addNodeFrame()));
-    addAction(action);
-    QMenu *menu = new ContourContextContextMenu(element, "Add contour");
-    addMenu(menu);
-  }
-
-  void FlexibleBodyFFRContextMenu::addNodeFrame() {
-    mw->addFrame(new NodeFrame("P"), element);
-  }
-
   FixedRelativeFrameContextContextMenu::FixedRelativeFrameContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
     QAction *action = new QAction("Add frame", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
@@ -312,9 +278,6 @@ namespace MBSimGUI {
     addAction(action);
     QMenu *menu = new SignalContextContextMenu(element, "Add signal");
     addMenu(menu);
-    action = new QAction("Add linear transfer system", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
-    addAction(action);
     action = new QAction("Add generalized spring damper", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedSpringDamper()));
     addAction(action);
@@ -356,10 +319,6 @@ namespace MBSimGUI {
   void LinkContextContextMenu::addSignal() {
     SignalContextContextMenu menu(element);
     menu.exec(QCursor::pos());
-  }
-
-  void LinkContextContextMenu::addLinearTransferSystem() {
-//    mw->addLink(new LinearTransferSystem("LTS"), element);
   }
 
   void LinkContextContextMenu::addGeneralizedSpringDamper() {
@@ -503,35 +462,31 @@ namespace MBSimGUI {
   }
 
   void SensorContextContextMenu::addGeneralizedPositionSensor() {
-//    mw->addLink(new GeneralizedPositionSensor("GeneralizedPositionSensor"));
+    mw->addLink(new GeneralizedPositionSensor("GeneralizedPositionSensor"), element);
   }
 
   void SensorContextContextMenu::addGeneralizedVelocitySensor() {
-//    mw->addLink(new GeneralizedVelocitySensor("GeneralizedVelocitySensor"));
+    mw->addLink(new GeneralizedVelocitySensor("GeneralizedVelocitySensor"), element);
   }
 
   void SensorContextContextMenu::addAbsolutePositionSensor() {
-//    mw->addLink(new AbsolutePositionSensor("AbsolutePositionSensor"));
+    mw->addLink(new AbsolutePositionSensor("AbsolutePositionSensor"), element);
   }
 
   void SensorContextContextMenu::addAbsoluteVelocitySensor() {
-//    mw->addLink(new AbsoluteVelocitySensor("AbsoluteVelocitySensor"));
+    mw->addLink(new AbsoluteVelocitySensor("AbsoluteVelocitySensor"), element);
   }
 
   void SensorContextContextMenu::addAbsoluteAngularPositionSensor() {
-//    mw->addLink(new AbsoluteAngularPositionSensor("AbsoluteAngularPositionSensor"));
+    mw->addLink(new AbsoluteAngularPositionSensor("AbsoluteAngularPositionSensor"), element);
   }
 
   void SensorContextContextMenu::addAbsoluteAngularVelocitySensor() {
-//    mw->addLink(new AbsoluteAngularVelocitySensor("AbsoluteAngularVelocitySensor"));
+    mw->addLink(new AbsoluteAngularVelocitySensor("AbsoluteAngularVelocitySensor"), element);
   }
 
   void SensorContextContextMenu::addFunctionSensor() {
-//    mw->addLink(new FunctionSensor("FunctionSensor"));
-  }
-
-  void SensorContextContextMenu::addSignalProcessingSystemSensor() {
-//    mw->addLink(new SignalProcessingSystemSensor("SPS"));
+    mw->addLink(new FunctionSensor("FunctionSensor"), element);
   }
 
 }

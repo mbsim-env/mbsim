@@ -55,7 +55,42 @@ namespace MBSimGUI {
 
   class GroupContextMenu : public ElementContextMenu {
     public:
-      GroupContextMenu(Element *group, QWidget * parent = 0, bool removable=true);
+      GroupContextMenu(Element *group, QWidget * parent = 0, bool removable=true) : ElementContextMenu(element,parent,removable) { }
+  };
+
+  class DynamicSystemSolverContextMenu : public GroupContextMenu {
+    public:
+      DynamicSystemSolverContextMenu(Element *solver, QWidget * parent = 0) : GroupContextMenu(solver,parent,false) { }
+  };
+
+  class FrameContextMenu : public ElementContextMenu {
+    public:
+      FrameContextMenu(Element *frame, QWidget * parent = 0, bool removable=false) : ElementContextMenu(frame,parent,removable) { }
+  };
+
+  class FixedRelativeFrameContextMenu : public FrameContextMenu {
+    public:
+      FixedRelativeFrameContextMenu(Element *frame, QWidget * parent = 0) : FrameContextMenu(frame,parent,true) { }
+  };
+
+  class NodeFrameContextMenu : public FrameContextMenu {
+    public:
+      NodeFrameContextMenu(Element *frame, QWidget * parent = 0) : FrameContextMenu(frame,parent,true) { }
+  };
+
+  class ObjectContextMenu : public ElementContextMenu {
+    public:
+      ObjectContextMenu(Element *object, QWidget * parent = 0) : ElementContextMenu(element,parent,true) { }
+  };
+
+  class RigidBodyContextMenu : public ObjectContextMenu {
+    public:
+      RigidBodyContextMenu(Element *body, QWidget * parent = 0) : ObjectContextMenu(element,parent) { }
+  };
+
+  class FlexibleBodyFFRContextMenu : public ObjectContextMenu {
+    public:
+      FlexibleBodyFFRContextMenu(Element *body, QWidget * parent = 0) : ObjectContextMenu(element,parent) { }
   };
 
   class FixedRelativeFrameContextContextMenu : public QMenu {
@@ -174,7 +209,6 @@ namespace MBSimGUI {
       void addElasticJoint();
       void addContact();
       void addSignal();
-      void addLinearTransferSystem();
       void addGeneralizedFriction();
       void addGeneralizedGear();
       void addGeneralizedElasticConnection();
@@ -234,55 +268,9 @@ namespace MBSimGUI {
       void addAbsoluteAngularPositionSensor();
       void addAbsoluteAngularVelocitySensor();
       void addFunctionSensor();
-      void addSignalProcessingSystemSensor();
 
     protected:
       Element *element;
-  };
-
-  class DynamicSystemSolverContextMenu : public GroupContextMenu {
-
-    public:
-      DynamicSystemSolverContextMenu(Element *solver, QWidget * parent = 0);
-  };
-
-  class FrameContextMenu : public ElementContextMenu {
-
-    public:
-      FrameContextMenu(Element *frame, QWidget * parent = 0, bool removable=false);
-  };
-
-  class FixedRelativeFrameContextMenu : public FrameContextMenu {
-
-    public:
-      FixedRelativeFrameContextMenu(Element *frame, QWidget * parent = 0); 
-  };
-
-  class NodeFrameContextMenu : public FrameContextMenu {
-
-    public:
-      NodeFrameContextMenu(Element *frame, QWidget * parent = 0);
-  };
-
-  class ObjectContextMenu : public ElementContextMenu {
-
-    public:
-      ObjectContextMenu(Element *object, QWidget * parent = 0);
-  };
-
-  class RigidBodyContextMenu : public ObjectContextMenu {
-    public:
-      RigidBodyContextMenu(Element *body, QWidget * parent = 0);
-  };
-
-  class FlexibleBodyFFRContextMenu : public ObjectContextMenu {
-    Q_OBJECT
-
-    public:
-      FlexibleBodyFFRContextMenu(Element *body, QWidget * parent = 0);
-
-      protected slots:
-        void addNodeFrame();
   };
 
 }
