@@ -420,6 +420,7 @@ sub ScanFile {
   # Don't add excluded files
   foreach my $ex (@Excludes) {
     if (Text::Glob::match_glob( $ex, $BugFile )) {
+      unlink "$Dir/$FName";
       return;
     }
   }
