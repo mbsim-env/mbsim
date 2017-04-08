@@ -14,19 +14,11 @@ SRCDIR="/home/mbsim/linux64-dailydebug"
 os.environ["PKG_CONFIG_PATH"]=SRCDIR+"/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi3py-local-linux64/lib/pkgconfig:"+\
                               "/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig"
 os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib"
-os.environ["CPPFLAGS"]="--coverage"
 os.environ["CXXFLAGS"]="-O0 -g"
 os.environ["CFLAGS"]="-O0 -g"
 os.environ["FFLAGS"]="-O0 -g"
-os.environ["LDFLAGS"]="--coverage -lgcov"
 os.environ['MBSIM_SWIG']='1'
 simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "CPPFLAGS", "CXXFLAGS", "CFLAGS", "FFLAGS", "LDFLAGS", 'GCOV_PREFIX']
-
-# disable coverage (write to a dummy dir)
-os.environ["GCOV_PREFIX"]=tempfile.gettempdir()+"/linux64-dailydebug-dummy-gcov"
-if os.path.exists(os.environ["GCOV_PREFIX"]):
-  shutil.rmtree(os.environ["GCOV_PREFIX"])
-os.makedirs(os.environ["GCOV_PREFIX"])
 
 # read config files
 fd=open("/home/mbsim/BuildServiceConfig/mbsimBuildService.conf", 'r+')
@@ -72,7 +64,7 @@ os.chdir(SRCDIR+"/mbsim_valgrind/examples")
 if subprocess.call(["git", "pull"])!=0:
   print("git pull of mbsim_valgrind/examples failed.")
 os.environ["MBSIM_SET_MINIMAL_TEND"]="1"
-if simplesandbox.call(["./runexamples.py", "--rotate", "30", "-j", "2", "--reportOutDir",
+if simplesandbox.call(["./runexamples.py", "--rotate", "30", "-j", "2", "--coverage", SRCDIR, "--reportOutDir",
                     "/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report", "--url",
                     "http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
                     "--buildSystemRun", SCRIPTDIR,
