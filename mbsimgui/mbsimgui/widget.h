@@ -32,7 +32,6 @@ namespace XERCES_CPP_NAMESPACE {
 namespace MBSimGUI {
 
   class WidgetInterface {
-
     public:
       virtual void updateWidget() { }
       virtual void resize_(int m, int n) { }
@@ -50,7 +49,7 @@ namespace MBSimGUI {
 
   class WidgetFactory {
     public:
-      virtual ~WidgetFactory() {}
+      virtual ~WidgetFactory() { }
       virtual QWidget* createWidget(int i=0) = 0;
       virtual QString getName(int i=0) const { return ""; }
       virtual int getSize() const { return 0; }
