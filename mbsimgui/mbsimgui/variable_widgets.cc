@@ -788,9 +788,13 @@ namespace MBSimGUI {
         for(unsigned int j=0; j<box.size(); j++)
           if(i!=j)
             connect(box[i][j],SIGNAL(textChanged(const QString&)),box[j][i],SLOT(setText(const QString&)));
-      for(int i=0; i<min((int)buf.size(),rows); i++)
-        for(int j=0; j<min((int)buf[i].size(),rows); j++)
+      for(int i=0; i<min((int)buf.size(),rows); i++) {
+        for(int j=0; j<min((int)buf[i].size(),rows); j++) {
+          box[i][j]->blockSignals(true);
           box[i][j]->setText(buf[i][j]);
+          box[i][j]->blockSignals(false);
+        }
+      }
     }
   }
 
@@ -811,9 +815,13 @@ namespace MBSimGUI {
       return resize_(0);
     if(A.size() != box.size())
       resize_(A.size());
-    for(unsigned int i=0; i<box.size(); i++)
-      for(unsigned int j=0; j<box.size(); j++)
+    for(unsigned int i=0; i<box.size(); i++) {
+      for(unsigned int j=0; j<box.size(); j++) {
+        box[i][j]->blockSignals(true);
         box[i][j]->setText(A[i][j]=="0"?"":A[i][j]);
+        box[i][j]->blockSignals(false);
+      }
+    }
   }
 
   void SymMatWidget::setReadOnly(bool flag) {

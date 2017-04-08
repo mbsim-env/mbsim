@@ -231,7 +231,7 @@ namespace MBSimGUI {
     box->setLayout(hbox);
     hbox->setMargin(0);
     hbox->addWidget(spinBox);
-    QObject::connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     list = new QListWidget;
     hbox->addWidget(list);
     layout->addWidget(box);
