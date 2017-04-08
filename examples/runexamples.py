@@ -1720,13 +1720,13 @@ def coverage(mainFD):
   dirs=["-d", args.coverage.split(":")[2]]+[v for il in dirs for v in il]
 
   # run lcov: init counters
-  ret=ret+abs(subprocess.call(["lcov", "-c", "--no-external", "-i", "-o", pj(args.reportOutDir, "cov.trace.base")]+dirs, stdout=lcovFD, stderr=lcovFD))
+  ret=ret+abs(subprocess.call(["lcov", "-c", "--no-external", "-i", "-o", pj(args.reportOutDir, "coverage", "cov.trace.base")]+dirs, stdout=lcovFD, stderr=lcovFD))
   # run lcov: count
-  ret=ret+abs(subprocess.call(["lcov", "-c", "--no-external", "-o", pj(args.reportOutDir, "cov.trace.test")]+dirs, stdout=lcovFD, stderr=lcovFD))
+  ret=ret+abs(subprocess.call(["lcov", "-c", "--no-external", "-o", pj(args.reportOutDir, "coverage", "cov.trace.test")]+dirs, stdout=lcovFD, stderr=lcovFD))
   # run lcov: combine counters
-  ret=ret+abs(subprocess.call(["lcov", "-a", pj(args.reportOutDir, "cov.trace.base"), "-a", pj(args.reportOutDir, "cov.trace.test"), "-o", pj(args.reportOutDir, "cov.trace.total")], stdout=lcovFD, stderr=lcovFD))
+  ret=ret+abs(subprocess.call(["lcov", "-a", pj(args.reportOutDir, "coverage", "cov.trace.base"), "-a", pj(args.reportOutDir, "coverage", "cov.trace.test"), "-o", pj(args.reportOutDir, "coverage", "cov.trace.total")], stdout=lcovFD, stderr=lcovFD))
   # run lcov: remove counters
-  ret=ret+abs(subprocess.call(["lcov", "-r", pj(args.reportOutDir, "cov.trace.total"),
+  ret=ret+abs(subprocess.call(["lcov", "-r", pj(args.reportOutDir, "coverage", "cov.trace.total"),
     "mbsim*/kernel/swig/*", "openmbv*/openmbvcppinterface/swig/java/*", # SWIG generated
     "openmbv*/openmbvcppinterface/swig/octave/*", "openmbv*/openmbvcppinterface/swig/python/*", # SWIG generated
     "openmbv*/mbxmlutils/mbxmlutils/swigpyrun.h", "openmbv*/mbxmlutils/mbxmlutils/casadi_oct_swig_octave.cc", # SWIG generated
@@ -1734,7 +1734,7 @@ def coverage(mainFD):
     "mbsim/examples/*", # mbsim examples
     "modules/mbsimInterface/mbsimInterface/interface_messages.cc", "*.moc.cc", "*.qrc.cc", # mbsim generated
     "hdf5serie/h5plotserie/h5plotserie/*", "openmbv/openmbv/openmbv/*", "mbsim/mbsimgui/mbsimgui/*", # mbsim GUI (untested)
-    "-o", pj(args.reportOutDir, "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
+    "-o", pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
 
   # collect all header files in repos and hash it
   repoHeader={}
@@ -1742,17 +1742,17 @@ def coverage(mainFD):
     for root, _, files in os.walk(pj(args.coverage.split(":")[0], repo)):
       for f in files:
         if f.endswith(".h"):
-          repoHeader[hashlib.sha1(open(pj(root, f)).read().encode("utf-8")).hexdigest()]=pj(root, f)
+          repoHeader[hashlib.sha1(codecs.open(pj(root, f), "r", encoding="utf-8").read().encode("utf-8")).hexdigest()]=pj(root, f)
   # loop over all header files in local and create mapping (using the hash)
   headerMap=[]
   for root, _, files in os.walk(pj(args.coverage.split(":")[2], "include")):
     for f in files:
       if f.endswith(".h"):
-        h=hashlib.sha1(open(pj(root, f)).read().encode("utf-8")).hexdigest()
+        h=hashlib.sha1(codecs.open(pj(root, f), "r", encoding="utf-8").read().encode("utf-8")).hexdigest()
         if h in repoHeader:
           headerMap.append((pj(root, f), repoHeader[h]))
   # replace header map in lcov trace file
-  for line in fileinput.FileInput(pj(args.reportOutDir, "cov.trace.final"), inplace=1):
+  for line in fileinput.FileInput(pj(args.reportOutDir, "coverage", "cov.trace.final"), inplace=1):
     if line.startswith("SF:"):
       for hm in headerMap:
         line=line.replace("SF:"+hm[0], "SF:"+hm[1])
@@ -1762,7 +1762,7 @@ def coverage(mainFD):
   ret=ret+abs(subprocess.call(["genhtml", "-t", "MBSim-Env Examples", "--prefix", args.coverage.split(":")[0], "--legend",
     "--html-prolog", pj(scriptDir, "lcov-prolog.parthtml"), "--html-epilog", pj(scriptDir, "lcov-epilog.parthtml"),
     "--no-function-coverage", "-o", pj(args.reportOutDir, "coverage"),
-    pj(args.reportOutDir, "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
+    pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
   lcovFD.close()
 
   # get coverage rate

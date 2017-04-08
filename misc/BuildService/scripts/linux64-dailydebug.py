@@ -18,7 +18,7 @@ os.environ["CXXFLAGS"]="-O0 -g"
 os.environ["CFLAGS"]="-O0 -g"
 os.environ["FFLAGS"]="-O0 -g"
 os.environ['MBSIM_SWIG']='1'
-simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "CPPFLAGS", "CXXFLAGS", "CFLAGS", "FFLAGS", "LDFLAGS", 'GCOV_PREFIX']
+simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "CPPFLAGS", "CXXFLAGS", "CFLAGS", "FFLAGS", "LDFLAGS"]
 
 # read config files
 fd=open("/home/mbsim/BuildServiceConfig/mbsimBuildService.conf", 'r+')
@@ -37,7 +37,7 @@ fd.close()
 if len(checkedExamples)>0:
   os.chdir(SRCDIR+"/mbsim/examples")
   if simplesandbox.call(["./runexamples.py", "--action", "copyToReference"]+checkedExamples,
-                    shareddir=[".", os.environ["GCOV_PREFIX"]], envvar=simplesandboxEnvvars, buildSystemRun=True)!=0:
+                    shareddir=["."], envvar=simplesandboxEnvvars, buildSystemRun=True)!=0:
     print("runexamples.py --action copyToReference ... failed.")
   os.chdir(CURDIR)
 
@@ -54,7 +54,7 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "30",
 # update references for download
 os.chdir(SRCDIR+"/mbsim/examples")
 if simplesandbox.call(["./runexamples.py", "--action", "pushReference=/var/www/html/mbsim/linux64-dailydebug/references"],
-                   shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/references", os.environ["GCOV_PREFIX"]],
+                   shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/references"],
                    envvar=simplesandboxEnvvars, buildSystemRun=True)!=0:
   print("pushing references to download dir failed.")
 os.chdir(CURDIR)
@@ -73,7 +73,7 @@ if simplesandbox.call(["./runexamples.py", "--rotate", "30", "-j", "2", "--cover
                     SRCDIR+"/mbsim_valgrind/misc/valgrind-mbsim.supp --leak-check=full", "--disableCompare", "--disableValidate",
                     "--buildType", "linux64-dailydebug-valgrind"],
                    shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
-                              "/var/www/html/mbsim/buildsystemstate", os.environ["GCOV_PREFIX"]],
+                              "/var/www/html/mbsim/buildsystemstate"],
                    envvar=simplesandboxEnvvars+["MBSIM_SET_MINIMAL_TEND"], buildSystemRun=True)!=0:
   print("runing examples with valgrind failed.")
 os.chdir(CURDIR)
