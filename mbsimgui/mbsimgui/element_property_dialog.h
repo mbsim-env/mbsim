@@ -303,7 +303,7 @@ namespace MBSimGUI {
       ExtWidget *q0, *u0, *R;
       VecWidget *q0_, *u0_;
     public slots:
-      void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
+      void updateWidget() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
   };
 
   class BodyPropertyDialog : public ObjectPropertyDialog {
@@ -344,7 +344,7 @@ namespace MBSimGUI {
       ExtWidget *mass, *pdm, *ppdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor;
       FlexibleBodyFFR *body;
     protected slots:
-      void resizeVariables();
+      void updateWidget();
   };
 
   class ConstraintPropertyDialog : public ElementPropertyDialog {
@@ -399,7 +399,7 @@ namespace MBSimGUI {
     protected:
       ExtWidget *constraintFunction;
     protected slots:
-      void resizeVariables();
+      void updateWidget();
   };
 
   class GeneralizedVelocityConstraintPropertyDialog : public GeneralizedDualConstraintPropertyDialog {
@@ -412,7 +412,7 @@ namespace MBSimGUI {
     protected:
       ExtWidget *constraintFunction, *x0;
     protected slots:
-      void resizeVariables();
+      void updateWidget();
   };
 
   class GeneralizedAccelerationConstraintPropertyDialog : public GeneralizedDualConstraintPropertyDialog {
@@ -425,7 +425,7 @@ namespace MBSimGUI {
     protected:
       ExtWidget *constraintFunction, *x0;
     protected slots:
-      void resizeVariables();
+      void updateWidget();
   };
 
   class JointConstraintPropertyDialog : public MechanicalConstraintPropertyDialog {
@@ -438,7 +438,7 @@ namespace MBSimGUI {
     protected:
       ExtWidget *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *refFrameID, *force, *moment, *connections, *q0;
     protected slots:
-      void resizeVariables();
+      void updateWidget();
   };
 
   class GeneralizedConnectionConstraintPropertyDialog : public GeneralizedDualConstraintPropertyDialog {
@@ -516,7 +516,7 @@ namespace MBSimGUI {
     protected:
       ExtWidget *forceDirection, *forceFunction, *momentDirection, *momentFunction, *arrow;
     protected slots:
-      void resizeVariables();
+      void updateWidget();
   };
 
   class SpringDamperPropertyDialog : public FixedFrameLinkPropertyDialog {
@@ -599,7 +599,7 @@ namespace MBSimGUI {
     protected:
       ExtWidget *function;
     protected slots:
-      void resizeVariables();
+      void updateWidget();
   };
 
   class ContactPropertyDialog : public LinkPropertyDialog {

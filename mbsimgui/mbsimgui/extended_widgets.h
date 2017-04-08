@@ -41,7 +41,6 @@ namespace MBSimGUI {
     public:
       ExtWidget(const QString &name, QWidget *widget, bool deactivatable=false, bool active=false, const MBXMLUtils::FQN &xmlName="");
       QWidget* getWidget() const {return widget;}
-      virtual void resizeVariables() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resizeVariables();}
       void resize_(int m, int n) {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resize_(m,n);}
       bool isActive() const {return (isCheckable() && !isChecked())?0:1;}
       void setActive(bool flag) {if(isCheckable()) setChecked(flag);}
@@ -53,9 +52,9 @@ namespace MBSimGUI {
       QWidget *widget;
       MBXMLUtils::FQN xmlName;
     public slots:
-      virtual void updateWidget() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
+      void updateWidget() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
     signals:
-      void resize_();
+      void widgetChanged();
   };
 
   class ChoiceWidget2 : public Widget {
@@ -81,9 +80,6 @@ namespace MBSimGUI {
       QWidget *widget;
       WidgetFactory *factory;
       int mode;
-
-    signals:
-      void widgetChanged();
   };
 
   class ContainerWidget : public Widget {

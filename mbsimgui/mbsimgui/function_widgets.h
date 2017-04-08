@@ -160,7 +160,7 @@ namespace MBSimGUI {
       QString ext;
       ExtWidget *fo, *fi;
     public slots:
-      void resizeVariables();
+      void updateWidget();
   };
 
   class LimitedFunctionWidget : public FunctionWidget {

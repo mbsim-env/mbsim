@@ -85,7 +85,7 @@ namespace MBSimGUI {
   QWidget* RigidBodyOfReferenceWidgetFactory::createWidget(int i) {
     QWidget *widget = new ExtWidget("name",new RigidBodyOfReferenceWidget(element,0),false,false,xmlName);
     if(parent)
-      QObject::connect(widget,SIGNAL(bodyChanged()),parent,SLOT(resizeVariables()));
+      QObject::connect(widget,SIGNAL(bodyChanged()),parent,SLOT(updateWidget()));
     return widget;
   }
 
@@ -624,9 +624,9 @@ namespace MBSimGUI {
     u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
     addToTab("Initial conditions", u0);
 
-    connect(q0, SIGNAL(resize_()), this, SLOT(resizeVariables()));
-    connect(u0, SIGNAL(resize_()), this, SLOT(resizeVariables()));
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+    connect(q0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(u0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   DOMElement* ObjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -679,11 +679,11 @@ namespace MBSimGUI {
 
     translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", translation);
-    connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(translation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
     rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", rotation);
-    connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(rotation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
     translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationDependentRotation");
     addToTab("Kinematics", translationDependentRotation);
@@ -865,11 +865,11 @@ namespace MBSimGUI {
 
     translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body,MBSIMFLEX),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", translation);
-    connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(translation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
     rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body,MBSIMFLEX),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", rotation);
-    connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(rotation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
     translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"translationDependentRotation");
     addToTab("Kinematics", translationDependentRotation);
@@ -880,13 +880,12 @@ namespace MBSimGUI {
     ombvEditor = new ExtWidget("Enable openMBV",new FlexibleBodyFFRMBSOMBVWidget("NOTSET"),true,false,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualisation", ombvEditor);
 
-    connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-    connect(Pdm->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-    connect(buttonResize,SIGNAL(clicked(bool)),this,SLOT(resizeVariables()));
-//    connect(Knl1,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(buttonResize,SIGNAL(clicked(bool)),this,SLOT(updateWidget()));
+//    connect(Knl1,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
   }
 
-  void FlexibleBodyFFRPropertyDialog::resizeVariables() {
+  void FlexibleBodyFFRPropertyDialog::updateWidget() {
     int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
     if(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getIndex()==0)
       rPdm->resize_(3,size);
@@ -1130,7 +1129,7 @@ namespace MBSimGUI {
     independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new GeneralizedGearConstraintWidgetFactory(MBSIM%"independentRigidBody",constraint,0),"Independent body",0,1),false,false,"");
     addToTab("General",independentBodies);
 
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   DOMElement* GeneralizedGearConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1212,12 +1211,12 @@ namespace MBSimGUI {
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new FunctionWidgetFactory2(constraint),QBoxLayout::TopToBottom,0),true,false,MBSIM%"constraintFunction");
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
-  void GeneralizedPositionConstraintPropertyDialog::resizeVariables() {
+  void GeneralizedPositionConstraintPropertyDialog::updateWidget() {
 //    RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
 //    int size = refBody?refBody->getqRelSize():0;
 //    constraintFunction->resize_(size,1);
@@ -1240,17 +1239,17 @@ namespace MBSimGUI {
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
     x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
     addToTab("Initial conditions", x0);
 
-    connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+    connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateWidget()));
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
-  void GeneralizedVelocityConstraintPropertyDialog::resizeVariables() {
-    cout << "GeneralizedVelocityConstraintPropertyDialog::resizeVariables() not yet implemented" << endl;
+  void GeneralizedVelocityConstraintPropertyDialog::updateWidget() {
+    cout << "GeneralizedVelocityConstraintPropertyDialog::updateWidget() not yet implemented" << endl;
   }
 
   DOMElement* GeneralizedVelocityConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1272,16 +1271,16 @@ namespace MBSimGUI {
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
     x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
     addToTab("Initial conditions", x0);
 
-    connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+    connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateWidget()));
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
-  void GeneralizedAccelerationConstraintPropertyDialog::resizeVariables() {
+  void GeneralizedAccelerationConstraintPropertyDialog::updateWidget() {
 //    RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
 //    int size = refBody?(refBody->getqRelSize()+refBody->getuRelSize()):0;
 //    static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->resize_(size,1);
@@ -1312,11 +1311,11 @@ namespace MBSimGUI {
 
     dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"dependentRigidBodyOnFirstSide",constraint,this),"Body",0,1),false,false,"");
     addToTab("General",dependentBodiesFirstSide);
-    connect(dependentBodiesFirstSide->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(dependentBodiesFirstSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
     dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"dependentRigidBodyOnSecondSide",constraint,this),"Body",0,1),false,false,"");
     addToTab("General",dependentBodiesSecondSide);
-    connect(dependentBodiesSecondSide->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(dependentBodiesSecondSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
     independentBody = new ExtWidget("Independent rigid body",new RigidBodyOfReferenceWidget(constraint,0),false,false,MBSIM%"independentRigidBody");
     addToTab("General", independentBody);
@@ -1336,10 +1335,10 @@ namespace MBSimGUI {
     q0 = new ExtWidget("Initial guess",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
     addToTab("Initial conditions", q0);
 
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
-  void JointConstraintPropertyDialog::resizeVariables() {
+  void JointConstraintPropertyDialog::updateWidget() {
 //    int size = 0;
 //    ListWidget *list = static_cast<ListWidget*>(dependentBodiesFirstSide->getWidget());
 //    for(int i=0; i<list->getSize(); i++) {
@@ -1371,7 +1370,7 @@ namespace MBSimGUI {
 //    static_cast<JointConstraint*>(element)->moment.toWidget(moment);
 //    static_cast<JointConstraint*>(element)->connections.toWidget(connections);
 //    static_cast<JointConstraint*>(element)->q0.toWidget(q0);
-//    resizeVariables();
+//    updateWidget();
 //  }
 //
 //  void JointConstraintPropertyDialog::fromWidget(Element *element) {
@@ -1435,7 +1434,7 @@ namespace MBSimGUI {
   }
 
   GeneralizedConnectionConstraintPropertyDialog::GeneralizedConnectionConstraintPropertyDialog(GeneralizedConnectionConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedDualConstraintPropertyDialog(constraint,parent,f) {
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(link,parent,f) {
@@ -1541,16 +1540,14 @@ namespace MBSimGUI {
     arrow = new ExtWidget("OpenMBV arrow",new ArrowMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation",arrow);
 
-    connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-    connect(forceDirection->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-    connect(forceFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-    connect(momentDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-    connect(momentDirection->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-    connect(momentFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+    connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(forceFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(momentDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(momentFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
-  void KineticExcitationPropertyDialog::resizeVariables() {
+  void KineticExcitationPropertyDialog::updateWidget() {
     if(forceDirection->isActive()) {
       int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(forceDirection->getWidget())->getWidget())->cols();
       forceFunction->resize_(size,1);
@@ -1763,7 +1760,7 @@ namespace MBSimGUI {
     function = new ExtWidget("Generalized force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
     addToTab("Kinetics",function);
 
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   DOMElement* GeneralizedGearPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1787,12 +1784,12 @@ namespace MBSimGUI {
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(connection),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
 
-    connect(function,SIGNAL(resize_()),this,SLOT(resizeVariables()));
-    connect(buttonResize,SIGNAL(clicked(bool)),this,SLOT(resizeVariables()));
-    connect(connections->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(function,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(buttonResize,SIGNAL(clicked(bool)),this,SLOT(updateWidget()));
+    connect(connections->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
   }
 
-  void GeneralizedElasticConnectionPropertyDialog::resizeVariables() {
+  void GeneralizedElasticConnectionPropertyDialog::updateWidget() {
 //    RigidBodyOfReferenceWidget* widget = static_cast<ConnectRigidBodiesWidget*>(static_cast<ChoiceWidget2*>(connections->getWidget())->getWidget())->getWidget(0);
 //    if(not widget->getBody().isEmpty()) {
 //      int size = element->getByPath<RigidBody>(widget->getBody().toStdString())->getuRelSize();

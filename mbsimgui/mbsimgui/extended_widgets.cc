@@ -40,14 +40,14 @@ namespace MBSimGUI {
 
     if(deactivatable) {
       setCheckable(true);
-      connect(this,SIGNAL(toggled(bool)),this,SIGNAL(resize_()));
+      connect(this,SIGNAL(toggled(bool)),this,SIGNAL(widgetChanged()));
       connect(this,SIGNAL(toggled(bool)),widget,SLOT(setVisible(bool)));
       connect(this,SIGNAL(toggled(bool)),this,SLOT(updateWidget()));
       setChecked(active);
     }
     setLayout(layout);
     layout->addWidget(widget);
-    connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
+    connect(widget,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
   }
 
   DOMElement* ExtWidget::initializeUsingXML(DOMElement *element) {
@@ -105,9 +105,8 @@ namespace MBSimGUI {
     widget = factory->createWidget(index);
     layout->addWidget(widget);
     updateWidget();
-    emit Widget::resize_();
-    emit widgetChanged();
-    connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
+    emit Widget::widgetChanged();
+    connect(widget,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
   }
 
   DOMElement* ChoiceWidget2::initializeUsingXML(DOMElement *element) {
@@ -297,14 +296,14 @@ namespace MBSimGUI {
       if(i>0)
         widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-      connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
+      connect(widget,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
     }
 
     if(i==0)
       list->setCurrentRow(0);
 
     if(emitSignals) {
-      emit Widget::resize_();
+      emit Widget::widgetChanged();
     }
   }
 
@@ -316,7 +315,7 @@ namespace MBSimGUI {
       delete list->takeItem(i);
     }
     //  if(emitSignals) {
-    emit Widget::resize_();
+    emit Widget::widgetChanged();
     //  }
   }
 

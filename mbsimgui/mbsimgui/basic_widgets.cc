@@ -336,7 +336,7 @@ namespace MBSimGUI {
       selectedBody = 0;
     body->setText(selectedBody?selectedBody->getXMLPath(element,true):"");
     emit bodyChanged();
-    emit Widget::resize_();
+    emit Widget::updateWidget();
   }
 
   void RigidBodyOfReferenceWidget::setBody(const QString &str) {
@@ -344,7 +344,7 @@ namespace MBSimGUI {
     bodyBrowser->updateWidget(selectedBody);
     body->setText(str);
     emit bodyChanged();
-    emit Widget::resize_();
+    emit Widget::updateWidget();
   }
 
   QString RigidBodyOfReferenceWidget::getBody() const {
@@ -403,7 +403,7 @@ namespace MBSimGUI {
     bodyBrowser->updateWidget(selectedBody);
     body->setText(str);
     emit bodyChanged();
-//    emit Widget::resize_();
+//    emit Widget::updateWidget();
   }
 
   QString GearInputReferenceWidget::getBody() const {

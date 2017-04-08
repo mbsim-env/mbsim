@@ -574,7 +574,7 @@ namespace MBSimGUI {
   void MatColsVarWidget::currentIndexChanged(int cols) {
     widget->resize_(widget->rows(),cols);
     emit sizeChanged(cols);
-    emit Widget::resize_();
+    emit Widget::widgetChanged();
   }
 
   bool MatColsVarWidget::validate(const vector<vector<QString> > &A) const {
@@ -1165,7 +1165,7 @@ namespace MBSimGUI {
     connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
     layout->addWidget(evalButton);
 
-    connect(widget_,SIGNAL(resize_()),this,SIGNAL(resize_()));
+    connect(widget_,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
   }
 
   void PhysicalVariableWidget::openEvalDialog() {

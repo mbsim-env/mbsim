@@ -278,8 +278,8 @@ namespace MBSimGUI {
     return static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fi->getWidget())->getWidget())->getArg1Size();
   }
 
-  void CompositeFunctionWidget::resizeVariables() {
-    cout << "CompositeFunctionWidget::resizeVariables() not yet implemented" << endl;
+  void CompositeFunctionWidget::updateWidget() {
+    cout << "CompositeFunctionWidget::updateWidget() not yet implemented" << endl;
     // int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size();
     // static_cast<ChoiceWidget*>(fi->getWidget())->resize_(size,1);
   }
