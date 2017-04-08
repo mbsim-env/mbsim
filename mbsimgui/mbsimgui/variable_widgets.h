@@ -141,7 +141,7 @@ namespace MBSimGUI {
       CustomSpinBox* sizeCombo;
       int minSize, maxSize;
     public:
-      VecSizeVarWidget(int size, int minSize, int maxSize, bool transpose=false);
+      VecSizeVarWidget(int size, int minSize, int maxSize, int singleStep=1, bool transpose=false);
 //      VecSizeVarWidget(const std::vector<QString> &x, int minSize, int maxSize, bool transpose=false);
       std::vector<QString> getVec() const {return widget->getVec();}
       void setVec(const std::vector<QString> &x);
@@ -319,8 +319,6 @@ namespace MBSimGUI {
       int cols() const {return box[0].size();}
       virtual QString getType() const {return "Matrix";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
   class SymMatSizeVarWidget : public BasicMatWidget {
@@ -522,13 +520,13 @@ namespace MBSimGUI {
 
   class VecSizeVarWidgetFactory : public WidgetFactory {
     public:
-      VecSizeVarWidgetFactory(int m, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
+      VecSizeVarWidgetFactory(int m, int singleStep=1, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
 //      VecSizeVarWidgetFactory(const std::vector<QString> &x, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
-      int m;
+      int m, singleStep;
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;

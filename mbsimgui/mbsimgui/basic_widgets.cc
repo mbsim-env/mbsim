@@ -647,7 +647,6 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
     connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
-    connect(filePath,SIGNAL(textChanged(const QString&)),this,SIGNAL(fileChanged(const QString&)));
   }
 
   void FileWidget::selectFile() {
@@ -873,7 +872,6 @@ namespace MBSimGUI {
       widget.push_back(new RigidBodyOfReferenceWidget(element,0));
       QWidget *subwidget = new ExtWidget(subname,widget[i]);
       layout->addWidget(subwidget);
-      connect(widget[widget.size()-1],SIGNAL(resize_()),this,SIGNAL(resize_()));
     }
   }
 
@@ -966,20 +964,6 @@ namespace MBSimGUI {
       mw->removeItemWithHref(ele);
     return NULL;
   }
-
-//  SignalReferenceWidget::SignalReferenceWidget(Element *element) {
-//    QVBoxLayout *layout = new QVBoxLayout;
-//    setLayout(layout);
-//    layout->setMargin(0);
-//
-//    refSignal = new SignalOfReferenceWidget(element,0);
-//    layout->addWidget(refSignal);
-//
-//    vector<PhysicalVariableWidget*> input;
-//    input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 1));
-//    factor = new ExtWidget("Factor",new ExtPhysicalVarWidget(input));
-//    layout->addWidget(factor);
-//  }
 
   ColorWidget::ColorWidget() {
     QHBoxLayout *layout = new QHBoxLayout;
@@ -1077,7 +1061,9 @@ namespace MBSimGUI {
   }
 
   void PlotFeatureStatusWidget::addFeature(const QString &feature) {
+    value->blockSignals(true);
     value->addItem(feature);
+    value->blockSignals(false);
   }
 
   void PlotFeatureStatusWidget::addFeature() {

@@ -142,7 +142,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    a = new ExtWidget("Coefficients",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"coefficients");
+    a = new ExtWidget("Coefficients",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,1,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"coefficients");
     layout->addWidget(a);
   }
 
@@ -374,10 +374,8 @@ namespace MBSimGUI {
       layout->addWidget(argname[i],i,0);
 
       argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new SpinBoxWidget(1,1,max)));
-      if(var[i]!="t") {
-        connect(argdim[i]->getWidget(),SIGNAL(valueChanged(int)),this,SIGNAL(arg1SizeChanged(int)));
+      if(var[i]!="t")
         layout->addWidget(argdim[i],i,1);
-      }
     }
     f = new ExtWidget("Function",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,"");
     layout->addWidget(f,var.size(),0,1,2);

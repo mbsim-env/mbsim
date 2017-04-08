@@ -336,9 +336,6 @@ namespace MBSimGUI {
 
     protected slots:
       void selectFile();
-
-    signals:
-      void fileChanged(const QString &str);
   };
 
   class IntegerWidget : public Widget {

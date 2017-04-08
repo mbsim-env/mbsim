@@ -39,8 +39,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=NULL);
     public slots:
       virtual void resize_(int m, int n) {}
-    signals:
-      void arg1SizeChanged(int);
   };
 
 }

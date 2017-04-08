@@ -359,7 +359,7 @@ namespace MBSimGUI {
     return true;
   }
 
-  VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_, bool transpose) : minSize(minSize_), maxSize(maxSize_) {
+  VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_, int singleStep, bool transpose) : minSize(minSize_), maxSize(maxSize_) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -370,11 +370,12 @@ namespace MBSimGUI {
     layout->addWidget(box);
     sizeCombo = new CustomSpinBox;
     sizeCombo->setRange(minSize,maxSize);
+    sizeCombo->setSingleStep(singleStep);
     hbox->addWidget(sizeCombo);
     //  hbox->addWidget(new QLabel("x"));
     //  hbox->addWidget(new QLabel("1"));
     sizeCombo->setValue(size);
-    QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     hbox->addStretch(2);
     widget = new VecWidget(size, transpose);
     layout->addWidget(widget);
@@ -546,7 +547,7 @@ namespace MBSimGUI {
     colsCombo = new CustomSpinBox;
     colsCombo->setRange(minCols,maxCols);
     colsCombo->setValue(cols);
-    QObject::connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     hbox->addWidget(colsCombo);
     hbox->addStretch(2);
     widget = new MatWidget(rows,cols);
@@ -596,7 +597,7 @@ namespace MBSimGUI {
     rowsCombo = new CustomSpinBox;
     rowsCombo->setRange(minRows,maxRows);
     rowsCombo->setValue(rows);
-    QObject::connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     hbox->addWidget(rowsCombo);
     hbox->addWidget(new QLabel("x"));
     colsLabel = new QLabel(QString::number(cols));
@@ -651,8 +652,8 @@ namespace MBSimGUI {
     colsCombo = new CustomSpinBox;
     colsCombo->setRange(minCols,maxCols);
     colsCombo->setValue(cols);
-    QObject::connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentRowIndexChanged(int)));
-    QObject::connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentColIndexChanged(int)));
+    connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentRowIndexChanged(int)));
+    connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentColIndexChanged(int)));
     hbox->addWidget(rowsCombo);
     hbox->addWidget(new QLabel("x"));
     hbox->addWidget(colsCombo);
@@ -712,7 +713,7 @@ namespace MBSimGUI {
     sizeCombo = new CustomSpinBox;
     sizeCombo->setRange(minSize,maxSize);
     sizeCombo->setValue(size);
-    QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     hbox->addWidget(sizeCombo);
     hbox->addStretch(2);
     widget = new MatWidget(size,size);
@@ -835,46 +836,6 @@ namespace MBSimGUI {
     return true;
   }
 
-  DOMElement* SymMatWidget::initializeUsingXML(DOMElement *parent) {
-    DOMElement *element=parent->getFirstElementChild();
-    if(!element || E(element)->getTagName() != (PV%"xmlMatrix"))
-      return 0;
-    DOMElement *ei=element->getFirstElementChild();
-    int i=0;
-    std::vector<std::vector<QString> > value;
-    while(ei && E(ei)->getTagName()==PV%"row") {
-      DOMElement *ej=ei->getFirstElementChild();
-      int j=0;
-      value.push_back(vector<QString>());
-      while(ej && E(ej)->getTagName()==PV%"ele") {
-        value[i].push_back(QString::fromStdString(X()%E(ej)->getFirstTextChild()->getData()));
-        ej=ej->getNextElementSibling();
-        j++;
-      }
-      i++;
-      ei=ei->getNextElementSibling();
-    }
-    setMat(value);
-    return element;
-  }
-
-  DOMElement* SymMatWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele = D(doc)->createElement(PV%"xmlMatrix");
-    for(int i=0; i<rows(); i++) {
-      DOMElement *elei = D(doc)->createElement(PV%"row");
-      for(int j=0; j<cols(); j++) {
-        DOMElement *elej = D(doc)->createElement(PV%"ele");
-        DOMText *text = doc->createTextNode(X()%getMat()[i][j].toStdString());
-        elej->insertBefore(text, NULL);
-        elei->insertBefore(elej, NULL);
-      }
-      ele->insertBefore(elei, NULL);
-    }
-    parent->insertBefore(ele, NULL);
-    return 0;
-  }
-
   SymMatSizeVarWidget::SymMatSizeVarWidget(int size, int minSize_, int maxSize_) : minSize(minSize_), maxSize(maxSize_) {
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -887,7 +848,7 @@ namespace MBSimGUI {
     sizeCombo = new CustomSpinBox;
     sizeCombo->setRange(minSize,maxSize);
     sizeCombo->setValue(size);
-    QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     hbox->addWidget(sizeCombo);
     hbox->addStretch(2);
     widget = new SymMatWidget(size);
@@ -1331,7 +1292,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : m(m_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
+  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, int singleStep_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : m(m_), singleStep(singleStep_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
     name[0] = "Vector";
     name[1] = "File";
     name[2] = "Editor";
@@ -1339,7 +1300,7 @@ namespace MBSimGUI {
 
   QWidget* VecSizeVarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new VecSizeVarWidget(m,1,100,transpose), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new VecSizeVarWidget(m,1,100,singleStep,transpose), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)

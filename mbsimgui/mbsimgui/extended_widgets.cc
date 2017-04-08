@@ -34,68 +34,6 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalVariableWidget*> inputWidget_, int evalIndex) : inputWidget(inputWidget_), evalInput(0) {
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    inputWidget.push_back(new PhysicalVariableWidget(new ExpressionWidget, inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
-
-    QPushButton *evalButton = new QPushButton("Eval");
-    connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
-    evalDialog = new EvalDialog(0);
-
-    inputCombo = new CustomComboBox;
-    stackedWidget = new QStackedWidget;
-    connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(changeCurrent(int)));
-    connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SIGNAL(inputDialogChanged(int)));
-    for(unsigned int i=0; i<inputWidget.size()-1; i++) {
-      stackedWidget->addWidget(inputWidget[i]);
-      inputCombo->addItem(inputWidget[i]->getType());
-      if(i>0)
-        inputWidget[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    }
-    stackedWidget->addWidget(inputWidget[inputWidget.size()-1]);
-    inputCombo->addItem(inputWidget[inputWidget.size()-1]->getType());
-    inputWidget[inputWidget.size()-1]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-
-    layout->addWidget(stackedWidget);
-//    layout->addWidget(evalButton);
-    layout->addWidget(inputCombo);
-  }
-
-  ExtPhysicalVarWidget::~ExtPhysicalVarWidget() {
-    delete evalDialog;
-  }
-
-  void ExtPhysicalVarWidget::changeCurrent(int idx) {
-    if (stackedWidget->currentWidget() !=0)
-      stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    stackedWidget->setCurrentIndex(idx);
-    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    adjustSize();
-  }
-
-  QString ExtPhysicalVarWidget::getValue() const { 
-    return inputWidget[inputCombo->currentIndex()]->getValue();
-  }
-
-  void ExtPhysicalVarWidget::setValue(const QString &str) { 
-    inputWidget[inputCombo->currentIndex()]->setValue(str);
-  }
-
-  void ExtPhysicalVarWidget::openEvalDialog() {
-    evalInput = inputCombo->currentIndex();
-    QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString())));
-    str = removeWhiteSpace(str);
-    vector<vector<QString> > A = strToMat(str);
-    if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(A))) {
-      QMessageBox::warning( this, "Validation", "Value not valid"); 
-      return;
-    }
-    evalDialog->exec();
-  }
-
   ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active, const FQN &xmlName_) : QGroupBox(name), widget(widget_), xmlName(xmlName_) {
 
     QHBoxLayout *layout = new QHBoxLayout;

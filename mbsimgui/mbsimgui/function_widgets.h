@@ -202,8 +202,6 @@ namespace MBSimGUI {
     protected:
       ExtWidget *f;
       std::vector<ExtWidget*> argname, argdim;
-    signals:
-      void arg1SizeChanged(int i);
   };
 
   class TabularFunctionWidget : public FunctionWidget {

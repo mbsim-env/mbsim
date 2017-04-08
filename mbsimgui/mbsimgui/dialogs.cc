@@ -62,7 +62,7 @@ namespace MBSimGUI {
     rigidBodyList = new QTreeWidget;
     rigidBodyList->setColumnCount(1);
     mainLayout->addWidget(rigidBodyList,0,0);
-    QObject::connect(rigidBodyList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForRigidBody(QTreeWidgetItem*,int)));
+    connect(rigidBodyList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForRigidBody(QTreeWidgetItem*,int)));
 
     okButton = new QPushButton("Ok");
     if(!selection)
@@ -131,7 +131,7 @@ namespace MBSimGUI {
     objectList = new QTreeWidget;
     objectList->setColumnCount(1);
     mainLayout->addWidget(objectList,0,0);
-    QObject::connect(objectList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForObject(QTreeWidgetItem*,int)));
+    connect(objectList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForObject(QTreeWidgetItem*,int)));
 
     okButton = new QPushButton("Ok");
     if(!selection)
@@ -200,7 +200,7 @@ namespace MBSimGUI {
     linkList = new QTreeWidget;
     linkList->setColumnCount(1);
     mainLayout->addWidget(linkList,0,0);
-    QObject::connect(linkList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForLink(QTreeWidgetItem*,int)));
+    connect(linkList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForLink(QTreeWidgetItem*,int)));
 
     okButton = new QPushButton("Ok");
     if(!selection)
@@ -269,7 +269,7 @@ namespace MBSimGUI {
     constraintList = new QTreeWidget;
     constraintList->setColumnCount(1);
     mainLayout->addWidget(constraintList,0,0);
-    QObject::connect(constraintList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForConstraint(QTreeWidgetItem*,int)));
+    connect(constraintList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForConstraint(QTreeWidgetItem*,int)));
 
     okButton = new QPushButton("Ok");
     if(!selection)
@@ -338,7 +338,7 @@ namespace MBSimGUI {
     frameList = new QTreeWidget;
     frameList->setColumnCount(1);
     mainLayout->addWidget(frameList,0,0);
-    QObject::connect(frameList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForFrame(QTreeWidgetItem*,int)));
+    connect(frameList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForFrame(QTreeWidgetItem*,int)));
 
     okButton = new QPushButton("Ok");
     if(!selection)
@@ -408,7 +408,7 @@ namespace MBSimGUI {
     contourList = new QTreeWidget;
     contourList->setColumnCount(1);
     mainLayout->addWidget(contourList,0,0);
-    QObject::connect(contourList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForContour(QTreeWidgetItem*,int)));
+    connect(contourList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForContour(QTreeWidgetItem*,int)));
 
     okButton = new QPushButton("Ok");
     if(!selection)
@@ -479,7 +479,7 @@ namespace MBSimGUI {
     signalList = new QTreeWidget;
     signalList->setColumnCount(1);
     mainLayout->addWidget(signalList,0,0);
-    QObject::connect(signalList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForSignal(QTreeWidgetItem*,int)));
+    connect(signalList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForSignal(QTreeWidgetItem*,int)));
 
     okButton = new QPushButton("Ok");
     if(!selection)

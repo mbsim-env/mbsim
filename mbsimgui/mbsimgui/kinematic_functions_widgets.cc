@@ -66,9 +66,10 @@ namespace MBSimGUI {
   }
 
   int LinearTranslationWidget::getArg1Size() const {
-    string str = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(static_cast<ExtPhysicalVarWidget*>(A->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString()));
-    vector<vector<string> > A = strToMat(str);
-    return A.size()?A[0].size():0;
+//    string str = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(static_cast<ExtPhysicalVarWidget*>(A->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString()));
+//    vector<vector<string> > A = strToMat(str);
+//    return A.size()?A[0].size():0;
+    return 0;
   }
 
   void LinearTranslationWidget::resize_(int m, int n) {

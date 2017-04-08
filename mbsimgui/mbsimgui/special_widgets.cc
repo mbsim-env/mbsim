@@ -39,7 +39,7 @@ namespace MBSimGUI {
       sizeCombo = new CustomSpinBox;
       sizeCombo->setValue(size);
       layout->addWidget(sizeCombo);
-      QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+      connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     }
     else
       if(size) resize_(size,m,1);
@@ -61,7 +61,7 @@ namespace MBSimGUI {
       ele.resize(size);
       for(int i=0; i<size; i++) {
         QString name = QString("ele")+QString::number(i+1);
-        ele[i] = new ExtWidget(name,new ChoiceWidget2(new VecWidgetFactory(m),QBoxLayout::RightToLeft),5);
+        ele[i] = new ExtWidget(name,new ChoiceWidget2(new VecWidgetFactory(m),QBoxLayout::RightToLeft,5),false,false);
         layout()->addWidget(ele[i]);
       }
 //      for(int i=0; i<min((int)buf.size(),size); i++)
@@ -81,7 +81,7 @@ namespace MBSimGUI {
       int i=0;
       while(e) {
         QString name = QString("ele")+QString::number(i+1);
-        ele.push_back(new ExtWidget(name,new ChoiceWidget2(new VecWidgetFactory(m),QHBoxLayout::RightToLeft,5)));
+        ele.push_back(new ExtWidget(name,new ChoiceWidget2(new VecWidgetFactory(m),QHBoxLayout::RightToLeft,5),false,false));
         layout()->addWidget(ele[i]);
         ele[i]->initializeUsingXML(e);
         e=e->getNextElementSibling();
@@ -126,7 +126,7 @@ namespace MBSimGUI {
       ele.resize(size);
       for(int i=0; i<size; i++) {
         QString name = QString("ele")+QString::number(i+1);
-        ele[i] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n),QBoxLayout::RightToLeft,5));
+        ele[i] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n),QBoxLayout::RightToLeft,5),false,false);
         layout()->addWidget(ele[i]);
       }
     }
@@ -144,7 +144,7 @@ namespace MBSimGUI {
       int i=0;
       while(e) {
         QString name = QString("ele")+QString::number(i+1);
-        ele.push_back(new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(0,0),QHBoxLayout::RightToLeft,5)));
+        ele.push_back(new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(0,0),QHBoxLayout::RightToLeft,5),false,false));
         layout()->addWidget(ele[i]);
         ele[i]->initializeUsingXML(e);
         e=e->getNextElementSibling();
@@ -191,7 +191,7 @@ namespace MBSimGUI {
         ele[i].resize(csize);
         for(int j=0; j<csize; j++) {
           QString name = QString("ele")+QString::number(i+1)+QString::number(j+1);
-          ele[i][j] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n),QBoxLayout::RightToLeft,5));
+          ele[i][j] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n),QBoxLayout::RightToLeft,5),false,false);
           layout()->addWidget(ele[i][j]);
         }
       }
@@ -215,7 +215,7 @@ namespace MBSimGUI {
         ele.push_back(vector<ExtWidget*>());
         while(ee) {
           QString name = QString("ele")+QString::number(i+1)+QString::number(j+1);
-          ele[i].push_back(new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(0,0),QHBoxLayout::RightToLeft,5)));
+          ele[i].push_back(new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(0,0),QHBoxLayout::RightToLeft,5),false,false));
           layout()->addWidget(ele[i][j]);
           ele[i][j]->initializeUsingXML(ee);
           ee=ee->getNextElementSibling();
@@ -264,7 +264,7 @@ namespace MBSimGUI {
     if(i==0)
       return new ExtWidget(name[i],new OneDimVecArrayWidget(size,m,var),false,false,"");
     if(i==1)
-      return new ExtWidget(name[i],var?new ChoiceWidget2(new VecSizeVarWidgetFactory(size*m),QBoxLayout::RightToLeft,5):new ChoiceWidget2(new VecWidgetFactory(size*m),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"array");
+      return new ExtWidget(name[i],var?new ChoiceWidget2(new VecSizeVarWidgetFactory(size*m,3),QBoxLayout::RightToLeft,5):new ChoiceWidget2(new VecWidgetFactory(size*m),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"array");
     return NULL;
   }
 

@@ -35,34 +35,6 @@ namespace MBSimGUI {
   class PhysicalVariableWidget;
   class EvalDialog;
 
-  class ExtPhysicalVarWidget : public Widget {
-    Q_OBJECT
-
-    public:
-      ExtPhysicalVarWidget(std::vector<PhysicalVariableWidget*> inputWidget, int evalIndex=0);
-      ~ExtPhysicalVarWidget();
-
-      PhysicalVariableWidget* getPhysicalVariableWidget(int i) {return inputWidget[i];}
-      PhysicalVariableWidget* getCurrentPhysicalVariableWidget() {return inputWidget[inputCombo->currentIndex()];}
-      int getNumberOfInputs() const {return inputWidget.size();}
-      int getCurrentInput() const {return inputCombo->currentIndex();}
-      void setCurrentInput(int i) {inputCombo->setCurrentIndex(i);}
-      virtual QString getValue() const;
-      void setValue(const QString &str);
-
-    protected:
-      std::vector<PhysicalVariableWidget*> inputWidget;
-      QComboBox *inputCombo;
-      EvalDialog *evalDialog;
-      QStackedWidget *stackedWidget;
-      int evalInput;
-    protected slots:
-      void openEvalDialog();
-      void changeCurrent(int idx);
-    signals:
-      void inputDialogChanged(int);
-  };
-
   class ExtWidget : public QGroupBox, public WidgetInterface {
     Q_OBJECT
 
