@@ -31,6 +31,7 @@ namespace MBSimGUI {
 
   void EmbeddingView::openEditor() {
     if(!editor) {
+      mw->setAllowUndo(false);
       index = selectionModel()->currentIndex();
       parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
       if(parameter) {
@@ -71,17 +72,22 @@ namespace MBSimGUI {
 
   void EmbeddingView::dialogFinished(int result) {
     if(result != 0) {
-      mw->setProjectChanged(true);
+      if(editor->getCancel())
+        mw->setProjectChanged(true);
+      editor->fromWidget();
       mw->mbsimxml(1);
       if(parameter)
         parameter->setConfig(true);
     }
     parameter = 0;
     editor = 0;
+    mw->setAllowUndo(true);
   }
 
   void EmbeddingView::apply() {
-    mw->setProjectChanged(true);
+    if(editor->getCancel())
+      mw->setProjectChanged(true);
+    editor->fromWidget();
     update(index);
     update(index.sibling(index.row(),1));
     mw->mbsimxml(1);

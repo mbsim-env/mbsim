@@ -49,14 +49,10 @@ namespace MBSimGUI {
   }
 
   void PropertyDialog::clicked(QAbstractButton *button) {
-    if(button == buttonBox->button(QDialogButtonBox::Ok)) {
-      fromWidget();
+    if(button == buttonBox->button(QDialogButtonBox::Ok))
       accept();
-    }
-    else if(button == buttonBox->button(QDialogButtonBox::Apply)) {
-      fromWidget();
+    else if(button == buttonBox->button(QDialogButtonBox::Apply))
       emit apply();
-    }
     else if(button == buttonBox->button(QDialogButtonBox::Cancel))
       reject();
     else if(button == buttonBox->button(QDialogButtonBox::Help)) {
@@ -96,8 +92,11 @@ namespace MBSimGUI {
   }
 
   void PropertyDialog::setCancel(bool on) {
-    //buttonBox->button(QDialogButtonBox::Cancel)->setVisible(false);
     buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(on);
+  }
+
+  bool PropertyDialog::getCancel() const {
+    return buttonBox->button(QDialogButtonBox::Cancel)->isEnabled();
   }
 
 }

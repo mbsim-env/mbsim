@@ -151,7 +151,7 @@ namespace MBSimFlexibleBody {
             cout << "];" << endl;
           }
         }
-        exit(0);
+        THROW_MBSIMERROR("init failed");
       }
     }
   }

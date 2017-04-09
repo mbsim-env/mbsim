@@ -117,6 +117,7 @@ namespace MBSimGUI {
 
   bool IntegratorMouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick) {
+      mw->setAllowUndo(false);
       editor = view->getSolver()->createPropertyDialog();
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
@@ -132,6 +133,7 @@ namespace MBSimGUI {
     editor = 0;
     if(result != 0)
       mw->setProjectChanged(true);
+    mw->setAllowUndo(true);
   }
 
   void IntegratorMouseEvent::apply() {

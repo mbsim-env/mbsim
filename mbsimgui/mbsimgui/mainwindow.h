@@ -24,6 +24,7 @@
 #include <QProcess>
 #include <boost/filesystem/path.hpp>
 #include <xercesc/util/XercesDefs.hpp>
+#include <deque>
 
 class QAction;
 class QModelIndex;
@@ -92,9 +93,10 @@ namespace MBSimGUI {
       QString autoExportDir;
       static QDialog *helpDialog;
       static QWebView *helpViewer;
-      bool debug;
-      std::shared_ptr<xercesc::DOMDocument> doc;
+      bool debug, allowUndo;
+      xercesc::DOMDocument *doc;
       std::vector<TreeItemData*> itemsWithHref;
+      std::deque<xercesc::DOMDocument*> undos, redos;
 
     public:
       MainWindow(QStringList &arg);
@@ -120,6 +122,7 @@ namespace MBSimGUI {
       void selectSolver(int i);
       void addItemWithHref(TreeItemData *item);
       void removeItemWithHref(TreeItemData *item);
+      void setAllowUndo(bool allowUndo_) { allowUndo = allowUndo_; }
     public slots:
       void elementListClicked();
       void parameterListClicked();
@@ -137,7 +140,6 @@ namespace MBSimGUI {
       void saveStateVector(const QString &file);
       void saveEigenanalysisAs();
       void saveEigenanalysis(const QString &file);
-      void removeParameter();
       void simulate();
       void refresh();
       void openmbv();
@@ -147,7 +149,10 @@ namespace MBSimGUI {
       void xmlHelp(const QString &url="");
       void about();
       void updateParameters(Element *element);
+      void undo();
+      void redo();
       void removeElement();
+      void removeParameter();
       void saveElementAs();
       void projectSettings();
     protected slots:
@@ -162,7 +167,7 @@ namespace MBSimGUI {
       void applySettings();
       void settingsFinished(int result);
     protected:
-      void closeEvent ( QCloseEvent * event );
+      void closeEvent(QCloseEvent *event);
   };
 
 }

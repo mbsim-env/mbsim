@@ -52,6 +52,7 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) {return 0;}
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL) {return 0;}
       void setCancel(bool on);
+      bool getCancel() const;
     protected:
       std::map<QString,QVBoxLayout*> layout;
       std::vector<QWidget*> widget;

@@ -75,7 +75,7 @@ namespace MBSimGUI {
   QDialog *MainWindow::helpDialog = NULL;
   QWebView *MainWindow::helpViewer = NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./"), debug(true) {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./"), debug(true), allowUndo(true), doc(NULL) {
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_HTMLOUTPUT=1";
     putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
@@ -132,7 +132,7 @@ namespace MBSimGUI {
     GUIMenu->addSeparator();
 
     action = GUIMenu->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"exit.svg").string())), "E&xit", this, SLOT(close()));
-    action->setShortcuts(QKeySequence::Quit);
+    action->setShortcut(QKeySequence::Quit);
     action->setStatusTip(tr("Exit the application"));
 
     for (int i=0; i<maxRecentFiles; i++) {
@@ -142,15 +142,20 @@ namespace MBSimGUI {
     }
     QMenu *menu=new QMenu("Project", menuBar());
     action = menu->addAction("New", this, SLOT(newProject()));
-    action->setShortcuts(QKeySequence::New);
+    action->setShortcut(QKeySequence::New);
     action = menu->addAction("Load", this, SLOT(loadProject()));
-    action->setShortcuts(QKeySequence::Open);
+    action->setShortcut(QKeySequence::Open);
     action = menu->addAction("Save as", this, SLOT(saveProjectAs()));
-    action->setShortcuts(QKeySequence::SaveAs);
+    action->setShortcut(QKeySequence::SaveAs);
     actionSaveProject = menu->addAction("Save", this, SLOT(saveProject()));
-    actionSaveProject->setShortcuts(QKeySequence::Save);
+    actionSaveProject->setShortcut(QKeySequence::Save);
    //ProjMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirOpenIcon)),"Load", this, SLOT(loadProj()));
     actionSaveProject->setDisabled(true);
+    menu->addSeparator();
+    action = menu->addAction("Undo", this, SLOT(undo()));
+    action->setShortcut(QKeySequence::Undo);
+    action = menu->addAction("Redo", this, SLOT(redo()));
+    action->setShortcut(QKeySequence::Redo);
     menu->addSeparator();
     //separatorAct = menu->addSeparator();
     for (int i = 0; i < maxRecentFiles; ++i)
@@ -377,6 +382,14 @@ namespace MBSimGUI {
 
   void MainWindow::setProjectChanged(bool changed) { 
     setWindowModified(changed);
+    if(changed) {
+      cout << "copy document" << endl;
+      undos.push_back(static_cast<DOMDocument*>(doc->cloneNode(true)));
+      if(undos.size() > 3)
+        undos.pop_front();
+      redos.clear();
+      cout << undos.size() << " " << redos.size() << endl;
+    }
   }
   
   bool MainWindow::maybeSave() {
@@ -528,7 +541,7 @@ namespace MBSimGUI {
       DynamicSystemSolver *dss = new DynamicSystemSolver("MBS");
       model->createGroupItem(dss,QModelIndex());
 
-      doc = shared_ptr<DOMDocument>(impl->createDocument());
+      doc = impl->createDocument();
 
       DOMElement *ele0=D(doc)->createElement(MBSIMXML%"MBSimProject");
       doc->insertBefore(ele0, NULL);
@@ -556,7 +569,7 @@ namespace MBSimGUI {
       MBSimObjectFactory::initialize();
       std::string message;
       try { 
-        doc = shared_ptr<DOMDocument>(MBSimGUI::parser->parseURI(X()%file.toStdString()));
+        doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
       }
       catch(const std::exception &ex) {
         message = ex.what();
@@ -639,7 +652,7 @@ namespace MBSimGUI {
           serializer->writeToURI(ndoc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
         }
         else
-          serializer->writeToURI(doc.get(), X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
+          serializer->writeToURI(doc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
       }
       return true;
     }
@@ -986,6 +999,76 @@ namespace MBSimGUI {
         );
   }
 
+  void MainWindow::undo() {
+    if(allowUndo and undos.size()) {
+    cout << "undo" << endl;
+    redos.push_back(doc);
+    doc = undos.back();
+    undos.pop_back();
+    cout << undos.size() << " " << redos.size() << endl;
+
+    DOMElement *ele0=doc->getDocumentElement();
+    DOMElement *ele1 = ele0->getFirstElementChild();
+
+    DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1);
+
+    EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    QModelIndex index = pmodel->index(0,0);
+    pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
+
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    index = model->index(0,0);
+    if(model->rowCount(index))
+      delete model->getItem(index)->getItemData();
+    model->removeRow(index.row(), index.parent());
+    model->createGroupItem(dss);
+
+    elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
+
+    ele1 = ele1->getNextElementSibling();
+
+    Solver *solver=Embed<Solver>::createAndInit(ele1);
+    solverView->setSolver(solver);
+
+    mbsimxml(1);
+    }
+  }
+
+  void MainWindow::redo() {
+    if(redos.size()) {
+    cout << "redo" << endl;
+    undos.push_back(doc);
+    doc = redos.back();
+    redos.pop_back();
+    cout << undos.size() << " " << redos.size() << endl;
+
+    DOMElement *ele0=doc->getDocumentElement();
+    DOMElement *ele1 = ele0->getFirstElementChild();
+
+    DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1);
+
+    EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    QModelIndex index = pmodel->index(0,0);
+    pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
+
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    index = model->index(0,0);
+    if(model->rowCount(index))
+      delete model->getItem(index)->getItemData();
+    model->removeRow(index.row(), index.parent());
+    model->createGroupItem(dss);
+
+    elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
+
+    ele1 = ele1->getNextElementSibling();
+
+    Solver *solver=Embed<Solver>::createAndInit(ele1);
+    solverView->setSolver(solver);
+
+    mbsimxml(1);
+    }
+  }
+
   void MainWindow::removeElement() {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
@@ -995,6 +1078,22 @@ namespace MBSimGUI {
     element->getParent()->removeElement(element);
     model->removeRow(index.row(), index.parent());
     mbsimxml(1);
+  }
+
+  void MainWindow::removeParameter() {
+    setProjectChanged(true);
+    QModelIndex index = embeddingList->selectionModel()->currentIndex().parent();
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    Element *element=static_cast<Element*>(model->getItem(index)->getItemData());
+    EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    QModelIndex pindex = embeddingList->selectionModel()->currentIndex();
+    Parameter *parameter=static_cast<Parameter*>(pmodel->getItem(pindex)->getItemData());
+    DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
+    if(ps and X()%ps->getNodeName()=="#text")
+      parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement()->getPreviousSibling());
+    parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
+    element->removeParameter(parameter);
+    pmodel->removeRow(pindex.row(), pindex.parent());
   }
 
   void MainWindow::saveElementAs() {
@@ -1113,22 +1212,6 @@ namespace MBSimGUI {
     QModelIndex newIndex = model->createParameterItem(parameter,index);
     embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
     embeddingList->openEditor();
-  }
-
-  void MainWindow::removeParameter() {
-    setProjectChanged(true);
-    QModelIndex index = embeddingList->selectionModel()->currentIndex().parent();
-    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-    Element *element=static_cast<Element*>(model->getItem(index)->getItemData());
-    EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-    QModelIndex pindex = embeddingList->selectionModel()->currentIndex();
-    Parameter *parameter=static_cast<Parameter*>(pmodel->getItem(pindex)->getItemData());
-    DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
-    if(ps and X()%ps->getNodeName()=="#text")
-      parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement()->getPreviousSibling());
-    parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
-    element->removeParameter(parameter);
-    pmodel->removeRow(pindex.row(), pindex.parent());
   }
 
   void MainWindow::dragEnterEvent(QDragEnterEvent *event) {

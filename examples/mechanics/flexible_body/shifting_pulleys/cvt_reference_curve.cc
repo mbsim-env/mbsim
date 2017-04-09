@@ -437,7 +437,7 @@ void CVTReferenceSurfaceParts::computeReference() {
       d2posdXi2Str += "];";
       cout << posStr << endl << dposdXiStr << endl << d2posdXi2Str << endl;
     }
-    exit(0);
+    THROW_MBSIMERROR("computeReference failed");
   }
 
   if (0) {
@@ -463,7 +463,7 @@ void CVTReferenceSurfaceParts::computeReference() {
       d2posdTh2Str += "];";
       cout << posStr << endl << dposdThStr << endl << d2posdTh2Str << endl;
     }
-    exit(0);
+    THROW_MBSIMERROR("computeReference failed");
   }
 
 }

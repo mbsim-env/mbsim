@@ -32,6 +32,7 @@ namespace MBSimGUI {
 
   void ElementView::openEditor() {
     if(!editor) {
+      mw->setAllowUndo(false);
       index = selectionModel()->currentIndex();
       element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
       if(element) {
@@ -60,17 +61,22 @@ namespace MBSimGUI {
 
   void ElementView::dialogFinished(int result) {
     if(result != 0) {
-      mw->setProjectChanged(true);
+      if(editor->getCancel())
+        mw->setProjectChanged(true);
+      editor->fromWidget();
       mw->mbsimxml(1);
       element->setConfig(true);
     }
     editor = 0;
     element = 0;
+    mw->setAllowUndo(true);
   }
 
   void ElementView::apply() {
+    if(editor->getCancel())
+      mw->setProjectChanged(true);
+    editor->fromWidget();
     update(index);
-    mw->setProjectChanged(true);
     mw->mbsimxml(1);
     element->setConfig(true);
     editor->setCancel(true);
