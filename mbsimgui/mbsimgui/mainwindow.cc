@@ -152,19 +152,21 @@ namespace MBSimGUI {
    //ProjMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirOpenIcon)),"Load", this, SLOT(loadProj()));
     actionSaveProject->setDisabled(true);
     menu->addSeparator();
-    action = menu->addAction("Undo", this, SLOT(undo()));
-    action->setShortcut(QKeySequence::Undo);
-    action = menu->addAction("Redo", this, SLOT(redo()));
-    action->setShortcut(QKeySequence::Redo);
-    menu->addSeparator();
     //separatorAct = menu->addSeparator();
     for (int i = 0; i < maxRecentFiles; ++i)
       menu->addAction(recentProjectFileActs[i]);
     updateRecentProjectFileActions();
     menu->addSeparator();
-    menuBar()->addMenu(menu);
     menu->addSeparator();
     action = menu->addAction("Settings", this, SLOT(projectSettings()));
+    menuBar()->addMenu(menu);
+
+    menu=new QMenu("Edit", menuBar());
+    action = menu->addAction("Undo", this, SLOT(undo()));
+    action->setShortcut(QKeySequence::Undo);
+    action = menu->addAction("Redo", this, SLOT(redo()));
+    action->setShortcut(QKeySequence::Redo);
+    menuBar()->addMenu(menu);
 
     menu=new QMenu("Export", menuBar());
     actionSaveDataAs = menu->addAction("Export all data", this, SLOT(saveDataAs()));
