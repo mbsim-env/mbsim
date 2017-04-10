@@ -21,15 +21,16 @@
 #include "embedding_property_dialog.h"
 #include "element.h"
 #include "basic_widgets.h"
-#include "mainwindow.h"
+#include "utils.h"
+#include <boost/lexical_cast.hpp>
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
-
-  extern MainWindow *mw;
 
   EmbeddingPropertyDialog::EmbeddingPropertyDialog(Element *element_, bool embedding, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), element(element_), embed(0) {
     addTab("Embedding");
@@ -71,9 +72,27 @@ namespace MBSimGUI {
       else {
         element->setCounterName("");
         element->setValue("");
-        element->setHref("");
-        element->setParameterHref("");
-        mw->removeItemWithHref(element);
+        int removeHref = 0;
+        int removeParameterHref = 0;
+        DOMProcessingInstruction *instr = E(element->getXMLElement())->getFirstProcessingInstructionChildNamed("href");
+        if(instr) {
+          element->getXMLElement()->removeChild(instr);
+          removeParameterHref = 1;
+        }
+        instr = E(element->getXMLElement())->getFirstProcessingInstructionChildNamed("parameterHref");
+        if(instr) {
+          element->getXMLElement()->removeChild(instr);
+          removeHref = 1;
+        }
+        if((removeHref + removeParameterHref) > 0) {
+          DOMDocument *doc=node->getOwnerDocument();
+          DOMProcessingInstruction *instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
+          string count = X()%instr->getData();
+          if(count == "1")
+            doc->getDocumentElement()->removeChild(instr);
+          else
+            instr->setData(X()%toStr(boost::lexical_cast<int>(count)-1));
+        }
         if(X()%embedNode->getNodeName()=="Embed") {
           if(element->getNumberOfParameters()) {
             E(static_cast<DOMElement*>(embedNode))->removeAttribute("count");

@@ -22,17 +22,18 @@
 
 #include <mbxmlutilshelper/dom.h>
 #include "parameter.h"
-#include "mainwindow.h"
+#include "utils.h"
 #include <QFileInfo>
 #include <QDir>
+#include <boost/lexical_cast.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 namespace MBSimGUI {
 
   class Element;
   extern QDir mbsDir;
   extern xercesc::DOMLSParser *parser;
-  extern MainWindow *mw;
 
   template <typename T>
     class Embed {
@@ -74,9 +75,28 @@ namespace MBSimGUI {
               object->initializeUsingXML(ele2);
               for(size_t i=0; i<param.size(); i++)
                 object->addParameter(param[i]);
-              if(not href.isEmpty()) object->setHref(href);
-              if(not parameterHref.isEmpty()) object->setParameterHref(parameterHref);
-              if((not parameterHref.isEmpty()) or (not href.isEmpty())) mw->addItemWithHref(object);
+              if(not href.isEmpty()) {
+                xercesc::DOMDocument *doc=ele2->getOwnerDocument();
+                xercesc::DOMProcessingInstruction *id=doc->createProcessingInstruction(MBXMLUtils::X()%"href", MBXMLUtils::X()%href.toStdString());
+                ele2->insertBefore(id, ele2->getFirstChild());
+              }
+              if(not parameterHref.isEmpty()) {
+                xercesc::DOMDocument *doc=ele2->getOwnerDocument();
+                xercesc::DOMProcessingInstruction *id=doc->createProcessingInstruction(MBXMLUtils::X()%"parameterHref", MBXMLUtils::X()%parameterHref.toStdString());
+                ele2->insertBefore(id, ele2->getFirstChild());
+              }
+              if((not parameterHref.isEmpty()) or (not href.isEmpty())) {
+                xercesc::DOMDocument *doc=ele2->getOwnerDocument();
+                xercesc::DOMProcessingInstruction *instr = MBXMLUtils::E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
+                if(not instr) {
+                  instr=doc->createProcessingInstruction(MBXMLUtils::X()%"hrefCount", MBXMLUtils::X()%"1");
+                  doc->getDocumentElement()->insertBefore(instr, doc->getDocumentElement()->getFirstChild());
+                }
+                else {
+                  std::string count = MBXMLUtils::X()%instr->getData();
+                  instr->setData(MBXMLUtils::X()%toStr(boost::lexical_cast<int>(count)+1));
+                }
+              }
             }
           }
           else {

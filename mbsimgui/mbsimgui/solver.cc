@@ -52,44 +52,4 @@ namespace MBSimGUI {
     this->element = element;
   }
 
-  QString Solver::getHref() const {
-    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
-    return instr?QString::fromStdString(X()%instr->getData()):"";
-  }
-
-  void Solver::setHref(const QString &str) {
-    DOMDocument *doc=element->getOwnerDocument();
-    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
-    if(not str.isEmpty()) {
-      if(not instr) {
-        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"href", X()%str.toStdString());
-        element->insertBefore(id, element->getFirstChild());
-      }
-      else
-        instr->setData(X()%str.toStdString());
-    }
-    else if(instr)
-      element->removeChild(instr);
-  }
-
-  QString Solver::getParameterHref() const {
-    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
-    return instr?QString::fromStdString(X()%instr->getData()):"";
-  }
-
-  void Solver::setParameterHref(const QString &str) {
-    DOMDocument *doc=element->getOwnerDocument();
-    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
-    if(not str.isEmpty()) {
-      if(not instr) {
-        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"parameterHref", X()%str.toStdString());
-        element->insertBefore(id, element->getFirstChild());
-      }
-      else
-        instr->setData(X()%str.toStdString());
-    }
-    else if(instr)
-      element->removeChild(instr);
-  }
-
 }

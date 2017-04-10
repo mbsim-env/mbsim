@@ -77,10 +77,6 @@ namespace MBSimGUI {
       void setValue(const QString &str) { value = str; }
       const QString& getCounterName() const { return counterName; }
       void setCounterName(const QString &str) { counterName = str; }
-      QString getHref() const;
-      void setHref(const QString &str);
-      QString getParameterHref() const;
-      void setParameterHref(const QString &str);
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       virtual QString getFileExtension() const { return ".xml"; }
       template<class T> T* getByPath(const QString &path, bool initialCaller=true) const;

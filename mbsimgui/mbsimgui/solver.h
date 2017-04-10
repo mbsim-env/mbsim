@@ -47,10 +47,6 @@ namespace MBSimGUI {
       virtual QString getType() const { return "Solver"; }
       const QString& getName() const { return name; }
       const QString& getValue() const { return value; }
-      QString getHref() const;
-      void setHref(const QString &str);
-      QString getParameterHref() const;
-      void setParameterHref(const QString &str);
       virtual MBXMLUtils::NamespaceURI getNameSpace() const = 0;
       virtual SolverPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
       void addParameter(Parameter *param) { }

@@ -279,8 +279,6 @@ namespace MBSimGUI {
       return T(str.c_str());
     }
 
-  QTreeWidgetItem* getChild(QTreeWidgetItem *parentItem, const QString &str);
-
   template <class AT>
     inline std::vector<std::vector<AT> > transpose(const std::vector<std::vector<AT> > &A) {
       std::vector<std::vector<AT> > B(A[0].size());

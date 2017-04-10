@@ -64,30 +64,31 @@ namespace MBSimGUI {
   }
 
   DOMElement* Element::processHref(DOMElement *element) {
-    if(not getParameterHref().isEmpty()) {
-      DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
+    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
+    if(instr) {
       element->removeChild(instr);
       DOMElement *parameter = E(static_cast<DOMElement*>(element->getParentNode()))->getFirstElementChildNamed(PV%"Parameter");
       if(parameter) {
         DOMDocument *doc = impl->createDocument();
         DOMNode *node = doc->importNode(parameter,true);
         doc->insertBefore(node,NULL);
-        serializer->writeToURI(doc, X()%getParameterHref().toStdString());
-        E(static_cast<DOMElement*>(element->getParentNode()))->setAttribute("parameterHref",getParameterHref().toStdString());
+        serializer->writeToURI(doc,instr->getData());
+        E(static_cast<DOMElement*>(element->getParentNode()))->setAttribute("parameterHref",X()%instr->getData());
         DOMNode *ps = parameter->getPreviousSibling();
         if(ps and X()%ps->getNodeName()=="#text")
           parameter->getParentNode()->removeChild(ps);
         parameter->getParentNode()->removeChild(parameter);
       }
     }
-    if(not getHref().isEmpty()) {
+    instr = E(element)->getFirstProcessingInstructionChildNamed("href");
+    if(instr) {
       DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
       element->removeChild(instr);
       DOMDocument *doc = impl->createDocument();
       DOMNode *node = doc->importNode(element,true);
       doc->insertBefore(node,NULL);
-      serializer->writeToURI(doc, X()%getHref().toStdString());
-      E(static_cast<DOMElement*>(element->getParentNode()))->setAttribute("href",getHref().toStdString());
+      serializer->writeToURI(doc, instr->getData());
+      E(static_cast<DOMElement*>(element->getParentNode()))->setAttribute("href",X()%instr->getData());
       DOMNode *ps = element->getPreviousSibling();
       if(ps and X()%ps->getNodeName()=="#text")
         element->getParentNode()->removeChild(ps);
@@ -271,46 +272,6 @@ namespace MBSimGUI {
     plotFeatures.push_back(pf);
     if(getParent())
       getParent()->addPlotFeature(pf);
-  }
-
-  QString Element::getHref() const {
-    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
-    return instr?QString::fromStdString(X()%instr->getData()):"";
-  }
-
-  void Element::setHref(const QString &str) {
-    DOMDocument *doc=element->getOwnerDocument();
-    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
-    if(not str.isEmpty()) {
-      if(not instr) {
-        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"href", X()%str.toStdString());
-        element->insertBefore(id, element->getFirstChild());
-      }
-      else
-        instr->setData(X()%str.toStdString());
-    }
-    else if(instr)
-      element->removeChild(instr);
-  }
-
-  QString Element::getParameterHref() const {
-    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
-    return instr?QString::fromStdString(X()%instr->getData()):"";
-  }
-
-  void Element::setParameterHref(const QString &str) {
-    DOMDocument *doc=element->getOwnerDocument();
-    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
-    if(not str.isEmpty()) {
-      if(not instr) {
-        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"parameterHref", X()%str.toStdString());
-        element->insertBefore(id, element->getFirstChild());
-      }
-      else
-        instr->setData(X()%str.toStdString());
-    }
-    else if(instr)
-      element->removeChild(instr);
   }
 
 }

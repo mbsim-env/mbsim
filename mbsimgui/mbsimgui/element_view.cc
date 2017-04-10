@@ -36,7 +36,6 @@ namespace MBSimGUI {
       index = selectionModel()->currentIndex();
       element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
       if(element) {
-        std::cout << "href of " << element->getName().toStdString() << " " << element->getHref().toStdString() << std::endl;
         mw->updateParameters(element);
         editor = element->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);

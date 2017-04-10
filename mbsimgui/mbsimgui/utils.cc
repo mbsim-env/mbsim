@@ -134,14 +134,6 @@ namespace MBSimGUI {
     return AlphaBetaGamma;
   }
 
-  QTreeWidgetItem* getChild(QTreeWidgetItem *parentItem, const QString &str) {
-    for(int i=0; i<parentItem->childCount(); i++) {
-      if(parentItem->child(i)->text(0) == str)
-        return parentItem->child(i);
-    }
-    return 0;
-  }
-
   string removeWhiteSpace(const string &str) {
     string ret = str;
     size_t found;

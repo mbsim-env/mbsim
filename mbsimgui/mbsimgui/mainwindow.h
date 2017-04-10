@@ -95,7 +95,6 @@ namespace MBSimGUI {
       static QWebView *helpViewer;
       bool debug, allowUndo;
       xercesc::DOMDocument *doc;
-      std::vector<TreeItemData*> itemsWithHref;
       std::deque<xercesc::DOMDocument*> undos, redos;
 
     public:
@@ -120,8 +119,6 @@ namespace MBSimGUI {
       ElementView* getElementList() { return elementList; }
       void setProjectChanged(bool changed=true);
       void selectSolver(int i);
-      void addItemWithHref(TreeItemData *item);
-      void removeItemWithHref(TreeItemData *item);
       void setAllowUndo(bool allowUndo_) { allowUndo = allowUndo_; }
     public slots:
       void elementListClicked();

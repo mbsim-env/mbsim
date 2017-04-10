@@ -616,11 +616,14 @@ namespace MBSimGUI {
     try {
       if(modifyStatus) {
         setProjectChanged(false);
-        cout << itemsWithHref.size() << endl;
-        if(itemsWithHref.size()) {
+        DOMProcessingInstruction *instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
+        cout << "DOMProcessingInstruction " << instr << endl;
+        if(instr) {
+          cout << X()%instr->getData() << endl;
           QModelIndex index = elementList->model()->index(0,0);
           DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
           DOMDocument *ndoc = static_cast<DOMDocument*>(doc->cloneNode(true));
+          ndoc->getDocumentElement()->removeChild(E(ndoc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount"));
           DOMElement* ele = ndoc->getDocumentElement()->getFirstElementChild();
           if(E(ele)->getTagName()==PV%"Embed")
             ele = E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
@@ -1246,21 +1249,6 @@ namespace MBSimGUI {
   void MainWindow::applySettings() {
     setProjectChanged(true);
     mbsimxml(1);
-  }
-
-  void MainWindow::addItemWithHref(TreeItemData *item) {
-    for (vector<TreeItemData*>::iterator it = itemsWithHref.begin() ; it != itemsWithHref.end(); ++it)
-      if(*it==item)
-        return;
-    itemsWithHref.push_back(item);
-  }
-
-  void MainWindow::removeItemWithHref(TreeItemData *item) {
-    for (vector<TreeItemData*>::iterator it = itemsWithHref.begin() ; it != itemsWithHref.end(); ++it)
-      if(*it==item) {
-        itemsWithHref.erase(it);
-        break;
-      }
   }
 
 }
