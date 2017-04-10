@@ -385,12 +385,10 @@ namespace MBSimGUI {
   void MainWindow::setProjectChanged(bool changed) { 
     setWindowModified(changed);
     if(changed) {
-      cout << "copy document" << endl;
       undos.push_back(static_cast<DOMDocument*>(doc->cloneNode(true)));
-      if(undos.size() > 3)
+      if(undos.size() > 10)
         undos.pop_front();
       redos.clear();
-      cout << undos.size() << " " << redos.size() << endl;
     }
   }
   
@@ -520,6 +518,7 @@ namespace MBSimGUI {
 
   void MainWindow::newProject(bool ask) {
     if(maybeSave()) {
+      undos.clear();
       setProjectChanged(false);
       mbsDir = QDir::current();
       actionOpenMBV->setDisabled(true);
@@ -563,6 +562,7 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject(const QString &file) {
     if(not(file.isEmpty())) {
+      undos.clear();
       setProjectChanged(false);
       mbsDir = QFileInfo(file).absolutePath();
       QDir::setCurrent(QFileInfo(file).absolutePath());
@@ -579,36 +579,10 @@ namespace MBSimGUI {
       catch(...) {
         message = "Unknown exception.";
       }
-      DOMElement *ele0=doc->getDocumentElement();
       setWindowTitle(fileProject+"[*]");
-
 //      evalSelect.initializeUsingXML(ele0);
-
-      DOMElement *ele1 = ele0->getFirstElementChild();
-//      if(evalSelect.isActive()) ele1 = ele1->getNextElementSibling();
-
-      DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1);
-
-      EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-      QModelIndex index = pmodel->index(0,0);
-      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
-        
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      index = model->index(0,0);
-      if(model->rowCount(index))
-        delete model->getItem(index)->getItemData();
-      model->removeRow(index.row(), index.parent());
-      model->createGroupItem(dss);
-
-      elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
-
-      ele1 = ele1->getNextElementSibling();
-
-      Solver *solver=Embed<Solver>::createAndInit(ele1);
-      solverView->setSolver(solver);
-
+      rebuildTree();
       actionSaveProject->setDisabled(false);
-
       mbsimxml(1);
     }
   }
@@ -1001,14 +975,7 @@ namespace MBSimGUI {
         );
   }
 
-  void MainWindow::undo() {
-    if(allowUndo and undos.size()) {
-    cout << "undo" << endl;
-    redos.push_back(doc);
-    doc = undos.back();
-    undos.pop_back();
-    cout << undos.size() << " " << redos.size() << endl;
-
+  void MainWindow::rebuildTree() {
     DOMElement *ele0=doc->getDocumentElement();
     DOMElement *ele1 = ele0->getFirstElementChild();
 
@@ -1031,43 +998,26 @@ namespace MBSimGUI {
 
     Solver *solver=Embed<Solver>::createAndInit(ele1);
     solverView->setSolver(solver);
+  }
 
-    mbsimxml(1);
+  void MainWindow::undo() {
+    if(allowUndo and undos.size()) {
+      setWindowModified(true);
+      redos.push_back(doc);
+      doc = undos.back();
+      undos.pop_back();
+      rebuildTree();
+      mbsimxml(1);
     }
   }
 
   void MainWindow::redo() {
     if(redos.size()) {
-    cout << "redo" << endl;
-    undos.push_back(doc);
-    doc = redos.back();
-    redos.pop_back();
-    cout << undos.size() << " " << redos.size() << endl;
-
-    DOMElement *ele0=doc->getDocumentElement();
-    DOMElement *ele1 = ele0->getFirstElementChild();
-
-    DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1);
-
-    EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-    QModelIndex index = pmodel->index(0,0);
-    pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
-
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    index = model->index(0,0);
-    if(model->rowCount(index))
-      delete model->getItem(index)->getItemData();
-    model->removeRow(index.row(), index.parent());
-    model->createGroupItem(dss);
-
-    elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
-
-    ele1 = ele1->getNextElementSibling();
-
-    Solver *solver=Embed<Solver>::createAndInit(ele1);
-    solverView->setSolver(solver);
-
-    mbsimxml(1);
+      undos.push_back(doc);
+      doc = redos.back();
+      redos.pop_back();
+      rebuildTree();
+      mbsimxml(1);
     }
   }
 
