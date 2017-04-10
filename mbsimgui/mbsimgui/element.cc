@@ -64,31 +64,31 @@ namespace MBSimGUI {
   }
 
   DOMElement* Element::processHref(DOMElement *element) {
-    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
+    DOMElement *parent = static_cast<DOMElement*>(element->getParentNode());
+    DOMProcessingInstruction *instr = E(parent)->getFirstProcessingInstructionChildNamed("parameterHref");
     if(instr) {
-      element->removeChild(instr);
-      DOMElement *parameter = E(static_cast<DOMElement*>(element->getParentNode()))->getFirstElementChildNamed(PV%"Parameter");
+      parent->removeChild(instr);
+      DOMElement *parameter = E(parent)->getFirstElementChildNamed(PV%"Parameter");
       if(parameter) {
         DOMDocument *doc = impl->createDocument();
         DOMNode *node = doc->importNode(parameter,true);
         doc->insertBefore(node,NULL);
         serializer->writeToURI(doc,instr->getData());
-        E(static_cast<DOMElement*>(element->getParentNode()))->setAttribute("parameterHref",X()%instr->getData());
+        E(parent)->setAttribute("parameterHref",X()%instr->getData());
         DOMNode *ps = parameter->getPreviousSibling();
         if(ps and X()%ps->getNodeName()=="#text")
           parameter->getParentNode()->removeChild(ps);
         parameter->getParentNode()->removeChild(parameter);
       }
     }
-    instr = E(element)->getFirstProcessingInstructionChildNamed("href");
+    instr = E(parent)->getFirstProcessingInstructionChildNamed("href");
     if(instr) {
-      DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
-      element->removeChild(instr);
+      parent->removeChild(instr);
       DOMDocument *doc = impl->createDocument();
       DOMNode *node = doc->importNode(element,true);
       doc->insertBefore(node,NULL);
       serializer->writeToURI(doc, instr->getData());
-      E(static_cast<DOMElement*>(element->getParentNode()))->setAttribute("href",X()%instr->getData());
+      E(parent)->setAttribute("href",X()%instr->getData());
       DOMNode *ps = element->getPreviousSibling();
       if(ps and X()%ps->getNodeName()=="#text")
         element->getParentNode()->removeChild(ps);

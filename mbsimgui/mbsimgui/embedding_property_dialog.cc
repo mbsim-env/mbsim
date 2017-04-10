@@ -35,7 +35,7 @@ namespace MBSimGUI {
   EmbeddingPropertyDialog::EmbeddingPropertyDialog(Element *element_, bool embedding, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), element(element_), embed(0) {
     addTab("Embedding");
     if(embedding) {
-      embed = new ExtWidget("Embed", new EmbedWidget(element), true);
+      embed = new ExtWidget("Embed", new EmbedWidget(element->getName()), true);
       addToTab("Embedding",embed);
       name = new ExtWidget("Name",new TextWidget);
       addToTab("Embedding",name);
@@ -72,27 +72,27 @@ namespace MBSimGUI {
       else {
         element->setCounterName("");
         element->setValue("");
-        int removeHref = 0;
-        int removeParameterHref = 0;
-        DOMProcessingInstruction *instr = E(element->getXMLElement())->getFirstProcessingInstructionChildNamed("href");
-        if(instr) {
-          element->getXMLElement()->removeChild(instr);
-          removeParameterHref = 1;
-        }
-        instr = E(element->getXMLElement())->getFirstProcessingInstructionChildNamed("parameterHref");
-        if(instr) {
-          element->getXMLElement()->removeChild(instr);
-          removeHref = 1;
-        }
-        if((removeHref + removeParameterHref) > 0) {
-          DOMDocument *doc=node->getOwnerDocument();
-          DOMProcessingInstruction *instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
-          string count = X()%instr->getData();
-          if(count == "1")
-            doc->getDocumentElement()->removeChild(instr);
-          else
-            instr->setData(X()%toStr(boost::lexical_cast<int>(count)-1));
-        }
+//        int removeHref = 0;
+//        int removeParameterHref = 0;
+//        DOMProcessingInstruction *instr = E(element->getXMLElement())->getFirstProcessingInstructionChildNamed("href");
+//        if(instr) {
+//          element->getXMLElement()->removeChild(instr);
+//          removeParameterHref = 1;
+//        }
+//        instr = E(element->getXMLElement())->getFirstProcessingInstructionChildNamed("parameterHref");
+//        if(instr) {
+//          element->getXMLElement()->removeChild(instr);
+//          removeHref = 1;
+//        }
+//        if((removeHref + removeParameterHref) > 0) {
+//          DOMDocument *doc=node->getOwnerDocument();
+//          DOMProcessingInstruction *instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
+//          string count = X()%instr->getData();
+//          if(count == "1")
+//            doc->getDocumentElement()->removeChild(instr);
+//          else
+//            instr->setData(X()%toStr(boost::lexical_cast<int>(count)-1));
+//        }
         if(X()%embedNode->getNodeName()=="Embed") {
           if(element->getNumberOfParameters()) {
             E(static_cast<DOMElement*>(embedNode))->removeAttribute("count");

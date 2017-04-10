@@ -904,17 +904,17 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  EmbedWidget::EmbedWidget(Element *ele_) : ele(ele_) {
+  EmbedWidget::EmbedWidget(const QString &name) {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
     layout->setMargin(0);
-    href = new ExtWidget("File", new FileWidget(ele->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false, true), true);
+    href = new ExtWidget("File", new FileWidget(name+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false, true), true);
     layout->addWidget(href);
     count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")), true);
     layout->addWidget(count);
     counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
     layout->addWidget(counterName);
-    parameterHref = new ExtWidget("Parameter file", new FileWidget(ele->getName()+".parameter.xml", "XML parameter files", "xml files (*.xml)", 1, false, true), true);
+    parameterHref = new ExtWidget("Parameter file", new FileWidget(name+".parameter.xml", "XML parameter files", "xml files (*.xml)", 1, false, true), true);
     layout->addWidget(parameterHref);
   }
 
@@ -927,8 +927,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbedWidget::initializeUsingXML(DOMElement *parent) {
-    DOMElement *element = static_cast<DOMElement*>(parent)->getLastElementChild();
-    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
+    DOMProcessingInstruction *instr = E(parent)->getFirstProcessingInstructionChildNamed("href");
     if(instr) {
       href->setActive(true);
       static_cast<FileWidget*>(href->getWidget())->setFile(QString::fromStdString(X()%instr->getData()));
@@ -941,7 +940,7 @@ namespace MBSimGUI {
       counterName->setActive(true);
       static_cast<TextWidget*>(counterName->getWidget())->setText(QString::fromStdString(E(parent)->getAttribute("counterName")));
     }
-    instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
+    instr = E(parent)->getFirstProcessingInstructionChildNamed("parameterHref");
     if(instr) {
       parameterHref->setActive(true);
       static_cast<FileWidget*>(parameterHref->getWidget())->setFile(QString::fromStdString(X()%instr->getData()));
@@ -953,7 +952,7 @@ namespace MBSimGUI {
     int removeHref = 0;
     int removeParameterHref = 0;
     bool addHref = false;
-    DOMElement *element = static_cast<DOMElement*>(parent)->getLastElementChild();
+    DOMElement *element = static_cast<DOMElement*>(parent);
     DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
     if(href->isActive() and (not static_cast<FileWidget*>(href->getWidget())->getFile().isEmpty())) {
       if(not instr) {

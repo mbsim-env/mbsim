@@ -49,10 +49,12 @@ namespace MBSimGUI {
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               parameterHref = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"));
               QFileInfo fileInfo(mbsDir.absoluteFilePath(parameterHref));
-              std::shared_ptr<xercesc::DOMDocument> doc(parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString()));
+              xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
               ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
               ele1->insertBefore(ele2,ele1->getFirstElementChild());
               MBXMLUtils::E(ele1)->removeAttribute("parameterHref");
+              xercesc::DOMProcessingInstruction *id=ele1->getOwnerDocument()->createProcessingInstruction(MBXMLUtils::X()%"parameterHref", MBXMLUtils::X()%parameterHref.toStdString());
+              ele1->insertBefore(id, ele1->getFirstChild());
             }
             else
               ele2 = MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
@@ -65,26 +67,18 @@ namespace MBSimGUI {
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               href = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"));
               QFileInfo fileInfo(mbsDir.absoluteFilePath(href));
-              std::shared_ptr<xercesc::DOMDocument> doc(parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString()));
+              xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
               ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
               ele1->insertBefore(ele2,NULL);
               MBXMLUtils::E(ele1)->removeAttribute("href");
+              xercesc::DOMProcessingInstruction *id=ele1->getOwnerDocument()->createProcessingInstruction(MBXMLUtils::X()%"href", MBXMLUtils::X()%href.toStdString());
+              ele1->insertBefore(id, ele1->getFirstChild());
             }
             object=create(ele2);
             if(object) {
               object->initializeUsingXML(ele2);
               for(size_t i=0; i<param.size(); i++)
                 object->addParameter(param[i]);
-              if(not href.isEmpty()) {
-                xercesc::DOMDocument *doc=ele2->getOwnerDocument();
-                xercesc::DOMProcessingInstruction *id=doc->createProcessingInstruction(MBXMLUtils::X()%"href", MBXMLUtils::X()%href.toStdString());
-                ele2->insertBefore(id, ele2->getFirstChild());
-              }
-              if(not parameterHref.isEmpty()) {
-                xercesc::DOMDocument *doc=ele2->getOwnerDocument();
-                xercesc::DOMProcessingInstruction *id=doc->createProcessingInstruction(MBXMLUtils::X()%"parameterHref", MBXMLUtils::X()%parameterHref.toStdString());
-                ele2->insertBefore(id, ele2->getFirstChild());
-              }
               if((not parameterHref.isEmpty()) or (not href.isEmpty())) {
                 xercesc::DOMDocument *doc=ele2->getOwnerDocument();
                 xercesc::DOMProcessingInstruction *instr = MBXMLUtils::E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");

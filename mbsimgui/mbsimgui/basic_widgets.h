@@ -464,7 +464,7 @@ namespace MBSimGUI {
   class EmbedWidget : public Widget {
 
     public:
-      EmbedWidget(Element *ele);
+      EmbedWidget(const QString &name);
       QString getCounterName() const;
       QString getCount() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -472,7 +472,6 @@ namespace MBSimGUI {
 
     protected:
       ExtWidget *href, *count, *counterName, *parameterHref;
-      Element *ele;
   };
 
 //  class SignalReferenceWidget : public Widget {
