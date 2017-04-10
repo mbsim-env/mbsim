@@ -65,9 +65,11 @@ namespace MBSimGUI {
 
   DOMElement* Element::processHref(DOMElement *element) {
     if(not getParameterHref().isEmpty()) {
-      DOMDocument *doc = impl->createDocument();
+      DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
+      element->removeChild(instr);
       DOMElement *parameter = E(static_cast<DOMElement*>(element->getParentNode()))->getFirstElementChildNamed(PV%"Parameter");
       if(parameter) {
+        DOMDocument *doc = impl->createDocument();
         DOMNode *node = doc->importNode(parameter,true);
         doc->insertBefore(node,NULL);
         serializer->writeToURI(doc, X()%getParameterHref().toStdString());
@@ -79,6 +81,8 @@ namespace MBSimGUI {
       }
     }
     if(not getHref().isEmpty()) {
+      DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
+      element->removeChild(instr);
       DOMDocument *doc = impl->createDocument();
       DOMNode *node = doc->importNode(element,true);
       doc->insertBefore(node,NULL);
@@ -96,7 +100,8 @@ namespace MBSimGUI {
     DOMNode *e = element->getFirstChild();
     while(e) {
       DOMNode *en=e->getNextSibling();
-      element->removeChild(e);
+      if(e->getNodeType() != DOMNode::PROCESSING_INSTRUCTION_NODE)
+        element->removeChild(e);
       e = en;
     }
   }
@@ -266,6 +271,46 @@ namespace MBSimGUI {
     plotFeatures.push_back(pf);
     if(getParent())
       getParent()->addPlotFeature(pf);
+  }
+
+  QString Element::getHref() const {
+    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
+    return instr?QString::fromStdString(X()%instr->getData()):"";
+  }
+
+  void Element::setHref(const QString &str) {
+    DOMDocument *doc=element->getOwnerDocument();
+    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
+    if(not str.isEmpty()) {
+      if(not instr) {
+        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"href", X()%str.toStdString());
+        element->insertBefore(id, element->getFirstChild());
+      }
+      else
+        instr->setData(X()%str.toStdString());
+    }
+    else if(instr)
+      element->removeChild(instr);
+  }
+
+  QString Element::getParameterHref() const {
+    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
+    return instr?QString::fromStdString(X()%instr->getData()):"";
+  }
+
+  void Element::setParameterHref(const QString &str) {
+    DOMDocument *doc=element->getOwnerDocument();
+    DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
+    if(not str.isEmpty()) {
+      if(not instr) {
+        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"parameterHref", X()%str.toStdString());
+        element->insertBefore(id, element->getFirstChild());
+      }
+      else
+        instr->setData(X()%str.toStdString());
+    }
+    else if(instr)
+      element->removeChild(instr);
   }
 
 }

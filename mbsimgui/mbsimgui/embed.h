@@ -70,13 +70,13 @@ namespace MBSimGUI {
               MBXMLUtils::E(ele1)->removeAttribute("href");
             }
             object=create(ele2);
-            if(not href.isEmpty()) object->setHref(href);
-            if(not parameterHref.isEmpty()) object->setParameterHref(parameterHref);
-            if((not parameterHref.isEmpty()) or (not href.isEmpty())) mw->addItemWithHref(object);
             if(object) {
               object->initializeUsingXML(ele2);
               for(size_t i=0; i<param.size(); i++)
                 object->addParameter(param[i]);
+              if(not href.isEmpty()) object->setHref(href);
+              if(not parameterHref.isEmpty()) object->setParameterHref(parameterHref);
+              if((not parameterHref.isEmpty()) or (not href.isEmpty())) mw->addItemWithHref(object);
             }
           }
           else {

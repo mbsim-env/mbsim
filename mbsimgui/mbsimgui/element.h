@@ -50,7 +50,7 @@ namespace MBSimGUI {
       std::vector<Parameter*> removedParameter;
       std::vector<QString> plotFeatures;
       xercesc::DOMElement *element;
-      QString ID, name, value, counterName, href, parameterHref;
+      QString ID, name, value, counterName;
       bool config;
     public:
       Element(const QString &name="");
@@ -77,10 +77,10 @@ namespace MBSimGUI {
       void setValue(const QString &str) { value = str; }
       const QString& getCounterName() const { return counterName; }
       void setCounterName(const QString &str) { counterName = str; }
-      const QString& getHref() const { return href; }
-      void setHref(const QString &str) { href = str; }
-      const QString& getParameterHref() const { return parameterHref; }
-      void setParameterHref(const QString &str) { parameterHref = str; }
+      QString getHref() const;
+      void setHref(const QString &str);
+      QString getParameterHref() const;
+      void setParameterHref(const QString &str);
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       virtual QString getFileExtension() const { return ".xml"; }
       template<class T> T* getByPath(const QString &path, bool initialCaller=true) const;
