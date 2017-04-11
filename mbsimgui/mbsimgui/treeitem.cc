@@ -19,9 +19,6 @@
 
 #include <config.h>
 #include "treeitem.h"
-#include <iostream>
-
-using namespace std;
 
 namespace MBSimGUI {
 

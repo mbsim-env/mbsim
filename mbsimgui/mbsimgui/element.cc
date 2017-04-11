@@ -48,19 +48,12 @@ namespace MBSimGUI {
 
   int Element::IDcounter=0;
 
-  Element::Element(const QString &name_) : parent(NULL), element(NULL), name(name_), config(false) {
+  Element::Element(const QString &name) : EmbedItemData(name), parent(NULL), config(false) {
     ID=toQStr(IDcounter++);
     addPlotFeature("plotRecursive");
     addPlotFeature("separateFilePerGroup");
     addPlotFeature("openMBV");
     addPlotFeature("debug");
-  }
-
-  Element::~Element() {
-    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++)
-      delete (*it);
-    for(vector<Parameter*>::iterator i = removedParameter.begin(); i != removedParameter.end(); ++i)
-      delete *i;
   }
 
   DOMElement* Element::processHref(DOMElement *element) {
@@ -240,28 +233,13 @@ namespace MBSimGUI {
     }
   }
 
-  vector<TreeItemData*> Element::getParents() {
-    vector<TreeItemData*> parents;
+  vector<EmbedItemData*> Element::getParents() {
+    vector<EmbedItemData*> parents;
     if(getParent()) {
       parents = getParent()->getParents();
       parents.push_back(getParent());
     }
     return parents;
-  }
-
-  void Element::addParameter(Parameter *param) {
-    parameter.push_back(param);
-    param->setParent(this);
-  }
-
-  void Element::removeParameter(Parameter *param) {
-    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++) {
-      if(*it == param) {
-        parameter.erase(it);
-        break;
-      }
-    }
-    removedParameter.push_back(param);
   }
 
   void Element::addPlotFeature(const QString &pf) {

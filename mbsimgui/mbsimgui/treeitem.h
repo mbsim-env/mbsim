@@ -26,89 +26,8 @@
 #include <QVariant>
 #include <QVector>
 #include <QApplication>
-#include "element_context_menu.h"
-#include "element.h"
 
 namespace MBSimGUI {
-
-  class BasicItemData : public TreeItemData {
-    protected:
-      QString name, value, counterName;
-    public:
-      BasicItemData(const QString &name_, const QString &value_) : name(name_), value(value_) {}
-      const QString& getName() const {return name;}
-      const QString& getValue() const {return value;}
-      const QString& getCounterName() const {return counterName;}
-      QString getType() const {return "Type";}
-      void setName(const QString &name_) {name = name_;}
-      void setValue(const QString &value_) {value = value_;}
-      void setCounterName(const QString &counterName_) {counterName = counterName_;}
-      virtual QMenu* createContextMenu() {return new QMenu;}
-  };
-
-  class FrameItemData : public BasicItemData {
-    private:
-      Element *element;
-    public:
-      FrameItemData(Element *element_) : BasicItemData("frames",""), element(element_) {}
-      QString getType() const {return "";}
-      virtual QMenu* createContextMenu() {return element->createFrameContextMenu();}
-  };
-
-  class ContourItemData : public BasicItemData {
-    private:
-      Element *element;
-    public:
-      ContourItemData(Element *element_) : BasicItemData("contours",""), element(element_) {}
-      QString getType() const {return "";}
-      virtual QMenu* createContextMenu() {return new ContourContextContextMenu(element);}
-  };
-
-  class GroupItemData : public BasicItemData {
-    private:
-      Element *element;
-    public:
-      GroupItemData(Element *element_) : BasicItemData("groups",""), element(element_) {}
-      QString getType() const {return "";}
-      virtual QMenu* createContextMenu() {return new GroupContextContextMenu(element);}
-  };
-
-
-  class ObjectItemData : public BasicItemData {
-    private:
-      Element *element;
-    public:
-      ObjectItemData(Element *element_) : BasicItemData("objects",""), element(element_) {}
-      QString getType() const {return "";}
-      virtual QMenu* createContextMenu() {return new ObjectContextContextMenu(element);}
-  };
-
-  class LinkItemData : public BasicItemData {
-    private:
-      Element *element;
-    public:
-      LinkItemData(Element *element_) : BasicItemData("links",""), element(element_) {}
-      QString getType() const {return "";}
-      virtual QMenu* createContextMenu() {return new LinkContextContextMenu(element);}
-  };
-
-  class ConstraintItemData : public BasicItemData {
-    private:
-      Element *element;
-    public:
-      ConstraintItemData(Element *element_) : BasicItemData("constraints",""), element(element_) {}
-      QString getType() const {return "";}
-      virtual QMenu* createContextMenu() {return new ConstraintContextContextMenu(element);}
-  };
-
-  class ObserverItemData : public BasicItemData {
-    private:
-      Element *element;
-    public:
-      ObserverItemData(Element *element_) : BasicItemData("observers",""), element(element_) {}
-      QString getType() const {return "";}
-      virtual QMenu* createContextMenu() {return new ObserverContextContextMenu(element);}
-  };
 
   class TreeItem {
     public:

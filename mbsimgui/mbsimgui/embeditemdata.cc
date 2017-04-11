@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2017 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,34 +17,34 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _SOLVER__H_
-#define _SOLVER__H_
-
+#include <config.h>
 #include "embeditemdata.h"
-#include "solver_property_dialog.h"
-#include "namespace.h"
+#include "parameter.h"
 
-namespace XERCES_CPP_NAMESPACE {
-  class DOMElement;
-  class DOMNode;
-}
+using namespace std;
 
 namespace MBSimGUI {
 
-  class Parameter;
+  EmbedItemData::~EmbedItemData() {
+    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++)
+      delete (*it);
+    for(vector<Parameter*>::iterator i = removedParameter.begin(); i != removedParameter.end(); ++i)
+      delete *i;
+  }
 
-  class Solver : public EmbedItemData {
-    public:
-      Solver() : EmbedItemData("Solver") { }
-      virtual void removeXMLElements();
-      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual QString getType() const { return "Solver"; }
-      virtual MBXMLUtils::NamespaceURI getNameSpace() const = 0;
-      virtual SolverPropertyDialog* createPropertyDialog() { return new SolverPropertyDialog(this); }
-      virtual QMenu* createContextMenu() { return NULL; }
-  };
+  void EmbedItemData::addParameter(Parameter *param) {
+    parameter.push_back(param);
+    param->setParent(this);
+  }
+
+  void EmbedItemData::removeParameter(Parameter *param) {
+    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++) {
+      if(*it == param) {
+        parameter.erase(it);
+        break;
+      }
+    }
+    removedParameter.push_back(param);
+  }
 
 }
-
-#endif

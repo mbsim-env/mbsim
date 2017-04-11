@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  EmbeddingPropertyDialog::EmbeddingPropertyDialog(TreeItemData *item_, bool embedding, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_) {
+  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_) {
     addTab("Embedding");
     if(embedding) {
       name = new ExtWidget("Name",new TextWidget);
@@ -171,11 +171,11 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  void EmbeddingPropertyDialog::toWidget(TreeItemData *item) {
+  void EmbeddingPropertyDialog::toWidget(EmbedItemData *item) {
     initializeUsingXML(item->getXMLElement());
   }
 
-  void EmbeddingPropertyDialog::fromWidget(TreeItemData *item) {
+  void EmbeddingPropertyDialog::fromWidget(EmbedItemData *item) {
     writeXMLFile(item->getXMLElement());
   }
 

@@ -26,7 +26,7 @@
 
 namespace MBSimGUI {
 
-  class TreeItemData;
+  class EmbedItemData;
   class Element;
   class Frame;
   class Contour;
@@ -84,7 +84,7 @@ namespace MBSimGUI {
       EmbeddingTreeModel(QObject *parent = 0);
 
       void createElementItem(Element *element, const QModelIndex &parent = QModelIndex());
-      QModelIndex createEmbeddingItem(TreeItemData *item, const QModelIndex &parent = QModelIndex());
+      QModelIndex createEmbeddingItem(EmbedItemData *item, const QModelIndex &parent = QModelIndex());
       QModelIndex createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
 
       std::map<Element*, QModelIndex> idEleMap;

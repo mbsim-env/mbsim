@@ -31,7 +31,7 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
-  class Element;
+  class EmbedItemData;
   class PropertyWidget;
   class PropertyDialog;
   class ExtWidget;
@@ -39,29 +39,21 @@ namespace MBSimGUI {
 
   class Parameter : public TreeItemData {
     public:
-      Parameter(const QString &name_="") : parent(NULL), name(name_), config(false) { }
-      virtual ~Parameter() { }
-      const QString& getValue() const { return valuestr; }
-      void setValue(const QString &value) { valuestr = value; }
+      Parameter(const QString &name="") : TreeItemData(name), parent(NULL), config(false) { }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual QString getType() const { return "Parameter"; }
-      const QString& getName() const { return name; }
-      void setName(const QString &str) { name = str; }
-      const QString& getCounterName() const { return counterName; }
-      void setCounterName(const QString &str) { counterName = str; }
       virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog(this);}
       virtual ParameterContextMenu* createContextMenu() {return new ParameterContextMenu;}
       xercesc::DOMElement* getXMLElement() { return element; }
       virtual void removeXMLElements();
-      Element* getParent() { return parent; }
-      void setParent(Element* parent_) { parent = parent_; }
+      EmbedItemData* getParent() { return parent; }
+      void setParent(EmbedItemData* parent_) { parent = parent_; }
       bool getConfig() { return config; }
       void setConfig(bool config_) { config = config_; }
       static std::vector<Parameter*> initializeParametersUsingXML(xercesc::DOMElement *element);
     protected:
-      Element *parent;
-      QString name, valuestr, counterName;
+      EmbedItemData *parent;
+      QString name, valuestr;
       xercesc::DOMElement *element;
       bool config;
   };
@@ -69,7 +61,6 @@ namespace MBSimGUI {
   class StringParameter : public Parameter {
     public:
       StringParameter(const QString &name="") : Parameter(name) { }
-      virtual ~StringParameter() {}
       virtual QString getType() const { return "stringParameter"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new StringParameterPropertyDialog(this);}
@@ -78,7 +69,6 @@ namespace MBSimGUI {
   class ScalarParameter : public Parameter {
     public:
       ScalarParameter(const QString &name="") : Parameter(name) { }
-      virtual ~ScalarParameter() {}
       virtual QString getType() const { return "scalarParameter"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog(this);}
@@ -87,7 +77,6 @@ namespace MBSimGUI {
   class VectorParameter : public Parameter {
     public:
       VectorParameter(const QString &name="") : Parameter(name) { }
-      virtual ~VectorParameter() {}
       virtual QString getType() const { return "vectorParameter"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new VectorParameterPropertyDialog(this);}
@@ -96,7 +85,6 @@ namespace MBSimGUI {
   class MatrixParameter : public Parameter {
     public:
       MatrixParameter(const QString &name="") : Parameter("import") { }
-      virtual ~MatrixParameter() {}
       virtual QString getType() const { return "matrixParameter"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
@@ -105,7 +93,6 @@ namespace MBSimGUI {
   class ImportParameter : public Parameter {
     public:
       ImportParameter() : Parameter("") { }
-      virtual ~ImportParameter() {}
       virtual QString getType() const { return "import"; }
       virtual ParameterPropertyDialog* createPropertyDialog() {return new ImportParameterPropertyDialog(this);}
   };

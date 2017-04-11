@@ -20,7 +20,7 @@
 #ifndef _ELEMENT__H_
 #define _ELEMENT__H_
 
-#include "treeitemdata.h"
+#include "embeditemdata.h"
 #include "element_property_dialog.h"
 #include "embedding_property_dialog.h"
 #include "element_context_menu.h"
@@ -42,21 +42,16 @@ namespace MBSimGUI {
     class DOMNode;
   }
 
-  class Element : public TreeItemData {
+  class Element : public EmbedItemData {
     protected:
       Element *parent;
       static int IDcounter;
-      std::vector<Parameter*> parameter;
-      std::vector<Parameter*> removedParameter;
       std::vector<QString> plotFeatures;
-      xercesc::DOMElement *element;
-      QString ID, name, value, counterName;
+      QString ID;
       bool config;
     public:
       Element(const QString &name="");
-      virtual ~Element();
       QString getXMLPath(Element *ref=0, bool rel=false);
-      xercesc::DOMElement* getXMLElement() { return element; }
       virtual xercesc::DOMElement* getXMLFrames() { return NULL; }
       virtual xercesc::DOMElement* getXMLContours() { return NULL; }
       virtual xercesc::DOMElement* getXMLGroups() { return NULL; }
@@ -71,55 +66,44 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       void removeXMLElement();
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      const QString& getName() const { return name; }
-      void setName(const QString &str) { name = str; }
-      const QString& getValue() const { return value; }
-      void setValue(const QString &str) { value = str; }
-      const QString& getCounterName() const { return counterName; }
-      void setCounterName(const QString &str) { counterName = str; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       virtual QString getFileExtension() const { return ".xml"; }
       template<class T> T* getByPath(const QString &path, bool initialCaller=true) const;
       virtual Element* getChildByContainerAndName(const QString &container, const QString &name) const { return 0; }
-      virtual int getNumberOfFrames() {return 0;}
-      virtual int getNumberOfContours() {return 0;}
-      virtual int getNumberOfGroups() {return 0;}
-      virtual int getNumberOfObjects() {return 0;}
-      virtual int getNumberOfExtraDynamics() {return 0;}
-      virtual int getNumberOfLinks() {return 0;}
-      virtual int getNumberOfConstraints() {return 0;}
-      virtual int getNumberOfObservers() {return 0;}
-      virtual Frame* getFrame(int i) const {return 0;}
-      virtual Contour* getContour(int i) const {return 0;}
-      virtual Group* getGroup(int i) const {return 0;}
-      virtual Object* getObject(int i) const {return 0;}
-      virtual Link* getLink(int i) const {return 0;}
-      virtual Constraint* getConstraint(int i) const {return 0;}
-      virtual Observer* getObserver(int i) const {return 0;}
-      virtual Frame* getFrame(const QString &name) const {return 0;}
-      virtual void addFrame(Frame *frame) {}
-      virtual void addContour(Contour *contour) {}
-      virtual void addGroup(Group *group) {}
-      virtual void addObject(Object *object) {}
-      virtual void addLink(Link *link) {}
-      virtual void addConstraint(Constraint *constraint) {}
-      virtual void addObserver(Observer *observer) {}
-      virtual void removeElement(Element *element) {}
+      virtual int getNumberOfFrames() { return 0; }
+      virtual int getNumberOfContours() { return 0; }
+      virtual int getNumberOfGroups() { return 0; }
+      virtual int getNumberOfObjects() { return 0; }
+      virtual int getNumberOfExtraDynamics() { return 0; }
+      virtual int getNumberOfLinks() { return 0; }
+      virtual int getNumberOfConstraints() { return 0; }
+      virtual int getNumberOfObservers() { return 0; }
+      virtual Frame* getFrame(int i) const { return 0; }
+      virtual Contour* getContour(int i) const { return 0; }
+      virtual Group* getGroup(int i) const { return 0; }
+      virtual Object* getObject(int i) const { return 0; }
+      virtual Link* getLink(int i) const { return 0; }
+      virtual Constraint* getConstraint(int i) const { return 0; }
+      virtual Observer* getObserver(int i) const { return 0; }
+      virtual Frame* getFrame(const QString &name) const { return 0; }
+      virtual void addFrame(Frame *frame) { }
+      virtual void addContour(Contour *contour) { }
+      virtual void addGroup(Group *group) { }
+      virtual void addObject(Object *object) { }
+      virtual void addLink(Link *link) { }
+      virtual void addConstraint(Constraint *constraint) { }
+      virtual void addObserver(Observer *observer) { }
+      virtual void removeElement(Element *element) { }
       const QString& getID() const { return ID; }
       void setID(const QString &ID_) { ID = ID_; }
       Element* getParent() {return parent;}
-      std::vector<TreeItemData*> getParents();
+      std::vector<EmbedItemData*> getParents();
       void setParent(Element* parent_) {parent = parent_;}
       virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
-      virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
       virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}
       virtual QMenu* createEmbeddingContextMenu() {return new EmbeddingContextMenu(this);}
       virtual QMenu* createFrameContextMenu() {return NULL;}
       Element* getRoot() {return parent?parent->getRoot():this;}
-      void addParameter(Parameter *param);
-      void removeParameter(Parameter *param);
-      int getNumberOfParameters() const { return parameter.size(); }
-      Parameter* getParameter(int i) { return parameter[i]; }
       void addPlotFeature(const QString &pf);
       const std::vector<QString>& getPlotFeatures() const { return plotFeatures; }
       virtual QString getPlotFeatureType() const { return ""; }

@@ -20,6 +20,7 @@
 #include <config.h>
 #include "treemodel.h"
 #include "treeitem.h"
+#include "basicitemdata.h"
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
@@ -148,7 +149,7 @@ namespace MBSimGUI {
 
   ElementTreeModel::ElementTreeModel(QObject *parent) : TreeModel(parent) {
 
-    rootItem = new TreeItem(new BasicItemData("Name","Value"));
+    rootItem = new TreeItem(new TreeItemData("Name","Value"));
   }
 
   void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
@@ -287,7 +288,7 @@ namespace MBSimGUI {
 
   EmbeddingTreeModel::EmbeddingTreeModel(QObject *parent) : TreeModel(parent) {
 
-    rootItem = new TreeItem(new BasicItemData("Name","Value"));
+    rootItem = new TreeItem(new TreeItemData("Name","Value"));
   }
 
   void EmbeddingTreeModel::createElementItem(Element *element, const QModelIndex &parent) {
@@ -327,13 +328,12 @@ namespace MBSimGUI {
       createElementItem(element->getObserver(i),index);
   }
 
-  QModelIndex EmbeddingTreeModel::createEmbeddingItem(TreeItemData *itemData, const QModelIndex &parent) {
+  QModelIndex EmbeddingTreeModel::createEmbeddingItem(EmbedItemData *itemData, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);
 
     int i = rowCount(parent);
     beginInsertRows(parent, i, i);
-    //TreeItem *item = new TreeItem(new Embedding(element),parentItem,1,Qt::gray);
     TreeItem *item = new TreeItem(itemData,parentItem,1,Qt::gray);
     parentItem->insertChildren(item,1);
     endInsertRows();

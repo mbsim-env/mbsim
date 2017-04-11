@@ -62,7 +62,7 @@ namespace MBSimGUI {
   class Observer;
   class Parameter;
   class ParameterList;
-  class TreeItemData;
+  class EmbedItemData;
 
   class MainWindow : public QMainWindow {
 
@@ -145,7 +145,7 @@ namespace MBSimGUI {
       void help();
       void xmlHelp(const QString &url="");
       void about();
-      void updateParameters(TreeItemData *item);
+      void updateParameters(EmbedItemData *item);
       void rebuildTree();
       void undo();
       void redo();

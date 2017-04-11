@@ -35,7 +35,7 @@ namespace MBSimGUI {
       index = selectionModel()->currentIndex();
       parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
       if(parameter) {
-        TreeItemData *item = static_cast<EmbeddingTreeModel*>(model())->getItem(index.parent())->getItemData();
+        EmbedItemData *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index.parent())->getItemData());
         mw->updateParameters(item);
         editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
@@ -49,7 +49,7 @@ namespace MBSimGUI {
         return;
       }
       else {
-        TreeItemData *item = static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData();
+        EmbedItemData *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
         if(item) {
           mw->updateParameters(item);
           editor = item->createEmbeddingPropertyDialog();

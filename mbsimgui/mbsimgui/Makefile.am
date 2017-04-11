@@ -26,6 +26,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   integrator.cc \
 		   parameter.cc \
 		   objectfactory.cc \
+		   embeditemdata.cc \
 		   treeitem.cc \
 		   treemodel.cc \
 		   basic_widgets.cc \
