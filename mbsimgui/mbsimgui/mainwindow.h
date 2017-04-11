@@ -146,7 +146,7 @@ namespace MBSimGUI {
       void help();
       void xmlHelp(const QString &url="");
       void about();
-      void updateParameters(EmbedItemData *item);
+      void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
       void undo();
       void redo();

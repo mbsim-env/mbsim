@@ -699,7 +699,7 @@ namespace MBSimGUI {
   }
 
   // update model parameters including additional paramters from paramList
-  void MainWindow::updateParameters(EmbedItemData *item) {
+  void MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,NULL);
@@ -710,7 +710,7 @@ namespace MBSimGUI {
         ele0->insertBefore(node,NULL);
       }
     }
-    for(size_t j=0; j<item->getNumberOfParameters(); j++) {
+    for(size_t j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
       DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
       ele0->insertBefore(node,NULL);
     }

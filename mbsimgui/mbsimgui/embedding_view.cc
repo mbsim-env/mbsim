@@ -36,7 +36,7 @@ namespace MBSimGUI {
       parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
       if(parameter) {
         EmbedItemData *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index.parent())->getItemData());
-        mw->updateParameters(item);
+        mw->updateParameters(item,true);
         editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(parameter->getConfig())
