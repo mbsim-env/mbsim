@@ -116,8 +116,9 @@ namespace MBSimGUI {
   }
 
   bool IntegratorMouseEvent::eventFilter(QObject *obj, QEvent *event) {
-    if (event->type() == QEvent::MouseButtonDblClick) {
+    if(event->type() == QEvent::MouseButtonDblClick) {
       mw->setAllowUndo(false);
+      mw->updateParameters(view->getSolver());
       editor = view->getSolver()->createPropertyDialog();
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
@@ -125,19 +126,26 @@ namespace MBSimGUI {
       connect(editor,SIGNAL(apply()),this,SLOT(apply()));
       connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
       return true;
-    } else
+    }
+    else if(event->type() == QEvent::MouseButtonPress) {
+      mw->solverViewClicked();
+      return true;
+    }
+    else
       return QObject::eventFilter(obj, event);
   }
 
   void IntegratorMouseEvent::dialogFinished(int result) {
-    editor = 0;
     if(result != 0)
       mw->setProjectChanged(true);
+    editor->fromWidget();
+    editor = 0;
     mw->setAllowUndo(true);
   }
 
   void IntegratorMouseEvent::apply() {
     mw->setProjectChanged(true);
+    editor->fromWidget();
   }
 
 }

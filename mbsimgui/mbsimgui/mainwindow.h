@@ -105,7 +105,7 @@ namespace MBSimGUI {
 //      ExtProperty evalSelect;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
-      void addParameter(Parameter *parameter, Element *parent=NULL);
+      void addParameter(Parameter *parameter, EmbedItemData *parent=NULL);
       void addFrame(Frame *frame, Element *parent=NULL);
       void addContour(Contour *contour, Element *parent=NULL);
       void addGroup(Group *group, Element *parent=NULL);
@@ -123,6 +123,7 @@ namespace MBSimGUI {
     public slots:
       void elementListClicked();
       void parameterListClicked();
+      void solverViewClicked();
       void newProject(bool ask=true);
       void loadProject();
       bool saveProjectAs();
@@ -157,7 +158,7 @@ namespace MBSimGUI {
       void selectElement(std::string ID);
       void changeWorkingDir();
       void openOptionsMenu();
-      void selectionChanged(const QModelIndex &current, const QModelIndex &previous);
+      void selectionChanged(const QModelIndex &current);
       void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void openRecentProjectFile();
       void preprocessFinished(int result);

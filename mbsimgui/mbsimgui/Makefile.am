@@ -47,6 +47,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   project_property_dialog.cc \
 		   element_context_menu.cc \
 		   parameter_context_menu.cc \
+		   embedding_context_menu.cc \
 		   element_view.cc \
 		   embedding_view.cc \
 		   solver_view.cc \
@@ -73,6 +74,7 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   property_dialog.moc.cc  \
 		   element_property_dialog.moc.cc \
 		   element_context_menu.moc.cc \
+		   embedding_context_menu.moc.cc \
 		   element_view.moc.cc \
 		   embedding_view.moc.cc \
 		   solver_view.moc.cc \

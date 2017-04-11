@@ -35,51 +35,10 @@
 #include "gear.h"
 #include "connection.h"
 #include "sensor.h"
-//#include "linear_transfer_system.h"
-#include "parameter.h"
-#include <QFileDialog>
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
-
-  EmbeddingContextMenu::EmbeddingContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QAction *action = new QAction("Add scalar parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
-    addAction(action);
-    action = new QAction("Add vector parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
-    addAction(action);
-    action = new QAction("Add matrix parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
-    addAction(action);
-    action = new QAction("Add string parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
-    addAction(action);
-    action = new QAction("Add import parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addImportParameter()));
-    addAction(action);
-  }
-
-  void EmbeddingContextMenu::addScalarParameter() {
-    mw->addParameter(new ScalarParameter("a"), element);
-  }
-
-  void EmbeddingContextMenu::addVectorParameter() {
-    mw->addParameter(new VectorParameter("a"), element);
-  }
-
-  void EmbeddingContextMenu::addMatrixParameter() {
-    mw->addParameter(new MatrixParameter("a"), element);
-  }
-
-  void EmbeddingContextMenu::addStringParameter() {
-    mw->addParameter(new StringParameter("a"), element);
-  }
-
-  void EmbeddingContextMenu::addImportParameter() {
-    mw->addParameter(new ImportParameter, element);
-  }
 
   ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable) : QMenu(parent), element(element_) {
     if(removable) {

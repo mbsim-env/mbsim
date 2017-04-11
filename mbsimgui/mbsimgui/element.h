@@ -22,7 +22,6 @@
 
 #include "embeditemdata.h"
 #include "element_property_dialog.h"
-#include "embedding_property_dialog.h"
 #include "element_context_menu.h"
 #include "namespace.h"
 
@@ -101,7 +100,6 @@ namespace MBSimGUI {
       void setParent(Element* parent_) {parent = parent_;}
       virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
       virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}
-      virtual QMenu* createEmbeddingContextMenu() {return new EmbeddingContextMenu(this);}
       virtual QMenu* createFrameContextMenu() {return NULL;}
       Element* getRoot() {return parent?parent->getRoot():this;}
       void addPlotFeature(const QString &pf);

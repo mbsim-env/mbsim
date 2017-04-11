@@ -47,9 +47,6 @@ namespace MBSimGUI {
   }
 
   SolverPropertyDialog::SolverPropertyDialog(Solver *solver_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), solver(solver_) {
-//    addTab("Embedding");
-//    embed = new ExtWidget("Embed", new EmbedWidget, true);
-//    addToTab("Embedding",embed);
   }
 
   DOMElement* SolverPropertyDialog::initializeUsingXML(DOMElement *parent) {

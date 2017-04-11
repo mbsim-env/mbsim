@@ -23,16 +23,12 @@
 #include "dialogs.h"
 #include "custom_widgets.h"
 #include <QtGui>
-#include "mainwindow.h"
-#include <mbxmlutils/eval.h>
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
-
-  extern MainWindow *mw;
 
   ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active, const FQN &xmlName_) : QGroupBox(name), widget(widget_), xmlName(xmlName_) {
 

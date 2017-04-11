@@ -26,23 +26,6 @@ namespace MBSimGUI {
 
   class Element;
 
-  class EmbeddingContextMenu : public QMenu {
-    Q_OBJECT
-
-    public:
-      EmbeddingContextMenu(Element *element, const QString &title="", QWidget * parent = 0);
-
-    protected slots:
-      void addScalarParameter();
-      void addVectorParameter();
-      void addMatrixParameter();
-      void addStringParameter();
-      void addImportParameter();
-
-    protected:
-      Element *element;
-  };
-
   class ElementContextMenu : public QMenu {
     Q_OBJECT
 

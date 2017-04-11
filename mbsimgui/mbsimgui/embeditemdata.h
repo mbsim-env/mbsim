@@ -22,6 +22,7 @@
 
 #include "treeitemdata.h"
 #include "embedding_property_dialog.h"
+#include "embedding_context_menu.h"
 #include <xercesc/util/XercesDefs.hpp>
 
 namespace XERCES_CPP_NAMESPACE {
@@ -30,7 +31,6 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
-  class EmbeddingPropertyDialog;
   class Parameter;
 
   class EmbedItemData : public TreeItemData {
@@ -52,6 +52,7 @@ namespace MBSimGUI {
       void removeParameter(Parameter *param);
       xercesc::DOMElement* getXMLElement() { return element; }
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }
+      QMenu* createEmbeddingContextMenu() { return new EmbeddingContextMenu(this); }
   };
 
 }
