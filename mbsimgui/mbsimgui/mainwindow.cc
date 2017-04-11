@@ -639,9 +639,7 @@ namespace MBSimGUI {
       if(modifyStatus) {
         setProjectChanged(false);
         DOMProcessingInstruction *instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
-        cout << "DOMProcessingInstruction " << instr << endl;
         if(instr) {
-          cout << X()%instr->getData() << endl;
           QModelIndex index = elementList->model()->index(0,0);
           DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
           DOMDocument *ndoc = static_cast<DOMDocument*>(doc->cloneNode(true));
@@ -675,9 +673,29 @@ namespace MBSimGUI {
 
   void MainWindow::selectSolver(int i) {
     setProjectChanged(true);
-    solverView->getSolver()->getXMLElement()->getParentNode()->removeChild(solverView->getSolver()->getXMLElement());
+    DOMElement *element = solverView->getSolver()->getXMLElement();
+    DOMNode *parent = element->getParentNode();
+    DOMNode *ps = element->getPreviousSibling();
+    if(ps and X()%ps->getNodeName()=="#text")
+      parent->removeChild(ps);
+    parent->removeChild(element);
     solverView->setSolver(i);
-    solverView->getSolver()->createXMLElement(doc->getDocumentElement());
+    element = solverView->getSolver()->getXMLElement();
+    if(element) {
+      for(int i=0; i<solverView->getSolver()->getNumberOfParameters(); i++)
+        solverView->getSolver()->removeParameter(solverView->getSolver()->getParameter(i));
+      DOMElement *ele = static_cast<DOMElement*>(doc->importNode(element,true));
+      parent->insertBefore(ele,NULL);
+      solverView->getSolver()->initializeUsingXML(ele);
+    }
+    else
+      solverView->getSolver()->createXMLElement(parent);
+    std::vector<Parameter*> param;
+    DOMElement *ele = MBXMLUtils::E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
+    if(ele) param = Parameter::initializeParametersUsingXML(ele);
+    for(size_t i=0; i<param.size(); i++)
+      solverView->getSolver()->addParameter(param[i]);
+    solverViewClicked();
   }
 
   // update model parameters including additional paramters from paramList

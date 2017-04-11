@@ -22,6 +22,8 @@
 #include "parameter.h"
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -46,5 +48,28 @@ namespace MBSimGUI {
     }
     removedParameter.push_back(param);
   }
+
+  void EmbedItemData::removeXMLElement() {
+    DOMNode *parent = element->getParentNode();
+    if(X()%parent->getNodeName()=="Embed") {
+      DOMNode *e = parent->getFirstChild();
+      while(e) {
+        DOMNode *en=e->getNextSibling();
+        parent->removeChild(e);
+        e = en;
+      }
+      DOMNode *ps = parent->getPreviousSibling();
+      if(ps and X()%ps->getNodeName()=="#text")
+        parent->getParentNode()->removeChild(ps);
+      parent->getParentNode()->removeChild(parent);
+    }
+    else {
+      DOMNode *ps = element->getPreviousSibling();
+      if(ps and X()%ps->getNodeName()=="#text")
+        parent->removeChild(ps);
+      parent->removeChild(element);
+    }
+  }
+
 
 }

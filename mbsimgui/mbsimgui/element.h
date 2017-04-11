@@ -63,7 +63,6 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* processHref(xercesc::DOMElement* element);
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      void removeXMLElement();
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       virtual QString getFileExtension() const { return ".xml"; }
