@@ -24,21 +24,21 @@
 
 namespace MBSimGUI {
 
-  class Element;
+  class TreeItemData;
   class ExtWidget;
 
   class EmbeddingPropertyDialog : public PropertyDialog {
 
     public:
-      EmbeddingPropertyDialog(Element *element, bool embedding=true, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      EmbeddingPropertyDialog(TreeItemData *item, bool embedding=true, QWidget * parent = 0, Qt::WindowFlags f = 0);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
-      virtual void toWidget(Element *element);
-      virtual void fromWidget(Element *element);
-      void toWidget() {toWidget(element);}
-      void fromWidget() {fromWidget(element);}
+      virtual void toWidget(TreeItemData *item);
+      virtual void fromWidget(TreeItemData *item);
+      void toWidget() {toWidget(item);}
+      void fromWidget() {fromWidget(item);}
     protected:
-      Element *element;
+      TreeItemData *item;
       ExtWidget *name, *href, *count, *counterName, *parameterHref;
   };
 

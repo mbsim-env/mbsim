@@ -240,8 +240,8 @@ namespace MBSimGUI {
     }
   }
 
-  vector<Element*> Element::getParents() {
-    vector<Element*> parents;
+  vector<TreeItemData*> Element::getParents() {
+    vector<TreeItemData*> parents;
     if(getParent()) {
       parents = getParent()->getParents();
       parents.push_back(getParent());

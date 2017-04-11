@@ -463,7 +463,7 @@ namespace MBSimGUI {
     if(element) {
 
       EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-      vector<Element*> parents = element->getParents();
+      vector<TreeItemData*> parents = element->getParents();
       QModelIndex index = emodel->index(0,0);
       emodel->removeRow(index.row(), index.parent());
       if(parents.size()) {
@@ -655,22 +655,22 @@ namespace MBSimGUI {
   }
 
   // update model parameters including additional paramters from paramList
-  void MainWindow::updateParameters(Element *element) {
+  void MainWindow::updateParameters(TreeItemData *item) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,NULL);
-    vector<Element*> parents = element->getParents();
+    vector<TreeItemData*> parents = item->getParents();
     for(size_t i=0; i<parents.size(); i++) {
       for(size_t j=0; j<parents[i]->getNumberOfParameters(); j++) {
         DOMNode *node = doc->importNode(parents[i]->getParameter(j)->getXMLElement(),true);
         ele0->insertBefore(node,NULL);
       }
     }
-    for(size_t j=0; j<element->getNumberOfParameters(); j++) {
-      DOMNode *node = doc->importNode(element->getParameter(j)->getXMLElement(),true);
+    for(size_t j=0; j<item->getNumberOfParameters(); j++) {
+      DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
       ele0->insertBefore(node,NULL);
     }
-    QString counterName = element->getCounterName();
+    QString counterName = item->getCounterName();
     if(not(counterName.isEmpty())) {
       DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
       E(ele1)->setAttribute("name", counterName.toStdString());

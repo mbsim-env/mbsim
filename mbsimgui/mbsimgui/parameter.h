@@ -48,6 +48,8 @@ namespace MBSimGUI {
       virtual QString getType() const { return "Parameter"; }
       const QString& getName() const { return name; }
       void setName(const QString &str) { name = str; }
+      const QString& getCounterName() const { return counterName; }
+      void setCounterName(const QString &str) { counterName = str; }
       virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog(this);}
       virtual ParameterContextMenu* createContextMenu() {return new ParameterContextMenu;}
       xercesc::DOMElement* getXMLElement() { return element; }
@@ -59,7 +61,7 @@ namespace MBSimGUI {
       static std::vector<Parameter*> initializeParametersUsingXML(xercesc::DOMElement *element);
     protected:
       Element *parent;
-      QString name, valuestr;
+      QString name, valuestr, counterName;
       xercesc::DOMElement *element;
       bool config;
   };

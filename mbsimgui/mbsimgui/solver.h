@@ -35,7 +35,7 @@ namespace MBSimGUI {
 
   class Solver : public TreeItemData {
     protected:
-      QString name, value;
+      QString name, value, counterName;
       xercesc::DOMElement *element;
     public:
       Solver() : name("Solver") { }
@@ -47,10 +47,13 @@ namespace MBSimGUI {
       virtual QString getType() const { return "Solver"; }
       const QString& getName() const { return name; }
       const QString& getValue() const { return value; }
+      const QString& getCounterName() const { return counterName; }
+      void setCounterName(const QString &str) { counterName = str; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const = 0;
       virtual SolverPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
       void addParameter(Parameter *param) { }
       virtual QMenu* createContextMenu() {return NULL;}
+      virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return NULL; }
   };
 
 }

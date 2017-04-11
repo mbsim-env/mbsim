@@ -108,7 +108,7 @@ namespace MBSimGUI {
       const QString& getID() const { return ID; }
       void setID(const QString &ID_) { ID = ID_; }
       Element* getParent() {return parent;}
-      std::vector<Element*> getParents();
+      std::vector<TreeItemData*> getParents();
       void setParent(Element* parent_) {parent = parent_;}
       virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
@@ -119,7 +119,7 @@ namespace MBSimGUI {
       void addParameter(Parameter *param);
       void removeParameter(Parameter *param);
       int getNumberOfParameters() const { return parameter.size(); }
-      Parameter *getParameter(int i) { return parameter[i]; }
+      Parameter* getParameter(int i) { return parameter[i]; }
       void addPlotFeature(const QString &pf);
       const std::vector<QString>& getPlotFeatures() const { return plotFeatures; }
       virtual QString getPlotFeatureType() const { return ""; }

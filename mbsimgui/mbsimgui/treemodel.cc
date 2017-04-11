@@ -327,14 +327,14 @@ namespace MBSimGUI {
       createElementItem(element->getObserver(i),index);
   }
 
-  QModelIndex EmbeddingTreeModel::createEmbeddingItem(Element *element, const QModelIndex &parent) {
+  QModelIndex EmbeddingTreeModel::createEmbeddingItem(TreeItemData *itemData, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);
 
     int i = rowCount(parent);
     beginInsertRows(parent, i, i);
     //TreeItem *item = new TreeItem(new Embedding(element),parentItem,1,Qt::gray);
-    TreeItem *item = new TreeItem(element,parentItem,1,Qt::gray);
+    TreeItem *item = new TreeItem(itemData,parentItem,1,Qt::gray);
     parentItem->insertChildren(item,1);
     endInsertRows();
 
@@ -345,8 +345,8 @@ namespace MBSimGUI {
       index = parent.child(i,0);
     i = rowCount(index);
 
-    for(int i=0; i<element->getNumberOfParameters(); i++)
-      createParameterItem(element->getParameter(i),index);
+    for(int i=0; i<itemData->getNumberOfParameters(); i++)
+      createParameterItem(itemData->getParameter(i),index);
 
     return index;
   }

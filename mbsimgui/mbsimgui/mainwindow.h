@@ -145,7 +145,7 @@ namespace MBSimGUI {
       void help();
       void xmlHelp(const QString &url="");
       void about();
-      void updateParameters(Element *element);
+      void updateParameters(TreeItemData *item);
       void rebuildTree();
       void undo();
       void redo();

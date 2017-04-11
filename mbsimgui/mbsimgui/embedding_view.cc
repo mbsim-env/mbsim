@@ -35,8 +35,8 @@ namespace MBSimGUI {
       index = selectionModel()->currentIndex();
       parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
       if(parameter) {
-        Element *element = static_cast<Element*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index.parent())->getItemData());
-        mw->updateParameters(element);
+        TreeItemData *item = static_cast<EmbeddingTreeModel*>(model())->getItem(index.parent())->getItemData();
+        mw->updateParameters(item);
         editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(parameter->getConfig())
@@ -48,15 +48,17 @@ namespace MBSimGUI {
         connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
         return;
       }
-      Element *element = dynamic_cast<Element*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
-      if(element) {
-        mw->updateParameters(element);
-        editor = element->createEmbeddingPropertyDialog();
-        editor->setAttribute(Qt::WA_DeleteOnClose);
-        editor->toWidget();
-        editor->show();
-        connect(editor,SIGNAL(apply()),this,SLOT(apply()));
-        connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+      else {
+        TreeItemData *item = static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData();
+        if(item) {
+          mw->updateParameters(item);
+          editor = item->createEmbeddingPropertyDialog();
+          editor->setAttribute(Qt::WA_DeleteOnClose);
+          editor->toWidget();
+          editor->show();
+          connect(editor,SIGNAL(apply()),this,SLOT(apply()));
+          connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+        }
       }
     }
   }

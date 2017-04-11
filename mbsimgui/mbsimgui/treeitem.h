@@ -33,14 +33,16 @@ namespace MBSimGUI {
 
   class BasicItemData : public TreeItemData {
     protected:
-      QString name, value;
+      QString name, value, counterName;
     public:
       BasicItemData(const QString &name_, const QString &value_) : name(name_), value(value_) {}
       const QString& getName() const {return name;}
       const QString& getValue() const {return value;}
+      const QString& getCounterName() const {return counterName;}
       QString getType() const {return "Type";}
       void setName(const QString &name_) {name = name_;}
       void setValue(const QString &value_) {value = value_;}
+      void setCounterName(const QString &counterName_) {counterName = counterName_;}
       virtual QMenu* createContextMenu() {return new QMenu;}
   };
 
