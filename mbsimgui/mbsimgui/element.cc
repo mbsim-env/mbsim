@@ -27,12 +27,11 @@
 #include "link.h"
 #include "constraint.h"
 #include "observer.h"
-#include "embed.h"
 #include "utils.h"
-#include "mainwindow.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
+#include <QDir>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -44,7 +43,6 @@ namespace MBSimGUI {
   extern QDir mbsDir;
   extern DOMImplementation *impl;
   extern DOMLSSerializer *serializer;
-  extern MainWindow *mw;
 
   int Element::IDcounter=0;
 

@@ -33,40 +33,41 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_) {
+  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, bool name_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_), name(NULL), count(NULL), counterName(NULL) {
     addTab("Embedding");
     if(embedding) {
-      name = new ExtWidget("Name",new TextWidget);
-      addToTab("Embedding",name);
-
+      if(name_) {
+        name = new ExtWidget("Name",new TextWidget);
+        addToTab("Embedding",name);
+        count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")), true);
+        addToTab("Embedding",count);
+        counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
+        addToTab("Embedding",counterName);
+      }
       href = new ExtWidget("File", new FileWidget(item->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false, true), true);
       addToTab("Embedding",href);
-      count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")), true);
-      addToTab("Embedding",count);
-      counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
-      addToTab("Embedding",counterName);
       parameterHref = new ExtWidget("Parameter file", new FileWidget(item->getName()+".parameter.xml", "XML parameter files", "xml files (*.xml)", 1, false, true), true);
       addToTab("Embedding",parameterHref);
     }
   }
 
   DOMElement* EmbeddingPropertyDialog::initializeUsingXML(DOMElement *ele) {
-    if(name) {
-      static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
+    if(href) {
+      if(name) static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
       DOMElement *parent = static_cast<DOMElement*>(ele->getParentNode());
       if(E(parent)->getTagName()==PV%"Embed") {
+        if(count and E(parent)->hasAttribute("count")) {
+          count->setActive(true);
+          static_cast<PhysicalVariableWidget*>(count->getWidget())->setValue(QString::fromStdString(E(parent)->getAttribute("count")));
+        }
+        if(counterName and E(parent)->hasAttribute("counterName")) {
+          counterName->setActive(true);
+          static_cast<TextWidget*>(counterName->getWidget())->setText(QString::fromStdString(E(parent)->getAttribute("counterName")));
+        }
         DOMProcessingInstruction *instr = E(parent)->getFirstProcessingInstructionChildNamed("href");
         if(instr) {
           href->setActive(true);
           static_cast<FileWidget*>(href->getWidget())->setFile(QString::fromStdString(X()%instr->getData()));
-        }
-        if(E(parent)->hasAttribute("count")) {
-          count->setActive(true);
-          static_cast<PhysicalVariableWidget*>(count->getWidget())->setValue(QString::fromStdString(E(parent)->getAttribute("count")));
-        }
-        if(E(parent)->hasAttribute("counterName")) {
-          counterName->setActive(true);
-          static_cast<TextWidget*>(counterName->getWidget())->setText(QString::fromStdString(E(parent)->getAttribute("counterName")));
         }
         instr = E(parent)->getFirstProcessingInstructionChildNamed("parameterHref");
         if(instr) {
@@ -79,7 +80,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbeddingPropertyDialog::writeXMLFile(DOMNode *node, DOMNode *ref) {
-    if(name) {
+    if(href) {
       DOMNode* embedNode = node->getParentNode();
       if(X()%embedNode->getNodeName()!="Embed") {
         DOMDocument *doc=node->getOwnerDocument();
@@ -92,8 +93,30 @@ namespace MBSimGUI {
       int removeParameterHref = 0;
       bool addHref = false;
       DOMElement *element = static_cast<DOMElement*>(embedNode);
-      item->setName(static_cast<TextWidget*>(name->getWidget())->getText());
-      E(element->getLastElementChild())->setAttribute("name",item->getName().toStdString());
+      if(name) {
+        item->setName(static_cast<TextWidget*>(name->getWidget())->getText());
+        E(element->getLastElementChild())->setAttribute("name",item->getName().toStdString());
+      }
+      if(count) {
+        if(count->isActive()) {
+          item->setValue(static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue());
+          E(element)->setAttribute("count",item->getValue().toStdString());
+        }
+        else {
+          item->setValue("");
+          E(element)->removeAttribute("count");
+        }
+      }
+      if(counterName) {
+        if(counterName->isActive()) {
+          item->setCounterName(static_cast<TextWidget*>(counterName->getWidget())->getText());
+          E(element)->setAttribute("counterName",item->getCounterName().toStdString());
+        }
+        else {
+          item->setCounterName("");
+          E(element)->removeAttribute("counterName");
+        }
+      }
       DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
       if(href->isActive() and (not static_cast<FileWidget*>(href->getWidget())->getFile().isEmpty())) {
         if(not instr) {
@@ -109,22 +132,6 @@ namespace MBSimGUI {
       else if(instr) {
         element->removeChild(instr);
         removeHref = 1;
-      }
-      if(count->isActive()) {
-        item->setValue(static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue());
-        E(element)->setAttribute("count",item->getValue().toStdString());
-      }
-      else {
-        item->setValue("");
-        E(element)->removeAttribute("count");
-      }
-      if(counterName->isActive()) {
-        item->setCounterName(static_cast<TextWidget*>(counterName->getWidget())->getText());
-        E(element)->setAttribute("counterName",item->getCounterName().toStdString());
-      }
-      else {
-        item->setCounterName("");
-        E(element)->removeAttribute("counterName");
       }
       instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
       if(parameterHref->isActive() and (not static_cast<FileWidget*>(parameterHref->getWidget())->getFile().isEmpty())) {
@@ -163,7 +170,7 @@ namespace MBSimGUI {
           instr->setData(X()%toStr(boost::lexical_cast<int>(count)+1));
         }
       }
-      if((not href->isActive()) and (not count->isActive()) and (not counterName->isActive()) and (not parameterHref->isActive()) and (not item->getNumberOfParameters())) {
+      if((not href->isActive()) and (not count or not count->isActive()) and (not counterName or not counterName->isActive()) and (not parameterHref->isActive()) and (not item->getNumberOfParameters())) {
         embedNode->getParentNode()->insertBefore(node,embedNode);
         embedNode->getParentNode()->removeChild(embedNode);
       }

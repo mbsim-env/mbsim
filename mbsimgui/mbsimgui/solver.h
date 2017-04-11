@@ -36,6 +36,7 @@ namespace MBSimGUI {
   class Solver : public EmbedItemData {
     public:
       Solver() : EmbedItemData("Solver") { }
+      xercesc::DOMElement* processHref(xercesc::DOMElement* element);
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
@@ -43,6 +44,7 @@ namespace MBSimGUI {
       virtual MBXMLUtils::NamespaceURI getNameSpace() const = 0;
       virtual SolverPropertyDialog* createPropertyDialog() { return new SolverPropertyDialog(this); }
       virtual QMenu* createContextMenu() { return NULL; }
+      virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this,true,false); }
   };
 
 }

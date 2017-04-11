@@ -648,8 +648,12 @@ namespace MBSimGUI {
           ndoc->getDocumentElement()->removeChild(E(ndoc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount"));
           DOMElement* ele = ndoc->getDocumentElement()->getFirstElementChild();
           if(E(ele)->getTagName()==PV%"Embed")
-            ele = E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+            ele = ele->getLastElementChild();
           dss->processHref(ele);
+          ele = ele->getNextElementSibling();
+          if(E(ele)->getTagName()==PV%"Embed")
+            ele = ele->getLastElementChild();
+          solverView->getSolver()->processHref(ele);
           serializer->writeToURI(ndoc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
         }
         else
