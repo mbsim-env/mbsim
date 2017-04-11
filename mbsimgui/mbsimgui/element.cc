@@ -101,8 +101,7 @@ namespace MBSimGUI {
     DOMNode *e = element->getFirstChild();
     while(e) {
       DOMNode *en=e->getNextSibling();
-      if(e->getNodeType() != DOMNode::PROCESSING_INSTRUCTION_NODE)
-        element->removeChild(e);
+      element->removeChild(e);
       e = en;
     }
   }

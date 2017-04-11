@@ -42,7 +42,7 @@ namespace MBSimGUI {
     DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
     while(e) {
       DOMNode *en=e->getNextSibling();
-      if((e != frames) and (e != contours) and (e != ombvFrame) and (e->getNodeType() != DOMNode::PROCESSING_INSTRUCTION_NODE))
+      if((e != frames) and (e != contours) and (e != ombvFrame))
         element->removeChild(e);
       e = en;
     }
