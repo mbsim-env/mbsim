@@ -39,7 +39,7 @@ namespace MBSimGUI {
       void fromWidget() {fromWidget(element);}
     protected:
       Element *element;
-      ExtWidget *name, *embed;
+      ExtWidget *name, *href, *count, *counterName, *parameterHref;
   };
 
 }

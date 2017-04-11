@@ -21,6 +21,7 @@
 #include "embedding_property_dialog.h"
 #include "element.h"
 #include "basic_widgets.h"
+#include "variable_widgets.h"
 #include "utils.h"
 #include <boost/lexical_cast.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -32,22 +33,50 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  EmbeddingPropertyDialog::EmbeddingPropertyDialog(Element *element_, bool embedding, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), element(element_), embed(0) {
+  EmbeddingPropertyDialog::EmbeddingPropertyDialog(Element *element_, bool embedding, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), element(element_) {
     addTab("Embedding");
     if(embedding) {
-      embed = new ExtWidget("Embed", new EmbedWidget(element->getName()), true);
-      addToTab("Embedding",embed);
+//      embed = new ExtWidget("Embed", new EmbedWidget(element->getName()), true);
+//      addToTab("Embedding",embed);
       name = new ExtWidget("Name",new TextWidget);
       addToTab("Embedding",name);
+
+      href = new ExtWidget("File", new FileWidget(element->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false, true), true);
+      addToTab("Embedding",href);
+      count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")), true);
+      addToTab("Embedding",count);
+      counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
+      addToTab("Embedding",counterName);
+      parameterHref = new ExtWidget("Parameter file", new FileWidget(element->getName()+".parameter.xml", "XML parameter files", "xml files (*.xml)", 1, false, true), true);
+      addToTab("Embedding",parameterHref);
     }
   }
 
   DOMElement* EmbeddingPropertyDialog::initializeUsingXML(DOMElement *ele) {
-    if(embed) {
+    if(name) {
       static_cast<TextWidget*>(name->getWidget())->setText(element->getName());
       DOMElement *parent = static_cast<DOMElement*>(ele->getParentNode());
-      if(E(parent)->getTagName()==PV%"Embed")
-        embed->initializeUsingXML(parent);
+      if(E(parent)->getTagName()==PV%"Embed") {
+//        embed->initializeUsingXML(parent);
+        DOMProcessingInstruction *instr = E(parent)->getFirstProcessingInstructionChildNamed("href");
+        if(instr) {
+          href->setActive(true);
+          static_cast<FileWidget*>(href->getWidget())->setFile(QString::fromStdString(X()%instr->getData()));
+        }
+        if(E(parent)->hasAttribute("count")) {
+          count->setActive(true);
+          static_cast<PhysicalVariableWidget*>(count->getWidget())->setValue(QString::fromStdString(E(parent)->getAttribute("count")));
+        }
+        if(E(parent)->hasAttribute("counterName")) {
+          counterName->setActive(true);
+          static_cast<TextWidget*>(counterName->getWidget())->setText(QString::fromStdString(E(parent)->getAttribute("counterName")));
+        }
+        instr = E(parent)->getFirstProcessingInstructionChildNamed("parameterHref");
+        if(instr) {
+          parameterHref->setActive(true);
+          static_cast<FileWidget*>(parameterHref->getWidget())->setFile(QString::fromStdString(X()%instr->getData()));
+        }
+      }
     }
     return NULL;
   }
@@ -55,54 +84,91 @@ namespace MBSimGUI {
   DOMElement* EmbeddingPropertyDialog::writeXMLFile(DOMNode *node, DOMNode *ref) {
     element->setName(static_cast<TextWidget*>(name->getWidget())->getText());
     E(element->getXMLElement())->setAttribute("name",element->getName().toStdString());
-    if(embed) {
-      element->setCounterName(static_cast<EmbedWidget*>(embed->getWidget())->getCounterName());
-      element->setValue(static_cast<EmbedWidget*>(embed->getWidget())->getCount());
+    if(name) {
       DOMNode* embedNode = node->getParentNode();
-      if(embed->isActive()) {
-        if(X()%embedNode->getNodeName()!="Embed") {
-          DOMDocument *doc=node->getOwnerDocument();
-          DOMNode *ele=D(doc)->createElement(PV%"Embed");
-          embedNode->insertBefore(ele,node);
-          embedNode = ele;
-          embedNode->insertBefore(node,NULL);
+      if(X()%embedNode->getNodeName()!="Embed") {
+        DOMDocument *doc=node->getOwnerDocument();
+        DOMNode *ele=D(doc)->createElement(PV%"Embed");
+        embedNode->insertBefore(ele,node);
+        embedNode = ele;
+        embedNode->insertBefore(node,NULL);
+      }
+      int removeHref = 0;
+      int removeParameterHref = 0;
+      bool addHref = false;
+      DOMElement *element = static_cast<DOMElement*>(embedNode);
+      DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
+      if(href->isActive() and (not static_cast<FileWidget*>(href->getWidget())->getFile().isEmpty())) {
+        if(not instr) {
+          DOMDocument *doc=element->getOwnerDocument();
+          instr=doc->createProcessingInstruction(X()%"href", X()%static_cast<FileWidget*>(href->getWidget())->getFile().toStdString());
+          element->insertBefore(instr, element->getFirstChild());
+          addHref = true;
         }
-        embed->writeXMLFile(embedNode,ref);
+        else
+          instr->setData(X()%static_cast<FileWidget*>(href->getWidget())->getFile().toStdString());
+        removeHref = -1;
+      }
+      else if(instr) {
+        element->removeChild(instr);
+        removeHref = 1;
+      }
+      if(count->isActive()) {
+        this->element->setValue(static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue());
+        E(static_cast<DOMElement*>(embedNode))->setAttribute("count",this->element->getValue().toStdString());
       }
       else {
-        element->setCounterName("");
-        element->setValue("");
-//        int removeHref = 0;
-//        int removeParameterHref = 0;
-//        DOMProcessingInstruction *instr = E(element->getXMLElement())->getFirstProcessingInstructionChildNamed("href");
-//        if(instr) {
-//          element->getXMLElement()->removeChild(instr);
-//          removeParameterHref = 1;
-//        }
-//        instr = E(element->getXMLElement())->getFirstProcessingInstructionChildNamed("parameterHref");
-//        if(instr) {
-//          element->getXMLElement()->removeChild(instr);
-//          removeHref = 1;
-//        }
-//        if((removeHref + removeParameterHref) > 0) {
-//          DOMDocument *doc=node->getOwnerDocument();
-//          DOMProcessingInstruction *instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
-//          string count = X()%instr->getData();
-//          if(count == "1")
-//            doc->getDocumentElement()->removeChild(instr);
-//          else
-//            instr->setData(X()%toStr(boost::lexical_cast<int>(count)-1));
-//        }
-        if(X()%embedNode->getNodeName()=="Embed") {
-          if(element->getNumberOfParameters()) {
-            E(static_cast<DOMElement*>(embedNode))->removeAttribute("count");
-            E(static_cast<DOMElement*>(embedNode))->removeAttribute("counterName");
-          }
-          else {
-            embedNode->getParentNode()->insertBefore(node,embedNode);
-            embedNode->getParentNode()->removeChild(embedNode);
-          }
+        this->element->setValue("");
+        E(static_cast<DOMElement*>(embedNode))->removeAttribute("count");
+      }
+      if(counterName->isActive()) {
+        this->element->setCounterName(static_cast<TextWidget*>(counterName->getWidget())->getText());
+        E(static_cast<DOMElement*>(embedNode))->setAttribute("counterName",this->element->getCounterName().toStdString());
+      }
+      else {
+        this->element->setCounterName("");
+        E(static_cast<DOMElement*>(embedNode))->removeAttribute("counterName");
+      }
+      instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
+      if(parameterHref->isActive() and (not static_cast<FileWidget*>(parameterHref->getWidget())->getFile().isEmpty())) {
+        if(not instr) {
+          DOMDocument *doc=element->getOwnerDocument();
+          instr=doc->createProcessingInstruction(X()%"parameterHref", X()%static_cast<FileWidget*>(parameterHref->getWidget())->getFile().toStdString());
+          element->insertBefore(instr, element->getFirstChild());
+          addHref = true;
         }
+        else
+          instr->setData(X()%static_cast<FileWidget*>(parameterHref->getWidget())->getFile().toStdString());
+        removeParameterHref = -1;
+      }
+      else if(instr) {
+        element->removeChild(instr);
+        removeParameterHref = 1;
+      }
+      if((removeHref + removeParameterHref) > 0) {
+        DOMDocument *doc=embedNode->getOwnerDocument();
+        instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
+        string count = X()%instr->getData();
+        if(count == "1")
+          doc->getDocumentElement()->removeChild(instr);
+        else
+          instr->setData(X()%toStr(boost::lexical_cast<int>(count)-1));
+      }
+      else if(addHref) {
+        DOMDocument *doc=embedNode->getOwnerDocument();
+        instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
+        if(not instr) {
+          instr=doc->createProcessingInstruction(X()%"hrefCount", X()%"1");
+          doc->getDocumentElement()->insertBefore(instr, doc->getDocumentElement()->getFirstChild());
+        }
+        else {
+          string count = X()%instr->getData();
+          instr->setData(X()%toStr(boost::lexical_cast<int>(count)+1));
+        }
+      }
+      if((not href->isActive()) and (not count->isActive()) and (not counterName->isActive()) and (not parameterHref->isActive()) and (not this->element->getNumberOfParameters())) {
+        embedNode->getParentNode()->insertBefore(node,embedNode);
+        embedNode->getParentNode()->removeChild(embedNode);
       }
     }
     return NULL;
