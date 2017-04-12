@@ -65,6 +65,14 @@ namespace MBSimGUI {
     saveStateVector = new QCheckBox("Save final state vector");
     layout->addWidget(saveStateVector);
 
+    sublayout = new QHBoxLayout;
+    layout->addLayout(sublayout);
+    label = new QLabel("Maximum number of undos");
+    sublayout->addWidget(label);
+    maxUndo = new QSpinBox;
+    maxUndo->setMinimum(1);
+    sublayout->addWidget(maxUndo);
+
     layout->addWidget(buttonBox);
     setWindowTitle("GUI options");
   }
@@ -124,6 +132,14 @@ namespace MBSimGUI {
 
   void OptionsDialog::setSaveStateVector(bool flag) {
     saveStateVector->setCheckState(flag?Qt::Checked:Qt::Unchecked);
+  }
+
+  int OptionsDialog::getMaxUndo() const {
+    return maxUndo->value();
+  }
+
+  void OptionsDialog::setMaxUndo(int num) {
+    maxUndo->setValue(num);
   }
 
 }

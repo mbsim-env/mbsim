@@ -89,7 +89,7 @@ namespace MBSimGUI {
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
       bool autoSave, autoExport, saveFinalStateVector;
-      int autoSaveInterval;
+      int autoSaveInterval, maxUndo;
       QString autoExportDir;
       static QDialog *helpDialog;
       static QWebView *helpViewer;
@@ -113,6 +113,13 @@ namespace MBSimGUI {
       void addLink(Link *link, Element *parent=NULL);
       void addConstraint(Constraint *constraint, Element *parent=NULL);
       void addObserver(Observer *observer, Element *parent=NULL);
+      void loadFrame(Element *parent=NULL);
+      void loadContour(Element *parent=NULL);
+      void loadGroup(Element *parent=NULL);
+      void loadObject(Element *parent=NULL);
+      void loadLink(Element *parent=NULL);
+      void loadConstraint(Element *parent=NULL);
+      void loadObserver(Element *parent=NULL);
       void highlightObject(const QString &ID);
       const QString& getHighlightedObject() const {return currentID;}
       void loadProject(const QString &file);

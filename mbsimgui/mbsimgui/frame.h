@@ -32,7 +32,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this,false);}
-      QMenu* createContextMenu() {return new FrameContextMenu(this);}
   };
 
   class InternalFrame : public Frame {
@@ -41,6 +40,7 @@ namespace MBSimGUI {
       QString getType() const { return "InternalFrame"; }
       ElementPropertyDialog* createPropertyDialog() {return new InternalFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
+      QMenu* createContextMenu() {return new ElementContextMenu(this,NULL,false);}
       void removeXMLElements();
       const MBXMLUtils::FQN& getXMLFrameName() const { return xmlFrameName; }
       QString getPlotFeatureType() const { return plotFeatureType; }
@@ -55,7 +55,6 @@ namespace MBSimGUI {
       QString getType() const { return "FixedRelativeFrame"; }
       ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
-      QMenu* createContextMenu() {return new FixedRelativeFrameContextMenu(this);}
   };
 
   class NodeFrame : public Frame {
@@ -65,7 +64,6 @@ namespace MBSimGUI {
       MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
       ElementPropertyDialog* createPropertyDialog() {return new NodeFramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
-      QMenu* createContextMenu() {return new NodeFrameContextMenu(this);}
   };
 
 }

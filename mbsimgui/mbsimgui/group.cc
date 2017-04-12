@@ -101,63 +101,49 @@ namespace MBSimGUI {
     if(dynamic_cast<Frame*>(element)) {
       for (vector<Frame*>::iterator it = frame.begin() ; it != frame.end(); ++it)
         if(*it==element) {
-          //cout << "erase " << (*it)->getName() << endl;
           frame.erase(it);
-          //delete (*it);
           break;
         }
     }
     else if(dynamic_cast<Contour*>(element)) {
       for (vector<Contour*>::iterator it = contour.begin() ; it != contour.end(); ++it)
         if(*it==element) {
-          //cout << "erase " << (*it)->getName() << endl;
           contour.erase(it);
-          //delete (*it);
           break;
         }
     }
     else if(dynamic_cast<Group*>(element)) {
       for (vector<Group*>::iterator it = group.begin() ; it != group.end(); ++it)
         if(*it==element) {
-          //cout << "erase " << (*it)->getName() << endl;
           group.erase(it);
-          //delete (*it);
           break;
         }
     }
     else if(dynamic_cast<Object*>(element)) {
       for (vector<Object*>::iterator it = object.begin() ; it != object.end(); ++it)
         if(*it==element) {
-          //cout << "erase " << (*it)->getName() << endl;
           object.erase(it);
-          //delete (*it);
           break;
         }
     }
     else if(dynamic_cast<Link*>(element)) {
       for (vector<Link*>::iterator it = link.begin() ; it != link.end(); ++it)
         if(*it==element) {
-          //cout << "erase " << (*it)->getName() << endl;
           link.erase(it);
-          //delete (*it);
           break;
         }
     }
     else if(dynamic_cast<Constraint*>(element)) {
       for (vector<Constraint*>::iterator it = constraint.begin() ; it != constraint.end(); ++it)
         if(*it==element) {
-          //cout << "erase " << (*it)->getName() << endl;
           constraint.erase(it);
-          //delete (*it);
           break;
         }
     }
     else if(dynamic_cast<Observer*>(element)) {
       for (vector<Observer*>::iterator it = observer.begin() ; it != observer.end(); ++it)
         if(*it==element) {
-          //cout << "erase " << (*it)->getName() << endl;
           observer.erase(it);
-          //delete (*it);
           break;
         }
     }
@@ -317,7 +303,6 @@ namespace MBSimGUI {
   DOMElement* Group::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
 
-    // frames
     frames = E(element)->getFirstElementChildNamed(MBSIM%"frames");
     DOMElement *ELE=frames->getFirstElementChild();
     Frame *f;
@@ -327,7 +312,6 @@ namespace MBSimGUI {
       ELE=ELE->getNextElementSibling();
     }
 
-    // contours
     contours = E(element)->getFirstElementChildNamed(MBSIM%"contours");
     ELE=contours->getFirstElementChild();
     Contour *c;
@@ -337,7 +321,6 @@ namespace MBSimGUI {
       ELE=ELE->getNextElementSibling();
     }
 
-    // groups
     groups = E(element)->getFirstElementChildNamed(MBSIM%"groups");
     ELE=groups->getFirstElementChild();
     Group *g;
@@ -347,7 +330,6 @@ namespace MBSimGUI {
       ELE=ELE->getNextElementSibling();
     }
 
-    // objects
     objects = E(element)->getFirstElementChildNamed(MBSIM%"objects");
     ELE=objects->getFirstElementChild();
     Object *o;
@@ -357,7 +339,6 @@ namespace MBSimGUI {
       ELE=ELE->getNextElementSibling();
     }
 
-    // links
     links = E(element)->getFirstElementChildNamed(MBSIM%"links");
     ELE=links->getFirstElementChild();
     Link *l;
@@ -367,7 +348,6 @@ namespace MBSimGUI {
       ELE=ELE->getNextElementSibling();
     }
 
-    // constraints
     constraints = E(element)->getFirstElementChildNamed(MBSIM%"constraints");
     ELE=constraints->getFirstElementChild();
     Constraint *constraint;
@@ -377,7 +357,6 @@ namespace MBSimGUI {
       ELE=ELE->getNextElementSibling();
     }
 
-    // observers
     observers = E(element)->getFirstElementChildNamed(MBSIM%"observers");
     ELE=observers->getFirstElementChild();
     Observer *obsrv;

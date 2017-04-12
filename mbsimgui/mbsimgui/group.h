@@ -94,8 +94,7 @@ namespace MBSimGUI {
       void addObserver(Observer *observer);
       void removeElement(Element *element);
       ElementPropertyDialog* createPropertyDialog() {return new GroupPropertyDialog(this);}
-      QMenu* createContextMenu() {return new GroupContextMenu(this);}
-      QMenu* createFrameContextMenu() {return new FixedRelativeFrameContextContextMenu(this);}
+      QMenu* createFrameContextMenu() {return new FixedRelativeFramesContextMenu(this);}
   };
 
 }

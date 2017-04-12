@@ -75,7 +75,7 @@ namespace MBSimGUI {
   QDialog *MainWindow::helpDialog = NULL;
   QWebView *MainWindow::helpViewer = NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./"), debug(true), allowUndo(true), doc(NULL) {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), debug(true), allowUndo(true), doc(NULL) {
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_HTMLOUTPUT=1";
     putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
@@ -386,7 +386,7 @@ namespace MBSimGUI {
     setWindowModified(changed);
     if(changed) {
       undos.push_back(static_cast<DOMDocument*>(doc->cloneNode(true)));
-      if(undos.size() > 10)
+      if(undos.size() > maxUndo)
         undos.pop_front();
       redos.clear();
     }
@@ -428,6 +428,7 @@ namespace MBSimGUI {
     menu.setAutoExport(autoExport);
     menu.setAutoExportDir(autoExportDir);
     menu.setSaveStateVector(saveFinalStateVector);
+    menu.setMaxUndo(maxUndo);
     int res = menu.exec();
     if(res == 1) {
       autoSave = menu.getAutoSave();
@@ -441,6 +442,7 @@ namespace MBSimGUI {
         autoSaveTimer->start(autoSaveInterval*60000);
       else
         autoSaveTimer->stop();
+      maxUndo = menu.getMaxUndo();
     }
   }
 
@@ -1099,10 +1101,10 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+element->getName()+".xml", "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+element->getName()+".mbsim.xml", "XML files (*.xml)");
     if(not file.isEmpty()) {
       DOMDocument *edoc = impl->createDocument();
-      DOMNode *node = edoc->importNode(element->getXMLElement(),true);
+      DOMNode *node = edoc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true);
       edoc->insertBefore(node,NULL);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }
@@ -1114,7 +1116,7 @@ namespace MBSimGUI {
     QModelIndex index = elementList->selectionModel()->currentIndex();
     frame->setName(frame->getName()+toQStr(model->getItem(index)->getID()));
     parent->addFrame(frame);
-    frame->createXMLElement(frame->getParent()->getXMLFrames());
+    frame->createXMLElement(parent->getXMLFrames());
     model->createFrameItem(frame,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1127,7 +1129,7 @@ namespace MBSimGUI {
     QModelIndex index = elementList->selectionModel()->currentIndex();
     contour->setName(contour->getName()+toQStr(model->getItem(index)->getID()));
     parent->addContour(contour);
-    contour->createXMLElement(contour->getParent()->getXMLContours());
+    contour->createXMLElement(parent->getXMLContours());
     model->createContourItem(contour,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1140,7 +1142,7 @@ namespace MBSimGUI {
     QModelIndex index = elementList->selectionModel()->currentIndex();
     group->setName(group->getName()+toQStr(model->getItem(index)->getID()));
     parent->addGroup(group);
-    group->createXMLElement(group->getParent()->getXMLGroups());
+    group->createXMLElement(parent->getXMLGroups());
     model->createGroupItem(group,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1153,7 +1155,7 @@ namespace MBSimGUI {
     QModelIndex index = elementList->selectionModel()->currentIndex();
     object->setName(object->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObject(object);
-    object->createXMLElement(object->getParent()->getXMLObjects());
+    object->createXMLElement(parent->getXMLObjects());
     model->createObjectItem(object,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1166,7 +1168,7 @@ namespace MBSimGUI {
     QModelIndex index = elementList->selectionModel()->currentIndex();
     link->setName(link->getName()+toQStr(model->getItem(index)->getID()));
     parent->addLink(link);
-    link->createXMLElement(link->getParent()->getXMLLinks());
+    link->createXMLElement(parent->getXMLLinks());
     model->createLinkItem(link,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1179,7 +1181,7 @@ namespace MBSimGUI {
     QModelIndex index = elementList->selectionModel()->currentIndex();
     constraint->setName(constraint->getName()+toQStr(model->getItem(index)->getID()));
     parent->addConstraint(constraint);
-    constraint->createXMLElement(constraint->getParent()->getXMLConstraints());
+    constraint->createXMLElement(parent->getXMLConstraints());
     model->createConstraintItem(constraint,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1192,7 +1194,7 @@ namespace MBSimGUI {
     QModelIndex index = elementList->selectionModel()->currentIndex();
     observer->setName(observer->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObserver(observer);
-    observer->createXMLElement(observer->getParent()->getXMLObservers());
+    observer->createXMLElement(parent->getXMLObservers());
     model->createObserverItem(observer,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1204,12 +1206,124 @@ namespace MBSimGUI {
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     parent->addParameter(parameter);
-    parameter->createXMLElement(parameter->getParent()->getXMLElement());
+    parameter->createXMLElement(parent->getXMLElement());
     if(parameter->getName()!="import")
       parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
     embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
     embeddingList->openEditor();
+  }
+
+  void MainWindow::loadFrame(Element *parent) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QString file=QFileDialog::getOpenFileName(0, "XML frame files", ".", "XML files (*.xml)");
+    DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+    DOMElement *ele = static_cast<xercesc::DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+    parent->getXMLFrames()->insertBefore(ele, NULL);
+    Frame *frame = Embed<Frame>::createAndInit(ele);
+    if(frame) parent->addFrame(frame);
+    model->createFrameItem(frame,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
+    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    mbsimxml(1);
+  }
+
+  void MainWindow::loadContour(Element *parent) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QString file=QFileDialog::getOpenFileName(0, "XML contour files", ".", "XML files (*.xml)");
+    DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+    DOMElement *ele = static_cast<xercesc::DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+    parent->getXMLContours()->insertBefore(ele, NULL);
+    Contour *contour = Embed<Contour>::createAndInit(ele);
+    if(contour) parent->addContour(contour);
+    model->createContourItem(contour,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
+    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    mbsimxml(1);
+  }
+
+  void MainWindow::loadGroup(Element *parent) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QString file=QFileDialog::getOpenFileName(0, "XML group files", ".", "XML files (*.xml)");
+    DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+    DOMElement *ele = static_cast<xercesc::DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+    parent->getXMLGroups()->insertBefore(ele, NULL);
+    Group *group = Embed<Group>::createAndInit(ele);
+    if(group) parent->addGroup(group);
+    model->createGroupItem(group,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
+    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    mbsimxml(1);
+  }
+
+  void MainWindow::loadObject(Element *parent) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QString file=QFileDialog::getOpenFileName(0, "XML object files", ".", "XML files (*.xml)");
+    DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+    DOMElement *ele = static_cast<xercesc::DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+    parent->getXMLObjects()->insertBefore(ele, NULL);
+    Object *object = Embed<Object>::createAndInit(ele);
+    if(object) parent->addObject(object);
+    model->createObjectItem(object,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
+    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    mbsimxml(1);
+  }
+
+  void MainWindow::loadLink(Element *parent) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QString file=QFileDialog::getOpenFileName(0, "XML link files", ".", "XML files (*.xml)");
+    DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+    DOMElement *ele = static_cast<xercesc::DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+    parent->getXMLLinks()->insertBefore(ele, NULL);
+    Link *link = Embed<Link>::createAndInit(ele);
+    if(link) parent->addLink(link);
+    model->createLinkItem(link,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
+    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    mbsimxml(1);
+  }
+
+  void MainWindow::loadConstraint(Element *parent) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QString file=QFileDialog::getOpenFileName(0, "XML constraint files", ".", "XML files (*.xml)");
+    DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+    DOMElement *ele = static_cast<xercesc::DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+    parent->getXMLConstraints()->insertBefore(ele, NULL);
+    Constraint *constraint = Embed<Constraint>::createAndInit(ele);
+    if(constraint) parent->addConstraint(constraint);
+    model->createConstraintItem(constraint,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
+    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    mbsimxml(1);
+  }
+
+  void MainWindow::loadObserver(Element *parent) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QString file=QFileDialog::getOpenFileName(0, "XML observer files", ".", "XML files (*.xml)");
+    DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+    DOMElement *ele = static_cast<xercesc::DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+    parent->getXMLObservers()->insertBefore(ele, NULL);
+    Observer *observer = Embed<Observer>::createAndInit(ele);
+    if(observer) parent->addObserver(observer);
+    model->createObserverItem(observer,index);
+    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
+    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    mbsimxml(1);
   }
 
   void MainWindow::dragEnterEvent(QDragEnterEvent *event) {

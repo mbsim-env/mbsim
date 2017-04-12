@@ -38,7 +38,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       ContourItemData(Element *element_) : TreeItemData("contours",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new ContourContextContextMenu(element); }
+      virtual QMenu* createContextMenu() { return new ContoursContextMenu(element); }
   };
 
   class GroupItemData : public TreeItemData {
@@ -46,7 +46,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       GroupItemData(Element *element_) : TreeItemData("groups",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new GroupContextContextMenu(element); }
+      virtual QMenu* createContextMenu() { return new GroupsContextMenu(element); }
   };
 
 
@@ -55,7 +55,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       ObjectItemData(Element *element_) : TreeItemData("objects",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new ObjectContextContextMenu(element); }
+      virtual QMenu* createContextMenu() { return new ObjectsContextMenu(element); }
   };
 
   class LinkItemData : public TreeItemData {
@@ -63,7 +63,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       LinkItemData(Element *element_) : TreeItemData("links",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new LinkContextContextMenu(element); }
+      virtual QMenu* createContextMenu() { return new LinksContextMenu(element); }
   };
 
   class ConstraintItemData : public TreeItemData {
@@ -71,7 +71,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       ConstraintItemData(Element *element_) : TreeItemData("constraints",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new ConstraintContextContextMenu(element); }
+      virtual QMenu* createContextMenu() { return new ConstraintsContextMenu(element); }
   };
 
   class ObserverItemData : public TreeItemData {
@@ -79,7 +79,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       ObserverItemData(Element *element_) : TreeItemData("observers",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new ObserverContextContextMenu(element); }
+      virtual QMenu* createContextMenu() { return new ObserversContextMenu(element); }
   };
 
 }

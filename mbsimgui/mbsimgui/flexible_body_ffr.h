@@ -37,8 +37,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       ElementPropertyDialog* createPropertyDialog() {return new FlexibleBodyFFRPropertyDialog(this);}
-      QMenu* createContextMenu() {return new FlexibleBodyFFRContextMenu(this);}
-      QMenu* createFrameContextMenu() {return new NodeFrameContextContextMenu(this);}
+      QMenu* createFrameContextMenu() {return new NodeFramesContextMenu(this);}
     protected:
       xercesc::DOMElement *frames, *contours;
   };

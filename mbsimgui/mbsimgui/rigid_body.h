@@ -38,8 +38,7 @@ namespace MBSimGUI {
       bool isConstrained() const {return constrained;}
       void setConstrained(bool b) {constrained = b;}
       ElementPropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
-      QMenu* createContextMenu() {return new RigidBodyContextMenu(this);}
-      QMenu* createFrameContextMenu() {return new FixedRelativeFrameContextContextMenu(this);}
+      QMenu* createFrameContextMenu() {return new FixedRelativeFramesContextMenu(this);}
     protected:
       bool constrained;
       xercesc::DOMElement *frames, *contours;
