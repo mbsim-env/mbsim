@@ -136,7 +136,7 @@ namespace MBSimGUI {
       void newProject(bool ask=true);
       void loadProject();
       bool saveProjectAs();
-      bool saveProject(const QString &filename="", bool modifyStatus=true);
+      bool saveProject(const QString &filename="", bool processDocument=true, bool modifyStatus=true);
       void saveDataAs();
       void saveMBSimH5DataAs();
       void saveMBSimH5Data(const QString &file);

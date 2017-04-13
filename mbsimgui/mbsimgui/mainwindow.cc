@@ -319,7 +319,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::autoSaveProject() {
-    saveProject("./.MBS.mbsimprj.xml",false);
+    saveProject("./.MBS.mbsimprj.xml",true,false);
   }
 
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
@@ -330,7 +330,7 @@ namespace MBSimGUI {
     if(ret == QMessageBox::Ok) {
       QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
       QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
-      saveProject(projectFile,false);
+      saveProject(projectFile,false,false);
       QStringList arg;
       arg.append("--stopafterfirststep");
       arg.append(projectFile);
@@ -636,29 +636,27 @@ namespace MBSimGUI {
     return false;
   }
 
-  bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
+  bool MainWindow::saveProject(const QString &fileName, bool processDocument, bool modifyStatus) {
     try {
-      if(modifyStatus) {
-        setProjectChanged(false);
-        DOMProcessingInstruction *instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
-        if(instr) {
-          QModelIndex index = elementList->model()->index(0,0);
-          DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
-          DOMDocument *ndoc = static_cast<DOMDocument*>(doc->cloneNode(true));
-          ndoc->getDocumentElement()->removeChild(E(ndoc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount"));
-          DOMElement* ele = ndoc->getDocumentElement()->getFirstElementChild();
-          if(E(ele)->getTagName()==PV%"Embed")
-            ele = ele->getLastElementChild();
-          dss->processHref(ele);
-          ele = ele->getNextElementSibling();
-          if(E(ele)->getTagName()==PV%"Embed")
-            ele = ele->getLastElementChild();
-          solverView->getSolver()->processHref(ele);
-          serializer->writeToURI(ndoc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
-        }
-        else
-          serializer->writeToURI(doc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
+      DOMProcessingInstruction *instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
+      if(processDocument and instr) {
+        QModelIndex index = elementList->model()->index(0,0);
+        DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
+        DOMDocument *ndoc = static_cast<DOMDocument*>(doc->cloneNode(true));
+        ndoc->getDocumentElement()->removeChild(E(ndoc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount"));
+        DOMElement* ele = ndoc->getDocumentElement()->getFirstElementChild();
+        if(E(ele)->getTagName()==PV%"Embed")
+          ele = ele->getLastElementChild();
+        dss->processHref(ele);
+        ele = ele->getNextElementSibling();
+        if(E(ele)->getTagName()==PV%"Embed")
+          ele = ele->getLastElementChild();
+        solverView->getSolver()->processHref(ele);
+        serializer->writeToURI(ndoc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
       }
+      else
+        serializer->writeToURI(doc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
+      if(modifyStatus) setProjectChanged(false);
       return true;
     }
     catch(const std::exception &ex) {
@@ -902,7 +900,7 @@ namespace MBSimGUI {
       if(ret == QMessageBox::Ok) {
         QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
         QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
-        saveProject(projectFile,false);
+        saveProject(projectFile,false,false);
         QStringList arg;
         arg.append("--stopafterfirststep");
         arg.append(projectFile);
@@ -1051,6 +1049,7 @@ namespace MBSimGUI {
 
   void MainWindow::undo() {
     if(allowUndo and undos.size()) {
+      elementBuffer.first = NULL;
       setWindowModified(true);
       redos.push_back(doc);
       doc = undos.back();
