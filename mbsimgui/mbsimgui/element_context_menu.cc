@@ -105,6 +105,7 @@ namespace MBSimGUI {
     QAction *action = new QAction("Paste contour", this);
     action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(pasteContour()));
+    addAction(action);
     action = new QAction("Load contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadContour()));
     addAction(action);
@@ -186,6 +187,7 @@ namespace MBSimGUI {
     QAction *action = new QAction("Paste group", this);
     action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(pasteGroup()));
+    addAction(action);
     action = new QAction("Load group", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadGroup()));
     addAction(action);
@@ -249,6 +251,7 @@ namespace MBSimGUI {
     QAction *action = new QAction("Paste link", this);
     action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(pasteLink()));
+    addAction(action);
     action = new QAction("Load link", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadLink()));
     addAction(action);
@@ -344,6 +347,7 @@ namespace MBSimGUI {
     QAction *action = new QAction("Paste constraint", this);
     action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(pasteConstraint()));
+    addAction(action);
     action = new QAction("Load constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadConstraint()));
     addAction(action);
@@ -404,6 +408,7 @@ namespace MBSimGUI {
     QAction *action = new QAction("Paste observer", this);
     action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(pasteObserver()));
+    addAction(action);
     action = new QAction("Load observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadObserver()));
     addAction(action);
