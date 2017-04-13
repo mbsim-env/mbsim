@@ -73,7 +73,7 @@ if simplesandbox.call(["./runexamples.py", "--rotate", "30", "-j", "2", "--cover
                     SRCDIR+"/mbsim_valgrind/misc/valgrind-mbsim.supp --leak-check=full", "--disableCompare", "--disableValidate",
                     "--buildType", "linux64-dailydebug-valgrind"],
                    shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
-                              "/var/www/html/mbsim/buildsystemstate"],
+                              "/var/www/html/mbsim/buildsystemstate"]+map(lambda x: SRCDIR+"/"+x, ["fmatvec", "hdf5serie", "openmbv", "mbsim"]),
                    envvar=simplesandboxEnvvars+["MBSIM_SET_MINIMAL_TEND"], buildSystemRun=True)!=0:
   print("runing examples with valgrind failed.")
 os.chdir(CURDIR)
