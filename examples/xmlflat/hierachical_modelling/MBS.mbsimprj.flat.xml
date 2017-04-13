@@ -9,16 +9,25 @@
     <plotFeatureRecursive feature="+generalizedPosition"/>
     <plotFeatureRecursive feature="+generalizedVelocity"/>
     <plotFeatureRecursive feature="+deflection"/>
-    <frames/>
+    <frames>
+      <FixedRelativeFrame name="Q">
+        <relativePosition>[2;0;0]</relativePosition>
+        <relativeOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeOrientation>
+      </FixedRelativeFrame>
+    </frames>
     <contours/>
     <groups>
       <Group name="Hauptgruppe1">
-        <frames/>
+        <frames>
+          <FixedRelativeFrame name="Q">
+            <relativePosition>[1;0;0]</relativePosition>
+            <relativeOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeOrientation>
+          </FixedRelativeFrame>
+        </frames>
         <contours/>
         <groups>
           <Group name="Untergruppe">
-            <position>[1;0;0]</position>
-            <orientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</orientation>
+            <frameOfReference ref="../Frame[Q]"/>
             <frames/>
             <contours/>
             <groups/>
@@ -167,14 +176,17 @@
       <Group name="Hauptgruppe2">
         <plotFeatureRecursive feature="+stateDerivative"/>
         <plotFeature feature="+separateFilePerGroup"/>
-        <position>[2;0;0]</position>
-        <orientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</orientation>
-        <frames/>
+        <frameOfReference ref="../Frame[Q]"/>
+        <frames>
+          <FixedRelativeFrame name="Q">
+            <relativePosition>[1;0;0]</relativePosition>
+            <relativeOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeOrientation>
+          </FixedRelativeFrame>
+        </frames>
         <contours/>
         <groups>
           <Group name="Untergruppe">
-            <position>[1;0;0]</position>
-            <orientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</orientation>
+            <frameOfReference ref="../Frame[Q]"/>
             <frames/>
             <contours/>
             <groups/>

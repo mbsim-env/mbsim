@@ -43,7 +43,7 @@ using namespace MBXMLUtils;
 namespace MBSim {
 
   DynamicSystem::DynamicSystem(const string &name) :
-      Element(name), R(0), PrPF(Vec3()), APF(SqrMat3(EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0), corrInd(0)
+      Element(name), R(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0), corrInd(0)
   {
     uSize[0] = 0;
     uSize[1] = 0;
@@ -387,19 +387,8 @@ namespace MBSim {
           static_cast<RigidContour*>(contour[k])->setFrameOfReference(I);
       }
       if (R) {
-        I->setOrientation(R->evalOrientation() * APF);
-        I->setPosition(R->getPosition() + R->getOrientation() * PrPF);
-      }
-      else {
-        DynamicSystem* sys = dynamic_cast<DynamicSystem*>(parent);
-        if (sys) {
-          I->setOrientation(sys->getFrameI()->evalOrientation() * APF);
-          I->setPosition(sys->getFrameI()->getPosition() + sys->getFrameI()->getOrientation() * PrPF);
-        }
-        else {
-          I->setOrientation(getFrameI()->evalOrientation() * APF);
-          I->setPosition(getFrameI()->getPosition() + getFrameI()->getOrientation() * PrPF);
-        }
+        I->setOrientation(R->evalOrientation());
+        I->setPosition(R->getPosition());
       }
     }
     else if (stage == plotting) {

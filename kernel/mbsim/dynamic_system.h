@@ -95,9 +95,10 @@ namespace MBSim {
       virtual fmatvec::Vec& getq() { return q; };
       virtual const fmatvec::Vec& getu() const { return u; };
       virtual fmatvec::Vec& getu() { return u; };
-      void setq(const fmatvec::Vec& q_){ q = q_;}
-      void setu(const fmatvec::Vec& u_){ u = u_;}
-      void setjsv(const fmatvec::VecInt& jsv_){ jsv = jsv_;}
+      void setq(const fmatvec::Vec& q_) { q = q_;}
+      void setu(const fmatvec::Vec& u_) { u = u_;}
+      void setx(const fmatvec::Vec& x_) { x = x_; }
+      void setjsv(const fmatvec::VecInt& jsv_) { jsv = jsv_;}
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
       virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
 
@@ -221,15 +222,8 @@ namespace MBSim {
       /*****************************************************/
 
       /* GETTER / SETTER */
-      void setPosition(const fmatvec::Vec3& PrPF_) { PrPF = PrPF_; }
-      void setOrientation(const fmatvec::SqrMat3& APF_) { APF = APF_; }
       void setFrameOfReference(Frame *frame) { R = frame; };
-      const fmatvec::Vec3& getPosition() const { return PrPF; }
-      const fmatvec::SqrMat3& getOrientation() const { return APF; }
       const Frame* getFrameOfReference() const { return R; };
-
-      const fmatvec::Vec& getx0() const { return x0; };
-      fmatvec::Vec& getx0() { return x0; };
 
       const fmatvec::Mat& getT(bool check=true) const;
       const fmatvec::Vec& geth(int j=0, bool check=true) const;
@@ -274,10 +268,6 @@ namespace MBSim {
       const fmatvec::Vec& evalgd();
       const fmatvec::Mat& evalWInverseKinetics();
       const fmatvec::Mat& evalbInverseKinetics();
-
-      void setx(const fmatvec::Vec& x_) { x = x_; }
-      void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
-      void setx0(double x0_) { x0 = fmatvec::Vec(1,fmatvec::INIT,x0_); }
 
       void setqd(const fmatvec::Vec& qd_) { qd = qd_; }
       void setud(const fmatvec::Vec& ud_) { ud = ud_; }
@@ -780,16 +770,6 @@ namespace MBSim {
        */
       Frame *R;
 
-      /**
-       * \brief relative translation with respect to parent frame
-       */
-      fmatvec::Vec3 PrPF;
-
-      /**
-       * \brief relative rotation with respect to parent frame
-       */
-      fmatvec::SqrMat3 APF;
-
       /** 
        * \brief container for possible ingredients
        */
@@ -825,17 +805,17 @@ namespace MBSim {
       /**
        * \brief positions, differentiated positions, initial positions
        */
-      fmatvec::Vec q, qd, dq, q0;
+      fmatvec::Vec q, qd, dq;
 
       /**
        * \brief velocities, differentiated velocities, initial velocities
        */
-      fmatvec::Vec u, ud, du, u0;
+      fmatvec::Vec u, ud, du;
 
       /**
        * \brief order one parameters, differentiated order one parameters, initial order one parameters
        */
-      fmatvec::Vec x, xd, dx, x0;
+      fmatvec::Vec x, xd, dx;
 
       /**
        * \brief smooth, smooth with respect to objects, smooth with respect to links and nonsmooth

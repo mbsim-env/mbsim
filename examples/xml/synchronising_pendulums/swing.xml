@@ -1,7 +1,5 @@
 <Group name="Swing" xmlns="http://www.mbsim-env.de/MBSim">
   <frameOfReference ref="../Frame[I]"/> <!-- optional -->
-  <position>[0 0 0]'</position>
-  <orientation>eye(3)</orientation>
   <frames>
     <FixedRelativeFrame name="fMountLeft">
       <!--

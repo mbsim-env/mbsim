@@ -24,6 +24,12 @@
         <relativeOrientation>eye(3)</relativeOrientation>
       </FixedRelativeFrame>
     </Embed>
+    <Embed count="3" counterName="i" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <FixedRelativeFrame name="Q{i}" xmlns="http://www.mbsim-env.de/MBSim">
+        <frameOfReference ref="../Frame[I{i}]"/>
+        <relativeOrientation>rotateAboutZ(pi/2)</relativeOrientation>
+      </FixedRelativeFrame>
+    </Embed>
   </frames>
   <contours>
   </contours>

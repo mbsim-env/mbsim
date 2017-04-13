@@ -494,38 +494,26 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f), position(0), orientation(0), frameOfReference(0) {
+  GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f), frameOfReference(0) {
     if(kinematics) {
       addTab("Kinematics",1);
 
       frameOfReference = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(group,NULL),true,false,MBSIM%"frameOfReference");
       addToTab("Kinematics", frameOfReference);
-
-      position = new ExtWidget("Position",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"position");
-      addToTab("Kinematics", position);
-
-      orientation = new ExtWidget("Orientation",new ChoiceWidget2(new RotMatWidgetFactory,QBoxLayout::RightToLeft),true,false,MBSIM%"orientation");
-      addToTab("Kinematics", orientation);
     }
   }
 
   DOMElement* GroupPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
-    if(position) {
+    if(frameOfReference)
       frameOfReference->initializeUsingXML(element->getXMLElement());
-      position->initializeUsingXML(element->getXMLElement());
-      orientation->initializeUsingXML(element->getXMLElement());
-    }
     return parent;
   }
 
   DOMElement* GroupPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ElementPropertyDialog::writeXMLFile(parent,ref?ref:element->getXMLFrames());
-    if(position) {
+    if(frameOfReference)
       frameOfReference->writeXMLFile(element->getXMLElement(),ref?ref:element->getXMLFrames());
-      position->writeXMLFile(element->getXMLElement(),ref?ref:element->getXMLFrames());
-      orientation->writeXMLFile(element->getXMLElement(),ref?ref:element->getXMLFrames());
-    }
     return NULL;
   }
 

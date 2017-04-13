@@ -7,8 +7,6 @@
   <plotFeatureRecursive feature="+generalizedForce"/>
   <plotFeatureRecursive feature="+generalizedPosition"/>
   <plotFeatureRecursive feature="+generalizedVelocity"/>
-  <position>[0;0;0]</position><!-- dummy -->
-  <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
   <frames>
     <FixedRelativeFrame name="Os">
       <relativePosition>[0;0;0.04]</relativePosition>

@@ -10,13 +10,19 @@
   <plotFeatureRecursive feature="+generalizedVelocity"/>
   <plotFeatureRecursive feature="{if plotSubTypeEnabled, ret='+'; else ret='-'; end}{plotSubType}"/>
   <plotFeature feature="+separateFilePerGroup"/>
-  <position unit="mm">
-    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <ele>rHG(numHG)*1000</ele><ele>0</ele><ele>0</ele>
-    </xmlVector>
-  </position>
-  <orientation><pv:aboutZ unit="degree">-alphaHG(numHG)*180/pi</pv:aboutZ></orientation>
-  <frames/>
+  <frameOfReference ref="../Frame[Q{numHG}]"/>
+  <frames>
+    <FixedRelativeFrame name="Q">
+      <relativePosition>[cot(2)/cot(2);0*det([4,5;6,3]);0]</relativePosition>
+      <relativeOrientation>
+        <pv:cardan unit="degree">
+          <pv:alpha>0</pv:alpha>
+          <pv:beta>0</pv:beta>
+          <pv:gamma>-alphaUG*180/pi</pv:gamma>
+        </pv:cardan>
+      </relativeOrientation>
+    </FixedRelativeFrame>
+  </frames>
   <contours/>
   <groups>
     <pv:Embed href="submodel/Untergruppe.xml" parameterHref="submodel/Untergruppe.param.xml"/>

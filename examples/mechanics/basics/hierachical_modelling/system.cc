@@ -1,5 +1,6 @@
 #include "system.h"
 #include "group2.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/environment.h"
 
 using namespace MBSim;
@@ -29,8 +30,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(2,2) = 1;
   A(0,1) = sin(a);
   A(1,0) = -sin(a);
-  group2->setPosition(r);
-  group2->setOrientation(A);
+  addFrame(new FixedRelativeFrame("Q",r,A));
+  group2->setFrameOfReference(getFrame("Q"));
   addGroup(group2);
 
   setPlotFeatureRecursive("generalizedPosition",enabled);

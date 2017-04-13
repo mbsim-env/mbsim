@@ -118,7 +118,8 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   group = new TestGroup("PendelGruppe2"); 
   Vec r(3);
   r(0) = 0.2;
-  group->setPosition(r);
+  addFrame(new FixedRelativeFrame("Q",r));
+  group->setFrameOfReference(getFrame("Q"));
   addGroup(group);
 
   setPlotFeatureRecursive("generalizedPosition",enabled);

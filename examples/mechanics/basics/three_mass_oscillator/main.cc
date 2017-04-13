@@ -2,6 +2,7 @@
 
 #include "mbsim/integrators/integrators.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/environment.h"
 
 #include <time.h>
@@ -13,9 +14,19 @@ using namespace fmatvec;
 
 int main(int argc, char *argv[]) {
   DynamicSystemSolver *sys = new DynamicSystemSolver("MBS");
-  sys->addGroup(new System(0));
-  sys->addGroup(new System(1));
-  sys->addGroup(new System(2));
+  double dDisk=0.05;
+  sys->addFrame(new FixedRelativeFrame("Q1",1.5*dDisk*Vec("[1;0;0]")+1.5*dDisk*Vec("[0;0;-1]")));
+  sys->addFrame(new FixedRelativeFrame("Q2",3.*dDisk*Vec("[1;0;0]")+1.5*dDisk*Vec("[0;0;-1]")));
+  sys->addFrame(new FixedRelativeFrame("Q0",1.5*dDisk*Vec("[0;0;-1]")));
+  System *group = new System(0,dDisk);
+  sys->addGroup(group);
+  group->setFrameOfReference(sys->getFrame("Q0"));
+  group = new System(1,dDisk);
+  sys->addGroup(group);
+  group->setFrameOfReference(sys->getFrame("Q1"));
+  group = new System(2,dDisk);
+  sys->addGroup(group);
+  group->setFrameOfReference(sys->getFrame("Q2"));
   MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;0;0]");
 
   sys->setConstraintSolver(DynamicSystemSolver::LinearEquations);

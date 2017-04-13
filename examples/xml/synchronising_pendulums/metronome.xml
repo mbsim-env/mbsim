@@ -1,7 +1,5 @@
 <Group name="Metronome{i}" xmlns="http://www.mbsim-env.de/MBSim">
   <frameOfReference ref="../Frame[I{i}]"/>
-  <position>[0; 0; 0]</position>
-  <orientation>eye(3)</orientation>
   <frames/>
   <contours/>
   <groups>

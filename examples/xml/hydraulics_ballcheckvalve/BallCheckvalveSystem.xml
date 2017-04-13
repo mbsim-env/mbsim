@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Group name="BallCheckvalveSystem" xmlns="http://www.mbsim-env.de/MBSim">
-  <position>[0;-(hpcInitialHeight+pistonHeight-pistonContourRadius);0]</position>
-  <orientation>eye(3)</orientation>
+  <frameOfReference ref="../Frame[Q]"/>
   <frames/>
   <contours/>
   <groups>

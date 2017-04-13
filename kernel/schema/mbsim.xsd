@@ -369,20 +369,6 @@
               <xs:attribute name="ref" type="ParentFrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="position" type="pv:lengthVector" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Relative Lage der Gruppe. Vektor vom <code>frameOfReference</code> zum KOS "I" dieser Gruppe.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="orientation" type="pv:rotationMatrix" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Relative Orientierung der Gruppe. Transformationsmatrix vom KOS "I" dieser Gruppe in das KOS <code>frameOfReference</code>.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>           
           <xs:element name="frames">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">

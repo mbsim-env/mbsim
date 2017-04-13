@@ -5,8 +5,6 @@
     <plotFeatureRecursive feature="+generalizedForce"/>
     <plotFeatureRecursive feature="+generalizedPosition"/>
     <plotFeatureRecursive feature="+generalizedVelocity"/>
-    <position>[0,0,0]</position>
-    <orientation>[[1,0,0],[0,1,0],[0,0,1]]</orientation>
     <frames />
     <contours />
     <groups />

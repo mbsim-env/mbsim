@@ -82,29 +82,12 @@ namespace MBSim {
     Element::initializeUsingXML(element);
 
     // search first element known by Group
-    DOMElement *e=element->getFirstElementChild();
-    while(e && E(e)->getTagName()!=MBSIM%"frameOfReference" &&
-        E(e)->getTagName()!=MBSIM%"position" &&
-        E(e)->getTagName()!=MBSIM%"orientation" &&
-        E(e)->getTagName()!=MBSIM%"frames")
-      e=e->getNextElementSibling();
-
-    if(e && E(e)->getTagName()==MBSIM%"frameOfReference") {
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(e)
       saved_frameOfReference=E(e)->getAttribute("ref");
-      e=e->getNextElementSibling();
-    }
-
-    if(e && E(e)->getTagName()==MBSIM%"position") {
-      setPosition(getVec3(e));
-      e=e->getNextElementSibling();
-    }
-
-    if(e && E(e)->getTagName()==MBSIM%"orientation") {
-      setOrientation(getSqrMat3(e));
-      e=e->getNextElementSibling();
-    }
 
     // frames
+    e=E(element)->getFirstElementChildNamed(MBSIM%"frames");
     DOMElement *E=e->getFirstElementChild();
     while(E) {
       FixedRelativeFrame *f=new FixedRelativeFrame(MBXMLUtils::E(E)->getAttribute("name"));
@@ -112,18 +95,18 @@ namespace MBSim {
       f->initializeUsingXML(E);
       E=E->getNextElementSibling();
     }
-    e=e->getNextElementSibling();
 
     // contours
+    e=e->getNextElementSibling();
     E=e->getFirstElementChild();
     while(E) {
       RigidContour *c=ObjectFactory::createAndInit<RigidContour>(E);
       addContour(c);
       E=E->getNextElementSibling();
     }
-    e=e->getNextElementSibling();
 
     // groups
+    e=e->getNextElementSibling();
     E=e->getFirstElementChild();
     Group *g;
     while(E) {
@@ -131,9 +114,9 @@ namespace MBSim {
       addGroup(g);
       E=E->getNextElementSibling();
     }
-    e=e->getNextElementSibling();
 
     // objects
+    e=e->getNextElementSibling();
     E=e->getFirstElementChild();
     Object *o;
     while(E) {
@@ -141,9 +124,9 @@ namespace MBSim {
       addObject(o);
       E=E->getNextElementSibling();
     }
-    e=e->getNextElementSibling();
 
     // links
+    e=e->getNextElementSibling();
     E=e->getFirstElementChild();
     Link *l;
     while(E) {
@@ -151,9 +134,9 @@ namespace MBSim {
       addLink(l);
       E=E->getNextElementSibling();
     }
-    e=e->getNextElementSibling();
 
     // constraints
+    e=e->getNextElementSibling();
     E=e->getFirstElementChild();
     Constraint *crt;
     while(E) {
@@ -161,9 +144,9 @@ namespace MBSim {
       addConstraint(crt);
       E=E->getNextElementSibling();
     }
-    e=e->getNextElementSibling();
 
     // observers
+    e=e->getNextElementSibling();
     E=e->getFirstElementChild();
     Observer *obsrv;
     while(E) {

@@ -1,6 +1,5 @@
 <Group name="Control{i}" xmlns="http://www.mbsim-env.de/MBSim">
-  <frameOfReference ref="../Frame[I{i}]"/>
-  <orientation>rotateAboutZ(pi/2)</orientation>
+  <frameOfReference ref="../Frame[Q{i}]"/>
   <frames>
   </frames>
   <contours>

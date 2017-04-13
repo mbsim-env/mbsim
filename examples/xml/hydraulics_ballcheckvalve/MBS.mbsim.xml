@@ -9,6 +9,9 @@
   <plotFeatureRecursive feature="+deflection"/>
   <plotFeatureRecursive feature="+signal"/>
   <frames>
+    <FixedRelativeFrame name="Q">
+      <relativePosition>[0;-(hpcInitialHeight+pistonHeight-pistonContourRadius);0]</relativePosition>
+    </FixedRelativeFrame>
     <FixedRelativeFrame name="AnregungC">
       <relativePosition>[0;pistonRadius; 0 ]</relativePosition>
       <relativeOrientation>eye(3)</relativeOrientation>

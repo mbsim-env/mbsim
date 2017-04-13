@@ -20,10 +20,9 @@ using namespace std;
 using namespace MBSim;
 using namespace fmatvec;
 
-System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
+System::System(unsigned int type, double dDisk) : Group("System"+numtostr(int(type))) {
 
   // input values
-  double dDisk=0.05;
   double rhoDisk=800;
   double hDisk=0.01;
   double h0Cylinder=0.1;
@@ -164,13 +163,6 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   sp12->enableOpenMBV(_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
 
   sp23->enableOpenMBV(_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
-
-  if(type==1) 
-    setPosition(1.5*dDisk*Vec("[1;0;0]")+1.5*dDisk*Vec("[0;0;-1]"));
-  else if (type==2)
-    setPosition(3.*dDisk*Vec("[1;0;0]")+1.5*dDisk*Vec("[0;0;-1]"));
-  else 
-    setPosition(0*h0Cylinder*Vec("[1;0;0]")+1.5*dDisk*Vec("[0;0;-1]"));
 
   setPlotFeatureRecursive("generalizedPosition",enabled);
   setPlotFeatureRecursive("generalizedVelocity",enabled);

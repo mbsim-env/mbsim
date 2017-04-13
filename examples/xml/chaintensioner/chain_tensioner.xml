@@ -6,8 +6,6 @@
   xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
   xmlns:h="http://www.mbsim-env.de/MBSimHydraulics"
   xmlns:c="http://www.mbsim-env.de/MBSimControl">
-  <position>[0;0;0]</position>
-  <orientation>eye(3)</orientation>
   <frames/>
   <contours/>
   <groups>

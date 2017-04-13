@@ -1,5 +1,6 @@
 #include "group2.h"
 #include "group1.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include <openmbvcppinterface/cuboid.h>
@@ -42,8 +43,8 @@ Group2::Group2(const string &name) : Group(name) {
   A(2,2) = 1;
   A(0,1) = sin(a);
   A(1,0) = -sin(a);
-  group->setPosition(r);
-  group->setOrientation(A);
+  addFrame(new FixedRelativeFrame("Q",r,A));
+  group->setFrameOfReference(getFrame("Q"));
   addGroup(group);
 
 
