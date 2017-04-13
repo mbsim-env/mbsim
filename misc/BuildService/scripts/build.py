@@ -15,7 +15,6 @@ import shutil
 import codecs
 import simplesandbox
 import buildSystemState
-import tempfile
 import hashlib
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
@@ -31,15 +30,9 @@ args=None
 
 # pass these envvar to simplesandbox.call
 simplesandboxEnvvars=["PKG_CONFIG_PATH", "CPPFLAGS", "CXXFLAGS", "CFLAGS", "FFLAGS", "LDFLAGS", # general required envvars
-                      "GCOV_PREFIX", # gcov
                       "MBSIM_SWIG", # MBSim required envvars
                       "LD_LIBRARY_PATH", # Linux specific required envvars
                       "WINEPATH", "PLATFORM", "CXX", "MOC", "UIC", "RCC"] # Windows specific required envvars
-
-def getGcovPrefix():
-  if "GCOV_PREFIX" in os.environ:
-    return [os.environ["GCOV_PREFIX"]]
-  return []
 
 def parseArguments():
   # command line option definition
@@ -53,7 +46,7 @@ def parseArguments():
   
   mainOpts=argparser.add_argument_group('Main Options')
   mainOpts.add_argument("--sourceDir", type=str, required=True,
-    help="The base source/build directory (see --srcSuffix/--binSuffix for VPATH builds")
+    help="The base source/build directory (see --binSuffix for VPATH builds")
   configOpts=mainOpts.add_mutually_exclusive_group(required=True)
   configOpts.add_argument("--prefix", type=str, help="run configure using this directory as prefix option")
   configOpts.add_argument("--recheck", action="store_true",
@@ -75,7 +68,6 @@ def parseArguments():
   cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build the XML doc")
   cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
   cfgOpts.add_argument("--enableDistribution", action="store_true", help="Create a release distribution archive (only usefull on the buildsystem)")
-  cfgOpts.add_argument("--srcSuffix", default="", help='base tool name suffix for the source dir in --sourceDir (default: "" = no VPATH build)')
   cfgOpts.add_argument("--binSuffix", default="", help='base tool name suffix for the binary (build) dir in --sourceDir (default: "" = no VPATH build)')
   cfgOpts.add_argument("--fmatvecBranch", default="", help='In the fmatvec repo checkout the branch FMATVECBRANCH')
   cfgOpts.add_argument("--hdf5serieBranch", default="", help='In the hdf5serierepo checkout the branch HDF5SERIEBRANCH')
@@ -247,14 +239,6 @@ def main():
   args.sourceDir=os.path.abspath(args.sourceDir)
   args.reportOutDir=os.path.abspath(args.reportOutDir)
 
-  # prepare coverage
-  if args.coverage:
-    # coverage (write to a tmp dir)
-    os.environ["GCOV_PREFIX"]=tempfile.gettempdir()+"/linux64-dailydebug-gcov"
-    if os.path.exists(os.environ["GCOV_PREFIX"]):
-      shutil.rmtree(os.environ["GCOV_PREFIX"])
-    os.makedirs(os.environ["GCOV_PREFIX"])
-
   # all tools to be build including the tool dependencies
   global toolDependencies
 
@@ -357,6 +341,13 @@ def main():
   global timeID
   timeID=datetime.datetime.now()
   timeID=datetime.datetime(timeID.year, timeID.month, timeID.day, timeID.hour, timeID.minute, timeID.second)
+
+  # enable coverage
+  if args.coverage:
+    if not "CPPFLAGS" in os.environ: os.environ["CPPFLAGS"]=""
+    if not "LDFLAGS"  in os.environ: os.environ["LDFLAGS" ]=""
+    os.environ["CPPFLAGS"]=os.environ["CPPFLAGS"]+" --coverage"
+    os.environ["LDFLAGS" ]=os.environ["LDFLAGS" ]+" --coverage -lgcov"
 
   # start messsage
   print("Started build process.")
@@ -491,13 +482,6 @@ def main():
     runExamplesErrorCode=runexamples(mainFD)
     os.chdir(savedDir)
 
-  # coverage analyzis
-  if args.coverage:
-    nrRun=nrRun+1
-    print("Create coverage analyzis"); sys.stdout.flush()
-    if coverage(mainFD)!=0:
-      nrFailed=nrFailed+1
-
   # create distribution
   if args.enableDistribution:
     nrRun=nrRun+1
@@ -594,10 +578,6 @@ def sortBuildTools(buildTools, orderedBuildTools):
 
 
 
-def srcTool(tool):
-  t=tool.split(os.path.sep)
-  t[0]=t[0]+args.srcSuffix
-  return os.path.sep.join(t)
 def buildTool(tool):
   t=tool.split(os.path.sep)
   t[0]=t[0]+args.binSuffix
@@ -620,7 +600,7 @@ def repoUpdate(mainFD):
   print('</tr></thead><tbody>', file=mainFD)
 
   for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
-    os.chdir(pj(args.sourceDir, repo+args.srcSuffix))
+    os.chdir(pj(args.sourceDir, repo))
     # update
     repoUpdFD=codecs.open(pj(args.reportOutDir, "repo-update-"+repo+".txt"), "w", encoding="utf-8")
     retlocal=0
@@ -746,29 +726,29 @@ def configure(tool, mainFD):
     if not args.disableConfigure:
       run=1
       # pre configure
-      os.chdir(pj(args.sourceDir, srcTool(tool)))
+      os.chdir(pj(args.sourceDir, tool))
       print("\n\nRUNNING aclocal\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["aclocal"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+      if simplesandbox.call(["aclocal"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("aclocal failed")
       print("\n\nRUNNING autoheader\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["autoheader"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+      if simplesandbox.call(["autoheader"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("autoheader failed")
       print("\n\nRUNNING libtoolize\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["libtoolize", "-c"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+      if simplesandbox.call(["libtoolize", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("libtoolize failed")
       print("\n\nRUNNING automake\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["automake", "-a", "-c"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+      if simplesandbox.call(["automake", "-a", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("automake failed")
       print("\n\nRUNNING autoconf\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["autoconf"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+      if simplesandbox.call(["autoconf"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("autoconf failed")
       print("\n\nRUNNING autoreconf\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["autoreconf"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+      if simplesandbox.call(["autoreconf"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("autoreconf failed")
       # configure
@@ -777,13 +757,13 @@ def configure(tool, mainFD):
       copyConfigLog=True
       print("\n\nRUNNING configure\n", file=configureFD); configureFD.flush()
       if args.prefix==None:
-        if simplesandbox.call(["./config.status", "--recheck"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+        if simplesandbox.call(["./config.status", "--recheck"], envvar=simplesandboxEnvvars, shareddir=["."],
                               stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
           raise RuntimeError("configure failed")
       else:
-        command=[pj(args.sourceDir, srcTool(tool), "configure"), "--prefix", args.prefix]
+        command=[pj(args.sourceDir, tool, "configure"), "--prefix", args.prefix]
         command.extend(args.passToConfigure)
-        if simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+        if simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=["."],
                               stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
           raise RuntimeError("configure failed")
     else:
@@ -826,17 +806,23 @@ def make(tool, mainFD):
       errStr=""
       if not args.disableMakeClean:
         print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
-        if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+        if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
                               stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
           errStr=errStr+"make clean failed; "
+        if args.coverage:
+          # remove all "*.gcno", "*.gcda" files
+          for d,_,files in os.walk('.'):
+            for f in files:
+              if os.path.splitext(f)[1]==".gcno": os.remove(pj(d, f))
+              if os.path.splitext(f)[1]==".gcda": os.remove(pj(d, f))
       print("\n\nRUNNING make -k\n", file=makeFD); makeFD.flush()
-      if simplesandbox.call(staticCodeAnalyzeComm+["make", "-k", "-j", str(args.j)], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix()+staticCodeAnalyzeDir,
+      if simplesandbox.call(staticCodeAnalyzeComm+["make", "-k", "-j", str(args.j)], envvar=simplesandboxEnvvars, shareddir=["."]+staticCodeAnalyzeDir,
                             stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
         errStr=errStr+"make failed; "
       if not args.disableMakeInstall:
         print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
         if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
-                              shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto]+getGcovPrefix(),
+                              shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
                               stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
           errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
@@ -889,7 +875,7 @@ def check(tool, mainFD):
     run=1
     # make check
     print("RUNNING make check\n", file=checkFD); checkFD.flush()
-    if simplesandbox.call(["make", "-k", "-j", str(args.j), "check"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+    if simplesandbox.call(["make", "-k", "-j", str(args.j), "check"], envvar=simplesandboxEnvvars, shareddir=["."],
                           stderr=subprocess.STDOUT, stdout=checkFD, buildSystemRun=args.buildSystemRun)==0:
       result="done"
     else:
@@ -940,17 +926,17 @@ def doc(tool, mainFD, disabled, docDirName):
       # make doc
       errStr=""
       print("\n\nRUNNING make clean\n", file=docFD); docFD.flush()
-      if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
+      if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
         errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make\n", file=docFD); docFD.flush()
       if simplesandbox.call(["make", "-k"], envvar=simplesandboxEnvvars,
-                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto]+getGcovPrefix(),
+                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
                             stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
         errStr=errStr+"make failed; "
       print("\n\nRUNNING make install\n", file=docFD); docFD.flush()
       if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
-                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto]+getGcovPrefix(),
+                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
                             stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
         errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
@@ -995,6 +981,8 @@ def runexamples(mainFD):
   command.extend(["--timeID", timeID.strftime("%Y-%m-%dT%H:%M:%S")])
   if args.buildSystemRun:
     command.extend(["--buildSystemRun", scriptdir])
+  if args.coverage:
+    command.extend(["--coverage", args.sourceDir+":"+args.binSuffix+":"+args.prefix])
   command.extend(args.passToRunexamples)
 
   print("")
@@ -1003,7 +991,8 @@ def runexamples(mainFD):
   print("")
   if not os.path.isdir(pj(args.reportOutDir, "runexamples_report")): os.makedirs(pj(args.reportOutDir, "runexamples_report"))
   ret=abs(simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"),
-                             "/var/www/html/mbsim/buildsystemstate"]+getGcovPrefix(),
+                             "/var/www/html/mbsim/buildsystemstate"]+
+                             map(lambda x: pj(args.sourceDir, x+args.binSuffix), ["fmatvec", "hdf5serie", "openmbv", "mbsim"]),
                              stderr=subprocess.STDOUT, buildSystemRun=args.buildSystemRun))
 
   if ret==0:
@@ -1018,84 +1007,6 @@ def runexamples(mainFD):
 
   mainFD.flush()
 
-  return ret
-
-
-
-def coverage(mainFD):
-  print('<tr><td>Coverage analyzis</td>', file=mainFD); mainFD.flush()
-
-  ret=0
-  # copy .gcda files from coverage dir to build dir
-  for root, _, files in os.walk(os.environ["GCOV_PREFIX"]):
-    for f in files:
-      if f=="conftest.gcda": continue # skip conftest.gcda (the corresponding conftest.gcno is already deleted (by autotools))
-      dst=pj(root[len(os.environ["GCOV_PREFIX"]):], f)
-      if os.path.exists(dst): os.remove(dst)
-      os.link(pj(root, f), dst)
-  
-  # run lcov and genhtml
-  if not os.path.exists(pj(args.reportOutDir, "coverage")): os.makedirs(pj(args.reportOutDir, "coverage"))
-  lcovFD=codecs.open(pj(args.reportOutDir, "coverage", "log.txt"), "w", encoding="utf-8")
-  # create tracefile without external source files
-  ret=ret+abs(subprocess.call(["lcov", "-c", "--no-external", "-d", args.sourceDir, "-o",
-    pj(os.environ["GCOV_PREFIX"], "cov.trace1")], stdout=lcovFD, stderr=lcovFD))
-  # remove all (SWIG) generated source files, and other 3rd party souce files and the mbsim examples
-  ret=ret+abs(subprocess.call(["lcov", "-r", pj(os.environ["GCOV_PREFIX"], "cov.trace1"), "mbsim/kernel/swig/*", "mbsim/kernel/swig/check/*",
-    "openmbv/openmbvcppinterface/swig/java/*", "openmbv/openmbvcppinterface/swig/octave/*",
-    "openmbv/openmbvcppinterface/swig/python/*", "openmbv/mbxmlutils/mbxmlutils/swigpyrun.h",
-    "openmbv/mbxmlutils/mbxmlutils/casadi_oct_swig_octave.cc", "mbsim/thirdparty/nurbs++/*",
-    "local/include/nurbs++/*", "mbsim/examples/*", "mbsim/modules/mbsimInterface/mbsimInterface/interface_messages.cc",
-    "-o", pj(os.environ["GCOV_PREFIX"], "cov.trace2")], stdout=lcovFD, stderr=lcovFD))
-
-  # collect all header files in repos and hash it
-  repoHeader={}
-  for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
-    for root, _, files in os.walk(pj(args.sourceDir, repo)):
-      for f in files:
-        if f.endswith(".h"):
-          repoHeader[hashlib.sha1(open(pj(root, f)).read()).hexdigest()]=pj(root, f)
-  # loop over all header files in local and create mapping (using the hash)
-  headerMap=[]
-  for root, _, files in os.walk(pj(args.sourceDir, "local", "include")):
-    for f in files:
-      if f.endswith(".h"):
-        h=hashlib.sha1(open(pj(root, f)).read()).hexdigest()
-        if h in repoHeader:
-          headerMap.append((pj(root, f), repoHeader[h]))
-  # replace header map in lcov trace file
-  for line in fileinput.FileInput(pj(os.environ["GCOV_PREFIX"], "cov.trace2"), inplace=1):
-    if line.startswith("SF:"):
-      for hm in headerMap:
-        line=line.replace("SF:"+hm[0], "SF:"+hm[1])
-    print(line, end="")
-
-  # generate html files
-  ret=ret+abs(subprocess.call(["genhtml", "-t", "MBSim-Env Examples", "--prefix", args.sourceDir, "--legend",
-    "--html-prolog", pj(scriptdir, "lcov-prolog.parthtml"), "--html-epilog", pj(scriptdir, "lcov-epilog.parthtml"),
-    "--no-function-coverage", "-o", pj(args.reportOutDir, "coverage"),
-    pj(os.environ["GCOV_PREFIX"], "cov.trace2")], stdout=lcovFD, stderr=lcovFD))
-  lcovFD.close()
-
-  # update build state
-  covRate=0
-  linesRE=re.compile("^ *lines\.*: *([0-9]+\.[0-9]+)% ")
-  for line in fileinput.FileInput(pj(args.reportOutDir, "coverage", "log.txt")):
-    m=linesRE.match(line)
-    if m!=None:
-      covRate=int(float(m.group(1))+0.5)
-  buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", str(covRate)+"%",
-    "#5cb85c" if covRate>=90 else ("#f0ad4e" if covRate>=75 else "#d9534f"))
-
-  if ret==0:
-    print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;', file=mainFD)
-  else:
-    print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
-  print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
-        '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%d%%</span></a></td>'%(covRate), file=mainFD)
-  for i in range(0, 5-sum([args.disableConfigure, args.disableMake, not args.staticCodeAnalyzis, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
-    print('<td>-</td>', file=mainFD)
-  print('</tr>', file=mainFD); mainFD.flush()
   return ret
 
 

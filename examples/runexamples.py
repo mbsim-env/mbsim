@@ -29,6 +29,7 @@ import time
 import json
 import fcntl
 import zipfile
+import tempfile
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -114,6 +115,7 @@ cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
 cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables (wine is used if set)")
 cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out")
 cfgOpts.add_argument("--maxCompareFailure", default=200, type=float, help="Maximal number of compare failures to report. Use 0 for unlimited (default: 200)")
+cfgOpts.add_argument("--coverage", default=None, type=str, help='Enable coverage analyzis using gcov/lcov; The arg must be the base dir of the source/build dir + ":" + the --binSuffix.')
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
@@ -494,6 +496,12 @@ def main():
       mainRet=1
       failedExamples.append(directories[index][0])
 
+  # coverage analyzis (postpare)
+  coverageError=0
+  if args.coverage!=None:
+    print("Create coverage analyzis"); sys.stdout.flush()
+    coverageError=coverage(mainFD)
+
   print('</tbody></table><hr/>', file=mainFD)
 
   if len(failedExamples)>0:
@@ -569,6 +577,9 @@ def main():
   # print result summary to console
   if len(failedExamples)>0:
     print('\nERROR: '+str(len(failedExamples))+' of '+str(len(retAll))+' examples have failed.')
+  if coverageError!=0:
+    mainRet=1
+    print('\nERROR: Coverage analyzis generation failed.')
 
   return mainRet
 
@@ -944,6 +955,12 @@ def executeSrcExample(executeFD, example):
   executeFD.flush()
   if not args.disableMakeClean:
     if subprocessCall(["make", "clean"], executeFD)!=0: return 1, 0, []
+    if args.coverage!=None:
+      # remove all "*.gcno", "*.gcda" files
+      for d,_,files in os.walk('.'):
+        for f in files:
+          if os.path.splitext(f)[1]==".gcno": os.remove(pj(d, f))
+          if os.path.splitext(f)[1]==".gcda": os.remove(pj(d, f))
   if subprocessCall(["make"], executeFD)!=0: return 1, 0, []
   # append $prefix/lib to LD_LIBRARY_PATH/PATH to find lib by main of the example
   if os.name=="posix":
@@ -1688,6 +1705,91 @@ def writeAtomFeed(currentID, nrFailed, nrTotal):
     "%d of %d examples failed."%(nrFailed, nrTotal),
     "%s/result_%010d/index.html"%(args.url, currentID),
     nrFailed, nrTotal)
+
+
+
+def coverage(mainFD):
+  print('<tr><td>Coverage analyzis</td>', file=mainFD); mainFD.flush()
+  ret=0
+  if not os.path.exists(pj(args.reportOutDir, "coverage")): os.makedirs(pj(args.reportOutDir, "coverage"))
+  lcovFD=codecs.open(pj(args.reportOutDir, "coverage", "log.txt"), "a", encoding="utf-8")
+  # lcov "-d" arguments
+  dirs=map(lambda x: ["-d", pj(args.coverage.split(":")[0], x),
+                      "-d", pj(args.coverage.split(":")[0], x+args.coverage.split(":")[1])],
+                     ["fmatvec", "hdf5serie", "openmbv", "mbsim"])
+  dirs=["-d", args.coverage.split(":")[2]]+[v for il in dirs for v in il]
+
+  # run lcov: init counters
+  ret=ret+abs(subprocess.call(["lcov", "-c", "--no-external", "-i", "-o", pj(args.reportOutDir, "coverage", "cov.trace.base")]+dirs, stdout=lcovFD, stderr=lcovFD))
+  # run lcov: count
+  ret=ret+abs(subprocess.call(["lcov", "-c", "--no-external", "-o", pj(args.reportOutDir, "coverage", "cov.trace.test")]+dirs, stdout=lcovFD, stderr=lcovFD))
+  # run lcov: combine counters
+  ret=ret+abs(subprocess.call(["lcov", "-a", pj(args.reportOutDir, "coverage", "cov.trace.base"), "-a", pj(args.reportOutDir, "coverage", "cov.trace.test"), "-o", pj(args.reportOutDir, "coverage", "cov.trace.total")], stdout=lcovFD, stderr=lcovFD))
+  # run lcov: remove counters
+  ret=ret+abs(subprocess.call(["lcov", "-r", pj(args.reportOutDir, "coverage", "cov.trace.total"),
+    "mbsim*/kernel/swig/*", "openmbv*/openmbvcppinterface/swig/java/*", # SWIG generated
+    "openmbv*/openmbvcppinterface/swig/octave/*", "openmbv*/openmbvcppinterface/swig/python/*", # SWIG generated
+    "openmbv*/mbxmlutils/mbxmlutils/swigpyrun.h", "openmbv*/mbxmlutils/mbxmlutils/casadi_oct_swig_octave.cc", # SWIG generated
+    "mbsim/thirdparty/nurbs++/*", "include/nurbs++/*", "include/casadi/*", # 3rd party
+    "mbsim/examples/*", # mbsim examples
+    "modules/mbsimInterface/mbsimInterface/interface_messages.cc", "*.moc.cc", "*.qrc.cc", # mbsim generated
+    "hdf5serie/h5plotserie/h5plotserie/*", "openmbv/openmbv/openmbv/*", "mbsim/mbsimgui/mbsimgui/*", # mbsim GUI (untested)
+    "-o", pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
+
+  # collect all header files in repos and hash it
+  repoHeader={}
+  for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
+    for root, _, files in os.walk(pj(args.coverage.split(":")[0], repo)):
+      for f in files:
+        if f.endswith(".h"):
+          repoHeader[hashlib.sha1(codecs.open(pj(root, f), "r", encoding="utf-8").read().encode("utf-8")).hexdigest()]=pj(root, f)
+  # loop over all header files in local and create mapping (using the hash)
+  headerMap=[]
+  for root, _, files in os.walk(pj(args.coverage.split(":")[2], "include")):
+    for f in files:
+      if f.endswith(".h"):
+        h=hashlib.sha1(codecs.open(pj(root, f), "r", encoding="utf-8").read().encode("utf-8")).hexdigest()
+        if h in repoHeader:
+          headerMap.append((pj(root, f), repoHeader[h]))
+  # replace header map in lcov trace file
+  for line in fileinput.FileInput(pj(args.reportOutDir, "coverage", "cov.trace.final"), inplace=1):
+    if line.startswith("SF:"):
+      for hm in headerMap:
+        line=line.replace("SF:"+hm[0], "SF:"+hm[1])
+    print(line, end="")
+
+  # generate html files
+  ret=ret+abs(subprocess.call(["genhtml", "-t", "MBSim-Env Examples", "--prefix", args.coverage.split(":")[0], "--legend",
+    "--html-prolog", pj(scriptDir, "lcov-prolog.parthtml"), "--html-epilog", pj(scriptDir, "lcov-epilog.parthtml"),
+    "--no-function-coverage", "-o", pj(args.reportOutDir, "coverage"),
+    pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
+  lcovFD.close()
+
+  # get coverage rate
+  covRate=0
+  linesRE=re.compile("^ *lines\.*: *([0-9]+\.[0-9]+)% ")
+  for line in fileinput.FileInput(pj(args.reportOutDir, "coverage", "log.txt")):
+    m=linesRE.match(line)
+    if m!=None:
+      covRate=int(float(m.group(1))+0.5)
+  # update build state (only if --buildSystemRun is used)
+  if args.buildSystemRun!=None:
+    # load and add module
+    sys.path.append(args.buildSystemRun)
+    import buildSystemState
+    buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", str(covRate)+"%",
+      "#5cb85c" if covRate>=90 else ("#f0ad4e" if covRate>=75 else "#d9534f"))
+
+  if ret==0:
+    print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;', file=mainFD)
+  else:
+    print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
+  print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
+        '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%d%%</span></a></td>'%(covRate), file=mainFD)
+  for i in range(0, 5-sum([4*args.disableRun, args.disableCompare, args.disableValidate])):
+    print('<td>-</td>', file=mainFD)
+  print('</tr>', file=mainFD); mainFD.flush()
+  return ret
 
 
 
