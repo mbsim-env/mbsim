@@ -1405,7 +1405,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref1" type="FrameReferenceType" default="../Frame[I]"/>
-              <xs:attribute name="ref2" type="FrameReferenceType"/>
+              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

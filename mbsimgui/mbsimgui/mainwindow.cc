@@ -543,6 +543,7 @@ namespace MBSimGUI {
   void MainWindow::newProject(bool ask) {
     if(maybeSave()) {
       undos.clear();
+      elementBuffer.first = NULL;
       setProjectChanged(false);
       mbsDir = QDir::current();
       actionOpenMBV->setDisabled(true);
@@ -587,6 +588,7 @@ namespace MBSimGUI {
   void MainWindow::loadProject(const QString &file) {
     if(not(file.isEmpty())) {
       undos.clear();
+      elementBuffer.first = NULL;
       setProjectChanged(false);
       mbsDir = QFileInfo(file).absolutePath();
       QDir::setCurrent(QFileInfo(file).absolutePath());
