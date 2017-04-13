@@ -96,6 +96,7 @@ namespace MBSimGUI {
       bool debug, allowUndo;
       xercesc::DOMDocument *doc;
       std::deque<xercesc::DOMDocument*> undos, redos;
+      std::pair<Element*,bool> elementBuffer;
 
     public:
       MainWindow(QStringList &arg);
@@ -105,21 +106,21 @@ namespace MBSimGUI {
 //      ExtProperty evalSelect;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
-      void addParameter(Parameter *parameter, EmbedItemData *parent=NULL);
-      void addFrame(Frame *frame, Element *parent=NULL);
-      void addContour(Contour *contour, Element *parent=NULL);
-      void addGroup(Group *group, Element *parent=NULL);
-      void addObject(Object *object, Element *parent=NULL);
-      void addLink(Link *link, Element *parent=NULL);
-      void addConstraint(Constraint *constraint, Element *parent=NULL);
-      void addObserver(Observer *observer, Element *parent=NULL);
-      void loadFrame(Element *parent=NULL);
-      void loadContour(Element *parent=NULL);
-      void loadGroup(Element *parent=NULL);
-      void loadObject(Element *parent=NULL);
-      void loadLink(Element *parent=NULL);
-      void loadConstraint(Element *parent=NULL);
-      void loadObserver(Element *parent=NULL);
+      void addParameter(Parameter *parameter, EmbedItemData *parent);
+      void addFrame(Frame *frame, Element *parent);
+      void addContour(Contour *contour, Element *parent);
+      void addGroup(Group *group, Element *parent);
+      void addObject(Object *object, Element *parent);
+      void addLink(Link *link, Element *parent);
+      void addConstraint(Constraint *constraint, Element *parent);
+      void addObserver(Observer *observer, Element *parent);
+      void loadFrame(Element *parent, Element *element=NULL);
+      void loadContour(Element *parent, Element *element=NULL);
+      void loadGroup(Element *parent, Element *element=NULL);
+      void loadObject(Element *parent, Element *element=NULL);
+      void loadLink(Element *parent, Element *element=NULL);
+      void loadConstraint(Element *parent, Element *element=NULL);
+      void loadObserver(Element *parent, Element *element=NULL);
       void highlightObject(const QString &ID);
       const QString& getHighlightedObject() const {return currentID;}
       void loadProject(const QString &file);
@@ -127,6 +128,7 @@ namespace MBSimGUI {
       void setProjectChanged(bool changed=true);
       void selectSolver(int i);
       void setAllowUndo(bool allowUndo_) { allowUndo = allowUndo_; }
+      const std::pair<Element*,bool>& getElementBuffer() const { return elementBuffer; }
     public slots:
       void elementListClicked();
       void parameterListClicked();
@@ -160,6 +162,7 @@ namespace MBSimGUI {
       void removeElement();
       void removeParameter();
       void saveElementAs();
+      void copyElement();
       void projectSettings();
     protected slots:
       void selectElement(std::string ID);

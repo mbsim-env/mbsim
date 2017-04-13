@@ -41,6 +41,7 @@ namespace MBSimGUI {
       FramesContextMenu(Element *frame, const QString &title="", QWidget * parent = 0);
 
     protected slots:
+      void pasteFrame();
       void loadFrame();
 
     protected:
@@ -83,6 +84,7 @@ namespace MBSimGUI {
       void addLineSegment();
       void addPlanarContour();
       void addSpatialContour();
+      void pasteContour();
       void loadContour();
 
     protected:
@@ -97,6 +99,7 @@ namespace MBSimGUI {
 
     protected slots:
       void addGroup();
+      void pasteGroup();
       void loadGroup();
 
     protected:
@@ -110,6 +113,7 @@ namespace MBSimGUI {
       ObjectsContextMenu(Element *object, const QString &title="", QWidget * parent = 0);
 
     protected slots:
+      void pasteObject();
       void loadObject();
 
     protected:
@@ -148,6 +152,7 @@ namespace MBSimGUI {
       void addGeneralizedFriction();
       void addGeneralizedGear();
       void addGeneralizedElasticConnection();
+      void pasteLink();
       void loadLink();
 
     protected:
@@ -167,6 +172,7 @@ namespace MBSimGUI {
       void addGeneralizedAccelerationConstraint();
       void addJointConstraint();
       void addGeneralizedConnectionConstraint();
+      void pasteConstraint();
       void loadConstraint();
 
     protected:
@@ -188,6 +194,7 @@ namespace MBSimGUI {
       void addRigidBodyObserver();
       void addKinematicCoordinatesObserver();
       void addRelativeKinematicsObserver();
+      void pasteObserver();
       void loadObserver();
 
     protected:

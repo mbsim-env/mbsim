@@ -47,7 +47,10 @@ namespace MBSimGUI {
     addAction(action);
     if(removable) {
       addSeparator();
-      QAction *action=new QAction("Save as", this);
+      action=new QAction("Copy", this);
+      connect(action,SIGNAL(triggered()),mw,SLOT(copyElement()));
+      addAction(action);
+      action=new QAction("Save as", this);
       connect(action,SIGNAL(triggered()),mw,SLOT(saveElementAs()));
       addAction(action);
       addSeparator();
@@ -59,9 +62,17 @@ namespace MBSimGUI {
   }
 
   FramesContextMenu::FramesContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QAction *action = new QAction("Load contour", this);
+    QAction *action = new QAction("Paste frame", this);
+    action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(pasteFrame()));
+    addAction(action);
+    action = new QAction("Load contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadFrame()));
     addAction(action);
+  }
+
+  void FramesContextMenu::pasteFrame() {
+    mw->loadFrame(element, mw->getElementBuffer().first);
   }
 
   void FramesContextMenu::loadFrame() {
@@ -91,7 +102,10 @@ namespace MBSimGUI {
   }
 
   ContoursContextMenu::ContoursContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QAction *action = new QAction("Load contour", this);
+    QAction *action = new QAction("Paste contour", this);
+    action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(pasteContour()));
+    action = new QAction("Load contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadContour()));
     addAction(action);
     addSeparator();
@@ -122,6 +136,10 @@ namespace MBSimGUI {
     action = new QAction("Add spatial contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSpatialContour()));
     addAction(action);
+  }
+
+  void ContoursContextMenu::pasteContour() {
+    mw->loadContour(element, mw->getElementBuffer().first);
   }
 
   void ContoursContextMenu::loadContour() {
@@ -165,13 +183,20 @@ namespace MBSimGUI {
   }
 
   GroupsContextMenu::GroupsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QAction *action = new QAction("Load group", this);
+    QAction *action = new QAction("Paste group", this);
+    action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(pasteGroup()));
+    action = new QAction("Load group", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadGroup()));
     addAction(action);
     addSeparator();
     action = new QAction("Add group", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGroup()));
     addAction(action);
+  }
+
+  void GroupsContextMenu::pasteGroup() {
+    mw->loadGroup(element, mw->getElementBuffer().first);
   }
 
   void GroupsContextMenu::loadGroup() {
@@ -183,12 +208,20 @@ namespace MBSimGUI {
   }
 
   ObjectsContextMenu::ObjectsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QAction *action = new QAction("Load object", this);
+    QAction *action = new QAction("Paste object", this);
+    action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(pasteObject()));
+    addAction(action);
+    action = new QAction("Load object", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadObject()));
     addAction(action);
     addSeparator();
     QMenu *menu = new BodiesContextMenu(element, "Add body");
     addMenu(menu);
+  }
+
+  void ObjectsContextMenu::pasteObject() {
+    mw->loadObject(element, mw->getElementBuffer().first);
   }
 
   void ObjectsContextMenu::loadObject() {
@@ -213,7 +246,10 @@ namespace MBSimGUI {
   }
 
   LinksContextMenu::LinksContextMenu(Element *element_, const QString &title,  QWidget *parent) : QMenu(title,parent), element(element_) {
-    QAction *action = new QAction("Load link", this);
+    QAction *action = new QAction("Paste link", this);
+    action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(pasteLink()));
+    action = new QAction("Load link", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadLink()));
     addAction(action);
     addSeparator();
@@ -249,6 +285,10 @@ namespace MBSimGUI {
     action = new QAction("Add generalized elastic connection", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedElasticConnection()));
     addAction(action);
+  }
+
+  void LinksContextMenu::pasteLink() {
+    mw->loadLink(element, mw->getElementBuffer().first);
   }
 
   void LinksContextMenu::loadLink() {
@@ -301,7 +341,10 @@ namespace MBSimGUI {
   }
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QAction *action = new QAction("Load link", this);
+    QAction *action = new QAction("Paste constraint", this);
+    action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(pasteConstraint()));
+    action = new QAction("Load constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadConstraint()));
     addAction(action);
     addSeparator();
@@ -323,6 +366,10 @@ namespace MBSimGUI {
     action = new QAction("Add generalized connection constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedConnectionConstraint()));
     addAction(action);
+  }
+
+  void ConstraintsContextMenu::pasteConstraint() {
+    mw->loadConstraint(element, mw->getElementBuffer().first);
   }
 
   void ConstraintsContextMenu::loadConstraint() {
@@ -354,7 +401,10 @@ namespace MBSimGUI {
   }
 
   ObserversContextMenu::ObserversContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QAction *action = new QAction("Load link", this);
+    QAction *action = new QAction("Paste observer", this);
+    action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(pasteObserver()));
+    action = new QAction("Load observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadObserver()));
     addAction(action);
     addSeparator();
@@ -379,6 +429,10 @@ namespace MBSimGUI {
     action = new QAction("Add relative kinematics observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRelativeKinematicsObserver()));
     addAction(action);
+  }
+
+  void ObserversContextMenu::pasteObserver() {
+    mw->loadObserver(element, mw->getElementBuffer().first);
   }
 
   void ObserversContextMenu::loadObserver() {
