@@ -33,6 +33,8 @@ namespace MBSim {
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
       if(saved_IndependentBody!="")
         setIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody));
+      if(not bd)
+        THROW_MBSIMERROR("No dependent rigid body given!");
     }
     else if(stage==preInit) {
       bd->addDependency(this);

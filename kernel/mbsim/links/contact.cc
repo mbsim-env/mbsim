@@ -322,8 +322,9 @@ namespace MBSim {
           connect(getByPath<Contour>(saved_ref[i].name1), getByPath<Contour>(saved_ref[i].name2), 0, saved_ref[i].contourPairingName);
         //TODO: add option to specifiy contact_kinematics
       }
-//      if(not(contour.size()))
-//        THROW_MBSIMERROR("no connection given!");
+
+      if(not(contour.size()))
+        THROW_MBSIMERROR("no connection given!");
 
       Link::init(stage);
     }

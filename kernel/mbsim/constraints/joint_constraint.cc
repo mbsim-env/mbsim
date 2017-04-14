@@ -79,8 +79,14 @@ namespace MBSim {
         bd2.push_back(getByPath<RigidBody>(saved_RigidBodySecondSide[i]));
       for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
         bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
+      if(not bi.size())
+        THROW_MBSIMERROR("No independent rigid bodies given!");
+      if((not bd1.size()) and (not bd2.size()))
+        THROW_MBSIMERROR("No dependent rigid bodies given!");
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
+      if(frame1==NULL or frame2==NULL)
+        THROW_MBSIMERROR("Not all connections are given!");
       if(bd1.size()) {
         for(unsigned int i=0; i<bd1.size()-1; i++) 
           if1.push_back(bd1[i+1]->getFrameOfReference());

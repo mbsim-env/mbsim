@@ -35,6 +35,8 @@ namespace MBSim {
       else
       if(saved_ref1!="" and saved_ref2!="")
         connect(getByPath<RigidBody>(saved_ref1),getByPath<RigidBody>(saved_ref2));
+      if(not body.size())
+        THROW_MBSIMERROR("No connection given!");
     }
     else if(stage==unknownStage) {
       if(body.size()>1 and (body[0]->getuRelSize()!=body[1]->getuRelSize()))
