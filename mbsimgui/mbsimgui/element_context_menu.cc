@@ -66,7 +66,7 @@ namespace MBSimGUI {
     action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(pasteFrame()));
     addAction(action);
-    action = new QAction("Load contour", this);
+    action = new QAction("Load frame", this);
     connect(action,SIGNAL(triggered()),this,SLOT(loadFrame()));
     addAction(action);
   }
