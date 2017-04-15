@@ -1137,7 +1137,8 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    elementBuffer = make_pair(element,false);
+    if((not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element)))
+      elementBuffer = make_pair(element,false);
   }
 
   void MainWindow::saveElementAs() {
