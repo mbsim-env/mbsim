@@ -75,7 +75,7 @@ namespace MBSimGUI {
   QDialog *MainWindow::helpDialog = NULL;
   QWebView *MainWindow::helpViewer = NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), debug(true), allowUndo(true), doc(NULL), elementBuffer(NULL,false) {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(NULL), elementBuffer(NULL,false) {
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_HTMLOUTPUT=1";
     putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
@@ -190,16 +190,13 @@ namespace MBSimGUI {
 
     QToolBar *toolBar = addToolBar("Tasks");
     actionSimulate = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaPlay)),"Start simulation");
-    //actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
     toolBar->addAction(actionSimulate);
     QAction *actionInterrupt = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
-//    actionInterrupt->setDisabled(true);
     connect(actionInterrupt,SIGNAL(triggered()),mbsim,SLOT(interrupt()));
     toolBar->addAction(actionInterrupt);
     actionRefresh = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh 3D view");
-//    actionRefresh->setDisabled(true);
     connect(actionRefresh,SIGNAL(triggered()),this,SLOT(refresh()));
     toolBar->addAction(actionRefresh);
     actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
@@ -214,6 +211,9 @@ namespace MBSimGUI {
     actionEigenanalysis->setDisabled(true);
     connect(actionEigenanalysis,SIGNAL(triggered()),this,SLOT(eigenanalysis()));
     toolBar->addAction(actionEigenanalysis);
+    QAction *actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
+    connect(actionDebug,SIGNAL(triggered()),this,SLOT(debug()));
+    toolBar->addAction(actionDebug);
 
     elementList->setModel(new ElementTreeModel);
     elementList->setColumnWidth(0,250);
@@ -323,43 +323,27 @@ namespace MBSimGUI {
   }
 
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    QMessageBox::StandardButton ret = QMessageBox::Cancel;
-    if(debug and (exitStatus!=QProcess::NormalExit or exitCode==1)) {
-      ret = QMessageBox::warning(this, tr("Error message"), tr("Model file not valid. Restart in debug mode?"), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
+    if(currentTask==1) {
+      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
+      QModelIndex index = elementList->selectionModel()->currentIndex();
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+      Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+      if(element)
+        highlightObject(element->getID());
     }
-    if(ret == QMessageBox::Ok) {
-      QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-      QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
-      saveProject(projectFile,false,false);
-      QStringList arg;
-      arg.append("--stopafterfirststep");
-      arg.append(projectFile);
-      mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
-      debug = false;
-      mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
-    } else {
-      if(currentTask==1) {
-        inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
-        QModelIndex index = elementList->selectionModel()->currentIndex();
-        ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-        Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-        if(element)
-          highlightObject(element->getID());
-      }
-      else if(autoExport) {
-        saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
-        saveOpenMBVXMLData(autoExportDir+"/MBS.ombv.xml");
-        saveOpenMBVH5Data(autoExportDir+"/MBS.ombv.h5");
-        if(saveFinalStateVector)
-          saveStateVector(autoExportDir+"/statevector.asc");
-      }
-      actionSimulate->setDisabled(false);
-      actionOpenMBV->setDisabled(false);
-      actionH5plotserie->setDisabled(false);
-      actionEigenanalysis->setDisabled(false);
-      actionRefresh->setDisabled(false);
-      statusBar()->showMessage(tr("Ready"));
+    else if(autoExport) {
+      saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
+      saveOpenMBVXMLData(autoExportDir+"/MBS.ombv.xml");
+      saveOpenMBVH5Data(autoExportDir+"/MBS.ombv.h5");
+      if(saveFinalStateVector)
+        saveStateVector(autoExportDir+"/statevector.asc");
     }
+    actionSimulate->setDisabled(false);
+    actionOpenMBV->setDisabled(false);
+    actionH5plotserie->setDisabled(false);
+    actionEigenanalysis->setDisabled(false);
+    actionRefresh->setDisabled(false);
+    statusBar()->showMessage(tr("Ready"));
   }
 
   void MainWindow::initInlineOpenMBV() {
@@ -843,7 +827,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::mbsimxml(int task) {
-    debug = true;
     absolutePath = true;
     QModelIndex index = elementList->model()->index(0,0);
     DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
@@ -896,25 +879,8 @@ namespace MBSimGUI {
       mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
       mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
     }
-    else {
+    else
       mbsim->preprocessFailed(mbsimThread->getErrorText());
-      QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Error message"), tr("Model file not valid. Restart in debug mode?"), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
-      if(ret == QMessageBox::Ok) {
-        QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-        QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
-        saveProject(projectFile,false,false);
-        QStringList arg;
-        arg.append("--stopafterfirststep");
-        arg.append(projectFile);
-        mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
-        debug = false;
-        mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
-      }
-    }
-  }
-
-  void MainWindow::refresh() {
-    mbsimxml(1);
   }
 
   void MainWindow::simulate() {
@@ -932,6 +898,10 @@ namespace MBSimGUI {
     actionEigenanalysis->setDisabled(true);
     actionRefresh->setDisabled(true);
     statusBar()->showMessage(tr("Simulating"));
+  }
+
+  void MainWindow::refresh() {
+    mbsimxml(1);
   }
 
   void MainWindow::openmbv() {
@@ -958,6 +928,17 @@ namespace MBSimGUI {
     FileEditor *edit = new FileEditor("Eigenanalysis",name,1,"Eigenanalysis not yet performed!",this);
     edit->setModal(true);
     edit->show();
+  }
+
+  void MainWindow::debug() {
+    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+    QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
+    saveProject(projectFile,false,false);
+    QStringList arg;
+    arg.append("--stopafterfirststep");
+    arg.append(projectFile);
+    mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
+    mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
   }
 
   void MainWindow::selectElement(string ID) {

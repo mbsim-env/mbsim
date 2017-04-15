@@ -99,7 +99,8 @@ dist_mbsimguiicon_DATA = icons/exit.svg \
 			 icons/h5plotserie.svg \
 			 icons/eigenanalysis.svg \
 			 icons/resize.svg \
-			 icons/workdir.svg
+			 icons/workdir.svg \
+			 icons/debug.svg
 
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines

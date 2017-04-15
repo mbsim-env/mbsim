@@ -93,7 +93,7 @@ namespace MBSimGUI {
       QString autoExportDir;
       static QDialog *helpDialog;
       static QWebView *helpViewer;
-      bool debug, allowUndo;
+      bool allowUndo;
       xercesc::DOMDocument *doc;
       std::deque<xercesc::DOMDocument*> undos, redos;
       std::pair<Element*,bool> elementBuffer;
@@ -152,6 +152,7 @@ namespace MBSimGUI {
       void openmbv();
       void h5plotserie();
       void eigenanalysis();
+      void debug();
       void help();
       void xmlHelp(const QString &url="");
       void about();
