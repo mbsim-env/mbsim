@@ -48,7 +48,6 @@ namespace MBSimGUI {
     if(removable) {
       addSeparator();
       action=new QAction("Copy", this);
-      action->setShortcut(QKeySequence::Copy);
       connect(action,SIGNAL(triggered()),mw,SLOT(copyElement()));
       addAction(action);
       action=new QAction("Save as", this);
@@ -213,7 +212,6 @@ namespace MBSimGUI {
   ObjectsContextMenu::ObjectsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
     QAction *action = new QAction("Paste object", this);
     action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
-    action->setShortcut(QKeySequence::Paste);
     connect(action,SIGNAL(triggered()),this,SLOT(pasteObject()));
     addAction(action);
     action = new QAction("Load object", this);

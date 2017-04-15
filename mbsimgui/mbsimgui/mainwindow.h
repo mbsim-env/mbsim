@@ -162,8 +162,10 @@ namespace MBSimGUI {
       void redo();
       void removeElement();
       void removeParameter();
-      void saveElementAs();
+      void copy();
+      void paste();
       void copyElement();
+      void saveElementAs();
       void projectSettings();
     protected slots:
       void selectElement(std::string ID);

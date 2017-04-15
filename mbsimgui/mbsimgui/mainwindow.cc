@@ -41,6 +41,7 @@
 #include "project_property_dialog.h"
 #include "file_editor.h"
 #include "utils.h"
+#include "basicitemdata.h"
 #include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QtGui>
@@ -166,6 +167,12 @@ namespace MBSimGUI {
     action->setShortcut(QKeySequence::Undo);
     action = menu->addAction("Redo", this, SLOT(redo()));
     action->setShortcut(QKeySequence::Redo);
+    menuBar()->addMenu(menu);
+    action = menu->addAction("Copy", this, SLOT(copy()));
+    action->setShortcut(QKeySequence::Copy);
+    menuBar()->addMenu(menu);
+    action = menu->addAction("Paste", this, SLOT(paste()));
+    action->setShortcut(QKeySequence::Paste);
     menuBar()->addMenu(menu);
 
     menu=new QMenu("Export", menuBar());
@@ -1077,6 +1084,53 @@ namespace MBSimGUI {
     parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
     item->removeParameter(parameter);
     pmodel->removeRow(pindex.row(), pindex.parent());
+  }
+
+  void MainWindow::copy() {
+    if(elementList->hasFocus())
+      copyElement();
+  }
+
+  void MainWindow::paste() {
+    if(elementList->hasFocus()) {
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+      QModelIndex index = elementList->selectionModel()->currentIndex();
+      ContainerItemData *item = dynamic_cast<FrameItemData*>(model->getItem(index)->getItemData());
+      if(item and dynamic_cast<Frame*>(getElementBuffer().first)) {
+        loadFrame(item->getElement(),getElementBuffer().first);
+        return;
+      }
+      item = dynamic_cast<ContourItemData*>(model->getItem(index)->getItemData());
+      if(item and dynamic_cast<Contour*>(getElementBuffer().first)) {
+        loadContour(item->getElement(),getElementBuffer().first);
+        return;
+      }
+      item = dynamic_cast<GroupItemData*>(model->getItem(index)->getItemData());
+      if(item and dynamic_cast<Group*>(getElementBuffer().first)) {
+        loadGroup(item->getElement(),getElementBuffer().first);
+        return;
+      }
+      item = dynamic_cast<ObjectItemData*>(model->getItem(index)->getItemData());
+      if(item and dynamic_cast<Object*>(getElementBuffer().first)) {
+        loadObject(item->getElement(),getElementBuffer().first);
+        return;
+      }
+      item = dynamic_cast<LinkItemData*>(model->getItem(index)->getItemData());
+      if(item and dynamic_cast<Link*>(getElementBuffer().first)) {
+        loadLink(item->getElement(),getElementBuffer().first);
+        return;
+      }
+      item = dynamic_cast<ConstraintItemData*>(model->getItem(index)->getItemData());
+      if(item and dynamic_cast<Constraint*>(getElementBuffer().first)) {
+        loadConstraint(item->getElement(),getElementBuffer().first);
+        return;
+      }
+      item = dynamic_cast<ObserverItemData*>(model->getItem(index)->getItemData());
+      if(item and dynamic_cast<Observer*>(getElementBuffer().first)) {
+        loadObserver(item->getElement(),getElementBuffer().first);
+        return;
+      }
+    }
   }
 
   void MainWindow::copyElement() {

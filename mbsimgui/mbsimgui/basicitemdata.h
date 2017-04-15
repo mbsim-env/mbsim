@@ -25,61 +25,49 @@
 
 namespace MBSimGUI {
 
-  class FrameItemData : public TreeItemData {
-    private:
+  class ContainerItemData : public TreeItemData {
+    protected:
       Element *element;
     public:
-      FrameItemData(Element *element_) : TreeItemData("frames",""), element(element_) { }
+      ContainerItemData(const QString &name, Element *element_) : TreeItemData(name,""), element(element_) { }
+      Element* getElement() { return element; }
       virtual QMenu* createContextMenu() { return element->createFrameContextMenu(); }
   };
 
-  class ContourItemData : public TreeItemData {
-    private:
-      Element *element;
+  class FrameItemData : public ContainerItemData {
     public:
-      ContourItemData(Element *element_) : TreeItemData("contours",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new ContoursContextMenu(element); }
+      FrameItemData(Element *element) : ContainerItemData("frames",element) { }
   };
 
-  class GroupItemData : public TreeItemData {
-    private:
-      Element *element;
+  class ContourItemData : public ContainerItemData {
     public:
-      GroupItemData(Element *element_) : TreeItemData("groups",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new GroupsContextMenu(element); }
+      ContourItemData(Element *element) : ContainerItemData("contours",element) { }
+  };
+
+  class GroupItemData : public ContainerItemData {
+    public:
+      GroupItemData(Element *element) : ContainerItemData("groups",element) { }
   };
 
 
-  class ObjectItemData : public TreeItemData {
-    private:
-      Element *element;
+  class ObjectItemData : public ContainerItemData {
     public:
-      ObjectItemData(Element *element_) : TreeItemData("objects",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new ObjectsContextMenu(element); }
+      ObjectItemData(Element *element) : ContainerItemData("objects",element) { }
   };
 
-  class LinkItemData : public TreeItemData {
-    private:
-      Element *element;
+  class LinkItemData : public ContainerItemData {
     public:
-      LinkItemData(Element *element_) : TreeItemData("links",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new LinksContextMenu(element); }
+      LinkItemData(Element *element) : ContainerItemData("links",element) { }
   };
 
-  class ConstraintItemData : public TreeItemData {
-    private:
-      Element *element;
+  class ConstraintItemData : public ContainerItemData {
     public:
-      ConstraintItemData(Element *element_) : TreeItemData("constraints",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new ConstraintsContextMenu(element); }
+      ConstraintItemData(Element *element) : ContainerItemData("constraints",element) { }
   };
 
-  class ObserverItemData : public TreeItemData {
-    private:
-      Element *element;
+  class ObserverItemData : public ContainerItemData {
     public:
-      ObserverItemData(Element *element_) : TreeItemData("observers",""), element(element_) { }
-      virtual QMenu* createContextMenu() { return new ObserversContextMenu(element); }
+      ObserverItemData(Element *element) : ContainerItemData("observers",element) { }
   };
 
 }
