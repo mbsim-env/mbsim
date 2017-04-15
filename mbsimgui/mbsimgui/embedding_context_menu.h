@@ -38,6 +38,7 @@ namespace MBSimGUI {
       void addMatrixParameter();
       void addStringParameter();
       void addImportParameter();
+      void paste();
 
     protected:
       EmbedItemData *item;

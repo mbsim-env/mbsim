@@ -40,7 +40,8 @@ namespace MBSimGUI {
   class Parameter : public TreeItemData {
     public:
       Parameter(const QString &name="") : TreeItemData(name), parent(NULL), config(false) { }
-      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
+      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
+      static void insertXMLElement(xercesc::DOMElement *element, xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog(this);}
       virtual ParameterContextMenu* createContextMenu() {return new ParameterContextMenu;}

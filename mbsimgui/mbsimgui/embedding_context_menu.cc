@@ -27,7 +27,11 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   EmbeddingContextMenu::EmbeddingContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
-    QAction *action = new QAction("Add scalar parameter", this);
+    QAction *action = new QAction("Paste", this);
+    action->setEnabled(mw->getParameterBuffer().first);
+    connect(action,SIGNAL(triggered()),this,SLOT(paste()));
+    addAction(action);
+    action = new QAction("Add scalar parameter", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
     addAction(action);
     action = new QAction("Add vector parameter", this);
@@ -42,6 +46,10 @@ namespace MBSimGUI {
     action = new QAction("Add import parameter", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addImportParameter()));
     addAction(action);
+  }
+
+  void EmbeddingContextMenu::paste() {
+    mw->loadParameter(item, mw->getParameterBuffer().first);
   }
 
   void EmbeddingContextMenu::addScalarParameter() {

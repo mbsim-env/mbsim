@@ -76,7 +76,7 @@ namespace MBSimGUI {
   QDialog *MainWindow::helpDialog = NULL;
   QWebView *MainWindow::helpViewer = NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(NULL), elementBuffer(NULL,false) {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(NULL), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_HTMLOUTPUT=1";
     putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
@@ -535,6 +535,7 @@ namespace MBSimGUI {
     if(maybeSave()) {
       undos.clear();
       elementBuffer.first = NULL;
+      parameterBuffer.first = NULL;
       setProjectChanged(false);
       mbsDir = QDir::current();
       actionOpenMBV->setDisabled(true);
@@ -580,6 +581,7 @@ namespace MBSimGUI {
     if(not(file.isEmpty())) {
       undos.clear();
       elementBuffer.first = NULL;
+      parameterBuffer.first = NULL;
       setProjectChanged(false);
       mbsDir = QFileInfo(file).absolutePath();
       QDir::setCurrent(QFileInfo(file).absolutePath());
@@ -1040,6 +1042,7 @@ namespace MBSimGUI {
   void MainWindow::undo() {
     if(allowUndo and undos.size()) {
       elementBuffer.first = NULL;
+      parameterBuffer.first = NULL;
       setWindowModified(true);
       redos.push_back(doc);
       doc = undos.back();
@@ -1076,10 +1079,12 @@ namespace MBSimGUI {
     setProjectChanged(true);
     QModelIndex index = embeddingList->selectionModel()->currentIndex().parent();
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-    EmbedItemData *item=static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
+    EmbedItemData *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
     EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     QModelIndex pindex = embeddingList->selectionModel()->currentIndex();
-    Parameter *parameter=static_cast<Parameter*>(pmodel->getItem(pindex)->getItemData());
+    Parameter *parameter = static_cast<Parameter*>(pmodel->getItem(pindex)->getItemData());
+    if(parameter == parameterBuffer.first)
+      parameterBuffer.first = NULL;
     DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
     if(ps and X()%ps->getNodeName()=="#text")
       parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement()->getPreviousSibling());
@@ -1091,6 +1096,8 @@ namespace MBSimGUI {
   void MainWindow::copy() {
     if(elementList->hasFocus())
       copyElement();
+    else if(embeddingList->hasFocus())
+      copyParameter();
   }
 
   void MainWindow::paste() {
@@ -1133,6 +1140,13 @@ namespace MBSimGUI {
         return;
       }
     }
+    else if(embeddingList->hasFocus()) {
+      EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+      QModelIndex index = embeddingList->selectionModel()->currentIndex();
+      EmbedItemData *item = dynamic_cast<EmbedItemData*>(model->getItem(index)->getItemData());
+      if(item)
+        loadParameter(item,getParameterBuffer().first);
+    }
   }
 
   void MainWindow::copyElement() {
@@ -1141,6 +1155,13 @@ namespace MBSimGUI {
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
     if((not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element)))
       elementBuffer = make_pair(element,false);
+  }
+
+  void MainWindow::copyParameter() {
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    QModelIndex index = embeddingList->selectionModel()->currentIndex();
+    Parameter *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
+    parameterBuffer = make_pair(parameter,false);
   }
 
   void MainWindow::saveElementAs() {
@@ -1258,6 +1279,19 @@ namespace MBSimGUI {
     QModelIndex newIndex = model->createParameterItem(parameter,index);
     embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
     embeddingList->openEditor();
+  }
+
+  void MainWindow::loadParameter(EmbedItemData *parent, Parameter *param) {
+    DOMElement *ele = static_cast<DOMElement*>(doc->importNode(param->getXMLElement(),true));
+    setProjectChanged(true);
+    QModelIndex index = embeddingList->selectionModel()->currentIndex();
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    Parameter::insertXMLElement(ele,parent->getXMLElement());
+    Parameter *parameter=ObjectFactory::getInstance()->createParameter(ele);
+    parameter->initializeUsingXML(ele);
+    parent->addParameter(parameter);
+    QModelIndex newIndex = model->createParameterItem(parameter,index);
+    embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
   }
 
   void MainWindow::loadFrame(Element *parent, Element *element) {

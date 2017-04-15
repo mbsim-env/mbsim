@@ -61,7 +61,6 @@ namespace MBSimGUI {
   class Constraint;
   class Observer;
   class Parameter;
-  class ParameterList;
   class EmbedItemData;
 
   class MainWindow : public QMainWindow {
@@ -97,6 +96,7 @@ namespace MBSimGUI {
       xercesc::DOMDocument *doc;
       std::deque<xercesc::DOMDocument*> undos, redos;
       std::pair<Element*,bool> elementBuffer;
+      std::pair<Parameter*,bool> parameterBuffer;
 
     public:
       MainWindow(QStringList &arg);
@@ -114,6 +114,7 @@ namespace MBSimGUI {
       void addLink(Link *link, Element *parent);
       void addConstraint(Constraint *constraint, Element *parent);
       void addObserver(Observer *observer, Element *parent);
+      void loadParameter(EmbedItemData *parent, Parameter *parameter);
       void loadFrame(Element *parent, Element *element=NULL);
       void loadContour(Element *parent, Element *element=NULL);
       void loadGroup(Element *parent, Element *element=NULL);
@@ -125,10 +126,12 @@ namespace MBSimGUI {
       const QString& getHighlightedObject() const {return currentID;}
       void loadProject(const QString &file);
       ElementView* getElementList() { return elementList; }
+      EmbeddingView* getEmbeddingList() { return embeddingList; }
       void setProjectChanged(bool changed=true);
       void selectSolver(int i);
       void setAllowUndo(bool allowUndo_) { allowUndo = allowUndo_; }
       const std::pair<Element*,bool>& getElementBuffer() const { return elementBuffer; }
+      const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
     public slots:
       void elementListClicked();
       void parameterListClicked();
@@ -165,6 +168,7 @@ namespace MBSimGUI {
       void copy();
       void paste();
       void copyElement();
+      void copyParameter();
       void saveElementAs();
       void projectSettings();
     protected slots:
