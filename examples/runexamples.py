@@ -466,6 +466,9 @@ def main():
   print("Started running examples. Each example will print a message if finished.")
   print("See the log file "+pj(os.path.dirname(args.reportOutDir), "result_current", "index.html")+" for detailed results.\n")
 
+  if args.coverage!=None:
+    coverageBackupRestore('backup')
+
   if not args.debugDisableMultiprocessing:
     # init mulitprocessing handling and run in parallel
     resultQueue = multiprocessing.Manager().Queue()
@@ -497,10 +500,13 @@ def main():
       failedExamples.append(directories[index][0])
 
   # coverage analyzis (postpare)
-  coverageError=0
+  coverageAll=0
+  coverageFailed=0
   if args.coverage!=None:
+    coverageAll=1
     print("Create coverage analyzis"); sys.stdout.flush()
-    coverageError=coverage(mainFD)
+    coverageFailed=coverage(mainFD)
+    coverageBackupRestore('restore')
 
   print('</tbody></table><hr/>', file=mainFD)
 
@@ -572,12 +578,12 @@ def main():
     print(line, end="")
 
   # write RSS feed
-  writeAtomFeed(currentID, len(failedExamples), len(retAll))
+  writeAtomFeed(currentID, len(failedExamples)+coverageAll, len(retAll)+coverageFailed)
 
   # print result summary to console
   if len(failedExamples)>0:
     print('\nERROR: '+str(len(failedExamples))+' of '+str(len(retAll))+' examples have failed.')
-  if coverageError!=0:
+  if coverageFailed!=0:
     mainRet=1
     print('\nERROR: Coverage analyzis generation failed.')
 
@@ -1708,6 +1714,19 @@ def writeAtomFeed(currentID, nrFailed, nrTotal):
 
 
 
+def coverageBackupRestore(variant):
+  for t in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
+    d=pj(args.coverage.split(":")[0], t+args.coverage.split(":")[1])
+    for root, _, files in os.walk(d):
+      for f in sorted(files):
+        if variant=="backup":
+          if f.endswith(".gcda"):
+            shutil.copyfile(pj(root, f), pj(root, f+".beforeRunexamples"))
+        if variant=="restore":
+          if f.endswith(".gcda"): # is processed before .gcda.beforeRunexamples: files is sotred
+            os.remove(pj(root, f))
+          if f.endswith(".gcda.beforeRunexamples"): # is processed after .gcda: files is sotred
+            shutil.move(pj(root, f), pj(root, os.path.splitext(f)[0]))
 def coverage(mainFD):
   print('<tr><td>Coverage analyzis</td>', file=mainFD); mainFD.flush()
   ret=0
@@ -1720,7 +1739,7 @@ def coverage(mainFD):
   dirs=["-d", args.coverage.split(":")[2]]+[v for il in dirs for v in il]
 
   # run lcov: init counters
-  ret=ret+abs(subprocess.call(["lcov", "-c", "--no-external", "-i", "-o", pj(args.reportOutDir, "coverage", "cov.trace.base")]+dirs, stdout=lcovFD, stderr=lcovFD))
+  ret=ret+abs(subprocess.call(["lcov", "-c", "--no-external", "-i", "--ignore-errors", "graph", "-o", pj(args.reportOutDir, "coverage", "cov.trace.base")]+dirs, stdout=lcovFD, stderr=lcovFD))
   # run lcov: count
   ret=ret+abs(subprocess.call(["lcov", "-c", "--no-external", "-o", pj(args.reportOutDir, "coverage", "cov.trace.test")]+dirs, stdout=lcovFD, stderr=lcovFD))
   # run lcov: combine counters
@@ -1789,7 +1808,7 @@ def coverage(mainFD):
   for i in range(0, 5-sum([4*args.disableRun, args.disableCompare, args.disableValidate])):
     print('<td>-</td>', file=mainFD)
   print('</tr>', file=mainFD); mainFD.flush()
-  return ret
+  return 1 if ret!=0 else 0
 
 
 
