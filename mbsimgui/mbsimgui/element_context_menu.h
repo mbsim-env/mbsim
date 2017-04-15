@@ -41,8 +41,8 @@ namespace MBSimGUI {
       FramesContextMenu(Element *frame, const QString &title="", QWidget * parent = 0);
 
     protected slots:
-      void pasteFrame();
-      void loadFrame();
+      void paste();
+      void load();
 
     protected:
       Element *element;
@@ -84,8 +84,8 @@ namespace MBSimGUI {
       void addLineSegment();
       void addPlanarContour();
       void addSpatialContour();
-      void pasteContour();
-      void loadContour();
+      void paste();
+      void load();
 
     protected:
       Element *element;
@@ -98,9 +98,9 @@ namespace MBSimGUI {
       GroupsContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
 
     protected slots:
-      void addGroup();
-      void pasteGroup();
-      void loadGroup();
+      void add();
+      void paste();
+      void load();
 
     protected:
       Element *element;
@@ -113,8 +113,8 @@ namespace MBSimGUI {
       ObjectsContextMenu(Element *object, const QString &title="", QWidget * parent = 0);
 
     protected slots:
-      void pasteObject();
-      void loadObject();
+      void paste();
+      void load();
 
     protected:
       Element *element;
@@ -152,8 +152,8 @@ namespace MBSimGUI {
       void addGeneralizedFriction();
       void addGeneralizedGear();
       void addGeneralizedElasticConnection();
-      void pasteLink();
-      void loadLink();
+      void paste();
+      void load();
 
     protected:
       Element *element;
@@ -172,8 +172,8 @@ namespace MBSimGUI {
       void addGeneralizedAccelerationConstraint();
       void addJointConstraint();
       void addGeneralizedConnectionConstraint();
-      void pasteConstraint();
-      void loadConstraint();
+      void paste();
+      void load();
 
     protected:
       Element *element;
@@ -194,8 +194,8 @@ namespace MBSimGUI {
       void addRigidBodyObserver();
       void addKinematicCoordinatesObserver();
       void addRelativeKinematicsObserver();
-      void pasteObserver();
-      void loadObserver();
+      void paste();
+      void load();
 
     protected:
       Element *element;
