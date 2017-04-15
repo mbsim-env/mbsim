@@ -165,10 +165,13 @@ namespace MBSimGUI {
       void redo();
       void removeElement();
       void removeParameter();
-      void copy();
+      void copy(bool cut);
+      void cut() { copy(true); }
       void paste();
-      void copyElement();
-      void copyParameter();
+      void copyElement(bool cut=false);
+      void cutElement() { copyElement(true); }
+      void copyParameter(bool cut=false);
+      void cutParameter() { copyParameter(true); }
       void saveElementAs();
       void projectSettings();
     protected slots:

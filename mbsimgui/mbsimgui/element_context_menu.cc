@@ -50,6 +50,9 @@ namespace MBSimGUI {
       action=new QAction("Copy", this);
       connect(action,SIGNAL(triggered()),mw,SLOT(copyElement()));
       addAction(action);
+      action=new QAction("Cut", this);
+      connect(action,SIGNAL(triggered()),mw,SLOT(cutElement()));
+      addAction(action);
       action=new QAction("Save as", this);
       connect(action,SIGNAL(triggered()),mw,SLOT(saveElementAs()));
       addAction(action);

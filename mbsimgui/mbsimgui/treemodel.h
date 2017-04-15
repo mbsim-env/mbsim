@@ -37,6 +37,7 @@ namespace MBSimGUI {
   class Observer;
   class Parameter;
   class TreeItem;
+  class TreeItemData;
 
   class TreeModel : public QAbstractItemModel {
     public:
@@ -58,7 +59,8 @@ namespace MBSimGUI {
 
       bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 
-      TreeItem *getItem(const QModelIndex &index) const;
+      TreeItem* getItem(const QModelIndex &index) const;
+      QModelIndex findItem(const TreeItemData *item, const QModelIndex &parentIndex) const;
 
     protected:
       TreeItem *rootItem;

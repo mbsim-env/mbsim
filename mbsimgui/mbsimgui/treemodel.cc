@@ -65,12 +65,25 @@ namespace MBSimGUI {
     return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
   }
 
-  TreeItem *TreeModel::getItem(const QModelIndex &index) const {
+  TreeItem* TreeModel::getItem(const QModelIndex &index) const {
     if(index.isValid()) {
       TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
       if(item) return item;
     }
     return rootItem;
+  }
+
+  QModelIndex TreeModel::findItem(const TreeItemData *item, const QModelIndex &parentIndex) const {
+    QModelIndex index;
+    if(getItem(parentIndex)->getItemData()==item)
+      return parentIndex;
+    for (int i = 0; i < rowCount(parentIndex); i++) {
+      QString name = getItem(this->index(i, 0, parentIndex))->getItemData()->getName();
+      index = findItem(item, this->index(i, 0, parentIndex));
+      if(getItem(index)->getItemData()==item)
+        return index;
+    }
+    return index;
   }
 
   QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const {
