@@ -578,7 +578,7 @@ def main():
     print(line, end="")
 
   # write RSS feed
-  writeAtomFeed(currentID, len(failedExamples)+coverageAll, len(retAll)+coverageFailed)
+  writeAtomFeed(currentID, len(failedExamples)+coverageFailed, len(retAll)+coverageAll)
 
   # print result summary to console
   if len(failedExamples)>0:
