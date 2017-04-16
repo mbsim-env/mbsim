@@ -1749,10 +1749,11 @@ def coverage(mainFD):
     "mbsim*/kernel/swig/*", "openmbv*/openmbvcppinterface/swig/java/*", # SWIG generated
     "openmbv*/openmbvcppinterface/swig/octave/*", "openmbv*/openmbvcppinterface/swig/python/*", # SWIG generated
     "openmbv*/mbxmlutils/mbxmlutils/swigpyrun.h", "openmbv*/mbxmlutils/mbxmlutils/casadi_oct_swig_octave.cc", # SWIG generated
-    "mbsim/thirdparty/nurbs++/*", "include/nurbs++/*", "include/casadi/*", # 3rd party
+    "mbsim/thirdparty/nurbs++/*", "include/nurbs++/*", "include/casadi/*", "mbsim/kernel/mbsim/numerics/csparse.*", # 3rd party
     "mbsim/examples/*", # mbsim examples
     "modules/mbsimInterface/mbsimInterface/interface_messages.cc", "*.moc.cc", "*.qrc.cc", # mbsim generated
-    "hdf5serie/h5plotserie/h5plotserie/*", "openmbv/openmbv/openmbv/*", "mbsim/mbsimgui/mbsimgui/*", # mbsim GUI (untested)
+    "hdf5serie/h5plotserie/h5plotserie/*", "openmbv/openmbv/openmbv/*", "mbsim/mbsimgui/mbsimgui/*", # GUI (untested)
+    "mbsim/modules/mbsimInterface/mbsimInterface/*", # other untested features
     "-o", pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
 
   # collect all header files in repos and hash it
