@@ -48,8 +48,10 @@ namespace MBSimGUI {
       virtual std::vector<EmbedItemData*> getParents() { return std::vector<EmbedItemData*>(); }
       int getNumberOfParameters() const { return parameter.size(); }
       Parameter* getParameter(int i) { return parameter[i]; }
+      void setParameter(Parameter *param, int i) { parameter[i] = param; }
       void addParameter(Parameter *param);
       void removeParameter(Parameter *param);
+      int getIndexOfParameter(Parameter *param) const;
       xercesc::DOMElement* getXMLElement() { return element; }
       void removeXMLElement();
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }

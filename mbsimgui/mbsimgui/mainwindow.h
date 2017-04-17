@@ -75,18 +75,12 @@ namespace MBSimGUI {
       Process *mbsim;
       MBSimThread *mbsimThread;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
-      void initInlineOpenMBV();
-      void dragEnterEvent(QDragEnterEvent *event);
-      void dropEvent(QDropEvent *event);
-      bool maybeSave();
       boost::filesystem::path uniqueTempDir;
       QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs;
       QTimer *autoSaveTimer;
       QString currentID;
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
-      void setCurrentProjectFile(const QString &fileName);
-      void updateRecentProjectFileActions();
       bool autoSave, autoExport, saveFinalStateVector;
       int autoSaveInterval, maxUndo;
       QString autoExportDir;
@@ -97,6 +91,14 @@ namespace MBSimGUI {
       std::deque<xercesc::DOMDocument*> undos, redos;
       std::pair<Element*,bool> elementBuffer;
       std::pair<Parameter*,bool> parameterBuffer;
+      void initInlineOpenMBV();
+      void dragEnterEvent(QDragEnterEvent *event);
+      void dropEvent(QDropEvent *event);
+      void closeEvent(QCloseEvent *event);
+      bool maybeSave();
+      void setCurrentProjectFile(const QString &fileName);
+      void updateRecentProjectFileActions();
+      void moveParameter(bool up);
 
     public:
       MainWindow(QStringList &arg);
@@ -132,6 +134,7 @@ namespace MBSimGUI {
       void setAllowUndo(bool allowUndo_) { allowUndo = allowUndo_; }
       const std::pair<Element*,bool>& getElementBuffer() const { return elementBuffer; }
       const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
+
     public slots:
       void elementListClicked();
       void parameterListClicked();
@@ -168,13 +171,18 @@ namespace MBSimGUI {
       void copy(bool cut);
       void cut() { copy(true); }
       void paste();
+      void moveUp();
+      void moveDown();
       void copyElement(bool cut=false);
       void cutElement() { copyElement(true); }
       void copyParameter(bool cut=false);
       void cutParameter() { copyParameter(true); }
+      void moveUpParameter() { moveParameter(true); }
+      void moveDownParameter() { moveParameter(false); }
       void saveElementAs();
       void projectSettings();
-    protected slots:
+
+    private slots:
       void selectElement(std::string ID);
       void changeWorkingDir();
       void openOptionsMenu();
@@ -185,8 +193,6 @@ namespace MBSimGUI {
       void autoSaveProject();
       void applySettings();
       void settingsFinished(int result);
-    protected:
-      void closeEvent(QCloseEvent *event);
   };
 
 }

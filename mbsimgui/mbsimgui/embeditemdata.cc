@@ -49,6 +49,13 @@ namespace MBSimGUI {
     removedParameter.push_back(param);
   }
 
+  int EmbedItemData::getIndexOfParameter(Parameter *param) const {
+    for(size_t i=0; i<parameter.size(); i++)
+      if(parameter[i] == param)
+        return i;
+    return -1;
+  }
+
   void EmbedItemData::removeXMLElement() {
     DOMNode *parent = element->getParentNode();
     if(X()%parent->getNodeName()=="Embed") {

@@ -20,13 +20,15 @@
 #include <config.h>
 #include "parameter_context_menu.h"
 #include "embedding_view.h"
+#include "parameter.h"
+#include "embeditemdata.h"
 #include "mainwindow.h"
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  ParameterContextMenu::ParameterContextMenu(QWidget *parent) : QMenu(parent) {
+  ParameterContextMenu::ParameterContextMenu(Parameter *parameter_, QWidget *parent) : QMenu(parent), parameter(parameter_) {
     QAction *action=new QAction("Edit", this);
     connect(action,SIGNAL(triggered()),mw->getEmbeddingList(),SLOT(openEditor()));
     addAction(action);
@@ -36,6 +38,15 @@ namespace MBSimGUI {
     addAction(action);
     action=new QAction("Cut", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(cutParameter()));
+    addAction(action);
+    addSeparator();
+    action=new QAction("Move up", this);
+    action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpParameter()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)<parameter->getParent()->getNumberOfParameters()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownParameter()));
     addAction(action);
     addSeparator();
     action=new QAction("Remove", this);
