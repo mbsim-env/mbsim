@@ -1452,15 +1452,13 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  RotMatWidgetFactory::RotMatWidgetFactory() : name(4), unit(4), defaultUnit(4,1) {
-    name[0] = "AboutZ";
-    name[1] = "Cardan";
-    name[2] = "Matrix";
-    name[3] = "Editor";
-    unit[0] = QStringList();
-    unit[1] = QStringList();
-    unit[2] = QStringList();
-    unit[3] = QStringList();
+  RotMatWidgetFactory::RotMatWidgetFactory() : name(6), unit(6,QStringList()), defaultUnit(6,0) {
+    name[0] = "AboutX";
+    name[1] = "AboutY";
+    name[2] = "AboutZ";
+    name[3] = "Cardan";
+    name[4] = "Matrix";
+    name[5] = "Editor";
   }
 
   RotMatWidgetFactory::RotMatWidgetFactory(const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : name(name_), unit(unit_), defaultUnit(defaultUnit_) {
@@ -1468,13 +1466,17 @@ namespace MBSimGUI {
 
   QWidget* RotMatWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new AboutZWidget,unit[1],defaultUnit[1]);
+      return new PhysicalVariableWidget(new AboutXWidget,unit[0],defaultUnit[0]);
     if(i==1)
-      return new PhysicalVariableWidget(new CardanWidget,unit[1],defaultUnit[1]);
+      return new PhysicalVariableWidget(new AboutYWidget,unit[1],defaultUnit[1]);
     if(i==2)
-      return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[0],defaultUnit[0]);
+      return new PhysicalVariableWidget(new AboutZWidget,unit[2],defaultUnit[2]);
     if(i==3)
-      return new PhysicalVariableWidget(new ExpressionWidget,unit[2],defaultUnit[2]);
+      return new PhysicalVariableWidget(new CardanWidget,unit[3],defaultUnit[3]);
+    if(i==4)
+      return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[4],defaultUnit[4]);
+    if(i==5)
+      return new PhysicalVariableWidget(new ExpressionWidget,unit[5],defaultUnit[5]);
     return NULL;
   }
 

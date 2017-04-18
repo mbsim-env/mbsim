@@ -85,7 +85,7 @@ namespace MBSimGUI {
 
   class MatrixParameter : public Parameter {
     public:
-      MatrixParameter(const QString &name="") : Parameter("import") { }
+      MatrixParameter(const QString &name="") : Parameter(name) { }
       virtual QString getType() const { return "matrixParameter"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
