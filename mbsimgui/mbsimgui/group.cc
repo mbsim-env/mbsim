@@ -31,8 +31,7 @@
 #include "mbxmlutilshelper/dom.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
-using namespace std;
-using namespace MBXMLUtils;
+using namespace std; using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
@@ -449,6 +448,55 @@ namespace MBSimGUI {
       return getObserver(name);
     else
       return 0;
+  }
+
+  int Group::getIndexOfFrame(Frame *frame_) {
+    for(size_t i=0; i<frame.size(); i++)
+      if(frame[i] == frame_)
+        return i;
+    return -1;
+  }
+
+  int Group::getIndexOfContour(Contour *contour_) {
+    for(size_t i=0; i<contour.size(); i++)
+      if(contour[i] == contour_)
+        return i;
+    return -1;
+  }
+
+  int Group::getIndexOfGroup(Group *group_) {
+    for(size_t i=0; i<group.size(); i++)
+      if(group[i] == group_)
+        return i;
+    return -1;
+  }
+
+  int Group::getIndexOfObject(Object *object_) {
+    for(size_t i=0; i<object.size(); i++)
+      if(object[i] == object_)
+        return i;
+    return -1;
+  }
+
+  int Group::getIndexOfLink(Link *link_) {
+    for(size_t i=0; i<link.size(); i++)
+      if(link[i] == link_)
+        return i;
+    return -1;
+  }
+
+  int Group::getIndexOfConstraint(Constraint *constraint_) {
+    for(size_t i=0; i<constraint.size(); i++)
+      if(constraint[i] == constraint_)
+        return i;
+    return -1;
+  }
+
+  int Group::getIndexOfObserver(Observer *observer_) {
+    for(size_t i=0; i<observer.size(); i++)
+      if(observer[i] == observer_)
+        return i;
+    return -1;
   }
 
 }

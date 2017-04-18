@@ -27,6 +27,7 @@ namespace MBSimGUI {
   class Observer : public Element {
     public:
       Observer(const QString &str="") : Element(str) { }
+      QMenu* createContextMenu() { return new ObserverContextMenu(this); }
   };
 
   class KinematicCoordinatesObserver : public Observer {

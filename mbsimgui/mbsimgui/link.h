@@ -27,6 +27,7 @@ namespace MBSimGUI {
   class Link : public Element {
     public:
       Link(const QString &str="");
+      QMenu* createContextMenu() { return new LinkContextMenu(this); }
   };
 
   class MechanicalLink : public Link {

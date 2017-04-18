@@ -72,8 +72,8 @@ namespace MBSimGUI {
 
       void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
       void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
-      void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
-      void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
+      void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex(), bool recursive=true);
+      void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex(), bool recursive=true);
       void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
       void createConstraintItem(Constraint *observer, const QModelIndex &parent = QModelIndex());
       void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
@@ -85,7 +85,6 @@ namespace MBSimGUI {
     public:
       EmbeddingTreeModel(QObject *parent = 0);
 
-      void createElementItem(Element *element, const QModelIndex &parent = QModelIndex());
       QModelIndex createEmbeddingItem(EmbedItemData *item, const QModelIndex &parent = QModelIndex());
       QModelIndex createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
 

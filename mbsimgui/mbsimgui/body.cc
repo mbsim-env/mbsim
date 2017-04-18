@@ -92,4 +92,18 @@ namespace MBSimGUI {
       return 0;
   }
 
+  int Body::getIndexOfFrame(Frame *frame_) {
+    for(size_t i=0; i<frame.size(); i++)
+      if(frame[i] == frame_)
+        return i;
+    return -1;
+  }
+
+  int Body::getIndexOfContour(Contour *contour_) {
+    for(size_t i=0; i<contour.size(); i++)
+      if(contour[i] == contour_)
+        return i;
+    return -1;
+  }
+
 }

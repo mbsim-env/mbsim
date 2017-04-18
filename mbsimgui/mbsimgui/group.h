@@ -70,6 +70,13 @@ namespace MBSimGUI {
       int getNumberOfLinks() {return link.size();}
       int getNumberOfConstraints() {return constraint.size();}
       int getNumberOfObservers() {return observer.size();}
+      int getIndexOfFrame(Frame *frame);
+      int getIndexOfContour(Contour *contour);
+      int getIndexOfGroup(Group *group);
+      int getIndexOfObject(Object *object);
+      int getIndexOfLink(Link *link);
+      int getIndexOfConstraint(Constraint *constraint);
+      int getIndexOfObserver(Observer *observer);
       Frame* getFrame(int i) const {return frame[i];}
       Contour* getContour(int i) const {return contour[i];}
       Object* getObject(int i) const {return object[i];}
@@ -84,7 +91,13 @@ namespace MBSimGUI {
       Link* getLink(const QString &name) const;
       Constraint* getConstraint(const QString &name) const;
       Observer* getObserver(const QString &name) const;
-
+      void setFrame(Frame *frame_, int i) { frame[i] = frame_; }
+      void setContour(Contour *contour_, int i) { contour[i] = contour_; }
+      void setGroup(Group *group_, int i) { group[i] = group_; }
+      void setObject(Object *object_, int i) { object[i] = object_; }
+      void setLink(Link *link_, int i) { link[i] = link_; }
+      void setConstraint(Constraint *constraint_, int i) { constraint[i] = constraint_; }
+      void setObserver(Observer *observer_, int i) { observer[i] = observer_; }
       void addFrame(Frame *frame);
       void addContour(Contour *contour);
       void addGroup(Group *group);
@@ -95,6 +108,7 @@ namespace MBSimGUI {
       void removeElement(Element *element);
       ElementPropertyDialog* createPropertyDialog() {return new GroupPropertyDialog(this);}
       QMenu* createFrameContextMenu() {return new FixedRelativeFramesContextMenu(this);}
+      QMenu* createContextMenu() { return new GroupContextMenu(this); }
   };
 
 }

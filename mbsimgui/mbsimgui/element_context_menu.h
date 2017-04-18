@@ -25,6 +25,13 @@
 namespace MBSimGUI {
 
   class Element;
+  class Frame;
+  class Contour;
+  class Group;
+  class Object;
+  class Link;
+  class Constraint;
+  class Observer;
 
   class ElementContextMenu : public QMenu {
     public:
@@ -32,6 +39,41 @@ namespace MBSimGUI {
 
     protected:
       Element *element;
+  };
+
+  class FrameContextMenu : public ElementContextMenu {
+    public:
+      FrameContextMenu(Frame *frame, QWidget * parent = 0, bool removable=true);
+  };
+
+  class ContourContextMenu : public ElementContextMenu {
+    public:
+      ContourContextMenu(Contour *contour, QWidget * parent = 0, bool removable=true);
+  };
+
+  class GroupContextMenu : public ElementContextMenu {
+    public:
+      GroupContextMenu(Group *group, QWidget * parent = 0, bool removable=true);
+  };
+
+  class ObjectContextMenu : public ElementContextMenu {
+    public:
+      ObjectContextMenu(Object *object, QWidget * parent = 0, bool removable=true);
+  };
+
+  class LinkContextMenu : public ElementContextMenu {
+    public:
+      LinkContextMenu(Link *link, QWidget * parent = 0, bool removable=true);
+  };
+
+  class ConstraintContextMenu : public ElementContextMenu {
+    public:
+      ConstraintContextMenu(Constraint *constraint, QWidget * parent = 0, bool removable=true);
+  };
+
+  class ObserverContextMenu : public ElementContextMenu {
+    public:
+      ObserverContextMenu(Observer *observer, QWidget * parent = 0, bool removable=true);
   };
 
   class FramesContextMenu : public QMenu {

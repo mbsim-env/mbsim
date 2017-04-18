@@ -76,6 +76,13 @@ namespace MBSimGUI {
       virtual int getNumberOfLinks() { return 0; }
       virtual int getNumberOfConstraints() { return 0; }
       virtual int getNumberOfObservers() { return 0; }
+      virtual int getIndexOfFrame(Frame *frame) { return -1; }
+      virtual int getIndexOfContour(Contour *contour) { return -1; }
+      virtual int getIndexOfGroup(Group *group) { return -1; }
+      virtual int getIndexOfObject(Object *object) { return -1; }
+      virtual int getIndexOfLink(Link *link) { return -1; }
+      virtual int getIndexOfConstraint(Constraint *constraint) { return -1; }
+      virtual int getIndexOfObserver(Observer *observer) { return -1; }
       virtual Frame* getFrame(int i) const { return 0; }
       virtual Contour* getContour(int i) const { return 0; }
       virtual Group* getGroup(int i) const { return 0; }
@@ -84,6 +91,13 @@ namespace MBSimGUI {
       virtual Constraint* getConstraint(int i) const { return 0; }
       virtual Observer* getObserver(int i) const { return 0; }
       virtual Frame* getFrame(const QString &name) const { return 0; }
+      virtual void setFrame(Frame *frame, int i) { }
+      virtual void setContour(Contour *contour, int i) { }
+      virtual void setGroup(Group *group, int i) { }
+      virtual void setObject(Object *object, int i) { }
+      virtual void setLink(Link *link, int i) { }
+      virtual void setConstraint(Constraint *constraint, int i) { }
+      virtual void setObserver(Observer *observer, int i) { }
       virtual void addFrame(Frame *frame) { }
       virtual void addContour(Contour *contour) { }
       virtual void addGroup(Group *group) { }

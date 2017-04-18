@@ -32,6 +32,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this,false);}
+      QMenu* createContextMenu() { return new FrameContextMenu(this); }
   };
 
   class InternalFrame : public Frame {

@@ -1146,23 +1146,52 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::moveUp() {
-    if(embeddingList->hasFocus()) {
-      EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-      QModelIndex index = embeddingList->selectionModel()->currentIndex();
-      Parameter *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
-      if(parameter and parameter->getParent()->getIndexOfParameter(parameter)>0)
-        moveParameter(true);
+  void MainWindow::move(bool up) {
+    if(elementList->hasFocus()) {
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+      QModelIndex index = elementList->selectionModel()->currentIndex();
+      Frame *frame = dynamic_cast<Frame*>(model->getItem(index)->getItemData());
+      if(frame and (not dynamic_cast<InternalFrame*>(frame)) and (up?(frame->getParent()->getIndexOfFrame(frame)>1):(frame->getParent()->getIndexOfFrame(frame)<frame->getParent()->getNumberOfFrames()-1))) {
+        moveFrame(up);
+        return;
+      }
+      Contour *contour = dynamic_cast<Contour*>(model->getItem(index)->getItemData());
+      if(contour and (up?(contour->getParent()->getIndexOfContour(contour)>0):(contour->getParent()->getIndexOfContour(contour)<contour->getParent()->getNumberOfContours()-1))) {
+        moveContour(up);
+        return;
+      }
+      Group *group = dynamic_cast<Group*>(model->getItem(index)->getItemData());
+      if(group and (up?(group->getParent()->getIndexOfGroup(group)>0):(group->getParent()->getIndexOfGroup(group)<group->getParent()->getNumberOfGroups()-1))) {
+        moveGroup(up);
+        return;
+      }
+      Object *object = dynamic_cast<Object*>(model->getItem(index)->getItemData());
+      if(object and (up?(object->getParent()->getIndexOfObject(object)>0):(object->getParent()->getIndexOfObject(object)<object->getParent()->getNumberOfObjects()-1))) {
+        moveObject(up);
+        return;
+      }
+      Link *link = dynamic_cast<Link*>(model->getItem(index)->getItemData());
+      if(link and (up?(link->getParent()->getIndexOfLink(link)>0):(link->getParent()->getIndexOfLink(link)<link->getParent()->getNumberOfLinks()-1))) {
+        moveLink(up);
+        return;
+      }
+      Constraint *constraint = dynamic_cast<Constraint*>(model->getItem(index)->getItemData());
+      if(constraint and (up?(constraint->getParent()->getIndexOfConstraint(constraint)>0):(constraint->getParent()->getIndexOfConstraint(constraint)<constraint->getParent()->getNumberOfConstraints()-1))) {
+        moveConstraint(up);
+        return;
+      }
+      Observer *observer = dynamic_cast<Observer*>(model->getItem(index)->getItemData());
+      if(observer and (up?(observer->getParent()->getIndexOfObserver(observer)>0):(observer->getParent()->getIndexOfObserver(observer)<observer->getParent()->getNumberOfObservers()-1))) {
+        moveObserver(up);
+        return;
+      }
     }
-  }
-
-  void MainWindow::moveDown() {
-    if(embeddingList->hasFocus()) {
+    else if(embeddingList->hasFocus()) {
       EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
       QModelIndex index = embeddingList->selectionModel()->currentIndex();
       Parameter *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
-      if(parameter and parameter->getParent()->getIndexOfParameter(parameter)<parameter->getParent()->getNumberOfParameters()-1)
-        moveParameter(false);
+      if(parameter and (up?(parameter->getParent()->getIndexOfParameter(parameter)>0):(parameter->getParent()->getIndexOfParameter(parameter)<parameter->getParent()->getNumberOfParameters()-1)))
+        moveParameter(up);
     }
   }
 
@@ -1182,6 +1211,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::moveParameter(bool up) {
+    setProjectChanged(true);
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
     Parameter *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
@@ -1196,52 +1226,172 @@ namespace MBSimGUI {
     parent->insertBefore(ele,tmp);
     parameter->getParent()->setParameter(parameter->getParent()->getParameter(j),i);
     parameter->getParent()->setParameter(parameter,j);
-      model->removeRows(0,parameter->getParent()->getNumberOfParameters(),index.parent());
-      for(int i=0; i<parameter->getParent()->getNumberOfParameters(); i++)
-        model->createParameterItem(parameter->getParent()->getParameter(i),index.parent());
-      embeddingList->setCurrentIndex(index.sibling(j,0));
+    model->removeRows(0,parameter->getParent()->getNumberOfParameters(),index.parent());
+    for(int i=0; i<parameter->getParent()->getNumberOfParameters(); i++)
+      model->createParameterItem(parameter->getParent()->getParameter(i),index.parent());
+    embeddingList->setCurrentIndex(index.sibling(j,0));
   }
 
-//  void MainWindow::moveUpParameter() {
-//    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-//    QModelIndex index = embeddingList->selectionModel()->currentIndex();
-//    Parameter *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
-//    int i = parameter->getParent()->getIndexOfParameter(parameter);
-//    DOMElement *prev = parameter->getXMLElement()->getPreviousElementSibling();
-//    DOMNode *parent = parameter->getXMLElement()->getParentNode();
-//    DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
-//    if(ps and X()%ps->getNodeName()=="#text")
-//      parent->removeChild(ps);
-//    DOMNode *ele = parent->removeChild(parameter->getXMLElement());
-//    parent->insertBefore(ele,prev);
-//    parameter->getParent()->setParameter(parameter->getParent()->getParameter(i-1),i);
-//    parameter->getParent()->setParameter(parameter,i-1);
-//      model->removeRows(0,parameter->getParent()->getNumberOfParameters(),index.parent());
-//      for(int i=0; i<parameter->getParent()->getNumberOfParameters(); i++)
-//        model->createParameterItem(parameter->getParent()->getParameter(i),index.parent());
-//      embeddingList->setCurrentIndex(index.sibling(i-1,0));
-//  }
-//
-//  void MainWindow::moveDownParameter() {
-//    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-//    QModelIndex index = embeddingList->selectionModel()->currentIndex();
-//    Parameter *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
-//    int i = parameter->getParent()->getIndexOfParameter(parameter);
-//    DOMElement *next = parameter->getXMLElement()->getNextElementSibling()->getNextElementSibling();
-//    DOMNode *parent = parameter->getXMLElement()->getParentNode();
-//    DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
-//    if(ps and X()%ps->getNodeName()=="#text")
-//      parent->removeChild(ps);
-//    DOMNode *ele = parent->removeChild(parameter->getXMLElement());
-//    parent->insertBefore(ele,next);
-//    parameter->getParent()->setParameter(parameter->getParent()->getParameter(i+1),i);
-//    parameter->getParent()->setParameter(parameter,i+1);
-//cout << parameter->getParent()->getNumberOfParameters() << endl;
-//      model->removeRows(0,parameter->getParent()->getNumberOfParameters(),index.parent());
-//      for(int i=0; i<parameter->getParent()->getNumberOfParameters(); i++)
-//        model->createParameterItem(parameter->getParent()->getParameter(i),index.parent());
-//      embeddingList->setCurrentIndex(index.sibling(i+1,0));
-//  }
+  void MainWindow::moveFrame(bool up) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    Frame *frame = static_cast<Frame*>(model->getItem(index)->getItemData());
+    int i = frame->getParent()->getIndexOfFrame(frame);
+    int j = up?i-1:i+1;
+    DOMElement *ele = static_cast<DOMElement*>(X()%frame->getXMLElement()->getParentNode()->getNodeName()=="Embed"?frame->getXMLElement()->getParentNode():frame->getXMLElement());
+    DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
+    DOMNode *parent = ele->getParentNode();
+    DOMNode *ps = ele->getPreviousSibling();
+    if(ps and X()%ps->getNodeName()=="#text")
+      parent->removeChild(ps);
+    parent->removeChild(ele);
+    parent->insertBefore(ele,tmp);
+    frame->getParent()->setFrame(frame->getParent()->getFrame(j),i);
+    frame->getParent()->setFrame(frame,j);
+    model->removeRows(0,frame->getParent()->getNumberOfFrames(),index.parent());
+    for(int i=0; i<frame->getParent()->getNumberOfFrames(); i++)
+      model->createFrameItem(frame->getParent()->getFrame(i),index.parent());
+    elementList->setCurrentIndex(index.sibling(j,0));
+  }
+
+  void MainWindow::moveContour(bool up) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    Contour *contour = static_cast<Contour*>(model->getItem(index)->getItemData());
+    int i = contour->getParent()->getIndexOfContour(contour);
+    int j = up?i-1:i+1;
+    DOMElement *ele = static_cast<DOMElement*>(X()%contour->getXMLElement()->getParentNode()->getNodeName()=="Embed"?contour->getXMLElement()->getParentNode():contour->getXMLElement());
+    DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
+    DOMNode *parent = ele->getParentNode();
+    DOMNode *ps = ele->getPreviousSibling();
+    if(ps and X()%ps->getNodeName()=="#text")
+      parent->removeChild(ps);
+    parent->removeChild(ele);
+    parent->insertBefore(ele,tmp);
+    contour->getParent()->setContour(contour->getParent()->getContour(j),i);
+    contour->getParent()->setContour(contour,j);
+    model->removeRows(0,contour->getParent()->getNumberOfContours(),index.parent());
+    for(int i=0; i<contour->getParent()->getNumberOfContours(); i++)
+      model->createContourItem(contour->getParent()->getContour(i),index.parent());
+    elementList->setCurrentIndex(index.sibling(j,0));
+  }
+
+  void MainWindow::moveGroup(bool up) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    Group *group = static_cast<Group*>(model->getItem(index)->getItemData());
+    int i = group->getParent()->getIndexOfGroup(group);
+    int j = up?i-1:i+1;
+    DOMElement *ele = static_cast<DOMElement*>(X()%group->getXMLElement()->getParentNode()->getNodeName()=="Embed"?group->getXMLElement()->getParentNode():group->getXMLElement());
+    DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
+    DOMNode *parent = ele->getParentNode();
+    DOMNode *ps = ele->getPreviousSibling();
+    if(ps and X()%ps->getNodeName()=="#text")
+      parent->removeChild(ps);
+    parent->removeChild(ele);
+    parent->insertBefore(ele,tmp);
+    group->getParent()->setGroup(group->getParent()->getGroup(j),i);
+    group->getParent()->setGroup(group,j);
+    model->removeRows(0,group->getParent()->getNumberOfGroups(),index.parent());
+    for(int i=0; i<group->getParent()->getNumberOfGroups(); i++)
+      model->createGroupItem(group->getParent()->getGroup(i),index.parent(),false);
+    elementList->setCurrentIndex(index.sibling(j,0));
+  }
+
+  void MainWindow::moveObject(bool up) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    Object *object = static_cast<Object*>(model->getItem(index)->getItemData());
+    int i = object->getParent()->getIndexOfObject(object);
+    int j = up?i-1:i+1;
+    DOMElement *ele = static_cast<DOMElement*>(X()%object->getXMLElement()->getParentNode()->getNodeName()=="Embed"?object->getXMLElement()->getParentNode():object->getXMLElement());
+    DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
+    DOMNode *parent = ele->getParentNode();
+    DOMNode *ps = ele->getPreviousSibling();
+    if(ps and X()%ps->getNodeName()=="#text")
+      parent->removeChild(ps);
+    parent->removeChild(ele);
+    parent->insertBefore(ele,tmp);
+    object->getParent()->setObject(object->getParent()->getObject(j),i);
+    object->getParent()->setObject(object,j);
+    model->removeRows(0,object->getParent()->getNumberOfObjects(),index.parent());
+    for(int i=0; i<object->getParent()->getNumberOfObjects(); i++)
+      model->createObjectItem(object->getParent()->getObject(i),index.parent(),false);
+    elementList->setCurrentIndex(index.sibling(j,0));
+  }
+
+  void MainWindow::moveLink(bool up) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    Link *link = static_cast<Link*>(model->getItem(index)->getItemData());
+    int i = link->getParent()->getIndexOfLink(link);
+    int j = up?i-1:i+1;
+    DOMElement *ele = static_cast<DOMElement*>(X()%link->getXMLElement()->getParentNode()->getNodeName()=="Embed"?link->getXMLElement()->getParentNode():link->getXMLElement());
+    DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
+    DOMNode *parent = ele->getParentNode();
+    DOMNode *ps = ele->getPreviousSibling();
+    if(ps and X()%ps->getNodeName()=="#text")
+      parent->removeChild(ps);
+    parent->removeChild(ele);
+    parent->insertBefore(ele,tmp);
+    link->getParent()->setLink(link->getParent()->getLink(j),i);
+    link->getParent()->setLink(link,j);
+    model->removeRows(0,link->getParent()->getNumberOfLinks(),index.parent());
+    for(int i=0; i<link->getParent()->getNumberOfLinks(); i++)
+      model->createLinkItem(link->getParent()->getLink(i),index.parent());
+    elementList->setCurrentIndex(index.sibling(j,0));
+  }
+
+  void MainWindow::moveConstraint(bool up) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    Constraint *constraint = static_cast<Constraint*>(model->getItem(index)->getItemData());
+    int i = constraint->getParent()->getIndexOfConstraint(constraint);
+    int j = up?i-1:i+1;
+    DOMElement *ele = static_cast<DOMElement*>(X()%constraint->getXMLElement()->getParentNode()->getNodeName()=="Embed"?constraint->getXMLElement()->getParentNode():constraint->getXMLElement());
+    DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
+    DOMNode *parent = ele->getParentNode();
+    DOMNode *ps = ele->getPreviousSibling();
+    if(ps and X()%ps->getNodeName()=="#text")
+      parent->removeChild(ps);
+    parent->removeChild(ele);
+    parent->insertBefore(ele,tmp);
+    constraint->getParent()->setConstraint(constraint->getParent()->getConstraint(j),i);
+    constraint->getParent()->setConstraint(constraint,j);
+    model->removeRows(0,constraint->getParent()->getNumberOfConstraints(),index.parent());
+    for(int i=0; i<constraint->getParent()->getNumberOfConstraints(); i++)
+      model->createConstraintItem(constraint->getParent()->getConstraint(i),index.parent());
+    elementList->setCurrentIndex(index.sibling(j,0));
+  }
+
+  void MainWindow::moveObserver(bool up) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    Observer *observer = static_cast<Observer*>(model->getItem(index)->getItemData());
+    int i = observer->getParent()->getIndexOfObserver(observer);
+    int j = up?i-1:i+1;
+    DOMElement *ele = static_cast<DOMElement*>(X()%observer->getXMLElement()->getParentNode()->getNodeName()=="Embed"?observer->getXMLElement()->getParentNode():observer->getXMLElement());
+    DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
+    DOMNode *parent = ele->getParentNode();
+    DOMNode *ps = ele->getPreviousSibling();
+    if(ps and X()%ps->getNodeName()=="#text")
+      parent->removeChild(ps);
+    parent->removeChild(ele);
+    parent->insertBefore(ele,tmp);
+    observer->getParent()->setObserver(observer->getParent()->getObserver(j),i);
+    observer->getParent()->setObserver(observer,j);
+    model->removeRows(0,observer->getParent()->getNumberOfObservers(),index.parent());
+    for(int i=0; i<observer->getParent()->getNumberOfObservers(); i++)
+      model->createObserverItem(observer->getParent()->getObserver(i),index.parent());
+    elementList->setCurrentIndex(index.sibling(j,0));
+  }
 
   void MainWindow::saveElementAs() {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
@@ -1361,8 +1511,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadParameter(EmbedItemData *parent, Parameter *param) {
-    DOMElement *ele = static_cast<DOMElement*>(doc->importNode(param->getXMLElement(),true));
     setProjectChanged(true);
+    DOMElement *ele = static_cast<DOMElement*>(doc->importNode(param->getXMLElement(),true));
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     if(parameterBuffer.second) {
       parameterBuffer.first = NULL;
@@ -1385,6 +1535,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadFrame(Element *parent, Element *element) {
+    setProjectChanged(true);
     DOMElement *ele = NULL;
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     if(element) {
@@ -1407,7 +1558,6 @@ namespace MBSimGUI {
       else
         return;
     }
-    setProjectChanged(true);
     QModelIndex index = elementList->selectionModel()->currentIndex();
     parent->getXMLFrames()->insertBefore(ele, NULL);
     Frame *frame = Embed<Frame>::createAndInit(ele);
@@ -1419,6 +1569,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadContour(Element *parent, Element *element) {
+    setProjectChanged(true);
     DOMElement *ele = NULL;
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     if(element) {
@@ -1441,7 +1592,6 @@ namespace MBSimGUI {
       else
         return;
     }
-    setProjectChanged(true);
     QModelIndex index = elementList->selectionModel()->currentIndex();
     parent->getXMLContours()->insertBefore(ele, NULL);
     Contour *contour = Embed<Contour>::createAndInit(ele);
@@ -1453,6 +1603,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadGroup(Element *parent, Element *element) {
+    setProjectChanged(true);
     DOMElement *ele = NULL;
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     if(element) {
@@ -1475,7 +1626,6 @@ namespace MBSimGUI {
       else
         return;
     }
-    setProjectChanged(true);
     QModelIndex index = elementList->selectionModel()->currentIndex();
     parent->getXMLGroups()->insertBefore(ele, NULL);
     Group *group = Embed<Group>::createAndInit(ele);
@@ -1487,6 +1637,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadObject(Element *parent, Element *element) {
+    setProjectChanged(true);
     DOMElement *ele = NULL;
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     if(element) {
@@ -1509,7 +1660,6 @@ namespace MBSimGUI {
       else
         return;
     }
-    setProjectChanged(true);
     QModelIndex index = elementList->selectionModel()->currentIndex();
     parent->getXMLObjects()->insertBefore(ele, NULL);
     Object *object = Embed<Object>::createAndInit(ele);
@@ -1521,6 +1671,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadLink(Element *parent, Element *element) {
+    setProjectChanged(true);
     DOMElement *ele = NULL;
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     if(element) {
@@ -1543,7 +1694,6 @@ namespace MBSimGUI {
       else
         return;
     }
-    setProjectChanged(true);
     QModelIndex index = elementList->selectionModel()->currentIndex();
     parent->getXMLLinks()->insertBefore(ele, NULL);
     Link *link = Embed<Link>::createAndInit(ele);
@@ -1555,6 +1705,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadConstraint(Element *parent, Element *element) {
+    setProjectChanged(true);
     DOMElement *ele = NULL;
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     if(element) {
@@ -1577,7 +1728,6 @@ namespace MBSimGUI {
       else
         return;
     }
-    setProjectChanged(true);
     QModelIndex index = elementList->selectionModel()->currentIndex();
     parent->getXMLConstraints()->insertBefore(ele, NULL);
     Constraint *constraint = Embed<Constraint>::createAndInit(ele);
@@ -1589,6 +1739,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadObserver(Element *parent, Element *element) {
+    setProjectChanged(true);
     DOMElement *ele = NULL;
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     if(element) {
@@ -1611,7 +1762,6 @@ namespace MBSimGUI {
       else
         return;
     }
-    setProjectChanged(true);
     QModelIndex index = elementList->selectionModel()->currentIndex();
     parent->getXMLObservers()->insertBefore(ele, NULL);
     Observer *observer = Embed<Observer>::createAndInit(ele);

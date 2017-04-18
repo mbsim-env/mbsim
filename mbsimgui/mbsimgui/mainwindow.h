@@ -98,7 +98,15 @@ namespace MBSimGUI {
       bool maybeSave();
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
+      void move(bool up);
       void moveParameter(bool up);
+      void moveFrame(bool up);
+      void moveContour(bool up);
+      void moveGroup(bool up);
+      void moveObject(bool up);
+      void moveLink(bool up);
+      void moveConstraint(bool up);
+      void moveObserver(bool up);
 
     public:
       MainWindow(QStringList &arg);
@@ -168,17 +176,31 @@ namespace MBSimGUI {
       void redo();
       void removeElement();
       void removeParameter();
-      void copy(bool cut);
+      void copy(bool cut=false);
       void cut() { copy(true); }
       void paste();
-      void moveUp();
-      void moveDown();
+      void moveUp() { move(true); }
+      void moveDown() { move(false); }
       void copyElement(bool cut=false);
       void cutElement() { copyElement(true); }
       void copyParameter(bool cut=false);
       void cutParameter() { copyParameter(true); }
       void moveUpParameter() { moveParameter(true); }
       void moveDownParameter() { moveParameter(false); }
+      void moveUpFrame() { moveFrame(true); }
+      void moveDownFrame() { moveFrame(false); }
+      void moveUpContour() { moveContour(true); }
+      void moveDownContour() { moveContour(false); }
+      void moveUpGroup() { moveGroup(true); }
+      void moveDownGroup() { moveGroup(false); }
+      void moveUpObject() { moveObject(true); }
+      void moveDownObject() { moveObject(false); }
+      void moveUpLink() { moveLink(true); }
+      void moveDownLink() { moveLink(false); }
+      void moveUpConstraint() { moveConstraint(true); }
+      void moveDownConstraint() { moveConstraint(false); }
+      void moveUpObserver() { moveObserver(true); }
+      void moveDownObserver() { moveObserver(false); }
       void saveElementAs();
       void projectSettings();
 

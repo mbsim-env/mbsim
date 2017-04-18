@@ -27,6 +27,7 @@ namespace MBSimGUI {
   class Constraint : public Element {
     public:
       Constraint(const QString &str="") : Element(str) { }
+      QMenu* createContextMenu() { return new ConstraintContextMenu(this); }
   };
 
   class MechanicalConstraint : public Constraint {

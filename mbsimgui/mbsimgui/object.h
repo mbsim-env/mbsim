@@ -28,6 +28,7 @@ namespace MBSimGUI {
     public:
       Object(const QString &str="");
       ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
+      QMenu* createContextMenu() { return new ObjectContextMenu(this); }
   };
 
 }

@@ -64,6 +64,90 @@ namespace MBSimGUI {
     }
   }
 
+  FrameContextMenu::FrameContextMenu(Frame *frame, QWidget *parent, bool removable) : ElementContextMenu(frame,parent,removable) {
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(frame->getParent()->getIndexOfFrame(frame)>1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpFrame()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(frame->getParent()->getIndexOfFrame(frame)<frame->getParent()->getNumberOfFrames()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownFrame()));
+    addAction(action);
+  }
+
+  ContourContextMenu::ContourContextMenu(Contour *contour, QWidget *parent, bool removable) : ElementContextMenu(contour,parent,removable) {
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(contour->getParent()->getIndexOfContour(contour)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpContour()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(contour->getParent()->getIndexOfContour(contour)<contour->getParent()->getNumberOfContours()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownContour()));
+    addAction(action);
+  }
+
+  GroupContextMenu::GroupContextMenu(Group *group, QWidget *parent, bool removable) : ElementContextMenu(group,parent,removable) {
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(group->getParent()->getIndexOfGroup(group)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpGroup()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(group->getParent()->getIndexOfGroup(group)<group->getParent()->getNumberOfGroups()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownGroup()));
+    addAction(action);
+  }
+
+  ObjectContextMenu::ObjectContextMenu(Object *object, QWidget *parent, bool removable) : ElementContextMenu(object,parent,removable) {
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(object->getParent()->getIndexOfObject(object)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpObject()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(object->getParent()->getIndexOfObject(object)<object->getParent()->getNumberOfObjects()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownObject()));
+    addAction(action);
+  }
+
+  LinkContextMenu::LinkContextMenu(Link *link, QWidget *parent, bool removable) : ElementContextMenu(link,parent,removable) {
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(link->getParent()->getIndexOfLink(link)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpLink()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(link->getParent()->getIndexOfLink(link)<link->getParent()->getNumberOfLinks()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownLink()));
+    addAction(action);
+  }
+
+  ConstraintContextMenu::ConstraintContextMenu(Constraint *constraint, QWidget *parent, bool removable) : ElementContextMenu(constraint,parent,removable) {
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpConstraint()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)<constraint->getParent()->getNumberOfConstraints()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownConstraint()));
+    addAction(action);
+  }
+
+  ObserverContextMenu::ObserverContextMenu(Observer *observer, QWidget *parent, bool removable) : ElementContextMenu(observer,parent,removable) {
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(observer->getParent()->getIndexOfObserver(observer)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpObserver()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(observer->getParent()->getIndexOfObserver(observer)<observer->getParent()->getNumberOfObservers()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownObserver()));
+    addAction(action);
+  }
+
   FramesContextMenu::FramesContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
     QAction *action = new QAction("Paste", this);
     action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));

@@ -31,10 +31,14 @@ namespace MBSimGUI {
       virtual Element * getChildByContainerAndName(const QString &container, const QString &name) const;
       int getNumberOfFrames() {return frame.size();}
       int getNumberOfContours() {return contour.size();}
+      int getIndexOfFrame(Frame *frame);
+      int getIndexOfContour(Contour *contour);
       Frame* getFrame(int i) const {return frame[i];}
       Contour* getContour(int i) const {return contour[i];}
       Frame* getFrame(const QString &name) const;
       Contour* getContour(const QString &name) const;
+      void setFrame(Frame *frame_, int i) { frame[i] = frame_; }
+      void setContour(Contour *contour_, int i) { contour[i] = contour_; }
       void addFrame(Frame *frame);
       void addContour(Contour *contour);
       void removeElement(Element* element);

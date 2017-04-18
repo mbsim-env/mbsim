@@ -29,6 +29,7 @@ namespace MBSimGUI {
       Contour(const QString &str="") : Element(str) { }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new ContourPropertyDialog(this);}
+      QMenu* createContextMenu() { return new ContourContextMenu(this); }
   };
 
   class RigidContour : public Contour {
