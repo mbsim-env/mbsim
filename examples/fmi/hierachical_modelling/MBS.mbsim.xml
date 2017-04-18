@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
     xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
-  <plotFeatureRecursive feature="+generalizedRelativePosition"/>
-  <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
-  <plotFeatureRecursive feature="+generalizedForce"/>
-  <plotFeatureRecursive feature="+generalizedPosition"/>
-  <plotFeatureRecursive feature="+generalizedVelocity"/>
-  <plotFeatureRecursive feature="+deflection"/>
-  <position>[0;0;0]</position><!-- dummy -->
-  <orientation>identHalf*2</orientation><!-- dummy -->
-  <frames/>
+  <frames>
+    <pv:Embed count="2" counterName="numHG">
+    <FixedRelativeFrame name="Q{numHG}" xmlns="http://www.mbsim-env.de/MBSim">
+      <relativePosition unit="mm">
+        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <ele>rHG(numHG)*1000</ele><ele>0</ele><ele>0</ele>
+        </xmlVector>
+      </relativePosition>
+      <relativeOrientation><pv:aboutZ unit="degree">-alphaHG(numHG)*180/pi</pv:aboutZ></relativeOrientation>
+    </FixedRelativeFrame>
+    </pv:Embed>
+  </frames>
   <contours/>
   <groups>
     <pv:Embed href="Hauptgruppe.xml" count="2" counterName="numHG"/>

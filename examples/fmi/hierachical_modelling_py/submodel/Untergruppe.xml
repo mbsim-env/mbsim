@@ -2,14 +2,7 @@
 <Group name="Untergruppe" xmlns="http://www.mbsim-env.de/MBSim"
     xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
     xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-  <position>[(1/math.tan(2))/(1/math.tan(2)),0*555,0]</position><!-- use "cot" to test a octave internal .m file; use "det" to test a octave internal .oct file -->
-  <orientation>
-    <pv:cardan unit="degree">
-      <pv:alpha>0</pv:alpha>
-      <pv:beta>0</pv:beta>
-      <pv:gamma>-alphaUG*180/pi</pv:gamma>
-    </pv:cardan>
-  </orientation>
+  <frameOfReference ref="../Frame[Q]"/>
   <frames/>
   <contours/>
   <groups/>

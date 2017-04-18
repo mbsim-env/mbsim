@@ -2,14 +2,7 @@
 <Group name="Untergruppe" xmlns="http://www.mbsim-env.de/MBSim"
     xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
     xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-  <position>[cot(2)/cot(2);0*det([4,5;6,3]);0]</position><!-- use "cot" to test a octave internal .m file; use "det" to test a octave internal .oct file -->
-  <orientation>
-    <pv:cardan unit="degree">
-      <pv:alpha>0</pv:alpha>
-      <pv:beta>0</pv:beta>
-      <pv:gamma>-alphaUG*180/pi</pv:gamma>
-    </pv:cardan>
-  </orientation>
+  <frameOfReference ref="../Frame[Q]"/>
   <frames/>
   <contours/>
   <groups/>
@@ -77,7 +70,6 @@
       </openMBVRigidBody>
     </RigidBody>
     <RigidBody name="Box2">
-      <plotFeature feature="-stateDerivative"/>
       <generalizedInitialPosition>[l01 + l02 + h1 + h2/2]</generalizedInitialPosition>
       <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>
