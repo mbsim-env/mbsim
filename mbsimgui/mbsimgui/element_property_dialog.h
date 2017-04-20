@@ -81,6 +81,7 @@ namespace MBSimGUI {
   class ContactObserver;
   class FrameObserver;
   class RigidBodyObserver;
+  class RigidBodyGroupObserver;
   class Signal;
   class Sensor;
   class GeneralizedCoordinateSensor;
@@ -686,6 +687,16 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *body, *weight, *jointForce, *jointMoment, *axisOfRotation;
+  };
+
+  class RigidBodyGroupObserverPropertyDialog : public ObserverPropertyDialog {
+
+    public:
+      RigidBodyGroupObserverPropertyDialog(RigidBodyGroupObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+    protected:
+      ExtWidget *bodies, *position, *velocity, *acceleration, *weight, *momentum, *angularMomentum, *derivativeOfMomentum, *derivativeOfAngularMomentum;
   };
 
   class SignalPropertyDialog: public LinkPropertyDialog {

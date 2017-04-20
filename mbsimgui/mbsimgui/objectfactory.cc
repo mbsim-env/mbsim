@@ -249,6 +249,8 @@ namespace MBSimGUI {
       return new FrameObserver;
     if(E(element)->getTagName()==MBSIM%"RigidBodyObserver")
       return new RigidBodyObserver;
+    if(E(element)->getTagName()==MBSIM%"RigidBodyGroupObserver")
+      return new RigidBodyGroupObserver;
     return 0;
   }  
 

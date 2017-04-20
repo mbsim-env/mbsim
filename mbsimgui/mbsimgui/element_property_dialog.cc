@@ -62,6 +62,7 @@ namespace MBSimGUI {
     public:
       GeneralizedGearConstraintWidgetFactory(const FQN &xmlName_, Element* element_, QWidget *parent_=0) : xmlName(xmlName_), element(element_), parent(parent_) { }
       QWidget* createWidget(int i=0);
+      FQN getXMLName(int i=0) const { return xmlName; }
     protected:
       FQN xmlName;
       Element *element;
@@ -69,13 +70,14 @@ namespace MBSimGUI {
   };
 
   QWidget* GeneralizedGearConstraintWidgetFactory::createWidget(int i) {
-    return new ExtWidget("name",new GearInputReferenceWidget(element,0),false,false,xmlName);
+    return new GearInputReferenceWidget(element,0);
   }
 
   class RigidBodyOfReferenceWidgetFactory : public WidgetFactory {
     public:
       RigidBodyOfReferenceWidgetFactory(const FQN &xmlName_, Element* element_, QWidget *parent_=0) : xmlName(xmlName_), element(element_), parent(parent_) { }
       QWidget* createWidget(int i=0);
+      FQN getXMLName(int i=0) const { return xmlName; }
     protected:
       FQN xmlName;
       Element *element;
@@ -83,7 +85,7 @@ namespace MBSimGUI {
   };
 
   QWidget* RigidBodyOfReferenceWidgetFactory::createWidget(int i) {
-    QWidget *widget = new ExtWidget("name",new RigidBodyOfReferenceWidget(element,0),false,false,xmlName);
+    QWidget *widget = new RigidBodyOfReferenceWidget(element,0);
     if(parent)
       QObject::connect(widget,SIGNAL(bodyChanged()),parent,SLOT(updateWidget()));
     return widget;
@@ -1114,10 +1116,10 @@ namespace MBSimGUI {
     dependentBody = new ExtWidget("Dependent rigid body",new RigidBodyOfReferenceWidget(constraint,0),false,false,MBSIM%"dependentRigidBody");
     addToTab("General", dependentBody);
 
-    independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new GeneralizedGearConstraintWidgetFactory(MBSIM%"independentRigidBody",constraint,0),"Independent body",0,1),false,false,"");
+    independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new GeneralizedGearConstraintWidgetFactory(MBSIM%"independentRigidBody",constraint,0),"Independent body",0,2),false,false,"");
     addToTab("General",independentBodies);
 
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
+//    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   DOMElement* GeneralizedGearConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1297,11 +1299,11 @@ namespace MBSimGUI {
     addTab("Visualisation",2);
     addTab("Initial conditions",2);
 
-    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"dependentRigidBodyOnFirstSide",constraint,this),"Body",0,1),false,false,"");
+    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"dependentRigidBodyOnFirstSide",constraint,this),"Body",0,2),false,false,"");
     addToTab("General",dependentBodiesFirstSide);
     connect(dependentBodiesFirstSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
-    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"dependentRigidBodyOnSecondSide",constraint,this),"Body",0,1),false,false,"");
+    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"dependentRigidBodyOnSecondSide",constraint,this),"Body",0,2),false,false,"");
     addToTab("General",dependentBodiesSecondSide);
     connect(dependentBodiesSecondSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
@@ -1742,7 +1744,7 @@ namespace MBSimGUI {
     gearOutput = new ExtWidget("Gear output",new RigidBodyOfReferenceWidget(link,0),false,false,MBSIM%"gearOutput");
     addToTab("General",gearOutput);
 
-    gearInput = new ExtWidget("Gear inputs",new ListWidget(new GeneralizedGearConstraintWidgetFactory(MBSIM%"gearInput",link,0),"Gear input",0,1),false,false,"");
+    gearInput = new ExtWidget("Gear inputs",new ListWidget(new GeneralizedGearConstraintWidgetFactory(MBSIM%"gearInput",link,0),"Gear input",0,2),false,false,"");
     addToTab("General",gearInput);
 
     function = new ExtWidget("Generalized force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
@@ -2128,6 +2130,31 @@ namespace MBSimGUI {
     jointForce->writeXMLFile(element->getXMLElement(),ref);
     jointMoment->writeXMLFile(element->getXMLElement(),ref);
     axisOfRotation->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
+  RigidBodyGroupObserverPropertyDialog::RigidBodyGroupObserverPropertyDialog(RigidBodyGroupObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
+
+    addTab("Visualisation",1);
+
+    bodies = new ExtWidget("Rigid bodies",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"rigidBody",observer,0),"Rigid body",0,2),false,false,"");
+    addToTab("General", bodies);
+
+    weight = new ExtWidget("OpenMBV weight arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVWeight");
+    addToTab("Visualisation",weight);
+  }
+
+  DOMElement* RigidBodyGroupObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
+    bodies->initializeUsingXML(element->getXMLElement());
+    weight->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RigidBodyGroupObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    bodies->writeXMLFile(element->getXMLElement(),ref);
+    weight->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 

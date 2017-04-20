@@ -521,6 +521,9 @@ namespace MBSimGUI {
     action = new QAction("Add relative kinematics observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRelativeKinematicsObserver()));
     addAction(action);
+    action = new QAction("Add rigid body group observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodyGroupObserver()));
+    addAction(action);
   }
 
   void ObserversContextMenu::paste() {
@@ -557,6 +560,10 @@ namespace MBSimGUI {
 
   void ObserversContextMenu::addRelativeKinematicsObserver() {
     mw->addObserver(new RelativeKinematicsObserver("RelativeKinematicsObserver"), element);
+  }
+
+  void ObserversContextMenu::addRigidBodyGroupObserver() {
+    mw->addObserver(new RigidBodyGroupObserver("RigidBodyGroupObserver"), element);
   }
 
   SignalsContextMenu::SignalsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

@@ -318,21 +318,42 @@ namespace MBSimGUI {
   DOMElement* ListWidget::initializeUsingXML(DOMElement *element) {
     list->blockSignals(true);
     spinBox->blockSignals(true);
-    DOMElement *e=(mode==0)?element->getFirstElementChild():element;
-    while(e) {
-      addElements(1,false);
-      dynamic_cast<WidgetInterface*>(getWidget(getSize()-1))->initializeUsingXML(e);
-      e=e->getNextElementSibling();
+    if(mode<=1) {
+      DOMElement *e=(mode==0)?element->getFirstElementChild():element;
+      while(e) {
+        addElements(1,false);
+        dynamic_cast<WidgetInterface*>(getWidget(getSize()-1))->initializeUsingXML(e);
+        e=e->getNextElementSibling();
+      }
+      spinBox->setValue(getSize());
     }
-    spinBox->setValue(getSize());
+    else {
+      DOMElement *e=E(element)->getFirstElementChildNamed(factory->getXMLName());
+      while(e and E(e)->getTagName()==factory->getXMLName()) {
+        addElements(1,false);
+        dynamic_cast<WidgetInterface*>(getWidget(getSize()-1))->initializeUsingXML(e);
+        e=e->getNextElementSibling();
+      }
+      spinBox->setValue(getSize());
+    }
     list->blockSignals(false);
     spinBox->blockSignals(false);
     return element;
   }
 
   DOMElement* ListWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    for(unsigned int i=0; i<getSize(); i++)
-      dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent);
+    if(mode<=1) {
+      for(unsigned int i=0; i<getSize(); i++)
+        dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent);
+    }
+    else {
+      DOMDocument *doc=parent->getOwnerDocument();
+      for(unsigned int i=0; i<getSize(); i++) {
+        DOMElement *ele0 = D(doc)->createElement(factory->getXMLName());
+        dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(ele0);
+        parent->insertBefore(ele0, NULL);
+      }
+    }
     return 0;
   }
 
