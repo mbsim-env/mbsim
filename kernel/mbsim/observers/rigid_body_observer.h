@@ -41,7 +41,7 @@ namespace MBSim {
 
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
-      virtual void plot();
+      void plot();
 
      /** \brief Visualize the weight */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVWeight, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {

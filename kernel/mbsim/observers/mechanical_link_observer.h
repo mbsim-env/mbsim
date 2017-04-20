@@ -38,9 +38,10 @@ namespace MBSim {
     public:
       MechanicalLinkObserver(const std::string &name="");
       void setMechanicalLink(MechanicalLink *link_) { link = link_; } 
+
       void init(InitStage stage);
-      virtual void plot();
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void plot();
+      void initializeUsingXML(xercesc::DOMElement *element);
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);

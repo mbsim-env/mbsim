@@ -46,9 +46,10 @@ namespace MBSim {
 
     public:
       SingleContactObserver(const std::string &name="");
+
       void init(InitStage stage);
-      virtual void plot();
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void plot();
+      void initializeUsingXML(xercesc::DOMElement *element);
 
       /** 
        * \brief Draw two OpenMBV::Frame's of size 'size' at the contact points if 'enable'==true, otherwise the object is available but disabled.
@@ -75,6 +76,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         contactArrow=ombv.createOpenMBV(); 
       }
+
       void setOpenMBVNormalForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { contactArrow=arrow; }
 
       /** 
@@ -88,6 +90,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         frictionArrow=ombv.createOpenMBV(); 
       }
+
       void setOpenMBVTangentialForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { frictionArrow=arrow; }
   };
 

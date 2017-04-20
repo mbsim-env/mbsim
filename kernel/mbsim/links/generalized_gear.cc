@@ -59,10 +59,8 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if (saved_gearOutput!="")
         setGearOutput(getByPath<RigidBody>(saved_gearOutput));
-      if (saved_gearInput.size()>0) {
-        for (unsigned int i=0; i<saved_gearInput.size(); i++)
-          body.push_back(getByPath<RigidBody>(saved_gearInput[i]));
-      }
+      for (unsigned int i=0; i<saved_gearInput.size(); i++)
+        body.push_back(getByPath<RigidBody>(saved_gearInput[i]));
       if(not body[0])
         THROW_MBSIMERROR("No gear output given!");
       if(body.size()==1)
@@ -87,8 +85,6 @@ namespace MBSim {
     RigidBodyLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"gearOutput");
     saved_gearOutput=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"gearOutput");
-    saved_gearOutput = E(e)->getAttribute("ref");
     e=e->getNextElementSibling();
     while(e && E(e)->getTagName()==MBSIM%"gearInput") {
       saved_gearInput.push_back(E(e)->getAttribute("ref"));
