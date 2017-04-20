@@ -28,57 +28,56 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  RigidBodyGroupObserver::RigidBodyGroupObserver(const std::string &name) : Observer(name), ref(0) {
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBodyGroupObserver)
+
+  RigidBodyGroupObserver::RigidBodyGroupObserver(const std::string &name) : Observer(name) {
   }
 
   void RigidBodyGroupObserver::init(InitStage stage) {
-    if(stage==plotting) {
+    if(stage==resolveXMLPath) {
+      for (unsigned int i=0; i<saved_body.size(); i++)
+        body.push_back(getByPath<RigidBody>(saved_body[i]));
       Observer::init(stage);
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[13464197197848110344ULL]==enabled) {
-          if(openMBVPosition) {
-            openMBVPosition->setName("Position");
-            getOpenMBVGrp()->addObject(openMBVPosition);
-          }
-          if(openMBVVelocity) {
-            openMBVVelocity->setName("Velocity");
-            getOpenMBVGrp()->addObject(openMBVVelocity);
-          }
-          if(openMBVAcceleration) {
-            openMBVAcceleration->setName("Acceleration");
-            getOpenMBVGrp()->addObject(openMBVAcceleration);
-          }
-          if(openMBVAngularVelocity) {
-            openMBVAngularVelocity->setName("AngularVelocity");
-            getOpenMBVGrp()->addObject(openMBVAngularVelocity);
-          }
-          if(openMBVAngularAcceleration) {
-            openMBVAngularAcceleration->setName("AngularAcceleration");
-            getOpenMBVGrp()->addObject(openMBVAngularAcceleration);
-          }
-          if(openMBVWeight) {
-            openMBVWeight->setName("Weight");
-            getOpenMBVGrp()->addObject(openMBVWeight);
-          }
-          if(openMBVMomentum) {
-            openMBVMomentum->setName("Momentum");
-            getOpenMBVGrp()->addObject(openMBVMomentum);
-          }
-          if(openMBVAngularMomentum) {
-            openMBVAngularMomentum->setName("AngularMomentum");
-            getOpenMBVGrp()->addObject(openMBVAngularMomentum);
-          }
-          if(openMBVDerivativeOfMomentum) {
-            openMBVDerivativeOfMomentum->setName("DerivativeOfMomentum");
-            getOpenMBVGrp()->addObject(openMBVDerivativeOfMomentum);
-          }
-          if(openMBVDerivativeOfAngularMomentum) {
-            openMBVDerivativeOfAngularMomentum->setName("DerivativeOfAngularMomentum");
-            getOpenMBVGrp()->addObject(openMBVDerivativeOfAngularMomentum);
-          }
+    }
+    else if(stage==plotting) {
+      Observer::init(stage);
+      if(plotFeature[13464197197848110344ULL]==enabled) {
+        if(openMBVPosition) {
+          openMBVPosition->setName("Position");
+          getOpenMBVGrp()->addObject(openMBVPosition);
+        }
+        if(openMBVVelocity) {
+          openMBVVelocity->setName("Velocity");
+          getOpenMBVGrp()->addObject(openMBVVelocity);
+        }
+        if(openMBVAcceleration) {
+          openMBVAcceleration->setName("Acceleration");
+          getOpenMBVGrp()->addObject(openMBVAcceleration);
+        }
+        if(openMBVWeight) {
+          openMBVWeight->setName("Weight");
+          getOpenMBVGrp()->addObject(openMBVWeight);
+        }
+        if(openMBVMomentum) {
+          openMBVMomentum->setName("Momentum");
+          getOpenMBVGrp()->addObject(openMBVMomentum);
+        }
+        if(openMBVAngularMomentum) {
+          openMBVAngularMomentum->setName("AngularMomentum");
+          getOpenMBVGrp()->addObject(openMBVAngularMomentum);
+        }
+        if(openMBVDerivativeOfMomentum) {
+          openMBVDerivativeOfMomentum->setName("DerivativeOfMomentum");
+          getOpenMBVGrp()->addObject(openMBVDerivativeOfMomentum);
+        }
+        if(openMBVDerivativeOfAngularMomentum) {
+          openMBVDerivativeOfAngularMomentum->setName("DerivativeOfAngularMomentum");
+          getOpenMBVGrp()->addObject(openMBVDerivativeOfAngularMomentum);
         }
       }
     }
@@ -87,7 +86,7 @@ namespace MBSim {
   }
 
   void RigidBodyGroupObserver::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
+    if(plotFeature[13464197197848110344ULL]==enabled) {
       double m = 0;
       for(unsigned int i=0; i<body.size(); i++) {
         m += body[i]->getMass();
@@ -104,9 +103,12 @@ namespace MBSim {
       Vec3 rOS = mpos/m;
       Vec3 vS = mvel/m;
       Vec3 aS = macc/m;
-      Vec3 rOR = ref?ref->evalPosition():rOS;
-      Vec3 vR = ref?ref->evalVelocity():vS;
-      Vec3 aR = ref?ref->evalAcceleration():aS;
+      Vec rOR = rOS;
+      Vec vR = vS;
+      Vec aR = aS;
+//      Vec3 rOR = ref?ref->evalPosition():rOS;
+//      Vec3 vR = ref?ref->evalVelocity():vS;
+//      Vec3 aR = ref?ref->evalAcceleration():aS;
       for(unsigned int i=0; i<body.size(); i++) {
         SqrMat3 AIK = body[i]->getFrame("C")->getOrientation();
         Vec3 rRSi = body[i]->getFrame("C")->getPosition() - rOR;
@@ -121,69 +123,162 @@ namespace MBSim {
         Ld += WThetaS*psii + crossProduct(omi,WThetaS*omi) + crossProduct(rRSi,mi*aSi);
       }
       Vec3 G = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if(openMBVWeight) {
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(rOS(0));
-          data.push_back(rOS(1));
-          data.push_back(rOS(2));
-          data.push_back(G(0));
-          data.push_back(G(1));
-          data.push_back(G(2));
-          data.push_back(0.5);
-          openMBVWeight->append(data);
-        }
-        if(openMBVMomentum) {
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(rOS(0));
-          data.push_back(rOS(1));
-          data.push_back(rOS(2));
-          data.push_back(p(0));
-          data.push_back(p(1));
-          data.push_back(p(2));
-          data.push_back(0.5);
-          openMBVMomentum->append(data);
-        }
-        if(openMBVAngularMomentum) {
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(rOR(0));
-          data.push_back(rOR(1));
-          data.push_back(rOR(2));
-          data.push_back(L(0));
-          data.push_back(L(1));
-          data.push_back(L(2));
-          data.push_back(0.5);
-          openMBVAngularMomentum->append(data);
-        }
-        if(openMBVDerivativeOfMomentum) {
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(rOS(0));
-          data.push_back(rOS(1));
-          data.push_back(rOS(2));
-          data.push_back(pd(0));
-          data.push_back(pd(1));
-          data.push_back(pd(2));
-          data.push_back(0.5);
-          openMBVDerivativeOfMomentum->append(data);
-        }
-        if(openMBVDerivativeOfAngularMomentum) {
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(rOR(0));
-          data.push_back(rOR(1));
-          data.push_back(rOR(2));
-          data.push_back(Ld(0));
-          data.push_back(Ld(1));
-          data.push_back(Ld(2));
-          data.push_back(0.5);
-          openMBVDerivativeOfAngularMomentum->append(data);
-        }
+      if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(0);
+        data.push_back(0);
+        data.push_back(0);
+        data.push_back(rOR(0));
+        data.push_back(rOR(1));
+        data.push_back(rOR(2));
+        data.push_back(0.5);
+        openMBVPosition->append(data);
       }
-      Observer::plot();
+      if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(rOR(0));
+        data.push_back(rOR(1));
+        data.push_back(rOR(2));
+        data.push_back(vR(0));
+        data.push_back(vR(1));
+        data.push_back(vR(2));
+        data.push_back(0.5);
+        openMBVVelocity->append(data);
+      }
+      if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(rOR(0));
+        data.push_back(rOR(1));
+        data.push_back(rOR(2));
+        data.push_back(aR(0));
+        data.push_back(aR(1));
+        data.push_back(aR(2));
+        data.push_back(0.5);
+        openMBVAcceleration->append(data);
+      }
+      if(openMBVWeight) {
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(rOS(0));
+        data.push_back(rOS(1));
+        data.push_back(rOS(2));
+        data.push_back(G(0));
+        data.push_back(G(1));
+        data.push_back(G(2));
+        data.push_back(0.5);
+        openMBVWeight->append(data);
+      }
+      if(openMBVMomentum) {
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(rOS(0));
+        data.push_back(rOS(1));
+        data.push_back(rOS(2));
+        data.push_back(p(0));
+        data.push_back(p(1));
+        data.push_back(p(2));
+        data.push_back(0.5);
+        openMBVMomentum->append(data);
+      }
+      if(openMBVAngularMomentum) {
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(rOR(0));
+        data.push_back(rOR(1));
+        data.push_back(rOR(2));
+        data.push_back(L(0));
+        data.push_back(L(1));
+        data.push_back(L(2));
+        data.push_back(0.5);
+        openMBVAngularMomentum->append(data);
+      }
+      if(openMBVDerivativeOfMomentum) {
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(rOS(0));
+        data.push_back(rOS(1));
+        data.push_back(rOS(2));
+        data.push_back(pd(0));
+        data.push_back(pd(1));
+        data.push_back(pd(2));
+        data.push_back(0.5);
+        openMBVDerivativeOfMomentum->append(data);
+      }
+      if(openMBVDerivativeOfAngularMomentum) {
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(rOR(0));
+        data.push_back(rOR(1));
+        data.push_back(rOR(2));
+        data.push_back(Ld(0));
+        data.push_back(Ld(1));
+        data.push_back(Ld(2));
+        data.push_back(0.5);
+        openMBVDerivativeOfAngularMomentum->append(data);
+      }
+    }
+    Observer::plot();
+  }
+
+  void RigidBodyGroupObserver::initializeUsingXML(DOMElement *element) {
+    Observer::initializeUsingXML(element);
+
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBody");
+    while(e && E(e)->getTagName()==MBSIM%"rigidBody") {
+      saved_body.push_back(E(e)->getAttribute("ref"));
+      e=e->getNextElementSibling();
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
+    if(e) {
+      OpenMBVArrow ombv;
+      openMBVPosition=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
+    if(e) {
+      OpenMBVArrow ombv;
+      openMBVVelocity=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
+    if(e) {
+      OpenMBVArrow ombv;
+      openMBVAcceleration=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
+    if(e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      openMBVWeight=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMomentum");
+    if(e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      openMBVMomentum=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularMomentum");
+    if(e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      openMBVAngularMomentum=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivatveOfMomentum");
+    if(e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      openMBVDerivativeOfMomentum=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivativeOfAngularMomentum");
+    if(e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      openMBVDerivativeOfAngularMomentum=ombv.createOpenMBV(e);
     }
   }
+
 }
