@@ -168,7 +168,7 @@ namespace MBSim {
         data.push_back(G(0));
         data.push_back(G(1));
         data.push_back(G(2));
-        data.push_back(0.5);
+        data.push_back(1.0);
         openMBVWeight->append(data);
       }
       if(openMBVMomentum) {
@@ -180,7 +180,7 @@ namespace MBSim {
         data.push_back(p(0));
         data.push_back(p(1));
         data.push_back(p(2));
-        data.push_back(0.5);
+        data.push_back(1.0);
         openMBVMomentum->append(data);
       }
       if(openMBVAngularMomentum) {
@@ -192,7 +192,7 @@ namespace MBSim {
         data.push_back(L(0));
         data.push_back(L(1));
         data.push_back(L(2));
-        data.push_back(0.5);
+        data.push_back(1.0);
         openMBVAngularMomentum->append(data);
       }
       if(openMBVDerivativeOfMomentum) {
@@ -204,7 +204,7 @@ namespace MBSim {
         data.push_back(pd(0));
         data.push_back(pd(1));
         data.push_back(pd(2));
-        data.push_back(0.5);
+        data.push_back(1.0);
         openMBVDerivativeOfMomentum->append(data);
       }
       if(openMBVDerivativeOfAngularMomentum) {
@@ -216,7 +216,7 @@ namespace MBSim {
         data.push_back(Ld(0));
         data.push_back(Ld(1));
         data.push_back(Ld(2));
-        data.push_back(0.5);
+        data.push_back(1.0);
         openMBVDerivativeOfAngularMomentum->append(data);
       }
     }
