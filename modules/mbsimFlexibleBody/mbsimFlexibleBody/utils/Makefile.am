@@ -14,5 +14,4 @@ utilsinclude_HEADERS = contact_utils.h\
 		       angles.h\
 		       cardan.h\
 		       revcardan.h\
-		       openmbv_utils.h\
-		       cell_array.h
+		       openmbv_utils.h

@@ -26,7 +26,6 @@
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/index.h"
 #include "mbsimFlexibleBody/utils/openmbv_utils.h"
-#include "mbsimFlexibleBody/utils/cell_array.h"
 
 namespace MBSim {
   class Frame;
@@ -34,6 +33,78 @@ namespace MBSim {
 }
 
 namespace MBSimFlexibleBody {
+
+  class ErrorType {
+    public:
+      ErrorType() {
+        throw std::runtime_error("Impossible type.");
+      }
+  };
+
+  template<typename Dep>
+    struct BaseType {
+      typedef ErrorType type;
+    };
+
+  template<>
+    struct BaseType<fmatvec::Vec3> {
+      typedef fmatvec::VecV type;
+      static int size;
+      static fmatvec::Vec3 getEle(xercesc::DOMElement *element) { return MBSim::Element::getVec3(element); }
+      static fmatvec::VecV getMat(xercesc::DOMElement *element) { return MBSim::Element::getVec(element); }
+    };
+
+  int BaseType<fmatvec::Vec3>::size = 3;
+
+  template<>
+    struct BaseType<fmatvec::Vector<fmatvec::Fixed<6>, double> > {
+      typedef fmatvec::VecV type;
+      static int size;
+      static fmatvec::Vector<fmatvec::Fixed<6>, double> getEle(xercesc::DOMElement *element) { return MBSim::Element::getVec(element); }
+      static fmatvec::VecV getMat(xercesc::DOMElement *element) { return MBSim::Element::getVec(element); }
+    };
+
+  int BaseType<fmatvec::Vector<fmatvec::Fixed<6>, double> >::size = 6;
+
+  template<>
+    struct BaseType<fmatvec::SqrMat3> {
+      typedef fmatvec::MatVx3 type;
+      static int size;
+      static fmatvec::SqrMat3 getEle(xercesc::DOMElement *element) { return MBSim::Element::getSqrMat3(element); }
+      static fmatvec::MatVx3 getMat(xercesc::DOMElement *element) { return MBSim::Element::getMat(element); }
+    };
+
+  int BaseType<fmatvec::SqrMat3>::size = 3;
+
+  template<>
+    struct BaseType<fmatvec::SqrMatV> {
+      typedef fmatvec::MatV type;
+      static int size;
+      static fmatvec::SqrMatV getEle(xercesc::DOMElement *element) { return MBSim::Element::getSqrMat(element); }
+      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBSim::Element::getMat(element); }
+    };
+
+  int BaseType<fmatvec::SqrMatV>::size = 0;
+
+  template<>
+    struct BaseType<fmatvec::Mat3xV> {
+      typedef fmatvec::MatV type;
+      static int size;
+      static fmatvec::Mat3xV getEle(xercesc::DOMElement *element) { return MBSim::Element::getMat3xV(element); }
+      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBSim::Element::getMat(element); }
+    };
+
+  int BaseType<fmatvec::Mat3xV>::size = 3;
+
+  template<>
+    struct BaseType<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > {
+      typedef fmatvec::MatV type;
+      static int size;
+      static fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> getEle(xercesc::DOMElement *element) { return MBSim::Element::getMat(element); }
+      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBSim::Element::getMat(element); }
+    };
+
+  int BaseType<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> >::size = 6;
 
   /*!
    *  \brief Flexible body using a floating frame of reference formulation
@@ -171,16 +242,28 @@ namespace MBSimFlexibleBody {
       void setPositionIntegral(const fmatvec::Vec3 &rdm_) { rdm = rdm_; }
       void setPositionPositionIntegral(const fmatvec::SymMat3& rrdm_) { rrdm = rrdm_; }
       void setShapeFunctionIntegral(const fmatvec::Mat3xV &Pdm_) { Pdm = Pdm_; }
-      void setPositionShapeFunctionIntegral(const CellArray1D<fmatvec::Mat3xV> &rPdm_) { rPdm = rPdm_; }
-      void setShapeFunctionShapeFunctionIntegral(const CellArray2D<fmatvec::SqrMatV> &PPdm_) { PPdm = PPdm_; }
+
+      void setPositionShapeFunctionIntegral(const std::vector<fmatvec::Mat3xV> &rPdm) { setPositionShapeFunctionIntegralArray(rPdm); }
+      void setPositionShapeFunctionIntegralArray(const std::vector<fmatvec::Mat3xV> &rPdm_) { rPdm = rPdm_; }
+      void setPositionShapeFunctionIntegral(const fmatvec::MatV &rPdm_) { rPdm = getCellArray1D<fmatvec::Mat3xV>(rPdm_); }
+
+      void setShapeFunctionShapeFunctionIntegral(const std::vector<std::vector<fmatvec::SqrMatV> > &PPdm) { setShapeFunctionShapeFunctionIntegralArray(PPdm); }
+      void setShapeFunctionShapeFunctionIntegralArray(const std::vector<std::vector<fmatvec::SqrMatV> > &PPdm_) { PPdm = PPdm_; }
+      void setShapeFunctionShapeFunctionIntegral(const fmatvec::MatV &PPdm_) { PPdm = getCellArray2D<fmatvec::SqrMatV>(PPdm_); }
+
       void setStiffnessMatrix(const fmatvec::SymMatV &Ke0_) { Ke0 = Ke0_; }
       void setDampingMatrix(const fmatvec::SymMatV &De0_) { De0 = De0_; }
       void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
       // End of interface
 
       // Interface for nonlinear stiffness matrices
-      void setNonlinearStiffnessMatrixOfFirstOrder(const CellArray1D<fmatvec::SqrMatV> &Knl1_) { Knl1 = Knl1_; }
-      void setNonlinearStiffnessMatrixOfSecondOrder(const CellArray2D<fmatvec::SqrMatV> &Knl2_) { Knl2 = Knl2_; }
+      void setNonlinearStiffnessMatrixOfFirstOrder(const std::vector<fmatvec::SqrMatV> &Knl1) { setNonlinearStiffnessMatrixOfFirstOrderArray(Knl1); }
+      void setNonlinearStiffnessMatrixOfFirstOrderArray(const std::vector<fmatvec::SqrMatV> &Knl1_) { Knl1 = Knl1_; }
+      void setNonlinearStiffnessMatrixOfFirstOrder(const fmatvec::MatV &Knl1_) { Knl1 = getCellArray1D<fmatvec::SqrMatV>(Knl1_); }
+
+      void setNonlinearStiffnessMatrixOfSecondOrder(const std::vector<std::vector<fmatvec::SqrMatV> > &Knl2) { setNonlinearStiffnessMatrixOfSecondOrderArray(Knl2); }
+      void setNonlinearStiffnessMatrixOfSecondOrderArray(const std::vector<std::vector<fmatvec::SqrMatV> > &Knl2_) { Knl2 = Knl2_; }
+      void setNonlinearStiffnessMatrixOfSecondOrder(const fmatvec::MatV &Knl2_) { Knl2 = getCellArray2D<fmatvec::SqrMatV>(Knl2_); }
       // End of interface
 
       // Interface for reference stresses 
@@ -189,20 +272,54 @@ namespace MBSimFlexibleBody {
       // End of interface
 
       // Interface for geometric stiffness matrices
-      void setGeometricStiffnessMatrixDueToAcceleration(const CellArray1D<fmatvec::SqrMatV> &K0t_) { K0t = K0t_; }
-      void setGeometricStiffnessMatrixDueToAngularAcceleration(const CellArray1D<fmatvec::SqrMatV> &K0r_) { K0r = K0r_; }
-      void setGeometricStiffnessMatrixDueToAngularVelocity(const CellArray1D<fmatvec::SqrMatV> &K0om_) { K0om = K0om_; }
+      void setGeometricStiffnessMatrixDueToAcceleration(const std::vector<fmatvec::SqrMatV> &K0t) { setGeometricStiffnessMatrixDueToAccelerationArray(K0t); }
+      void setGeometricStiffnessMatrixDueToAccelerationArray(const std::vector<fmatvec::SqrMatV> &K0t_) { K0t = K0t_; }
+      void setGeometricStiffnessMatrixDueToAcceleration(const fmatvec::MatV &K0t_) { K0t = getCellArray1D<fmatvec::SqrMatV>(K0t_); }
+
+      void setGeometricStiffnessMatrixDueToAngularAcceleration(const std::vector<fmatvec::SqrMatV> &K0r) { setGeometricStiffnessMatrixDueToAngularAccelerationArray(K0r); }
+      void setGeometricStiffnessMatrixDueToAngularAccelerationArray(const std::vector<fmatvec::SqrMatV> &K0r_) { K0r = K0r_; }
+      void setGeometricStiffnessMatrixDueToAngularAcceleration(const fmatvec::MatV &K0r_) { K0r = getCellArray1D<fmatvec::SqrMatV>(K0r_); }
+
+      void setGeometricStiffnessMatrixDueToAngularVelocity(const std::vector<fmatvec::SqrMatV> &K0om) { setGeometricStiffnessMatrixDueToAngularVelocityArray(K0om); }
+      void setGeometricStiffnessMatrixDueToAngularVelocityArray(const std::vector<fmatvec::SqrMatV> &K0om_) { K0om = K0om_; }
+      void setGeometricStiffnessMatrixDueToAngularVelocity(const fmatvec::MatV &K0om_) { K0om = getCellArray1D<fmatvec::SqrMatV>(K0om_); }
       // End of interface
 
-      void setNodalRelativePosition(const CellArray1D<fmatvec::Vec3> &r) { KrKP = r; }
-      void setNodalRelativeOrientation(const CellArray1D<fmatvec::SqrMat3> &A) { ARP = A; }
-      void setNodalShapeMatrixOfTranslation(const CellArray1D<fmatvec::Mat3xV> &Phi_) { Phi = Phi_; }
-      void setNodalShapeMatrixOfRotation(const CellArray1D<fmatvec::Mat3xV> &Psi_) { Psi = Psi_; }
-      void setNodalStressMatrix(const CellArray1D<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahel_) { sigmahel = sigmahel_; }
-      void setNodalNonlinearStressMatrix(const CellArray2D<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahen_) { sigmahen = sigmahen_; }
-      void setNodalInitialStress(const CellArray1D<fmatvec::Vector<fmatvec::Fixed<6>, double> > &sigma0_) { sigma0 = sigma0_; }
-      void setNodalGeometricStiffnessMatrixDueToForce(const CellArray2D<fmatvec::SqrMatV> &K0F_) { K0F = K0F_; }
-      void setNodalGeometricStiffnessMatrixDueToMoment(const CellArray2D<fmatvec::SqrMatV> &K0M_) { K0M = K0M_; }
+      void setNodalRelativePosition(const std::vector<fmatvec::Vec3> &r) { setNodalRelativePositionArray(r); }
+      void setNodalRelativePositionArray(const std::vector<fmatvec::Vec3> &r) { KrKP = r; }
+      void setNodalRelativePosition(const fmatvec::VecV &r) { KrKP = getCellArray1D<fmatvec::Vec3>(r); }
+
+      void setNodalRelativeOrientation(const std::vector<fmatvec::SqrMat3> &A) { setNodalRelativeOrientationArray(A); }
+      void setNodalRelativeOrientationArray(const std::vector<fmatvec::SqrMat3> &A) { ARP = A; }
+      void setNodalRelativeOrientation(const fmatvec::MatVx3 &A) { ARP = getCellArray1D<fmatvec::SqrMat3>(A); }
+
+      void setNodalShapeMatrixOfTranslation(const std::vector<fmatvec::Mat3xV> &Phi) { setNodalShapeMatrixOfTranslationArray(Phi); }
+      void setNodalShapeMatrixOfTranslationArray(const std::vector<fmatvec::Mat3xV> &Phi_) { Phi = Phi_; }
+      void setNodalShapeMatrixOfTranslation(const fmatvec::MatV &Phi_) { Phi = getCellArray1D<fmatvec::Mat3xV>(Phi_); }
+
+      void setNodalShapeMatrixOfRotation(const std::vector<fmatvec::Mat3xV> &Psi) { setNodalShapeMatrixOfRotationArray(Psi); }
+      void setNodalShapeMatrixOfRotationArray(const std::vector<fmatvec::Mat3xV> &Psi_) { Psi = Psi_; }
+      void setNodalShapeMatrixOfRotation(const fmatvec::MatV &Psi_) { Psi = getCellArray1D<fmatvec::Mat3xV>(Psi_); }
+
+      void setNodalStressMatrix(const std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahel) { setNodalStressMatrixArray(sigmahel); }
+      void setNodalStressMatrixArray(const std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahel_) { sigmahel = sigmahel_; }
+      void setNodalStressMatrix(const fmatvec::MatV &sigmahel_) { sigmahel = getCellArray1D<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> >(sigmahel_); }
+
+      void setNodalNonlinearStressMatrix(const std::vector<std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > &sigmahen) { setNodalNonlinearStressMatrixArray(sigmahen); }
+      void setNodalNonlinearStressMatrixArray(const std::vector<std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > &sigmahen_) { sigmahen = sigmahen_; }
+      void setNodalNonlinearStressMatrix(const fmatvec::MatV &sigmahen_) { sigmahen = getCellArray2D<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> >(sigmahen_); }
+
+      void setNodalInitialStress(const std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > &sigma0) { setNodalInitialStressArray(sigma0); }
+      void setNodalInitialStressArray(const std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > &sigma0_) { sigma0 = sigma0_; }
+      void setNodalInitialStress(const fmatvec::VecV &sigma0_) { sigma0 = getCellArray1D<fmatvec::Vector<fmatvec::Fixed<6>, double> >(sigma0_); }
+
+      void setNodalGeometricStiffnessMatrixDueToForce(const std::vector<std::vector<fmatvec::SqrMatV> > &K0F) { setNodalGeometricStiffnessMatrixDueToForceArray(K0F); }
+      void setNodalGeometricStiffnessMatrixDueToForceArray(const std::vector<std::vector<fmatvec::SqrMatV> > &K0F_) { K0F = K0F_; }
+      void setNodalGeometricStiffnessMatrixDueToForce(const fmatvec::MatV &K0F_) { K0F = getCellArray2D<fmatvec::SqrMatV>(K0F_); }
+
+      void setNodalGeometricStiffnessMatrixDueToMoment(const std::vector<std::vector<fmatvec::SqrMatV> > &K0M) { setNodalGeometricStiffnessMatrixDueToMomentArray(K0M); }
+      void setNodalGeometricStiffnessMatrixDueToMomentArray(const std::vector<std::vector<fmatvec::SqrMatV> > &K0M_) { K0M = K0M_; }
+      void setNodalGeometricStiffnessMatrixDueToMoment(const fmatvec::MatV &K0M_) { K0M = getCellArray2D<fmatvec::SqrMatV>(K0M_); }
 
       using NodeBasedBody::addFrame;
       using NodeBasedBody::addContour;
@@ -258,17 +375,75 @@ namespace MBSimFlexibleBody {
       virtual void updateJacobians(NodeFrame* frame, int j=0);
       virtual void updateGyroscopicAccelerations(NodeFrame* frame);
 
+      template <class T>
+      static std::vector<T> getCellArray1D(xercesc::DOMElement *element) {
+        std::vector<T> array;
+        xercesc::DOMElement* e=element->getFirstElementChild();
+        if(MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"ele") {
+          while(e) {
+            array.push_back(BaseType<T>::getEle(e));
+            e=e->getNextElementSibling();
+          }
+        }
+        return array;
+      }
+
+      template <class T>
+      static std::vector<T> getCellArray1D(const typename BaseType<T>::type &A) {
+        std::vector<T> array;
+        int n = A.cols();
+        int m = BaseType<T>::size?BaseType<T>::size:n;
+        array.resize(A.rows()/m);
+        for(unsigned int i=0; i<array.size(); i++)
+          array[i] = T(A(fmatvec::RangeV(m*i,m*i+(m-1)),fmatvec::RangeV(0,n-1)));
+        return array;
+      }
+
+      template <class T>
+      static std::vector<std::vector<T> > getCellArray2D(xercesc::DOMElement *element) {
+        std::vector<std::vector<T> > array;
+        xercesc::DOMElement *e=element->getFirstElementChild();
+        if(MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"row") {
+          while(e) {
+            array.push_back(std::vector<T>());
+            xercesc::DOMElement *ee=e->getFirstElementChild();
+            while(ee) {
+              array[array.size()-1].push_back(BaseType<T>::getEle(ee));
+              ee=ee->getNextElementSibling();
+            }
+            e=e->getNextElementSibling();
+          }
+        }
+        return array;
+      }
+
+      template <class T>
+      static std::vector<std::vector<T> > getCellArray2D(const typename BaseType<T>::type &A) {
+        std::vector<std::vector<T> > array;
+        int n = A.cols();
+        int m = BaseType<T>::size?BaseType<T>::size:n;
+        int k = 0;
+        array.resize(A.rows()/m/n);
+        for(unsigned int i=0; i<array.size(); i++) {
+          array[i].resize(n);
+          for(int j=0; j<n; j++) {
+            array[i][j] = T(A(fmatvec::RangeV(m*k,m*k+(m-1)),fmatvec::RangeV(0,n-1)));
+            k++;
+          }
+        }
+        return array;
+      }
+
     protected:
       double m;
       fmatvec::Vec3 rdm;
       fmatvec::SymMat3 rrdm, mmi0;
       fmatvec::Mat3xV Pdm;
-      CellArray2D<fmatvec::SqrMatV> Knl2, PPdm;
+      std::vector<std::vector<fmatvec::SqrMatV> > PPdm, Knl2;
       std::vector<std::vector<fmatvec::SqrMatV> > Ke2;
-      CellArray1D<fmatvec::Mat3xV> rPdm;
+      std::vector<fmatvec::Mat3xV> rPdm;
       std::vector<std::vector<fmatvec::SqrMat3> > mmi2, Gr1;
-      CellArray1D<fmatvec::SqrMatV> Knl1, K0t, K0r, K0om;
-      std::vector<fmatvec::SqrMatV> Ct1, Cr1, Ge, Oe1, Ke1, De1;
+      std::vector<fmatvec::SqrMatV> Knl1, K0t, K0r, K0om, Ct1, Cr1, Ge, Oe1, Ke1, De1;
       fmatvec::Vec2 beta;
       fmatvec::VecV ksigma0;
       fmatvec::SqrMatV ksigma1;
@@ -279,16 +454,13 @@ namespace MBSimFlexibleBody {
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double> Oe0;
 
       fmatvec::SqrMat3 Id;
-      CellArray1D<fmatvec::Vec3> KrKP;
-      std::vector<fmatvec::Vec3> WrOP, WrRP, disp, Wvrel, Womrel;
-      CellArray1D<fmatvec::SqrMat3> ARP;
-      std::vector<fmatvec::SqrMat3> AWK;
-      CellArray1D<fmatvec::Mat3xV> Phi, Psi;
-      CellArray2D<fmatvec::SqrMatV> K0F, K0M;
-      CellArray1D<fmatvec::Vector<fmatvec::Fixed<6>, double> > sigma0;
-      std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > sigma;
-      CellArray1D<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > sigmahel;
-      CellArray2D<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > sigmahen;
+      std::vector<fmatvec::Vec3> KrKP, WrOP, WrRP, disp, Wvrel, Womrel;
+      std::vector<fmatvec::SqrMat3> ARP, AWK;
+      std::vector<fmatvec::Mat3xV> Phi, Psi;
+      std::vector<std::vector<fmatvec::SqrMatV> > K0F, K0M;
+      std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > sigma0, sigma;
+      std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > sigmahel;
+      std::vector<std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > sigmahen;
 
       // Number of mode shapes 
       int ne;

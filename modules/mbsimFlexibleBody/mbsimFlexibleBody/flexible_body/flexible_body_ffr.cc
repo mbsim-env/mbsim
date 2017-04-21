@@ -738,11 +738,19 @@ namespace MBSimFlexibleBody {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionIntegral");
     setShapeFunctionIntegral(getMat3xV(e));
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"positionShapeFunctionIntegral");
-    rPdm.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"positionShapeFunctionIntegralArray");
+    if(e) setPositionShapeFunctionIntegral(getCellArray1D<Mat3xV>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"positionShapeFunctionIntegral");
+      setPositionShapeFunctionIntegral(getMat(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral");
-    PPdm.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionShapeFunctionIntegralArray");
+    if(e) setShapeFunctionShapeFunctionIntegral(getCellArray2D<SqrMatV>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral");
+      setShapeFunctionShapeFunctionIntegral(getMat(e));
+    }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stiffnessMatrix");
     setStiffnessMatrix(getSymMat(e));
@@ -753,11 +761,19 @@ namespace MBSimFlexibleBody {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
     if(e) setProportionalDamping(getVec(e));
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrder");
-    if(e) Knl1.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrderArray");
+    if(e) setNonlinearStiffnessMatrixOfFirstOrder(getCellArray1D<SqrMatV>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrder");
+      if(e) setNonlinearStiffnessMatrixOfFirstOrder(getMat(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrder");
-    if(e) Knl2.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrderArray");
+    if(e) setNonlinearStiffnessMatrixOfSecondOrder(getCellArray2D<SqrMatV>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrder");
+      if(e) setNonlinearStiffnessMatrixOfSecondOrder(getMat(e));
+    }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"initialStressIntegral");
     if(e) setInitialStressIntegral(getVec(e));
@@ -765,41 +781,89 @@ namespace MBSimFlexibleBody {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearInitialStressIntegral");
     if(e) setNonlinearInitialStressIntegral(getSqrMat(e));
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAcceleration");
-    if(e) K0t.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAccelerationArray");
+    if(e) setGeometricStiffnessMatrixDueToAcceleration(getCellArray1D<SqrMatV>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAcceleration");
+      if(e) setGeometricStiffnessMatrixDueToAcceleration(getMat(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration");
-    if(e) K0r.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAccelerationArray");
+    if(e) setGeometricStiffnessMatrixDueToAngularAcceleration(getCellArray1D<SqrMatV>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration");
+      if(e) setGeometricStiffnessMatrixDueToAngularAcceleration(getMat(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity");
-    if(e) K0om.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocityArray");
+    if(e) setGeometricStiffnessMatrixDueToAngularVelocity(getCellArray1D<SqrMatV>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity");
+      if(e) setGeometricStiffnessMatrixDueToAngularVelocity(getMat(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalRelativePosition");
-    if(e) KrKP.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalRelativePositionArray");
+    if(e) setNodalRelativePosition(getCellArray1D<Vec3>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalRelativePosition");
+      if(e) setNodalRelativePosition(getVec(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalRelativeOrientation");
-    if(e) ARP.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalRelativeOrientationArray");
+    if(e) setNodalRelativeOrientation(getCellArray1D<SqrMat3>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalRelativeOrientationArray");
+      if(e) setNodalRelativeOrientation(getMat(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalShapeMatrixOfTranslation");
-    if(e) Phi.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalShapeMatrixOfTranslationArray");
+    if(e) setNodalShapeMatrixOfTranslation(getCellArray1D<Mat3xV>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalShapeMatrixOfTranslation");
+      if(e) setNodalShapeMatrixOfTranslation(getMat(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalShapeMatrixOfRotation");
-    if(e) Psi.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalShapeMatrixOfRotationArray");
+    if(e) setNodalShapeMatrixOfRotation(getCellArray1D<Mat3xV>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalShapeMatrixOfRotation");
+      if(e) setNodalShapeMatrixOfRotation(getMat(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalStressMatrix");
-    if(e) sigmahel.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalStressMatrixArray");
+    if(e) setNodalStressMatrix(getCellArray1D<Matrix<General, Fixed<6>, Var, double> >(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalStressMatrix");
+      if(e) setNodalStressMatrix(getMat(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalNonlinearStressMatrix");
-    if(e) sigmahen.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalNonlinearStressMatrixArray");
+    if(e) setNodalNonlinearStressMatrix(getCellArray2D<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> >(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalNonlinearStressMatrix");
+      if(e) setNodalNonlinearStressMatrix(getMat(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalInitialStress");
-    if(e) sigma0.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalInitialStressArray");
+    if(e) setNodalInitialStress(getCellArray1D<fmatvec::Vector<fmatvec::Fixed<6>, double> >(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalInitialStress");
+      if(e) setNodalInitialStress(getVec(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToForce");
-    if(e) K0F.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToForceArray");
+    if(e) setNodalGeometricStiffnessMatrixDueToForce(getCellArray2D<fmatvec::SqrMatV>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToForce");
+      if(e) setNodalGeometricStiffnessMatrixDueToForce(getMat(e));
+    }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToMoment");
-    if(e) K0M.initializeUsingXML(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToMomentArray");
+    if(e) setNodalGeometricStiffnessMatrixDueToMoment(getCellArray2D<fmatvec::SqrMatV>(e));
+    else {
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToMoment");
+      if(e) setNodalGeometricStiffnessMatrixDueToMoment(getMat(e));
+    }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalTranslation");
     if(e) {
