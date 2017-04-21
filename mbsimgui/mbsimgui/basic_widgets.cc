@@ -437,6 +437,7 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton(tr("Browse"));
     connect(button,SIGNAL(clicked(bool)),objectBrowser,SLOT(show()));
     layout->addWidget(button);
+    updateWidget();
   }
 
   void ObjectOfReferenceWidget::updateWidget() {
@@ -598,6 +599,7 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton(tr("Browse"));
     connect(button,SIGNAL(clicked(bool)),signalBrowser,SLOT(show()));
     layout->addWidget(button);
+    updateWidget();
   }
 
   void SignalOfReferenceWidget::updateWidget() {
