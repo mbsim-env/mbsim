@@ -564,34 +564,42 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameForInertiaTensor");
     if(e) setFrameForInertiaTensor(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalTranslation");
-    if(e && e->getFirstElementChild()) {
+    if(e) {
       Function<Vec3(VecV,double)> *trans=ObjectFactory::createAndInit<Function<Vec3(VecV,double)> >(e->getFirstElementChild());
       setGeneralTranslation(trans);
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentTranslation");
-    if(e && e->getFirstElementChild()) {
-      Function<Vec3(double)> *trans=ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild());
-      setTimeDependentTranslation(trans);
-    }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentTranslation");
-    if(e && e->getFirstElementChild()) {
-      Function<Vec3(VecV)> *trans=ObjectFactory::createAndInit<Function<Vec3(VecV)> >(e->getFirstElementChild());
-      setStateDependentTranslation(trans);
+    else {
+      e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentTranslation");
+      if(e) {
+        Function<Vec3(double)> *trans=ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild());
+        setTimeDependentTranslation(trans);
+      }
+      else {
+        e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentTranslation");
+        if(e) {
+          Function<Vec3(VecV)> *trans=ObjectFactory::createAndInit<Function<Vec3(VecV)> >(e->getFirstElementChild());
+          setStateDependentTranslation(trans);
+        }
+      }
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalRotation");
-    if(e && e->getFirstElementChild()) {
+    if(e) {
       Function<RotMat3(VecV,double)> *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV,double)> >(e->getFirstElementChild());
       setGeneralRotation(rot);
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentRotation");
-    if(e && e->getFirstElementChild()) {
-      Function<RotMat3(double)> *rot=ObjectFactory::createAndInit<Function<RotMat3(double)> >(e->getFirstElementChild());
-      setTimeDependentRotation(rot);
-    }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentRotation");
-    if(e && e->getFirstElementChild()) {
-      Function<RotMat3(VecV)> *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV)> >(e->getFirstElementChild());
-      setStateDependentRotation(rot);
+    else {
+      e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentRotation");
+      if(e) {
+        Function<RotMat3(double)> *rot=ObjectFactory::createAndInit<Function<RotMat3(double)> >(e->getFirstElementChild());
+        setTimeDependentRotation(rot);
+      }
+      else {
+        e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentRotation");
+        if(e) {
+          Function<RotMat3(VecV)> *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV)> >(e->getFirstElementChild());
+          setStateDependentRotation(rot);
+        }
+      }
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"translationDependentRotation");
     if(e) translationDependentRotation = getBool(e);
