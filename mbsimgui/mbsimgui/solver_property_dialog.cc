@@ -42,7 +42,7 @@ namespace MBSimGUI {
     if(i==0)
       return new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5);
     if(i==1)
-      return new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5);
+      return new ChoiceWidget2(new VecWidgetFactory(0),QBoxLayout::RightToLeft,5);
     return NULL;
   }
 
