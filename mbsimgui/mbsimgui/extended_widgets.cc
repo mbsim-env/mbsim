@@ -106,66 +106,31 @@ namespace MBSimGUI {
   }
 
   DOMElement* ChoiceWidget2::initializeUsingXML(DOMElement *element) {
-    if(mode<=1) {
-      DOMElement *e=element;
-      if(e) {
-        DOMElement* ee=(mode==0)?e->getFirstElementChild():e;
-        if(ee) {
-          for(int i=0; i<factory->getSize(); i++) {
-            if(E(ee)->getTagName() == factory->getXMLName(i)) {
-              blockSignals(true);
-              defineWidget(i);
-              blockSignals(false);
-              comboBox->blockSignals(true);
-              comboBox->setCurrentIndex(i);
-              comboBox->blockSignals(false);
-              return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee);
-            }
-          }
-        }
-      }
-      return 0;
-    }
-    else if (mode<=3) {
-      DOMElement *e=element;
-      if(e) {
-        DOMElement* ee=(mode==2)?e->getFirstElementChild():e;
-        if(ee) {
-          for(int i=0; i<factory->getSize(); i++) {
-            DOMElement *eee=E(ee)->getFirstElementChildNamed(factory->getXMLName(i));
-            if(eee) {
-              blockSignals(true);
-              defineWidget(i);
-              blockSignals(false);
-              comboBox->blockSignals(true);
-              comboBox->setCurrentIndex(i);
-              comboBox->blockSignals(false);
-              return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee);
-            }
-          }
+    if (mode<=3) {
+      for(int i=0; i<factory->getSize(); i++) {
+        DOMElement *e=E(element)->getFirstElementChildNamed(factory->getXMLName(i));
+        if(e) {
+          blockSignals(true);
+          defineWidget(i);
+          blockSignals(false);
+          comboBox->blockSignals(true);
+          comboBox->setCurrentIndex(i);
+          comboBox->blockSignals(false);
+          return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
         }
       }
       return 0;
     }
     else {
-      DOMElement *e=element;
-      if(e) {
-        DOMElement* ee=e;
-        if(ee) {
-          for(int i=0; i<factory->getSize(); i++) {
-            DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;
-            if(eee) {
-              blockSignals(true);
-              defineWidget(i);
-              blockSignals(false);
-              comboBox->blockSignals(true);
-              comboBox->setCurrentIndex(i);
-              comboBox->blockSignals(false);
-              if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee))
-                return eee;
-            }
-          }
-        }
+      for(int i=0; i<factory->getSize(); i++) {
+        blockSignals(true);
+        defineWidget(i);
+        blockSignals(false);
+        comboBox->blockSignals(true);
+        comboBox->setCurrentIndex(i);
+        comboBox->blockSignals(false);
+        if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(element))
+          return element;
       }
       return NULL;
     }
@@ -173,8 +138,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* ChoiceWidget2::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
-
+    if(mode==3) {
+      DOMDocument *doc=parent->getOwnerDocument();
+      DOMElement *ele0 = D(doc)->createElement(factory->getXMLName(getIndex()));
+      dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(ele0);
+      parent->insertBefore(ele0,ref);
+    }
+    else
+      dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
     return NULL;
   }
 
@@ -209,7 +180,7 @@ namespace MBSimGUI {
 
   DOMElement* ContainerWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     for(unsigned int i=0; i<widget.size(); i++)
-      dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent);
+      dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent,ref);
     return NULL;
   }
 
@@ -344,14 +315,14 @@ namespace MBSimGUI {
   DOMElement* ListWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     if(mode<=1) {
       for(unsigned int i=0; i<getSize(); i++)
-        dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent);
+        dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent,ref);
     }
     else {
       DOMDocument *doc=parent->getOwnerDocument();
       for(unsigned int i=0; i<getSize(); i++) {
         DOMElement *ele0 = D(doc)->createElement(factory->getXMLName());
         dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(ele0);
-        parent->insertBefore(ele0, NULL);
+        parent->insertBefore(ele0,ref);
       }
     }
     return 0;

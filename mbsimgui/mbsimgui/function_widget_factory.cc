@@ -342,13 +342,13 @@ namespace MBSimGUI {
 
   QWidget* TranslationWidgetFactory4::createWidget(int i) {
     if(i==0)
-      return new ExtWidget(name[i],new ChoiceWidget2(new TranslationWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
+      return new ChoiceWidget2(new TranslationWidgetFactory2(parent),QBoxLayout::TopToBottom,0);
     if(i==1)
-      return new ExtWidget(name[i],new ChoiceWidget2(new TranslationWidgetFactory3(parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
+      return new ChoiceWidget2(new TranslationWidgetFactory3(parent),QBoxLayout::TopToBottom,0);
     if(i==2) {
       QStringList var;
       var << "q" << "t";
-      return new ExtWidget(name[i],new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var,parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
+      return new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var,parent),QBoxLayout::TopToBottom,0);
     }
     return NULL;
   }
@@ -362,9 +362,9 @@ namespace MBSimGUI {
 
   QWidget* RotationWidgetFactory4::createWidget(int i) {
     if(i==0)
-      return new ExtWidget("Function A=A(q)",new ChoiceWidget2(new RotationWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
+      return new ChoiceWidget2(new RotationWidgetFactory2(parent),QBoxLayout::TopToBottom,0);
     if(i==1)
-      return new ExtWidget("Function A=A(t)",new ChoiceWidget2(new RotationWidgetFactory3(parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
+      return new ChoiceWidget2(new RotationWidgetFactory3(parent),QBoxLayout::TopToBottom,0);
     return NULL;
   }
 

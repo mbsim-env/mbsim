@@ -253,48 +253,45 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  OneDimVecArrayWidgetFactory::OneDimVecArrayWidgetFactory(int size_, int m_, bool var_) : name(2), xmlName(2), size(size_), m(m_), var(var_) {
+  OneDimVecArrayWidgetFactory::OneDimVecArrayWidgetFactory(const FQN &xmlBase, int size_, int m_, bool var_) : name(2), xmlName(2,xmlBase), size(size_), m(m_), var(var_) {
     name[0] = "Cell array";
     name[1] = "Vector";
-    xmlName[0] = MBSIMFLEX%"ele";
-    xmlName[1] = MBSIMFLEX%"array";
+    xmlName[0].second += "Array";
   }
 
   QWidget* OneDimVecArrayWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ExtWidget(name[i],new OneDimVecArrayWidget(size,m,var),false,false,"");
+      return new OneDimVecArrayWidget(size,m,var);
     if(i==1)
-      return new ExtWidget(name[i],var?new ChoiceWidget2(new VecSizeVarWidgetFactory(size*m,3),QBoxLayout::RightToLeft,5):new ChoiceWidget2(new VecWidgetFactory(size*m),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"array");
+      return var?new ChoiceWidget2(new VecSizeVarWidgetFactory(size*m,3),QBoxLayout::RightToLeft,5):new ChoiceWidget2(new VecWidgetFactory(size*m),QBoxLayout::RightToLeft,5);
     return NULL;
   }
 
-  OneDimMatArrayWidgetFactory::OneDimMatArrayWidgetFactory(int size_, int m_, int n_) : name(2), xmlName(2), size(size_), m(m_), n(n_) {
+  OneDimMatArrayWidgetFactory::OneDimMatArrayWidgetFactory(const FQN &xmlBase, int size_, int m_, int n_) : name(2), xmlName(2,xmlBase), size(size_), m(m_), n(n_) {
     name[0] = "Cell array";
     name[1] = "Matrix";
-    xmlName[0] = MBSIMFLEX%"ele";
-    xmlName[1] = MBSIMFLEX%"array";
+    xmlName[0].second += "Array";
   }
 
   QWidget* OneDimMatArrayWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ExtWidget(name[i],new OneDimMatArrayWidget(size,m,n),false,false,"");
+      return new OneDimMatArrayWidget(size,m,n);
     if(i==1)
-      return new ExtWidget(name[i],new ChoiceWidget2(new MatWidgetFactory(size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"array");
+      return new ChoiceWidget2(new MatWidgetFactory(size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,5);
     return NULL;
   }
 
-  TwoDimMatArrayWidgetFactory::TwoDimMatArrayWidgetFactory(int size_, int m_, int n_) : name(2), xmlName(2), size(size_), m(m_), n(n_) {
+  TwoDimMatArrayWidgetFactory::TwoDimMatArrayWidgetFactory(const FQN &xmlBase, int size_, int m_, int n_) : name(2), xmlName(2,xmlBase), size(size_), m(m_), n(n_) {
     name[0] = "Cell array";
     name[1] = "Matrix";
-    xmlName[0] = MBSIMFLEX%"row";
-    xmlName[1] = MBSIMFLEX%"array";
+    xmlName[0].second += "Array";
   }
 
   QWidget* TwoDimMatArrayWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ExtWidget(name[i],new TwoDimMatArrayWidget(size,m,n),false,false,"");
+      return new TwoDimMatArrayWidget(size,m,n);
     if(i==1)
-      return new ExtWidget(name[i],new ChoiceWidget2(new MatWidgetFactory(size*size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"array");
+      return new ChoiceWidget2(new MatWidgetFactory(size*size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,5);
     return NULL;
   }
 

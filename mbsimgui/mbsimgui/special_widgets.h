@@ -71,7 +71,7 @@ namespace MBSimGUI {
 
   class OneDimVecArrayWidgetFactory : public WidgetFactory {
     public:
-      OneDimVecArrayWidgetFactory(int size=0, int m=0, bool var=false);
+      OneDimVecArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size=0, int m=0, bool var=false);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
@@ -85,7 +85,7 @@ namespace MBSimGUI {
 
   class OneDimMatArrayWidgetFactory : public WidgetFactory {
     public:
-      OneDimMatArrayWidgetFactory(int size=0, int m=0, int n=0);
+      OneDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size=0, int m=0, int n=0);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
@@ -98,7 +98,7 @@ namespace MBSimGUI {
 
   class TwoDimMatArrayWidgetFactory : public WidgetFactory {
     public:
-      TwoDimMatArrayWidgetFactory(int size=0, int m=0, int n=0);
+      TwoDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size=0, int m=0, int n=0);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }

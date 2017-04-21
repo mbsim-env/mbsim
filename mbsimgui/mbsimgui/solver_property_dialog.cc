@@ -40,9 +40,9 @@ namespace MBSimGUI {
 
   QWidget* ToleranceWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ExtWidget("Scalar tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5),false,false,xmlName[i]);
+      return new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5);
     if(i==1)
-      return new ExtWidget("Tolerance",new ChoiceWidget2(new VecWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,xmlName[i]);
+      return new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5);
     return NULL;
   }
 
