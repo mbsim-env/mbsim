@@ -99,13 +99,13 @@ ret = 0;</scalarParameter>
             <positionIntegral>load('data.asc','rdm').rdm</positionIntegral>
             <positionPositionIntegral unit="kg*m^2">load('data.asc','rrdm').rrdm</positionPositionIntegral>
             <shapeFunctionIntegral>load('data.asc','Pdm').Pdm</shapeFunctionIntegral>
-            <positionShapeFunctionIntegral>
+            <positionShapeFunctionIntegralArray>
               <ele>load('data.asc','rPdm').rPdm{1}
 </ele>
               <ele>load('data.asc','rPdm').rPdm{2}</ele>
               <ele>load('data.asc','rPdm').rPdm{3}</ele>
-            </positionShapeFunctionIntegral>
-            <shapeFunctionShapeFunctionIntegral>
+            </positionShapeFunctionIntegralArray>
+            <shapeFunctionShapeFunctionIntegralArray>
               <row>
                 <ele>load('data.asc','PPdm').PPdm{1,1}</ele>
                 <ele>load('data.asc','PPdm').PPdm{1,2}</ele>
@@ -121,13 +121,13 @@ ret = 0;</scalarParameter>
                 <ele>load('data.asc','PPdm').PPdm{3,2}</ele>
                 <ele>load('data.asc','PPdm').PPdm{3,3}</ele>
               </row>
-            </shapeFunctionShapeFunctionIntegral>
+            </shapeFunctionShapeFunctionIntegralArray>
             <stiffnessMatrix>load('data.asc','Ke').Ke</stiffnessMatrix>
-            <nodalRelativePosition>
-              <array unit="m">u0'(:)</array>
+            <nodalRelativePosition unit="m">
+              u0'(:)
             </nodalRelativePosition>
             <nodalShapeMatrixOfTranslation>
-              <array>V(:,1:modes)</array>
+              V(:,1:modes)
             </nodalShapeMatrixOfTranslation>
             <frames>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="nf" counterName="n">

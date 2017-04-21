@@ -141,13 +141,13 @@
             <positionIntegral>load('data.bin','rdm').rdm</positionIntegral>
             <positionPositionIntegral unit="kg*m^2">load('data.bin','rrdm').rrdm</positionPositionIntegral>
             <shapeFunctionIntegral>load('data.bin','Pdm').Pdm</shapeFunctionIntegral>
-            <positionShapeFunctionIntegral>
+            <positionShapeFunctionIntegralArray>
               <ele>load('data.bin','rPdm').rPdm{1}
 </ele>
               <ele>load('data.bin','rPdm').rPdm{2}</ele>
               <ele>load('data.bin','rPdm').rPdm{3}</ele>
-            </positionShapeFunctionIntegral>
-            <shapeFunctionShapeFunctionIntegral>
+            </positionShapeFunctionIntegralArray>
+            <shapeFunctionShapeFunctionIntegralArray>
               <row>
                 <ele>load('data.bin','PPdm').PPdm{1,1}</ele>
                 <ele>load('data.bin','PPdm').PPdm{1,2}</ele>
@@ -163,7 +163,7 @@
                 <ele>load('data.bin','PPdm').PPdm{3,2}</ele>
                 <ele>load('data.bin','PPdm').PPdm{3,3}</ele>
               </row>
-            </shapeFunctionShapeFunctionIntegral>
+            </shapeFunctionShapeFunctionIntegralArray>
             <stiffnessMatrix>load('data.bin','Ke').Ke</stiffnessMatrix>
             <proportionalDamping unit="-">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -171,14 +171,14 @@
                 <ele>0.0001</ele>
               </xmlVector>
             </proportionalDamping>
-            <nodalRelativePosition>
-              <array unit="m">u0'(:)</array>
+            <nodalRelativePosition unit="m">
+              u0'(:)
             </nodalRelativePosition>
             <nodalShapeMatrixOfTranslation>
-              <array>V</array>
+              V
             </nodalShapeMatrixOfTranslation>
             <nodalStressMatrix>
-              <array>sigh</array>
+              sigh
             </nodalStressMatrix>
             <stateDependentRotation>
               <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>

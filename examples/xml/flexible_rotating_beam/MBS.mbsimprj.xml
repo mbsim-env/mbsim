@@ -92,7 +92,7 @@
               </row>
             </xmlMatrix>
           </shapeFunctionIntegral>
-          <positionShapeFunctionIntegral>
+          <positionShapeFunctionIntegralArray>
             <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
@@ -141,8 +141,8 @@
                 </row>
               </xmlMatrix>
             </ele>
-          </positionShapeFunctionIntegral>
-          <shapeFunctionShapeFunctionIntegral>
+          </positionShapeFunctionIntegralArray>
+          <shapeFunctionShapeFunctionIntegralArray>
             <row>
               <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -257,7 +257,7 @@
                 </xmlMatrix>
               </ele>
             </row>
-          </shapeFunctionShapeFunctionIntegral>
+          </shapeFunctionShapeFunctionIntegralArray>
           <stiffnessMatrix>
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
@@ -270,7 +270,7 @@
               </row>
             </xmlMatrix>
           </stiffnessMatrix>
-          <nodalRelativePosition>
+          <nodalRelativePositionArray>
             <ele unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>l</ele>
@@ -278,8 +278,8 @@
                 <ele>0</ele>
               </xmlVector>
             </ele>
-          </nodalRelativePosition>
-          <nodalShapeMatrixOfTranslation>
+          </nodalRelativePositionArray>
+          <nodalShapeMatrixOfTranslationArray>
             <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
@@ -296,8 +296,8 @@
                 </row>
               </xmlMatrix>
             </ele>
-          </nodalShapeMatrixOfTranslation>
-          <nodalShapeMatrixOfRotation>
+          </nodalShapeMatrixOfTranslationArray>
+          <nodalShapeMatrixOfRotationArray>
             <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
@@ -314,7 +314,7 @@
                 </row>
               </xmlMatrix>
             </ele>
-          </nodalShapeMatrixOfRotation>
+          </nodalShapeMatrixOfRotationArray>
           <timeDependentRotation>
             <CompositeFunction xmlns="http://www.mbsim-env.de/MBSim">
               <outerFunction>
@@ -402,7 +402,7 @@
               </row>
             </xmlMatrix>
           </shapeFunctionIntegral>
-          <positionShapeFunctionIntegral>
+          <positionShapeFunctionIntegralArray>
             <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
@@ -451,8 +451,8 @@
                 </row>
               </xmlMatrix>
             </ele>
-          </positionShapeFunctionIntegral>
-          <shapeFunctionShapeFunctionIntegral>
+          </positionShapeFunctionIntegralArray>
+          <shapeFunctionShapeFunctionIntegralArray>
             <row>
               <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -567,7 +567,7 @@
                 </xmlMatrix>
               </ele>
             </row>
-          </shapeFunctionShapeFunctionIntegral>
+          </shapeFunctionShapeFunctionIntegralArray>
           <stiffnessMatrix>
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
@@ -580,7 +580,7 @@
               </row>
             </xmlMatrix>
           </stiffnessMatrix>
-          <geometricStiffnessMatrixDueToAngularVelocity>
+          <geometricStiffnessMatrixDueToAngularVelocityArray>
             <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
@@ -617,8 +617,8 @@
                 </row>
               </xmlMatrix>
             </ele>
-          </geometricStiffnessMatrixDueToAngularVelocity>
-          <nodalRelativePosition>
+          </geometricStiffnessMatrixDueToAngularVelocityArray>
+          <nodalRelativePositionArray>
             <ele unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>l</ele>
@@ -626,8 +626,8 @@
                 <ele>0</ele>
               </xmlVector>
             </ele>
-          </nodalRelativePosition>
-          <nodalShapeMatrixOfTranslation>
+          </nodalRelativePositionArray>
+          <nodalShapeMatrixOfTranslationArray>
             <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
@@ -644,8 +644,8 @@
                 </row>
               </xmlMatrix>
             </ele>
-          </nodalShapeMatrixOfTranslation>
-          <nodalShapeMatrixOfRotation>
+          </nodalShapeMatrixOfTranslationArray>
+          <nodalShapeMatrixOfRotationArray>
             <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
@@ -662,7 +662,7 @@
                 </row>
               </xmlMatrix>
             </ele>
-          </nodalShapeMatrixOfRotation>
+          </nodalShapeMatrixOfRotationArray>
           <timeDependentRotation>
             <CompositeFunction xmlns="http://www.mbsim-env.de/MBSim">
               <outerFunction>
@@ -750,7 +750,7 @@
               </row>
             </xmlMatrix>
           </shapeFunctionIntegral>
-          <positionShapeFunctionIntegral>
+          <positionShapeFunctionIntegralArray>
             <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
@@ -799,8 +799,8 @@
                 </row>
               </xmlMatrix>
             </ele>
-          </positionShapeFunctionIntegral>
-          <shapeFunctionShapeFunctionIntegral>
+          </positionShapeFunctionIntegralArray>
+          <shapeFunctionShapeFunctionIntegralArray>
             <row>
               <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -915,7 +915,7 @@
                 </xmlMatrix>
               </ele>
             </row>
-          </shapeFunctionShapeFunctionIntegral>
+          </shapeFunctionShapeFunctionIntegralArray>
           <stiffnessMatrix>
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
@@ -928,7 +928,7 @@
               </row>
             </xmlMatrix>
           </stiffnessMatrix>
-          <nonlinearStiffnessMatrixOfFirstOrder>
+          <nonlinearStiffnessMatrixOfFirstOrderArray>
             <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
@@ -953,8 +953,8 @@
                 </row>
               </xmlMatrix>
             </ele>
-          </nonlinearStiffnessMatrixOfFirstOrder>
-          <nonlinearStiffnessMatrixOfSecondOrder>
+          </nonlinearStiffnessMatrixOfFirstOrderArray>
+          <nonlinearStiffnessMatrixOfSecondOrderArray>
             <row>
               <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -1007,8 +1007,8 @@
                 </xmlMatrix>
               </ele>
             </row>
-          </nonlinearStiffnessMatrixOfSecondOrder>
-          <nodalRelativePosition>
+          </nonlinearStiffnessMatrixOfSecondOrderArray>
+          <nodalRelativePositionArray>
             <ele unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>l</ele>
@@ -1016,8 +1016,8 @@
                 <ele>0</ele>
               </xmlVector>
             </ele>
-          </nodalRelativePosition>
-          <nodalShapeMatrixOfTranslation>
+          </nodalRelativePositionArray>
+          <nodalShapeMatrixOfTranslationArray>
             <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
@@ -1034,8 +1034,8 @@
                 </row>
               </xmlMatrix>
             </ele>
-          </nodalShapeMatrixOfTranslation>
-          <nodalShapeMatrixOfRotation>
+          </nodalShapeMatrixOfTranslationArray>
+          <nodalShapeMatrixOfRotationArray>
             <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
@@ -1052,7 +1052,7 @@
                 </row>
               </xmlMatrix>
             </ele>
-          </nodalShapeMatrixOfRotation>
+          </nodalShapeMatrixOfRotationArray>
           <timeDependentRotation>
             <CompositeFunction xmlns="http://www.mbsim-env.de/MBSim">
               <outerFunction>
