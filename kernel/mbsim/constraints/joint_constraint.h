@@ -39,7 +39,6 @@ namespace MBSim {
       JointConstraint(const std::string &name="");
 
       void init(InitStage stage);
-      void initz();
 
       void resetUpToDate();
 

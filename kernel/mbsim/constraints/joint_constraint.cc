@@ -144,8 +144,7 @@ namespace MBSim {
       q.resize(nq);
       JT.resize(3,nu);
       JR.resize(3,nu);
-    }
-    else if (stage == unknownStage) {
+
       Js.resize(3 - forceDir.cols());
       if (forceDir.cols() == 2)
         Js.set(0, crossProduct(forceDir.col(0), forceDir.col(1)));
@@ -157,17 +156,14 @@ namespace MBSim {
         Js.set(0, computeTangential(forceDir.col(0)));
         Js.set(1, crossProduct(forceDir.col(0), Js.col(0)));
       }
+      if(q0() == NULL)
+        q.init(0);
+      else if(q0.size() == q.size())
+        q = q0;
+      else
+        THROW_MBSIMERROR("(JointConstraint::initz): size of q0 does not match");
     }
     MechanicalConstraint::init(stage);
-  }
-
-  void JointConstraint::initz() {
-    if(q0() == NULL)
-      q.init(0);
-    else if(q0.size() == q.size())
-      q = q0;
-    else
-      THROW_MBSIMERROR("(JointConstraint::initz): size of q0 does not match");
   }
 
   void JointConstraint::resetUpToDate() {
