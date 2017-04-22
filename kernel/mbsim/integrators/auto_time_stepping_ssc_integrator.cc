@@ -291,15 +291,19 @@ namespace MBSimIntegrator {
     int *piter=NULL;
     Vec z_l, q_l, u_l, x_l;
 
-    if(nrSys_==1) {
-      piter = &iter_T1;
+    switch(nrSys_) {
+      case 1:
+        piter = &iter_T1;
+        break;
+      case 2:
+        piter = &iter_T2;
+        break;
+      case 3:
+        piter = &iter_T3;
+        break;
+      default:
+        throw MBSimError("nrSys_ is out of range.");
     }
-    else if(nrSys_==2) {
-      piter = &iter_T2;
-    }
-    else if(nrSys_==3) {
-      piter = &iter_T3;
-    }   
 
     *piter = 0;
 
@@ -333,34 +337,38 @@ namespace MBSimIntegrator {
     int JacAttempts=0;
     bool *JacUpdate=NULL;
 
-    if(nrSys_==1) {
-      pit = &it_T1;
-      piter = &iter_T1;
-      pgAC = &gAC_T1;
-      pgAC_reg = &gAC_reg_T1;
-      pupgedated = &upgedated_T1;
-      dhdq_n << dhdq_n_T1;
-      dhdu_n << dhdu_n_T1;
-      JacUpdate = &JacUpdate_T1;
-    }
-    else if(nrSys_==2) {
-      pit = &it_T2;
-      piter = &iter_T2;
-      pgAC = &gAC_T2;
-      pgAC_reg = &gAC_reg_T2;
-      pupgedated = &upgedated_T2;
-      dhdq_n << dhdq_n_T2;
-      dhdu_n << dhdu_n_T2;
-      JacUpdate = &JacUpdate_T2;
-    }
-    else if(nrSys_==3) {
-      pit = &it_T3;
-      piter = &iter_T3;
-      pgAC = &gAC_T3;
-      pgAC_reg = &gAC_reg_T3;
-      pupgedated = &upgedated_T3;
-      dhdq_n << dhdq_n_T3;
-      dhdu_n << dhdu_n_T3;
+    switch(nrSys_) {
+      case 1:
+        pit = &it_T1;
+        piter = &iter_T1;
+        pgAC = &gAC_T1;
+        pgAC_reg = &gAC_reg_T1;
+        pupgedated = &upgedated_T1;
+        dhdq_n << dhdq_n_T1;
+        dhdu_n << dhdu_n_T1;
+        JacUpdate = &JacUpdate_T1;
+        break;
+      case 2:
+        pit = &it_T2;
+        piter = &iter_T2;
+        pgAC = &gAC_T2;
+        pgAC_reg = &gAC_reg_T2;
+        pupgedated = &upgedated_T2;
+        dhdq_n << dhdq_n_T2;
+        dhdu_n << dhdu_n_T2;
+        JacUpdate = &JacUpdate_T2;
+        break;
+      case 3:
+        pit = &it_T3;
+        piter = &iter_T3;
+        pgAC = &gAC_T3;
+        pgAC_reg = &gAC_reg_T3;
+        pupgedated = &upgedated_T3;
+        dhdq_n << dhdq_n_T3;
+        dhdu_n << dhdu_n_T3;
+        break;
+      default:
+        throw MBSimError("nrSys_ is out of range.");
     }
 
     *pit = 0;
@@ -542,23 +550,27 @@ namespace MBSimIntegrator {
     bool *pupgedated=NULL;
     int *piter=NULL;
 
-    if(nrSys_==1) {
-      pupgedated = &upgedated_T1;
-      dhdq_n << dhdq_n_T1;
-      dhdu_n << dhdu_n_T1;
-      piter = &iter_T1;
-    }
-    else if(nrSys_==2) {
-      pupgedated = &upgedated_T2;
-      dhdq_n << dhdq_n_T2;
-      dhdu_n << dhdu_n_T2;
-      piter = &iter_T2;
-    }
-    else if(nrSys_==3) {
-      pupgedated = &upgedated_T3;
-      dhdq_n << dhdq_n_T3;
-      dhdu_n << dhdu_n_T3;
-      piter = &iter_T3;
+    switch(nrSys_) {
+      case 1:
+        pupgedated = &upgedated_T1;
+        dhdq_n << dhdq_n_T1;
+        dhdu_n << dhdu_n_T1;
+        piter = &iter_T1;
+        break;
+      case 2:
+        pupgedated = &upgedated_T2;
+        dhdq_n << dhdq_n_T2;
+        dhdu_n << dhdu_n_T2;
+        piter = &iter_T2;
+        break;
+      case 3:
+        pupgedated = &upgedated_T3;
+        dhdq_n << dhdq_n_T3;
+        dhdu_n << dhdu_n_T3;
+        piter = &iter_T3;
+        break;
+      default:
+        throw MBSimError("nrSys_ is out of range.");
     }
 
     *piter = 0;

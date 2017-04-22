@@ -34,10 +34,10 @@ int main (int argc, char* argv[]) {
             }
             break;
     case 1: {
-              integrator = new ThetaTimeSteppingIntegrator();
-              dt_const = 2.0e-5;
-              static_cast<ThetaTimeSteppingIntegrator*>(integrator)->setStepSize(dt_const);
-              static_cast<ThetaTimeSteppingIntegrator*>(integrator)->setTheta(1.0);
+//              integrator = new ThetaTimeSteppingIntegrator();
+//              dt_const = 2.0e-5;
+//              static_cast<ThetaTimeSteppingIntegrator*>(integrator)->setStepSize(dt_const);
+//              static_cast<ThetaTimeSteppingIntegrator*>(integrator)->setTheta(1.0);
             }
             break;
             //LSODARIntegrator integrator;

@@ -89,23 +89,27 @@ namespace MBSim {
         E(e)->getTagName()!=MBSIM%"orientation" &&
         E(e)->getTagName()!=MBSIM%"frames")
       e=e->getNextElementSibling();
+    if(!e)
+      THROW_MBSIMERROR("Illegal XML file.");
 
-    if(e && E(e)->getTagName()==MBSIM%"frameOfReference") {
+    if(E(e)->getTagName()==MBSIM%"frameOfReference") {
       saved_frameOfReference=E(e)->getAttribute("ref");
       e=e->getNextElementSibling();
     }
 
-    if(e && E(e)->getTagName()==MBSIM%"position") {
+    if(E(e)->getTagName()==MBSIM%"position") {
       setPosition(getVec3(e));
       e=e->getNextElementSibling();
     }
 
-    if(e && E(e)->getTagName()==MBSIM%"orientation") {
+    if(E(e)->getTagName()==MBSIM%"orientation") {
       setOrientation(getSqrMat3(e));
       e=e->getNextElementSibling();
     }
 
     // frames
+    if(!e)
+      THROW_MBSIMERROR("Illegal XML file.");
     DOMElement *E=e->getFirstElementChild();
     while(E) {
       FixedRelativeFrame *f=new FixedRelativeFrame(MBXMLUtils::E(E)->getAttribute("name"));
