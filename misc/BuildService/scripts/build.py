@@ -801,7 +801,11 @@ def make(tool, mainFD):
       if args.staticCodeAnalyzis and tool != "mbsim/thirdparty/nurbs++": # skip nurbs++ being a 3rd party tool
         staticCodeAnalyzeDir=[pj(args.reportOutDir, tool, "static-code-analyze")]
         if not os.path.exists(staticCodeAnalyzeDir[0]): os.mkdir(staticCodeAnalyzeDir[0])
-        staticCodeAnalyzeComm=[scriptdir+"/scan-build", "-analyze-headers", "--exclude", "*_swig_python.cc", "--exclude", "*_swig_octave.cc", "--exclude", "*_swig_java.cc", "--exclude", "/usr/include/*", "--exclude", "/home/mbsim/3rdparty/*", "-o", staticCodeAnalyzeDir[0], "--html-title", tool+" - Static Code Analyzis"]
+        staticCodeAnalyzeComm=[scriptdir+"/scan-build", "-analyze-headers",
+           "--exclude", "*_swig_python.cc", "--exclude", "*_swig_octave.cc", "--exclude", "*_swig_java.cc",
+           "--exclude", "/usr/include/*", "--exclude", "/home/mbsim/3rdparty/*",
+           "--exclude", "*/mbsim/kernel/mbsim/numerics/csparse.*",
+           "-o", staticCodeAnalyzeDir[0], "--html-title", tool+" - Static Code Analyzis"]
       # make
       errStr=""
       if not args.disableMakeClean:

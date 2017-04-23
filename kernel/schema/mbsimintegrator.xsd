@@ -501,7 +501,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="ThetaTimeSteppingIntegrator" substitutionGroup="Integrator" type="ThetaTimeSteppingIntegratorType">
+<!--  <xs:element name="ThetaTimeSteppingIntegrator" substitutionGroup="Integrator" type="ThetaTimeSteppingIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Timestepping Integration für Maßdifferentialinklusionen.
     </xs:documentation></xs:annotation>
@@ -528,7 +528,7 @@
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>   
+  </xs:complexType>-->
 
   <xs:element name="EulerExplicitIntegrator" substitutionGroup="Integrator" type="EulerExplicitIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
