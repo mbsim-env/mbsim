@@ -82,7 +82,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   belt->setFrameOfReference(this->getFrame("off"));
   belt->setNumberElements(elements);
   belt->initRelaxed(0.0);
-  belt->setq0(q0);
+//  belt->setInitialGeneralizedPosition(q0);
   this->addObject(belt);
 
   std::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
