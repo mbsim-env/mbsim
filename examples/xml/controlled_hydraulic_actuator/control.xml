@@ -21,14 +21,35 @@
         <T>1/25</T>
       </pt1Type>
     </LinearTransferSystem>
-    <RelativePositionSensor name="MassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
-      <frame ref="../../Frame[FMass]" rel="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
-      <direction>[0;1;0]</direction>
-    </RelativePositionSensor>
+    <PositionSensor name="FMassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <frame ref="../../Frame[FMass]"/>
+    </PositionSensor>
+    <Demultiplexer name="FMassPositiony" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[FMassPosition]"/>
+      <indices>[2]</indices>
+    </Demultiplexer>
+    <PositionSensor name="MassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <frame ref="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
+    </PositionSensor>
+    <Demultiplexer name="MassPositiony" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[MassPosition]"/>
+      <indices>[2]</indices>
+    </Demultiplexer>
+    <BinarySignalOperation name="RelativeMassPositiony" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <firstInputSignal ref="../Link[FMassPositiony]"/>
+      <secondInputSignal ref="../Link[MassPositiony]"/>
+      <function>
+       <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
+          y-x
+        </SymbolicFunction>
+      </function>
+    </BinarySignalOperation>
+    <!--
     <RelativeVelocitySensor name="MassVelocity" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../../Frame[FMass]" rel="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
       <direction>[0;1;0]</direction>
     </RelativeVelocitySensor>
+    -->
     <FunctionSensor name="DesiredPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
       <function>
         <!--
@@ -46,7 +67,7 @@
     </FunctionSensor>
     <BinarySignalOperation name="DifferencePosition" xmlns="http://www.mbsim-env.de/MBSimControl">
       <firstInputSignal ref="../Link[DesiredPosition]"/>
-      <secondInputSignal ref="../Link[MassPosition]"/>
+      <secondInputSignal ref="../Link[RelativeMassPositiony]"/>
       <function>
        <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
           y-x

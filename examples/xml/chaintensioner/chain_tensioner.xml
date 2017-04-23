@@ -178,7 +178,7 @@
       <h:length unit="mm">7</h:length>
       <h:firstSurfaceVelocity>
         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
-          <returnSignal ref="../../Link[PistonVelocity]"/>
+          <returnSignal ref="../../Link[PistonVelocityy]"/>
         </SignalFunction>
       </h:firstSurfaceVelocity>
       <h:innerRadius unit="mm">8</h:innerRadius>
@@ -248,10 +248,13 @@
       <h:initialPressure>1e5</h:initialPressure>
       <h:fracAir>.01</h:fracAir>
     </h:ElasticNodeMec>
-    <c:AbsoluteVelocitySensor name="PistonVelocity">
+    <c:VelocitySensor name="PistonVelocity">
       <c:frame ref="../Object[Piston]/Frame[C]"/>
-      <c:direction>[0;1;0]</c:direction>
-    </c:AbsoluteVelocitySensor>
+    </c:VelocitySensor>
+    <c:Demultiplexer name="PistonVelocityy">
+      <c:inputSignal ref="../Link[PistonVelocity]"/>
+      <c:indices>[2]</c:indices>
+    </c:Demultiplexer>
   </links>
   <constraints/>
   <observers/>

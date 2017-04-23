@@ -49,14 +49,16 @@
     </RigidBody>
   </objects>
   <links>
+  <!--
     <c:RelativePositionSensor name="KinematicExcitationPosition">
       <c:frame ref="../Group[ChainTensioner]/Object[Housing]/Frame[PistonInitialTopFrame]" rel="../Object[KinematicExcitation]/Frame[C]"/>
       <c:direction>[0;1;0]</c:direction>
     </c:RelativePositionSensor>
-    <c:AbsoluteVelocitySensor name="KinematicExcitationVelocity">
+    <c:VelocitySensor name="KinematicExcitationVelocity">
       <c:frame ref="../Object[KinematicExcitation]/Frame[C]"/>
       <c:direction>[0;1;0]</c:direction>
-    </c:AbsoluteVelocitySensor>
+    </c:VelocitySensor>
+    -->
     <Joint name="Sensor">
       <connect ref1="../Group[ChainTensioner]/Object[Piston]/Frame[Top]" ref2="../Object[KinematicExcitation]/Frame[C]"/>
       <forceDirection>[0;1;0]</forceDirection>
