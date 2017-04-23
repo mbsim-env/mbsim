@@ -878,6 +878,7 @@ namespace MBSimIntegrator {
       sysT1->plot();
     }
     if ((t>=tPlot) && outputInterpolation && !FlagPlotEveryStep) {
+      throw MBSimError("Not implemented");
 
       // Dimension/size von la und lae synchronisieren
       Vec laSynchron;
@@ -910,7 +911,6 @@ namespace MBSimIntegrator {
 
       while (t>tPlot) {
         double ratio = (tPlot -(t-dte))/dte;
-        throw;
         sysT1->setTime(tPlot);
         sysT1->setState(zi + (ze-zi)*ratio);
         sysT1->setla(laSynchron+(laeSynchron-laSynchron)*ratio);
@@ -1455,20 +1455,21 @@ namespace MBSimIntegrator {
   // Vector<int> laSizes contains the singel la-size of each link
 
   void TimeSteppingSSCIntegrator::getDataForGapControl() {
-    int nInActive=0;
-    int nActive=0;
-    throw;
-    for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++){ 
-      SetValuedLinkListT1[i]->checkActive(1);
-      SetValuedLinkListT1[i]->SizeLinearImpactEstimation(&nInActive, &nActive);
-    }
-    gInActive.resize(nInActive,NONINIT);
-    gdInActive.resize(nInActive,NONINIT);
-    gUniActive.resize(nActive,NONINIT);
-    nInActive=0;
-    nActive=0;
-    for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++) 
-      SetValuedLinkListT1[i]->LinearImpactEstimation(t,gInActive,gdInActive,&nInActive,gUniActive,&nActive);
+    throw MBSimError("TimeSteppingSSCIntegrator::getDataForGapControl not implemented");
+//    int nInActive=0;
+//    int nActive=0;
+//    throw;
+//    for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++){ 
+//      SetValuedLinkListT1[i]->checkActive(1);
+//      SetValuedLinkListT1[i]->SizeLinearImpactEstimation(&nInActive, &nActive);
+//    }
+//    gInActive.resize(nInActive,NONINIT);
+//    gdInActive.resize(nInActive,NONINIT);
+//    gUniActive.resize(nActive,NONINIT);
+//    nInActive=0;
+//    nActive=0;
+//    for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++) 
+//      SetValuedLinkListT1[i]->LinearImpactEstimation(t,gInActive,gdInActive,&nInActive,gUniActive,&nActive);
   }
 
   bool TimeSteppingSSCIntegrator::changedLinkStatus(const VecInt &L1, const VecInt &L2, int ex) {

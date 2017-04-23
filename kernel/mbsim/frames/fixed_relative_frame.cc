@@ -37,7 +37,7 @@ namespace MBSim {
 
   void FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
     Frame::initializeUsingXML(element);
-    DOMElement *ec=element->getFirstElementChild();
+    DOMElement *ec;
     ec=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
     if(ec) setFrameOfReference(E(ec)->getAttribute("ref"));
     ec=E(element)->getFirstElementChildNamed(MBSIM%"relativePosition");

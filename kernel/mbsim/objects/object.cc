@@ -35,52 +35,53 @@ namespace MBSim {
   }
 
   void Object::updatedhdz() {
-    Vec h0 = h[0].copy();
-
-    updateh(); // update with correct state
-    Vec hEnd = h[0].copy();
-
-    /**************** velocity dependent calculations ********************/
-    for (int i = 0; i < uSize[0]; i++) {
-      h[0] = h0;
-
-      double ui = u(i); // save correct position
-
-      u(i) += epsroot(); // update with disturbed positions assuming same active links
-      throw;
-      //updateStateDependentVariables(t);
-      updateh();
-
-      //dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
-      u(i) = ui;
-    }
-
-    /***************** position dependent calculations ********************/
-    for (int i = 0; i < qSize; i++) {
-      h[0] = h0;
-
-      double qi = q(i); // save correct position
-
-      q(i) += epsroot(); // update with disturbed positions assuming same active links
-      throw;
-
-      //dhdq.col(i) = (hObject-hObjectEnd)/epsroot();
-      q(i) = qi;
-    }
-
-    /******************* time dependent calculations **********************/
-    // hObject = hObject0; // set to old values
-    // h = h0;
-    // double t0 = t; // save correct position
-    // t += epsroot(); // update with disturbed positions assuming same active links
-    // updateStateDependentVariables(t); 
-    // updateT();
-    // updateJacobians(t);
-    // updateh();
-    // dhdt = (hObject-hObjectEnd)/epsroot();
-    // t = t0;
-    /******************* back to initial state **********************/
-    h[0] = hEnd;
+    THROW_MBSIMERROR("Object::updatedhdz not implemented.");
+//    Vec h0 = h[0].copy();
+//
+//    updateh(); // update with correct state
+//    Vec hEnd = h[0].copy();
+//
+//    /**************** velocity dependent calculations ********************/
+//    for (int i = 0; i < uSize[0]; i++) {
+//      h[0] = h0;
+//
+//      double ui = u(i); // save correct position
+//
+//      u(i) += epsroot(); // update with disturbed positions assuming same active links
+//      throw;
+//      //updateStateDependentVariables(t);
+//      updateh();
+//
+//      //dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
+//      u(i) = ui;
+//    }
+//
+//    /***************** position dependent calculations ********************/
+//    for (int i = 0; i < qSize; i++) {
+//      h[0] = h0;
+//
+//      double qi = q(i); // save correct position
+//
+//      q(i) += epsroot(); // update with disturbed positions assuming same active links
+//      throw;
+//
+//      //dhdq.col(i) = (hObject-hObjectEnd)/epsroot();
+//      q(i) = qi;
+//    }
+//
+//    /******************* time dependent calculations **********************/
+//    // hObject = hObject0; // set to old values
+//    // h = h0;
+//    // double t0 = t; // save correct position
+//    // t += epsroot(); // update with disturbed positions assuming same active links
+//    // updateStateDependentVariables(t); 
+//    // updateT();
+//    // updateJacobians(t);
+//    // updateh();
+//    // dhdt = (hObject-hObjectEnd)/epsroot();
+//    // t = t0;
+//    /******************* back to initial state **********************/
+//    h[0] = hEnd;
   }
 
   void Object::sethSize(int hSize_, int j) {

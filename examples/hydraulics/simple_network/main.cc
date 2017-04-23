@@ -110,16 +110,16 @@ int main (int argc, char* argv[]) {
             endTime=clock();
           }
           else if (iintegrator==1) {
-            ThetaTimeSteppingIntegrator in;
-            in.setStepSize(stepSizeFactor*dtPlot);
-            in.setTheta(.5);
-            in.setStartTime(0);
-            in.setEndTime(tEnd);
-            in.setPlotStepSize(dtPlot);
-            in.setOutput(true);
-            startTime=clock();
-            in.integrate(*dss);
-            endTime=clock();
+//            ThetaTimeSteppingIntegrator in;
+//            in.setStepSize(stepSizeFactor*dtPlot);
+//            in.setTheta(.5);
+//            in.setStartTime(0);
+//            in.setEndTime(tEnd);
+//            in.setPlotStepSize(dtPlot);
+//            in.setOutput(true);
+//            startTime=clock();
+//            in.integrate(*dss);
+//            endTime=clock();
           }
           else if (iintegrator==2) {
             EulerExplicitIntegrator in;

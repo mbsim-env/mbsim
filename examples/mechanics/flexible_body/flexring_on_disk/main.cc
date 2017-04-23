@@ -26,8 +26,8 @@ int main (int argc, char* argv[]) {
             }
             break;
     case 1: {
-              integrator = new ThetaTimeSteppingIntegrator();
-              static_cast<ThetaTimeSteppingIntegrator*>(integrator)->setStepSize(5.0e-4);
+//              integrator = new ThetaTimeSteppingIntegrator();
+//              static_cast<ThetaTimeSteppingIntegrator*>(integrator)->setStepSize(5.0e-4);
             }
             break;
             //LSODARIntegrator integrator;

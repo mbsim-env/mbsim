@@ -702,75 +702,77 @@ namespace MBSim {
   }
 
   Mat DynamicSystemSolver::dhdq(int lb, int ub) {
-    if (lb != 0 || ub != 0) {
-      assert(lb >= 0);
-      assert(ub <= qSize);
-    }
-    else if (lb == 0 && ub == 0) {
-      lb = 0;
-      ub = qSize;
-    }
-    double delta = epsroot();
-    Mat J(hSize[0], qSize, INIT, 0.0);
-    throw;
-    updateg();
-    updategd();
-    updateT();
-    updateh();
-    Vec hOld = h[0].copy();
-    for (int i = lb; i < ub; i++) {
-      double qtmp = q(i);
-      q(i) += delta;
-      updateg();
-      updategd();
-      updateT();
-      updateh();
-      J.col(i) = (h[0] - hOld) / delta;
-      q(i) = qtmp;
-    }
-    h[0] = hOld;
-
-    updateg();
-    updategd();
-    updateT();
-    updateh();
-
-    return J;
+    THROW_MBSIMERROR("DynamicSystemSolver::dhdq not implemented.");
+//    if (lb != 0 || ub != 0) {
+//      assert(lb >= 0);
+//      assert(ub <= qSize);
+//    }
+//    else if (lb == 0 && ub == 0) {
+//      lb = 0;
+//      ub = qSize;
+//    }
+//    double delta = epsroot();
+//    Mat J(hSize[0], qSize, INIT, 0.0);
+//    throw;
+//    updateg();
+//    updategd();
+//    updateT();
+//    updateh();
+//    Vec hOld = h[0].copy();
+//    for (int i = lb; i < ub; i++) {
+//      double qtmp = q(i);
+//      q(i) += delta;
+//      updateg();
+//      updategd();
+//      updateT();
+//      updateh();
+//      J.col(i) = (h[0] - hOld) / delta;
+//      q(i) = qtmp;
+//    }
+//    h[0] = hOld;
+//
+//    updateg();
+//    updategd();
+//    updateT();
+//    updateh();
+//
+//    return J;
   }
 
   Mat DynamicSystemSolver::dhdu(int lb, int ub) {
-    if (lb != 0 || ub != 0) {
-      assert(lb >= 0);
-      assert(ub <= uSize[0]);
-    }
-    else if (lb == 0 && ub == 0) {
-      lb = 0;
-      ub = uSize[0];
-    }
-    double delta = epsroot();
-    Mat J(hSize[0], uSize[0], INIT, 0.0);
-    throw;
-    updateg();
-    updategd();
-    updateT();
-    updateh();
-    Vec hOld = h[0].copy();
-    for (int i = lb; i < ub; i++) {
-      //msg(Info) << "bin bei i=" << i << endl;
-      double utmp = u(i);
-      u(i) += delta;
-      //updateg();
-      updategd();
-      //updateT();
-      updateh();
-      J.col(i) = (h[0] - hOld) / delta;
-      u(i) = utmp;
-    }
-    h[0] = hOld;
-    updategd();
-    updateh();
-
-    return J;
+    THROW_MBSIMERROR("DynamicSystemSolver::dhdu not implemented.");
+//    if (lb != 0 || ub != 0) {
+//      assert(lb >= 0);
+//      assert(ub <= uSize[0]);
+//    }
+//    else if (lb == 0 && ub == 0) {
+//      lb = 0;
+//      ub = uSize[0];
+//    }
+//    double delta = epsroot();
+//    Mat J(hSize[0], uSize[0], INIT, 0.0);
+//    throw;
+//    updateg();
+//    updategd();
+//    updateT();
+//    updateh();
+//    Vec hOld = h[0].copy();
+//    for (int i = lb; i < ub; i++) {
+//      //msg(Info) << "bin bei i=" << i << endl;
+//      double utmp = u(i);
+//      u(i) += delta;
+//      //updateg();
+//      updategd();
+//      //updateT();
+//      updateh();
+//      J.col(i) = (h[0] - hOld) / delta;
+//      u(i) = utmp;
+//    }
+//    h[0] = hOld;
+//    updategd();
+//    updateh();
+//
+//    return J;
   }
 
   Mat DynamicSystemSolver::dhdx() {
