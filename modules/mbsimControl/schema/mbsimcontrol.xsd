@@ -183,14 +183,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="AbsoluteCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="AbsoluteCoordinateSensorType">
+  <xs:element name="FrameSensor" abstract="true" substitutionGroup="Sensor" type="FrameSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Sensor zum Auslesen von Koordinatensystemen in absoluten Koordinaten (Welt-System)
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="AbsoluteCoordinateSensorType">
+  <xs:complexType name="FrameSensorType">
     <xs:complexContent>
       <xs:extension base="SensorType">
         <xs:sequence>
@@ -204,70 +204,64 @@
               <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="direction" type="pv:nounitMatrix">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Matrix der Richtungsvektoren
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>        
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="AbsolutePositionSensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsolutePositionSensorType">
+  <xs:element name="PositionSensor" substitutionGroup="FrameSensor" type="PositionSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Sensor zum Auslesen der Positionen im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="AbsolutePositionSensorType">
+  <xs:complexType name="PositionSensorType">
     <xs:complexContent>
-      <xs:extension base="AbsoluteCoordinateSensorType"/>
+      <xs:extension base="FrameSensorType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="AbsoluteVelocitySensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteVelocitySensorType">
+  <xs:element name="VelocitySensor" substitutionGroup="FrameSensor" type="VelocitySensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Sensor zum Auslesen der Geschwindigkeiten im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="AbsoluteVelocitySensorType">
+  <xs:complexType name="VelocitySensorType">
     <xs:complexContent>
-      <xs:extension base="AbsoluteCoordinateSensorType"/>
+      <xs:extension base="FrameSensorType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="AbsoluteAngularPositionSensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteAngularPositionSensorType">
+  <xs:element name="AngleSensor" substitutionGroup="FrameSensor" type="AngleSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Sensor zum Auslesen der Winkel im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="AbsoluteAngularPositionSensorType">
+  <xs:complexType name="AngleSensorType">
     <xs:complexContent>
-      <xs:extension base="AbsoluteCoordinateSensorType"/>
+      <xs:extension base="FrameSensorType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="AbsoluteAngularVelocitySensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteAngularVelocitySensorType">
+  <xs:element name="AngularVelocitySensor" substitutionGroup="FrameSensor" type="AngularVelocitySensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Sensor zum Auslesen der Winkelgeschwindigkeit im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="AbsoluteAngularVelocitySensorType">
+  <xs:complexType name="AngularVelocitySensorType">
     <xs:complexContent>
-      <xs:extension base="AbsoluteCoordinateSensorType"/>
+      <xs:extension base="FrameSensorType"/>
     </xs:complexContent>
   </xs:complexType>
 
+  <!--
   <xs:element name="RelativeCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="RelativeCoordinateSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -354,6 +348,7 @@
       <xs:extension base="RelativeCoordinateSensorType"/>
     </xs:complexContent>
   </xs:complexType>
+  -->
 
   <xs:element name="FunctionSensor" substitutionGroup="Sensor" type="FunctionSensorType">
     <xs:annotation>

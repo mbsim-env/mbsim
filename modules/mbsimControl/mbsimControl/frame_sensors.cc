@@ -19,8 +19,8 @@
 
 #include <config.h>
 #include "mbsimControl/frame_sensors.h"
-
 #include "mbsim/frames/frame.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -30,126 +30,111 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  void AbsolutCoordinateSensor::initializeUsingXML(DOMElement * element) {
+  void FrameSensor::initializeUsingXML(DOMElement * element) {
     Sensor::initializeUsingXML(element);
-    DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frame");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frame");
     frameString=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"direction");
-    direction=getMat(e,3,0);
-    for (int i=0; i<direction.cols(); i++)
-      direction.col(i)=direction.col(i)/nrm2(direction.col(i));
   }
 
-  void AbsolutCoordinateSensor::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      if (frameString!="")
+  void FrameSensor::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      if(frameString!="")
         setFrame(getByPath<Frame>(frameString));
-      Sensor::init(stage);
     }
-    else
-      Sensor::init(stage);
+    Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AbsolutePositionSensor)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, PositionSensor)
 
-  void AbsolutePositionSensor::updateSignal() {
-    s = direction.T()*frame->evalPosition();
+  void PositionSensor::updateSignal() {
+    s = frame->evalPosition();
     upds = false;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AbsoluteVelocitySensor)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, VelocitySensor)
 
-  void AbsoluteVelocitySensor::updateSignal() {
-    s = direction.T()*frame->evalVelocity();
+  void VelocitySensor::updateSignal() {
+    s = frame->evalVelocity();
     upds = false;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AbsoluteAngularPositionSensor)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AngleSensor)
 
-  void AbsoluteAngularPositionSensor::updatexd() {
-    xd=direction.T()*frame->evalAngularVelocity();
-  }
-
-  void AbsoluteAngularPositionSensor::updatedx() {
-    dx=direction.T()*frame->evalAngularVelocity()*getStepSize();
-  }
-
-  void AbsoluteAngularPositionSensor::updateSignal() {
-    s = x;
+  void AngleSensor::updateSignal() {
+    s = AIK2Cardan(frame->evalOrientation());
     upds = false;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AbsoluteAngularVelocitySensor)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AngularVelocitySensor)
 
-  void AbsoluteAngularVelocitySensor::updateSignal() {
-    s = direction.T()*frame->evalAngularVelocity();
+  void AngularVelocitySensor::updateSignal() {
+    s = frame->evalAngularVelocity();
     upds = false;
   }
 
-  void RelativeCoordinateSensor::initializeUsingXML(DOMElement * element) {
-    Sensor::initializeUsingXML(element);
-    DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frame");
-    refFrameString=E(e)->getAttribute("ref");
-    relFrameString=E(e)->getAttribute("rel");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"direction");
-    direction=getMat(e,3,0);
-    for (int i=0; i<direction.cols(); i++)
-      direction.col(i)=direction.col(i)/nrm2(direction.col(i));
-  }
-
-  void RelativeCoordinateSensor::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      if (refFrameString!="")
-        setReferenceFrame(getByPath<Frame>(refFrameString));
-      if (relFrameString!="")
-        setRelativeFrame(getByPath<Frame>(relFrameString));
-      Sensor::init(stage);
-    }
-    else
-      Sensor::init(stage);
-  }
-
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativePositionSensor)
-
-  void RelativePositionSensor::updateSignal() {
-    VecV WrRefRel=relFrame->evalPosition()-refFrame->evalPosition();
-    s = (refFrame->getOrientation()*direction).T()*WrRefRel;
-    upds = false;
-  }
-
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativeVelocitySensor)
-
-  void RelativeVelocitySensor::updateSignal() {
-    VecV WvRefRel=relFrame->evalVelocity()-refFrame->evalVelocity();
-    s = (refFrame->getOrientation()*direction).T()*WvRefRel;
-    upds = false;
-  }
-
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativeAngularPositionSensor)
-
-  void RelativeAngularPositionSensor::updatexd() {
-    VecV WomegaRefRel=relFrame->evalAngularVelocity()-refFrame->evalAngularVelocity();
-    xd=(refFrame->getOrientation()*direction).T()*WomegaRefRel;
-  }
-
-  void RelativeAngularPositionSensor::updatedx() {
-    VecV WomegaRefRel=relFrame->evalAngularVelocity()-refFrame->evalAngularVelocity();
-    dx=(refFrame->getOrientation()*direction).T()*WomegaRefRel*getStepSize();
-  }
-
-  void RelativeAngularPositionSensor::updateSignal() {
-    s = x;
-    upds = false;
-  }
-
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativeAngularVelocitySensor)
-
-  void RelativeAngularVelocitySensor::updateSignal() {
-    VecV WomegaRefRel=relFrame->evalAngularVelocity()-refFrame->evalAngularVelocity();
-    s = (refFrame->getOrientation()*direction).T()*WomegaRefRel;
-    upds = false;
-  }
+//  void RelativeCoordinateSensor::initializeUsingXML(DOMElement * element) {
+//    Sensor::initializeUsingXML(element);
+//    DOMElement *e;
+//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frame");
+//    refFrameString=E(e)->getAttribute("ref");
+//    relFrameString=E(e)->getAttribute("rel");
+//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"direction");
+//    direction=getMat(e,3,0);
+//    for (int i=0; i<direction.cols(); i++)
+//      direction.col(i)=direction.col(i)/nrm2(direction.col(i));
+//  }
+//
+//  void RelativeCoordinateSensor::init(InitStage stage) {
+//    if (stage==resolveXMLPath) {
+//      if (refFrameString!="")
+//        setReferenceFrame(getByPath<Frame>(refFrameString));
+//      if (relFrameString!="")
+//        setRelativeFrame(getByPath<Frame>(relFrameString));
+//      Sensor::init(stage);
+//    }
+//    else
+//      Sensor::init(stage);
+//  }
+//
+//  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativePositionSensor)
+//
+//  void RelativePositionSensor::updateSignal() {
+//    VecV WrRefRel=relFrame->evalPosition()-refFrame->evalPosition();
+//    s = (refFrame->getOrientation()*direction).T()*WrRefRel;
+//    upds = false;
+//  }
+//
+//  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativeVelocitySensor)
+//
+//  void RelativeVelocitySensor::updateSignal() {
+//    VecV WvRefRel=relFrame->evalVelocity()-refFrame->evalVelocity();
+//    s = (refFrame->getOrientation()*direction).T()*WvRefRel;
+//    upds = false;
+//  }
+//
+//  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativeAngularPositionSensor)
+//
+//  void RelativeAngularPositionSensor::updatexd() {
+//    VecV WomegaRefRel=relFrame->evalAngularVelocity()-refFrame->evalAngularVelocity();
+//    xd=(refFrame->getOrientation()*direction).T()*WomegaRefRel;
+//  }
+//
+//  void RelativeAngularPositionSensor::updatedx() {
+//    VecV WomegaRefRel=relFrame->evalAngularVelocity()-refFrame->evalAngularVelocity();
+//    dx=(refFrame->getOrientation()*direction).T()*WomegaRefRel*getStepSize();
+//  }
+//
+//  void RelativeAngularPositionSensor::updateSignal() {
+//    s = x;
+//    upds = false;
+//  }
+//
+//  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativeAngularVelocitySensor)
+//
+//  void RelativeAngularVelocitySensor::updateSignal() {
+//    VecV WomegaRefRel=relFrame->evalAngularVelocity()-refFrame->evalAngularVelocity();
+//    s = (refFrame->getOrientation()*direction).T()*WomegaRefRel;
+//    upds = false;
+//  }
 
 }

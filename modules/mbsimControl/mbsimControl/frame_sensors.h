@@ -29,171 +29,149 @@ namespace MBSim {
 namespace MBSimControl {
 
   /*!
-   * \brief AbsolutCoordinateSensor
+   * \brief FrameSensor
    * \author Markus Schneider
    */
-  class AbsolutCoordinateSensor : public Sensor {
+  class FrameSensor : public Sensor {
     public:
-      AbsolutCoordinateSensor(const std::string &name) : Sensor(name), frame(NULL), direction(), frameString("") {}
-      std::string getType() const { return "AbsolutCoordinateSensor"; }
+      FrameSensor(const std::string &name) : Sensor(name), frame(NULL) { }
+      std::string getType() const { return "FrameSensor"; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void setFrame(MBSim::Frame * frame_) {frame=frame_; }
-      void setDirection(fmatvec::Mat direction_) {
-        direction=direction_;
-        for (int i=0; i<direction_.cols(); i++)
-          direction.col(i)=direction.col(i)/nrm2(direction.col(i)); 
-        assert(direction.rows()==3); 
-      }
-      int getSignalSize() const { return direction.cols(); }
+      void setFrame(MBSim::Frame * frame_) { frame = frame_; }
+      int getSignalSize() const { return 3; }
     protected:
-      MBSim::Frame * frame;
-      fmatvec::Mat direction;
+      MBSim::Frame *frame;
       std::string frameString;
   };
 
   /*!
-   * \brief AbsolutePositionSensor
+   * \brief PositionSensor
    * \author Markus Schneider
    */
-  class AbsolutePositionSensor : public AbsolutCoordinateSensor {
+  class PositionSensor : public FrameSensor {
     public:
-      AbsolutePositionSensor(const std::string &name="") : AbsolutCoordinateSensor(name) {}
-      std::string getType() const { return "AbsolutePositionSensor"; }
+      PositionSensor(const std::string &name="") : FrameSensor(name) {}
+      std::string getType() const { return "PositionSensor"; }
       void updateSignal();
   };
 
   /*!
-   * \brief AbsoluteVelocitySensor
+   * \brief VelocitySensor
    * \author Markus Schneider
    */
-  class AbsoluteVelocitySensor : public AbsolutCoordinateSensor {
+  class VelocitySensor : public FrameSensor {
     public:
-      AbsoluteVelocitySensor(const std::string &name="") : AbsolutCoordinateSensor(name) {}
-      std::string getType() const { return "AbsoluteVelocitySensor"; }
+      VelocitySensor(const std::string &name="") : FrameSensor(name) {}
+      std::string getType() const { return "VelocitySensor"; }
       void updateSignal();
   };
 
   /*!
-   * \brief AbsoluteAngularPositionSensor
+   * \brief AngularPositionSensor
    * \author Markus Schneider
    */
-  class AbsoluteAngularPositionSensor : public AbsolutCoordinateSensor {
+  class AngleSensor : public FrameSensor {
     public:
-      AbsoluteAngularPositionSensor(const std::string &name="") : AbsolutCoordinateSensor(name) {}
-      std::string getType() const { return "AbsoluteAngularPositionSensor"; }
+      AngleSensor(const std::string &name="") : FrameSensor(name) {}
+      std::string getType() const { return "AngleSensor"; }
       void updateSignal();
-
-      void calcxSize() {xSize=direction.cols(); }
-      void init(InitStage stage) {
-        if (stage==preInit) {
-          AbsolutCoordinateSensor::init(stage);
-          g.resize(direction.cols()); 
-          gd.resize(direction.cols()); 
-          x.resize(direction.cols());
-        }
-        else
-          AbsolutCoordinateSensor::init(stage);
-      }
-      void updatexd();
-      void updatedx();
   };
 
   /*!
-   * \brief AbsoluteAngularVelocitySensor
+   * \brief AngularVelocitySensor
    * \author Markus Schneider
    */
-  class AbsoluteAngularVelocitySensor : public AbsolutCoordinateSensor {
+  class AngularVelocitySensor : public FrameSensor {
     public:
-      AbsoluteAngularVelocitySensor(const std::string &name="") : AbsolutCoordinateSensor(name) {}
-      std::string getType() const { return "AbsoluteAngularVelocitySensor"; }
+      AngularVelocitySensor(const std::string &name="") : FrameSensor(name) {}
+      std::string getType() const { return "AngularVelocitySensor"; }
       void updateSignal();
   };
   
-  
-  /*!
-   * \brief RelativeCoordinateSensor
-   * \author Markus Schneider
-   */
-  class RelativeCoordinateSensor : public Sensor {
-    public:
-      RelativeCoordinateSensor(const std::string &name) : Sensor(name), refFrame(NULL), relFrame(NULL), direction(), refFrameString(""), relFrameString("") {}
-      std::string getType() const { return "RelativeCoordinateSensor"; }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
-      void setReferenceFrame(MBSim::Frame * refFrame_) {refFrame=refFrame_; }
-      void setRelativeFrame(MBSim::Frame * relFrame_) {relFrame=relFrame_; }
-      void setDirection(fmatvec::Mat direction_) {
-        direction=direction_;
-        for (int i=0; i<direction_.cols(); i++)
-          direction.col(i)=direction.col(i)/nrm2(direction.col(i)); 
-        assert(direction.rows()==3); 
-      }
-      int getSignalSize() const { return direction.cols(); }
-    protected:
-      MBSim::Frame * refFrame;
-      MBSim::Frame * relFrame;
-      fmatvec::Mat direction;
-      std::string refFrameString, relFrameString;
-  };
-  
-  /*!
-   * \brief RelativePositionSensor
-   * \author Markus Schneider
-   */
-  class RelativePositionSensor : public RelativeCoordinateSensor {
-    public:
-      RelativePositionSensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-      std::string getType() const { return "RelativePositionSensor"; }
-      void updateSignal();
-  };
-  
-  /*!
-   * \brief RelativeVelocitySensor
-   * \author Markus Schneider
-   */
-  class RelativeVelocitySensor : public RelativeCoordinateSensor {
-    public:
-      RelativeVelocitySensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-      std::string getType() const { return "RelativeVelocitySensor"; }
-      void updateSignal();
-  };
-  
-  /*!
-   * \brief RelativeAngularPositionSensor
-   * \author Markus Schneider
-   */
-  class RelativeAngularPositionSensor : public RelativeCoordinateSensor {
-    public:
-      RelativeAngularPositionSensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-      std::string getType() const { return "RelativeAngularPositionSensor"; }
-      void updateSignal();
-      
-      void calcxSize() {xSize=direction.cols(); }
-      void init(InitStage stage) {
-        if (stage==preInit) {
-          RelativeCoordinateSensor::init(stage);
-          g.resize(direction.cols()); 
-          gd.resize(direction.cols());
-          x.resize(direction.cols()); 
-        }
-        else
-          RelativeCoordinateSensor::init(stage);
-      }
-      void updatexd();
-      void updatedx();
-  };
-  
-  /*!
-   * \brief RelativeAngularVelocitySensor
-   * \author Markus Schneider
-   */
-  class RelativeAngularVelocitySensor : public RelativeCoordinateSensor {
-    public:
-      RelativeAngularVelocitySensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-      std::string getType() const { return "RelativeAngularVelocitySensor"; }
-      void updateSignal();
-  };
+//  /*!
+//   * \brief RelativeCoordinateSensor
+//   * \author Markus Schneider
+//   */
+//  class RelativeCoordinateSensor : public Sensor {
+//    public:
+//      RelativeCoordinateSensor(const std::string &name) : Sensor(name), refFrame(NULL), relFrame(NULL), direction(), refFrameString(""), relFrameString("") {}
+//      std::string getType() const { return "RelativeCoordinateSensor"; }
+//      void initializeUsingXML(xercesc::DOMElement *element);
+//      void init(InitStage stage);
+//      void setReferenceFrame(MBSim::Frame * refFrame_) {refFrame=refFrame_; }
+//      void setRelativeFrame(MBSim::Frame * relFrame_) {relFrame=relFrame_; }
+//      void setDirection(fmatvec::Mat direction_) {
+//        direction=direction_;
+//        for (int i=0; i<direction_.cols(); i++)
+//          direction.col(i)=direction.col(i)/nrm2(direction.col(i));
+//        assert(direction.rows()==3);
+//      }
+//      int getSignalSize() const { return direction.cols(); }
+//    protected:
+//      MBSim::Frame * refFrame;
+//      MBSim::Frame * relFrame;
+//      fmatvec::Mat direction;
+//      std::string refFrameString, relFrameString;
+//  };
+//
+//  /*!
+//   * \brief RelativePositionSensor
+//   * \author Markus Schneider
+//   */
+//  class RelativePositionSensor : public RelativeCoordinateSensor {
+//    public:
+//      RelativePositionSensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
+//      std::string getType() const { return "RelativePositionSensor"; }
+//      void updateSignal();
+//  };
+//
+//  /*!
+//   * \brief RelativeVelocitySensor
+//   * \author Markus Schneider
+//   */
+//  class RelativeVelocitySensor : public RelativeCoordinateSensor {
+//    public:
+//      RelativeVelocitySensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
+//      std::string getType() const { return "RelativeVelocitySensor"; }
+//      void updateSignal();
+//  };
+//
+//  /*!
+//   * \brief RelativeAngularPositionSensor
+//   * \author Markus Schneider
+//   */
+//  class RelativeAngularPositionSensor : public RelativeCoordinateSensor {
+//    public:
+//      RelativeAngularPositionSensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
+//      std::string getType() const { return "RelativeAngularPositionSensor"; }
+//      void updateSignal();
+//
+//      void calcxSize() {xSize=direction.cols(); }
+//      void init(InitStage stage) {
+//        if (stage==preInit) {
+//          RelativeCoordinateSensor::init(stage);
+//          g.resize(direction.cols());
+//          gd.resize(direction.cols());
+//          x.resize(direction.cols());
+//        }
+//        else
+//          RelativeCoordinateSensor::init(stage);
+//      }
+//      void updatexd();
+//      void updatedx();
+//  };
+//
+//  /*!
+//   * \brief RelativeAngularVelocitySensor
+//   * \author Markus Schneider
+//   */
+//  class RelativeAngularVelocitySensor : public RelativeCoordinateSensor {
+//    public:
+//      RelativeAngularVelocitySensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
+//      std::string getType() const { return "RelativeAngularVelocitySensor"; }
+//      void updateSignal();
+//  };
 
 }
 
