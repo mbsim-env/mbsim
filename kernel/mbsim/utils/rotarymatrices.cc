@@ -37,86 +37,78 @@ namespace MBSim {
       I_X        */
 
 
-  SqrMat BasicRotAKIx(double phi) {
-    SqrMat AKI(3,INIT,0.0);
+  SqrMat3 BasicRotAKIx(double phi) {
+    SqrMat3 AKI(NONINIT);
     AKI(0,0)= 1.0;
     AKI(1,1)= cos(phi);
     AKI(2,2)= AKI(1,1);
     AKI(1,2)= sin(phi);
     AKI(2,1)=-AKI(1,2); 
+    AKI(0,1)= 0.0;
+    AKI(1,0)= 0.0;
+    AKI(0,2)= 0.0;
+    AKI(2,0)= 0.0;
     return AKI;
   }
 
-  SqrMat BasicRotAKIy(double phi) {
-    SqrMat AKI(3,INIT,0.0);
+  SqrMat3 BasicRotAKIy(double phi) {
+    SqrMat3 AKI(NONINIT);
     AKI(1,1)= 1.0;
     AKI(0,0)= cos(phi);
     AKI(2,2)= AKI(0,0);
     AKI(0,2)=-sin(phi);
     AKI(2,0)=-AKI(0,2);
+    AKI(0,1)= 0.0;
+    AKI(1,0)= 0.0;
+    AKI(1,2)= 0.0;
+    AKI(2,1)= 0.0;
     return AKI; 
   }
 
-  SqrMat BasicRotAKIz(double phi) {
-    SqrMat AKI(3,INIT,0.0);
+  SqrMat3 BasicRotAKIz(double phi) {
+    SqrMat3 AKI(NONINIT);
     AKI(2,2)= 1.0;
     AKI(0,0)= cos(phi);
     AKI(1,1)= AKI(0,0);
     AKI(0,1)= sin(phi);
     AKI(1,0)= -AKI(0,1);
+    AKI(0,2)= 0.0;
+    AKI(2,0)= 0.0;
+    AKI(1,2)= 0.0;
+    AKI(2,1)= 0.0;
     return AKI; 
   }
 
-  SqrMat BasicRotAIKx(double phi) {
-    SqrMat AIK(3,INIT,0.0);
-    AIK = BasicRotAKIx(-phi);
-    return AIK;
+  Vec3 AIK2Cardan(const SqrMat3 &AIK) {
+    Vec3 AlphaBetaGamma(NONINIT);
+    AlphaBetaGamma(1)= asin(AIK(0,2));
+    double nenner = cos(AlphaBetaGamma(1));
+    if (fabs(nenner)>1e-10) {
+      AlphaBetaGamma(0) = atan2(-AIK(1,2),AIK(2,2));
+      AlphaBetaGamma(2) = atan2(-AIK(0,1),AIK(0,0));
+    } else {
+      AlphaBetaGamma(0)=0;
+      AlphaBetaGamma(2)=atan2(AIK(1,0),AIK(1,1));
+    }
+    return AlphaBetaGamma;
   }
 
-  SqrMat BasicRotAIKy(double phi) {
-    SqrMat AIK(3,INIT,0.0);
-    AIK = BasicRotAKIy(-phi);
-    return AIK; 
+  Vec3 AIK2RevCardan(const SqrMat3 &AIK) {
+    Vec3 AlphaBetaGamma(NONINIT);
+    AlphaBetaGamma(1)= asin(-AIK(2,0));
+    double nenner = cos(AlphaBetaGamma(1));
+    if (fabs(nenner)>1e-10) {
+      AlphaBetaGamma(0) = atan2(AIK(2,1),AIK(2,2));
+      AlphaBetaGamma(2) = ArcTan(AIK(0,0),AIK(1,0));
+    } else {
+      AlphaBetaGamma(0)=0;
+      AlphaBetaGamma(2)=atan2(-AIK(0,1),AIK(1,1));
+    }
+    return AlphaBetaGamma;
   }
 
-  SqrMat BasicRotAIKz(double phi) {
-    SqrMat AIK(3,INIT,0.0);
-    AIK = BasicRotAKIz(-phi);
-    return AIK; 
-  }
-
-  SqrMat Cardan2AIK(double alpha,double beta,double gamma) {
-    //x
-    SqrMat AIKx(3,INIT,0);
-    AIKx =  BasicRotAIKx(alpha);
-    //y
-    SqrMat AIKy(3,INIT,0); 
-    AIKy =  BasicRotAIKy(beta);
-
-    //z
-    SqrMat AIKz(3,INIT,0);  
-    AIKz = BasicRotAIKz(gamma);
-
-    return AIKx*AIKy*AIKz;          //Wie im TM VI Skript
-  }
-
-  SqrMat Euler2AIK(double psi,double theta,double phi) {
-    //z Preazession
-    SqrMat AIKz_psi(3,INIT,0);
-    AIKz_psi =  BasicRotAIKz(psi);
-    //x Nutation (Kippen)
-    SqrMat AIKx(3,INIT,0); 
-    AIKx =  BasicRotAIKx(theta);
-
-    //z Rotation (um eigene Achse)
-    SqrMat AIKz_phi(3,INIT,0);  
-    AIKz_phi = BasicRotAIKz(phi);
-
-    return AIKz_psi*AIKx*AIKz_phi; 
-  }
-
-  Vec AIK2ParametersZXY(const SqrMat &AIK) {
-    Vec AlphaBetaGamma(3,INIT,0.0);
+  Vec3 AIK2ParametersZXY(const SqrMat3 &AIK) {
+    Vec3 AlphaBetaGamma(NONINIT);
     AlphaBetaGamma(0) = asin(AIK(2,1));
     double nenner = cos(AlphaBetaGamma(0));
     if (fabs(nenner)>1e10) {
@@ -130,9 +122,9 @@ namespace MBSim {
     return AlphaBetaGamma;
   }
 
-  Vec calcParametersDotZXY(const SqrMat &AIK, const Vec &KomegaK) {
-    Vec AlBeGa = AIK2ParametersZXY(AIK);
-    SqrMat B(3,INIT,0.0);
+  Vec3 calcParametersDotZXY(const SqrMat3 &AIK, const Vec3 &KomegaK) {
+    Vec3 AlBeGa = AIK2ParametersZXY(AIK);
+    SqrMat3 B(NONINIT);
     double cosAl = cos(AlBeGa(0));
     double sinAl = sin(AlBeGa(0));
     double cosBe = cos(AlBeGa(1));
@@ -143,8 +135,11 @@ namespace MBSim {
     B(0,2) = cosAl*sinBe;
     B(1,2) = -sinAl*cosBe;
     B(2,2) = cosBe;
-    B = B/cosAl;
-    B(1,1)=1;
+    B /= cosAl;
+    B(0,1) = 0.0;
+    B(1,1) = 1.0;
+    B(2,1) = 0.0;
     return B*KomegaK;
   }
+
 }
