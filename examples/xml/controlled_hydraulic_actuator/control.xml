@@ -24,26 +24,22 @@
     <PositionSensor name="FMassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../../Frame[FMass]"/>
     </PositionSensor>
-    <Demultiplexer name="FMassPositiony" xmlns="http://www.mbsim-env.de/MBSimControl">
-      <inputSignal ref="../Link[FMassPosition]"/>
-      <indices>[2]</indices>
-    </Demultiplexer>
     <PositionSensor name="MassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
     </PositionSensor>
-    <Demultiplexer name="MassPositiony" xmlns="http://www.mbsim-env.de/MBSimControl">
-      <inputSignal ref="../Link[MassPosition]"/>
-      <indices>[2]</indices>
-    </Demultiplexer>
-    <BinarySignalOperation name="RelativeMassPositiony" xmlns="http://www.mbsim-env.de/MBSimControl">
-      <firstInputSignal ref="../Link[FMassPositiony]"/>
-      <secondInputSignal ref="../Link[MassPositiony]"/>
+    <BinarySignalOperation name="RelativeMassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <firstInputSignal ref="../Link[FMassPosition]"/>
+      <secondInputSignal ref="../Link[MassPosition]"/>
       <function>
-       <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
+       <SymbolicFunction arg1="x" arg1Dim="3" arg2="y" arg2Dim="3" xmlns="http://www.mbsim-env.de/MBSim">
           y-x
         </SymbolicFunction>
       </function>
     </BinarySignalOperation>
+    <Demultiplexer name="RelativeMassPositiony" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[RelativeMassPosition]"/>
+      <indices>[2]</indices>
+    </Demultiplexer>
     <!--
     <RelativeVelocitySensor name="MassVelocity" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../../Frame[FMass]" rel="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
