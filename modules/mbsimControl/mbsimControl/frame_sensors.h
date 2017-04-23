@@ -51,7 +51,7 @@ namespace MBSimControl {
    */
   class PositionSensor : public FrameSensor {
     public:
-      PositionSensor(const std::string &name="") : FrameSensor(name) {}
+      PositionSensor(const std::string &name="") : FrameSensor(name) { }
       std::string getType() const { return "PositionSensor"; }
       void updateSignal();
   };
@@ -62,7 +62,7 @@ namespace MBSimControl {
    */
   class VelocitySensor : public FrameSensor {
     public:
-      VelocitySensor(const std::string &name="") : FrameSensor(name) {}
+      VelocitySensor(const std::string &name="") : FrameSensor(name) { }
       std::string getType() const { return "VelocitySensor"; }
       void updateSignal();
   };
@@ -73,7 +73,7 @@ namespace MBSimControl {
    */
   class AngleSensor : public FrameSensor {
     public:
-      AngleSensor(const std::string &name="") : FrameSensor(name) {}
+      AngleSensor(const std::string &name="") : FrameSensor(name) { }
       std::string getType() const { return "AngleSensor"; }
       void updateSignal();
   };
@@ -84,7 +84,7 @@ namespace MBSimControl {
    */
   class AngularVelocitySensor : public FrameSensor {
     public:
-      AngularVelocitySensor(const std::string &name="") : FrameSensor(name) {}
+      AngularVelocitySensor(const std::string &name="") : FrameSensor(name) { }
       std::string getType() const { return "AngularVelocitySensor"; }
       void updateSignal();
   };

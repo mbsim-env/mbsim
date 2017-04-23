@@ -19,7 +19,6 @@
     </LinearTransferSystem>
     <GeneralizedVelocitySensor name="crankMeasuredSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
       <object ref="../../Object[Crank]"/>
-      <index>0</index>
     </GeneralizedVelocitySensor>
     <FunctionSensor name="crankReferenceSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
       <function>

@@ -124,14 +124,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="GeneralizedCoordinateSensorType">
+  <xs:element name="ObjectSensor" abstract="true" substitutionGroup="Sensor" type="ObjectSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Sensor zum Auslesen der generalisierten Koordinaten eines Objekts.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="GeneralizedCoordinateSensorType">
+  <xs:complexType name="ObjectSensorType">
     <xs:complexContent>
       <xs:extension base="SensorType">
         <xs:sequence>
@@ -145,19 +145,12 @@
               <xs:attribute name="ref" type="mbsim:ObjectReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="index" type="pv:integerFullEval">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Index der generalisierten Koordinate
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedPositionSensor" substitutionGroup="GeneralizedCoordinateSensor" type="GeneralizedPositionSensorType">
+  <xs:element name="GeneralizedPositionSensor" substitutionGroup="ObjectSensor" type="GeneralizedPositionSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Sensor zum Auslesen der generalisierten Positionen
@@ -166,11 +159,11 @@
   </xs:element>
   <xs:complexType name="GeneralizedPositionSensorType">
     <xs:complexContent>
-      <xs:extension base="GeneralizedCoordinateSensorType"/>
+      <xs:extension base="ObjectSensorType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedVelocitySensor" substitutionGroup="GeneralizedCoordinateSensor" type="GeneralizedVelocitySensorType">
+  <xs:element name="GeneralizedVelocitySensor" substitutionGroup="ObjectSensor" type="GeneralizedVelocitySensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Sensor zum Auslesen der generalisierten Geschwindigkeiten
@@ -179,7 +172,7 @@
   </xs:element>
   <xs:complexType name="GeneralizedVelocitySensorType">
     <xs:complexContent>
-      <xs:extension base="GeneralizedCoordinateSensorType"/>
+      <xs:extension base="ObjectSensorType"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -479,27 +472,23 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SignalMux" substitutionGroup="Signal" type="SignalMuxType">
+  <xs:element name="Multiplexer" substitutionGroup="Signal" type="MultiplexerType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Vektorwertiges Zusammenführen von Signalen
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SignalMuxType">
+  <xs:complexType name="MultiplexerType">
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="inputSignals">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Liste der Eingangssignale
-              </xs:documentation>
-            </xs:annotation>
+          <xs:element name="inputSignal" minOccurs="1" maxOccurs="unbounded">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Eingangssignal
+            </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="Signal"/>
-              </xs:sequence>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -507,14 +496,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SignalDemux" substitutionGroup="Signal" type="SignalDemuxType">
+  <xs:element name="Demultiplexer" substitutionGroup="Signal" type="DemultiplexerType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Auswahl eines Index eines vektorwertigen Signals
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SignalDemuxType">
+  <xs:complexType name="DemultiplexerType">
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
@@ -523,7 +512,7 @@
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="indices" type="pv:unknownVector">
+          <xs:element name="indices" type="pv:indexVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Vektor der ausgewählten Indizes.

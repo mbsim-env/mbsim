@@ -222,14 +222,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::init(InitStage stage) {
-    if(stage==preInit) {
+    if(stage==resolveXMLPath) {
       ne = Pdm.cols();
-
-      for(unsigned int k=0; k<contour.size(); k++) {
-        RigidContour *contour_ = dynamic_cast<RigidContour*>(contour[k]);
-        if(contour_ and not(contour_->getFrameOfReference()))
-          contour_->setFrameOfReference(K);
-      }
 
       int nqT=0, nqR=0, nuT=0, nuR=0;
       if(fPrPK) {
@@ -265,6 +259,14 @@ namespace MBSimFlexibleBody {
       }
 
       nu[1] = 6 + ne;
+
+    }
+    else if(stage==preInit) {
+      for(unsigned int k=0; k<contour.size(); k++) {
+        RigidContour *contour_ = dynamic_cast<RigidContour*>(contour[k]);
+        if(contour_ and not(contour_->getFrameOfReference()))
+          contour_->setFrameOfReference(K);
+      }
 
       Ki.resize(6+ne);
 

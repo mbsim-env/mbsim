@@ -23,42 +23,45 @@
 #include "mbsimControl/signal_.h"
 #include <mbsim/functions/function.h>
 
+namespace MBSim {
+  typedef int Index;
+}
+
 namespace MBSimControl {
 
   /*!
-   * \brief SignalMux
+   * \brief Multiplexer
    * \author Markus Schneider
    */
-  class SignalMux : public Signal {  
+  class Multiplexer : public Signal {
     public:
-      SignalMux(const std::string &name="") : Signal(name) {}
+      Multiplexer(const std::string &name="") : Signal(name) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void addInputSignal(Signal * signal) {signals.push_back(signal); }
+      void addInputSignal(Signal * signal_) { signal.push_back(signal_); }
       void updateSignal();
-      int getSignalSize() const { return signals[0]->getSignalSize(); }
+      int getSignalSize() const;
     private:
-      std::vector<Signal *> signals;
+      std::vector<Signal*> signal;
       std::vector<std::string> signalString;
   };
 
   /*!
-   * \brief SignalDemux
+   * \brief Demultiplexer
    * \author Markus Schneider
    */
-  class SignalDemux : public Signal {  
+  class Demultiplexer : public Signal {
     public:
-      SignalDemux(const std::string &name="") : Signal(name) {}
+      Demultiplexer(const std::string &name="") : Signal(name), signal(NULL) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void setInputSignal(Signal * signal_) { signal=signal_; }
-      void setIndices(const fmatvec::VecInt &indices_) { indices = indices_; }
+      void setInputSignal(Signal *signal_) { signal = signal_; }
+      void setIndices(const std::vector<MBSim::Index> &index_) { index = index_; }
       void updateSignal();
-      int getSignalSize() const { return signal->getSignalSize(); }
+      int getSignalSize() const { return index.size(); }
     private:
       Signal *signal;
-      fmatvec::VecInt indices;
-      fmatvec::VecV indicesTmp;
+      std::vector<MBSim::Index> index;
       std::string signalString;
   };
 
@@ -68,14 +71,14 @@ namespace MBSimControl {
    */
   class SignalTimeDiscretization : public Signal {  
     public:
-      SignalTimeDiscretization(const std::string &name="") : Signal(name), s(NULL), tOld(-99e99), signalString("") {}
+      SignalTimeDiscretization(const std::string &name="") : Signal(name), s(NULL), tOld(-99e99) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void setInputSignal(Signal * signal_) {s=signal_; }
+      void setInputSignal(Signal *signal_) { s=signal_; }
       void updateSignal();
       int getSignalSize() const { return s->getSignalSize(); }
     private:
-      Signal * s;
+      Signal *s;
       double tOld;
       std::string signalString;
   };

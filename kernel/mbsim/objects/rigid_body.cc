@@ -115,33 +115,7 @@ namespace MBSim {
 
   void RigidBody::init(InitStage stage) {
     Z.init(stage);
-    if(stage==preInit) {
-
-      for(unsigned int k=1; k<frame.size(); k++) {
-        if(not(static_cast<FixedRelativeFrame*>(frame[k])->getFrameOfReference()))
-          static_cast<FixedRelativeFrame*>(frame[k])->setFrameOfReference(C);
-      }
-
-      for(unsigned int k=0; k<contour.size(); k++) {
-        if(not(static_cast<RigidContour*>(contour[k]))->getFrameOfReference())
-          static_cast<RigidContour*>(contour[k])->setFrameOfReference(C);
-      }
-
-      if(K!=C) {
-        const FixedRelativeFrame *R = K;
-        do {
-          R = static_cast<const FixedRelativeFrame*>(R->getFrameOfReference());
-          K->setRelativePosition(R->getRelativePosition() + R->getRelativeOrientation()*K->getRelativePosition());
-          K->setRelativeOrientation(R->getRelativeOrientation()*K->getRelativeOrientation());
-        } while(R!=C);
-        C->setRelativeOrientation(K->getRelativeOrientation().T());
-        C->setRelativePosition(-(C->getRelativeOrientation()*K->getRelativePosition()));
-        C->setFrameOfReference(K);
-        K->setRelativeOrientation(SqrMat3(EYE));
-        K->setRelativePosition(Vec3());
-      }
-      K->setFrameOfReference(&Z);
-
+    if(stage==resolveXMLPath) {
       int nqT=0, nqR=0, nuT=0, nuR=0;
       if(fPrPK) {
         nqT = fPrPK->getArg1Size();
@@ -172,6 +146,33 @@ namespace MBSim {
       }
 
       nu[1] = 6;
+    }
+    else if(stage==preInit) {
+
+      for(unsigned int k=1; k<frame.size(); k++) {
+        if(not(static_cast<FixedRelativeFrame*>(frame[k])->getFrameOfReference()))
+          static_cast<FixedRelativeFrame*>(frame[k])->setFrameOfReference(C);
+      }
+
+      for(unsigned int k=0; k<contour.size(); k++) {
+        if(not(static_cast<RigidContour*>(contour[k]))->getFrameOfReference())
+          static_cast<RigidContour*>(contour[k])->setFrameOfReference(C);
+      }
+
+      if(K!=C) {
+        const FixedRelativeFrame *R = K;
+        do {
+          R = static_cast<const FixedRelativeFrame*>(R->getFrameOfReference());
+          K->setRelativePosition(R->getRelativePosition() + R->getRelativeOrientation()*K->getRelativePosition());
+          K->setRelativeOrientation(R->getRelativeOrientation()*K->getRelativeOrientation());
+        } while(R!=C);
+        C->setRelativeOrientation(K->getRelativeOrientation().T());
+        C->setRelativePosition(-(C->getRelativeOrientation()*K->getRelativePosition()));
+        C->setFrameOfReference(K);
+        K->setRelativeOrientation(SqrMat3(EYE));
+        K->setRelativePosition(Vec3());
+      }
+      K->setFrameOfReference(&Z);
 
       if(constraint)
         addDependency(constraint);

@@ -193,11 +193,9 @@
 
     <GeneralizedPositionSensor name="AngularSensor" xmlns="http://www.mbsim-env.de/MBSimControl">
       <object ref="../Object[Pendulum]"/>
-      <index>0</index>
     </GeneralizedPositionSensor>
     <GeneralizedVelocitySensor name="VelocitySensor" xmlns="http://www.mbsim-env.de/MBSimControl">
       <object ref="../Object[Pendulum]"/>
-      <index>0</index>
     </GeneralizedVelocitySensor>
 
     <UnarySignalOperation name="VelocitySensorTanh" xmlns="http://www.mbsim-env.de/MBSimControl">

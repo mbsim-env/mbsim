@@ -107,7 +107,6 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   GeneralizedPositionSensor * basePosition = new GeneralizedPositionSensor("BasePositionIst");
   addLink(basePosition);
   basePosition->setObject(basis);
-  basePosition->setIndex(0);
 
   Mat bPT(FileTofmatvecString("./Soll_Basis.tab").c_str());
   TabularFunction<VecV(double)> * basePositionSollFunction = new TabularFunction<VecV(double)>(bPT.col(0), bPT.col(1));
@@ -152,7 +151,6 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   GeneralizedPositionSensor * armPosition = new GeneralizedPositionSensor("ArmPositionIst");
   addLink(armPosition);
   armPosition->setObject(arm);
-  armPosition->setIndex(0);
 
   Mat aPT(FileTofmatvecString("./Soll_Arm.tab").c_str());
   TabularFunction<VecV(double)> * armPositionSollFunction = new TabularFunction<VecV(double)>(aPT.col(0), aPT.col(1));
@@ -193,7 +191,6 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   GeneralizedPositionSensor * spitzePosition = new GeneralizedPositionSensor("SpitzePositionIst");
   addLink(spitzePosition);
   spitzePosition->setObject(spitze);
-  spitzePosition->setIndex(0);
 
   Mat sPT(FileTofmatvecString("./Soll_Spitze.tab").c_str());
   TabularFunction<VecV(double)> * spitzePositionSollFunction = new TabularFunction<VecV(double)>(sPT.col(0), sPT.col(1));

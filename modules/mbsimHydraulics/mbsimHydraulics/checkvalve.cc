@@ -146,7 +146,6 @@ namespace MBSimHydraulics {
       spring->setForceDirection("[1; 0; 0]");
 
       xOpen->setObject(ball);
-      xOpen->setIndex(0);
 
       if (openMBVBodies) {
         shared_ptr<OpenMBV::Frustum> ballSeatVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();

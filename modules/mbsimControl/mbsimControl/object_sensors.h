@@ -32,28 +32,26 @@ namespace MBSimControl {
    * \brief GeneralizedCoordinateSensor
    * \author Markus Schneider
    */
-  class GeneralizedCoordinateSensor : public Sensor {
+  class ObjectSensor : public Sensor {
     public:
-      GeneralizedCoordinateSensor(const std::string &name) : Sensor(name), object(NULL), objectString(""), index(0) {}
-      std::string getType() const { return "GeneralizedCoordinateSensor"; }
-      void setObject(MBSim::Object * object_) {object=object_; }
-      void setIndex(int index_) {index=index_; }
+      ObjectSensor(const std::string &name) : Sensor(name), object(NULL) { }
+      std::string getType() const { return "ObjectSensor"; }
+      void setObject(MBSim::Object * object_) { object=object_; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      int getSignalSize() const { return 1; }
+      int getSignalSize() const;
     protected:
-      MBSim::Object * object;
+      MBSim::Object *object;
       std::string objectString;
-      int index;
   };
 
   /*!
    * \brief GeneralizedPositionSensor
    * \author Markus Schneider
    */
-  class GeneralizedPositionSensor : public GeneralizedCoordinateSensor {
+  class GeneralizedPositionSensor : public ObjectSensor {
     public:
-      GeneralizedPositionSensor(const std::string &name="") : GeneralizedCoordinateSensor(name) {}
+      GeneralizedPositionSensor(const std::string &name="") : ObjectSensor(name) { }
       std::string getType() const { return "GeneralizedPositionSensor"; }
       void updateSignal();
   };
@@ -62,9 +60,9 @@ namespace MBSimControl {
    * \brief GeneralizedVelocitySensor
    * \author Markus Schneider
    */
-  class GeneralizedVelocitySensor : public GeneralizedCoordinateSensor {
+  class GeneralizedVelocitySensor : public ObjectSensor {
     public:
-      GeneralizedVelocitySensor(const std::string &name="") : GeneralizedCoordinateSensor(name) {}
+      GeneralizedVelocitySensor(const std::string &name="") : ObjectSensor(name) { }
       std::string getType() const { return "GeneralizedVelocitySensor"; }
       void updateSignal();
   };

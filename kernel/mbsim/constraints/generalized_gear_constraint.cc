@@ -35,9 +35,9 @@ namespace MBSim {
 
   void GeneralizedGearConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if (saved_DependentBody!="")
+      if(saved_DependentBody!="")
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
-      for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
+      for(unsigned int i=0; i<saved_IndependentBody.size(); i++)
         bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
       if(not bd)
         THROW_MBSIMERROR("No dependent rigid body given!");

@@ -33,7 +33,7 @@ namespace MBSim {
 }
 
 namespace MBSimControl {
-  class GeneralizedCoordinateSensor;
+  class ObjectSensor;
 }
 
 namespace MBSimHydraulics {
@@ -71,7 +71,7 @@ namespace MBSimHydraulics {
       MBSim::Contact * getSeatContact() {return seatContact; }
       MBSim::Contact * getMaximalContact() {return maxContact; }
       MBSim::DirectionalSpringDamper * getSpring() {return spring; }
-      MBSimControl::GeneralizedCoordinateSensor * getXOpen() {return xOpen; }
+      MBSimControl::ObjectSensor * getXOpen() {return xOpen; }
       
       void init(InitStage stage);
       
@@ -84,7 +84,7 @@ namespace MBSimHydraulics {
       MBSim::Contact * seatContact;
       MBSim::Contact * maxContact;
       MBSim::DirectionalSpringDamper * spring;
-      MBSimControl::GeneralizedCoordinateSensor * xOpen;
+      MBSimControl::ObjectSensor * xOpen;
       unsigned int fromNodeAreaIndex, toNodeAreaIndex;
       double hMax, mBall;
       std::string refFrameString;

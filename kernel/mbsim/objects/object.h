@@ -63,6 +63,8 @@ namespace MBSim {
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }
       virtual int getuSize(int i=0) const { return uSize[i]; }
+      virtual int getqRelSize() const { return getqSize(); }
+      virtual int getuRelSize(int i=0) const { return getuSize(i); }
       virtual void calcqSize() { }
       virtual void calcuSize(int j) { }
       virtual int getuInd(int i=0) { return uInd[i]; }

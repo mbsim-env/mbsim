@@ -186,12 +186,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //------------------------------------------------------------------------------
 
   // Anregung
-  KineticExcitation *MomentAnCrank = new KineticExcitation("MomentAnCrank");
-  MomentAnCrank->setMomentDirection("[0;0;1]");
-  MomentAnCrank->setMomentFunction(new ConstantFunction<VecV(double)>(109));
-  MomentAnCrank->connect(Crank->getFrameForKinematics());
+  KineticExcitation *MomentAtCrank = new KineticExcitation("MomentAtCrank");
+  MomentAtCrank->setMomentDirection("[0;0;1]");
+  MomentAtCrank->setMomentFunction(new ConstantFunction<VecV(double)>(109));
+  MomentAtCrank->connect(Crank->getFrameForKinematics());
 
-  addLink(MomentAnCrank);
+  addLink(MomentAtCrank);
 
   //------------------------------------------------------------------------------
 
@@ -330,32 +330,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Regelung
 
-  // Geschwindigkeitssensor an Crank
-  AbsoluteAngularVelocitySensor *AbsVelSensorAnCrank = new AbsoluteAngularVelocitySensor("AbsVelSensorAnCrank");
-  addLink(AbsVelSensorAnCrank);
-  AbsVelSensorAnCrank->setFrame(Crank->getFrameForKinematics());
-  AbsVelSensorAnCrank->setDirection("[0;0;1]");
-
   // Zusätzlicher Sensor
-  GeneralizedVelocitySensor *GenVelSensorAnCrank = new GeneralizedVelocitySensor("GenVelSensorAnCrank");
-  addLink(GenVelSensorAnCrank);
-  GenVelSensorAnCrank->setObject(Crank);
-  GenVelSensorAnCrank->setIndex(0);
-
-  // Zusätzlicher Sensor
-  GeneralizedVelocitySensor *GenVelSensorAnRod = new GeneralizedVelocitySensor("GenVelSensorAnRod");
-  addLink(GenVelSensorAnRod);
-  GenVelSensorAnRod->setObject(Rod);
-  GenVelSensorAnRod->setIndex(0);
-
-  // Zusätzlicher Sensor
-  AbsoluteAngularVelocitySensor *AbsVelSensorAnRod = new AbsoluteAngularVelocitySensor("AbsVelSensorAnRod");
-  addLink(AbsVelSensorAnRod);
-  AbsVelSensorAnRod->setFrame(Rod->getFrameForKinematics());
-  AbsVelSensorAnRod->setDirection("[0;0;1]");
-
-
-
+  GeneralizedVelocitySensor *GenVelSensorAtCrank = new GeneralizedVelocitySensor("GenVelSensorAtCrank");
+  addLink(GenVelSensorAtCrank);
+  GenVelSensorAtCrank->setObject(Crank);
 
   // Sollsignal
   FunctionSensor *VelSoll = new FunctionSensor("VelSoll");
@@ -369,7 +347,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Signal-Addition
   BinarySignalOperation * Regelfehler = new BinarySignalOperation("Regelfehler");
   addLink(Regelfehler);
-  Regelfehler->setFirstInputSignal(AbsVelSensorAnCrank);
+  Regelfehler->setFirstInputSignal(GenVelSensorAtCrank);
   Regelfehler->setSecondInputSignal(VelSoll);
   Regelfehler->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y, s1, s2));
 

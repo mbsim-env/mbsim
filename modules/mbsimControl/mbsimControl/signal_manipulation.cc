@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsim/utils/eps.h"
-#include <fmatvec/function.h>
+#include "mbsim/utils/index.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -30,68 +30,71 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, SignalMux)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, Multiplexer)
 
-  void SignalMux::initializeUsingXML(DOMElement *element) {
+  void Multiplexer::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignals")->getFirstElementChild();
-     while (e) {
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    while(e && E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
       signalString.push_back(E(e)->getAttribute("ref"));
       e=e->getNextElementSibling();
     }
   }
 
-  void SignalMux::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      for (unsigned int i=0; i<signalString.size(); i++)
+  void Multiplexer::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      for(unsigned int i=0; i<signalString.size(); i++)
         addInputSignal(getByPath<Signal>(signalString[i]));
-      signalString.clear();
-      Signal::init(stage);
     }
-    else
-      Signal::init(stage);
+    else if(stage==preInit)
+      s.resize(getSignalSize(),NONINIT);
+    Signal::init(stage);
   }
 
-  void SignalMux::updateSignal() {
-    VecV y=signals[0]->evalSignal();
-    for (unsigned int i=1; i<signals.size(); i++) {
-      VecV s1=y;
-      VecV s2=signals[i]->evalSignal();
-      y.resize(s1.size()+s2.size());
-      y.set(RangeV(0, s1.size()-1),s1);
-      y.set(RangeV(s1.size(), y.size()-1),s2);
+  void Multiplexer::updateSignal() {
+    int k=0;
+    for (unsigned int i=0; i<signal.size(); i++) {
+      VecV si = signal[i]->evalSignal();
+      s.set(RangeV(k,k+si.size()-1),si);
+      k+=si.size();;
     }
-    s = y;
     upds = false;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, SignalDemux)
+  int Multiplexer::getSignalSize() const {
+    int size = 0;
+    for (unsigned int i=0; i<signal.size(); i++)
+      size += signal[i]->getSignalSize();
+    return size;
+  }
 
-  void SignalDemux::initializeUsingXML(DOMElement *element) {
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, Demultiplexer)
+
+  void Demultiplexer::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
     signalString=E(e)->getAttribute("ref");
-    indicesTmp = Element::getVec(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"indices"));
+    Vec indices = Element::getVec(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"indices"));
+    index.resize(indices.size());
+    for(unsigned int i=0; i<index.size(); i++)
+      index[i] = static_cast<Index>(indices(i))-1;
   }
 
-  void SignalDemux::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-        for (int j=0; j<indicesTmp.size(); j++)
-          indices(j)=int(indicesTmp(j));
-        if (signalString!="")
-          setInputSignal(getByPath<Signal>(signalString));
-        Signal::init(stage);
+  void Demultiplexer::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      if(signalString!="")
+        setInputSignal(getByPath<Signal>(signalString));
     }
-    else
-      Signal::init(stage);
+    else if(stage==preInit)
+      s.resize(getSignalSize(),NONINIT);
+    Signal::init(stage);
   }
 
-  void SignalDemux::updateSignal() {
-    VecV y(indices.size(), INIT, 0);
-    for (int k=0; k<indices.size(); k++) {
-      y(k)=signal->evalSignal()(indices(k));
+  void Demultiplexer::updateSignal() {
+    VecV sIn = signal->evalSignal();
+    for (unsigned int i=0; i<index.size(); i++) {
+      s(i) = sIn(index[i]);
     }
-    s = y;
     upds = false;
   }
 

@@ -57,9 +57,9 @@ namespace MBSim {
 
   void GeneralizedGear::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if (saved_gearOutput!="")
+      if(saved_gearOutput!="")
         setGearOutput(getByPath<RigidBody>(saved_gearOutput));
-      for (unsigned int i=0; i<saved_gearInput.size(); i++)
+      for(unsigned int i=0; i<saved_gearInput.size(); i++)
         body.push_back(getByPath<RigidBody>(saved_gearInput[i]));
       if(not body[0])
         THROW_MBSIMERROR("No gear output given!");

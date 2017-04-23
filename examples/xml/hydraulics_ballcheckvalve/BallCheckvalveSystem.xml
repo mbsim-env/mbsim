@@ -159,12 +159,12 @@
       <length>gapLength</length>
       <firstSurfaceVelocity>
         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
-          <returnSignal ref="../../Link[pistonSpeed]"/>
+          <returnSignal ref="../../Link[pistonSpeedy]"/>
         </SignalFunction>
       </firstSurfaceVelocity>
       <secondSurfaceVelocity>
         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
-          <returnSignal ref="../../Link[housingSpeed]"/>
+          <returnSignal ref="../../Link[housingSpeedy]"/>
         </SignalFunction>
       </secondSurfaceVelocity>
       <innerRadius>pistonRadius</innerRadius>
@@ -192,18 +192,26 @@
         <crossSectionRadius>.0002</crossSectionRadius>
       </enableOpenMBV>
     </SpringDamper>
+    <!--
     <RelativePositionSensor name="GapLength" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../Object[Housing]/Frame[PistonGap]" rel="../Object[Piston]/Frame[CheckvalveF]"/>
       <direction>[0;-1;0]</direction>
     </RelativePositionSensor>
-    <AbsoluteVelocitySensor name="housingSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
+    -->
+    <VelocitySensor name="housingSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../Object[Housing]/Frame[PistonGap]"/>
-      <direction>[0;1;0]</direction>
-    </AbsoluteVelocitySensor>
-    <AbsoluteVelocitySensor name="pistonSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
+    </VelocitySensor>
+    <Demultiplexer name="housingSpeedy" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[housingSpeed]"/>
+      <indices>[2]</indices>
+    </Demultiplexer>
+    <VelocitySensor name="pistonSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../Object[Piston]/Frame[CheckvalveF]"/>
-      <direction>[0;1;0]</direction>
-    </AbsoluteVelocitySensor>
+    </VelocitySensor>
+    <Demultiplexer name="pistonSpeedy" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[pistonSpeed]"/>
+      <indices>[2]</indices>
+    </Demultiplexer>
     <EnvironmentNodeMec name="nEnvironment" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <inflow ref="../Object[circularLeakage]"/>
       <initialVolume>0</initialVolume>

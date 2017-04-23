@@ -219,10 +219,10 @@ namespace MBSim {
       void setJRel(const fmatvec::MatV &J);
       void setjRel(const fmatvec::VecV &j);
 
-      int getqRelSize() const {return nq;}
-      int getuRelSize(int i=0) const {return nu[i];}
+      int getqRelSize() const { return nq; }
+      int getuRelSize(int i=0) const { return nu[i]; }
 
-      bool transformCoordinates() const {return fTR!=NULL;}
+      bool transformCoordinates() const { return fTR!=NULL; }
 
       void resetUpToDate();
       void resetPositionsUpToDate();

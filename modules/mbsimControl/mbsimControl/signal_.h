@@ -41,29 +41,23 @@ namespace MBSimControl {
 
       void init(InitStage stage);
 
-      /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateg() {}
-      virtual void updategd() {}
-      virtual void updateSignal() {}
-      /***************************************************/
+      virtual void updateg() { }
+      virtual void updategd() { }
+      virtual void updateSignal() { }
 
-      /* INHERITED INTERFACE OF LINK */
-      virtual void updateWRef(const fmatvec::Mat& ref, int i=0) {}
-      virtual void updateVRef(const fmatvec::Mat& ref, int i=0) {}
-      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0) {}
-      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) {}
-      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) {}
-      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) {}
-      virtual void updaterRef(const fmatvec::Vec &ref, int i=0) {}
+      virtual void updateWRef(const fmatvec::Mat& ref, int i=0) { }
+      virtual void updateVRef(const fmatvec::Mat& ref, int i=0) { }
+      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0) { }
+      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) { }
+      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) { }
+      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) { }
+      virtual void updaterRef(const fmatvec::Vec &ref, int i=0) { }
       virtual bool isActive() const { return false; }
       virtual bool gActiveChanged() { return false; }
       virtual bool isSingleValued() const { return true; }
-      /***************************************************/
 
-      /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Signal"; }
       virtual void plot();
-      /***************************************************/
       
       const fmatvec::VecV& getSignal(bool check=true) { assert((not check) or (not upds)); return s; }
       const fmatvec::VecV& evalSignal() { if(upds) updateSignal(); return s; }
@@ -79,4 +73,3 @@ namespace MBSimControl {
 }
 
 #endif /* _SIGNALMBSIM_H_ */
-

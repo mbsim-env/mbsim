@@ -94,14 +94,20 @@
       </normalImpactLaw>
         -->
     </Contact>
-    <AbsolutePositionSensor name="AnregungPos" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <PositionSensor name="AnregungPos" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../Object[Anregung]/Frame[C]"/>
-      <direction>[0;1;0]</direction>
-    </AbsolutePositionSensor>
-    <AbsoluteVelocitySensor name="AnregungVel" xmlns="http://www.mbsim-env.de/MBSimControl">
+    </PositionSensor>
+    <Demultiplexer name="AnregungPosy" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[AnregungPos]"/>
+      <indices>[2]</indices>
+    </Demultiplexer>
+    <VelocitySensor name="AnregungVel" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../Object[Anregung]/Frame[C]"/>
-      <direction>[0;1;0]</direction>
-    </AbsoluteVelocitySensor>
+    </VelocitySensor>
+    <Demultiplexer name="AnregungVely" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[AnregungVel]"/>
+      <indices>[2]</indices>
+    </Demultiplexer>
   </links>
   <constraints/>
   <observers/>

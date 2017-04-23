@@ -29,45 +29,37 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  void GeneralizedCoordinateSensor::initializeUsingXML(DOMElement *element) {
+  void ObjectSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"object");
     objectString=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"index");
-    index=getInt(e);
   }
 
-  void GeneralizedCoordinateSensor::init(InitStage stage) {
+  void ObjectSensor::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (objectString!="")
         setObject(getByPath<Object>(objectString));
-      Sensor::init(stage);
     }
-    else if(stage==preInit) {
-      Sensor::init(stage);
-      s.resize(1);
-    }
-    else
-      Sensor::init(stage);
+    else if(stage==preInit)
+      s.resize(getSignalSize());
+    Sensor::init(stage);
+  }
+
+  int ObjectSensor::getSignalSize() const {
+    return object->getqRelSize();
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedPositionSensor)
 
   void GeneralizedPositionSensor::updateSignal() {
-    if (object->getq().size()==0)
-      s = fmatvec::VecV(1, fmatvec::INIT, 0);
-    else
-      s = ((object->getq()))(RangeV(index, index));
+    s = object->evalGeneralizedPosition();
     upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedVelocitySensor)
 
   void GeneralizedVelocitySensor::updateSignal() {
-    if (object->getu().size()==0)
-      s = fmatvec::VecV(1, fmatvec::INIT, 0);
-    else
-      s = ((object->getu()))(RangeV(index, index));
+    s = object->evalGeneralizedVelocity();
     upds = false;
   }
 
