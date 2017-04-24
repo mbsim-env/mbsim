@@ -27,15 +27,18 @@
         </ConstantFunction>
       </function>
     </FunctionSensor>
-    <BinarySignalOperation name="speedDeviation" xmlns="http://www.mbsim-env.de/MBSimControl">
-      <firstInputSignal ref="../Link[crankReferenceSpeed]"/>
-      <secondInputSignal ref="../Link[crankMeasuredSpeed]"/>
+    <Multiplexer name="Multiplexer" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[crankReferenceSpeed]"/>
+      <inputSignal ref="../Link[crankMeasuredSpeed]"/>
+   </Multiplexer>
+   <SignalOperation name="speedDeviation" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[Multiplexer]"/>
       <function>
-       <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
-          x-y
+       <SymbolicFunction arg1="x" arg1Dim="2" xmlns="http://www.mbsim-env.de/MBSim">
+          x(1)-x(2)
         </SymbolicFunction>
       </function>
-    </BinarySignalOperation>
+    </SignalOperation>
     <KineticExcitation name="motor" xmlns="http://www.mbsim-env.de/MBSim">
       <connect ref1="../Frame[I]" ref2="../../Object[Crank]/Frame[B2]"/>
       <momentDirection>[0 0 1]'</momentDirection> <!-- optional -->

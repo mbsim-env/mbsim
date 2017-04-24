@@ -188,9 +188,9 @@ namespace MBSimControl {
     P = PP; I = II; D = DD;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, UnarySignalOperation)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, SignalOperation)
 
-  void UnarySignalOperation::initializeUsingXML(DOMElement *element) {
+  void SignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
@@ -202,55 +202,18 @@ namespace MBSimControl {
     }
   }
 
-  void UnarySignalOperation::init(InitStage stage) {
+  void SignalOperation::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (signalString!="")
         setInputSignal(getByPath<Signal>(signalString));
-      Signal::init(stage);
     }
-    else
-      Signal::init(stage);
+    Signal::init(stage);
     f->init(stage);
   }
 
-  void UnarySignalOperation::updateSignal() {
+  void SignalOperation::updateSignal() {
     Signal::s = (*f)(s->evalSignal());
     upds = false;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, BinarySignalOperation)
-
-  void BinarySignalOperation::initializeUsingXML(DOMElement *element) {
-    Signal::initializeUsingXML(element);
-    DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"firstInputSignal");
-    signal1String=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"secondInputSignal");
-    signal2String=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
-    if(e) {
-      MBSim::Function<VecV(VecV,VecV)> *f=ObjectFactory::createAndInit<MBSim::Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
-      setFunction(f);
-    }
-  }
-
-  void BinarySignalOperation::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      if (signal1String!="")
-        setFirstInputSignal(getByPath<Signal>(signal1String));
-      if (signal2String!="")
-        setSecondInputSignal(getByPath<Signal>(signal2String));
-      Signal::init(stage);
-    }
-    else
-      Signal::init(stage);
-    f->init(stage);
-  }
-
-  void BinarySignalOperation::updateSignal() {
-    s = (*f)(s1->evalSignal(),s2->evalSignal());
-    upds = false;
-  }
-
 }
-

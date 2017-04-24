@@ -117,13 +117,13 @@ namespace MBSimControl {
   };
 
   /*!
-   * \brief UnarySignalOperation
+   * \brief SignalOperation
    * \author Martin Foerg
    */
-  class UnarySignalOperation : public Signal {  
+  class SignalOperation : public Signal {
     public:
-      UnarySignalOperation(const std::string &name="") : Signal(name), s(NULL), signalString(""), f(0) { }
-      ~UnarySignalOperation() { delete f; }
+      SignalOperation(const std::string &name="") : Signal(name), s(NULL), f(NULL) { }
+      ~SignalOperation() { delete f; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setInputSignal(Signal *signal_) {s=signal_; }
@@ -133,39 +133,13 @@ namespace MBSimControl {
         f->setName("Function");
       };
       void updateSignal();
-      int getSignalSize() const { return s->getSignalSize(); }
+      int getSignalSize() const { return f->getRetSize().first; }
     private:
       Signal *s;
       std::string signalString;
       MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f;
   };
 
-  /*!
-   * \brief BinarySignalOperation
-   * \author Martin Foerg
-   */
-  class BinarySignalOperation : public Signal {  
-    public:
-      BinarySignalOperation(const std::string &name="") : Signal(name), s1(NULL), s2(NULL), signal1String(""), signal2String(""), f(0) { }
-      ~BinarySignalOperation() { delete f; }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
-      void setFirstInputSignal(Signal *signal_) {s1=signal_; }
-      void setSecondInputSignal(Signal *signal_) {s2=signal_; }
-      void setFunction(MBSim::Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *f_) {
-        f=f_;
-        f->setParent(this);
-        f->setName("Function");
-      };
-      void updateSignal();
-      int getSignalSize() const { return s1->getSignalSize(); }
-    private:
-      Signal *s1, *s2;
-      std::string signal1String, signal2String;
-      MBSim::Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *f;
-  };
-
 }
 
 #endif /* _SIGNAL_MANIPULATION_H_ */
-

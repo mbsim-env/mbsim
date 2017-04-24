@@ -27,15 +27,18 @@
     <PositionSensor name="MassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
     </PositionSensor>
-    <BinarySignalOperation name="RelativeMassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
-      <firstInputSignal ref="../Link[FMassPosition]"/>
-      <secondInputSignal ref="../Link[MassPosition]"/>
+    <Multiplexer name="Multiplexer2" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[FMassPosition]"/>
+      <inputSignal ref="../Link[MassPosition]"/>
+    </Multiplexer>
+    <SignalOperation name="RelativeMassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[Multiplexer2]"/>
       <function>
-       <SymbolicFunction arg1="x" arg1Dim="3" arg2="y" arg2Dim="3" xmlns="http://www.mbsim-env.de/MBSim">
-          y-x
+       <SymbolicFunction arg1="x" arg1Dim="6" xmlns="http://www.mbsim-env.de/MBSim">
+          [x(4)-x(1);x(5)-x(2);x(6)-x(3)]
         </SymbolicFunction>
       </function>
-    </BinarySignalOperation>
+    </SignalOperation>
     <Demultiplexer name="RelativeMassPositiony" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[RelativeMassPosition]"/>
       <indices>[2]</indices>
@@ -61,16 +64,19 @@
         </TabularFunction>
       </function>
     </FunctionSensor>
-    <BinarySignalOperation name="DifferencePosition" xmlns="http://www.mbsim-env.de/MBSimControl">
-      <firstInputSignal ref="../Link[DesiredPosition]"/>
-      <secondInputSignal ref="../Link[RelativeMassPositiony]"/>
+    <Multiplexer name="Multiplexer1" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[DesiredPosition]"/>
+      <inputSignal ref="../Link[RelativeMassPositiony]"/>
+   </Multiplexer>
+    <SignalOperation name="DifferencePosition" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[Multiplexer1]"/>
       <function>
-       <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
-          y-x
+       <SymbolicFunction arg1="x" arg1Dim="2" xmlns="http://www.mbsim-env.de/MBSim">
+          x(2)-x(1)
         </SymbolicFunction>
       </function>
-    </BinarySignalOperation>
-    <UnarySignalOperation name="ControlOutputLimitted" xmlns="http://www.mbsim-env.de/MBSimControl">
+    </SignalOperation>
+    <SignalOperation name="ControlOutputLimitted" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[LTI]"/>
       <function>
         <BoundedFunction xmlns="http://www.mbsim-env.de/MBSim">
@@ -78,8 +84,8 @@
           <upperBound>1+5</upperBound>
          </BoundedFunction>
       </function>
-    </UnarySignalOperation>
-    <UnarySignalOperation name="PT1ControlvalveOutputLimitted" xmlns="http://www.mbsim-env.de/MBSimControl">
+    </SignalOperation>
+    <SignalOperation name="PT1ControlvalveOutputLimitted" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[PT1Controlvalve]"/>
       <function>
         <BoundedFunction xmlns="http://www.mbsim-env.de/MBSim">
@@ -87,7 +93,7 @@
           <upperBound>1</upperBound>
          </BoundedFunction>
       </function>
-    </UnarySignalOperation>
+    </SignalOperation>
   </links>
   <constraints/>
   <observers/>
