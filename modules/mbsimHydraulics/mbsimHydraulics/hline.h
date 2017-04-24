@@ -39,7 +39,7 @@ namespace MBSimHydraulics {
       HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(), QIn(1), QOut(1), Jacobian(), frameOfReference(NULL), updQ(true), saved_frameOfReference("") { }
       virtual std::string getType() const { return "HLine"; }
 
-      virtual int getuRelSize(int i=0) const { return dependency.size()?0:1; }
+      virtual void calcSize();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       void updateh(int j=0) { }
@@ -101,7 +101,7 @@ namespace MBSimHydraulics {
       void addInflowDependencyOnInflow(RigidHLine* line);
 
       void calcqSize() { qSize=0; }
-      void calcuSize(int j=0) { uSize[j]=getuRelSize(j); }
+      void calcuSize(int j=0) { uSize[j]=getGeneralizedVelocitySize(); }
       fmatvec::Mat calculateJacobian(std::vector<RigidHLine*> dep_check);
       
       void updatePressureLossGravity();

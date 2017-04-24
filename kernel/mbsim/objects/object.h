@@ -45,12 +45,10 @@ namespace MBSim {
        */
       Object(const std::string &name);
 
-      /**
-       * \brief destructor
-       */
-      virtual ~Object() { }
+      virtual void calcSize() { }
+      int getGeneralizedPositionSize() { if(updSize) calcSize(); return nq; }
+      int getGeneralizedVelocitySize() { if(updSize) calcSize(); return nu; }
 
-      /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT() { }
       virtual void updateh(int j=0) { }
       virtual void updateM() { }
@@ -63,8 +61,6 @@ namespace MBSim {
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }
       virtual int getuSize(int i=0) const { return uSize[i]; }
-      virtual int getqRelSize() const { return getqSize(); }
-      virtual int getuRelSize(int i=0) const { return getuSize(i); }
       virtual void calcqSize() { }
       virtual void calcuSize(int j) { }
       virtual int getuInd(int i=0) { return uInd[i]; }
@@ -73,7 +69,6 @@ namespace MBSim {
       virtual const fmatvec::Vec& getq() const { return q; }
       virtual const fmatvec::Vec& getu() const { return u; }
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
-      /*******************************************************/ 
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot();
@@ -280,6 +275,8 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
     protected:
+      int nq, nu;
+
       /**
        * \brief size of object positions
        */
@@ -346,7 +343,7 @@ namespace MBSim {
 
       fmatvec::VecV qRel, uRel, qdRel, udRel;
 
-      bool updq, updu, updqd, updud;
+      bool updSize, updq, updu, updqd, updud;
   };
 
 }

@@ -51,12 +51,11 @@ namespace MBSim {
        */
       Link(const std::string &name);
 
-      /**
-       * \brief destructor
-       */
-      virtual ~Link() { }
+      virtual void calcSize() { }
+      int getGeneralizedRelativePositionSize() { if(updSize) calcSize(); return ng; }
+      int getGeneralizedRelativeVelocitySize() { if(updSize) calcSize(); return ngd; }
+      int getGeneralizedForceSize() { if(updSize) calcSize(); return nla; }
 
-      /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updateg() { }
       virtual void updategd() { }
       virtual void updatewb() { }
@@ -68,9 +67,7 @@ namespace MBSim {
       virtual void updateLinkStatusReg() { }
       virtual void updateJacobians(int j=0) { }
       virtual void updateb() { }
-      /***************************************************/
 
-      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       virtual void updatedx() { }
       virtual void updatexd() { }
       virtual void calcxSize() { xSize = 0; }
@@ -86,7 +83,6 @@ namespace MBSim {
       virtual void initz();
       virtual void writez(H5::GroupBase *group);
       virtual void readz0(H5::GroupBase *group);
-      /***************************************************/
 
       virtual void setbInd(int bInd_) { bInd = bInd_; };
 
@@ -435,6 +431,8 @@ namespace MBSim {
       int getcorrSize() const { return corrSize; } 
 
     protected:
+      int ng, ngd, nla;
+
       /** 
        * \brief order one parameters
        */
@@ -606,7 +604,7 @@ namespace MBSim {
 
       fmatvec::VecV rrel, vrel, lambda;
 
-      bool updrrel, updvrel, updla;
+      bool updSize, updrrel, updvrel, updla;
   };
 }
 

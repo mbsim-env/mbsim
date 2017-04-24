@@ -40,16 +40,14 @@ namespace MBSimControl {
       if (objectString!="")
         setObject(getByPath<Object>(objectString));
     }
-    else if(stage==preInit)
-      s.resize(getSignalSize());
     Sensor::init(stage);
   }
 
-  int ObjectSensor::getSignalSize() const {
-    return object->getqRelSize();
-  }
-
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedPositionSensor)
+
+  int GeneralizedPositionSensor::getSignalSize() const {
+    return object->getGeneralizedPositionSize();
+  }
 
   void GeneralizedPositionSensor::updateSignal() {
     s = object->evalGeneralizedPosition();
@@ -57,6 +55,10 @@ namespace MBSimControl {
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedVelocitySensor)
+
+  int GeneralizedVelocitySensor::getSignalSize() const {
+    return object->getGeneralizedVelocitySize();
+  }
 
   void GeneralizedVelocitySensor::updateSignal() {
     s = object->evalGeneralizedVelocity();

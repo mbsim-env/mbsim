@@ -51,13 +51,13 @@ namespace MBSim {
   }
 
   void GeneralizedKinematicExcitation::calclaSize(int j) {
-    laSize = body[0]->getuRelSize();
+    laSize = body[0]->getGeneralizedVelocitySize();
   }
   void GeneralizedKinematicExcitation::calcgSize(int j) {
-    gSize = body[0]->getuRelSize();
+    gSize = body[0]->getGeneralizedVelocitySize();
   }
   void GeneralizedKinematicExcitation::calcgdSize(int j) {
-    gdSize = body[0]->getuRelSize();
+    gdSize = body[0]->getGeneralizedVelocitySize();
   }
 
   void GeneralizedKinematicExcitation::updateGeneralizedForces() {

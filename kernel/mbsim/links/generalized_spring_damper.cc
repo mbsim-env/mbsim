@@ -41,7 +41,7 @@ namespace MBSim {
 
   void GeneralizedSpringDamper::init(InitStage stage) {
     if(stage==unknownStage) {
-      if(body[0]->getuRelSize()!=1)
+      if(body[0]->getGeneralizedVelocitySize()!=1)
         THROW_MBSIMERROR("rigid bodies must have 1 dof!");
     }
     DualRigidBodyLink::init(stage);

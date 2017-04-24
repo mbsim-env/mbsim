@@ -32,7 +32,7 @@ using namespace std;
 
 namespace MBSim {
 
-  Link::Link(const string &name) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), bSize(0), bInd(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), rFactorSize(0), rFactorInd(0), rMax(1.), corrSize(0), corrInd(0), updrrel(true), updvrel(true), updla(true) {
+  Link::Link(const string &name) : Element(name), ng(0), ngd(0), nla(0), xSize(0), xInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), bSize(0), bInd(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), rFactorSize(0), rFactorInd(0), rMax(1.), corrSize(0), corrInd(0), updSize(true), updrrel(true), updvrel(true), updla(true) {
   }
 
   void Link::plot() {
@@ -123,8 +123,11 @@ namespace MBSim {
   } 
 
   void Link::init(InitStage stage) {
-    if(stage==unknownStage)
-      rFactorUnsure.resize(rFactorSize);
+    if(stage==preInit) {
+      rrel.resize(getGeneralizedRelativePositionSize());
+      vrel.resize(ngd);
+      lambda.resize(nla);
+    }
     else if(stage==plotting) {
       if(plotFeature[11334901831169464975ULL]==enabled) {
         if(plotFeature[5125144808927415120ULL]==enabled) {
@@ -143,6 +146,8 @@ namespace MBSim {
           plotColumns.push_back("potential energy");
       }
     }
+    else if(stage==unknownStage)
+      rFactorUnsure.resize(rFactorSize);
     Element::init(stage);
   }
 

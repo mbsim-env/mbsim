@@ -43,6 +43,8 @@ class Fahrwiderstand : public MBSim::Function<fmatvec::VecV(double)> {
   public:
     Fahrwiderstand(RigidBody *body_) : body(body_) {}
 
+    pair<int, int> getRetSize() const { return make_pair(1,1); }
+
     fmatvec::VecV operator()(const double& t) {
       fmatvec::VecV F(1);
       double v = abs(body->getu()(0));
@@ -75,6 +77,8 @@ class Moment : public MBSim::Function<fmatvec::VecV(double)> {
       Om_eck = 3440./30*M_PI/ue;
       M_max = P/Om_eck;
     }
+
+    pair<int, int> getRetSize() const { return make_pair(1,1); }
 
     fmatvec::VecV operator()(const double& t) {
       fmatvec::VecV M(1);

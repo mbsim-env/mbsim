@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsimControl/link_sensors.h"
-
 #include "mbsim/links/link.h"
 
 using namespace std;
@@ -49,12 +48,20 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedRelativePositionSensor)
 
+  int GeneralizedRelativePositionSensor::getSignalSize() const {
+    return link->getGeneralizedRelativePositionSize();
+  }
+
   void GeneralizedRelativePositionSensor::updateSignal() {
     s = link->evalGeneralizedRelativePosition();
     upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedRelativeVelocitySensor)
+
+  int GeneralizedRelativeVelocitySensor::getSignalSize() const {
+    return link->getGeneralizedRelativeVelocitySize();
+  }
 
   void GeneralizedRelativeVelocitySensor::updateSignal() {
     s = link->evalGeneralizedRelativeVelocity();

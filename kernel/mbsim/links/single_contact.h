@@ -106,6 +106,7 @@ namespace MBSim {
       virtual void updatelaRef(const fmatvec::Vec& ref);
       virtual void updateLaRef(const fmatvec::Vec& ref);
       virtual void updategdRef(const fmatvec::Vec& ref);
+      virtual void calcSize();
       virtual void calcxSize();
       virtual void calclaSize(int j);
       virtual void calcgSize(int j);

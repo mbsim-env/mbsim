@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Object::Object(const std::string &name) : Element(name), qSize(0), uSize{0,0}, hSize{0,0}, qInd(0), uInd{0,0}, hInd{0,0}, updq(true), updu(true), updqd(true), updud(true) {
+  Object::Object(const std::string &name) : Element(name), nq(0), nu(0), qSize(0), uSize{0,0}, hSize{0,0}, qInd(0), uInd{0,0}, hInd{0,0}, updSize(true), updq(true), updu(true), updqd(true), updud(true) {
   }
 
   void Object::updatedhdz() {
@@ -186,6 +186,12 @@ namespace MBSim {
   }
 
   void Object::init(InitStage stage) {
+    if (stage == preInit) {
+      qRel.resize(getGeneralizedPositionSize());
+      uRel.resize(nu);
+      qdRel.resize(nq);
+      udRel.resize(nu);
+    }
     if (stage == plotting) {
       if (plotFeature[11334901831169464975ULL] == enabled) {
         if (plotFeature[5656632352625109444ULL] == enabled) {

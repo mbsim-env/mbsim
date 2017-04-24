@@ -42,6 +42,8 @@ namespace MBSimHydraulics {
       ElasticLineGalerkin(const std::string &name="");
       virtual std::string getType() const { return "ElasticLineGalerkin"; }
 
+      void calcSize();
+
       /*! set initial pressure of the pipe fluid*/
       void setp0(double p0_) {p0=p0_; }
       /*! set the fracAir of the pipe (for E-Modulus calculation*/
@@ -68,7 +70,6 @@ namespace MBSimHydraulics {
       fmatvec::VecV getOutflowFactor() {return Area*wA; }
 
       void init(InitStage stage);
-      int getuRelSize(int i=0) const { return mdim; }
       void calcqSize() {qSize=mdim; }
       void calcuSize(int j) {uSize[j]=mdim; }
 

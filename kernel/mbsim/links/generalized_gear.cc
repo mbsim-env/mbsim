@@ -68,7 +68,7 @@ namespace MBSim {
     }
     else if(stage==unknownStage) {
       for(unsigned int i=0; i<body.size(); i++) {
-        if(body[i]->getuRelSize()!=1)
+        if(body[i]->getGeneralizedVelocitySize()!=1)
           THROW_MBSIMERROR("rigid bodies must have of 1 dof!");
       }
       if(fl->isSetValued()) {

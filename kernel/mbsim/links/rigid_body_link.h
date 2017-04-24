@@ -39,6 +39,7 @@ namespace MBSim {
     public:
       RigidBodyLink(const std::string &name="");
 
+      void calcSize();
       void calclaSize(int j) { laSize = 1; }
       void calcgSize(int j) { gSize = 1; }
       void calcgdSize(int j) { gdSize = 1; }

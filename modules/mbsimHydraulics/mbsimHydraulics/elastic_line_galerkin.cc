@@ -39,6 +39,12 @@ namespace MBSimHydraulics {
   ElasticLineGalerkin::ElasticLineGalerkin(const string &name) : HLine(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(), wA(), wE(), lambda(0), MatIntWWT(), MatIntWSWST(), K(), D(), N(), Omega(), phi(), ansatz(NULL), plotVecW(), plotVecWS(), l(0), d(0), Area(0), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints() {
   }
 
+  void ElasticLineGalerkin::calcSize() {
+    Object::nq = mdim;
+    Object::nu = mdim;
+    updSize = false;
+  }
+
   void ElasticLineGalerkin::setAnsatzFunction(AnsatzTypes method_, int nAnsatz_) {
     if (l<=1e-4)
       THROW_MBSIMERROR("set length first");
@@ -83,7 +89,6 @@ namespace MBSimHydraulics {
       K=Area*E*MatIntWSWST;
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       phi.resize(mdim);
-      lambda.resize(mdim);
       
       Jacobian.resize(mdim, mdim, INIT, 0);
       for (int i=0; i<mdim; i++)
@@ -112,10 +117,6 @@ namespace MBSimHydraulics {
       for (int i=0; i<mdim; i++)
         for (int j=0; j<mdim; j++)
           D(i,j)=DTmp(i,j);
-      qRel.resize(mdim);
-      uRel.resize(mdim);
-      qdRel.resize(mdim);
-      udRel.resize(mdim);
     }
     else if (stage==plotting) {
       if(plotFeature[11334901831169464975ULL]==enabled) {

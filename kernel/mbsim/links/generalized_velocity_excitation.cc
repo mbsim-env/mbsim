@@ -27,7 +27,7 @@ using namespace fmatvec;
 namespace MBSim {
 
   void GeneralizedVelocityExcitation::calcxSize() {
-    xSize = body[0]->getqRelSize();
+    xSize = body[0]->getGeneralizedPositionSize();
   }
 
   void GeneralizedVelocityExcitation::init(InitStage stage) {

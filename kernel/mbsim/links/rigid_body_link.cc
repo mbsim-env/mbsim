@@ -161,6 +161,13 @@ namespace MBSim {
       wb += body[i]->evaljRel()*ratio[i];
   }
 
+  void RigidBodyLink::calcSize() {
+    ng = body[0]->getGeneralizedPositionSize();
+    ngd = body[0]->getGeneralizedVelocitySize();
+    nla = ngd;
+    updSize = false;
+  }
+
   void RigidBodyLink::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_supportFrame!="")
@@ -169,23 +176,20 @@ namespace MBSim {
     else if(stage==preInit) {
       if(!support)
         support = body[0]->getFrameOfReference();
-      iF = RangeV(0, body[0]->getPJT(0,false).cols()-1);
-      iM = RangeV(0, body[0]->getPJR(0,false).cols()-1);
-      rrel.resize(body[0]->getqRelSize());
-      vrel.resize(body[0]->getuRelSize());
+      iF = RangeV(0, body[0]->getGeneralizedVelocitySize()-1);
+      iM = RangeV(0, body[0]->getGeneralizedVelocitySize()-1);
       P.resize(body.size());
       F.resize(body.size());
       M.resize(body.size());
       DF.resize(body.size(),Mat3xV(iF.size()));
       DM.resize(body.size(),Mat3xV(iM.size()));
-      RF.resize(body.size(),Mat3xV(vrel.size()));
-      RM.resize(body.size(),Mat3xV(vrel.size()));
+      RF.resize(body.size(),Mat3xV(getGeneralizedRelativeVelocitySize()));
+      RM.resize(body.size(),Mat3xV(ngd));
       if(isSetValued()) {
-        g.resize(rrel.size());
-        gd.resize(vrel.size());
-        la.resize(vrel.size());
+        g.resize(ng);
+        gd.resize(ngd);
+        la.resize(nla);
       }
-      lambda.resize(vrel.size());
       h[0].resize(2*body.size());
       h[1].resize(2*body.size());
       W[0].resize(2*body.size());

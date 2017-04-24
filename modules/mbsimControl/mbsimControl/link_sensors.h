@@ -34,11 +34,11 @@ namespace MBSimControl {
    */
   class LinkSensor : public Sensor {
     public:
-      LinkSensor(const std::string &name) : Sensor(name), link(NULL), linkString("") {}
+      LinkSensor(const std::string &name) : Sensor(name), link(NULL) { }
       std::string getType() const { return "LinkSensor"; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void setLink(MBSim::Link * link_) {link=link_; }
+      void setLink(MBSim::Link * link_) { link=link_; }
     protected:
       MBSim::Link * link;
       std::string linkString;
@@ -52,8 +52,8 @@ namespace MBSimControl {
     public:
       GeneralizedRelativePositionSensor(const std::string &name="") : LinkSensor(name) {}
       std::string getType() const { return "GeneralizedRelativePositionSensor"; }
+      int getSignalSize() const;
       void updateSignal();
-      int getSignalSize() const { return link->getGeneralizedRelativePosition(false).size(); }
   };
 
   /*!
@@ -64,8 +64,8 @@ namespace MBSimControl {
     public:
       GeneralizedRelativeVelocitySensor(const std::string &name="") : LinkSensor(name) {}
       std::string getType() const { return "GeneralizedRelativeVelocitySensor"; }
+      int getSignalSize() const;
       void updateSignal();
-      int getSignalSize() const { return link->getGeneralizedRelativeVelocity(false).size(); }
   };
 
 }

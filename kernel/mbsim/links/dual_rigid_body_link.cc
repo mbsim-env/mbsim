@@ -39,7 +39,7 @@ namespace MBSim {
         THROW_MBSIMERROR("No connection given!");
     }
     else if(stage==unknownStage) {
-      if(body.size()>1 and (body[0]->getuRelSize()!=body[1]->getuRelSize()))
+      if(body.size()>1 and (body[0]->getGeneralizedVelocitySize()!=body[1]->getGeneralizedVelocitySize()))
         THROW_MBSIMERROR("rigid bodies must have the same dof!");
     }
     RigidBodyLink::init(stage);

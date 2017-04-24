@@ -45,7 +45,7 @@ namespace MBSim {
 
   void GeneralizedConnectionConstraint::updateGeneralizedJacobians(int j) {
     if(bi)
-      bd->getJRel(0,false).set(Range<Var,Var>(0,bi->getuRelSize()-1),Range<Var,Var>(0,bi->gethSize()-1),bi->evalJRel());
+      bd->getJRel(0,false).set(Range<Var,Var>(0,bi->getGeneralizedVelocitySize()-1),Range<Var,Var>(0,bi->gethSize()-1),bi->evalJRel());
     updGJ = false;
   }
 

@@ -175,8 +175,6 @@ namespace MBSim {
        */
       fmatvec::Mat3xV PJT[2], PJR[2];
 
-      int nu[2], nq;
-
       bool updPos, updVel, updPJ;
 
       std::shared_ptr<OpenMBV::Body> openMBVBody;

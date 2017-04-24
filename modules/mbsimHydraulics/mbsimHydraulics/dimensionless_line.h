@@ -30,6 +30,7 @@ namespace MBSimHydraulics {
       DimensionlessLine(const std::string &name) : HLine(name), length(0) {}
       virtual std::string getType() const { return "DimensionlessLine"; }
       
+      void calcSize() { nu = 0; updSize = false; }
       void setLength(double length_) {length=length_; }
       double getLength() const {return length; }
 

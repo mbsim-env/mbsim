@@ -35,6 +35,8 @@ namespace MBSim {
        */
       FixedFrameLink(const std::string &name);
 
+      void calcSize();
+
       virtual void init(InitStage stage);
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -45,6 +47,8 @@ namespace MBSim {
 
       const fmatvec::Mat3xV& evalGlobalForceDirection(int i=0) { if(updDF) updateForceDirections(); return DF; }
       const fmatvec::Mat3xV& evalGlobalMomentDirection(int i=0) { if(updDF) updateForceDirections(); return DM; }
+
+      void updateSize();
 
       void resetUpToDate();
       void updatePositions();

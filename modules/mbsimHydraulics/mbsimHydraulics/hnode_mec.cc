@@ -595,7 +595,7 @@ namespace MBSimHydraulics {
 
   void RigidNodeMec::updateW(int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      const int hJ=connectedLines[i].line->getuRelSize()-1;
+      const int hJ=connectedLines[i].line->getGeneralizedVelocitySize()-1;
       W[j][i](RangeV(0,hJ), RangeV(0, 0))+=trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign;
     }
     for (unsigned int i=0; i<nTrans; i++) {

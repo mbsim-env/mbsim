@@ -290,6 +290,13 @@ namespace MBSim {
     }
   }
 
+  void SingleContact::calcSize() {
+    ng = 1;
+    ngd = 1 + getFrictionDirections();
+    nla = ngd;
+    updSize = false;
+  }
+
   void SingleContact::calcxSize() {
     ContourLink::calcxSize();
     xSize = 0;
@@ -486,33 +493,7 @@ namespace MBSim {
   }
 
   void SingleContact::init(InitStage stage) {
-    if (stage == unknownStage) {
-      if (contactKinematics == 0) {
-        contactKinematics = contour[0]->findContactPairingWith(contour[0]->getType(), contour[1]->getType());
-        if (contactKinematics == 0) {
-          contactKinematics = contour[1]->findContactPairingWith(contour[1]->getType(), contour[0]->getType());
-          if (contactKinematics == 0) {
-            contactKinematics = contour[0]->findContactPairingWith(contour[1]->getType(), contour[0]->getType());
-            if (contactKinematics == 0) {
-              contactKinematics = contour[1]->findContactPairingWith(contour[0]->getType(), contour[1]->getType());
-              if (contactKinematics == 0)
-                THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + contour[0]->getType() + "\" and Contour\"" + contour[1]->getType() + "\"!");
-            }
-          }
-        }
-      }
-
-      //TODO: check if indices are set correctly?
-      laN.resize() >> la(0, 0);
-      laT.resize() >> la(1, getFrictionDirections());
-
-      gdN.resize() >> gd(0, 0);
-      gdT.resize() >> gd(1, getFrictionDirections());
-
-      gddNBuf.resize(1);
-      gddTBuf.resize(getFrictionDirections());
-    }
-    else if (stage == preInit) {
+    if(stage==preInit) {
       gActive = 1;
       gActive0 = 1;
 
@@ -543,31 +524,54 @@ namespace MBSim {
       else
         updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceS;
 
-      RF.resize(1+getFrictionDirections());
-      RM.resize(1+getFrictionDirections());
+      RF.resize(getGeneralizedForceSize());
+      RM.resize(nla);
 
-      iF = RangeV(0,1+getFrictionDirections()-1);
+      iF = RangeV(0,nla-1);
       iM = RangeV(0,-1);
-      DF.resize(1+getFrictionDirections(),NONINIT);
+      DF.resize(nla,NONINIT);
 
       lambdaT.resize(getFrictionDirections());
 
       //TODO: Change this if la should be the vector of nonsmooth forces
-      la.resize(1 + getFrictionDirections());
+      la.resize(nla);
       g.resize(1);
-      gd.resize(1 + getFrictionDirections());
+      gd.resize(ngd);
       gddN.resize(1);
       gddT.resize(getFrictionDirections());
       gdnN.resize(1);
       gdnT.resize(getFrictionDirections());
-      rrel.resize(1);
-      vrel.resize(1 + getFrictionDirections());
-      lambda.resize(1 + getFrictionDirections());
 
       if (getFrictionDirections() == 0)
         gdActive[tangential] = false;
     }
-    else if(stage == LASTINITSTAGE) {
+    else if(stage==unknownStage) {
+      if (contactKinematics == 0) {
+        contactKinematics = contour[0]->findContactPairingWith(contour[0]->getType(), contour[1]->getType());
+        if (contactKinematics == 0) {
+          contactKinematics = contour[1]->findContactPairingWith(contour[1]->getType(), contour[0]->getType());
+          if (contactKinematics == 0) {
+            contactKinematics = contour[0]->findContactPairingWith(contour[1]->getType(), contour[0]->getType());
+            if (contactKinematics == 0) {
+              contactKinematics = contour[1]->findContactPairingWith(contour[0]->getType(), contour[1]->getType());
+              if (contactKinematics == 0)
+                THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + contour[0]->getType() + "\" and Contour\"" + contour[1]->getType() + "\"!");
+            }
+          }
+        }
+      }
+
+      //TODO: check if indices are set correctly?
+      laN.resize() >> la(0, 0);
+      laT.resize() >> la(1, getFrictionDirections());
+
+      gdN.resize() >> gd(0, 0);
+      gdT.resize() >> gd(1, getFrictionDirections());
+
+      gddNBuf.resize(1);
+      gddTBuf.resize(getFrictionDirections());
+    }
+    else if(stage==LASTINITSTAGE) {
       if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
         throw MBSimError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
     }
@@ -1292,7 +1296,7 @@ namespace MBSim {
     //    else if(j==3) { // IG
     //      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
     //        corrIndk = corrSize;
-    //        corrSizek = gActive[i]*(1+getFrictionDirections());
+    //        corrSizek = gActive[i]*(nla);
     //        corrSize = corrSizek;
     //      }
     //    }

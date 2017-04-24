@@ -32,6 +32,13 @@ namespace MBSim {
   FixedFrameLink::FixedFrameLink(const std::string &name) : FrameLink(name), DF(1), updDF(true) {
   }
 
+  void FixedFrameLink::calcSize() {
+    ng = 1;
+    ngd = 1;
+    nla = 1;
+    updSize = false;
+  }
+
   void FixedFrameLink::resetUpToDate() {
     FrameLink::resetUpToDate();
     updDF = true;
@@ -94,8 +101,6 @@ namespace MBSim {
     if(stage==preInit) {
       iF = RangeV(0, 0);
       iM = RangeV(0, -1);
-      rrel.resize(1);
-      vrel.resize(1);
       if(isSetValued()) {
         g.resize(1);
         gd.resize(1);
@@ -103,7 +108,6 @@ namespace MBSim {
         RF[1].resize(1);
         la.resize(1);
       }
-      lambda.resize(1);
       lambdaF.resize(1);
       for(unsigned int i=0; i<2; i++) {
         W[i].resize(2);

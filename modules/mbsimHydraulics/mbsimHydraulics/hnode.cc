@@ -44,6 +44,11 @@ namespace MBSimHydraulics {
   HNode::HNode(const string &name) : Link(name), QHyd(0), nLines(0), updQHyd(true) {
   }
 
+  void HNode::calcSize() {
+    nla = 1;
+    updSize = false;
+  }
+
   void HNode::enableOpenMBV(double size, double pMin, double pMax, const Vec3 &WrON_) {
     openMBVSphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     openMBVSphere->setRadius(size);
@@ -117,7 +122,6 @@ namespace MBSimHydraulics {
     else if (stage==preInit) {
       gd.resize(1);
       la.resize(1);
-      lambda.resize(1);
       nLines=connectedLines.size();
       W[0].resize(nLines);
       W[1].resize(nLines);
@@ -164,7 +168,7 @@ namespace MBSimHydraulics {
       const int laI=laInd;
       const int laJ=laInd;
       const int hI=connectedLines[i].line->gethInd(j);
-      const int hJ=hI+connectedLines[i].line->getuRelSize()-1;
+      const int hJ=hI+connectedLines[i].line->getGeneralizedVelocitySize()-1;
       W[j][i].resize()>>WParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
@@ -174,7 +178,7 @@ namespace MBSimHydraulics {
       const int laI=laInd;
       const int laJ=laInd;
       const int hI=connectedLines[i].line->gethInd(j);
-      const int hJ=hI+connectedLines[i].line->getuRelSize()-1;
+      const int hJ=hI+connectedLines[i].line->getGeneralizedVelocitySize()-1;
       V[j][i].resize()>>VParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
@@ -182,7 +186,7 @@ namespace MBSimHydraulics {
   void HNode::updatehRef(const Vec& hParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd=connectedLines[i].line->gethInd(j);
-      const RangeV I(hInd, hInd+connectedLines[i].line->getuRelSize()-1);
+      const RangeV I(hInd, hInd+connectedLines[i].line->getGeneralizedVelocitySize()-1);
       h[j][i].resize() >> hParent(I);
     }
   }
@@ -190,7 +194,7 @@ namespace MBSimHydraulics {
   void HNode::updaterRef(const Vec& rParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd=connectedLines[i].line->gethInd(j);
-      const RangeV I(hInd, hInd+connectedLines[i].line->getuRelSize()-1);
+      const RangeV I(hInd, hInd+connectedLines[i].line->getGeneralizedVelocitySize()-1);
       r[j][i].resize() >> rParent(I);
     }
   }
@@ -403,7 +407,7 @@ namespace MBSimHydraulics {
 
   void RigidNode::updateW(int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      const int hJ=connectedLines[i].line->getuRelSize()-1;
+      const int hJ=connectedLines[i].line->getGeneralizedVelocitySize()-1;
       W[j][i](RangeV(0,hJ), RangeV(0, 0))+=trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign;
     }
   }

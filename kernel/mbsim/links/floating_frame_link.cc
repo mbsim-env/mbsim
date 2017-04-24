@@ -37,6 +37,13 @@ namespace MBSim {
     C.resetUpToDate();  
   }
 
+  void FloatingFrameLink::calcSize() {
+    ng = forceDir.cols() + momentDir.cols();
+    ngd = ng;
+    nla = ng;
+    updSize = false;
+  }
+
   void FloatingFrameLink::calclaSize(int j) {
     FrameLink::calclaSize(j);
     laSize = forceDir.cols() + momentDir.cols();
@@ -138,21 +145,17 @@ namespace MBSim {
 
   void FloatingFrameLink::init(InitStage stage) {
     if(stage==preInit) {
-      int size = forceDir.cols() + momentDir.cols();
       iF = RangeV(0, forceDir.cols() - 1);
-      iM = RangeV(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
-      rrel.resize(size);
-      vrel.resize(size);
+      iM = RangeV(forceDir.cols(), getGeneralizedRelativePositionSize() - 1);
       if(isSetValued()) {
-        g.resize(size);
-        gd.resize(size);
-        RF[0].resize(size);
-        RM[0].resize(size);
-        RF[1].resize(size);
-        RM[1].resize(size);
-        la.resize(size);
+        g.resize(ng);
+        gd.resize(ng);
+        RF[0].resize(ng);
+        RM[0].resize(ng);
+        RF[1].resize(ng);
+        RM[1].resize(ng);
+        la.resize(ng);
       }
-      lambda.resize(size);
       lambdaF.resize(forceDir.cols());
       lambdaM.resize(momentDir.cols());
       for(unsigned int i=0; i<2; i++) {

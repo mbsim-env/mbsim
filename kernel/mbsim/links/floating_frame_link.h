@@ -43,6 +43,7 @@ namespace MBSim {
       std::string getType() const { return "FloatingFrameLink"; }
       /***************************************************/
 
+      void calcSize();
       void calclaSize(int j);
       void calcgSize(int j);
       void calcgdSize(int j);
@@ -63,6 +64,8 @@ namespace MBSim {
        * If ID=0 (default) the first frame, if ID=1 the second frame is used.
        */
       void setFrameOfReferenceID(Index ID) { refFrameID = ID; }
+
+      void updateSize();
 
       void resetUpToDate();
       void updatePositions(Frame *frame);

@@ -38,29 +38,29 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::calcxSize() {
-    xSize = bd->getqRelSize()+bd->getuRelSize();
+    xSize = bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize();
   }
 
   void GeneralizedAccelerationConstraint::updatexd() {
-    xd(0,bd->getqRelSize()-1) = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
-    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = (*f)(x,getTime());
+    xd(0,bd->getGeneralizedPositionSize()-1) = x(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1);
+    xd(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1) = (*f)(x,getTime());
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates() {
     if(bi) {
-      bd->setqRel(bi->evalGeneralizedPosition()+x(0,bd->getqRelSize()-1));
-      bd->setuRel(bi->evalGeneralizedVelocity()+x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1));
+      bd->setqRel(bi->evalGeneralizedPosition()+x(0,bd->getGeneralizedPositionSize()-1));
+      bd->setuRel(bi->evalGeneralizedVelocity()+x(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1));
     }
     else {
-      bd->setqRel(x(0,bd->getqRelSize()-1));
-      bd->setuRel(x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1));
+      bd->setqRel(x(0,bd->getGeneralizedPositionSize()-1));
+      bd->setuRel(x(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1));
     }
     updGC = false;
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedJacobians(int jj) {
     if(bi) {
-      bd->getJRel(0,false).set(Range<Var,Var>(0,bi->getuRelSize()-1),Range<Var,Var>(0,bi->gethSize()-1),bi->evalJRel());
+      bd->getJRel(0,false).set(Range<Var,Var>(0,bi->getGeneralizedVelocitySize()-1),Range<Var,Var>(0,bi->gethSize()-1),bi->evalJRel());
       bd->setjRel((*f)(x,getTime()));
     }
     else

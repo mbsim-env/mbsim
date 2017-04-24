@@ -86,6 +86,7 @@ namespace MBSim {
       void updateJacobians1(Frame *frame) { }
       void updateJacobians2(Frame *frame);
 
+      virtual void calcSize();
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
       void sethSize(int hSize_, int i=0);
@@ -219,9 +220,6 @@ namespace MBSim {
       void setJRel(const fmatvec::MatV &J);
       void setjRel(const fmatvec::VecV &j);
 
-      int getqRelSize() const { return nq; }
-      int getuRelSize(int i=0) const { return nu[i]; }
-
       bool transformCoordinates() const { return fTR!=NULL; }
 
       void resetUpToDate();
@@ -331,7 +329,6 @@ namespace MBSim {
       /** a pointer to Frame "C" */
       FixedRelativeFrame *C;
 
-//      fmatvec::Vec qRel, uRel;
       fmatvec::MatV JRel[2];
       fmatvec::VecV jRel;
 

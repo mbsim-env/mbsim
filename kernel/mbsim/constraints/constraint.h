@@ -28,8 +28,6 @@ namespace MBSim {
    * \author Martin Foerg
    */
   class Constraint : public Element {
-    private:
-
     public:
       Constraint(const std::string &name);
       virtual void updateGeneralizedCoordinates() {}

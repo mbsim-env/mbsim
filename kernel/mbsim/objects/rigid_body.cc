@@ -100,6 +100,38 @@ namespace MBSim {
     }
   }
 
+  void RigidBody::calcSize() {
+    int nqT=0, nqR=0, nuT=0, nuR=0;
+    if(fPrPK) {
+      nqT = fPrPK->getArg1Size();
+      nuT = fPrPK->getArg1Size(); // TODO fTT->getArg1Size()
+    }
+    if(fAPK) {
+      nqR = fAPK->getArg1Size();
+      nuR = fAPK->getArg1Size(); // TODO fTR->getArg1Size()
+    }
+
+    if(translationDependentRotation) {
+      assert(nqT == nqR);
+      assert(nuT == nuR);
+      nq = nqT;
+      nu = nuT;
+      iqT = Range<Var,Var>(0,nq-1);
+      iqR = Range<Var,Var>(0,nq-1);
+      iuT = Range<Var,Var>(0,nu-1);
+      iuR = Range<Var,Var>(0,nu-1);
+    }
+    else {
+      nq = nqT + nqR;
+      nu = nuT + nuR;
+      iqT = Range<Var,Var>(0,nqT-1);
+      iqR = Range<Var,Var>(nq-nqR,nq-1);
+      iuT = Range<Var,Var>(0,nuT-1);
+      iuR = Range<Var,Var>(nu-nuR,nu-1);
+    }
+    updSize = false;
+  }
+
   void RigidBody::calcqSize() {
     Body::calcqSize();
     qSize = constraint ? 0 : nq;
@@ -108,46 +140,14 @@ namespace MBSim {
   void RigidBody::calcuSize(int j) {
     Body::calcuSize(j);
     if(j==0)
-      uSize[j] = constraint ? 0 : nu[j];
+      uSize[j] = constraint ? 0 : nu;
     else
       uSize[j] = 6;
   }
 
   void RigidBody::init(InitStage stage) {
     Z.init(stage);
-    if(stage==resolveXMLPath) {
-      int nqT=0, nqR=0, nuT=0, nuR=0;
-      if(fPrPK) {
-        nqT = fPrPK->getArg1Size();
-        nuT = fPrPK->getArg1Size(); // TODO fTT->getArg1Size()
-      }
-      if(fAPK) {
-        nqR = fAPK->getArg1Size();
-        nuR = fAPK->getArg1Size(); // TODO fTR->getArg1Size()
-      }
-
-      if(translationDependentRotation) {
-        assert(nqT == nqR);
-        assert(nuT == nuR);
-        nq = nqT;
-        nu[0] = nuT;
-        iqT = Range<Var,Var>(0,nq-1);
-        iqR = Range<Var,Var>(0,nq-1);
-        iuT = Range<Var,Var>(0,nu[0]-1);
-        iuR = Range<Var,Var>(0,nu[0]-1);
-      }
-      else {
-        nq = nqT + nqR;
-        nu[0] = nuT + nuR;
-        iqT = Range<Var,Var>(0,nqT-1);
-        iqR = Range<Var,Var>(nq-nqR,nq-1);
-        iuT = Range<Var,Var>(0,nuT-1);
-        iuR = Range<Var,Var>(nu[0]-nuR,nu[0]-1);
-      }
-
-      nu[1] = 6;
-    }
-    else if(stage==preInit) {
+    if(stage==preInit) {
 
       for(unsigned int k=1; k<frame.size(); k++) {
         if(not(static_cast<FixedRelativeFrame*>(frame[k])->getFrameOfReference()))
@@ -177,29 +177,25 @@ namespace MBSim {
       if(constraint)
         addDependency(constraint);
 
-      PJT[0].resize(nu[0]);
-      PJR[0].resize(nu[0]);
+      PJT[0].resize(getGeneralizedVelocitySize());
+      PJR[0].resize(nu);
 
-      PJT[1].resize(nu[1]);
-      PJR[1].resize(nu[1]);
+      PJT[1].resize(6);
+      PJR[1].resize(6);
       for(int i=0; i<3; i++)
 	PJT[1](i,i) = 1;
       for(int i=3; i<6; i++)
 	PJR[1](i-3,i) = 1;
-      jRel.resize(nu[0]);
-      qRel.resize(nq);
-      uRel.resize(nu[0]);
-      qdRel.resize(nq);
-      udRel.resize(nu[0]);
+      jRel.resize(nu);
 
       updateM_ = &RigidBody::updateMNotConst;
       updateLLM_ = &RigidBody::updateLLMNotConst;
     }
     else if(stage==unknownStage) {
-      JRel[0].resize(nu[0],hSize[0]);
+      JRel[0].resize(nu,hSize[0]);
       for(int i=0; i<uSize[0]; i++)
         JRel[0](i,hSize[0]-uSize[0]+i) = 1;
-      JRel[1].resize(nu[1],hSize[1]);
+      JRel[1].resize(6,hSize[1]);
       for(int i=0; i<uSize[1]; i++)
         JRel[1](i,hSize[1]-uSize[1]+i) = 1;
       T.init(Eye());

@@ -35,6 +35,11 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
+  void HLine::calcSize() {
+    nu = dependency.size()?0:1;
+    updSize = false;
+  }
+
   void HLine::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
@@ -88,15 +93,15 @@ namespace MBSimHydraulics {
     // TODO efficient calculation (not every loop is necessary)
     Mat JLocal;
     if(dependency.size()==0) {
-      if(getuRelSize()==1)
+      if(getGeneralizedVelocitySize()==1)
         JLocal=Mat(1,1,INIT,1);
       else {
-        JLocal=Mat(1,getuRelSize(),INIT,0);
+        JLocal=Mat(1,getGeneralizedVelocitySize(),INIT,0);
         JLocal(0,uInd[0])=1;
       }
     }
     else {
-      JLocal=Mat(1,getuRelSize(),INIT,0);
+      JLocal=Mat(1,getGeneralizedVelocitySize(),INIT,0);
       dep_check.push_back(this);
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++) {
         const Mat Jdep=((RigidHLine*)dependencyOnOutflow[i])->calculateJacobian(dep_check);
@@ -150,8 +155,6 @@ namespace MBSimHydraulics {
         dependency.push_back(dependencyOnInflow[i]);
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++)
         dependency.push_back(dependencyOnOutflow[i]);
-      uRel.resize((dependency.size()?0:1));
-      udRel.resize(uRel.size());
     }
     else if(stage==plotting) {
       if(plotFeature[11334901831169464975ULL]==enabled) {

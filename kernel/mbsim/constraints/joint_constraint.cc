@@ -41,13 +41,13 @@ namespace MBSim {
     Vec res(x.size(),NONINIT); 
     int nq = 0;
     for(unsigned int i=0; i<body1.size(); i++) {
-      int dq = body1[i]->getqRelSize();
+      int dq = body1[i]->getGeneralizedPositionSize();
       body1[i]->resetPositionsUpToDate();
       body1[i]->setqRel(x(nq,nq+dq-1));
       nq += dq;
     }
     for(unsigned int i=0; i<body2.size(); i++) {
-      int dq = body2[i]->getqRelSize();
+      int dq = body2[i]->getGeneralizedPositionSize();
       body2[i]->resetPositionsUpToDate();
       body2[i]->setqRel(x(nq,nq+dq-1));
       nq += dq;
@@ -116,8 +116,8 @@ namespace MBSim {
       Iu1.resize(bd1.size());
       Ih1.resize(bd1.size());
       for(unsigned int i=0; i<bd1.size(); i++) {
-        int dq = bd1[i]->getqRelSize();
-        int du = bd1[i]->getuRelSize();
+        int dq = bd1[i]->getGeneralizedPositionSize();
+        int du = bd1[i]->getGeneralizedVelocitySize();
         int dh = bd1[i]->gethSize(0);
         Iq1[i] = RangeV(nq,nq+dq-1);
         Iu1[i] = RangeV(nu,nu+du-1);
@@ -130,8 +130,8 @@ namespace MBSim {
       Iu2.resize(bd2.size());
       Ih2.resize(bd2.size());
       for(unsigned int i=0; i<bd2.size(); i++) {
-        int dq = bd2[i]->getqRelSize();
-        int du = bd2[i]->getuRelSize();
+        int dq = bd2[i]->getGeneralizedPositionSize();
+        int du = bd2[i]->getGeneralizedVelocitySize();
         int dh = bd2[i]->gethSize(0);
         Iq2[i] = RangeV(nq,nq+dq-1);
         Iu2[i] = RangeV(nu,nu+du-1);
@@ -208,11 +208,11 @@ namespace MBSim {
     }
     for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->resetJacobiansUpToDate();
-      bd1[i]->setuRel(Vec(bd1[i]->getuRelSize()));
+      bd1[i]->setuRel(Vec(bd1[i]->getGeneralizedVelocitySize()));
     }
     for(size_t i=0; i<bd2.size(); i++) {
       bd2[i]->resetJacobiansUpToDate();
-      bd2[i]->setuRel(Vec(bd2[i]->getuRelSize()));
+      bd2[i]->setuRel(Vec(bd2[i]->getGeneralizedVelocitySize()));
     }
     SqrMat A(nu);
     A(RangeV(0,dT.cols()-1),RangeV(0,nu-1)) = dT.T()*JT;
@@ -238,12 +238,12 @@ namespace MBSim {
     if(jj == 0) {
 
       for(unsigned int i=0; i<bd1.size(); i++) {
-        bd1[i]->setJRel(Mat(bd1[i]->getuRelSize(),bd1[i]->gethSize()));
-        bd1[i]->setjRel(Vec(bd1[i]->getuRelSize()));
+        bd1[i]->setJRel(Mat(bd1[i]->getGeneralizedVelocitySize(),bd1[i]->gethSize()));
+        bd1[i]->setjRel(Vec(bd1[i]->getGeneralizedVelocitySize()));
       }
       for(unsigned int i=0; i<bd2.size(); i++) {
-        bd2[i]->setJRel(Mat(bd2[i]->getuRelSize(),bd2[i]->gethSize()));
-        bd2[i]->setjRel(Vec(bd2[i]->getuRelSize()));
+        bd2[i]->setJRel(Mat(bd2[i]->getGeneralizedVelocitySize(),bd2[i]->gethSize()));
+        bd2[i]->setjRel(Vec(bd2[i]->getGeneralizedVelocitySize()));
       }
       Vec3 WvP0P1 = frame2->evalVelocity() - C.evalVelocity();
       Vec3 WomP0P1 = frame2->evalAngularVelocity() - C.evalAngularVelocity();

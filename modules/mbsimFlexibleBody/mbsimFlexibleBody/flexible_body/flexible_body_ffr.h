@@ -146,6 +146,7 @@ namespace MBSimFlexibleBody {
       void updateKJ0();
       void updateKJ1();
       void (FlexibleBodyFFR::*updateKJ_[2])();
+      virtual void calcSize();
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
 
@@ -335,9 +336,6 @@ namespace MBSimFlexibleBody {
 
       void setqRel(const fmatvec::VecV &q);
       void setuRel(const fmatvec::VecV &u);
-
-      int getqRelSize() const {return nq;}
-      int getuRelSize(int i=0) const {return nu[i];}
 
       bool transformCoordinates() const {return fTR!=NULL;}
 
@@ -542,8 +540,6 @@ namespace MBSimFlexibleBody {
 
       fmatvec::VecV qTRel, qRRel, uTRel, uRRel, qdTRel, qdRRel;
       fmatvec::Mat3xV WJTrel, WJRrel, PJTT, PJRR;
-
-      int nu[2], nq;
 
       MBSim::Frame *frameForJacobianOfRotation;
 

@@ -56,8 +56,9 @@ namespace MBSimHydraulics {
   class HNode : public MBSim::Link {
     public:
       HNode(const std::string &name);
-      ~HNode() {};
       virtual std::string getType() const { return "HNode"; }
+
+      void calcSize();
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVSphere, tag, (optional (size,(double),1)(minimalPressure,(double),0e5)(maximalPressure,(double),10e5)(position,(const fmatvec::Vec3&),fmatvec::Vec3()))) { 
         enableOpenMBV(size,minimalPressure,maximalPressure,position);

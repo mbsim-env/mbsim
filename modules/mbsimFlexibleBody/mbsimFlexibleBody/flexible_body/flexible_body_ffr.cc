@@ -78,6 +78,44 @@ namespace MBSimFlexibleBody {
     h[index] += evalKJ(index).T()*(evalhb() - evalMb()*evalKi());
   }
 
+  void FlexibleBodyFFR::calcSize() {
+    ne = Pdm.cols();
+
+    int nqT=0, nqR=0, nuT=0, nuR=0;
+    if(fPrPK) {
+      nqT = fPrPK->getArg1Size();
+      nuT = fPrPK->getArg1Size(); // TODO fTT->getArg1Size()
+    }
+    if(fAPK) {
+      nqR = fAPK->getArg1Size();
+      nuR = fAPK->getArg1Size(); // TODO fTR->getArg1Size()
+    }
+
+    if(translationDependentRotation) {
+      assert(nqT == nqR);
+      assert(nuT == nuR);
+      nq = nqT + ne;
+      nu = nuT + ne;
+      iqT = Range<Var,Var>(0,nqT+nqR-1);
+      iqR = Range<Var,Var>(0,nqT+nqR-1);
+      iqE = Range<Var,Var>(nqT+nqR,nq-1);
+      iuT = Range<Var,Var>(0,nuT+nuR-1);
+      iuR = Range<Var,Var>(0,nuT+nuR-1);
+      iuE = Range<Var,Var>(nuT+nuR,nu-1);
+    }
+    else {
+      nq = nqT + nqR + ne;
+      nu = nuT + nuR + ne;
+      iqT = Range<Var,Var>(0,nqT-1);
+      iqR = Range<Var,Var>(nqT,nqT+nqR-1);
+      iqE = Range<Var,Var>(nqT+nqR,nq-1);
+      iuT = Range<Var,Var>(0,nuT-1);
+      iuR = Range<Var,Var>(nuT,nqT+nqR-1);
+      iuE = Range<Var,Var>(nuT+nuR,nu-1);
+    }
+    updSize = false;
+  }
+
   void FlexibleBodyFFR::calcqSize() {
     NodeBasedBody::calcqSize();
     qSize = nq;
@@ -86,7 +124,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::calcuSize(int j) {
     NodeBasedBody::calcuSize(j);
     if(j==0)
-      uSize[j] = nu[j];
+      uSize[j] = nu;
     else
       uSize[j] = 6 + ne;
   }
@@ -222,70 +260,31 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      ne = Pdm.cols();
-
-      int nqT=0, nqR=0, nuT=0, nuR=0;
-      if(fPrPK) {
-        nqT = fPrPK->getArg1Size();
-        nuT = fPrPK->getArg1Size(); // TODO fTT->getArg1Size()
-      }
-      if(fAPK) {
-        nqR = fAPK->getArg1Size();
-        nuR = fAPK->getArg1Size(); // TODO fTR->getArg1Size()
-      }
- 
-      if(translationDependentRotation) {
-        assert(nqT == nqR);
-        assert(nuT == nuR);
-        nq = nqT + ne;
-        nu[0] = nuT + ne;
-        iqT = Range<Var,Var>(0,nqT+nqR-1);
-        iqR = Range<Var,Var>(0,nqT+nqR-1);
-        iqE = Range<Var,Var>(nqT+nqR,nq-1);
-        iuT = Range<Var,Var>(0,nuT+nuR-1);
-        iuR = Range<Var,Var>(0,nuT+nuR-1);
-        iuE = Range<Var,Var>(nuT+nuR,nu[0]-1);
-      }
-      else {
-        nq = nqT + nqR + ne;
-        nu[0] = nuT + nuR + ne;
-        iqT = Range<Var,Var>(0,nqT-1);
-        iqR = Range<Var,Var>(nqT,nqT+nqR-1);
-        iqE = Range<Var,Var>(nqT+nqR,nq-1);
-        iuT = Range<Var,Var>(0,nuT-1);
-        iuR = Range<Var,Var>(nuT,nqT+nqR-1);
-        iuE = Range<Var,Var>(nuT+nuR,nu[0]-1);
-      }
-
-      nu[1] = 6 + ne;
-
-    }
-    else if(stage==preInit) {
+    if(stage==preInit) {
       for(unsigned int k=0; k<contour.size(); k++) {
         RigidContour *contour_ = dynamic_cast<RigidContour*>(contour[k]);
         if(contour_ and not(contour_->getFrameOfReference()))
           contour_->setFrameOfReference(K);
       }
 
+      PJT[0].resize(getGeneralizedVelocitySize());
+      PJR[0].resize(nu);
+
       Ki.resize(6+ne);
 
-      PJT[0].resize(nu[0]);
-      PJR[0].resize(nu[0]);
-
-      PJT[1].resize(nu[1]);
-      PJR[1].resize(nu[1]);
+      PJT[1].resize(6+ne);
+      PJR[1].resize(6+ne);
       for(int i=0; i<3; i++)
 	PJT[1](i,i) = 1;
       for(int i=3; i<6; i++)
 	PJR[1](i-3,i) = 1;
 
       qRel.resize(nq);
-      uRel.resize(nu[0]);
+      uRel.resize(nu);
       qdRel.resize(nq);
-      udRel.resize(nu[0]);
-      WJTrel.resize(nu[0]);
-      WJRrel.resize(nu[0]);
+      udRel.resize(nu);
+      WJTrel.resize(nu);
+      WJRrel.resize(nu);
 
       updNodalPos.resize(KrKP.size(),true);
       updNodalVel.resize(KrKP.size(),true);
