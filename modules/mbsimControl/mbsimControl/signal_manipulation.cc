@@ -30,74 +30,6 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, Multiplexer)
-
-  void Multiplexer::initializeUsingXML(DOMElement *element) {
-    Signal::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
-    while(e && E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
-      signalString.push_back(E(e)->getAttribute("ref"));
-      e=e->getNextElementSibling();
-    }
-  }
-
-  void Multiplexer::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      for(unsigned int i=0; i<signalString.size(); i++)
-        addInputSignal(getByPath<Signal>(signalString[i]));
-    }
-    else if(stage==preInit)
-      s.resize(getSignalSize(),NONINIT);
-    Signal::init(stage);
-  }
-
-  void Multiplexer::updateSignal() {
-    int k=0;
-    for (unsigned int i=0; i<signal.size(); i++) {
-      VecV si = signal[i]->evalSignal();
-      s.set(RangeV(k,k+si.size()-1),si);
-      k+=si.size();;
-    }
-    upds = false;
-  }
-
-  int Multiplexer::getSignalSize() const {
-    int size = 0;
-    for (unsigned int i=0; i<signal.size(); i++)
-      size += signal[i]->getSignalSize();
-    return size;
-  }
-
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, Demultiplexer)
-
-  void Demultiplexer::initializeUsingXML(DOMElement *element) {
-    Signal::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
-    signalString=E(e)->getAttribute("ref");
-    Vec indices = Element::getVec(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"indices"));
-    index.resize(indices.size());
-    for(unsigned int i=0; i<index.size(); i++)
-      index[i] = static_cast<Index>(indices(i))-1;
-  }
-
-  void Demultiplexer::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(signalString!="")
-        setInputSignal(getByPath<Signal>(signalString));
-    }
-    else if(stage==preInit)
-      s.resize(getSignalSize(),NONINIT);
-    Signal::init(stage);
-  }
-
-  void Demultiplexer::updateSignal() {
-    VecV sIn = signal->evalSignal();
-    for (unsigned int i=0; i<index.size(); i++) {
-      s(i) = sIn(index[i]);
-    }
-    upds = false;
-  }
-
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, SignalTimeDiscretization)
 
   void SignalTimeDiscretization::initializeUsingXML(DOMElement *element) {
@@ -186,34 +118,6 @@ namespace MBSimControl {
     else
       updateSignalMethod=&PIDController::updateSignalPID;
     P = PP; I = II; D = DD;
-  }
-
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, SignalOperation)
-
-  void SignalOperation::initializeUsingXML(DOMElement *element) {
-    Signal::initializeUsingXML(element);
-    DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
-    signalString=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
-    if(e) {
-      MBSim::Function<VecV(VecV)> *f=ObjectFactory::createAndInit<MBSim::Function<VecV(VecV)> >(e->getFirstElementChild());
-      setFunction(f);
-    }
-  }
-
-  void SignalOperation::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      if (signalString!="")
-        setInputSignal(getByPath<Signal>(signalString));
-    }
-    Signal::init(stage);
-    f->init(stage);
-  }
-
-  void SignalOperation::updateSignal() {
-    Signal::s = (*f)(s->evalSignal());
-    upds = false;
   }
 
 }

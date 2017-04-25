@@ -253,8 +253,6 @@ namespace MBSimGUI {
     protected slots:
       void addSensor();
       void addPIDController();
-      void addUnarySignalOperation();
-      void addBinarySignalOperation();
       void addExternSignalSource();
       void addExternSignalSink();
 
@@ -271,10 +269,9 @@ namespace MBSimGUI {
     protected slots:
       void addGeneralizedPositionSensor();
       void addGeneralizedVelocitySensor();
-      void addAbsolutePositionSensor();
-      void addAbsoluteVelocitySensor();
-      void addAbsoluteAngularPositionSensor();
-      void addAbsoluteAngularVelocitySensor();
+      void addPositionSensor();
+      void addVelocitySensor();
+      void addAngularVelocitySensor();
       void addFunctionSensor();
 
     protected:

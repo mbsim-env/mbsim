@@ -131,6 +131,7 @@ namespace MBSimGUI {
     public:
       ChoiceWidgetFactory(WidgetFactory *factory_, int mode_=1) : factory(factory_), mode(mode_) { }
       Widget* createWidget(int i=0);
+      MBXMLUtils::FQN getXMLName(int i=0) const { return factory->getXMLName(i); }
     protected:
       WidgetFactory *factory;
       int mode;

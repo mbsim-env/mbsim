@@ -106,7 +106,22 @@ namespace MBSimGUI {
   }
 
   DOMElement* ChoiceWidget2::initializeUsingXML(DOMElement *element) {
-    if (mode<=3) {
+    if (mode<=1) {
+      for(int i=0; i<factory->getSize(); i++) {
+        DOMElement *e=(mode==0)?element->getFirstElementChild():element;
+        if(e and E(e)->getTagName()==factory->getXMLName(i)) {
+          blockSignals(true);
+          defineWidget(i);
+          blockSignals(false);
+          comboBox->blockSignals(true);
+          comboBox->setCurrentIndex(i);
+          comboBox->blockSignals(false);
+          return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
+        }
+      }
+      return 0;
+    }
+    else if (mode<=3) {
       for(int i=0; i<factory->getSize(); i++) {
         DOMElement *e=E(element)->getFirstElementChildNamed(factory->getXMLName(i));
         if(e) {

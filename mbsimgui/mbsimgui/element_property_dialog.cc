@@ -2160,7 +2160,7 @@ namespace MBSimGUI {
   SensorPropertyDialog::SensorPropertyDialog(Sensor *sensor, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(sensor,parent,f) {
   }
 
-  GeneralizedCoordinateSensorPropertyDialog::GeneralizedCoordinateSensorPropertyDialog(GeneralizedCoordinateSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
+  ObjectSensorPropertyDialog::ObjectSensorPropertyDialog(ObjectSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
     object = new ExtWidget("Object of reference",new ObjectOfReferenceWidget(sensor,0),false,false,MBSIMCONTROL%"object");
     addToTab("General", object);
 
@@ -2168,27 +2168,27 @@ namespace MBSimGUI {
     addToTab("General", index);
   }
 
-  DOMElement* GeneralizedCoordinateSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* ObjectSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
     object->initializeUsingXML(element->getXMLElement());
     index->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
-  DOMElement* GeneralizedCoordinateSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* ObjectSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     object->writeXMLFile(element->getXMLElement(),ref);
     index->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 
-  GeneralizedPositionSensorPropertyDialog::GeneralizedPositionSensorPropertyDialog(GeneralizedPositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : GeneralizedCoordinateSensorPropertyDialog(sensor,parent,f) {
+  GeneralizedPositionSensorPropertyDialog::GeneralizedPositionSensorPropertyDialog(GeneralizedPositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : ObjectSensorPropertyDialog(sensor,parent,f) {
   }
 
-  GeneralizedVelocitySensorPropertyDialog::GeneralizedVelocitySensorPropertyDialog(GeneralizedVelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : GeneralizedCoordinateSensorPropertyDialog(sensor,parent,f) {
+  GeneralizedVelocitySensorPropertyDialog::GeneralizedVelocitySensorPropertyDialog(GeneralizedVelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : ObjectSensorPropertyDialog(sensor,parent,f) {
   }
 
-  AbsoluteCoordinateSensorPropertyDialog::AbsoluteCoordinateSensorPropertyDialog(AbsoluteCoordinateSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
+  FrameSensorPropertyDialog::FrameSensorPropertyDialog(FrameSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
     frame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(sensor,0),false,false,MBSIMCONTROL%"frame");
     addToTab("General", frame);
 
@@ -2196,30 +2196,27 @@ namespace MBSimGUI {
     addToTab("General", direction);
   }
 
-  DOMElement* AbsoluteCoordinateSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* FrameSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SensorPropertyDialog::initializeUsingXML(element->getXMLElement());
     frame->initializeUsingXML(element->getXMLElement());
     direction->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
-  DOMElement* AbsoluteCoordinateSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* FrameSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SensorPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     frame->writeXMLFile(element->getXMLElement(),ref);
     direction->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 
-  AbsolutePositionSensorPropertyDialog::AbsolutePositionSensorPropertyDialog(AbsolutePositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
+  PositionSensorPropertyDialog::PositionSensorPropertyDialog(PositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : FrameSensorPropertyDialog(sensor,parent,f) {
   }
 
-  AbsoluteVelocitySensorPropertyDialog::AbsoluteVelocitySensorPropertyDialog(AbsoluteVelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
+  VelocitySensorPropertyDialog::VelocitySensorPropertyDialog(VelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : FrameSensorPropertyDialog(sensor,parent,f) {
   }
 
-  AbsoluteAngularPositionSensorPropertyDialog::AbsoluteAngularPositionSensorPropertyDialog(AbsoluteAngularPositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
-  }
-
-  AbsoluteAngularVelocitySensorPropertyDialog::AbsoluteAngularVelocitySensorPropertyDialog(AbsoluteAngularVelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
+  AngularVelocitySensorPropertyDialog::AngularVelocitySensorPropertyDialog(AngularVelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : FrameSensorPropertyDialog(sensor,parent,f) {
   }
 
   FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
@@ -2273,57 +2270,6 @@ namespace MBSimGUI {
     P->writeXMLFile(element->getXMLElement(),ref);
     I->writeXMLFile(element->getXMLElement(),ref);
     D->writeXMLFile(element->getXMLElement(),ref);
-    return NULL;
-  }
-
-  UnarySignalOperationPropertyDialog::UnarySignalOperationPropertyDialog(UnarySignalOperation *signal, QWidget * parent, Qt::WindowFlags f_) : SignalPropertyDialog(signal,parent,f_) {
-    sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"inputSignal");
-    addToTab("General", sRef);
-
-    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory3(QStringList("x")),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
-    addToTab("General", f);
-  }
-
-  DOMElement* UnarySignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
-    sRef->initializeUsingXML(element->getXMLElement());
-    f->initializeUsingXML(element->getXMLElement());
-    return parent;
-  }
-
-  DOMElement* UnarySignalOperationPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    sRef->writeXMLFile(element->getXMLElement(),ref);
-    f->writeXMLFile(element->getXMLElement(),ref);
-    return NULL;
-  }
-
-  BinarySignalOperationPropertyDialog::BinarySignalOperationPropertyDialog(BinarySignalOperation *signal, QWidget * parent, Qt::WindowFlags f_) : SignalPropertyDialog(signal,parent,f_) {
-    s1Ref = new ExtWidget("First input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"firstInputSignal");
-    addToTab("General", s1Ref);
-
-    s2Ref = new ExtWidget("Second input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"secondInputSignal");
-    addToTab("General", s2Ref);
-
-    QStringList var;
-    var << "x1" << "x2";
-    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var,signal),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
-    addToTab("General", f);
-  }
-
-  DOMElement* BinarySignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
-    s1Ref->initializeUsingXML(element->getXMLElement());
-    s2Ref->initializeUsingXML(element->getXMLElement());
-    f->initializeUsingXML(element->getXMLElement());
-    return parent;
-  }
-
-  DOMElement* BinarySignalOperationPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    s1Ref->writeXMLFile(element->getXMLElement(),ref);
-    s2Ref->writeXMLFile(element->getXMLElement(),ref);
-    f->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 

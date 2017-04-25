@@ -24,6 +24,7 @@
 #include "extended_widgets.h"
 #include "variable_widgets.h"
 #include "basic_widgets.h"
+#include "function.h"
 #include <iostream>
 
 using namespace std;
@@ -88,8 +89,11 @@ namespace MBSimGUI {
       return new VectorValuedFunctionWidget(parent,1,true);
     if(i==7)
       return new PiecewiseDefinedFunctionWidget(parent);
-    if(i==8)
-      return new CompositeFunctionWidget(new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
+    if(i==8) {
+      Function *dummy = new Function("NoName"); // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(parent);
+      return new CompositeFunctionWidget(new FunctionWidgetFactory2(dummy), new FunctionWidgetFactory2(dummy));
+    }
     if(i==9)
       return new SymbolicFunctionWidget(QStringList("x"),1,3);
     if(i==10)

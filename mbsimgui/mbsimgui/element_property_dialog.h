@@ -84,18 +84,15 @@ namespace MBSimGUI {
   class RigidBodyGroupObserver;
   class Signal;
   class Sensor;
-  class GeneralizedCoordinateSensor;
+  class ObjectSensor;
   class GeneralizedPositionSensor;
   class GeneralizedVelocitySensor;
-  class AbsoluteCoordinateSensor;
-  class AbsolutePositionSensor;
-  class AbsoluteVelocitySensor;
-  class AbsoluteAngularPositionSensor;
-  class AbsoluteAngularVelocitySensor;
+  class FrameSensor;
+  class PositionSensor;
+  class VelocitySensor;
+  class AngularVelocitySensor;
   class FunctionSensor;
   class PIDController;
-  class UnarySignalOperation;
-  class BinarySignalOperation;
   class TextWidget;
   class VecWidget;
   class ExtWidget;
@@ -711,60 +708,54 @@ namespace MBSimGUI {
       SensorPropertyDialog(Sensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0); 
   };
 
-  class GeneralizedCoordinateSensorPropertyDialog : public SensorPropertyDialog {
+  class ObjectSensorPropertyDialog : public SensorPropertyDialog {
 
     public:
-      GeneralizedCoordinateSensorPropertyDialog(GeneralizedCoordinateSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      ObjectSensorPropertyDialog(ObjectSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *object, *index;
   };
 
-  class GeneralizedPositionSensorPropertyDialog : public GeneralizedCoordinateSensorPropertyDialog {
+  class GeneralizedPositionSensorPropertyDialog : public ObjectSensorPropertyDialog {
 
     public:
       GeneralizedPositionSensorPropertyDialog(GeneralizedPositionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
   };
 
-  class GeneralizedVelocitySensorPropertyDialog : public GeneralizedCoordinateSensorPropertyDialog {
+  class GeneralizedVelocitySensorPropertyDialog : public ObjectSensorPropertyDialog {
 
     public:
       GeneralizedVelocitySensorPropertyDialog(GeneralizedVelocitySensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
   };
 
-  class AbsoluteCoordinateSensorPropertyDialog : public SensorPropertyDialog {
+  class FrameSensorPropertyDialog : public SensorPropertyDialog {
 
     public:
-      AbsoluteCoordinateSensorPropertyDialog(AbsoluteCoordinateSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      FrameSensorPropertyDialog(FrameSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *frame, *direction;
   };
 
-  class AbsolutePositionSensorPropertyDialog : public AbsoluteCoordinateSensorPropertyDialog {
+  class PositionSensorPropertyDialog : public FrameSensorPropertyDialog {
 
     public:
-      AbsolutePositionSensorPropertyDialog(AbsolutePositionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      PositionSensorPropertyDialog(PositionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
   };
 
-  class AbsoluteVelocitySensorPropertyDialog : public AbsoluteCoordinateSensorPropertyDialog {
+  class VelocitySensorPropertyDialog : public FrameSensorPropertyDialog {
 
     public:
-      AbsoluteVelocitySensorPropertyDialog(AbsoluteVelocitySensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      VelocitySensorPropertyDialog(VelocitySensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
   };
 
-  class AbsoluteAngularPositionSensorPropertyDialog : public AbsoluteCoordinateSensorPropertyDialog {
+  class AngularVelocitySensorPropertyDialog : public FrameSensorPropertyDialog {
 
     public:
-      AbsoluteAngularPositionSensorPropertyDialog(AbsoluteAngularPositionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
-  };
-
-  class AbsoluteAngularVelocitySensorPropertyDialog : public AbsoluteCoordinateSensorPropertyDialog {
-
-    public:
-      AbsoluteAngularVelocitySensorPropertyDialog(AbsoluteAngularVelocitySensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      AngularVelocitySensorPropertyDialog(AngularVelocitySensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
   };
 
   class FunctionSensorPropertyDialog : public SensorPropertyDialog {
@@ -785,26 +776,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *sRef, *sdRef, *P, *I, *D;
-  };
-
-  class UnarySignalOperationPropertyDialog : public SignalPropertyDialog {
-
-    public:
-      UnarySignalOperationPropertyDialog(UnarySignalOperation *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
-    protected:
-      ExtWidget *sRef, *f;
-  };
-
-  class BinarySignalOperationPropertyDialog : public SignalPropertyDialog {
-
-    public:
-      BinarySignalOperationPropertyDialog(BinarySignalOperation *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
-    protected:
-      ExtWidget *s1Ref, *s2Ref, *f;
   };
 
   class ExternSignalSourcePropertyDialog : public SignalPropertyDialog {

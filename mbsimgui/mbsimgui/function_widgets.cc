@@ -95,6 +95,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* LinearFunctionWidget::initializeUsingXML(DOMElement *element) {
+    cout << "LinearFunctionWidget" << endl;
     a0->initializeUsingXML(element);
     a1->initializeUsingXML(element);
     return element;
@@ -243,7 +244,9 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(parent)),"Function",0,0),false,false,MBSIM%"components");
+    Function *dummy = new Function("NoName"); // Workaround for correct XML path. TODO: provide a consistent concept
+    dummy->setParent(parent);
+    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(dummy),1),"Function",0,0),false,false,MBSIM%"components");
     layout->addWidget(functions);
   }
 

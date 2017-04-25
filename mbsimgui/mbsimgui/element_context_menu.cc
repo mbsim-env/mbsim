@@ -572,12 +572,6 @@ namespace MBSimGUI {
     QAction *action = new QAction("Add PID controller", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addPIDController()));
     addAction(action);
-    action = new QAction("Add unary signal operation", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addUnarySignalOperation()));
-    addAction(action);
-    action = new QAction("Add binary signal operation", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addBinarySignalOperation()));
-    addAction(action);
     action = new QAction("Add extern signal source", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addExternSignalSource()));
     addAction(action);
@@ -593,14 +587,6 @@ namespace MBSimGUI {
 
   void SignalsContextMenu::addPIDController() {
     mw->addLink(new PIDController("PIDController"), element);
-  }
-
-  void SignalsContextMenu::addUnarySignalOperation() {
-    mw->addLink(new UnarySignalOperation("UnarySignalOperation"), element);
-  }
-
-  void SignalsContextMenu::addBinarySignalOperation() {
-    mw->addLink(new BinarySignalOperation("BinarySignalOperation"), element);
   }
 
   void SignalsContextMenu::addExternSignalSource() {
@@ -619,16 +605,13 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocitySensor()));
     addAction(action);
     action = new QAction("Add absolute position sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addAbsolutePositionSensor()));
+    connect(action,SIGNAL(triggered()),this,SLOT(addPositionSensor()));
     addAction(action);
     action = new QAction("Add absolute velocity sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteVelocitySensor()));
-    addAction(action);
-    action = new QAction("Add absolute angular position sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteAngularPositionSensor()));
+    connect(action,SIGNAL(triggered()),this,SLOT(addVelocitySensor()));
     addAction(action);
     action = new QAction("Add absolute angular velocity sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteAngularVelocitySensor()));
+    connect(action,SIGNAL(triggered()),this,SLOT(addAngularVelocitySensor()));
     addAction(action);
     action = new QAction("Add function sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFunctionSensor()));
@@ -643,20 +626,16 @@ namespace MBSimGUI {
     mw->addLink(new GeneralizedVelocitySensor("GeneralizedVelocitySensor"), element);
   }
 
-  void SensorsContextMenu::addAbsolutePositionSensor() {
-    mw->addLink(new AbsolutePositionSensor("AbsolutePositionSensor"), element);
+  void SensorsContextMenu::addPositionSensor() {
+    mw->addLink(new PositionSensor("PositionSensor"), element);
   }
 
-  void SensorsContextMenu::addAbsoluteVelocitySensor() {
-    mw->addLink(new AbsoluteVelocitySensor("AbsoluteVelocitySensor"), element);
+  void SensorsContextMenu::addVelocitySensor() {
+    mw->addLink(new VelocitySensor("VelocitySensor"), element);
   }
 
-  void SensorsContextMenu::addAbsoluteAngularPositionSensor() {
-    mw->addLink(new AbsoluteAngularPositionSensor("AbsoluteAngularPositionSensor"), element);
-  }
-
-  void SensorsContextMenu::addAbsoluteAngularVelocitySensor() {
-    mw->addLink(new AbsoluteAngularVelocitySensor("AbsoluteAngularVelocitySensor"), element);
+  void SensorsContextMenu::addAngularVelocitySensor() {
+    mw->addLink(new AngularVelocitySensor("AngularVelocitySensor"), element);
   }
 
   void SensorsContextMenu::addFunctionSensor() {

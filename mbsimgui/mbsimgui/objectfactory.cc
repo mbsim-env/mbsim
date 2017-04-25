@@ -181,22 +181,16 @@ namespace MBSimGUI {
       return new GeneralizedPositionSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")
       return new GeneralizedVelocitySensor;
-    if(E(element)->getTagName()==MBSIMCONTROL%"AbsolutePositionSensor")
-      return new AbsolutePositionSensor;
-    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteVelocitySensor")
-      return new AbsoluteVelocitySensor;
-    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularPositionSensor")
-      return new AbsoluteAngularPositionSensor;
-    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularVelocitySensor")
-      return new AbsoluteAngularVelocitySensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"PositionSensor")
+      return new PositionSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"VelocitySensor")
+      return new VelocitySensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"AngularVelocitySensor")
+      return new AngularVelocitySensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"FunctionSensor")
       return new FunctionSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"PIDController")
       return new PIDController;
-    if(E(element)->getTagName()==MBSIMCONTROL%"UnarySignalOperation")
-      return new UnarySignalOperation;
-    if(E(element)->getTagName()==MBSIMCONTROL%"BinarySignalOperation")
-      return new BinarySignalOperation;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSource")
       return new ExternSignalSource;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")

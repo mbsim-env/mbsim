@@ -32,23 +32,9 @@ namespace MBSimGUI {
 
   class PIDController : public Signal {
     public:
-    PIDController(const QString &str="") : Signal(str) { }
-    QString getType() const { return "PIDController"; }
-    ElementPropertyDialog* createPropertyDialog() {return new PIDControllerPropertyDialog(this);}
-  };
-
-  class UnarySignalOperation : public Signal {
-    public:
-    UnarySignalOperation(const QString &str="") : Signal(str) { }
-    QString getType() const { return "UnarySignalOperation"; }
-    ElementPropertyDialog* createPropertyDialog() {return new UnarySignalOperationPropertyDialog(this);}
-  };
-
-  class BinarySignalOperation : public Signal {
-    public:
-    BinarySignalOperation(const QString &str="") : Signal(str) { }
-    QString getType() const { return "BinarySignalOperation"; }
-    ElementPropertyDialog* createPropertyDialog() {return new BinarySignalOperationPropertyDialog(this);}
+      PIDController(const QString &str="") : Signal(str) { }
+      QString getType() const { return "PIDController"; }
+      ElementPropertyDialog* createPropertyDialog() {return new PIDControllerPropertyDialog(this);}
   };
 
   class ExternSignalSource : public Signal {
