@@ -15,6 +15,8 @@
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/constant_function.h"
 #include "mbsim/functions/symbolic_function.h"
+#include "mbsim/functions/vector_valued_function.h"
+#include "mbsim/functions/composite_function.h"
 
 #include "mbsimControl/signal_function.h"
 #include "mbsimControl/linear_transfer_system.h"
@@ -343,16 +345,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SX s = SX::sym("s",2);
   SX y = s(1)-s(0);
 
-  Multiplexer *VelSignale = new Multiplexer("VelSignale");
-  addLink(VelSignale);
-  VelSignale->addInputSignal(GenVelSensorAtCrank);
-  VelSignale->addInputSignal(VelSoll);
-
   // Signal-Addition
-  SignalOperation * Regelfehler = new SignalOperation("Regelfehler");
+  VectorValuedFunction<VecV(double)> *velMux = new VectorValuedFunction<VecV(double)>;
+  velMux->addComponent(new SignalFunction<double(double)>(GenVelSensorAtCrank));
+  velMux->addComponent(new SignalFunction<double(double)>(VelSoll));
+  FunctionSensor *Regelfehler = new FunctionSensor("Regelfehler");
   addLink(Regelfehler);
-  Regelfehler->setInputSignal(VelSignale);
-  Regelfehler->setFunction(new SymbolicFunction<VecV(VecV)>(y, s));
+  Regelfehler->setFunction(new CompositeFunction<VecV(VecV(double))>(new SymbolicFunction<VecV(VecV)>(y, s), velMux));
 
   // Regler
   LinearTransferSystem *Regler = new LinearTransferSystem("Regler");
