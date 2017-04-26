@@ -116,6 +116,30 @@ namespace MBSimControl {
       void updateSignalPID();
   };
 
+  /*!
+   * \brief SignalOperation
+   * \author Martin Foerg
+   */
+  class SignalOperation : public Signal {
+    public:
+      SignalOperation(const std::string &name="") : Signal(name), s(NULL), f(NULL) { }
+      ~SignalOperation() { delete f; }
+      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage);
+      void setInputSignal(Signal *signal_) {s=signal_; }
+      void setFunction(MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f_) {
+        f=f_;
+        f->setParent(this);
+        f->setName("Function");
+      };
+      void updateSignal();
+      int getSignalSize() const { return f->getRetSize().first; }
+    private:
+      Signal *s;
+      std::string signalString;
+      MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f;
+  };
+
 }
 
 #endif /* _SIGNAL_MANIPULATION_H_ */

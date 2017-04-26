@@ -51,6 +51,13 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() {return new PIDControllerPropertyDialog(this);}
   };
 
+  class SignalOperation : public Signal {
+    public:
+      SignalOperation(const QString &str="") : Signal(str) { }
+      QString getType() const { return "SignalOperation"; }
+      ElementPropertyDialog* createPropertyDialog() {return new SignalOperationPropertyDialog(this);}
+  };
+
   class ExternSignalSource : public Signal {
     public:
       ExternSignalSource(const QString &str="") : Signal(str) { }

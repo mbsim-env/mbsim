@@ -95,6 +95,7 @@ namespace MBSimGUI {
   class Multiplexer;
   class Demultiplexer;
   class PIDController;
+  class SignalOperation;
   class TextWidget;
   class VecWidget;
   class ExtWidget;
@@ -798,6 +799,16 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *sRef, *sdRef, *P, *I, *D;
+  };
+
+  class SignalOperationPropertyDialog : public SignalPropertyDialog {
+
+    public:
+      SignalOperationPropertyDialog(SignalOperation *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+    protected:
+      ExtWidget *inputSignal, *function;
   };
 
   class ExternSignalSourcePropertyDialog : public SignalPropertyDialog {

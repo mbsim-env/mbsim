@@ -188,4 +188,32 @@ namespace MBSimControl {
     P = PP; I = II; D = DD;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, SignalOperation)
+
+  void SignalOperation::initializeUsingXML(DOMElement *element) {
+    Signal::initializeUsingXML(element);
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    signalString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
+    if(e) {
+      MBSim::Function<VecV(VecV)> *f=ObjectFactory::createAndInit<MBSim::Function<VecV(VecV)> >(e->getFirstElementChild());
+      setFunction(f);
+    }
+  }
+
+  void SignalOperation::init(InitStage stage) {
+    if (stage==resolveXMLPath) {
+      if (signalString!="")
+        setInputSignal(getByPath<Signal>(signalString));
+    }
+    Signal::init(stage);
+    f->init(stage);
+  }
+
+  void SignalOperation::updateSignal() {
+    Signal::s = (*f)(s->evalSignal());
+    upds = false;
+  }
+
 }

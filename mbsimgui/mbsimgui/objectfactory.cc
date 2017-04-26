@@ -195,6 +195,8 @@ namespace MBSimGUI {
       return new Demultiplexer;
     if(E(element)->getTagName()==MBSIMCONTROL%"PIDController")
       return new PIDController;
+    if(E(element)->getTagName()==MBSIMCONTROL%"SignalOperation")
+      return new SignalOperation;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSource")
       return new ExternSignalSource;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")

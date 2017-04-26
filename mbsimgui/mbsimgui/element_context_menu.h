@@ -255,6 +255,7 @@ namespace MBSimGUI {
       void addMultiplexer();
       void addDemultiplexer();
       void addPIDController();
+      void addSignalOperation();
       void addExternSignalSource();
       void addExternSignalSink();
 

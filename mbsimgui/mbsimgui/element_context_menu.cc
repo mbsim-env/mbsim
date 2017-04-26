@@ -578,6 +578,9 @@ namespace MBSimGUI {
     action = new QAction("Add PID controller", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addPIDController()));
     addAction(action);
+    action = new QAction("Add signal operation", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSignalOperation()));
+    addAction(action);
     action = new QAction("Add extern signal source", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addExternSignalSource()));
     addAction(action);
@@ -601,6 +604,10 @@ namespace MBSimGUI {
 
   void SignalsContextMenu::addPIDController() {
     mw->addLink(new PIDController("PIDController"), element);
+  }
+
+  void SignalsContextMenu::addSignalOperation() {
+    mw->addLink(new SignalOperation("SignalOperation"), element);
   }
 
   void SignalsContextMenu::addExternSignalSource() {

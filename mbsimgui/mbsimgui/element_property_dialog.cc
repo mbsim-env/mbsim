@@ -2317,6 +2317,28 @@ namespace MBSimGUI {
     return NULL;
   }
 
+  SignalOperationPropertyDialog::SignalOperationPropertyDialog(SignalOperation *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
+    inputSignal = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"inputSignal");
+    addToTab("General", inputSignal);
+
+    function = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory3(QStringList("x")),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
+    addToTab("General", function);
+  }
+
+  DOMElement* SignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
+    inputSignal->initializeUsingXML(element->getXMLElement());
+    function->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* SignalOperationPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    inputSignal->writeXMLFile(element->getXMLElement(),ref);
+    function->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
   ExternSignalSourcePropertyDialog::ExternSignalSourcePropertyDialog(ExternSignalSource *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
     sourceSize = new ExtWidget("Length of input vector",new SpinBoxWidget(1,1,1000),false,false,MBSIMCONTROL%"sourceSize");
     addToTab("General", sourceSize);
