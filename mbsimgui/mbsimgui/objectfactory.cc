@@ -189,6 +189,10 @@ namespace MBSimGUI {
       return new AngularVelocitySensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"FunctionSensor")
       return new FunctionSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"Multiplexer")
+      return new Multiplexer;
+    if(E(element)->getTagName()==MBSIMCONTROL%"Demultiplexer")
+      return new Demultiplexer;
     if(E(element)->getTagName()==MBSIMCONTROL%"PIDController")
       return new PIDController;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSource")

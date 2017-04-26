@@ -569,7 +569,13 @@ namespace MBSimGUI {
   SignalsContextMenu::SignalsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
     QMenu *menu = new SensorsContextMenu(element,"Add sensor");
     addMenu(menu);
-    QAction *action = new QAction("Add PID controller", this);
+    QAction *action = new QAction("Add multiplexer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMultiplexer()));
+    addAction(action);
+    action = new QAction("Add demultiplexer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addDemultiplexer()));
+    addAction(action);
+    action = new QAction("Add PID controller", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addPIDController()));
     addAction(action);
     action = new QAction("Add extern signal source", this);
@@ -583,6 +589,14 @@ namespace MBSimGUI {
   void SignalsContextMenu::addSensor() {
     SensorsContextMenu menu(element);
     menu.exec(QCursor::pos());
+  }
+
+  void SignalsContextMenu::addMultiplexer() {
+    mw->addLink(new Multiplexer("Multiplexer"), element);
+  }
+
+  void SignalsContextMenu::addDemultiplexer() {
+    mw->addLink(new Demultiplexer("Demultiplexer"), element);
   }
 
   void SignalsContextMenu::addPIDController() {

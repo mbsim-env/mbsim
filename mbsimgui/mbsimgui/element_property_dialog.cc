@@ -91,6 +91,22 @@ namespace MBSimGUI {
     return widget;
   }
 
+  class SignalOfReferenceWidgetFactory : public WidgetFactory {
+    public:
+      SignalOfReferenceWidgetFactory(const FQN &xmlName_, Element* element_, QWidget *parent_=0) : xmlName(xmlName_), element(element_), parent(parent_) { }
+      QWidget* createWidget(int i=0);
+      FQN getXMLName(int i=0) const { return xmlName; }
+    protected:
+      FQN xmlName;
+      Element *element;
+      QWidget *parent;
+  };
+
+  QWidget* SignalOfReferenceWidgetFactory::createWidget(int i) {
+    QWidget *widget = new SignalOfReferenceWidget(element,0);
+    return widget;
+  }
+
   ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), element(element_) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(element->getName()));
@@ -2163,22 +2179,17 @@ namespace MBSimGUI {
   ObjectSensorPropertyDialog::ObjectSensorPropertyDialog(ObjectSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
     object = new ExtWidget("Object of reference",new ObjectOfReferenceWidget(sensor,0),false,false,MBSIMCONTROL%"object");
     addToTab("General", object);
-
-    index = new ExtWidget("Index",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"index");
-    addToTab("General", index);
   }
 
   DOMElement* ObjectSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
     object->initializeUsingXML(element->getXMLElement());
-    index->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
   DOMElement* ObjectSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     object->writeXMLFile(element->getXMLElement(),ref);
-    index->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 
@@ -2191,22 +2202,17 @@ namespace MBSimGUI {
   FrameSensorPropertyDialog::FrameSensorPropertyDialog(FrameSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
     frame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(sensor,0),false,false,MBSIMCONTROL%"frame");
     addToTab("General", frame);
-
-    direction = new ExtWidget("Direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"direction");
-    addToTab("General", direction);
   }
 
   DOMElement* FrameSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SensorPropertyDialog::initializeUsingXML(element->getXMLElement());
     frame->initializeUsingXML(element->getXMLElement());
-    direction->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
   DOMElement* FrameSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SensorPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     frame->writeXMLFile(element->getXMLElement(),ref);
-    direction->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 
@@ -2233,6 +2239,44 @@ namespace MBSimGUI {
   DOMElement* FunctionSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SensorPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     function->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
+  MultiplexerPropertyDialog::MultiplexerPropertyDialog(Multiplexer *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
+    inputSignal = new ExtWidget("Input signal",new ListWidget(new SignalOfReferenceWidgetFactory(MBSIMCONTROL%"inputSignal",signal,this),"Signal",0,2),false,false,"");
+    addToTab("General", inputSignal);
+  }
+
+  DOMElement* MultiplexerPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
+    inputSignal->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* MultiplexerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    inputSignal->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
+  }
+
+  DemultiplexerPropertyDialog::DemultiplexerPropertyDialog(Demultiplexer *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
+    inputSignal = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"inputSignal");
+    addToTab("General", inputSignal);
+    indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"indices");
+    addToTab("General", indices);
+  }
+
+  DOMElement* DemultiplexerPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
+    inputSignal->initializeUsingXML(element->getXMLElement());
+    indices->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DemultiplexerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    inputSignal->writeXMLFile(element->getXMLElement(),ref);
+    indices->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 

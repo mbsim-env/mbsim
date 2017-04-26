@@ -92,6 +92,8 @@ namespace MBSimGUI {
   class VelocitySensor;
   class AngularVelocitySensor;
   class FunctionSensor;
+  class Multiplexer;
+  class Demultiplexer;
   class PIDController;
   class TextWidget;
   class VecWidget;
@@ -715,7 +717,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-      ExtWidget *object, *index;
+      ExtWidget *object;
   };
 
   class GeneralizedPositionSensorPropertyDialog : public ObjectSensorPropertyDialog {
@@ -737,7 +739,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-      ExtWidget *frame, *direction;
+      ExtWidget *frame;
   };
 
   class PositionSensorPropertyDialog : public FrameSensorPropertyDialog {
@@ -766,6 +768,26 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *function;
+  };
+
+  class MultiplexerPropertyDialog : public SignalPropertyDialog {
+
+    public:
+      MultiplexerPropertyDialog(Multiplexer *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+    protected:
+      ExtWidget *inputSignal;
+  };
+
+  class DemultiplexerPropertyDialog : public SignalPropertyDialog {
+
+    public:
+      DemultiplexerPropertyDialog(Demultiplexer *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+    protected:
+      ExtWidget *inputSignal, *indices;
   };
 
   class PIDControllerPropertyDialog : public SignalPropertyDialog {

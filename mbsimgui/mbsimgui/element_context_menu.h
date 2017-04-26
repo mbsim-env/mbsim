@@ -252,6 +252,8 @@ namespace MBSimGUI {
 
     protected slots:
       void addSensor();
+      void addMultiplexer();
+      void addDemultiplexer();
       void addPIDController();
       void addExternSignalSource();
       void addExternSignalSink();

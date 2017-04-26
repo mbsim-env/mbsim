@@ -30,6 +30,20 @@ namespace MBSimGUI {
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
   };
 
+  class Multiplexer : public Signal {
+    public:
+      Multiplexer(const QString &str="") : Signal(str) { }
+      QString getType() const { return "Multiplexer"; }
+      ElementPropertyDialog* createPropertyDialog() {return new MultiplexerPropertyDialog(this);}
+  };
+
+  class Demultiplexer : public Signal {
+    public:
+      Demultiplexer(const QString &str="") : Signal(str) { }
+      QString getType() const { return "Demultiplexer"; }
+      ElementPropertyDialog* createPropertyDialog() {return new DemultiplexerPropertyDialog(this);}
+  };
+
   class PIDController : public Signal {
     public:
       PIDController(const QString &str="") : Signal(str) { }

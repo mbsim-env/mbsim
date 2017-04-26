@@ -30,6 +30,42 @@ namespace MBSim {
 namespace MBSimControl {
 
   /*!
+   * \brief Multiplexer
+   * \author Markus Schneider
+   */
+  class Multiplexer : public Signal {
+    public:
+      Multiplexer(const std::string &name="") : Signal(name) { }
+      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage);
+      void addInputSignal(Signal * signal_) { signal.push_back(signal_); }
+      void updateSignal();
+      int getSignalSize() const;
+    private:
+      std::vector<Signal*> signal;
+      std::vector<std::string> signalString;
+  };
+
+  /*!
+   * \brief Demultiplexer
+   * \author Markus Schneider
+   */
+  class Demultiplexer : public Signal {
+    public:
+      Demultiplexer(const std::string &name="") : Signal(name), signal(NULL) { }
+      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage);
+      void setInputSignal(Signal *signal_) { signal = signal_; }
+      void setIndices(const std::vector<MBSim::Index> &index_) { index = index_; }
+      void updateSignal();
+      int getSignalSize() const { return index.size(); }
+    private:
+      Signal *signal;
+      std::vector<MBSim::Index> index;
+      std::string signalString;
+  };
+
+  /*!
    * \brief SignalTimeDiscretization
    * \author Markus Schneider
    */
