@@ -198,69 +198,42 @@
       <object ref="../Object[Pendulum]"/>
     </GeneralizedVelocitySensor>
 
-    <FunctionSensor name="VelocitySensorTanh" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <SignalOperation name="VelocitySensorTanh" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[VelocitySensor]"/>
       <function>
-        <CompositeFunction xmlns="http://www.mbsim-env.de/MBSim">
-          <outerFunction>
-            <SymbolicFunction arg1="s" xmlns="http://www.mbsim-env.de/MBSim">
-              (exp(s)-exp(-s))/(exp(s)+exp(-s))
-            </SymbolicFunction>
-          </outerFunction>
-          <innerFunction>
-            <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
-              <returnSignal ref="../../../Link[VelocitySensor]"/>
-            </SignalFunction>
-          </innerFunction>
-        </CompositeFunction>
+        <SymbolicFunction arg1="s" xmlns="http://www.mbsim-env.de/MBSim">
+          (exp(s)-exp(-s))/(exp(s)+exp(-s))
+        </SymbolicFunction>
       </function>
-    </FunctionSensor>
-    <FunctionSensor name="ExcitationTorque" xmlns="http://www.mbsim-env.de/MBSimControl">
+    </SignalOperation>
+    <SignalOperation name="ExcitationTorque" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[AngularSensor]"/>
       <function>
-        <CompositeFunction xmlns="http://www.mbsim-env.de/MBSim">
-          <outerFunction>
-            <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
-              <xy>
-                <![CDATA[
-                x=[-100 -.01 0 .01 1000];
-                y=[0 0 .04 0 0];
-                xx=[linspace(-100, -.03, 10) linspace(-.02, .02, 100) linspace(.03, 100, 10)];
-                yy=interp1(x, y, xx, 'pchip');
-                ret=[xx' yy'];
-                ]]>
-              </xy>
-            </TabularFunction>
-          </outerFunction>
-          <innerFunction>
-            <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
-              <returnSignal ref="../../../Link[AngularSensor]"/>
-            </SignalFunction>
-          </innerFunction>
-        </CompositeFunction>
+        <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
+          <xy>
+            <![CDATA[
+            x=[-100 -.01 0 .01 1000];
+            y=[0 0 .04 0 0];
+            xx=[linspace(-100, -.03, 10) linspace(-.02, .02, 100) linspace(.03, 100, 10)];
+            yy=interp1(x, y, xx, 'pchip');
+            ret=[xx' yy'];
+            ]]>
+          </xy>
+        </TabularFunction>
       </function>
-    </FunctionSensor>
-    <FunctionSensor name="Excitation" xmlns="http://www.mbsim-env.de/MBSimControl">
+    </SignalOperation>
+    <Multiplexer name="Multiplexer" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[ExcitationTorque]"/>
+      <inputSignal ref="../Link[VelocitySensorTanh]"/>
+    </Multiplexer>
+    <SignalOperation name="Excitation" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[Multiplexer]"/>
       <function>
-        <CompositeFunction xmlns="http://www.mbsim-env.de/MBSim">
-          <outerFunction>
-            <SymbolicFunction arg1="x" arg1Dim="2" xmlns="http://www.mbsim-env.de/MBSim">
-              x(1)*x(2)^3
-            </SymbolicFunction>
-          </outerFunction>
-          <innerFunction>
-            <VectorValuedFunction>
-              <components>
-                <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
-                  <returnSignal ref="../../../../Link[ExcitationTorque]"/>
-                </SignalFunction>
-                <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
-                  <returnSignal ref="../../../../Link[VelocitySensorTanh]"/>
-                </SignalFunction>
-              </components>
-            </VectorValuedFunction>
-          </innerFunction>
-        </CompositeFunction>
+        <SymbolicFunction arg1="x" arg1Dim="2" xmlns="http://www.mbsim-env.de/MBSim">
+          x(1)*x(2)^3
+        </SymbolicFunction>
       </function>
-    </FunctionSensor>
+    </SignalOperation>
     <KineticExcitation name="Actuator" xmlns="http://www.mbsim-env.de/MBSim">
       <connect ref1="../Object[Pendulum]/Frame[fBottom]" ref2="../Object[Base]/Frame[fTop]"/>
       <momentDirection>[0 0 -1]'</momentDirection>

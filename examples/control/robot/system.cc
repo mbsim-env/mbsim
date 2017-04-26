@@ -6,8 +6,6 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/tabular_function.h"
 #include "mbsim/functions/symbolic_function.h"
-#include "mbsim/functions/vector_valued_function.h"
-#include "mbsim/functions/composite_function.h"
 
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/object_sensors.h"
@@ -119,13 +117,15 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   SX s = SX::sym("s",2);
   SX y = s(0)-s(1);
 
-  VectorValuedFunction<VecV(double)> *baseMux = new VectorValuedFunction<VecV(double)>;
-  baseMux->addComponent(new SignalFunction<double(double)>(basePositionSoll));
-  baseMux->addComponent(new SignalFunction<double(double)>(basePosition));
+  Multiplexer *basePositions = new Multiplexer("BasePositions");
+  addLink(basePositions);
+  basePositions->addInputSignal(basePositionSoll);
+  basePositions->addInputSignal(basePosition);
 
-  FunctionSensor *basePositionDiff = new FunctionSensor("BasePositionDiff");
+  SignalOperation * basePositionDiff = new SignalOperation("BasePositionDiff");
   addLink(basePositionDiff);
-  basePositionDiff->setFunction(new CompositeFunction<VecV(VecV(double))>(new SymbolicFunction<VecV(VecV)>(y, s), baseMux));
+  basePositionDiff->setInputSignal(basePositions);
+  basePositionDiff->setFunction(new SymbolicFunction<VecV(VecV)>(y, s));
 
   LinearTransferSystem * basisControl = new LinearTransferSystem("ReglerBasis");
   addLink(basisControl);
@@ -161,14 +161,16 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(armPositionSoll);
   armPositionSoll->setFunction(armPositionSollFunction);
 
-  VectorValuedFunction<VecV(double)> *armMux = new VectorValuedFunction<VecV(double)>;
-  armMux->addComponent(new SignalFunction<double(double)>(armPositionSoll));
-  armMux->addComponent(new SignalFunction<double(double)>(armPosition));
+  Multiplexer *armPositions = new Multiplexer("ArmPositions");
+  addLink(armPositions);
+  armPositions->addInputSignal(armPositionSoll);
+  armPositions->addInputSignal(armPosition);
 
-  FunctionSensor *armPositionDiff = new FunctionSensor("ArmPositionDiff");
+  SignalOperation * armPositionDiff = new SignalOperation("ArmPositionDiff");
   addLink(armPositionDiff);
-  armPositionDiff->setFunction(new CompositeFunction<VecV(VecV(double))>(new SymbolicFunction<VecV(VecV)>(y, s), armMux));
-
+  armPositionDiff->setInputSignal(armPositions);
+  armPositionDiff->setFunction(new SymbolicFunction<VecV(VecV)>(y, s));
+  
   LinearTransferSystem * armControl = new LinearTransferSystem("ReglerArm");
   addLink(armControl);
   armControl->setInputSignal(armPositionDiff);
@@ -203,13 +205,15 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(spitzePositionSoll);
   spitzePositionSoll->setFunction(spitzePositionSollFunction);
 
-  VectorValuedFunction<VecV(double)> *spitzeMux = new VectorValuedFunction<VecV(double)>;
-  spitzeMux->addComponent(new SignalFunction<double(double)>(spitzePositionSoll));
-  spitzeMux->addComponent(new SignalFunction<double(double)>(spitzePosition));
+  Multiplexer *spitzePositions = new Multiplexer("SpitzePositions");
+  addLink(spitzePositions);
+  spitzePositions->addInputSignal(spitzePositionSoll);
+  spitzePositions->addInputSignal(spitzePosition);
 
-  FunctionSensor *spitzePositionDiff = new FunctionSensor("SpitzePositionDiff");
+  SignalOperation * spitzePositionDiff = new SignalOperation("SpitzePositionDiff");
   addLink(spitzePositionDiff);
-  spitzePositionDiff->setFunction(new CompositeFunction<VecV(VecV(double))>(new SymbolicFunction<VecV(VecV)>(y, s), spitzeMux));
+  spitzePositionDiff->setInputSignal(spitzePositions);
+  spitzePositionDiff->setFunction(new SymbolicFunction<VecV(VecV)>(y, s));
 
   LinearTransferSystem * spitzeControl = new LinearTransferSystem("ReglerSpitze");
   addLink(spitzeControl);
