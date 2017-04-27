@@ -32,6 +32,9 @@ namespace MBSim {
     public:
       TwoDimensionalTabularFunction() : x0Index(0), x1Index(0), y0Index(0), y1Index(0), zVal(4,fmatvec::INIT,1), zInd(4,fmatvec::INIT,0), zFac(4, 4,fmatvec::INIT,0) { }
       /* INHERITED INTERFACE OF FUNCTION2 */
+      int getArg1Size() const { return 1; }
+      int getArg2Size() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
       virtual void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement * e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
         if(e) {
