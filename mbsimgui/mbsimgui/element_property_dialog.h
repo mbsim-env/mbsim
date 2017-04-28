@@ -97,11 +97,11 @@ namespace MBSimGUI {
   class Demultiplexer;
   class PIDController;
   class SignalOperation;
-  class TextWidget;
-  class VecWidget;
-  class ExtWidget;
+  class SignalOperation;
   class ExternSignalSource;
   class ExternSignalSink;
+  class LinearTransferSystem;
+  class ExtWidget;
 
   class ElementPropertyDialog : public PropertyDialog {
 
@@ -303,7 +303,6 @@ namespace MBSimGUI {
       virtual void resizeGeneralizedVelocity() {}
     protected:
       ExtWidget *q0, *u0, *R;
-      VecWidget *q0_, *u0_;
     public slots:
       void updateWidget() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
   };
@@ -840,6 +839,17 @@ namespace MBSimGUI {
     protected:
       ExtWidget *inputSignal;
   };
+
+  class LinearTransferSystemPropertyDialog : public SignalPropertyDialog {
+
+    public:
+      LinearTransferSystemPropertyDialog(LinearTransferSystem *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+    protected:
+      ExtWidget *inputSignal, *pidType, *abcdType, *integratorType, *pt1Type;
+  };
+
 
 }
 

@@ -2290,13 +2290,13 @@ namespace MBSimGUI {
     sdRef = new ExtWidget("Derivative of input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"derivativeOfInputSignal");
     addToTab("General", sdRef);
 
-    P = new ExtWidget("P",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"P");
+    P = new ExtWidget("Proportional gain",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"proportionalGain");
     addToTab("General", P);
 
-    I = new ExtWidget("I",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"I");
+    I = new ExtWidget("Integral gain",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"integralGain");
     addToTab("General", I);
 
-    D = new ExtWidget("D",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"D");
+    D = new ExtWidget("Derivative gain",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"derivativeGain");
     addToTab("General", D);
   }
 

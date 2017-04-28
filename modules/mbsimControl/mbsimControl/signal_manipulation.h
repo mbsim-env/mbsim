@@ -90,25 +90,27 @@ namespace MBSimControl {
   class PIDController : public Signal {
 
     public:   
-      PIDController(const std::string& name="") : Signal(name), s(NULL), sd(NULL) {}
+      PIDController(const std::string& name="") : Signal(name), P(0), I(0), D(0), s(NULL), sd(NULL) { }
       void initializeUsingXML(xercesc::DOMElement * element);
       
-      void calcxSize() {xSize=updateSignalMethod==&PIDController::updateSignalPD?0:1;}
+      void calcxSize() { xSize=updateSignalMethod==&PIDController::updateSignalPD?0:1; }
       
       void init(InitStage stage);
 
       void updatedx();
       void updatexd();
       
-      void setPID(double P_, double I_, double D_);
-      void setInputSignal(Signal *inputSignal_) {s=inputSignal_; }
-      void setDerivativeOfInputSignal(Signal *inputSignal_) {sd=inputSignal_; }
+      void setProportionalGain(double P_) { P = P_; }
+      void setIntegralGain(double I_) { I = I_; }
+      void setDerivativeGain(double D_) { D = D_; }
+      void setInputSignal(Signal *inputSignal_) { s=inputSignal_; }
+      void setDerivativeOfInputSignal(Signal *inputSignal_) { sd=inputSignal_; }
 
       void updateSignal();
       int getSignalSize() const { return s->getSignalSize(); }
 
     protected:
-      double P,I,D;
+      double P, I, D;
       Signal *s, *sd;
       std::string sString, sdString;
       void (PIDController::*updateSignalMethod)();

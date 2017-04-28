@@ -134,13 +134,12 @@ namespace MBSimControl {
     sString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"derivativeOfInputSignal");
     sdString=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"P");
-    double p=Element::getDouble(e);
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"I");
-    double i=Element::getDouble(e);
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"D");
-    double d=Element::getDouble(e);
-    setPID(p, i, d);
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"proportionalGain");
+    P=Element::getDouble(e);
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"integralGain");
+    I=Element::getDouble(e);
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"derivativeGain");
+    D=Element::getDouble(e);
   }
 
   void PIDController::updatedx() {
@@ -152,19 +151,22 @@ namespace MBSimControl {
   }
 
   void PIDController::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      if (sString!="")
+    if(stage==resolveXMLPath) {
+      if(sString!="")
         setInputSignal(getByPath<Signal>(sString));
-      if (sdString!="")
+      if(sdString!="")
         setDerivativeOfInputSignal(getByPath<Signal>(sdString));
-      Signal::init(stage);
+      if(not s)
+        THROW_MBSIMERROR("(PIDController::init): input signal must be given");
     }
-    else if (stage==unknownStage) {
-      Signal::init(stage);
+    else if (stage==preInit) {
       x.resize(xSize, INIT, 0);
+      if(fabs(I)<epsroot())
+        updateSignalMethod=&PIDController::updateSignalPD;
+      else
+        updateSignalMethod=&PIDController::updateSignalPID;
     }
-    else
-      Signal::init(stage);
+    Signal::init(stage);
   }
 
   void PIDController::updateSignal() {
@@ -178,14 +180,6 @@ namespace MBSimControl {
 
   void PIDController::updateSignalPD() {
     Signal::s = P*s->evalSignal() + D*sd->evalSignal();
-  }
-
-  void PIDController::setPID(double PP, double II, double DD) {
-    if ((fabs(II)<epsroot()))
-      updateSignalMethod=&PIDController::updateSignalPD;
-    else
-      updateSignalMethod=&PIDController::updateSignalPID;
-    P = PP; I = II; D = DD;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, SignalOperation)
@@ -205,7 +199,7 @@ namespace MBSimControl {
   }
 
   void SignalOperation::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
+    if(stage==resolveXMLPath) {
       for(unsigned int i=0; i<signalString.size(); i++)
         addInputSignal(getByPath<Signal>(signalString[i]));
       if(signal.size()==1)

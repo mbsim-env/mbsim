@@ -516,9 +516,9 @@
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="P" type="pv:nounitScalar"/>
-          <xs:element name="I" type="pv:nounitScalar"/>
-          <xs:element name="D" type="pv:nounitScalar"/>
+          <xs:element name="proportionalGain" type="pv:nounitScalar"/>
+          <xs:element name="integralGain" type="pv:nounitScalar"/>
+          <xs:element name="derivativeGain" type="pv:nounitScalar"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
