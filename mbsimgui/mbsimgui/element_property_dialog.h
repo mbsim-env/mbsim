@@ -89,6 +89,7 @@ namespace MBSimGUI {
   class GeneralizedVelocitySensor;
   class FrameSensor;
   class PositionSensor;
+  class OrientationSensor;
   class VelocitySensor;
   class AngularVelocitySensor;
   class FunctionSensor;
@@ -747,6 +748,12 @@ namespace MBSimGUI {
 
     public:
       PositionSensorPropertyDialog(PositionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+  };
+
+  class OrientationSensorPropertyDialog : public FrameSensorPropertyDialog {
+
+    public:
+      OrientationSensorPropertyDialog(OrientationSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
   };
 
   class VelocitySensorPropertyDialog : public FrameSensorPropertyDialog {

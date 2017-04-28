@@ -308,7 +308,7 @@ namespace MBSimGUI {
 
   QWidget* SymbolicFunctionWidgetFactory2::createWidget(int i) {
     if(i==0)
-      return new SymbolicFunctionWidget(var,1,3);
+      return new SymbolicFunctionWidget(var,1,100);
     if(i==1)
       return new TwoDimensionalTabularFunctionWidget(1);
     if(i==2)
@@ -327,7 +327,7 @@ namespace MBSimGUI {
 
   QWidget* SymbolicFunctionWidgetFactory3::createWidget(int i) {
     if(i==0)
-      return new SymbolicFunctionWidget(var,1,3);
+      return new SymbolicFunctionWidget(var,1,100);
     if(i==1)
       return new ModuloFunctionWidget;
     if(i==2)

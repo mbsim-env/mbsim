@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsimControl/frame_sensors.h"
 #include "mbsim/frames/frame.h"
-#include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -41,6 +40,8 @@ namespace MBSimControl {
       if(frameString!="")
         setFrame(getByPath<Frame>(frameString));
     }
+    else if(stage==preInit)
+      s.resize(getSignalSize());
     Sensor::init(stage);
   }
 
@@ -51,17 +52,22 @@ namespace MBSimControl {
     upds = false;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, OrientationSensor)
+
+  void OrientationSensor::updateSignal() {
+    SqrMat3 A = frame->evalOrientation();
+    int k=0;
+    for(int i=0; i<A.rows(); i++) {
+      for(int j=0; j<A.cols(); j++)
+        s(k++) = A(i,j);
+    }
+    upds = false;
+  }
+
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, VelocitySensor)
 
   void VelocitySensor::updateSignal() {
     s = frame->evalVelocity();
-    upds = false;
-  }
-
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AngleSensor)
-
-  void AngleSensor::updateSignal() {
-    s = AIK2Cardan(frame->evalOrientation());
     upds = false;
   }
 

@@ -183,6 +183,8 @@ namespace MBSimGUI {
       return new GeneralizedVelocitySensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"PositionSensor")
       return new PositionSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"OrientationSensor")
+      return new OrientationSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"VelocitySensor")
       return new VelocitySensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"AngularVelocitySensor")

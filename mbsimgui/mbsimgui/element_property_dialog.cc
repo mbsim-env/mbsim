@@ -2219,6 +2219,9 @@ namespace MBSimGUI {
   PositionSensorPropertyDialog::PositionSensorPropertyDialog(PositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : FrameSensorPropertyDialog(sensor,parent,f) {
   }
 
+  OrientationSensorPropertyDialog::OrientationSensorPropertyDialog(OrientationSensor *sensor, QWidget * parent, Qt::WindowFlags f) : FrameSensorPropertyDialog(sensor,parent,f) {
+  }
+
   VelocitySensorPropertyDialog::VelocitySensorPropertyDialog(VelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : FrameSensorPropertyDialog(sensor,parent,f) {
   }
 

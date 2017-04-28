@@ -57,6 +57,18 @@ namespace MBSimControl {
   };
 
   /*!
+   * \brief OrientationSensor
+   * \author Martin Foerg
+   */
+  class OrientationSensor : public FrameSensor {
+    public:
+      OrientationSensor(const std::string &name="") : FrameSensor(name) { }
+      std::string getType() const { return "OrientationSensor"; }
+      void updateSignal();
+      int getSignalSize() const { return 9; }
+  };
+
+  /*!
    * \brief VelocitySensor
    * \author Markus Schneider
    */
@@ -64,17 +76,6 @@ namespace MBSimControl {
     public:
       VelocitySensor(const std::string &name="") : FrameSensor(name) { }
       std::string getType() const { return "VelocitySensor"; }
-      void updateSignal();
-  };
-
-  /*!
-   * \brief AngularPositionSensor
-   * \author Markus Schneider
-   */
-  class AngleSensor : public FrameSensor {
-    public:
-      AngleSensor(const std::string &name="") : FrameSensor(name) { }
-      std::string getType() const { return "AngleSensor"; }
       void updateSignal();
   };
 

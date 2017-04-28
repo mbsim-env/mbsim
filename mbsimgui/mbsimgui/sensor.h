@@ -63,6 +63,13 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() {return new PositionSensorPropertyDialog(this);}
   };
 
+  class OrientationSensor : public FrameSensor {
+    public:
+      OrientationSensor(const QString &str="") : FrameSensor(str) { }
+      QString getType() const { return "OrientationSensor"; }
+      ElementPropertyDialog* createPropertyDialog() {return new OrientationSensorPropertyDialog(this);}
+  };
+
   class VelocitySensor : public FrameSensor {
     public:
       VelocitySensor(const QString &str="") : FrameSensor(str) { }

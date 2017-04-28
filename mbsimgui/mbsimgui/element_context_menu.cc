@@ -625,13 +625,16 @@ namespace MBSimGUI {
     action = new QAction("Add generalized velocity sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocitySensor()));
     addAction(action);
-    action = new QAction("Add absolute position sensor", this);
+    action = new QAction("Add position sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addPositionSensor()));
     addAction(action);
-    action = new QAction("Add absolute velocity sensor", this);
+    action = new QAction("Add orientation sensor", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addOrientationSensor()));
+    addAction(action);
+    action = new QAction("Add velocity sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addVelocitySensor()));
     addAction(action);
-    action = new QAction("Add absolute angular velocity sensor", this);
+    action = new QAction("Add angular velocity sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addAngularVelocitySensor()));
     addAction(action);
     action = new QAction("Add function sensor", this);
@@ -649,6 +652,10 @@ namespace MBSimGUI {
 
   void SensorsContextMenu::addPositionSensor() {
     mw->addLink(new PositionSensor("PositionSensor"), element);
+  }
+
+  void SensorsContextMenu::addOrientationSensor() {
+    mw->addLink(new OrientationSensor("OrientationSensor"), element);
   }
 
   void SensorsContextMenu::addVelocitySensor() {
