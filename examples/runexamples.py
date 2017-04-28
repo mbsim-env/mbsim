@@ -1798,7 +1798,7 @@ def coverage(mainFD):
     sys.path.append(args.buildSystemRun)
     import buildSystemState
     buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", str(covRate)+"%",
-      "#5cb85c" if covRate>=90 else ("#f0ad4e" if covRate>=75 else "#d9534f"))
+      "#5cb85c" if covRate>=90 else ("#f0ad4e" if covRate>=70 else "#d9534f"))
 
   if ret==0:
     print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;', file=mainFD)
