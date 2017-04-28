@@ -802,6 +802,7 @@ namespace MBSimGUI {
   };
 
   class SignalOperationPropertyDialog : public SignalPropertyDialog {
+    Q_OBJECT
 
     public:
       SignalOperationPropertyDialog(SignalOperation *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -809,6 +810,8 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *inputSignal, *function;
+    protected slots:
+      void updateFunctionFactory();
   };
 
   class ExternSignalSourcePropertyDialog : public SignalPropertyDialog {

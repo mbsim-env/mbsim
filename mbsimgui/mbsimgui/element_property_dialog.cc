@@ -2318,16 +2318,28 @@ namespace MBSimGUI {
   }
 
   SignalOperationPropertyDialog::SignalOperationPropertyDialog(SignalOperation *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
-    inputSignal = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"inputSignal");
+    inputSignal = new ExtWidget("Input signal",new ListWidget(new SignalOfReferenceWidgetFactory(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1,2),false,false,"");
     addToTab("General", inputSignal);
 
     function = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory3(QStringList("x")),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
+
+    connect(inputSignal,SIGNAL(widgetChanged()),this,SLOT(updateFunctionFactory()));
+  }
+
+  void SignalOperationPropertyDialog::updateFunctionFactory() {
+    cout << "updateFunctionFactory" << endl;
+    if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory3(QStringList("x")));
+    else
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory2(QStringList("x")<<"y",element));
+    static_cast<ChoiceWidget2*>(function->getWidget())->defineWidget(0);
   }
 
   DOMElement* SignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
     inputSignal->initializeUsingXML(element->getXMLElement());
+    updateFunctionFactory();
     function->initializeUsingXML(element->getXMLElement());
     return parent;
   }

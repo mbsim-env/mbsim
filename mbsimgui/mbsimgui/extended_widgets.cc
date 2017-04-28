@@ -101,6 +101,7 @@ namespace MBSimGUI {
     widget = factory->createWidget(index);
     layout->addWidget(widget);
     updateWidget();
+    emit widgetChanged();
     emit Widget::widgetChanged();
     connect(widget,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
   }
@@ -199,14 +200,15 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, int m, int mode_, bool fixedSize) : factory(factory_), name(name_), mode(mode_) {
+  ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, int m, int mode_, bool fixedSize, int minSize, int maxSize) : factory(factory_), name(name_), mode(mode_) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     spinBox = new QSpinBox;
     spinBox->setDisabled(fixedSize);
-    spinBox->setRange(0,10);
+    spinBox->setRange(minSize,maxSize);
+    spinBox->setValue(m);
     QWidget *box = new QWidget;
     QHBoxLayout *hbox = new QHBoxLayout;
     box->setLayout(hbox);
@@ -219,7 +221,7 @@ namespace MBSimGUI {
     stackedWidget = new QStackedWidget;
     connect(list,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
     layout->addWidget(stackedWidget);
-    spinBox->setValue(m);
+    currentIndexChanged(m);
   }
 
   ListWidget::~ListWidget() {
@@ -296,12 +298,13 @@ namespace MBSimGUI {
       stackedWidget->removeWidget(stackedWidget->widget(i));
       delete list->takeItem(i);
     }
-    //  if(emitSignals) {
     emit Widget::widgetChanged();
-    //  }
   }
 
   DOMElement* ListWidget::initializeUsingXML(DOMElement *element) {
+    blockSignals(true);
+    removeElements(getSize());
+    blockSignals(false);
     list->blockSignals(true);
     spinBox->blockSignals(true);
     if(mode<=1) {

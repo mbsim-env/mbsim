@@ -68,10 +68,11 @@ namespace MBSimGUI {
       int getIndex() const { return comboBox->currentIndex(); }
       void setIndex(int i) { return comboBox->setCurrentIndex(i); }
       void resize_(int m, int n) { dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n); }
+      void setWidgetFactory(WidgetFactory *factory_) { factory = factory_; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
-    protected slots:
+    public slots:
       void defineWidget(int);
 
     protected:
@@ -103,7 +104,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ListWidget(WidgetFactory *factory, const QString &name="Element", int m=0, int mode=0, bool fixedSize=false);
+      ListWidget(WidgetFactory *factory, const QString &name="Element", int m=0, int mode=0, bool fixedSize=false, int minSize=0, int maxSize=100);
       ~ListWidget();
       void resize_(int m, int n);
       int getSize() const;
