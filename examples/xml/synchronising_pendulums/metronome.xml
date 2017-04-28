@@ -222,15 +222,12 @@
         </TabularFunction>
       </function>
     </SignalOperation>
-    <Multiplexer name="Multiplexer" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <SignalOperation name="Excitation" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[ExcitationTorque]"/>
       <inputSignal ref="../Link[VelocitySensorTanh]"/>
-    </Multiplexer>
-    <SignalOperation name="Excitation" xmlns="http://www.mbsim-env.de/MBSimControl">
-      <inputSignal ref="../Link[Multiplexer]"/>
       <function>
-        <SymbolicFunction arg1="x" arg1Dim="2" xmlns="http://www.mbsim-env.de/MBSim">
-          x(1)*x(2)^3
+        <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
+          x*y^3
         </SymbolicFunction>
       </function>
     </SignalOperation>

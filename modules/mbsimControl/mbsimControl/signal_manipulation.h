@@ -122,22 +122,32 @@ namespace MBSimControl {
    */
   class SignalOperation : public Signal {
     public:
-      SignalOperation(const std::string &name="") : Signal(name), s(NULL), f(NULL) { }
-      ~SignalOperation() { delete f; }
+      SignalOperation(const std::string &name="") : Signal(name), f1(NULL), f2(NULL) { }
+      ~SignalOperation() { delete f1; delete f2; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void setInputSignal(Signal *signal_) {s=signal_; }
-      void setFunction(MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f_) {
-        f=f_;
-        f->setParent(this);
-        f->setName("Function");
+      void setInputSignal(Signal *signal_) { signal.resize(1,signal_); }
+      void addInputSignal(Signal *signal_) { signal.push_back(signal_); }
+      void setFunction(MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f) {
+        f1=f;
+        f1->setParent(this);
+        f1->setName("Function");
       };
-      void updateSignal();
-      int getSignalSize() const { return f->getRetSize().first; }
+      void setFunction(MBSim::Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *f) {
+        f2=f;
+        f2->setParent(this);
+        f2->setName("Function");
+      };
+      void updateSignal() { (this->*updateSignal_)(); }
+      void updateSignal1();
+      void updateSignal2();
+      int getSignalSize() const { return f1?f1->getRetSize().first:f2->getRetSize().first; }
     private:
-      Signal *s;
-      std::string signalString;
-      MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f;
+      std::vector<Signal*> signal;
+      std::vector<std::string> signalString;
+      MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f1;
+      MBSim::Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *f2;
+      void (SignalOperation::*updateSignal_)();
   };
 
 }

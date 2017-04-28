@@ -27,15 +27,12 @@
         </ConstantFunction>
       </function>
     </FunctionSensor>
-    <Multiplexer name="Multiplexer" xmlns="http://www.mbsim-env.de/MBSimControl">
+   <SignalOperation name="speedDeviation" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[crankReferenceSpeed]"/>
       <inputSignal ref="../Link[crankMeasuredSpeed]"/>
-   </Multiplexer>
-   <SignalOperation name="speedDeviation" xmlns="http://www.mbsim-env.de/MBSimControl">
-      <inputSignal ref="../Link[Multiplexer]"/>
       <function>
-       <SymbolicFunction arg1="x" arg1Dim="2" xmlns="http://www.mbsim-env.de/MBSim">
-          x(1)-x(2)
+       <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
+          x-y
         </SymbolicFunction>
       </function>
     </SignalOperation>

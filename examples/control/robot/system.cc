@@ -114,18 +114,15 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(basePositionSoll);
   basePositionSoll->setFunction(basePositionSollFunction);
 
-  SX s = SX::sym("s",2);
-  SX y = s(0)-s(1);
-
-  Multiplexer *basePositions = new Multiplexer("BasePositions");
-  addLink(basePositions);
-  basePositions->addInputSignal(basePositionSoll);
-  basePositions->addInputSignal(basePosition);
+  SX s1 = SX::sym("s1",1);
+  SX s2 = SX::sym("s2",1);
+  SX y = s1-s2;
 
   SignalOperation * basePositionDiff = new SignalOperation("BasePositionDiff");
   addLink(basePositionDiff);
-  basePositionDiff->setInputSignal(basePositions);
-  basePositionDiff->setFunction(new SymbolicFunction<VecV(VecV)>(y, s));
+  basePositionDiff->addInputSignal(basePositionSoll);
+  basePositionDiff->addInputSignal(basePosition);
+  basePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
 
   LinearTransferSystem * basisControl = new LinearTransferSystem("ReglerBasis");
   addLink(basisControl);
@@ -161,15 +158,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(armPositionSoll);
   armPositionSoll->setFunction(armPositionSollFunction);
 
-  Multiplexer *armPositions = new Multiplexer("ArmPositions");
-  addLink(armPositions);
-  armPositions->addInputSignal(armPositionSoll);
-  armPositions->addInputSignal(armPosition);
-
   SignalOperation * armPositionDiff = new SignalOperation("ArmPositionDiff");
   addLink(armPositionDiff);
-  armPositionDiff->setInputSignal(armPositions);
-  armPositionDiff->setFunction(new SymbolicFunction<VecV(VecV)>(y, s));
+  armPositionDiff->addInputSignal(armPositionSoll);
+  armPositionDiff->addInputSignal(armPosition);
+  armPositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
   
   LinearTransferSystem * armControl = new LinearTransferSystem("ReglerArm");
   addLink(armControl);
@@ -205,15 +198,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(spitzePositionSoll);
   spitzePositionSoll->setFunction(spitzePositionSollFunction);
 
-  Multiplexer *spitzePositions = new Multiplexer("SpitzePositions");
-  addLink(spitzePositions);
-  spitzePositions->addInputSignal(spitzePositionSoll);
-  spitzePositions->addInputSignal(spitzePosition);
-
   SignalOperation * spitzePositionDiff = new SignalOperation("SpitzePositionDiff");
   addLink(spitzePositionDiff);
-  spitzePositionDiff->setInputSignal(spitzePositions);
-  spitzePositionDiff->setFunction(new SymbolicFunction<VecV(VecV)>(y, s));
+  spitzePositionDiff->addInputSignal(spitzePositionSoll);
+  spitzePositionDiff->addInputSignal(spitzePosition);
+  spitzePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
 
   LinearTransferSystem * spitzeControl = new LinearTransferSystem("ReglerSpitze");
   addLink(spitzeControl);

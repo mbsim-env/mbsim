@@ -340,19 +340,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(VelSoll);
   VelSoll->setFunction(new ConstantFunction<VecV(double)>(10));
 
-  SX s = SX::sym("s",2);
-  SX y = s(1)-s(0);
-
-  Multiplexer *VelSignale = new Multiplexer("VelSignale");
-  addLink(VelSignale);
-  VelSignale->addInputSignal(GenVelSensorAtCrank);
-  VelSignale->addInputSignal(VelSoll);
+  SX s1 = SX::sym("s1",1);
+  SX s2 = SX::sym("s2",1);
+  SX y = s2-s1;
 
   // Signal-Addition
   SignalOperation * Regelfehler = new SignalOperation("Regelfehler");
   addLink(Regelfehler);
-  Regelfehler->setInputSignal(VelSignale);
-  Regelfehler->setFunction(new SymbolicFunction<VecV(VecV)>(y, s));
+  Regelfehler->addInputSignal(GenVelSensorAtCrank);
+  Regelfehler->addInputSignal(VelSoll);
+  Regelfehler->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y, s1, s2));
 
   // Regler
   LinearTransferSystem *Regler = new LinearTransferSystem("Regler");

@@ -192,27 +192,41 @@ namespace MBSimControl {
 
   void SignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
-    signalString=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
-    if(e) {
-      MBSim::Function<VecV(VecV)> *f=ObjectFactory::createAndInit<MBSim::Function<VecV(VecV)> >(e->getFirstElementChild());
-      setFunction(f);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    while(E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
+      signalString.push_back(E(e)->getAttribute("ref"));
+      e=e->getNextElementSibling();
     }
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
+    if(signalString.size()==1)
+      setFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV)> >(e->getFirstElementChild()));
+    else if(signalString.size()==2)
+      setFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV,VecV)> >(e->getFirstElementChild()));
   }
 
   void SignalOperation::init(InitStage stage) {
     if (stage==resolveXMLPath) {
-      if (signalString!="")
-        setInputSignal(getByPath<Signal>(signalString));
+      for(unsigned int i=0; i<signalString.size(); i++)
+        addInputSignal(getByPath<Signal>(signalString[i]));
+      if(signal.size()==1)
+        updateSignal_ = &SignalOperation::updateSignal1;
+      else if(signal.size()==2)
+        updateSignal_ = &SignalOperation::updateSignal2;
+      else
+        THROW_MBSIMERROR("(SignalOperation::init): number of input signals must be 1 or 2");
     }
     Signal::init(stage);
-    f->init(stage);
+    if(f1) f1->init(stage);
+    if(f2) f2->init(stage);
   }
 
-  void SignalOperation::updateSignal() {
-    Signal::s = (*f)(s->evalSignal());
+  void SignalOperation::updateSignal1() {
+    s = (*f1)(signal[0]->evalSignal());
+    upds = false;
+  }
+
+  void SignalOperation::updateSignal2() {
+    s = (*f2)(signal[0]->evalSignal(),signal[1]->evalSignal());
     upds = false;
   }
 
