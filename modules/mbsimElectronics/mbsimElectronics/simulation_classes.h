@@ -87,6 +87,8 @@ namespace MBSimElectronics {
       virtual const Element* getParent() const {return parent;}
       virtual void setParent(Element* parent_) {parent = parent_;}
 
+      void calcSize() { ng = 1; ngd = 1; nla = 1; }
+
       void calcgSize(int j);
       void calcgdSize(int j);
       void calclaSize(int j);
@@ -184,6 +186,7 @@ namespace MBSimElectronics {
     protected:
     public:
       ElectronicObject(const std::string &name) : Object(name) {}
+      void calcSize() { nq = 0; nu = 1; }
       void init(InitStage stage);
       virtual Element* getParent() {return parent;}
       virtual const Element* getParent() const {return parent;}
