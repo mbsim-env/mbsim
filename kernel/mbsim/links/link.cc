@@ -56,6 +56,11 @@ namespace MBSim {
     Element::plot();
   }
 
+  void Link::updatedx() {
+    updatexd();
+    dx = xd * getStepSize();
+  }
+
   void Link::updatewbRef(const Vec& wbParent) {
     wb >> wbParent(laInd,laInd+laSize-1);
   }

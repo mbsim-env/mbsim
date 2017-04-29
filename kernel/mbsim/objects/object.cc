@@ -321,7 +321,8 @@ namespace MBSim {
   }
 
   void Object::updatedq() {
-    dq = evalT() * u * getStepSize();
+    updateqd();
+    dq = qd * getStepSize();
   }
 
   void Object::updatedu() {

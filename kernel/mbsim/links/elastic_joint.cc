@@ -47,10 +47,6 @@ namespace MBSim {
     xd = evalGeneralizedRelativeVelocity()(iM);
   }
 
-  void ElasticJoint::updatedx() {
-    dx = evalGeneralizedRelativeVelocity()(iM) * getStepSize();
-  }
-
   void ElasticJoint::calcxSize() {
     FloatingFrameLink::calcxSize();
     xSize = momentDir.cols();

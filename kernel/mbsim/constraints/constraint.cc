@@ -31,6 +31,11 @@ namespace MBSim {
   Constraint::Constraint(const std::string &name) : Element(name), updGC(true), updGJ(true) {
   }
 
+  void Constraint::updatedx() {
+    updatexd();
+    dx = xd * getStepSize();
+  }
+
   void Constraint::updatexRef(const Vec &xParent) {
     x >> xParent(xInd,xInd+xSize-1);
   } 

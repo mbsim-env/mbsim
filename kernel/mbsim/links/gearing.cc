@@ -247,10 +247,6 @@ namespace MBSim {
     xd = gd;
   }
 
-  void Gearing::updatedx() {
-    dx = gd*dt;
-  }
-
   void Gearing::calcxSize() {
     MechanicalLink::calcxSize();
     xSize = 1;
