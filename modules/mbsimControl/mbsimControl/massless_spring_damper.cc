@@ -68,32 +68,6 @@ namespace MBSimControl {
       setMaximumPositionValue(getDouble(e));
   }
 
-  void MasslessSpringDamper::updatedx() {
-    const double F=(inputSignal->evalSignal())(0);
-    double h=F+F0-c*x(0);
-    if (h<0) {
-      if (x(0)<xMin)
-        dx(0)=0;
-      else {
-        h+=FFricNeg;
-        if (h>0)
-          h=0;
-        dx(0)=h/dNeg;
-      }
-    }
-    else {
-      if (x(0)>xMax)
-        dx(0)=0;
-      else {
-        h-=FFricPos;
-        if (h<0)
-          h=0;
-        dx(0)=h/dPos;
-      }
-    }
-    dx(0)*=getStepSize();
-  }
-
   void MasslessSpringDamper::updatexd() {
     const double F=(inputSignal->evalSignal())(0);
     double h=F+F0-c*x(0);

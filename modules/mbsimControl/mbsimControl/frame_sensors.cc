@@ -125,11 +125,6 @@ namespace MBSimControl {
 //    xd=(refFrame->getOrientation()*direction).T()*WomegaRefRel;
 //  }
 //
-//  void RelativeAngularPositionSensor::updatedx() {
-//    VecV WomegaRefRel=relFrame->evalAngularVelocity()-refFrame->evalAngularVelocity();
-//    dx=(refFrame->getOrientation()*direction).T()*WomegaRefRel*getStepSize();
-//  }
-//
 //  void RelativeAngularPositionSensor::updateSignal() {
 //    s = x;
 //    upds = false;

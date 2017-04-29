@@ -44,7 +44,6 @@ namespace MBSimControl {
       void init(InitStage stage);
 
       void updateSignal();
-      void updatedx();
       void updatexd();
       
       void plot();

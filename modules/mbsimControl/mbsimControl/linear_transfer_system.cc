@@ -93,10 +93,6 @@ namespace MBSimControl {
     upds = false;
   }
 
-  void LinearTransferSystem::updatedx() {
-    dx=(A*x+B*inputSignal->evalSignal())*getStepSize();
-  }
-
   void LinearTransferSystem::updatexd() {
     xd=A*x+B*inputSignal->evalSignal();
   }

@@ -549,15 +549,6 @@ namespace MBSimFlexibleBody {
     qd(iqE) = uRel(iuE);
   }
 
-  void FlexibleBodyFFR::updatedq() {
-    dq(iqT) = evaluTRel()*getStepSize();
-    if(fTR)
-      dq(iqR) = (*fTR)(evalqRRel())*uRRel*getStepSize();
-    else
-      dq(iqR) = uRRel*getStepSize();
-    dq(iqE) = uRel(iuE)*getStepSize();
-  }
-
   void FlexibleBodyFFR::updateT() {
     if(fTR) T(iqR,iuR) = (*fTR)(evalqRRel());
   }

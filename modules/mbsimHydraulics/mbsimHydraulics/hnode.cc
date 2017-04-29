@@ -346,10 +346,6 @@ namespace MBSimHydraulics {
     xd(0)=(*bulkModulus)(evalGeneralizedForce()(0))/V*evalQHyd();
   }
 
-  void ElasticNode::updatedx() {
-    dx(0)=(*bulkModulus)(evalGeneralizedForce()(0))/V*evalQHyd()*getStepSize();
-  }
-
   void ElasticNode::plot() {
     if(plotFeature[11334901831169464975ULL]==enabled)
       plotVector.push_back((*bulkModulus)(evalGeneralizedForce()(0))*1e-6);
@@ -667,10 +663,6 @@ namespace MBSimHydraulics {
 
   void RigidCavitationNode::updatexd() {
     xd(0) = isActive() ? (fabs(evalgdn())>(gdTol)?gdn:0) : -evalQHyd();
-  }
-
-  void RigidCavitationNode::updatedx() {
-    dx(0) = isActive() ? (fabs(evalgdn())>(gdTol)?gdn:0)*getStepSize() : -evalQHyd()*getStepSize();
   }
 
   void RigidCavitationNode::updateStopVector() {

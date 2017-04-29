@@ -90,7 +90,6 @@ namespace MBSimHydraulics {
       void updater(int j=0);
       void updategd();
       void updatexd();
-      void updatedx();
       void updatedhdz();
 
       void plot();
@@ -169,7 +168,6 @@ namespace MBSimHydraulics {
       void updateGeneralizedForces();
 
       void updatexd();
-      void updatedx();
 
       void plot();
 

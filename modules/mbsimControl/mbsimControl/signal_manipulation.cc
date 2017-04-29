@@ -142,12 +142,24 @@ namespace MBSimControl {
     D=Element::getDouble(e);
   }
 
-  void PIDController::updatedx() {
-    if(xSize) dx=s->evalSignal()*getStepSize();
+  void PIDController::calcxSize() {
+    if(updateSignalMethod==&PIDController::updateSignalPD)
+      xSize = 0;
+    else {
+      if(updatexd_==&PIDController::updatexd1)
+        xSize = getSignalSize();
+      else
+        xSize = 2*getSignalSize();
+    }
   }
 
-  void PIDController::updatexd() {
-    if(xSize) xd=s->evalSignal();
+  void PIDController::updatexd1() {
+    xd = s->evalSignal();
+  }
+
+  void PIDController::updatexd2() {
+    xd(I1) = s->evalSignal();
+    xd(I2) = (s->evalSignal() - x(I2))/(R1*c);
   }
 
   void PIDController::init(InitStage stage) {
@@ -160,11 +172,19 @@ namespace MBSimControl {
         THROW_MBSIMERROR("(PIDController::init): input signal must be given");
     }
     else if (stage==preInit) {
-      x.resize(xSize, INIT, 0);
+//      x.resize(xSize);
       if(fabs(I)<epsroot())
-        updateSignalMethod=&PIDController::updateSignalPD;
+        updateSignalMethod = &PIDController::updateSignalPD;
       else
-        updateSignalMethod=&PIDController::updateSignalPID;
+        updateSignalMethod = &PIDController::updateSignalPID;
+      if(fabs(D)>0 and not sd) {
+        I1 = RangeV(0,s->getSignalSize()-1);
+        I2 = RangeV(I1.start(),getSignalSize()-1);
+        updatexd_ = &PIDController::updatexd2;
+        updateSignalMethod = &PIDController::updateSignalPID;
+      }
+      else
+        updatexd_ = &PIDController::updatexd1;
     }
     Signal::init(stage);
   }

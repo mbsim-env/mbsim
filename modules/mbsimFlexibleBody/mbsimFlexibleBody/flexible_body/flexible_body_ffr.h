@@ -119,7 +119,6 @@ namespace MBSimFlexibleBody {
        */
       virtual ~FlexibleBodyFFR();
 
-      void updatedq();
       void updateqd();
       void updateT();
       void updateh(int j=0);

@@ -160,7 +160,6 @@ namespace MBSimControl {
 //          RelativeCoordinateSensor::init(stage);
 //      }
 //      void updatexd();
-//      void updatedx();
 //  };
 //
 //  /*!

@@ -164,7 +164,6 @@ namespace MBSimHydraulics {
       void updateGeneralizedForces();
 
       void updatexd();
-      void updatedx();
 
       void plot();
 
@@ -252,7 +251,6 @@ namespace MBSimHydraulics {
       void updateg();
       void updateW(int j=0);
       void updatexd();
-      void updatedx();
       void updateStopVector();
       void checkRoot();
 

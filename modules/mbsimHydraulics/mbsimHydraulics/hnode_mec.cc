@@ -319,10 +319,6 @@ namespace MBSimHydraulics {
     xd(0)=evalQMec();
   }
 
-  void HNodeMec::updatedx() {
-    dx(0)=evalQMec()*getStepSize();
-  }
-
   void HNodeMec::plot() {
     if(plotFeature[11334901831169464975ULL]==enabled) {
       plotVector.push_back(x(0)*1e9);
@@ -489,12 +485,6 @@ namespace MBSimHydraulics {
     HNodeMec::updatexd();
     E=(*bulkModulus)(evalGeneralizedForce()(0));
     xd(1)=-E/x(0)*(evalQMec()-evalQHyd());
-  }
-
-  void ElasticNodeMec::updatedx() {
-    HNodeMec::updatedx();
-    E=(*bulkModulus)(evalGeneralizedForce()(0));
-    dx(1)=-E/x(0)*(evalQMec()-evalQHyd())*getStepSize();
   }
 
   void ElasticNodeMec::plot() {

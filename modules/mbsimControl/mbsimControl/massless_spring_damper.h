@@ -45,7 +45,6 @@ namespace MBSimControl {
 
       void updateSignal() { s = x; upds = false; }
 
-      void updatedx();
       void updatexd();
 
       void plot();
