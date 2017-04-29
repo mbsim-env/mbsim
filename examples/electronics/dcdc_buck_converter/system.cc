@@ -29,7 +29,7 @@ class VoltageSensor : public MBSimControl::Sensor {
       s = comp->evalGeneralizedForce();
       upds = false;
     }
-    int getSignalSize() const { return 1; }
+    int getSignalSize() const { return comp->getGeneralizedForceSize(); }
 };
 
 
@@ -59,6 +59,7 @@ class SwitchSignal : public MBSimControl::Signal {
 
 class Signal : public MBSim::Function<fmatvec::VecV(double)> {
   public:
+    std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
     fmatvec::VecV operator()(const double &t) {
       fmatvec::VecV U(1);
       U(0) = 35;
