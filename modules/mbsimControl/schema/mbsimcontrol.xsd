@@ -501,29 +501,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="PIDController" substitutionGroup="Signal" type="PIDControllerType"/>
-  <xs:complexType name="PIDControllerType">
-    <xs:complexContent>
-      <xs:extension base="SignalType">
-        <xs:sequence>
-          <xs:element name="inputSignal">
-            <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="derivativeOfInputSignal">
-            <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="proportionalGain" type="pv:nounitScalar"/>
-          <xs:element name="integralGain" type="pv:nounitScalar"/>
-          <xs:element name="derivativeGain" type="pv:nounitScalar"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:element name="SignalOperation" substitutionGroup="Signal" type="SignalOperationType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -589,45 +566,10 @@
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:choice>
-            <xs:element name="pidType">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="P" type="pv:nounitScalar"/>
-                  <xs:element name="I" type="pv:nounitScalar"/>
-                  <xs:element name="D" type="pv:nounitScalar"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-            <xs:element name="abcdType">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="A" type="pv:nounitMatrix"/>
-                  <xs:element name="B" type="pv:nounitMatrix"/>
-                  <xs:element name="C" type="pv:nounitMatrix"/>
-                  <xs:element name="D" type="pv:nounitMatrix"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-            <xs:element name="integratorType">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="gain" type="pv:nounitScalar"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-            <xs:element name="pt1Type">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="P" type="pv:nounitScalar"/>
-                  <xs:element name="T" type="pv:nounitScalar"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-          </xs:choice>
-          <xs:element name="showABCD" minOccurs="0">
-            <xs:complexType/>
-          </xs:element>
+          <xs:element name="systemMatrix" type="pv:nounitMatrix" minOccurs="0"/>
+          <xs:element name="inputMatrix" type="pv:nounitMatrix" minOccurs="0"/>
+          <xs:element name="outputMatrix" type="pv:nounitMatrix" minOccurs="0"/>
+          <xs:element name="feedthroughMatrix" type="pv:nounitMatrix" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

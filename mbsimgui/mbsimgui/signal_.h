@@ -44,11 +44,11 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() {return new DemultiplexerPropertyDialog(this);}
   };
 
-  class PIDController : public Signal {
+  class LinearTransferSystem : public Signal {
     public:
-      PIDController(const QString &str="") : Signal(str) { }
-      QString getType() const { return "PIDController"; }
-      ElementPropertyDialog* createPropertyDialog() {return new PIDControllerPropertyDialog(this);}
+      LinearTransferSystem(const QString &str="") : Signal(str) { }
+      QString getType() const { return "LinearTransferSystem"; }
+      ElementPropertyDialog* createPropertyDialog() {return new LinearTransferSystemPropertyDialog(this);}
   };
 
   class SignalOperation : public Signal {

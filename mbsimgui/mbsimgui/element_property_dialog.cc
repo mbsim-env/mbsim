@@ -2283,39 +2283,39 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  PIDControllerPropertyDialog::PIDControllerPropertyDialog(PIDController *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
-    sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"inputSignal");
-    addToTab("General", sRef);
+  LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTransferSystem *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
+    inputSignal = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"inputSignal");
+    addToTab("General", inputSignal);
 
-    sdRef = new ExtWidget("Derivative of input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"derivativeOfInputSignal");
-    addToTab("General", sdRef);
+    A = new ExtWidget("System matrix",new ChoiceWidget2(new SqrMatSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"systemMatrix");
+    addToTab("General", A);
 
-    P = new ExtWidget("Proportional gain",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"proportionalGain");
-    addToTab("General", P);
+    B = new ExtWidget("Input matrix",new ChoiceWidget2(new MatWidgetFactory(0,0),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"inputMatrix");
+    addToTab("General", B);
 
-    I = new ExtWidget("Integral gain",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"integralGain");
-    addToTab("General", I);
+    C = new ExtWidget("Output matrix",new ChoiceWidget2(new MatWidgetFactory(0,0),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"outputMatrix");
+    addToTab("General", C);
 
-    D = new ExtWidget("Derivative gain",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"derivativeGain");
+    D = new ExtWidget("Feedthrough matrix",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"feedthroughMatrix");
     addToTab("General", D);
   }
 
-  DOMElement* PIDControllerPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* LinearTransferSystemPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
-    sRef->initializeUsingXML(element->getXMLElement());
-    sdRef->initializeUsingXML(element->getXMLElement());
-    P->initializeUsingXML(element->getXMLElement());
-    I->initializeUsingXML(element->getXMLElement());
+    inputSignal->initializeUsingXML(element->getXMLElement());
+    A->initializeUsingXML(element->getXMLElement());
+    B->initializeUsingXML(element->getXMLElement());
+    C->initializeUsingXML(element->getXMLElement());
     D->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
-  DOMElement* PIDControllerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* LinearTransferSystemPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    sRef->writeXMLFile(element->getXMLElement(),ref);
-    sdRef->writeXMLFile(element->getXMLElement(),ref);
-    P->writeXMLFile(element->getXMLElement(),ref);
-    I->writeXMLFile(element->getXMLElement(),ref);
+    inputSignal->writeXMLFile(element->getXMLElement(),ref);
+    A->writeXMLFile(element->getXMLElement(),ref);
+    B->writeXMLFile(element->getXMLElement(),ref);
+    C->writeXMLFile(element->getXMLElement(),ref);
     D->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }

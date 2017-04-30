@@ -10,12 +10,10 @@
   <links>
     <LinearTransferSystem name="pidController" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[speedDeviation]"/>
-      <pidType>
-        <P>controllerKP</P>
-        <I>controllerKI</I>
-        <D>0</D>
-      </pidType>
-      <showABCD/> <!-- optional -->
+      <systemMatrix>[0]</systemMatrix>
+      <inputMatrix>[1]</inputMatrix>
+      <outputMatrix>[controllerKI]</outputMatrix>
+      <feedthroughMatrix>[controllerKP]</feedthroughMatrix>
     </LinearTransferSystem>
     <GeneralizedVelocitySensor name="crankMeasuredSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
       <object ref="../../Object[Crank]"/>

@@ -1386,19 +1386,10 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  SqrMatSizeVarWidgetFactory::SqrMatSizeVarWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
-    name[0] = "Matrix";
-    name[1] = "File";
-    name[2] = "Editor";
-  }
-
   SqrMatSizeVarWidgetFactory::SqrMatSizeVarWidgetFactory(int m_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
-  }
-
-  SqrMatSizeVarWidgetFactory::SqrMatSizeVarWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
   }
 
   QWidget* SqrMatSizeVarWidgetFactory::createWidget(int i) {

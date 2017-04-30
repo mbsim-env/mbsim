@@ -575,8 +575,8 @@ namespace MBSimGUI {
     action = new QAction("Add demultiplexer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addDemultiplexer()));
     addAction(action);
-    action = new QAction("Add PID controller", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addPIDController()));
+    action = new QAction("Add linear transfer system", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
     addAction(action);
     action = new QAction("Add signal operation", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSignalOperation()));
@@ -602,8 +602,8 @@ namespace MBSimGUI {
     mw->addLink(new Demultiplexer("Demultiplexer"), element);
   }
 
-  void SignalsContextMenu::addPIDController() {
-    mw->addLink(new PIDController("PIDController"), element);
+  void SignalsContextMenu::addLinearTransferSystem() {
+    mw->addLink(new LinearTransferSystem("LinearTransferSystem"), element);
   }
 
   void SignalsContextMenu::addSignalOperation() {

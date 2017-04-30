@@ -56,7 +56,6 @@ namespace MBSimGUI {
   class GeneralizedAccelerationConstraint;
   class JointConstraint;
   class GeneralizedConnectionConstraint;
-  class LinearTransferSystem;
   class Link;
   class MechanicalLink;
   class FrameLink;
@@ -95,12 +94,11 @@ namespace MBSimGUI {
   class FunctionSensor;
   class Multiplexer;
   class Demultiplexer;
-  class PIDController;
+  class LinearTransferSystem;
   class SignalOperation;
   class SignalOperation;
   class ExternSignalSource;
   class ExternSignalSink;
-  class LinearTransferSystem;
   class ExtWidget;
 
   class ElementPropertyDialog : public PropertyDialog {
@@ -797,14 +795,14 @@ namespace MBSimGUI {
       ExtWidget *inputSignal, *indices;
   };
 
-  class PIDControllerPropertyDialog : public SignalPropertyDialog {
+  class LinearTransferSystemPropertyDialog : public SignalPropertyDialog {
 
     public:
-      PIDControllerPropertyDialog(PIDController *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      LinearTransferSystemPropertyDialog(LinearTransferSystem *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-      ExtWidget *sRef, *sdRef, *P, *I, *D;
+      ExtWidget *inputSignal, *A, *B, *C, *D;
   };
 
   class SignalOperationPropertyDialog : public SignalPropertyDialog {
@@ -838,16 +836,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *inputSignal;
-  };
-
-  class LinearTransferSystemPropertyDialog : public SignalPropertyDialog {
-
-    public:
-      LinearTransferSystemPropertyDialog(LinearTransferSystem *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
-    protected:
-      ExtWidget *inputSignal, *pidType, *abcdType, *integratorType, *pt1Type;
   };
 
 

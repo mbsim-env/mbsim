@@ -7,7 +7,6 @@
 #include "mbsim/functions/tabular_function.h"
 #include "mbsim/functions/symbolic_function.h"
 
-#include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/object_sensors.h"
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_manipulation.h"
@@ -99,18 +98,13 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   spitze->setFrameForKinematics(spitze->getFrame("C"));
 
   // --------------------------- Setup Control ----------------------------
-//  RelativeAngularPositionSensor * basePosition = new RelativeAngularPositionSensor("BasePositionIst");
-//  addLink(basePosition);
-//  basePosition->setReferenceFrame(getFrame("I"));
-//  basePosition->setRelativeFrame(basis->getFrame("C"));
-//  basePosition->setDirection("[0;1;0]");
-  GeneralizedPositionSensor * basePosition = new GeneralizedPositionSensor("BasePositionIst");
+  GeneralizedPositionSensor *basePosition = new GeneralizedPositionSensor("BasePositionIst");
   addLink(basePosition);
   basePosition->setObject(basis);
 
   Mat bPT(FileTofmatvecString("./Soll_Basis.tab").c_str());
-  TabularFunction<VecV(double)> * basePositionSollFunction = new TabularFunction<VecV(double)>(bPT.col(0), bPT.col(1));
-  FunctionSensor * basePositionSoll = new FunctionSensor("BasePositionSoll");
+  TabularFunction<VecV(double)> *basePositionSollFunction = new TabularFunction<VecV(double)>(bPT.col(0), bPT.col(1));
+  FunctionSensor *basePositionSoll = new FunctionSensor("BasePositionSoll");
   addLink(basePositionSoll);
   basePositionSoll->setFunction(basePositionSollFunction);
 
@@ -118,22 +112,19 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   SX s2 = SX::sym("s2",1);
   SX y = s1-s2;
 
-  SignalOperation * basePositionDiff = new SignalOperation("BasePositionDiff");
+  SignalOperation *basePositionDiff = new SignalOperation("BasePositionDiff");
   addLink(basePositionDiff);
   basePositionDiff->addInputSignal(basePositionSoll);
   basePositionDiff->addInputSignal(basePosition);
   basePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
 
-  LinearTransferSystem * basisControl = new LinearTransferSystem("ReglerBasis");
+  PIDController *basisControl = new PIDController("ReglerBasis");
   addLink(basisControl);
   basisControl->setInputSignal(basePositionDiff);
-  basisControl->setPID(4000., 0., 200.);
+  basisControl->setProportionalGain(4000);
+  basisControl->setDerivativeGain(200);
 
-//  SignalProcessingSystemSensor * basisControlOut = new SignalProcessingSystemSensor("BaseControlOut");
-//  addLink(basisControlOut);
-//  basisControlOut->setSignalProcessingSystem(basisControl);
-
-  SignalTimeDiscretization * bDis = new SignalTimeDiscretization("BaseDis");
+  SignalTimeDiscretization *bDis = new SignalTimeDiscretization("BaseDis");
   addLink(bDis);
   bDis->setInputSignal(basisControl);
 
@@ -143,37 +134,29 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   motorBasis->setMomentFunction(new SignalFunction<VecV(double)>(bDis));
   motorBasis->connect(getFrame("I"),basis->getFrame("R"));
 
-//  RelativeAngularPositionSensor * armPosition = new RelativeAngularPositionSensor("ArmPositionIst");
-//  addLink(armPosition);
-//  armPosition->setReferenceFrame(basis->getFrame("C"));
-//  armPosition->setRelativeFrame(arm->getFrame("C"));
-//  armPosition->setDirection("[0;0;1]");
-  GeneralizedPositionSensor * armPosition = new GeneralizedPositionSensor("ArmPositionIst");
+  GeneralizedPositionSensor *armPosition = new GeneralizedPositionSensor("ArmPositionIst");
   addLink(armPosition);
   armPosition->setObject(arm);
 
   Mat aPT(FileTofmatvecString("./Soll_Arm.tab").c_str());
-  TabularFunction<VecV(double)> * armPositionSollFunction = new TabularFunction<VecV(double)>(aPT.col(0), aPT.col(1));
-  FunctionSensor * armPositionSoll = new FunctionSensor("ArmPositionSoll");
+  TabularFunction<VecV(double)> *armPositionSollFunction = new TabularFunction<VecV(double)>(aPT.col(0), aPT.col(1));
+  FunctionSensor *armPositionSoll = new FunctionSensor("ArmPositionSoll");
   addLink(armPositionSoll);
   armPositionSoll->setFunction(armPositionSollFunction);
 
-  SignalOperation * armPositionDiff = new SignalOperation("ArmPositionDiff");
+  SignalOperation *armPositionDiff = new SignalOperation("ArmPositionDiff");
   addLink(armPositionDiff);
   armPositionDiff->addInputSignal(armPositionSoll);
   armPositionDiff->addInputSignal(armPosition);
   armPositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
   
-  LinearTransferSystem * armControl = new LinearTransferSystem("ReglerArm");
+  PIDController *armControl = new PIDController("ReglerArm");
   addLink(armControl);
   armControl->setInputSignal(armPositionDiff);
-  armControl->setPID(4000., 0., 200.);
+  armControl->setProportionalGain(4000);
+  armControl->setDerivativeGain(200);
 
-//  SignalProcessingSystemSensor * armControlOut = new SignalProcessingSystemSensor("ArmControlOut");
-//  addLink(armControlOut);
-//  armControlOut->setSignalProcessingSystem(armControl);
-
-  SignalTimeDiscretization * aDis = new SignalTimeDiscretization("ArmDis");
+  SignalTimeDiscretization *aDis = new SignalTimeDiscretization("ArmDis");
   addLink(aDis);
   aDis->setInputSignal(armControl);
 
@@ -183,37 +166,29 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   motorArm->setMomentFunction(new SignalFunction<VecV(double)>(aDis));
   motorArm->connect(basis->getFrame("P"),arm->getFrame("R"));
 
-//  RelativePositionSensor * spitzePosition = new RelativePositionSensor("SpitzePositionIst");
-//  addLink(spitzePosition);
-//  spitzePosition->setReferenceFrame(arm->getFrame("Q"));
-//  spitzePosition->setRelativeFrame(spitze->getFrame("C"));
-//  spitzePosition->setDirection("[0;1;0]");
-  GeneralizedPositionSensor * spitzePosition = new GeneralizedPositionSensor("SpitzePositionIst");
+  GeneralizedPositionSensor *spitzePosition = new GeneralizedPositionSensor("SpitzePositionIst");
   addLink(spitzePosition);
   spitzePosition->setObject(spitze);
 
   Mat sPT(FileTofmatvecString("./Soll_Spitze.tab").c_str());
-  TabularFunction<VecV(double)> * spitzePositionSollFunction = new TabularFunction<VecV(double)>(sPT.col(0), sPT.col(1));
-  FunctionSensor * spitzePositionSoll = new FunctionSensor("SpitzePositionSoll");
+  TabularFunction<VecV(double)> *spitzePositionSollFunction = new TabularFunction<VecV(double)>(sPT.col(0), sPT.col(1));
+  FunctionSensor *spitzePositionSoll = new FunctionSensor("SpitzePositionSoll");
   addLink(spitzePositionSoll);
   spitzePositionSoll->setFunction(spitzePositionSollFunction);
 
-  SignalOperation * spitzePositionDiff = new SignalOperation("SpitzePositionDiff");
+  SignalOperation *spitzePositionDiff = new SignalOperation("SpitzePositionDiff");
   addLink(spitzePositionDiff);
   spitzePositionDiff->addInputSignal(spitzePositionSoll);
   spitzePositionDiff->addInputSignal(spitzePosition);
   spitzePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
 
-  LinearTransferSystem * spitzeControl = new LinearTransferSystem("ReglerSpitze");
+  PIDController *spitzeControl = new PIDController("ReglerSpitze");
   addLink(spitzeControl);
   spitzeControl->setInputSignal(spitzePositionDiff);
-  spitzeControl->setPID(4000., 0., 200.);
+  spitzeControl->setProportionalGain(4000);
+  spitzeControl->setDerivativeGain(200);
 
-//  SignalProcessingSystemSensor * spitzeControlOut = new SignalProcessingSystemSensor("SpitzeControlOut");
-//  addLink(spitzeControlOut);
-//  spitzeControlOut->setSignalProcessingSystem(spitzeControl);
-
-  SignalTimeDiscretization * sDis = new SignalTimeDiscretization("SpitzeDis");
+  SignalTimeDiscretization *sDis = new SignalTimeDiscretization("SpitzeDis");
   addLink(sDis);
   sDis->setInputSignal(spitzeControl);
 

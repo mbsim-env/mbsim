@@ -17,7 +17,6 @@
 #include "mbsim/functions/symbolic_function.h"
 
 #include "mbsimControl/signal_function.h"
-#include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/object_sensors.h"
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_manipulation.h"
@@ -352,10 +351,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Regelfehler->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y, s1, s2));
 
   // Regler
-  LinearTransferSystem *Regler = new LinearTransferSystem("Regler");
+  PIDController *Regler = new PIDController("Regler");
   addLink(Regler);
   Regler->setInputSignal(Regelfehler);
-  Regler->setPID(10000.,1000.,0.);
+  Regler->setProportionalGain(10000);
+  Regler->setIntegralGain(1000);
 
   //// Konvertierung
   //SignalProcessingSystemSensor *Reglerausgang = new SignalProcessingSystemSensor("Reglerausgang");

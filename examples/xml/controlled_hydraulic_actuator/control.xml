@@ -8,18 +8,17 @@
   <links>
     <LinearTransferSystem name="LTI" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[DifferencePosition]"/>
-      <pidType>
-        <P>1000</P>
-        <I>100</I>
-        <D>10</D>
-      </pidType>
+      <systemMatrix>[0,0;0,-1/2e-3]</systemMatrix>
+      <inputMatrix>[1;1/2e-3]</inputMatrix>
+      <outputMatrix>[100,-10/2e-3]</outputMatrix>
+      <feedthroughMatrix>[1000+10/2e-3]</feedthroughMatrix>
     </LinearTransferSystem>
     <LinearTransferSystem name="PT1Controlvalve" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[ControlOutputLimitted]"/>
-      <pt1Type>
-        <P>1</P>
-        <T>1/25</T>
-      </pt1Type>
+      <systemMatrix>[-25]</systemMatrix>
+      <inputMatrix>[1]</inputMatrix>
+      <outputMatrix>[25]</outputMatrix>
+      <feedthroughMatrix>[0]</feedthroughMatrix>
     </LinearTransferSystem>
     <PositionSensor name="FMassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../../Frame[FMass]"/>

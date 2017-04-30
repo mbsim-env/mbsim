@@ -588,9 +588,7 @@ namespace MBSimGUI {
 
   class SqrMatSizeVarWidgetFactory : public WidgetFactory {
     public:
-      SqrMatSizeVarWidgetFactory();
-      SqrMatSizeVarWidgetFactory(int m, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
-      SqrMatSizeVarWidgetFactory(int m, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+      SqrMatSizeVarWidgetFactory(int m, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0));
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }

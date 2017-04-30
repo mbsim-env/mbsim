@@ -84,45 +84,6 @@ namespace MBSimControl {
   };
 
   /*!
-   * \brief PID controller
-   * \author Martin Foerg
-   */
-  class PIDController : public Signal {
-
-    public:   
-      PIDController(const std::string& name="") : Signal(name), P(0), I(0), D(0), R1(2e-3), R2(1), c(1), s(NULL), sd(NULL) { }
-      void initializeUsingXML(xercesc::DOMElement * element);
-      
-      void calcxSize();
-      
-      void init(InitStage stage);
-
-      void updatexd() { (this->*updatexd_)(); }
-      
-      void setProportionalGain(double P_) { P = P_; }
-      void setIntegralGain(double I_) { I = I_; }
-      void setDerivativeGain(double D_) { D = D_; }
-      void setBandwidth(double f) { R1 = 1./(2*M_PI*f*c); R2 = sqrt(R1*R1+1./(c*c)); }
-      void setInputSignal(Signal *inputSignal_) { s = inputSignal_; }
-      void setDerivativeOfInputSignal(Signal *inputSignal_) { sd = inputSignal_; }
-
-      void updateSignal();
-      int getSignalSize() const { return s->getSignalSize(); }
-
-    protected:
-      double P, I, D, R1, R2, c;
-      fmatvec::RangeV I1, I2;
-      Signal *s, *sd;
-      std::string sString, sdString;
-      void (PIDController::*updateSignalMethod)();
-      void (PIDController::*updatexd_)();
-      void updateSignalPD();
-      void updateSignalPID();
-      void updatexd1();
-      void updatexd2();
-  };
-
-  /*!
    * \brief SignalOperation
    * \author Martin Foerg
    */
