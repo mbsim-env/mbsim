@@ -21,6 +21,7 @@
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsimControl/frame_sensors.h"
+#include "mbsimControl/linear_transfer_system.h"
 
 #include <cmath>
 
@@ -351,11 +352,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Regelfehler->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y, s1, s2));
 
   // Regler
-  PIDController *Regler = new PIDController("Regler");
+  LinearTransferSystem *Regler = new LinearTransferSystem("Regler");
   addLink(Regler);
   Regler->setInputSignal(Regelfehler);
-  Regler->setProportionalGain(10000);
-  Regler->setIntegralGain(1000);
+  Regler->setSystemMatrix(SqrMatV(1));
+  Regler->setInputMatrix(MatV(1,1,INIT,1));
+  Regler->setOutputMatrix(MatV(1,1,INIT,1000));
+  Regler->setFeedthroughMatrix(SqrMatV(1,INIT,10000));
 
   //// Konvertierung
   //SignalProcessingSystemSensor *Reglerausgang = new SignalProcessingSystemSensor("Reglerausgang");

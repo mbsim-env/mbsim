@@ -11,6 +11,7 @@
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsimControl/signal_function.h"
+#include "mbsimControl/linear_transfer_system.h"
 
 #include "tools/file_to_fmatvecstring.h"
 
@@ -118,11 +119,24 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   basePositionDiff->addInputSignal(basePosition);
   basePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
 
-  PIDController *basisControl = new PIDController("ReglerBasis");
+  SqrMatV AMat(2);
+  AMat(1,1) = -1./2e-3;
+  MatV BMat(2,1);
+  BMat(0,0) = 1.;
+  BMat(1,0) = 1./2e-3;
+  MatV CMat(1,2);
+  CMat(0,0) = 0;
+  CMat(0,1) = -200/2e-3;
+  SqrMatV DMat(1);
+  DMat(0,0) = 4000+200/2e-3;
+
+  LinearTransferSystem *basisControl = new LinearTransferSystem("ReglerBasis");
   addLink(basisControl);
   basisControl->setInputSignal(basePositionDiff);
-  basisControl->setProportionalGain(4000);
-  basisControl->setDerivativeGain(200);
+  basisControl->setSystemMatrix(AMat);
+  basisControl->setInputMatrix(BMat);
+  basisControl->setOutputMatrix(CMat);
+  basisControl->setFeedthroughMatrix(DMat);
 
   SignalTimeDiscretization *bDis = new SignalTimeDiscretization("BaseDis");
   addLink(bDis);
@@ -150,11 +164,13 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   armPositionDiff->addInputSignal(armPosition);
   armPositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
   
-  PIDController *armControl = new PIDController("ReglerArm");
+  LinearTransferSystem *armControl = new LinearTransferSystem("ReglerArm");
   addLink(armControl);
   armControl->setInputSignal(armPositionDiff);
-  armControl->setProportionalGain(4000);
-  armControl->setDerivativeGain(200);
+  armControl->setSystemMatrix(AMat);
+  armControl->setInputMatrix(BMat);
+  armControl->setOutputMatrix(CMat);
+  armControl->setFeedthroughMatrix(DMat);
 
   SignalTimeDiscretization *aDis = new SignalTimeDiscretization("ArmDis");
   addLink(aDis);
@@ -182,11 +198,13 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   spitzePositionDiff->addInputSignal(spitzePosition);
   spitzePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
 
-  PIDController *spitzeControl = new PIDController("ReglerSpitze");
+  LinearTransferSystem *spitzeControl = new LinearTransferSystem("ReglerSpitze");
   addLink(spitzeControl);
   spitzeControl->setInputSignal(spitzePositionDiff);
-  spitzeControl->setProportionalGain(4000);
-  spitzeControl->setDerivativeGain(200);
+  spitzeControl->setSystemMatrix(AMat);
+  spitzeControl->setInputMatrix(BMat);
+  spitzeControl->setOutputMatrix(CMat);
+  spitzeControl->setFeedthroughMatrix(DMat);
 
   SignalTimeDiscretization *sDis = new SignalTimeDiscretization("SpitzeDis");
   addLink(sDis);
