@@ -288,7 +288,7 @@ namespace MBSimGUI {
       void setMat(const std::vector<std::vector<QString> > &A);
       void resize_(int rows, int cols);
       int rows() const {return sizeCombo->value();}
-      int cols() const {return cols();}
+      int cols() const {return rows();}
       QString getValue() const {return toQStr(getMat());}
       void setValue(const QString &str) {setMat(strToMat(str));}
       void setReadOnly(bool flag) {widget->setReadOnly(flag);}
