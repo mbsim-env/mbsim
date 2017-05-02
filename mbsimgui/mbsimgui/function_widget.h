@@ -28,17 +28,16 @@ namespace MBSimGUI {
   class FunctionWidget : public Widget {
     Q_OBJECT
     public:
-      FunctionWidget() {}
-      virtual ~FunctionWidget() {}
-      virtual int getArg1Size() const {return 0;}
-      virtual int getArg2Size() const {return 0;}
-      virtual void setArg1Size(int i) {}
+      virtual ~FunctionWidget() { }
+      virtual int getArg1Size() const { return 0; }
+      virtual int getArg2Size() const { return 0; }
+      virtual void setArg1Size(int i) { }
       virtual QString getType() const { return "Element"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=NULL);
     public slots:
-      virtual void resize_(int m, int n) {}
+      virtual void resize_(int m, int n) { }
   };
 
 }

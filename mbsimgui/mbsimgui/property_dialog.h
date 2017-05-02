@@ -43,14 +43,12 @@ namespace MBSimGUI {
 
     public:
       PropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
-      ~PropertyDialog();
       void setParentObject(QObject *obj);
       void addToTab(const QString &name, QWidget* widget_);
       void addTab(const QString &name, int i=-1);
       void addStretch();
-      void updateWidget();
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) {return 0;}
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL) {return 0;}
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return 0; }
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL) { return 0; }
       void setCancel(bool on);
       bool getCancel() const;
     protected:
@@ -59,11 +57,12 @@ namespace MBSimGUI {
       QTabWidget *tabWidget;
       QDialogButtonBox *buttonBox;
       QPushButton *buttonResize;
-      virtual void showXMLHelp() {}
+      virtual void showXMLHelp() { }
     public slots:
       void clicked(QAbstractButton *button);
-      virtual void toWidget() {}
-      virtual void fromWidget() {}
+      virtual void toWidget() { }
+      virtual void fromWidget() { }
+      virtual void updateWidget();
     signals:
       void apply();
   };

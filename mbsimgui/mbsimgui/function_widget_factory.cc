@@ -168,7 +168,7 @@ namespace MBSimGUI {
     if(i==9)
       return new SymbolicFunctionWidget(QStringList("q"),3,3);
     if(i==10)
-      return new CompositeFunctionWidget(new TranslationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory1(QStringList("q"),parent));
+      return new CompositeFunctionWidget(new TranslationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory1(parent,QStringList("q")));
     if(i==11)
       return new PiecewisePolynomFunctionWidget(3);
     if(i==12)
@@ -257,7 +257,7 @@ namespace MBSimGUI {
     if(i==9)
       return new RotationAboutFixedAxisWidget;
     if(i==10)
-      return new CompositeFunctionWidget(new RotationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory1(QStringList("q"),parent));
+      return new CompositeFunctionWidget(new RotationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory1(parent,QStringList("q")));
     if(i==11)
       return new SymbolicFunctionWidget(QStringList("q"),1,3);
     return NULL;
@@ -278,7 +278,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  SymbolicFunctionWidgetFactory1::SymbolicFunctionWidgetFactory1(const QStringList &var_, Element *parent_) : parent(parent_), var(var_)  {
+  SymbolicFunctionWidgetFactory1::SymbolicFunctionWidgetFactory1(Element *parent_, const QStringList &var_, int m_, bool fixedSize_) : parent(parent_), var(var_), m(m_), fixedSize(fixedSize_) {
     name.push_back("Symbolic function");
     name.push_back("Piecewise polynom function");
     name.push_back("Piecewise defined function");
@@ -289,7 +289,7 @@ namespace MBSimGUI {
 
   QWidget* SymbolicFunctionWidgetFactory1::createWidget(int i) {
     if(i==0)
-      return new SymbolicFunctionWidget(var,1,3);
+      return new SymbolicFunctionWidget(var,m,3,fixedSize);
     if(i==1)
       return new PiecewisePolynomFunctionWidget(1);
     if(i==2)
@@ -297,7 +297,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  SymbolicFunctionWidgetFactory2::SymbolicFunctionWidgetFactory2(const QStringList &var_, Element *parent_) : parent(parent_), var(var_)  {
+  SymbolicFunctionWidgetFactory2::SymbolicFunctionWidgetFactory2(Element *parent_, const QStringList &var_, int m_, bool fixedSize_) : parent(parent_), var(var_), m(m_), fixedSize(fixedSize_) {
     name.push_back("Symbolic function");
     name.push_back("Two dimensional tabular function");
     name.push_back("Two dimensional piecewise polynom function");
@@ -308,7 +308,7 @@ namespace MBSimGUI {
 
   QWidget* SymbolicFunctionWidgetFactory2::createWidget(int i) {
     if(i==0)
-      return new SymbolicFunctionWidget(var,1,100);
+      return new SymbolicFunctionWidget(var,m,100,fixedSize);
     if(i==1)
       return new TwoDimensionalTabularFunctionWidget(1);
     if(i==2)
@@ -316,7 +316,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  SymbolicFunctionWidgetFactory3::SymbolicFunctionWidgetFactory3(const QStringList &var_) : var(var_) {
+  SymbolicFunctionWidgetFactory3::SymbolicFunctionWidgetFactory3(Element *parent_, const QStringList &var_, int m_, bool fixedSize_) : parent(parent_), var(var_), m(m_), fixedSize(fixedSize_) {
     name.push_back("Symbolic function");
     name.push_back("Modulo function");
     name.push_back("Bounded function");
@@ -327,7 +327,7 @@ namespace MBSimGUI {
 
   QWidget* SymbolicFunctionWidgetFactory3::createWidget(int i) {
     if(i==0)
-      return new SymbolicFunctionWidget(var,1,100);
+      return new SymbolicFunctionWidget(var,m,100,fixedSize);
     if(i==1)
       return new ModuloFunctionWidget;
     if(i==2)
@@ -352,7 +352,7 @@ namespace MBSimGUI {
     if(i==2) {
       QStringList var;
       var << "q" << "t";
-      return new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(parent,var),QBoxLayout::TopToBottom,0);
     }
     return NULL;
   }
@@ -441,7 +441,7 @@ namespace MBSimGUI {
     if(i==0)
       return new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
     if(i==1)
-      return new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(QStringList("q"),parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
+      return new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(parent,QStringList("q")),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
     return NULL;
   }
 
@@ -501,7 +501,7 @@ namespace MBSimGUI {
     if(i==1)
       return new SymbolicFunctionWidget(QStringList("eta"),3,1);
     if(i==2)
-      return new ContinuedFunctionWidget(new PlanarContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(QStringList("x")));
+      return new ContinuedFunctionWidget(new PlanarContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(parent,QStringList("x")));
     if(i==3)
       return new PiecewisePolynomFunctionWidget(1);
     if(i==4)
@@ -524,9 +524,9 @@ namespace MBSimGUI {
     if(i==0)
       return new SymbolicFunctionWidget(QStringList("zeta"),3,2);
     if(i==1)
-      return new ContinuedFunctionWidget(new SpatialContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(QStringList("x")));
+      return new ContinuedFunctionWidget(new SpatialContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(parent,QStringList("x")));
     if(i==2)
-      return new CompositeFunctionWidget(new SpatialContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(QStringList("x")));
+      return new CompositeFunctionWidget(new SpatialContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(parent,QStringList("x")));
     return NULL;
   }
 

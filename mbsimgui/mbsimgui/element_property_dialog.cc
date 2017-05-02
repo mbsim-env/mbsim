@@ -632,7 +632,6 @@ namespace MBSimGUI {
 
     connect(q0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
     connect(u0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   DOMElement* ObjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -885,7 +884,6 @@ namespace MBSimGUI {
     addToTab("Visualisation", ombvEditor);
 
     connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(buttonResize,SIGNAL(clicked(bool)),this,SLOT(updateWidget()));
 //    connect(Knl1,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
   }
 
@@ -1130,8 +1128,6 @@ namespace MBSimGUI {
 
     independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new GeneralizedGearConstraintWidgetFactory(MBSIM%"independentRigidBody",constraint,0),"Independent body",0,2),false,false,"");
     addToTab("General",independentBodies);
-
-//    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   DOMElement* GeneralizedGearConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1214,8 +1210,6 @@ namespace MBSimGUI {
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new FunctionWidgetFactory2(constraint),QBoxLayout::TopToBottom,0),true,false,MBSIM%"constraintFunction");
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   void GeneralizedPositionConstraintPropertyDialog::updateWidget() {
@@ -1247,7 +1241,6 @@ namespace MBSimGUI {
     addToTab("Initial conditions", x0);
 
     connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateWidget()));
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   void GeneralizedVelocityConstraintPropertyDialog::updateWidget() {
@@ -1279,7 +1272,6 @@ namespace MBSimGUI {
     addToTab("Initial conditions", x0);
 
     connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateWidget()));
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   void GeneralizedAccelerationConstraintPropertyDialog::updateWidget() {
@@ -1336,8 +1328,6 @@ namespace MBSimGUI {
 
     q0 = new ExtWidget("Initial guess",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
     addToTab("Initial conditions", q0);
-
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   void JointConstraintPropertyDialog::updateWidget() {
@@ -1436,7 +1426,6 @@ namespace MBSimGUI {
   }
 
   GeneralizedConnectionConstraintPropertyDialog::GeneralizedConnectionConstraintPropertyDialog(GeneralizedConnectionConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedDualConstraintPropertyDialog(constraint,parent,f) {
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(link,parent,f) {
@@ -1546,7 +1535,6 @@ namespace MBSimGUI {
     connect(forceFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
     connect(momentDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
     connect(momentFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   void KineticExcitationPropertyDialog::updateWidget() {
@@ -1761,8 +1749,6 @@ namespace MBSimGUI {
 
     function = new ExtWidget("Generalized force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
     addToTab("Kinetics",function);
-
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   DOMElement* GeneralizedGearPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1787,7 +1773,6 @@ namespace MBSimGUI {
     addToTab("Kinetics", function);
 
     connect(function,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(buttonResize,SIGNAL(clicked(bool)),this,SLOT(updateWidget()));
     connect(connections->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
   }
 
@@ -2287,17 +2272,24 @@ namespace MBSimGUI {
     inputSignal = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
 
-    A = new ExtWidget("System matrix",new ChoiceWidget2(new SqrMatSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"systemMatrix");
+    A = new ExtWidget("System matrix",new ChoiceWidget2(new SqrMatSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"systemMatrix");
     addToTab("General", A);
 
-    B = new ExtWidget("Input matrix",new ChoiceWidget2(new MatWidgetFactory(0,0),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"inputMatrix");
+    B = new ExtWidget("Input matrix",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"inputMatrix");
     addToTab("General", B);
 
-    C = new ExtWidget("Output matrix",new ChoiceWidget2(new MatWidgetFactory(0,0),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"outputMatrix");
+    C = new ExtWidget("Output matrix",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"outputMatrix");
     addToTab("General", C);
 
-    D = new ExtWidget("Feedthrough matrix",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"feedthroughMatrix");
+    D = new ExtWidget("Feedthrough matrix",new ChoiceWidget2(new SqrMatSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"feedthroughMatrix");
     addToTab("General", D);
+  }
+
+  void LinearTransferSystemPropertyDialog::updateWidget() {
+    int sizeA = A->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(A->getWidget())->getWidget())->rows():0;
+    int sizeD = D->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(D->getWidget())->getWidget())->rows():0;
+    B->resize_(sizeA,sizeD);
+    C->resize_(sizeD,sizeA);
   }
 
   DOMElement* LinearTransferSystemPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2324,25 +2316,25 @@ namespace MBSimGUI {
     inputSignal = new ExtWidget("Input signal",new ListWidget(new SignalOfReferenceWidgetFactory(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1,2),false,false,"");
     addToTab("General", inputSignal);
 
-    function = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory3(QStringList("x")),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
+    function = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory3(signal,QStringList("x"),1,false),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
 
     connect(inputSignal,SIGNAL(widgetChanged()),this,SLOT(updateFunctionFactory()));
   }
 
-  void SignalOperationPropertyDialog::updateFunctionFactory() {
-    cout << "updateFunctionFactory" << endl;
+  void SignalOperationPropertyDialog::updateFunctionFactory(bool defineWidget) {
     if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory3(QStringList("x")));
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory3(element,QStringList("x"),1,false));
     else
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory2(QStringList("x")<<"y",element));
-    static_cast<ChoiceWidget2*>(function->getWidget())->defineWidget(0);
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory2(element,QStringList("x")<<"y",1,false));
+    if(defineWidget)
+      static_cast<ChoiceWidget2*>(function->getWidget())->defineWidget(0);
   }
 
   DOMElement* SignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
     inputSignal->initializeUsingXML(element->getXMLElement());
-    updateFunctionFactory();
+    updateFunctionFactory(false);
     function->initializeUsingXML(element->getXMLElement());
     return parent;
   }

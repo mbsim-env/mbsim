@@ -43,9 +43,8 @@ namespace MBSimGUI {
     buttonResize = new QPushButton(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DialogResetButton)), "Resize");
     layout->addWidget(buttonResize,1,0);
     setWindowTitle(QString("Properties"));
-  }
 
-  PropertyDialog::~PropertyDialog() {
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));
   }
 
   void PropertyDialog::clicked(QAbstractButton *button) {
@@ -71,8 +70,9 @@ namespace MBSimGUI {
   }
 
   void PropertyDialog::updateWidget() {
-    for(unsigned int i=0; i<widget.size(); i++)
-      dynamic_cast<WidgetInterface*>(widget[i])->updateWidget();
+    cout << "original update Widget" << endl;
+//    for(unsigned int i=0; i<widget.size(); i++)
+//      dynamic_cast<WidgetInterface*>(widget[i])->updateWidget();
   }
 
   void PropertyDialog::addTab(const QString &name, int i) {  

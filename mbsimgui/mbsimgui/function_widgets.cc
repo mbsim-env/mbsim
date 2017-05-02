@@ -368,7 +368,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  SymbolicFunctionWidget::SymbolicFunctionWidget(const QStringList &var, int m, int max) {
+  SymbolicFunctionWidget::SymbolicFunctionWidget(const QStringList &var, int m, int max, bool fixedSize) {
     QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -380,7 +380,10 @@ namespace MBSimGUI {
       if(var[i]!="t")
         layout->addWidget(argdim[i],i,1);
     }
-    f = new ExtWidget("Function",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,"");
+    if(fixedSize)
+      f = new ExtWidget("Function",new ChoiceWidget2(new VecWidgetFactory(m),QBoxLayout::RightToLeft,5),false,false,"");
+    else
+      f = new ExtWidget("Function",new ChoiceWidget2(new VecSizeVarWidgetFactory(m),QBoxLayout::RightToLeft,5),false,false,"");
     layout->addWidget(f,var.size(),0,1,2);
   }
 

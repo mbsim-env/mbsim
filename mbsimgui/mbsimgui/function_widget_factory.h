@@ -94,7 +94,7 @@ namespace MBSimGUI {
 
   class SymbolicFunctionWidgetFactory1 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory1(const QStringList &var_, Element *parent_);
+      SymbolicFunctionWidgetFactory1(Element *parent, const QStringList &var_, int m=3, bool fixedSize=true);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
@@ -104,11 +104,13 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QStringList var;
+      int m;
+      bool fixedSize;
   };
 
   class SymbolicFunctionWidgetFactory2 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory2(const QStringList &var_, Element *parent_);
+      SymbolicFunctionWidgetFactory2(Element *parent, const QStringList &var_, int m=3, bool fixedSize=true);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
@@ -118,19 +120,24 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QStringList var;
+      int m;
+      bool fixedSize;
   };
 
   class SymbolicFunctionWidgetFactory3 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory3(const QStringList &var_);
+      SymbolicFunctionWidgetFactory3(Element *parent, const QStringList &var_, int m=3, bool fixedSize=true);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QStringList var;
+      int m;
+      bool fixedSize;
   };
 
   class TranslationWidgetFactory4 : public WidgetFactory {

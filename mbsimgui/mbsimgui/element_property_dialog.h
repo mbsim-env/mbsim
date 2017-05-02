@@ -291,7 +291,6 @@ namespace MBSimGUI {
   };
 
   class ObjectPropertyDialog : public ElementPropertyDialog {
-    Q_OBJECT
 
     public:
       ObjectPropertyDialog(Object *object, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -301,7 +300,6 @@ namespace MBSimGUI {
       virtual void resizeGeneralizedVelocity() {}
     protected:
       ExtWidget *q0, *u0, *R;
-    public slots:
       void updateWidget() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
   };
 
@@ -329,7 +327,6 @@ namespace MBSimGUI {
   };
 
   class FlexibleBodyFFRPropertyDialog : public BodyPropertyDialog {
-    Q_OBJECT
 
     public:
       FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -342,7 +339,6 @@ namespace MBSimGUI {
     protected:
       ExtWidget *mass, *pdm, *ppdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor;
       FlexibleBodyFFR *body;
-    protected slots:
       void updateWidget();
   };
 
@@ -389,7 +385,6 @@ namespace MBSimGUI {
   };
 
   class GeneralizedPositionConstraintPropertyDialog : public GeneralizedDualConstraintPropertyDialog {
-    Q_OBJECT
 
     public:
       GeneralizedPositionConstraintPropertyDialog(GeneralizedPositionConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -397,12 +392,10 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *constraintFunction;
-    protected slots:
       void updateWidget();
   };
 
   class GeneralizedVelocityConstraintPropertyDialog : public GeneralizedDualConstraintPropertyDialog {
-    Q_OBJECT
 
     public:
       GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -410,12 +403,10 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *constraintFunction, *x0;
-    protected slots:
       void updateWidget();
   };
 
   class GeneralizedAccelerationConstraintPropertyDialog : public GeneralizedDualConstraintPropertyDialog {
-    Q_OBJECT
 
     public:
       GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -423,12 +414,10 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *constraintFunction, *x0;
-    protected slots:
       void updateWidget();
   };
 
   class JointConstraintPropertyDialog : public MechanicalConstraintPropertyDialog {
-    Q_OBJECT
 
     public:
       JointConstraintPropertyDialog(JointConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -436,7 +425,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *refFrameID, *force, *moment, *connections, *q0;
-    protected slots:
       void updateWidget();
   };
 
@@ -506,7 +494,6 @@ namespace MBSimGUI {
   };
 
   class KineticExcitationPropertyDialog : public FloatingFrameLinkPropertyDialog {
-    Q_OBJECT
 
     public:
       KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -514,7 +501,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *forceDirection, *forceFunction, *momentDirection, *momentFunction, *arrow;
-    protected slots:
       void updateWidget();
   };
 
@@ -589,7 +575,6 @@ namespace MBSimGUI {
   };
 
   class GeneralizedElasticConnectionPropertyDialog : public DualRigidBodyLinkPropertyDialog {
-    Q_OBJECT
 
     public:
       GeneralizedElasticConnectionPropertyDialog(DualRigidBodyLink *connection, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -597,7 +582,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *function;
-    protected slots:
       void updateWidget();
   };
 
@@ -803,6 +787,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *inputSignal, *A, *B, *C, *D;
+      void updateWidget();
   };
 
   class SignalOperationPropertyDialog : public SignalPropertyDialog {
@@ -815,7 +800,7 @@ namespace MBSimGUI {
     protected:
       ExtWidget *inputSignal, *function;
     protected slots:
-      void updateFunctionFactory();
+      void updateFunctionFactory(bool defineWidget=true);
   };
 
   class ExternSignalSourcePropertyDialog : public SignalPropertyDialog {
@@ -837,7 +822,6 @@ namespace MBSimGUI {
     protected:
       ExtWidget *inputSignal;
   };
-
 
 }
 
