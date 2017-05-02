@@ -95,7 +95,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* LinearFunctionWidget::initializeUsingXML(DOMElement *element) {
-    cout << "LinearFunctionWidget" << endl;
     a0->initializeUsingXML(element);
     a1->initializeUsingXML(element);
     return element;
@@ -313,10 +312,10 @@ namespace MBSimGUI {
     functions = new ExtWidget("Limited functions",new ListWidget(new ChoiceWidgetFactory(new LimitedFunctionWidgetFactory(parent)),"Function",0,0),false,false,MBSIM%"limitedFunctions");
     layout->addWidget(functions);
 
-    shiftAbscissa = new ExtWidget("Shift abscissa",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftAbscissa");
+    shiftAbscissa = new ExtWidget("Shift abscissa",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftAbscissa");
     layout->addWidget(shiftAbscissa);
 
-    shiftOrdinate = new ExtWidget("Shift ordinate",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftOrdinate");
+    shiftOrdinate = new ExtWidget("Shift ordinate",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftOrdinate");
     layout->addWidget(shiftOrdinate);
   }
 
