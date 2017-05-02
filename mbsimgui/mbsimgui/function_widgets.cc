@@ -316,7 +316,7 @@ namespace MBSimGUI {
     shiftAbscissa = new ExtWidget("Shift abscissa",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftAbscissa");
     layout->addWidget(shiftAbscissa);
 
-    shiftOrdinate = new ExtWidget("Shift orientation",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftOrdinate");
+    shiftOrdinate = new ExtWidget("Shift ordinate",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftOrdinate");
     layout->addWidget(shiftOrdinate);
   }
 
