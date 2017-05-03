@@ -176,6 +176,7 @@ namespace MBSimGUI {
       void redo();
       void removeElement();
       void removeParameter();
+      void remove();
       void copy(bool cut=false);
       void cut() { copy(true); }
       void paste();

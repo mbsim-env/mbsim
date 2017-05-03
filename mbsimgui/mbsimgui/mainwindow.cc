@@ -163,25 +163,26 @@ namespace MBSimGUI {
     menuBar()->addMenu(menu);
 
     menu=new QMenu("Edit", menuBar());
+    action = menu->addAction("Edit", elementList, SLOT(openEditor()));
+    action->setShortcut(QKeySequence("Ctrl+E"));
+    menu->addSeparator();
     action = menu->addAction("Undo", this, SLOT(undo()));
     action->setShortcut(QKeySequence::Undo);
     action = menu->addAction("Redo", this, SLOT(redo()));
     action->setShortcut(QKeySequence::Redo);
-    menuBar()->addMenu(menu);
-    menuBar()->addSeparator();
+    menu->addSeparator();
     action = menu->addAction("Copy", this, SLOT(copy()));
     action->setShortcut(QKeySequence::Copy);
-    menuBar()->addMenu(menu);
     action = menu->addAction("Cut", this, SLOT(cut()));
     action->setShortcut(QKeySequence::Cut);
-    menuBar()->addMenu(menu);
     action = menu->addAction("Paste", this, SLOT(paste()));
     action->setShortcut(QKeySequence::Paste);
-    menuBar()->addMenu(menu);
-    menuBar()->addSeparator();
+    menu->addSeparator();
+    action = menu->addAction("Remove", this, SLOT(remove()));
+    action->setShortcut(QKeySequence::Delete);
+    menu->addSeparator();
     action = menu->addAction("Move up", this, SLOT(moveUp()));
     action->setShortcut(QKeySequence("Ctrl+Up"));
-    menuBar()->addMenu(menu);
     action = menu->addAction("Move down", this, SLOT(moveDown()));
     action->setShortcut(QKeySequence("Ctrl+Down"));
     menuBar()->addMenu(menu);
@@ -1063,16 +1064,18 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeElement() {
-    setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    if(element == elementBuffer.first)
-      elementBuffer.first = NULL;
-    element->removeXMLElement();
-    element->getParent()->removeElement(element);
-    model->removeRow(index.row(), index.parent());
-    mbsimxml(1);
+    if((not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element))) {
+      setProjectChanged(true);
+      if(element == elementBuffer.first)
+        elementBuffer.first = NULL;
+      element->removeXMLElement();
+      element->getParent()->removeElement(element);
+      model->removeRow(index.row(), index.parent());
+      mbsimxml(1);
+    }
   }
 
   void MainWindow::removeParameter() {
@@ -1088,6 +1091,13 @@ namespace MBSimGUI {
     parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
     parameter->getParent()->removeParameter(parameter);
     model->removeRow(index.row(), index.parent());
+  }
+
+  void MainWindow::remove() {
+    if(elementList->hasFocus())
+      removeElement();
+    else if(embeddingList->hasFocus())
+      removeParameter();
   }
 
   void MainWindow::copy(bool cut) {
