@@ -65,8 +65,6 @@ namespace MBSim {
        */
       void setFrameOfReferenceID(Index ID) { refFrameID = ID; }
 
-      void updateSize();
-
       void resetUpToDate();
       void updatePositions(Frame *frame);
       void updatePositions();
