@@ -35,13 +35,15 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBodyGroupObserver)
 
-  RigidBodyGroupObserver::RigidBodyGroupObserver(const std::string &name) : Observer(name) {
+  RigidBodyGroupObserver::RigidBodyGroupObserver(const std::string &name) : Observer(name), frameOfReference(NULL) {
   }
 
   void RigidBodyGroupObserver::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      for (unsigned int i=0; i<saved_body.size(); i++)
+      for(unsigned int i=0; i<saved_body.size(); i++)
         body.push_back(getByPath<RigidBody>(saved_body[i]));
+      if(saved_frameOfReference!="")
+        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       Observer::init(stage);
     }
     else if(stage==plotting) {
@@ -103,12 +105,9 @@ namespace MBSim {
       Vec3 rOS = mpos/m;
       Vec3 vS = mvel/m;
       Vec3 aS = macc/m;
-      Vec rOR = rOS;
-      Vec vR = vS;
-      Vec aR = aS;
-//      Vec3 rOR = ref?ref->evalPosition():rOS;
-//      Vec3 vR = ref?ref->evalVelocity():vS;
-//      Vec3 aR = ref?ref->evalAcceleration():aS;
+      Vec3 rOR = frameOfReference?frameOfReference->evalPosition():rOS;
+      Vec3 vR = frameOfReference?frameOfReference->evalVelocity():vS;
+      Vec3 aR = frameOfReference?frameOfReference->evalAcceleration():aS;
       for(unsigned int i=0; i<body.size(); i++) {
         SqrMat3 AIK = body[i]->getFrame("C")->getOrientation();
         Vec3 rRSi = body[i]->getFrame("C")->getPosition() - rOR;
@@ -232,6 +231,9 @@ namespace MBSim {
       e=e->getNextElementSibling();
     }
 
+    e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(e) saved_frameOfReference=E(e)->getAttribute("ref");
+
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(e) {
       OpenMBVArrow ombv;
@@ -264,7 +266,7 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularMomentum");
     if(e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       openMBVAngularMomentum=ombv.createOpenMBV(e);
     }
 
@@ -276,7 +278,7 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivativeOfAngularMomentum");
     if(e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       openMBVDerivativeOfAngularMomentum=ombv.createOpenMBV(e);
     }
   }

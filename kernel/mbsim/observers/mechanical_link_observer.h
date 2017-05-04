@@ -49,7 +49,7 @@ namespace MBSim {
       }
       void setOpenMBVForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVForce=arrow; }
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         openMBVMoment=ombv.createOpenMBV(); 
       }
       void setOpenMBVMoment(const std::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVMoment=arrow; }

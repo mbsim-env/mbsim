@@ -31,7 +31,7 @@ namespace MBSim {
 
   class KinematicCoordinatesObserver : public Observer {
     private:
-      Frame* frame, *frameOfReference;
+      Frame *frame, *frameOfReference;
       std::shared_ptr<OpenMBV::Group> openMBVPosGrp, openMBVVelGrp, openMBVAccGrp;
       std::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAcceleration, openMBVXPosition, openMBVYPosition, openMBVZPosition, openMBVXVelocity, openMBVYVelocity, openMBVZVelocity, openMBVXAcceleration, openMBVYAcceleration, openMBVZAcceleration;
       std::string saved_frame, saved_frameOfReference;

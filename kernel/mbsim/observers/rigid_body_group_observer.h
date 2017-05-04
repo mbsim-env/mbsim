@@ -28,16 +28,20 @@
 namespace MBSim {
 
   class RigidBody;
+  class Frame;
 
   class RigidBodyGroupObserver : public Observer {
     private:
       std::vector<RigidBody*> body;
+      Frame *frameOfReference;
       std::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAcceleration, openMBVWeight, openMBVMomentum, openMBVAngularMomentum, openMBVDerivativeOfMomentum, openMBVDerivativeOfAngularMomentum;
       std::vector<std::string> saved_body;
+      std::string saved_frameOfReference;
 
     public:
       RigidBodyGroupObserver(const std::string &name="");
       void addRigidBody(RigidBody *body_) { body.push_back(body_); }
+      void setFrameOfReference(Frame *frameOfReference_) { frameOfReference = frameOfReference_; }
 
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
@@ -88,4 +92,3 @@ namespace MBSim {
 }  
 
 #endif
-

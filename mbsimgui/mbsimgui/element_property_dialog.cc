@@ -163,7 +163,7 @@ namespace MBSimGUI {
 
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
-    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
+    visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
   }
@@ -182,7 +182,7 @@ namespace MBSimGUI {
 
   InternalFramePropertyDialog::InternalFramePropertyDialog(InternalFrame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
-    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET"),true,true,frame->getXMLFrameName());
+    visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget("NOTSET"),true,true,frame->getXMLFrameName());
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
     setReadOnly(true);
@@ -1528,7 +1528,7 @@ namespace MBSimGUI {
     momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentFunction");
     addToTab("Kinetics",momentFunction);
 
-    arrow = new ExtWidget("OpenMBV arrow",new ArrowMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
+    arrow = new ExtWidget("Enable openMBV",new ArrowMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation",arrow);
 
     connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
@@ -1858,15 +1858,15 @@ namespace MBSimGUI {
     addToTab("General", frame);
 
     frameOfReference = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frameOfReference");
-    addToTab("General", frame);
+    addToTab("General", frameOfReference);
 
-    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
+    position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
     addToTab("Visualisation",position);
 
-    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVVelocity");
+    velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVVelocity");
     addToTab("Visualisation",velocity);
 
-    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAcceleration");
+    acceleration = new ExtWidget("Enable openMBV acceleration",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAcceleration");
     addToTab("Visualisation",acceleration);
   }
 
@@ -1900,19 +1900,19 @@ namespace MBSimGUI {
     refFrame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frameOfReference");
     addToTab("General", frame);
 
-    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
+    position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
     addToTab("Visualisation",position);
 
-    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVVelocity");
+    velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVVelocity");
     addToTab("Visualisation",velocity);
 
-    angularVelocity = new ExtWidget("OpenMBV angular velocity arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularVelocity");
+    angularVelocity = new ExtWidget("Enable openMBV angular velocity",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularVelocity");
     addToTab("Visualisation",angularVelocity);
 
-    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAcceleration");
+    acceleration = new ExtWidget("Enable openMBV acceleration",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAcceleration");
     addToTab("Visualisation",acceleration);
 
-    angularAcceleration = new ExtWidget("OpenMBV angular acceleration arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularAcceleration");
+    angularAcceleration = new ExtWidget("Enable openMBV angular acceleration",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularAcceleration");
     addToTab("Visualisation",angularAcceleration);
   }
 
@@ -1947,10 +1947,10 @@ namespace MBSimGUI {
     link = new ExtWidget("Mechanical link",new LinkOfReferenceWidget(observer,0),false,false,MBSIM%"mechanicalLink");
     addToTab("General", link);
 
-    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
+    forceArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
+    momentArrow = new ExtWidget("Enable openMBV moment",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
     addToTab("Visualisation",momentArrow);
   }
 
@@ -1977,10 +1977,10 @@ namespace MBSimGUI {
     constraint = new ExtWidget("Mechanical constraint",new ConstraintOfReferenceWidget(observer,0),false,false,MBSIM%"mechanicalConstraint");
     addToTab("General", constraint);
 
-    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
+    forceArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
+    momentArrow = new ExtWidget("Enable openMBV moment",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
     addToTab("Visualisation",momentArrow);
   }
 
@@ -2007,19 +2007,19 @@ namespace MBSimGUI {
     link = new ExtWidget("Mechanical link",new LinkOfReferenceWidget(observer,0),false,false,MBSIM%"contact");
     addToTab("General", link);
 
-    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
+    forceArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
+    momentArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
     addToTab("Visualisation",momentArrow);
 
-    contactPoints = new ExtWidget("OpenMBV contact points",new FrameMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVContactPoints");
+    contactPoints = new ExtWidget("Enable openMBV contact points",new FrameMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVContactPoints");
     addToTab("Visualisation",contactPoints);
 
-    normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVNormalForce");
+    normalForceArrow = new ExtWidget("Enable openMBV normal force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVNormalForce");
     addToTab("Visualisation",normalForceArrow);
 
-    frictionArrow = new ExtWidget("OpenMBV tangential force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVTangentialForce");
+    frictionArrow = new ExtWidget("Enable openMBV tangential force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVTangentialForce");
     addToTab("Visualisation",frictionArrow);
   }
 
@@ -2052,19 +2052,19 @@ namespace MBSimGUI {
     frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0),false,false,MBSIM%"frame");
     addToTab("General", frame);
 
-    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
+    position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
     addToTab("Visualisation",position);
 
-    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVVelocity");
+    velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVVelocity");
     addToTab("Visualisation",velocity);
 
-    angularVelocity = new ExtWidget("OpenMBV angular velocity arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularVelocity");
+    angularVelocity = new ExtWidget("Enable openMBV angular velocity",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularVelocity");
     addToTab("Visualisation",angularVelocity);
 
-    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAcceleration");
+    acceleration = new ExtWidget("Enable openMBV acceleration",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAcceleration");
     addToTab("Visualisation",acceleration);
 
-    angularAcceleration = new ExtWidget("OpenMBV angular acceleration arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularAcceleration");
+    angularAcceleration = new ExtWidget("Enable openMBV angular acceleration",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularAcceleration");
     addToTab("Visualisation",angularAcceleration);
   }
 
@@ -2097,16 +2097,16 @@ namespace MBSimGUI {
     body = new ExtWidget("Rigid body",new RigidBodyOfReferenceWidget(observer,0),false,false,MBSIM%"rigidBody");
     addToTab("General", body);
 
-    weight = new ExtWidget("OpenMBV weight arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVWeight");
+    weight = new ExtWidget("Enable openMBV weight",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVWeight");
     addToTab("Visualisation",weight);
 
-    jointForce = new ExtWidget("OpenMBV joint force arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVJointForce");
+    jointForce = new ExtWidget("Enable openMBV joint force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVJointForce");
     addToTab("Visualisation",jointForce);
 
-    jointMoment = new ExtWidget("OpenMBV joint moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVJointMoment");
+    jointMoment = new ExtWidget("Enable openMBV joint moment",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVJointMoment");
     addToTab("Visualisation",jointMoment);
 
-    axisOfRotation = new ExtWidget("OpenMBV axis of rotation",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAxisOfRotation");
+    axisOfRotation = new ExtWidget("Enable openMBV axis of rotation",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAxisOfRotation");
     addToTab("Visualisation",axisOfRotation);
   }
 
@@ -2137,21 +2137,62 @@ namespace MBSimGUI {
     bodies = new ExtWidget("Rigid bodies",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"rigidBody",observer,0),"Rigid body",0,2),false,false,"");
     addToTab("General", bodies);
 
-    weight = new ExtWidget("OpenMBV weight arrow",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVWeight");
+    frameOfReference = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frameOfReference");
+    addToTab("General", frameOfReference);
+
+    position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
+    addToTab("Visualisation",position);
+
+    velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVVelocity");
+    addToTab("Visualisation",velocity);
+
+    acceleration = new ExtWidget("Enable openMBV acceleration",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAcceleration");
+    addToTab("Visualisation",acceleration);
+
+    weight = new ExtWidget("Enable openMBV weight",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVWeight");
     addToTab("Visualisation",weight);
+
+    momentum = new ExtWidget("Enable openMBV momentum",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMomentum");
+    addToTab("Visualisation",momentum);
+
+    angularMomentum = new ExtWidget("Enable openMBV angular momentum",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularMomentum");
+    addToTab("Visualisation",angularMomentum);
+
+    derivativeOfMomentum = new ExtWidget("Enable openMBV derivative of momentum",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVDerivativeOfMomentum");
+    addToTab("Visualisation",derivativeOfMomentum);
+
+    derivativeOfAngularMomentum = new ExtWidget("Enable openMBV derivative of angular momentum",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVDerivativeOfAngularMomentum");
+    addToTab("Visualisation",derivativeOfAngularMomentum);
+
   }
 
   DOMElement* RigidBodyGroupObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
     bodies->initializeUsingXML(element->getXMLElement());
+    frameOfReference->initializeUsingXML(element->getXMLElement());
+    position->initializeUsingXML(element->getXMLElement());
+    velocity->initializeUsingXML(element->getXMLElement());
+    acceleration->initializeUsingXML(element->getXMLElement());
     weight->initializeUsingXML(element->getXMLElement());
+    momentum->initializeUsingXML(element->getXMLElement());
+    angularMomentum->initializeUsingXML(element->getXMLElement());
+    derivativeOfMomentum->initializeUsingXML(element->getXMLElement());
+    derivativeOfAngularMomentum->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
   DOMElement* RigidBodyGroupObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     bodies->writeXMLFile(element->getXMLElement(),ref);
+    frameOfReference->writeXMLFile(element->getXMLElement(),ref);
+    position->writeXMLFile(element->getXMLElement(),ref);
+    velocity->writeXMLFile(element->getXMLElement(),ref);
+    acceleration->writeXMLFile(element->getXMLElement(),ref);
     weight->writeXMLFile(element->getXMLElement(),ref);
+    momentum->writeXMLFile(element->getXMLElement(),ref);
+    angularMomentum->writeXMLFile(element->getXMLElement(),ref);
+    derivativeOfMomentum->writeXMLFile(element->getXMLElement(),ref);
+    derivativeOfAngularMomentum->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 
