@@ -79,7 +79,7 @@ namespace MBSimGUI {
     plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"plotStepSize");
     addToTab("General", plotStepSize);
 
-    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialState");
+    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialState");
     addToTab("Initial conditions", initialState);
   }
 
@@ -378,7 +378,7 @@ namespace MBSimGUI {
     plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"plotStepSize");
     addToTab("General", plotStepSize);
 
-    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"initialState");
+    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"initialState");
     addToTab("Initial conditions", initialState);
 
     vector<QString> list;

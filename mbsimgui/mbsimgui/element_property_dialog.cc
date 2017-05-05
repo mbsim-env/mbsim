@@ -622,7 +622,7 @@ namespace MBSimGUI {
   }
 
   ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {
-    addTab("Initial conditions");
+    addTab("Initial conditions",1);
 
     q0 = new ExtWidget("Generalized initial position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialPosition");
     addToTab("Initial conditions", q0);
@@ -649,7 +649,7 @@ namespace MBSimGUI {
   }
 
   BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(body,parent,f) {
-    addTab("Kinematics");
+    addTab("Kinematics",1);
 
     R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,body->getParent()->getFrame(0)),true,false,MBSIM%"frameOfReference");
     addToTab("Kinematics",R);
@@ -1326,7 +1326,7 @@ namespace MBSimGUI {
     moment = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
     addToTab("Kinetics", moment);
 
-    q0 = new ExtWidget("Initial guess",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
+    q0 = new ExtWidget("Initial guess",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
     addToTab("Initial conditions", q0);
   }
 
@@ -1576,7 +1576,7 @@ namespace MBSimGUI {
     unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedLength");
     addToTab("General",unloadedLength);
 
-    coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBV");
+    coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", coilSpring);
   }
 

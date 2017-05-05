@@ -443,6 +443,7 @@ namespace MBSimGUI {
   SphereWidget::SphereWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
 
     radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"radius");
+    layout->addWidget(radius);
   }
 
   DOMElement* SphereWidget::initializeUsingXML(DOMElement *element) {
