@@ -24,7 +24,7 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  Link::Link(const QString &str) : Element(str) {
+  void Link::addPlotFeatures() {
     addPlotFeature("generalizedRelativePosition");
     addPlotFeature("generalizedRelativeVelocity");
     addPlotFeature("generalizedForce");

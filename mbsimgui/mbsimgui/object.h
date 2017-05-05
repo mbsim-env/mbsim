@@ -26,9 +26,11 @@ namespace MBSimGUI {
 
   class Object : public Element {
     public:
-      Object(const QString &str="");
+      Object(const QString &str="") : Element(str) { }
       ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
       QMenu* createContextMenu() { return new ObjectContextMenu(this); }
+    private:
+      void addPlotFeatures();
   };
 
 }

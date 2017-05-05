@@ -24,7 +24,7 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  Object::Object(const QString &str) : Element(str) {
+  void Object::addPlotFeatures() {
     addPlotFeature("generalizedPosition");
     addPlotFeature("generalizedVelocity");
     addPlotFeature("derivativeOfGeneralizedPosition");

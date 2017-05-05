@@ -28,6 +28,7 @@ namespace MBSimGUI {
     public:
       Signal(const QString &str="") : Link(str) { }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
+      void addPlotFeatures() { addPlotFeature("signal"); }
   };
 
   class Multiplexer : public Signal {

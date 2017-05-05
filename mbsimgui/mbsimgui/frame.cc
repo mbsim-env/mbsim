@@ -28,16 +28,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Frame::Frame(const QString &str) : Element(str) {
-
-    addPlotFeature("position");
-    addPlotFeature("angle");
-    addPlotFeature("velocity");
-    addPlotFeature("angularVelocity");
-    addPlotFeature("acceleration");
-    addPlotFeature("angularAcceleration");
-  }
-
   DOMElement* Frame::processFileID(DOMElement *element) {
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ELE) {
@@ -46,6 +36,15 @@ namespace MBSimGUI {
       ELE->insertBefore(id, NULL);
     }
     return element;
+  }
+
+  void Frame::addPlotFeatures() {
+    addPlotFeature("position");
+    addPlotFeature("angle");
+    addPlotFeature("velocity");
+    addPlotFeature("angularVelocity");
+    addPlotFeature("acceleration");
+    addPlotFeature("angularAcceleration");
   }
 
   InternalFrame::InternalFrame(const QString &str, const MBXMLUtils::FQN &xmlFrameName_, const QString &plotFeatureType_) : Frame(str), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) {

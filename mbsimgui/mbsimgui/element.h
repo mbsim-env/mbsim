@@ -49,7 +49,7 @@ namespace MBSimGUI {
       QString ID;
       bool config;
     public:
-      Element(const QString &name="");
+      Element(const QString &name="") : EmbedItemData(name), parent(NULL), ID(QString::number(IDcounter++)), config(false) { }
       QString getXMLPath(Element *ref=0, bool rel=false);
       virtual xercesc::DOMElement* getXMLFrames() { return NULL; }
       virtual xercesc::DOMElement* getXMLContours() { return NULL; }
@@ -110,7 +110,7 @@ namespace MBSimGUI {
       void setID(const QString &ID_) { ID = ID_; }
       Element* getParent() { return parent; }
       std::vector<EmbedItemData*> getParents();
-      void setParent(Element* parent_) { parent = parent_; }
+      void setParent(Element* parent_) { parent = parent_; addPlotFeatures(); }
       virtual ElementPropertyDialog* createPropertyDialog() { return new ElementPropertyDialog(this); }
       virtual QMenu* createContextMenu() { return new ElementContextMenu(this); }
       virtual QMenu* createFrameContextMenu() {return NULL;}
@@ -120,6 +120,8 @@ namespace MBSimGUI {
       virtual QString getPlotFeatureType() const { return ""; }
       bool getConfig() { return config; }
       void setConfig(bool config_) { config = config_; }
+    private:
+      virtual void addPlotFeatures();
   };
 
   template<class T>

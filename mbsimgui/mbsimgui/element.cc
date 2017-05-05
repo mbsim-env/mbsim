@@ -27,7 +27,7 @@
 #include "link.h"
 #include "constraint.h"
 #include "observer.h"
-#include "utils.h"
+#include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
@@ -45,14 +45,6 @@ namespace MBSimGUI {
   extern DOMLSSerializer *serializer;
 
   int Element::IDcounter=0;
-
-  Element::Element(const QString &name) : EmbedItemData(name), parent(NULL), config(false) {
-    ID=toQStr(IDcounter++);
-    addPlotFeature("plotRecursive");
-    addPlotFeature("separateFilePerGroup");
-    addPlotFeature("openMBV");
-    addPlotFeature("debug");
-  }
 
   DOMElement* Element::processHref(DOMElement *element) {
     DOMElement *parent = static_cast<DOMElement*>(element->getParentNode());
@@ -216,6 +208,13 @@ namespace MBSimGUI {
       parents.push_back(getParent());
     }
     return parents;
+  }
+
+  void Element::addPlotFeatures() {
+    addPlotFeature("plotRecursive");
+    addPlotFeature("separateFilePerGroup");
+    addPlotFeature("openMBV");
+    addPlotFeature("debug");
   }
 
   void Element::addPlotFeature(const QString &pf) {
