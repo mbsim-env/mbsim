@@ -23,7 +23,10 @@
 #include <QDialog>
 #include <QPushButton>
 #include <QTreeWidgetItem>
-#include "variable_widgets.h"
+
+class QTableWidget;
+class QSpinBox;
+class QComboBox;
 
 namespace MBSimGUI {
 
@@ -35,6 +38,8 @@ namespace MBSimGUI {
   class Frame;
   class Contour;
   class Signal;
+//  class VariableWidget;
+//  class TabularWidget;
 
   class ElementItem : public QTreeWidgetItem {
     private:
@@ -45,12 +50,18 @@ namespace MBSimGUI {
   };
 
   class EvalDialog : public QDialog {
+    Q_OBJECT
     public:
-      EvalDialog(QWidget *widget);
-      //    void setValue(const std::vector<std::vector<QString> > &A) {var->setMat(A);}
-      //QString getValue() const {return var->getValue();}
-    protected:
-      QWidget *var;
+      //EvalDialog(VariableWidget *widget);
+      EvalDialog(const std::vector<std::vector<QString> > &var_);
+    private:
+      std::vector<std::vector<double> > var;
+//      VariableWidget *var;
+      QComboBox *format;
+      QSpinBox *precision;
+      QTableWidget *tab;
+    private slots:
+      void updateWidget();
   };
 
   class ObjectBrowser : public QDialog {

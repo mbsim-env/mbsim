@@ -176,7 +176,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  TranslationWidgetFactory3::TranslationWidgetFactory3(Element *parent_) {
+  TranslationWidgetFactory3::TranslationWidgetFactory3(Element *parent_) : parent(parent_) {
     name.push_back("Vector valued function");
     name.push_back("Composite function");
     name.push_back("Symbolic function");

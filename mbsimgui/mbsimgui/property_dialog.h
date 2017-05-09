@@ -46,7 +46,7 @@ namespace MBSimGUI {
       void setParentObject(QObject *obj);
       void addToTab(const QString &name, QWidget* widget_);
       void addTab(const QString &name, int i=-1);
-      void addStretch();
+      void addStretch(int s=1);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return 0; }
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL) { return 0; }
       void setCancel(bool on);

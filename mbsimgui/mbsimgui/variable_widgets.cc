@@ -131,6 +131,14 @@ namespace MBSimGUI {
     }
   }
 
+  vector<vector<QString> > VariableWidget::getEvalMat() const {
+    if(getValue().isEmpty())
+      return vector<vector<QString> >();
+    QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString())));
+    str = removeWhiteSpace(str);
+    return strToMat(str);
+  }
+
   BoolWidget::BoolWidget(const QString &b) { 
     value = new QCheckBox;
     setValue(b);
@@ -148,8 +156,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  QWidget* BoolWidget::getValidatedWidget() const {
-    return new BoolWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
+  vector<vector<QString> > BoolWidget::getEvalMat() const {
+    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))))) ;
   }
 
   DOMElement* BoolWidget::initializeUsingXML(DOMElement *element) {
@@ -189,18 +197,6 @@ namespace MBSimGUI {
     setValue(str);
   }
 
-  vector<vector<QString> > ExpressionWidget::getMat() const {
-    if(getValue().isEmpty())
-      return vector<vector<QString> >();
-    QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString())));
-    str = removeWhiteSpace(str);
-    return strToMat(str);
-  }
-
-  QWidget* ExpressionWidget::getValidatedWidget() const {
-    return new MatWidget(getMat());
-  }
-
   DOMElement* ExpressionWidget::initializeUsingXML(DOMElement *element) {
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
@@ -235,8 +231,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  QWidget* ScalarWidget::getValidatedWidget() const {
-    return new ScalarWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
+  vector<vector<QString> > ScalarWidget::getEvalMat() const {
+    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))))) ;
   }
 
   DOMElement* ScalarWidget::initializeUsingXML(DOMElement *element) {
@@ -257,11 +253,12 @@ namespace MBSimGUI {
     return 0;
   }
 
-  QWidget* BasicVecWidget::getValidatedWidget() const {
+  vector<vector<QString> > BasicVecWidget::getEvalMat() const {
     vector<QString> x = getVec();
+    vector<vector<QString> > A(x.size(),vector<QString>(1));
     for(size_t i=0; i<x.size(); i++)
-      x[i] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString())));
-    return new VecWidget(x);
+      A[i][0] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString())));
+    return A;
   }
 
   DOMElement* BasicVecWidget::initializeUsingXML(DOMElement *parent) {
@@ -269,7 +266,7 @@ namespace MBSimGUI {
     if(!element || E(element)->getTagName() != PV%"xmlVector")
       return 0;
     DOMElement *ei=element->getFirstElementChild();
-    std::vector<QString> value;
+    vector<QString> value;
     while(ei && E(ei)->getTagName()==PV%"ele") {
       value.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
       ei=ei->getNextElementSibling();
@@ -409,12 +406,12 @@ namespace MBSimGUI {
     return true;
   }
 
-  QWidget* BasicMatWidget::getValidatedWidget() const {
+  vector<vector<QString> > BasicMatWidget::getEvalMat() const {
     vector<vector<QString> > A = getMat();
     for(size_t i=0; i<A.size(); i++)
       for(size_t j=0; j<A[i].size(); j++)
         A[i][j] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(A[i][j].toStdString())));
-    return new MatWidget(A);
+    return A;
   }
 
   DOMElement* BasicMatWidget::initializeUsingXML(DOMElement *parent) {
@@ -422,7 +419,7 @@ namespace MBSimGUI {
     if(!element || E(element)->getTagName() != PV%"xmlMatrix")
       return 0;
     DOMElement *ei=element->getFirstElementChild();
-    std::vector<std::vector<QString> > value;
+    vector<vector<QString> > value;
     while(ei && E(ei)->getTagName()==PV%"row") {
       DOMElement *ej=ei->getFirstElementChild();
       value.push_back(vector<QString>());
@@ -531,6 +528,7 @@ namespace MBSimGUI {
       return false;
     return true;
   }
+
 
   MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
 
@@ -939,11 +937,12 @@ namespace MBSimGUI {
     return true;
   }
 
-  QWidget* CardanWidget::getValidatedWidget() const {
+  vector<vector<QString> > CardanWidget::getEvalMat() const {
     vector<QString> x = getAngles();
+    vector<vector<QString> > A(x.size(),vector<QString>(1));
     for(size_t i=0; i<x.size(); i++)
-      x[i] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString())));
-    return new VecWidget(x);
+      A[i][0] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString())));
+    return A;
   }
 
   DOMElement* CardanWidget::initializeUsingXML(DOMElement *parent) {
@@ -1009,8 +1008,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  QWidget* AboutXWidget::getValidatedWidget() const {
-    return new ScalarWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
+  vector<vector<QString> > AboutXWidget::getEvalMat() const {
+    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))))) ;
   }
 
   DOMElement* AboutXWidget::initializeUsingXML(DOMElement *parent) {
@@ -1064,8 +1063,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  QWidget* AboutYWidget::getValidatedWidget() const {
-    return new ScalarWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
+  vector<vector<QString> > AboutYWidget::getEvalMat() const {
+    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))))) ;
   }
 
   DOMElement* AboutYWidget::initializeUsingXML(DOMElement *parent) {
@@ -1119,8 +1118,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  QWidget* AboutZWidget::getValidatedWidget() const {
-    return new ScalarWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
+  vector<vector<QString> > AboutZWidget::getEvalMat() const {
+    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))))) ;
   }
 
   DOMElement* AboutZWidget::initializeUsingXML(DOMElement *parent) {
@@ -1169,15 +1168,15 @@ namespace MBSimGUI {
   }
 
   void PhysicalVariableWidget::openEvalDialog() {
-    QWidget *w=0;
-    try {
-      w = widget->getValidatedWidget();
-    }
-    catch(MBXMLUtils::DOMEvalException e) {
-      QMessageBox::warning(0, "Expression evaluation", QString::fromStdString(e.getMessage()));
-      return;
-    }
-    EvalDialog evalDialog(w); 
+//    VariableWidget *w=0;
+//    try {
+//      w = widget->getValidatedWidget();
+//    }
+//    catch(MBXMLUtils::DOMEvalException e) {
+//      QMessageBox::warning(0, "Expression evaluation", QString::fromStdString(e.getMessage()));
+//      return;
+//    }
+    EvalDialog evalDialog(widget->getEvalMat());
     evalDialog.exec();
   }
 
@@ -1227,11 +1226,11 @@ namespace MBSimGUI {
     return getFile();
   }
 
-  QWidget* FromFileWidget::getValidatedWidget() const {
+  vector<vector<QString> > FromFileWidget::getEvalMat() const {
     string file = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getFile().toStdString(),0,false));
     QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue("ret=load(" + file + ")")));
     str = removeWhiteSpace(str);
-    return new MatWidget(strToMat((str)));
+    return strToMat((str));
   }
 
   DOMElement* FromFileWidget::initializeUsingXML(DOMElement *parent) {
@@ -1469,6 +1468,86 @@ namespace MBSimGUI {
     if(i==5)
       return new PhysicalVariableWidget(new ExpressionWidget,unit[5],defaultUnit[5]);
     return NULL;
+  }
+
+  TableWidget::TableWidget(int rows, int cols) {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    table = new QTableWidget(this);
+    layout->setMargin(0);
+    setLayout(layout);
+    layout->addWidget(table);
+    resize_(rows,cols);
+  }
+
+  TableWidget::TableWidget(const vector<vector<QString> > &A) {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    table = new QTableWidget(this);
+    layout->setMargin(0);
+    setLayout(layout);
+    layout->addWidget(table);
+    setMat(A);
+  }
+
+  int TableWidget::rows() const {
+    return table->rowCount();
+  }
+
+  int TableWidget::cols() const {
+    return table->columnCount();
+  }
+
+  void TableWidget::resize_(int rows, int cols) {
+    if(this->rows()!=rows or this->cols()!=cols) {
+      vector<vector<QString> > buf(this->rows());
+      for(unsigned int i=0; i<this->rows(); i++) {
+        buf[i].resize(this->cols());
+        for(unsigned int j=0; j<this->cols(); j++)
+          buf[i][j] = table->item(i,j)->text();
+      }
+      table->setRowCount(rows);
+      table->setColumnCount(cols);
+      for(int i=0; i<rows; i++) {
+        for(int j=0; j<cols; j++) {
+          QTableWidgetItem *newItem = new QTableWidgetItem;
+          table->setItem(i,j,newItem);
+          //box[i][j]->setPlaceholderText("0");
+        }
+      }
+      for(int i=0; i<min((int)buf.size(),rows); i++)
+        for(int j=0; j<min((int)buf[i].size(),cols); j++)
+          table->item(i,j)->setText(buf[i][j]);
+    }
+  }
+
+  vector<vector<QString> > TableWidget::getMat() const {
+    vector<vector<QString> > A(rows());
+    for(unsigned int i=0; i<rows(); i++) {
+      A[i].resize(cols());
+      for(unsigned int j=0; j<cols(); j++) {
+        QString tmp = table->item(i,j)->text();
+        A[i][j] = tmp.isEmpty()?"0":tmp;
+      }
+    }
+    return A;
+  }
+
+  void TableWidget::setMat(const vector<vector<QString> > &A) {
+    if(A.size()==0)
+      return resize_(0,0);
+    if(A.size() != rows() || A[0].size()!=cols())
+      resize_(A.size(),A[0].size());
+    for(unsigned int i=0; i<rows(); i++)
+      for(unsigned int j=0; j<cols(); j++)
+        table->item(i,j)->setText(A[i][j]);
+        //table->item(i,j)->setText(A[i][j]=="0"?"":A[i][j]);
+  }
+
+  bool TableWidget::validate(const vector<vector<QString> > &A) const {
+    if(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()))
+      return false;
+    return true;
   }
 
 }

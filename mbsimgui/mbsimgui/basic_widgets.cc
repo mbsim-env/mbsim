@@ -26,9 +26,12 @@
 #include "signal_.h"
 #include "constraint.h"
 #include "dialogs.h"
+#include "utils.h"
+#include "variable_widgets.h"
 #include "mainwindow.h"
 #include <QtGui>
 #include <boost/lexical_cast.hpp>
+#include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
@@ -971,7 +974,7 @@ namespace MBSimGUI {
     QStringList labels;
     labels << "Type" << "Value" << "Status";
     tree->setHeaderLabels(labels);
-    layout->addWidget(tree,0,0,3,1);
+    layout->addWidget(tree,0,0,6,1);
 
     type = new CustomComboBox;
     type->addItems(type_);
@@ -989,11 +992,11 @@ namespace MBSimGUI {
 
     QPushButton *add = new QPushButton("Add");
     connect(add,SIGNAL(pressed()),this,SLOT(addFeature()));
-    layout->addWidget(add,3,0);
+    layout->addWidget(add,3,1);
 
     QPushButton *remove = new QPushButton("Remove");
     connect(remove,SIGNAL(pressed()),this,SLOT(removeFeature()));
-    layout->addWidget(remove,3,1);
+    layout->addWidget(remove,4,1);
 
     connect(type,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
     connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));

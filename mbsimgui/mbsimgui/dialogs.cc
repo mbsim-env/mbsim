@@ -25,35 +25,79 @@
 #include "rigid_body.h"
 #include "signal_.h"
 #include "constraint.h"
+#include "variable_widgets.h"
 #include "mainwindow.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QTreeWidget>
-#include <QScrollArea>
+#include <QTableWidget>
+#include <QLabel>
+#include <QComboBox>
+#include <QSpinBox>
+
+using namespace std;
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  EvalDialog::EvalDialog(QWidget *var_) : var(var_) {
-    //var = new MatWidget(0,0);
-    QScrollArea *tab = new QScrollArea;
-    tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    tab->setWidgetResizable(true);
+  //EvalDialog::EvalDialog(VariableWidget *var_) : var(var_) {
+  EvalDialog::EvalDialog(const vector<vector<QString> > &var_) {
+    var.resize(var_.size());
+    for(int i=0; i<var_.size(); i++) {
+      var[i].resize(var_[i].size());
+      for(int j=0; j<var[i].size(); j++)
+        var[i][j] = var_[i][j].toDouble();
+    }
 
-    //  var->setReadOnly(true);
-    tab->setWidget(var);
+    QVBoxLayout *mainlayout = new QVBoxLayout;
+    setLayout(mainlayout);
 
-    QVBoxLayout *layout = new QVBoxLayout;
-    setLayout(layout);
-    layout->addWidget(tab);
+    QGridLayout *layout = new QGridLayout;
+    mainlayout->addLayout(layout);
+
+    layout->addWidget(new QLabel("Format:"),0,0);
+    format = new QComboBox;
+    format->addItems(QStringList() << "e" << "E" << "f" << "g" << "G");
+    format->setCurrentIndex(3);
+    layout->addWidget(format,0,1);
+    connect(format, SIGNAL(currentIndexChanged(int)), this, SLOT(updateWidget()));
+
+    layout->addWidget(new QLabel("Precision:"),0,2);
+    precision = new QSpinBox;
+    precision->setValue(6);
+    layout->addWidget(precision,0,3);
+    connect(precision, SIGNAL(valueChanged(int)), this, SLOT(updateWidget()));
+
+    tab = new QTableWidget;
+    tab->setRowCount(var.size());
+    tab->setColumnCount(var.size()?var[0].size():0);
+    for(int i=0; i<tab->rowCount(); i++) {
+      for(int j=0; j<tab->columnCount(); j++)
+        tab->setItem(i,j,new QTableWidgetItem(QString::number(var[i][j],'g',6)));
+    }
+
+    layout->addWidget(tab,1,0,1,5);
+
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Close);
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
-    layout->addWidget(buttonBox);
+    mainlayout->addWidget(buttonBox);
+
+    layout->setColumnStretch(4, 10);
+//    layout->setColumnStretch(2, 20);
+
     setWindowTitle("Expression evaluation");
+  }
+
+  void EvalDialog::updateWidget() {
+    QString f = format->currentText();
+    int p = precision->value();
+    for(int i=0; i<tab->rowCount(); i++) {
+      for(int j=0; j<tab->columnCount(); j++)
+        tab->item(i,j)->setText(QString::number(var[i][j],f[0].toAscii(),p));
+    }
   }
 
   RigidBodyBrowser::RigidBodyBrowser(Element* element_, RigidBody* rigidBody, QWidget *parentObject_) : QDialog(parentObject_), selection(rigidBody), savedItem(0), element(element_) {

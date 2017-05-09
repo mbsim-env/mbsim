@@ -29,6 +29,7 @@
 #include <QSyntaxHighlighter>
 
 class QLabel;
+class QTableWidget;
 
 namespace MBSimGUI {
 
@@ -50,9 +51,9 @@ namespace MBSimGUI {
       virtual void setValue(const QString &str) = 0;
       virtual QString getType() const = 0;
       virtual bool validate(const std::vector<std::vector<QString> > &A) const {return true;}
-      virtual QWidget* getValidatedWidget() const {return 0;}
       virtual int rows() const { return 1; }
       virtual int cols() const { return 1; }
+      virtual std::vector<std::vector<QString> > getEvalMat() const;
   };
 
   class BoolWidget : public VariableWidget {
@@ -63,7 +64,7 @@ namespace MBSimGUI {
       void setValue(const QString &str) {value->setCheckState((str=="0"||str=="false")?Qt::Unchecked:Qt::Checked);}
       virtual QString getType() const {return "Boolean";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
-      virtual QWidget* getValidatedWidget() const;
+      std::vector<std::vector<QString> > getEvalMat() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
@@ -77,10 +78,8 @@ namespace MBSimGUI {
       QString getValue() const { return value->toPlainText(); }
       void setValue(const QString &str) { value->setPlainText(str); }
       virtual QString getType() const {return "Editor";}
-      virtual QWidget* getValidatedWidget() const;
-      std::vector<std::vector<QString> > getMat() const;
-      int rows() const { return getMat().size(); }
-      int cols() const { return getMat().size()?getMat()[0].size():0; }
+      int rows() const { return getEvalMat().size(); }
+      int cols() const { return getEvalMat().size()?getEvalMat()[0].size():0; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
@@ -98,7 +97,7 @@ namespace MBSimGUI {
       void setValue(const QString &str) {box->setText(str=="0"?"":str);}
       virtual QString getType() const {return "Scalar";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
-      virtual QWidget* getValidatedWidget() const;
+      std::vector<std::vector<QString> > getEvalMat() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
@@ -107,7 +106,7 @@ namespace MBSimGUI {
     public:
       virtual std::vector<QString> getVec() const = 0;
       virtual void setVec(const std::vector<QString> &x) = 0;
-      virtual QWidget* getValidatedWidget() const;
+      std::vector<std::vector<QString> > getEvalMat() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
@@ -165,7 +164,7 @@ namespace MBSimGUI {
     public:
       virtual std::vector<std::vector<QString> > getMat() const = 0;
       virtual void setMat(const std::vector<std::vector<QString> > &A) = 0;
-      virtual QWidget* getValidatedWidget() const;
+      std::vector<std::vector<QString> > getEvalMat() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
@@ -365,7 +364,7 @@ namespace MBSimGUI {
       bool validate(const std::vector<std::vector<QString> > &A) const;
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
-      virtual QWidget* getValidatedWidget() const;
+      std::vector<std::vector<QString> > getEvalMat() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
@@ -383,7 +382,7 @@ namespace MBSimGUI {
       bool validate(const std::vector<std::vector<QString> > &A) const;
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
-      virtual QWidget* getValidatedWidget() const;
+      std::vector<std::vector<QString> > getEvalMat() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
@@ -401,7 +400,7 @@ namespace MBSimGUI {
       bool validate(const std::vector<std::vector<QString> > &A) const;
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
-      virtual QWidget* getValidatedWidget() const;
+      std::vector<std::vector<QString> > getEvalMat() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
@@ -419,7 +418,7 @@ namespace MBSimGUI {
       bool validate(const std::vector<std::vector<QString> > &A) const;
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
-      virtual QWidget* getValidatedWidget() const;
+      std::vector<std::vector<QString> > getEvalMat() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
@@ -466,7 +465,7 @@ namespace MBSimGUI {
       QString getFile() const {return relativeFilePath->text();}
       void setFile(const QString &str);
       virtual QString getType() const {return "File";}
-      virtual QWidget* getValidatedWidget() const;
+      std::vector<std::vector<QString> > getEvalMat() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
@@ -638,6 +637,25 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
+  };
+
+  class TableWidget : public VariableWidget {
+
+    private:
+      QTableWidget *table;
+    public:
+      TableWidget(int rows, int cols);
+      TableWidget(const std::vector<std::vector<QString> > &A);
+      void resize_(int rows, int cols);
+      std::vector<std::vector<QString> > getMat() const;
+      void setMat(const std::vector<std::vector<QString> > &A);
+//      void setReadOnly(bool flag);
+      QString getValue() const {return toQStr(getMat());}
+      void setValue(const QString &str) {setMat(strToMat(str));}
+      int rows() const;
+      int cols() const;
+      virtual QString getType() const {return "Matrix";}
+      bool validate(const std::vector<std::vector<QString> > &A) const;
   };
 
 }

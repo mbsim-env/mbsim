@@ -64,9 +64,9 @@ namespace MBSimGUI {
     widget.push_back(widget_);
   }
 
-  void PropertyDialog::addStretch() {
+  void PropertyDialog::addStretch(int s) {
     for ( std::map<QString,QVBoxLayout*>::iterator it=layout.begin() ; it != layout.end(); it++ )
-      (*it).second->addStretch(1);
+      (*it).second->addStretch(s);
   }
 
   void PropertyDialog::updateWidget() {
