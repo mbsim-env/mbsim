@@ -53,7 +53,7 @@ namespace MBSimGUI {
       bool getCancel() const;
     protected:
       std::map<QString,QVBoxLayout*> layout;
-      std::vector<QWidget*> widget;
+//      std::vector<QWidget*> widget;
       QTabWidget *tabWidget;
       QDialogButtonBox *buttonBox;
       QPushButton *buttonResize;
@@ -62,7 +62,7 @@ namespace MBSimGUI {
       void clicked(QAbstractButton *button);
       virtual void toWidget() { }
       virtual void fromWidget() { }
-      virtual void updateWidget();
+      virtual void updateWidget() { }
     signals:
       void apply();
   };

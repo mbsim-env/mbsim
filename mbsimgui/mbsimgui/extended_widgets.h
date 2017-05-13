@@ -68,7 +68,7 @@ namespace MBSimGUI {
       int getIndex() const { return comboBox->currentIndex(); }
       void setIndex(int i) { return comboBox->setCurrentIndex(i); }
       void resize_(int m, int n) { dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n); }
-      void setWidgetFactory(WidgetFactory *factory_) { factory = factory_; }
+      void setWidgetFactory(WidgetFactory *factory_);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 

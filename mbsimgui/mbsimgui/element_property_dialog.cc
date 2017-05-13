@@ -583,11 +583,6 @@ namespace MBSimGUI {
 
     useConstraintSolverForPlot = new ExtWidget("Use constraint solver for plot",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForPlot");
     addToTab("Extra", useConstraintSolverForPlot);
-
-    layout["General"]->addStretch(1);
-    layout["Extra"]->addStretch(1);
-    layout["Environment"]->addStretch(1);
-    layout["Solver parameters"]->addStretch(1);
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2366,6 +2361,10 @@ namespace MBSimGUI {
     addToTab("General", function);
 
     connect(inputSignal,SIGNAL(widgetChanged()),this,SLOT(updateFunctionFactory()));
+  }
+
+  void SignalOperationPropertyDialog::updateWidget() {
+    function->updateWidget();
   }
 
   void SignalOperationPropertyDialog::updateFunctionFactory(bool defineWidget) {

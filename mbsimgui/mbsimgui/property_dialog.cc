@@ -60,8 +60,7 @@ namespace MBSimGUI {
   }
 
   void PropertyDialog::addToTab(const QString &name, QWidget* widget_) {
-    layout[name]->addWidget(widget_);
-    widget.push_back(widget_);
+    layout[name]->insertWidget(layout[name]->count()-1,widget_);
   }
 
   void PropertyDialog::addStretch(int s) {
@@ -69,11 +68,11 @@ namespace MBSimGUI {
       (*it).second->addStretch(s);
   }
 
-  void PropertyDialog::updateWidget() {
-    cout << "original update Widget" << endl;
-//    for(unsigned int i=0; i<widget.size(); i++)
-//      dynamic_cast<WidgetInterface*>(widget[i])->updateWidget();
-  }
+//  void PropertyDialog::updateWidget() {
+//    cout << "original update Widget" << endl;
+////    for(unsigned int i=0; i<widget.size(); i++)
+////      dynamic_cast<WidgetInterface*>(widget[i])->updateWidget();
+//  }
 
   void PropertyDialog::addTab(const QString &name, int i) {  
     QScrollArea *tab = new QScrollArea;
@@ -89,6 +88,8 @@ namespace MBSimGUI {
       tabWidget->addTab(tab, name);
     else 
       tabWidget->insertTab(i,tab,name);
+
+    layout[name]->addStretch(1);
   }
 
   void PropertyDialog::setCancel(bool on) {

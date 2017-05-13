@@ -32,13 +32,13 @@ namespace MBSimGUI {
 
   ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active, const FQN &xmlName_) : QGroupBox(name), widget(widget_), xmlName(xmlName_) {
 
-    QHBoxLayout *layout = new QHBoxLayout;
+    QVBoxLayout *layout = new QVBoxLayout;
 
     if(deactivatable) {
       setCheckable(true);
       connect(this,SIGNAL(toggled(bool)),this,SIGNAL(widgetChanged()));
       connect(this,SIGNAL(toggled(bool)),widget,SLOT(setVisible(bool)));
-      connect(this,SIGNAL(toggled(bool)),this,SLOT(updateWidget()));
+//      connect(this,SIGNAL(toggled(bool)),this,SLOT(updateWidget()));
       setChecked(active);
     }
     setLayout(layout);
@@ -82,6 +82,16 @@ namespace MBSimGUI {
     return NULL;
   }
 
+  void ChoiceWidget2::setWidgetFactory(WidgetFactory *factory_) {
+    factory = factory_;
+    comboBox->blockSignals(true);
+    comboBox->clear();
+    for(int i=0; i<factory->getSize(); i++)
+      comboBox->addItem(factory->getName(i));
+    comboBox->blockSignals(false);
+    //defineWidget(0);
+  }
+
   ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir, int mode_) : widget(0), factory(factory_), mode(mode_) {
     layout = new QBoxLayout(dir);
     layout->setMargin(0);
@@ -92,7 +102,9 @@ namespace MBSimGUI {
       comboBox->addItem(factory->getName(i));
     layout->addWidget(comboBox);
     defineWidget(0);
+//    connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SIGNAL(widgetChanged()));
     connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
+//    connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateWidget()));
   }
 
   void ChoiceWidget2::defineWidget(int index) {
@@ -100,9 +112,7 @@ namespace MBSimGUI {
     delete widget;
     widget = factory->createWidget(index);
     layout->addWidget(widget);
-    updateWidget();
     emit widgetChanged();
-    emit Widget::widgetChanged();
     connect(widget,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
   }
 
@@ -179,6 +189,7 @@ namespace MBSimGUI {
   void ContainerWidget::addWidget(QWidget *widget_) {
     layout->addWidget(widget_); 
     widget.push_back(widget_);
+    connect(widget[widget.size()-1],SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
   }
 
   void ContainerWidget::updateWidget() {
@@ -201,7 +212,7 @@ namespace MBSimGUI {
   }
 
   ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, int m, int mode_, bool fixedSize, int minSize, int maxSize) : factory(factory_), name(name_), mode(mode_) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -209,18 +220,15 @@ namespace MBSimGUI {
     spinBox->setDisabled(fixedSize);
     spinBox->setRange(minSize,maxSize);
     spinBox->setValue(m);
-    QWidget *box = new QWidget;
-    QHBoxLayout *hbox = new QHBoxLayout;
-    box->setLayout(hbox);
-    hbox->setMargin(0);
-    hbox->addWidget(spinBox);
+    layout->addWidget(new QLabel("Number:"),0,0);
+    layout->addWidget(spinBox,0,1);
     connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     list = new QListWidget;
-    hbox->addWidget(list);
-    layout->addWidget(box);
+    layout->addWidget(list,1,0,1,3);
     stackedWidget = new QStackedWidget;
     connect(list,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
-    layout->addWidget(stackedWidget);
+    layout->addWidget(stackedWidget,2,0,1,3);
+    layout->setColumnStretch(2,1);
     currentIndexChanged(m);
   }
 
@@ -276,7 +284,7 @@ namespace MBSimGUI {
 
       QWidget *widget = factory->createWidget();
       stackedWidget->addWidget(widget);
-      dynamic_cast<WidgetInterface*>(widget)->updateWidget();
+//      dynamic_cast<WidgetInterface*>(widget)->updateWidget();
       if(i>0)
         widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 

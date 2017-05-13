@@ -342,7 +342,7 @@ namespace MBSimGUI {
       bool validate(const std::vector<std::vector<QString> > &A) const;
 
     public slots:
-        void currentIndexChanged(int);
+      void currentIndexChanged(int);
     signals:
       void sizeChanged(int);
   };

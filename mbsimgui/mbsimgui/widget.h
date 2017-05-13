@@ -45,6 +45,8 @@ namespace MBSimGUI {
       Widget() { }
     signals:
       void widgetChanged();
+    public slots:
+      void updateWidget() { }
   };
 
   class WidgetFactory {

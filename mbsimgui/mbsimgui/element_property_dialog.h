@@ -799,6 +799,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *inputSignal, *function;
+      void updateWidget();
     protected slots:
       void updateFunctionFactory(bool defineWidget=true);
   };

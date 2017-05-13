@@ -156,11 +156,10 @@ namespace MBSimGUI {
       void resize_(int m, int n);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      void updateWidget();
     protected:
       QString ext;
       ExtWidget *fo, *fi;
-    public slots:
-      void updateWidget();
   };
 
   class LimitedFunctionWidget : public FunctionWidget {
@@ -205,6 +204,7 @@ namespace MBSimGUI {
   };
 
   class TabularFunctionWidget : public FunctionWidget {
+    Q_OBJECT
 
     public:
       TabularFunctionWidget(int n);
@@ -214,21 +214,28 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ChoiceWidget2* choice;
+    protected slots:
+      void choiceChanged();
+      void updateWidget();
   };
 
   class TwoDimensionalTabularFunctionWidget : public FunctionWidget {
+    Q_OBJECT
 
     public:
       TwoDimensionalTabularFunctionWidget(int n);
       QString getType() const { return "TwoDimensionalTabularFunction"; }
-      void resize_(int m, int n);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ChoiceWidget2* choice;
+    protected slots:
+      void choiceChanged();
+      void updateWidget();
   };
 
   class PiecewisePolynomFunctionWidget : public FunctionWidget {
+    Q_OBJECT
 
     public:
       PiecewisePolynomFunctionWidget(int n);
@@ -239,19 +246,25 @@ namespace MBSimGUI {
     protected:
       ChoiceWidget2* choice;
       ExtWidget *method;
+    protected slots:
+      void choiceChanged();
+      void updateWidget();
   };
 
   class TwoDimensionalPiecewisePolynomFunctionWidget : public FunctionWidget {
+    Q_OBJECT
 
     public:
       TwoDimensionalPiecewisePolynomFunctionWidget(int n);
       QString getType() const { return "TwoDimensionalPiecewisePolynomFunction"; }
-      void resize_(int m, int n);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ChoiceWidget2* choice;
       ExtWidget *method;
+    protected slots:
+      void choiceChanged();
+      void updateWidget();
   };
 
   class FourierFunctionWidget : public FunctionWidget {

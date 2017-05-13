@@ -358,24 +358,18 @@ namespace MBSimGUI {
 
   VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_, int singleStep, bool transpose) : minSize(minSize_), maxSize(maxSize_) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
-    QWidget *box = new QWidget;
-    QHBoxLayout *hbox = new QHBoxLayout;
-    box->setLayout(hbox);
-    hbox->setMargin(0);
-    layout->addWidget(box);
     sizeCombo = new CustomSpinBox;
     sizeCombo->setRange(minSize,maxSize);
     sizeCombo->setSingleStep(singleStep);
-    hbox->addWidget(sizeCombo);
-    //  hbox->addWidget(new QLabel("x"));
-    //  hbox->addWidget(new QLabel("1"));
+    layout->addWidget(new QLabel("Size:"),0,0);
+    layout->addWidget(sizeCombo,0,1);
     sizeCombo->setValue(size);
     connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
-    hbox->addStretch(2);
     widget = new VecWidget(size, transpose);
-    layout->addWidget(widget);
+    layout->addWidget(widget,1,0,1,3);
+    layout->setColumnStretch(2,1);
     setLayout(layout);
   }
 
@@ -396,6 +390,7 @@ namespace MBSimGUI {
   void VecSizeVarWidget::currentIndexChanged(int size) {
     widget->resize_(size);
     emit sizeChanged(size);
+    emit Widget::widgetChanged();
   }
 
   bool VecSizeVarWidget::validate(const vector<vector<QString> > &A) const {
@@ -532,24 +527,20 @@ namespace MBSimGUI {
 
   MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
-    QWidget *box = new QWidget;
-    QHBoxLayout *hbox = new QHBoxLayout;
-    box->setLayout(hbox);
-    hbox->setMargin(0);
-    layout->addWidget(box);
     rowsLabel = new QLabel(QString::number(rows));
-    hbox->addWidget(rowsLabel);
-    hbox->addWidget(new QLabel("x"));
+    layout->addWidget(new QLabel("Size:"),0,0);
+    layout->addWidget(rowsLabel,0,1);
+    layout->addWidget(new QLabel("x"),0,2);
     colsCombo = new CustomSpinBox;
     colsCombo->setRange(minCols,maxCols);
     colsCombo->setValue(cols);
     connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
-    hbox->addWidget(colsCombo);
-    hbox->addStretch(2);
+    layout->addWidget(colsCombo,0,3);
     widget = new MatWidget(rows,cols);
-    layout->addWidget(widget);
+    layout->addWidget(widget,1,0,1,5);
+    layout->setColumnStretch(4,1);
     setLayout(layout);
   }
 
@@ -585,24 +576,20 @@ namespace MBSimGUI {
 
   MatRowsVarWidget::MatRowsVarWidget(int rows, int cols, int minRows_, int maxRows_) : minRows(minRows_), maxRows(maxRows_) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
-    QWidget *box = new QWidget;
-    QHBoxLayout *hbox = new QHBoxLayout;
-    box->setLayout(hbox);
-    hbox->setMargin(0);
-    layout->addWidget(box);
+    colsLabel = new QLabel(QString::number(cols));
+    layout->addWidget(new QLabel("Size:"),0,0);
+    layout->addWidget(colsLabel,0,3);
+    layout->addWidget(new QLabel("x"),0,2);
     rowsCombo = new CustomSpinBox;
     rowsCombo->setRange(minRows,maxRows);
     rowsCombo->setValue(rows);
     connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
-    hbox->addWidget(rowsCombo);
-    hbox->addWidget(new QLabel("x"));
-    colsLabel = new QLabel(QString::number(cols));
-    hbox->addWidget(colsLabel);
-    hbox->addStretch(2);
+    layout->addWidget(rowsCombo,0,1);
     widget = new MatWidget(rows,cols);
-    layout->addWidget(widget);
+    layout->addWidget(widget,1,0,1,5);
+    layout->setColumnStretch(4,1);
     setLayout(layout);
   }
 
@@ -625,6 +612,7 @@ namespace MBSimGUI {
   void MatRowsVarWidget::currentIndexChanged(int rows) {
     widget->resize_(rows,widget->cols());
     emit sizeChanged(rows);
+    emit Widget::widgetChanged();
   }
 
   bool MatRowsVarWidget::validate(const vector<vector<QString> > &A) const {
