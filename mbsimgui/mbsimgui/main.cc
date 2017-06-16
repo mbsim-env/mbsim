@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
     cout    <<"                [<dir>] [<mbsimfile>] [<parameterfile>] [<integratorfile>]"<<endl;
     cout    <<""<<endl;
     cout    <<"-h|--help          Shows this help"<<endl;
+    cout    <<"--fullscreen       Start in full screen mode"<<endl;
     cout    <<"<dir>              Load first *.mbsim.xml, *.mbsimparam.xml"<<endl;
     cout    <<"                   and *.mbsimint.xml file in <dir>."<<endl;
     cout    <<"<mbsimfile>        Load <mbsimfile>"<<endl;
@@ -71,6 +72,7 @@ int main(int argc, char *argv[]) {
   setlocale(LC_ALL, "C");
   MainWindow mainwindow(arg);
   mainwindow.show();
+  if(arg.contains("--fullscreen")) mainwindow.showFullScreen(); // must be done after mainwindow.show()
   //mainwindow.showMaximized();
   //mainwindow->resize(1400, 900);
   //mainwindow->resize(1100, 700);
