@@ -159,7 +159,7 @@ try:
     <p>Set cookie in your browser.</p>
     <p>This window should close itself after a short time.</p>
   </body>
-</html>'''%(login, login))
+</html>'''%(login))
 
   # logout
   if action=="/logout" and method=="GET":
