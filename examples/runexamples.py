@@ -1781,7 +1781,7 @@ def coverage(mainFD):
   # generate html files
   ret=ret+abs(subprocess.call(["genhtml", "-t", "MBSim-Env Examples", "--prefix", args.coverage.split(":")[0], "--legend",
     "--html-prolog", pj(scriptDir, "lcov-prolog.parthtml"), "--html-epilog", pj(scriptDir, "lcov-epilog.parthtml"),
-    "--no-function-coverage", "-o", pj(args.reportOutDir, "coverage"),
+    "--demangle-cpp", "-o", pj(args.reportOutDir, "coverage"),
     pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
   lcovFD.close()
 
@@ -1798,7 +1798,7 @@ def coverage(mainFD):
     sys.path.append(args.buildSystemRun)
     import buildSystemState
     buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", str(covRate)+"%",
-      "#5cb85c" if covRate>=90 else ("#f0ad4e" if covRate>=75 else "#d9534f"))
+      "#5cb85c" if covRate>=90 else ("#f0ad4e" if covRate>=70 else "#d9534f"))
 
   if ret==0:
     print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;', file=mainFD)
