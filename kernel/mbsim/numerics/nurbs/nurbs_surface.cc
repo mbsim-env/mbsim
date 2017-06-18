@@ -386,8 +386,8 @@ namespace MBSim {
    */
 
   void NurbsSurface::findSpan(double u, double v, int spanU, int spanV) const {
-    spanU = findSpanU(u);
-    spanV = findSpanV(v);
+    //spanU = findSpanU(u);
+    //spanV = findSpanV(v);
   }
 
   /*!

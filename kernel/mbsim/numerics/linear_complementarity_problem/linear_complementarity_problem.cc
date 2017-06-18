@@ -267,7 +267,6 @@ namespace MBSim {
       solution = lemkeSolver.solve();
 
       if (lemkeSolver.getInfo() == 0) {
-        solved = true;
         if (DEBUGLEVEL >= 1) {
           cout << "LemkerSolver found solution (in fallback case): " << lemkeSolver.getSteps() << " step(s)." << endl;
           if (DEBUGLEVEL >= 2) {

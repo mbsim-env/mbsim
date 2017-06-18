@@ -60,7 +60,6 @@ namespace MBSim {
     hFrustum=getDouble(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"roundingRadius");
     rho=getDouble(e);
-    e=e->getNextElementSibling();
     if(E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV"))
       enableOpenMBV();
     checkInput();

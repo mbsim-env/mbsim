@@ -136,7 +136,6 @@ namespace MBSim {
     DOMElement* e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"radius");
     setRadius(getDouble(e));
-    e=e->getNextElementSibling();
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVSphere ombv;
