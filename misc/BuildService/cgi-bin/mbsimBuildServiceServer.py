@@ -132,8 +132,8 @@ try:
             c=Cookie.SimpleCookie()
             c['mbsimenvsessionid']=sessionid
             c['mbsimenvsessionid']['comment']="Session ID for www.mbsim-env.de"
-            c['mbsimenvsessionid']['domain']='.www.ssl-id1.de'
-            c['mbsimenvsessionid']['path']='/www.mbsim-env.de'
+            c['mbsimenvsessionid']['domain']='www.mbsim-env.de'
+            c['mbsimenvsessionid']['path']='/'
             c['mbsimenvsessionid']['secure']=True
             c['mbsimenvsessionid']['httponly']=True
             defaultOutput=False
@@ -152,8 +152,7 @@ try:
     <script type="text/javascript">
       $(document).ready(function() {
         // notify opener window
-        window.opener.postMessage("User %s successfully logged in.", "http://www.mbsim-env.de");
-        window.opener.postMessage("User %s successfully logged in.", "https://www.ssl-id1.de");
+        window.opener.postMessage("User %s successfully logged in.", "https://www.mbsim-env.de");
       })
     </script>
     <h1>Please Wait</h1>
@@ -382,9 +381,9 @@ try:
                          "message": "Release "+data['relStr']+" of MBSim-Env for "+platform+"\n"+\
                                     "\n"+\
                                     "The binary "+platform+" release can be downloaded from\n"+\
-                                    "http://www.mbsim-env.de/mbsim/releases/"+relArchiveName+"\n"+\
+                                    "https://www.mbsim-env.de/mbsim/releases/"+relArchiveName+"\n"+\
                                     "Please note that this binary release includes a full build of MBSim-Env not only of this repository.\n"+\
-                                    "Also look at http://www.mbsim-env.de/mbsim/releases for other platforms of this release version.\n",
+                                    "Also look at https://www.mbsim-env.de/mbsim/releases for other platforms of this release version.\n",
                          "object": data['commitid'][repo],
                          "type": "commit",
                          "tagger": {
@@ -417,9 +416,9 @@ try:
               createRelData={"tag_name": tagName,
                              "name": "Release "+data['relStr']+" of MBSim-Env for "+platform,
                              "body": "The binary "+platform+" release can be downloaded from\n"+\
-                                     "http://www.mbsim-env.de/mbsim/releases/"+relArchiveName+"\n"+\
+                                     "https://www.mbsim-env.de/mbsim/releases/"+relArchiveName+"\n"+\
                                      "Please note that this binary release includes a full build of MBSim-Env not only of this repository. "+\
-                                     "Also look at http://www.mbsim-env.de/mbsim/releases for other platforms of this release version.",
+                                     "Also look at https://www.mbsim-env.de/mbsim/releases for other platforms of this release version.",
                              "draft": False,
                              "prerelease": False}
               response=requests.post('https://api.github.com/repos/'+org+'/'+repo+'/releases',
@@ -464,7 +463,6 @@ except:
 # generate response
 if defaultOutput:
   print('Content-Type: application/json')
-  print('Access-Control-Allow-Origin: http://www.mbsim-env.de') # allow CORS from www.mbsim-env.de
   print('Access-Control-Allow-Credentials: true')
   print()
   print(json.dumps(response_data))

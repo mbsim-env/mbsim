@@ -27,7 +27,7 @@
             var content=$($(this).get(0).getElementsByTagNameNS(NS, "content")).text();
             var link=$($(this).get(0).getElementsByTagNameNS(NS, "link")).attr("href");
             var updated=$($(this).get(0).getElementsByTagNameNS(NS, "updated")).text();
-            ret.push([updated, title, '<a href="../'+link.substring("http://www.mbsim-env.de/mbsim/".length)+'">'+content+'</a>']);
+            ret.push([updated, title, '<a href="../'+link.substring("https://www.mbsim-env.de/mbsim/".length)+'">'+content+'</a>']);
           });
           return ret;
         }

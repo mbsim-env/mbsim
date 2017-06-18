@@ -1,4 +1,4 @@
-var cgiPath="https://www.ssl-id1.de/www.mbsim-env.de/cgi-bin/mbsimBuildServiceServer.py";
+var cgiPath="https://www.mbsim-env.de/cgi-bin/mbsimBuildServiceServer.py";
 
 // indicate start of server commnication
 function statusCommunicating() {
@@ -37,7 +37,7 @@ function statusMessage(response) {
 }
 
 $(document).ready(function() {
-// when the login button is clicked redirect to github auth page
+  // when the login button is clicked redirect to github auth page
   var loginWindow;
   $("#LOGINBUTTON").click(function() {
     statusCommunicating();
@@ -47,7 +47,7 @@ $(document).ready(function() {
   window.addEventListener("message", loginCallback, false);
   function loginCallback(event) {
     // do nothing for wrong origin
-    if(event.origin!=="https://www.ssl-id1.de")
+    if(event.origin!=="https://www.mbsim-env.de")
       return;
     // close opened github login window and display the status message
     loginWindow.close();

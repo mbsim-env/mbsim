@@ -6,7 +6,7 @@ import subprocess
 
 SRCDIR="/home/mbsim/win64-dailyrelease"
 OUTDIR="/var/www/html/mbsim/win64-dailyrelease"
-URL="http://www.mbsim-env.de/mbsim/win64-dailyrelease"
+URL="https://www.mbsim-env.de/mbsim/win64-dailyrelease"
 SCRIPTDIR=os.path.dirname(os.path.realpath(__file__))
 
 

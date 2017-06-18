@@ -102,9 +102,9 @@
     </ul>
     <hr/>
     <span class="pull-left small">
-      <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
-      <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
-      <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
+      <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
+      <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
+      <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
     </span>
     <span class="pull-right small">
       Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by MBSimXML<xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>

@@ -37,7 +37,7 @@ else:
 
 # global variables
 scriptDir=os.path.dirname(os.path.realpath(__file__))
-buildSystemRootURL="http://www.mbsim-env.de/mbsim"
+buildSystemRootURL="https://www.mbsim-env.de/mbsim"
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
 mbxmlutilsvalidate=None
@@ -555,9 +555,9 @@ def main():
 </div>
 <hr/>
 <span class="pull-left small">
-  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
-  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
-  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
+  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
+  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
+  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
 </span>
 <span class="pull-right small">
   Generated on %s by runexamples.py
@@ -874,9 +874,9 @@ def runExample(resultQueue, example):
       print('</tbody></table>', file=htmlOutputFD)
       print('<hr/>',  file=htmlOutputFD)
       print('<span class="pull-left small">',  file=htmlOutputFD)
-      print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /',  file=htmlOutputFD)
-      print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /',  file=htmlOutputFD)
-      print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>',  file=htmlOutputFD)
+      print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /',  file=htmlOutputFD)
+      print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /',  file=htmlOutputFD)
+      print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
       print('<span class="pull-right small">',  file=htmlOutputFD)
       print('  Generated on %s by runexamples.py'%(str(timeID)), file=htmlOutputFD)
@@ -1200,9 +1200,9 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<p><object data="plot.svg" type="image/svg+xml"> </object></p>', file=diffHTMLPlotFD)
   print('<hr/>', file=diffHTMLPlotFD)
   print('<span class="pull-left small">', file=diffHTMLPlotFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=diffHTMLPlotFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=diffHTMLPlotFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=diffHTMLPlotFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=diffHTMLPlotFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=diffHTMLPlotFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
   print('<span class="pull-right small">', file=diffHTMLPlotFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=diffHTMLPlotFD)
@@ -1585,9 +1585,9 @@ def compareExample(example, compareFN):
   print('</tbody></table>', file=compareFD)
   print('<hr/>', file=compareFD)
   print('<span class="pull-left small">', file=compareFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=compareFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=compareFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=compareFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=compareFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=compareFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=compareFD)
   print('</span>', file=compareFD)
   print('<span class="pull-right small">', file=compareFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=compareFD)

@@ -43,7 +43,7 @@ def update(buildType, title, content, link, nrFailed, nrRun):
     elefeed.insert(5, eleentry)
     eleid=ET.Element(NS+"id")
     eleentry.append(eleid)
-    eleid.text="http://www.mbsim-env.de/atom/mbsim-env-build-system/"+curtime.strftime("%s")
+    eleid.text="https://www.mbsim-env.de/atom/mbsim-env-build-system/"+curtime.strftime("%s")
     elecategory=ET.Element(NS+"category", term=buildType)
     eleentry.append(elecategory)
     elelink=ET.Element(NS+"link", rel="alternate", href=link)

@@ -45,7 +45,7 @@ if len(checkedExamples)>0:
 if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
   "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--coverage", "--staticCodeAnalyzis", "--reportOutDir",
   "/var/www/html/mbsim/linux64-dailydebug/report", "--url",
-  "http://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
+  "https://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
   "--passToConfigure", "--enable-python", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
   "--passToRunexamples"])!=0:
@@ -66,7 +66,7 @@ if subprocess.call(["git", "pull"])!=0:
 os.environ["MBSIM_SET_MINIMAL_TEND"]="1"
 if simplesandbox.call(["./runexamples.py", "--rotate", "30", "-j", "2", "--coverage", SRCDIR+"::"+SRCDIR+"/local", "--reportOutDir",
                     "/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report", "--url",
-                    "http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
+                    "https://www.mbsim-env.de/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
                     "--buildSystemRun", SCRIPTDIR,
                     "--prefixSimulationKeyword=VALGRIND", "--prefixSimulation",
                     "valgrind --trace-children=yes --trace-children-skip=*/rm --num-callers=150 --gen-suppressions=all --suppressions="+

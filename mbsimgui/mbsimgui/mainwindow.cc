@@ -1036,9 +1036,9 @@ namespace MBSimGUI {
         "<ul>"
         "tbd"
         //"  <li>'Qt - A cross-platform application and UI framework' by Nokia from <tt>http://www.qtsoftware.com</tt> (License: GPL/LGPL)</li>"
-        //"  <li>'mbsimflatxml - tbd <tt>http://www.mbsim-env.de/</tt> (Licence: Qwt/LGPL)</li>"
-        //"  <li>'OpenMBV - tbd <tt>http://www.mbsim-env.de/</tt> (License: LGPL)</li>"
-        //"  <li>'h5plotserie - tbd <tt>http://www.mbsim-env.de/</tt> (License: NCSA-HDF)</li>"
+        //"  <li>'mbsimflatxml - tbd <tt>https://www.mbsim-env.de/</tt> (Licence: Qwt/LGPL)</li>"
+        //"  <li>'OpenMBV - tbd <tt>https://www.mbsim-env.de/</tt> (License: LGPL)</li>"
+        //"  <li>'h5plotserie - tbd <tt>https://www.mbsim-env.de/</tt> (License: NCSA-HDF)</li>"
         //"  <li>...</li>"
         "</ul>"
         );
