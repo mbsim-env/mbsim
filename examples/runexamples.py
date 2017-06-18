@@ -115,7 +115,7 @@ cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
 cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables (wine is used if set)")
 cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out")
 cfgOpts.add_argument("--maxCompareFailure", default=200, type=float, help="Maximal number of compare failures to report. Use 0 for unlimited (default: 200)")
-cfgOpts.add_argument("--coverage", default=None, type=str, help='Enable coverage analyzis using gcov/lcov; The arg must be the base dir of the source/build dir + ":" + the --binSuffix.')
+cfgOpts.add_argument("--coverage", default=None, type=str, help='Enable coverage analyzis using gcov/lcov; The arg must be the base dir of the source/
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
@@ -1779,7 +1779,7 @@ def coverage(mainFD):
     print(line, end="")
 
   # generate html files
-  ret=ret+abs(subprocess.call(["genhtml", "-t", "MBSim-Env Examples", "--prefix", args.coverage.split(":")[0], "--legend",
+  ret=ret+abs(subprocess.call(["genhtml", "-t", "MBSim-Env Examples (%s)"%(args.buildType), "--prefix", args.coverage.split(":")[0], "--legend",
     "--html-prolog", pj(scriptDir, "lcov-prolog.parthtml"), "--html-epilog", pj(scriptDir, "lcov-epilog.parthtml"),
     "--demangle-cpp", "-o", pj(args.reportOutDir, "coverage"),
     pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
