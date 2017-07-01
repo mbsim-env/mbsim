@@ -549,15 +549,6 @@ def main():
  Update references<span class="caret"> </span></a></div>
   <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">
     <p>Update the references of the selected examples before next build.</p>
-    <p><small>(On login this server stores some personal data obtained from GitHub, including an access token. Logout removes these data. You can also revoke the access token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known or checked by this server.)</small></p>
-    <p>
-      <span class="octicon octicon-person"></span>&nbsp;
-      <img id="LOGINAVATAR" src="" alt="avatar" height="30" width="30"/>&nbsp;
-      <strong id="LOGINUSER">unknwon</strong>
-      <button id="LOGINBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in">
-        </span>&nbsp;Login using <span class="octicon octicon-logo-github"></span></button>
-      <button id="LOGOUTBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
-    </p>
     <p>
       <button id="SAVEBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-ok"></span>&nbsp;Save changes</button>
     </p>
