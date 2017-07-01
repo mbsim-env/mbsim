@@ -32,8 +32,10 @@ import zipfile
 import tempfile
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
+  import urllib as myurllibp
 else:
   import urllib.request as myurllib
+  import urllib.parse as myurllibp
 
 # global variables
 scriptDir=os.path.dirname(os.path.realpath(__file__))
@@ -129,6 +131,7 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--buildSystemRun", default=None, type=str, help="Run in build system mode: generate build system state; The dir to the scripts of the build system must be passed.")
+debugOpts.add_argument("--webapp", action="store_true", help="Add buttons for mbsimwebapp.")
 
 # parse command line options
 args = argparser.parse_args()
@@ -410,6 +413,18 @@ def main():
           });
         });
       }
+
+      // if this is the current result and the sessionid cookie exists then enable the webapp buttons
+      if($(location).attr('href').search("/result_current/")>=0) {
+        var c=document.cookie.split(';');
+        for(var i=0; i<c.length; i++)
+          if(c[i].split('=')[0].trim()=="mbsimenvsessionid") {
+            $("._WEBAPP").each(function() {
+              $(this).removeAttr("disabled");
+            });
+            break;
+          }
+      }
     });
   </script>'''%(args.buildType, buildSystemRootURL), file=mainFD)
 
@@ -453,6 +468,8 @@ def main():
   if not args.disableCompare:
     print('<th><div class="pull-left"><span class="glyphicon glyphicon-search"></span>&nbsp;Ref.</div>'+\
           '<div class="pull-right" style="padding-right:0.75em;">[update]</div></th>', file=mainFD)
+  if not args.disableRun and args.buildSystemRun!=None and args.webapp:
+    print('<th><span class="glyphicon glyphicon-picture"></span>&nbsp;Webapp</th>', file=mainFD)
   if not args.disableRun:
     print('<th><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Depr.</th>', file=mainFD)
   if not args.disableValidate:
@@ -806,6 +823,10 @@ def runExample(resultQueue, example):
                      '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
 
     # check for deprecated features
+    if not args.disableRun and args.buildSystemRun!=None and args.webapp:
+      resultStr+=webapp(example[0])
+
+    # check for deprecated features
     if not args.disableRun:
       nrDeprecated=0
       for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
@@ -899,7 +920,8 @@ def runExample(resultQueue, example):
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
     resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td>%s</tr>' \
-      %('<td>-</td>'*(5-sum([args.disableRun, args.disableCompare, args.disableValidate])))
+      %('<td>-</td>'*(5-sum([args.disableRun, args.disableCompare, args.disableValidate,
+      args.disableRun or args.buildSystemRun==None or not args.webapp])))
     runExampleRet=1
   finally:
     os.chdir(savedDir)
@@ -907,6 +929,49 @@ def runExample(resultQueue, example):
     return runExampleRet
 
 
+
+def webapp(example):
+  ombv={}
+  fl=glob.glob("*.ombv.xml")
+  if len(fl)>0:
+    ombv={'buildType': args.buildType, 'prog': 'openmbv'}
+    if 'TS.ombv.xml' in fl:
+      ombv['file']=example+'/TS.ombv.xml'
+    elif 'MBS.ombv.xml' in fl:
+      ombv['file']=example+'/MBS.ombv.xml'
+    else:
+      ombv['file']=[example+'/'+f for f in fl]
+  h5p={}
+  fl=glob.glob("*.mbsim.h5")
+  if len(fl)>0:
+    h5p={'buildType': args.buildType, 'prog': 'h5plotserie'}
+    if 'TS.mbsim.h5' in fl:
+      h5p['file']=example+'/TS.mbsim.h5'
+    elif 'MBS.mbsim.h5' in fl:
+      h5p['file']=example+'/MBS.mbsim.h5'
+    else:
+      h5p['file']=[example+'/'+f for f in fl]
+  gui={}
+  if os.path.exists("MBS.mbsimprj.xml") or os.path.exists("FMI.mbsimprj.xml"):
+    gui={'buildType': args.buildType, 'prog': 'mbsimgui'}
+    if os.path.exists("MBS.mbsimprj.xml"):
+      gui['file']=example+'MBS.mbsimprj.xml'
+    else:
+      gui['file']=example+'FMI.mbsimprj.xml'
+  return '<td>'+\
+      ('<a disabled="disabled" style="visibility:'+('visible' if len(ombv)>0 else 'hidden')+\
+       ';" class="_WEBAPP btn btn-default btn-xs" href="'+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+myurllibp.urlencode(ombv)+'">'+\
+       '<img src="%s/html/openmbv.svg"/></a>'%(buildSystemRootURL)+\
+       '&nbsp;')+\
+      ('<a disabled="disabled" style="visibility:'+('visible' if len(h5p)>0 else 'hidden')+\
+       ';" class="_WEBAPP btn btn-default btn-xs" href="'+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+myurllibp.urlencode(h5p)+'">'+\
+       '<img src="%s/html/h5plotserie.svg"/></a>'%(buildSystemRootURL)+\
+       '&nbsp;')+\
+      ('<a disabled="disabled" style="visibility:'+('visible' if len(gui)>0 else 'hidden')+\
+       ';" class="_WEBAPP btn btn-default btn-xs" href="'+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+myurllibp.urlencode(gui)+'">'+\
+       '<img src="%s/html/mbsimgui.svg"/></a>'%(buildSystemRootURL)+\
+       '&nbsp;')+\
+    '</td>'
 
 # if args.exeEXt is set we must prefix every command with wine
 def exePrefix():
@@ -1806,7 +1871,8 @@ def coverage(mainFD):
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
   print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
         '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%d%%</span></a></td>'%(covRate), file=mainFD)
-  for i in range(0, 5-sum([4*args.disableRun, args.disableCompare, args.disableValidate])):
+  for i in range(0, 5-sum([4*args.disableRun, args.disableCompare, args.disableValidate,
+    args.disableRun or args.buildSystemRun==None or not args.webapp])):
     print('<td>-</td>', file=mainFD)
   print('</tr>', file=mainFD); mainFD.flush()
   return 1 if ret!=0 else 0

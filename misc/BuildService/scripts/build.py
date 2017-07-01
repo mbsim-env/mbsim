@@ -76,6 +76,7 @@ def parseArguments():
   cfgOpts.add_argument("--buildSystemRun", action="store_true", help='Run in build system mode: generate build system state files and run with simplesandbox.')
   cfgOpts.add_argument("--coverage", action="store_true", help='Enable coverage analyzis using gcov/lcov.')
   cfgOpts.add_argument("--staticCodeAnalyzis", action="store_true", help='Enable static code analyzis using LLVM Clang Analyzer.')
+  cfgOpts.add_argument("--webapp", action="store_true", help='Just passed to runexamples.py.')
   
   outOpts=argparser.add_argument_group('Output Options')
   outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
@@ -987,6 +988,8 @@ def runexamples(mainFD):
     command.extend(["--buildSystemRun", scriptdir])
   if args.coverage:
     command.extend(["--coverage", args.sourceDir+":"+args.binSuffix+":"+args.prefix])
+  if args.webapp:
+    command.extend(["--webapp"])
   command.extend(args.passToRunexamples)
 
   print("")
