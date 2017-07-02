@@ -5,9 +5,8 @@
   <meta charset="utf-8">
   <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
               Remove this if you use the .htaccess -->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- Apple iOS Safari settings -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <!-- App Start Icon  -->
@@ -107,7 +106,7 @@
       rfb.connect("www.mbsim-env.de", 443, "", "websockify?token="+encodeURIComponent(window.location.search.substring(1)));
     };
   </script>
-  <canvas id="noVNC_canvas" width="1px" height="1px">
+  <canvas id="noVNC_canvas" width="1" height="1">
     <div class="panel panel-danger">
       <div class="panel-heading"><span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;Error message</div>
       <div class="panel-body text-center">
@@ -120,7 +119,7 @@
     <div class="panel-body text-center">
       <div id="STATUSMSG">
         <p>Connecting, please wait.</p>
-        <p><object data="loading.svg" type="image/svg+xml"/></p>
+        <p><object data="loading.svg" type="image/svg+xml"></object></p>
       </div>
     </div>
   </div>
