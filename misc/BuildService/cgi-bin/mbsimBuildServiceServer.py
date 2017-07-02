@@ -152,7 +152,8 @@ try:
   <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Set cookie and notify opener windows</title>
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
+    <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">
+    <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">
   </head>
   <body style="margin:0.5em">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
