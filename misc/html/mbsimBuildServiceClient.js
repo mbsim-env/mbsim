@@ -70,7 +70,7 @@ $(document).ready(function() {
     $.ajax({url: cgiPath+"/getuser", xhrFields: {withCredentials: true}, dataType: "json", type: "GET"}).done(function(response) {
       if(!response.success) {
         $('#LOGINUSER').text("Internal error: "+response.message);
-        $('#LOGINAVATAR').attr("src", "");
+        $('#LOGINAVATAR').attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
       }
       else {
         $('#LOGINUSER').text(response.username);

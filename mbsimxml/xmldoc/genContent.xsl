@@ -32,7 +32,8 @@
       <title>MBSimXML - XML Documentation</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
-      <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
+      <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">
+      <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">
       <style type="text/css">
         *._element { font-family:monospace; font-weight:bold; }
         *._type { font-family:monospace; }
