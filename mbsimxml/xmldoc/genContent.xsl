@@ -108,7 +108,7 @@
     </span>
     <span class="pull-right small">
       Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by MBSimXML<xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
-      <a href="http://validator.w3.org/check?uri=referer">
+      <a href="https://validator.w3.org/check?uri=referer">
         <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
       </a>
     </span>

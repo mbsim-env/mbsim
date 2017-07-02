@@ -418,9 +418,9 @@ def main():
       if($(location).attr('href').search("/result_current/")>=0) {
         var c=document.cookie.split(';');
         for(var i=0; i<c.length; i++)
-          if(c[i].split('=')[0].trim()=="mbsimenvsessionid") {
+          if(c[i].split('=')[0].trim()=="mbsimenvsessionid_js") {
             $("._WEBAPP").each(function() {
-              $(this).removeAttr("disabled");
+              $(this).prop("disabled", false);
             });
             break;
           }
@@ -569,7 +569,7 @@ def main():
 </span>
 <span class="pull-right small">
   Generated on %s by runexamples.py
-  <a href="http://validator.w3.org/check?uri=referer">
+  <a href="https://validator.w3.org/check?uri=referer">
     <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
   </a>
 </span>
@@ -892,7 +892,7 @@ def runExample(resultQueue, example):
       print('</span>',  file=htmlOutputFD)
       print('<span class="pull-right small">',  file=htmlOutputFD)
       print('  Generated on %s by runexamples.py'%(str(timeID)), file=htmlOutputFD)
-      print('  <a href="http://validator.w3.org/check?uri=referer">',  file=htmlOutputFD)
+      print('  <a href="https://validator.w3.org/check?uri=referer">',  file=htmlOutputFD)
       print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>',  file=htmlOutputFD)
       print('  </a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
@@ -911,8 +911,8 @@ def runExample(resultQueue, example):
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
     resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td>%s</tr>' \
-      %('<td>-</td>'*(5-sum([args.disableRun, args.disableCompare, args.disableValidate,
-      args.disableRun or args.buildSystemRun==None or not args.webapp])))
+      %('<td>-</td>'*(6-sum([args.disableRun, args.disableRun, args.disableRun, args.disableCompare,
+      args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])))
     runExampleRet=1
   finally:
     os.chdir(savedDir)
@@ -946,21 +946,21 @@ def webapp(example):
   if os.path.exists("MBS.mbsimprj.xml") or os.path.exists("FMI.mbsimprj.xml"):
     gui={'buildType': args.buildType, 'prog': 'mbsimgui'}
     if os.path.exists("MBS.mbsimprj.xml"):
-      gui['file']=example+'MBS.mbsimprj.xml'
+      gui['file']=example+'/MBS.mbsimprj.xml'
     else:
-      gui['file']=example+'FMI.mbsimprj.xml'
+      gui['file']=example+'/FMI.mbsimprj.xml'
   return '<td>'+\
-      ('<a disabled="disabled" style="visibility:'+('visible' if len(ombv)>0 else 'hidden')+\
-       ';" class="_WEBAPP btn btn-default btn-xs" href="'+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+myurllibp.urlencode(ombv)+'">'+\
-       '<img src="%s/html/openmbv.svg"/></a>'%(buildSystemRootURL)+\
+      ('<button disabled="disabled" type="button" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       ('visible' if len(ombv)>0 else 'hidden')+';"><a href="'+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+myurllibp.urlencode(ombv)+'">'+\
+       '<img src="%s/html/openmbv.svg" alt="ombv"/></a></button>'%(buildSystemRootURL)+\
        '&nbsp;')+\
-      ('<a disabled="disabled" style="visibility:'+('visible' if len(h5p)>0 else 'hidden')+\
-       ';" class="_WEBAPP btn btn-default btn-xs" href="'+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+myurllibp.urlencode(h5p)+'">'+\
-       '<img src="%s/html/h5plotserie.svg"/></a>'%(buildSystemRootURL)+\
+      ('<button disabled="disabled" type="button" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       ('visible' if len(h5p)>0 else 'hidden')+';"><a href="'+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+myurllibp.urlencode(h5p)+'">'+\
+       '<img src="%s/html/h5plotserie.svg" alt="h5p"/></a></button>'%(buildSystemRootURL)+\
        '&nbsp;')+\
-      ('<a disabled="disabled" style="visibility:'+('visible' if len(gui)>0 else 'hidden')+\
-       ';" class="_WEBAPP btn btn-default btn-xs" href="'+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+myurllibp.urlencode(gui)+'">'+\
-       '<img src="%s/html/mbsimgui.svg"/></a>'%(buildSystemRootURL)+\
+      ('<button disabled="disabled" type="button" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       ('visible' if len(gui)>0 else 'hidden')+';"><a href="'+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+myurllibp.urlencode(gui)+'">'+\
+       '<img src="%s/html/mbsimgui.svg" alt="gui"/></a></button>'%(buildSystemRootURL)+\
        '&nbsp;')+\
     '</td>'
 
@@ -1262,7 +1262,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('</span>', file=diffHTMLPlotFD)
   print('<span class="pull-right small">', file=diffHTMLPlotFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=diffHTMLPlotFD)
-  print('  <a href="http://validator.w3.org/check?uri=referer">', file=diffHTMLPlotFD)
+  print('  <a href="https://validator.w3.org/check?uri=referer">', file=diffHTMLPlotFD)
   print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=diffHTMLPlotFD)
   print('  </a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
@@ -1647,7 +1647,7 @@ def compareExample(example, compareFN):
   print('</span>', file=compareFD)
   print('<span class="pull-right small">', file=compareFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=compareFD)
-  print('  <a href="http://validator.w3.org/check?uri=referer">', file=compareFD)
+  print('  <a href="https://validator.w3.org/check?uri=referer">', file=compareFD)
   print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=compareFD)
   print('  </a>', file=compareFD)
   print('</span>', file=compareFD)
@@ -1862,8 +1862,8 @@ def coverage(mainFD):
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
   print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
         '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%d%%</span></a></td>'%(covRate), file=mainFD)
-  for i in range(0, 5-sum([4*args.disableRun, args.disableCompare, args.disableValidate,
-    args.disableRun or args.buildSystemRun==None or not args.webapp])):
+  for i in range(0, 6-sum([args.disableRun, args.disableRun, args.disableRun, args.disableCompare,
+    args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])):
     print('<td>-</td>', file=mainFD)
   print('</tr>', file=mainFD); mainFD.flush()
   return 1 if ret!=0 else 0
