@@ -201,8 +201,8 @@ def mainDocPage():
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=docFD)
   print('  <title>Documentation of the MBSim-Environment</title>', file=docFD)
   print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=docFD)
-  print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">', file=docFD)
-  print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">', file=docFD)
+  print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=docFD)
+  print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=docFD)
   print('</head>', file=docFD)
   print('<body style="margin:0.5em">', file=docFD)
   print('<h1>Documentation of the MBSim-Environment</h1>', file=docFD)
@@ -370,8 +370,8 @@ def main():
   <title>Build Results of MBSim-Env: <small>%s</small></title>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css"/>
-  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">
-  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
+  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
 </head>
 <body style="margin:0.5em">
 <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>

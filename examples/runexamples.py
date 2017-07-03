@@ -360,8 +360,8 @@ def main():
     <title>MBSim runexamples Results: %s</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css"/>
-    <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">
-    <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
+    <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
   </head>
   <body style="margin:0.5em">
   <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
@@ -842,8 +842,8 @@ def runExample(resultQueue, example):
       print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=htmlOutputFD)
       print('  <title>Validate XML Files: %s</title>'%(args.buildType), file=htmlOutputFD)
       print('  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>', file=htmlOutputFD)
-      print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">', file=htmlOutputFD)
-      print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">', file=htmlOutputFD)
+      print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=htmlOutputFD)
+      print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
       print('<body style="margin:0.5em">', file=htmlOutputFD)
       print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=htmlOutputFD)
@@ -1223,8 +1223,8 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=diffHTMLPlotFD)
   print('  <title>Difference Plot: %s</title>'%(args.buildType), file=diffHTMLPlotFD)
   print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
-  print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">', file=diffHTMLPlotFD)
-  print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">', file=diffHTMLPlotFD)
+  print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=diffHTMLPlotFD)
+  print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
   print('<body style="margin:0.5em">', file=diffHTMLPlotFD)
   print('<h1>Difference Plot: <small>%s</small></h1>'%(args.buildType), file=diffHTMLPlotFD)
@@ -1490,8 +1490,8 @@ def compareExample(example, compareFN):
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=compareFD)
   print('  <title>Compare Results: %s</title>'%(args.buildType), file=compareFD)
   print('  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>', file=compareFD)
-  print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">', file=compareFD)
-  print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">', file=compareFD)
+  print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=compareFD)
+  print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=compareFD)
   print('</head>', file=compareFD)
   print('<body style="margin:0.5em">', file=compareFD)
   print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=compareFD)

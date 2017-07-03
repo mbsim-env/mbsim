@@ -14,8 +14,8 @@
         <title>Valgrind Report: <xsl:value-of select="tool/text()"/></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
-        <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">
-        <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
+        <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
         <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
         <script type="text/javascript">
           $(document).ready(function() {
