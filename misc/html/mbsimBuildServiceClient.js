@@ -62,6 +62,8 @@ $(document).ready(function() {
     $.ajax({url: cgiPath+"/logout", xhrFields: {withCredentials: true}, dataType: "json", type: "GET"}).done(function(response) {
       loginStatus();
       statusMessage(response);
+      if(response.success)
+        document.cookie="mbsimenvsessionid_js=dummy; Domain=www.mbsim-env.de; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 UTC; Secure;"
     });
   })
 
