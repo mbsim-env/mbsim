@@ -3,7 +3,9 @@ var cgiPath="https://www.mbsim-env.de/cgi-bin/mbsimBuildServiceServer.py";
 // indicate start of server commnication
 function statusCommunicating() {
   // disable the buttons
-  $("button").prop("disabled", true);
+  $("._DISABLEONCOMM").each(function() {
+    $(this).prop("disabled", true);
+  });
   $("body").css("cursor", "progress");
   // set status
   var statuspanel=$("#STATUSPANEL");
@@ -32,7 +34,9 @@ function statusMessage(response) {
   }
   statusmsg.text(response.message);
   // enable the buttons
-  $("button").prop("disabled", false);
+  $("._DISABLEONCOMM").each(function() {
+    $(this).prop("disabled", false);
+  });
   $("body").css("cursor", "default");
 }
 

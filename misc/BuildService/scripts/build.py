@@ -1133,7 +1133,7 @@ def releaseGeneration2(mainFD, distArchiveName):
       </div>
     </div>
     <div style="margin-top:0.5em">
-      <button id="RELEASEBUTTON" type="button" disabled="disabled" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>mbsim-env-release-<span class="RELSTR">%s</span>-%s</b> and <span class="octicon octicon-tag"></span>&nbsp;tag as <b>release/<span class="RELSTR">%s</span>-%s</b></button>
+      <button id="RELEASEBUTTON" type="button" disabled="disabled" class="_DISABLEONCOMM btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>mbsim-env-release-<span class="RELSTR">%s</span>-%s</b> and <span class="octicon octicon-tag"></span>&nbsp;tag as <b>release/<span class="RELSTR">%s</span>-%s</b></button>
     </div>
     <p><small>(NOTE! This will create an annotated git tag with your username and email on the public MBSim-Env repositories on GitHub!)</small></p>
   </div>

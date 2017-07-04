@@ -64,8 +64,8 @@
           sel.empty();
           response.curcibranch.forEach(function(branch) {
             sel.append('<tr><td>#'+nr.toString()+'</td>'+
-              '<td><button disabled="disabled" class="DELCIBRANCH btn btn-default btn-xs" value="'+JSON.stringify(branch).replace(/"/g, "'")+
-                 '" disabled="disabled" type="button"><span class="glyphicon glyphicon-minus-sign"></span></button></td>'+
+              '<td><button disabled="disabled" class="_DISABLEONCOMM DELCIBRANCH btn btn-default btn-xs" value="'+JSON.stringify(branch).replace(/"/g, "'")+
+                 '" type="button"><span class="glyphicon glyphicon-minus-sign"></span></button></td>'+
               '<td><a href="https://github.com/mbsim-env/fmatvec/tree/'+branch.fmatvec+'">'+
                 '<span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.fmatvec+'</span></a></td>'+
               '<td><a href="https://github.com/mbsim-env/hdf5serie/tree/'+branch.hdf5serie+'">'+
@@ -153,7 +153,7 @@ where CI is always active) must be activated manually for CI. This can be done o
       <dt><a href="https://github.com/mbsim-env/mbsim"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span></a></dt>
         <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="MBSIM_BRANCH"> </select></dd>
     </dl>
-    <button id="APPLYADDCIBRANCH" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Add</button>
+    <button id="APPLYADDCIBRANCH" disabled="disabled" type="button" class="_DISABLEONCOMM btn btn-default btn-sm"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Add</button>
   </div>
 </div>
 
