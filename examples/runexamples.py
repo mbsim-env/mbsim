@@ -551,7 +551,7 @@ def main():
   <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">
     <p>Update the references of the selected examples before next build.</p>
     <p>
-      <button id="SAVEBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-ok"></span>&nbsp;Save changes</button>
+      <button id="SAVEBUTTON" disabled="disabled" type="button" class="_DISABLEONCOMM btn btn-default btn-sm"><span class="glyphicon glyphicon-ok"></span>&nbsp;Save changes</button>
     </p>
   </div>
 </div>
