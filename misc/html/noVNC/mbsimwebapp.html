@@ -14,6 +14,8 @@
   <!-- For iOS devices set the icon to use if user bookmarks app on their homescreen -->
   <link rel="apple-touch-icon" href="images/screen_57x57.png"/>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
+  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
 </head>
 <body style="margin: 0px;">
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
@@ -103,7 +105,18 @@
 
       // Authorization is done using the cookie send with the websocket request.
       // The noVNC token is used to pass additonal information to the server: here we pass the url query as token.
-      rfb.connect("www.mbsim-env.de", 443, "", "websockify?token="+encodeURIComponent(window.location.search.substring(1)));
+      var port=location.port;
+      if(!port) {
+        if(location.protocol=="https:")
+          port=443;
+        else if(location.protocol=="http:")
+          port=80;
+        else {
+          updateState(null, 'fatal', null, 'Cannot detect port');
+          return;
+        }
+      }
+      rfb.connect(location.hostname, port, "", "websockify?token="+encodeURIComponent(window.location.search.substring(1)));
     };
   </script>
   <canvas id="noVNC_canvas" width="1" height="1">

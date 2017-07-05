@@ -953,15 +953,15 @@ def webapp(example):
       gui['file']=example+'/FMI.mbsimprj.xml'
   return '<td>'+\
       ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
-       myurllibp.urlencode(ombv)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       myurllibp.urlencode(ombv, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(ombv)>0 else 'hidden')+';">'+\
        '<img src="%s/html/openmbv.svg" alt="ombv"/></button>'%(buildSystemRootURL)+'&nbsp;')+\
       ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
-       myurllibp.urlencode(h5p)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       myurllibp.urlencode(h5p, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(h5p)>0 else 'hidden')+';">'+\
        '<img src="%s/html/h5plotserie.svg" alt="h5p"/></button>'%(buildSystemRootURL)+'&nbsp;')+\
       ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
-       myurllibp.urlencode(gui)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       myurllibp.urlencode(gui, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(gui)>0 else 'hidden')+';">'+\
        '<img src="%s/html/mbsimgui.svg" alt="gui"/></button>'%(buildSystemRootURL)+'&nbsp;')+\
     '</td>'
