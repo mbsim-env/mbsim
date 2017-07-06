@@ -266,6 +266,10 @@ namespace MBSimGUI {
       arg.erase(i);
     }
 
+    // remove the fullscreen option -> is handled in main.cc
+    if((i=std::find(arg.begin(), arg.end(), "--fullscreen"))!=arg.end())
+      arg.erase(i);
+
     QString fileProject;
     QRegExp filterProject(".+\\.mbsimprj\\.xml");
     QDir dir;

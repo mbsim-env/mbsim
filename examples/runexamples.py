@@ -420,7 +420,7 @@ def main():
         var c=document.cookie.split(';');
         for(var i=0; i<c.length; i++)
           if(c[i].split('=')[0].trim()=="mbsimenvsessionid_js") {
-            $("._WEBAPP").each(function() {
+            $("#SortThisTable").DataTable().$("._WEBAPP").each(function() {
               $(this).prop("disabled", false);
             });
             break;
