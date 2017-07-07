@@ -259,40 +259,29 @@ namespace MBSimGUI {
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
-    QStringList::iterator i, i2;
-
-    if((i=std::find(arg.begin(), arg.end(), "--maximized"))!=arg.end()) {
+    if(arg.contains("--maximized"))
       showMaximized();
-      arg.erase(i);
-    }
-
-    // remove the fullscreen option -> is handled in main.cc
-    if((i=std::find(arg.begin(), arg.end(), "--fullscreen"))!=arg.end())
-      arg.erase(i);
 
     QString fileProject;
     QRegExp filterProject(".+\\.mbsimprj\\.xml");
     QDir dir;
     dir.setFilter(QDir::Files);
-    i=arg.begin();
-    while(i!=arg.end() and (*i)[0]!='-') {
-      dir.setPath(*i);
+    for(auto it=arg.begin(); it!=arg.end(); ++it) {
+      if((*it)[0]=='-') continue;
+      dir.setPath(*it);
       if(dir.exists()) {
         QStringList file=dir.entryList();
         for(int j=0; j<file.size(); j++) {
           if(fileProject.isEmpty() and filterProject.exactMatch(file[j]))
             fileProject = dir.path()+"/"+file[j];
         }
-        i2=i; i++; arg.erase(i2);
         continue;
       }
-      if(QFile::exists(*i)) {
-        if(fileProject.isEmpty() and filterProject.exactMatch(*i))
-          fileProject = *i;
-        i2=i; i++; arg.erase(i2);
+      if(QFile::exists(*it)) {
+        if(fileProject.isEmpty() and filterProject.exactMatch(*it))
+          fileProject = *it;
         continue;
       }
-      i++;
     }
     if(fileProject.size())
       loadProject(QDir::current().absoluteFilePath(fileProject));

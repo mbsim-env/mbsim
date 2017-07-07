@@ -60,8 +60,6 @@ int main(int argc, char *argv[]) {
     cout    <<"<parameterfile>    Load <parameterfile>"<<endl;
     cout    <<"<integratorfile>   Load <integratorfile>"<<endl;
     cout    <<""<<endl;
-    arg.removeAll("-h"); 
-    arg.removeAll("--help"); 
     return 0;
   }
 
