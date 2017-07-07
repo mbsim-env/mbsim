@@ -992,6 +992,7 @@ def getOutFilesAndAdaptRet(example, ret):
     # and adapt the return value if errors in valgrind outputs are detected
     xmlFiles=glob.glob("valgrind.*.xml")
     outFiles=[]
+    i=0
     for xmlFile in xmlFiles:
       # check for errors
       content=codecs.open(xmlFile).read().decode('utf-8')
@@ -1002,6 +1003,8 @@ def getOutFilesAndAdaptRet(example, ret):
         ret[0]=1
       # transform xml file to html file (in reportOutDir)
       htmlFile=xmlFile[:-4]+".html"
+      i=i+1
+      htmlFile=re.sub('^valgrind\.[0-9]+\.', 'valgrind.%d.'%(i), htmlFile) # use small numbers for pid
       outFiles.append(htmlFile)
       subprocess.check_call(['Xalan', '-o', pj(args.reportOutDir, example[0], htmlFile), xmlFile,
                             pj(scriptDir, 'valgrindXMLToHTML.xsl')])

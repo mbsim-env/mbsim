@@ -1,5 +1,5 @@
 include /opt/firejail-local/etc/firejail/default.profile
-private
+private-home .wine
 private-dev
 private-tmp
 caps.drop all
