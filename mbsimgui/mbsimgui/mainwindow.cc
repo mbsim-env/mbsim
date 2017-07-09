@@ -77,10 +77,14 @@ namespace MBSimGUI {
     
     mw = this;
 
+#if _WIN32
+    uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
+#else
     if(bfs::is_directory("/dev/shm"))
       uniqueTempDir=bfs::unique_path("/dev/shm/mbsimgui_%%%%-%%%%-%%%%-%%%%");
     else
       uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
+#endif
     bfs::create_directories(uniqueTempDir);
 
     mbsim = new Process(this);
