@@ -71,7 +71,7 @@
         case 'disconnected':
           if(running)
             // go to previous page
-            window.location.href=document.referrer;
+            window.history.back();
           break;
         default:
           break;
