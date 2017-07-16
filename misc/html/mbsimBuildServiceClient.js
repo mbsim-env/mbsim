@@ -42,22 +42,12 @@ function statusMessage(response) {
 
 $(document).ready(function() {
   // when the login button is clicked redirect to github auth page
-  var loginWindow;
   $("#LOGINBUTTON").click(function() {
     statusCommunicating();
-    loginWindow=window.open("https://github.com/login/oauth/authorize?client_id=987997eb60fc086e9707&scope=read:org,public_repo,user:email");
+    // save current scroll value and goto github
+    sessionStorage.setItem('backFromLogin', $(document).scrollTop());
+    window.location.href="https://github.com/login/oauth/authorize?client_id=987997eb60fc086e9707&scope=read:org,public_repo,user:email";
   })
-  // and install a event listener to react on a successfull login on this page
-  window.addEventListener("message", loginCallback, false);
-  function loginCallback(event) {
-    // do nothing for wrong origin
-    if(event.origin!=="https://www.mbsim-env.de")
-      return;
-    // close opened github login window and display the status message
-    loginWindow.close();
-    loginStatus();
-    statusMessage({success: true, message: event.data})
-  }
 
   // when the logout button is clicked
   $("#LOGOUTBUTTON").click(function() {
@@ -77,12 +67,26 @@ $(document).ready(function() {
       if(!response.success) {
         $('#LOGINUSER').text("Internal error: "+response.message);
         $('#LOGINAVATAR').attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+        statusMessage({success: false, message: response.message})
       }
       else {
-        $('#LOGINUSER').text(response.username);
+        if(response.username)
+        {
+          $('#LOGINUSER').text(response.username);
+          statusMessage({success: true, message: "User "+response.username+" is logged in."})
+        }
+        else {
+          $('#LOGINUSER').text("not logged in");
+          statusMessage({success: true, message: "No user is currently logged in. "+response.message})
+        }
         $('#LOGINAVATAR').attr("src", response.avatar_url);
       }
     });
   }
   loginStatus();
+  // if we are back from github login, restore scroll value and remove the storage always
+  if(sessionStorage.getItem('backFromLogin')) {
+    $(document).scrollTop(sessionStorage.getItem("backFromLogin"));
+  }
+  sessionStorage.removeItem('backFromLogin');
 });

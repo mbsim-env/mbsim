@@ -17,8 +17,22 @@ def run(token, display):
   XAUTHTMPL='/tmp/mbsimwebapp-xauth-%d.'+getpass.getuser()
   PIDFILE='/tmp/mbsimwebapp-pid/%d.'+getpass.getuser()
 
+  # check arg
   if type(display)!=int:
     raise RuntimeError('Illegal display parameter')
+
+  # parse the token
+  cmd=urlparse.parse_qs(token)
+
+  # get prog of file
+  buildType=cmd.get('buildType', [None])[0]
+  prog=cmd.get('prog', [None])[0]
+  file=cmd.get('file', [])
+
+  # check arg
+  if buildType not in ["linux64-dailydebug", "linux64-ci", "linux64-dailyrelease", "win64-dailyrelease"] or \
+     prog not in ["openmbv", "h5plotserie", "mbsimgui"]:
+    raise RuntimeError('Unknown buildType or prog.')
 
   # create XAUTH file
   os.open(XAUTHTMPL%(display), os.O_CREAT, 0o600)
@@ -53,32 +67,22 @@ def run(token, display):
   # run window manager
   wm=subprocess.Popen(['/usr/bin/xfwm4'], env=xenv)
 
-  # parse the token
-  cmd=urlparse.parse_qs(token)
-
-  # get prog of file
-  buildType=cmd.get('buildType', [None])[0]
-  prog=cmd.get('prog', [None])[0]
-  file=cmd.get('file', [])
-
-  # run the main program according to clipboard string
-  if buildType in ["linux64-dailydebug", "linux64-ci", "linux64-dailyrelease", "win64-dailyrelease"] and \
-     prog in ["openmbv", "h5plotserie", "mbsimgui"]:
-    absFile=[]
-    cdir=None
-    for f in file:
-      af='/usr/local/mbsim/'+buildType+'/mbsim/examples/'+f
-      if os.path.exists(af):
-        absFile.append(af)
-        cdir=os.path.dirname(af)
-    prefixCmd=[]
-    if buildType=="win64-dailyrelease":
-      # prefix command with wine
-      prefixCmd=["/usr/bin/wine"]
-      # convert filenames to Windows (wine) path
-      for i, v in enumerate(absFile):
-        absFile[i] = 'Z:'+v.replace('/', '\\')
-    p=subprocess.Popen(prefixCmd+['/usr/local/mbsim/'+buildType+'/local/bin/'+prog, '--fullscreen']+absFile, cwd=cdir, env=xenv)
+  # run the main program according to token
+  absFile=[]
+  cdir=None
+  for f in file:
+    af='/usr/local/mbsim/'+buildType+'/mbsim/examples/'+f
+    if os.path.exists(af):
+      absFile.append(af)
+      cdir=os.path.dirname(af)
+  prefixCmd=[]
+  if buildType=="win64-dailyrelease":
+    # prefix command with wine
+    prefixCmd=["/usr/bin/wine"]
+    # convert filenames to Windows (wine) path
+    for i, v in enumerate(absFile):
+      absFile[i] = 'Z:'+v.replace('/', '\\')
+  p=subprocess.Popen(prefixCmd+['/usr/local/mbsim/'+buildType+'/local/bin/'+prog, '--fullscreen']+absFile, cwd=cdir, env=xenv)
 
   # wait for all child processes
   p.wait()
