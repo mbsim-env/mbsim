@@ -144,30 +144,10 @@ try:
               c['mbsimenvsessionid_js']['path']='/'
               c['mbsimenvsessionid_js']['secure']=True
               defaultOutput=False
-              print('Content-Type: text/html')
+              print('Status: 301 Moved Permanently')
+              print('Location: https://www.mbsim-env.de/mbsim/html/index.html')
               print(c)
               print()
-              print('''<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Set cookie and notify opener windows</title>
-    <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
-    <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
-  </head>
-  <body style="margin:0.5em">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
-    <script type="text/javascript">
-      $(document).ready(function() {
-        // notify opener window
-        window.opener.postMessage("User %s successfully logged in.", "https://www.mbsim-env.de");
-      })
-    </script>
-    <h1>Please Wait</h1>
-    <p>Set cookie in your browser.</p>
-    <p>This window should close itself after a short time.</p>
-  </body>
-</html>'''%(login))
 
     # logout
     if action=="/logout" and method=="GET":
@@ -303,14 +283,14 @@ try:
         sessionid=None
       if sessionid==None:
         response_data['success']=True
-        response_data['username']="Not logged in"
+        response_data['username']=None
         response_data['avatar_url']=''
         response_data['message']="No session ID cookie found on your browser."
       else:
         with ConfigFile(False) as config: pass
         if not sessionid in config['session']:
           response_data['success']=True
-          response_data['username']="Not logged in"
+          response_data['username']=None
           response_data['avatar_url']=''
           response_data['message']="The username of the browser cookie is not known by the server. Please relogin."
         else:
