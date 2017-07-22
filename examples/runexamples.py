@@ -1843,7 +1843,7 @@ def coverage(mainFD):
 
   # generate html files
   ret=ret+abs(subprocess.call(["genhtml", "-t", "MBSim-Env Examples (%s)"%(args.buildType), "--prefix", args.coverage.split(":")[0], "--legend",
-    "--html-prolog", pj(scriptDir, "lcov-prolog.parthtml"), "--html-epilog", pj(scriptDir, "lcov-epilog.parthtml"),
+    "--html-prolog", pj(scriptDir, "lcov-prolog.part.html"), "--html-epilog", pj(scriptDir, "lcov-epilog.part.html"),
     "--demangle-cpp", "-o", pj(args.reportOutDir, "coverage"),
     pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
   lcovFD.close()
