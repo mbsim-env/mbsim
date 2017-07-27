@@ -1,9 +1,11 @@
-var cgiPath="https://www.ssl-id1.de/www.mbsim-env.de/cgi-bin/mbsimBuildServiceServer.py";
+var cgiPath="https://www.mbsim-env.de/cgi-bin/mbsimBuildServiceServer.py";
 
 // indicate start of server commnication
 function statusCommunicating() {
   // disable the buttons
-  $("button").prop("disabled", true);
+  $("._DISABLEONCOMM").each(function() {
+    $(this).prop("disabled", true);
+  });
   $("body").css("cursor", "progress");
   // set status
   var statuspanel=$("#STATUSPANEL");
@@ -32,28 +34,20 @@ function statusMessage(response) {
   }
   statusmsg.text(response.message);
   // enable the buttons
-  $("button").prop("disabled", false);
+  $("._DISABLEONCOMM").each(function() {
+    $(this).prop("disabled", false);
+  });
   $("body").css("cursor", "default");
 }
 
 $(document).ready(function() {
-// when the login button is clicked redirect to github auth page
-  var loginWindow;
+  // when the login button is clicked redirect to github auth page
   $("#LOGINBUTTON").click(function() {
     statusCommunicating();
-    loginWindow=window.open("https://github.com/login/oauth/authorize?client_id=987997eb60fc086e9707&scope=read:org,public_repo,user:email");
+    // save current scroll value and goto github
+    sessionStorage.setItem('backFromLogin', $(document).scrollTop());
+    window.location.href="https://github.com/login/oauth/authorize?client_id=987997eb60fc086e9707&scope=read:org,public_repo,user:email";
   })
-  // and install a event listener to react on a successfull login on this page
-  window.addEventListener("message", loginCallback, false);
-  function loginCallback(event) {
-    // do nothing for wrong origin
-    if(event.origin!=="https://www.ssl-id1.de")
-      return;
-    // close opened github login window and display the status message
-    loginWindow.close();
-    loginStatus();
-    statusMessage({success: true, message: event.data})
-  }
 
   // when the logout button is clicked
   $("#LOGOUTBUTTON").click(function() {
@@ -62,6 +56,8 @@ $(document).ready(function() {
     $.ajax({url: cgiPath+"/logout", xhrFields: {withCredentials: true}, dataType: "json", type: "GET"}).done(function(response) {
       loginStatus();
       statusMessage(response);
+      if(response.success)
+        document.cookie="mbsimenvsessionid_js=dummy; Domain=www.mbsim-env.de; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 UTC; Secure;"
     });
   })
 
@@ -70,13 +66,27 @@ $(document).ready(function() {
     $.ajax({url: cgiPath+"/getuser", xhrFields: {withCredentials: true}, dataType: "json", type: "GET"}).done(function(response) {
       if(!response.success) {
         $('#LOGINUSER').text("Internal error: "+response.message);
-        $('#LOGINAVATAR').attr("src", "");
+        $('#LOGINAVATAR').attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+        statusMessage({success: false, message: response.message})
       }
       else {
-        $('#LOGINUSER').text(response.username);
+        if(response.username)
+        {
+          $('#LOGINUSER').text(response.username);
+          statusMessage({success: true, message: "User "+response.username+" is logged in."})
+        }
+        else {
+          $('#LOGINUSER').text("not logged in");
+          statusMessage({success: true, message: "No user is currently logged in. "+response.message})
+        }
         $('#LOGINAVATAR').attr("src", response.avatar_url);
       }
     });
   }
   loginStatus();
+  // if we are back from github login, restore scroll value and remove the storage always
+  if(sessionStorage.getItem('backFromLogin')) {
+    $(document).scrollTop(sessionStorage.getItem("backFromLogin"));
+  }
+  sessionStorage.removeItem('backFromLogin');
 });

@@ -32,7 +32,8 @@
       <title>MBSimXML - XML Documentation</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
-      <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
+      <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
+      <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
       <style type="text/css">
         *._element { font-family:monospace; font-weight:bold; }
         *._type { font-family:monospace; }
@@ -102,13 +103,13 @@
     </ul>
     <hr/>
     <span class="pull-left small">
-      <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
-      <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
-      <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
+      <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
+      <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
+      <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
     </span>
     <span class="pull-right small">
       Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by MBSimXML<xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
-      <a href="http://validator.w3.org/check?uri=referer">
+      <a href="https://validator.w3.org/check?uri=referer">
         <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
       </a>
     </span>

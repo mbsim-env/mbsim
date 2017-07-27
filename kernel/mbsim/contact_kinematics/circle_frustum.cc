@@ -332,6 +332,8 @@ namespace MBSim {
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2_star_nrm2= " << c2_star_nrm2 << endl;
           }
 
+          if(!funcRho)
+            throw MBSimError("(ContactKinematicsCircleFrustum::updateg): funcRho is not defined.");
           funcRho->setDiffVec(Wd_SC);
           funcRho->setSectionCOS(c1, c2);
 

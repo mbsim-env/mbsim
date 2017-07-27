@@ -31,4 +31,4 @@ f.close()
 
 buildSystemState.update("build-manuals", "Building Manuals Failed",
                         str(nrDocFailed)+" of "+str(len(mainFiles))+" manuals failed to build.",
-                        "http://www.mbsim-env.de/mbsim/doc/", nrDocFailed, len(mainFiles))
+                        "https://www.mbsim-env.de/mbsim/doc/", nrDocFailed, len(mainFiles))

@@ -76,6 +76,7 @@ def parseArguments():
   cfgOpts.add_argument("--buildSystemRun", action="store_true", help='Run in build system mode: generate build system state files and run with simplesandbox.')
   cfgOpts.add_argument("--coverage", action="store_true", help='Enable coverage analyzis using gcov/lcov.')
   cfgOpts.add_argument("--staticCodeAnalyzis", action="store_true", help='Enable static code analyzis using LLVM Clang Analyzer.')
+  cfgOpts.add_argument("--webapp", action="store_true", help='Just passed to runexamples.py.')
   
   outOpts=argparser.add_argument_group('Output Options')
   outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
@@ -200,7 +201,8 @@ def mainDocPage():
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=docFD)
   print('  <title>Documentation of the MBSim-Environment</title>', file=docFD)
   print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=docFD)
-  print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=docFD)
+  print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=docFD)
+  print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=docFD)
   print('</head>', file=docFD)
   print('<body style="margin:0.5em">', file=docFD)
   print('<h1>Documentation of the MBSim-Environment</h1>', file=docFD)
@@ -219,13 +221,13 @@ def mainDocPage():
   print('</div>', file=docFD)
   print('<hr/>', file=docFD)
   print('<span class="pull-left small">', file=docFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=docFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=docFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=docFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=docFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=docFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=docFD)
   print('</span>', file=docFD)
   print('<span class="pull-right small">', file=docFD)
   print('  Generated on %s'%(str(timeID)), file=docFD)
-  print('  <a href="http://validator.w3.org/check?uri=referer">', file=docFD)
+  print('  <a href="https://validator.w3.org/check?uri=referer">', file=docFD)
   print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=docFD)
   print('  </a>', file=docFD)
   print('</span>', file=docFD)
@@ -368,7 +370,8 @@ def main():
   <title>Build Results of MBSim-Env: <small>%s</small></title>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css"/>
-  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
+  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
+  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
 </head>
 <body style="margin:0.5em">
 <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
@@ -497,13 +500,13 @@ def main():
 
   print('<hr/>', file=mainFD)
   print('<span class="pull-left small">', file=mainFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=mainFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=mainFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=mainFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=mainFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=mainFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=mainFD)
   print('</span>', file=mainFD)
   print('<span class="pull-right small">', file=mainFD)
   print('  Generated on %s'%(str(timeID)), file=mainFD)
-  print('  <a href="http://validator.w3.org/check?uri=referer">', file=mainFD)
+  print('  <a href="https://validator.w3.org/check?uri=referer">', file=mainFD)
   print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=mainFD)
   print('  </a>', file=mainFD)
   print('</span>', file=mainFD)
@@ -987,6 +990,8 @@ def runexamples(mainFD):
     command.extend(["--buildSystemRun", scriptdir])
   if args.coverage:
     command.extend(["--coverage", args.sourceDir+":"+args.binSuffix+":"+args.prefix])
+  if args.webapp:
+    command.extend(["--webapp"])
   command.extend(args.passToRunexamples)
 
   print("")
@@ -1119,15 +1124,6 @@ def releaseGeneration2(mainFD, distArchiveName):
         to release the Windows and Linux release builds at the same commit state using the same "release version" string!
       </label></div>
     </div>
-    <p><small>(On login this server stores some personal data obtained from GitHub, including an access token. Logout removes these data. You can also revoke the access token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known or checked by this server.)</small></p>
-    <div>
-      <span class="octicon octicon-person"></span>&nbsp;
-      <img id="LOGINAVATAR" src="" alt="avatar" height="30" width="30"/>&nbsp;
-      <strong id="LOGINUSER">unknwon</strong>
-      <button id="LOGINBUTTON" type="button" disabled="disabled" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in">
-        </span>&nbsp;Login using <span class="octicon octicon-logo-github"></span></button>
-      <button id="LOGOUTBUTTON" type="button" disabled="disabled" class="btn btn-default btn-sm"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
-    </div>
     <div>
       <span id="DISTARCHIVENAME" style="display:none">%s</span>
       <span id="REPORTOUTDIR" style="display:none">%s</span>
@@ -1137,7 +1133,7 @@ def releaseGeneration2(mainFD, distArchiveName):
       </div>
     </div>
     <div style="margin-top:0.5em">
-      <button id="RELEASEBUTTON" type="button" disabled="disabled" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>mbsim-env-release-<span class="RELSTR">%s</span>-%s</b> and <span class="octicon octicon-tag"></span>&nbsp;tag as <b>release/<span class="RELSTR">%s</span>-%s</b></button>
+      <button id="RELEASEBUTTON" type="button" disabled="disabled" class="_DISABLEONCOMM btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>mbsim-env-release-<span class="RELSTR">%s</span>-%s</b> and <span class="octicon octicon-tag"></span>&nbsp;tag as <b>release/<span class="RELSTR">%s</span>-%s</b></button>
     </div>
     <p><small>(NOTE! This will create an annotated git tag with your username and email on the public MBSim-Env repositories on GitHub!)</small></p>
   </div>

@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MBSim Build Service - CI</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css">
-  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css"/>
+  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
+  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
 </head>
 <body style="margin:0.5em;cursor:progress;">
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
@@ -63,8 +64,8 @@
           sel.empty();
           response.curcibranch.forEach(function(branch) {
             sel.append('<tr><td>#'+nr.toString()+'</td>'+
-              '<td><button disabled="disabled" class="DELCIBRANCH btn btn-default btn-xs" value="'+JSON.stringify(branch).replace(/"/g, "'")+
-                 '" disabled="disabled" type="button"><span class="glyphicon glyphicon-minus-sign"></span></button></td>'+
+              '<td><button disabled="disabled" class="_DISABLEONCOMM DELCIBRANCH btn btn-default btn-xs" value="'+JSON.stringify(branch).replace(/"/g, "'")+
+                 '" type="button"><span class="glyphicon glyphicon-minus-sign"></span></button></td>'+
               '<td><a href="https://github.com/mbsim-env/fmatvec/tree/'+branch.fmatvec+'">'+
                 '<span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.fmatvec+'</span></a></td>'+
               '<td><a href="https://github.com/mbsim-env/hdf5serie/tree/'+branch.hdf5serie+'">'+
@@ -114,18 +115,6 @@ repositories <a href="https://github.com/mbsim-env/fmatvec"><span class="label l
 However, each branch combination (except <span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;master</span> for all repos,
 where CI is always active) must be activated manually for CI. This can be done on this site.</p>
 
-<h2>Login Using GitHub</h2>
-<p>To change CI branches you must login with your GitHub account and have apropriate rights.</p>
-<p><small>(On login this server stores some personal data obtained from GitHub, including an access token. Logout removes these data. You can also revoke the access token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known or checked by this server.)</small></p>
-<p>
-  <span class="octicon octicon-person"></span>&nbsp;
-  <img id="LOGINAVATAR" src="" alt="avatar" height="30" width="30"/>&nbsp;
-  <strong id="LOGINUSER">unknwon</strong>
-  <button id="LOGINBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in"></span>&nbsp;Login using
-    <span class="octicon octicon-logo-github"></span></button>
-  <button id="LOGOUTBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
-</p>
-
 <h2>CI Branch Combinations</h2>
 <div class="panel panel-success">
   <div class="panel-heading"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;Current branch combinations activated for CI</div>
@@ -164,7 +153,7 @@ where CI is always active) must be activated manually for CI. This can be done o
       <dt><a href="https://github.com/mbsim-env/mbsim"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span></a></dt>
         <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="MBSIM_BRANCH"> </select></dd>
     </dl>
-    <button id="APPLYADDCIBRANCH" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Add</button>
+    <button id="APPLYADDCIBRANCH" disabled="disabled" type="button" class="_DISABLEONCOMM btn btn-default btn-sm"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Add</button>
   </div>
 </div>
 
@@ -182,7 +171,7 @@ where CI is always active) must be activated manually for CI. This can be done o
   <a href="impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
 </span>
 <span class="pull-right small">
-  <a href="http://validator.w3.org/check?uri=referer">
+  <a href="https://validator.w3.org/check?uri=referer">
     <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
   </a>
 </span>

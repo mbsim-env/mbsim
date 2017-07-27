@@ -32,12 +32,14 @@ import zipfile
 import tempfile
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
+  import urllib as myurllibp
 else:
   import urllib.request as myurllib
+  import urllib.parse as myurllibp
 
 # global variables
 scriptDir=os.path.dirname(os.path.realpath(__file__))
-buildSystemRootURL="http://www.mbsim-env.de/mbsim"
+buildSystemRootURL="https://www.mbsim-env.de/mbsim"
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
 mbxmlutilsvalidate=None
@@ -115,7 +117,7 @@ cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
 cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables (wine is used if set)")
 cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out")
 cfgOpts.add_argument("--maxCompareFailure", default=200, type=float, help="Maximal number of compare failures to report. Use 0 for unlimited (default: 200)")
-cfgOpts.add_argument("--coverage", default=None, type=str, help='Enable coverage analyzis using gcov/lcov; The arg must be the base dir of the source/build dir + ":" + the --binSuffix.')
+cfgOpts.add_argument("--coverage", default=None, type=str, help='Enable coverage analyzis using gcov/lcov; The arg must be: <sourceDir>:<binSuffix>:<prefix>')
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
@@ -129,6 +131,7 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--buildSystemRun", default=None, type=str, help="Run in build system mode: generate build system state; The dir to the scripts of the build system must be passed.")
+debugOpts.add_argument("--webapp", action="store_true", help="Add buttons for mbsimwebapp.")
 
 # parse command line options
 args = argparser.parse_args()
@@ -357,7 +360,8 @@ def main():
     <title>MBSim runexamples Results: %s</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css"/>
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
+    <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
+    <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
   </head>
   <body style="margin:0.5em">
   <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
@@ -410,6 +414,18 @@ def main():
           });
         });
       }
+
+      // if this is the current result and the sessionid cookie exists then enable the webapp buttons
+      if($(location).attr('href').search("/result_current/")>=0) {
+        var c=document.cookie.split(';');
+        for(var i=0; i<c.length; i++)
+          if(c[i].split('=')[0].trim()=="mbsimenvsessionid_js") {
+            $("#SortThisTable").DataTable().$("._WEBAPP").each(function() {
+              $(this).prop("disabled", false);
+            });
+            break;
+          }
+      }
     });
   </script>'''%(args.buildType, buildSystemRootURL), file=mainFD)
 
@@ -453,6 +469,8 @@ def main():
   if not args.disableCompare:
     print('<th><div class="pull-left"><span class="glyphicon glyphicon-search"></span>&nbsp;Ref.</div>'+\
           '<div class="pull-right" style="padding-right:0.75em;">[update]</div></th>', file=mainFD)
+  if not args.disableRun and args.buildSystemRun!=None and args.webapp:
+    print('<th><span class="glyphicon glyphicon-picture"></span>&nbsp;Webapp</th>', file=mainFD)
   if not args.disableRun:
     print('<th><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Depr.</th>', file=mainFD)
   if not args.disableValidate:
@@ -532,17 +550,8 @@ def main():
  Update references<span class="caret"> </span></a></div>
   <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">
     <p>Update the references of the selected examples before next build.</p>
-    <p><small>(On login this server stores some personal data obtained from GitHub, including an access token. Logout removes these data. You can also revoke the access token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known or checked by this server.)</small></p>
     <p>
-      <span class="octicon octicon-person"></span>&nbsp;
-      <img id="LOGINAVATAR" src="" alt="avatar" height="30" width="30"/>&nbsp;
-      <strong id="LOGINUSER">unknwon</strong>
-      <button id="LOGINBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in">
-        </span>&nbsp;Login using <span class="octicon octicon-logo-github"></span></button>
-      <button id="LOGOUTBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
-    </p>
-    <p>
-      <button id="SAVEBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-ok"></span>&nbsp;Save changes</button>
+      <button id="SAVEBUTTON" disabled="disabled" type="button" class="_DISABLEONCOMM btn btn-default btn-sm"><span class="glyphicon glyphicon-ok"></span>&nbsp;Save changes</button>
     </p>
   </div>
 </div>
@@ -555,13 +564,13 @@ def main():
 </div>
 <hr/>
 <span class="pull-left small">
-  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
-  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
-  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
+  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
+  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
+  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
 </span>
 <span class="pull-right small">
   Generated on %s by runexamples.py
-  <a href="http://validator.w3.org/check?uri=referer">
+  <a href="https://validator.w3.org/check?uri=referer">
     <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
   </a>
 </span>
@@ -806,6 +815,10 @@ def runExample(resultQueue, example):
                      '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
 
     # check for deprecated features
+    if not args.disableRun and args.buildSystemRun!=None and args.webapp:
+      resultStr+=webapp(example[0])
+
+    # check for deprecated features
     if not args.disableRun:
       nrDeprecated=0
       for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
@@ -829,7 +842,8 @@ def runExample(resultQueue, example):
       print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=htmlOutputFD)
       print('  <title>Validate XML Files: %s</title>'%(args.buildType), file=htmlOutputFD)
       print('  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>', file=htmlOutputFD)
-      print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=htmlOutputFD)
+      print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=htmlOutputFD)
+      print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
       print('<body style="margin:0.5em">', file=htmlOutputFD)
       print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=htmlOutputFD)
@@ -874,13 +888,13 @@ def runExample(resultQueue, example):
       print('</tbody></table>', file=htmlOutputFD)
       print('<hr/>',  file=htmlOutputFD)
       print('<span class="pull-left small">',  file=htmlOutputFD)
-      print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /',  file=htmlOutputFD)
-      print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /',  file=htmlOutputFD)
-      print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>',  file=htmlOutputFD)
+      print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /',  file=htmlOutputFD)
+      print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /',  file=htmlOutputFD)
+      print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
       print('<span class="pull-right small">',  file=htmlOutputFD)
       print('  Generated on %s by runexamples.py'%(str(timeID)), file=htmlOutputFD)
-      print('  <a href="http://validator.w3.org/check?uri=referer">',  file=htmlOutputFD)
+      print('  <a href="https://validator.w3.org/check?uri=referer">',  file=htmlOutputFD)
       print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>',  file=htmlOutputFD)
       print('  </a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
@@ -899,7 +913,8 @@ def runExample(resultQueue, example):
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
     resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td>%s</tr>' \
-      %('<td>-</td>'*(5-sum([args.disableRun, args.disableCompare, args.disableValidate])))
+      %('<td>-</td>'*(6-sum([args.disableRun, args.disableRun, args.disableRun, args.disableCompare,
+      args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])))
     runExampleRet=1
   finally:
     os.chdir(savedDir)
@@ -907,6 +922,49 @@ def runExample(resultQueue, example):
     return runExampleRet
 
 
+
+def webapp(example):
+  ombv={}
+  fl=glob.glob("*.ombv.xml")
+  if len(fl)>0:
+    ombv={'buildType': args.buildType, 'prog': 'openmbv'}
+    if 'TS.ombv.xml' in fl:
+      ombv['file']=example+'/TS.ombv.xml'
+    elif 'MBS.ombv.xml' in fl:
+      ombv['file']=example+'/MBS.ombv.xml'
+    else:
+      ombv['file']=[example+'/'+f for f in fl]
+  h5p={}
+  fl=glob.glob("*.mbsim.h5")
+  if len(fl)>0:
+    h5p={'buildType': args.buildType, 'prog': 'h5plotserie'}
+    if 'TS.mbsim.h5' in fl:
+      h5p['file']=example+'/TS.mbsim.h5'
+    elif 'MBS.mbsim.h5' in fl:
+      h5p['file']=example+'/MBS.mbsim.h5'
+    else:
+      h5p['file']=[example+'/'+f for f in fl]
+  gui={}
+  if os.path.exists("MBS.mbsimprj.xml") or os.path.exists("FMI.mbsimprj.xml"):
+    gui={'buildType': args.buildType, 'prog': 'mbsimgui'}
+    if os.path.exists("MBS.mbsimprj.xml"):
+      gui['file']=example+'/MBS.mbsimprj.xml'
+    else:
+      gui['file']=example+'/FMI.mbsimprj.xml'
+  return '<td>'+\
+      ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
+       myurllibp.urlencode(ombv, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       ('visible' if len(ombv)>0 else 'hidden')+';">'+\
+       '<img src="%s/html/openmbv.svg" alt="ombv"/></button>'%(buildSystemRootURL)+'&nbsp;')+\
+      ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
+       myurllibp.urlencode(h5p, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       ('visible' if len(h5p)>0 else 'hidden')+';">'+\
+       '<img src="%s/html/h5plotserie.svg" alt="h5p"/></button>'%(buildSystemRootURL)+'&nbsp;')+\
+      ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
+       myurllibp.urlencode(gui, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       ('visible' if len(gui)>0 else 'hidden')+';">'+\
+       '<img src="%s/html/mbsimgui.svg" alt="gui"/></button>'%(buildSystemRootURL)+'&nbsp;')+\
+    '</td>'
 
 # if args.exeEXt is set we must prefix every command with wine
 def exePrefix():
@@ -934,6 +992,7 @@ def getOutFilesAndAdaptRet(example, ret):
     # and adapt the return value if errors in valgrind outputs are detected
     xmlFiles=glob.glob("valgrind.*.xml")
     outFiles=[]
+    i=0
     for xmlFile in xmlFiles:
       # check for errors
       content=codecs.open(xmlFile).read().decode('utf-8')
@@ -944,6 +1003,8 @@ def getOutFilesAndAdaptRet(example, ret):
         ret[0]=1
       # transform xml file to html file (in reportOutDir)
       htmlFile=xmlFile[:-4]+".html"
+      i=i+1
+      htmlFile=re.sub('^valgrind\.[0-9]+\.', 'valgrind.%d.'%(i), htmlFile) # use small numbers for pid
       outFiles.append(htmlFile)
       subprocess.check_call(['Xalan', '-o', pj(args.reportOutDir, example[0], htmlFile), xmlFile,
                             pj(scriptDir, 'valgrindXMLToHTML.xsl')])
@@ -1165,7 +1226,8 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=diffHTMLPlotFD)
   print('  <title>Difference Plot: %s</title>'%(args.buildType), file=diffHTMLPlotFD)
   print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
-  print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=diffHTMLPlotFD)
+  print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=diffHTMLPlotFD)
+  print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
   print('<body style="margin:0.5em">', file=diffHTMLPlotFD)
   print('<h1>Difference Plot: <small>%s</small></h1>'%(args.buildType), file=diffHTMLPlotFD)
@@ -1200,13 +1262,13 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<p><object data="plot.svg" type="image/svg+xml"> </object></p>', file=diffHTMLPlotFD)
   print('<hr/>', file=diffHTMLPlotFD)
   print('<span class="pull-left small">', file=diffHTMLPlotFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=diffHTMLPlotFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=diffHTMLPlotFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=diffHTMLPlotFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=diffHTMLPlotFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=diffHTMLPlotFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
   print('<span class="pull-right small">', file=diffHTMLPlotFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=diffHTMLPlotFD)
-  print('  <a href="http://validator.w3.org/check?uri=referer">', file=diffHTMLPlotFD)
+  print('  <a href="https://validator.w3.org/check?uri=referer">', file=diffHTMLPlotFD)
   print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=diffHTMLPlotFD)
   print('  </a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
@@ -1431,7 +1493,8 @@ def compareExample(example, compareFN):
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=compareFD)
   print('  <title>Compare Results: %s</title>'%(args.buildType), file=compareFD)
   print('  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>', file=compareFD)
-  print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=compareFD)
+  print('  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=compareFD)
+  print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=compareFD)
   print('</head>', file=compareFD)
   print('<body style="margin:0.5em">', file=compareFD)
   print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=compareFD)
@@ -1585,13 +1648,13 @@ def compareExample(example, compareFN):
   print('</tbody></table>', file=compareFD)
   print('<hr/>', file=compareFD)
   print('<span class="pull-left small">', file=compareFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=compareFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=compareFD)
-  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=compareFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=compareFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=compareFD)
+  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=compareFD)
   print('</span>', file=compareFD)
   print('<span class="pull-right small">', file=compareFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=compareFD)
-  print('  <a href="http://validator.w3.org/check?uri=referer">', file=compareFD)
+  print('  <a href="https://validator.w3.org/check?uri=referer">', file=compareFD)
   print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=compareFD)
   print('  </a>', file=compareFD)
   print('</span>', file=compareFD)
@@ -1779,9 +1842,9 @@ def coverage(mainFD):
     print(line, end="")
 
   # generate html files
-  ret=ret+abs(subprocess.call(["genhtml", "-t", "MBSim-Env Examples", "--prefix", args.coverage.split(":")[0], "--legend",
+  ret=ret+abs(subprocess.call(["genhtml", "-t", "MBSim-Env Examples (%s)"%(args.buildType), "--prefix", args.coverage.split(":")[0], "--legend",
     "--html-prolog", pj(scriptDir, "lcov-prolog.parthtml"), "--html-epilog", pj(scriptDir, "lcov-epilog.parthtml"),
-    "--no-function-coverage", "-o", pj(args.reportOutDir, "coverage"),
+    "--demangle-cpp", "-o", pj(args.reportOutDir, "coverage"),
     pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
   lcovFD.close()
 
@@ -1798,7 +1861,7 @@ def coverage(mainFD):
     sys.path.append(args.buildSystemRun)
     import buildSystemState
     buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", str(covRate)+"%",
-      "#5cb85c" if covRate>=90 else ("#f0ad4e" if covRate>=75 else "#d9534f"))
+      "#5cb85c" if covRate>=90 else ("#f0ad4e" if covRate>=70 else "#d9534f"))
 
   if ret==0:
     print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;', file=mainFD)
@@ -1806,7 +1869,8 @@ def coverage(mainFD):
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
   print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
         '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%d%%</span></a></td>'%(covRate), file=mainFD)
-  for i in range(0, 5-sum([4*args.disableRun, args.disableCompare, args.disableValidate])):
+  for i in range(0, 6-sum([args.disableRun, args.disableRun, args.disableRun, args.disableCompare,
+    args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])):
     print('<td>-</td>', file=mainFD)
   print('</tr>', file=mainFD); mainFD.flush()
   return 1 if ret!=0 else 0

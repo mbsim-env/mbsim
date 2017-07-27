@@ -87,10 +87,14 @@ namespace MBSimGUI {
     
     mw = this;
 
+#if _WIN32
+    uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
+#else
     if(bfs::is_directory("/dev/shm"))
       uniqueTempDir=bfs::unique_path("/dev/shm/mbsimgui_%%%%-%%%%-%%%%-%%%%");
     else
       uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
+#endif
     bfs::create_directories(uniqueTempDir);
 
     mbsim = new Process(this);
@@ -294,36 +298,29 @@ namespace MBSimGUI {
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
-    QStringList::iterator i, i2;
-
-    if((i=std::find(arg.begin(), arg.end(), "--maximized"))!=arg.end()) {
+    if(arg.contains("--maximized"))
       showMaximized();
-      arg.erase(i);
-    }
 
     QString fileProject;
     QRegExp filterProject(".+\\.mbsimprj\\.xml");
     QDir dir;
     dir.setFilter(QDir::Files);
-    i=arg.begin();
-    while(i!=arg.end() and (*i)[0]!='-') {
-      dir.setPath(*i);
+    for(auto it=arg.begin(); it!=arg.end(); ++it) {
+      if((*it)[0]=='-') continue;
+      dir.setPath(*it);
       if(dir.exists()) {
         QStringList file=dir.entryList();
         for(int j=0; j<file.size(); j++) {
           if(fileProject.isEmpty() and filterProject.exactMatch(file[j]))
             fileProject = dir.path()+"/"+file[j];
         }
-        i2=i; i++; arg.erase(i2);
         continue;
       }
-      if(QFile::exists(*i)) {
-        if(fileProject.isEmpty() and filterProject.exactMatch(*i))
-          fileProject = *i;
-        i2=i; i++; arg.erase(i2);
+      if(QFile::exists(*it)) {
+        if(fileProject.isEmpty() and filterProject.exactMatch(*it))
+          fileProject = *it;
         continue;
       }
-      i++;
     }
     if(fileProject.size())
       loadProject(QDir::current().absoluteFilePath(fileProject));
@@ -1007,9 +1004,9 @@ namespace MBSimGUI {
         "<ul>"
         "tbd"
         //"  <li>'Qt - A cross-platform application and UI framework' by Nokia from <tt>http://www.qtsoftware.com</tt> (License: GPL/LGPL)</li>"
-        //"  <li>'mbsimflatxml - tbd <tt>http://www.mbsim-env.de/</tt> (Licence: Qwt/LGPL)</li>"
-        //"  <li>'OpenMBV - tbd <tt>http://www.mbsim-env.de/</tt> (License: LGPL)</li>"
-        //"  <li>'h5plotserie - tbd <tt>http://www.mbsim-env.de/</tt> (License: NCSA-HDF)</li>"
+        //"  <li>'mbsimflatxml - tbd <tt>https://www.mbsim-env.de/</tt> (Licence: Qwt/LGPL)</li>"
+        //"  <li>'OpenMBV - tbd <tt>https://www.mbsim-env.de/</tt> (License: LGPL)</li>"
+        //"  <li>'h5plotserie - tbd <tt>https://www.mbsim-env.de/</tt> (License: NCSA-HDF)</li>"
         //"  <li>...</li>"
         "</ul>"
         );

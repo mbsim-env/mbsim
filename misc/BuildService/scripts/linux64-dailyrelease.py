@@ -6,7 +6,7 @@ import subprocess
 
 SRCDIR="/home/mbsim/linux64-dailyrelease"
 OUTDIR="/var/www/html/mbsim/linux64-dailyrelease"
-URL="http://www.mbsim-env.de/mbsim/linux64-dailyrelease"
+URL="https://www.mbsim-env.de/mbsim/linux64-dailyrelease"
 SCRIPTDIR=os.path.dirname(os.path.realpath(__file__))
 
 
@@ -18,7 +18,7 @@ os.environ["CFLAGS"]="-g -O2"
 os.environ["FFLAGS"]="-g -O2"
 os.environ['MBSIM_SWIG']='1'
 
-if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR,
+if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--webapp",
   "--prefix", SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "linux64-dailyrelease",
   "--enableCleanPrefix", "--passToConfigure", "--with-lowram", "--enable-python", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin", "--with-qmake=qmake-qt4",

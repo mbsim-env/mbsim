@@ -6,7 +6,7 @@ import subprocess
 
 SRCDIR="/home/mbsim/win64-dailyrelease"
 OUTDIR="/var/www/html/mbsim/win64-dailyrelease"
-URL="http://www.mbsim-env.de/mbsim/win64-dailyrelease"
+URL="https://www.mbsim-env.de/mbsim/win64-dailyrelease"
 SCRIPTDIR=os.path.dirname(os.path.realpath(__file__))
 
 
@@ -29,7 +29,7 @@ os.environ["CXX"]="x86_64-w64-mingw32-g++" # required for source code examples
 os.environ['MBSIM_SWIG']='1'
 
 if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix",
-  SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "win64-dailyrelease",
+  SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "win64-dailyrelease", "--webapp",
   "--enableCleanPrefix", "--passToConfigure", "--with-lowram", "--enable-python", "--enable-shared", "--disable-static", "--build=x86_64-redhat-linux", "--host=x86_64-w64-mingw32",
   "--with-javajniosdir="+SCRIPTDIR+"/buildPreparation/windows",
   "--with-mkoctfile=/home/mbsim/3rdparty/octave-local-win64/bin/mkoctfile.exe",

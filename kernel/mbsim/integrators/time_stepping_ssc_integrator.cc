@@ -559,7 +559,6 @@ namespace MBSimIntegrator {
           ConstraintsChangedBlock1 = ConstraintsChangedB || ConstraintsChangedC || ConstraintsChangedD;
           ConstraintsChanged       = ConstraintsChangedA || ConstraintsChangedBlock1;
           calcBlock2 = (Block2IsOptional==false) || (ConstraintsChangedBlock1==false);
-          ConstraintsChangedA = false;
           ConstraintsChangedB = false;
           ConstraintsChangedC = false;
           ConstraintsChangedD = false;
@@ -1414,7 +1413,6 @@ namespace MBSimIntegrator {
       if (GapControlStrategy==4 && NSiMin<NSi) dt=safetyFactorGapControl*NSiMin+1e-15;
       if (GapControlStrategy==5) {
         if(NSi<NSiMin) {NSiMin=NSi; IndexNSMin=IndexNS;}
-        NSi=NSiMin;
         double dtUnsafe = fabs(qUnsafe/gdInActive(IndexNSMin));
         dtUnsafe *= NSiMin/dte; //pow(NS/dte,order);
         if(dtUnsafe*10<dte) {  // Falls Unsicherheit zu gross macht gapContol keinen Sinn !

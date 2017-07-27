@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MBSim-Env - WebApp</title>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+              Remove this if you use the .htaccess -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Apple iOS Safari settings -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <!-- App Start Icon  -->
+  <link rel="apple-touch-startup-image" href="images/screen_320x460.png" />
+  <!-- For iOS devices set the icon to use if user bookmarks app on their homescreen -->
+  <link rel="apple-touch-icon" href="images/screen_57x57.png"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+  <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
+  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
+</head>
+<body style="margin: 0px;">
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
+  <script src="/noVNC/include/util.js"> </script>
+  <script>
+    "use strict";
+
+    // Load supporting scripts
+    var INCLUDE_URI="/noVNC/include/";
+    Util.load_scripts(["webutil.js", "base64.js", "websock.js", "des.js",
+                       "keysymdef.js", "keyboard.js", "input.js", "display.js",
+                       "inflator.js", "rfb.js", "keysym.js"]);
+
+    var rfb;
+    var resizeTimeout;
+    var running=false;
+
+    function UIresize() {
+      var innerW=window.innerWidth;
+      var innerH=window.innerHeight;
+      var padding=5;
+      if (innerW!==undefined && innerH!==undefined)
+        rfb.requestDesktopSize(innerW, innerH-padding);
+    }
+    function FBUComplete(rfb, fbu) {
+      UIresize();
+      rfb.set_onFBUComplete(function() {});
+    }
+    function clipboard(rfb, text) {
+      // copy text to clipboard: not working in a browser to to security restrictions
+    }
+    function updateState(rfb, state, oldstate, msg) {
+      switch(state) {
+        case 'normal':
+          // hide the status panel
+          $("#STATUSPANEL").addClass("hidden");
+          running=true;
+          break;
+        case 'failed':
+        case 'fatal':
+          // change the status panel text
+          $("#STATUSMSG").children().remove();
+          $("#STATUSMSG").append("<p>"+msg+"</p>");
+          // switch to danger message box
+          $("#STATUSPANEL").removeClass("panel-info");
+          $("#STATUSPANEL").addClass("panel-danger");
+          // switch message box sign
+          $("#STATUSSIGN").removeClass("glyphicon-info-sign");
+          $("#STATUSSIGN").addClass("glyphicon-exclamation-sign");
+          // show status panel
+          $("#STATUSPANEL").removeClass("hidden");
+          break;
+        case 'disconnected':
+          if(running)
+            // go to previous page
+            window.history.back();
+          break;
+        default:
+          break;
+      }
+    }
+
+    window.onresize=function () {
+      // When the window has been resized, wait until the size remains
+      // the same for 0.5 seconds before sending the request for changing
+      // the resolution of the session
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(function() {
+        UIresize();
+      }, 500);
+    };
+
+    window.onscriptsload=function () {
+      try {
+        rfb=new RFB({
+          'target': $D('noVNC_canvas'),
+          'encrypt': true,
+          'local_cursor': true,
+          'shared': false,
+          'onUpdateState': updateState,
+          'onFBUComplete': FBUComplete,
+          'onClipboard': clipboard,
+        });
+      } catch (exc) {
+        updateState(null, 'fatal', null, 'Unable to create RFB client -- ' + exc);
+        return;
+      }
+
+      // Authorization is done using the cookie send with the websocket request.
+      // The noVNC token is used to pass additonal information to the server: here we pass the url query as token.
+      var port=location.port;
+      if(!port) {
+        if(location.protocol=="https:")
+          port=443;
+        else if(location.protocol=="http:")
+          port=80;
+        else {
+          updateState(null, 'fatal', null, 'Cannot detect port');
+          return;
+        }
+      }
+      rfb.connect(location.hostname, port, "", "websockify?token="+encodeURIComponent(window.location.search.substring(1)));
+    };
+  </script>
+  <canvas id="noVNC_canvas" width="1" height="1">
+    <div class="panel panel-danger">
+      <div class="panel-heading"><span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;Error message</div>
+      <div class="panel-body text-center">
+        Your browser does not support Canvas.
+      </div>
+    </div>
+  </canvas>
+  <div id="STATUSPANEL" class="panel panel-info" style="margin: 1em;">
+    <div class="panel-heading"><span id="STATUSSIGN" class="glyphicon glyphicon-info-sign"></span>&nbsp;Status message</div>
+    <div class="panel-body text-center">
+      <div id="STATUSMSG">
+        <p>Connecting, please wait.</p>
+        <p><object data="loading.svg" type="image/svg+xml"></object></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
