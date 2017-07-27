@@ -356,7 +356,7 @@ namespace MBSimGUI {
     return true;
   }
 
-  VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_, int singleStep, bool transpose) : minSize(minSize_), maxSize(maxSize_) {
+  VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_, int singleStep, bool transpose, bool table) : minSize(minSize_), maxSize(maxSize_) {
 
     QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
@@ -367,7 +367,8 @@ namespace MBSimGUI {
     layout->addWidget(sizeCombo,0,1);
     sizeCombo->setValue(size);
     connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
-    widget = new VecWidget(size, transpose);
+    if(table) widget = new VecTableWidget(size);
+    else widget = new VecWidget(size, transpose);
     layout->addWidget(widget,1,0,1,3);
     layout->setColumnStretch(2,1);
     setLayout(layout);
@@ -381,20 +382,89 @@ namespace MBSimGUI {
   }
 
   void VecSizeVarWidget::resize_(int size) {
-    widget->resize_(size);
+    widget->resize_(size,1);
     sizeCombo->blockSignals(true);
     sizeCombo->setValue(size);
     sizeCombo->blockSignals(false);
   }
 
   void VecSizeVarWidget::currentIndexChanged(int size) {
-    widget->resize_(size);
+    widget->resize_(size,1);
     emit sizeChanged(size);
     emit Widget::widgetChanged();
   }
 
   bool VecSizeVarWidget::validate(const vector<vector<QString> > &A) const {
     if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
+      return false;
+    if(A.size() && A[0].size()!=1)
+      return false;
+    return true;
+  }
+
+  VecTableWidget::VecTableWidget(int size) {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    table = new QTableWidget(this);
+    table->setMinimumSize(100,200);
+    layout->setMargin(0);
+    setLayout(layout);
+    layout->addWidget(table);
+    resize_(size,1);
+  }
+
+  VecTableWidget::VecTableWidget(const vector<QString> &x) {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    table = new QTableWidget(this);
+    table->setMinimumSize(100,200);
+    layout->setMargin(0);
+    setLayout(layout);
+    layout->addWidget(table);
+    setVec(x);
+  }
+
+  int VecTableWidget::size() const {
+    return table->rowCount();
+  }
+
+  void VecTableWidget::resize_(int size) {
+    if(this->rows()!=size) {
+      vector<QString> buf(this->rows());
+      for(unsigned int i=0; i<this->rows(); i++)
+        buf[i] = table->item(i,0)->text();
+      table->setRowCount(size);
+      table->setColumnCount(1);
+      for(int i=0; i<size; i++) {
+        QTableWidgetItem *newItem = new QTableWidgetItem("0");
+        table->setItem(i,0,newItem);
+        //box[i][j]->setPlaceholderText("0");
+      }
+      for(int i=0; i<min((int)buf.size(),size); i++)
+        table->item(i,0)->setText(buf[i]);
+    }
+  }
+
+  vector<QString> VecTableWidget::getVec() const {
+    vector<QString> x(size());
+    for(unsigned int i=0; i<rows(); i++) {
+      QString tmp = table->item(i,0)->text();
+      x[i] = tmp.isEmpty()?"0":tmp;
+    }
+    return x;
+  }
+
+  void VecTableWidget::setVec(const vector<QString> &x) {
+    if(x.size()==0)
+      return resize_(0,1);
+    if(x.size() != size())
+      resize_(x.size());
+    for(unsigned int i=0; i<size(); i++)
+      table->item(i,0)->setText(x[i]);
+  }
+
+  bool VecTableWidget::validate(const vector<vector<QString> > &A) const {
+    if(size()!=static_cast<int>(A.size()))
       return false;
     if(A.size() && A[0].size()!=1)
       return false;
@@ -525,7 +595,7 @@ namespace MBSimGUI {
   }
 
 
-  MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
+  MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_, int table) : minCols(minCols_), maxCols(maxCols_) {
 
     QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
@@ -538,7 +608,8 @@ namespace MBSimGUI {
     colsCombo->setValue(cols);
     connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     layout->addWidget(colsCombo,0,3);
-    widget = new MatWidget(rows,cols);
+    if(table) widget = new MatTableWidget(rows,cols);
+    else widget = new MatWidget(rows,cols);
     layout->addWidget(widget,1,0,1,5);
     layout->setColumnStretch(4,1);
     setLayout(layout);
@@ -574,7 +645,7 @@ namespace MBSimGUI {
     return true;
   }
 
-  MatRowsVarWidget::MatRowsVarWidget(int rows, int cols, int minRows_, int maxRows_) : minRows(minRows_), maxRows(maxRows_) {
+  MatRowsVarWidget::MatRowsVarWidget(int rows, int cols, int minRows_, int maxRows_, int table) : minRows(minRows_), maxRows(maxRows_) {
 
     QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
@@ -587,7 +658,8 @@ namespace MBSimGUI {
     rowsCombo->setValue(rows);
     connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     layout->addWidget(rowsCombo,0,1);
-    widget = new MatWidget(rows,cols);
+    if(table) widget = new MatTableWidget(rows,cols);
+    else widget = new MatWidget(rows,cols);
     layout->addWidget(widget,1,0,1,5);
     layout->setColumnStretch(4,1);
     setLayout(layout);
@@ -623,7 +695,7 @@ namespace MBSimGUI {
     return true;
   }
 
-  MatRowsColsVarWidget::MatRowsColsVarWidget(int rows, int cols, int minRows_, int maxRows_, int minCols_, int maxCols_) : minRows(minRows_), maxRows(maxRows_), minCols(minCols_), maxCols(maxCols_) {
+  MatRowsColsVarWidget::MatRowsColsVarWidget(int rows, int cols, int minRows_, int maxRows_, int minCols_, int maxCols_, int table) : minRows(minRows_), maxRows(maxRows_), minCols(minCols_), maxCols(maxCols_) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -644,7 +716,8 @@ namespace MBSimGUI {
     hbox->addWidget(new QLabel("x"));
     hbox->addWidget(colsCombo);
     hbox->addStretch(2);
-    widget = new MatWidget(rows,cols);
+    if(table) widget = new MatTableWidget(rows,cols);
+    else widget = new MatWidget(rows,cols);
     layout->addWidget(widget);
     setLayout(layout);
   }
@@ -873,6 +946,88 @@ namespace MBSimGUI {
     if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
       return false;
     if(static_cast<int>(A[0].size())<minSize || static_cast<int>(A[0].size())>maxSize)
+      return false;
+    return true;
+  }
+
+  MatTableWidget::MatTableWidget(int rows, int cols) {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    table = new QTableWidget(this);
+    table->setMinimumSize(200,200);
+    layout->setMargin(0);
+    setLayout(layout);
+    layout->addWidget(table);
+    resize_(rows,cols);
+  }
+
+  MatTableWidget::MatTableWidget(const vector<vector<QString> > &A) {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    table = new QTableWidget(this);
+    table->setMinimumSize(200,200);
+    layout->setMargin(0);
+    setLayout(layout);
+    layout->addWidget(table);
+    setMat(A);
+  }
+
+  int MatTableWidget::rows() const {
+    return table->rowCount();
+  }
+
+  int MatTableWidget::cols() const {
+    return table->columnCount();
+  }
+
+  void MatTableWidget::resize_(int rows, int cols) {
+    if(this->rows()!=rows or this->cols()!=cols) {
+      vector<vector<QString> > buf(this->rows());
+      for(unsigned int i=0; i<this->rows(); i++) {
+        buf[i].resize(this->cols());
+        for(unsigned int j=0; j<this->cols(); j++)
+          buf[i][j] = table->item(i,j)->text();
+      }
+      table->setRowCount(rows);
+      table->setColumnCount(cols);
+      for(int i=0; i<rows; i++) {
+        for(int j=0; j<cols; j++) {
+          QTableWidgetItem *newItem = new QTableWidgetItem("0");
+          table->setItem(i,j,newItem);
+          //box[i][j]->setPlaceholderText("0");
+        }
+      }
+      for(int i=0; i<min((int)buf.size(),rows); i++)
+        for(int j=0; j<min((int)buf[i].size(),cols); j++)
+          table->item(i,j)->setText(buf[i][j]);
+    }
+  }
+
+  vector<vector<QString> > MatTableWidget::getMat() const {
+    vector<vector<QString> > A(rows());
+    for(unsigned int i=0; i<rows(); i++) {
+      A[i].resize(cols());
+      for(unsigned int j=0; j<cols(); j++) {
+        QString tmp = table->item(i,j)->text();
+        A[i][j] = tmp.isEmpty()?"0":tmp;
+      }
+    }
+    return A;
+  }
+
+  void MatTableWidget::setMat(const vector<vector<QString> > &A) {
+    if(A.size()==0)
+      return resize_(0,0);
+    if(A.size() != rows() || A[0].size()!=cols())
+      resize_(A.size(),A[0].size());
+    for(unsigned int i=0; i<rows(); i++)
+      for(unsigned int j=0; j<cols(); j++)
+        table->item(i,j)->setText(A[i][j]);
+        //table->item(i,j)->setText(A[i][j]=="0"?"":A[i][j]);
+  }
+
+  bool MatTableWidget::validate(const vector<vector<QString> > &A) const {
+    if(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()))
       return false;
     return true;
   }
@@ -1137,7 +1292,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
+  PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_, bool eval) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
     QHBoxLayout *layout = new QHBoxLayout;
     setLayout(layout);
     layout->setMargin(0);
@@ -1148,9 +1303,11 @@ namespace MBSimGUI {
     if(units.size())
       layout->addWidget(unit);
 
-    QPushButton *evalButton = new QPushButton("Eval");
-    connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
-    layout->addWidget(evalButton);
+    if(eval) {
+      QPushButton *evalButton = new QPushButton("Eval");
+      connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
+      layout->addWidget(evalButton);
+    }
 
     connect(widget_,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
   }
@@ -1265,13 +1422,13 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  VecWidgetFactory::VecWidgetFactory(int m, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : x(getVec<QString>(m,"0")), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
-    name[0] = "Vector";
+  VecWidgetFactory::VecWidgetFactory(int m, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_, bool table_, bool eval_) : x(getVec<QString>(m,"0")), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_), table(table_), eval(eval_) {
+    name[0] = table?"Table":"Vector";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  VecWidgetFactory::VecWidgetFactory(const vector<QString> &x_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : x(x_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
+  VecWidgetFactory::VecWidgetFactory(const vector<QString> &x_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_, bool eval_) : x(x_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_), table(false), eval(eval_) {
     name[0] = "Vector";
     name[1] = "File";
     name[2] = "Editor";
@@ -1279,37 +1436,37 @@ namespace MBSimGUI {
 
   QWidget* VecWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new VecWidget(x,transpose), unit[0], defaultUnit[0]);
+      return table?new PhysicalVariableWidget(new VecTableWidget(x), unit[0], defaultUnit[0]):new PhysicalVariableWidget(new VecWidget(x,transpose), unit[0], defaultUnit[0], eval);
     if(i==1)
-      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
+      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1], eval);
     if(i==2)
-      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2], eval);
     return NULL;
   }
 
-  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, int singleStep_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : m(m_), singleStep(singleStep_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
-    name[0] = "Vector";
+  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, int singleStep_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_, bool table_, bool eval_) : m(m_), singleStep(singleStep_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_), table(table_), eval(eval_) {
+    name[0] = table?"Table":"Vector";
     name[1] = "File";
     name[2] = "Editor";
   }
 
   QWidget* VecSizeVarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new VecSizeVarWidget(m,1,100,singleStep,transpose), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new VecSizeVarWidget(m,1,100,singleStep,transpose,table), unit[0], defaultUnit[0], eval);
     if(i==1)
-      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
+      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1], eval);
     if(i==2)
-      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2], eval);
     return NULL;
   }
 
-  MatWidgetFactory::MatWidgetFactory(int m, int n, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(getMat<QString>(m,n,"0")), name(3), unit(unit_), defaultUnit(defaultUnit_) {
-    name[0] = "Matrix";
+  MatWidgetFactory::MatWidgetFactory(int m, int n, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool table_) : A(getMat<QString>(m,n,"0")), name(3), unit(unit_), defaultUnit(defaultUnit_), table(table_) {
+    name[0] = table?"Table":"Matrix";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  MatWidgetFactory::MatWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
+  MatWidgetFactory::MatWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_), table(false) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
@@ -1317,7 +1474,7 @@ namespace MBSimGUI {
 
   QWidget* MatWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new MatWidget(A), unit[0], defaultUnit[0]);
+      return table?new PhysicalVariableWidget(new MatTableWidget(A), unit[0], defaultUnit[0]):new PhysicalVariableWidget(new MatWidget(A), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
@@ -1325,15 +1482,15 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory(int m_, int n_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), n(n_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
-    name[0] = "Matrix";
+  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory(int m_, int n_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool table_) : m(m_), n(n_), name(3), unit(unit_), defaultUnit(defaultUnit_), table(table_) {
+    name[0] = table?"Table":"Matrix";
     name[1] = "File";
     name[2] = "Editor";
   }
 
   QWidget* MatRowsVarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new MatRowsVarWidget(m,n,1,100), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new MatRowsVarWidget(m,n,1,100,table), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
@@ -1341,15 +1498,15 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  MatColsVarWidgetFactory::MatColsVarWidgetFactory(int m_, int n_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), n(n_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
-    name[0] = "Matrix";
+  MatColsVarWidgetFactory::MatColsVarWidgetFactory(int m_, int n_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool table_) : m(m_), n(n_), name(3), unit(unit_), defaultUnit(defaultUnit_), table(table_) {
+    name[0] = table?"Table":"Matrix";
     name[1] = "File";
     name[2] = "Editor";
   }
 
   QWidget* MatColsVarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new MatColsVarWidget(m,n,1,100), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new MatColsVarWidget(m,n,1,100,table), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
@@ -1357,15 +1514,15 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  MatRowsColsVarWidgetFactory::MatRowsColsVarWidgetFactory(int m, int n) : A(getScalars<QString>(m,n,"0")), name(3), unit(3,QStringList()), defaultUnit(3,1) {
-    name[0] = "Matrix";
+  MatRowsColsVarWidgetFactory::MatRowsColsVarWidgetFactory(int m, int n, bool table_) : A(getScalars<QString>(m,n,"0")), name(3), unit(3,QStringList()), defaultUnit(3,1), table(table_) {
+    name[0] = table?"Table":"Matrix";
     name[1] = "File";
     name[2] = "Editor";
   }
 
   QWidget* MatRowsColsVarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new MatRowsColsVarWidget(2,2,1,100,1,100), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new MatRowsColsVarWidget(2,2,1,100,1,100,table), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
@@ -1456,86 +1613,6 @@ namespace MBSimGUI {
     if(i==5)
       return new PhysicalVariableWidget(new ExpressionWidget,unit[5],defaultUnit[5]);
     return NULL;
-  }
-
-  TableWidget::TableWidget(int rows, int cols) {
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    table = new QTableWidget(this);
-    layout->setMargin(0);
-    setLayout(layout);
-    layout->addWidget(table);
-    resize_(rows,cols);
-  }
-
-  TableWidget::TableWidget(const vector<vector<QString> > &A) {
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    table = new QTableWidget(this);
-    layout->setMargin(0);
-    setLayout(layout);
-    layout->addWidget(table);
-    setMat(A);
-  }
-
-  int TableWidget::rows() const {
-    return table->rowCount();
-  }
-
-  int TableWidget::cols() const {
-    return table->columnCount();
-  }
-
-  void TableWidget::resize_(int rows, int cols) {
-    if(this->rows()!=rows or this->cols()!=cols) {
-      vector<vector<QString> > buf(this->rows());
-      for(unsigned int i=0; i<this->rows(); i++) {
-        buf[i].resize(this->cols());
-        for(unsigned int j=0; j<this->cols(); j++)
-          buf[i][j] = table->item(i,j)->text();
-      }
-      table->setRowCount(rows);
-      table->setColumnCount(cols);
-      for(int i=0; i<rows; i++) {
-        for(int j=0; j<cols; j++) {
-          QTableWidgetItem *newItem = new QTableWidgetItem;
-          table->setItem(i,j,newItem);
-          //box[i][j]->setPlaceholderText("0");
-        }
-      }
-      for(int i=0; i<min((int)buf.size(),rows); i++)
-        for(int j=0; j<min((int)buf[i].size(),cols); j++)
-          table->item(i,j)->setText(buf[i][j]);
-    }
-  }
-
-  vector<vector<QString> > TableWidget::getMat() const {
-    vector<vector<QString> > A(rows());
-    for(unsigned int i=0; i<rows(); i++) {
-      A[i].resize(cols());
-      for(unsigned int j=0; j<cols(); j++) {
-        QString tmp = table->item(i,j)->text();
-        A[i][j] = tmp.isEmpty()?"0":tmp;
-      }
-    }
-    return A;
-  }
-
-  void TableWidget::setMat(const vector<vector<QString> > &A) {
-    if(A.size()==0)
-      return resize_(0,0);
-    if(A.size() != rows() || A[0].size()!=cols())
-      resize_(A.size(),A[0].size());
-    for(unsigned int i=0; i<rows(); i++)
-      for(unsigned int j=0; j<cols(); j++)
-        table->item(i,j)->setText(A[i][j]);
-        //table->item(i,j)->setText(A[i][j]=="0"?"":A[i][j]);
-  }
-
-  bool TableWidget::validate(const vector<vector<QString> > &A) const {
-    if(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()))
-      return false;
-    return true;
   }
 
 }

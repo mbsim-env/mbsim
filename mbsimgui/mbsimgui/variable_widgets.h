@@ -131,16 +131,17 @@ namespace MBSimGUI {
       bool validate(const std::vector<std::vector<QString> > &A) const;
   };
 
+
   class VecSizeVarWidget : public BasicVecWidget {
 
     Q_OBJECT
 
     private:
-      VecWidget *widget;
+      BasicVecWidget *widget;
       CustomSpinBox* sizeCombo;
       int minSize, maxSize;
     public:
-      VecSizeVarWidget(int size, int minSize, int maxSize, int singleStep=1, bool transpose=false);
+      VecSizeVarWidget(int size, int minSize, int maxSize, int singleStep=1, bool transpose=false, bool table=false);
 //      VecSizeVarWidget(const std::vector<QString> &x, int minSize, int maxSize, bool transpose=false);
       std::vector<QString> getVec() const {return widget->getVec();}
       void setVec(const std::vector<QString> &x);
@@ -158,6 +159,26 @@ namespace MBSimGUI {
       void currentIndexChanged(int);
     signals:
       void sizeChanged(int);
+  };
+
+  class VecTableWidget: public BasicVecWidget {
+
+    private:
+      QTableWidget *table;
+    public:
+      VecTableWidget(int size);
+      VecTableWidget(const std::vector<QString> &x);
+      void resize_(int size);
+      void resize_(int rows, int cols) { resize_(rows); }
+      std::vector<QString> getVec() const;
+      void setVec(const std::vector<QString> &x);
+//      void setReadOnly(bool flag);
+      QString getValue() const {return toQStr(getVec());}
+      void setValue(const QString &str) {setVec(strToVec(str));}
+      int size() const;
+      int rows() const { return size(); }
+      virtual QString getType() const {return "Vector";}
+      bool validate(const std::vector<std::vector<QString> > &A) const;
   };
 
   class BasicMatWidget : public VariableWidget {
@@ -193,12 +214,12 @@ namespace MBSimGUI {
     Q_OBJECT
 
     private:
-      MatWidget *widget;
+      BasicMatWidget *widget;
       QLabel *rowsLabel;
       CustomSpinBox* colsCombo;
       int minCols, maxCols;
     public:
-      MatColsVarWidget(int rows, int cols, int minCols, int maxCols);
+      MatColsVarWidget(int rows, int cols, int minCols, int maxCols, int table=false);
       std::vector<std::vector<QString> > getMat() const {return widget->getMat();}
       void setMat(const std::vector<std::vector<QString> > &A);
       void resize_(int rows, int cols);
@@ -221,12 +242,12 @@ namespace MBSimGUI {
     Q_OBJECT
 
     private:
-      MatWidget *widget;
+      BasicMatWidget *widget;
       CustomSpinBox *rowsCombo;
       QLabel *colsLabel;
       int minRows, maxRows;
     public:
-      MatRowsVarWidget(int rows, int cols, int minRows, int maxRows);
+      MatRowsVarWidget(int rows, int cols, int minRows, int maxRows, int table=false);
       std::vector<std::vector<QString> > getMat() const {return widget->getMat();}
       void setMat(const std::vector<std::vector<QString> > &A);
       void resize_(int rows, int cols);
@@ -249,11 +270,11 @@ namespace MBSimGUI {
     Q_OBJECT
 
     private:
-      MatWidget *widget;
+      BasicMatWidget *widget;
       CustomSpinBox *rowsCombo, *colsCombo;
       int minRows, maxRows, minCols, maxCols;
     public:
-      MatRowsColsVarWidget(int rows, int cols, int minRows, int maxRows, int minCols, int maxCols);
+      MatRowsColsVarWidget(int rows, int cols, int minRows, int maxRows, int minCols, int maxCols, int table=false);
       std::vector<std::vector<QString> > getMat() const {return widget->getMat();}
       void setMat(const std::vector<std::vector<QString> > &A);
       void resize_(int rows, int cols);
@@ -278,7 +299,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     private:
-      MatWidget *widget;
+      BasicMatWidget *widget;
       CustomSpinBox *sizeCombo;
       int minSize, maxSize;
     public:
@@ -345,6 +366,25 @@ namespace MBSimGUI {
       void currentIndexChanged(int);
     signals:
       void sizeChanged(int);
+  };
+
+  class MatTableWidget: public BasicMatWidget {
+
+    private:
+      QTableWidget *table;
+    public:
+      MatTableWidget(int rows, int cols);
+      MatTableWidget(const std::vector<std::vector<QString> > &A);
+      void resize_(int rows, int cols);
+      std::vector<std::vector<QString> > getMat() const;
+      void setMat(const std::vector<std::vector<QString> > &A);
+//      void setReadOnly(bool flag);
+      QString getValue() const {return toQStr(getMat());}
+      void setValue(const QString &str) {setMat(strToMat(str));}
+      int rows() const;
+      int cols() const;
+      virtual QString getType() const {return "Matrix";}
+      bool validate(const std::vector<std::vector<QString> > &A) const;
   };
 
   class CardanWidget : public VariableWidget {
@@ -435,7 +475,7 @@ namespace MBSimGUI {
     protected slots:
       void openEvalDialog();
     public:
-      PhysicalVariableWidget(VariableWidget *widget, const QStringList &units=QStringList(), int defaultUnit=0);
+      PhysicalVariableWidget(VariableWidget *widget, const QStringList &units=QStringList(), int defaultUnit=0, bool eval=true);
       QString getValue() const {return widget->getValue();}
       void setValue(const QString &str) {widget->setValue(str);}
       void setReadOnly(bool flag) {widget->setReadOnly(flag);}
@@ -504,8 +544,8 @@ namespace MBSimGUI {
 
   class VecWidgetFactory : public WidgetFactory {
     public:
-      VecWidgetFactory(int m, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
-      VecWidgetFactory(const std::vector<QString> &x, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
+      VecWidgetFactory(int m, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false, bool table=false, bool eval=true);
+      VecWidgetFactory(const std::vector<QString> &x, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false, bool eval=true);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
@@ -514,12 +554,12 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
-      bool transpose;
+      bool transpose, table, eval;
   };
 
   class VecSizeVarWidgetFactory : public WidgetFactory {
     public:
-      VecSizeVarWidgetFactory(int m, int singleStep=1, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
+      VecSizeVarWidgetFactory(int m, int singleStep=1, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false, bool table=false, bool eval=true);
 //      VecSizeVarWidgetFactory(const std::vector<QString> &x, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
@@ -529,12 +569,12 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
-      bool transpose;
+      bool transpose, table, eval;
   };
 
   class MatWidgetFactory : public WidgetFactory {
     public:
-      MatWidgetFactory(int m, int n, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0));
+      MatWidgetFactory(int m, int n, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool table=false);
       MatWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0));
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
@@ -544,11 +584,12 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
+      bool table;
   };
 
   class MatRowsVarWidgetFactory : public WidgetFactory {
     public:
-      MatRowsVarWidgetFactory(int m, int n, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0));
+      MatRowsVarWidgetFactory(int m, int n, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool table=false);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
@@ -557,11 +598,12 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
+      bool table;
   };
 
   class MatColsVarWidgetFactory : public WidgetFactory {
     public:
-      MatColsVarWidgetFactory(int m, int n, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0));
+      MatColsVarWidgetFactory(int m, int n, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool table=false);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
@@ -570,11 +612,12 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
+      bool table;
   };
 
   class MatRowsColsVarWidgetFactory : public WidgetFactory {
     public:
-      MatRowsColsVarWidgetFactory(int m=0, int n=0);
+      MatRowsColsVarWidgetFactory(int m=0, int n=0, bool table=false);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
@@ -583,6 +626,7 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
+      bool table;
   };
 
   class SqrMatSizeVarWidgetFactory : public WidgetFactory {
@@ -637,25 +681,6 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
-  };
-
-  class TableWidget : public VariableWidget {
-
-    private:
-      QTableWidget *table;
-    public:
-      TableWidget(int rows, int cols);
-      TableWidget(const std::vector<std::vector<QString> > &A);
-      void resize_(int rows, int cols);
-      std::vector<std::vector<QString> > getMat() const;
-      void setMat(const std::vector<std::vector<QString> > &A);
-//      void setReadOnly(bool flag);
-      QString getValue() const {return toQStr(getMat());}
-      void setValue(const QString &str) {setMat(strToMat(str));}
-      int rows() const;
-      int cols() const;
-      virtual QString getType() const {return "Matrix";}
-      bool validate(const std::vector<std::vector<QString> > &A) const;
   };
 
 }

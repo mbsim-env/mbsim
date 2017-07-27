@@ -380,9 +380,9 @@ namespace MBSimGUI {
         layout->addWidget(argdim[i],i,1);
     }
     if(fixedSize)
-      f = new ExtWidget("Function",new ChoiceWidget2(new VecWidgetFactory(m),QBoxLayout::RightToLeft,5),false,false,"");
+      f = new ExtWidget("Function",new ChoiceWidget2(new VecWidgetFactory(m,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
     else
-      f = new ExtWidget("Function",new ChoiceWidget2(new VecSizeVarWidgetFactory(m),QBoxLayout::RightToLeft,5),false,false,"");
+      f = new ExtWidget("Function",new ChoiceWidget2(new VecSizeVarWidgetFactory(m,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
     layout->addWidget(f,var.size(),0,1,2);
   }
 
