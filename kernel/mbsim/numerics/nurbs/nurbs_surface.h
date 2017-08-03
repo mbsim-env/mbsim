@@ -42,42 +42,51 @@ namespace MBSim {
       NurbsSurface(const NurbsSurface& nS);
 //  NurbsSurface(int DegU, int DegV, const Vector<T>& Uk, const Vector<T>& Vk, const Matrix< HPoint_nD<T,N> >& Cp) ;
 //  NurbsSurface(int DegU, int DegV, Vector<T>& Uk, Vector<T>& Vk, Matrix< Point_nD<T,N> >& Cp, Matrix<T>& W) ;
-      virtual ~NurbsSurface() //!< Empty desctructor
+      //! Empty desctructor
+      virtual ~NurbsSurface()
       {
         ;
       }
 
     public:
       // Reference to internal data
-      const Vec& knotU() const //!< A reference to the U knot vector
+      //! A reference to the U knot vector
+      const Vec& knotU() const
       {
         return U;
       }
-      const Vec& knotV() const //!< A reference to the V knot vector
+      //! A reference to the V knot vector
+      const Vec& knotV() const
       {
         return V;
       }
-      double knotU(int i) const //!< Returns the i-th knot from U
+      //! Returns the i-th knot from U
+      double knotU(int i) const
       {
         return U(i);
       }
-      double knotV(int i) const //!< Returns the i-th knot from V
+      //! Returns the i-th knot from V
+      double knotV(int i) const
       {
         return V(i);
       }
-      const GeneralMatrix<Vec4>& ctrlPnts() const //!< A reference to the control points
+      //! A reference to the control points
+      const GeneralMatrix<Vec4>& ctrlPnts() const
       {
         return P;
       }
-      const fmatvec::Vec4 ctrlPnts(int i, int j) const //!< A reference to the control point at (i,j)
+      //! A reference to the control point at (i,j)
+      const fmatvec::Vec4 ctrlPnts(int i, int j) const
       {
         return P(i, j);
       }
-      int degreeU() const //!< A reference to the degree in U of the surface
+      //! A reference to the degree in U of the surface
+      int degreeU() const
       {
         return degU;
       }
-      int degreeV() const //!< A reference to the degree in V of the surface
+      //! A reference to the degree in V of the surface
+      int degreeV() const
       {
         return degV;
       }
@@ -90,7 +99,8 @@ namespace MBSim {
 
       // Basis functions
       fmatvec::HPoint<3> operator()(double u, double v) const;
-      fmatvec::Point<3> pointAt(double u, double v) const;  //!< Projects the point in the normal space
+      //! rojects the point in the normal space
+      fmatvec::Point<3> pointAt(double u, double v) const;
 //  void basisFuns(T u, T v, int spanU, int spanV, Vector<T>& Nu, Vector<T>& Nv) const ;
 //  void basisFunsU(T u, int span, Vector<T>& M) const ;
 //  void basisFunsV(T u, int span, Vector<T>& M) const ;
@@ -175,14 +185,18 @@ namespace MBSim {
 //  int writeVRML97(ostream &fout,const Color& color,int Nu,int Nv, T u_s, T u_e, T v_s, T v_e) const { return ParaSurface<T,N>::writeVRML97(fout,color,Nu,Nv,u_s,u_e,v_s,v_e);}
 //  ostream& print(ostream& os) const ;
 //
-//  int writeVRML(const char* filename,const Color& color=whiteColor,int Nu=20,int Nv=20) const //!< Calls the ParaSurface routine with proper values
+//  //! Calls the ParaSurface routine with proper values
+//  int writeVRML(const char* filename,const Color& color=whiteColor,int Nu=20,int Nv=20) const
 //    { return ParaSurface<T,N>::writeVRML(filename,color,Nu,Nv,U[0],U[U.n()-1],V[0],V[V.n()-1]); }
-//  int writeVRML(ostream& fout,const Color& color=whiteColor,int Nu=20,int Nv=20) const //!< Calls the ParaSurface routine with proper values
+//  //! Calls the ParaSurface routine with proper values
+//  int writeVRML(ostream& fout,const Color& color=whiteColor,int Nu=20,int Nv=20) const
 //    { return ParaSurface<T,N>::writeVRML(fout,color,Nu,Nv,U[0],U[U.n()-1],V[0],V[V.n()-1]); }
 //
-//  int writeVRML97(const char* filename,const Color& color=whiteColor,int Nu=20,int Nv=20) const //!< Calls the ParaSurface routine with proper values
+//  //! Calls the ParaSurface routine with proper values
+//  int writeVRML97(const char* filename,const Color& color=whiteColor,int Nu=20,int Nv=20) const
 //    { return ParaSurface<T,N>::writeVRML97(filename,color,Nu,Nv,U[0],U[U.n()-1],V[0],V[V.n()-1]); }
-//  int writeVRML97(ostream& fout,const Color& color=whiteColor,int Nu=20,int Nv=20) const //!< Calls the ParaSurface routine with proper values
+//  //! Calls the ParaSurface routine with proper values
+//  int writeVRML97(ostream& fout,const Color& color=whiteColor,int Nu=20,int Nv=20) const
 //    { return ParaSurface<T,N>::writeVRML97(fout,color,Nu,Nv,U[0],U[U.n()-1],V[0],V[V.n()-1]); }
 //
 //  int writePOVRAY(ostream& povray, int patch_type=1, double flatness=0.01, int num_u_steps=8, int num_v_steps=8) const ;
@@ -206,18 +220,25 @@ namespace MBSim {
 //
 //  // Modifies the shape of the surface
 //  void transform(const MatrixRT<T>& A) ;
-//  void modCP(int i, int j, const HPoint_nD<T,N>& p) //!< Modifies a control point
+//  //! Modifies a control point
+//  void modCP(int i, int j, const HPoint_nD<T,N>& p)
 //    { P(i,j) = p ; }
-//  void modCPby(int i, int j, const HPoint_nD<T,N>& p) //!< Modifies a control point
+//  //! Modifies a control point
+//  void modCPby(int i, int j, const HPoint_nD<T,N>& p)
 //    { P(i,j) += p ; }
 //
 //  T& modU(int i) { return U[i] ; }
-//  T modU(int i) const { return U[i]; } //!< modifies a knot
-//  T& modV(int i) { return V[i] ; } //!< modifies a knot
-//  T modV(int i) const { return V[i]; } //!< modifies a knot
+//  //! modifies a knot
+//  T modU(int i) const { return U[i]; }
+//  //! modifies a knot
+//  T& modV(int i) { return V[i] ; }
+//  //! modifies a knot
+//  T modV(int i) const { return V[i]; }
 //
-//  void modKnotU(const Vector<T>& uKnot) { if(P.rows()+degU+1==uKnot.n()) U=uKnot ; } //!< modifies the U knot vector if uKnot is of a proper size
-//  void modKnotV(const Vector<T>& vKnot) { if(P.cols()+degV+1==vKnot.n()) V=vKnot ; } //!< modifies the U knot vector if uKnot is of a proper size
+//  //! modifies the U knot vector if uKnot is of a proper size
+//  void modKnotU(const Vector<T>& uKnot) { if(P.rows()+degU+1==uKnot.n()) U=uKnot ; }
+//  //! modifies the U knot vector if uKnot is of a proper size
+//  void modKnotV(const Vector<T>& vKnot) { if(P.cols()+degV+1==vKnot.n()) V=vKnot ; }
 //
 //  int movePoint(T u, T v, const Point_nD<T,N>& delta);
 //  int movePoint(const Vector<T>& ur, const Vector<T>& vr, const Vector< Point_nD<T,N> >& D, const Vector_INT& Du, const Vector_INT& Dv) ;
@@ -265,16 +286,19 @@ namespace MBSim {
 //template <class T, int N>
 //class NurbsSurfaceArray {
 //public:
-//  int n() const //!< a reference to the size of the array
+//  //! a reference to the size of the array
+//  int n() const
 //    { return sze ; }
 //  NurbsSurfaceArray(NurbsSurface<T,N>* Sa, int size) ;
 //  NurbsSurfaceArray() { S = 0 ; sze = 0 ; rsize = 0 ;} //<! Default constructor
 //  virtual ~NurbsSurfaceArray(){ if(S){ for(int i=0;i<rsize;i++) delete S[i];  delete []S ; }}
 //
+//  //! the ith surface
 //  virtual NurbsSurface<T,N>& operator[](int i)
-//    { return *(S[i]) ; } //!< the ith surface
+//    { return *(S[i]) ; }
+//  //! the ith surface
 //  virtual NurbsSurface<T,N> operator[](int i) const
-//    { return *(S[i]) ; } //!< the ith surface
+//    { return *(S[i]) ; }
 //
 //  virtual void resize(int s) ;
 //  void init(NurbsSurface<T,N>* Sa, int size) ;

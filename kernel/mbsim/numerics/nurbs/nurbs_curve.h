@@ -54,23 +54,28 @@ namespace MBSim {
       virtual ~NurbsCurve(); // empty destructor
 
       // Reference to internal data
-      int degree() const //!< a reference to the degree of the curve
+      //! a reference to the degree of the curve
+      int degree() const
       {
         return deg;
       }
-      const fmatvec::MatVx4 & ctrlPnts() const //!< a reference to the vector of control points
+      //! a reference to the vector of control points
+      const fmatvec::MatVx4 & ctrlPnts() const
       {
         return P;
       }
-      const fmatvec::Vec4 ctrlPnts(int i) const //!< a reference to one of the control points
+      //! a reference to one of the control points
+      const fmatvec::Vec4 ctrlPnts(int i) const
       {
         return trans(P.row(i));
       }
-      const fmatvec::Vec& knot() const //!< a reference to the vector of knots
+      //! a reference to the vector of knots
+      const fmatvec::Vec& knot() const
       {
         return U;
       }
-      double knot(int i) const //!< the i-th knot
+      //! the i-th knot
+      double knot(int i) const
       {
         return U(i);
       }
@@ -86,18 +91,21 @@ namespace MBSim {
 //
 //        // Evaluattion functions
       virtual fmatvec::HPoint<3> operator()(double u) const;
-      fmatvec::HPoint<3> hpointAt(double u) const  //!< calls operator()
+      //! calls operator()
+      fmatvec::HPoint<3> hpointAt(double u) const
       {
         return operator()(u);
       }
       fmatvec::HPoint<3> hpointAt(double u, int span) const;
       fmatvec::Point<3> pointAt(double u) const;
+//        //! a function interface to operator()
 //        friend fmatvec::HPoint<3>  C(double u, const NurbsCurve<T, N>& nurb) {
 //          return nurb(u);
-//        } //!< a function interface to operator()
+//        }
+//        //! returns the curvePoint in 3D
 //        friend fmatvec::Point<3>  Cp(double u, const NurbsCurve<T, N>& nurb) {
 //          return project(nurb(u));
-//        } //!< returns the curvePoint in 3D
+//        }
 
       // derivative functions
       void deriveAtH(double u, int d, fmatvec::MatVx4 & ders) const;
@@ -123,7 +131,8 @@ namespace MBSim {
 //        {
 //          return U[0];
 //        }
-//        T maxKnot() const //!< the maximal value for the knot vector
+//        //! the maximal value for the knot vector
+//        T maxKnot() const
 //        {
 //          return U[U.n() - 1];
 //        }
