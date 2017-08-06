@@ -351,7 +351,7 @@
       <xs:documentation xml:lang="de" xmlns="">
         Druckverluste aufgrund Ein-/Auslaufverluste sowie Umlenkverluste mit Berücksichtigung der Flussrichtung. Mit diesem Element können unilaterale Element wie etwa Rückflusssperrventile angenähert werden.<br/>
         Die Berechnung erfolgt gemäß
-        <object class="eqn">\Delta p = \frac{\rho}{2} \, \begin{cases} \zeta_{Pos} &amp; Q\geq0 \\ \zeta_{Neg} &amp; Q\textless 0 \end{cases} \, \frac{Q \, |Q|}{A^2}</object>
+        <object class="eqn">\Delta p = \frac{\rho}{2} \, \begin{cases} \zeta_{Pos} &amp; Q\geq0 \\ \zeta_{Neg} &amp; Q&lt; 0 \end{cases} \, \frac{Q \, |Q|}{A^2}</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -401,7 +401,7 @@
         Der Druckverlust berechnet sich zu
         <object class="eqn">\Delta p = \lambda \, \frac{l}{d} \, \frac{\rho}{2} \, \frac{|Q|\,Q}{A^2} \text{.}</object>
         Die Reynoldszahl wird gemäß 
-        <object class="eqn">Re=\begin{cases}\frac{d_{hyd}}{\nu}\,\frac{Q}{A_{ref}} &amp; Q\geq0 \\ \frac{d_{hyd, neg}}{\nu}\,\frac{Q}{A_{ref}} &amp; Q\textless 0 \end{cases} </object>
+        <object class="eqn">Re=\begin{cases}\frac{d_{hyd}}{\nu}\,\frac{Q}{A_{ref}} &amp; Q\geq0 \\ \frac{d_{hyd, neg}}{\nu}\,\frac{Q}{A_{ref}} &amp; Q&lt; 0 \end{cases} </object>
         bestimmt.<br/>
         Die Verlustzahl <object class="inlineeqn">\lambda</object> wird in Abhängigkeit der <object class="inlineeqn">Re</object>-Zahl bestimmt.
         Im laminaren Bereich gilt
@@ -573,9 +573,9 @@
       <xs:documentation xml:lang="de" xmlns="">
         Berechnung des Druckverlustes mittels einer laminaren Spaltströmung mit veränderlicher Höhe.
         <object class="eqn">
-          <![CDATA[p_V=\frac{12 \, \eta \l}{b \, h^3} \, Q]]>
+          <![CDATA[p_V=\frac{12 \, \eta l}{b \, h^3} \, Q]]>
         </object>
-        mit <object class="inlineeqn">h \textgreater 0</object>
+        mit <object class="inlineeqn">h &gt; 0</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -618,7 +618,7 @@
         Die Fläche <object class="inlineeqn">A(x)</object> wird aus dem Durchmesser <object class="inlineeqn">d(x)</object> berechnet; der Druckverlust wird somit unabhängig vom Leitungsdurchmesser berechnet.
         Die Druckverlustzahl <object class="inlineeqn">\lambda</object> wird nach Blasius unter Annahme eines glatten Rohres und eines turbulenten Strömungszustandes zu
         <object class="eqn">\lambda = \frac{0.3164}{Re^{0.25}}</object>
-        bestimmt, wobei für <object class="inlineeqn">0 \textless Re \textless 0.1 </object> eine lineare Extrapolation des <object class="inlineeqn">\lambda</object>-Wertes erfolgt.
+        bestimmt, wobei für <object class="inlineeqn">0 &lt; Re &lt; 0.1 </object> eine lineare Extrapolation des <object class="inlineeqn">\lambda</object>-Wertes erfolgt.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
