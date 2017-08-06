@@ -619,7 +619,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Feder-Dämpfer System, bei dem die Masse vernachlässigt wird. <br/>
-        <object class="figure" standby="8cm" data="massless_spring_damper" title="Größen"></object>
+        <object class="figure" data="massless_spring_damper.svg">Größen</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>

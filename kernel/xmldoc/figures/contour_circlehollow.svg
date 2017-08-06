@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 120.46964 120.46911"
+   id="svg39"
+   height="120.46911"
+   width="120.46964"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="contour_circlehollow.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="772"
+     inkscape:window-height="600"
+     id="namedview24"
+     showgrid="false"
+     units="mm"
+     fit-margin-top="1"
+     fit-margin-right="1"
+     fit-margin-bottom="1"
+     fit-margin-left="1"
+     inkscape:zoom="2.2425738"
+     inkscape:cx="119.35721"
+     inkscape:cy="23.123546"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg39" />
+  <metadata
+     id="metadata43">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     id="path2"
+     style="fill:none"
+     d="M 60.234824,3.5433071 A 56.691516,56.691249 0 0 1 116.92634,60.234556 56.691516,56.691249 0 1 1 60.234824,3.5433071 z"
+     inkscape:connector-curvature="0" />
+  <path
+     id="path4"
+     style="fill:#ffffff;fill-rule:evenodd;stroke:#1b1918;stroke-width:1.33303332;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none"
+     d="M 60.234824,12.991471 A 47.242952,47.243086 0 0 1 107.47778,60.234556 47.242952,47.243086 0 1 1 60.234824,12.991471 z"
+     inkscape:connector-curvature="0" />
+  <defs
+     id="defs9">
+    <marker
+       refY="5"
+       refX="1"
+       viewBox="0 0 10 10"
+       markerHeight="6"
+       markerWidth="8"
+       orient="auto"
+       markerUnits="strokeWidth"
+       id="endMarker1">
+      <polyline
+         id="polyline6"
+         fill="solid"
+         points="0,0 10,5 0,10 1,5" />
+    </marker>
+  </defs>
+  <path
+     id="path11"
+     style="fill:none;stroke:#1b1918;stroke-width:1.33343339;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;marker-end:url(#endMarker1)"
+     d="M 60.234824,60.234423 H 91.07192"
+     inkscape:connector-curvature="0" />
+  <defs
+     id="defs16">
+    <marker
+       refY="5"
+       refX="1"
+       viewBox="0 0 10 10"
+       markerHeight="6"
+       markerWidth="8"
+       orient="auto"
+       markerUnits="strokeWidth"
+       id="endMarker2">
+      <polyline
+         id="polyline13"
+         fill="solid"
+         points="0,0 10,5 0,10 1,5" />
+    </marker>
+  </defs>
+  <path
+     id="path18"
+     style="fill:none;stroke:#1b1918;stroke-width:1.33343339;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;marker-end:url(#endMarker2)"
+     d="M 60.234824,60.234423 V 29.397194"
+     inkscape:connector-curvature="0" />
+  <defs
+     id="defs23">
+    <marker
+       refY="5"
+       refX="1"
+       viewBox="0 0 10 10"
+       markerHeight="6"
+       markerWidth="8"
+       orient="auto"
+       markerUnits="strokeWidth"
+       id="endMarker3">
+      <polyline
+         id="polyline20"
+         fill="solid"
+         points="0,0 10,5 0,10 1,5" />
+    </marker>
+  </defs>
+  <path
+     id="path25"
+     style="fill:none;stroke:#1b1918;stroke-width:0.63985068;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;marker-end:url(#endMarker3)"
+     d="M 60.234824,60.234556 22.831226,89.093968"
+     inkscape:connector-curvature="0" />
+  <text
+     id="text29"
+     y="55.787014"
+     x="92.052032"
+     style="font-size:15.99960041px">
+    <tspan
+       style="font-size:11.99969959px;fill:#1b1918;font-family:Arial"
+       id="tspan27"
+       font-size="9.0000">x</tspan>
+  </text>
+  <text
+     id="text33"
+     y="32.038906"
+     x="50.32774"
+     style="font-size:15.99960041px">
+    <tspan
+       style="font-size:11.99969959px;fill:#1b1918;font-family:Arial"
+       id="tspan31"
+       font-size="9.0000">y</tspan>
+  </text>
+  <text
+     id="text37"
+     y="70.403511"
+     x="36.72715"
+     style="font-size:15.99960041px">
+    <tspan
+       style="font-size:11.99969959px;fill:#1b1918;font-family:Arial"
+       id="tspan35"
+       font-size="9.0000">r</tspan>
+  </text>
+</svg>
