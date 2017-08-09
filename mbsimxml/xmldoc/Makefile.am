@@ -12,7 +12,7 @@ all: mbsimxml.html http___www_mbsim-env_de_MBSimXML/index.html
 
 # list of all xsd files: variables XSDFILES and all MBSim modules
 .DELETE_ON_ERROR: xsdfiles.txt
-xsdfiles.txt: $(MBXMLUTILSBINDIR)/../share/mbsimmodules/*.mbsimmodule.xml
+xsdfiles.txt:
 	echo "$(XSDFILES)" | tr ' ' '\n' > xsdfiles.txt
 	for F in $(MBXMLUTILSBINDIR)/../share/mbsimmodules/*.mbsimmodule.xml; do \
 	  @XALAN@ $$F $(srcdir)/getModuleLocation.xsl | sed -re "s-^@MBSIMSCHEMADIR@/--" >> xsdfiles.txt; \
@@ -36,7 +36,10 @@ mbsimxml.html: $(srcdir)/genContent.xsl combindedSchema.xsd
 	@XALAN@ -o mbsimxml.html -p DATETIME "'$$(date "+%a %b %d %Y %H:%M:%S")'" -p MBSIMXMLVERSION "'@VERSION@'" -p ABS_BUILDDIR "'$(abs_builddir)'" combindedSchema.xsd $(srcdir)/genContent.xsl || exit 1; \
 	sed -re "s/ xmlns:[^ ]+ *= *\"[^\"]+\"//g" mbsimxml.html > mbsimxml.html_ || exit 1; \
 	mv -f mbsimxml.html_ mbsimxml.html || exit 1
-# above line: Remove all namespace declaration from the html output using sed (maybe a bug in Xalan)
+	RET=0; \
+	$(prefix)/share/fmatvec/checkHtml/checkHtml.sh mbsimxml.html || RET=1; \
+	$(prefix)/share/fmatvec/checkHtml/checkMathJax.sh mbsimxml.html || RET=1; \
+	test $$RET -ne 0 && exit 1 || exit 0
 
 
 
