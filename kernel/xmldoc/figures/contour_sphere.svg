@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 143.40925 143.40805"
+   id="svg55"
+   height="143.40805"
+   width="143.40926"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="contour_sphere.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1266"
+     inkscape:window-height="760"
+     id="namedview33"
+     showgrid="false"
+     units="mm"
+     fit-margin-top="1"
+     fit-margin-right="1"
+     fit-margin-bottom="1"
+     fit-margin-left="1"
+     inkscape:zoom="2.2425738"
+     inkscape:cx="150.3346"
+     inkscape:cy="34.593021"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg55" />
+  <metadata
+     id="metadata59">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs7">
+    <radialGradient
+       r="113.6017"
+       cy="383.83569"
+       cx="152.56563"
+       id="grad1"
+       gradientTransform="matrix(1.2000053,0,0,1.1999947,-111.37493,-388.89674)"
+       fx="152.56563"
+       fy="383.83569"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop2"
+         stop-opacity="1.0000"
+         stop-color="#ffffff"
+         offset="0%" />
+      <stop
+         id="stop4"
+         stop-opacity="1.0000"
+         stop-color="#1b1918"
+         offset="100%" />
+    </radialGradient>
+  </defs>
+  <path
+     id="path9"
+     style="fill:url(#grad1);stroke:#1b1918;stroke-width:0.25920001;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none"
+     d="M 71.704629,3.6729067 A 68.03172,68.03112 0 0 1 139.73635,71.704027 68.03172,68.03112 0 1 1 71.704629,3.6729067 z"
+     inkscape:connector-curvature="0" />
+  <defs
+     id="defs14">
+    <marker
+       refY="5"
+       refX="1"
+       viewBox="0 0 10 10"
+       markerHeight="6"
+       markerWidth="8"
+       orient="auto"
+       markerUnits="strokeWidth"
+       id="endMarker1">
+      <polyline
+         id="polyline11"
+         fill="solid"
+         points="0,0 10,5 0,10 1,5" />
+    </marker>
+  </defs>
+  <path
+     id="path16"
+     style="fill:none;stroke:#1b1918;stroke-width:1.20011997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;marker-end:url(#endMarker1)"
+     d="m 71.704629,71.704027 18.21396,-13.32912"
+     inkscape:connector-curvature="0" />
+  <defs
+     id="defs21">
+    <marker
+       refY="5"
+       refX="1"
+       viewBox="0 0 10 10"
+       markerHeight="6"
+       markerWidth="8"
+       orient="auto"
+       markerUnits="strokeWidth"
+       id="endMarker2">
+      <polyline
+         id="polyline18"
+         fill="solid"
+         points="0,0 10,5 0,10 1,5" />
+    </marker>
+  </defs>
+  <path
+     id="path23"
+     style="fill:none;stroke:#1b1918;stroke-width:1.20011997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;marker-end:url(#endMarker2)"
+     d="m 71.704629,71.704027 v -27.7542"
+     inkscape:connector-curvature="0" />
+  <defs
+     id="defs28">
+    <marker
+       refY="5"
+       refX="1"
+       viewBox="0 0 10 10"
+       markerHeight="6"
+       markerWidth="8"
+       orient="auto"
+       markerUnits="strokeWidth"
+       id="endMarker3">
+      <polyline
+         id="polyline25"
+         fill="solid"
+         points="0,0 10,5 0,10 1,5" />
+    </marker>
+  </defs>
+  <path
+     id="path30"
+     style="fill:none;stroke:#1b1918;stroke-width:1.20011997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;marker-end:url(#endMarker3)"
+     d="m 71.704629,71.704027 19.46844,8.62464"
+     inkscape:connector-curvature="0" />
+  <defs
+     id="defs35">
+    <marker
+       refY="5"
+       refX="1"
+       viewBox="0 0 10 10"
+       markerHeight="6"
+       markerWidth="8"
+       orient="auto"
+       markerUnits="strokeWidth"
+       id="endMarker4">
+      <polyline
+         id="polyline32"
+         fill="solid"
+         points="0,0 10,5 0,10 1,5" />
+    </marker>
+  </defs>
+  <path
+     id="path37"
+     style="fill:none;stroke:#1b1918;stroke-width:0.57587999;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;marker-end:url(#endMarker4)"
+     d="m 71.704629,71.704147 -58.0656,35.463483"
+     inkscape:connector-curvature="0" />
+  <text
+     id="text41"
+     y="65.09108"
+     x="91.980797"
+     style="font-size:14.39999962px">
+    <tspan
+       style="font-size:12px;fill:#1b1918;font-family:Arial"
+       id="tspan39"
+       font-size="10.0000">z</tspan>
+  </text>
+  <text
+     id="text45"
+     y="92.228188"
+     x="92.303223"
+     style="font-size:14.39999962px">
+    <tspan
+       style="font-size:12px;fill:#1b1918;font-family:Arial"
+       id="tspan43"
+       font-size="10.0000">y</tspan>
+  </text>
+  <text
+     id="text49"
+     y="44.705437"
+     x="62.656746"
+     style="font-size:14.39999962px">
+    <tspan
+       style="font-size:12px;fill:#1b1918;font-family:Arial"
+       id="tspan47"
+       font-size="10.0000">x</tspan>
+  </text>
+  <text
+     id="text53"
+     y="82.261978"
+     x="40.727825"
+     style="font-size:14.39999962px">
+    <tspan
+       style="font-size:12px;fill:#1b1918;font-family:Arial"
+       id="tspan51"
+       font-size="10.0000">r</tspan>
+  </text>
+</svg>

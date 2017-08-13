@@ -721,7 +721,8 @@ namespace MBSim {
     return sp;
   }
 
-  fmatvec::Point<3> NurbsSurface::pointAt(double u, double v) const  //!< Projects the point in the normal space
+  //! Projects the point in the normal space
+  fmatvec::Point<3> NurbsSurface::pointAt(double u, double v) const
     { return project(operator()(u,v)) ; }
 
 //inline

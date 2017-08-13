@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 233.85831 183.76691"
+   id="svg38"
+   height="183.76691"
+   width="233.85831"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="contact.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview24"
+     showgrid="false"
+     fit-margin-top="1"
+     units="mm"
+     fit-margin-left="1"
+     fit-margin-right="1"
+     fit-margin-bottom="1"
+     inkscape:zoom="0.28032173"
+     inkscape:cx="194.30389"
+     inkscape:cy="-142.7773"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg38" />
+  <metadata
+     id="metadata42">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="Layer1000"
+     transform="translate(-103.3339,-94.400793)">
+    <path
+       id="path2"
+       style="fill:none;stroke:#1b1918;stroke-width:0.4799;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none"
+       d="m 131.8026,261.6696 27.3691,-146.6199 c 25.8424,18.4587 43.5468,63.0583 23.4591,91.8818 -6.0395,8.666 -16.3768,16.1769 -20.5267,26.8803 -5.7279,14.774 -12.5223,27.8578 -30.3015,27.8578 z"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path4"
+       style="fill:#ffffff;fill-rule:evenodd"
+       d="m 130.125,251.5125 23.5772,-126.3063 c 22.262,15.9013 37.5135,54.3218 20.209,79.1519 -5.2028,7.4654 -14.1079,13.9357 -17.6829,23.1562 -4.9343,12.7271 -10.7874,23.9982 -26.1033,23.9982 z"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path6"
+       style="fill:#ffffff;fill-rule:evenodd"
+       d="m 131.8026,97.9441 v 37.3915 h 32.0289 V 97.9441 z"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path8"
+       style="fill:#ffffff;fill-rule:evenodd"
+       d="m 106.8772,237.2329 v 37.3915 h 32.0289 v -37.3915 z"
+       inkscape:connector-curvature="0" />
+  </g>
+  <g
+     id="Layer1001"
+     transform="translate(-103.3339,-94.400793)">
+    <path
+       id="path11"
+       style="fill:none;stroke:#1b1918;stroke-width:0.4799;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none"
+       d="m 308.724,239.1879 -3.9098,-128.5368 c -19.6534,42.5823 -84.0622,-0.5623 -84.0622,57.1818 0,39.6976 87.972,47.6288 87.972,71.355 z"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path13"
+       style="fill:#ffffff;fill-rule:evenodd"
+       d="m 317.5212,229.5911 -3.7994,-110.6534 c -19.0985,36.6577 -81.6888,-0.4841 -81.6888,49.226 0,34.1746 85.4882,41.0023 85.4882,61.4274 z"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path15"
+       style="fill:#ffffff;fill-rule:evenodd"
+       d="m 300.1709,98.1887 v 37.3915 h 32.0289 V 98.1887 z"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path17"
+       style="fill:#ffffff;fill-rule:evenodd"
+       d="m 301.6199,211.2528 v 37.3915 h 32.029 v -37.3915 z"
+       inkscape:connector-curvature="0" />
+  </g>
+  <defs
+     id="defs23">
+    <marker
+       refY="5"
+       refX="9"
+       viewBox="0 0 10 10"
+       markerHeight="6"
+       markerWidth="8"
+       orient="auto"
+       markerUnits="strokeWidth"
+       id="startMarker1">
+      <polyline
+         id="polyline20"
+         fill="solid"
+         points="10,0 0,5 10,10 9,5" />
+    </marker>
+  </defs>
+  <defs
+     id="defs28">
+    <marker
+       refY="5"
+       refX="1"
+       viewBox="0 0 10 10"
+       markerHeight="6"
+       markerWidth="8"
+       orient="auto"
+       markerUnits="strokeWidth"
+       id="endMarker1">
+      <polyline
+         id="polyline25"
+         fill="solid"
+         points="0,0 10,5 0,10 1,5" />
+    </marker>
+  </defs>
+  <path
+     id="path30"
+     style="fill:#102a83;fill-rule:evenodd;stroke:#1b1918;stroke-width:0.4799;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;marker-start:url(#startMarker1);marker-end:url(#endMarker1)"
+     d="m 87.775002,78.306209 29.749698,-2.5026"
+     inkscape:connector-curvature="0" />
+  <text
+     id="text36"
+     y="68.89753"
+     x="93.247093"
+     style="font-size:12px">
+    <tspan
+       style="font-size:11px;fill:#1b1918;font-family:Arial"
+       id="tspan32"
+       font-size="11.0000">g, g</tspan>
+    <tspan
+       style="font-size:11px;fill:#1b1918;font-family:Arial"
+       id="tspan34"
+       font-size="11.0000">.</tspan>
+  </text>
+</svg>

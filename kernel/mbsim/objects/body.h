@@ -43,8 +43,7 @@ namespace MBSim {
    *  \f]
    *  And a inline equation \f$x_a+\cos(x)\f$.
    *  And a image
-   *  \image html mbsim.png "The image caption"
-   *  \image latex mbsim.eps "The image caption" width=4cm
+   *  \image html mbsim.svg "The image caption"
    *  End of the test.
    */
   class Body : public Object {

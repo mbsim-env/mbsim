@@ -351,7 +351,7 @@
       <xs:documentation xml:lang="de" xmlns="">
         Druckverluste aufgrund Ein-/Auslaufverluste sowie Umlenkverluste mit Berücksichtigung der Flussrichtung. Mit diesem Element können unilaterale Element wie etwa Rückflusssperrventile angenähert werden.<br/>
         Die Berechnung erfolgt gemäß
-        <object class="eqn">\Delta p = \frac{\rho}{2} \, \begin{cases} \zeta_{Pos} &amp; Q\geq0 \\ \zeta_{Neg} &amp; Q\textless 0 \end{cases} \, \frac{Q \, |Q|}{A^2}</object>
+        <object class="eqn">\Delta p = \frac{\rho}{2} \, \begin{cases} \zeta_{Pos} &amp; Q\geq0 \\ \zeta_{Neg} &amp; Q&lt; 0 \end{cases} \, \frac{Q \, |Q|}{A^2}</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -401,7 +401,7 @@
         Der Druckverlust berechnet sich zu
         <object class="eqn">\Delta p = \lambda \, \frac{l}{d} \, \frac{\rho}{2} \, \frac{|Q|\,Q}{A^2} \text{.}</object>
         Die Reynoldszahl wird gemäß 
-        <object class="eqn">Re=\begin{cases}\frac{d_{hyd}}{\nu}\,\frac{Q}{A_{ref}} &amp; Q\geq0 \\ \frac{d_{hyd, neg}}{\nu}\,\frac{Q}{A_{ref}} &amp; Q\textless 0 \end{cases} </object>
+        <object class="eqn">Re=\begin{cases}\frac{d_{hyd}}{\nu}\,\frac{Q}{A_{ref}} &amp; Q\geq0 \\ \frac{d_{hyd, neg}}{\nu}\,\frac{Q}{A_{ref}} &amp; Q&lt; 0 \end{cases} </object>
         bestimmt.<br/>
         Die Verlustzahl <object class="inlineeqn">\lambda</object> wird in Abhängigkeit der <object class="inlineeqn">Re</object>-Zahl bestimmt.
         Im laminaren Bereich gilt
@@ -411,10 +411,10 @@
         berechnet.
         Im Übergangsbereich erfolgt eine lineare Interpolation des <object class="inlineeqn">\lambda</object>-Wertes.
         Diesen Zusammenhang verdeutlicht folgende Abbildung:
-        <object class="figure" standby="7cm" data="resistance_number" title="Rohrwiderstandszahl in Abhängigkeit der Re-Zahl"></object>
+        <object class="figure" data="resistance_number.svg">Rohrwiderstandszahl in Abhängigkeit der Re-Zahl</object>
         Den sich in Abhängigkeit des Durchflusses einstellenden Druckverlust bei verschiedenen Fluidtemperaturen zeigen folgende Abbildungen:
-        <object class="figure" standby="7cm" data="pressureloss_global" title="Druckverlust in Rohrleitung"></object>
-        <object class="figure" standby="7cm" data="pressureloss_detail" title="Druckverlust in Rohrleitung (Detail)"></object>
+        <object class="figure" data="pressureloss_global.svg">Druckverlust in Rohrleitung</object>
+        <object class="figure" data="pressureloss_detail.svg">Druckverlust in Rohrleitung (Detail)</object>
         Eine Umrechnung der Reynoldszahl der Leitung auf die Reynoldszahl des Druckverlustes erfolgt gemäß
         <object class="eqn">Re = \frac{d_{hyd} \, d}{d_{ref}^2} \, Re_{Leitung} \text{.}</object>
       </xs:documentation>
@@ -573,9 +573,9 @@
       <xs:documentation xml:lang="de" xmlns="">
         Berechnung des Druckverlustes mittels einer laminaren Spaltströmung mit veränderlicher Höhe.
         <object class="eqn">
-          <![CDATA[p_V=\frac{12 \, \eta \l}{b \, h^3} \, Q]]>
+          <![CDATA[p_V=\frac{12 \, \eta l}{b \, h^3} \, Q]]>
         </object>
-        mit <object class="inlineeqn">h \textgreater 0</object>
+        mit <object class="inlineeqn">h &gt; 0</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -618,7 +618,7 @@
         Die Fläche <object class="inlineeqn">A(x)</object> wird aus dem Durchmesser <object class="inlineeqn">d(x)</object> berechnet; der Druckverlust wird somit unabhängig vom Leitungsdurchmesser berechnet.
         Die Druckverlustzahl <object class="inlineeqn">\lambda</object> wird nach Blasius unter Annahme eines glatten Rohres und eines turbulenten Strömungszustandes zu
         <object class="eqn">\lambda = \frac{0.3164}{Re^{0.25}}</object>
-        bestimmt, wobei für <object class="inlineeqn">0 \textless Re \textless 0.1 </object> eine lineare Extrapolation des <object class="inlineeqn">\lambda</object>-Wertes erfolgt.
+        bestimmt, wobei für <object class="inlineeqn">0 &lt; Re &lt; 0.1 </object> eine lineare Extrapolation des <object class="inlineeqn">\lambda</object>-Wertes erfolgt.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -919,7 +919,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse hydraulischer Leitungen.
-        <object class="figure" standby="4cm" data="hline" title="Orientierung und Referenzierung eines hydraulischen Leitungsobjekts"></object>
+        <object class="figure" data="hline.svg">Orientierung und Referenzierung eines hydraulischen Leitungsobjekts</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1998,7 +1998,7 @@
   <xs:element name="Controlvalve43" substitutionGroup="mbsim:EmptyGroup" type="Controlvalve43Type">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        <object class="figure" standby="4cm" data="controlvalve43" title="Elemente eines 4/3-Wegeventils"></object>
+        <object class="figure" data="controlvalve43.svg">Elemente eines 4/3-Wegeventils</object>
         4/3-Wege Steuerventil. 
         Die Berechnung des Druckverlustes der einzelnen Leitungen erfolgt dabei gemäß
         <a class="link" href="mbsimhydraulics:RelativeAlphaClosablePressureLoss">&lt;RelativeAlphaClosablePressureLoss&gt;</a>.
@@ -2161,7 +2161,7 @@
         Modell eines Rückschlagventils mit Berücksichtigung der Trägheit der Ventilkugel.<br/>
         Die an die Blende angeschlossenen hydraulischen Knoten müssen vom Typ <a class="link" href="mbsimhydraulics:NodeMec">&lt;NodeMec&gt;</a> sein, da ihnen automatisch hydraulisch-mechanische Grenzflächen zur Berechnung der Kräfte auf die Ventilkugel zugewiesen werden. Die Fläche der Grenzfläche ist dabei abhängig vom gewählten Druckverlustmodell der Blende.
         <p>Die hydraulische Leitung des Rückschlagventils ist mit <i>Line</i> benannt und kann durch <i>XXX/Group[name]/Object[Line]</i> an Knoten angeschlossen werden.</p>
-        <object class="figure" standby="4cm" data="ball_checkvalve" title="Rückschlagventil"></object>
+        <object class="figure" data="ball_checkvalve.svg">Rückschlagventil</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>

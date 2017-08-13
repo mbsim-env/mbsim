@@ -542,23 +542,15 @@ namespace MBSim {
    \brief Generates a knot vector using the averaging technique
    \relates NurbsCurve
 
-   \latexonly
    The technique is as follows:
-   \begin{itemize}
-   \item $u_0 = \cdots = u_{deg} = 0$
-   \item $u_{m-deg} = \cdots = u_{m-1} = 1$
-   \item \begin{equation}
-   u_{j+deg} = \frac{1}{deg}\sum_{i=j}^{j+deg+1}\bar{u}_i
-   \hspace{0.5in} j= 1,\ldots,n-deg-1
-   \end{equation}
-   \end{itemize}
-   where $n$ is the size of the $\bar{u}$ knot coefficient vector,
-   $m=n+deg+1$ is the size of the knot vector and $deg$ is the
+
+   - \f$ u_0 = \cdots = u_{deg} = 0 \f$
+   - \f$ u_{m-deg} = \cdots = u_{m-1} = 1 \f$
+   - \f$ u_{j+deg} = \frac{1}{deg}\sum_{i=j}^{j+deg+1}\bar{u}_i\hspace{0.5in} j= 1,\ldots,n-deg-1 \f$
+
+   where \f$n\f$ is the size of the \f$\bar{u}\f$ knot coefficient vector,
+   \f$m=n+deg+1\f$ is the size of the knot vector and $deg$ is the
    degree of the curve.
-   \endlatexonly
-   \htmlonly
-   There is more information about this routine in the LaTeX version.
-   \endhtmlonly
 
    \param uk  the knot coefficients
    \param deg  the degree of the curve associated with the knot vector
@@ -747,7 +739,7 @@ namespace MBSim {
    \brief Setup a matrix containing binomial coefficients
 
    Setup the binomial coefficients into th matrix Bin
-   \htmlonly
+
    \[ Bin(i,j) = \left( \begin{array}{c}i \\ j\end{array} \right)\]
    The binomical coefficients are defined as follow
    \[ \left(\begin{array}{c}   n \\ k \end{array} \right)= \frac{ n!}{k!(n-k)!} \mbox{for $0\leq k \leq n$} \]
@@ -755,7 +747,6 @@ namespace MBSim {
    \[ \left(\begin{array}{c} n+1 \\ k \end{array} \right) =
    \left(\begin{array}{c} n \\ k \end{array} \right) +
    \left(\begin{array}{c} n \\ k-1 \end{array} \right) \]
-   \endhtmlonly
 
    \param Bin  the binomial matrix
    \author Philippe Lavoie

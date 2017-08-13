@@ -570,9 +570,7 @@ def main():
 </span>
 <span class="pull-right small">
   Generated on %s by runexamples.py
-  <a href="https://validator.w3.org/check?uri=referer">
-    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
-  </a>
+  <a href="/">Home</a>
 </span>
 <span id="FINISHED" style="display:none"> </span>
 </body>
@@ -894,9 +892,7 @@ def runExample(resultQueue, example):
       print('</span>',  file=htmlOutputFD)
       print('<span class="pull-right small">',  file=htmlOutputFD)
       print('  Generated on %s by runexamples.py'%(str(timeID)), file=htmlOutputFD)
-      print('  <a href="https://validator.w3.org/check?uri=referer">',  file=htmlOutputFD)
-      print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>',  file=htmlOutputFD)
-      print('  </a>',  file=htmlOutputFD)
+      print('  <a href="/">Home</a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
       print('</body>', file=htmlOutputFD)
       print('</html>', file=htmlOutputFD)
@@ -1268,9 +1264,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('</span>', file=diffHTMLPlotFD)
   print('<span class="pull-right small">', file=diffHTMLPlotFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=diffHTMLPlotFD)
-  print('  <a href="https://validator.w3.org/check?uri=referer">', file=diffHTMLPlotFD)
-  print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=diffHTMLPlotFD)
-  print('  </a>', file=diffHTMLPlotFD)
+  print('  <a href="/">Home</a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
   print('</body>', file=diffHTMLPlotFD)
   print('</html>', file=diffHTMLPlotFD)
@@ -1654,9 +1648,7 @@ def compareExample(example, compareFN):
   print('</span>', file=compareFD)
   print('<span class="pull-right small">', file=compareFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=compareFD)
-  print('  <a href="https://validator.w3.org/check?uri=referer">', file=compareFD)
-  print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=compareFD)
-  print('  </a>', file=compareFD)
+  print('  <a href="/">Home</a>', file=compareFD)
   print('</span>', file=compareFD)
   print('</body>', file=compareFD)
   print('</html>', file=compareFD)
@@ -1843,7 +1835,7 @@ def coverage(mainFD):
 
   # generate html files
   ret=ret+abs(subprocess.call(["genhtml", "-t", "MBSim-Env Examples (%s)"%(args.buildType), "--prefix", args.coverage.split(":")[0], "--legend",
-    "--html-prolog", pj(scriptDir, "lcov-prolog.parthtml"), "--html-epilog", pj(scriptDir, "lcov-epilog.parthtml"),
+    "--html-prolog", pj(scriptDir, "lcov-prolog.part.html"), "--html-epilog", pj(scriptDir, "lcov-epilog.part.html"),
     "--demangle-cpp", "-o", pj(args.reportOutDir, "coverage"),
     pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
   lcovFD.close()

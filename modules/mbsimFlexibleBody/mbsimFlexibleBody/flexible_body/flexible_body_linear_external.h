@@ -153,7 +153,7 @@ namespace MBSimFlexibleBody {
       /*! add a ContourInterpolation, no additional information needed */
 //      void addContourInterpolation(ContourInterpolation *contour);
 
-      /*! set origin BodyFlexibleLinearExternal::WrON00, \f$\rs{_W}[_K0]{\vr}\f$ of model
+      /*! set origin BodyFlexibleLinearExternal::WrON00, \f$_W \vr_{K0}\f$ of model
       */
       void setWrON00(const fmatvec::Vec &WrON00_) {WrON00 = WrON00_;}
 
@@ -167,7 +167,7 @@ namespace MBSimFlexibleBody {
 	  /** vector of ContourPointData controlling type of interface: node/interpolation */
       std::vector<MBSim::ContourPointData> contourType;
 
-      /** origin \f$\rs{_W}[_K0]{\vr}\f$ of model */
+      /** origin \f$_W \vr_{K0}\f$ of model */
       fmatvec::Vec WrON00;
 
       /*! update kinematical values\n

@@ -16,6 +16,8 @@ import codecs
 import simplesandbox
 import buildSystemState
 import hashlib
+import json
+import fcntl
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -175,6 +177,7 @@ def rotateOutput():
   args.reportOutDir=pj(args.reportOutDir, "result_%010d"%(currentID))
   if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
   os.makedirs(args.reportOutDir)
+  return currentID
 
 # create main documentation page
 def mainDocPage():
@@ -227,13 +230,57 @@ def mainDocPage():
   print('</span>', file=docFD)
   print('<span class="pull-right small">', file=docFD)
   print('  Generated on %s'%(str(timeID)), file=docFD)
-  print('  <a href="https://validator.w3.org/check?uri=referer">', file=docFD)
-  print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=docFD)
-  print('  </a>', file=docFD)
+  print('  <a href="/">Home</a>', file=docFD)
   print('</span>', file=docFD)
   print('</body>', file=docFD)
   print('</html>', file=docFD)
   docFD.close()
+
+# read config file
+def readConfigFile():
+  configFilename="/home/mbsim/BuildServiceConfig/mbsimBuildService.conf"
+  fd=open(configFilename, 'r')
+  fcntl.lockf(fd, fcntl.LOCK_SH)
+  config=json.load(fd)
+  fcntl.lockf(fd, fcntl.LOCK_UN)
+  fd.close()
+  return config
+def setStatus(commitidfull, state, currentID, endTime=None):
+  if not args.buildSystemRun:
+    return
+  import requests
+  for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
+    # create github status (for linux64-ci build on all master branch)
+    data={
+      "state": state,
+      "target_url": "https://www.mbsim-env.de/mbsim/%s/report/result_%010d/index.html"%(args.buildType, currentID),
+    }
+    if args.buildType=="linux64-dailydebug" or args.buildType=="linux64-dailyrelease" or args.buildType=="win64-dailyrelease":
+      data["context"]="mbsim-env/%s"%(args.buildType)
+      branches=""
+    elif args.buildType=="linux64-ci":
+      data["context"]="mbsim-env/linux64-ci/"+args.fmatvecBranch+"/"+args.hdf5serieBranch+"/"+args.openmbvBranch+"/"+args.mbsimBranch
+      branches=", fmatvec=%s, hdf5serie=%s, openmbv=%s, mbsim=%s"% \
+        (args.fmatvecBranch, args.hdf5serieBranch, args.openmbvBranch, args.mbsimBranch)
+    else:
+      raise RuntimeError("Unknown buildType "+args.buildType+" provided")
+    if state=="pending":
+      data["description"]="Building since %s (MBSim-Env, %s%s)"%(str(timeID), args.buildType, branches)
+    elif state=="failure":
+      data["description"]="Failed after %.1f min (MBSim-Env, %s%s)"%((endTime-timeID).total_seconds()/60, args.buildType, branches)
+    elif state=="success":
+      data["description"]="Passed after %.1f min (MBSim-Env, %s%s)"%((endTime-timeID).total_seconds()/60, args.buildType, branches)
+    else:
+      raise RuntimeError("Unknown state "+state+" provided")
+    status_access_token=readConfigFile()["status_access_token"]
+    headers={'Authorization': 'token '+status_access_token,
+             'Accept': 'application/vnd.github.v3+json'}
+    response=requests.post('https://api.github.com/repos/mbsim-env/'+repo+'/statuses/'+commitidfull[repo],
+                           headers=headers, data=json.dumps(data))
+    if response.status_code!=201:
+      print("Warning: failed to create github status on repo "+repo+".")
+      if "message" in response.json():
+        print(response.json()["message"])
 
 # the main routine being called ones
 def main():
@@ -358,7 +405,7 @@ def main():
     print("See also the generated documentation "+pj(args.docOutDir, "index.html")+".\n")
 
   # rotate (modifies args.reportOutDir)
-  rotateOutput()
+  currentID=rotateOutput()
 
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
@@ -398,7 +445,6 @@ def main():
   print('</code></div></dd>', file=mainFD)
   print('  <dt>Time ID</dt><dd>'+str(timeID)+'</dd>', file=mainFD)
   print('  <dt>End time</dt><dd><span id="STILLRUNNINGORABORTED" class="text-danger"><b>still running or aborted</b></span><!--E_ENDTIME--></dd>', file=mainFD)
-  currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   print('  <dt>Navigate</dt><dd><a class="btn btn-info btn-xs" href="../result_%010d/index.html"><span class="glyphicon glyphicon-step-backward"></span>&nbsp;previous</a>'%(currentID-1), file=mainFD)
   print('                    <a class="btn btn-info btn-xs" href="../result_%010d/index.html"><span class="glyphicon glyphicon-step-forward"></span>&nbsp;next</a>'%(currentID+1), file=mainFD)
   print('                    <a class="btn btn-info btn-xs" href="../result_current/index.html"><span class="glyphicon glyphicon-fast-forward"></span>&nbsp;newest</a>', file=mainFD)
@@ -411,8 +457,11 @@ def main():
   # update all repositories
   if not args.disableUpdate:
     nrRun+=1
-  if repoUpdate(mainFD)!=0:
-    nrFailed+=1
+  localRet, commitidfull=repoUpdate(mainFD, currentID)
+  if localRet!=0: nrFailed+=1
+
+  # set status on commit
+  setStatus(commitidfull, "pending", currentID)
 
   # clean prefix dir
   if args.enableCleanPrefix and os.path.isdir(args.prefix if args.prefix!=None else args.prefixAuto):
@@ -506,9 +555,7 @@ def main():
   print('</span>', file=mainFD)
   print('<span class="pull-right small">', file=mainFD)
   print('  Generated on %s'%(str(timeID)), file=mainFD)
-  print('  <a href="https://validator.w3.org/check?uri=referer">', file=mainFD)
-  print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=mainFD)
-  print('  </a>', file=mainFD)
+  print('  <a href="/">Home</a>', file=mainFD)
   print('</span>', file=mainFD)
   print('</body>', file=mainFD)
   print('</html>', file=mainFD)
@@ -527,6 +574,9 @@ def main():
                             "%d of %d build parts failed."%(nrFailed, nrRun),
                             args.url+"/result_%010d"%(currentID)+"/index.html",
                             nrFailed, nrRun)
+
+  # update status on commitid
+  setStatus(commitidfull, "success" if nrFailed+abs(runExamplesErrorCode)==0 else "failure", currentID, endTime)
 
   if nrFailed>0:
     print("\nERROR: %d of %d build parts failed!!!!!"%(nrFailed, nrRun));
@@ -586,7 +636,7 @@ def buildTool(tool):
   t[0]=t[0]+args.binSuffix
   return os.path.sep.join(t)
 
-def repoUpdate(mainFD):
+def repoUpdate(mainFD, currentID):
   ret=0
   savedDir=os.getcwd()
   if not args.disableUpdate:
@@ -602,6 +652,7 @@ def repoUpdate(mainFD):
   print('<th><span class="octicon octicon-git-commit"></span>&nbsp;Commit</th>', file=mainFD)
   print('</tr></thead><tbody>', file=mainFD)
 
+  commitidfull={}
   for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
     os.chdir(pj(args.sourceDir, repo))
     # update
@@ -624,9 +675,9 @@ def repoUpdate(mainFD):
     # get branch and commit
     branch=subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitid=subprocess.check_output(['git', 'log', '-n', '1', '--format=%h', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
-    commitidfull=subprocess.check_output(['git', 'log', '-n', '1', '--format=%H', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
+    commitidfull[repo]=subprocess.check_output(['git', 'log', '-n', '1', '--format=%H', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitsub=subprocess.check_output(['git', 'log', '-n', '1', '--format=%s', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
-    commitshort='<a href="https://github.com/mbsim-env/'+repo+'/commit/'+commitidfull+'"><code>'+commitid+'</code></a>: '+htmlEscape(commitsub)
+    commitshort='<a href="https://github.com/mbsim-env/'+repo+'/commit/'+commitidfull[repo]+'"><code>'+commitid+'</code></a>: '+htmlEscape(commitsub)
     commitlong=subprocess.check_output(['git', 'log', '-n', '1', '--format=Commit: %H%nAuthor: %an%nDate:   %ad%n%s%n%b', 'HEAD'], stderr=repoUpdFD).decode('utf-8')
     commitlong=htmlEscape(commitlong)
     repoUpdFD.close()
@@ -642,7 +693,7 @@ def repoUpdate(mainFD):
         repo,
         "passed" if retlocal==0 else "failed"), file=mainFD)
     print('  <td data-toggle="tooltip" data-placement="bottom" title="'+commitlong+'">'+commitshort+
-          '<span id="COMMITID_%s" style="display:none">%s</span></td>'%(repo, commitidfull), file=mainFD)
+          '<span id="COMMITID_%s" style="display:none">%s</span></td>'%(repo, commitidfull[repo]), file=mainFD)
     print('</tr>', file=mainFD)
 
   print('</tbody></table>', file=mainFD)
@@ -655,7 +706,7 @@ def repoUpdate(mainFD):
       print('passed')
 
   os.chdir(savedDir)
-  return ret
+  return ret, commitidfull
 
 
 
