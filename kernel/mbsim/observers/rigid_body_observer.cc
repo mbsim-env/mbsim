@@ -36,13 +36,15 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBodyObserver)
 
-  RigidBodyObserver::RigidBodyObserver(const std::string &name) : Observer(name), body(NULL) {
+  RigidBodyObserver::RigidBodyObserver(const std::string &name) : Observer(name), body(NULL), frameOfReference(NULL) {
   }
 
   void RigidBodyObserver::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_body!="")
         setRigidBody(getByPath<RigidBody>(saved_body));
+      if(saved_frameOfReference!="")
+        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       Observer::init(stage);
     }
     else if(stage==plotting) {
@@ -64,6 +66,22 @@ namespace MBSim {
           openMBVAxisOfRotation->setName("AxisOfRotation");
           getOpenMBVGrp()->addObject(openMBVAxisOfRotation);
         }
+        if(openMBVMomentum) {
+          openMBVMomentum->setName("Momentum");
+          getOpenMBVGrp()->addObject(openMBVMomentum);
+        }
+        if(openMBVAngularMomentum) {
+          openMBVAngularMomentum->setName("AngularMomentum");
+          getOpenMBVGrp()->addObject(openMBVAngularMomentum);
+        }
+        if(openMBVDerivativeOfMomentum) {
+          openMBVDerivativeOfMomentum->setName("DerivativeOfMomentum");
+          getOpenMBVGrp()->addObject(openMBVDerivativeOfMomentum);
+        }
+        if(openMBVDerivativeOfAngularMomentum) {
+          openMBVDerivativeOfAngularMomentum->setName("DerivativeOfAngularMomentum");
+          getOpenMBVGrp()->addObject(openMBVDerivativeOfAngularMomentum);
+        }
       }
     }
     else
@@ -72,17 +90,22 @@ namespace MBSim {
 
   void RigidBodyObserver::plot() {
     if(plotFeature[13464197197848110344ULL]==enabled) {
+      Vec3 rOS = body->getFrameC()->evalPosition();
+      Vec3 vS = body->getFrameC()->evalVelocity();
+      Vec3 aS = body->getFrameC()->evalAcceleration();
+      SqrMat3 AIK = body->getFrameC()->getOrientation();
+      Vec3 om = body->getFrameC()->getAngularVelocity();
+      Vec3 psi = body->getFrameC()->getAngularAcceleration();
       if(FWeight) {
         vector<double> data;
         data.push_back(getTime());
-        Vec3 WrOS=body->getFrameC()->evalPosition();
-        Vec3 WG = body->getMass()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-        data.push_back(WrOS(0));
-        data.push_back(WrOS(1));
-        data.push_back(WrOS(2));
-        data.push_back(WG(0));
-        data.push_back(WG(1));
-        data.push_back(WG(2));
+        Vec3 G = body->getMass()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+        data.push_back(rOS(0));
+        data.push_back(rOS(1));
+        data.push_back(rOS(2));
+        data.push_back(G(0));
+        data.push_back(G(1));
+        data.push_back(G(2));
         data.push_back(1.0);
         FWeight->append(data);
       }
@@ -93,11 +116,11 @@ namespace MBSim {
         data.push_back(toPoint(0));
         data.push_back(toPoint(1));
         data.push_back(toPoint(2));
-        Vec3 WF = body->getJoint()->evalForce();
-        data.push_back(WF(0));
-        data.push_back(WF(1));
-        data.push_back(WF(2));
-        data.push_back(nrm2(WF));
+        Vec3 F = body->getJoint()->evalForce();
+        data.push_back(F(0));
+        data.push_back(F(1));
+        data.push_back(F(2));
+        data.push_back(nrm2(F));
         FArrow->append(data);
       }
       if(MArrow) {
@@ -107,35 +130,33 @@ namespace MBSim {
         data.push_back(toPoint(0));
         data.push_back(toPoint(1));
         data.push_back(toPoint(2));
-        Vec3 WM = body->getJoint()->evalMoment();
-        data.push_back(WM(0));
-        data.push_back(WM(1));
-        data.push_back(WM(2));
-        data.push_back(nrm2(WM));
+        Vec3 M = body->getJoint()->evalMoment();
+        data.push_back(M(0));
+        data.push_back(M(1));
+        data.push_back(M(2));
+        data.push_back(nrm2(M));
         MArrow->append(data);
       }
       if(openMBVAxisOfRotation) {
         vector<double> data;
         data.push_back(getTime());
-        Vec3 om = body->getFrameC()->evalAngularVelocity();
-        Vec3 v = body->getFrameC()->evalVelocity();
         Vec3 dr;
         double absom = nrm2(om);
         if(abs(om(2))>macheps()) {
-          dr(0) = -v(1)/om(2);
-          dr(1) = v(0)/om(2);
+          dr(0) = -vS(1)/om(2);
+          dr(1) = vS(0)/om(2);
         }
         else if(abs(om(1))>macheps()) {
-          dr(0) = v(2)/om(1);
-          dr(2) = -v(0)/om(1);
+          dr(0) = vS(2)/om(1);
+          dr(2) = -vS(0)/om(1);
         }
         else if(abs(om(0))>macheps()) {
-          dr(1) = -v(2)/om(0);
-          dr(2) = v(1)/om(0);
+          dr(1) = -vS(2)/om(0);
+          dr(2) = vS(1)/om(0);
         }
         else
           absom = 1;
-        Vec3 r = body->getFrameC()->evalPosition() + dr;
+        Vec3 r = rOS + dr;
         data.push_back(r(0));
         data.push_back(r(1));
         data.push_back(r(2));
@@ -147,6 +168,68 @@ namespace MBSim {
         openMBVAxisOfRotation->append(data);
         //          plotVector.push_back(nrm2(dir));
       }
+      if(openMBVMomentum) {
+        Vec3 p = body->getMass()*vS;
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(rOS(0));
+        data.push_back(rOS(1));
+        data.push_back(rOS(2));
+        data.push_back(p(0));
+        data.push_back(p(1));
+        data.push_back(p(2));
+        data.push_back(1.0);
+        openMBVMomentum->append(data);
+      }
+      if(openMBVAngularMomentum) {
+        Vec3 rOR = frameOfReference?frameOfReference->evalPosition():rOS;
+        Vec3 rRS = rOS - rOR;
+        Vec3 vR = frameOfReference?frameOfReference->evalVelocity():vS;
+        Vec3 vRS = vS - vR;
+        Mat3x3 WThetaS = AIK*body->getInertiaTensor()*AIK.T();
+        Vec3 L = WThetaS*om + crossProduct(rRS,body->getMass()*vRS);
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(rOR(0));
+        data.push_back(rOR(1));
+        data.push_back(rOR(2));
+        data.push_back(L(0));
+        data.push_back(L(1));
+        data.push_back(L(2));
+        data.push_back(1.0);
+        openMBVAngularMomentum->append(data);
+      }
+      if(openMBVDerivativeOfMomentum) {
+        Vec3 pd = body->getMass()*aS;
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(rOS(0));
+        data.push_back(rOS(1));
+        data.push_back(rOS(2));
+        data.push_back(pd(0));
+        data.push_back(pd(1));
+        data.push_back(pd(2));
+        data.push_back(1.0);
+        openMBVDerivativeOfMomentum->append(data);
+      }
+      if(openMBVDerivativeOfAngularMomentum) {
+        Vec3 rOR = frameOfReference?frameOfReference->evalPosition():rOS;
+        Vec3 rRS = rOS - rOR;
+        Vec3 aR = frameOfReference?frameOfReference->evalAcceleration():aS;
+        Vec3 aRS = aS - aR;
+        Mat3x3 WThetaS = AIK*body->getInertiaTensor()*AIK.T();
+        Vec3 Ld = WThetaS*psi + crossProduct(om,WThetaS*om) + crossProduct(rRS,body->getMass()*aRS);
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(rOR(0));
+        data.push_back(rOR(1));
+        data.push_back(rOR(2));
+        data.push_back(Ld(0));
+        data.push_back(Ld(1));
+        data.push_back(Ld(2));
+        data.push_back(1.0);
+        openMBVDerivativeOfAngularMomentum->append(data);
+      }
     }
     Observer::plot();
   }
@@ -156,6 +239,9 @@ namespace MBSim {
 
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBody");
     saved_body=E(e)->getAttribute("ref");
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(e) saved_frameOfReference=E(e)->getAttribute("ref");
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(e) {
@@ -179,6 +265,30 @@ namespace MBSim {
     if(e) {
       OpenMBVArrow ombv("[0.5;1;1]",0,OpenMBV::Arrow::line,OpenMBV::Arrow::midPoint,1,1);
       openMBVAxisOfRotation=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMomentum");
+    if(e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      openMBVMomentum=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularMomentum");
+    if(e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      openMBVAngularMomentum=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivatveOfMomentum");
+    if(e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      openMBVDerivativeOfMomentum=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivativeOfAngularMomentum");
+    if(e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      openMBVDerivativeOfAngularMomentum=ombv.createOpenMBV(e);
     }
   }
 

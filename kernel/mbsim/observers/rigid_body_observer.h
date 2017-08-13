@@ -32,12 +32,15 @@ namespace MBSim {
   class RigidBodyObserver: public Observer {
     private:
       RigidBody* body;
+      Frame *frameOfReference;
+      std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow, openMBVAxisOfRotation, openMBVMomentum, openMBVAngularMomentum, openMBVDerivativeOfMomentum, openMBVDerivativeOfAngularMomentum;
       std::string saved_body;
-      std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow, openMBVAxisOfRotation;
+      std::string saved_frameOfReference;
 
     public:
       RigidBodyObserver(const std::string &name="");
       void setRigidBody(RigidBody *body_) { body = body_; } 
+      void setFrameOfReference(Frame *frameOfReference_) { frameOfReference = frameOfReference_; }
 
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
@@ -65,6 +68,26 @@ namespace MBSim {
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAxisOfRotation, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::line,referencePoint,scaleLength,scaleSize);
         openMBVAxisOfRotation=ombv.createOpenMBV();
+      }
+
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMomentum, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        openMBVMomentum=ombv.createOpenMBV();
+      }
+
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAngularMomentum, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        openMBVAngularMomentum=ombv.createOpenMBV();
+      }
+
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVDerivativeOfMomentum, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        openMBVDerivativeOfMomentum=ombv.createOpenMBV();
+      }
+
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVDerivativeOfAngularMomentum, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        openMBVDerivativeOfAngularMomentum=ombv.createOpenMBV();
       }
   };
 

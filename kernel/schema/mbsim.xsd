@@ -4753,6 +4753,16 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
+          <xs:element name="frameOfReference" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="enableOpenMBVWeight" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Wenn angegeben, wird die Gewichtskraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
@@ -4778,6 +4788,32 @@
             </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBVAxisOfRotation" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVMomentum" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird der Impuls durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVAngularMomentum" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird der Drehimpuls durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVDerivativeOfMomentum" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVDerivativeOfAngularMomentum" minOccurs="0">
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType>
@@ -4839,7 +4875,7 @@
           </xs:element>
           <xs:element name="enableOpenMBVMomentum" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+              Wenn angegeben, wird der Impuls durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
@@ -4847,7 +4883,7 @@
           </xs:element>
           <xs:element name="enableOpenMBVAngularMomentum" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+              Wenn angegeben, wird der Drehimpuls durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>

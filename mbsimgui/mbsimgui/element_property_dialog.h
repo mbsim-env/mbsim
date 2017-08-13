@@ -668,7 +668,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-      ExtWidget *body, *weight, *jointForce, *jointMoment, *axisOfRotation;
+      ExtWidget *body, *frameOfReference, *weight, *jointForce, *jointMoment, *axisOfRotation, *momentum, *angularMomentum, *derivativeOfMomentum, *derivativeOfAngularMomentum;
   };
 
   class RigidBodyGroupObserverPropertyDialog : public ObserverPropertyDialog {

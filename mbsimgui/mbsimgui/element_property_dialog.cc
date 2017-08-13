@@ -2097,6 +2097,9 @@ namespace MBSimGUI {
     body = new ExtWidget("Rigid body",new RigidBodyOfReferenceWidget(observer,0),false,false,MBSIM%"rigidBody");
     addToTab("General", body);
 
+    frameOfReference = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(observer,0),true,false,MBSIM%"frameOfReference");
+    addToTab("General", frameOfReference);
+
     weight = new ExtWidget("Enable openMBV weight",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVWeight");
     addToTab("Visualisation",weight);
 
@@ -2108,25 +2111,47 @@ namespace MBSimGUI {
 
     axisOfRotation = new ExtWidget("Enable openMBV axis of rotation",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAxisOfRotation");
     addToTab("Visualisation",axisOfRotation);
+
+    momentum = new ExtWidget("Enable openMBV momentum",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMomentum");
+    addToTab("Visualisation",momentum);
+
+    angularMomentum = new ExtWidget("Enable openMBV angular momentum",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAngularMomentum");
+    addToTab("Visualisation",angularMomentum);
+
+    derivativeOfMomentum = new ExtWidget("Enable openMBV derivative of momentum",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVDerivativeOfMomentum");
+    addToTab("Visualisation",derivativeOfMomentum);
+
+    derivativeOfAngularMomentum = new ExtWidget("Enable openMBV derivative of angular momentum",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVDerivativeOfAngularMomentum");
+    addToTab("Visualisation",derivativeOfAngularMomentum);
   }
 
   DOMElement* RigidBodyObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
     body->initializeUsingXML(element->getXMLElement());
+    frameOfReference->initializeUsingXML(element->getXMLElement());
     weight->initializeUsingXML(element->getXMLElement());
     jointForce->initializeUsingXML(element->getXMLElement());
     jointMoment->initializeUsingXML(element->getXMLElement());
     axisOfRotation->initializeUsingXML(element->getXMLElement());
+    momentum->initializeUsingXML(element->getXMLElement());
+    angularMomentum->initializeUsingXML(element->getXMLElement());
+    derivativeOfMomentum->initializeUsingXML(element->getXMLElement());
+    derivativeOfAngularMomentum->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
   DOMElement* RigidBodyObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     body->writeXMLFile(element->getXMLElement(),ref);
+    frameOfReference->writeXMLFile(element->getXMLElement(),ref);
     weight->writeXMLFile(element->getXMLElement(),ref);
     jointForce->writeXMLFile(element->getXMLElement(),ref);
     jointMoment->writeXMLFile(element->getXMLElement(),ref);
     axisOfRotation->writeXMLFile(element->getXMLElement(),ref);
+    momentum->writeXMLFile(element->getXMLElement(),ref);
+    angularMomentum->writeXMLFile(element->getXMLElement(),ref);
+    derivativeOfMomentum->writeXMLFile(element->getXMLElement(),ref);
+    derivativeOfAngularMomentum->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 

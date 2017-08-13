@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsim/observers/rigid_body_group_observer.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include <openmbvcppinterface/frame.h>
@@ -98,9 +98,9 @@ namespace MBSim {
       Vec3 &pd = macc;
       Vec3 L, Ld;
       for(unsigned int i=0; i<body.size(); i++) {
-        mpos += body[i]->getMass()*body[i]->getFrame("C")->evalPosition();
-        mvel += body[i]->getMass()*body[i]->getFrame("C")->evalVelocity();
-        macc += body[i]->getMass()*body[i]->getFrame("C")->evalAcceleration();
+        mpos += body[i]->getMass()*body[i]->getFrameC()->evalPosition();
+        mvel += body[i]->getMass()*body[i]->getFrameC()->evalVelocity();
+        macc += body[i]->getMass()*body[i]->getFrameC()->evalAcceleration();
       }
       Vec3 rOS = mpos/m;
       Vec3 vS = mvel/m;
@@ -109,17 +109,16 @@ namespace MBSim {
       Vec3 vR = frameOfReference?frameOfReference->evalVelocity():vS;
       Vec3 aR = frameOfReference?frameOfReference->evalAcceleration():aS;
       for(unsigned int i=0; i<body.size(); i++) {
-        SqrMat3 AIK = body[i]->getFrame("C")->getOrientation();
-        Vec3 rRSi = body[i]->getFrame("C")->getPosition() - rOR;
-        Vec3 vSi = body[i]->getFrame("C")->getVelocity() - vR;
-        Vec3 aSi = body[i]->getFrame("C")->getAcceleration() - aR;
-        Vec3 omi = body[i]->getFrame("C")->getAngularVelocity();
-        Vec3 psii = body[i]->getFrame("C")->getAngularAcceleration();
+        SqrMat3 AIK = body[i]->getFrameC()->getOrientation();
+        Vec3 rRSi = body[i]->getFrameC()->getPosition() - rOR;
+        Vec3 vRSi = body[i]->getFrameC()->getVelocity() - vR;
+        Vec3 aRSi = body[i]->getFrameC()->getAcceleration() - aR;
+        Vec3 omi = body[i]->getFrameC()->getAngularVelocity();
+        Vec3 psii = body[i]->getFrameC()->getAngularAcceleration();
         double mi = body[i]->getMass();
-        //L += (AIK*body[i]->getInertiaTensor()*AIK.T() - body[i]->getMass()*tilde(rRi)*tilde(rRi))*body[i]->getFrame("C")->getAngularVelocity();
         Mat3x3 WThetaS = AIK*body[i]->getInertiaTensor()*AIK.T();
-        L += WThetaS*omi + crossProduct(rRSi,mi*vSi);
-        Ld += WThetaS*psii + crossProduct(omi,WThetaS*omi) + crossProduct(rRSi,mi*aSi);
+        L += WThetaS*omi + crossProduct(rRSi,mi*vRSi);
+        Ld += WThetaS*psii + crossProduct(omi,WThetaS*omi) + crossProduct(rRSi,mi*aRSi);
       }
       Vec3 G = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
