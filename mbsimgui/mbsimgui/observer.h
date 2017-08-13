@@ -86,12 +86,12 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() {return new RigidBodyObserverPropertyDialog(this);}
   };
 
-  class RigidBodyGroupObserver : public Observer {
+  class RigidBodySystemObserver : public Observer {
     public:
-      RigidBodyGroupObserver(const QString &str="") : Observer(str) { }
-      QString getType() const { return "RigidBodyGroupObserver"; }
+      RigidBodySystemObserver(const QString &str="") : Observer(str) { }
+      QString getType() const { return "RigidBodySystemObserver"; }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
-      ElementPropertyDialog* createPropertyDialog() {return new RigidBodyGroupObserverPropertyDialog(this);}
+      ElementPropertyDialog* createPropertyDialog() {return new RigidBodySystemObserverPropertyDialog(this);}
   };
 }
 

@@ -252,7 +252,7 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* RigidBodyGroupObserver::processFileID(DOMElement *element) {
+  DOMElement* RigidBodySystemObserver::processFileID(DOMElement *element) {
     Observer::processFileID(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");

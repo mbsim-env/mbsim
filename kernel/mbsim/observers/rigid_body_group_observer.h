@@ -30,7 +30,7 @@ namespace MBSim {
   class RigidBody;
   class Frame;
 
-  class RigidBodyGroupObserver : public Observer {
+  class RigidBodySystemObserver : public Observer {
     private:
       std::vector<RigidBody*> body;
       Frame *frameOfReference;
@@ -39,7 +39,7 @@ namespace MBSim {
       std::string saved_frameOfReference;
 
     public:
-      RigidBodyGroupObserver(const std::string &name="");
+      RigidBodySystemObserver(const std::string &name="");
       void addRigidBody(RigidBody *body_) { body.push_back(body_); }
       void setFrameOfReference(Frame *frameOfReference_) { frameOfReference = frameOfReference_; }
 

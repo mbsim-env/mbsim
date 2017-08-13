@@ -236,7 +236,7 @@ namespace MBSimGUI {
       void addRigidBodyObserver();
       void addKinematicCoordinatesObserver();
       void addRelativeKinematicsObserver();
-      void addRigidBodyGroupObserver();
+      void addRigidBodySystemObserver();
       void paste();
       void load();
 

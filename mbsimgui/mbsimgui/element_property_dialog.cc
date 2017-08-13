@@ -2155,7 +2155,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  RigidBodyGroupObserverPropertyDialog::RigidBodyGroupObserverPropertyDialog(RigidBodyGroupObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
+  RigidBodySystemObserverPropertyDialog::RigidBodySystemObserverPropertyDialog(RigidBodySystemObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
 
     addTab("Visualisation",1);
 
@@ -2191,7 +2191,7 @@ namespace MBSimGUI {
 
   }
 
-  DOMElement* RigidBodyGroupObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* RigidBodySystemObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
     bodies->initializeUsingXML(element->getXMLElement());
     frameOfReference->initializeUsingXML(element->getXMLElement());
@@ -2206,7 +2206,7 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* RigidBodyGroupObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* RigidBodySystemObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
     bodies->writeXMLFile(element->getXMLElement(),ref);
     frameOfReference->writeXMLFile(element->getXMLElement(),ref);

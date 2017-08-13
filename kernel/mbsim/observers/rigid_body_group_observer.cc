@@ -33,12 +33,12 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBodyGroupObserver)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBodySystemObserver)
 
-  RigidBodyGroupObserver::RigidBodyGroupObserver(const std::string &name) : Observer(name), frameOfReference(NULL) {
+  RigidBodySystemObserver::RigidBodySystemObserver(const std::string &name) : Observer(name), frameOfReference(NULL) {
   }
 
-  void RigidBodyGroupObserver::init(InitStage stage) {
+  void RigidBodySystemObserver::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       for(unsigned int i=0; i<saved_body.size(); i++)
         body.push_back(getByPath<RigidBody>(saved_body[i]));
@@ -87,7 +87,7 @@ namespace MBSim {
       Observer::init(stage);
   }
 
-  void RigidBodyGroupObserver::plot() {
+  void RigidBodySystemObserver::plot() {
     if(plotFeature[13464197197848110344ULL]==enabled) {
       double m = 0;
       for(unsigned int i=0; i<body.size(); i++) {
@@ -221,7 +221,7 @@ namespace MBSim {
     Observer::plot();
   }
 
-  void RigidBodyGroupObserver::initializeUsingXML(DOMElement *element) {
+  void RigidBodySystemObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
 
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBody");
