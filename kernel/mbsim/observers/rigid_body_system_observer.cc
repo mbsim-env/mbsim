@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/observers/rigid_body_group_observer.h"
+#include "mbsim/observers/rigid_body_system_observer.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/environment.h"
