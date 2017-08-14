@@ -88,7 +88,7 @@ namespace MBSim {
   class PolynomialFrustum;
   class RelativeKinematicsObserver;
   class RigidBody;
-  class RigidBodyGroupObserver;
+  class RigidBodySystemObserver;
   class RigidBodyLink;
   class RigidContour;
   class Room;

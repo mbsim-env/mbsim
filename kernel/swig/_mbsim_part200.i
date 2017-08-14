@@ -54,7 +54,7 @@ namespace MBSim {
   class Object;
   class Observer;
   class RelativeKinematicsObserver;
-  class RigidBodyGroupObserver;
+  class RigidBodySystemObserver;
   class RigidBodyLink;
   class SpringDamper;
   class StandardDampingFunction;

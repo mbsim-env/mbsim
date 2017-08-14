@@ -68,7 +68,7 @@ namespace MBSim {
   class NumericalNewtonJacobianFunction;
   class RelativeKinematicsObserver;
   class RigidBody;
-  class RigidBodyGroupObserver;
+  class RigidBodySystemObserver;
   class RigidBodyLink;
   class Room;
   class SpringDamper;
