@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _RIGID_BODY_GROUP_OBSERVER_H__
-#define _RIGID_BODY_GROUP_OBSERVER_H__
+#ifndef _RIGID_BODY_SYSTEM_OBSERVER_H__
+#define _RIGID_BODY_SYSTEM_OBSERVER_H__
 
 #include "mbsim/observers/observer.h"
 

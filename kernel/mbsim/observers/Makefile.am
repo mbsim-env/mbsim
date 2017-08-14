@@ -3,7 +3,7 @@ libobserver_la_SOURCES = observer.cc\
 			 relative_kinematics_observer.cc \
 			 kinematic_coordinates_observer.cc \
 			 rigid_body_observer.cc \
-			 rigid_body_group_observer.cc \
+			 rigid_body_system_observer.cc \
 			 mechanical_link_observer.cc \
 			 mechanical_constraint_observer.cc \
 			 single_contact_observer.cc \
@@ -19,7 +19,7 @@ observerinclude_HEADERS = observer.h\
 			  relative_kinematics_observer.h \
 			  kinematic_coordinates_observer.h \
 			  rigid_body_observer.h \
-			  rigid_body_group_observer.h \
+			  rigid_body_system_observer.h \
 			  mechanical_link_observer.h \
 			  mechanical_constraint_observer.h \
 			  single_contact_observer.h \
