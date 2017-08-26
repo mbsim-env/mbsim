@@ -42,14 +42,17 @@ if len(checkedExamples)>0:
   os.chdir(CURDIR)
 
 # build and run all examples
-if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
+ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
   "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--coverage", "--staticCodeAnalyzis", "--webapp",
   "--reportOutDir", "/var/www/html/mbsim/linux64-dailydebug/report", "--url",
   "https://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
   "--passToConfigure", "--enable-python", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
-  "--passToRunexamples"])!=0:
+  "--passToRunexamples"])
+if ret!=0 and ret!=255:
   print("build.py failed.")
+if ret==255:
+  exit(0)
 
 # update references for download
 os.chdir(SRCDIR+"/mbsim/examples")
@@ -77,3 +80,7 @@ if simplesandbox.call(["./runexamples.py", "--rotate", "30", "-j", "2", "--cover
                    envvar=simplesandboxEnvvars+["MBSIM_SET_MINIMAL_TEND"], buildSystemRun=True)!=0:
   print("runing examples with valgrind failed.")
 os.chdir(CURDIR)
+
+# build doc
+if subprocess.call([SCRIPTDIR+"/builddoc.py"])!=0:
+  print("builddoc.py failed.")

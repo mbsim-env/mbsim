@@ -18,9 +18,10 @@ os.environ["CFLAGS"]="-g -O2"
 os.environ["FFLAGS"]="-g -O2"
 os.environ['MBSIM_SWIG']='1'
 
-if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--webapp",
+ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--webapp",
   "--prefix", SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "linux64-dailyrelease",
   "--enableCleanPrefix", "--passToConfigure", "--with-lowram", "--enable-python", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin", "--with-qmake=qmake-qt4",
-  "--passToRunexamples", "--disableCompare", "--disableValidate", "--filter", "'basic' in labels"])!=0:
+  "--passToRunexamples", "--disableCompare", "--disableValidate", "--filter", "'basic' in labels"])
+if ret!=0 and ret!=255:
   print("linux64-dailyrelease failed.")
