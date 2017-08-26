@@ -150,6 +150,14 @@ def rotateOutput():
   else:
     currentID=1
 
+  # check if the last build was the same
+  lastcommitidfull={}
+  try:
+    with codecs.open(pj(args.reportOutDir, "result_%010d"%(currentID-1), "repoState.json"), "r", encoding="utf-8") as f:
+      lastcommitidfull=json.load(f)
+  except:
+    pass
+
   # only keep args.rotate old results
   delFirstN=len(resultID)-args.rotate
   if delFirstN>0:
@@ -177,7 +185,7 @@ def rotateOutput():
   args.reportOutDir=pj(args.reportOutDir, "result_%010d"%(currentID))
   if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
   os.makedirs(args.reportOutDir)
-  return currentID
+  return currentID, lastcommitidfull
 
 # create main documentation page
 def mainDocPage():
@@ -405,7 +413,7 @@ def main():
     print("See also the generated documentation "+pj(args.docOutDir, "index.html")+".\n")
 
   # rotate (modifies args.reportOutDir)
-  currentID=rotateOutput()
+  currentID, lastcommitidfull=rotateOutput()
 
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
@@ -459,6 +467,18 @@ def main():
     nrRun+=1
   localRet, commitidfull=repoUpdate(mainFD, currentID)
   if localRet!=0: nrFailed+=1
+
+  # check if last build was the same as this build
+  if args.buildSystemRun and lastcommitidfull==commitidfull:
+    print('Skipping this build: the last build was exactly the same.')
+    # revert the outdir
+    args.reportOutDir=os.path.sep.join(args.reportOutDir.split(os.path.sep)[0:-1])
+    shutil.rmtree(pj(args.reportOutDir, "result_%010d"%(currentID)))
+    os.remove(pj(args.reportOutDir, "result_%010d"%(currentID+1)))
+    os.remove(pj(args.reportOutDir, "result_current"))
+    os.symlink("result_%010d"%(currentID-1), pj(args.reportOutDir, "result_%010d"%(currentID)))
+    os.symlink("result_%010d"%(currentID-1), pj(args.reportOutDir, "result_current"))
+    return 255 # build skipped, same as last build
 
   # set status on commit
   setStatus(commitidfull, "pending", currentID)
@@ -581,7 +601,11 @@ def main():
   if nrFailed>0:
     print("\nERROR: %d of %d build parts failed!!!!!"%(nrFailed, nrRun));
 
-  return nrFailed+abs(runExamplesErrorCode)
+  if nrFailed>0:
+    return 1 # build failed
+  if abs(runExamplesErrorCode)>0:
+    return 2 # examples failed
+  return 0 # all passed
 
 
 
@@ -698,6 +722,10 @@ def repoUpdate(mainFD, currentID):
 
   print('</tbody></table>', file=mainFD)
   mainFD.flush()
+
+  # dump the repo state (commitid) to a file
+  with codecs.open(pj(args.reportOutDir, "repoState.json"), "w", encoding="utf-8") as f:
+    json.dump(commitidfull, f, indent=2)
 
   if not args.disableUpdate:
     if ret>0:
@@ -1206,4 +1234,8 @@ def releaseGeneration2(mainFD, distArchiveName):
 
 if __name__=="__main__":
   mainRet=main()
+  # 0 -> all passed
+  # 1 -> build failed
+  # 2 -> examples failed
+  # 255 -> build skipped, same as last build
   exit(mainRet)
