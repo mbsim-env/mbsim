@@ -74,7 +74,8 @@ def run(token, display):
     af='/usr/local/mbsim/'+buildType+'/mbsim/examples/'+f
     if os.path.exists(af):
       absFile.append(af)
-      cdir=os.path.dirname(af)
+      if cdir==None: # use first file as current dir for the started program
+        cdir=os.path.dirname(af)
   prefixCmd=[]
   if buildType=="win64-dailyrelease":
     # prefix command with wine

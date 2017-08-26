@@ -921,25 +921,31 @@ def runExample(resultQueue, example):
 
 def webapp(example):
   ombv={}
-  fl=glob.glob("*.ombv.xml")
-  if len(fl)>0:
-    ombv={'buildType': args.buildType, 'prog': 'openmbv'}
-    if 'TS.ombv.xml' in fl:
-      ombv['file']=example+'/TS.ombv.xml'
-    elif 'MBS.ombv.xml' in fl:
-      ombv['file']=example+'/MBS.ombv.xml'
-    else:
-      ombv['file']=[example+'/'+f for f in fl]
+  for prefix in ['', 'reference/']:
+    fl=glob.glob(prefix+"*.ombv.xml")
+    if len(fl)>0:
+      ombv['buildType']=args.buildType
+      ombv['prog']='openmbv'
+      ombv['file']=[]
+      if prefix+'TS.ombv.xml' in fl:
+        ombv['file'].append(example+"/"+prefix+'TS.ombv.xml')
+      elif prefix+'MBS.ombv.xml' in fl:
+        ombv['file'].append(example+"/"+prefix+'MBS.ombv.xml')
+      else:
+        ombv['file'].extend([example+'/'+f for f in fl])
   h5p={}
-  fl=glob.glob("*.mbsim.h5")
-  if len(fl)>0:
-    h5p={'buildType': args.buildType, 'prog': 'h5plotserie'}
-    if 'TS.mbsim.h5' in fl:
-      h5p['file']=example+'/TS.mbsim.h5'
-    elif 'MBS.mbsim.h5' in fl:
-      h5p['file']=example+'/MBS.mbsim.h5'
-    else:
-      h5p['file']=[example+'/'+f for f in fl]
+  for prefix in ['', 'reference/']:
+    fl=glob.glob(prefix+"*.mbsim.h5")
+    if len(fl)>0:
+      h5p['buildType']=args.buildType
+      h5p['prog']='h5plotserie'
+      h5p['file']=[]
+      if prefix+'TS.mbsim.h5' in fl:
+        h5p['file'].append(example+"/"+prefix+'TS.mbsim.h5')
+      elif prefix+'MBS.mbsim.h5' in fl:
+        h5p['file'].append(example+"/"+prefix+'MBS.mbsim.h5')
+      else:
+        h5p['file'].extend([example+'/'+f for f in fl])
   gui={}
   if os.path.exists("MBS.mbsimprj.xml") or os.path.exists("FMI.mbsimprj.xml"):
     gui={'buildType': args.buildType, 'prog': 'mbsimgui'}
