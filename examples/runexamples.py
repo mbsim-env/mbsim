@@ -921,25 +921,24 @@ def runExample(resultQueue, example):
 
 def webapp(example):
   ombv={}
-  for prefix in ['', 'reference/']:
-    fl=glob.glob(prefix+"*.ombv.xml")
-    if len(fl)>0:
-      ombv['buildType']=args.buildType
-      ombv['prog']='openmbv'
-      ombv['file']=[]
-      if prefix+'TS.ombv.xml' in fl:
-        ombv['file'].append(example+"/"+prefix+'TS.ombv.xml')
-      elif prefix+'MBS.ombv.xml' in fl:
-        ombv['file'].append(example+"/"+prefix+'MBS.ombv.xml')
-      else:
-        ombv['file'].extend([example+'/'+f for f in fl])
+  fl=glob.glob("*.ombv.xml")
+  if len(fl)>0:
+    ombv['buildType']=args.buildType
+    ombv['prog']='openmbv'
+    if 'file' not in ombv: ombv['file']=[]
+    if 'TS.ombv.xml' in fl:
+      ombv['file'].append(example+'/TS.ombv.xml')
+    elif 'MBS.ombv.xml' in fl:
+      ombv['file'].append(example+'/MBS.ombv.xml')
+    else:
+      ombv['file'].extend([example+'/'+f for f in fl])
   h5p={}
   for prefix in ['', 'reference/']:
     fl=glob.glob(prefix+"*.mbsim.h5")
     if len(fl)>0:
       h5p['buildType']=args.buildType
       h5p['prog']='h5plotserie'
-      h5p['file']=[]
+      if 'file' not in h5p: h5p['file']=[]
       if prefix+'TS.mbsim.h5' in fl:
         h5p['file'].append(example+"/"+prefix+'TS.mbsim.h5')
       elif prefix+'MBS.mbsim.h5' in fl:
@@ -950,9 +949,9 @@ def webapp(example):
   if os.path.exists("MBS.mbsimprj.xml") or os.path.exists("FMI.mbsimprj.xml"):
     gui={'buildType': args.buildType, 'prog': 'mbsimgui'}
     if os.path.exists("MBS.mbsimprj.xml"):
-      gui['file']=example+'/MBS.mbsimprj.xml'
+      gui['file']=[example+'/MBS.mbsimprj.xml']
     else:
-      gui['file']=example+'/FMI.mbsimprj.xml'
+      gui['file']=[example+'/FMI.mbsimprj.xml']
   return '<td>'+\
       ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
        myurllibp.urlencode(ombv, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
@@ -1675,10 +1674,11 @@ def loopOverReferenceFiles(msg, srcPostfix, dstPrefix, action):
     curNumber+=1
     print("%s: Example %03d/%03d; %5.1f%%; %s"%(msg, curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
     if not os.path.isdir(pj(dstPrefix, example[0], "reference")): os.makedirs(pj(dstPrefix, example[0], "reference"))
-    for h5File in glob.glob(pj(example[0], srcPostfix, "*.h5")):
-      action(h5File, pj(dstPrefix, example[0], "reference", os.path.basename(h5File)))
-    if os.path.isfile(pj(example[0], srcPostfix, "time.dat")):
-      action(pj(example[0], srcPostfix, "time.dat"), pj(dstPrefix, example[0], "reference", "time.dat"))
+    # apply action to all these files in the current dir (example dir)
+    for fnglob in ["time.dat", "TS.mbsim.h5", "MBS.mbsim.h5", "TS.ombv.h5", "MBS.ombv.h5",
+                   "TS.*.mbsim.h5", "MBS.*.mbsim.h5", "TS.*.ombv.h5", "MBS.*.ombv.h5"]:
+      for fn in glob.glob(pj(example[0], srcPostfix, fnglob)):
+        action(fn, pj(dstPrefix, example[0], "reference", os.path.basename(fn)))
 
 def copyToReference():
   loopOverReferenceFiles("Copy to reference", ".", ".", shutil.copyfile)
