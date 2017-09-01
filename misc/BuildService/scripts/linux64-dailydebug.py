@@ -33,16 +33,28 @@ json.dump(config, fd)
 fd.truncate();
 fcntl.lockf(fd, fcntl.LOCK_UN)
 fd.close()
-# update references of examples
+
+extraBuildArgs=[]
 if len(checkedExamples)>0:
+  # update references of examples
   os.chdir(SRCDIR+"/mbsim/examples")
   if simplesandbox.call(["./runexamples.py", "--action", "copyToReference"]+checkedExamples,
                     shareddir=["."], envvar=simplesandboxEnvvars, buildSystemRun=True)!=0:
     print("runexamples.py --action copyToReference ... failed.")
   os.chdir(CURDIR)
 
+  # update references for download
+  os.chdir(SRCDIR+"/mbsim/examples")
+  if simplesandbox.call(["./runexamples.py", "--action", "pushReference=/var/www/html/mbsim/linux64-dailydebug/references"],
+                     shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/references"],
+                     envvar=simplesandboxEnvvars, buildSystemRun=True)!=0:
+    print("pushing references to download dir failed.")
+  os.chdir(CURDIR)
+
+  extraBuildArgs=['--forceBuild']
+
 # build and run all examples
-ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
+ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun"]+extraBuildArgs+["--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
   "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--coverage", "--staticCodeAnalyzis", "--webapp",
   "--reportOutDir", "/var/www/html/mbsim/linux64-dailydebug/report", "--url",
   "https://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
@@ -53,14 +65,6 @@ if ret!=0 and ret!=255:
   print("build.py failed.")
 if ret==255:
   exit(0)
-
-# update references for download
-os.chdir(SRCDIR+"/mbsim/examples")
-if simplesandbox.call(["./runexamples.py", "--action", "pushReference=/var/www/html/mbsim/linux64-dailydebug/references"],
-                   shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/references"],
-                   envvar=simplesandboxEnvvars, buildSystemRun=True)!=0:
-  print("pushing references to download dir failed.")
-os.chdir(CURDIR)
 
 # run examples with valgrind
 os.chdir(SRCDIR+"/mbsim_valgrind/examples")

@@ -56,8 +56,7 @@ def parseArguments():
   
   cfgOpts=argparser.add_argument_group('Configuration Options')
   cfgOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only make and runexamples.py)")
-  cfgOpts.add_argument("--forceBuild", default=list(), type=str, nargs="*",
-    help="Force building a tool including its dependencies. Build all, the default, if no second argument is given")
+  cfgOpts.add_argument("--forceBuild", action="store_true", help="Force building even if --buildSystemRun is used and no new commits exist")
   
   cfgOpts.add_argument("--enableCleanPrefix", action="store_true", help="Remove the prefix dir completely before starting")
   cfgOpts.add_argument("--disableUpdate", action="store_true", help="Do not update repositories")
@@ -469,7 +468,7 @@ def main():
   if localRet!=0: nrFailed+=1
 
   # check if last build was the same as this build
-  if args.buildSystemRun and lastcommitidfull==commitidfull:
+  if not args.forceBuild and args.buildSystemRun and lastcommitidfull==commitidfull:
     print('Skipping this build: the last build was exactly the same.')
     # revert the outdir
     args.reportOutDir=os.path.sep.join(args.reportOutDir.split(os.path.sep)[0:-1])
@@ -488,20 +487,9 @@ def main():
     shutil.rmtree(args.prefix if args.prefix!=None else args.prefixAuto)
     os.makedirs(args.prefix if args.prefix!=None else args.prefixAuto)
 
-  # force build
-  buildTools=set()
-  for i, value in enumerate(args.forceBuild): # normalize all given path
-    args.forceBuild[i]=os.path.normpath(value)
-  if len(args.forceBuild)==0:
-    args.forceBuild.extend(list(toolDependencies))
-  buildTools.update(args.forceBuild)
-
-  # a list of all tools to be build
-  allBuildTools(buildTools)
-
   # a sorted list of all tools te be build (in the correct order according the dependencies)
   orderedBuildTools=list()
-  sortBuildTools(buildTools, orderedBuildTools)
+  sortBuildTools(set(toolDependencies), orderedBuildTools)
 
   print('<h2>Build Status</h2>', file=mainFD)
   print('<p><span class="glyphicon glyphicon-info-sign"></span>&nbsp;Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.<br/>', file=mainFD)
@@ -633,16 +621,6 @@ def addAllDepencencies():
 
 
  
-def allBuildTools(buildTools):
-  add=set()
-  for bt in buildTools:
-    for t in toolDependencies:
-      if bt in toolDependencies[t][1]:
-        add.add(t)
-  buildTools.update(add)
-
-
-
 def sortBuildTools(buildTools, orderedBuildTools):
   upToDate=set(toolDependencies)-buildTools
   for bt in buildTools:
