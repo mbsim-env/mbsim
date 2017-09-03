@@ -252,31 +252,30 @@ def readConfigFile():
   fcntl.lockf(fd, fcntl.LOCK_UN)
   fd.close()
   return config
-def setStatus(commitidfull, state, currentID, endTime=None):
-  if not args.buildSystemRun:
-    return
+def setStatus(commitidfull, state, currentID, timeID, target_url, buildType, endTime=None):
   import requests
   for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
     # create github status (for linux64-ci build on all master branch)
     data={
       "state": state,
-      "target_url": "https://www.mbsim-env.de/mbsim/%s/report/result_%010d/index.html"%(args.buildType, currentID),
+      "target_url": target_url,
     }
-    if args.buildType=="linux64-dailydebug" or args.buildType=="linux64-dailyrelease" or args.buildType=="win64-dailyrelease":
-      data["context"]="mbsim-env/%s"%(args.buildType)
+    if buildType=="linux64-dailydebug" or buildType=="linux64-dailyrelease" or \
+       buildType=="win64-dailyrelease" or buildType=="linux64-dailydebug-valgrind":
+      data["context"]="mbsim-env/%s"%(buildType)
       branches=""
-    elif args.buildType=="linux64-ci":
+    elif buildType=="linux64-ci":
       data["context"]="mbsim-env/linux64-ci/"+args.fmatvecBranch+"/"+args.hdf5serieBranch+"/"+args.openmbvBranch+"/"+args.mbsimBranch
       branches=", fmatvec=%s, hdf5serie=%s, openmbv=%s, mbsim=%s"% \
         (args.fmatvecBranch, args.hdf5serieBranch, args.openmbvBranch, args.mbsimBranch)
     else:
-      raise RuntimeError("Unknown buildType "+args.buildType+" provided")
+      raise RuntimeError("Unknown buildType "+buildType+" provided")
     if state=="pending":
-      data["description"]="Building since %s (MBSim-Env, %s%s)"%(str(timeID), args.buildType, branches)
+      data["description"]="Building since %s (MBSim-Env, %s%s)"%(str(timeID), buildType, branches)
     elif state=="failure":
-      data["description"]="Failed after %.1f min (MBSim-Env, %s%s)"%((endTime-timeID).total_seconds()/60, args.buildType, branches)
+      data["description"]="Failed after %.1f min (MBSim-Env, %s%s)"%((endTime-timeID).total_seconds()/60, buildType, branches)
     elif state=="success":
-      data["description"]="Passed after %.1f min (MBSim-Env, %s%s)"%((endTime-timeID).total_seconds()/60, args.buildType, branches)
+      data["description"]="Passed after %.1f min (MBSim-Env, %s%s)"%((endTime-timeID).total_seconds()/60, buildType, branches)
     else:
       raise RuntimeError("Unknown state "+state+" provided")
     status_access_token=readConfigFile()["status_access_token"]
@@ -480,7 +479,9 @@ def main():
     return 255 # build skipped, same as last build
 
   # set status on commit
-  setStatus(commitidfull, "pending", currentID)
+  if args.buildSystemRun:
+    setStatus(commitidfull, "pending", currentID, timeID,
+      "https://www.mbsim-env.de/mbsim/%s/report/result_%010d/index.html"%(args.buildType, currentID), args.buildType)
 
   # clean prefix dir
   if args.enableCleanPrefix and os.path.isdir(args.prefix if args.prefix!=None else args.prefixAuto):
@@ -584,7 +585,9 @@ def main():
                             nrFailed, nrRun)
 
   # update status on commitid
-  setStatus(commitidfull, "success" if nrFailed+abs(runExamplesErrorCode)==0 else "failure", currentID, endTime)
+  if args.buildSystemRun:
+    setStatus(commitidfull, "success" if nrFailed+abs(runExamplesErrorCode)==0 else "failure", currentID, timeID,
+      "https://www.mbsim-env.de/mbsim/%s/report/result_%010d/index.html"%(args.buildType, currentID), args.buildType, endTime)
 
   if nrFailed>0:
     print("\nERROR: %d of %d build parts failed!!!!!"%(nrFailed, nrRun));

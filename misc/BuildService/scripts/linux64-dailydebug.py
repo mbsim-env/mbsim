@@ -7,6 +7,9 @@ import fcntl
 import subprocess
 import tempfile
 import shutil
+import datetime
+import codecs
+import build
 
 SCRIPTDIR=os.path.dirname(os.path.realpath(__file__))
 CURDIR=os.getcwd()
@@ -55,7 +58,7 @@ if len(checkedExamples)>0:
 
 # build and run all examples
 ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun"]+extraBuildArgs+["--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
-  "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--coverage", "--staticCodeAnalyzis", "--webapp",
+  "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--coverage", "--webapp",
   "--reportOutDir", "/var/www/html/mbsim/linux64-dailydebug/report", "--url",
   "https://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
   "--passToConfigure", "--enable-python", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",
@@ -67,23 +70,43 @@ if ret==255:
   exit(0)
 
 # run examples with valgrind
+
+# set github statuses
+outDir="/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report"
+currentID=int(os.readlink(outDir+"/result_current")[len("result_"):])
+timeID=datetime.datetime.now()
+timeID=datetime.datetime(timeID.year, timeID.month, timeID.day, timeID.hour, timeID.minute, timeID.second)
+with codecs.open("/var/www/html/mbsim/linux64-dailydebug/report/result_current/repoState.json", "r", encoding="utf-8") as f:
+  commitidfull=json.load(f)
+build.setStatus(commitidfull, "pending", currentID, timeID,
+      "https://www.mbsim-env.de/mbsim/linux64-dailydebug/report/runexamples_valgrind_report/result_%010d/index.html"%(currentID),
+      "linux64-dailydebug-valgrind")
+# update
 os.chdir(SRCDIR+"/mbsim_valgrind/examples")
 if subprocess.call(["git", "pull"])!=0:
   print("git pull of mbsim_valgrind/examples failed.")
 os.environ["MBSIM_SET_MINIMAL_TEND"]="1"
-if simplesandbox.call(["./runexamples.py", "--rotate", "30", "-j", "2", "--coverage", SRCDIR+"::"+SRCDIR+"/local", "--reportOutDir",
-                    "/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report", "--url",
-                    "https://www.mbsim-env.de/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
-                    "--buildSystemRun", SCRIPTDIR,
-                    "--prefixSimulationKeyword=VALGRIND", "--prefixSimulation",
-                    "valgrind --trace-children=yes --trace-children-skip=*/rm --num-callers=150 --gen-suppressions=all --suppressions="+
-                    SRCDIR+"/mbsim_valgrind/misc/valgrind-mbsim.supp --leak-check=full", "--disableCompare", "--disableValidate",
-                    "--buildType", "linux64-dailydebug-valgrind"],
-                   shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
-                              "/var/www/html/mbsim/buildsystemstate"]+map(lambda x: SRCDIR+"/"+x, ["fmatvec", "hdf5serie", "openmbv", "mbsim"]),
-                   envvar=simplesandboxEnvvars+["MBSIM_SET_MINIMAL_TEND"], buildSystemRun=True)!=0:
+# build
+ret=simplesandbox.call(["./runexamples.py", "--rotate", "30", "-j", "2", "--coverage", SRCDIR+"::"+SRCDIR+"/local", "--reportOutDir",
+          outDir, "--url",
+          "https://www.mbsim-env.de/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
+          "--buildSystemRun", SCRIPTDIR,
+          "--prefixSimulationKeyword=VALGRIND", "--prefixSimulation",
+          "valgrind --trace-children=yes --trace-children-skip=*/rm --num-callers=150 --gen-suppressions=all --suppressions="+
+          SRCDIR+"/mbsim_valgrind/misc/valgrind-mbsim.supp --leak-check=full", "--disableCompare", "--disableValidate",
+          "--buildType", "linux64-dailydebug-valgrind"],
+          shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
+                     "/var/www/html/mbsim/buildsystemstate"]+map(lambda x: SRCDIR+"/"+x, ["fmatvec", "hdf5serie", "openmbv", "mbsim"]),
+          envvar=simplesandboxEnvvars+["MBSIM_SET_MINIMAL_TEND"], buildSystemRun=True)
+if ret!=0:
   print("runing examples with valgrind failed.")
 os.chdir(CURDIR)
+# set github statuses
+endTime=datetime.datetime.now()
+endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
+build.setStatus(commitidfull, "success" if ret==0 else "failure", currentID, timeID,
+      "https://www.mbsim-env.de/mbsim/linux64-dailydebug/report/runexamples_valgrind_report/result_%010d/index.html"%(currentID),
+      "linux64-dailydebug-valgrind", endTime)
 
 # build doc
 if subprocess.call([SCRIPTDIR+"/builddoc.py"])!=0:
