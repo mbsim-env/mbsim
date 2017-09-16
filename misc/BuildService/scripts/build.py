@@ -268,7 +268,7 @@ def setStatus(commitidfull, state, currentID, timeID, target_url, buildType, end
       data["context"]="mbsim-env/linux64-ci/"+args.fmatvecBranch+"/"+args.hdf5serieBranch+"/"+args.openmbvBranch+"/"+args.mbsimBranch
     else:
       raise RuntimeError("Unknown buildType "+buildType+" provided")
-    # note description must be less than 140 characters, including the signature (see below)
+    # note description must be less than 140 characters
     if state=="pending":
       data["description"]="Building since %s on MBSim-Env (%s)"%(str(timeID), buildType)
     elif state=="failure":
@@ -277,13 +277,8 @@ def setStatus(commitidfull, state, currentID, timeID, target_url, buildType, end
       data["description"]="Passed after %.1f min on MBSim-Env (%s)"%((endTime-timeID).total_seconds()/60, buildType)
     else:
       raise RuntimeError("Unknown state "+state+" provided")
-    # hash sign the status: hash sign the message <context>:<state>:<target_url> using hmac/sha1 with key webhook_secret and store
-    # the signature at the end of <description> as sha1=<hexdigest>
-    config=readConfigFile()
-    msg=data["context"]+":"+data["state"]+":"+data["target_url"]
-    sha1=hmac.new(config['webhook_secret'].encode('utf-8'), msg.encode('utf-8'), hashlib.sha1).hexdigest()
-    data["description"]=data["description"]+" sha1="+sha1
     # call github api
+    config=readConfigFile()
     headers={'Authorization': 'token '+config["status_access_token"],
              'Accept': 'application/vnd.github.v3+json'}
     response=requests.post('https://api.github.com/repos/mbsim-env/'+repo+'/statuses/'+commitidfull[repo],
