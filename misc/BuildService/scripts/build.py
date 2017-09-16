@@ -264,36 +264,36 @@ def setStatus(commitidfull, state, currentID, timeID, target_url, buildType, end
     if buildType=="linux64-dailydebug" or buildType=="linux64-dailyrelease" or \
        buildType=="win64-dailyrelease" or buildType=="linux64-dailydebug-valgrind":
       data["context"]="mbsim-env/%s"%(buildType)
-      branches=""
     elif buildType=="linux64-ci":
       data["context"]="mbsim-env/linux64-ci/"+args.fmatvecBranch+"/"+args.hdf5serieBranch+"/"+args.openmbvBranch+"/"+args.mbsimBranch
-      branches=", fmatvec=%s, hdf5serie=%s, openmbv=%s, mbsim=%s"% \
-        (args.fmatvecBranch, args.hdf5serieBranch, args.openmbvBranch, args.mbsimBranch)
     else:
       raise RuntimeError("Unknown buildType "+buildType+" provided")
+    # note description must be less than 140 characters, including the signature (see below)
     if state=="pending":
-      data["description"]="Building since %s (MBSim-Env, %s%s)"%(str(timeID), buildType, branches)
+      data["description"]="Building since %s on MBSim-Env (%s)"%(str(timeID), buildType)
     elif state=="failure":
-      data["description"]="Failed after %.1f min (MBSim-Env, %s%s)"%((endTime-timeID).total_seconds()/60, buildType, branches)
+      data["description"]="Failed after %.1f min on MBSim-Env (%s)"%((endTime-timeID).total_seconds()/60, buildType)
     elif state=="success":
-      data["description"]="Passed after %.1f min (MBSim-Env, %s%s)"%((endTime-timeID).total_seconds()/60, buildType, branches)
+      data["description"]="Passed after %.1f min on MBSim-Env (%s)"%((endTime-timeID).total_seconds()/60, buildType)
     else:
       raise RuntimeError("Unknown state "+state+" provided")
     # hash sign the status: hash sign the message <context>:<state>:<target_url> using hmac/sha1 with key webhook_secret and store
-    # the signature at the end of <description> as sig=<hexdigest>
+    # the signature at the end of <description> as sha1=<hexdigest>
     config=readConfigFile()
     msg=data["context"]+":"+data["state"]+":"+data["target_url"]
-    sig=hmac.new(config['webhook_secret'].encode('utf-8'), msg.encode('utf-8'), hashlib.sha1).hexdigest()
-    data["description"]=data["description"]+" sig="+sig
+    sha1=hmac.new(config['webhook_secret'].encode('utf-8'), msg.encode('utf-8'), hashlib.sha1).hexdigest()
+    data["description"]=data["description"]+" sha1="+sha1
     # call github api
     headers={'Authorization': 'token '+config["status_access_token"],
              'Accept': 'application/vnd.github.v3+json'}
     response=requests.post('https://api.github.com/repos/mbsim-env/'+repo+'/statuses/'+commitidfull[repo],
                            headers=headers, data=json.dumps(data))
     if response.status_code!=201:
-      print("Warning: failed to create github status on repo "+repo+".")
-      if "message" in response.json():
-        print(response.json()["message"])
+      print("Warning: failed to create github status on repo "+repo+":")
+      if "message" in response.json(): print(response.json()["message"])
+      if "errors" in response.json():
+        for e in response.json()['errors']:
+          if 'message' in e: print(e["message"])
 
 # the main routine being called ones
 def main():
