@@ -58,7 +58,7 @@ if len(checkedExamples)>0:
 
 # build and run all examples
 ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun"]+extraBuildArgs+["--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
-  "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--coverage", "--webapp",
+  "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--coverage", "--staticCodeAnalyzis", "--webapp",
   "--reportOutDir", "/var/www/html/mbsim/linux64-dailydebug/report", "--url",
   "https://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
   "--passToConfigure", "--enable-python", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",

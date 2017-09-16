@@ -278,8 +278,14 @@ def setStatus(commitidfull, state, currentID, timeID, target_url, buildType, end
       data["description"]="Passed after %.1f min (MBSim-Env, %s%s)"%((endTime-timeID).total_seconds()/60, buildType, branches)
     else:
       raise RuntimeError("Unknown state "+state+" provided")
-    status_access_token=readConfigFile()["status_access_token"]
-    headers={'Authorization': 'token '+status_access_token,
+    # hash sign the status: hash sign the message <context>:<state>:<target_url> using hmac/sha1 with key webhook_secret and store
+    # the signature at the end of <description> as sig=<hexdigest>
+    config=readConfigFile()
+    msg=data["context"]+":"+data["state"]+":"+data["target_url"]
+    sig=hmac.new(config['webhook_secret'].encode('utf-8'), msg.encode('utf-8'), hashlib.sha1).hexdigest()
+    data["description"]=data["description"]+" sig="+sig
+    # call github api
+    headers={'Authorization': 'token '+config["status_access_token"],
              'Accept': 'application/vnd.github.v3+json'}
     response=requests.post('https://api.github.com/repos/mbsim-env/'+repo+'/statuses/'+commitidfull[repo],
                            headers=headers, data=json.dumps(data))
