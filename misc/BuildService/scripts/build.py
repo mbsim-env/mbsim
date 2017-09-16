@@ -16,6 +16,7 @@ import codecs
 import simplesandbox
 import buildSystemState
 import hashlib
+import hmac
 import json
 import fcntl
 if sys.version_info[0]==2: # to unify python 2 and python 3
