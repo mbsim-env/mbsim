@@ -1064,7 +1064,7 @@ def runexamples(mainFD):
   if not os.path.isdir(pj(args.reportOutDir, "runexamples_report")): os.makedirs(pj(args.reportOutDir, "runexamples_report"))
   ret=abs(simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"),
                              "/var/www/html/mbsim/buildsystemstate"]+
-                             map(lambda x: pj(args.sourceDir, x+args.binSuffix), ["fmatvec", "hdf5serie", "openmbv", "mbsim"]),
+                             list(map(lambda x: pj(args.sourceDir, x+args.binSuffix), ["fmatvec", "hdf5serie", "openmbv", "mbsim"])),
                              stderr=subprocess.STDOUT, buildSystemRun=args.buildSystemRun))
 
   if ret==0:
