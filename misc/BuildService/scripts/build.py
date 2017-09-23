@@ -79,6 +79,7 @@ def parseArguments():
   cfgOpts.add_argument("--coverage", action="store_true", help='Enable coverage analyzis using gcov/lcov.')
   cfgOpts.add_argument("--staticCodeAnalyzis", action="store_true", help='Enable static code analyzis using LLVM Clang Analyzer.')
   cfgOpts.add_argument("--webapp", action="store_true", help='Just passed to runexamples.py.')
+  cfgOpts.add_argument("--buildFailedExit", default=None, type=int, help='Define the exit code when the build fails - e.g. use --buildFailedExit 125 to skip a failed build when running as "git bisect run".')
   
   outOpts=argparser.add_argument_group('Output Options')
   outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
@@ -1221,4 +1222,6 @@ if __name__=="__main__":
   # 1 -> build failed
   # 2 -> examples failed
   # 255 -> build skipped, same as last build
+  if args.buildFailedExit and mainRet==1:
+    mainRet=args.buildFailedExit
   exit(mainRet)
