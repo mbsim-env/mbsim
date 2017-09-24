@@ -105,7 +105,7 @@ namespace MBSim {
       /**
        * \brief define level of debug output
        */
-      bool DEBUGLEVEL;
+      int DEBUGLEVEL;
 
       /**
        * \brief did the algorithm find a solution
