@@ -81,12 +81,13 @@ while True:
   else:
     break
 
-if subprocess.call([scriptdir+"/build.py", "--buildSystemRun", "--rotate", "30", "-j", "2", "--fmatvecBranch", fmatvecBranch,
+ret=subprocess.call([scriptdir+"/build.py", "--buildSystemRun", "--rotate", "30", "-j", "2", "--fmatvecBranch", fmatvecBranch,
   "--hdf5serieBranch", hdf5serieBranch, "--openmbvBranch", openmbvBranch, "--mbsimBranch", mbsimBranch, "--enableCleanPrefix",
   "--disableConfigure", "--disableMakeClean", "--disableDoxygen", "--disableXMLDoc", "--sourceDir", SRCDIR, "--webapp",
   "--prefix", SRCDIR+"/local", "--reportOutDir", "/var/www/html/mbsim/linux64-ci/report",
   "--url", "https://www.mbsim-env.de/mbsim/linux64-ci/report", "--buildType", "linux64-ci", "--passToConfigure", "--enable-python", "--enable-debug",
   "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
-  "--passToRunexamples", "--disableCompare", "--disableMakeClean", "--filter", "'basic' in labels"], env=env)!=0:
+  "--passToRunexamples", "--disableCompare", "--disableMakeClean", "--filter", "'basic' in labels"], env=env)
+if ret!=0 and ret!=255:
   print("CI Build failed.")

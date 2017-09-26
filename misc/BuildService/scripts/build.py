@@ -16,6 +16,7 @@ import codecs
 import simplesandbox
 import buildSystemState
 import hashlib
+import hmac
 import json
 import fcntl
 if sys.version_info[0]==2: # to unify python 2 and python 3
@@ -56,8 +57,7 @@ def parseArguments():
   
   cfgOpts=argparser.add_argument_group('Configuration Options')
   cfgOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only make and runexamples.py)")
-  cfgOpts.add_argument("--forceBuild", default=list(), type=str, nargs="*",
-    help="Force building a tool including its dependencies. Build all, the default, if no second argument is given")
+  cfgOpts.add_argument("--forceBuild", action="store_true", help="Force building even if --buildSystemRun is used and no new commits exist")
   
   cfgOpts.add_argument("--enableCleanPrefix", action="store_true", help="Remove the prefix dir completely before starting")
   cfgOpts.add_argument("--disableUpdate", action="store_true", help="Do not update repositories")
@@ -79,6 +79,7 @@ def parseArguments():
   cfgOpts.add_argument("--coverage", action="store_true", help='Enable coverage analyzis using gcov/lcov.')
   cfgOpts.add_argument("--staticCodeAnalyzis", action="store_true", help='Enable static code analyzis using LLVM Clang Analyzer.')
   cfgOpts.add_argument("--webapp", action="store_true", help='Just passed to runexamples.py.')
+  cfgOpts.add_argument("--buildFailedExit", default=None, type=int, help='Define the exit code when the build fails - e.g. use --buildFailedExit 125 to skip a failed build when running as "git bisect run".')
   
   outOpts=argparser.add_argument_group('Output Options')
   outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
@@ -150,6 +151,14 @@ def rotateOutput():
   else:
     currentID=1
 
+  # check if the last build was the same
+  lastcommitidfull={}
+  try:
+    with codecs.open(pj(args.reportOutDir, "result_%010d"%(currentID-1), "repoState.json"), "r", encoding="utf-8") as f:
+      lastcommitidfull=json.load(f)
+  except:
+    pass
+
   # only keep args.rotate old results
   delFirstN=len(resultID)-args.rotate
   if delFirstN>0:
@@ -177,7 +186,7 @@ def rotateOutput():
   args.reportOutDir=pj(args.reportOutDir, "result_%010d"%(currentID))
   if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
   os.makedirs(args.reportOutDir)
-  return currentID
+  return currentID, lastcommitidfull
 
 # create main documentation page
 def mainDocPage():
@@ -245,42 +254,42 @@ def readConfigFile():
   fcntl.lockf(fd, fcntl.LOCK_UN)
   fd.close()
   return config
-def setStatus(commitidfull, state, currentID, endTime=None):
-  if not args.buildSystemRun:
-    return
+def setStatus(commitidfull, state, currentID, timeID, target_url, buildType, endTime=None):
   import requests
   for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
     # create github status (for linux64-ci build on all master branch)
     data={
       "state": state,
-      "target_url": "https://www.mbsim-env.de/mbsim/%s/report/result_%010d/index.html"%(args.buildType, currentID),
+      "target_url": target_url,
     }
-    if args.buildType=="linux64-dailydebug" or args.buildType=="linux64-dailyrelease" or args.buildType=="win64-dailyrelease":
-      data["context"]="mbsim-env/%s"%(args.buildType)
-      branches=""
-    elif args.buildType=="linux64-ci":
+    if buildType=="linux64-dailydebug" or buildType=="linux64-dailyrelease" or \
+       buildType=="win64-dailyrelease" or buildType=="linux64-dailydebug-valgrind":
+      data["context"]="mbsim-env/%s"%(buildType)
+    elif buildType=="linux64-ci":
       data["context"]="mbsim-env/linux64-ci/"+args.fmatvecBranch+"/"+args.hdf5serieBranch+"/"+args.openmbvBranch+"/"+args.mbsimBranch
-      branches=", fmatvec=%s, hdf5serie=%s, openmbv=%s, mbsim=%s"% \
-        (args.fmatvecBranch, args.hdf5serieBranch, args.openmbvBranch, args.mbsimBranch)
     else:
-      raise RuntimeError("Unknown buildType "+args.buildType+" provided")
+      raise RuntimeError("Unknown buildType "+buildType+" provided")
+    # note description must be less than 140 characters
     if state=="pending":
-      data["description"]="Building since %s (MBSim-Env, %s%s)"%(str(timeID), args.buildType, branches)
+      data["description"]="Building since %s on MBSim-Env (%s)"%(str(timeID), buildType)
     elif state=="failure":
-      data["description"]="Failed after %.1f min (MBSim-Env, %s%s)"%((endTime-timeID).total_seconds()/60, args.buildType, branches)
+      data["description"]="Failed after %.1f min on MBSim-Env (%s)"%((endTime-timeID).total_seconds()/60, buildType)
     elif state=="success":
-      data["description"]="Passed after %.1f min (MBSim-Env, %s%s)"%((endTime-timeID).total_seconds()/60, args.buildType, branches)
+      data["description"]="Passed after %.1f min on MBSim-Env (%s)"%((endTime-timeID).total_seconds()/60, buildType)
     else:
       raise RuntimeError("Unknown state "+state+" provided")
-    status_access_token=readConfigFile()["status_access_token"]
-    headers={'Authorization': 'token '+status_access_token,
+    # call github api
+    config=readConfigFile()
+    headers={'Authorization': 'token '+config["status_access_token"],
              'Accept': 'application/vnd.github.v3+json'}
     response=requests.post('https://api.github.com/repos/mbsim-env/'+repo+'/statuses/'+commitidfull[repo],
                            headers=headers, data=json.dumps(data))
     if response.status_code!=201:
-      print("Warning: failed to create github status on repo "+repo+".")
-      if "message" in response.json():
-        print(response.json()["message"])
+      print("Warning: failed to create github status on repo "+repo+":")
+      if "message" in response.json(): print(response.json()["message"])
+      if "errors" in response.json():
+        for e in response.json()['errors']:
+          if 'message' in e: print(e["message"])
 
 # the main routine being called ones
 def main():
@@ -405,7 +414,7 @@ def main():
     print("See also the generated documentation "+pj(args.docOutDir, "index.html")+".\n")
 
   # rotate (modifies args.reportOutDir)
-  currentID=rotateOutput()
+  currentID, lastcommitidfull=rotateOutput()
 
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
@@ -460,28 +469,31 @@ def main():
   localRet, commitidfull=repoUpdate(mainFD, currentID)
   if localRet!=0: nrFailed+=1
 
+  # check if last build was the same as this build
+  if not args.forceBuild and args.buildSystemRun and lastcommitidfull==commitidfull:
+    print('Skipping this build: the last build was exactly the same.')
+    # revert the outdir
+    args.reportOutDir=os.path.sep.join(args.reportOutDir.split(os.path.sep)[0:-1])
+    shutil.rmtree(pj(args.reportOutDir, "result_%010d"%(currentID)))
+    os.remove(pj(args.reportOutDir, "result_%010d"%(currentID+1)))
+    os.remove(pj(args.reportOutDir, "result_current"))
+    os.symlink("result_%010d"%(currentID-1), pj(args.reportOutDir, "result_%010d"%(currentID)))
+    os.symlink("result_%010d"%(currentID-1), pj(args.reportOutDir, "result_current"))
+    return 255 # build skipped, same as last build
+
   # set status on commit
-  setStatus(commitidfull, "pending", currentID)
+  if args.buildSystemRun:
+    setStatus(commitidfull, "pending", currentID, timeID,
+      "https://www.mbsim-env.de/mbsim/%s/report/result_%010d/index.html"%(args.buildType, currentID), args.buildType)
 
   # clean prefix dir
   if args.enableCleanPrefix and os.path.isdir(args.prefix if args.prefix!=None else args.prefixAuto):
     shutil.rmtree(args.prefix if args.prefix!=None else args.prefixAuto)
     os.makedirs(args.prefix if args.prefix!=None else args.prefixAuto)
 
-  # force build
-  buildTools=set()
-  for i, value in enumerate(args.forceBuild): # normalize all given path
-    args.forceBuild[i]=os.path.normpath(value)
-  if len(args.forceBuild)==0:
-    args.forceBuild.extend(list(toolDependencies))
-  buildTools.update(args.forceBuild)
-
-  # a list of all tools to be build
-  allBuildTools(buildTools)
-
   # a sorted list of all tools te be build (in the correct order according the dependencies)
   orderedBuildTools=list()
-  sortBuildTools(buildTools, orderedBuildTools)
+  sortBuildTools(set(toolDependencies), orderedBuildTools)
 
   print('<h2>Build Status</h2>', file=mainFD)
   print('<p><span class="glyphicon glyphicon-info-sign"></span>&nbsp;Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.<br/>', file=mainFD)
@@ -576,12 +588,18 @@ def main():
                             nrFailed, nrRun)
 
   # update status on commitid
-  setStatus(commitidfull, "success" if nrFailed+abs(runExamplesErrorCode)==0 else "failure", currentID, endTime)
+  if args.buildSystemRun:
+    setStatus(commitidfull, "success" if nrFailed+abs(runExamplesErrorCode)==0 else "failure", currentID, timeID,
+      "https://www.mbsim-env.de/mbsim/%s/report/result_%010d/index.html"%(args.buildType, currentID), args.buildType, endTime)
 
   if nrFailed>0:
     print("\nERROR: %d of %d build parts failed!!!!!"%(nrFailed, nrRun));
 
-  return nrFailed+abs(runExamplesErrorCode)
+  if nrFailed>0:
+    return 1 # build failed
+  if abs(runExamplesErrorCode)>0:
+    return 2 # examples failed
+  return 0 # all passed
 
 
 
@@ -609,16 +627,6 @@ def addAllDepencencies():
 
 
  
-def allBuildTools(buildTools):
-  add=set()
-  for bt in buildTools:
-    for t in toolDependencies:
-      if bt in toolDependencies[t][1]:
-        add.add(t)
-  buildTools.update(add)
-
-
-
 def sortBuildTools(buildTools, orderedBuildTools):
   upToDate=set(toolDependencies)-buildTools
   for bt in buildTools:
@@ -698,6 +706,10 @@ def repoUpdate(mainFD, currentID):
 
   print('</tbody></table>', file=mainFD)
   mainFD.flush()
+
+  # dump the repo state (commitid) to a file
+  with codecs.open(pj(args.reportOutDir, "repoState.json"), "w", encoding="utf-8") as f:
+    json.dump(commitidfull, f, indent=2)
 
   if not args.disableUpdate:
     if ret>0:
@@ -1052,7 +1064,7 @@ def runexamples(mainFD):
   if not os.path.isdir(pj(args.reportOutDir, "runexamples_report")): os.makedirs(pj(args.reportOutDir, "runexamples_report"))
   ret=abs(simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"),
                              "/var/www/html/mbsim/buildsystemstate"]+
-                             map(lambda x: pj(args.sourceDir, x+args.binSuffix), ["fmatvec", "hdf5serie", "openmbv", "mbsim"]),
+                             list(map(lambda x: pj(args.sourceDir, x+args.binSuffix), ["fmatvec", "hdf5serie", "openmbv", "mbsim"])),
                              stderr=subprocess.STDOUT, buildSystemRun=args.buildSystemRun))
 
   if ret==0:
@@ -1206,4 +1218,10 @@ def releaseGeneration2(mainFD, distArchiveName):
 
 if __name__=="__main__":
   mainRet=main()
+  # 0 -> all passed
+  # 1 -> build failed
+  # 2 -> examples failed
+  # 255 -> build skipped, same as last build
+  if args.buildFailedExit and mainRet==1:
+    mainRet=args.buildFailedExit
   exit(mainRet)

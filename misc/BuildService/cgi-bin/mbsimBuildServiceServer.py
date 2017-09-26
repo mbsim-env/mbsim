@@ -64,7 +64,7 @@ try:
         # get access token for login
         access_token=config['session'][sessionid]['access_token']
         # check whether the sessionid is correct
-        if hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()!=sessionid:
+        if not hmac.compare_digest(hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest(), sessionid):
           response_data['success']=False
           response_data['message']="Invalid access token hmac! Maybe the login was faked! If not, try to relogin again."
         else:
@@ -304,7 +304,7 @@ try:
       with ConfigFile(True) as config:
         rawdata=sys.stdin.read()
         sig=os.environ['HTTP_X_HUB_SIGNATURE'][5:]
-        if sig!=hmac.new(config['webhook_secret'].encode('utf-8'), rawdata, hashlib.sha1).hexdigest():
+        if not hmac.compare_digest(sig, hmac.new(config['webhook_secret'].encode('utf-8'), rawdata, hashlib.sha1).hexdigest()):
           response_data['success']=False
           response_data['message']="Invalid signature. Only github is allowed to send hooks."
         else:
