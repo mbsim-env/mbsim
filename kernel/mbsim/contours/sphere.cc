@@ -35,7 +35,7 @@ namespace MBSim {
 
   void Sphere::init(InitStage stage) {
     if(stage==plotting) {
-      if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody)
+      if(plotFeature[openMBV]==enabled && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Sphere>(openMBVRigidBody)->setRadius(r);
     }
     RigidContour::init(stage);

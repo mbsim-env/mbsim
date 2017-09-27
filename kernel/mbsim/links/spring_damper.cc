@@ -33,6 +33,8 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpringDamper)
 
+  std::size_t SpringDamper::deflection = std::hash<std::string>()("deflection");
+
   SpringDamper::SpringDamper(const string &name) : FixedFrameLink(name), func(NULL), l0(0) {
   }
 
@@ -49,9 +51,9 @@ namespace MBSim {
 
   void SpringDamper::init(InitStage stage) {
     if(stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[4069279623887175301ULL]==enabled)
+      if(plotFeature[plotRecursive]==enabled and plotFeature[deflection]==enabled)
           plotColumns.push_back("deflection");
-      if(plotFeature[13464197197848110344ULL]==enabled and coilspringOpenMBV) {
+      if(plotFeature[openMBV]==enabled and coilspringOpenMBV) {
         coilspringOpenMBV->setName(name);
         parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
       }
@@ -61,9 +63,9 @@ namespace MBSim {
   }
 
   void SpringDamper::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[4069279623887175301ULL]==enabled)
+    if(plotFeature[plotRecursive]==enabled and plotFeature[deflection]==enabled)
       plotVector.push_back(evalGeneralizedRelativePosition()(0)-l0);
-    if(plotFeature[13464197197848110344ULL]==enabled and coilspringOpenMBV) {
+    if(plotFeature[openMBV]==enabled and coilspringOpenMBV) {
       Vec3 WrOToPoint;
       Vec3 WrOFromPoint;
 

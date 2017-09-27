@@ -32,24 +32,28 @@ using namespace std;
 
 namespace MBSim {
 
+  std::size_t Link::generalizedRelativePosition = std::hash<std::string>()("generalizedRelativePosition");
+  std::size_t Link::generalizedRelativeVelocity = std::hash<std::string>()("generalizedRelativeVelocity");
+  std::size_t Link::generalizedForce = std::hash<std::string>()("generalizedForce");
+
   Link::Link(const string &name) : Element(name), ng(0), ngd(0), nla(0), xSize(0), xInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), bSize(0), bInd(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), rFactorSize(0), rFactorInd(0), rMax(1.), corrSize(0), corrInd(0), updSize(true), updrrel(true), updvrel(true), updla(true) {
   }
 
   void Link::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[5125144808927415120ULL]==enabled) {
+    if(plotFeature[plotRecursive]==enabled) {
+      if(plotFeature[generalizedRelativePosition]==enabled) {
         for(int i=0; i<evalGeneralizedRelativePosition().size(); ++i)
           plotVector.push_back(rrel(i));
       }
-      if(plotFeature[7543055333706056486ULL]==enabled) {
+      if(plotFeature[generalizedRelativeVelocity]==enabled) {
         for(int i=0; i<evalGeneralizedRelativeVelocity().size(); ++i)
           plotVector.push_back(vrel(i));
       }
-      if(plotFeature[1829434585317744831ULL]==enabled) {
+      if(plotFeature[generalizedForce]==enabled) {
         for(int i=0; i<evalGeneralizedForce().size(); ++i)
           plotVector.push_back(evalGeneralizedForce()(i));
       }
-      if(plotFeature[2188794903238700147ULL]==enabled) {
+      if(plotFeature[energy]==enabled) {
         plotVector.push_back(evalPotentialEnergy());
       }
     }
@@ -134,20 +138,20 @@ namespace MBSim {
       lambda.resize(nla);
     }
     else if(stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[5125144808927415120ULL]==enabled) {
+      if(plotFeature[plotRecursive]==enabled) {
+        if(plotFeature[generalizedRelativePosition]==enabled) {
           for(int i=0; i<rrel.size(); ++i)
             plotColumns.push_back("generalized relative position ("+numtostr(i)+")");
         }
-        if(plotFeature[7543055333706056486ULL]==enabled) {
+        if(plotFeature[generalizedRelativeVelocity]==enabled) {
           for(int i=0; i<vrel.size(); ++i)
             plotColumns.push_back("generalized relative velocity ("+numtostr(i)+")");
         }
-        if(plotFeature[1829434585317744831ULL]==enabled) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
+        if(plotFeature[generalizedForce]==enabled) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
           for(int i=0; i<lambda.size(); ++i)
             plotColumns.push_back("generalized force ("+numtostr(i)+")");
         }
-        if(plotFeature[2188794903238700147ULL]==enabled)
+        if(plotFeature[energy]==enabled)
           plotColumns.push_back("potential energy");
       }
     }

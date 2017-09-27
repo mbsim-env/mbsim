@@ -409,7 +409,7 @@ namespace MBSim {
     else if (stage == plotting) {
       msg(Info) << "  initialising plot-files ..." << endl;
       Group::init(stage);
-      if (plotFeature[13464197197848110344ULL] == enabled)
+      if (plotFeature[openMBV] == enabled)
         openMBVGrp->write(true, truncateSimulationFiles);
       H5::File::reopenAllFilesAsSWMR();
       msg(Info) << "...... done initialising." << endl << endl;
@@ -1367,12 +1367,12 @@ namespace MBSim {
 
   void DynamicSystemSolver::constructor() {
     integratorExitRequest = false;
-    plotFeature[11334901831169464975ULL] = enabled;
-    plotFeatureForChildren[11334901831169464975ULL] = enabled;
-    plotFeature[18269718848207088804ULL] = enabled;
-    plotFeatureForChildren[18269718848207088804ULL] = disabled;
-    plotFeature[13464197197848110344ULL] = enabled;
-    plotFeatureForChildren[13464197197848110344ULL] = enabled;
+    plotFeature[plotRecursive] = enabled;
+    plotFeatureForChildren[plotRecursive] = enabled;
+    plotFeature[separateFilePerGroup] = enabled;
+    plotFeatureForChildren[separateFilePerGroup] = disabled;
+    plotFeature[openMBV] = enabled;
+    plotFeatureForChildren[openMBV] = enabled;
   }
 
   void DynamicSystemSolver::initializeUsingXML(DOMElement *element) {

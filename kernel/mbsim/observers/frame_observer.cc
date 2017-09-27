@@ -42,13 +42,13 @@ namespace MBSim {
       Observer::init(stage);
     }
     else if(stage==plotting) {
-//        if(plotFeature[12307443656510933270ULL]==enabled) plotColumns.push_back("AbsolutePosition");
-//        if(plotFeature[9333706489830170160ULL]==enabled) plotColumns.push_back("AbsoluteVelocity");
-//        if(plotFeature[9333706489830170160ULL]==enabled) plotColumns.push_back("AbsoluteAngularVelocity");
-//        if(plotFeature[1640323793842503125ULL]==enabled) plotColumns.push_back("AbsoluteAcceleration");
-//        if(plotFeature[1640323793842503125ULL]==enabled) plotColumns.push_back("AbsoluteAngularAcceleration");
+//        if(plotFeature[position]==enabled) plotColumns.push_back("AbsolutePosition");
+//        if(plotFeature[velocity]==enabled) plotColumns.push_back("AbsoluteVelocity");
+//        if(plotFeature[velocity]==enabled) plotColumns.push_back("AbsoluteAngularVelocity");
+//        if(plotFeature[acceleration]==enabled) plotColumns.push_back("AbsoluteAcceleration");
+//        if(plotFeature[acceleration]==enabled) plotColumns.push_back("AbsoluteAngularAcceleration");
       Observer::init(stage);
-      if(plotFeature[13464197197848110344ULL]==enabled) {
+      if(plotFeature[openMBV]==enabled) {
         if(openMBVPosition) {
           openMBVPosition->setName("AbsolutePosition");
           getOpenMBVGrp()->addObject(openMBVPosition);
@@ -76,7 +76,7 @@ namespace MBSim {
   }
 
   void FrameObserver::plot() {
-    if(plotFeature[13464197197848110344ULL]==enabled) {
+    if(plotFeature[openMBV]==enabled) {
       if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
         vector<double> data;
         data.push_back(getTime());

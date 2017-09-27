@@ -301,12 +301,12 @@ namespace MBSim {
     joint->setMomentLaw(new BilateralConstraint);
     joint->connect(R,&Z);
     joint->setBody(this);
-    joint->plotFeature[5125144808927415120ULL] = disabled;
-    joint->plotFeature[7543055333706056486ULL] = disabled;
+    joint->plotFeature[Link::generalizedRelativePosition] = disabled;
+    joint->plotFeature[Link::generalizedRelativeVelocity] = disabled;
   }
 
   void RigidBody::plot() {
-    if(plotFeature[13464197197848110344ULL]==enabled and openMBVBody) {
+    if(plotFeature[openMBV]==enabled and openMBVBody) {
       vector<double> data;
       data.push_back(getTime());
       Vec3 WrOS=openMBVFrame->evalPosition();

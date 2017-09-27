@@ -32,6 +32,8 @@ namespace MBSim {
    * distance and relative velocity between the two frames.
    */
   class SpringDamper : public FixedFrameLink {
+    public:
+      static std::size_t deflection;
     protected:
       Function<double(double,double)> *func;
       double l0;

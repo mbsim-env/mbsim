@@ -76,7 +76,7 @@ namespace MBSim {
       Kt(2) = sign;
     }
     else if(stage==plotting) {
-      if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
+      if(plotFeature[openMBV]==enabled && openMBVRigidBody) {
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(r);
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r);
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(0);

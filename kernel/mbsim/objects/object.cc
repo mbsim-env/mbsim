@@ -31,6 +31,11 @@ using namespace xercesc;
 
 namespace MBSim {
 
+  std::size_t Object::generalizedPosition = std::hash<std::string>()("generalizedPosition");
+  std::size_t Object::generalizedVelocity = std::hash<std::string>()("generalizedVelocity");
+  std::size_t Object::derivativeOfGeneralizedPosition = std::hash<std::string>()("derivativeOfGeneralizedPosition");
+  std::size_t Object::generalizedAcceleration = std::hash<std::string>()("generalizedAcceleration");
+
   Object::Object(const std::string &name) : Element(name), nq(0), nu(0), qSize(0), uSize{0,0}, hSize{0,0}, qInd(0), uInd{0,0}, hInd{0,0}, updSize(true), updq(true), updu(true), updqd(true), updud(true) {
   }
 
@@ -89,24 +94,25 @@ namespace MBSim {
   }
 
   void Object::plot() {
-    if (plotFeature[11334901831169464975ULL] == enabled) {
-      if (plotFeature[5656632352625109444ULL] == enabled) {
+    cout << (plotFeature[plotRecursive] == enabled) << " " << (plotFeature[generalizedPosition] == enabled) << " " << (plotFeature[derivativeOfGeneralizedPosition] == enabled) << endl;
+    if (plotFeature[plotRecursive] == enabled) {
+      if (plotFeature[generalizedPosition] == enabled) {
         for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
           plotVector.push_back(qRel(i));
       }
-      if (plotFeature[13287341799877438450ULL] == enabled) {
+      if (plotFeature[generalizedVelocity] == enabled) {
         for (int i = 0; i < evalGeneralizedVelocity().size(); ++i)
           plotVector.push_back(uRel(i));
       }
-      if (plotFeature[2887885390489345704ULL] == enabled) {
+      if (plotFeature[derivativeOfGeneralizedPosition] == enabled) {
         for (int i = 0; i < evalDerivativeOfGeneralizedPosition().size(); ++i)
           plotVector.push_back(qdRel(i));
       }
-      if (plotFeature[8408391595996478274ULL] == enabled) {
+      if (plotFeature[generalizedAcceleration] == enabled) {
         for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
           plotVector.push_back(udRel(i));
       }
-      if (plotFeature[2188794903238700147ULL] == enabled) {
+      if (plotFeature[energy] == enabled) {
         double Ttemp = evalKineticEnergy();
         double Vtemp = evalPotentialEnergy();
         plotVector.push_back(Ttemp);
@@ -193,24 +199,24 @@ namespace MBSim {
       udRel.resize(nu);
     }
     if (stage == plotting) {
-      if (plotFeature[11334901831169464975ULL] == enabled) {
-        if (plotFeature[5656632352625109444ULL] == enabled) {
+      if (plotFeature[plotRecursive] == enabled) {
+        if (plotFeature[generalizedPosition] == enabled) {
           for (int i = 0; i < qRel.size(); ++i)
             plotColumns.push_back("generalized position (" + numtostr(i) + ")");
         }
-        if (plotFeature[13287341799877438450ULL] == enabled) {
+        if (plotFeature[generalizedVelocity] == enabled) {
           for (int i = 0; i < uRel.size(); ++i)
             plotColumns.push_back("generalized velocity (" + numtostr(i) + ")");
         }
-        if (plotFeature[2887885390489345704ULL] == enabled) {
+        if (plotFeature[derivativeOfGeneralizedPosition] == enabled) {
           for (int i = 0; i < qdRel.size(); ++i)
             plotColumns.push_back("derivative of generalized position (" + numtostr(i) + ")");
         }
-        if (plotFeature[8408391595996478274ULL] == enabled) {
+        if (plotFeature[generalizedAcceleration] == enabled) {
           for (int i = 0; i < udRel.size(); ++i)
             plotColumns.push_back("generalized acceleration (" + numtostr(i) + ")");
         }
-        if (plotFeature[2188794903238700147ULL] == enabled) {
+        if (plotFeature[energy] == enabled) {
           plotColumns.push_back("kinetic energy");
           plotColumns.push_back("potential energy");
           plotColumns.push_back("total energy");

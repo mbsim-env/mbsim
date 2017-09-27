@@ -392,8 +392,8 @@ namespace MBSim {
       }
     }
     else if (stage == plotting) {
-      if (plotFeature[11334901831169464975ULL] == enabled) {
-        if (plotFeature[18269718848207088804ULL] == enabled) {
+      if (plotFeature[plotRecursive] == enabled) {
+        if (plotFeature[separateFilePerGroup] == enabled) {
           // We do not use getPath here since separateFilePerGroup is only allowed per Group and all parents of Group's
           // are also Group's (DynamicSystem's) -> Skip the Group[...] for each sub path.
           // We can walk to the top here since stage plotting is done before reorganizeHierarchy.
@@ -420,12 +420,12 @@ namespace MBSim {
         if(file)
           file->flush();
       }
-      if (plotFeature[13464197197848110344ULL] == enabled) {
+      if (plotFeature[openMBV] == enabled) {
         openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGrp->setName(name);
         if (parent)
           parent->getOpenMBVGrp()->addObject(openMBVGrp);
-        if (plotFeature[18269718848207088804ULL] == enabled)
+        if (plotFeature[separateFilePerGroup] == enabled)
           openMBVGrp->setSeparateFile(true);
       }
     }
