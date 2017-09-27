@@ -94,7 +94,6 @@ namespace MBSim {
   }
 
   void Object::plot() {
-    cout << (plotFeature[plotRecursive] == enabled) << " " << (plotFeature[generalizedPosition] == enabled) << " " << (plotFeature[derivativeOfGeneralizedPosition] == enabled) << endl;
     if (plotFeature[plotRecursive] == enabled) {
       if (plotFeature[generalizedPosition] == enabled) {
         for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
