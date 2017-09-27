@@ -15,10 +15,10 @@ namespace MBSimElectronics {
 	dependency.push_back(branch);
     } 
     else if(stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[12990959818100602138ULL]==enabled)
+      if(plotFeature[plotRecursive]==enabled) {
+        if(plotFeature[charge]==enabled)
           plotColumns.push_back("Charge");
-        if(plotFeature[12665280193825468542ULL]==enabled)
+        if(plotFeature[current]==enabled)
           plotColumns.push_back("Current");
       }
     }
@@ -26,10 +26,10 @@ namespace MBSimElectronics {
   }
 
   void ElectronicObject::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[12990959818100602138ULL]==enabled)
+    if(plotFeature[plotRecursive]==enabled) {
+      if(plotFeature[charge]==enabled)
         plotVector.push_back(evalCharge());
-      if(plotFeature[12665280193825468542ULL]==enabled)
+      if(plotFeature[current]==enabled)
         plotVector.push_back(evalCurrent());
     }
     Object::plot();
@@ -61,12 +61,12 @@ namespace MBSimElectronics {
       }
     }
     else if(stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[12990959818100602138ULL]==enabled)
+      if(plotFeature[plotRecursive]==enabled) {
+        if(plotFeature[charge]==enabled)
           plotColumns.push_back("Charge");
-        if(plotFeature[12665280193825468542ULL]==enabled)
+        if(plotFeature[current]==enabled)
           plotColumns.push_back("Current");
-        if(plotFeature[492538187671312075ULL]==enabled)
+        if(plotFeature[voltage]==enabled)
           plotColumns.push_back("Voltage");
       }
     }
@@ -82,12 +82,12 @@ namespace MBSimElectronics {
   }
 
   void ElectronicLink::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[12990959818100602138ULL]==enabled)
+    if(plotFeature[plotRecursive]==enabled) {
+      if(plotFeature[charge]==enabled)
         plotVector.push_back(evalCharge());
-      if(plotFeature[12665280193825468542ULL]==enabled)
+      if(plotFeature[current]==enabled)
         plotVector.push_back(evalCurrent());
-      if(plotFeature[492538187671312075ULL]==enabled)
+      if(plotFeature[voltage]==enabled)
         plotVector.push_back(evalGeneralizedForce()(0));
     }
     Link::plot();

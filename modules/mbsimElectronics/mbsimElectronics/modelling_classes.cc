@@ -10,6 +10,10 @@ using namespace MBSim;
 
 namespace MBSimElectronics {
 
+  std::size_t ElectronicComponent::charge = std::hash<std::string>()("charge");
+  std::size_t ElectronicComponent::current = std::hash<std::string>()("current");
+  std::size_t ElectronicComponent::voltage = std::hash<std::string>()("voltage");
+
   Branch tmpbranch("Dummy");
   
   void connectTerminal(Terminal *terminal1, Terminal *terminal2) {
