@@ -406,7 +406,7 @@ namespace MBSimFlexibleBody {
       T.init(Eye());
     }
     else if(stage==plotting) {
-      if(plotFeature[13464197197848110344ULL]==enabled and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
+      if(plotFeature[openMBV]==enabled and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
         dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
         if(ombvIndices.size())
           dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
@@ -428,7 +428,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::plot() {
-    if(plotFeature[13464197197848110344ULL]==enabled and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
+    if(plotFeature[openMBV]==enabled and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
       vector<double> data;
       data.push_back(getTime());
       for(unsigned int i=0; i<ombvNodes.size(); i++) {

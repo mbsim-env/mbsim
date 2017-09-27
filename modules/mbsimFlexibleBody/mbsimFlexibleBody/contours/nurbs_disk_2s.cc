@@ -76,7 +76,7 @@ namespace MBSimFlexibleBody {
       computeSurface();
     }
     else if(stage==plotting) {
-      if(plotFeature[13464197197848110344ULL]==enabled and openMBVNurbsDisk) {
+      if(plotFeature[openMBV]==enabled and openMBVNurbsDisk) {
         openMBVNurbsDisk->setName(name);
         drawDegree = 30 / nj;
         openMBVNurbsDisk->setDiffuseColor(0.46667, 1, 1);
@@ -209,7 +209,7 @@ namespace MBSimFlexibleBody {
   }
 
   void NurbsDisk2s::plot() {
-    if(plotFeature[13464197197848110344ULL]==enabled and openMBVNurbsDisk) {
+    if(plotFeature[openMBV]==enabled and openMBVNurbsDisk) {
       vector<double> data;
       data.push_back(getTime()); //time
 
