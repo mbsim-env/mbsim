@@ -43,6 +43,7 @@ namespace MBSim {
 
   std::size_t Element::plotRecursive = std::hash<std::string>()("plotRecursive");
   std::size_t Element::openMBV = std::hash<std::string>()("openMBV");
+  std::size_t Element::debug = std::hash<std::string>()("debug");
   std::size_t Element::separateFilePerGroup = std::hash<std::string>()("separateFilePerGroup");
   std::size_t Element::energy = std::hash<std::string>()("energy");
 

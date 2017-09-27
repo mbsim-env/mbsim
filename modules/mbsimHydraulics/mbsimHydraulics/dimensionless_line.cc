@@ -44,7 +44,7 @@ namespace MBSimHydraulics {
         THROW_MBSIMERROR("pTo is of setValued type. not valid for dimensionless lines.");
     }
     else if(stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled) {
+      if(plotFeature[plotRecursive]==enabled) {
         plotColumns.push_back("Volume flow [l/min]");
         plotColumns.push_back("Mass flow [kg/min]");
       }
@@ -53,7 +53,7 @@ namespace MBSimHydraulics {
   }
 
   void DimensionlessLine::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
+    if(plotFeature[plotRecursive]==enabled) {
       plotVector.push_back(evalQIn()(0)*6e4);
       plotVector.push_back(getQIn()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
     }

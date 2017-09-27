@@ -139,14 +139,14 @@ namespace MBSimHydraulics {
       }
     }
     else if (stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled) {
+      if(plotFeature[plotRecursive]==enabled) {
         plotColumns.push_back("Node pressure [bar]");
-        if(plotFeature[4352960293889866924ULL]==enabled) {
+        if(plotFeature[debug]==enabled) {
           plotColumns.push_back("Volume flow into and out the node [l/min]");
           plotColumns.push_back("Mass flow into and out the node [kg/min]");
         }
       }
-      if(plotFeature[13464197197848110344ULL]==enabled and openMBVSphere) {
+      if(plotFeature[openMBV]==enabled and openMBVSphere) {
         if (openMBVGrp) {
           openMBVSphere->setName("Node");
           openMBVGrp->addObject(openMBVSphere);
@@ -238,13 +238,13 @@ namespace MBSimHydraulics {
   }
 
   void HNode::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
+    if(plotFeature[plotRecursive]==enabled) {
       plotVector.push_back(evalGeneralizedForce()(0)*1e-5);
-      if(plotFeature[4352960293889866924ULL]==enabled) {
+      if(plotFeature[debug]==enabled) {
         plotVector.push_back(evalQHyd()*6e4);
         plotVector.push_back(QHyd*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
       }
-      if(plotFeature[13464197197848110344ULL]==enabled and openMBVSphere) {
+      if(plotFeature[openMBV]==enabled and openMBVSphere) {
         vector<double> data;
         data.push_back(getTime());
         data.push_back(WrON(0));
@@ -307,7 +307,7 @@ namespace MBSimHydraulics {
 
   void ElasticNode::init(InitStage stage) {
     if (stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled)
+      if(plotFeature[plotRecursive]==enabled)
         plotColumns.push_back("Node bulk modulus [N/mm^2]");
     }
     else if (stage==unknownStage) {
@@ -347,7 +347,7 @@ namespace MBSimHydraulics {
   }
 
   void ElasticNode::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled)
+    if(plotFeature[plotRecursive]==enabled)
       plotVector.push_back((*bulkModulus)(evalGeneralizedForce()(0))*1e-6);
     HNode::plot();
   }
@@ -589,7 +589,7 @@ namespace MBSimHydraulics {
     if (stage==preInit)
       x0=Vec(1, INIT, 0);
     else if (stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled)
+      if(plotFeature[plotRecursive]==enabled)
         plotColumns.push_back("active");
     }
     else if (stage==unknownStage)
@@ -600,7 +600,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidCavitationNode::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled)
+    if(plotFeature[plotRecursive]==enabled)
       plotVector.push_back(active);
     HNode::plot();
   }
