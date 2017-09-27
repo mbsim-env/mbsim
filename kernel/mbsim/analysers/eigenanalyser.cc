@@ -212,10 +212,10 @@ namespace MBSimAnalyser {
       os << endl;
       os << "# name: " << "z" << endl;
       os << "# type: " << "matrix" << endl;
-      os << "# rows: " << system->getState().size() << endl;
+      os << "# rows: " << zEq.size() << endl;
       os << "# columns: " << 1 << endl;
-      for(int i=0; i<system->getState().size(); i++)
-        os << setw(28) << system->getState().e(i) << endl;
+      for(int i=0; i<zEq.size(); i++)
+        os << setw(28) << zEq.e(i) << endl;
       os << endl;
       os << "# name: " << "f" << endl;
       os << "# type: " << "matrix" << endl;
