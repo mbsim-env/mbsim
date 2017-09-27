@@ -109,6 +109,7 @@ namespace MBSimAnalyser {
     Vec zh(n,NONINIT);
     for(int i=0; i<n; i++)
       zh(i) = sqrt(pow(zhr(i),2) + pow(zhi(i),2));
+    cout << zEq << endl;
     cout << zh << endl;
 
     for(double t=tStart; t<tStart+T+dtPlot; t+=dtPlot) {
@@ -119,32 +120,15 @@ namespace MBSimAnalyser {
     }
   }
 
-  bool HarmonicResponseAnalyser::saveEigenanalyis(const string& fileName) {
+  bool HarmonicResponseAnalyser::saveHarmonicResponseAnalysis(const string& fileName) {
     ofstream os(fileName.c_str());
     if(os.is_open()) {
-      os << "# name: " << "lambda" << endl;
-      os << "# type: " << "complex matrix" << endl;
-      os << "# rows: " << w.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(int i=0; i<w.size(); i++)
-        os << setw(28) << w.e(i) << endl;
-      os << endl;
-      os << "# name: " << "V" << endl;
-      os << "# type: " << "complex matrix" << endl;
-      os << "# rows: " << V.rows() << endl;
-      os << "# columns: " << V.cols() << endl;
-      for(int i=0; i<V.rows(); i++) {
-        for(int j=0; j<V.cols(); j++)
-          os << setw(28) << V.e(i,j) << " ";
-        os << endl;
-      }
-      os << endl;
       os << "# name: " << "z" << endl;
       os << "# type: " << "matrix" << endl;
       os << "# rows: " << system->getState().size() << endl;
       os << "# columns: " << 1 << endl;
-      for(int i=0; i<system->getState().size(); i++)
-        os << setw(28) << system->getState().e(i) << endl;
+      for(int i=0; i<zEq.size(); i++)
+        os << setw(28) << zEq.e(i) << endl;
       os << endl;
       os << "# name: " << "f" << endl;
       os << "# type: " << "matrix" << endl;
@@ -163,8 +147,6 @@ namespace MBSimAnalyser {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"startTime");
     if(e) setStartTime(Element::getDouble(e));
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"endTime");
-    if(e) setEndTime(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"plotStepSize");
     if(e) setPlotStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"initialState");
@@ -174,14 +156,7 @@ namespace MBSimAnalyser {
       string str=X()%E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
       if(str=="frequencyResponse") task=frequencyResponse;
-//      else if(str=="eigenmodes") task=eigenmodes;
-//      else if(str=="eigenmode") task=eigenmode;
-//      else if(str=="eigenmotion") task=eigenmotion;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"amplitude");
-    if(e) setAmplitude(Element::getDouble(e));
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"mode");
-    if(e) setMode(Element::getInt(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"determineEquilibriumState");
     if(e) setDetermineEquilibriumState(Element::getBool(e));
   }

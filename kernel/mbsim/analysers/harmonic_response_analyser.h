@@ -163,7 +163,7 @@ namespace MBSimAnalyser {
 
       std::string fileName;
 
-      bool saveEigenanalyis(const std::string &fileName);
+      bool saveHarmonicResponseAnalysis(const std::string &fileName);
       void computeEigenfrequencies();
       void computeEigenvalues();
       void computeFrequencyResponse();
