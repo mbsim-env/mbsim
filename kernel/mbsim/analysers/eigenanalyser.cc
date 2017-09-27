@@ -20,7 +20,6 @@
 #include <config.h>
 #include "eigenanalyser.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/utils/eps.h"
 #include "fmatvec/linear_algebra_complex.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
@@ -125,7 +124,6 @@ namespace MBSimAnalyser {
     Vector<Ref, complex<double> > wbuf;
     wbuf = w;
 
-    Vec z;
     double t0 = tStart;
     for(int j=0; j<static_cast<int>(f.size()); j++) {
       c(f[j].second) = complex<double>(0,A);
@@ -157,7 +155,6 @@ namespace MBSimAnalyser {
     Vector<Ref, complex<double> > wbuf;
     wbuf = w;
 
-    Vec z;
     c(f[n-1].second) = complex<double>(0,A);
     c(f[n-1].second+1) = complex<double>(0,-A);
     wbuf(f[n-1].second).real(0);
@@ -178,7 +175,6 @@ namespace MBSimAnalyser {
     computeEigenvalues();
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
 
-    Vec z;
     if(deltaz0.size()==0)
       deltaz0.resize(w.size());
     Vector<Ref, complex<double> > c = slvLU(V,toComplex(deltaz0));

@@ -50,12 +50,12 @@ namespace MBSimAnalyser {
       /**
        * \brief Standard constructor 
        */
-      Eigenanalyser() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), n(1), compEq(false), task(eigenmode) {}
+      Eigenanalyser() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), n(1), compEq(false), task(eigenmode) { }
       
       /**
        * \brief Destructor
        */
-      ~Eigenanalyser() {}
+      ~Eigenanalyser() { }
 
       void execute(MBSim::DynamicSystemSolver& system) { analyse(system); }
 
