@@ -50,7 +50,7 @@ namespace MBSimAnalyser {
       /**
        * \brief Standard constructor 
        */
-      HarmonicResponseAnalyser() : tStart(0), T(1), dtPlot(1e-2), A(1), n(1), compEq(false), task(frequencyResponse) { }
+      HarmonicResponseAnalyser() : tStart(0), T(1), dtPlot(1e-2), compEq(false), task(frequencyResponse) { }
       
       /**
        * \brief Destructor
@@ -64,24 +64,6 @@ namespace MBSimAnalyser {
        * \param system The dynamic system to be analysed
        */
       void analyse(MBSim::DynamicSystemSolver& system);
-
-      /**
-       * \brief Set the initial deviation of the equilibrium
-       * \param deltaz_ The deviation
-       */
-      void setInitialDeviation(const fmatvec::Vec &deltaz0_) { deltaz0 = deltaz0_; }
-
-      /**
-       * \brief Set the amplitude for the eigemode analysis
-       * \param A_ The amplitude
-       */
-      void setAmplitude(double A_) { A = A_; }
-
-      /**
-       * \brief Set the mode for the eigemode analysis
-       * \param n_ The mode number
-       */
-      void setMode(int n_) { n = n_; }
 
       /**
        * \brief Set the start time for the analysis
@@ -150,9 +132,8 @@ namespace MBSimAnalyser {
 
     protected:
 
-      fmatvec::Vec zEq, deltaz0;
-      double tStart, tEnd, dt, T, dtPlot, A;
-      int n;
+      fmatvec::Vec zEq, zh;
+      double tStart, tEnd, dt, T, dtPlot;
       bool compEq;
       Task task;
 

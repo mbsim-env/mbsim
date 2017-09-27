@@ -61,7 +61,7 @@ namespace MBSimAnalyser {
       newton.setLinearAlgebra(1);
       zEq = newton.solve(zEq);
       if(newton.getInfo() != 0)
-        throw MBSimError("In Eigenanalysis: computation of equilibrium state failed!");
+        throw MBSimError("In harmonic response analysis: computation of equilibrium state failed!");
     }
 
     int n = system->getzSize();
@@ -101,16 +101,14 @@ namespace MBSimAnalyser {
     Q(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1)) = -Om*SqrMat(n,EYE);
     Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1)) = Om*SqrMat(n,EYE);
     Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(n,2*n-1)) = -A;
-    cout << Q << endl;
-    cout << bri << endl;
     Vec zhri = slvLU(Q,bri);
     Vec zhr = zhri(0,n-1);
     Vec zhi = zhri(n,2*n-1);
-    Vec zh(n,NONINIT);
+    zh.resize(n,NONINIT);
     for(int i=0; i<n; i++)
       zh(i) = sqrt(pow(zhr(i),2) + pow(zhi(i),2));
-    cout << zEq << endl;
-    cout << zh << endl;
+
+    saveHarmonicResponseAnalysis(fileName.empty()?system->getName()+".harmonic_response_analysis.mat":fileName);
 
     for(double t=tStart; t<tStart+T+dtPlot; t+=dtPlot) {
       system->setTime(t);
@@ -130,12 +128,12 @@ namespace MBSimAnalyser {
       for(int i=0; i<zEq.size(); i++)
         os << setw(28) << zEq.e(i) << endl;
       os << endl;
-      os << "# name: " << "f" << endl;
+      os << "# name: " << "A" << endl;
       os << "# type: " << "matrix" << endl;
-      os << "# rows: " << freq.size() << endl;
+      os << "# rows: " << zh.size() << endl;
       os << "# columns: " << 1 << endl;
-      for(int i=0; i<freq.size(); i++)
-        os << setw(28) << freq.e(i) << endl;
+      for(int i=0; i<zh.size(); i++)
+        os << setw(28) << zh.e(i) << endl;
       os << endl;
       os.close();
       return true;
