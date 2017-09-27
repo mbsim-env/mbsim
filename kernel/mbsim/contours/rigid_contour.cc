@@ -39,7 +39,7 @@ namespace MBSim {
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
     }
     else if(stage==plotting) {
-      if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
+      if(plotFeature[openMBV]==enabled && openMBVRigidBody) {
         openMBVRigidBody->setName(name);
         parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
       }
@@ -94,7 +94,7 @@ namespace MBSim {
   }
 
   void RigidContour::plot() {
-    if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
+    if(plotFeature[openMBV]==enabled && openMBVRigidBody) {
       vector<double> data;
       data.push_back(getTime());
       data.push_back(R->evalPosition()(0));

@@ -36,6 +36,8 @@ namespace MBSim {
    */
   class Frame : public Element {
     public:
+      static std::size_t position, angle, velocity, angularVelocity, acceleration, angularAcceleration;
+
       /**
        * \brief constructor
        * \param name of coordinate system

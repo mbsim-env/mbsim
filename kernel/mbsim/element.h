@@ -58,6 +58,8 @@ namespace MBSim {
    */
   class Element : virtual public fmatvec::Atom {
     public:
+      static std::size_t plotRecursive, openMBV, debug, separateFilePerGroup, energy;
+
       /** \brief Plot feature status */
       enum PlotFeatureStatus {
         unset, /*!< use the default value for the feature */

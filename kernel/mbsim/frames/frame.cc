@@ -33,6 +33,13 @@ using namespace xercesc;
 
 namespace MBSim {
 
+  std::size_t Frame::position = std::hash<std::string>()("position");
+  std::size_t Frame::angle = std::hash<std::string>()("angle");
+  std::size_t Frame::velocity = std::hash<std::string>()("velocity");
+  std::size_t Frame::angularVelocity = std::hash<std::string>()("angularVelocity");
+  std::size_t Frame::acceleration = std::hash<std::string>()("acceleration");
+  std::size_t Frame::angularAcceleration = std::hash<std::string>()("angularAcceleration");
+
   Frame::Frame(const string &name) : Element(name), AWP(EYE), updGA(true), updPos(true), updVel(true), updAcc(true) {
 
     hSize[0] = 0;
@@ -45,40 +52,40 @@ namespace MBSim {
   }
 
   void Frame::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[12307443656510933270ULL]==enabled) {
+    if(plotFeature[plotRecursive]==enabled) {
+      if(plotFeature[position]==enabled) {
         if(updPos) updatePositions();
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
       }
-      if(plotFeature[5107032826456238796ULL]==enabled) {
+      if(plotFeature[angle]==enabled) {
         if(updPos) updatePositions();
         Vec3 cardan=AIK2Cardan(AWP);
         for(int i=0; i<3; i++)
           plotVector.push_back(cardan(i));
       }
-      if(plotFeature[9333706489830170160ULL]==enabled) {
+      if(plotFeature[velocity]==enabled) {
         if(updVel) updateVelocities();
         for(int i=0; i<3; i++)
           plotVector.push_back(WvP(i));
       }
-      if(plotFeature[10919411498317597175ULL]==enabled) {
+      if(plotFeature[angularVelocity]==enabled) {
         if(updVel) updateVelocities();
         for(int i=0; i<3; i++)
           plotVector.push_back(WomegaP(i));
       }
-      if(plotFeature[1640323793842503125ULL]==enabled) {
+      if(plotFeature[acceleration]==enabled) {
         if(updAcc) updateAccelerations();
         for(int i=0; i<3; i++)
           plotVector.push_back(WaP(i));
       }
-      if(plotFeature[1907010450089173335ULL]==enabled) {
+      if(plotFeature[angularAcceleration]==enabled) {
         if(updAcc) updateAccelerations();
         for(int i=0; i<3; i++)
           plotVector.push_back(WpsiP(i));
       }
     }
-    if(plotFeature[13464197197848110344ULL]==enabled and openMBVFrame && !openMBVFrame->isHDF5Link()) {
+    if(plotFeature[openMBV]==enabled and openMBVFrame && !openMBVFrame->isHDF5Link()) {
       if(updPos) updatePositions();
       vector<double> data;
       data.push_back(getTime());
@@ -103,39 +110,39 @@ namespace MBSim {
       WJR[1].resize(hSize[1]);
     }
     else if(stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[12307443656510933270ULL]==enabled) {
+      if(plotFeature[plotRecursive]==enabled) {
+        if(plotFeature[position]==enabled) {
           plotColumns.push_back("position (x)");
           plotColumns.push_back("position (y)");
           plotColumns.push_back("position (z)");
         }
-        if(plotFeature[5107032826456238796ULL]==enabled) {
+        if(plotFeature[angle]==enabled) {
           plotColumns.push_back("angle (alpha)");
           plotColumns.push_back("angle (beta)");
           plotColumns.push_back("angle (gamma)");
         }
-        if(plotFeature[9333706489830170160ULL]==enabled) {
+        if(plotFeature[velocity]==enabled) {
           plotColumns.push_back("velocity (x)");
           plotColumns.push_back("velocity (y)");
           plotColumns.push_back("velocity (z)");
         }
-        if(plotFeature[10919411498317597175ULL]==enabled) {
+        if(plotFeature[angularVelocity]==enabled) {
           plotColumns.push_back("angular velocity (x)");
           plotColumns.push_back("angular velocity (y)");
           plotColumns.push_back("angular velocity (z)");
         }
-        if(plotFeature[1640323793842503125ULL]==enabled) {
+        if(plotFeature[acceleration]==enabled) {
           plotColumns.push_back("acceleration (x)");
           plotColumns.push_back("acceleration (y)");
           plotColumns.push_back("acceleration (z)");
         }
-        if(plotFeature[1907010450089173335ULL]==enabled) {
+        if(plotFeature[angularAcceleration]==enabled) {
           plotColumns.push_back("angular acceleration (x)");
           plotColumns.push_back("angular acceleration (y)");
           plotColumns.push_back("angular acceleration (z)");
         }
       }
-      if(plotFeature[13464197197848110344ULL]==enabled and openMBVFrame) {
+      if(plotFeature[openMBV]==enabled and openMBVFrame) {
           openMBVFrame->setName(name);
           parent->getOpenMBVGrp()->addObject(openMBVFrame);
       }

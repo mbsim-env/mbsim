@@ -67,7 +67,7 @@ namespace MBSim {
 //        plotColumns.push_back("ZAcceleration");
 //      }
       Observer::init(stage);
-      if(plotFeature[13464197197848110344ULL]==enabled) {
+      if(plotFeature[openMBV]==enabled) {
         if(openMBVPosition) {
           openMBVPosGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVPosGrp->setName("Position_Group");
@@ -126,7 +126,7 @@ namespace MBSim {
   }
 
   void KinematicCoordinatesObserver::plot() {
-    if(plotFeature[13464197197848110344ULL]==enabled) {
+    if(plotFeature[openMBV]==enabled) {
       Vec3 r = frame->evalPosition();
       Vec3 v = frame->evalVelocity();
       Vec3 a = frame->evalAcceleration();

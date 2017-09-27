@@ -30,7 +30,6 @@
 #include <mbsim/mbsim_event.h>
 #include <mbsim/utils/eps.h>
 #include <hdf5serie/simpleattribute.h>
-#include <boost/functional/hash.hpp>
 
 using namespace std;
 using namespace fmatvec;
@@ -42,11 +41,16 @@ namespace MBSim {
   // we use none signaling (quiet) NaN values for double in MBSim -> Throw compile error if these do not exist.
   static_assert(numeric_limits<double>::has_quiet_NaN, "This platform does not support quiet NaN for double.");
 
+  std::size_t Element::plotRecursive = std::hash<std::string>()("plotRecursive");
+  std::size_t Element::openMBV = std::hash<std::string>()("openMBV");
+  std::size_t Element::separateFilePerGroup = std::hash<std::string>()("separateFilePerGroup");
+  std::size_t Element::energy = std::hash<std::string>()("energy");
+
   Element::Element(const string &name_) : Atom(), parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
   }
 
   void Element::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
+    if(plotFeature[plotRecursive]==enabled) {
       if(plotColumns.size()>1) {
         plotVector.insert(plotVector.begin(), getTime());
         assert(plotColumns.size()==plotVector.size());
@@ -61,10 +65,10 @@ namespace MBSim {
       updatePlotFeatures();
     else if(stage==plotting) {
 
-      if(plotFeature[11334901831169464975ULL]==enabled) {
+      if(plotFeature[plotRecursive]==enabled) {
         unsigned int numEnabled=0;
         for (auto& x: plotFeature) {
-          if((x.first != 11334901831169464975ULL) and (x.first != 13464197197848110344ULL) and x.second==enabled) {
+          if((x.first != plotRecursive) and (x.first != openMBV) and x.second==enabled) {
             numEnabled++;
             break;
           }
@@ -194,12 +198,12 @@ namespace MBSim {
   }
 
   void Element::setPlotFeature(const string &pf, PlotFeatureStatus value) {
-    boost::hash<string> string_hash;
+    std::hash<string> string_hash;
     plotFeature[string_hash(pf)] = value;
   }
 
   void Element::setPlotFeatureForChildren(const string &pf, PlotFeatureStatus value) {
-    boost::hash<string> string_hash;
+    std::hash<string> string_hash;
     plotFeatureForChildren[string_hash(pf)] = value;
   }
 
@@ -215,7 +219,7 @@ namespace MBSim {
                 E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
                 E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
       PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
-      boost::hash<string> string_hash;
+      std::hash<string> string_hash;
       size_t feature = string_hash(E(e)->getAttribute("feature").substr(1));
       if(E(e)->getTagName()==MBSIM%"plotFeature") plotFeature[feature] = status;
       else if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") plotFeatureForChildren[feature] = status;

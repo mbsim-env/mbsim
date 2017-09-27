@@ -49,7 +49,7 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       Observer::init(stage);
-      if(plotFeature[13464197197848110344ULL]==enabled) {
+      if(plotFeature[openMBV]==enabled) {
         if(FWeight) {
           FWeight->setName("Weight");
           getOpenMBVGrp()->addObject(FWeight);
@@ -89,7 +89,7 @@ namespace MBSim {
   }
 
   void RigidBodyObserver::plot() {
-    if(plotFeature[13464197197848110344ULL]==enabled) {
+    if(plotFeature[openMBV]==enabled) {
       Vec3 rOS = body->getFrameC()->evalPosition();
       Vec3 vS = body->getFrameC()->evalVelocity();
       Vec3 aS = body->getFrameC()->evalAcceleration();

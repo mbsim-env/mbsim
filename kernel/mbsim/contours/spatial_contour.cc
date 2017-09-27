@@ -77,7 +77,7 @@ namespace MBSim {
         THROW_MBSIMERROR("(SpatialContour::init): Size of xiNodes must be greater than 1.");
     }
     else if(stage==plotting) {
-      if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
+      if(plotFeature[openMBV]==enabled && openMBVRigidBody) {
         if(not(ombvEtaNodes.size())) {
           ombvEtaNodes.resize(51);
           for(unsigned int i=0; i<ombvEtaNodes.size(); i++)

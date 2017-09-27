@@ -31,9 +31,11 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, ExternSignalSource)
 
+  std::size_t Signal::signal = std::hash<std::string>()("signal");
+
   void Signal::init(InitStage stage) {
     if (stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[15826512145364485088ULL]==enabled) {
+      if(plotFeature[plotRecursive]==enabled and plotFeature[signal]==enabled) {
         for (int i=0; i<getSignalSize(); i++)
           plotColumns.push_back("signal (" + numtostr(i) + ")");
       }
@@ -43,7 +45,7 @@ namespace MBSimControl {
 
 
   void Signal::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[15826512145364485088ULL]==enabled) {
+    if(plotFeature[plotRecursive]==enabled and plotFeature[signal]==enabled) {
       for (int i=0; i<evalSignal().size(); i++)
         plotVector.push_back(getSignal()(i));
     }

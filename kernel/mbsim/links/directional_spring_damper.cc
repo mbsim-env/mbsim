@@ -63,7 +63,7 @@ namespace MBSim {
 
   void DirectionalSpringDamper::init(InitStage stage) {
     if(stage==plotting) {
-      if(plotFeature[13464197197848110344ULL]==enabled) {
+      if(plotFeature[openMBV]==enabled) {
         if(coilspringOpenMBV) {
           coilspringOpenMBV->setName(name);
           parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
@@ -75,7 +75,7 @@ namespace MBSim {
   }
 
   void DirectionalSpringDamper::plot() {
-    if(plotFeature[13464197197848110344ULL]==enabled) {
+    if(plotFeature[openMBV]==enabled) {
       if (coilspringOpenMBV) {
         Vec3 WrOToPoint;
         Vec3 WrOFromPoint;
