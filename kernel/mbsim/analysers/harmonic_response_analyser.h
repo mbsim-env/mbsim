@@ -50,7 +50,7 @@ namespace MBSimAnalyser {
       /**
        * \brief Standard constructor 
        */
-      HarmonicResponseAnalyser() : tStart(0), tEnd(1), dt(1e-3), T(1), dtPlot(1e-2), A(1), n(1), compEq(false), task(frequencyResponse) { }
+      HarmonicResponseAnalyser() : tStart(0), T(1), dtPlot(1e-2), A(1), n(1), compEq(false), task(frequencyResponse) { }
       
       /**
        * \brief Destructor

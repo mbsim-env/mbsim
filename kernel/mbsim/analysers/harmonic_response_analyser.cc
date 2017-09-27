@@ -30,13 +30,6 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-extern "C" {
-#define DFFTI FC_FUNC(dffti,DFFTI)
-  void DFFTI(int*, double*);
-#define DFFTF FC_FUNC(dfftf,DFFTF)
-  void DFFTF(int*, double*, double*);
-}
-
 namespace MBSimAnalyser {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYSER, HarmonicResponseAnalyser)
@@ -71,52 +64,28 @@ namespace MBSimAnalyser {
         throw MBSimError("In Eigenanalysis: computation of equilibrium state failed!");
     }
 
-    int m = int(T/dt);
     int n = system->getzSize();
-    SqrMat A(n);
     system->setState(zEq);
-    Mat Zd(m,n,NONINIT);
-    for(int i=0; i<m; i++) {
-      system->setTime(tStart+dt*i);
-      system->resetUpToDate();
-      Vec zd = system->evalzd();
-      for(int j=0; j<zd.size(); j++)
-        Zd(i,j) = zd(j);
-    }
-    double *work = new double[2*m+15];
-    DFFTI(&m,work);
-    for(int i=n/2; i<n; i++)
-      DFFTF(&m,Zd.col(i)(),work);
 
-    double tEnd = tStart+dt*(m-0*1);
-    double fm = 1./tEnd;
-    cout << m << " " << n << " " << tStart << " " << dt << " " << tEnd << " fm " << fm << endl;
-
+    double Om = 2*M_PI/T;
+    
     Vec bri(2*n);
     Vec br = bri(0,n-1);
     Vec bi = bri(n,2*n-1);
-    for(int j=n/2; j<n; j++) {
-      br(j) = Zd(1,j)*dt*2./tEnd;
-      bi(j) = Zd(2,j)*dt*2./tEnd;
-    }
-//    for(int i=1; i<m/2; i++) {
-//      bool stop = false;
-//      for(int j=n/2; j<n; j++) {
-//        if(fabs(Zd(2*i-1,j))>1e-8 or fabs(Zd(2*i,j))>1e-8) {
-//        cout << "real " << i << " " << j << " " << (i-1)*fm << " " << Zd(2*i-1,j)*dt*2./tEnd << endl;
-//        cout << "imag " << i << " " << j << " " << (i-1)*fm << " " << Zd(2*i,j)*dt*2./tEnd << endl;
-//        br(j) = Zd(2*i-1,j)*dt*2./tEnd;
-//        bi(j) = Zd(2*i,j)*dt*2./tEnd;
-//        stop = true;
-//        }
-//      }
-//      if(stop) break;
-//    }
+    system->setTime(tStart);
+    system->resetUpToDate();
+    Vec y0, y1;
+    y0 = system->evalzd()(n/2,n-1);
+    system->setTime(tStart+0.3*T);
+    system->resetUpToDate();
+    y1 = system->evalzd()(n/2,n-1);
+    br(n/2,n-1) = (y1*sin(Om*tStart) - y0*sin(Om*(tStart+0.3*T)))/sin(-0.3*Om*T);
+    bi(n/2,n-1) = (y1*cos(Om*tStart) - y0*cos(Om*(tStart+0.3*T)))/sin(0.3*Om*T);
 
     double delta = epsroot();
+    SqrMat A(n);
     Vec zd, zdOld;
     system->setTime(tStart);
-    system->setState(zEq);
     system->resetUpToDate();
     zdOld = system->evalzd();
     for (int i=0; i<n; i++) {
@@ -127,7 +96,6 @@ namespace MBSimAnalyser {
       A.col(i) = (zd - zdOld) / delta;
       system->getState()(i) = ztmp;
     }
-    double Om = 2*M_PI/T;
     SqrMat Q(2*n);
     Q(Range<Var,Var>(0,n-1),Range<Var,Var>(0,n-1)) = -A;
     Q(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1)) = -Om*SqrMat(n,EYE);
