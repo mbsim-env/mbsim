@@ -55,7 +55,7 @@ namespace MBSimHydraulics {
         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_LinePressureLoss", this, pL, false,false));
     }
     else if (stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled)
+      if(plotFeature[plotRecursive]==enabled)
         plotColumns.push_back("Reynolds number [-]");
     }
     else if (stage==unknownStage) {
@@ -69,7 +69,7 @@ namespace MBSimHydraulics {
   }
   
   void RigidLine::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled)
+    if(plotFeature[plotRecursive]==enabled)
       plotVector.push_back(fabs(evalQIn()(0))*ReynoldsFactor);
     RigidHLine::plot();
   }

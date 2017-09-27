@@ -83,7 +83,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
+    if(plotFeature[plotRecursive]==enabled) {
       plotVector.push_back(evalGeneralizedForce()(0)*1e-5);
       if (isSetValued())
         plotVector.push_back(active);
@@ -113,7 +113,7 @@ namespace MBSimHydraulics {
       }
     }
     else if (stage==plotting) {
-      if(plotFeature[11334901831169464975ULL]==enabled) {
+      if(plotFeature[plotRecursive]==enabled) {
         plotColumns.push_back("pressureLoss [bar]");
         if (isSetValued())
           plotColumns.push_back("active");
