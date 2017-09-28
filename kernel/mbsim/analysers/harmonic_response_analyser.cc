@@ -113,7 +113,7 @@ namespace MBSimAnalyser {
     for(int k=0; k<fs.size(); k++) {
       double T = 10./fs(k);
       double Om = 2*M_PI*fs(k);
-      if(T>=10) {
+      if(T<=10) {
         Q(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1)) = -Om*SqrMat(n,EYE);
         Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1)) = Om*SqrMat(n,EYE);
         zhri = slvLU(Q,bri);
