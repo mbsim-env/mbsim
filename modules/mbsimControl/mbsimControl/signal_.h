@@ -37,7 +37,7 @@ namespace MBSimControl {
   class Signal : public MBSim::Link {
 
     public:
-      static std::size_t signal;
+      static const std::size_t signal;
 
       Signal(const std::string &name) : Link(name), upds(true) { }
 

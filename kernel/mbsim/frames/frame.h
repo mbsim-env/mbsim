@@ -36,7 +36,7 @@ namespace MBSim {
    */
   class Frame : public Element {
     public:
-      static std::size_t position, angle, velocity, angularVelocity, acceleration, angularAcceleration;
+      static const std::size_t position, angle, velocity, angularVelocity, acceleration, angularAcceleration;
 
       /**
        * \brief constructor

@@ -41,7 +41,7 @@ namespace MBSimElectronics {
 
   class ElectronicComponent : public MBSim::ModellingInterface {
     public:
-      static std::size_t charge, current, voltage;
+      static const std::size_t charge, current, voltage;
     protected:
       std::vector<Terminal*> terminal;
       Branch* branch;
