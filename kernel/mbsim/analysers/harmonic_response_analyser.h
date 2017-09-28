@@ -50,7 +50,7 @@ namespace MBSimAnalyser {
       /**
        * \brief Standard constructor 
        */
-      HarmonicResponseAnalyser() : tStart(0), T(1), dtPlot(1e-2), compEq(false), task(frequencyResponse) { }
+      HarmonicResponseAnalyser() : tStart(0), f(1), dtPlot(1e-2), compEq(false), task(frequencyResponse) { }
       
       /**
        * \brief Destructor
@@ -71,15 +71,7 @@ namespace MBSimAnalyser {
        */
       void setStartTime(double tStart_) { tStart=tStart_; }
 
-      /**
-       * \brief Set the end time for the analysis
-       * \param tEnd_ The end time
-       */
-      void setEndTime(double tEnd_) { tEnd = tEnd_; }
-
-      void setStepSize(double dt_) { dt = dt_; }
-
-      void setPeriod(double T_) { T = T_; }
+      void setFrequencies(const fmatvec::VecV& fs_) { fs = fs_; }
 
       /**
        * \brief Set the plot step size for the analysis
@@ -105,24 +97,6 @@ namespace MBSimAnalyser {
       const fmatvec::Vec& getInitialState() const { return zEq; }
 
       /**
-       * \brief Get the eigenvalues
-       * \return A vector containing the eigenvalues of the system
-       */
-      const fmatvec::Vector<fmatvec::Ref, std::complex<double> >& getEigenvalues() const { return w; }
-
-      /**
-       * \brief Get the eigenvectors
-       * \return A matrix containing the eigenvectors of the system
-       */
-      const fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> >& getEigenvectors() const { return V; }
-
-      /**
-       * \brief Get the eigenfrequencies
-       * \return A vector containing the eigenfrequencies of the system
-       */
-      const fmatvec::Vec& getEigenfrequencies() const { return freq; }
-
-      /**
        * \brief Set the name of the output file
        * \param fileName_ The output file name
        */
@@ -133,22 +107,16 @@ namespace MBSimAnalyser {
     protected:
 
       fmatvec::Vec zEq, zh;
-      double tStart, tEnd, dt, T, dtPlot;
+      fmatvec::VecV fs;
+      fmatvec::Mat Zh;
+      double tStart, f, dtPlot;
       bool compEq;
       Task task;
 
-      fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> > V;
-      fmatvec::Vector<fmatvec::Ref, std::complex<double> > w;
-      fmatvec::Vec freq;
-      std::vector<std::pair<double,int> > f;
-
       std::string fileName;
 
-      bool saveHarmonicResponseAnalysis(const std::string &fileName);
-      void computeEigenfrequencies();
-      void computeEigenvalues();
       void computeFrequencyResponse();
- };
+  };
 
 }
 

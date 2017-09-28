@@ -18,8 +18,7 @@ int main (int argc, char* argv[]) {
   HarmonicResponseAnalyser analyser;
   Vec z0(sys->getzSize());
   analyser.setDetermineEquilibriumState(true);
-  analyser.setTask(HarmonicResponseAnalyser::frequencyResponse);
-  analyser.setPeriod(1./f);
+  analyser.setFrequencies(VecV(1,INIT,f));
   analyser.analyse(*sys);
 
   delete sys;

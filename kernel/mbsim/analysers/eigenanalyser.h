@@ -165,7 +165,7 @@ namespace MBSimAnalyser {
       void computeEigenmodes();
       void computeEigenmode();
       void computeEigenmotion();
- };
+  };
 
 }
 

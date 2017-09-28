@@ -52,6 +52,9 @@ namespace MBSimAnalyser {
   }
 
   void HarmonicResponseAnalyser::computeFrequencyResponse() {
+    if(not(fs.size()))
+      fs.resize(1,INIT,1);
+
     if(not(zEq.size()))
       zEq = system->evalz0();
 
@@ -67,7 +70,8 @@ namespace MBSimAnalyser {
     int n = system->getzSize();
     system->setState(zEq);
 
-    double Om = 2*M_PI/T;
+    double Om = 2*M_PI*fs(0);
+    double T = 1./fs(0);
     
     Vec bri(2*n);
     Vec br = bri(0,n-1);
@@ -98,28 +102,33 @@ namespace MBSimAnalyser {
     }
     SqrMat Q(2*n);
     Q(Range<Var,Var>(0,n-1),Range<Var,Var>(0,n-1)) = -A;
-    Q(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1)) = -Om*SqrMat(n,EYE);
-    Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1)) = Om*SqrMat(n,EYE);
     Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(n,2*n-1)) = -A;
-    Vec zhri = slvLU(Q,bri);
+    Vec zhri(2*n,NONINIT);
     Vec zhr = zhri(0,n-1);
     Vec zhi = zhri(n,2*n-1);
-    zh.resize(n,NONINIT);
-    for(int i=0; i<n; i++)
-      zh(i) = sqrt(pow(zhr(i),2) + pow(zhi(i),2));
+//    int N = int((fE-fS)/df)+1;
+    Zh.resize(fs.size(),n,NONINIT);
 
-    saveHarmonicResponseAnalysis(fileName.empty()?system->getName()+".harmonic_response_analysis.mat":fileName);
-
-    for(double t=tStart; t<tStart+T+dtPlot; t+=dtPlot) {
-      system->setTime(t);
-      system->setState(zEq + zhr*cos(Om*t) + zhi*sin(Om*t));
-      system->resetUpToDate();
-      system->plot();
+    double t0 = tStart;
+    for(int k=0; k<fs.size(); k++) {
+      double T = 10./fs(k);
+      double Om = 2*M_PI*fs(k);
+      if(T>=10) {
+        Q(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1)) = -Om*SqrMat(n,EYE);
+        Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1)) = Om*SqrMat(n,EYE);
+        zhri = slvLU(Q,bri);
+        for(int i=0; i<n; i++)
+          Zh(k,i) = sqrt(pow(zhr(i),2) + pow(zhi(i),2));
+        for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
+          system->setTime(t);
+          system->setState(zEq + zhr*cos(Om*t) + zhi*sin(Om*t));
+          system->resetUpToDate();
+          system->plot();
+        }
+        t0 += T+dtPlot;
+      }
     }
-  }
-
-  bool HarmonicResponseAnalyser::saveHarmonicResponseAnalysis(const string& fileName) {
-    ofstream os(fileName.c_str());
+    ofstream os((system->getName()+".harmonic_response_analysis.mat").c_str());
     if(os.is_open()) {
       os << "# name: " << "z" << endl;
       os << "# type: " << "matrix" << endl;
@@ -130,21 +139,25 @@ namespace MBSimAnalyser {
       os << endl;
       os << "# name: " << "A" << endl;
       os << "# type: " << "matrix" << endl;
-      os << "# rows: " << zh.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(int i=0; i<zh.size(); i++)
-        os << setw(28) << zh.e(i) << endl;
+      os << "# rows: " << fs.size() << endl;
+      os << "# columns: " << n << endl;
+      for(int i=0; i<Zh.rows(); i++) {
+          os << setw(28) << fs(i) << " ";
+        for(int j=0; j<Zh.cols(); j++)
+          os << setw(28) << Zh.e(i,j) << " ";
+        os << endl;
+      }
       os << endl;
       os.close();
-      return true;
     }
-    return false;
   }
 
   void HarmonicResponseAnalyser::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"startTime");
     if(e) setStartTime(Element::getDouble(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"frequencies");
+    if(e) setFrequencies(Element::getVec(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"plotStepSize");
     if(e) setPlotStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"initialState");

@@ -425,4 +425,51 @@ namespace MBSimGUI {
     return NULL;
   }
 
+  HarmonicResponseAnalyserPropertyDialog::HarmonicResponseAnalyserPropertyDialog(HarmonicResponseAnalyser *eigenanalyser, QWidget *parent, Qt::WindowFlags f) : SolverPropertyDialog(eigenanalyser,parent,f) {
+    addTab("General");
+    addTab("Initial conditions");
+
+    startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"startTime");
+    addToTab("General", startTime);
+
+    frequencies = new ExtWidget("Frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"frequencies");
+    addToTab("General", frequencies);
+
+    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"plotStepSize");
+    addToTab("General", plotStepSize);
+
+    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"initialState");
+    addToTab("Initial conditions", initialState);
+
+    vector<QString> list;
+    list.push_back("\"frequencyResponse\"");
+    task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIMANALYSER%"task");
+    addToTab("General",task);
+
+    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"determineEquilibriumState");
+    addToTab("General",determineEquilibriumState);
+  }
+
+  DOMElement* HarmonicResponseAnalyserPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SolverPropertyDialog::initializeUsingXML(solver->getXMLElement());
+    startTime->initializeUsingXML(solver->getXMLElement());
+    frequencies->initializeUsingXML(solver->getXMLElement());
+    plotStepSize->initializeUsingXML(solver->getXMLElement());
+    initialState->initializeUsingXML(solver->getXMLElement());
+    task->initializeUsingXML(solver->getXMLElement());
+    determineEquilibriumState->initializeUsingXML(solver->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* HarmonicResponseAnalyserPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SolverPropertyDialog::writeXMLFile(solver->getXMLElement());
+    startTime->writeXMLFile(solver->getXMLElement());
+    frequencies->writeXMLFile(solver->getXMLElement());
+    plotStepSize->writeXMLFile(solver->getXMLElement());
+    initialState->writeXMLFile(solver->getXMLElement());
+    task->writeXMLFile(solver->getXMLElement());
+    determineEquilibriumState->writeXMLFile(solver->getXMLElement());
+    return NULL;
+  }
+
 }

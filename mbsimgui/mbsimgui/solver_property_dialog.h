@@ -35,6 +35,7 @@ namespace MBSimGUI {
   class EulerExplicitIntegrator;
   class RKSuiteIntegrator;
   class Eigenanalyser;
+  class HarmonicResponseAnalyser;
   class VecWidget;
   class ExtWidget;
 
@@ -156,6 +157,16 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *task, *amplitude, *mode, *determineEquilibriumState;
+  };
+
+  class HarmonicResponseAnalyserPropertyDialog : public SolverPropertyDialog {
+
+    public:
+      HarmonicResponseAnalyserPropertyDialog(HarmonicResponseAnalyser *eigenanalyser, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+    protected:
+      ExtWidget *startTime, *frequencies, *plotStepSize, *initialState, *task, *determineEquilibriumState;
   };
 
 }
