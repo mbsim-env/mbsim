@@ -1853,20 +1853,21 @@ def coverage(mainFD):
     m=linesRE.match(line)
     if m!=None:
       covRate=int(float(m.group(1))+0.5)
+  covRateStr=str(covRate)+"%" if ret==0 else "ERR"
   # update build state (only if --buildSystemRun is used)
   if args.buildSystemRun!=None:
     # load and add module
     sys.path.append(args.buildSystemRun)
     import buildSystemState
-    buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", str(covRate)+"%",
-      "#5cb85c" if covRate>=90 else ("#f0ad4e" if covRate>=70 else "#d9534f"))
+    buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", covRateStr,
+      "#d9534f" if ret!=0 or covRate<70 else ("#f0ad4e" if covRate<90 else "#5cb85c"))
 
   if ret==0:
     print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;', file=mainFD)
   else:
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
   print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
-        '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%d%%</span></a></td>'%(covRate), file=mainFD)
+        '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%s</span></a></td>'%(covRateStr), file=mainFD)
   for i in range(0, 6-sum([args.disableRun, args.disableRun, args.disableRun, args.disableCompare,
     args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])):
     print('<td>-</td>', file=mainFD)
