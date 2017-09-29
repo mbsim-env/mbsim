@@ -143,7 +143,7 @@ namespace MBSimAnalyser {
       os << "# columns: " << n << endl;
       for(int i=0; i<Zh.rows(); i++) {
           os << setw(28) << fs(i) << " ";
-        for(int j=0; j<Zh.cols(); j++)
+        for(int j=0; j<Zh.cols()/2; j++)
           os << setw(28) << Zh.e(i,j) << " ";
         os << endl;
       }
