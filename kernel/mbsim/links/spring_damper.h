@@ -33,7 +33,7 @@ namespace MBSim {
    */
   class SpringDamper : public FixedFrameLink {
     public:
-      static std::size_t deflection;
+      static const std::size_t deflection;
     protected:
       Function<double(double,double)> *func;
       double l0;

@@ -40,7 +40,7 @@ namespace MBSim {
   //class Object : public Element, public ObjectInterface {
   class Object : public Element {
     public: 
-      static std::size_t generalizedPosition, generalizedVelocity, derivativeOfGeneralizedPosition, generalizedAcceleration;
+      static const std::size_t generalizedPosition, generalizedVelocity, derivativeOfGeneralizedPosition, generalizedAcceleration;
 
       /**
        * \brief constructor

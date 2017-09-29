@@ -35,8 +35,8 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  std::size_t HLine::volumeFlow = std::hash<std::string>()("volumeFlow");
-  std::size_t HLine::pressure = std::hash<std::string>()("pressure");
+  const std::size_t HLine::volumeFlow = std::hash<std::string>()("volumeFlow");
+  const std::size_t HLine::pressure = std::hash<std::string>()("pressure");
 
   void HLine::calcSize() {
     nu = dependency.size()?0:1;
