@@ -41,11 +41,11 @@ namespace MBSim {
   // we use none signaling (quiet) NaN values for double in MBSim -> Throw compile error if these do not exist.
   static_assert(numeric_limits<double>::has_quiet_NaN, "This platform does not support quiet NaN for double.");
 
-  std::size_t Element::plotRecursive = std::hash<std::string>()("plotRecursive");
-  std::size_t Element::openMBV = std::hash<std::string>()("openMBV");
-  std::size_t Element::debug = std::hash<std::string>()("debug");
-  std::size_t Element::separateFilePerGroup = std::hash<std::string>()("separateFilePerGroup");
-  std::size_t Element::energy = std::hash<std::string>()("energy");
+  const std::size_t Element::plotRecursive = std::hash<std::string>()("plotRecursive");
+  const std::size_t Element::openMBV = std::hash<std::string>()("openMBV");
+  const std::size_t Element::debug = std::hash<std::string>()("debug");
+  const std::size_t Element::separateFilePerGroup = std::hash<std::string>()("separateFilePerGroup");
+  const std::size_t Element::energy = std::hash<std::string>()("energy");
 
   Element::Element(const string &name_) : Atom(), parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
   }

@@ -31,10 +31,10 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  std::size_t Object::generalizedPosition = std::hash<std::string>()("generalizedPosition");
-  std::size_t Object::generalizedVelocity = std::hash<std::string>()("generalizedVelocity");
-  std::size_t Object::derivativeOfGeneralizedPosition = std::hash<std::string>()("derivativeOfGeneralizedPosition");
-  std::size_t Object::generalizedAcceleration = std::hash<std::string>()("generalizedAcceleration");
+  const std::size_t Object::generalizedPosition = std::hash<std::string>()("generalizedPosition");
+  const std::size_t Object::generalizedVelocity = std::hash<std::string>()("generalizedVelocity");
+  const std::size_t Object::derivativeOfGeneralizedPosition = std::hash<std::string>()("derivativeOfGeneralizedPosition");
+  const std::size_t Object::generalizedAcceleration = std::hash<std::string>()("generalizedAcceleration");
 
   Object::Object(const std::string &name) : Element(name), nq(0), nu(0), qSize(0), uSize{0,0}, hSize{0,0}, qInd(0), uInd{0,0}, hInd{0,0}, updSize(true), updq(true), updu(true), updqd(true), updud(true) {
   }

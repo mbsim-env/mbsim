@@ -45,7 +45,7 @@ namespace MBSim {
   //class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
   class Link : public Element {
     public:
-      static std::size_t generalizedRelativePosition, generalizedRelativeVelocity, generalizedForce;
+      static const std::size_t generalizedRelativePosition, generalizedRelativeVelocity, generalizedForce;
 
       /**
        * \brief constructor
