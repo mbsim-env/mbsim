@@ -1,4 +1,6 @@
 #include <config.h>
+#include <cassert>
+#include <cfenv>
 #include <mbxmlutilshelper/casadiXML.h>
 #include <sstream>
 #include <casadi/core/function/function.hpp>
@@ -9,6 +11,10 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 int main() {
+#ifndef _WIN32
+  assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
+#endif
+
   // the rotation symbolic equation using by xmlflat/time_dependent_kinematics
   double freq2=M_PI/3;
   SX t=SX::sym("t");
