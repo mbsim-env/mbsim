@@ -638,13 +638,9 @@ namespace MBSimGUI {
         xercesc::DOMDocument *ndoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
         ndoc->getDocumentElement()->removeChild(E(ndoc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount"));
         DOMElement* ele = ndoc->getDocumentElement()->getFirstElementChild();
-        if(E(ele)->getTagName()==PV%"Embed")
-          ele = ele->getLastElementChild();
-        dss->processHref(ele);
+        dss->processHref(E(ele)->getTagName()==PV%"Embed"?ele->getLastElementChild():ele);
         ele = ele->getNextElementSibling();
-        if(E(ele)->getTagName()==PV%"Embed")
-          ele = ele->getLastElementChild();
-        solverView->getSolver()->processHref(ele);
+        solverView->getSolver()->processHref(E(ele)->getTagName()==PV%"Embed"?ele->getLastElementChild():ele);
         serializer->writeToURI(ndoc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
       }
       else
