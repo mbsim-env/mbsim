@@ -85,6 +85,11 @@
                 Anregungsfrequenzen.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="systemFrequencies" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Systemfrequenzen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="plotStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweite zur Ausgabe von Plotdaten.<br/>

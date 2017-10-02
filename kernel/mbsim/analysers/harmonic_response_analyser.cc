@@ -34,7 +34,7 @@ namespace MBSimAnalyser {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYSER, HarmonicResponseAnalyser)
 
-  HarmonicResponseAnalyser::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) {}
+  HarmonicResponseAnalyser::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) { }
 
   Vec HarmonicResponseAnalyser::Residuum::operator()(const Vec &z) {
     Vec res;
@@ -44,6 +44,26 @@ namespace MBSimAnalyser {
     res = system->evalzd();
     return res;
   } 
+
+  HarmonicResponseAnalyser::Residuum2::Residuum2(DynamicSystemSolver *sys_, const Vec &br_) : sys(sys_), br(br_) { }
+
+  double HarmonicResponseAnalyser::Residuum2::operator()(const double &t) {
+    system->setTime(t);
+    system->resetUpToDate();
+    Vec y0, y1;
+    y0 = system->evalzd()(br.size(),2*br.size()-1);
+    cout << t << endl;
+    cout << y0 << endl;
+    cout << br << endl;
+    system->setTime(2*t);
+    system->resetUpToDate();
+    y1 = system->evalzd()(br.size(),2*br.size()-1);
+    cout << 2*t << endl;
+    cout << y1 << endl;
+    cout << br << endl;
+    cout << "end" << endl;
+    return nrm2(y0 - br);
+  }
 
   void HarmonicResponseAnalyser::analyse(DynamicSystemSolver& system_) {
     system = &system_;
@@ -70,21 +90,33 @@ namespace MBSimAnalyser {
     int n = system->getzSize();
     system->setState(zEq);
 
-    double Om = 2*M_PI*fs(0);
-    double T = 1./fs(0);
+    double T = 1./f(0);
     
+    Vec y0, y1;
     Vec bri(2*n);
     Vec br = bri(0,n-1);
     Vec bi = bri(n,2*n-1);
-    system->setTime(tStart);
+    //system->setTime(tStart);
+    //system->resetUpToDate();
+    //y0 = system->evalzd()(n/2,n-1);
+    //system->setTime(tStart+0.3*T);
+    //system->resetUpToDate();
+    //y1 = system->evalzd()(n/2,n-1);
+    //br(n/2,n-1) = (y1*sin(Om*tStart) - y0*sin(Om*(tStart+0.3*T)))/sin(-0.3*Om*T);
+    //bi(n/2,n-1) = (y1*cos(Om*tStart) - y0*cos(Om*(tStart+0.3*T)))/sin(0.3*Om*T);
+    system->setTime(0);
     system->resetUpToDate();
-    Vec y0, y1;
-    y0 = system->evalzd()(n/2,n-1);
-    system->setTime(tStart+0.3*T);
+    br(n/2,n-1) = system->evalzd()(n/2,n-1);
+    system->setTime(0.25*T);
     system->resetUpToDate();
-    y1 = system->evalzd()(n/2,n-1);
-    br(n/2,n-1) = (y1*sin(Om*tStart) - y0*sin(Om*(tStart+0.3*T)))/sin(-0.3*Om*T);
-    bi(n/2,n-1) = (y1*cos(Om*tStart) - y0*cos(Om*(tStart+0.3*T)))/sin(0.3*Om*T);
+    bi(n/2,n-1) = system->evalzd()(n/2,n-1);
+
+//      Residuum2 f2(system,br(n/2,n-1));
+//      NewtonMethod newton2(&f2);
+////      newton.setLinearAlgebra(1);
+//      cout << newton2.solve(0.4) << endl;
+//      if(newton2.getInfo() != 0)
+//        throw MBSimError("In harmonic response analysis: computation of period failed!");
 
     double delta = epsroot();
     SqrMat A(n);
@@ -109,24 +141,13 @@ namespace MBSimAnalyser {
 //    int N = int((fE-fS)/df)+1;
     Zh.resize(fs.size(),n,NONINIT);
 
-    double t0 = tStart;
     for(int k=0; k<fs.size(); k++) {
-      double T = 10./fs(k);
       double Om = 2*M_PI*fs(k);
-      if(T<=10) {
-        Q(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1)) = -Om*SqrMat(n,EYE);
-        Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1)) = Om*SqrMat(n,EYE);
-        zhri = slvLU(Q,bri);
-        for(int i=0; i<n; i++)
-          Zh(k,i) = sqrt(pow(zhr(i),2) + pow(zhi(i),2));
-        for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
-          system->setTime(t);
-          system->setState(zEq + zhr*cos(Om*t) + zhi*sin(Om*t));
-          system->resetUpToDate();
-          system->plot();
-        }
-        t0 += T+dtPlot;
-      }
+      Q(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1)) = -Om*SqrMat(n,EYE);
+      Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1)) = Om*SqrMat(n,EYE);
+      zhri = slvLU(Q,bri);
+      for(int i=0; i<n; i++)
+        Zh(k,i) = sqrt(pow(zhr(i),2) + pow(zhi(i),2));
     }
     ofstream os((system->getName()+".harmonic_response_analysis.mat").c_str());
     if(os.is_open()) {
@@ -137,12 +158,18 @@ namespace MBSimAnalyser {
       for(int i=0; i<zEq.size(); i++)
         os << setw(28) << zEq.e(i) << endl;
       os << endl;
-      os << "# name: " << "A" << endl;
+      os << "# name: " << "f" << endl;
       os << "# type: " << "matrix" << endl;
       os << "# rows: " << fs.size() << endl;
-      os << "# columns: " << n << endl;
+      os << "# columns: " << 1 << endl;
+      for(int i=0; i<fs.size(); i++)
+          os << setw(28) << fs(i) << endl;
+      os << endl;
+      os << "# name: " << "A" << endl;
+      os << "# type: " << "matrix" << endl;
+      os << "# rows: " << Zh.rows() << endl;
+      os << "# columns: " << Zh.cols()/2 << endl;
       for(int i=0; i<Zh.rows(); i++) {
-          os << setw(28) << fs(i) << " ";
         for(int j=0; j<Zh.cols()/2; j++)
           os << setw(28) << Zh.e(i,j) << " ";
         os << endl;
@@ -150,6 +177,18 @@ namespace MBSimAnalyser {
       os << endl;
       os.close();
     }
+//    double t0 = tStart;
+    double Om = 2*M_PI/T;
+    Q(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1)) = -Om*SqrMat(n,EYE);
+    Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1)) = Om*SqrMat(n,EYE);
+    zhri = slvLU(Q,bri);
+    for(double t=tStart; t<tStart+T+dtPlot; t+=dtPlot) {
+      system->setTime(t);
+      system->setState(zEq + zhr*cos(Om*t) + zhi*sin(Om*t));
+      system->resetUpToDate();
+      system->plot();
+    }
+//    t0 += T+dtPlot;
   }
 
   void HarmonicResponseAnalyser::initializeUsingXML(DOMElement *element) {
@@ -158,6 +197,8 @@ namespace MBSimAnalyser {
     if(e) setStartTime(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"frequencies");
     if(e) setFrequencies(Element::getVec(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"systemFrequencies");
+    if(e) setSystemFrequencies(Element::getVec(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"plotStepSize");
     if(e) setPlotStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"initialState");

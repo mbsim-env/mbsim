@@ -43,6 +43,15 @@ namespace MBSimAnalyser {
         double t;
     };
 
+    class Residuum2 : public MBSim::Function<double(double)> {
+      public:
+        Residuum2(MBSim::DynamicSystemSolver *sys_, const fmatvec::Vec &br_);
+        double operator()(const double &z);
+      private:
+        MBSim::DynamicSystemSolver *sys;
+        fmatvec::Vec br;
+    };
+
     public:
 
       enum Task { frequencyResponse };
@@ -50,7 +59,7 @@ namespace MBSimAnalyser {
       /**
        * \brief Standard constructor 
        */
-      HarmonicResponseAnalyser() : tStart(0), f(1), dtPlot(1e-2), compEq(false), task(frequencyResponse) { }
+      HarmonicResponseAnalyser() : tStart(0), dtPlot(1e-2), compEq(false), task(frequencyResponse) { }
       
       /**
        * \brief Destructor
@@ -72,6 +81,8 @@ namespace MBSimAnalyser {
       void setStartTime(double tStart_) { tStart=tStart_; }
 
       void setFrequencies(const fmatvec::VecV& fs_) { fs = fs_; }
+
+      void setSystemFrequencies(const fmatvec::VecV& f_) { f = f_; }
 
       /**
        * \brief Set the plot step size for the analysis
@@ -107,9 +118,9 @@ namespace MBSimAnalyser {
     protected:
 
       fmatvec::Vec zEq, zh;
-      fmatvec::VecV fs;
+      fmatvec::VecV fs, f;
       fmatvec::Mat Zh;
-      double tStart, f, dtPlot;
+      double tStart, dtPlot;
       bool compEq;
       Task task;
 

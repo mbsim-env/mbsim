@@ -57,7 +57,9 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   main.cc \
 		   embed.cc \
 		   solver.cc \
-		   file_editor.cc
+		   file_editor.cc \
+		   octave_utils.cc \
+		   data_plot.cc
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 
@@ -79,7 +81,9 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   embedding_view.moc.cc \
 		   solver_view.moc.cc \
 		   dialogs.moc.cc  \
-		   mbsim_process.moc.cc
+		   mbsim_process.moc.cc \
+		   data_plot.moc.cc
+
 BUILT_SOURCES = $(QT_BUILT_SOURCES)
 
 mbsimgui_HEADERS = 

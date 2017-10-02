@@ -435,6 +435,9 @@ namespace MBSimGUI {
     frequencies = new ExtWidget("Frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"frequencies");
     addToTab("General", frequencies);
 
+    systemFrequencies = new ExtWidget("System frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"systemFrequencies");
+    addToTab("General", systemFrequencies);
+
     plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"plotStepSize");
     addToTab("General", plotStepSize);
 
@@ -454,6 +457,7 @@ namespace MBSimGUI {
     SolverPropertyDialog::initializeUsingXML(solver->getXMLElement());
     startTime->initializeUsingXML(solver->getXMLElement());
     frequencies->initializeUsingXML(solver->getXMLElement());
+    systemFrequencies->initializeUsingXML(solver->getXMLElement());
     plotStepSize->initializeUsingXML(solver->getXMLElement());
     initialState->initializeUsingXML(solver->getXMLElement());
     task->initializeUsingXML(solver->getXMLElement());
@@ -465,6 +469,7 @@ namespace MBSimGUI {
     SolverPropertyDialog::writeXMLFile(solver->getXMLElement());
     startTime->writeXMLFile(solver->getXMLElement());
     frequencies->writeXMLFile(solver->getXMLElement());
+    systemFrequencies->writeXMLFile(solver->getXMLElement());
     plotStepSize->writeXMLFile(solver->getXMLElement());
     initialState->writeXMLFile(solver->getXMLElement());
     task->writeXMLFile(solver->getXMLElement());

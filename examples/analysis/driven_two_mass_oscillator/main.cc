@@ -19,6 +19,7 @@ int main (int argc, char* argv[]) {
   Vec z0(sys->getzSize());
   analyser.setDetermineEquilibriumState(true);
   analyser.setFrequencies(VecV(1,INIT,f));
+  analyser.setSystemFrequencies(VecV(1,INIT,f));
   analyser.analyse(*sys);
 
   delete sys;
