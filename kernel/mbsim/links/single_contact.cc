@@ -533,14 +533,12 @@ namespace MBSim {
 
       lambdaT.resize(getFrictionDirections());
 
-      //TODO: Change this if la should be the vector of nonsmooth forces
-      la.resize(nla);
-      g.resize(1);
-      gd.resize(ngd);
       gddN.resize(1);
       gddT.resize(getFrictionDirections());
       gdnN.resize(1);
       gdnT.resize(getFrictionDirections());
+      gddNBuf.resize(1);
+      gddTBuf.resize(getFrictionDirections());
 
       if (getFrictionDirections() == 0)
         gdActive[tangential] = false;
@@ -560,16 +558,6 @@ namespace MBSim {
           }
         }
       }
-
-      //TODO: check if indices are set correctly?
-      laN.resize() >> la(0, 0);
-      laT.resize() >> la(1, getFrictionDirections());
-
-      gdN.resize() >> gd(0, 0);
-      gdT.resize() >> gd(1, getFrictionDirections());
-
-      gddNBuf.resize(1);
-      gddTBuf.resize(getFrictionDirections());
     }
     else if(stage==LASTINITSTAGE) {
       if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
