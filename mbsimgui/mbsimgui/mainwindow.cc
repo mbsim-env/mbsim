@@ -337,6 +337,8 @@ namespace MBSimGUI {
     autoSaveTimer = new QTimer(this);
     connect(autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSaveProject()));
     autoSaveTimer->start(autoSaveInterval*60000);
+
+    setWindowIcon(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"mbsimgui.svg").string())));
   }
 
   void MainWindow::autoSaveProject() {
