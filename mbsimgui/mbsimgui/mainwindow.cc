@@ -236,12 +236,12 @@ namespace MBSimGUI {
     actionEigenanalysis->setDisabled(true);
     connect(actionEigenanalysis,SIGNAL(triggered()),this,SLOT(eigenanalysis()));
     toolBar->addAction(actionEigenanalysis);
+    QAction *actionFrequencyResponse = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
+//    actionFrequencyResponse->setDisabled(true);
+    connect(actionFrequencyResponse,SIGNAL(triggered()),this,SLOT(frequencyResponse()));
     QAction *actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,SIGNAL(triggered()),this,SLOT(debug()));
     toolBar->addAction(actionDebug);
-    QAction *actionFrequencyResponse = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
-//    actionFrequencyResponse->setDisabled(true);
-    connect(actionFrequencyResponse,SIGNAL(triggered()),this,SLOT(frequencyResponse()));
 
     elementList->setModel(new ElementTreeModel);
     elementList->setColumnWidth(0,250);
