@@ -43,15 +43,6 @@ namespace MBSimAnalyser {
         double t;
     };
 
-    class Residuum2 : public MBSim::Function<double(double)> {
-      public:
-        Residuum2(MBSim::DynamicSystemSolver *sys_, const fmatvec::Vec &br_);
-        double operator()(const double &z);
-      private:
-        MBSim::DynamicSystemSolver *sys;
-        fmatvec::Vec br;
-    };
-
     public:
 
       enum Task { frequencyResponse };

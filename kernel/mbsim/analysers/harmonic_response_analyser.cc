@@ -45,26 +45,6 @@ namespace MBSimAnalyser {
     return res;
   } 
 
-  HarmonicResponseAnalyser::Residuum2::Residuum2(DynamicSystemSolver *sys_, const Vec &br_) : sys(sys_), br(br_) { }
-
-  double HarmonicResponseAnalyser::Residuum2::operator()(const double &t) {
-    system->setTime(t);
-    system->resetUpToDate();
-    Vec y0, y1;
-    y0 = system->evalzd()(br.size(),2*br.size()-1);
-    cout << t << endl;
-    cout << y0 << endl;
-    cout << br << endl;
-    system->setTime(2*t);
-    system->resetUpToDate();
-    y1 = system->evalzd()(br.size(),2*br.size()-1);
-    cout << 2*t << endl;
-    cout << y1 << endl;
-    cout << br << endl;
-    cout << "end" << endl;
-    return nrm2(y0 - br);
-  }
-
   void HarmonicResponseAnalyser::analyse(DynamicSystemSolver& system_) {
     system = &system_;
 
@@ -110,13 +90,6 @@ namespace MBSimAnalyser {
     system->setTime(0.25*T);
     system->resetUpToDate();
     bi(n/2,n-1) = system->evalzd()(n/2,n-1);
-
-//      Residuum2 f2(system,br(n/2,n-1));
-//      NewtonMethod newton2(&f2);
-////      newton.setLinearAlgebra(1);
-//      cout << newton2.solve(0.4) << endl;
-//      if(newton2.getInfo() != 0)
-//        throw MBSimError("In harmonic response analysis: computation of period failed!");
 
     double delta = epsroot();
     SqrMat A(n);
