@@ -30,6 +30,7 @@ import json
 import fcntl
 import zipfile
 import tempfile
+import xml.etree.cElementTree as ET
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
   import urllib as myurllibp
@@ -1059,6 +1060,11 @@ def executeSrcExample(executeFD, example):
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles=getOutFilesAndAdaptRet(example, ret)
+
+  # check DynamicSystemSolver name (just as a heuristic, so do no report as error)
+  if not os.path.exists('TS.mbsim.h5') and not os.path.exists('MBS.mbsim.h5'):
+    print("WARNING: The DynamicSystemSolver element seems not to be named 'TS' or 'MBS'.", file=executeFD)
+
   return ret[0], dt, outFiles
 
 
@@ -1081,6 +1087,13 @@ def executeXMLExample(executeFD, example):
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles=getOutFilesAndAdaptRet(example, ret)
+
+  # check DynamicSystemSolver name
+  name=ET.parse(".pp."+prjFile).getroot().find("{http://www.mbsim-env.de/MBSim}DynamicSystemSolver").get("name")
+  if name!="TS" and name!="MBS":
+    print("ERROR: The DynamicSystemSolver element must be named 'TS' or 'MBS' but its name is '"+name+"'.", file=executeFD)
+    return 1, dt, outFiles
+
   return ret[0], dt, outFiles
 
 
@@ -1097,6 +1110,13 @@ def executeFlatXMLExample(executeFD, example):
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles=getOutFilesAndAdaptRet(example, ret)
+
+  # check DynamicSystemSolver name
+  name=ET.parse("MBS.mbsimprj.flat.xml").getroot().find("{http://www.mbsim-env.de/MBSim}DynamicSystemSolver").get("name")
+  if name!="TS" and name!="MBS":
+    print("ERROR: The DynamicSystemSolver element must be named 'TS' or 'MBS' but its name is '"+name+"'.", file=executeFD)
+    return 1, dt, outFiles
+
   return ret[0], dt, outFiles
 
 
@@ -1184,6 +1204,11 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   outFiles.extend(outFiles1)
   outFiles.extend(outFiles2)
   outFiles.extend(outFiles3)
+
+  # check DynamicSystemSolver name (just as a heuristic, so do no report as error)
+  if not os.path.exists('TS.mbsim.h5') and not os.path.exists('MBS.mbsim.h5'):
+    print("WARNING: The DynamicSystemSolver element seems not to be named 'TS' or 'MBS'.", file=executeFD)
+
   return ret, dt, outFiles
 
 # execute the FMI XML export example in the current directory (write everything to fd executeFD)
