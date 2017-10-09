@@ -93,29 +93,19 @@ namespace MBSimGUI {
       int removeParameterHref = 0;
       bool addHref = false;
       DOMElement *element = static_cast<DOMElement*>(embedNode);
-      if(name) {
-        item->setName(static_cast<TextWidget*>(name->getWidget())->getText());
-        E(element->getLastElementChild())->setAttribute("name",item->getName().toStdString());
-      }
+      if(name)
+        E(element->getLastElementChild())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
       if(count) {
-        if(count->isActive()) {
-          item->setValue(static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue());
-          E(element)->setAttribute("count",item->getValue().toStdString());
-        }
-        else {
-          item->setValue("");
+        if(count->isActive())
+          E(element)->setAttribute("count",static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue().toStdString());
+        else
           E(element)->removeAttribute("count");
-        }
       }
       if(counterName) {
-        if(counterName->isActive()) {
-          item->setCounterName(static_cast<TextWidget*>(counterName->getWidget())->getText());
-          E(element)->setAttribute("counterName",item->getCounterName().toStdString());
-        }
-        else {
-          item->setCounterName("");
+        if(counterName->isActive())
+          E(element)->setAttribute("counterName",static_cast<TextWidget*>(counterName->getWidget())->getText().toStdString());
+        else
           E(element)->removeAttribute("counterName");
-        }
       }
       DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
       if(href->isActive() and (not static_cast<FileWidget*>(href->getWidget())->getFile().isEmpty())) {

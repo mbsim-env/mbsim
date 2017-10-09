@@ -41,7 +41,7 @@ namespace MBSimGUI {
       xercesc::DOMElement *element;
 
     public:
-      EmbedItemData(const QString &name="") : TreeItemData(name), element(NULL) { }
+      EmbedItemData(const QString &name="") : element(NULL) { }
       ~EmbedItemData();
       QString getName() const { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       const QString& getCounterName() const { return counterName; }

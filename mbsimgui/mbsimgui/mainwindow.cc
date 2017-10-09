@@ -1415,7 +1415,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    frame->setName(frame->getName()+toQStr(model->getItem(index)->getID()));
+//    frame->setName(frame->getName()+toQStr(model->getItem(index)->getID()));
     parent->addFrame(frame);
     frame->createXMLElement(parent->getXMLFrames());
     model->createFrameItem(frame,index);
@@ -1428,7 +1428,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    contour->setName(contour->getName()+toQStr(model->getItem(index)->getID()));
+//    contour->setName(contour->getName()+toQStr(model->getItem(index)->getID()));
     parent->addContour(contour);
     contour->createXMLElement(parent->getXMLContours());
     model->createContourItem(contour,index);
@@ -1441,7 +1441,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    group->setName(group->getName()+toQStr(model->getItem(index)->getID()));
+//    group->setName(group->getName()+toQStr(model->getItem(index)->getID()));
     parent->addGroup(group);
     group->createXMLElement(parent->getXMLGroups());
     model->createGroupItem(group,index);
@@ -1454,7 +1454,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    object->setName(object->getName()+toQStr(model->getItem(index)->getID()));
+//    object->setName(object->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObject(object);
     object->createXMLElement(parent->getXMLObjects());
     model->createObjectItem(object,index);
@@ -1467,7 +1467,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    link->setName(link->getName()+toQStr(model->getItem(index)->getID()));
+//    link->setName(link->getName()+toQStr(model->getItem(index)->getID()));
     parent->addLink(link);
     link->createXMLElement(parent->getXMLLinks());
     model->createLinkItem(link,index);
@@ -1480,7 +1480,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    constraint->setName(constraint->getName()+toQStr(model->getItem(index)->getID()));
+//    constraint->setName(constraint->getName()+toQStr(model->getItem(index)->getID()));
     parent->addConstraint(constraint);
     constraint->createXMLElement(parent->getXMLConstraints());
     model->createConstraintItem(constraint,index);
@@ -1493,7 +1493,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    observer->setName(observer->getName()+toQStr(model->getItem(index)->getID()));
+//    observer->setName(observer->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObserver(observer);
     observer->createXMLElement(parent->getXMLObservers());
     model->createObserverItem(observer,index);
@@ -1508,8 +1508,8 @@ namespace MBSimGUI {
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     parent->addParameter(parameter);
     parameter->createXMLElement(parent->getXMLElement());
-    if(parameter->getName()!="import")
-      parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
+//    if(parameter->getName()!="import")
+//      parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
     embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
     embeddingList->openEditor();

@@ -92,6 +92,7 @@ namespace MBSimGUI {
   DOMElement* Element::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(getNameSpace()%getType().toStdString());
+    E(element)->setAttribute("name",getType().toStdString());
     parent->insertBefore(element, NULL);
     return element;
   }
@@ -99,11 +100,11 @@ namespace MBSimGUI {
   DOMElement* Element::initializeUsingXML(DOMElement *element) {
     this->element = element;
     config = true;
-    setName(QString::fromStdString(E(element)->getAttribute("name")));
+//    setName(QString::fromStdString(E(element)->getAttribute("name")));
     DOMElement *parent = static_cast<DOMElement*>(element->getParentNode());
     if(E(parent)->getTagName()==PV%"Embed") {
       setCounterName(QString::fromStdString(E(parent)->getAttribute("counterName")));
-      setValue(QString::fromStdString(E(parent)->getAttribute("count")));
+//      setValue(QString::fromStdString(E(parent)->getAttribute("count")));
     }
     return element;
   }

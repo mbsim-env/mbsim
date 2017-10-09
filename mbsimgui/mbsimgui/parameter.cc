@@ -31,7 +31,7 @@ namespace MBSimGUI {
 
   void Parameter::initializeUsingXML(DOMElement *element) {
     this->element = element;
-    setName(QString::fromStdString(E(element)->getAttribute("name")));
+//    setName(QString::fromStdString(E(element)->getAttribute("name")));
     config = true;
   }
 
@@ -84,12 +84,12 @@ namespace MBSimGUI {
 
   void StringParameter::initializeUsingXML(DOMElement *element) {
     Parameter::initializeUsingXML(element);
-    setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
+ //   setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
   }
 
   void ScalarParameter::initializeUsingXML(DOMElement *element) {
     Parameter::initializeUsingXML(element);
-    setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
+  //  setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
   }
 
   void VectorParameter::initializeUsingXML(DOMElement *element) {
@@ -103,15 +103,15 @@ namespace MBSimGUI {
           value.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
           ei=ei->getNextElementSibling();
         }
-        setValue(toQStr<QString>(value));
+//        setValue(toQStr<QString>(value));
       }
-      else if(E(ele)->getTagName() == (PV%"fromFile"))
-        setValue(QString::fromStdString((E(ele)->getAttribute("href"))));
+//      else if(E(ele)->getTagName() == (PV%"fromFile"))
+//        setValue(QString::fromStdString((E(ele)->getAttribute("href"))));
     }
     else {
-      DOMText *text=E(element)->getFirstTextChild();
-      if(text)
-      setValue(QString::fromStdString(X()%text->getData()));
+//      DOMText *text=E(element)->getFirstTextChild();
+ //     if(text)
+//      setValue(QString::fromStdString(X()%text->getData()));
     }
   }
 
@@ -131,15 +131,15 @@ namespace MBSimGUI {
           }
           ei=ei->getNextElementSibling();
         }
-        setValue(toQStr<QString>(value));
+//        setValue(toQStr<QString>(value));
       }
-      else if(E(ele)->getTagName() == (PV%"fromFile"))
-        setValue(QString::fromStdString((E(ele)->getAttribute("href"))));
+//      else if(E(ele)->getTagName() == (PV%"fromFile"))
+//        setValue(QString::fromStdString((E(ele)->getAttribute("href"))));
     }
     else {
-      DOMText *text=E(element)->getFirstTextChild();
-      if(text)
-      setValue(QString::fromStdString(X()%text->getData()));
+//      DOMText *text=E(element)->getFirstTextChild();
+//      if(text)
+//      setValue(QString::fromStdString(X()%text->getData()));
     }
   }
 
