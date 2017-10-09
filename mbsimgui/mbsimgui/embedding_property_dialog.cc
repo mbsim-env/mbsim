@@ -20,12 +20,13 @@
 #include <config.h>
 #include "embedding_property_dialog.h"
 #include "element.h"
+#include "parameter.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "utils.h"
 #include <boost/lexical_cast.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
+//#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -64,16 +65,20 @@ namespace MBSimGUI {
           counterName->setActive(true);
           static_cast<TextWidget*>(counterName->getWidget())->setText(QString::fromStdString(E(parent)->getAttribute("counterName")));
         }
-        DOMProcessingInstruction *instr = E(parent)->getFirstProcessingInstructionChildNamed("href");
-        if(instr) {
-          href->setActive(true);
-          static_cast<FileWidget*>(href->getWidget())->setFile(QString::fromStdString(X()%instr->getData()));
-        }
-        instr = E(parent)->getFirstProcessingInstructionChildNamed("parameterHref");
-        if(instr) {
+        if(E(parent)->hasAttribute("parameterHref")) {
           parameterHref->setActive(true);
-          static_cast<FileWidget*>(parameterHref->getWidget())->setFile(QString::fromStdString(X()%instr->getData()));
+          static_cast<FileWidget*>(parameterHref->getWidget())->setFile(QString::fromStdString(E(parent)->getAttribute("parameterHref")));
         }
+//        DOMProcessingInstruction *instr = E(parent)->getFirstProcessingInstructionChildNamed("href");
+//        if(instr) {
+//          href->setActive(true);
+//          static_cast<FileWidget*>(href->getWidget())->setFile(QString::fromStdString(X()%instr->getData()));
+//        }
+//        instr = E(parent)->getFirstProcessingInstructionChildNamed("parameterHref");
+//        if(instr) {
+//          parameterHref->setActive(true);
+//          static_cast<FileWidget*>(parameterHref->getWidget())->setFile(QString::fromStdString(X()%instr->getData()));
+//        }
       }
     }
     return NULL;
@@ -89,9 +94,9 @@ namespace MBSimGUI {
         embedNode = ele;
         embedNode->insertBefore(node,NULL);
       }
-      int removeHref = 0;
-      int removeParameterHref = 0;
-      bool addHref = false;
+//      int removeHref = 0;
+//      int removeParameterHref = 0;
+//      bool addHref = false;
       DOMElement *element = static_cast<DOMElement*>(embedNode);
       if(name)
         E(element->getLastElementChild())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
@@ -107,59 +112,74 @@ namespace MBSimGUI {
         else
           E(element)->removeAttribute("counterName");
       }
-      DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
-      if(href->isActive() and (not static_cast<FileWidget*>(href->getWidget())->getFile().isEmpty())) {
-        if(not instr) {
-          DOMDocument *doc=element->getOwnerDocument();
-          instr=doc->createProcessingInstruction(X()%"href", X()%static_cast<FileWidget*>(href->getWidget())->getFile().toStdString());
-          element->insertBefore(instr, element->getFirstChild());
-          addHref = true;
-        }
-        else
-          instr->setData(X()%static_cast<FileWidget*>(href->getWidget())->getFile().toStdString());
-        removeHref = -1;
-      }
-      else if(instr) {
-        element->removeChild(instr);
-        removeHref = 1;
-      }
-      instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
-      if(parameterHref->isActive() and (not static_cast<FileWidget*>(parameterHref->getWidget())->getFile().isEmpty())) {
-        if(not instr) {
-          DOMDocument *doc=element->getOwnerDocument();
-          instr=doc->createProcessingInstruction(X()%"parameterHref", X()%static_cast<FileWidget*>(parameterHref->getWidget())->getFile().toStdString());
-          element->insertBefore(instr, element->getFirstChild());
-          addHref = true;
-        }
-        else
-          instr->setData(X()%static_cast<FileWidget*>(parameterHref->getWidget())->getFile().toStdString());
-        removeParameterHref = -1;
-      }
-      else if(instr) {
-        element->removeChild(instr);
-        removeParameterHref = 1;
-      }
-      if((removeHref + removeParameterHref) > 0) {
-        DOMDocument *doc=embedNode->getOwnerDocument();
-        instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
-        string count = X()%instr->getData();
-        if(count == "1")
-          doc->getDocumentElement()->removeChild(instr);
-        else
-          instr->setData(X()%toStr(boost::lexical_cast<int>(count)-1));
-      }
-      else if(addHref) {
-        DOMDocument *doc=embedNode->getOwnerDocument();
-        instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
-        if(not instr) {
-          instr=doc->createProcessingInstruction(X()%"hrefCount", X()%"1");
-          doc->getDocumentElement()->insertBefore(instr, doc->getDocumentElement()->getFirstChild());
-        }
-        else {
-          string count = X()%instr->getData();
-          instr->setData(X()%toStr(boost::lexical_cast<int>(count)+1));
+      if(parameterHref->isActive())
+        E(element)->setAttribute("parameterHref",static_cast<FileWidget*>(parameterHref->getWidget())->getFile().toStdString());
+      else {
+        if(E(element)->hasAttribute("parameterHref")) {
+          DOMElement *ele = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(item->getParameter(0)->getXMLElement()->getParentNode(),true));
+          element->insertBefore(ele,element->getFirstElementChild());
+          E(element)->removeAttribute("parameterHref");
+          DOMElement *e = ele->getFirstElementChild();
+          for(int i=0; i<item->getNumberOfParameters(); i++) {
+            item->getParameter(i)->setXMLElement(e);
+            e = e->getNextElementSibling();
+          }
         }
       }
+
+//      DOMProcessingInstruction *instr = E(element)->getFirstProcessingInstructionChildNamed("href");
+//      if(href->isActive() and (not static_cast<FileWidget*>(href->getWidget())->getFile().isEmpty())) {
+//        if(not instr) {
+//          DOMDocument *doc=element->getOwnerDocument();
+//          instr=doc->createProcessingInstruction(X()%"href", X()%static_cast<FileWidget*>(href->getWidget())->getFile().toStdString());
+//          element->insertBefore(instr, element->getFirstChild());
+//          addHref = true;
+//        }
+//        else
+//          instr->setData(X()%static_cast<FileWidget*>(href->getWidget())->getFile().toStdString());
+//        removeHref = -1;
+//      }
+//      else if(instr) {
+//        element->removeChild(instr);
+//        removeHref = 1;
+//      }
+//      instr = E(element)->getFirstProcessingInstructionChildNamed("parameterHref");
+//      if(parameterHref->isActive() and (not static_cast<FileWidget*>(parameterHref->getWidget())->getFile().isEmpty())) {
+//        if(not instr) {
+//          DOMDocument *doc=element->getOwnerDocument();
+//          instr=doc->createProcessingInstruction(X()%"parameterHref", X()%static_cast<FileWidget*>(parameterHref->getWidget())->getFile().toStdString());
+//          element->insertBefore(instr, element->getFirstChild());
+//          addHref = true;
+//        }
+//        else
+//          instr->setData(X()%static_cast<FileWidget*>(parameterHref->getWidget())->getFile().toStdString());
+//        removeParameterHref = -1;
+//      }
+//      else if(instr) {
+//        element->removeChild(instr);
+//        removeParameterHref = 1;
+//      }
+//      if((removeHref + removeParameterHref) > 0) {
+//        DOMDocument *doc=embedNode->getOwnerDocument();
+//        instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
+//        string count = X()%instr->getData();
+//        if(count == "1")
+//          doc->getDocumentElement()->removeChild(instr);
+//        else
+//          instr->setData(X()%toStr(boost::lexical_cast<int>(count)-1));
+//      }
+//      else if(addHref) {
+//        DOMDocument *doc=embedNode->getOwnerDocument();
+//        instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
+//        if(not instr) {
+//          instr=doc->createProcessingInstruction(X()%"hrefCount", X()%"1");
+//          doc->getDocumentElement()->insertBefore(instr, doc->getDocumentElement()->getFirstChild());
+//        }
+//        else {
+//          string count = X()%instr->getData();
+//          instr->setData(X()%toStr(boost::lexical_cast<int>(count)+1));
+//        }
+//      }
       if((not href->isActive()) and (not count or not count->isActive()) and (not counterName or not counterName->isActive()) and (not parameterHref->isActive()) and (not item->getNumberOfParameters())) {
         embedNode->getParentNode()->insertBefore(node,embedNode);
         embedNode->getParentNode()->removeChild(embedNode);

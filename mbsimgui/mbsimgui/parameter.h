@@ -48,6 +48,7 @@ namespace MBSimGUI {
       virtual ParameterPropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
       virtual ParameterContextMenu* createContextMenu() { return new ParameterContextMenu(this); }
       xercesc::DOMElement* getXMLElement() { return element; }
+      void setXMLElement(xercesc::DOMElement *element_) { element = element_; }
       virtual void removeXMLElements();
       EmbedItemData* getParent() { return parent; }
       void setParent(EmbedItemData* parent_) { parent = parent_; }

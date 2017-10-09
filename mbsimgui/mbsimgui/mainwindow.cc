@@ -606,10 +606,6 @@ namespace MBSimGUI {
       rebuildTree();
       actionSaveProject->setDisabled(false);
       mbsimxml(1);
-
-      cout << "Map" << endl;
-      for ( auto it = hrefMap.begin(); it != hrefMap.end(); ++it )
-        std::cout << " " << it->first << ":" << it->second << endl;
     }
   }
 
@@ -640,20 +636,10 @@ namespace MBSimGUI {
 
   bool MainWindow::saveProject(const QString &fileName, bool processDocument, bool modifyStatus) {
     try {
-      DOMProcessingInstruction *instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
-      if(processDocument and instr) {
-        QModelIndex index = elementList->model()->index(0,0);
-        DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
-        xercesc::DOMDocument *ndoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
-        ndoc->getDocumentElement()->removeChild(E(ndoc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount"));
-        DOMElement* ele = ndoc->getDocumentElement()->getFirstElementChild();
-        dss->processHref(E(ele)->getTagName()==PV%"Embed"?ele->getLastElementChild():ele);
-        ele = ele->getNextElementSibling();
-        solverView->getSolver()->processHref(E(ele)->getTagName()==PV%"Embed"?ele->getLastElementChild():ele);
-        serializer->writeToURI(ndoc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
-      }
-      else
-        serializer->writeToURI(doc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
+      serializer->writeToURI(doc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
+      for(auto it=hrefMap.begin(); it!=hrefMap.end(); it++)
+        serializer->writeToURI(it->second, X()%(it->first));
+      //  std::cout << "save " << it->first << ":" << it->second << endl;
       if(modifyStatus) setProjectChanged(false);
       return true;
     }

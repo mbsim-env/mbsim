@@ -245,59 +245,59 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* Group::processHref(DOMElement *element) {
-    Element::processHref(element);
-
-    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
-    for(size_t i=1; i<frame.size(); i++) {
-      frame[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
-    for(size_t i=0; i<contour.size(); i++) {
-      contour[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"groups")->getFirstElementChild();
-    for(size_t i=0; i<group.size(); i++) {
-      group[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
-    for(size_t i=0; i<object.size(); i++) {
-      object[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
-    for(size_t i=0; i<link.size(); i++) {
-      link[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"constraints");
-    if(ELE) {
-      ELE=ELE->getFirstElementChild();
-      for(size_t i=0; i<constraint.size(); i++) {
-        constraint[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
-        ELE=ELE->getNextElementSibling();
-      }
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"observers");
-    if(ELE) {
-      ELE=ELE->getFirstElementChild();
-      for(size_t i=0; i<observer.size(); i++) {
-        observer[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
-        ELE=ELE->getNextElementSibling();
-      }
-    }
-
-    return element;
-  }
+//  DOMElement* Group::processHref(DOMElement *element) {
+//    Element::processHref(element);
+//
+//    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
+//    for(size_t i=1; i<frame.size(); i++) {
+//      frame[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+//      ELE=ELE->getNextElementSibling();
+//    }
+//
+//    ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
+//    for(size_t i=0; i<contour.size(); i++) {
+//      contour[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+//      ELE=ELE->getNextElementSibling();
+//    }
+//
+//    ELE=E(element)->getFirstElementChildNamed(MBSIM%"groups")->getFirstElementChild();
+//    for(size_t i=0; i<group.size(); i++) {
+//      group[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+//      ELE=ELE->getNextElementSibling();
+//    }
+//
+//    ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
+//    for(size_t i=0; i<object.size(); i++) {
+//      object[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+//      ELE=ELE->getNextElementSibling();
+//    }
+//
+//    ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
+//    for(size_t i=0; i<link.size(); i++) {
+//      link[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+//      ELE=ELE->getNextElementSibling();
+//    }
+//
+//    ELE=E(element)->getFirstElementChildNamed(MBSIM%"constraints");
+//    if(ELE) {
+//      ELE=ELE->getFirstElementChild();
+//      for(size_t i=0; i<constraint.size(); i++) {
+//        constraint[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+//        ELE=ELE->getNextElementSibling();
+//      }
+//    }
+//
+//    ELE=E(element)->getFirstElementChildNamed(MBSIM%"observers");
+//    if(ELE) {
+//      ELE=ELE->getFirstElementChild();
+//      for(size_t i=0; i<observer.size(); i++) {
+//        observer[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+//        ELE=ELE->getNextElementSibling();
+//      }
+//    }
+//
+//    return element;
+//  }
 
   DOMElement* Group::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
