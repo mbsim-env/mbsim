@@ -54,6 +54,7 @@ namespace MBSimGUI {
       void removeXMLElement();
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }
       QMenu* createEmbeddingContextMenu() { return new EmbeddingContextMenu(this); }
+      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
   };
 
 }

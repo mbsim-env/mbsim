@@ -68,6 +68,8 @@ namespace MBSimGUI {
   bool currentTask;
   bool absolutePath = false;
   QDir mbsDir;
+  unordered_map<string,DOMDocument*> hrefMap;
+  unordered_map<EmbedItemData*,DOMDocument*> embedItemMap;
 
   MainWindow *mw;
 
@@ -603,6 +605,12 @@ namespace MBSimGUI {
       rebuildTree();
       actionSaveProject->setDisabled(false);
       mbsimxml(1);
+
+      cout << "Map" << endl;
+      for ( auto it = hrefMap.begin(); it != hrefMap.end(); ++it )
+        std::cout << " " << it->first << ":" << it->second << endl;
+      for ( auto it = embedItemMap.begin(); it != embedItemMap.end(); ++it )
+        std::cout << " " << it->first->getName().toStdString() << ":" << it->second << endl;
     }
   }
 
@@ -851,6 +859,13 @@ namespace MBSimGUI {
     if(E(ele)->getTagName()==PV%"Embed")
       ele = E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
     dss->processFileID(ele);
+
+//    for ( auto it = embedItemMap.begin(); it != embedItemMap.end(); ++it ) {
+//      //cout << MBXMLUtils::E(it->first->getXMLElement()->getParentNode())->getTagName().second << endl;
+//      DOMElement *ele = static_cast<DOMElement*>(it->first->getXMLElement()->getParentNode());
+//      MBXMLUtils::E(ele)->removeAttribute("parameterHref");
+//    }
+
     E(ele)->setAttribute("name","out"+sTask.toStdString());;
     QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+sTask+".mbsimprj.flat.xml";
 

@@ -28,12 +28,15 @@
 #include <boost/lexical_cast.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <unordered_map>
 
 namespace MBSimGUI {
 
   class Element;
   extern QDir mbsDir;
   extern xercesc::DOMLSParser *parser;
+  extern std::unordered_map<std::string,xercesc::DOMDocument*> hrefMap;
+  extern std::unordered_map<EmbedItemData*,xercesc::DOMDocument*> embedItemMap;
 
   template <typename T>
     class Embed {
@@ -46,24 +49,30 @@ namespace MBSimGUI {
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
             QString href, parameterHref;
             xercesc::DOMElement *ele2 = 0;
+            xercesc::DOMDocument *doc1;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               parameterHref = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"));
               QFileInfo fileInfo(mbsDir.absoluteFilePath(parameterHref));
-              xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
-              ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-              ele1->insertBefore(ele2,ele1->getFirstElementChild());
-              MBXMLUtils::E(ele1)->removeAttribute("parameterHref");
+              auto it = hrefMap.find(fileInfo.canonicalFilePath().toStdString());
+              if(it == hrefMap.end()) {
+                doc1 = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
+                hrefMap[fileInfo.canonicalFilePath().toStdString()] = doc1;
+              }
+              else
+                doc1 = it->second;
+              //ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc1->getDocumentElement(),true));
+              //ele1->insertBefore(ele2,ele1->getFirstElementChild());
+              //MBXMLUtils::E(ele1)->removeAttribute("parameterHref");
+              param = Parameter::initializeParametersUsingXML(doc1->getDocumentElement());
+              ele2 = ele1->getFirstElementChild();
               xercesc::DOMProcessingInstruction *id=ele1->getOwnerDocument()->createProcessingInstruction(MBXMLUtils::X()%"parameterHref", MBXMLUtils::X()%parameterHref.toStdString());
               ele1->insertBefore(id, ele1->getFirstChild());
             }
-            else
+            else {
               ele2 = MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
-            if(ele2) {
               param = Parameter::initializeParametersUsingXML(ele2);
               ele2 = ele2->getNextElementSibling();
             }
-            else
-              ele2 = ele1->getFirstElementChild();
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               href = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"));
               QFileInfo fileInfo(mbsDir.absoluteFilePath(href));
@@ -80,6 +89,7 @@ namespace MBSimGUI {
               for(size_t i=0; i<param.size(); i++)
                 object->addParameter(param[i]);
               if((not parameterHref.isEmpty()) or (not href.isEmpty())) {
+                embedItemMap[object] = doc1;
                 xercesc::DOMDocument *doc=ele2->getOwnerDocument();
                 xercesc::DOMProcessingInstruction *instr = MBXMLUtils::E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
                 if(not instr) {
