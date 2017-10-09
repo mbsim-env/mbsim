@@ -35,7 +35,7 @@ namespace MBSimGUI {
   class Element;
   extern QDir mbsDir;
   extern xercesc::DOMLSParser *parser;
-  extern std::unordered_map<std::string,xercesc::DOMDocument*> hrefMap;
+  extern std::unordered_map<std::string,std::pair<xercesc::DOMDocument*,int> > hrefMap;
 
   template <typename T>
     class Embed {
@@ -46,19 +46,19 @@ namespace MBSimGUI {
           T *object;
           std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
-            QString href, parameterHref;
             xercesc::DOMElement *ele2 = 0;
             xercesc::DOMDocument *doc;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-              parameterHref = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"));
-              QFileInfo fileInfo(mbsDir.absoluteFilePath(parameterHref));
+              QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"))));
               auto it = hrefMap.find(fileInfo.canonicalFilePath().toStdString());
               if(it == hrefMap.end()) {
                 doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
-                hrefMap[fileInfo.canonicalFilePath().toStdString()] = doc;
+                hrefMap[fileInfo.canonicalFilePath().toStdString()] = std::pair<xercesc::DOMDocument*,int>(doc,1);
               }
-              else
-                doc = it->second;
+              else {
+                doc = it->second.first;
+                it->second.second++;
+              }
               param = Parameter::initializeParametersUsingXML(doc->getDocumentElement());
               ele2 = ele1->getFirstElementChild();
             }

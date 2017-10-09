@@ -68,7 +68,7 @@ namespace MBSimGUI {
   bool currentTask;
   bool absolutePath = false;
   QDir mbsDir;
-  unordered_map<string,DOMDocument*> hrefMap;
+  unordered_map<string,pair<DOMDocument*,int> > hrefMap;
 
   MainWindow *mw;
 
@@ -638,7 +638,7 @@ namespace MBSimGUI {
     try {
       serializer->writeToURI(doc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
       for(auto it=hrefMap.begin(); it!=hrefMap.end(); it++)
-        serializer->writeToURI(it->second, X()%(it->first));
+        serializer->writeToURI(it->second.first, X()%(it->first));
       //  std::cout << "save " << it->first << ":" << it->second << endl;
       if(modifyStatus) setProjectChanged(false);
       return true;

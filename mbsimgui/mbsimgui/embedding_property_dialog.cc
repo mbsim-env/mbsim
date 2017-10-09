@@ -27,12 +27,18 @@
 #include <boost/lexical_cast.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
 //#include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <unordered_map>
+#include <QFileInfo>
+#include <QDir>
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern QDir mbsDir;
+  extern unordered_map<string,pair<DOMDocument*,int> > hrefMap;
 
   EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, bool name_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_), name(NULL), count(NULL), counterName(NULL) {
     addTab("Embedding");
@@ -118,6 +124,13 @@ namespace MBSimGUI {
         if(E(element)->hasAttribute("parameterHref")) {
           DOMElement *ele = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(item->getParameter(0)->getXMLElement()->getParentNode(),true));
           element->insertBefore(ele,element->getFirstElementChild());
+          QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(element)->getAttribute("parameterHref"))));
+          auto it = hrefMap.find(fileInfo.canonicalFilePath().toStdString());
+          if(it != hrefMap.end()) {
+//            cout << "found parameterHref " << it->first << " " << it->second.first << " " << it->second.second << endl;
+            if(not --it->second.second)
+              hrefMap.erase(it);
+          }
           E(element)->removeAttribute("parameterHref");
           DOMElement *e = ele->getFirstElementChild();
           for(int i=0; i<item->getNumberOfParameters(); i++) {
