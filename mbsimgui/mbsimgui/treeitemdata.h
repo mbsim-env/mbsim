@@ -33,11 +33,11 @@ namespace MBSimGUI {
     public:
       TreeItemData(const QString &name_="", const QString &value_="") : name(name_), value(value_) { }
       virtual ~TreeItemData() { }
-      const QString& getName() const { return name; }
+      virtual QString getName() const { return "Name"; }
       void setName(const QString &str) { name = str; }
-      const QString& getValue() const { return value; }
+      virtual QString getValue() const { return ""; }
       void setValue(const QString &str) { value = str; }
-      virtual QString getType() const { return ""; }
+      virtual QString getType() const { return "Type"; }
       void setType(const QString &str) { }
       virtual QMenu* createContextMenu() { return NULL; }
   };

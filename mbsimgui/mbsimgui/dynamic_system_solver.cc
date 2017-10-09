@@ -57,7 +57,7 @@ namespace MBSimGUI {
     DOMElement *ele0 = Group::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
 
-    E(ele0)->setAttribute("name", getName().toStdString());
+    E(ele0)->setAttribute("name", "MBS");
     environments = D(doc)->createElement( MBSIM%"environments" );
     DOMElement *ele2 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
     DOMElement *ele3 = D(doc)->createElement( MBSIM%"accelerationOfGravity" );

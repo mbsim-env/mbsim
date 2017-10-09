@@ -34,7 +34,6 @@ namespace MBSimGUI {
   class Link;
   class Constraint;
   class Observer;
-  class Parameter;
 
   namespace XERCES_CPP_NAMESPACE {
     class DOMElement;

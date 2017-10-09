@@ -30,24 +30,28 @@ namespace MBSimGUI {
       Element *element;
     public:
       ContainerItemData(const QString &name, Element *element_) : TreeItemData(name,""), element(element_) { }
+      QString getType() const { return ""; }
       Element* getElement() { return element; }
   };
 
   class FrameItemData : public ContainerItemData {
     public:
       FrameItemData(Element *element) : ContainerItemData("frames",element) { }
+      QString getName() const { return "frames"; }
       virtual QMenu* createContextMenu() { return element->createFrameContextMenu(); }
   };
 
   class ContourItemData : public ContainerItemData {
     public:
       ContourItemData(Element *element) : ContainerItemData("contours",element) { }
+      QString getName() const { return "contours"; }
       virtual QMenu* createContextMenu() { return new ContoursContextMenu(element); }
   };
 
   class GroupItemData : public ContainerItemData {
     public:
       GroupItemData(Element *element) : ContainerItemData("groups",element) { }
+      QString getName() const { return "groups"; }
       virtual QMenu* createContextMenu() { return new GroupsContextMenu(element); }
   };
 
@@ -55,24 +59,28 @@ namespace MBSimGUI {
   class ObjectItemData : public ContainerItemData {
     public:
       ObjectItemData(Element *element) : ContainerItemData("objects",element) { }
+      QString getName() const { return "objects"; }
       virtual QMenu* createContextMenu() { return new ObjectsContextMenu(element); }
   };
 
   class LinkItemData : public ContainerItemData {
     public:
       LinkItemData(Element *element) : ContainerItemData("links",element) { }
+      QString getName() const { return "links"; }
       virtual QMenu* createContextMenu() { return new LinksContextMenu(element); }
   };
 
   class ConstraintItemData : public ContainerItemData {
     public:
       ConstraintItemData(Element *element) : ContainerItemData("constraints",element) { }
+      QString getName() const { return "constraints"; }
       virtual QMenu* createContextMenu() { return new ConstraintsContextMenu(element); }
   };
 
   class ObserverItemData : public ContainerItemData {
     public:
       ObserverItemData(Element *element) : ContainerItemData("observers",element) { }
+      QString getName() const { return "observers"; }
       virtual QMenu* createContextMenu() { return new ObserversContextMenu(element); }
   };
 

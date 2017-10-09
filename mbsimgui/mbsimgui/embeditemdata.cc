@@ -34,6 +34,11 @@ namespace MBSimGUI {
       delete *i;
   }
 
+//  QString EmbedItemData::getName() const {
+//      //return element?QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")):"Name";
+//    return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name"));
+//  }
+
   void EmbedItemData::addParameter(Parameter *param) {
     parameter.push_back(param);
     param->setParent(this);

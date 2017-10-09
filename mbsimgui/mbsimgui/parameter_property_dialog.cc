@@ -43,8 +43,7 @@ namespace MBSimGUI {
 
   DOMElement* ParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     parameter->removeXMLElements();
-    parameter->setName(static_cast<TextWidget*>(name->getWidget())->getText());
-    E(parameter->getXMLElement())->setAttribute("name",parameter->getName().toStdString());
+    E(parameter->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     return NULL;
   }
 
