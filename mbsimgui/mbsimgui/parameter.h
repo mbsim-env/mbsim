@@ -56,7 +56,6 @@ namespace MBSimGUI {
       static std::vector<Parameter*> initializeParametersUsingXML(xercesc::DOMElement *element);
     protected:
       EmbedItemData *parent;
-      QString name, valuestr;
       xercesc::DOMElement *element;
       bool config;
   };

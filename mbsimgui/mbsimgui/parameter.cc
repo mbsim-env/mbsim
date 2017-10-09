@@ -31,7 +31,6 @@ namespace MBSimGUI {
 
   void Parameter::initializeUsingXML(DOMElement *element) {
     this->element = element;
-//    setName(QString::fromStdString(E(element)->getAttribute("name")));
     config = true;
   }
 
@@ -47,7 +46,7 @@ namespace MBSimGUI {
   DOMElement* Parameter::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     element=D(doc)->createElement(PV%getType().toStdString());
-    E(element)->setAttribute("name", name.toStdString());
+    E(element)->setAttribute("name", getType().toStdString());
     insertXMLElement(element, parent);
     return element;
   }
