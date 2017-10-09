@@ -100,12 +100,6 @@ namespace MBSimGUI {
   DOMElement* Element::initializeUsingXML(DOMElement *element) {
     this->element = element;
     config = true;
-//    setName(QString::fromStdString(E(element)->getAttribute("name")));
-    DOMElement *parent = static_cast<DOMElement*>(element->getParentNode());
-    if(E(parent)->getTagName()==PV%"Embed") {
-      setCounterName(QString::fromStdString(E(parent)->getAttribute("counterName")));
-//      setValue(QString::fromStdString(E(parent)->getAttribute("count")));
-    }
     return element;
   }
 

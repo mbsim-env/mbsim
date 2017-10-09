@@ -35,7 +35,6 @@ namespace MBSimGUI {
 
   class EmbedItemData : public TreeItemData {
     protected:
-      QString counterName;
       std::vector<Parameter*> parameter;
       std::vector<Parameter*> removedParameter;
       xercesc::DOMElement *element;
@@ -44,8 +43,6 @@ namespace MBSimGUI {
       EmbedItemData(const QString &name="") : element(NULL) { }
       ~EmbedItemData();
       QString getName() const { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
-      const QString& getCounterName() const { return counterName; }
-      void setCounterName(const QString &str) { counterName = str; }
       virtual std::vector<EmbedItemData*> getParents() { return std::vector<EmbedItemData*>(); }
       int getNumberOfParameters() const { return parameter.size(); }
       Parameter* getParameter(int i) { return parameter[i]; }

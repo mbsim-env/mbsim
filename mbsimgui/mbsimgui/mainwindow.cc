@@ -694,6 +694,17 @@ namespace MBSimGUI {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,NULL);
+
+    DOMElement *parent = static_cast<DOMElement*>(item->getXMLElement()->getParentNode());
+    QString counterName = (E(parent)->getTagName()==PV%"Embed")?QString::fromStdString(E(parent)->getAttribute("counterName")):"";
+    if(not(counterName.isEmpty())) {
+      DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
+      E(ele1)->setAttribute("name", counterName.toStdString());
+      DOMText *text = doc->createTextNode(X()%"1");
+      ele1->insertBefore(text,NULL);
+      ele0->insertBefore(ele1,NULL);
+    }
+
     vector<EmbedItemData*> parents = item->getParents();
     for(size_t i=0; i<parents.size(); i++) {
       for(size_t j=0; j<parents[i]->getNumberOfParameters(); j++) {
@@ -704,14 +715,6 @@ namespace MBSimGUI {
     for(size_t j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
       DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
       ele0->insertBefore(node,NULL);
-    }
-    QString counterName = item->getCounterName();
-    if(not(counterName.isEmpty())) {
-      DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
-      E(ele1)->setAttribute("name", counterName.toStdString());
-      DOMText *text = doc->createTextNode(X()%"1");
-      ele1->insertBefore(text,NULL);
-      ele0->insertBefore(ele1,NULL);
     }
 
     DOMElement *root = doc->getDocumentElement();
