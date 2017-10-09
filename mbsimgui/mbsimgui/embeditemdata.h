@@ -27,6 +27,7 @@
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
+  class DOMDocument;
 }
 
 namespace MBSimGUI {
@@ -38,9 +39,10 @@ namespace MBSimGUI {
       std::vector<Parameter*> parameter;
       std::vector<Parameter*> removedParameter;
       xercesc::DOMElement *element;
+      xercesc::DOMDocument *paramHref;
 
     public:
-      EmbedItemData(const QString &name="") : element(NULL) { }
+      EmbedItemData(const QString &name="") : element(NULL), paramHref(NULL) { }
       ~EmbedItemData();
       QString getName() const { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       virtual std::vector<EmbedItemData*> getParents() { return std::vector<EmbedItemData*>(); }
@@ -51,6 +53,7 @@ namespace MBSimGUI {
       void removeParameter(Parameter *param);
       int getIndexOfParameter(Parameter *param) const;
       xercesc::DOMElement* getXMLElement() { return element; }
+      void setParamHref(xercesc::DOMDocument *paramHref_) { paramHref = paramHref_; }
       void removeXMLElement();
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }
       QMenu* createEmbeddingContextMenu() { return new EmbeddingContextMenu(this); }

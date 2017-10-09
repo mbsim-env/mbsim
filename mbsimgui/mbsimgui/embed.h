@@ -36,7 +36,6 @@ namespace MBSimGUI {
   extern QDir mbsDir;
   extern xercesc::DOMLSParser *parser;
   extern std::unordered_map<std::string,xercesc::DOMDocument*> hrefMap;
-  extern std::unordered_map<EmbedItemData*,xercesc::DOMDocument*> embedItemMap;
 
   template <typename T>
     class Embed {
@@ -89,7 +88,7 @@ namespace MBSimGUI {
               for(size_t i=0; i<param.size(); i++)
                 object->addParameter(param[i]);
               if((not parameterHref.isEmpty()) or (not href.isEmpty())) {
-                embedItemMap[object] = doc1;
+                object->setParamHref(doc1);
                 xercesc::DOMDocument *doc=ele2->getOwnerDocument();
                 xercesc::DOMProcessingInstruction *instr = MBXMLUtils::E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
                 if(not instr) {

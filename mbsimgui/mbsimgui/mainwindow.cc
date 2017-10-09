@@ -69,7 +69,6 @@ namespace MBSimGUI {
   bool absolutePath = false;
   QDir mbsDir;
   unordered_map<string,DOMDocument*> hrefMap;
-  unordered_map<EmbedItemData*,DOMDocument*> embedItemMap;
 
   MainWindow *mw;
 
@@ -609,8 +608,6 @@ namespace MBSimGUI {
       cout << "Map" << endl;
       for ( auto it = hrefMap.begin(); it != hrefMap.end(); ++it )
         std::cout << " " << it->first << ":" << it->second << endl;
-      for ( auto it = embedItemMap.begin(); it != embedItemMap.end(); ++it )
-        std::cout << " " << it->first->getName().toStdString() << ":" << it->second << endl;
     }
   }
 
@@ -855,16 +852,9 @@ namespace MBSimGUI {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMNode *newDocElement = doc->importNode(this->doc->getDocumentElement(), true);
     doc->insertBefore(newDocElement, NULL);
-    DOMElement* ele = doc->getDocumentElement()->getFirstElementChild();
-    if(E(ele)->getTagName()==PV%"Embed")
-      ele = E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+    DOMElement* ele0 = doc->getDocumentElement()->getFirstElementChild();
+    DOMElement* ele = (E(ele0)->getTagName()==PV%"Embed")?E(ele0)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver"):ele0;
     dss->processFileID(ele);
-
-//    for ( auto it = embedItemMap.begin(); it != embedItemMap.end(); ++it ) {
-//      //cout << MBXMLUtils::E(it->first->getXMLElement()->getParentNode())->getTagName().second << endl;
-//      DOMElement *ele = static_cast<DOMElement*>(it->first->getXMLElement()->getParentNode());
-//      MBXMLUtils::E(ele)->removeAttribute("parameterHref");
-//    }
 
     E(ele)->setAttribute("name","out"+sTask.toStdString());;
     QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+sTask+".mbsimprj.flat.xml";
@@ -878,6 +868,10 @@ namespace MBSimGUI {
       E(ele1)->setAttribute("feature","-plotRecursive");
       ele->insertBefore( ele1, ele->getFirstElementChild() );
     }
+
+    ele0 = ele0->getNextElementSibling();
+    ele = (E(ele0)->getTagName()==PV%"Embed")?ele0->getLastElementChild():ele0;
+    solverView->getSolver()->processFileID(ele);
 
     absolutePath = false;
 
