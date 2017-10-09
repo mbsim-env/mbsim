@@ -534,6 +534,7 @@ namespace MBSimGUI {
 
   void MainWindow::newProject(bool ask) {
     if(maybeSave()) {
+      hrefMap.clear();
       undos.clear();
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
@@ -580,6 +581,7 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject(const QString &file) {
     if(not(file.isEmpty())) {
+      hrefMap.clear();
       undos.clear();
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
