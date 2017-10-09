@@ -64,7 +64,7 @@ try:
         # get access token for login
         access_token=config['session'][sessionid]['access_token']
         # check whether the sessionid is correct
-        if not hmac.compare_digest(hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest(), sessionid):
+        if not hmac.compare_digest(hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest(), sessionid.encode('utf-8')):
           response_data['success']=False
           response_data['message']="Invalid access token hmac! Maybe the login was faked! If not, try to relogin again."
         else:
@@ -82,6 +82,15 @@ try:
           else:
             response_data['success']=True
     return response_data
+
+  # remove all sessionid's with username login from config
+  def removeLogin(config, login):
+    so=config['session']
+    sn={}
+    for s in so:
+      if so[s]['login']!=login:
+        sn[s]=so[s]
+    config['session']=sn
 
   if __name__ == "__main__":
     # get the script action = path info after the script url
@@ -123,7 +132,8 @@ try:
               login=response['login']
               # redirect to the example web side and pass login and access token hmac as http get methode
               sessionid=hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()
-              # save login and access token in a dictionary on the server
+              # save login and access token in a dictionary on the server (first remove all sessionid for login than add new sessionid)
+              removeLogin(config, login)
               config['session'][sessionid]={'access_token': access_token,
                                             'login': login,
                                             'avatar_url': response['avatar_url'],
@@ -162,8 +172,8 @@ try:
         response_data['message']="Nobody to log out."
       else:
         with ConfigFile(True) as config:
-          # remove sessionid from server config
-          config['session'].pop(sessionid, None)
+          # remove all sessionids for login from server config
+          removeLogin(config, config['session'][sessionid]['login'])
           # generate json response
           response_data['success']=True
           response_data['message']="Logged out from server."

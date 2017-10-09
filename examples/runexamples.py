@@ -30,6 +30,7 @@ import json
 import fcntl
 import zipfile
 import tempfile
+import xml.etree.cElementTree as ET
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
   import urllib as myurllibp
@@ -54,76 +55,80 @@ mbsimModules=["mbsimControl", "mbsimElectronics", "mbsimFlexibleBody",
 
 # command line option definition
 argparser = argparse.ArgumentParser(
-  formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+  formatter_class=argparse.RawTextHelpFormatter,
   description='''
-  Run MBSim examples.
-  This script runs the action given by --action on all specified directories recursively.
-  However only examples of the type matching --filter are executed.
-  The specified directories are processed from left to right.
-  The type of an example is defined dependent on some key files in the corrosponding example directory:
-  - If a file named 'Makefile' exists, than it is treated as a SRC example.
-  - If a file named 'MBS.mbsimprj.flat.xml' exists, then it is treated as a FLATXML example.
-  - If a file named 'MBS.mbsimprj.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
-  - If a file named 'FMI.mbsimprj.xml' exists, then it is treated as a FMI XML export example.
-    Beside running the file by mbsimxml also mbsimCreateFMU is run to export the model as a FMU and the FMU is run by fmuCheck.<PLATFORM>.
-  - If a file named 'Makefile_FMI' exists, then it is treated as a FMI source export example.
-    Beside compiling the source examples also mbsimCreateFMU is run to export the model as a FMU and the FMU is run by fmuCheck.<PLATFORM>.
-  If more then one of these files exist the behaviour is undefined.
-  The 'Makefile' of a SRC example must build the example and must create an executable named 'main'.
-  '''
+Run MBSim examples.
+This script runs the action given by --action on all specified directories recursively.
+However only examples of the type matching --filter are executed. The specified directories are
+processed from left to right.
+The type of an example is defined dependent on some key files in the corrosponding example directory:
+- If a file named 'Makefile' exists, than it is treated as a SRC example.
+- If a file named 'MBS.mbsimprj.flat.xml' exists, then it is treated as a FLATXML example.
+- If a file named 'MBS.mbsimprj.xml' exists, then it is treated as a XML example
+  which run throught the MBXMLUtils preprocessor first.
+- If a file named 'FMI.mbsimprj.xml' exists, then it is treated as a FMI XML export example. Beside running the file
+  by mbsimxml also mbsimCreateFMU is run to export the model as a FMU and the FMU is run by fmuCheck.<PLATFORM>.
+- If a file named 'Makefile_FMI' exists, then it is treated as a FMI source export example. Beside compiling the
+  source examples also mbsimCreateFMU is run to export the model as a FMU and the FMU is run by fmuCheck.<PLATFORM>.
+If more then one of these files exist the behaviour is undefined.
+The 'Makefile' of a SRC example must build the example and must create an executable named 'main'.
+'''
 )
 
 mainOpts=argparser.add_argument_group('Main Options')
 mainOpts.add_argument("directories", nargs="*", default=os.curdir,
-  help="A directory to run (recursively). If prefixed with '^' remove the directory form the current list")
+  help="A directory to run (recursively). If prefixed with '^' remove the directory form the current list [default: %(default)s]")
 mainOpts.add_argument("--action", default="report", type=str,
-  help='''The action of this script:
-          'report': run examples and report results (default);
-          'copyToReference': copy current results to reference directory;
-          'updateReference[=URL|DIR]': update references from URL or DIR, use the build system if not given;
-          'pushReference=DIR': push references to DIR;
-          'list': list directories to be run;''')
-mainOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only to the action 'report')")
-mainOpts.add_argument("--filter", default="True", type=str,
-  help='''Filter the specifed directories using the given Python code. A directory is processed if the provided
-          Python code evaluates to True where the following variables are defined:
-          src: is True if the directory is a source code example;
-          flatxml: is True if the directory is a xml flat example;
-          ppxml: is True if the directory is a preprocessing xml example;
-          xml: is True if the directory is a flat or preprocessing xml example;
-          fmi: is True if the directory is a FMI export example (source or XML);
-          labels: a list of labels (defined by the 'labels' file, being a space separated list of labels)
-                  the labels defined in the 'labels' file are extended automatically by the MBSim module
-                  labels: '''+str(mbsimModules)+'''
-                  the special label 'willfail' defines examples which are not reported as errors if they fail;
-          Example: --filter "xml and 'mbsimControl' not in labels or 'basic' in labels": run xml examples not requiring mbsimControl or
-                   all examples having the label "basic"''')
+  help='''The action of this script: [default: %(default)s]
+- 'report'                     Run examples and report results
+- 'copyToReference'            Copy current results to reference directory
+- 'updateReference[=URL|DIR]'  Update references from URL or DIR, use the build system if not given
+- 'pushReference=DIR'          Push references to DIR
+- 'list'                       List directories to be run''')
+mainOpts.add_argument("-j", default=1, type=int,
+  help="Number of jobs to run in parallel (applies only to the action 'report') [default: %(default)s]")
+mainOpts.add_argument("--filter", default="'nightly' in labels", type=str,
+  help='''Filter the specifed directories using the given Python code. If not given all directories with the
+label 'nightly' are used [default: %(default)s]
+A directory is processed if the provided Python code evaluates to True where the following variables are defined:
+- src      Is True if the directory is a source code example
+- flatxml  Is True if the directory is a xml flat example
+- ppxml    Is True if the directory is a preprocessing xml example
+- xml      Is True if the directory is a flat or preprocessing xml example
+- fmi      Is True if the directory is a FMI export example (source or XML)
+- labels   A list of labels (defined by the 'labels' file, being a space separated list of labels).
+           The labels defined in the 'labels' file are extended automatically by the MBSim module
+           labels: '''+str(mbsimModules)+'''
+           The special label 'willfail' defines examples which are not reported as errors if they fail.
+           If no labels file exists in a directory a labels file with the content "nightly" is assumed.
+Example: --filter "xml and 'mbsimControl' not in labels or 'basic' in labels"
+         run xml examples not requiring mbsimControl or all examples having the label "basic"''')
 
 cfgOpts=argparser.add_argument_group('Configuration Options')
 cfgOpts.add_argument("--atol", default=2e-5, type=float,
-  help="Absolute tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
+  help="Absolute tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated [default: %(default)s]")
 cfgOpts.add_argument("--rtol", default=2e-5, type=float,
-  help="Relative tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
+  help="Relative tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated [default: %(default)s]")
 cfgOpts.add_argument("--disableRun", action="store_true", help="disable running the example on action 'report'")
 cfgOpts.add_argument("--disableMakeClean", action="store_true", help="disable make clean on action 'report'")
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
 cfgOpts.add_argument("--printToConsole", action='store_const', const=sys.stdout, help="print all output also to the console")
-cfgOpts.add_argument("--buildType", default="local", type=str, help="Description of the build type (e.g: linux64-dailydebug)")
+cfgOpts.add_argument("--buildType", default="local", type=str, help="Description of the build type (e.g: linux64-dailydebug) [default: %(default)s]")
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
 cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
   help="VALGRIND: add special arguments and handling for valgrind")
 cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables (wine is used if set)")
-cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out")
-cfgOpts.add_argument("--maxCompareFailure", default=200, type=float, help="Maximal number of compare failures to report. Use 0 for unlimited (default: 200)")
+cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out [default: %(default)s]")
+cfgOpts.add_argument("--maxCompareFailure", default=200, type=float, help="Maximal number of compare failures to report. Use 0 for unlimited [default: %(default)s]")
 cfgOpts.add_argument("--coverage", default=None, type=str, help='Enable coverage analyzis using gcov/lcov; The arg must be: <sourceDir>:<binSuffix>:<prefix>')
 
 outOpts=argparser.add_argument_group('Output Options')
-outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
+outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report [default: %(default)s]")
 outOpts.add_argument("--url", type=str,
   help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the Atom feed")
-outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
+outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them [default: %(default)s]")
 
 debugOpts=argparser.add_argument_group('Debugging and other Options')
 debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
@@ -672,6 +677,8 @@ def addExamplesByFilter(baseDir, directoriesSet):
     labels=[]
     if os.path.isfile(pj(root, "labels")):
       labels=codecs.open(pj(root, "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
+    else:
+      labels=['nightly'] # nightly is the default label if no labels file exist
     # check for MBSim modules in src examples
     if src:
       filecont=codecs.open(pj(root, "Makefile"), "r", encoding="utf-8").read()
@@ -693,6 +700,9 @@ def addExamplesByFilter(baseDir, directoriesSet):
         {'ppxml': ppxml, 'flatxml': flatxml, 'xml': xml, 'src': src, 'fmi': fmi, 'labels': labels})
     except:
       print("Unable to evaluate the filter:\n"+args.filter)
+      exit(1)
+    if type(filterResult)!=bool:
+      print("The filter does not return a bool value:\n"+args.filter)
       exit(1)
     path=os.path.normpath(root)
     if filterResult and not "tmp_mbsimTestFMU" in path.split(os.sep) and not "tmp_fmuCheck" in path.split(os.sep):
@@ -1050,6 +1060,11 @@ def executeSrcExample(executeFD, example):
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles=getOutFilesAndAdaptRet(example, ret)
+
+  # check DynamicSystemSolver name (just as a heuristic, so do no report as error)
+  if not os.path.exists('TS.mbsim.h5') and not os.path.exists('MBS.mbsim.h5'):
+    print("WARNING: The DynamicSystemSolver element seems not to be named 'TS' or 'MBS'.", file=executeFD)
+
   return ret[0], dt, outFiles
 
 
@@ -1072,6 +1087,13 @@ def executeXMLExample(executeFD, example):
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles=getOutFilesAndAdaptRet(example, ret)
+
+  # check DynamicSystemSolver name
+  name=ET.parse(".pp."+prjFile).getroot().find("{http://www.mbsim-env.de/MBSim}DynamicSystemSolver").get("name")
+  if name!="TS" and name!="MBS":
+    print("ERROR: The DynamicSystemSolver element must be named 'TS' or 'MBS' but its name is '"+name+"'.", file=executeFD)
+    return 1, dt, outFiles
+
   return ret[0], dt, outFiles
 
 
@@ -1088,6 +1110,13 @@ def executeFlatXMLExample(executeFD, example):
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles=getOutFilesAndAdaptRet(example, ret)
+
+  # check DynamicSystemSolver name
+  name=ET.parse("MBS.mbsimprj.flat.xml").getroot().find("{http://www.mbsim-env.de/MBSim}DynamicSystemSolver").get("name")
+  if name!="TS" and name!="MBS":
+    print("ERROR: The DynamicSystemSolver element must be named 'TS' or 'MBS' but its name is '"+name+"'.", file=executeFD)
+    return 1, dt, outFiles
+
   return ret[0], dt, outFiles
 
 
@@ -1175,6 +1204,11 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   outFiles.extend(outFiles1)
   outFiles.extend(outFiles2)
   outFiles.extend(outFiles3)
+
+  # check DynamicSystemSolver name (just as a heuristic, so do no report as error)
+  if not os.path.exists('TS.mbsim.h5') and not os.path.exists('MBS.mbsim.h5'):
+    print("WARNING: The DynamicSystemSolver element seems not to be named 'TS' or 'MBS'.", file=executeFD)
+
   return ret, dt, outFiles
 
 # execute the FMI XML export example in the current directory (write everything to fd executeFD)
@@ -1676,7 +1710,7 @@ def loopOverReferenceFiles(msg, srcPostfix, dstPrefix, action):
     if not os.path.isdir(pj(dstPrefix, example[0], "reference")): os.makedirs(pj(dstPrefix, example[0], "reference"))
     # apply action to all these files in the current dir (example dir)
     for fnglob in ["time.dat", "TS.mbsim.h5", "MBS.mbsim.h5", "TS.ombv.h5", "MBS.ombv.h5",
-                   "TS.*.mbsim.h5", "MBS.*.mbsim.h5", "TS.*.ombv.h5", "MBS.*.ombv.h5"]:
+                   "TS.*.mbsim.h5", "MBS.*.mbsim.h5", "TS.*.ombv.h5", "MBS.*.ombv.h5", "fmuCheck.result.h5"]:
       for fn in glob.glob(pj(example[0], srcPostfix, fnglob)):
         action(fn, pj(dstPrefix, example[0], "reference", os.path.basename(fn)))
 
