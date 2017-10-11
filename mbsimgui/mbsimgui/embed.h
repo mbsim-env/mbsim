@@ -46,31 +46,38 @@ namespace MBSimGUI {
           std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
             xercesc::DOMElement *ele2 = 0;
-            xercesc::DOMDocument *doc;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-              std::cout << "parameterHref is currently not supported by MBSimGUI" << std::endl;
-              throw;
               QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"))));
+              std::cout << "Warning parameterHref is currently not supported by MBSimGUI. Content of file " << fileInfo.canonicalFilePath().toStdString() << " will be just imported!" << std::endl;
+              xercesc::DOMDocument *doc;
               auto it = hrefMap.find(fileInfo.canonicalFilePath().toStdString());
               if(it == hrefMap.end()) {
                 doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
-                hrefMap[fileInfo.canonicalFilePath().toStdString()] = std::pair<xercesc::DOMDocument*,int>(doc,1);
+                //hrefMap[fileInfo.canonicalFilePath().toStdString()] = std::pair<xercesc::DOMDocument*,int>(doc,1);
               }
               else {
                 doc = it->second.first;
                 it->second.second++;
               }
-              param = Parameter::initializeParametersUsingXML(doc->getDocumentElement());
-              ele2 = ele1->getFirstElementChild();
+              ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+              ele1->insertBefore(ele2,ele1->getFirstElementChild());
+              MBXMLUtils::E(ele1)->removeAttribute("parameterHref");
             }
-            else {
+            else
               ele2 = MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
+            if(ele2) {
               param = Parameter::initializeParametersUsingXML(ele2);
               ele2 = ele2->getNextElementSibling();
             }
+            else
+              ele2 = ele1->getFirstElementChild();
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
-              std::cout << "href is currently not supported by MBSimGUI" << std::endl;
-              throw;
+              QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"))));
+              std::cout << "Warning href is currently not supported by MBSimGUI. Content of file " << fileInfo.canonicalFilePath().toStdString() << " will be just imported!" << std::endl;
+              xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
+              ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+              ele1->insertBefore(ele2,NULL);
+              MBXMLUtils::E(ele1)->removeAttribute("href");
             }
             object=create(ele2);
             if(object) {
