@@ -420,7 +420,7 @@ def main():
       }
 
       // if this is the current result and the sessionid cookie exists then enable the webapp buttons
-      if($(location).attr('href').search("/result_current/")>=0) {
+      if($(location).attr('href').search("/report/result_current/runexamples_report/result_current")>=0) {
         var c=document.cookie.split(';');
         for(var i=0; i<c.length; i++)
           if(c[i].split('=')[0].trim()=="mbsimenvsessionid_js") {
