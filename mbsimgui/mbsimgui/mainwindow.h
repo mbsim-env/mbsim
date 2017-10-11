@@ -115,7 +115,6 @@ namespace MBSimGUI {
       ~MainWindow();
       std::shared_ptr<MBXMLUtils::DOMParser> parser;
       std::shared_ptr<MBXMLUtils::Eval> eval;
-//      ExtProperty evalSelect;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
       void addParameter(Parameter *parameter, EmbedItemData *parent);
@@ -206,7 +205,6 @@ namespace MBSimGUI {
       void moveUpObserver() { moveObserver(true); }
       void moveDownObserver() { moveObserver(false); }
       void saveElementAs();
-      void projectSettings();
 
     private slots:
       void selectElement(std::string ID);

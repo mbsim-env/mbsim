@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2017 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _SOLVER__H_
-#define _SOLVER__H_
+#ifndef _PROJECT__H_
+#define _PROJECT__H_
 
 #include "embeditemdata.h"
-#include "solver_property_dialog.h"
+#include "project_property_dialog.h"
 #include "namespace.h"
 
 namespace XERCES_CPP_NAMESPACE {
@@ -31,18 +31,28 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
-  class Solver : public EmbedItemData {
+  class DynamicSystemSolver;
+  class Solver;
+
+  class Project : public EmbedItemData {
     public:
-      Solver() : EmbedItemData("Solver") { }
+      Project() : EmbedItemData("Project"), dss(NULL), solver(NULL) { }
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual QString getName() const { return getType(); }
-      virtual QString getType() const { return "Solver"; }
-      virtual MBXMLUtils::NamespaceURI getNameSpace() const = 0;
-      virtual SolverPropertyDialog* createPropertyDialog() { return new SolverPropertyDialog(this); }
+      virtual QString getType() const { return "MBSimProject"; }
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMXML; }
+      virtual ProjectPropertyDialog* createPropertyDialog() { return new ProjectPropertyDialog(this); }
       virtual QMenu* createContextMenu() { return NULL; }
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this,true,false); }
+      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
+      void setDynamicSystemSolver(DynamicSystemSolver *dss_) { dss = dss_; }
+      void setSolver(Solver *solver_) { solver = solver_; }
+      DynamicSystemSolver* getDynamicSystemSolver() const { return dss; }
+      Solver* getSolver() const { return solver; }
+    private:
+      DynamicSystemSolver *dss;
+      Solver *solver;
   };
 
 }

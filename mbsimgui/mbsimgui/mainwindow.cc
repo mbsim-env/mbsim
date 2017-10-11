@@ -38,6 +38,7 @@
 #include "solver_view.h"
 #include "project_view.h"
 #include "embed.h"
+#include "project.h"
 #include "mbsim_process.h"
 #include "project_property_dialog.h"
 #include "file_editor.h"
@@ -85,8 +86,6 @@ namespace MBSimGUI {
 
     serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
 
-//    evalSelect.setProperty(new TextProperty("octave", PV%"evaluator", false));
-    
     mw = this;
 
 #if _WIN32
@@ -163,9 +162,6 @@ namespace MBSimGUI {
     for (int i = 0; i < maxRecentFiles; ++i)
       menu->addAction(recentProjectFileActs[i]);
     updateRecentProjectFileActions();
-    menu->addSeparator();
-    menu->addSeparator();
-    action = menu->addAction("Settings", this, SLOT(projectSettings()));
     menuBar()->addMenu(menu);
 
     menu=new QMenu("Edit", menuBar());
@@ -540,22 +536,21 @@ namespace MBSimGUI {
   }
 
   void MainWindow::projectViewClicked() {
-    cout << "project view clicked" << endl;
-    //EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-    //Solver *solver = solverView->getSolver();
-    //vector<EmbedItemData*> parents = solver->getParents();
-    //QModelIndex index = emodel->index(0,0);
-    //emodel->removeRow(index.row(), index.parent());
-    //if(parents.size()) {
-    //  index = emodel->createEmbeddingItem(parents[0]);
-    //  for(size_t i=0; i<parents.size()-1; i++)
-    //    index = emodel->createEmbeddingItem(parents[i+1],index);
-    //  emodel->createEmbeddingItem(solver,index);
-    //}
-    //else
-    //  index = emodel->createEmbeddingItem(solver);
-    //embeddingList->expandAll();
-    //embeddingList->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
+//    EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+//    Project *project = projectView->getProject();
+//    vector<EmbedItemData*> parents = project->getParents();
+//    QModelIndex index = emodel->index(0,0);
+//    emodel->removeRow(index.row(), index.parent());
+//    if(parents.size()) {
+//      index = emodel->createEmbeddingItem(parents[0]);
+//      for(size_t i=0; i<parents.size()-1; i++)
+//        index = emodel->createEmbeddingItem(parents[i+1],index);
+//      emodel->createEmbeddingItem(project,index);
+//    }
+//    else
+//      index = emodel->createEmbeddingItem(project);
+//    embeddingList->expandAll();
+//    embeddingList->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
   }
 
   void MainWindow::newProject(bool ask) {
@@ -575,6 +570,11 @@ namespace MBSimGUI {
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
 
+      doc = impl->createDocument();
+      Project *project = new Project;
+      project->createXMLElement(doc);
+      projectView->setProject(project);
+
       EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
       QModelIndex index = pmodel->index(0,0);
       pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
@@ -584,20 +584,12 @@ namespace MBSimGUI {
       if(model->rowCount(index))
         delete model->getItem(index)->getItemData();
       model->removeRow(index.row(), index.parent());
-      DynamicSystemSolver *dss = new DynamicSystemSolver("MBS");
-      model->createGroupItem(dss,QModelIndex());
-
-      doc = impl->createDocument();
-
-      DOMElement *ele0=D(doc)->createElement(MBSIMXML%"MBSimProject");
-      doc->insertBefore(ele0, NULL);
-      E(ele0)->setAttribute("name", "Project");
-      dss->createXMLElement(ele0);
+      model->createGroupItem(project->getDynamicSystemSolver(),QModelIndex());
 
       elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
-      Integrator *integrator = new DOPRI5Integrator;
-      integrator->createXMLElement(ele0);
-      solverView->setSolver(integrator);
+
+      solverView->setSolver(project->getSolver());
+
       actionSaveProject->setDisabled(true);
       fileProject="";
       mbsimxml(1);
@@ -628,7 +620,6 @@ namespace MBSimGUI {
         message = "Unknown exception.";
       }
       setWindowTitle(fileProject+"[*]");
-//      evalSelect.initializeUsingXML(ele0);
       rebuildTree();
       actionSaveProject->setDisabled(false);
       mbsimxml(1);
@@ -858,45 +849,30 @@ namespace MBSimGUI {
   void MainWindow::mbsimxml(int task) {
     absolutePath = true;
     QModelIndex index = elementList->model()->index(0,0);
-    DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
-    Solver *solver=solverView->getSolver();
-    if(!dss || !solver)
+    if(not projectView->getProject())
       return;
 
-    QString sTask = QString::number(task); 
+    currentTask = task;
+
 //    shared_ptr<xercesc::DOMDocument> doc(static_cast<xercesc::DOMDocument*>(this->doc->cloneNode(true)));
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMNode *newDocElement = doc->importNode(this->doc->getDocumentElement(), true);
     doc->insertBefore(newDocElement, NULL);
-    DOMElement* ele0 = doc->getDocumentElement()->getFirstElementChild();
-    DOMElement* ele = (E(ele0)->getTagName()==PV%"Embed")?E(ele0)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver"):ele0;
-    dss->processFileID(ele);
+    projectView->getProject()->processFileID(static_cast<DOMElement*>(newDocElement));
 
-    E(ele)->setAttribute("name","out"+sTask.toStdString());;
-    QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+sTask+".mbsimprj.flat.xml";
-
-    currentTask = task;
+    QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+QString::number(task)+".mbsimprj.flat.xml";
 
     if(task==1) {
       if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
         static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
-      DOMElement *ele1 = D(doc)->createElement( MBSIM%"plotFeatureRecursive" );
-      E(ele1)->setAttribute("feature","-plotRecursive");
-      ele->insertBefore( ele1, ele->getFirstElementChild() );
     }
-
-    ele0 = ele0->getNextElementSibling();
-    ele = (E(ele0)->getTagName()==PV%"Embed")?ele0->getLastElementChild():ele0;
-    solverView->getSolver()->processFileID(ele);
 
     absolutePath = false;
 
-//    if(ele0) {
-      mbsimThread->setDocument(doc);
-      mbsimThread->setProjectFile(projectFile);
-      mbsimThread->setEvaluator("octave");
-      mbsimThread->start();
-//    }
+    mbsimThread->setDocument(doc);
+    mbsimThread->setProjectFile(projectFile);
+    mbsimThread->setEvaluator("octave");
+    mbsimThread->start();
   }
 
   void MainWindow::preprocessFinished(int result) {
@@ -1039,10 +1015,9 @@ namespace MBSimGUI {
   }
 
   void MainWindow::rebuildTree() {
-    DOMElement *ele0=doc->getDocumentElement();
-    DOMElement *ele1 = ele0->getFirstElementChild();
 
-    DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1);
+    Project *project=Embed<Project>::createAndInit(doc->getDocumentElement());
+    projectView->setProject(project);
 
     EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     QModelIndex index = pmodel->index(0,0);
@@ -1053,14 +1028,11 @@ namespace MBSimGUI {
     if(model->rowCount(index))
       delete model->getItem(index)->getItemData();
     model->removeRow(index.row(), index.parent());
-    model->createGroupItem(dss);
+    model->createGroupItem(project->getDynamicSystemSolver());
 
     elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
-    ele1 = ele1->getNextElementSibling();
-
-    Solver *solver=Embed<Solver>::createAndInit(ele1);
-    solverView->setSolver(solver);
+    solverView->setSolver(project->getSolver());
   }
 
   void MainWindow::undo() {
@@ -1871,15 +1843,6 @@ namespace MBSimGUI {
       recentProjectFileActs[j]->setVisible(false);
 
     //separatorAct->setVisible(numRecentFiles > 0);
-  }
-
-  void MainWindow::projectSettings() {
-    ProjectPropertyDialog *editor = new ProjectPropertyDialog(this);
-    editor->setAttribute(Qt::WA_DeleteOnClose);
-    editor->toWidget();
-    editor->show();
-    connect(editor,SIGNAL(apply()),this,SLOT(applySettings()));
-    connect(editor,SIGNAL(finished(int)),this,SLOT(settingsFinished(int)));
   }
 
   void MainWindow::settingsFinished(int result) {

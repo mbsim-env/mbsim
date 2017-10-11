@@ -19,9 +19,6 @@
 
 #include <config.h>
 #include "solver.h"
-#include "dynamic_system_solver.h"
-#include "objectfactory.h"
-#include <QDir>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>

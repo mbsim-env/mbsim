@@ -28,6 +28,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  extern bool currentTask;
+
   Environment *Environment::instance=NULL;
 
   void DynamicSystemSolver::removeXMLElements() {
@@ -82,6 +84,17 @@ namespace MBSimGUI {
   DOMElement* DynamicSystemSolver::initializeUsingXML(DOMElement *element) {
     Group::initializeUsingXML(element);
     environments = E(element)->getFirstElementChildNamed(MBSIM%"environments");
+    return element;
+  }
+
+  DOMElement* DynamicSystemSolver::processFileID(DOMElement *element) {
+    Group::processFileID(element);
+    E(element)->setAttribute("name","out"+QString::number(currentTask).toStdString());;
+    if(currentTask==1) {
+      DOMElement *ele1 = D(element->getOwnerDocument())->createElement( MBSIM%"plotFeatureRecursive" );
+      E(ele1)->setAttribute("feature","-plotRecursive");
+      element->insertBefore( ele1, element->getFirstElementChild() );
+    }
     return element;
   }
 

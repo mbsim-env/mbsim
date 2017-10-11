@@ -46,6 +46,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       QString getFileExtension() const { return ".mbsim.xml"; }
+      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
 
       ElementPropertyDialog* createPropertyDialog() { return new DynamicSystemSolverPropertyDialog(this); }
       QMenu* createContextMenu() { return new ElementContextMenu(this,NULL,false); }
