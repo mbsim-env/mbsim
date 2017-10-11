@@ -124,7 +124,13 @@ int main(int argc, char *argv[]) {
       DOMElement *modelEle=modelDoc->getDocumentElement();
 
       // create a clean evaluator (get the evaluator name first form the dom)
-      DOMElement *evaluator=E(modelEle)->getFirstElementChildNamed(PV%"evaluator");
+      DOMElement *evaluator;
+      if(E(modelEle)->getTagName()==PV%"Embed")
+        // if the root element IS A Embed than the <evaluator> element is the first child of the first child of the root element
+        evaluator=E(modelEle->getFirstElementChild())->getFirstElementChildNamed(PV%"evaluator");
+      else
+        // if the root element IS NOT A Embed than the <evaluator> element is the first child root element
+        evaluator=E(modelEle)->getFirstElementChildNamed(PV%"evaluator");
       if(evaluator)
         evalName=X()%E(evaluator)->getFirstTextChild()->getData();
       eval=Eval::createEvaluator(evalName, &dependencies);
@@ -153,7 +159,8 @@ int main(int argc, char *argv[]) {
       var.insert(var.end(), xmlParam.begin(), xmlParam.end());
 
       if(xmlParam.empty()) {
-        // adapt the evaluator in the dom
+        // adapt the evaluator in the dom (reset evaluator because it may change if the root element is a Embed)
+        evaluator=E(modelEle)->getFirstElementChildNamed(PV%"evaluator");
         if(evaluator)
           E(evaluator)->getFirstTextChild()->setData(X()%"xmlflat");
         else {
