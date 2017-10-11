@@ -928,18 +928,18 @@ def runExample(resultQueue, example):
 
 
 
-def mainFiles(fl, prefix):
+def mainFiles(fl, example, prefix):
   ret=fl
   for f in fl:
     ret=list(filter(lambda r: not (r.startswith(f[0:-len(prefix)]+'.') and len(r)>len(f)), ret))
-  return ret
+  return list(map(lambda x: example+'/'+x, ret))
 def webapp(example):
   ombv={}
   fl=glob.glob("*.ombv.xml")
   if len(fl)>0:
     ombv['buildType']=args.buildType
     ombv['prog']='openmbv'
-    ombv['file']=mainFiles(fl, ".ombv.xml")
+    ombv['file']=mainFiles(fl, example, ".ombv.xml")
   h5p={}
   for prefix in ['', 'reference/']:
     fl=glob.glob(prefix+"*.mbsim.h5")
@@ -947,7 +947,7 @@ def webapp(example):
       h5p['buildType']=args.buildType
       h5p['prog']='h5plotserie'
       if 'file' not in h5p: h5p['file']=[]
-      h5p['file'].extend(mainFiles(fl, ".mbsim.h5"))
+      h5p['file'].extend(mainFiles(fl, example, ".mbsim.h5"))
   gui={}
   if os.path.exists("MBS.mbsimprj.xml") or os.path.exists("FMI.mbsimprj.xml"):
     gui={'buildType': args.buildType, 'prog': 'mbsimgui'}
