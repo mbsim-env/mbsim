@@ -637,9 +637,11 @@ namespace MBSimGUI {
   bool MainWindow::saveProject(const QString &fileName, bool processDocument, bool modifyStatus) {
     try {
       serializer->writeToURI(doc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
-      for(auto it=hrefMap.begin(); it!=hrefMap.end(); it++)
+//      cout << hrefMap.size() << endl;
+      for(auto it=hrefMap.begin(); it!=hrefMap.end(); it++) {
+//        std::cout << "save " << it->first << ":" << it->second.first << endl;
         serializer->writeToURI(it->second.first, X()%(it->first));
-      //  std::cout << "save " << it->first << ":" << it->second << endl;
+      }
       if(modifyStatus) setProjectChanged(false);
       return true;
     }

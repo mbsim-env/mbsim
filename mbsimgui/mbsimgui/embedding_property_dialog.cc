@@ -26,7 +26,7 @@
 #include "utils.h"
 #include <boost/lexical_cast.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
-//#include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <xercesc/dom/DOMImplementation.hpp>
 #include <unordered_map>
 #include <QFileInfo>
 #include <QDir>
@@ -39,6 +39,7 @@ namespace MBSimGUI {
 
   extern QDir mbsDir;
   extern unordered_map<string,pair<DOMDocument*,int> > hrefMap;
+  extern DOMImplementation *impl;
 
   EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, bool name_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_), name(NULL), count(NULL), counterName(NULL) {
     addTab("Embedding");
@@ -118,24 +119,52 @@ namespace MBSimGUI {
         else
           E(element)->removeAttribute("counterName");
       }
-      if(parameterHref->isActive())
-        E(element)->setAttribute("parameterHref",static_cast<FileWidget*>(parameterHref->getWidget())->getFile().toStdString());
+      if(parameterHref->isActive()) {
+        string pHref = static_cast<FileWidget*>(parameterHref->getWidget())->getFile().toStdString();
+        if(E(element)->getAttribute("parameterHref")!=pHref) {
+          E(element)->setAttribute("parameterHref",pHref);
+          if(item->getNumberOfParameters()) {
+            QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(pHref)));
+            auto it = hrefMap.find(fileInfo.canonicalFilePath().toStdString());
+            DOMDocument *doc;
+            if(it == hrefMap.end()) {
+              doc=impl->createDocument();
+              hrefMap[mbsDir.absolutePath().toStdString()+"/"+pHref] = pair<DOMDocument*,int>(doc,1);
+            }
+            else {
+              throw;
+              doc = it->second.first;
+              it->second.second++;
+            }
+            DOMNode *oldele = item->getXMLElement()->getParentNode()->removeChild(item->getParameter(0)->getXMLElement()->getParentNode());
+            DOMNode *newele = doc->importNode(oldele,true);
+            doc->insertBefore(newele,NULL);
+            DOMElement *e = static_cast<DOMElement*>(newele)->getFirstElementChild();
+            for(int i=0; i<item->getNumberOfParameters(); i++) {
+              item->getParameter(i)->setXMLElement(e);
+              e = e->getNextElementSibling();
+            }
+          }
+        }
+      }
       else {
         if(E(element)->hasAttribute("parameterHref")) {
-          DOMElement *ele = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(item->getParameter(0)->getXMLElement()->getParentNode(),true));
-          element->insertBefore(ele,element->getFirstElementChild());
-          QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(element)->getAttribute("parameterHref"))));
-          auto it = hrefMap.find(fileInfo.canonicalFilePath().toStdString());
-          if(it != hrefMap.end()) {
-//            cout << "found parameterHref " << it->first << " " << it->second.first << " " << it->second.second << endl;
-            if(not --it->second.second)
-              hrefMap.erase(it);
-          }
           E(element)->removeAttribute("parameterHref");
-          DOMElement *e = ele->getFirstElementChild();
-          for(int i=0; i<item->getNumberOfParameters(); i++) {
-            item->getParameter(i)->setXMLElement(e);
-            e = e->getNextElementSibling();
+          if(item->getNumberOfParameters()) {
+            DOMElement *ele = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(item->getParameter(0)->getXMLElement()->getParentNode(),true));
+            element->insertBefore(ele,element->getFirstElementChild());
+            QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(element)->getAttribute("parameterHref"))));
+            auto it = hrefMap.find(fileInfo.canonicalFilePath().toStdString());
+            if(it != hrefMap.end()) {
+              // cout << "found parameterHref " << it->first << " " << it->second.first << " " << it->second.second << endl;
+              if(not --it->second.second)
+                hrefMap.erase(it);
+            }
+            DOMElement *e = ele->getFirstElementChild();
+            for(int i=0; i<item->getNumberOfParameters(); i++) {
+              item->getParameter(i)->setXMLElement(e);
+              e = e->getNextElementSibling();
+            }
           }
         }
       }
