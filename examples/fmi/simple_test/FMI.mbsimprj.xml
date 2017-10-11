@@ -2,7 +2,7 @@
 <MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML"
   xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <pv:Embed>
-    <DynamicSystemSolver name="System" xmlns="http://www.mbsim-env.de/MBSim">
+    <DynamicSystemSolver name="MBS" xmlns="http://www.mbsim-env.de/MBSim">
      <plotFeatureRecursive feature="+generalizedRelativePosition"/>
      <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
      <plotFeatureRecursive feature="+generalizedForce"/>

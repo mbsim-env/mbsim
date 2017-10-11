@@ -1,4 +1,4 @@
-<DynamicSystemSolver name="CrankMechanism" xmlns="http://www.mbsim-env.de/MBSim">
+<DynamicSystemSolver name="MBS" xmlns="http://www.mbsim-env.de/MBSim">
   <plotFeatureRecursive feature="+generalizedRelativePosition"/>
   <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
   <plotFeatureRecursive feature="+generalizedForce"/>

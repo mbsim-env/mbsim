@@ -47,7 +47,13 @@ namespace MBSimFMI {
 
     // create a clean evaluator (get the evaluator name first form the dom)
     string evalName="octave"; // default evaluator
-    xercesc::DOMElement *evaluator=E(ele)->getFirstElementChildNamed(PV%"evaluator");
+    xercesc::DOMElement *evaluator;
+    if(E(ele)->getTagName()==PV%"Embed")
+      // if the root element IS A Embed than the <evaluator> element is the first child of the first child of the root element
+      evaluator=E(ele->getFirstElementChild())->getFirstElementChildNamed(PV%"evaluator");
+    else
+      // if the root element IS NOT A Embed than the <evaluator> element is the first child root element
+      evaluator=E(ele)->getFirstElementChildNamed(PV%"evaluator");
     if(evaluator)
       evalName=X()%E(evaluator)->getFirstTextChild()->getData();
     shared_ptr<Eval> eval=Eval::createEvaluator(evalName);
