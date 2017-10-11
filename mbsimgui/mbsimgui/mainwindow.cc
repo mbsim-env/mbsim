@@ -36,6 +36,7 @@
 #include "element_view.h"
 #include "embedding_view.h"
 #include "solver_view.h"
+#include "project_view.h"
 #include "embed.h"
 #include "mbsim_process.h"
 #include "project_property_dialog.h"
@@ -251,9 +252,15 @@ namespace MBSimGUI {
 
     solverView = new SolverView;
 
+    projectView = new ProjectView;
+
     connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
     connect(embeddingList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
     connect(elementList->selectionModel(),SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(selectionChanged(const QModelIndex&)));
+
+    QDockWidget *dockWidget0 = new QDockWidget("MBSim project");
+    addDockWidget(Qt::LeftDockWidgetArea,dockWidget0);
+    dockWidget0->setWidget(projectView);
 
     QDockWidget *dockWidget1 = new QDockWidget("Multibody system");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
@@ -530,6 +537,25 @@ namespace MBSimGUI {
       index = emodel->createEmbeddingItem(solver);
     embeddingList->expandAll();
     embeddingList->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
+  }
+
+  void MainWindow::projectViewClicked() {
+    cout << "project view clicked" << endl;
+    //EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    //Solver *solver = solverView->getSolver();
+    //vector<EmbedItemData*> parents = solver->getParents();
+    //QModelIndex index = emodel->index(0,0);
+    //emodel->removeRow(index.row(), index.parent());
+    //if(parents.size()) {
+    //  index = emodel->createEmbeddingItem(parents[0]);
+    //  for(size_t i=0; i<parents.size()-1; i++)
+    //    index = emodel->createEmbeddingItem(parents[i+1],index);
+    //  emodel->createEmbeddingItem(solver,index);
+    //}
+    //else
+    //  index = emodel->createEmbeddingItem(solver);
+    //embeddingList->expandAll();
+    //embeddingList->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
   }
 
   void MainWindow::newProject(bool ask) {

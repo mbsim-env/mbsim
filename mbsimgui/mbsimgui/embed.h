@@ -27,7 +27,6 @@
 #include <QDir>
 #include <boost/lexical_cast.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
-//#include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <unordered_map>
 
 namespace MBSimGUI {
@@ -49,6 +48,8 @@ namespace MBSimGUI {
             xercesc::DOMElement *ele2 = 0;
             xercesc::DOMDocument *doc;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
+              std::cout << "parameterHref is currently not supported by MBSimGUI" << std::endl;
+              throw;
               QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"))));
               auto it = hrefMap.find(fileInfo.canonicalFilePath().toStdString());
               if(it == hrefMap.end()) {
@@ -68,15 +69,8 @@ namespace MBSimGUI {
               ele2 = ele2->getNextElementSibling();
             }
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
+              std::cout << "href is currently not supported by MBSimGUI" << std::endl;
               throw;
-//              href = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"));
-//              QFileInfo fileInfo(mbsDir.absoluteFilePath(href));
-//              xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
-//              ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-//              ele1->insertBefore(ele2,NULL);
-//              MBXMLUtils::E(ele1)->removeAttribute("href");
-//              xercesc::DOMProcessingInstruction *id=ele1->getOwnerDocument()->createProcessingInstruction(MBXMLUtils::X()%"href", MBXMLUtils::X()%href.toStdString());
-//              ele1->insertBefore(id, ele1->getFirstChild());
             }
             object=create(ele2);
             if(object) {

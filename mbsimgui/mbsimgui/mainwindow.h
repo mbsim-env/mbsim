@@ -52,6 +52,7 @@ namespace MBSimGUI {
   class ElementView;
   class EmbeddingView;
   class SolverView;
+  class ProjectView;
   class Element;
   class Frame;
   class Contour;
@@ -71,6 +72,7 @@ namespace MBSimGUI {
       ElementView *elementList;
       EmbeddingView *embeddingList;
       SolverView *solverView;
+      ProjectView *projectView;
       QString fileProject; 
       Process *mbsim;
       MBSimThread *mbsimThread;
@@ -147,6 +149,7 @@ namespace MBSimGUI {
       void elementListClicked();
       void parameterListClicked();
       void solverViewClicked();
+      void projectViewClicked();
       void newProject(bool ask=true);
       void loadProject();
       bool saveProjectAs();

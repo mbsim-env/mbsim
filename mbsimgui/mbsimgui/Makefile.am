@@ -51,6 +51,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   element_view.cc \
 		   embedding_view.cc \
 		   solver_view.cc \
+		   project_view.cc \
 		   dialogs.cc  \
 		   utils.cc \
 		   mbsim_process.cc \
@@ -78,6 +79,7 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   element_view.moc.cc \
 		   embedding_view.moc.cc \
 		   solver_view.moc.cc \
+		   project_view.moc.cc \
 		   dialogs.moc.cc  \
 		   mbsim_process.moc.cc
 BUILT_SOURCES = $(QT_BUILT_SOURCES)

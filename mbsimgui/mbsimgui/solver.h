@@ -36,7 +36,6 @@ namespace MBSimGUI {
   class Solver : public EmbedItemData {
     public:
       Solver() : EmbedItemData("Solver") { }
-//      xercesc::DOMElement* processHref(xercesc::DOMElement* element);
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);

@@ -101,24 +101,6 @@ namespace MBSimGUI {
     return element;
   }
 
-//  DOMElement* RigidBody::processHref(DOMElement *element) {
-//    Body::processHref(element);
-//
-//    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
-//    for(size_t i=1; i<frame.size(); i++) {
-//      frame[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
-//      ELE=ELE->getNextElementSibling();
-//    }
-//
-//    ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
-//    for(size_t i=0; i<contour.size(); i++) {
-//      contour[i]->processHref(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
-//      ELE=ELE->getNextElementSibling();
-//    }
-//
-//    return element;
-//  }
-
   DOMElement* RigidBody::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Body::initializeUsingXML(element);
