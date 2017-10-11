@@ -38,6 +38,7 @@ namespace MBSimGUI {
     list.push_back("octave");
     list.push_back("python");
     evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,0),true,false,PV%"evaluator");
+    evalSelect->setDisabled(true);
     addToTab("General",evalSelect);
   }
 
