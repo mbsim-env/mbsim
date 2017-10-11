@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML"
-  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
-  <pv:evaluator>octave</pv:evaluator>
-  <pv:Embed href="MBS.mbsim.xml" parameterHref="parameter.mbsim.xml"/>
-  <pv:Embed href="Integrator.mbsimint.xml">
-    <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <scalarParameter name="Tend">4</scalarParameter>
-    </Parameter>
-  </pv:Embed>
-</MBSimProject>
+<pv:Embed xmlns="http://www.mbsim-env.de/MBSimXML" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+  <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <scalarParameter name="TendHalf">2</scalarParameter>
+  </Parameter>
+  <MBSimProject name="MBSPRJ">
+    <pv:evaluator>octave</pv:evaluator>
+    <pv:Embed href="MBS.mbsim.xml" parameterHref="parameter.mbsim.xml"/>
+    <pv:Embed href="Integrator.mbsimint.xml">
+      <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+        <scalarParameter name="Tend">TendHalf*2</scalarParameter>
+      </Parameter>
+    </pv:Embed>
+  </MBSimProject>
+</pv:Embed>
