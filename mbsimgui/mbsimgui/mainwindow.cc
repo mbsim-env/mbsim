@@ -36,7 +36,9 @@
 #include "element_view.h"
 #include "embedding_view.h"
 #include "solver_view.h"
+#include "project_view.h"
 #include "embed.h"
+#include "project.h"
 #include "mbsim_process.h"
 #include "project_property_dialog.h"
 #include "file_editor.h"
@@ -70,6 +72,7 @@ namespace MBSimGUI {
   bool currentTask;
   bool absolutePath = false;
   QDir mbsDir;
+  unordered_map<string,pair<DOMDocument*,int> > hrefMap;
 
   MainWindow *mw;
 
@@ -85,8 +88,6 @@ namespace MBSimGUI {
 
     serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
 
-//    evalSelect.setProperty(new TextProperty("octave", PV%"evaluator", false));
-    
     mw = this;
 
 #if _WIN32
@@ -163,9 +164,6 @@ namespace MBSimGUI {
     for (int i = 0; i < maxRecentFiles; ++i)
       menu->addAction(recentProjectFileActs[i]);
     updateRecentProjectFileActions();
-    menu->addSeparator();
-    menu->addSeparator();
-    action = menu->addAction("Settings", this, SLOT(projectSettings()));
     menuBar()->addMenu(menu);
 
     menu=new QMenu("Edit", menuBar());
@@ -255,9 +253,15 @@ namespace MBSimGUI {
 
     solverView = new SolverView;
 
+    projectView = new ProjectView;
+
     connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
     connect(embeddingList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
     connect(elementList->selectionModel(),SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(selectionChanged(const QModelIndex&)));
+
+    QDockWidget *dockWidget0 = new QDockWidget("MBSim project");
+    addDockWidget(Qt::LeftDockWidgetArea,dockWidget0);
+    dockWidget0->setWidget(projectView);
 
     QDockWidget *dockWidget1 = new QDockWidget("Multibody system");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
@@ -536,8 +540,18 @@ namespace MBSimGUI {
     embeddingList->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
   }
 
+  void MainWindow::projectViewClicked() {
+    EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    QModelIndex index = emodel->index(0,0);
+    emodel->removeRow(index.row(), index.parent());
+    emodel->createEmbeddingItem(projectView->getProject());
+    embeddingList->expandAll();
+    embeddingList->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
+  }
+
   void MainWindow::newProject(bool ask) {
     if(maybeSave()) {
+      hrefMap.clear();
       undos.clear();
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
@@ -552,6 +566,11 @@ namespace MBSimGUI {
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
 
+      doc = impl->createDocument();
+      Project *project = new Project;
+      project->createXMLElement(doc);
+      projectView->setProject(project);
+
       EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
       QModelIndex index = pmodel->index(0,0);
       pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
@@ -561,20 +580,12 @@ namespace MBSimGUI {
       if(model->rowCount(index))
         delete model->getItem(index)->getItemData();
       model->removeRow(index.row(), index.parent());
-      DynamicSystemSolver *dss = new DynamicSystemSolver("MBS");
-      model->createGroupItem(dss,QModelIndex());
-
-      doc = impl->createDocument();
-
-      DOMElement *ele0=D(doc)->createElement(MBSIMXML%"MBSimProject");
-      doc->insertBefore(ele0, NULL);
-      E(ele0)->setAttribute("name", "Project");
-      dss->createXMLElement(ele0);
+      model->createGroupItem(project->getDynamicSystemSolver(),QModelIndex());
 
       elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
-      Integrator *integrator = new DOPRI5Integrator;
-      integrator->createXMLElement(ele0);
-      solverView->setSolver(integrator);
+
+      solverView->setSolver(project->getSolver());
+
       actionSaveProject->setDisabled(true);
       fileProject="";
       mbsimxml(1);
@@ -584,6 +595,7 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject(const QString &file) {
     if(not(file.isEmpty())) {
+      hrefMap.clear();
       undos.clear();
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
@@ -604,7 +616,6 @@ namespace MBSimGUI {
         message = "Unknown exception.";
       }
       setWindowTitle(fileProject+"[*]");
-//      evalSelect.initializeUsingXML(ele0);
       rebuildTree();
       actionSaveProject->setDisabled(false);
       mbsimxml(1);
@@ -638,20 +649,12 @@ namespace MBSimGUI {
 
   bool MainWindow::saveProject(const QString &fileName, bool processDocument, bool modifyStatus) {
     try {
-      DOMProcessingInstruction *instr = E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
-      if(processDocument and instr) {
-        QModelIndex index = elementList->model()->index(0,0);
-        DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
-        xercesc::DOMDocument *ndoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
-        ndoc->getDocumentElement()->removeChild(E(ndoc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount"));
-        DOMElement* ele = ndoc->getDocumentElement()->getFirstElementChild();
-        dss->processHref(E(ele)->getTagName()==PV%"Embed"?ele->getLastElementChild():ele);
-        ele = ele->getNextElementSibling();
-        solverView->getSolver()->processHref(E(ele)->getTagName()==PV%"Embed"?ele->getLastElementChild():ele);
-        serializer->writeToURI(ndoc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
+      serializer->writeToURI(doc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
+//      cout << hrefMap.size() << endl;
+      for(auto it=hrefMap.begin(); it!=hrefMap.end(); it++) {
+//        std::cout << "save " << it->first << ":" << it->second.first << endl;
+        serializer->writeToURI(it->second.first, X()%(it->first));
       }
-      else
-        serializer->writeToURI(doc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
       if(modifyStatus) setProjectChanged(false);
       return true;
     }
@@ -699,6 +702,19 @@ namespace MBSimGUI {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,NULL);
+
+    if(item->getXMLElement()) {
+      DOMElement *parent = static_cast<DOMElement*>(item->getXMLElement()->getParentNode());
+      QString counterName = (E(parent)->getTagName()==PV%"Embed")?QString::fromStdString(E(parent)->getAttribute("counterName")):"";
+      if(not(counterName.isEmpty())) {
+        DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
+        E(ele1)->setAttribute("name", counterName.toStdString());
+        DOMText *text = doc->createTextNode(X()%"1");
+        ele1->insertBefore(text,NULL);
+        ele0->insertBefore(ele1,NULL);
+      }
+    }
+
     vector<EmbedItemData*> parents = item->getParents();
     for(size_t i=0; i<parents.size(); i++) {
       for(size_t j=0; j<parents[i]->getNumberOfParameters(); j++) {
@@ -709,14 +725,6 @@ namespace MBSimGUI {
     for(size_t j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
       DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
       ele0->insertBefore(node,NULL);
-    }
-    QString counterName = item->getCounterName();
-    if(not(counterName.isEmpty())) {
-      DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
-      E(ele1)->setAttribute("name", counterName.toStdString());
-      DOMText *text = doc->createTextNode(X()%"1");
-      ele1->insertBefore(text,NULL);
-      ele0->insertBefore(ele1,NULL);
     }
 
     DOMElement *root = doc->getDocumentElement();
@@ -839,41 +847,30 @@ namespace MBSimGUI {
   void MainWindow::mbsimxml(int task) {
     absolutePath = true;
     QModelIndex index = elementList->model()->index(0,0);
-    DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
-    Solver *solver=solverView->getSolver();
-    if(!dss || !solver)
+    if(not projectView->getProject())
       return;
 
-    QString sTask = QString::number(task); 
+    currentTask = task;
+
 //    shared_ptr<xercesc::DOMDocument> doc(static_cast<xercesc::DOMDocument*>(this->doc->cloneNode(true)));
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-    DOMNode *newDocElement = doc->importNode(this->doc->getDocumentElement(), true);
+    DOMElement *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, NULL);
-    DOMElement* ele = doc->getDocumentElement()->getFirstElementChild();
-    if(E(ele)->getTagName()==PV%"Embed")
-      ele = E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
-    dss->processFileID(ele);
-    E(ele)->setAttribute("name","out"+sTask.toStdString());;
-    QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+sTask+".mbsimprj.flat.xml";
+    projectView->getProject()->processFileID((E(newDocElement)->getTagName()==PV%"Embed")?E(newDocElement)->getFirstElementChildNamed(MBSIMXML%"MBSimProject"):newDocElement);
 
-    currentTask = task;
+    QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+QString::number(task)+".mbsimprj.flat.xml";
 
     if(task==1) {
       if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
         static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
-      DOMElement *ele1 = D(doc)->createElement( MBSIM%"plotFeatureRecursive" );
-      E(ele1)->setAttribute("feature","-plotRecursive");
-      ele->insertBefore( ele1, ele->getFirstElementChild() );
     }
 
     absolutePath = false;
 
-//    if(ele0) {
-      mbsimThread->setDocument(doc);
-      mbsimThread->setProjectFile(projectFile);
-      mbsimThread->setEvaluator("octave");
-      mbsimThread->start();
-//    }
+    mbsimThread->setDocument(doc);
+    mbsimThread->setProjectFile(projectFile);
+    mbsimThread->setEvaluator("octave");
+    mbsimThread->start();
   }
 
   void MainWindow::preprocessFinished(int result) {
@@ -1036,10 +1033,9 @@ namespace MBSimGUI {
   }
 
   void MainWindow::rebuildTree() {
-    DOMElement *ele0=doc->getDocumentElement();
-    DOMElement *ele1 = ele0->getFirstElementChild();
 
-    DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1);
+    Project *project=Embed<Project>::createAndInit(doc->getDocumentElement());
+    projectView->setProject(project);
 
     EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     QModelIndex index = pmodel->index(0,0);
@@ -1050,14 +1046,11 @@ namespace MBSimGUI {
     if(model->rowCount(index))
       delete model->getItem(index)->getItemData();
     model->removeRow(index.row(), index.parent());
-    model->createGroupItem(dss);
+    model->createGroupItem(project->getDynamicSystemSolver());
 
     elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
-    ele1 = ele1->getNextElementSibling();
-
-    Solver *solver=Embed<Solver>::createAndInit(ele1);
-    solverView->setSolver(solver);
+    solverView->setSolver(project->getSolver());
   }
 
   void MainWindow::undo() {
@@ -1440,7 +1433,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    frame->setName(frame->getName()+toQStr(model->getItem(index)->getID()));
+//    frame->setName(frame->getName()+toQStr(model->getItem(index)->getID()));
     parent->addFrame(frame);
     frame->createXMLElement(parent->getXMLFrames());
     model->createFrameItem(frame,index);
@@ -1453,7 +1446,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    contour->setName(contour->getName()+toQStr(model->getItem(index)->getID()));
+//    contour->setName(contour->getName()+toQStr(model->getItem(index)->getID()));
     parent->addContour(contour);
     contour->createXMLElement(parent->getXMLContours());
     model->createContourItem(contour,index);
@@ -1466,7 +1459,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    group->setName(group->getName()+toQStr(model->getItem(index)->getID()));
+//    group->setName(group->getName()+toQStr(model->getItem(index)->getID()));
     parent->addGroup(group);
     group->createXMLElement(parent->getXMLGroups());
     model->createGroupItem(group,index);
@@ -1479,7 +1472,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    object->setName(object->getName()+toQStr(model->getItem(index)->getID()));
+//    object->setName(object->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObject(object);
     object->createXMLElement(parent->getXMLObjects());
     model->createObjectItem(object,index);
@@ -1492,7 +1485,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    link->setName(link->getName()+toQStr(model->getItem(index)->getID()));
+//    link->setName(link->getName()+toQStr(model->getItem(index)->getID()));
     parent->addLink(link);
     link->createXMLElement(parent->getXMLLinks());
     model->createLinkItem(link,index);
@@ -1505,7 +1498,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    constraint->setName(constraint->getName()+toQStr(model->getItem(index)->getID()));
+//    constraint->setName(constraint->getName()+toQStr(model->getItem(index)->getID()));
     parent->addConstraint(constraint);
     constraint->createXMLElement(parent->getXMLConstraints());
     model->createConstraintItem(constraint,index);
@@ -1518,7 +1511,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    observer->setName(observer->getName()+toQStr(model->getItem(index)->getID()));
+//    observer->setName(observer->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObserver(observer);
     observer->createXMLElement(parent->getXMLObservers());
     model->createObserverItem(observer,index);
@@ -1532,9 +1525,9 @@ namespace MBSimGUI {
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     parent->addParameter(parameter);
-    parameter->createXMLElement(parent->getXMLElement());
-    if(parameter->getName()!="import")
-      parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
+    parameter->createXMLElement(parent->getParameterXMLElement());
+//    if(parameter->getName()!="import")
+//      parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
     embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
     embeddingList->openEditor();
@@ -1556,7 +1549,7 @@ namespace MBSimGUI {
         model->removeRow(index.row(), index.parent());
     }
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
-    Parameter::insertXMLElement(ele,parent->getXMLElement());
+    parent->getParameterXMLElement()->insertBefore(ele,NULL);
     Parameter *parameter=ObjectFactory::getInstance()->createParameter(ele);
     parameter->initializeUsingXML(ele);
     parent->addParameter(parameter);
@@ -1868,15 +1861,6 @@ namespace MBSimGUI {
       recentProjectFileActs[j]->setVisible(false);
 
     //separatorAct->setVisible(numRecentFiles > 0);
-  }
-
-  void MainWindow::projectSettings() {
-    ProjectPropertyDialog *editor = new ProjectPropertyDialog(this);
-    editor->setAttribute(Qt::WA_DeleteOnClose);
-    editor->toWidget();
-    editor->show();
-    connect(editor,SIGNAL(apply()),this,SLOT(applySettings()));
-    connect(editor,SIGNAL(finished(int)),this,SLOT(settingsFinished(int)));
   }
 
   void MainWindow::settingsFinished(int result) {

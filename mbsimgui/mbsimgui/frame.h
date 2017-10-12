@@ -40,6 +40,7 @@ namespace MBSimGUI {
   class InternalFrame : public Frame {
     public:
       InternalFrame(const QString &str, const MBXMLUtils::FQN &xmlFrameName_, const QString &plotFeatureType_="");
+      QString getName() const { return name; }
       QString getType() const { return "InternalFrame"; }
       ElementPropertyDialog* createPropertyDialog() { return new InternalFramePropertyDialog(this); }
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }
@@ -48,6 +49,7 @@ namespace MBSimGUI {
       const MBXMLUtils::FQN& getXMLFrameName() const { return xmlFrameName; }
       QString getPlotFeatureType() const { return plotFeatureType; }
     protected:
+      QString name;
       MBXMLUtils::FQN xmlFrameName;
       QString plotFeatureType;
   };

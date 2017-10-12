@@ -82,7 +82,7 @@ namespace MBSimGUI {
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(openContextMenu()));
 
-    installEventFilter(new IntegratorMouseEvent(this));
+    installEventFilter(new SolverMouseEvent(this));
     setReadOnly(true);
   }
 
@@ -121,7 +121,7 @@ namespace MBSimGUI {
     updateText();
   }
 
-  bool IntegratorMouseEvent::eventFilter(QObject *obj, QEvent *event) {
+  bool SolverMouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if(event->type() == QEvent::MouseButtonDblClick) {
       mw->setAllowUndo(false);
       mw->updateParameters(view->getSolver());
@@ -141,15 +141,16 @@ namespace MBSimGUI {
       return QObject::eventFilter(obj, event);
   }
 
-  void IntegratorMouseEvent::dialogFinished(int result) {
-    if(result != 0)
+  void SolverMouseEvent::dialogFinished(int result) {
+    if(result != 0) {
       mw->setProjectChanged(true);
-    editor->fromWidget();
+      editor->fromWidget();
+    }
     editor = 0;
     mw->setAllowUndo(true);
   }
 
-  void IntegratorMouseEvent::apply() {
+  void SolverMouseEvent::apply() {
     mw->setProjectChanged(true);
     editor->fromWidget();
   }

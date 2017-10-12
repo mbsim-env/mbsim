@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2017 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,52 +17,46 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _SOLVER_VIEW__H_
-#define _SOLVER_VIEW__H_
+#ifndef _PROJECT_VIEW__H_
+#define _PROJECT_VIEW__H_
 
 #include <QLineEdit>
 #include <QMenu>
 
 namespace MBSimGUI {
 
-  class Solver;
-  class SolverPropertyDialog;
+  class Project;
+  class ProjectPropertyDialog;
 
-  class SolverViewContextMenu : public QMenu {
+  class ProjectViewContextMenu : public QMenu {
     Q_OBJECT
 
     public:
-      SolverViewContextMenu(QWidget * parent = 0);
-    protected slots:
-      void selectSolver(QAction *action);
+      ProjectViewContextMenu(QWidget * parent = 0);
   };
 
-  class SolverView : public QLineEdit {
+  class ProjectView : public QLineEdit {
     Q_OBJECT
     public:
-      SolverView();
-      ~SolverView();
-      int getSolverNumber() const { return i; }
-      void setSolver(int i_) { i = i_; updateText(); }
-      Solver* getSolver() { return solver[i]; }
-      void setSolver(Solver *solver_);
-      void updateText() { setText(type[i]); }
-      QMenu* createContextMenu() { return new SolverViewContextMenu; }
+      ProjectView();
+      ~ProjectView() { }
+      Project* getProject() { return project; }
+      void setProject(Project *project_) { project = project_; }
+      void updateName();
+      QMenu* createContextMenu() { return new ProjectViewContextMenu; }
     protected:
-      std::vector<Solver*> solver;
-      std::vector<QString> type;
-      int i;
+      Project *project;
     protected slots:
       void openContextMenu();
   };
 
-  class SolverMouseEvent : public QObject {
+  class ProjectMouseEvent : public QObject {
     Q_OBJECT
     public:
-      SolverMouseEvent(SolverView* view_) : view(view_) { }
+      ProjectMouseEvent(ProjectView* view_) : view(view_) { }
     protected:
-      SolverView *view;
-      SolverPropertyDialog *editor;
+      ProjectView *view;
+      ProjectPropertyDialog *editor;
       bool eventFilter(QObject *obj, QEvent *event);
     protected slots:
       void dialogFinished(int result);

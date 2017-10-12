@@ -25,20 +25,22 @@
 
 namespace MBSimGUI {
 
-  class MainWindow;
+  class Project;
   class ExtWidget;
 
   class ProjectPropertyDialog : public PropertyDialog {
 
     public:
-      ProjectPropertyDialog(MainWindow *mw, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(MainWindow *mw);
-      virtual void fromWidget(MainWindow *mw);
-      void toWidget() {toWidget(mw);}
-      void fromWidget() {fromWidget(mw);}
+      ProjectPropertyDialog(Project *project, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      virtual void toWidget(Project *project);
+      virtual void fromWidget(Project *project);
+      void toWidget() {toWidget(project);}
+      void fromWidget() {fromWidget(project);}
     protected:
-      MainWindow *mw;
-      ExtWidget *evalSelect;
+      Project *project;
+      ExtWidget *name, *evalSelect;
   };
 
 }

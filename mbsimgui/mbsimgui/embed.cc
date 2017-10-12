@@ -21,6 +21,7 @@
 #include "embed.h"
 #include "dynamic_system_solver.h"
 #include "parameter.h"
+#include "project.h"
 #include "objectfactory.h"
 
 namespace MBSimGUI {
@@ -68,6 +69,11 @@ namespace MBSimGUI {
   template <>
     Solver* Embed<Solver>::create(xercesc::DOMElement *element) {
       return static_cast<Solver*>(ObjectFactory::getInstance()->createSolver(element));
+    }
+
+  template <>
+    Project* Embed<Project>::create(xercesc::DOMElement *element) {
+      return new Project;
     }
 
 }

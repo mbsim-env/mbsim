@@ -20,6 +20,8 @@
 #include <config.h>
 #include "embeditemdata.h"
 #include "parameter.h"
+#include <unordered_map>
+#include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -33,6 +35,11 @@ namespace MBSimGUI {
     for(vector<Parameter*>::iterator i = removedParameter.begin(); i != removedParameter.end(); ++i)
       delete *i;
   }
+
+//  QString EmbedItemData::getName() const {
+//      //return element?QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")):"Name";
+//    return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name"));
+//  }
 
   void EmbedItemData::addParameter(Parameter *param) {
     parameter.push_back(param);
@@ -76,6 +83,36 @@ namespace MBSimGUI {
         parent->removeChild(ps);
       parent->removeChild(element);
     }
+  }
+
+  DOMElement* EmbedItemData::getParameterXMLElement() {
+    DOMDocument *doc=element->getOwnerDocument();
+    DOMElement* embed = static_cast<DOMElement*>(element->getParentNode());
+    if(X()%embed->getNodeName()!="Embed") {
+      DOMElement *ele=D(doc)->createElement(PV%"Embed");
+      embed->insertBefore(ele,element);
+      embed = ele;
+      ele=D(doc)->createElement(PV%"Parameter");
+      embed->insertBefore(ele,NULL);
+      embed->insertBefore(element,NULL);
+      return ele;
+    }
+    else if(X()%embed->getFirstElementChild()->getNodeName()!="Parameter") {
+      DOMElement *ele=D(doc)->createElement(PV%"Parameter");
+      embed->insertBefore(ele,embed->getFirstElementChild());
+      return ele;
+    }
+    return embed->getFirstElementChild();
+  }
+
+  DOMElement* EmbedItemData::processFileID(DOMElement *element) {
+//    DOMElement *ele1 = static_cast<DOMElement*>(element->getParentNode());
+//    if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
+//      DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(parameter[0]->getXMLElement()->getParentNode(),true));
+//      ele1->insertBefore(ele2,ele1->getFirstElementChild());
+//      MBXMLUtils::E(ele1)->removeAttribute("parameterHref");
+//    }
+    return element;
   }
 
 }

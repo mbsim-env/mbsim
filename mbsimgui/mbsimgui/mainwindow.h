@@ -52,6 +52,7 @@ namespace MBSimGUI {
   class ElementView;
   class EmbeddingView;
   class SolverView;
+  class ProjectView;
   class Element;
   class Frame;
   class Contour;
@@ -71,6 +72,7 @@ namespace MBSimGUI {
       ElementView *elementList;
       EmbeddingView *embeddingList;
       SolverView *solverView;
+      ProjectView *projectView;
       QString fileProject; 
       Process *mbsim;
       MBSimThread *mbsimThread;
@@ -113,7 +115,6 @@ namespace MBSimGUI {
       ~MainWindow();
       std::shared_ptr<MBXMLUtils::DOMParser> parser;
       std::shared_ptr<MBXMLUtils::Eval> eval;
-//      ExtProperty evalSelect;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
       void addParameter(Parameter *parameter, EmbedItemData *parent);
@@ -147,6 +148,7 @@ namespace MBSimGUI {
       void elementListClicked();
       void parameterListClicked();
       void solverViewClicked();
+      void projectViewClicked();
       void newProject(bool ask=true);
       void loadProject();
       bool saveProjectAs();
@@ -204,7 +206,6 @@ namespace MBSimGUI {
       void moveUpObserver() { moveObserver(true); }
       void moveDownObserver() { moveObserver(false); }
       void saveElementAs();
-      void projectSettings();
 
     private slots:
       void selectElement(std::string ID);

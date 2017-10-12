@@ -47,7 +47,7 @@ namespace MBSimGUI {
     addPlotFeature("angularAcceleration");
   }
 
-  InternalFrame::InternalFrame(const QString &str, const MBXMLUtils::FQN &xmlFrameName_, const QString &plotFeatureType_) : Frame(str), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) {
+  InternalFrame::InternalFrame(const QString &str, const MBXMLUtils::FQN &xmlFrameName_, const QString &plotFeatureType_) : Frame(str), name(str), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) {
     config = true;
   }
 

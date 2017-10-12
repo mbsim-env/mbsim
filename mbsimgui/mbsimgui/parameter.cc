@@ -31,7 +31,6 @@ namespace MBSimGUI {
 
   void Parameter::initializeUsingXML(DOMElement *element) {
     this->element = element;
-    setName(QString::fromStdString(E(element)->getAttribute("name")));
     config = true;
   }
 
@@ -47,27 +46,9 @@ namespace MBSimGUI {
   DOMElement* Parameter::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     element=D(doc)->createElement(PV%getType().toStdString());
-    E(element)->setAttribute("name", getName().toStdString());
-    insertXMLElement(element, parent);
+    E(element)->setAttribute("name", getType().toStdString());
+    parent->insertBefore(element, NULL);
     return element;
-  }
-
-  void Parameter::insertXMLElement(DOMElement *element, DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement* embed = static_cast<DOMElement*>(parent->getParentNode());
-    if(X()%embed->getNodeName()!="Embed") {
-      DOMElement *ele=D(doc)->createElement(PV%"Embed");
-      embed->insertBefore(ele,parent);
-      embed = ele;
-      ele=D(doc)->createElement(PV%"Parameter");
-      embed->insertBefore(ele,NULL);
-      embed->insertBefore(parent,NULL);
-    }
-    else if(X()%embed->getFirstElementChild()->getNodeName()!="Parameter") {
-      DOMElement *ele=D(doc)->createElement(PV%"Parameter");
-      embed->insertBefore(ele,embed->getFirstElementChild());
-    }
-    embed->getFirstElementChild()->insertBefore(element,NULL);
   }
 
   vector<Parameter*> Parameter::initializeParametersUsingXML(DOMElement *element) {
@@ -84,12 +65,12 @@ namespace MBSimGUI {
 
   void StringParameter::initializeUsingXML(DOMElement *element) {
     Parameter::initializeUsingXML(element);
-    setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
+ //   setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
   }
 
   void ScalarParameter::initializeUsingXML(DOMElement *element) {
     Parameter::initializeUsingXML(element);
-    setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
+  //  setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
   }
 
   void VectorParameter::initializeUsingXML(DOMElement *element) {
@@ -103,15 +84,15 @@ namespace MBSimGUI {
           value.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
           ei=ei->getNextElementSibling();
         }
-        setValue(toQStr<QString>(value));
+//        setValue(toQStr<QString>(value));
       }
-      else if(E(ele)->getTagName() == (PV%"fromFile"))
-        setValue(QString::fromStdString((E(ele)->getAttribute("href"))));
+//      else if(E(ele)->getTagName() == (PV%"fromFile"))
+//        setValue(QString::fromStdString((E(ele)->getAttribute("href"))));
     }
     else {
-      DOMText *text=E(element)->getFirstTextChild();
-      if(text)
-      setValue(QString::fromStdString(X()%text->getData()));
+//      DOMText *text=E(element)->getFirstTextChild();
+ //     if(text)
+//      setValue(QString::fromStdString(X()%text->getData()));
     }
   }
 
@@ -131,15 +112,15 @@ namespace MBSimGUI {
           }
           ei=ei->getNextElementSibling();
         }
-        setValue(toQStr<QString>(value));
+//        setValue(toQStr<QString>(value));
       }
-      else if(E(ele)->getTagName() == (PV%"fromFile"))
-        setValue(QString::fromStdString((E(ele)->getAttribute("href"))));
+//      else if(E(ele)->getTagName() == (PV%"fromFile"))
+//        setValue(QString::fromStdString((E(ele)->getAttribute("href"))));
     }
     else {
-      DOMText *text=E(element)->getFirstTextChild();
-      if(text)
-      setValue(QString::fromStdString(X()%text->getData()));
+//      DOMText *text=E(element)->getFirstTextChild();
+//      if(text)
+//      setValue(QString::fromStdString(X()%text->getData()));
     }
   }
 
