@@ -314,7 +314,7 @@ namespace MBSimElectronics {
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
       gdn(0) += a[j]*LaMBS(ja[j]);
 
-    if(fabs(La(0) + gdn(0)/fabs(gdn(0))*fabs(U0)) <= LaTol)
+    if(fabs(La(0) + sign(gdn(0))*fabs(U0)) <= LaTol)
       ;
     else if(fabs(La(0)) <= fabs(U0)+LaTol && fabs(gdn(0)) <= gdTol)
       ;

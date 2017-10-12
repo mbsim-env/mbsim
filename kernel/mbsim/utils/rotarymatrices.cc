@@ -81,7 +81,8 @@ namespace MBSim {
 
   Vec3 AIK2Cardan(const SqrMat3 &AIK) {
     Vec3 AlphaBetaGamma(NONINIT);
-    AlphaBetaGamma(1)= asin(AIK(0,2));
+    assert(AIK(0,2)>=-1-1e-12 && AIK(0,2)<1+1e-12);
+    AlphaBetaGamma(1)= asin(std::max(std::min(AIK(0,2), 1.0), -1.0));
     double nenner = cos(AlphaBetaGamma(1));
     if (fabs(nenner)>1e-10) {
       AlphaBetaGamma(0) = atan2(-AIK(1,2),AIK(2,2));
@@ -95,7 +96,8 @@ namespace MBSim {
 
   Vec3 AIK2RevCardan(const SqrMat3 &AIK) {
     Vec3 AlphaBetaGamma(NONINIT);
-    AlphaBetaGamma(1)= asin(-AIK(2,0));
+    assert(-AIK(2,0)>=-1-1e-12 && -AIK(2,0)<1+1e-12);
+    AlphaBetaGamma(1)= asin(std::max(std::min(-AIK(2,0), 1.0), -1.0));
     double nenner = cos(AlphaBetaGamma(1));
     if (fabs(nenner)>1e-10) {
       AlphaBetaGamma(0) = atan2(AIK(2,1),AIK(2,2));
@@ -109,7 +111,8 @@ namespace MBSim {
 
   Vec3 AIK2ParametersZXY(const SqrMat3 &AIK) {
     Vec3 AlphaBetaGamma(NONINIT);
-    AlphaBetaGamma(0) = asin(AIK(2,1));
+    assert(AIK(2,1)>=-1-1e-12 && AIK(2,1)<1+1e-12);
+    AlphaBetaGamma(0) = asin(std::max(std::min(AIK(2,1), 1.0), -1.0));
     double nenner = cos(AlphaBetaGamma(0));
     if (fabs(nenner)>1e10) {
       AlphaBetaGamma(2) = atan2(-AIK(0,1), AIK(1,1));
