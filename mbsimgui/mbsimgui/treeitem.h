@@ -38,9 +38,6 @@ namespace MBSimGUI {
         getData_[0] = &TreeItem::getData0;
         getData_[1] = &TreeItem::getData1;
         getData_[2] = &TreeItem::getData2;
-        setData_[0] = &TreeItem::setData0;
-        setData_[1] = &TreeItem::setData1;
-        setData_[2] = &TreeItem::setData2;
       }
       ~TreeItem();
 
@@ -59,13 +56,8 @@ namespace MBSimGUI {
       QVariant getData0() const {return itemData->getName();}
       QVariant getData1() const {return itemData->getValue();}
       QVariant getData2() const {return itemData->getType();}
-      void setData0(const QVariant &value) {itemData->setName(value.toString());}
-      void setData1(const QVariant &value) {itemData->setValue(value.toString());}
-      void setData2(const QVariant &value) {itemData->setType(value.toString());}
       QVariant (TreeItem::*getData_[3])() const;
-      void (TreeItem::*setData_[3])(const QVariant &value);
       QVariant getData(int column) const {return (this->*getData_[column])();}
-      void setData(int column, const QVariant &value) {(this->*setData_[column])(value);}
       int getID() const {return ID;}
       QBrush getForeground() { return foreground; }
       void setForeground(const QBrush &brush) { foreground=brush; }

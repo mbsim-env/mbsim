@@ -27,6 +27,7 @@
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
+  class DOMDocument;
 }
 
 namespace MBSimGUI {
@@ -35,16 +36,14 @@ namespace MBSimGUI {
 
   class EmbedItemData : public TreeItemData {
     protected:
-      QString counterName;
       std::vector<Parameter*> parameter;
       std::vector<Parameter*> removedParameter;
       xercesc::DOMElement *element;
 
     public:
-      EmbedItemData(const QString &name="") : TreeItemData(name), element(NULL) { }
+      EmbedItemData(const QString &name="") : element(NULL) { }
       ~EmbedItemData();
-      const QString& getCounterName() const { return counterName; }
-      void setCounterName(const QString &str) { counterName = str; }
+      QString getName() const { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       virtual std::vector<EmbedItemData*> getParents() { return std::vector<EmbedItemData*>(); }
       int getNumberOfParameters() const { return parameter.size(); }
       Parameter* getParameter(int i) { return parameter[i]; }
@@ -54,8 +53,10 @@ namespace MBSimGUI {
       int getIndexOfParameter(Parameter *param) const;
       xercesc::DOMElement* getXMLElement() { return element; }
       void removeXMLElement();
+      virtual xercesc::DOMElement* getParameterXMLElement();
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }
       QMenu* createEmbeddingContextMenu() { return new EmbeddingContextMenu(this); }
+      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
   };
 
 }

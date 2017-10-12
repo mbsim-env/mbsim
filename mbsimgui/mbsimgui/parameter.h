@@ -39,13 +39,15 @@ namespace MBSimGUI {
 
   class Parameter : public TreeItemData {
     public:
-      Parameter(const QString &name="") : TreeItemData(name), parent(NULL), config(false) { }
+      Parameter(const QString &name="") : parent(NULL), config(false) { }
+      QString getName() const { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
+      QString getValue() const { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      static void insertXMLElement(xercesc::DOMElement *element, xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
       virtual ParameterContextMenu* createContextMenu() { return new ParameterContextMenu(this); }
       xercesc::DOMElement* getXMLElement() { return element; }
+      void setXMLElement(xercesc::DOMElement *element_) { element = element_; }
       virtual void removeXMLElements();
       EmbedItemData* getParent() { return parent; }
       void setParent(EmbedItemData* parent_) { parent = parent_; }
@@ -54,7 +56,6 @@ namespace MBSimGUI {
       static std::vector<Parameter*> initializeParametersUsingXML(xercesc::DOMElement *element);
     protected:
       EmbedItemData *parent;
-      QString name, valuestr;
       xercesc::DOMElement *element;
       bool config;
   };

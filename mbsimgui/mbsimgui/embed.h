@@ -27,13 +27,14 @@
 #include <QDir>
 #include <boost/lexical_cast.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <unordered_map>
 
 namespace MBSimGUI {
 
   class Element;
   extern QDir mbsDir;
   extern xercesc::DOMLSParser *parser;
+  extern std::unordered_map<std::string,std::pair<xercesc::DOMDocument*,int> > hrefMap;
 
   template <typename T>
     class Embed {
@@ -44,17 +45,23 @@ namespace MBSimGUI {
           T *object;
           std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
-            QString href, parameterHref;
             xercesc::DOMElement *ele2 = 0;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-              parameterHref = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"));
-              QFileInfo fileInfo(mbsDir.absoluteFilePath(parameterHref));
-              xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
+              QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"))));
+              std::cout << "Warning parameterHref is currently not supported by MBSimGUI. Content of file " << fileInfo.canonicalFilePath().toStdString() << " will be just imported!" << std::endl;
+              xercesc::DOMDocument *doc;
+              auto it = hrefMap.find(fileInfo.canonicalFilePath().toStdString());
+              if(it == hrefMap.end()) {
+                doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
+                //hrefMap[fileInfo.canonicalFilePath().toStdString()] = std::pair<xercesc::DOMDocument*,int>(doc,1);
+              }
+              else {
+                doc = it->second.first;
+                it->second.second++;
+              }
               ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
               ele1->insertBefore(ele2,ele1->getFirstElementChild());
               MBXMLUtils::E(ele1)->removeAttribute("parameterHref");
-              xercesc::DOMProcessingInstruction *id=ele1->getOwnerDocument()->createProcessingInstruction(MBXMLUtils::X()%"parameterHref", MBXMLUtils::X()%parameterHref.toStdString());
-              ele1->insertBefore(id, ele1->getFirstChild());
             }
             else
               ele2 = MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
@@ -65,32 +72,18 @@ namespace MBSimGUI {
             else
               ele2 = ele1->getFirstElementChild();
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
-              href = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"));
-              QFileInfo fileInfo(mbsDir.absoluteFilePath(href));
+              QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"))));
+              std::cout << "Warning href is currently not supported by MBSimGUI. Content of file " << fileInfo.canonicalFilePath().toStdString() << " will be just imported!" << std::endl;
               xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
               ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
               ele1->insertBefore(ele2,NULL);
               MBXMLUtils::E(ele1)->removeAttribute("href");
-              xercesc::DOMProcessingInstruction *id=ele1->getOwnerDocument()->createProcessingInstruction(MBXMLUtils::X()%"href", MBXMLUtils::X()%href.toStdString());
-              ele1->insertBefore(id, ele1->getFirstChild());
             }
             object=create(ele2);
             if(object) {
               object->initializeUsingXML(ele2);
               for(size_t i=0; i<param.size(); i++)
                 object->addParameter(param[i]);
-              if((not parameterHref.isEmpty()) or (not href.isEmpty())) {
-                xercesc::DOMDocument *doc=ele2->getOwnerDocument();
-                xercesc::DOMProcessingInstruction *instr = MBXMLUtils::E(doc->getDocumentElement())->getFirstProcessingInstructionChildNamed("hrefCount");
-                if(not instr) {
-                  instr=doc->createProcessingInstruction(MBXMLUtils::X()%"hrefCount", MBXMLUtils::X()%"1");
-                  doc->getDocumentElement()->insertBefore(instr, doc->getDocumentElement()->getFirstChild());
-                }
-                else {
-                  std::string count = MBXMLUtils::X()%instr->getData();
-                  instr->setData(MBXMLUtils::X()%toStr(boost::lexical_cast<int>(count)+1));
-                }
-              }
             }
           }
           else {

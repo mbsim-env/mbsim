@@ -19,29 +19,48 @@
 
 #include <config.h>
 #include "project_property_dialog.h"
-#include "mainwindow.h"
+#include "project.h"
 #include "basic_widgets.h"
 #include "extended_widgets.h"
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ProjectPropertyDialog::ProjectPropertyDialog(MainWindow *mw_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), mw(mw_) {
+  ProjectPropertyDialog::ProjectPropertyDialog(Project *project_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), project(project_) {
     addTab("General");
+    name = new ExtWidget("Name",new TextWidget(project->getName()));
+    name->setToolTip("Set the name of the project");
+    addToTab("General", name);
     vector<QString> list;
     list.push_back("octave");
     list.push_back("python");
-    evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,0),false);
+    evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,0),true,false,PV%"evaluator");
+    evalSelect->setDisabled(true);
     addToTab("General",evalSelect);
   }
 
-  void ProjectPropertyDialog::toWidget(MainWindow *mw) {
-//    mw->evalSelect.toWidget(evalSelect);
+  DOMElement* ProjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    static_cast<TextWidget*>(name->getWidget())->setText(project->getName());
+    evalSelect->initializeUsingXML(project->getXMLElement());
+    return parent;
   }
 
-  void ProjectPropertyDialog::fromWidget(MainWindow *mw) {
-//    mw->evalSelect.fromWidget(evalSelect);
+  DOMElement* ProjectPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    project->removeXMLElements();
+    E(project->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    evalSelect->writeXMLFile(project->getXMLElement(),project->getXMLElement()->getFirstElementChild());
+    return NULL;
+  }
+
+  void ProjectPropertyDialog::toWidget(Project *project) {
+    initializeUsingXML(project->getXMLElement());
+  }
+
+  void ProjectPropertyDialog::fromWidget(Project *project) {
+    writeXMLFile(project->getXMLElement());
   }
 
 }

@@ -139,8 +139,8 @@ namespace MBSimGUI {
       return false;
 
     TreeItem *item = getItem(index);
-    if(role == Qt::EditRole && index.column()==0)
-      item->setData0(value);
+//    if(role == Qt::EditRole && index.column()==0)
+//      item->setData0(value);
     if(role == Qt::ForegroundRole && index.column()==0)
       item->setForeground(value.value<QBrush>());
 
@@ -153,8 +153,8 @@ namespace MBSimGUI {
     if(role != Qt::EditRole || orientation != Qt::Horizontal)
       return false;
 
-    rootItem->setData(section,value);
-
+//    rootItem->setData(section,value);
+//
     emit headerDataChanged(orientation, section, section);
 
     return true;
@@ -162,7 +162,7 @@ namespace MBSimGUI {
 
   ElementTreeModel::ElementTreeModel(QObject *parent) : TreeModel(parent) {
 
-    rootItem = new TreeItem(new TreeItemData("Name","Value"));
+    rootItem = new TreeItem(new TreeItemData);
   }
 
   void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
@@ -305,7 +305,7 @@ namespace MBSimGUI {
 
   EmbeddingTreeModel::EmbeddingTreeModel(QObject *parent) : TreeModel(parent) {
 
-    rootItem = new TreeItem(new TreeItemData("Name","Value"));
+    rootItem = new TreeItem(new TreeItemData);
   }
 
   QModelIndex EmbeddingTreeModel::createEmbeddingItem(EmbedItemData *itemData, const QModelIndex &parent) {
@@ -323,7 +323,6 @@ namespace MBSimGUI {
       index = this->index(0,0,parent);
     else
       index = parent.child(i,0);
-    i = rowCount(index);
 
     for(int i=0; i<itemData->getNumberOfParameters(); i++)
       createParameterItem(itemData->getParameter(i),index);

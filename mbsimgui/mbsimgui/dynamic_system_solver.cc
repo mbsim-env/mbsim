@@ -19,15 +19,17 @@
 
 #include <config.h>
 #include "dynamic_system_solver.h"
+#include "project.h"
 #include "objectfactory.h"
 #include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern bool currentTask;
 
   Environment *Environment::instance=NULL;
 
@@ -57,7 +59,7 @@ namespace MBSimGUI {
     DOMElement *ele0 = Group::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
 
-    E(ele0)->setAttribute("name", getName().toStdString());
+    E(ele0)->setAttribute("name", "MBS");
     environments = D(doc)->createElement( MBSIM%"environments" );
     DOMElement *ele2 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
     DOMElement *ele3 = D(doc)->createElement( MBSIM%"accelerationOfGravity" );
@@ -84,6 +86,21 @@ namespace MBSimGUI {
     Group::initializeUsingXML(element);
     environments = E(element)->getFirstElementChildNamed(MBSIM%"environments");
     return element;
+  }
+
+  DOMElement* DynamicSystemSolver::processFileID(DOMElement *element) {
+    Group::processFileID(element);
+    E(element)->setAttribute("name","out"+QString::number(currentTask).toStdString());;
+    if(currentTask==1) {
+      DOMElement *ele1 = D(element->getOwnerDocument())->createElement( MBSIM%"plotFeatureRecursive" );
+      E(ele1)->setAttribute("feature","-plotRecursive");
+      element->insertBefore( ele1, element->getFirstElementChild() );
+    }
+    return element;
+  }
+
+  std::vector<EmbedItemData*> DynamicSystemSolver::getParents() {
+    return vector<EmbedItemData*>(1,project);
   }
 
 }

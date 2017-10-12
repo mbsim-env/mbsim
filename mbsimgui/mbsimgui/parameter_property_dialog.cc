@@ -43,8 +43,7 @@ namespace MBSimGUI {
 
   DOMElement* ParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     parameter->removeXMLElements();
-    parameter->setName(static_cast<TextWidget*>(name->getWidget())->getText());
-    E(parameter->getXMLElement())->setAttribute("name",parameter->getName().toStdString());
+    E(parameter->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     return NULL;
   }
 
@@ -70,7 +69,7 @@ namespace MBSimGUI {
   DOMElement* StringParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
-    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
+//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
     return NULL;
   }
 
@@ -88,7 +87,7 @@ namespace MBSimGUI {
   DOMElement* ScalarParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
-    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
+//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
     return NULL;
   }
 
@@ -106,7 +105,7 @@ namespace MBSimGUI {
   DOMElement* VectorParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
-    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
+//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
     return NULL;
   }
 
@@ -124,7 +123,7 @@ namespace MBSimGUI {
   DOMElement* MatrixParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
-    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
+//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
     return NULL;
   }
 
@@ -142,7 +141,7 @@ namespace MBSimGUI {
   DOMElement* ImportParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
-    parameter->setValue(static_cast<ExpressionWidget*>(value->getWidget())->getValue());
+//    parameter->setValue(static_cast<ExpressionWidget*>(value->getWidget())->getValue());
     return NULL;
   }
 

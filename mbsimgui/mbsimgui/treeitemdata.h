@@ -27,18 +27,12 @@ class QMenu;
 namespace MBSimGUI {
 
   class TreeItemData {
-    protected:
-      QString name, value;
 
     public:
-      TreeItemData(const QString &name_="", const QString &value_="") : name(name_), value(value_) { }
       virtual ~TreeItemData() { }
-      const QString& getName() const { return name; }
-      void setName(const QString &str) { name = str; }
-      const QString& getValue() const { return value; }
-      void setValue(const QString &str) { value = str; }
-      virtual QString getType() const { return ""; }
-      void setType(const QString &str) { }
+      virtual QString getName() const { return "Name"; }
+      virtual QString getValue() const { return ""; }
+      virtual QString getType() const { return "Type"; }
       virtual QMenu* createContextMenu() { return NULL; }
   };
 

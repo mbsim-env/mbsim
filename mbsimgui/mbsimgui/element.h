@@ -34,7 +34,6 @@ namespace MBSimGUI {
   class Link;
   class Constraint;
   class Observer;
-  class Parameter;
 
   namespace XERCES_CPP_NAMESPACE {
     class DOMElement;
@@ -59,8 +58,6 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* getXMLConstraints() { return NULL; }
       virtual xercesc::DOMElement* getXMLObservers() { return NULL; }
       virtual xercesc::DOMElement* getXMLFrame() { return NULL; }
-      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element) { return element; }
-      virtual xercesc::DOMElement* processHref(xercesc::DOMElement* element);
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
