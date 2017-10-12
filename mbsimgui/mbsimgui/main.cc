@@ -18,6 +18,8 @@
 */
 
 #include <config.h>
+#include <cassert>
+#include <cfenv>
 #include <iostream>
 #include <QApplication>
 #include "mainwindow.h"
@@ -27,6 +29,10 @@ using namespace std;
 using namespace MBSimGUI;
 
 int main(int argc, char *argv[]) {
+#ifndef _WIN32
+  assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
+#endif
+
   // environment variables
   // Disable COIN VBO per default (see --help)
   static char COIN_VBO[11];

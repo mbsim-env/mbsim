@@ -39,7 +39,7 @@ namespace MBSimControl {
       Signal::init(stage);
     }
     else
-      Link::init(stage);
+      Signal::init(stage);
   }
 
   void ExternSignalSink::updateSignal() {
