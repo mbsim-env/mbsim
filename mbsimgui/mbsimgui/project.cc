@@ -49,9 +49,9 @@ namespace MBSimGUI {
     element=D(doc)->createElement(getNameSpace()%getType().toStdString());
     E(element)->setAttribute("name","Project");
     parent->insertBefore(element, NULL);
-    dss = new DynamicSystemSolver("MBS");
+    setDynamicSystemSolver(new DynamicSystemSolver("MBS"));
     dss->createXMLElement(element);
-    solver = new DOPRI5Integrator;
+    setSolver(new DOPRI5Integrator);
     solver->createXMLElement(element);
     return element;
   }
@@ -59,9 +59,9 @@ namespace MBSimGUI {
   void Project::initializeUsingXML(DOMElement *element) {
     this->element = element;
     DOMElement *ele = element->getFirstElementChild();
-    dss = Embed<DynamicSystemSolver>::createAndInit(ele);
+    setDynamicSystemSolver(Embed<DynamicSystemSolver>::createAndInit(ele));
     ele = ele->getNextElementSibling();
-    solver=Embed<Solver>::createAndInit(ele);
+    setSolver(Embed<Solver>::createAndInit(ele));
   }
 
   DOMElement* Project::processFileID(DOMElement *element) {
@@ -74,6 +74,16 @@ namespace MBSimGUI {
     ele = (E(ele0)->getTagName()==PV%"Embed")?ele0->getLastElementChild():ele0;
     solver->processFileID(ele);
     return element;
+  }
+
+  void Project::setDynamicSystemSolver(DynamicSystemSolver *dss_) {
+    dss = dss_;
+    dss->setProject(this);
+  }
+
+  void Project::setSolver(Solver *solver_) {
+    solver = solver_;
+    solver->setProject(this);
   }
 
   DOMElement* Project::getParameterXMLElement() {

@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "solver.h"
+#include "project.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
@@ -50,6 +51,10 @@ namespace MBSimGUI {
 
   void Solver::initializeUsingXML(DOMElement *element) {
     this->element = element;
+  }
+
+  std::vector<EmbedItemData*> Solver::getParents() {
+    return vector<EmbedItemData*>(1,project);
   }
 
 }

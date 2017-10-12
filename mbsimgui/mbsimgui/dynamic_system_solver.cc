@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "dynamic_system_solver.h"
+#include "project.h"
 #include "objectfactory.h"
 #include <xercesc/dom/DOMDocument.hpp>
 
@@ -96,6 +97,10 @@ namespace MBSimGUI {
       element->insertBefore( ele1, element->getFirstElementChild() );
     }
     return element;
+  }
+
+  std::vector<EmbedItemData*> DynamicSystemSolver::getParents() {
+    return vector<EmbedItemData*>(1,project);
   }
 
 }

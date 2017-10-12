@@ -31,9 +31,15 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
+  class Project;
+
   class Solver : public EmbedItemData {
+    protected:
+      Project *project;
     public:
-      Solver() : EmbedItemData("Solver") { }
+      Solver() : EmbedItemData("Solver"), project(NULL) { }
+      void setProject(Project* project_) { project = project_; }
+      Project* getProject() { return project; }
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
@@ -43,6 +49,7 @@ namespace MBSimGUI {
       virtual SolverPropertyDialog* createPropertyDialog() { return new SolverPropertyDialog(this); }
       virtual QMenu* createContextMenu() { return NULL; }
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this,true,false); }
+      std::vector<EmbedItemData*> getParents();
   };
 
 }

@@ -46,8 +46,8 @@ namespace MBSimGUI {
       virtual QMenu* createContextMenu() { return NULL; }
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this,true,false); }
       virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
-      void setDynamicSystemSolver(DynamicSystemSolver *dss_) { dss = dss_; }
-      void setSolver(Solver *solver_) { solver = solver_; }
+      void setDynamicSystemSolver(DynamicSystemSolver *dss_);
+      void setSolver(Solver *solver_);
       DynamicSystemSolver* getDynamicSystemSolver() const { return dss; }
       Solver* getSolver() const { return solver; }
       virtual xercesc::DOMElement* getParameterXMLElement();

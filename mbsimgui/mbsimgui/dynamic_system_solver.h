@@ -25,6 +25,8 @@
 
 namespace MBSimGUI {
 
+  class Project;
+
   class Environment : public QObject {
     public:
       static Environment *getInstance() { return instance?instance:(instance=new Environment); }
@@ -38,18 +40,21 @@ namespace MBSimGUI {
   class DynamicSystemSolver : public Group {
     protected:
       xercesc::DOMElement *environments;
+      Project *project;
     public:
-      DynamicSystemSolver(const QString &str="") : Group(str) { config = true; }
+      DynamicSystemSolver(const QString &str="") : Group(str), project(NULL) { config = true; }
       QString getType() const { return "DynamicSystemSolver"; }
+      void setProject(Project* project_) { project = project_; }
+      Project* getProject() { return project; }
       xercesc::DOMElement* getXMLEnvironments() { return environments; }
       void removeXMLElements();
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       QString getFileExtension() const { return ".mbsim.xml"; }
       virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
-
       ElementPropertyDialog* createPropertyDialog() { return new DynamicSystemSolverPropertyDialog(this); }
       QMenu* createContextMenu() { return new ElementContextMenu(this,NULL,false); }
+      std::vector<EmbedItemData*> getParents();
   };
 
 }
