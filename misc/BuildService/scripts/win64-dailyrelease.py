@@ -18,9 +18,9 @@ os.environ["WINEPATH"]="/usr/x86_64-w64-mingw32/sys-root/mingw/bin;/home/mbsim/3
   "/home/mbsim/win64-dailyrelease/local/bin;/home/mbsim/3rdparty/octave-local-win64/bin;"+ \
   "/home/mbsim/3rdparty/hdf5-local-win64/bin;/home/mbsim/3rdparty/libarchive-local-win64/bin;"+ \
   "/home/mbsim/3rdparty/python-win64"
-os.environ["CXXFLAGS"]="-g -O2"
-os.environ["CFLAGS"]="-g -O2"
-os.environ["FFLAGS"]="-g -O2"
+os.environ["CXXFLAGS"]="-g -O2 -DNDEBUG"
+os.environ["CFLAGS"]="-g -O2 -DNDEBUG"
+os.environ["FFLAGS"]="-g -O2 -DNDEBUG"
 os.environ["MOC"]="/usr/x86_64-w64-mingw32/bin/moc"
 os.environ["UIC"]="/usr/x86_64-w64-mingw32/bin/uic"
 os.environ["RCC"]="/usr/x86_64-w64-mingw32/bin/rcc"

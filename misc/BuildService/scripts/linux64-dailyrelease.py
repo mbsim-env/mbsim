@@ -13,9 +13,9 @@ SCRIPTDIR=os.path.dirname(os.path.realpath(__file__))
 os.environ["PKG_CONFIG_PATH"]=SRCDIR+"/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi3py-local-linux64/lib/pkgconfig:"+ \
   "/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig"
 os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib"
-os.environ["CXXFLAGS"]="-g -O2"
-os.environ["CFLAGS"]="-g -O2"
-os.environ["FFLAGS"]="-g -O2"
+os.environ["CXXFLAGS"]="-g -O2 -DNDEBUG"
+os.environ["CFLAGS"]="-g -O2 -DNDEBUG"
+os.environ["FFLAGS"]="-g -O2 -DNDEBUG"
 os.environ['MBSIM_SWIG']='1'
 
 ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--webapp",
