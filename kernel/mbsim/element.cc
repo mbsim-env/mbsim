@@ -18,6 +18,8 @@
  */
 
 #include <config.h>
+#include <cassert>
+#include <cfenv>
 #include <mbsim/element.h>
 #include <mbsim/frames/frame.h>
 #include <mbsim/contours/contour.h>
@@ -37,6 +39,15 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSim {
+
+#if !defined(_WIN32) && !defined(NDEBUG)
+  // enable FPE of everything which load libmbsim.so -> this enables it automaticaly for all source examples
+  static struct EnableFPE {
+    EnableFPE() {
+      assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
+    }
+  } enableFPE;
+#endif
 
   // we use none signaling (quiet) NaN values for double in MBSim -> Throw compile error if these do not exist.
   static_assert(numeric_limits<double>::has_quiet_NaN, "This platform does not support quiet NaN for double.");

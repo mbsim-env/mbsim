@@ -1,4 +1,6 @@
 // includes
+#include <cassert>
+#include <cfenv>
 #include <mbxmlutilshelper/shared_library.h>
 #include <fmiModelFunctions.h>
 #include <boost/filesystem.hpp>
@@ -123,6 +125,10 @@ void doubleLoad(const path &fmuFile, fmiCallbackFunctions cbFuncs, const string 
 
 
 int main(int argc, char *argv[]) {
+#ifndef _WIN32
+  assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
+#endif
+
   if(argc!=2) {
     cout<<"Usage: "<<argv[0]<<" <FMU dir>"<<endl;
     return 1;
