@@ -928,11 +928,13 @@ def runExample(resultQueue, example):
 
 
 
-def mainFiles(fl, example, prefix):
+def mainFiles(fl, example, suffix):
   ret=fl
   for f in fl:
-    ret=list(filter(lambda r: not (r.startswith(f[0:-len(prefix)]+'.') and len(r)>len(f)), ret))
-  return list(map(lambda x: example+'/'+x, ret))
+    ret=list(filter(lambda r: not (r.startswith(f[0:-len(suffix)]+'.') and len(r)>len(f)), ret))
+  ret=list(map(lambda x: example+'/'+x, ret))
+  ret.sort(key=lambda a: os.path.basename(a))
+  return ret
 def webapp(example):
   ombv={}
   fl=glob.glob("*.ombv.xml")
