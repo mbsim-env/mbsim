@@ -698,14 +698,16 @@ namespace MBSimGUI {
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,NULL);
 
-    DOMElement *parent = static_cast<DOMElement*>(item->getXMLElement()->getParentNode());
-    QString counterName = (E(parent)->getTagName()==PV%"Embed")?QString::fromStdString(E(parent)->getAttribute("counterName")):"";
-    if(not(counterName.isEmpty())) {
-      DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
-      E(ele1)->setAttribute("name", counterName.toStdString());
-      DOMText *text = doc->createTextNode(X()%"1");
-      ele1->insertBefore(text,NULL);
-      ele0->insertBefore(ele1,NULL);
+    if(item->getXMLElement()) {
+      DOMElement *parent = static_cast<DOMElement*>(item->getXMLElement()->getParentNode());
+      QString counterName = (E(parent)->getTagName()==PV%"Embed")?QString::fromStdString(E(parent)->getAttribute("counterName")):"";
+      if(not(counterName.isEmpty())) {
+        DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
+        E(ele1)->setAttribute("name", counterName.toStdString());
+        DOMText *text = doc->createTextNode(X()%"1");
+        ele1->insertBefore(text,NULL);
+        ele0->insertBefore(ele1,NULL);
+      }
     }
 
     vector<EmbedItemData*> parents = item->getParents();
