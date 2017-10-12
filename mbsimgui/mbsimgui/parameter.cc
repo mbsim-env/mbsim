@@ -47,26 +47,8 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     element=D(doc)->createElement(PV%getType().toStdString());
     E(element)->setAttribute("name", getType().toStdString());
-    insertXMLElement(element, parent);
+    parent->insertBefore(element, NULL);
     return element;
-  }
-
-  void Parameter::insertXMLElement(DOMElement *element, DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement* embed = static_cast<DOMElement*>(parent->getParentNode());
-    if(X()%embed->getNodeName()!="Embed") {
-      DOMElement *ele=D(doc)->createElement(PV%"Embed");
-      embed->insertBefore(ele,parent);
-      embed = ele;
-      ele=D(doc)->createElement(PV%"Parameter");
-      embed->insertBefore(ele,NULL);
-      embed->insertBefore(parent,NULL);
-    }
-    else if(X()%embed->getFirstElementChild()->getNodeName()!="Parameter") {
-      DOMElement *ele=D(doc)->createElement(PV%"Parameter");
-      embed->insertBefore(ele,embed->getFirstElementChild());
-    }
-    embed->getFirstElementChild()->insertBefore(element,NULL);
   }
 
   vector<Parameter*> Parameter::initializeParametersUsingXML(DOMElement *element) {

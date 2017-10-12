@@ -536,21 +536,12 @@ namespace MBSimGUI {
   }
 
   void MainWindow::projectViewClicked() {
-//    EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-//    Project *project = projectView->getProject();
-//    vector<EmbedItemData*> parents = project->getParents();
-//    QModelIndex index = emodel->index(0,0);
-//    emodel->removeRow(index.row(), index.parent());
-//    if(parents.size()) {
-//      index = emodel->createEmbeddingItem(parents[0]);
-//      for(size_t i=0; i<parents.size()-1; i++)
-//        index = emodel->createEmbeddingItem(parents[i+1],index);
-//      emodel->createEmbeddingItem(project,index);
-//    }
-//    else
-//      index = emodel->createEmbeddingItem(project);
-//    embeddingList->expandAll();
-//    embeddingList->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
+    EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    QModelIndex index = emodel->index(0,0);
+    emodel->removeRow(index.row(), index.parent());
+    emodel->createEmbeddingItem(projectView->getProject());
+    embeddingList->expandAll();
+    embeddingList->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
   }
 
   void MainWindow::newProject(bool ask) {
@@ -856,9 +847,9 @@ namespace MBSimGUI {
 
 //    shared_ptr<xercesc::DOMDocument> doc(static_cast<xercesc::DOMDocument*>(this->doc->cloneNode(true)));
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-    DOMNode *newDocElement = doc->importNode(this->doc->getDocumentElement(), true);
+    DOMElement *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, NULL);
-    projectView->getProject()->processFileID(static_cast<DOMElement*>(newDocElement));
+    projectView->getProject()->processFileID((E(newDocElement)->getTagName()==PV%"Embed")?E(newDocElement)->getFirstElementChildNamed(MBSIMXML%"MBSimProject"):newDocElement);
 
     QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+QString::number(task)+".mbsimprj.flat.xml";
 
@@ -1507,7 +1498,7 @@ namespace MBSimGUI {
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     parent->addParameter(parameter);
-    parameter->createXMLElement(parent->getXMLElement());
+    parameter->createXMLElement(parent->getParameterXMLElement());
 //    if(parameter->getName()!="import")
 //      parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
@@ -1531,7 +1522,7 @@ namespace MBSimGUI {
         model->removeRow(index.row(), index.parent());
     }
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
-    Parameter::insertXMLElement(ele,parent->getXMLElement());
+    parent->getParameterXMLElement()->insertBefore(ele,NULL);
     Parameter *parameter=ObjectFactory::getInstance()->createParameter(ele);
     parameter->initializeUsingXML(ele);
     parent->addParameter(parameter);

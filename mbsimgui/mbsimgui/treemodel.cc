@@ -323,7 +323,6 @@ namespace MBSimGUI {
       index = this->index(0,0,parent);
     else
       index = parent.child(i,0);
-    i = rowCount(index);
 
     for(int i=0; i<itemData->getNumberOfParameters(); i++)
       createParameterItem(itemData->getParameter(i),index);

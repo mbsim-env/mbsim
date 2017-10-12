@@ -85,6 +85,26 @@ namespace MBSimGUI {
     }
   }
 
+  DOMElement* EmbedItemData::getParameterXMLElement() {
+    DOMDocument *doc=element->getOwnerDocument();
+    DOMElement* embed = static_cast<DOMElement*>(element->getParentNode());
+    if(X()%embed->getNodeName()!="Embed") {
+      DOMElement *ele=D(doc)->createElement(PV%"Embed");
+      embed->insertBefore(ele,element);
+      embed = ele;
+      ele=D(doc)->createElement(PV%"Parameter");
+      embed->insertBefore(ele,NULL);
+      embed->insertBefore(element,NULL);
+      return ele;
+    }
+    else if(X()%embed->getFirstElementChild()->getNodeName()!="Parameter") {
+      DOMElement *ele=D(doc)->createElement(PV%"Parameter");
+      embed->insertBefore(ele,embed->getFirstElementChild());
+      return ele;
+    }
+    return embed->getFirstElementChild();
+  }
+
   DOMElement* EmbedItemData::processFileID(DOMElement *element) {
 //    DOMElement *ele1 = static_cast<DOMElement*>(element->getParentNode());
 //    if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {

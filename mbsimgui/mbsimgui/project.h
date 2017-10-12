@@ -50,6 +50,7 @@ namespace MBSimGUI {
       void setSolver(Solver *solver_) { solver = solver_; }
       DynamicSystemSolver* getDynamicSystemSolver() const { return dss; }
       Solver* getSolver() const { return solver; }
+      virtual xercesc::DOMElement* getParameterXMLElement();
     private:
       DynamicSystemSolver *dss;
       Solver *solver;

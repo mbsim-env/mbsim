@@ -53,6 +53,7 @@ namespace MBSimGUI {
       int getIndexOfParameter(Parameter *param) const;
       xercesc::DOMElement* getXMLElement() { return element; }
       void removeXMLElement();
+      virtual xercesc::DOMElement* getParameterXMLElement();
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }
       QMenu* createEmbeddingContextMenu() { return new EmbeddingContextMenu(this); }
       virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
