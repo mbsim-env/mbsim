@@ -62,7 +62,7 @@ namespace MBSim {
   }
 
   bool PlanarCoulombFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
-    if (fabs(la(0) + gdn(0) / fabs(gdn(0)) * mu * fabs(laN)) <= laTol)
+    if (fabs(la(0) + sign(gdn(0)) * mu * fabs(laN)) <= laTol)
       return true;
     else if (fabs(la(0)) <= mu * fabs(laN) + laTol && fabs(gdn(0)) <= gdTol)
       return true;

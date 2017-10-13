@@ -75,7 +75,7 @@ namespace MBSim {
       // Halber Oeffnungswinkel
       double  psi = atan((r(0) - r(1))/h); // psi > 0 falls r_unten(0) > r_oben(1)
       double phi = M_PI*0.5 - fabs(psi);
-      double vz=psi/fabs(psi);
+      double vz=sign(psi);
       g = fabs(r_h-l)*sin(phi)-sphere->getRadius();
       double out = 1;
 
