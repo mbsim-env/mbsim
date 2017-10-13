@@ -18,7 +18,10 @@ int main (int argc, char* argv[]) {
   HarmonicResponseAnalyser analyser;
   Vec z0(sys->getzSize());
   analyser.setDetermineEquilibriumState(true);
-  analyser.setFrequencies(VecV(1,INIT,f));
+  Vec freq(50);
+  for(int i=0; i<freq.size(); i++)
+    freq(i) = 0.1 + i*0.1;
+  analyser.setFrequencies(freq);
   analyser.setSystemFrequencies(VecV(1,INIT,f));
   analyser.analyse(*sys);
 

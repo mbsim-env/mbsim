@@ -176,4 +176,3 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   spring2->enableOpenMBV(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 
 }
-
