@@ -59,6 +59,8 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   embed.cc \
 		   solver.cc \
 		   project.cc \
+		   octave_utils.cc \
+		   data_plot.cc \
 		   file_editor.cc
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
@@ -82,7 +84,9 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   solver_view.moc.cc \
 		   project_view.moc.cc \
 		   dialogs.moc.cc  \
-		   mbsim_process.moc.cc
+		   mbsim_process.moc.cc \
+		   data_plot.moc.cc
+
 BUILT_SOURCES = $(QT_BUILT_SOURCES)
 
 mbsimgui_HEADERS = 
@@ -104,7 +108,8 @@ dist_mbsimguiicon_DATA = icons/exit.svg \
 			 icons/resize.svg \
 			 icons/workdir.svg \
 			 icons/debug.svg \
-			 icons/mbsimgui.svg
+			 icons/mbsimgui.svg \
+			 icons/frequency_response.svg
 
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines

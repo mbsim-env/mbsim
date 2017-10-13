@@ -37,6 +37,13 @@ namespace MBSimGUI {
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMANALYSER; }
   };
 
+  class HarmonicResponseAnalyser : public Solver {
+    public:
+      virtual QString getType() const { return "HarmonicResponseAnalyser"; }
+      virtual HarmonicResponseAnalyserPropertyDialog* createPropertyDialog() {return new HarmonicResponseAnalyserPropertyDialog(this);}
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMANALYSER; }
+  };
+
 }
 
 #endif

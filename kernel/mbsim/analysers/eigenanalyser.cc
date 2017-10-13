@@ -50,7 +50,7 @@ namespace MBSimAnalyser {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYSER, Eigenanalyser)
 
-  Eigenanalyser::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) {}
+  Eigenanalyser::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) { }
 
   Vec Eigenanalyser::Residuum::operator()(const Vec &z) {
     Vec res;

@@ -169,6 +169,7 @@ namespace MBSimGUI {
       void h5plotserie();
       void eigenanalysis();
       void debug();
+      void frequencyResponse();
       void help();
       void xmlHelp(const QString &url="");
       void about();

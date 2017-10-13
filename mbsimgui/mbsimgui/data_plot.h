@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2017 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,17 +17,27 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _FUNCTION_H_
-#define _FUNCTION_H_
+#ifndef _DATA_PLOT__H_
+#define _DATA_PLOT__H_
 
-#include "element.h"
+#include <QDialog>
+
+class QwtPlot;
+class QwtPlotCurve;
 
 namespace MBSimGUI {
 
-  class Function : public Element {
+  class DataPlot : public QDialog {
+    Q_OBJECT
     public:
-      Function(const QString &name="") : Element(name) { }
-      virtual QString getType() const { return "Function"; }
+      DataPlot(const QVector<double> &f_, const QVector<QVector<double> > &A_, const QString &title="", const QString &xLabel="", const QString &yLabel="",  QWidget *parent=NULL);
+    private:
+      QVector<double> f;
+      QVector<QVector<double> > A;
+      QwtPlot *plot;
+      QwtPlotCurve *curve;
+    private slots:
+      void numChanged(int i);
   };
 
 }

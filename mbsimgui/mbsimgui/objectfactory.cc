@@ -281,6 +281,8 @@ namespace MBSimGUI {
       return new RKSuiteIntegrator;
     else if(E(element)->getTagName()==MBSIMANALYSER%"Eigenanalyser")
       return new Eigenanalyser;
+    else if(E(element)->getTagName()==MBSIMANALYSER%"HarmonicResponseAnalyser")
+      return new HarmonicResponseAnalyser;
     return 0;
   }
 

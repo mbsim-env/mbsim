@@ -30,13 +30,13 @@
                 Endzeitpunkt der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="plotStepSize" type="pv:timeScalar" minOccurs="0">  
+          <xs:element name="plotStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweite zur Ausgabe von Plotdaten.<br/>
                 Die Schrittweite zur Ausgabe von Plotdaten darf nicht kleiner als die Integrationsschrittweite sein.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="initialState" type="pv:unknownVector" minOccurs="0"> 
+          <xs:element name="initialState" type="pv:unknownVector" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Anfangszustand der Differentialinklusion.
             </xs:documentation></xs:annotation>
@@ -56,7 +56,7 @@
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="determineEquilibriumState" type="pv:booleanFullEval" minOccurs="0">  
+          <xs:element name="determineEquilibriumState" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
@@ -64,6 +64,56 @@
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType> 
+  </xs:complexType>
+
+  <xs:element name="HarmonicResponseAnalyser" substitutionGroup="mbsim:Solver" type="HarmonicResponseAnalyserType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+    tbd
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="HarmonicResponseAnalyserType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:SolverType">
+        <xs:sequence>
+          <xs:element name="startTime" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Startzeitpunkt der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="frequencies" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Anregungsfrequenzen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="systemFrequencies" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Systemfrequenzen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="plotStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Schrittweite zur Ausgabe von Plotdaten.<br/>
+                Die Schrittweite zur Ausgabe von Plotdaten darf nicht kleiner als die Integrationsschrittweite sein.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialState" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Anfangszustand der Differentialinklusion.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="task" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="determineEquilibriumState" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
 </xs:schema>

@@ -55,6 +55,8 @@
 #include <xercesc/dom/DOMException.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
+#include "octave_utils.h"
+#include "data_plot.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -232,6 +234,9 @@ namespace MBSimGUI {
     actionEigenanalysis->setDisabled(true);
     connect(actionEigenanalysis,SIGNAL(triggered()),this,SLOT(eigenanalysis()));
     toolBar->addAction(actionEigenanalysis);
+    QAction *actionFrequencyResponse = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
+//    actionFrequencyResponse->setDisabled(true);
+    connect(actionFrequencyResponse,SIGNAL(triggered()),this,SLOT(frequencyResponse()));
     QAction *actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,SIGNAL(triggered()),this,SLOT(debug()));
     toolBar->addAction(actionDebug);
@@ -941,6 +946,26 @@ namespace MBSimGUI {
     arg.append(projectFile);
     mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
     mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
+  }
+
+  void MainWindow::frequencyResponse() {
+    QString name = QString::fromStdString(uniqueTempDir.generic_string()+"/out0.harmonic_response_analysis.mat");
+    if(QFile::exists(name)) {
+      OctaveParser parser(name.toStdString());
+      parser.parse();
+      fmatvec::MatV t_ = static_cast<const OctaveMatrix*>(parser.get(1))->get<fmatvec::MatV>();
+      fmatvec::MatV A_ = static_cast<const OctaveMatrix*>(parser.get(2))->get<fmatvec::MatV>();
+      QVector<double> t(t_.rows());
+      QVector<QVector<double> > A(A_.cols(),QVector<double>(A_.rows()));
+      for(int i=0; i<t_.rows(); i++) {
+        t[i] = t_(i,0);
+        for(int j=0; j<A_.cols(); j++)
+          A[j][i] = A_(i,j);
+      }
+
+      DataPlot *plotDialog = new DataPlot(t,A,"Frequency response", "f in Hz", "A", this);
+      plotDialog->exec();
+    }
   }
 
   void MainWindow::selectElement(string ID) {

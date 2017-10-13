@@ -48,6 +48,8 @@ namespace MBSimGUI {
     actionGroup->addAction(action);
     action = new QAction(Utils::QIconCached("newobject.svg"),"Eigenanalyser", this);
     actionGroup->addAction(action);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"HarmonicResponseAnalyser", this);
+    actionGroup->addAction(action);
     addActions(actionGroup->actions());
     connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(selectSolver(QAction*)));
   }
@@ -67,6 +69,7 @@ namespace MBSimGUI {
     solver.push_back(new EulerExplicitIntegrator);
     solver.push_back(new RKSuiteIntegrator);
     solver.push_back(new Eigenanalyser);
+    solver.push_back(new HarmonicResponseAnalyser);
     type.push_back("DOPRI5 integrator");
     type.push_back("RADAU5 integrator");
     type.push_back("LSODE integrator");
@@ -75,6 +78,7 @@ namespace MBSimGUI {
     type.push_back("Euler explicit integrator");
     type.push_back("RKSuite integrator");
     type.push_back("Eigenanalyser");
+    type.push_back("HarmonicResponseAnalyser");
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(openContextMenu()));
 
@@ -110,6 +114,8 @@ namespace MBSimGUI {
       i=6;
     else if(dynamic_cast<Eigenanalyser*>(solver_))
       i=7;
+    else if(dynamic_cast<HarmonicResponseAnalyser*>(solver_))
+      i=8;
     delete solver[i];
     solver[i] = solver_;
     updateText();

@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _EIGENANALYSER_H_
-#define _EIGENANALYSER_H_
+#ifndef _HARMONIC_RESPONSE_ANALYSER_H_
+#define _HARMONIC_RESPONSE_ANALYSER_H_
 
 #include "fmatvec/fmatvec.h"
 #include "mbsim/functions/function.h"
@@ -29,10 +29,10 @@ namespace MBSimAnalyser {
   const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://www.mbsim-env.de/MBSimAnalyser");
 
   /**
-   * \brief Eigenanalyser for dynamic systems
+   * \brief HarmonicResponseAnalyser for dynamic systems
    * \author Martin Foerg
    */
-  class Eigenanalyser : public MBSim::Solver {
+  class HarmonicResponseAnalyser : public MBSim::Solver {
 
     class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
       public:
@@ -45,17 +45,17 @@ namespace MBSimAnalyser {
 
     public:
 
-      enum Task { eigenfrequencies, eigenmodes, eigenmode, eigenmotion };
+      enum Task { frequencyResponse };
 
       /**
        * \brief Standard constructor 
        */
-      Eigenanalyser() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), n(1), compEq(false), task(eigenmode) { }
+      HarmonicResponseAnalyser() : tStart(0), dtPlot(1e-2), compEq(false), task(frequencyResponse) { }
       
       /**
        * \brief Destructor
        */
-      ~Eigenanalyser() { }
+      ~HarmonicResponseAnalyser() { }
 
       void execute(MBSim::DynamicSystemSolver& system) { analyse(system); }
 
@@ -66,34 +66,14 @@ namespace MBSimAnalyser {
       void analyse(MBSim::DynamicSystemSolver& system);
 
       /**
-       * \brief Set the initial deviation of the equilibrium
-       * \param deltaz_ The deviation
-       */
-      void setInitialDeviation(const fmatvec::Vec &deltaz0_) { deltaz0 = deltaz0_; }
-
-      /**
-       * \brief Set the amplitude for the eigemode analysis
-       * \param A_ The amplitude
-       */
-      void setAmplitude(double A_) { A = A_; }
-
-      /**
-       * \brief Set the mode for the eigemode analysis
-       * \param n_ The mode number
-       */
-      void setMode(int n_) { n = n_; }
-
-      /**
        * \brief Set the start time for the analysis
        * \param tStart_ The start time
        */
       void setStartTime(double tStart_) { tStart=tStart_; }
 
-      /**
-       * \brief Set the end time for the analysis
-       * \param tEnd_ The end time
-       */
-      void setEndTime(double tEnd_) { tEnd = tEnd_; }
+      void setFrequencies(const fmatvec::VecV& fs_) { fs = fs_; }
+
+      void setSystemFrequencies(const fmatvec::VecV& f_) { f = f_; }
 
       /**
        * \brief Set the plot step size for the analysis
@@ -119,24 +99,6 @@ namespace MBSimAnalyser {
       const fmatvec::Vec& getInitialState() const { return zEq; }
 
       /**
-       * \brief Get the eigenvalues
-       * \return A vector containing the eigenvalues of the system
-       */
-      const fmatvec::Vector<fmatvec::Ref, std::complex<double> >& getEigenvalues() const { return w; }
-
-      /**
-       * \brief Get the eigenvectors
-       * \return A matrix containing the eigenvectors of the system
-       */
-      const fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> >& getEigenvectors() const { return V; }
-
-      /**
-       * \brief Get the eigenfrequencies
-       * \return A vector containing the eigenfrequencies of the system
-       */
-      const fmatvec::Vec& getEigenfrequencies() const { return freq; }
-
-      /**
        * \brief Set the name of the output file
        * \param fileName_ The output file name
        */
@@ -146,25 +108,16 @@ namespace MBSimAnalyser {
 
     protected:
 
-      fmatvec::Vec zEq, deltaz0;
-      double tStart, tEnd, dtPlot, A;
-      int n;
+      fmatvec::Vec zEq, zh;
+      fmatvec::VecV fs, f;
+      fmatvec::Mat Zh;
+      double tStart, dtPlot;
       bool compEq;
       Task task;
 
-      fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> > V;
-      fmatvec::Vector<fmatvec::Ref, std::complex<double> > w;
-      fmatvec::Vec freq;
-      std::vector<std::pair<double,int> > f;
-
       std::string fileName;
 
-      bool saveEigenanalyis(const std::string &fileName);
-      void computeEigenfrequencies();
-      void computeEigenvalues();
-      void computeEigenmodes();
-      void computeEigenmode();
-      void computeEigenmotion();
+      void computeFrequencyResponse();
   };
 
 }
