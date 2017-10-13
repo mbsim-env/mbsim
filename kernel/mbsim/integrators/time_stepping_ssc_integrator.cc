@@ -1330,9 +1330,12 @@ namespace MBSimIntegrator {
       if((i<qSize) || (i>qSize+uSize) || includeVelocities) { 
         if ((i>=qSize)&&(i<qSize+uSize))
           ResTol_i = aTol(i)/Hscale +  rTol(i)*fabs(zi(i));
-        else ResTol_i = aTol(i) + rTol(i)*fabs(zi(i));
-        dtNewRel_i = ResTol_i / fabs(ErrorLocal(i));
-        if (dtNewRel_i < dtNewRel) dtNewRel = dtNewRel_i;
+        else
+          ResTol_i = aTol(i) + rTol(i)*fabs(zi(i));
+        if(ErrorLocal(i)!=0) {
+          dtNewRel_i = ResTol_i / fabs(ErrorLocal(i));
+          if (dtNewRel_i < dtNewRel) dtNewRel = dtNewRel_i;
+        }
       }
     }
     return dtNewRel;
