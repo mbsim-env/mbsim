@@ -52,8 +52,8 @@ namespace MBSimAnalyser {
   }
 
   void HarmonicResponseAnalyser::computeFrequencyResponse() {
-    if(not(fs.size()))
-      fs.resize(1,INIT,1);
+    if(not(fE.size()))
+      fE.resize(1,INIT,1);
 
     if(not(zEq.size()))
       zEq = system->evalz0();
@@ -70,7 +70,7 @@ namespace MBSimAnalyser {
     int n = system->getzSize();
     system->setState(zEq);
 
-    double T = 1./f(0);
+    double T = 1./fS(0);
     
     Vec y0, y1;
     Vec bri(2*n);
@@ -112,10 +112,10 @@ namespace MBSimAnalyser {
     Vec zhr = zhri(0,n-1);
     Vec zhi = zhri(n,2*n-1);
 //    int N = int((fE-fS)/df)+1;
-    Zh.resize(fs.size(),n,NONINIT);
+    Zh.resize(fE.size(),n,NONINIT);
 
-    for(int k=0; k<fs.size(); k++) {
-      double Om = 2*M_PI*fs(k);
+    for(int k=0; k<fE.size(); k++) {
+      double Om = 2*M_PI*fE(k);
       Q(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1)) = -Om*SqrMat(n,EYE);
       Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1)) = Om*SqrMat(n,EYE);
       zhri = slvLU(Q,bri);
@@ -133,10 +133,10 @@ namespace MBSimAnalyser {
       os << endl;
       os << "# name: " << "f" << endl;
       os << "# type: " << "matrix" << endl;
-      os << "# rows: " << fs.size() << endl;
+      os << "# rows: " << fE.size() << endl;
       os << "# columns: " << 1 << endl;
-      for(int i=0; i<fs.size(); i++)
-          os << setw(28) << fs(i) << endl;
+      for(int i=0; i<fE.size(); i++)
+          os << setw(28) << fE(i) << endl;
       os << endl;
       os << "# name: " << "A" << endl;
       os << "# type: " << "matrix" << endl;
@@ -168,8 +168,8 @@ namespace MBSimAnalyser {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"startTime");
     if(e) setStartTime(Element::getDouble(e));
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"frequencies");
-    if(e) setFrequencies(Element::getVec(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"excitationFrequencies");
+    if(e) setExcitationFrequencies(Element::getVec(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"systemFrequencies");
     if(e) setSystemFrequencies(Element::getVec(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"plotStepSize");

@@ -71,9 +71,9 @@ namespace MBSimAnalyser {
        */
       void setStartTime(double tStart_) { tStart=tStart_; }
 
-      void setFrequencies(const fmatvec::VecV& fs_) { fs = fs_; }
+      void setExcitationFrequencies(const fmatvec::VecV& fE_) { fE = fE_; }
 
-      void setSystemFrequencies(const fmatvec::VecV& f_) { f = f_; }
+      void setSystemFrequencies(const fmatvec::VecV& fS_) { fS = fS_; }
 
       /**
        * \brief Set the plot step size for the analysis
@@ -109,7 +109,7 @@ namespace MBSimAnalyser {
     protected:
 
       fmatvec::Vec zEq, zh;
-      fmatvec::VecV fs, f;
+      fmatvec::VecV fE, fS;
       fmatvec::Mat Zh;
       double tStart, dtPlot;
       bool compEq;

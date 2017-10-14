@@ -166,7 +166,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-      ExtWidget *startTime, *frequencies, *systemFrequencies, *plotStepSize, *initialState, *task, *determineEquilibriumState;
+      ExtWidget *startTime, *excitationFrequencies, *systemFrequencies, *plotStepSize, *initialState, *task, *determineEquilibriumState;
   };
 
 }

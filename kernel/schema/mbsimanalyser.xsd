@@ -80,7 +80,7 @@
                 Startzeitpunkt der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="frequencies" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="excitationFrequencies" type="pv:unknownVector" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Anregungsfrequenzen.
             </xs:documentation></xs:annotation>

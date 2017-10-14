@@ -432,8 +432,8 @@ namespace MBSimGUI {
     startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"startTime");
     addToTab("General", startTime);
 
-    frequencies = new ExtWidget("Frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"frequencies");
-    addToTab("General", frequencies);
+    excitationFrequencies = new ExtWidget("Excitation frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"excitationFrequencies");
+    addToTab("General", excitationFrequencies);
 
     systemFrequencies = new ExtWidget("System frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"systemFrequencies");
     addToTab("General", systemFrequencies);
@@ -456,7 +456,7 @@ namespace MBSimGUI {
   DOMElement* HarmonicResponseAnalyserPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SolverPropertyDialog::initializeUsingXML(solver->getXMLElement());
     startTime->initializeUsingXML(solver->getXMLElement());
-    frequencies->initializeUsingXML(solver->getXMLElement());
+    excitationFrequencies->initializeUsingXML(solver->getXMLElement());
     systemFrequencies->initializeUsingXML(solver->getXMLElement());
     plotStepSize->initializeUsingXML(solver->getXMLElement());
     initialState->initializeUsingXML(solver->getXMLElement());
@@ -468,7 +468,7 @@ namespace MBSimGUI {
   DOMElement* HarmonicResponseAnalyserPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SolverPropertyDialog::writeXMLFile(solver->getXMLElement());
     startTime->writeXMLFile(solver->getXMLElement());
-    frequencies->writeXMLFile(solver->getXMLElement());
+    excitationFrequencies->writeXMLFile(solver->getXMLElement());
     systemFrequencies->writeXMLFile(solver->getXMLElement());
     plotStepSize->writeXMLFile(solver->getXMLElement());
     initialState->writeXMLFile(solver->getXMLElement());
