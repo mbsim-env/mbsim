@@ -72,7 +72,7 @@ namespace MBSimGUI {
   bool currentTask;
   bool absolutePath = false;
   QDir mbsDir;
-  unordered_map<string,pair<DOMDocument*,int> > hrefMap;
+  unordered_map<string,std::pair<DOMDocument*,int> > hrefMap;
 
   MainWindow *mw;
 
