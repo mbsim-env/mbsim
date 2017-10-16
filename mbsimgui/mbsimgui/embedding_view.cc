@@ -21,8 +21,8 @@
 #include "embedding_view.h"
 #include "treemodel.h"
 #include "treeitem.h"
+#include "embeditemdata.h"
 #include "parameter.h"
-#include "element.h"
 #include "mainwindow.h"
 
 namespace MBSimGUI {
@@ -50,7 +50,7 @@ namespace MBSimGUI {
       }
       else {
         EmbedItemData *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
-        if(item) {
+        if(item and item->getXMLElement()) {
           mw->updateParameters(item);
           editor = item->createEmbeddingPropertyDialog();
           editor->setAttribute(Qt::WA_DeleteOnClose);

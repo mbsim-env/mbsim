@@ -30,7 +30,7 @@ namespace MBSimGUI {
 
   ParameterContextMenu::ParameterContextMenu(Parameter *parameter_, QWidget *parent) : QMenu(parent), parameter(parameter_) {
     QAction *action=new QAction("Edit", this);
-    connect(action,SIGNAL(triggered()),mw->getEmbeddingList(),SLOT(openEditor()));
+    connect(action,SIGNAL(triggered()),mw->getEmbeddingView(),SLOT(openEditor()));
     addAction(action);
     addSeparator();
     action=new QAction("Copy", this);

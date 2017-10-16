@@ -69,8 +69,8 @@ namespace MBSimGUI {
     Q_OBJECT
 
     private:
-      ElementView *elementList;
-      EmbeddingView *embeddingList;
+      ElementView *elementView;
+      EmbeddingView *embeddingView;
       SolverView *solverView;
       ProjectView *projectView;
       QString fileProject; 
@@ -78,7 +78,7 @@ namespace MBSimGUI {
       MBSimThread *mbsimThread;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs;
+      QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs;
       QTimer *autoSaveTimer;
       QString currentID;
       enum { maxRecentFiles = 5 };
@@ -136,8 +136,8 @@ namespace MBSimGUI {
       void highlightObject(const QString &ID);
       const QString& getHighlightedObject() const {return currentID;}
       void loadProject(const QString &file);
-      ElementView* getElementList() { return elementList; }
-      EmbeddingView* getEmbeddingList() { return embeddingList; }
+      ElementView* getElementView() { return elementView; }
+      EmbeddingView* getEmbeddingView() { return embeddingView; }
       void setProjectChanged(bool changed=true);
       void selectSolver(int i);
       void setAllowUndo(bool allowUndo_) { allowUndo = allowUndo_; }
@@ -145,8 +145,8 @@ namespace MBSimGUI {
       const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
 
     public slots:
-      void elementListClicked();
-      void parameterListClicked();
+      void elementViewClicked();
+      void embeddingViewClicked();
       void solverViewClicked();
       void projectViewClicked();
       void newProject(bool ask=true);

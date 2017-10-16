@@ -43,7 +43,7 @@ namespace MBSimGUI {
 
   ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable) : QMenu(parent), element(element_) {
     QAction *action=new QAction("Edit", this);
-    connect(action,SIGNAL(triggered()),mw->getElementList(),SLOT(openEditor()));
+    connect(action,SIGNAL(triggered()),mw->getElementView(),SLOT(openEditor()));
     addAction(action);
     if(removable) {
       addSeparator();

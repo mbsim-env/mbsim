@@ -119,7 +119,7 @@ namespace MBSimGUI {
     mbsimThread->setParser(parser);
     connect(mbsimThread, SIGNAL(resultReady(int)), this, SLOT(preprocessFinished(int)));
 
-    elementList = new ElementView;
+    elementView = new ElementView;
 
     initInlineOpenMBV();
 
@@ -167,7 +167,7 @@ namespace MBSimGUI {
     menuBar()->addMenu(menu);
 
     menu=new QMenu("Edit", menuBar());
-    action = menu->addAction("Edit", elementList, SLOT(openEditor()));
+    action = menu->addAction("Edit", elementView, SLOT(openEditor()));
     action->setShortcut(QKeySequence("Ctrl+E"));
     menu->addSeparator();
     action = menu->addAction("Undo", this, SLOT(undo()));
@@ -241,23 +241,23 @@ namespace MBSimGUI {
     connect(actionDebug,SIGNAL(triggered()),this,SLOT(debug()));
     toolBar->addAction(actionDebug);
 
-    elementList->setModel(new ElementTreeModel);
-    elementList->setColumnWidth(0,250);
-    elementList->setColumnWidth(1,200);
-    elementList->hideColumn(1);
+    elementView->setModel(new ElementTreeModel);
+    elementView->setColumnWidth(0,250);
+    elementView->setColumnWidth(1,200);
+    elementView->hideColumn(1);
 
-    embeddingList = new EmbeddingView;
-    embeddingList->setModel(new EmbeddingTreeModel);
-    embeddingList->setColumnWidth(0,150);
-    embeddingList->setColumnWidth(1,200);
+    embeddingView = new EmbeddingView;
+    embeddingView->setModel(new EmbeddingTreeModel);
+    embeddingView->setColumnWidth(0,150);
+    embeddingView->setColumnWidth(1,200);
 
     solverView = new SolverView;
 
     projectView = new ProjectView;
 
-    connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
-    connect(embeddingList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
-    connect(elementList->selectionModel(),SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(selectionChanged(const QModelIndex&)));
+    connect(elementView,SIGNAL(pressed(QModelIndex)), this, SLOT(elementViewClicked()));
+    connect(embeddingView,SIGNAL(pressed(QModelIndex)), this, SLOT(embeddingViewClicked()));
+    connect(elementView->selectionModel(),SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(selectionChanged(const QModelIndex&)));
 
     QDockWidget *dockWidget0 = new QDockWidget("MBSim project");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget0);
@@ -270,9 +270,9 @@ namespace MBSimGUI {
     QGridLayout *widgetLayout1=new QGridLayout(widget1);
     widgetLayout1->setContentsMargins(0,0,0,0);
     widget1->setLayout(widgetLayout1);
-    OpenMBVGUI::AbstractViewFilter *elementListFilter=new OpenMBVGUI::AbstractViewFilter(elementList, 0, 1);
-    widgetLayout1->addWidget(elementListFilter, 0, 0);
-    widgetLayout1->addWidget(elementList, 1, 0);
+    OpenMBVGUI::AbstractViewFilter *elementViewFilter=new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
+    widgetLayout1->addWidget(elementViewFilter, 0, 0);
+    widgetLayout1->addWidget(elementView, 1, 0);
 
     QDockWidget *dockWidget3 = new QDockWidget("Embeddings");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
@@ -281,9 +281,9 @@ namespace MBSimGUI {
     QGridLayout *widgetLayout3=new QGridLayout(widget3);
     widgetLayout3->setContentsMargins(0,0,0,0);
     widget3->setLayout(widgetLayout3);
-    OpenMBVGUI::AbstractViewFilter *parameterListFilter=new OpenMBVGUI::AbstractViewFilter(embeddingList, 0, -2);
-    widgetLayout3->addWidget(parameterListFilter, 0, 0);
-    widgetLayout3->addWidget(embeddingList, 1, 0);
+    OpenMBVGUI::AbstractViewFilter *embeddingViewFilter=new OpenMBVGUI::AbstractViewFilter(embeddingView, 0, -2);
+    widgetLayout3->addWidget(embeddingViewFilter, 0, 0);
+    widgetLayout3->addWidget(embeddingView, 1, 0);
 
     QDockWidget *dockWidget2 = new QDockWidget("Solver");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
@@ -352,8 +352,8 @@ namespace MBSimGUI {
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
     if(currentTask==1) {
       inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
-      QModelIndex index = elementList->selectionModel()->currentIndex();
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+      QModelIndex index = elementView->selectionModel()->currentIndex();
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
       Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
       if(element)
         highlightObject(element->getID());
@@ -381,7 +381,7 @@ namespace MBSimGUI {
     inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
 
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
-    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementList, SLOT(openEditor()));
+    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementView, SLOT(openEditor()));
   }
 
   MainWindow::~MainWindow() {
@@ -463,10 +463,10 @@ namespace MBSimGUI {
   }
 
   void MainWindow::selectionChanged(const QModelIndex &current) {
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     Element *element=dynamic_cast<Element*>(model->getItem(current)->getItemData());
     if(element) {
-      EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+      EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
       vector<EmbedItemData*> parents = element->getParents();
       QModelIndex index = emodel->index(0,0);
       emodel->removeRow(index.row(), index.parent());
@@ -478,17 +478,17 @@ namespace MBSimGUI {
       }
       else
         index = emodel->createEmbeddingItem(element);
-      embeddingList->expandAll();
+      embeddingView->expandAll();
       highlightObject(element->getID());
     }
     else
       highlightObject("");
   }
 
-  void MainWindow::elementListClicked() {
+  void MainWindow::elementViewClicked() {
     if(QApplication::mouseButtons()==Qt::RightButton) {
-      QModelIndex index = elementList->selectionModel()->currentIndex();
-      TreeItemData *itemData = static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData();
+      QModelIndex index = elementView->selectionModel()->currentIndex();
+      TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData();
       if(itemData && index.column()==0) {
         QMenu *menu = itemData->createContextMenu();
         menu->exec(QCursor::pos());
@@ -496,14 +496,14 @@ namespace MBSimGUI {
       } 
     }
     else if(QApplication::mouseButtons()==Qt::LeftButton)
-      selectionChanged(elementList->selectionModel()->currentIndex());
+      selectionChanged(elementView->selectionModel()->currentIndex());
   }
 
-  void MainWindow::parameterListClicked() {
+  void MainWindow::embeddingViewClicked() {
     if(QApplication::mouseButtons()==Qt::RightButton) {
-      QModelIndex index = embeddingList->selectionModel()->currentIndex();
+      QModelIndex index = embeddingView->selectionModel()->currentIndex();
       if(index.column()==0) {
-        Parameter *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(embeddingList->model())->getItem(index)->getItemData());
+        Parameter *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
         if(parameter) {
           QMenu *menu = parameter->createContextMenu();
           menu->exec(QCursor::pos());
@@ -511,8 +511,8 @@ namespace MBSimGUI {
           return;
         }
         else {
-          EmbedItemData *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(embeddingList->model())->getItem(index)->getItemData());
-          if(item) {
+          EmbedItemData *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
+          if(item and item->getXMLElement()) {
             QMenu *menu = item->createEmbeddingContextMenu();
             menu->exec(QCursor::pos());
             delete menu;
@@ -523,7 +523,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::solverViewClicked() {
-    EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     Solver *solver = solverView->getSolver();
     vector<EmbedItemData*> parents = solver->getParents();
     QModelIndex index = emodel->index(0,0);
@@ -536,17 +536,17 @@ namespace MBSimGUI {
     }
     else
       index = emodel->createEmbeddingItem(solver);
-    embeddingList->expandAll();
-    embeddingList->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
+    embeddingView->expandAll();
+    embeddingView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
   }
 
   void MainWindow::projectViewClicked() {
-    EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = emodel->index(0,0);
     emodel->removeRow(index.row(), index.parent());
     emodel->createEmbeddingItem(projectView->getProject());
-    embeddingList->expandAll();
-    embeddingList->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
+    embeddingView->expandAll();
+    embeddingView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
   }
 
   void MainWindow::newProject(bool ask) {
@@ -571,18 +571,18 @@ namespace MBSimGUI {
       project->createXMLElement(doc);
       projectView->setProject(project);
 
-      EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+      EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
       QModelIndex index = pmodel->index(0,0);
       pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
 
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
       index = model->index(0,0);
       if(model->rowCount(index))
         delete model->getItem(index)->getItemData();
       model->removeRow(index.row(), index.parent());
       model->createGroupItem(project->getDynamicSystemSolver(),QModelIndex());
 
-      elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
+      elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
       solverView->setSolver(project->getSolver());
 
@@ -631,7 +631,7 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProjectAs() {
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
     QString file=QFileDialog::getSaveFileName(0, "XML project files", QString("./")+model->getItem(index)->getItemData()->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
     if(not(file.isEmpty())) {
@@ -774,7 +774,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveMBSimH5DataAs() {
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
     QString file=QFileDialog::getSaveFileName(0, "Export MBSim H5 file", QString("./")+model->getItem(index)->getItemData()->getName()+".mbsim.h5", "H5 files (*.mbsim.h5)");
     if(file!="") {
@@ -815,7 +815,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveStateVectorAs() {
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
     QString file=QFileDialog::getSaveFileName(0, "Export state vector file", "./statevector.asc", "ASCII files (*.asc)");
     if(file!="") {
@@ -830,7 +830,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveEigenanalysisAs() {
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
     QString file=QFileDialog::getSaveFileName(0, "Export eigenanalysis file", QString("./")+model->getItem(index)->getItemData()->getName()+".eigenanalysis.mat", "mat files (*.eigenanalysis.mat)");
     if(file!="") {
@@ -846,7 +846,7 @@ namespace MBSimGUI {
 
   void MainWindow::mbsimxml(int task) {
     absolutePath = true;
-    QModelIndex index = elementList->model()->index(0,0);
+    QModelIndex index = elementView->model()->index(0,0);
     if(not projectView->getProject())
       return;
 
@@ -969,10 +969,10 @@ namespace MBSimGUI {
   }
 
   void MainWindow::selectElement(string ID) {
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     map<QString, QModelIndex>::iterator it=model->idEleMap.find(QString::fromStdString(ID));
     if(it!=model->idEleMap.end())
-      elementList->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
+      elementView->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
   }
 
   void MainWindow::help() {
@@ -1037,18 +1037,18 @@ namespace MBSimGUI {
     Project *project=Embed<Project>::createAndInit(doc->getDocumentElement());
     projectView->setProject(project);
 
-    EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = pmodel->index(0,0);
     pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
 
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     index = model->index(0,0);
     if(model->rowCount(index))
       delete model->getItem(index)->getItemData();
     model->removeRow(index.row(), index.parent());
     model->createGroupItem(project->getDynamicSystemSolver());
 
-    elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
     solverView->setSolver(project->getSolver());
   }
@@ -1077,8 +1077,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeElement() {
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
     if((not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element))) {
       setProjectChanged(true);
@@ -1093,8 +1093,8 @@ namespace MBSimGUI {
 
   void MainWindow::removeParameter() {
     setProjectChanged(true);
-    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-    QModelIndex index = embeddingList->selectionModel()->currentIndex();
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+    QModelIndex index = embeddingView->selectionModel()->currentIndex();
     Parameter *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
     if(parameter == parameterBuffer.first)
       parameterBuffer.first = NULL;
@@ -1107,23 +1107,23 @@ namespace MBSimGUI {
   }
 
   void MainWindow::remove() {
-    if(elementList->hasFocus())
+    if(elementView->hasFocus())
       removeElement();
-    else if(embeddingList->hasFocus())
+    else if(embeddingView->hasFocus())
       removeParameter();
   }
 
   void MainWindow::copy(bool cut) {
-    if(elementList->hasFocus())
+    if(elementView->hasFocus())
       copyElement(cut);
-    else if(embeddingList->hasFocus())
+    else if(embeddingView->hasFocus())
       copyParameter(cut);
   }
 
   void MainWindow::paste() {
-    if(elementList->hasFocus()) {
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      QModelIndex index = elementList->selectionModel()->currentIndex();
+    if(elementView->hasFocus()) {
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+      QModelIndex index = elementView->selectionModel()->currentIndex();
       ContainerItemData *item = dynamic_cast<FrameItemData*>(model->getItem(index)->getItemData());
       if(item and dynamic_cast<Frame*>(getElementBuffer().first)) {
         loadFrame(item->getElement(),getElementBuffer().first);
@@ -1160,9 +1160,9 @@ namespace MBSimGUI {
         return;
       }
     }
-    else if(embeddingList->hasFocus()) {
-      EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-      QModelIndex index = embeddingList->selectionModel()->currentIndex();
+    else if(embeddingView->hasFocus()) {
+      EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+      QModelIndex index = embeddingView->selectionModel()->currentIndex();
       EmbedItemData *item = dynamic_cast<EmbedItemData*>(model->getItem(index)->getItemData());
       if(item)
         loadParameter(item,getParameterBuffer().first);
@@ -1170,9 +1170,9 @@ namespace MBSimGUI {
   }
 
   void MainWindow::move(bool up) {
-    if(elementList->hasFocus()) {
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      QModelIndex index = elementList->selectionModel()->currentIndex();
+    if(elementView->hasFocus()) {
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+      QModelIndex index = elementView->selectionModel()->currentIndex();
       Frame *frame = dynamic_cast<Frame*>(model->getItem(index)->getItemData());
       if(frame and (not dynamic_cast<InternalFrame*>(frame)) and (up?(frame->getParent()->getIndexOfFrame(frame)>1):(frame->getParent()->getIndexOfFrame(frame)<frame->getParent()->getNumberOfFrames()-1))) {
         moveFrame(up);
@@ -1209,9 +1209,9 @@ namespace MBSimGUI {
         return;
       }
     }
-    else if(embeddingList->hasFocus()) {
-      EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-      QModelIndex index = embeddingList->selectionModel()->currentIndex();
+    else if(embeddingView->hasFocus()) {
+      EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+      QModelIndex index = embeddingView->selectionModel()->currentIndex();
       Parameter *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
       if(parameter and (up?(parameter->getParent()->getIndexOfParameter(parameter)>0):(parameter->getParent()->getIndexOfParameter(parameter)<parameter->getParent()->getNumberOfParameters()-1)))
         moveParameter(up);
@@ -1219,24 +1219,24 @@ namespace MBSimGUI {
   }
 
   void MainWindow::copyElement(bool cut) {
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
     if((not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element)))
       elementBuffer = make_pair(element,cut);
   }
 
   void MainWindow::copyParameter(bool cut) {
-    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-    QModelIndex index = embeddingList->selectionModel()->currentIndex();
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+    QModelIndex index = embeddingView->selectionModel()->currentIndex();
     Parameter *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
     parameterBuffer = make_pair(parameter,cut);
   }
 
   void MainWindow::moveParameter(bool up) {
     setProjectChanged(true);
-    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-    QModelIndex index = embeddingList->selectionModel()->currentIndex();
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+    QModelIndex index = embeddingView->selectionModel()->currentIndex();
     Parameter *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
     int i = parameter->getParent()->getIndexOfParameter(parameter);
     int j = up?i-1:i+1;
@@ -1252,13 +1252,13 @@ namespace MBSimGUI {
     model->removeRows(0,parameter->getParent()->getNumberOfParameters(),index.parent());
     for(int i=0; i<parameter->getParent()->getNumberOfParameters(); i++)
       model->createParameterItem(parameter->getParent()->getParameter(i),index.parent());
-    embeddingList->setCurrentIndex(index.sibling(j,0));
+    embeddingView->setCurrentIndex(index.sibling(j,0));
   }
 
   void MainWindow::moveFrame(bool up) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     Frame *frame = static_cast<Frame*>(model->getItem(index)->getItemData());
     int i = frame->getParent()->getIndexOfFrame(frame);
     int j = up?i-1:i+1;
@@ -1275,13 +1275,13 @@ namespace MBSimGUI {
     model->removeRows(0,frame->getParent()->getNumberOfFrames(),index.parent());
     for(int i=0; i<frame->getParent()->getNumberOfFrames(); i++)
       model->createFrameItem(frame->getParent()->getFrame(i),index.parent());
-    elementList->setCurrentIndex(index.sibling(j,0));
+    elementView->setCurrentIndex(index.sibling(j,0));
   }
 
   void MainWindow::moveContour(bool up) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     Contour *contour = static_cast<Contour*>(model->getItem(index)->getItemData());
     int i = contour->getParent()->getIndexOfContour(contour);
     int j = up?i-1:i+1;
@@ -1298,13 +1298,13 @@ namespace MBSimGUI {
     model->removeRows(0,contour->getParent()->getNumberOfContours(),index.parent());
     for(int i=0; i<contour->getParent()->getNumberOfContours(); i++)
       model->createContourItem(contour->getParent()->getContour(i),index.parent());
-    elementList->setCurrentIndex(index.sibling(j,0));
+    elementView->setCurrentIndex(index.sibling(j,0));
   }
 
   void MainWindow::moveGroup(bool up) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     Group *group = static_cast<Group*>(model->getItem(index)->getItemData());
     int i = group->getParent()->getIndexOfGroup(group);
     int j = up?i-1:i+1;
@@ -1321,13 +1321,13 @@ namespace MBSimGUI {
     model->removeRows(0,group->getParent()->getNumberOfGroups(),index.parent());
     for(int i=0; i<group->getParent()->getNumberOfGroups(); i++)
       model->createGroupItem(group->getParent()->getGroup(i),index.parent(),false);
-    elementList->setCurrentIndex(index.sibling(j,0));
+    elementView->setCurrentIndex(index.sibling(j,0));
   }
 
   void MainWindow::moveObject(bool up) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     Object *object = static_cast<Object*>(model->getItem(index)->getItemData());
     int i = object->getParent()->getIndexOfObject(object);
     int j = up?i-1:i+1;
@@ -1344,13 +1344,13 @@ namespace MBSimGUI {
     model->removeRows(0,object->getParent()->getNumberOfObjects(),index.parent());
     for(int i=0; i<object->getParent()->getNumberOfObjects(); i++)
       model->createObjectItem(object->getParent()->getObject(i),index.parent(),false);
-    elementList->setCurrentIndex(index.sibling(j,0));
+    elementView->setCurrentIndex(index.sibling(j,0));
   }
 
   void MainWindow::moveLink(bool up) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     Link *link = static_cast<Link*>(model->getItem(index)->getItemData());
     int i = link->getParent()->getIndexOfLink(link);
     int j = up?i-1:i+1;
@@ -1367,13 +1367,13 @@ namespace MBSimGUI {
     model->removeRows(0,link->getParent()->getNumberOfLinks(),index.parent());
     for(int i=0; i<link->getParent()->getNumberOfLinks(); i++)
       model->createLinkItem(link->getParent()->getLink(i),index.parent());
-    elementList->setCurrentIndex(index.sibling(j,0));
+    elementView->setCurrentIndex(index.sibling(j,0));
   }
 
   void MainWindow::moveConstraint(bool up) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     Constraint *constraint = static_cast<Constraint*>(model->getItem(index)->getItemData());
     int i = constraint->getParent()->getIndexOfConstraint(constraint);
     int j = up?i-1:i+1;
@@ -1390,13 +1390,13 @@ namespace MBSimGUI {
     model->removeRows(0,constraint->getParent()->getNumberOfConstraints(),index.parent());
     for(int i=0; i<constraint->getParent()->getNumberOfConstraints(); i++)
       model->createConstraintItem(constraint->getParent()->getConstraint(i),index.parent());
-    elementList->setCurrentIndex(index.sibling(j,0));
+    elementView->setCurrentIndex(index.sibling(j,0));
   }
 
   void MainWindow::moveObserver(bool up) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     Observer *observer = static_cast<Observer*>(model->getItem(index)->getItemData());
     int i = observer->getParent()->getIndexOfObserver(observer);
     int j = up?i-1:i+1;
@@ -1413,12 +1413,12 @@ namespace MBSimGUI {
     model->removeRows(0,observer->getParent()->getNumberOfObservers(),index.parent());
     for(int i=0; i<observer->getParent()->getNumberOfObservers(); i++)
       model->createObserverItem(observer->getParent()->getObserver(i),index.parent());
-    elementList->setCurrentIndex(index.sibling(j,0));
+    elementView->setCurrentIndex(index.sibling(j,0));
   }
 
   void MainWindow::saveElementAs() {
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
     QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+element->getName()+".mbsim.xml", "XML files (*.xml)");
     if(not file.isEmpty()) {
@@ -1431,112 +1431,112 @@ namespace MBSimGUI {
 
   void MainWindow::addFrame(Frame *frame, Element *parent) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
 //    frame->setName(frame->getName()+toQStr(model->getItem(index)->getID()));
     parent->addFrame(frame);
     frame->createXMLElement(parent->getXMLFrames());
     model->createFrameItem(frame,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementList->openEditor();
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->openEditor();
   }
 
   void MainWindow::addContour(Contour *contour, Element *parent) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
 //    contour->setName(contour->getName()+toQStr(model->getItem(index)->getID()));
     parent->addContour(contour);
     contour->createXMLElement(parent->getXMLContours());
     model->createContourItem(contour,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementList->openEditor();
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->openEditor();
   }
 
   void MainWindow::addGroup(Group *group, Element *parent) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
 //    group->setName(group->getName()+toQStr(model->getItem(index)->getID()));
     parent->addGroup(group);
     group->createXMLElement(parent->getXMLGroups());
     model->createGroupItem(group,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementList->openEditor();
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->openEditor();
   }
 
   void MainWindow::addObject(Object *object, Element *parent) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
 //    object->setName(object->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObject(object);
     object->createXMLElement(parent->getXMLObjects());
     model->createObjectItem(object,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementList->openEditor();
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->openEditor();
   }
 
   void MainWindow::addLink(Link *link, Element *parent) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
 //    link->setName(link->getName()+toQStr(model->getItem(index)->getID()));
     parent->addLink(link);
     link->createXMLElement(parent->getXMLLinks());
     model->createLinkItem(link,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementList->openEditor();
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->openEditor();
   }
 
   void MainWindow::addConstraint(Constraint *constraint, Element *parent) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
 //    constraint->setName(constraint->getName()+toQStr(model->getItem(index)->getID()));
     parent->addConstraint(constraint);
     constraint->createXMLElement(parent->getXMLConstraints());
     model->createConstraintItem(constraint,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementList->openEditor();
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->openEditor();
   }
 
   void MainWindow::addObserver(Observer *observer, Element *parent) {
     setProjectChanged(true);
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
 //    observer->setName(observer->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObserver(observer);
     observer->createXMLElement(parent->getXMLObservers());
     model->createObserverItem(observer,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementList->openEditor();
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->openEditor();
   }
 
   void MainWindow::addParameter(Parameter *parameter, EmbedItemData *parent) {
     setProjectChanged(true);
-    QModelIndex index = embeddingList->selectionModel()->currentIndex();
-    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     parent->addParameter(parameter);
     parameter->createXMLElement(parent->getParameterXMLElement());
 //    if(parameter->getName()!="import")
 //      parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
-    embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
-    embeddingList->openEditor();
+    embeddingView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
+    embeddingView->openEditor();
   }
 
   void MainWindow::loadParameter(EmbedItemData *parent, Parameter *param) {
     setProjectChanged(true);
     DOMElement *ele = static_cast<DOMElement*>(doc->importNode(param->getXMLElement(),true));
-    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     if(parameterBuffer.second) {
       parameterBuffer.first = NULL;
       DOMNode *ps = param->getXMLElement()->getPreviousSibling();
@@ -1548,19 +1548,19 @@ namespace MBSimGUI {
       if(index.isValid())
         model->removeRow(index.row(), index.parent());
     }
-    QModelIndex index = embeddingList->selectionModel()->currentIndex();
+    QModelIndex index = embeddingView->selectionModel()->currentIndex();
     parent->getParameterXMLElement()->insertBefore(ele,NULL);
     Parameter *parameter=ObjectFactory::getInstance()->createParameter(ele);
     parameter->initializeUsingXML(ele);
     parent->addParameter(parameter);
     QModelIndex newIndex = model->createParameterItem(parameter,index);
-    embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
+    embeddingView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
   }
 
   void MainWindow::loadFrame(Element *parent, Element *element) {
     setProjectChanged(true);
     DOMElement *ele = NULL;
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
       ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
       if(elementBuffer.second) {
@@ -1581,20 +1581,20 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     parent->getXMLFrames()->insertBefore(ele, NULL);
     Frame *frame = Embed<Frame>::createAndInit(ele);
     if(frame) parent->addFrame(frame);
     model->createFrameItem(frame,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     mbsimxml(1);
   }
 
   void MainWindow::loadContour(Element *parent, Element *element) {
     setProjectChanged(true);
     DOMElement *ele = NULL;
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
       ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
       if(elementBuffer.second) {
@@ -1615,20 +1615,20 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     parent->getXMLContours()->insertBefore(ele, NULL);
     Contour *contour = Embed<Contour>::createAndInit(ele);
     if(contour) parent->addContour(contour);
     model->createContourItem(contour,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     mbsimxml(1);
   }
 
   void MainWindow::loadGroup(Element *parent, Element *element) {
     setProjectChanged(true);
     DOMElement *ele = NULL;
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
       ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
       if(elementBuffer.second) {
@@ -1649,20 +1649,20 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     parent->getXMLGroups()->insertBefore(ele, NULL);
     Group *group = Embed<Group>::createAndInit(ele);
     if(group) parent->addGroup(group);
     model->createGroupItem(group,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     mbsimxml(1);
   }
 
   void MainWindow::loadObject(Element *parent, Element *element) {
     setProjectChanged(true);
     DOMElement *ele = NULL;
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
       ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
       if(elementBuffer.second) {
@@ -1683,20 +1683,20 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     parent->getXMLObjects()->insertBefore(ele, NULL);
     Object *object = Embed<Object>::createAndInit(ele);
     if(object) parent->addObject(object);
     model->createObjectItem(object,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     mbsimxml(1);
   }
 
   void MainWindow::loadLink(Element *parent, Element *element) {
     setProjectChanged(true);
     DOMElement *ele = NULL;
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
       ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
       if(elementBuffer.second) {
@@ -1717,20 +1717,20 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     parent->getXMLLinks()->insertBefore(ele, NULL);
     Link *link = Embed<Link>::createAndInit(ele);
     if(link) parent->addLink(link);
     model->createLinkItem(link,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     mbsimxml(1);
   }
 
   void MainWindow::loadConstraint(Element *parent, Element *element) {
     setProjectChanged(true);
     DOMElement *ele = NULL;
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
       ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
       if(elementBuffer.second) {
@@ -1751,20 +1751,20 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     parent->getXMLConstraints()->insertBefore(ele, NULL);
     Constraint *constraint = Embed<Constraint>::createAndInit(ele);
     if(constraint) parent->addConstraint(constraint);
     model->createConstraintItem(constraint,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     mbsimxml(1);
   }
 
   void MainWindow::loadObserver(Element *parent, Element *element) {
     setProjectChanged(true);
     DOMElement *ele = NULL;
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
       ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
       if(elementBuffer.second) {
@@ -1785,13 +1785,13 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     parent->getXMLObservers()->insertBefore(ele, NULL);
     Observer *observer = Embed<Observer>::createAndInit(ele);
     if(observer) parent->addObserver(observer);
     model->createObserverItem(observer,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     mbsimxml(1);
   }
 
