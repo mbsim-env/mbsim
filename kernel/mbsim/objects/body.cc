@@ -77,7 +77,7 @@ namespace MBSim {
       contour[i]->setDynamicSystemSolver(sys);
   }
 
-  void Body::init(InitStage stage) {
+  void Body::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
@@ -99,12 +99,12 @@ namespace MBSim {
         }
       }
     }
-    Object::init(stage);
+    Object::init(stage, config);
 
     for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) 
-      (*i)->init(stage);
+      (*i)->init(stage, config);
     for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->init(stage);
+      (*i)->init(stage, config);
   }
 
   void Body::addContour(Contour* contour_) {

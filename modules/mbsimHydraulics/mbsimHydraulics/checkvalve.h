@@ -73,7 +73,7 @@ namespace MBSimHydraulics {
       MBSim::DirectionalSpringDamper * getSpring() {return spring; }
       MBSimControl::ObjectSensor * getXOpen() {return xOpen; }
       
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       
       void initializeUsingXML(xercesc::DOMElement * element);
 

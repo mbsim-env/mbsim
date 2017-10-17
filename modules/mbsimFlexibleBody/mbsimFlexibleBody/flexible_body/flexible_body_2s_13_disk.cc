@@ -263,7 +263,7 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13Disk::init(InitStage stage) {
+  void FlexibleBody2s13Disk::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       assert(nr > 0); // at least on radial row
       assert(nj > 1); // at least two azimuthal elements
@@ -319,15 +319,15 @@ namespace MBSimFlexibleBody {
         uElement.push_back(Vec(discretization[0]->getuSize(), INIT, 0.));
         ElementalNodes.push_back(Vec(4, INIT, 0.));
       }
-      FlexibleBody2s13::init(stage);
+      FlexibleBody2s13::init(stage, config);
     }
     else if (stage == unknownStage) {
       initMatrices(); // calculate constant mass- and stiffness matrix
 
-      FlexibleBody2s13::init(stage);
+      FlexibleBody2s13::init(stage, config);
     }
     else
-      FlexibleBody2s13::init(stage);
+      FlexibleBody2s13::init(stage, config);
   }
 
   Vec FlexibleBody2s13Disk::transformCW(const Vec& WrPoint) {

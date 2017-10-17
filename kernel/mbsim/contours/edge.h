@@ -42,7 +42,7 @@ namespace MBSim {
       Edge(const std::string &name="", Frame *R=0) : RigidContour(name,R), length(1) { }
 
       std::string getType() const {return "Edge";}
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
 
       /* GETTER / SETTER */
       void setLength(double length_) {length = length_;}

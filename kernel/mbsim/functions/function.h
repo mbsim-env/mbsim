@@ -22,6 +22,7 @@
 #include "fmatvec/function.h"
 #include <string>
 #include <xercesc/dom/DOMElement.hpp>
+#include "mbsim/utils/initconfigenum.h"
 
 namespace {
   std::string uniqueDummyName(void *p) {
@@ -32,6 +33,9 @@ namespace {
 }
 
 namespace MBSim {
+
+  extern const InitConfigEnum noDer;
+  extern const InitConfigEnum noDerDer; // this implies noDer
 
   /*! This class is just to have a none template base class for all MBSim function classes. */
   class FunctionBase : public Element {

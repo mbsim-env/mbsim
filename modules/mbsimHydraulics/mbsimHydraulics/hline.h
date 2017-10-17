@@ -70,7 +70,7 @@ namespace MBSimHydraulics {
       virtual void updateQ() { }
       void updateM() { M=Mlocal; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement *element);
 
       virtual Element* getDependency() const { return 0; }
@@ -114,7 +114,7 @@ namespace MBSimHydraulics {
       void updateM();
       
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void plot();
       
       void resetUpToDate() { HLine::resetUpToDate(); updPLG = true; }
@@ -145,7 +145,7 @@ namespace MBSimHydraulics {
       void updateQ();
       
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       
     private:
       MBSim::Function<double(double)> * QFunction;
@@ -165,7 +165,7 @@ namespace MBSimHydraulics {
       void updateQ();
       
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       
     private:
       MBSim::Function<double(double)> *QFunction;
@@ -190,7 +190,7 @@ namespace MBSimHydraulics {
       void updateQ();
       
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void plot();
       
     private:

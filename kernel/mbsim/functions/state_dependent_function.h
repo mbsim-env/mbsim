@@ -48,9 +48,9 @@ namespace MBSim {
       bool constParDer1() const { return f->constParDer(); }
       bool constParDer2() const { return true; }
       Function<Ret(fmatvec::VecV)>* getFunction() const { return f; }
-      void init(Element::InitStage stage) {
-        Function<Ret(fmatvec::VecV,double)>::init(stage);
-        f->init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(fmatvec::VecV,double)>::init(stage, config);
+        f->init(stage, config);
         if(stage == Element::preInit)
           n = (*f)(fmatvec::VecV(getArg1Size())).rows();
       }

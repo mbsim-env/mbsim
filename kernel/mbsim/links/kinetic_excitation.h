@@ -53,7 +53,7 @@ namespace MBSim {
       void updatelaM();
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */

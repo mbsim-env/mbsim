@@ -35,11 +35,11 @@ namespace MBSim {
   FrameObserver::FrameObserver(const std::string &name) : Observer(name), frame(0) {
   }
 
-  void FrameObserver::init(InitStage stage) {
+  void FrameObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_frame!="")
         setFrame(getByPath<Frame>(saved_frame));
-      Observer::init(stage);
+      Observer::init(stage, config);
     }
     else if(stage==plotting) {
 //        if(plotFeature[position]) plotColumns.push_back("AbsolutePosition");
@@ -47,7 +47,7 @@ namespace MBSim {
 //        if(plotFeature[velocity]) plotColumns.push_back("AbsoluteAngularVelocity");
 //        if(plotFeature[acceleration]) plotColumns.push_back("AbsoluteAcceleration");
 //        if(plotFeature[acceleration]) plotColumns.push_back("AbsoluteAngularAcceleration");
-      Observer::init(stage);
+      Observer::init(stage, config);
       if(plotFeature[openMBV]) {
         if(openMBVPosition) {
           openMBVPosition->setName("AbsolutePosition");
@@ -72,7 +72,7 @@ namespace MBSim {
       }
     }
     else
-      Observer::init(stage);
+      Observer::init(stage, config);
   }
 
   void FrameObserver::plot() {

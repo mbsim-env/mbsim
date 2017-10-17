@@ -70,7 +70,7 @@ namespace MBSimHydraulics {
 
       void calcgdSize(int j) {gdSize=1; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
 
       void updateWRef(const fmatvec::Mat& WRef, int i=0);
       void updateVRef(const fmatvec::Mat& VRef, int i=0);
@@ -124,7 +124,7 @@ namespace MBSimHydraulics {
       }
 
       void updateGeneralizedForces();
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement *element);
       virtual bool isSingleValued() const {return true;}
 
@@ -139,7 +139,7 @@ namespace MBSimHydraulics {
       EnvironmentNode(const std::string &name="") : HNode(name) {}
       virtual std::string getType() const { return "EnvironmentNode"; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
 
       virtual bool isSingleValued() const {return true;}
   };
@@ -158,7 +158,7 @@ namespace MBSimHydraulics {
 
       void calcxSize() {xSize=1; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement *element);
 
       void updateGeneralizedForces();
@@ -187,7 +187,7 @@ namespace MBSimHydraulics {
       bool isSetValued() const {return true; }
       virtual bool isActive() const {return true; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
 
       void calclaSize(int j) {laSize=1; }
       //void calclaSizeForActiveg() {laSize=0; }
@@ -239,7 +239,7 @@ namespace MBSimHydraulics {
       void calcrFactorSize(int j) {rFactorSize=1; }
       void calcsvSize() {svSize=1; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement *element);
       void plot();
 
@@ -286,7 +286,7 @@ namespace MBSimHydraulics {
 
       void setpFunction(MBSim::Function<double(double)> *pFunction_) { pFunction=pFunction_; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
 
       void updateGeneralizedForces();
       void initializeUsingXML(xercesc::DOMElement *element);

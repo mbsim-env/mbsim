@@ -38,9 +38,9 @@ namespace MBSim {
     updla = false;
   }
 
-  void GeneralizedElasticConnection::init(InitStage stage) {
-    DualRigidBodyLink::init(stage);
-    func->init(stage);
+  void GeneralizedElasticConnection::init(InitStage stage, const InitConfigSet &config) {
+    DualRigidBodyLink::init(stage, config);
+    func->init(stage, config);
   }
 
   void GeneralizedElasticConnection::initializeUsingXML(DOMElement *element) {

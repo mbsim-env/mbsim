@@ -365,7 +365,7 @@ namespace MBSim {
       observer[i]->plotAtSpecialEvent();
   }
 
-  void DynamicSystem::init(InitStage stage) {
+  void DynamicSystem::init(InitStage stage, const InitConfigSet &config) {
     if (stage == resolveXMLPath) {
       if (saved_frameOfReference != "")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
@@ -431,23 +431,23 @@ namespace MBSim {
     }
 
     for (unsigned i = 0; i < frame.size(); i++)
-      frame[i]->init(stage);
+      frame[i]->init(stage, config);
     for (unsigned int i = 0; i < contour.size(); i++)
-      contour[i]->init(stage);
+      contour[i]->init(stage, config);
     for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-      dynamicsystem[i]->init(stage);
+      dynamicsystem[i]->init(stage, config);
     for (unsigned i = 0; i < object.size(); i++)
-      object[i]->init(stage);
+      object[i]->init(stage, config);
     for (unsigned i = 0; i < link.size(); i++)
-      link[i]->init(stage);
+      link[i]->init(stage, config);
     for (unsigned i = 0; i < constraint.size(); i++)
-      constraint[i]->init(stage);
+      constraint[i]->init(stage, config);
     for (unsigned i = 0; i < model.size(); i++)
-      model[i]->init(stage);
+      model[i]->init(stage, config);
     for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
-      inverseKineticsLink[i]->init(stage);
+      inverseKineticsLink[i]->init(stage, config);
     for (unsigned i = 0; i < observer.size(); i++)
-      observer[i]->init(stage);
+      observer[i]->init(stage, config);
   }
 
   int DynamicSystem::solveConstraintsFixpointSingle() {

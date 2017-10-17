@@ -41,7 +41,7 @@ namespace MBSim {
     delete M;
   }
 
-  void KineticExcitation::init(InitStage stage) {
+  void KineticExcitation::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_ref!="") connect(getByPath<Frame>(saved_ref));
       if(frame[0]==NULL) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
@@ -64,9 +64,9 @@ namespace MBSim {
       if(F  and (F->getRetSize().first!=forceDir.cols())) THROW_MBSIMERROR("Number of force directions does not match!");
       if(M  and (M->getRetSize().first!=momentDir.cols())) THROW_MBSIMERROR("Number of moment directions does not match!");
     }
-    FloatingFrameLink::init(stage);
-    if(F) F->init(stage);
-    if(M) M->init(stage);
+    FloatingFrameLink::init(stage, config);
+    if(F) F->init(stage, config);
+    if(M) M->init(stage, config);
   }
 
   void KineticExcitation::updatelaF() {

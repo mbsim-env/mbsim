@@ -53,16 +53,16 @@ namespace MBSim {
     updla = false;
   }
 
-  void GeneralizedConnection::init(InitStage stage) {
+  void GeneralizedConnection::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
       if(fl->isSetValued()) {
         il = new BilateralImpact;
         il->setParent(this);
       }
     }
-    DualRigidBodyLink::init(stage);
-    if(fl) fl->init(stage);
-    if(il) il->init(stage);
+    DualRigidBodyLink::init(stage, config);
+    if(fl) fl->init(stage, config);
+    if(il) il->init(stage, config);
   }
 
   void GeneralizedConnection::initializeUsingXML(DOMElement* element) {

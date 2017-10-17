@@ -174,9 +174,9 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s33ANCF::init(InitStage stage) {
+  void FlexibleBody1s33ANCF::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
-      FlexibleBody1s::init(stage);
+      FlexibleBody1s::init(stage, config);
 
       initialised = true;
 
@@ -193,7 +193,7 @@ namespace MBSimFlexibleBody {
       initM();
     }
     else
-      FlexibleBody1s::init(stage);
+      FlexibleBody1s::init(stage, config);
   }
 
   void FlexibleBody1s33ANCF::plot() {
@@ -261,7 +261,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33ANCF::initInfo() {
-    FlexibleBody1s::init(unknownStage);
+    FlexibleBody1s::init(unknownStage, InitConfigSet());
     l0 = L/Elements;
     Vec g = Vec("[0.;0.;0.]");
     for(int i=0;i<Elements;i++) {

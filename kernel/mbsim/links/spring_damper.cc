@@ -51,7 +51,7 @@ namespace MBSim {
     updlaF = false;
   }
 
-  void SpringDamper::init(InitStage stage) {
+  void SpringDamper::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[plotRecursive] and plotFeature[deflection])
           plotColumns.push_back("deflection");
@@ -60,8 +60,8 @@ namespace MBSim {
         parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
       }
     }
-    FixedFrameLink::init(stage);
-    func->init(stage);
+    FixedFrameLink::init(stage, config);
+    func->init(stage, config);
   }
 
   void SpringDamper::plot() {

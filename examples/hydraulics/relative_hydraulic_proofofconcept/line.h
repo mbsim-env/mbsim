@@ -22,7 +22,7 @@ class Line : public Object {
     fmatvec::Mat evalJ(int k=0) { if(updJ) updateJacobians(k); return J; }
     void updateJacobians(int k=0);
     double getFlowrate() { return flowrate; }
-    void init(InitStage stage);
+    void init(InitStage stage, const InitConfigSet &config);
     void plot();
     void resetUpToDate() { Object::resetUpToDate(); updJ = true; }
 };

@@ -9,7 +9,7 @@ using namespace MBSim;
 
 namespace MBSimElectronics {
 
-  void ElectronicObject::init(InitStage stage) {
+  void ElectronicObject::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       if(branch)
 	dependency.push_back(branch);
@@ -22,7 +22,7 @@ namespace MBSimElectronics {
           plotColumns.push_back("Current");
       }
     }
-    Object::init(stage);
+    Object::init(stage, config);
   }
 
   void ElectronicObject::plot() {
@@ -47,7 +47,7 @@ namespace MBSimElectronics {
     laSize = 1;
   }
 
-  void ElectronicLink::init(InitStage stage) {
+  void ElectronicLink::init(InitStage stage, const MBSim::InitConfigSet &config) {
     if(stage==preInit) {
       g.resize(1);
       gd.resize(1);
@@ -70,7 +70,7 @@ namespace MBSimElectronics {
           plotColumns.push_back("Voltage");
       }
     }
-    Link::init(stage);
+    Link::init(stage, config);
   }
 
   void ElectronicLink::updateg() {
@@ -120,17 +120,17 @@ namespace MBSimElectronics {
     h[j][0] += branch->getJacobian(j).T()*evalGeneralizedForce()(0)*vz;
   }
 
-  void Mesh::init(InitStage stage) {
+  void Mesh::init(InitStage stage, const MBSim::InitConfigSet &config) {
     if(stage==unknownStage) {
       T(0,0) = 1;
     }
     else if(stage==preInit) {
-      Object::init(stage);
+      Object::init(stage, config);
       if(precessor)
 	dependency.push_back(precessor);
     } 
     else
-      Object::init(stage);
+      Object::init(stage, config);
   }
 
   void Branch::updateCharge() {
@@ -153,7 +153,7 @@ namespace MBSimElectronics {
 	vz[i] = vz_;
   }
 
-  void Branch::init(InitStage stage) {
+  void Branch::init(InitStage stage, const MBSim::InitConfigSet &config) {
     if(stage==unknownStage) {
       if(J[0].cols() == 0) {
 	J[0].resize(1,gethSize(0));
@@ -163,10 +163,10 @@ namespace MBSimElectronics {
       if(J[1].cols() == 0) {
 	J[1].resize(1,gethSize(1),INIT,1);
       }
-      Object::init(stage);
+      Object::init(stage, config);
     }
     else
-      Object::init(stage);
+      Object::init(stage, config);
   }
 
   void Branch::addConnectedBranch(Branch *branch) {

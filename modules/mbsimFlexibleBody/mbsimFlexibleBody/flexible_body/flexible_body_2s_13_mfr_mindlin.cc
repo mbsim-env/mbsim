@@ -418,7 +418,7 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13MFRMindlin::init(InitStage stage) {
+  void FlexibleBody2s13MFRMindlin::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       assert(nr > 0); // at least on radial row
       assert(nj > 1); // at least two azimuthal elements
@@ -493,15 +493,15 @@ namespace MBSimFlexibleBody {
 //      contour->setAlphaEnd(alphaE);
 
 
-      FlexibleBody2s13::init(stage);
+      FlexibleBody2s13::init(stage, config);
     }
     else if (stage == unknownStage) {
       initMatrices(); // calculate constant stiffness matrix and the constant parts of the mass-matrix
 
-      FlexibleBody2s13::init(stage);
+      FlexibleBody2s13::init(stage, config);
     }
     else
-      FlexibleBody2s13::init(stage);
+      FlexibleBody2s13::init(stage, config);
   }
 
   Vec FlexibleBody2s13MFRMindlin::transformCW(const Vec& WrPoint) {

@@ -35,14 +35,14 @@ namespace MBSim {
   MechanicalLinkObserver::MechanicalLinkObserver(const std::string &name) : Observer(name), link(NULL) {
   }
 
-  void MechanicalLinkObserver::init(InitStage stage) {
+  void MechanicalLinkObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_link!="")
         setMechanicalLink(getByPath<MechanicalLink>(saved_link));
-      Observer::init(stage);
+      Observer::init(stage, config);
     }
     else if(stage==plotting) {
-      Observer::init(stage);
+      Observer::init(stage, config);
       if(plotFeature[openMBV]) {
 //      if(openMBVForce) plotColumns.push_back("Force");
 //      if(openMBVMoment) plotColumns.push_back("Moment");
@@ -57,7 +57,7 @@ namespace MBSim {
       }
     }
     else
-      Observer::init(stage);
+      Observer::init(stage, config);
   }
 
   void MechanicalLinkObserver::plot() {

@@ -76,7 +76,7 @@ namespace MBSim {
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       /*******************************************************/ 
 
       /* INTERFACE FOR DERIVED CLASSES */

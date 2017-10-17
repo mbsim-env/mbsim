@@ -39,7 +39,7 @@ namespace MBSim {
       FrameObserver(const std::string &name="");
       void setFrame(Frame *frame_) { frame = frame_; } 
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
 

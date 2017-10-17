@@ -54,17 +54,17 @@ namespace MBSimHydraulics {
     return (s2vFunction)?(*s2vFunction)(getTime()):0;
   }
 
-  void LeakageLine::init(InitStage stage) {
+  void LeakageLine::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_LeakagePressureLoss", this, lpl, false, false));
-      RigidHLine::init(stage);
+      RigidHLine::init(stage, config);
     }
     else
-      RigidHLine::init(stage);
-    lpl->init(stage);
-    if(s1vFunction) s1vFunction->init(stage);
-    if(s2vFunction) s2vFunction->init(stage);
-    if(glFunction) glFunction->init(stage);
+      RigidHLine::init(stage, config);
+    lpl->init(stage, config);
+    if(s1vFunction) s1vFunction->init(stage, config);
+    if(s2vFunction) s2vFunction->init(stage, config);
+    if(glFunction) glFunction->init(stage, config);
   }
 
   void LeakageLine::initializeUsingXML(DOMElement * element) {
@@ -83,14 +83,14 @@ namespace MBSimHydraulics {
     lpl=plpl;
   }
 
-  void PlaneLeakageLine::init(InitStage stage) {
+  void PlaneLeakageLine::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {  
-      LeakageLine::init(stage);
+      LeakageLine::init(stage, config);
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       Mlocal.resize(1, INIT, rho*length/hGap/wGap);
     }
     else
-      LeakageLine::init(stage);
+      LeakageLine::init(stage, config);
   }
 
   void PlaneLeakageLine::initializeUsingXML(DOMElement * element) {
@@ -112,16 +112,16 @@ namespace MBSimHydraulics {
     lpl->setName("lpl");
   }
 
-  void CircularLeakageLine::init(InitStage stage) {
+  void CircularLeakageLine::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {  
       rO=rI+hGap;
-      LeakageLine::init(stage);
+      LeakageLine::init(stage, config);
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       Mlocal.resize(1, INIT, rho*length/(M_PI*(rO*rO-rI*rI)));
     }
     else
-      LeakageLine::init(stage);
-    lpl->init(stage);
+      LeakageLine::init(stage, config);
+    lpl->init(stage, config);
   }
 
   void CircularLeakageLine::initializeUsingXML(DOMElement * element) {

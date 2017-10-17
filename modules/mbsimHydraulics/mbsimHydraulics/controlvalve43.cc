@@ -134,7 +134,7 @@ namespace MBSimHydraulics {
   void Controlvalve43::setBOutflow(HLine * hl) {nB->addOutFlow(hl); }
   void Controlvalve43::setTOutflow(HLine * hl) {nT->addOutFlow(hl); }
 
-  void Controlvalve43::init(InitStage stage) {
+  void Controlvalve43::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       checkSizeFunctionPA = new ControlvalveAreaFunction("RelativeAlphaPA", 1., 0., position, relAlphaPA);
       checkSizeFunctionPB = new ControlvalveAreaFunction("RelativeAlphaPB", -1., 1., position, relAlphaPA);
@@ -146,7 +146,7 @@ namespace MBSimHydraulics {
       lAT->setFunction(checkSizeFunctionAT);
       lBT->setFunction(checkSizeFunctionBT);
 
-//      Group::init(stage);
+//      Group::init(stage, config);
 //    }
 //    else if (stage==resolveXMLPath) {
 
@@ -159,7 +159,7 @@ namespace MBSimHydraulics {
       if (nTOutflowString!="")
         setTOutflow(getByPath<HLine>(nTOutflowString));
 
-      Group::init(stage);
+      Group::init(stage, config);
 
       if (pRACC) {
         fstream o;
@@ -189,13 +189,13 @@ namespace MBSimHydraulics {
       }
     }
     else
-      Group::init(stage);
-    relAlphaPA->init(stage);
-    position->init(stage);
-    checkSizeFunctionPA->init(stage);
-    checkSizeFunctionPB->init(stage);
-    checkSizeFunctionAT->init(stage);
-    checkSizeFunctionBT->init(stage);
+      Group::init(stage, config);
+    relAlphaPA->init(stage, config);
+    position->init(stage, config);
+    checkSizeFunctionPA->init(stage, config);
+    checkSizeFunctionPB->init(stage, config);
+    checkSizeFunctionAT->init(stage, config);
+    checkSizeFunctionBT->init(stage, config);
   }
 
   void Controlvalve43::initializeUsingXML(DOMElement * element) {

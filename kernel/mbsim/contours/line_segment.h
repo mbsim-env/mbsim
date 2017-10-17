@@ -47,7 +47,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "LineSegment"; }
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */

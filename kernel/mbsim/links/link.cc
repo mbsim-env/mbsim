@@ -135,7 +135,7 @@ namespace MBSim {
     b>>bParent(I,J);
   } 
 
-  void Link::init(InitStage stage) {
+  void Link::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       rrel.resize(getGeneralizedRelativePositionSize());
       vrel.resize(ngd);
@@ -161,7 +161,7 @@ namespace MBSim {
     }
     else if(stage==unknownStage)
       rFactorUnsure.resize(rFactorSize);
-    Element::init(stage);
+    Element::init(stage, config);
   }
 
   void Link::initz() {

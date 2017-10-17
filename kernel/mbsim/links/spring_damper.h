@@ -48,7 +48,7 @@ namespace MBSim {
       bool gActiveChanged() { return false; }
       bool isSingleValued() const { return true; }
       std::string getType() const { return "SpringDamper"; }
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       /*****************************/
 
       /** \brief Set function for the force calculation.

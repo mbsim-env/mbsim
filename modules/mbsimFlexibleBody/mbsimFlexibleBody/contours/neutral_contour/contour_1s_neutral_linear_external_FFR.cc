@@ -67,7 +67,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void Contour1sNeutralLinearExternalFFR::init(InitStage stage) {
+  void Contour1sNeutralLinearExternalFFR::init(InitStage stage, const InitConfigSet &config) {
     if (stage == unknownStage) { //TODO: Actually for the calculate Initial values in the contact search it is necessary to call the following functions before (even though they also just compute initial values)
 
       qSize = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getqSize();
@@ -84,10 +84,10 @@ namespace MBSimFlexibleBody {
 
       resetUpToDate();
 
-      Contour1sNeutralFactory::init(stage);
+      Contour1sNeutralFactory::init(stage, config);
     }
 
-    Contour1sNeutralFactory::init(stage);
+    Contour1sNeutralFactory::init(stage, config);
   }
 
   Vec3 Contour1sNeutralLinearExternalFFR::evalPosition(const Vec2 &zeta) {

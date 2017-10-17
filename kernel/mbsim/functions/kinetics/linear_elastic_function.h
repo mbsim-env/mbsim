@@ -42,7 +42,7 @@ namespace MBSim {
        */
       LinearElasticFunction(const fmatvec::SymMatV &K_, const fmatvec::SymMatV &D_) : K(K_), D(D_) { }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
 
       virtual fmatvec::VecV operator()(const fmatvec::VecV& q, const fmatvec::VecV& u) { return K*q + D*u; }
 

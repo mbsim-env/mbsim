@@ -146,8 +146,8 @@ namespace MBSim {
       uSize[j] = 6;
   }
 
-  void RigidBody::init(InitStage stage) {
-    Z.init(stage);
+  void RigidBody::init(InitStage stage, const InitConfigSet &config) {
+    Z.init(stage, config);
     if(stage==preInit) {
 
       for(unsigned int k=1; k<frame.size(); k++) {
@@ -287,10 +287,10 @@ namespace MBSim {
       if(frameForInertiaTensor && frameForInertiaTensor!=C)
         SThetaS = JMJT(C->evalOrientation().T()*frameForInertiaTensor->evalOrientation(),SThetaS) - m*JTJ(tilde(C->evalOrientation().T()*(frameForInertiaTensor->evalPosition()-C->evalPosition())));
     }
-    Body::init(stage);
-    if(fTR) fTR->init(stage);
-    if(fPrPK) fPrPK->init(stage);
-    if(fAPK) fAPK->init(stage);
+    Body::init(stage, config);
+    if(fTR) fTR->init(stage, config);
+    if(fPrPK) fPrPK->init(stage, config);
+    if(fAPK) fAPK->init(stage, config);
   }
 
   void RigidBody::setUpInverseKinetics() {

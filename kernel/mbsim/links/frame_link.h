@@ -36,7 +36,7 @@ namespace MBSim {
        */
       FrameLink(const std::string &name);
 
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement *element);
 
       void connect(Frame *frame0, Frame* frame1);

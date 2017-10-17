@@ -50,7 +50,7 @@ namespace MBSim {
       std::string getType() const {
         return "Plate";
       }
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       /**********************************/
 
       /* GETTER / SETTER */

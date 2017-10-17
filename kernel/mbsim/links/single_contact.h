@@ -115,7 +115,7 @@ namespace MBSim {
       virtual void calcsvSize();
       virtual void calcLinkStatusSize();
       virtual void calcLinkStatusRegSize();
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       virtual bool isSetValued() const;
       virtual bool isSingleValued() const;
       virtual void updateLinkStatus();

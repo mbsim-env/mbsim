@@ -36,7 +36,7 @@ namespace MBSim {
   {
   }
 
-  void Room::init(InitStage stage) {
+  void Room::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       Vec3 Kr[6];
       Vec2 limit[6];
@@ -108,7 +108,7 @@ namespace MBSim {
       if(openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(l,d,h);
     }
-    CompoundContour::init(stage);
+    CompoundContour::init(stage, config);
   }
 
   void Room::plot() {

@@ -31,7 +31,7 @@ namespace MBSim {
       GeneralizedAccelerationConstraint(const std::string &name="") : GeneralizedDualConstraint(name) { }
       ~GeneralizedAccelerationConstraint() { delete f; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
 
       void calcxSize();
 

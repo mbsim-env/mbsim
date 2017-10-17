@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief initialize the FE
        */
-      virtual void init(MBSim::Element::InitStage stage);
+      virtual void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
       virtual int getqSize() const {
         throw MBSim::MBSimError("Not implemented" + string(__func__));
       }

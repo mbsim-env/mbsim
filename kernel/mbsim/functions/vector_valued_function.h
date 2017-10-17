@@ -72,10 +72,10 @@ namespace MBSim {
           e=e->getNextElementSibling();
         }
       }
-      void init(Element::InitStage stage) {
-        Function<Ret(double)>::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(double)>::init(stage, config);
         for(std::vector<Function<double(double)> *>::iterator it=component.begin(); it!=component.end(); ++it)
-          (*it)->init(stage);
+          (*it)->init(stage, config);
       }
     private:
       std::vector<Function<double(double)> *> component;
@@ -124,10 +124,10 @@ namespace MBSim {
           e=e->getNextElementSibling();
         }
       }
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg)>::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(Arg)>::init(stage, config);
         for(typename std::vector<Function<double(Arg)> *>::iterator it=component.begin(); it!=component.end(); ++it)
-          (*it)->init(stage);
+          (*it)->init(stage, config);
       }
     private:
       std::vector<Function<double(Arg)> *> component;

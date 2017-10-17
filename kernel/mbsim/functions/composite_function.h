@@ -75,10 +75,10 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
         setInnerFunction(ObjectFactory::createAndInit<Function<Argo(double)> >(e->getFirstElementChild()));
       }
-      void init(Element::InitStage stage) {
-        Function<Ret(double)>::init(stage);
-        fo->init(stage);
-        fi->init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(double)>::init(stage, config);
+        fo->init(stage, config);
+        fi->init(stage, config);
       }
     private:
       Function<Ret(Argo)> *fo;
@@ -131,10 +131,10 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
         setInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)> >(e->getFirstElementChild()));
       }
-      void init(Element::InitStage stage) {
-        Function<Ret(Argi)>::init(stage);
-        fo->init(stage);
-        fi->init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(Argi)>::init(stage, config);
+        fo->init(stage, config);
+        fi->init(stage, config);
       }
     private:
       Function<Ret(Argo)> *fo;

@@ -31,7 +31,7 @@ class initLink : public Link {
     bool isActive() const {return false; }
     virtual bool isSingleValued() const { return true; }
     bool gActiveChanged() {return false; }
-    void init(InitStage stage) {
+    void init(InitStage stage, const InitConfigSet &config) {
       if (stage==calculateLocalInitialValues) {
         class CamRockerDistance : public MBSim::Function<double(double)> {
           public:

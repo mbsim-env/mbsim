@@ -112,7 +112,7 @@ namespace MBSimHydraulics {
     out->setFromNode(this);
   }
 
-  void HNode::init(InitStage stage) {
+  void HNode::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       for (unsigned int i=0; i<refInflowString.size(); i++)
         addInFlow(getByPath<HLine>(refInflowString[i]));
@@ -160,7 +160,7 @@ namespace MBSimHydraulics {
     else if (stage==unknownStage) {
       gdTol/=6e4;
     }
-    Link::init(stage);
+    Link::init(stage, config);
   }
 
   void HNode::updateWRef(const Mat &WParent, int j) {
@@ -262,18 +262,18 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ConstrainedNode)
 
-  void ConstrainedNode::init(InitStage stage) {
+  void ConstrainedNode::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      HNode::init(stage);
+      HNode::init(stage, config);
       addDependency(pFun->getDependency());
     }
     else if (stage==unknownStage) {
-      HNode::init(stage);
+      HNode::init(stage, config);
       la.init((*pFun)(0));
     }
     else
-      HNode::init(stage);
-    pFun->init(stage);
+      HNode::init(stage, config);
+    pFun->init(stage, config);
   }
 
   void ConstrainedNode::updateGeneralizedForces() {
@@ -289,13 +289,13 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, EnvironmentNode)
 
-  void EnvironmentNode::init(InitStage stage) {
+  void EnvironmentNode::init(InitStage stage, const InitConfigSet &config) {
     if (stage==unknownStage) {
-      HNode::init(stage);
+      HNode::init(stage, config);
       lambda(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
     }
     else
-      HNode::init(stage);
+      HNode::init(stage, config);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ElasticNode)
@@ -305,7 +305,7 @@ namespace MBSimHydraulics {
     bulkModulus=NULL;
   }
 
-  void ElasticNode::init(InitStage stage) {
+  void ElasticNode::init(InitStage stage, const InitConfigSet &config) {
     if (stage==plotting) {
       if(plotFeature[plotRecursive])
         plotColumns.push_back("Node bulk modulus [N/mm^2]");
@@ -323,7 +323,7 @@ namespace MBSimHydraulics {
       double kappa=HydraulicEnvironment::getInstance()->getKappa();
       bulkModulus = new OilBulkModulus(path, E0, pinf, kappa, fracAir);
     }
-    HNode::init(stage);
+    HNode::init(stage, config);
   }
 
   void ElasticNode::initializeUsingXML(DOMElement * element) {
@@ -372,10 +372,10 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidNode::init(InitStage stage) {
-    HNode::init(stage);
-    if(gfl) gfl->init(stage);
-    if(gil) gil->init(stage);
+  void RigidNode::init(InitStage stage, const InitConfigSet &config) {
+    HNode::init(stage, config);
+    if(gfl) gfl->init(stage, config);
+    if(gil) gil->init(stage, config);
   }
 
   const double& RigidNode::evalgdn() {
@@ -585,7 +585,7 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidCavitationNode::init(InitStage stage) {
+  void RigidCavitationNode::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit)
       x0=Vec(1, INIT, 0);
     else if (stage==plotting) {
@@ -594,9 +594,9 @@ namespace MBSimHydraulics {
     }
     else if (stage==unknownStage)
       lambda(0) = pCav;
-    HNode::init(stage);
-    if(gfl) gfl->init(stage);
-    if(gil) gil->init(stage);
+    HNode::init(stage, config);
+    if(gfl) gfl->init(stage, config);
+    if(gil) gil->init(stage, config);
   }
 
   void RigidCavitationNode::plot() {
@@ -857,9 +857,9 @@ namespace MBSimHydraulics {
     setpFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
   }
 
-  void PressurePump::init(InitStage stage) {
-    HNode::init(stage);
-    pFunction->init(stage);
+  void PressurePump::init(InitStage stage, const InitConfigSet &config) {
+    HNode::init(stage, config);
+    pFunction->init(stage, config);
   }
 
   void PressurePump::updateGeneralizedForces() {

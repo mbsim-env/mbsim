@@ -43,7 +43,7 @@ namespace MBSim {
       void addRigidBody(RigidBody *body_) { body.push_back(body_); }
       void setFrameOfReference(Frame *frameOfReference_) { frameOfReference = frameOfReference_; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement *element);
       void plot();
 

@@ -54,7 +54,7 @@ namespace MBSim {
     return funcCrPC->parDerParDer(zeta(0));
   }
 
-  void PlanarContour::init(InitStage stage) {
+  void PlanarContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       if (etaNodes.size() < 2)
         THROW_MBSIMERROR("(PlanarContour::init): Size of etaNodes must be greater than 1.");
@@ -75,9 +75,9 @@ namespace MBSim {
         static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
       }
     }
-    RigidContour::init(stage);
+    RigidContour::init(stage, config);
 
-    funcCrPC->init(stage);
+    funcCrPC->init(stage, config);
   }
 
   void PlanarContour::setContourFunction(Function<Vec3(double)> *func) {

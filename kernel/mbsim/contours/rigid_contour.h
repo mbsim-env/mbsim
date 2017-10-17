@@ -54,7 +54,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "RigidContour"; }
       virtual void plot();
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 
       fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta);

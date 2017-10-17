@@ -66,7 +66,7 @@ namespace MBSimHydraulics {
       fmatvec::VecV getInflowFactor() {return wI; }
       fmatvec::VecV getOutflowFactor() {return wO; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void calcqSize() {qSize=n-1; }
       void calcuSize(int j) {uSize[j]=n; }
 

@@ -45,10 +45,10 @@ namespace MBSim {
        */
       virtual ~GeneralizedForceLaw() { if(forceFunc) delete forceFunc; forceFunc = NULL; };
 
-      void init(Element::InitStage stage) {
-        Element::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Element::init(stage, config);
         if(forceFunc)
-          forceFunc->init(stage);
+          forceFunc->init(stage, config);
       }
 
       /* INTERFACE FOR DERIVED CLASSES */

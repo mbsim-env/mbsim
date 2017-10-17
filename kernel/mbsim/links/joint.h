@@ -71,7 +71,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       virtual void updatexd();
       virtual void calcxSize();
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
@@ -153,7 +153,7 @@ namespace MBSim {
       void setBody(Body* body_) {
         body = body_;
       }
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       virtual bool isSetValued() const { return true; }
 
     protected:

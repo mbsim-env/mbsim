@@ -55,7 +55,7 @@ namespace MBSimControl {
     xd = A*x + B*inputSignal->evalSignal();
   }
 
-  void LinearTransferSystem::init(InitStage stage) {
+  void LinearTransferSystem::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(inputSignalString!="")
         setInputSignal(getByPath<Signal>(inputSignalString));
@@ -85,7 +85,7 @@ namespace MBSimControl {
           THROW_MBSIMERROR("Size of feedthrough matrix must be equal to signal size");
       }
     }
-    Signal::init(stage);
+    Signal::init(stage, config);
   }
 
 }

@@ -40,7 +40,7 @@ namespace MBSimHydraulics {
   ElasticLineVariational::ElasticLineVariational(const string &name) : HLine(name), p0(0), fracAir(0), r(0), l(0), relPlotPoints(0), window_function_type(BlackmanHarris), n(9), wO(0), wI(0), hq(0), hu(0), hp0(0), cu(0), Tlocal(0,0), relPlot(0,0), Mlocal(0) {
   }
 
-  void ElasticLineVariational::init(InitStage stage) {
+  void ElasticLineVariational::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
       const double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
       const double kappa=HydraulicEnvironment::getInstance()->getKappa();
@@ -204,7 +204,7 @@ namespace MBSimHydraulics {
       if (printStateSpace)
         doPrintStateSpace();
     }
-    HLine::init(stage);
+    HLine::init(stage, config);
   }
 
   void ElasticLineVariational::updateQ() {

@@ -77,8 +77,8 @@ namespace MBSim {
 
       std::pair<int, int> getRetSize() const { return std::make_pair(y.cols(),1); }
 
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg)>::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(Arg)>::init(stage, config);
         if(stage==Element::preInit) {
           if(y.rows() != x.size())
             THROW_MBSIMERROR("Dimension missmatch in size of x");

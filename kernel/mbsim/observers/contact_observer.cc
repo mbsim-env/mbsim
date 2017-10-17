@@ -37,14 +37,14 @@ namespace MBSim {
   ContactObserver::ContactObserver(const std::string &name) : Observer(name) {
   }
 
-  void ContactObserver::init(InitStage stage) {
+  void ContactObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_link!="")
         setContact(getByPath<Contact>(saved_link));
-      Observer::init(stage);
+      Observer::init(stage, config);
     }
     else if(stage==preInit) {
-      Observer::init(stage);
+      Observer::init(stage, config);
       contactObserver.resize(static_cast<Contact*>(link)->getSubcontacts().size(),vector<SingleContactObserver>(static_cast<Contact*>(link)->getSubcontacts()[0].size()));
       for (unsigned int i=0; i<contactObserver.size(); i++) {
         for (unsigned int j=0; j<contactObserver[i].size(); j++) {
@@ -66,26 +66,26 @@ namespace MBSim {
             contactObserver[i][j].setOpenMBVNormalForce((i==0 and j==0)?contactArrow:OpenMBV::ObjectFactory::create(contactArrow));
           if(frictionArrow)
             contactObserver[i][j].setOpenMBVTangentialForce((i==0 and j==0)?frictionArrow:OpenMBV::ObjectFactory::create(frictionArrow));
-          contactObserver[i][j].init(stage);
+          contactObserver[i][j].init(stage, config);
         }
       }
     }
     else if (stage == plotting) {
-      Observer::init(stage);
+      Observer::init(stage, config);
       for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
         for (std::vector<SingleContactObserver>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-          jter->init(stage);
+          jter->init(stage, config);
       }
     }
     else if (stage == unknownStage) {
       for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
         for (std::vector<SingleContactObserver>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-          jter->init(stage);
+          jter->init(stage, config);
       }
-      Observer::init(stage);
+      Observer::init(stage, config);
     }
     else
-      Observer::init(stage);
+      Observer::init(stage, config);
   }
 
   void ContactObserver::plot() {

@@ -38,7 +38,7 @@ namespace MBSimControl {
       
       void calcxSize() { xSize = A.rows(); }
       
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
 
       void updateSignal();
       void updatexd();

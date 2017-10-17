@@ -195,7 +195,7 @@ namespace MBSim {
     LLM >> LLMParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
   }
 
-  void Object::init(InitStage stage) {
+  void Object::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       qRel.resize(getGeneralizedPositionSize());
       uRel.resize(nu);
@@ -227,7 +227,7 @@ namespace MBSim {
         }
       }
     }
-    Element::init(stage);
+    Element::init(stage, config);
   }
 
   void Object::initz() {

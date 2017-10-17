@@ -40,7 +40,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Cuboid)
 
-  void Cuboid::init(InitStage stage) {
+  void Cuboid::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
 
       Vec3 r;
@@ -327,7 +327,7 @@ namespace MBSim {
       if(openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(lx,ly,lz);
     }
-    CompoundContour::init(stage);
+    CompoundContour::init(stage, config);
   }
 
   void Cuboid::initializeUsingXML(DOMElement *element) {

@@ -90,8 +90,8 @@ namespace MBSim {
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"amplitudePhaseAngleForm");
         if(e) amplitudePhaseAngleForm = Element::getBool(e);
       }
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg)>::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(Arg)>::init(stage, config);
         if(stage == Element::preInit) {
           if(amplitudePhaseAngleForm) {
             for(int i=0; i<a.size(); i++) {

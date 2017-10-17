@@ -142,9 +142,9 @@ void FuncCrPC_PlanePolar::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
   pp_r->setInterpolationMethod(PiecewisePolynomFunction<VecV(double)>::cSplinePeriodic);
 }   
 
-void FuncCrPC_PlanePolar::init(Element::InitStage stage) {
-  Function<Vec3(double)>::init(stage);
-  pp_r->init(stage);
+void FuncCrPC_PlanePolar::init(Element::InitStage stage, const InitConfigSet &config) {
+  Function<Vec3(double)>::init(stage, config);
+  pp_r->init(stage, config);
 }
 
 Vec3 FuncCrPC_PlanePolar::operator()(const double& alpha) {

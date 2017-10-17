@@ -32,8 +32,8 @@ namespace MBSim {
     public:
       PolynomFunction() { }
       PolynomFunction(const fmatvec::VecV &a_) : a(a_) { }
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg)>::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(Arg)>::init(stage, config);
         if(stage == Element::preInit) {
           ad.resize(a.size()-1);
           add.resize(ad.size()-1);

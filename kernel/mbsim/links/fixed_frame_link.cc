@@ -97,7 +97,7 @@ namespace MBSim {
       h[j][i]+=frame[i]->evalJacobianOfTranslation(j).T()*evalForce(i);
   }
 
-  void FixedFrameLink::init(InitStage stage) {
+  void FixedFrameLink::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       iF = RangeV(0, 0);
       iM = RangeV(0, -1);
@@ -120,7 +120,7 @@ namespace MBSim {
       P[0] = frame[0];
       P[1] = frame[1];
     }
-    FrameLink::init(stage);
+    FrameLink::init(stage, config);
   }
 
 }

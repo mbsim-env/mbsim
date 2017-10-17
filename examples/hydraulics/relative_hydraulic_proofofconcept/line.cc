@@ -53,11 +53,11 @@ void Line::updateJacobians(int k) {
   updJ = false;
 }
 
-void Line::init(InitStage stage) {
+void Line::init(InitStage stage, const InitConfigSet &config) {
   if(stage==plotting) {
     plotColumns.push_back("flowrate");
   }
-  Object::init(stage);
+  Object::init(stage, config);
 }
 
 void Line::plot() {

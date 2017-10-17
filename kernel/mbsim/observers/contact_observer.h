@@ -50,7 +50,7 @@ namespace MBSim {
       ContactObserver(const std::string &name="");
       void setContact(Contact *link_) { link = link_; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
       void setDynamicSystemSolver(DynamicSystemSolver *sys);

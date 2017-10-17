@@ -22,7 +22,7 @@ namespace MBSimFlexibleBody {
       Contour1sNeutralLinearExternalFFR(const std::string &name_) : Contour1sNeutralFactory(name_), transNodes(0), NP(NULL), NLP(NULL), NV(NULL), qSize(0) { }
 
       virtual ~Contour1sNeutralLinearExternalFFR();
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
       virtual NeutralNurbsVelocity1s* createNeutralVelocity();
       virtual NeutralNurbsPosition1s* createNeutralPosition();
       virtual NeutralNurbsLocalPosition1s* createNeutralLocalPosition();

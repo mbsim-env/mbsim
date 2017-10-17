@@ -39,7 +39,7 @@ namespace MBSim {
       MechanicalLinkObserver(const std::string &name="");
       void setMechanicalLink(MechanicalLink *link_) { link = link_; } 
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
 

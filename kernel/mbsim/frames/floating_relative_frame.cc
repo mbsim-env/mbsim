@@ -27,12 +27,12 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  void FloatingRelativeFrame::init(InitStage stage) {
+  void FloatingRelativeFrame::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
     }
-    Frame::init(stage);
+    Frame::init(stage, config);
   }
 
   void FloatingRelativeFrame::initializeUsingXML(DOMElement *element) {

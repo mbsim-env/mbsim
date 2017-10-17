@@ -45,7 +45,7 @@ namespace MBSimControl {
         return MBSim::FromVecV<Ret>::cast(ret->evalSignal());
       }
 
-      void init(MBSim::Element::InitStage stage);
+      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
 
       void initializeUsingXML(xercesc::DOMElement *element);
 
@@ -70,14 +70,14 @@ namespace MBSimControl {
   }
 
   template<typename Ret, typename Arg>
-  void SignalFunction<Ret(Arg)>::init(MBSim::Element::InitStage stage) {
+  void SignalFunction<Ret(Arg)>::init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config) {
     if(stage==MBSim::Element::resolveXMLPath) {
       if(retString!="")
         setReturnSignal(this->template getByPath<Signal>(retString));
-      MBSim::Function<Ret(Arg)>::init(stage);
+      MBSim::Function<Ret(Arg)>::init(stage, config);
     }
     else
-      MBSim::Function<Ret(Arg)>::init(stage);
+      MBSim::Function<Ret(Arg)>::init(stage, config);
   }
 
   //! A function with two arguments which get its return value from a signal
@@ -94,7 +94,7 @@ namespace MBSimControl {
         return MBSim::FromVecV<Ret>::cast(ret->evalSignal());
       }
 
-      void init(MBSim::Element::InitStage stage);
+      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
 
       void initializeUsingXML(xercesc::DOMElement *element);
 
@@ -119,14 +119,14 @@ namespace MBSimControl {
   }
 
   template<typename Ret, typename Arg1, typename Arg2>
-  void SignalFunction<Ret(Arg1, Arg2)>::init(MBSim::Element::InitStage stage) {
+  void SignalFunction<Ret(Arg1, Arg2)>::init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config) {
     if(stage==MBSim::Element::resolveXMLPath) {
       if(retString!="")
         setReturnSignal(this->template getByPath<Signal>(retString));
-      MBSim::Function<Ret(Arg1,Arg2)>::init(stage);
+      MBSim::Function<Ret(Arg1,Arg2)>::init(stage, config);
     }
     else
-      MBSim::Function<Ret(Arg1,Arg2)>::init(stage);
+      MBSim::Function<Ret(Arg1,Arg2)>::init(stage, config);
   }
 
 }

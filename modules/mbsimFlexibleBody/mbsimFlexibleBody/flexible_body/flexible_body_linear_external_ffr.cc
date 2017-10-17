@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
 //	  delete FFR;
   }
   
-  void FlexibleBodyLinearExternalFFR::init(InitStage stage) {
+  void FlexibleBodyLinearExternalFFR::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       qSize = 6+nf;
       uSize[0] = qSize;
@@ -100,7 +100,7 @@ namespace MBSimFlexibleBody {
       initQv();
     }
 
-    FlexibleBodyContinuum<Vec>::init(stage);
+    FlexibleBodyContinuum<Vec>::init(stage, config);
   }
   
   void FlexibleBodyLinearExternalFFR::calcqSize() {

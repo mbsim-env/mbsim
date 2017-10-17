@@ -34,7 +34,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  void FlexibleBand::init(InitStage stage) {
+  void FlexibleBand::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[openMBV] and openMBVSpineExtrusion) {
         openMBVSpineExtrusion->setName(name);
@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
         parent->getOpenMBVGrp()->addObject(openMBVSpineExtrusion);
       }
     }
-    Contour1s::init(stage);
+    Contour1s::init(stage, config);
   }
 
   ContourFrame* FlexibleBand::createContourFrame(const string &name) {

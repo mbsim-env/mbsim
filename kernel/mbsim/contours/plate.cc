@@ -38,14 +38,14 @@ namespace MBSim {
     thickness = t;
   }
 
-  void Plate::init(InitStage stage) {
+  void Plate::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit)
       setVertices();
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody)
         if(openMBVRigidBody) static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(0,yLength,zLength);
     }
-    Plane::init(stage);
+    Plane::init(stage, config);
   }
 
   void Plate::setVertices() {

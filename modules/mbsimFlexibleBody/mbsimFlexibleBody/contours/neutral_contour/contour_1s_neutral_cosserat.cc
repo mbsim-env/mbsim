@@ -49,7 +49,7 @@ namespace MBSimFlexibleBody {
     return new NeutralNurbsDotangle1s(parent, rotNodes, nodeOffset, uMin, uMax, degU, openStructure);
   }
 
-  void Contour1sNeutralCosserat::init(InitStage stage) {
+  void Contour1sNeutralCosserat::init(InitStage stage, const InitConfigSet &config) {
 
     if (stage == preInit) {
       NP = createNeutralPosition();
@@ -58,7 +58,7 @@ namespace MBSimFlexibleBody {
       NA = createNeutralAngle();
       NDA = createNeutralDotangle();
 
-      Contour1sNeutralFactory::init(stage);
+      Contour1sNeutralFactory::init(stage, config);
     }
     else if(stage == unknownStage) {
       NP->computeCurve(false); // the first time call the computeCurveVelocity, the flag should be false
@@ -73,10 +73,10 @@ namespace MBSimFlexibleBody {
         etaNodes.push_back(u(i));
       etaNodes.push_back(uMax);
 
-      Contour1sNeutralFactory::init(stage);
+      Contour1sNeutralFactory::init(stage, config);
     }
 
-    Contour1sNeutralFactory::init(stage);
+    Contour1sNeutralFactory::init(stage, config);
   }
 
   Vec3 Contour1sNeutralCosserat::evalPosition(const Vec2 &zeta) {

@@ -29,7 +29,7 @@ namespace MBSimFlexibleBody {
 
   SuperElementLinearExternal::SuperElementLinearExternal() : DiscretizationInterface(), M(0), K(0), alpha(0.), beta(0.) {}
 
-  void SuperElementLinearExternal::init(Element::InitStage stage) {
+  void SuperElementLinearExternal::init(Element::InitStage stage, const InitConfigSet &config) {
     if(stage==Element::unknownStage) {
       D = static_cast<SqrMat>( alpha*M + beta * K );
       Dhq = -K;

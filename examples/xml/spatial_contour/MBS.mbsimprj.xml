@@ -110,10 +110,10 @@
                   </function>
                   <continuationRule>
                     <SymbolicFunction arg1="x" arg1Dim="2">n = floor((x(2)+pi/2)/pi);
-eta = x(1)+n*pi;
-s = 1-(n-2*floor(n/2))*2;
+eta = x(1) + n*pi;
+s = (-1)^abs(n);
 t = s*x(2)+pi/2;
-xi = (t-pi*floor(t/pi))-pi/2;
+xi = (t - pi * floor (t / pi))-pi/2;
 ret = [eta;xi]</SymbolicFunction>
                   </continuationRule>
                 </ContinuedFunction>

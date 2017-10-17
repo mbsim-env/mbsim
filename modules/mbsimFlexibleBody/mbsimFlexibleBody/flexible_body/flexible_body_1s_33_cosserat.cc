@@ -227,13 +227,13 @@ namespace MBSimFlexibleBody {
     return R->evalOrientation() * u(6 * i + 3, 6 * i + 5);
   }
 
-  void FlexibleBody1s33Cosserat::init(InitStage stage) {
+  void FlexibleBody1s33Cosserat::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
-      FlexibleBody1sCosserat::init(stage);
+      FlexibleBody1sCosserat::init(stage, config);
       l0 = L / Elements;
     }
     else if (stage == unknownStage) {
-      FlexibleBody1sCosserat::init(stage);
+      FlexibleBody1sCosserat::init(stage, config);
 
       initialised = true;
 
@@ -259,7 +259,7 @@ namespace MBSimFlexibleBody {
       initM();
     }
     else
-      FlexibleBody1sCosserat::init(stage);
+      FlexibleBody1sCosserat::init(stage, config);
 
 //curve->initContourFromBody(stage);
   }
@@ -385,8 +385,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::initInfo() {
-    FlexibleBody1sCosserat::init(preInit);
-    FlexibleBody1sCosserat::init(unknownStage);
+    FlexibleBody1sCosserat::init(preInit, InitConfigSet());
+    FlexibleBody1sCosserat::init(unknownStage, InitConfigSet());
     l0 = L / Elements;
     Vec g = Vec("[0.;0.;0.]");
 

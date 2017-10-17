@@ -50,7 +50,7 @@ namespace MBSim {
       
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Sphere"; }
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 
       virtual fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);

@@ -33,13 +33,13 @@ namespace MBSimControl {
     signalString=E(e)->getAttribute("ref");
   }
 
-  void ExternSignalSink::init(InitStage stage) {
+  void ExternSignalSink::init(InitStage stage, const MBSim::InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       setSignal(getByPath<Signal>(signalString));
-      Signal::init(stage);
+      Signal::init(stage, config);
     }
     else
-      Signal::init(stage);
+      Signal::init(stage, config);
   }
 
   void ExternSignalSink::updateSignal() {

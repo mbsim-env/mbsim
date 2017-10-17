@@ -42,13 +42,13 @@ namespace MBSim {
     updla = false;
   }
 
-  void GeneralizedFriction::init(InitStage stage) {
+  void GeneralizedFriction::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
       if(body[0]->getGeneralizedVelocitySize()!=1)
         THROW_MBSIMERROR("rigid bodies must have 1 dof!");
     }
-    DualRigidBodyLink::init(stage);
-    func->init(stage);
+    DualRigidBodyLink::init(stage, config);
+    func->init(stage, config);
   }
 
   void GeneralizedFriction::setGeneralizedFrictionForceLaw(FrictionForceLaw *func_) { 

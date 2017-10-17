@@ -61,7 +61,7 @@ namespace MBSim {
     updlaF = false;
   }
 
-  void DirectionalSpringDamper::init(InitStage stage) {
+  void DirectionalSpringDamper::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[openMBV]) {
         if(coilspringOpenMBV) {
@@ -70,8 +70,8 @@ namespace MBSim {
         }
       }
     }
-    FloatingFrameLink::init(stage);
-    func->init(stage);
+    FloatingFrameLink::init(stage, config);
+    func->init(stage, config);
   }
 
   void DirectionalSpringDamper::plot() {

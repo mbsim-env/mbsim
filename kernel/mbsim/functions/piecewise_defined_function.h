@@ -89,10 +89,10 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftOrdinate");
         if(e) shiftOrdinate=Element::getBool(e);
       }
-      void init(Element::InitStage stage) {
-        Function<Ret(double)>::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(double)>::init(stage, config);
         for(typename std::vector<Function<Ret(double)> *>::iterator it=function.begin(); it!=function.end(); it++)
-          (*it)->init(stage);
+          (*it)->init(stage, config);
         if(stage==Element::preInit) {
           if(shiftAbscissa) {
             for(unsigned int i=1; i<a.size(); i++)
@@ -166,10 +166,10 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftOrdinate");
         if(e) shiftOrdinate=Element::getBool(e);
       }
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg)>::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(Arg)>::init(stage, config);
         for(typename std::vector<Function<Ret(Arg)> *>::iterator it=function.begin(); it!=function.end(); it++)
-          (*it)->init(stage);
+          (*it)->init(stage, config);
         if(stage==Element::preInit) {
           if(shiftAbscissa) {
             for(unsigned int i=1; i<a.size(); i++)

@@ -68,7 +68,7 @@ namespace MBSimHydraulics {
       bool isActive() const { return false; }
       bool gActiveChanged() { return false; }
       virtual bool isSingleValued() const { return true; }
-      void init(InitStage stage) { }
+      void init(InitStage stage, const InitConfigSet &config) { }
       void updateg()  { }
       void updategd() { }
       void plot() { Link::plot(); body->setDynamicColor((l->isClosed())?.9:.1); }
@@ -108,7 +108,7 @@ namespace MBSimHydraulics {
   void Checkvalve::setMaximalContactImpactLaw(GeneralizedImpactLaw * GIL) {maxContact->setNormalImpactLaw(GIL); }
   void Checkvalve::setMaximalContactForceLaw(GeneralizedForceLaw * GFL) {maxContact->setNormalForceLaw(GFL); }
 
-  void Checkvalve::init(InitStage stage) {
+  void Checkvalve::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       double rBall=((CheckvalveClosablePressureLoss*)line->getClosablePressureLoss())->getBallRadius();
       double rLine=line->getDiameter()/2.;
@@ -182,15 +182,15 @@ namespace MBSimHydraulics {
         ballSeat->getFrame("SpringMount")->enableOpenMBV(.5*rBall, 1.);
         ball->getFrame("C")->enableOpenMBV(.5*rBall, 1.);
       }
-//      Group::init(stage);
+//      Group::init(stage, config);
 //    }
 //    else if (stage==resolveXMLPath) {
       if (refFrameString!="")
         setFrameOfReference(getByPath<Frame>(refFrameString));
-      Group::init(stage);
+      Group::init(stage, config);
     }
     else if (stage==preInit) {
-      Group::init(stage);
+      Group::init(stage, config);
 
       if (!dynamic_cast<HNodeMec*>(line->getFromNode()))
         THROW_MBSIMERROR("Hydraulic Node \""+line->getFromNode()->getPath()+"\" connected to this Checkvalve has to be of Type \"HNodeMec\"!");
@@ -215,7 +215,7 @@ namespace MBSimHydraulics {
           false);
     }
     else
-      Group::init(stage);
+      Group::init(stage, config);
   }
 
   void Checkvalve::initializeUsingXML(DOMElement * element) {

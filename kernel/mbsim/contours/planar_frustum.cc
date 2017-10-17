@@ -28,7 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  void PlanarFrustum::init(InitStage stage) {
+  void PlanarFrustum::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialTranslation(0.,h,0.);
@@ -38,7 +38,7 @@ namespace MBSim {
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(h);
       }
     }
-    RigidContour::init(stage);
+    RigidContour::init(stage, config);
   }
 
 }

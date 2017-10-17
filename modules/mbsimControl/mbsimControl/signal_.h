@@ -41,7 +41,7 @@ namespace MBSimControl {
     public:
       Signal(const std::string &name) : Link(name), upds(true) { }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
 
       virtual void updateg() { }
       virtual void updategd() { }

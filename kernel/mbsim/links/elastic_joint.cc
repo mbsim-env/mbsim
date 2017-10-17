@@ -52,9 +52,9 @@ namespace MBSim {
     xSize = momentDir.cols();
   }
 
-  void ElasticJoint::init(InitStage stage) {
-    FloatingFrameLink::init(stage);
-    func->init(stage);
+  void ElasticJoint::init(InitStage stage, const InitConfigSet &config) {
+    FloatingFrameLink::init(stage, config);
+    func->init(stage, config);
   }
 
   void ElasticJoint::setForceDirection(const Mat3xV &fd) {

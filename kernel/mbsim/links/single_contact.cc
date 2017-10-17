@@ -492,7 +492,7 @@ namespace MBSim {
     LinkStatusReg.resize(LinkStatusRegSize);
   }
 
-  void SingleContact::init(InitStage stage) {
+  void SingleContact::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       gActive = 1;
       gActive0 = 1;
@@ -563,11 +563,11 @@ namespace MBSim {
       if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
         throw MBSimError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
     }
-    ContourLink::init(stage);
-    if(fcl) fcl->init(stage);
-    if(fdf) fdf->init(stage);
-    if(fnil) fnil->init(stage);
-    if(ftil) ftil->init(stage);
+    ContourLink::init(stage, config);
+    if(fcl) fcl->init(stage, config);
+    if(fdf) fdf->init(stage, config);
+    if(fnil) fnil->init(stage, config);
+    if(ftil) ftil->init(stage, config);
   }
 
   bool SingleContact::isSetValued() const {

@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
 
   }
 
-  void FlexibleBody1SReferenceCurveFE::init(Element::InitStage stage) {
+  void FlexibleBody1SReferenceCurveFE::init(Element::InitStage stage, const InitConfigSet &config) {
 
     // initialize the coefficients
     if (stage == Element::resize) {

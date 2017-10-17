@@ -34,7 +34,7 @@ namespace MBSimHydraulics {
       int getSignalSize() const { return 1; }
       void updateSignal();
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void setHLine(HLine * line_) {line=line_; }
     protected:
       HLine * line;
@@ -48,7 +48,7 @@ namespace MBSimHydraulics {
       int getSignalSize() const { return 1; }
       void updateSignal();
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void setHNode(HNode * node_) {node=node_; }
     protected:
       HNode * node;
@@ -60,7 +60,7 @@ namespace MBSimHydraulics {
       TemperatureSensor(const std::string &name="") : MBSimControl::Sensor(name) {}
       std::string getType() const { return "TemperatureSensor"; }
       int getSignalSize() const { return 1; }
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
   };
 
   class KinematicViscositySensor : public MBSimControl::Sensor {
@@ -68,7 +68,7 @@ namespace MBSimHydraulics {
       KinematicViscositySensor(const std::string &name="") : MBSimControl::Sensor(name) {}
       std::string getType() const { return "KinematicViscositySensor"; }
       int getSignalSize() const { return 1; }
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
   };
 
 }

@@ -40,7 +40,7 @@ namespace MBSim {
       MechanicalConstraintObserver(const std::string &name="");
       void setMechanicalConstraint(MechanicalConstraint *constraint_) { constraint = constraint_; } 
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
 

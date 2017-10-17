@@ -79,7 +79,7 @@ namespace MBSimFlexibleBody {
       /****************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

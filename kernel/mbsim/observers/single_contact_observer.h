@@ -47,7 +47,7 @@ namespace MBSim {
     public:
       SingleContactObserver(const std::string &name="");
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
 

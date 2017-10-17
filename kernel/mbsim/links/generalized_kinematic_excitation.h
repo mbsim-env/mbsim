@@ -39,7 +39,7 @@ namespace MBSim {
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       void calclaSize(int j);
       void calcgSize(int j);
       void calcgdSize(int j);

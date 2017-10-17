@@ -30,7 +30,7 @@ namespace MBSim {
       GeneralizedPositionConstraint(const std::string &name="") : GeneralizedDualConstraint(name), f(NULL) { }
       ~GeneralizedPositionConstraint() { delete f; }
 
-      void init(Element::InitStage stage);
+      void init(Element::InitStage stage, const InitConfigSet &config);
 
       void setConstraintFunction(Function<fmatvec::VecV(double)>* f_) {
         f = f_;

@@ -31,7 +31,7 @@ namespace MBSim {
       GeneralizedVelocityConstraint(const std::string &name="") : GeneralizedDualConstraint(name), f(NULL) { }
       ~GeneralizedVelocityConstraint() { delete f; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
 
       void calcxSize();
 

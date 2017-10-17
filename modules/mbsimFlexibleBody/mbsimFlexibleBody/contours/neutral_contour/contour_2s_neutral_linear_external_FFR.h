@@ -30,7 +30,7 @@ namespace MBSimFlexibleBody {
       virtual ~Contour2sNeutralLinearExternalFFR();
 
       /*INHERITED INTERFACE */
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
 
       /* GETTER / SETTER*/
       int getNumberOfTransNodesU();

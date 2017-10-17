@@ -44,9 +44,9 @@ namespace MBSim {
        */
       virtual ~SpatialStribeckImpact() { if(fmu) delete fmu; fmu=0; }
 
-      void init(Element::InitStage stage) {
-        FrictionImpactLaw::init(stage);
-        fmu->init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        FrictionImpactLaw::init(stage, config);
+        fmu->init(stage, config);
       }
 
       /* INHERITED INTERFACE */

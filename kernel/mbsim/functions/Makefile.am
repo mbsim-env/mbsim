@@ -17,6 +17,7 @@ libfunction_la_SOURCES = identity_function.cc\
 			 piecewise_defined_function.cc\
 			 tabular_function.cc\
 			 two_dimensional_tabular_function.cc\
+			 function.cc\
 			 symbolic_function.cc\
 			 piecewise_polynom_function.cc\
 			 two_dimensional_piecewise_polynom_function.cc\

@@ -30,7 +30,7 @@ namespace MBSim {
     public:
       GeneralizedGearConstraint(const std::string &name="") : GeneralizedConstraint(name), bd(NULL) { }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
 
       void setDependentRigidBody(RigidBody* body_) { bd=body_; }
       void addIndependentRigidBody(RigidBody *body, double ratio);

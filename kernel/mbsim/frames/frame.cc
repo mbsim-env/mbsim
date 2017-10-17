@@ -109,7 +109,7 @@ namespace MBSim {
     Element::plot();
   }
 
-  void Frame::init(InitStage stage) {
+  void Frame::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
       WJP[0].resize(hSize[0]);
       WJR[0].resize(hSize[0]);
@@ -154,7 +154,7 @@ namespace MBSim {
           parent->getOpenMBVGrp()->addObject(openMBVFrame);
       }
     }
-    Element::init(stage);
+    Element::init(stage, config);
   }
 
   void Frame::initializeUsingXML(DOMElement *element) {

@@ -42,7 +42,7 @@ namespace MBSim {
       void setFrame(Frame *frame_) { frame = frame_; }
       void setFrameOfReference(Frame *frameOfReference_) { frameOfReference = frameOfReference_; }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement *element);
       void plot();
 

@@ -45,14 +45,14 @@ namespace MBSimHydraulics {
     lineString=E(e)->getAttribute("ref");
   }
 
-  void FlowSensor::init(InitStage stage) {
+  void FlowSensor::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       if (lineString!="")
         setHLine(getByPath<HLine>(lineString));
-      Sensor::init(stage);
+      Sensor::init(stage, config);
     }
     else
-      Sensor::init(stage);
+      Sensor::init(stage, config);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, PressureSensor)
@@ -69,40 +69,40 @@ namespace MBSimHydraulics {
     nodeString=E(e)->getAttribute("ref");
   }
 
-  void PressureSensor::init(InitStage stage) {
+  void PressureSensor::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       if (nodeString!="")
         setHNode(getByPath<HNode>(nodeString));
-      Sensor::init(stage);
+      Sensor::init(stage, config);
     }
     else if (stage==preInit) {
       addDependency(node);
-      Sensor::init(stage);
+      Sensor::init(stage, config);
     }
     else
-      Sensor::init(stage);
+      Sensor::init(stage, config);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, TemperatureSensor)
   
-  void TemperatureSensor::init(InitStage stage) {
+  void TemperatureSensor::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
       s(0)=HydraulicEnvironment::getInstance()->getTemperature();
-      Sensor::init(stage);
+      Sensor::init(stage, config);
     }
     else
-      Sensor::init(stage);
+      Sensor::init(stage, config);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, KinematicViscositySensor)
   
-  void KinematicViscositySensor::init(InitStage stage) {
+  void KinematicViscositySensor::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
       s(0)=HydraulicEnvironment::getInstance()->getKinematicViscosity();
-      Sensor::init(stage);
+      Sensor::init(stage, config);
     }
     else
-      Sensor::init(stage);
+      Sensor::init(stage, config);
   }
 
 }

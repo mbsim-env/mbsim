@@ -25,7 +25,7 @@ namespace MBSimFlexibleBody {
 //      virtual std::string getType() const {
 //        return "Contour1sNeutralCosserat";
 //      }
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
       virtual NeutralNurbsPosition1s* createNeutralPosition();
       virtual NeutralNurbsVelocity1s* createNeutralVelocity();
       virtual NeutralNurbsAngle1s* createNeutralAngle();

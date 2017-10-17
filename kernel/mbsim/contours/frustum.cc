@@ -34,7 +34,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Frustum)
 
-  void Frustum::init(InitStage stage) {
+  void Frustum::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialTranslation(0.,h,0.);
@@ -44,7 +44,7 @@ namespace MBSim {
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(h);
       }
     }
-    RigidContour::init(stage);
+    RigidContour::init(stage, config);
   }
 
   //TODO: Same function as in flexible_body_2s_13_mfr_mindlin (transformCW) --> this is just the transformation into cylindrical coordinates --> get it into utils?

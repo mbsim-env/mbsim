@@ -97,7 +97,7 @@ namespace MBSim {
        * void MyClass::init(InitStage stage) {
        *   if(stage==preInit) {
        *     // do something
-       *     MyBaseClass::init(stage); // base must be called
+       *     MyBaseClass::init(stage, config); // base must be called
        *     // do something
        *   }
        *   else if(stage==plot) {
@@ -105,10 +105,10 @@ namespace MBSim {
        *     // base need not be called
        *   }
        *   else
-       *     MyBaseClass::init(stage);
+       *     MyBaseClass::init(stage, config);
        *
        *   for(int i=0; i<container.size(); i++)
-       *     container[i]->init(stage);
+       *     container[i]->init(stage, config);
        * }
        * \endcode
        */
@@ -124,7 +124,7 @@ namespace MBSim {
       void setTruncateSimulationFiles(bool trunc) { truncateSimulationFiles=trunc; }
 
       /* INHERITED INTERFACE OF GROUP */
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       using Group::plot;
       /***************************************************/
 

@@ -36,7 +36,7 @@ namespace MBSim {
 
       std::string getType() const { return "FixedRelativeFrame"; }
 
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
 
       void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
       void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }

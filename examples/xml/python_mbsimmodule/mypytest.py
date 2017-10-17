@@ -68,7 +68,7 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
   def isSingleValued(self):
     return True
 
-  def init(self, stage):
+  def init(self, stage, config):
     if stage==self.plotting:
       if self.getPlotFeature(mbsim.plotRecursive):
         if self.getPlotFeature(pyTestPlotFeature):
@@ -76,7 +76,7 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
       if self.getPlotFeature(mbsim.openMBV):
         self.coilspringOpenMBV.setName(self.name)
         self.parent.getOpenMBVGrp().addObject(self.coilspringOpenMBV)
-    super(PySpringDamperPyScriptInit, self).init(stage)
+    super(PySpringDamperPyScriptInit, self).init(stage, config)
 
   def plot(self):
     if self.getPlotFeature(mbsim.plotRecursive):

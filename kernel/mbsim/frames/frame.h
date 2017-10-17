@@ -50,7 +50,7 @@ namespace MBSim {
       virtual ~Frame() {}
 
       /* INHERITED INTERFACE ELEMENT */
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       std::string getType() const { return "Frame"; }
       virtual void plot();
       /***************************************************/

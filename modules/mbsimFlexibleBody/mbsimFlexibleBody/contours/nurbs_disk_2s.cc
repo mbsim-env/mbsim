@@ -55,7 +55,7 @@ namespace MBSimFlexibleBody {
     if(vVec) {delete vVec; vVec=0;}
   }
 
-  void NurbsDisk2s::init(InitStage stage) {
+  void NurbsDisk2s::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       degU = (static_cast<FlexibleBody2s13*>(parent))->getAzimuthalDegree();
       degV = (static_cast<FlexibleBody2s13*>(parent))->getRadialDegree();
@@ -96,7 +96,7 @@ namespace MBSimFlexibleBody {
         parent->getOpenMBVGrp()->addObject(openMBVNurbsDisk);
       }
     }
-    Contour2s::init(stage);
+    Contour2s::init(stage, config);
   }
 
   ContourFrame* NurbsDisk2s::createContourFrame(const string &name) {

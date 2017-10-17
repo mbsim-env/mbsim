@@ -37,7 +37,7 @@ namespace MBSim {
   KinematicCoordinatesObserver::KinematicCoordinatesObserver(const std::string &name) : Observer(name), frame(NULL), frameOfReference(NULL) {
   }
 
-  void KinematicCoordinatesObserver::init(InitStage stage) {
+  void KinematicCoordinatesObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_frame!="")
         setFrame(getByPath<Frame>(saved_frame));
@@ -45,7 +45,7 @@ namespace MBSim {
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       if(not frameOfReference)
         setFrameOfReference(static_cast<DynamicSystem*>(parent)->getFrameI());
-      Observer::init(stage);
+      Observer::init(stage, config);
     }
     else if(stage==plotting) {
 //      if(openMBVPosition) {
@@ -66,7 +66,7 @@ namespace MBSim {
 //        plotColumns.push_back("YAcceleration");
 //        plotColumns.push_back("ZAcceleration");
 //      }
-      Observer::init(stage);
+      Observer::init(stage, config);
       if(plotFeature[openMBV]) {
         if(openMBVPosition) {
           openMBVPosGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
@@ -122,7 +122,7 @@ namespace MBSim {
       }
     }
     else
-      Observer::init(stage);
+      Observer::init(stage, config);
   }
 
   void KinematicCoordinatesObserver::plot() {

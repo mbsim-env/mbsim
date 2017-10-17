@@ -30,7 +30,7 @@ namespace MBSim {
       ~PolarContourFunction();
 
       void setRadiusFunction(Function<double(double)> *f_);
-      void init(Element::InitStage stage);
+      void init(Element::InitStage stage, const InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement *element);
 
       fmatvec::Vec3 operator()(const double& alpha);

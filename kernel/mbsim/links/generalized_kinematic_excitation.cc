@@ -69,16 +69,16 @@ namespace MBSim {
     updla = false;
   }
 
-  void GeneralizedKinematicExcitation::init(InitStage stage) {
+  void GeneralizedKinematicExcitation::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
       if(fl->isSetValued()) {
         il = new BilateralImpact;
         il->setParent(this);
       }
     }
-    RigidBodyLink::init(stage);
-    if(fl) fl->init(stage);
-    if(il) il->init(stage);
+    RigidBodyLink::init(stage, config);
+    if(fl) fl->init(stage, config);
+    if(il) il->init(stage, config);
   }
 
 }

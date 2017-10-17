@@ -29,8 +29,8 @@ namespace MBSim {
     iPoints.resize(numberOfPoints);
   }
 
-  void ContourQuad::init(InitStage stage) {
-    Contour::init(stage);
+  void ContourQuad::init(InitStage stage, const InitConfigSet &config) {
+    Contour::init(stage, config);
   }
 
 //  bool ContourQuad::testInsideBounds(const ContourPointData &cp) {

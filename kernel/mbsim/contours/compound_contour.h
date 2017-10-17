@@ -52,7 +52,7 @@ namespace MBSim {
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGroup; }
       /***************************************************/
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       Contour* getContourElement(int i) {
         return element[i];
       }

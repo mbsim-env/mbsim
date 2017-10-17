@@ -37,7 +37,7 @@ namespace MBSim {
 
       void calcSize();
 
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "FixedFrameLink"; }

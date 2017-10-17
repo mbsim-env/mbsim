@@ -36,7 +36,7 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  void DimensionlessLine::init(InitStage stage) {
+  void DimensionlessLine::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       if (dynamic_cast<RigidNode*>(nFrom) || dynamic_cast<RigidNodeMec*>(nFrom))
         THROW_MBSIMERROR("pFrom is of setValued type. not valid for dimensionless lines.");
@@ -49,7 +49,7 @@ namespace MBSimHydraulics {
         plotColumns.push_back("Mass flow [kg/min]");
       }
     }
-    HLine::init(stage);
+    HLine::init(stage, config);
   }
 
   void DimensionlessLine::plot() {
@@ -86,12 +86,12 @@ namespace MBSimHydraulics {
     return (s2vFunction)?(*s2vFunction)(getTime()):0;
   }
 
-  void Leakage0DOF::init(InitStage stage) {
-    DimensionlessLine::init(stage);
-    lpl->init(stage);
-    if(s1vFunction) s1vFunction->init(stage);
-    if(s2vFunction) s2vFunction->init(stage);
-    if(glFunction) glFunction->init(stage);
+  void Leakage0DOF::init(InitStage stage, const InitConfigSet &config) {
+    DimensionlessLine::init(stage, config);
+    lpl->init(stage, config);
+    if(s1vFunction) s1vFunction->init(stage, config);
+    if(s2vFunction) s2vFunction->init(stage, config);
+    if(glFunction) glFunction->init(stage, config);
   }
 
   void Leakage0DOF::updateQ() {
@@ -137,13 +137,13 @@ namespace MBSimHydraulics {
     lpl->setLine(this);
   }
 
-  void CircularLeakage0DOF::init(InitStage stage) {
+  void CircularLeakage0DOF::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {  
       rO=rI+hGap;
-      Leakage0DOF::init(stage);
+      Leakage0DOF::init(stage, config);
     }
     else
-      Leakage0DOF::init(stage);
+      Leakage0DOF::init(stage, config);
   }
 
   void CircularLeakage0DOF::initializeUsingXML(DOMElement * element) {

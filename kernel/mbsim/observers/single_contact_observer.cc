@@ -37,9 +37,9 @@ namespace MBSim {
   SingleContactObserver::SingleContactObserver(const std::string &name) : MechanicalLinkObserver(name), openMBVContactFrame(2) {
   }
 
-  void SingleContactObserver::init(InitStage stage) {
+  void SingleContactObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
-      MechanicalLinkObserver::init(stage);
+      MechanicalLinkObserver::init(stage, config);
       if (plotFeature[openMBV]) {
         if(openMBVContactFrame[0]) {
           for (unsigned int i = 0; i < 2; i++) { // frames
@@ -59,7 +59,7 @@ namespace MBSim {
       }
     }
     else
-      MechanicalLinkObserver::init(stage);
+      MechanicalLinkObserver::init(stage, config);
   }
 
   void SingleContactObserver::plot() {

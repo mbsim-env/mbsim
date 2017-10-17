@@ -77,8 +77,8 @@ namespace MBSim {
         x = xy.col(0);
         y = xy(fmatvec::RangeV(0, xy.rows() - 1), fmatvec::RangeV(1, xy.cols() - 1));
       }
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg)>::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(Arg)>::init(stage, config);
         if(stage==Element::preInit) {
           for(int i=1; i<x.size(); i++)
             if(x(i) <= x(i-1))

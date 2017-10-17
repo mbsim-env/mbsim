@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  void DualRigidBodyLink::init(InitStage stage) {
+  void DualRigidBodyLink::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_ref!="")
         connect(getByPath<RigidBody>(saved_ref));
@@ -42,7 +42,7 @@ namespace MBSim {
       if(body.size()>1 and (body[0]->getGeneralizedVelocitySize()!=body[1]->getGeneralizedVelocitySize()))
         THROW_MBSIMERROR("rigid bodies must have the same dof!");
     }
-    RigidBodyLink::init(stage);
+    RigidBodyLink::init(stage, config);
   }
 
   void DualRigidBodyLink::initializeUsingXML(DOMElement* element) {

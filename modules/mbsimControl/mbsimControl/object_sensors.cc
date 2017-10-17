@@ -35,12 +35,12 @@ namespace MBSimControl {
     objectString=E(e)->getAttribute("ref");
   }
 
-  void ObjectSensor::init(InitStage stage) {
+  void ObjectSensor::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       if (objectString!="")
         setObject(getByPath<Object>(objectString));
     }
-    Sensor::init(stage);
+    Sensor::init(stage, config);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedPositionSensor)

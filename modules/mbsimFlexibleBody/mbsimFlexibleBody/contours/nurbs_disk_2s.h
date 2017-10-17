@@ -68,7 +68,7 @@ namespace MBSimFlexibleBody {
       virtual std::string getType() const { return "NurbsDisk2s"; }
       /***************************************************/
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
 
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 

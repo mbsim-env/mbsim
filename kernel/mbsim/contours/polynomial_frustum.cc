@@ -37,7 +37,7 @@ namespace MBSim {
 
   }
 
-  void PolynomialFrustum::init(InitStage stage) {
+  void PolynomialFrustum::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit)
       updateEnclosingSphere();
 
@@ -51,7 +51,7 @@ namespace MBSim {
         createInventorFile();
       }
     }
-    RigidContour::init(stage);
+    RigidContour::init(stage, config);
   }
 
   Vec2 PolynomialFrustum::evalZeta(const Vec3 & WrPoint) {

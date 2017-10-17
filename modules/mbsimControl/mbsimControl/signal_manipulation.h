@@ -37,7 +37,7 @@ namespace MBSimControl {
     public:
       Multiplexer(const std::string &name="") : Signal(name) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void addInputSignal(Signal * signal_) { signal.push_back(signal_); }
       void updateSignal();
       int getSignalSize() const;
@@ -54,7 +54,7 @@ namespace MBSimControl {
     public:
       Demultiplexer(const std::string &name="") : Signal(name), signal(NULL) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void setInputSignal(Signal *signal_) { signal = signal_; }
       void setIndices(const std::vector<MBSim::Index> &index_) { index = index_; }
       void updateSignal();
@@ -73,7 +73,7 @@ namespace MBSimControl {
     public:
       SignalTimeDiscretization(const std::string &name="") : Signal(name), s(NULL), tOld(-99e99) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void setInputSignal(Signal *signal_) { s=signal_; }
       void updateSignal();
       int getSignalSize() const { return s->getSignalSize(); }
@@ -92,7 +92,7 @@ namespace MBSimControl {
       SignalOperation(const std::string &name="") : Signal(name), f1(NULL), f2(NULL) { }
       ~SignalOperation() { delete f1; delete f2; }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void setInputSignal(Signal *signal_) { signal.resize(1,signal_); }
       void addInputSignal(Signal *signal_) { signal.push_back(signal_); }
       void setFunction(MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f) {

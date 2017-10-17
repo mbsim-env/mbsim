@@ -190,24 +190,30 @@ namespace MBSim {
       checkFunctionIODim();
     }
 
-    void init(Element::InitStage stage) {
-      Function<Ret(Arg)>::init(stage);
+    void init(Element::InitStage stage, const InitConfigSet &config) {
+      Function<Ret(Arg)>::init(stage, config);
       if(stage == Element::preInit) {
         casadi::SX argd=casadi::SX::sym("argd", getArgSize());
         casadi::SX argd_2=casadi::SX::sym("argd_2", getArgSize());
 
-        pd_ = parDerSX<Ret>(ret, arg);
-        casadi::SX dd_ = dirDerSX<Ret>(ret, arg, argd);
-        pddd_ = parDerSX(dd_, arg);
-        pdpd_ = parDerSX(pd_, arg);
-        casadi::SX dddd_ = dirDerSX(dd_, arg, argd_2);
-
         f = casadi::Function("noname", {arg}, {ret});
-        pd = casadi::Function("noname", {arg}, {pd_});
-        dd = casadi::Function("noname", {argd, arg}, {dd_});
-        pddd = casadi::Function("noname", {argd, arg}, {pddd_});
-        pdpd = casadi::Function("noname", {arg}, {pdpd_});
-        dddd = casadi::Function("noname", {argd_2, argd, arg}, {dddd_});
+
+        casadi::SX dd_;
+        if(config.find(noDer)==config.end()) {
+          pd_ = parDerSX<Ret>(ret, arg);
+          dd_ = dirDerSX<Ret>(ret, arg, argd);
+          pd = casadi::Function("noname", {arg}, {pd_});
+          dd = casadi::Function("noname", {argd, arg}, {dd_});
+        }
+
+        if(config.find(noDer)==config.end() && config.find(noDerDer)==config.end()) {
+          pddd_ = parDerSX(dd_, arg);
+          pdpd_ = parDerSX(pd_, arg);
+          casadi::SX dddd_ = dirDerSX(dd_, arg, argd_2);
+          pddd = casadi::Function("noname", {argd, arg}, {pddd_});
+          pdpd = casadi::Function("noname", {arg}, {pdpd_});
+          dddd = casadi::Function("noname", {argd_2, argd, arg}, {dddd_});
+        }
       }
     }
 
@@ -293,32 +299,37 @@ namespace MBSim {
       checkFunctionIODim();
     }
 
-    void init(Element::InitStage stage) {
-      Function<Ret(Arg1, Arg2)>::init(stage);
+    void init(Element::InitStage stage, const InitConfigSet &config) {
+      Function<Ret(Arg1, Arg2)>::init(stage, config);
       if(stage == Element::preInit) {
         casadi::SX arg1d=casadi::SX::sym("arg1d", getArg1Size());
         casadi::SX arg2d=casadi::SX::sym("arg2d", getArg2Size());
 
-        pd1_ = parDerSX<Ret>(ret, arg1);
-        pd2_ = parDerSX<Ret>(ret, arg2);
-        casadi::SX dd1_ = dirDerSX<Ret>(ret, arg1, arg1d);
-        casadi::SX dd2_ = dirDerSX<Ret>(ret, arg2, arg2d);
-        pd1dd1_ = parDerSX(dd1_, arg1);
-        pd1dd2_ = parDerSX(dd2_, arg1);
-        pd1pd2_ = parDerSX(pd1_, arg2);
-        pd2dd1_ = parDerSX(dd1_, arg2);
-        pd2dd2_ = parDerSX(dd2_, arg2);
-        pd2pd2_ = parDerSX(pd2_, arg2);
-
         f = casadi::Function("noname", {arg1, arg2}, {ret});
-        pd1 = casadi::Function("noname", {arg1, arg2}, {pd1_});
-        pd2 = casadi::Function("noname", {arg1, arg2}, {pd2_});
-        pd1dd1 = casadi::Function("noname", {arg1d, arg1, arg2}, {pd1dd1_});
-        pd1dd2 = casadi::Function("noname", {arg2d, arg1, arg2}, {pd1dd2_});
-        pd1pd2 = casadi::Function("noname", {arg1, arg2}, {pd1pd2_});
-        pd2dd1 = casadi::Function("noname", {arg1d, arg1, arg2}, {pd2dd1_});
-        pd2dd2 = casadi::Function("noname", {arg2d, arg1, arg2}, {pd2dd2_});
-        pd2pd2 = casadi::Function("noname", {arg1, arg2}, {pd2pd2_});
+
+        if(config.find(noDer)==config.end()) {
+          pd1_ = parDerSX<Ret>(ret, arg1);
+          pd2_ = parDerSX<Ret>(ret, arg2);
+          pd1 = casadi::Function("noname", {arg1, arg2}, {pd1_});
+          pd2 = casadi::Function("noname", {arg1, arg2}, {pd2_});
+        }
+
+        if(config.find(noDer)==config.end() && config.find(noDerDer)==config.end()) {
+          casadi::SX dd1_ = dirDerSX<Ret>(ret, arg1, arg1d);
+          casadi::SX dd2_ = dirDerSX<Ret>(ret, arg2, arg2d);
+          pd1dd1_ = parDerSX(dd1_, arg1);
+          pd1dd2_ = parDerSX(dd2_, arg1);
+          pd1pd2_ = parDerSX(pd1_, arg2);
+          pd2dd1_ = parDerSX(dd1_, arg2);
+          pd2dd2_ = parDerSX(dd2_, arg2);
+          pd2pd2_ = parDerSX(pd2_, arg2);
+          pd1dd1 = casadi::Function("noname", {arg1d, arg1, arg2}, {pd1dd1_});
+          pd1dd2 = casadi::Function("noname", {arg2d, arg1, arg2}, {pd1dd2_});
+          pd1pd2 = casadi::Function("noname", {arg1, arg2}, {pd1pd2_});
+          pd2dd1 = casadi::Function("noname", {arg1d, arg1, arg2}, {pd2dd1_});
+          pd2dd2 = casadi::Function("noname", {arg2d, arg1, arg2}, {pd2dd2_});
+          pd2pd2 = casadi::Function("noname", {arg1, arg2}, {pd2pd2_});
+        }
       }
     }
 

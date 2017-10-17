@@ -36,14 +36,14 @@ namespace MBSimControl {
     linkString=E(e)->getAttribute("ref");
   }
 
-  void LinkSensor::init(InitStage stage) {
+  void LinkSensor::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       if (linkString!="")
         setLink(getByPath<Link>(linkString));
-      Sensor::init(stage);
+      Sensor::init(stage, config);
     }
     else
-      Sensor::init(stage);
+      Sensor::init(stage, config);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedRelativePositionSensor)

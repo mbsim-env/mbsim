@@ -47,7 +47,7 @@ namespace MBSimHydraulics {
 
       bool hasSmoothPart() const {return (bilateral || (unilateral && (fabs(dpMin)>1e-6))); }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       // ================================
       // Methods from init-Process
       // ================================

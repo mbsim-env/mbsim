@@ -47,7 +47,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       virtual void updatexd();
       virtual void calcxSize();
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */

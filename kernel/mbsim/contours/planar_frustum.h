@@ -43,7 +43,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "PlanarFrustum"; }
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 
       /* GETTER / SETTER */

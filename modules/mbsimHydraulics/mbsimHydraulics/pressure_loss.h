@@ -36,7 +36,7 @@ namespace MBSimHydraulics {
     public:
       PressureLoss() : line(0), initialized(false) {}
       virtual void setLine(const HLine *line_) { line = line_; }
-//      void init(InitStage stage);
+//      void init(InitStage stage, const MBSim::InitConfigSet &config);
     protected:
       const HLine *line;
       bool initialized;
@@ -58,7 +58,7 @@ namespace MBSimHydraulics {
       void setLine(const HLine *line_) { line = line_; for(unsigned int i=0; i<slp.size(); i++) slp[i]->setLine(line); }
       void addLinePressureLoss(LinePressureLoss * l) { slp.push_back(l); slp[slp.size()-1]->setParent(this); }
       double operator()(const double& Q);
-      void init(MBSim::Element::InitStage stage);
+      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement * element);
     private:
       std::vector<LinePressureLoss*> slp;
@@ -72,7 +72,7 @@ namespace MBSimHydraulics {
       void setLine(const HLine *line_) { line = line_; pl->setLine(line); }
       void setLinePressureLoss(LinePressureLoss * pl_, int number_) {pl=pl_; number=double(number_); }
       double operator()(const double& Q);
-      void init(MBSim::Element::InitStage stage);
+      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement * element);
     private:
       LinePressureLoss* pl;
@@ -124,7 +124,7 @@ namespace MBSimHydraulics {
       void setHydraulicDiameter(double dHyd_, double dHydNeg_=0);
       void setSurfaceRoughness(double k_) {k=k_; }
       double operator()(const double& Q);
-      void init(MBSim::Element::InitStage stage);
+      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement *element);
     private:
       double c, dRef, dHyd, dHydNeg, k, ReynoldsFactor, ReynoldsFactorNeg;
@@ -158,7 +158,7 @@ namespace MBSimHydraulics {
       }
       double operator()(const double& Q);
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::Element::InitStage stage);
+      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
     private:
       MBSim::Function<double(double)> * zetaTabular;
   };

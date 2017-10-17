@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
     delete refCurve;
   }
 
-  void FlexibleBody1SReferenceCurve::init(Element::InitStage stage) {
+  void FlexibleBody1SReferenceCurve::init(Element::InitStage stage, const InitConfigSet &config) {
 
     if (stage == preInit) {
       refCurve->computeReference();
@@ -326,10 +326,10 @@ namespace MBSimFlexibleBody {
 // initialize elements
     for (size_t i = 0; i < discretization.size(); i++) {
       FlexibleBody1SReferenceCurveFE * ele = static_cast<FlexibleBody1SReferenceCurveFE*>(discretization[i]);
-      ele->init(stage);
+      ele->init(stage, config);
     }
 
-    FlexibleBodyContinuum<double>::init(stage);
+    FlexibleBodyContinuum<double>::init(stage, config);
   }
 
   void FlexibleBody1SReferenceCurve::initInfo(Vec q0, Vec u0) {

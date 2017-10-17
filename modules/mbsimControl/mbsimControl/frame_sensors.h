@@ -37,7 +37,7 @@ namespace MBSimControl {
       FrameSensor(const std::string &name) : Sensor(name), frame(NULL) { }
       std::string getType() const { return "FrameSensor"; }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void setFrame(MBSim::Frame * frame_) { frame = frame_; }
       int getSignalSize() const { return 3; }
     protected:
@@ -151,13 +151,13 @@ namespace MBSimControl {
 //      void calcxSize() {xSize=direction.cols(); }
 //      void init(InitStage stage) {
 //        if (stage==preInit) {
-//          RelativeCoordinateSensor::init(stage);
+//          RelativeCoordinateSensor::init(stage, config);
 //          g.resize(direction.cols());
 //          gd.resize(direction.cols());
 //          x.resize(direction.cols());
 //        }
 //        else
-//          RelativeCoordinateSensor::init(stage);
+//          RelativeCoordinateSensor::init(stage, config);
 //      }
 //      void updatexd();
 //  };

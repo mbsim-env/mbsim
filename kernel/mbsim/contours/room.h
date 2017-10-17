@@ -74,7 +74,7 @@ namespace MBSim {
       int gridSize;
 
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
   };
 }
 

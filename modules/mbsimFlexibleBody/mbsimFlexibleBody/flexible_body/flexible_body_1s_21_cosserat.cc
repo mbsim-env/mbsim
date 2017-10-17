@@ -217,7 +217,7 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s21Cosserat::init(InitStage stage) {
+  void FlexibleBody1s21Cosserat::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       l0 = L / Elements;
 
@@ -237,7 +237,7 @@ namespace MBSimFlexibleBody {
         u << u0;
       }
 
-      FlexibleBody1sCosserat::init(stage);
+      FlexibleBody1sCosserat::init(stage, config);
 
       Vec g = R->getOrientation().T() * MBSimEnvironment::getInstance()->getAccelerationOfGravity();
 
@@ -262,7 +262,7 @@ namespace MBSimFlexibleBody {
     }
 
     else if (stage == unknownStage) {
-      FlexibleBody1sCosserat::init(stage);
+      FlexibleBody1sCosserat::init(stage, config);
 
       initialised = true;
 
@@ -273,11 +273,11 @@ namespace MBSimFlexibleBody {
 
     else if (stage == plotting) {
 //      ((OpenMBV::SpineExtrusion*) openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation()));
-      FlexibleBody1sCosserat::init(stage);
+      FlexibleBody1sCosserat::init(stage, config);
     }
 
     else
-      FlexibleBody1sCosserat::init(stage);
+      FlexibleBody1sCosserat::init(stage, config);
 
     //curve->initContourFromBody(stage);
   }
@@ -421,7 +421,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::initInfo() {
-    init(preInit);
+    init(preInit, InitConfigSet());
 //    init(resize);
     l0 = L / Elements;
     Vec g = Vec("[0.;0.;0.]");
@@ -439,7 +439,7 @@ namespace MBSimFlexibleBody {
       qRotationElement.push_back(Vec(rotationDiscretization[0]->getqSize(), INIT, 0.));
       uRotationElement.push_back(Vec(rotationDiscretization[0]->getuSize(), INIT, 0.));
     }
-    FlexibleBody1sCosserat::init(unknownStage);
+    FlexibleBody1sCosserat::init(unknownStage, InitConfigSet());
 //    BuildElements();
 
     //curve->initContourFromBody(resize);

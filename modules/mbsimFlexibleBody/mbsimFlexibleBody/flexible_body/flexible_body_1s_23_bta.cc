@@ -119,9 +119,9 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s23BTA::init(InitStage stage) {
+  void FlexibleBody1s23BTA::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
-      FlexibleBody1s::init(stage);
+      FlexibleBody1s::init(stage, config);
 
       assert(0<Elements);
 
@@ -144,7 +144,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else
-      FlexibleBody1s::init(stage);
+      FlexibleBody1s::init(stage, config);
   }
 
   void FlexibleBody1s23BTA::setNumberElements(int n) {

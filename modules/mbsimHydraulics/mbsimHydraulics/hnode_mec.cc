@@ -72,7 +72,7 @@ namespace MBSimHydraulics {
     return connectedRotFrames.size()-1;
   }
 
-  void HNodeMec::init(InitStage stage) {
+  void HNodeMec::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       for (unsigned int i=0; i<saved_translatorial_frameOfReference.size(); i++) {
         addTransMecArea(
@@ -154,7 +154,7 @@ namespace MBSimHydraulics {
     }
     else if (stage==unknownStage)
       x0(0) = V0;
-    HNode::init(stage);
+    HNode::init(stage, config);
   }
 
   void HNodeMec::updateWRef(const Mat &WParent, int j) {
@@ -416,13 +416,13 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ConstrainedNodeMec)
 
-  void ConstrainedNodeMec::init(InitStage stage) {
+  void ConstrainedNodeMec::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
       addDependency(pFun->getDependency());
     else if (stage==unknownStage)
       la.init((*pFun)(0));
-    HNodeMec::init(stage);
-    pFun->init(stage);
+    HNodeMec::init(stage, config);
+    pFun->init(stage, config);
   }
 
   void ConstrainedNodeMec::updateGeneralizedForces() {
@@ -438,13 +438,13 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, EnvironmentNodeMec)
 
-  void EnvironmentNodeMec::init(InitStage stage) {
+  void EnvironmentNodeMec::init(InitStage stage, const InitConfigSet &config) {
     if (stage==unknownStage) {
-      HNodeMec::init(stage);
+      HNodeMec::init(stage, config);
       lambda(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
     }
     else
-      HNodeMec::init(stage);
+      HNodeMec::init(stage, config);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ElasticNodeMec)
@@ -454,7 +454,7 @@ namespace MBSimHydraulics {
     bulkModulus=NULL;
   }
 
-  void ElasticNodeMec::init(InitStage stage) {
+  void ElasticNodeMec::init(InitStage stage, const InitConfigSet &config) {
     if (stage==plotting) {
       if(plotFeature[plotRecursive])
         plotColumns.push_back("Node bulk modulus [N/mm^2]");
@@ -473,7 +473,7 @@ namespace MBSimHydraulics {
       double kappa=HydraulicEnvironment::getInstance()->getKappa();
       bulkModulus = new OilBulkModulus(path, E0, pinf, kappa, fracAir);
     }
-    HNodeMec::init(stage);
+    HNodeMec::init(stage, config);
   }
 
   void ElasticNodeMec::updateGeneralizedForces() {
@@ -522,7 +522,7 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidNodeMec::init(InitStage stage) {
+  void RigidNodeMec::init(InitStage stage, const InitConfigSet &config) {
     if (stage==unknownStage) {
       for (unsigned int i=0; i<nLines; i++) {
         Vec u0=connectedLines[i].line->getu0();
@@ -556,9 +556,9 @@ namespace MBSimHydraulics {
         }
       }
     }
-    HNodeMec::init(stage);
-    if(gfl) gfl->init(stage);
-    if(gil) gil->init(stage);
+    HNodeMec::init(stage, config);
+    if(gfl) gfl->init(stage, config);
+    if(gil) gil->init(stage, config);
   }
 
   void RigidNodeMec::updatewbRef(const Vec &wbParent) {

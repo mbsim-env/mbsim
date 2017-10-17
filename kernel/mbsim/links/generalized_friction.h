@@ -40,7 +40,7 @@ namespace MBSim {
       bool gActiveChanged() { return false; }
       virtual bool isSingleValued() const { return true; }
       std::string getType() const { return "GeneralizedFriction"; }
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
 
       void setGeneralizedFrictionForceLaw(FrictionForceLaw *func_);
       void setGeneralizedNormalForceFunction(Function<double(double)> *laN_) { 

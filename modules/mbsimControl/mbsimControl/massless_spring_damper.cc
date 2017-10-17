@@ -111,7 +111,7 @@ namespace MBSimControl {
      */
   }
 
-  void MasslessSpringDamper::init(InitStage stage) {
+  void MasslessSpringDamper::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       if (inputSignalString!="")
         setInputSignal(getByPath<Signal>(inputSignalString));
@@ -137,7 +137,7 @@ namespace MBSimControl {
         FFricNeg=FFricPos;
       assert(!(FFricNeg<0));
     }
-    Signal::init(stage);
+    Signal::init(stage, config);
   }
 
   void MasslessSpringDamper::plot() {

@@ -38,7 +38,7 @@ namespace MBSimFlexibleBody {
   Contour1sNeutralFlexibleBody1SReferenceCurve::~Contour1sNeutralFlexibleBody1SReferenceCurve() {
   }
 
-  void Contour1sNeutralFlexibleBody1SReferenceCurve::init(InitStage stage) {
+  void Contour1sNeutralFlexibleBody1SReferenceCurve::init(InitStage stage, const InitConfigSet &config) {
 
     if (stage == preInit) {
       uMin = 0;
@@ -55,7 +55,7 @@ namespace MBSimFlexibleBody {
     else if (stage == unknownStage) {
     }
 
-    Contour1sNeutralFactory::init(stage);
+    Contour1sNeutralFactory::init(stage, config);
   }
 
 //  void Contour1sNeutralFlexibleBody1SReferenceCurve::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff) {

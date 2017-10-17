@@ -36,9 +36,9 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-//  void PressureLoss::init(InitStage stage) {
+//  void PressureLoss::init(InitStage stage, const InitConfigSet &config) {
 //   if(stage==preInit) {
-//      Function<double(double)>::init(stage);
+//      Function<double(double)>::init(stage, config);
 //      if(t<0) throw;
 //    }
 //  }
@@ -57,10 +57,10 @@ namespace MBSimHydraulics {
     return pl;
   }
 
-  void SerialResistanceLinePressureLoss::init(InitStage stage) {
-    LinePressureLoss::init(stage);
+  void SerialResistanceLinePressureLoss::init(InitStage stage, const InitConfigSet &config) {
+    LinePressureLoss::init(stage, config);
     for(unsigned int i=0; i<slp.size(); i++)
-      slp[i]->init(stage);
+      slp[i]->init(stage, config);
   }
 
   void SerialResistanceLinePressureLoss::initializeUsingXML(DOMElement * element) {
@@ -80,9 +80,9 @@ namespace MBSimHydraulics {
     return (*pl)(Q/number);
   }
 
-  void ParallelResistanceLinePressureLoss::init(InitStage stage) {
-    LinePressureLoss::init(stage);
-    pl->init(stage);
+  void ParallelResistanceLinePressureLoss::init(InitStage stage, const InitConfigSet &config) {
+    LinePressureLoss::init(stage, config);
+    pl->init(stage, config);
   }
 
   void ParallelResistanceLinePressureLoss::initializeUsingXML(DOMElement * element) {
@@ -220,9 +220,9 @@ namespace MBSimHydraulics {
     }
   }
 
-  void TurbulentTubeFlowLinePressureLoss::init(InitStage stage) {
-    LinePressureLoss::init(stage);
-    if(lambdaTabular) lambdaTabular->init(stage);
+  void TurbulentTubeFlowLinePressureLoss::init(InitStage stage, const InitConfigSet &config) {
+    LinePressureLoss::init(stage, config);
+    if(lambdaTabular) lambdaTabular->init(stage, config);
   }
 
   void TurbulentTubeFlowLinePressureLoss::initializeUsingXML(DOMElement * element) {
@@ -279,9 +279,9 @@ namespace MBSimHydraulics {
     setZetaTabular(MBSim::ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
   }
 
-  void TabularLinePressureLoss::init(MBSim::Element::InitStage stage) {
-    LinePressureLoss::init(stage);
-    zetaTabular->init(stage);
+  void TabularLinePressureLoss::init(MBSim::Element::InitStage stage, const InitConfigSet &config) {
+    LinePressureLoss::init(stage, config);
+    zetaTabular->init(stage, config);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, RelativeAreaZetaClosablePressureLoss)

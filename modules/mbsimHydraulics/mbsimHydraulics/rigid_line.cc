@@ -49,7 +49,7 @@ namespace MBSimHydraulics {
     pL->setName("PressureLoss"); 
   }
 
-  void RigidLine::init(InitStage stage) {
+  void RigidLine::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       if (pL)
         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_LinePressureLoss", this, pL, false,false));
@@ -64,8 +64,8 @@ namespace MBSimHydraulics {
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       ReynoldsFactor=diameter/nu/area;
     }
-    RigidHLine::init(stage);
-    if(pL) pL->init(stage);
+    RigidHLine::init(stage, config);
+    if(pL) pL->init(stage, config);
   }
   
   void RigidLine::plot() {
@@ -104,19 +104,19 @@ namespace MBSimHydraulics {
     return isClosed()?cpLMinValue:(*cpLFunction)(getTime());
   }
 
-  void ClosableRigidLine::init(InitStage stage) {
+  void ClosableRigidLine::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       if (cpLBilateral)
          ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_BilateralClosablePressureLoss", this, cpL, true, false));
      else
         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_ClosablePressureLoss", this, cpL, false,false));
 
-      RigidLine::init(stage);
+      RigidLine::init(stage, config);
     }
     else
-      RigidLine::init(stage);
-    cpL->init(stage);
-    cpLFunction->init(stage);
+      RigidLine::init(stage, config);
+    cpL->init(stage, config);
+    cpLFunction->init(stage, config);
   }
 
   void ClosableRigidLine::initializeUsingXML(DOMElement * element) {
@@ -136,17 +136,17 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, UnidirectionalRigidLine)
 
-  void UnidirectionalRigidLine::init(InitStage stage) {
+  void UnidirectionalRigidLine::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       if (upL)
         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_RegularizedUnidirectionalPressureLoss", this, upL, false,false));
       else
         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_UnilateralUnidirectionalPressureLoss", this, NULL, false, true));
-      RigidLine::init(stage);
+      RigidLine::init(stage, config);
     }
     else
-      RigidLine::init(stage);
-    if(upL) upL->init(stage);
+      RigidLine::init(stage, config);
+    if(upL) upL->init(stage, config);
   }
 
   void UnidirectionalRigidLine::initializeUsingXML(DOMElement * element) {

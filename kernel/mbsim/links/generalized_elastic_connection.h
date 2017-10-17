@@ -40,7 +40,7 @@ namespace MBSim {
       bool gActiveChanged() { return false; }
       virtual bool isSingleValued() const { return true; }
       std::string getType() const { return "GeneralizedElasticConnection"; }
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
 
       void setGeneralizedForceFunction(Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func_) {
         func=func_;

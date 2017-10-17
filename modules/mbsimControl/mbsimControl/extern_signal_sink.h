@@ -37,7 +37,7 @@ namespace MBSimControl {
       void updateSignal();
       void setSignal(Signal *sig) { signal=sig; }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       int getSignalSize() const { return signal->getSignalSize(); }
   };
 

@@ -38,16 +38,16 @@ namespace MBSim {
   RigidBodySystemObserver::RigidBodySystemObserver(const std::string &name) : Observer(name), frameOfReference(NULL) {
   }
 
-  void RigidBodySystemObserver::init(InitStage stage) {
+  void RigidBodySystemObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       for(unsigned int i=0; i<saved_body.size(); i++)
         body.push_back(getByPath<RigidBody>(saved_body[i]));
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      Observer::init(stage);
+      Observer::init(stage, config);
     }
     else if(stage==plotting) {
-      Observer::init(stage);
+      Observer::init(stage, config);
       if(plotFeature[openMBV]) {
         if(openMBVPosition) {
           openMBVPosition->setName("Position");
@@ -84,7 +84,7 @@ namespace MBSim {
       }
     }
     else
-      Observer::init(stage);
+      Observer::init(stage, config);
   }
 
   void RigidBodySystemObserver::plot() {

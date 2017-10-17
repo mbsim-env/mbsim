@@ -70,7 +70,7 @@ namespace MBSim {
     return zeta;
   }
 
-  void Circle::init(InitStage stage) {
+  void Circle::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       sign = solid?1:-1;
       Kt(2) = sign;
@@ -82,7 +82,7 @@ namespace MBSim {
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(0);
       }
     }
-    RigidContour::init(stage);
+    RigidContour::init(stage, config);
   }
 
   void Circle::initializeUsingXML(DOMElement *element) {

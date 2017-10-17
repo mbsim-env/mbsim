@@ -213,7 +213,7 @@ namespace MBSim {
     wb(0) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad(0)+u1.T()*tOm2*R2*zetad(1)-u1.T()*tOm1*(vC2-vC1);
   }
 
-  void Gearing::init(InitStage stage) {
+  void Gearing::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
       h[0].push_back(Vec(P0->getJacobianOfTranslation().cols()));
       h[1].push_back(Vec(6));
@@ -238,9 +238,9 @@ namespace MBSim {
       gd.resize(1);
       la.resize(1);
     }
-    MechanicalLink::init(stage);
+    MechanicalLink::init(stage, config);
 
-    func->init(stage);
+    func->init(stage, config);
   }
 
   void Gearing::updatexd() {

@@ -75,16 +75,16 @@ namespace MBSim {
 
   }
 
-  void MaxwellContact::init(InitStage stage) {
+  void MaxwellContact::init(InitStage stage, const InitConfigSet &config) {
     if (stage == resolveXMLPath) {
 
       // initialize all contour couplings if generalized force law is of maxwell-type
       initializeContourCouplings();
 
-      Contact::init(stage);
+      Contact::init(stage, config);
     }
     else if (stage == preInit) {
-      Contact::init(stage);
+      Contact::init(stage, config);
       setNormalForceLaw(new MaxwellUnilateralConstraint);
       for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
         for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -92,7 +92,7 @@ namespace MBSim {
       }
    }
     else
-      Contact::init(stage);
+      Contact::init(stage, config);
   }
 
   void MaxwellContact::updateGeneralizedNormalForce() {

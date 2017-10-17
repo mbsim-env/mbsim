@@ -38,7 +38,7 @@ namespace MBSimControl {
       void setFunction(MBSim::Function<fmatvec::VecV(double)>* function_);
       void updateSignal();
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::Element::InitStage stage);
+      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
       int getSignalSize() const { return function->getRetSize().first; }
     private:
       MBSim::Function<fmatvec::VecV(double)> * function;

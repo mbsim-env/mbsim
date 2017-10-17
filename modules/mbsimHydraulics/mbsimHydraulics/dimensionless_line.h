@@ -40,7 +40,7 @@ namespace MBSimHydraulics {
       void calcuSize(int j) {uSize[j]=0; }
       
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void plot();
     protected:
       double length;
@@ -72,7 +72,7 @@ namespace MBSimHydraulics {
       }
       double evalSurface2Velocity() const;
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
 
       void updateQ();
 
@@ -111,7 +111,7 @@ namespace MBSimHydraulics {
       double getOuterRadius() const {return rO; }
       void setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl);
 
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
 
       void initializeUsingXML(xercesc::DOMElement * element);
     private:

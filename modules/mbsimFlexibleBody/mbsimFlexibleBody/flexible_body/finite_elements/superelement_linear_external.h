@@ -38,7 +38,7 @@ namespace MBSimFlexibleBody {
   class SuperElementLinearExternal : public DiscretizationInterface {
     public:
       SuperElementLinearExternal();
-	  void init(MBSim::Element::InitStage stage);
+	  void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
 
 	  /*! set constant mass matrix \f$\vM\f$
 	   * \param M mass matrix

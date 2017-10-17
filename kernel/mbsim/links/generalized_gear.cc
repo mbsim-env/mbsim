@@ -55,7 +55,7 @@ namespace MBSim {
     updla = false;
   }
 
-  void GeneralizedGear::init(InitStage stage) {
+  void GeneralizedGear::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_gearOutput!="")
         setGearOutput(getByPath<RigidBody>(saved_gearOutput));
@@ -76,9 +76,9 @@ namespace MBSim {
         il->setParent(this);
       }
     }
-    RigidBodyLink::init(stage);
-    if(fl) fl->init(stage);
-    if(il) il->init(stage);
+    RigidBodyLink::init(stage, config);
+    if(fl) fl->init(stage, config);
+    if(il) il->init(stage, config);
   }
 
   void GeneralizedGear::initializeUsingXML(DOMElement* element) {

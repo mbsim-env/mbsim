@@ -1,4 +1,5 @@
-/* Copyright (C) 2004-2016 MBSim Development Team
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -17,28 +18,11 @@
  */
 
 #include <config.h>
-#include "mbsim/constraints/generalized_constraint.h"
-#include "mbsim/frames/frame.h"
-
-using namespace std;
-using namespace fmatvec;
-using namespace MBXMLUtils;
-using namespace xercesc;
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
 
-  void GeneralizedConstraint::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
-      if(saved_supportFrame!="")
-        setSupportFrame(getByPath<Frame>(saved_supportFrame));
-    }
-    MechanicalConstraint::init(stage, config);
-  }
-
-  void GeneralizedConstraint::initializeUsingXML(DOMElement* element) {
-    MechanicalConstraint::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"supportFrame");
-    if(e) saved_supportFrame=E(e)->getAttribute("ref");
-  }
+  const InitConfigEnum noDer;
+  const InitConfigEnum noDerDer;
 
 }

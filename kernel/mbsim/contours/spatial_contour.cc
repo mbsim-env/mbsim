@@ -69,7 +69,7 @@ namespace MBSim {
     return funcCrPC->parDerDirDer(dir2,zeta).col(1);
   }
 
-  void SpatialContour::init(InitStage stage) {
+  void SpatialContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       if (etaNodes.size() < 2)
         THROW_MBSIMERROR("(SpatialContour::init): Size of etaNodes must be greater than 1.");
@@ -117,9 +117,9 @@ namespace MBSim {
         static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setIndices(indices);
       }
     }
-    RigidContour::init(stage);
+    RigidContour::init(stage, config);
 
-    funcCrPC->init(stage);
+    funcCrPC->init(stage, config);
   }
 
   void SpatialContour::setContourFunction(Function<Vec3(Vec2)> *func) {

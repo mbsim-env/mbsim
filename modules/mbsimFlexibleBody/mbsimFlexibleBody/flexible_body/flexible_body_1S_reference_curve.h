@@ -74,7 +74,7 @@ namespace MBSimFlexibleBody {
 
       virtual ~FlexibleBody1SReferenceCurve();
 
-      virtual void init(MBSim::Element::InitStage stage);
+      virtual void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
       virtual void initInfo(fmatvec::Vec q0 = fmatvec::Vec(0,fmatvec::NONINIT), fmatvec::Vec u0 = fmatvec::Vec(0,fmatvec::NONINIT));
 
       /*INHERITED INTERFACE*/

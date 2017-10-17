@@ -210,9 +210,9 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s21RCM::init(InitStage stage) {
+  void FlexibleBody1s21RCM::init(InitStage stage, const InitConfigSet &config) {
     if (stage == unknownStage) {
-      FlexibleBody1s::init(stage);
+      FlexibleBody1s::init(stage, config);
 
       initialized = true;
 
@@ -239,10 +239,10 @@ namespace MBSimFlexibleBody {
         plotColumns.push_back("Dal (" + numtostr(plotElements(i)) + ")"); // 6
         plotColumns.push_back("Dalp(" + numtostr(plotElements(i)) + ")"); // 7
       }
-      FlexibleBody1s::init(stage);
+      FlexibleBody1s::init(stage, config);
     }
     else
-      FlexibleBody1s::init(stage);
+      FlexibleBody1s::init(stage, config);
   }
 
   void FlexibleBody1s21RCM::plot() {
@@ -342,7 +342,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21RCM::initInfo() {
-    FlexibleBody1s::init(unknownStage);
+    FlexibleBody1s::init(unknownStage, InitConfigSet());
     l0 = L / Elements;
     Vec g = Vec("[0.;0.;0.]");
     for (int i = 0; i < Elements; i++) {

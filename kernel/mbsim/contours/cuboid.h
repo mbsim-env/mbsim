@@ -64,7 +64,7 @@ namespace MBSim {
        */
       double lx,ly,lz;
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
   };
 }
 

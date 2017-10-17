@@ -314,7 +314,7 @@ namespace MBSim {
     LinkStatusReg.resize(LinkStatusRegSize);
   }
 
-  void Contact::init(InitStage stage) {
+  void Contact::init(InitStage stage, const InitConfigSet &config) {
     if (stage == resolveXMLPath) {
       //connect all contours given in xml file
       for (size_t i = 0; i < saved_ref.size(); i++) {
@@ -326,10 +326,10 @@ namespace MBSim {
       if(not(contour.size()))
         THROW_MBSIMERROR("no connection given!");
 
-      Link::init(stage);
+      Link::init(stage, config);
     }
     else if (stage == preInit) {
-      Link::init(stage);
+      Link::init(stage, config);
       for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
         contactKinematics[cK]->setSearchAllContactPoints(searchAllCP);
         contactKinematics[cK]->setInitialGuess(zeta0);
@@ -367,29 +367,29 @@ namespace MBSim {
           jter->setTangentialForceLaw(fdf);
           jter->setTangentialImpactLaw(ftil);
 
-          jter->init(stage);
+          jter->init(stage, config);
         }
       }
     }
     else if (stage == plotting) {
-      Element::init(stage);
+      Element::init(stage, config);
       for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
         for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-          jter->init(stage);
+          jter->init(stage, config);
       }
     }
     else {
-      Link::init(stage);
+      Link::init(stage, config);
       for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
         for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-          jter->init(stage);
+          jter->init(stage, config);
       }
     }
     //Don't call init()-routines for "sub"-contacts with stage "LASTINITSTAGE" as here is checked if contactKinematics has more than one possible contact point, which is only possible in multi-contact
-    if(fcl) fcl->init(stage);
-    if(fdf) fdf->init(stage);
-    if(fnil) fnil->init(stage);
-    if(ftil) ftil->init(stage);
+    if(fcl) fcl->init(stage, config);
+    if(fdf) fdf->init(stage, config);
+    if(fnil) fnil->init(stage, config);
+    if(ftil) ftil->init(stage, config);
   }
 
   bool Contact::isSetValued() const {

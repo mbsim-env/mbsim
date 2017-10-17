@@ -30,9 +30,9 @@ namespace MBSim {
     xSize = body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize();
   }
 
-  void GeneralizedAccelerationExcitation::init(InitStage stage) {
-    GeneralizedKinematicExcitation::init(stage);
-    f->init(stage);
+  void GeneralizedAccelerationExcitation::init(InitStage stage, const InitConfigSet &config) {
+    GeneralizedKinematicExcitation::init(stage, config);
+    f->init(stage, config);
   }
 
   void GeneralizedAccelerationExcitation::updatexd() {

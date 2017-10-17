@@ -35,7 +35,7 @@ namespace MBSim {
   RelativeKinematicsObserver::RelativeKinematicsObserver(const std::string &name) : Observer(name), frame(NULL), refFrame(NULL) {
   }
 
-  void RelativeKinematicsObserver::init(InitStage stage) {
+  void RelativeKinematicsObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_frame!="")
         setFrame(getByPath<Frame>(saved_frame));
@@ -43,7 +43,7 @@ namespace MBSim {
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       if(not refFrame)
         setFrameOfReference(static_cast<DynamicSystem*>(parent)->getFrameI());
-      Observer::init(stage);
+      Observer::init(stage, config);
     }
     else if(stage==plotting) {
 //      if(openMBVPosition) {
@@ -78,7 +78,7 @@ namespace MBSim {
 //        plotColumns.push_back("RotationalAngularAcceleration");
 //        plotColumns.push_back("RelativeAngularAcceleration");
 //      }
-      Observer::init(stage);
+      Observer::init(stage, config);
       if(plotFeature[openMBV]) {
         if(openMBVPosition) {
           openMBVPosGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
@@ -174,7 +174,7 @@ namespace MBSim {
       }
     }
     else
-      Observer::init(stage);
+      Observer::init(stage, config);
   }
 
   void RelativeKinematicsObserver::plot() {

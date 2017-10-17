@@ -143,7 +143,7 @@ namespace MBSim {
     gd(iM) = vrel(iM);
   }
 
-  void FloatingFrameLink::init(InitStage stage) {
+  void FloatingFrameLink::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       iF = RangeV(0, forceDir.cols() - 1);
       iM = RangeV(forceDir.cols(), getGeneralizedRelativePositionSize() - 1);
@@ -171,7 +171,7 @@ namespace MBSim {
       P[0] = frame[0];
       P[1] = &C;
     }
-    FrameLink::init(stage);
+    FrameLink::init(stage, config);
   }
 
   void FloatingFrameLink::initializeUsingXML(DOMElement *element) {

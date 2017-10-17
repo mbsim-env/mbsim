@@ -34,7 +34,7 @@ namespace MBSim {
     public:
       GeneralizedConstraint(const std::string &name) : MechanicalConstraint(name), support(NULL) { }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
 
       virtual void setSupportFrame(Frame *frame) { support = frame; }
 

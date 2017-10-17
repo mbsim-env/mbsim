@@ -140,8 +140,8 @@ namespace MBSim {
       void setInterpolationMethodFirstDimension(InterpolationMethod method1_) { method1 = method1_; }
       void setInterpolationMethodSecondDimension(InterpolationMethod method2_) { method2 = method2_; }
 
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg1, Arg2)>::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(Arg1, Arg2)>::init(stage, config);
         if(stage==Element::preInit) {
           if (z.cols() != x.size())
             THROW_MBSIMERROR("Dimension missmatch in xSize");
@@ -160,8 +160,8 @@ namespace MBSim {
           f2.sety(y);
           f2.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method2));
         }
-        f1.init(stage);
-        f2.init(stage);
+        f1.init(stage, config);
+        f2.init(stage, config);
       }
 
     protected:

@@ -51,9 +51,9 @@ namespace MBSimControl {
     setFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<VecV(double)> >(e->getFirstElementChild())); 
   }
 
-  void FunctionSensor::init(MBSim::Element::InitStage stage) {
-    Sensor::init(stage);
-    function->init(stage);
+  void FunctionSensor::init(MBSim::Element::InitStage stage, const InitConfigSet &config) {
+    Sensor::init(stage, config);
+    function->init(stage, config);
   }
 
 }

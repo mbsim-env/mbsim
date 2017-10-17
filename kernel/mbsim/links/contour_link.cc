@@ -111,7 +111,7 @@ namespace MBSim {
     updM = false;
   }
 
-  void ContourLink::init(InitStage stage) {
+  void ContourLink::init(InitStage stage, const InitConfigSet &config) {
     if(stage == resolveXMLPath) {
       if(saved_ref1 != "" && saved_ref2 != "")
         connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
@@ -141,7 +141,7 @@ namespace MBSim {
       P[0] = cFrame[0];
       P[1] = cFrame[1];
     }
-    MechanicalLink::init(stage);
+    MechanicalLink::init(stage, config);
   }
 
   void ContourLink::resetUpToDate() {

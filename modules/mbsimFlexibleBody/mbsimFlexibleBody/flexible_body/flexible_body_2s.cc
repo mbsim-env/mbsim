@@ -29,13 +29,13 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
- void FlexibleBody2s::init(InitStage stage) {
+ void FlexibleBody2s::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
 //      ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->evalOrientation()));
-      FlexibleBodyContinuum<Vec2>::init(stage);
+      FlexibleBodyContinuum<Vec2>::init(stage, config);
     }
     else
-      FlexibleBodyContinuum<Vec2>::init(stage);
+      FlexibleBodyContinuum<Vec2>::init(stage, config);
   }
 
   void FlexibleBody2s::plot() {

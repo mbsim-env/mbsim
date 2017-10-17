@@ -73,10 +73,10 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"positiveDirectionalFunction");
         setPositiveDirectionalFunction(ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild()));
       }
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg)>::init(stage);
-        fn->init(stage);
-        fp->init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(Arg)>::init(stage, config);
+        fn->init(stage, config);
+        fp->init(stage, config);
       }
     private:
       Function<Ret(Arg)> *fn, *fp;

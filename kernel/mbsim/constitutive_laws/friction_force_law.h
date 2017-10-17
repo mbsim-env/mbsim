@@ -45,10 +45,10 @@ namespace MBSim {
        */
       virtual ~FrictionForceLaw() { if(frictionForceFunc) delete frictionForceFunc; frictionForceFunc = NULL; };
 
-      void init(Element::InitStage stage) {
-        Element::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Element::init(stage, config);
         if(frictionForceFunc)
-          frictionForceFunc->init(stage);
+          frictionForceFunc->init(stage, config);
       }
 
       /* INTERFACE FOR DERIVED CLASSES */

@@ -29,11 +29,11 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, LinearElasticFunction)
 
-  void LinearElasticFunction::init(InitStage stage) {
+  void LinearElasticFunction::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
       if(not D.size()) D.resize(K.size());
     }
-    Function<VecV(VecV,VecV)>::init(stage);
+    Function<VecV(VecV,VecV)>::init(stage, config);
   }
 
   void LinearElasticFunction::initializeUsingXML(DOMElement *element) {

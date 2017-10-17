@@ -32,9 +32,9 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedAccelerationConstraint)
 
-  void GeneralizedAccelerationConstraint::init(InitStage stage) {
-    GeneralizedDualConstraint::init(stage);
-    f->init(stage);
+  void GeneralizedAccelerationConstraint::init(InitStage stage, const InitConfigSet &config) {
+    GeneralizedDualConstraint::init(stage, config);
+    f->init(stage, config);
   }
 
   void GeneralizedAccelerationConstraint::calcxSize() {

@@ -24,6 +24,7 @@
 #include "fmatvec/atom.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/plotfeatureenum.h"
+#include "mbsim/utils/initconfigenum.h"
 #include <string>
 #include <hdf5serie/vectorserie.h>
 #include <mbxmlutilshelper/dom.h>
@@ -129,7 +130,7 @@ namespace MBSim {
        * \brief plots time series header
        * \param invocing parent class
        */
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
 
       /**
        * \brief creates the plotGroup for H5-output

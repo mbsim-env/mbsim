@@ -46,14 +46,14 @@ namespace MBSimHydraulics {
     updSize = false;
   }
 
-  void HLine::init(InitStage stage) {
+  void HLine::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      Object::init(stage);
+      Object::init(stage, config);
     }
     else if (stage==preInit) {
-      Object::init(stage);
+      Object::init(stage, config);
       if (!nFrom && !nFromRelative) 
         THROW_MBSIMERROR("No fromNode!");
       if (!nTo && !nToRelative) 
@@ -62,7 +62,7 @@ namespace MBSimHydraulics {
         THROW_MBSIMERROR("fromNode and toNode are the same!");
     }
     else
-      Object::init(stage);
+      Object::init(stage, config);
   }
       
   void HLine::setFrameOfReference(Frame *frame) {
@@ -149,7 +149,7 @@ namespace MBSimHydraulics {
     M+=Mlocal(0,0)*JTJ(Jacobian);
   }
 
-  void RigidHLine::init(InitStage stage) {
+  void RigidHLine::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       for (unsigned int i=0; i<refDependencyOnInflowString.size(); i++)
         addInflowDependencyOnInflow(getByPath<RigidHLine>(refDependencyOnInflowString[i]));
@@ -175,7 +175,7 @@ namespace MBSimHydraulics {
       dep_check.push_back(this);
       Jacobian=calculateJacobian(dep_check);
     }
-    HLine::init(stage);
+    HLine::init(stage, config);
   }
   
   void RigidHLine::plot() {
@@ -224,17 +224,17 @@ namespace MBSimHydraulics {
     setQFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
   }
 
-  void ConstrainedLine::init(InitStage stage) {
+  void ConstrainedLine::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
-      Object::init(stage); // no check of connected lines
+      Object::init(stage, config); // no check of connected lines
       if (!nFrom && !nTo) 
         THROW_MBSIMERROR("needs at least one connected node!");
       if (nFrom==nTo) 
         THROW_MBSIMERROR("fromNode and toNode are the same!");
     }
     else
-      HLine::init(stage);
-    QFunction->init(stage);
+      HLine::init(stage, config);
+    QFunction->init(stage, config);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, FluidPump)
@@ -251,17 +251,17 @@ namespace MBSimHydraulics {
     setQFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
   }
 
-  void FluidPump::init(InitStage stage) {
+  void FluidPump::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
-      Object::init(stage); // no check of connected lines
+      Object::init(stage, config); // no check of connected lines
       if (!nFrom && !nTo) 
         THROW_MBSIMERROR("needs at least one connected node!");
       if (nFrom==nTo)
         THROW_MBSIMERROR("fromNode and toNode are the same!");
     }
     else
-      HLine::init(stage);
-    QFunction->init(stage);
+      HLine::init(stage, config);
+    QFunction->init(stage, config);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, StatelessOrifice)
@@ -282,7 +282,7 @@ namespace MBSimHydraulics {
     setCalcAreaModus(getInt(e));
   }
 
-  void StatelessOrifice::init(InitStage stage) {
+  void StatelessOrifice::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
       if (!nFrom && !nTo) 
         THROW_MBSIMERROR("needs at least one connected node!");
@@ -305,10 +305,10 @@ namespace MBSimHydraulics {
       const double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       alpha=alpha*sqrt(2./rho);
     }
-    HLine::init(stage);
-    inflowFunction->init(stage);
-    outflowFunction->init(stage);
-    openingFunction->init(stage);
+    HLine::init(stage, config);
+    inflowFunction->init(stage, config);
+    outflowFunction->init(stage, config);
+    openingFunction->init(stage, config);
   }
 
   void StatelessOrifice::plot() {

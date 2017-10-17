@@ -103,8 +103,8 @@ namespace MBSim {
       double getyMax() { return y(y.size() - 1); }
       /***************************************************/
 
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg1, Arg2)>::init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(Arg1, Arg2)>::init(stage, config);
         if(stage==Element::preInit) {
           if (z.cols() != x.size())
             THROW_MBSIMERROR("Dimension missmatch in size of x");

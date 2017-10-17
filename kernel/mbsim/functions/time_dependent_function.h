@@ -47,9 +47,9 @@ namespace MBSim {
       typename B::DRetDArg1 parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return typename B::DRetDArg1(n,getArg1Size()); }
       bool constParDer1() const { return true; }
       bool constParDer2() const { return f->constParDer(); }
-      void init(Element::InitStage stage) {
-        Function<Ret(fmatvec::VecV,double)>::init(stage);
-        f->init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(fmatvec::VecV,double)>::init(stage, config);
+        f->init(stage, config);
         if(stage == Element::preInit)
           n = (*f)(0).rows();
       }

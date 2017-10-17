@@ -88,12 +88,12 @@ namespace MBSim {
 
     for (int stage = 0; stage < LASTINITSTAGE; stage++) {
       msg(Info) << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << " \"" << InitStageStrings[stage] << "\" " << endl;
-      init((InitStage) stage);
+      init((InitStage) stage, InitConfigSet());
       msg(Info) << "Done initializing stage " << stage << "/" << LASTINITSTAGE - 1 << endl;
     }
   }
 
-  void DynamicSystemSolver::init(InitStage stage) {
+  void DynamicSystemSolver::init(InitStage stage, const InitConfigSet &config) {
     if (stage == unknownStage) {
       msg(Info) << name << " (special group) stage==unknownStage:" << endl;
 
@@ -398,24 +398,24 @@ namespace MBSim {
 
       msg(Info) << "End of special group stage==unknownStage" << endl;
 
-      Group::init(stage);
+      Group::init(stage, config);
     }
     else if (stage == preInit) {
       msg(Info) << "  initialising preInit ..." << endl;
       if (inverseKinetics)
         setUpInverseKinetics();
-      Group::init(stage);
+      Group::init(stage, config);
     }
     else if (stage == plotting) {
       msg(Info) << "  initialising plot-files ..." << endl;
-      Group::init(stage);
+      Group::init(stage, config);
       if (plotFeature[openMBV])
         openMBVGrp->write(true, truncateSimulationFiles);
       H5::File::reopenAllFilesAsSWMR();
       msg(Info) << "...... done initialising." << endl << endl;
     }
     else
-      Group::init(stage);
+      Group::init(stage, config);
   }
 
   int DynamicSystemSolver::solveConstraintsFixpointSingle() {

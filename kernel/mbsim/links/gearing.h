@@ -52,7 +52,7 @@ namespace MBSim {
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       std::string getType() const { return "Gearing"; }
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
       bool isSetValued() const;
       virtual void calclaSize(int j);
       virtual void calcgSize(int j);

@@ -91,13 +91,13 @@ namespace MBSimHydraulics {
     Link::plot();
   }
 
-  void RigidLinePressureLoss::init(InitStage stage) {
+  void RigidLinePressureLoss::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
       if(linePressureLoss) addDependency(linePressureLoss->getDependency());
       if(closablePressureLoss) addDependency(closablePressureLoss->getDependency());
       if(leakagePressureLoss) addDependency(leakagePressureLoss->getDependency());
       if(unidirectionalPressureLoss) addDependency(unidirectionalPressureLoss->getDependency());
-      Link::init(stage);
+      Link::init(stage, config);
       W[0].resize(1);
       W[1].resize(1);
       V[0].resize(1);
@@ -121,9 +121,9 @@ namespace MBSimHydraulics {
     }
     else if (stage==unknownStage)
       gdTol/=6e4;
-    Link::init(stage);
-    if(gfl) gfl->init(stage);
-    if(gil) gil->init(stage);
+    Link::init(stage, config);
+    if(gfl) gfl->init(stage, config);
+    if(gil) gil->init(stage, config);
   }
 
   void RigidLinePressureLoss::updatehRef(const Vec& hParent, int i) {

@@ -27,6 +27,7 @@ utilsinclude_HEADERS = colors.h\
                        utils.h\
                        xmlutils.h\
                        plotfeatureenum.h\
+                       initconfigenum.h\
                        stopwatch.h\
                        ansatz_functions.h\
 		       boost_parameters.h\

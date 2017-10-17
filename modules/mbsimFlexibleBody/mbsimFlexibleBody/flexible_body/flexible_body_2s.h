@@ -43,7 +43,7 @@ namespace MBSimFlexibleBody {
        */
       FlexibleBody2s(const std::string &name) : FlexibleBodyContinuum<fmatvec::Vec2>(name) { } //, L(0), openStructure(openStructure_) { }
 
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
       virtual void plot();
 
 //      void setLength(double L_) { L = L_; }

@@ -41,9 +41,9 @@ namespace MBSim {
     u0.resize(uSize);
   }
 
-  void BodyFlexible1s01Torsion::init(InitStage stage) {
+  void BodyFlexible1s01Torsion::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
-      BodyFlexible1s::init(stage);
+      BodyFlexible1s::init(stage, config);
       assert(0<n);
 
       JT = Mat(0,0);
@@ -51,7 +51,7 @@ namespace MBSim {
       initMatrizes();
     }
     else
-      BodyFlexible1s::init(stage);
+      BodyFlexible1s::init(stage, config);
   }
 
 

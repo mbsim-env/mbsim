@@ -29,12 +29,12 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Edge)
 
-  void Edge::init(InitStage stage) {
+  void Edge::init(InitStage stage, const InitConfigSet &config) {
     if (stage == plotting) {
       if (plotFeature[openMBV] && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(0, length, 0);
     }
-    RigidContour::init(stage);
+    RigidContour::init(stage, config);
   }
 
 }

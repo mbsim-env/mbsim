@@ -27,7 +27,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  void GeneralizedDualConstraint::init(InitStage stage) {
+  void GeneralizedDualConstraint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_DependentBody!="")
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
@@ -40,7 +40,7 @@ namespace MBSim {
       bd->addDependency(this);
       if(bi) addDependency(bi);
     }
-    GeneralizedConstraint::init(stage);
+    GeneralizedConstraint::init(stage, config);
   }
 
   void GeneralizedDualConstraint::initializeUsingXML(DOMElement* element) {

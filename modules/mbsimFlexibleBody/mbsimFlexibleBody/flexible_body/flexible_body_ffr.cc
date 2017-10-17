@@ -260,7 +260,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBodyFFR::init(InitStage stage) {
+  void FlexibleBodyFFR::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       for(unsigned int k=0; k<contour.size(); k++) {
         RigidContour *contour_ = dynamic_cast<RigidContour*>(contour[k]);
@@ -413,10 +413,10 @@ namespace MBSimFlexibleBody {
           dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
       }
     }
-    NodeBasedBody::init(stage);
-    if(fTR) fTR->init(stage);
-    if(fPrPK) fPrPK->init(stage);
-    if(fAPK) fAPK->init(stage);
+    NodeBasedBody::init(stage, config);
+    if(fTR) fTR->init(stage, config);
+    if(fPrPK) fPrPK->init(stage, config);
+    if(fAPK) fAPK->init(stage, config);
   }
 
   void FlexibleBodyFFR::setUpInverseKinetics() {

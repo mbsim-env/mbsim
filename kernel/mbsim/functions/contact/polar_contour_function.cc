@@ -44,9 +44,9 @@ namespace MBSim {
     r->setName("r");
   }
 
-  void PolarContourFunction::init(Element::InitStage stage) {
-    Function<Vec3(double)>::init(stage);
-    r->init(stage);
+  void PolarContourFunction::init(Element::InitStage stage, const InitConfigSet &config) {
+    Function<Vec3(double)>::init(stage, config);
+    r->init(stage, config);
   }
 
   void PolarContourFunction::initializeUsingXML(xercesc::DOMElement *element) {

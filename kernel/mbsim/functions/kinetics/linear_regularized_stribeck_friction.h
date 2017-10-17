@@ -50,9 +50,9 @@ namespace MBSim {
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual void init(Element::InitStage stage) {
-        Function<fmatvec::Vec(fmatvec::Vec,double)>::init(stage);
-        fmu->init(stage);
+      virtual void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<fmatvec::Vec(fmatvec::Vec,double)>::init(stage, config);
+        fmu->init(stage, config);
       }
       /***************************************************/
 

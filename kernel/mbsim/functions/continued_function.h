@@ -54,10 +54,13 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"continuationRule");
         setContinuationRule(ObjectFactory::createAndInit<Function<Arg(Arg)> >(e->getFirstElementChild()));
       }
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg)>::init(stage);
-        f->init(stage);
-        rule->init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<Ret(Arg)>::init(stage, config);
+        f->init(stage, config);
+        InitConfigSet configRule(config);
+        configRule.insert(noDer);
+        configRule.insert(noDerDer);
+        rule->init(stage, configRule);
       }
     private:
       Function<Ret(Arg)> *f;

@@ -33,7 +33,7 @@ namespace MBSim {
     public:
       GeneralizedDualConstraint(const std::string &name) : GeneralizedConstraint(name), bd(NULL), bi(NULL) { }
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
 
       void setDependentRigidBody(RigidBody* body_) { bd=body_; }
       void setIndependentRigidBody(RigidBody* body_) { bi=body_; }

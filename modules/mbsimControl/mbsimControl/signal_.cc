@@ -35,14 +35,14 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERENUM(MBSim::PlotFeatureEnum, MBSIMCONTROL, signal)
 
-  void Signal::init(InitStage stage) {
+  void Signal::init(InitStage stage, const InitConfigSet &config) {
     if (stage==plotting) {
       if(plotFeature[plotRecursive] and plotFeature[signal]) {
         for (int i=0; i<getSignalSize(); i++)
           plotColumns.push_back("signal (" + numtostr(i) + ")");
       }
     }
-    Link::init(stage);
+    Link::init(stage, config);
   }
 
 

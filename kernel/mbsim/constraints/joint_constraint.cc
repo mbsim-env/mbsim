@@ -71,7 +71,7 @@ namespace MBSim {
     C.setParent(this);
   }
 
-  void JointConstraint::init(InitStage stage) {
+  void JointConstraint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       for (unsigned int i=0; i<saved_RigidBodyFirstSide.size(); i++)
         bd1.push_back(getByPath<RigidBody>(saved_RigidBodyFirstSide[i]));
@@ -163,7 +163,7 @@ namespace MBSim {
       else
         THROW_MBSIMERROR("(JointConstraint::initz): size of q0 does not match");
     }
-    MechanicalConstraint::init(stage);
+    MechanicalConstraint::init(stage, config);
   }
 
   void JointConstraint::resetUpToDate() {

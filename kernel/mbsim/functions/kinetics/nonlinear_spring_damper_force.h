@@ -57,10 +57,10 @@ namespace MBSim {
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const double& s, const double& sd) { return (*sF)(s) + (*sdF)(sd); }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(Element::InitStage stage) {
-        Function<double(double,double)>::init(stage);
-        sF->init(stage);
-        sdF->init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        Function<double(double,double)>::init(stage, config);
+        sF->init(stage, config);
+        sdF->init(stage, config);
       }
       /***************************************************/
 

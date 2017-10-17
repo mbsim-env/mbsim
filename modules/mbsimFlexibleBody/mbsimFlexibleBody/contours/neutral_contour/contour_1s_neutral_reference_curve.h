@@ -41,7 +41,7 @@ namespace MBSimFlexibleBody {
       virtual std::string getType() const {
         return "Contour1sNeutralFlexibleBody1SReferenceCurve";
       }
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
 //      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
 //      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1);

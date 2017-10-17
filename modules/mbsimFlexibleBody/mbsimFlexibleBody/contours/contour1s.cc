@@ -30,7 +30,7 @@ using namespace fmatvec;
 
 namespace MBSimFlexibleBody {
 
-  void Contour1s::init(InitStage stage) {
+  void Contour1s::init(InitStage stage, const MBSim::InitConfigSet &config) {
 
     if (stage == plotting) {
       if(plotFeature[MBSim::openMBV] and openMBVSpineExtrusion) {
@@ -39,7 +39,7 @@ namespace MBSimFlexibleBody {
 //        openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(R->getOrientation()));
       }
     }
-    Contour::init(stage);
+    Contour::init(stage, config);
   }
 
   Vec3 Contour1s::evalKt(const fmatvec::Vec2 &zeta) {

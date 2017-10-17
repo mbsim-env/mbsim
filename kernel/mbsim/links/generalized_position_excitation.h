@@ -33,7 +33,7 @@ namespace MBSim {
       GeneralizedPositionExcitation(const std::string &name) : GeneralizedKinematicExcitation(name) { }
 
       void calcxSize();
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
 
       void updateGeneralizedPositions();
       void updateGeneralizedVelocities();

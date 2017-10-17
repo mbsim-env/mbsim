@@ -38,7 +38,7 @@ namespace MBSimControl {
       std::string getType() const { return "ObjectSensor"; }
       void setObject(MBSim::Object * object_) { object=object_; }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
     protected:
       MBSim::Object *object;
       std::string objectString;

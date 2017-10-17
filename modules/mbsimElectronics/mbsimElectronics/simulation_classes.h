@@ -25,7 +25,7 @@ namespace MBSimElectronics {
       Mesh(const std::string &name) : MBSim::Object(name), precessor(0) {}
       void calcqSize() { qSize = 1;}
       void calcuSize(int j) { uSize[j] = (j==0) ? 1 : 0;}
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void setPrecessor(Object* obj) {precessor = obj;}
       void addBranch(Branch* branch_) {branch.push_back(branch_);}
       int getNumberOfBranches() {return branch.size();}
@@ -62,7 +62,7 @@ namespace MBSimElectronics {
       void clearMeshList() {mesh.clear();}
       int getNumberOfConnectedMeshes() const {return mesh.size();}
       Mesh* getMesh(int i) {return mesh[i];}
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void setStartTerminal(Terminal* p) {startTerminal = p; p->addConnectedBranch(this);}
       void setEndTerminal(Terminal* p) {endTerminal = p; p->addConnectedBranch(this);}
       Terminal* getStartTerminal() {return startTerminal;}
@@ -102,7 +102,7 @@ namespace MBSimElectronics {
       bool isActive() const {return true;}
       bool gActiveChanged() {return true;}
       virtual bool isSingleValued() const { return true; }
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updaterRef(const fmatvec::Vec &rParent, int j=0);
 
@@ -187,7 +187,7 @@ namespace MBSimElectronics {
     public:
       ElectronicObject(const std::string &name) : Object(name) {}
       void calcSize() { nq = 0; nu = 1; }
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
       virtual Element* getParent() {return parent;}
       virtual const Element* getParent() const {return parent;}
       virtual void setParent(Element* parent_) {parent = parent_;}

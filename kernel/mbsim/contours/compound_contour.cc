@@ -53,7 +53,7 @@ namespace MBSim {
     f->setParent(this);
   }
 
-  void CompoundContour::init(InitStage stage) {
+  void CompoundContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == unknownStage) {
       for (unsigned int i = 0; i < element.size(); i++)
         element[i]->sethSize(hSize[0]);
@@ -68,10 +68,10 @@ namespace MBSim {
           openMBVGroup->setSeparateFile(true);
       }
     }
-    RigidContour::init(stage);
+    RigidContour::init(stage, config);
 
     for (unsigned int i = 0; i < element.size(); i++)
-      element[i]->init(stage);
+      element[i]->init(stage, config);
   }
 
   void CompoundContour::resetUpToDate() {

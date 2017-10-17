@@ -231,9 +231,9 @@ namespace MBSimFlexibleBody {
     return getPositions(s)(Range<Fixed<3>,Fixed<5> >());
   }
 
-  void FlexibleBody1s33RCM::init(InitStage stage) {
+  void FlexibleBody1s33RCM::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
-      FlexibleBody1s::init(stage);
+      FlexibleBody1s::init(stage, config);
 
       initialised = true;
 
@@ -253,7 +253,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else
-      FlexibleBody1s::init(stage);
+      FlexibleBody1s::init(stage, config);
   }
 
   void FlexibleBody1s33RCM::setNumberElements(int n) {
@@ -310,7 +310,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::initInfo() {
-    FlexibleBody1s::init(unknownStage);
+    FlexibleBody1s::init(unknownStage, InitConfigSet());
     l0 = L / Elements;
     Vec g = Vec("[0.;0.;0.]");
     for (int i = 0; i < Elements; i++) {

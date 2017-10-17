@@ -30,9 +30,9 @@ namespace MBSim {
     if(!f) xSize = body[0]->getGeneralizedPositionSize();
   }
 
-  void GeneralizedPositionExcitation::init(InitStage stage) {
-    GeneralizedKinematicExcitation::init(stage);
-    f->init(stage);
+  void GeneralizedPositionExcitation::init(InitStage stage, const InitConfigSet &config) {
+    GeneralizedKinematicExcitation::init(stage, config);
+    f->init(stage, config);
   }
 
   void GeneralizedPositionExcitation::updateGeneralizedPositions() {

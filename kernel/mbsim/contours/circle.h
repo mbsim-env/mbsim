@@ -45,7 +45,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Circle"; }
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */

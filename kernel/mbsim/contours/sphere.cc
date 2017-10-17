@@ -33,12 +33,12 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Sphere)
 
-  void Sphere::init(InitStage stage) {
+  void Sphere::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Sphere>(openMBVRigidBody)->setRadius(r);
     }
-    RigidContour::init(stage);
+    RigidContour::init(stage, config);
   }
 
   Vec3 Sphere::evalKs(const fmatvec::Vec2 &zeta) {

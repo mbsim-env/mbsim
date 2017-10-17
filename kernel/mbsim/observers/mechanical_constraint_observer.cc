@@ -36,14 +36,14 @@ namespace MBSim {
   MechanicalConstraintObserver::MechanicalConstraintObserver(const std::string &name) : Observer(name), constraint(NULL) {
   }
 
-  void MechanicalConstraintObserver::init(InitStage stage) {
+  void MechanicalConstraintObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_constraint!="")
         setMechanicalConstraint(getByPath<MechanicalConstraint>(saved_constraint));
-      Observer::init(stage);
+      Observer::init(stage, config);
     }
     else if(stage==plotting) {
-      Observer::init(stage);
+      Observer::init(stage, config);
       if(plotFeature[openMBV]) {
         //      if(openMBVForce) plotColumns.push_back("Force");
         //      if(openMBVMoment) plotColumns.push_back("Moment");
@@ -58,7 +58,7 @@ namespace MBSim {
       }
     }
     else
-      Observer::init(stage);
+      Observer::init(stage, config);
   }
 
   void MechanicalConstraintObserver::plot() {

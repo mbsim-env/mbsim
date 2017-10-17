@@ -29,7 +29,7 @@ namespace MBSim {
   Observer::Observer(const std::string &name) : Element(name) {
   }
 
-  void Observer::init(InitStage stage) {
+  void Observer::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[openMBV]) {
         openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
@@ -38,7 +38,7 @@ namespace MBSim {
         parent->getOpenMBVGrp()->addObject(openMBVGrp);
       }
     }
-    Element::init(stage);
+    Element::init(stage, config);
   }
 
 }

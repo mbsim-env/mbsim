@@ -75,15 +75,15 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getdhdu(), dhdu); // assemble
   }
 
-  void FlexibleBody::init(InitStage stage) {
+  void FlexibleBody::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
-      NodeBasedBody::init(stage);
+      NodeBasedBody::init(stage, config);
       qRel.resize(qSize);
       uRel.resize(uSize[0]);
       T = SqrMat(qSize, EYE);
     }
     else
-      NodeBasedBody::init(stage);
+      NodeBasedBody::init(stage, config);
   }
 
   double FlexibleBody::computeKineticEnergy() {

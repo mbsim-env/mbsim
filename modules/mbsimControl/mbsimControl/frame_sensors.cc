@@ -35,14 +35,14 @@ namespace MBSimControl {
     frameString=E(e)->getAttribute("ref");
   }
 
-  void FrameSensor::init(InitStage stage) {
+  void FrameSensor::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(frameString!="")
         setFrame(getByPath<Frame>(frameString));
     }
     else if(stage==preInit)
       s.resize(getSignalSize());
-    Sensor::init(stage);
+    Sensor::init(stage, config);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, PositionSensor)
@@ -96,10 +96,10 @@ namespace MBSimControl {
 //        setReferenceFrame(getByPath<Frame>(refFrameString));
 //      if (relFrameString!="")
 //        setRelativeFrame(getByPath<Frame>(relFrameString));
-//      Sensor::init(stage);
+//      Sensor::init(stage, config);
 //    }
 //    else
-//      Sensor::init(stage);
+//      Sensor::init(stage, config);
 //  }
 //
 //  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativePositionSensor)

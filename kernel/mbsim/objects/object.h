@@ -188,7 +188,7 @@ namespace MBSim {
       /**
        * \brief initialize object at start of simulation with respect to contours and frames
        */
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
 
       /**
        * initialize state of object at start of simulation

@@ -66,7 +66,7 @@ namespace MBSim {
       }
       /***************************************************/
 
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       virtual void initializeContourCouplings();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 

@@ -83,7 +83,7 @@ namespace MBSim {
     }
   }
 
-  void Element::init(InitStage stage) {
+  void Element::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
       updatePlotFeatures();
     else if(stage==plotting) {

@@ -27,7 +27,7 @@ class Block : public MBSim::RigidBody {
       addContour(bottom);
     }
 
-    virtual void init(InitStage stage) {
+    virtual void init(InitStage stage, const InitConfigSet &config) {
       if (stage == preInit) {
         /*Back Plane*/
         fmatvec::Vec3 backRefTrans;
@@ -75,7 +75,7 @@ class Block : public MBSim::RigidBody {
         bottom->enableOpenMBV(groove / 10.);
         C->enableOpenMBV(0.01);
       }
-      RigidBody::init(stage);
+      RigidBody::init(stage, config);
     }
 
   public:

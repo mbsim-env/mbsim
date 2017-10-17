@@ -71,7 +71,7 @@ namespace MBSimHydraulics {
     MatIntWSWST=ansatz->MatIntWSWST();
   }
 
-  void ElasticLineGalerkin::init(InitStage stage) {
+  void ElasticLineGalerkin::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
       Area=M_PI*d*d/4.;
       if (direction.size()>0)
@@ -142,7 +142,7 @@ namespace MBSimHydraulics {
       u0 = inv(MatIntWWT)*WInt*Q0; 
       //plotParameters();
     }
-    HLine::init(stage);
+    HLine::init(stage, config);
 
   }
 

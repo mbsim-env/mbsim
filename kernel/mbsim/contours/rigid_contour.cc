@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  void RigidContour::init(InitStage stage) {
+  void RigidContour::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
@@ -44,7 +44,7 @@ namespace MBSim {
         parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
       }
     }
-    Contour::init(stage);
+    Contour::init(stage, config);
   }
   
   ContourFrame* RigidContour::createContourFrame(const string &name) {

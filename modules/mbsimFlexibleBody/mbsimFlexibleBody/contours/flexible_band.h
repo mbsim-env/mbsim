@@ -48,7 +48,7 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBand"; }
-      void init(InitStage stage);
+      void init(InitStage stage, const MBSim::InitConfigSet &config);
      /***************************************************/
 
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");

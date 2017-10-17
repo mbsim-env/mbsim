@@ -44,9 +44,9 @@ namespace MBSim {
        */
       virtual ~PlanarStribeckFriction() { if(fmu) delete fmu; fmu=0; }
 
-      void init(Element::InitStage stage) {
-        FrictionForceLaw::init(stage);
-        fmu->init(stage);
+      void init(Element::InitStage stage, const InitConfigSet &config) {
+        FrictionForceLaw::init(stage, config);
+        fmu->init(stage, config);
       }
 
       /* INHERITED INTERFACE */

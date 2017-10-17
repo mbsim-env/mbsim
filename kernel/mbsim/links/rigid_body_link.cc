@@ -168,7 +168,7 @@ namespace MBSim {
     updSize = false;
   }
 
-  void RigidBodyLink::init(InitStage stage) {
+  void RigidBodyLink::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_supportFrame!="")
         setSupportFrame(getByPath<Frame>(saved_supportFrame));
@@ -209,7 +209,7 @@ namespace MBSim {
       for(unsigned int i=0; i<body.size(); i++)
         P[i] = body[i]->getFrameForKinematics();
     }
-    MechanicalLink::init(stage);
+    MechanicalLink::init(stage, config);
   }
 
   void RigidBodyLink::initializeUsingXML(DOMElement* element) {

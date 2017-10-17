@@ -122,7 +122,7 @@ namespace MBSim {
       void updatexRef(const fmatvec::Vec &ref);
       void updatexdRef(const fmatvec::Vec &ref);
       void updatedxRef(const fmatvec::Vec &ref);
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const InitConfigSet &config);
       virtual void initz();
       virtual void writez(H5::GroupBase *group);
       virtual void readz0(H5::GroupBase *parent);

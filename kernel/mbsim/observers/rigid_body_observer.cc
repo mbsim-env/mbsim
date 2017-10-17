@@ -39,16 +39,16 @@ namespace MBSim {
   RigidBodyObserver::RigidBodyObserver(const std::string &name) : Observer(name), body(NULL), frameOfReference(NULL) {
   }
 
-  void RigidBodyObserver::init(InitStage stage) {
+  void RigidBodyObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_body!="")
         setRigidBody(getByPath<RigidBody>(saved_body));
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      Observer::init(stage);
+      Observer::init(stage, config);
     }
     else if(stage==plotting) {
-      Observer::init(stage);
+      Observer::init(stage, config);
       if(plotFeature[openMBV]) {
         if(FWeight) {
           FWeight->setName("Weight");
@@ -85,7 +85,7 @@ namespace MBSim {
       }
     }
     else
-      Observer::init(stage);
+      Observer::init(stage, config);
   }
 
   void RigidBodyObserver::plot() {

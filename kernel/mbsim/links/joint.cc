@@ -102,7 +102,7 @@ namespace MBSim {
     xSize = momentDir.cols();
   }
 
-  void Joint::init(InitStage stage) {
+  void Joint::init(InitStage stage, const InitConfigSet &config) {
     if (stage == unknownStage) {
       gdd.resize(gdSize);
       gdn.resize(gdSize);
@@ -140,11 +140,11 @@ namespace MBSim {
       else
         updatelaM_ = &Joint::updatelaMS;
     }
-    FloatingFrameLink::init(stage);
-    if(ffl) ffl->init(stage);
-    if(fml) fml->init(stage);
-    if(fifl) fifl->init(stage);
-    if(fiml) fiml->init(stage);
+    FloatingFrameLink::init(stage, config);
+    if(ffl) ffl->init(stage, config);
+    if(fml) fml->init(stage, config);
+    if(fifl) fifl->init(stage, config);
+    if(fiml) fiml->init(stage, config);
   }
 
   bool Joint::isSetValued() const {
@@ -505,10 +505,10 @@ namespace MBSim {
     }
   }
 
-  void InverseKineticsJoint::init(InitStage stage) {
+  void InverseKineticsJoint::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit)
       x.resize(momentDir.cols());
-    Joint::init(stage);
+    Joint::init(stage, config);
   }
 
 }

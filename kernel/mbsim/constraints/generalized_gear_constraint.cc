@@ -33,7 +33,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedGearConstraint)
 
-  void GeneralizedGearConstraint::init(InitStage stage) {
+  void GeneralizedGearConstraint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(saved_DependentBody!="")
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
@@ -49,7 +49,7 @@ namespace MBSim {
       for(unsigned int i=0; i<bi.size(); i++)
         addDependency(bi[i]);
     }
-    GeneralizedConstraint::init(stage);
+    GeneralizedConstraint::init(stage, config);
   }
 
   void GeneralizedGearConstraint::addIndependentRigidBody(RigidBody *body, double ratio_) {

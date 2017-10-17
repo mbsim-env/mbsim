@@ -30,7 +30,7 @@ namespace MBSim {
     public:
       Observer(const std::string &name);
 
-      void init(InitStage stage);
+      void init(InitStage stage, const InitConfigSet &config);
 
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
   };

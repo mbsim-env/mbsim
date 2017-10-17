@@ -41,14 +41,14 @@ namespace MBSimControl {
     }
   }
 
-  void Multiplexer::init(InitStage stage) {
+  void Multiplexer::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       for(unsigned int i=0; i<signalString.size(); i++)
         addInputSignal(getByPath<Signal>(signalString[i]));
     }
     else if(stage==preInit)
       s.resize(getSignalSize(),NONINIT);
-    Signal::init(stage);
+    Signal::init(stage, config);
   }
 
   void Multiplexer::updateSignal() {
@@ -80,14 +80,14 @@ namespace MBSimControl {
       index[i] = static_cast<Index>(indices(i))-1;
   }
 
-  void Demultiplexer::init(InitStage stage) {
+  void Demultiplexer::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       if(signalString!="")
         setInputSignal(getByPath<Signal>(signalString));
     }
     else if(stage==preInit)
       s.resize(getSignalSize(),NONINIT);
-    Signal::init(stage);
+    Signal::init(stage, config);
   }
 
   void Demultiplexer::updateSignal() {
@@ -107,14 +107,14 @@ namespace MBSimControl {
     signalString=E(e)->getAttribute("ref");
   }
 
-  void SignalTimeDiscretization::init(InitStage stage) {
+  void SignalTimeDiscretization::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveXMLPath) {
       if (signalString!="")
         setInputSignal(getByPath<Signal>(signalString));
-      Signal::init(stage);
+      Signal::init(stage, config);
     }
     else
-      Signal::init(stage);
+      Signal::init(stage, config);
   }
 
   void SignalTimeDiscretization::updateSignal() {
@@ -141,7 +141,7 @@ namespace MBSimControl {
       setFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV,VecV)> >(e->getFirstElementChild()));
   }
 
-  void SignalOperation::init(InitStage stage) {
+  void SignalOperation::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveXMLPath) {
       for(unsigned int i=0; i<signalString.size(); i++)
         addInputSignal(getByPath<Signal>(signalString[i]));
@@ -152,9 +152,9 @@ namespace MBSimControl {
       else
         THROW_MBSIMERROR("(SignalOperation::init): number of input signals must be 1 or 2");
     }
-    Signal::init(stage);
-    if(f1) f1->init(stage);
-    if(f2) f2->init(stage);
+    Signal::init(stage, config);
+    if(f1) f1->init(stage, config);
+    if(f2) f2->init(stage, config);
   }
 
   void SignalOperation::updateSignal1() {

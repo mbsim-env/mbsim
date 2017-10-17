@@ -150,7 +150,7 @@ namespace MBSimFlexibleBody {
       virtual void calcuSize(int j=0);
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage);
+      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
       virtual void updateLLM() { (this->*updateLLM_)(); }
       virtual void setUpInverseKinetics();
       /*****************************************************/
