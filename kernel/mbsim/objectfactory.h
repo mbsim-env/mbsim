@@ -22,10 +22,12 @@
 
 #include "objectfactory_part.h"
 #include <vector>
+#include <functional>
 #include <stdexcept>
 #include <typeinfo>
 #include "mbsim/utils/utils.h"
 #include <mbsim/mbsim_event.h>
+#include <xercesc/dom/DOMAttr.hpp>
 #include <mbxmlutilshelper/utils.h>
 #include "fmatvec/atom.h"
 #ifdef HAVE_BOOST_CORE_DEMANGLE_HPP // not available for older boost versions
@@ -203,7 +205,7 @@ struct DeallocateSingleton : public DeallocateBase {
 
 /** Helper function for automatic class registration for ObjectFactory.
  * You should not use this class directly but
- * use the macro MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY. */
+ * use the macro MBSIM_OBJECTFACTORY_REGISTERCLASS. */
 template<class CreateType>
 class ObjectFactoryRegisterClassHelper {
 
@@ -226,7 +228,7 @@ class ObjectFactoryRegisterClassHelper {
 
 /** Helper function for automatic class registration for ObjectFactory.
  * You should not use this class directly but
- * use the macro MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORYASSINGLETON. */
+ * use the macro MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON. */
 template<class CreateType>
 class ObjectFactoryRegisterClassHelperAsSingleton {
 
@@ -246,6 +248,55 @@ class ObjectFactoryRegisterClassHelperAsSingleton {
     MBXMLUtils::FQN name;
 
 };
+
+/** Helper function for automatic enum registration for ObjectFactory.
+ * You should not use this class directly but
+ * use the macro MBSIM_OBJECTFACTORY_REGISTERENUM. */
+template<class EnumType>
+class EnumFactory {
+
+  template<class EV> friend void registerEnum_internal(const MBXMLUtils::FQN &name, const EV& value);
+  template<class EV> friend void deregisterEnum_internal(const MBXMLUtils::FQN &name);
+
+  public:
+
+    /** ctor registring the new enum */
+    EnumFactory(const EnumType &enumVar, const MBXMLUtils::FQN &fqn_) : fqn(fqn_) {
+      registerEnum_internal<EnumType>(fqn, enumVar);
+    }
+
+    /** dtor deregistring the enum */
+    ~EnumFactory() {
+      deregisterEnum_internal<EnumType>(fqn);
+    }
+
+    /** get an enum value given by the string enumStr **/
+    static const EnumType& get(const std::string &enumStr, const xercesc::DOMElement *e=nullptr, const xercesc::DOMAttr *a=nullptr) {
+      size_t end=enumStr.find('}');
+      if(end==std::string::npos)
+        throw MBXMLUtils::DOMEvalException("No namespace found in enumeration value "+enumStr, e, a);
+      MBXMLUtils::FQN fqn(enumStr.substr(1, end-1), enumStr.substr(end+1));
+      auto it=reg.find(fqn);
+      if(it==reg.end())
+        throw MBXMLUtils::DOMEvalException("No enumeration value named {"+fqn.first+"}"+fqn.second+" registred", e, a);
+      return it->second.get();
+    }
+
+  private:
+    MBXMLUtils::FQN fqn;
+    static std::map<MBXMLUtils::FQN, std::reference_wrapper<const EnumType>> reg;
+
+};
+
+template<class EV>
+void registerEnum_internal(const MBXMLUtils::FQN &name, const EV& value) {
+  EnumFactory<EV>::reg.insert(std::make_pair(name, std::ref(value)));
+}
+
+template<class EV>
+void deregisterEnum_internal(const MBXMLUtils::FQN &name) {
+  EnumFactory<EV>::reg.erase(name);
+}
 
 // fix local xml name (remove template and namespace)
 std::string fixXMLLocalName(std::string name);
@@ -268,7 +319,7 @@ std::string fixXMLLocalName(std::string name);
  * Class must have a public Class* getInstance() function and should not have a public dtor and a getXMLFQN() static member function. */
 #define MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON(NS, Class) \
   static MBSim::ObjectFactoryRegisterClassHelperAsSingleton<Class> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariableAsSingleTon)(NS%MBSim::fixXMLLocalName(#Class));
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(NS%MBSim::fixXMLLocalName(#Class));
 
 /** Same as MBSIM_OBJECTFACTORY_REGISTERCLASS but also explicitly instantiates the template class Class.
  * Please note that template member functions of Class must be explicitly instantated by hand. */
@@ -282,6 +333,11 @@ std::string fixXMLLocalName(std::string name);
 #define MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON_AND_INSTANTIATE(NS, Class) \
   template class Class; \
   static MBSim::ObjectFactoryRegisterClassHelperAsSingleton<Class> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariableAsSingleTon)(NS%MBSim::fixXMLLocalName(#Class));
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(NS%MBSim::fixXMLLocalName(#Class));
+
+/** Use this macro somewhere at the definition of PlotFeatureEnum enumName to register it by the ObjectFactory. */
+#define MBSIM_OBJECTFACTORY_REGISTERENUM(EnumType, NS, enumName) \
+  static MBSim::EnumFactory<EnumType> \
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(enumName, NS%#enumName);
 
 #endif

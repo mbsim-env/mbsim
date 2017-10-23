@@ -81,15 +81,6 @@
     </xs:sequence>
   </xs:group>
 
-  <xs:simpleType name="PlotFeatureType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Bestimmt, welche Plotausgaben aktiviert bzw. deaktiviert werden. Die Werte sind
-        jeweils mit einem vorangestellten '<b>+</b>' oder '<b>-</b>' zulässig. Ein '<b>+</b>' aktiviert das entsprechende
-        Plotfeature, ein '<b>-</b>' deaktiviert es (Der default Wert ist in eckigen Klammern angegeben):
-    </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:stringPartialEval"/>
-  </xs:simpleType>
-
   <!-- A reference to a Frame at the same hierarchy -->
   <xs:simpleType name="CurrentFrameReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -232,7 +223,7 @@
             Definiert die Plotfeatures für dieses Element.
         </xs:documentation></xs:annotation>
         <xs:complexType>
-          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+          <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
         </xs:complexType> 
       </xs:element>  
       <xs:element name="plotFeatureForChildren">
@@ -240,7 +231,7 @@
             Definiert die Plotfeatures für alle Kindelement.
         </xs:documentation></xs:annotation>
         <xs:complexType>
-          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+          <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
         </xs:complexType> 
       </xs:element>  
       <xs:element name="plotFeatureRecursive">  
@@ -248,7 +239,7 @@
             Definiert die Plotfeatures für diese Element und alle Kindelement.
         </xs:documentation></xs:annotation>
         <xs:complexType>
-          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+          <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
         </xs:complexType> 
       </xs:element>  
     </xs:choice> 
@@ -541,7 +532,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+              <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 
@@ -1004,7 +995,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+              <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 

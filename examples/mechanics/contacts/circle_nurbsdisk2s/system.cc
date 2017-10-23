@@ -214,11 +214,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   obj2->setInitialTranslation(l_pole*0.5,0.,0.);
   pole->setOpenMBVRigidBody(obj2);
 
-  setPlotFeatureRecursive("generalizedPosition",enabled);
-  setPlotFeatureRecursive("generalizedVelocity",enabled);
-  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
-  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
-  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive(generalizedPosition,enabled);
+  setPlotFeatureRecursive(generalizedVelocity,enabled);
+  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
+  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
+  setPlotFeatureRecursive(generalizedForce,enabled);
 } 
 
 void System::init(InitStage stage) {

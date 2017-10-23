@@ -6,6 +6,7 @@ libutils_la_SOURCES = colors.cc\
                       contact_utils.cc\
                       rotarymatrices.cc\
                       utils.cc\
+                      xmlutils.cc\
                       stopwatch.cc\
                       ansatz_functions.cc\
                       openmbv_utils.cc\
@@ -24,6 +25,8 @@ utilsinclude_HEADERS = colors.h\
                        contact_utils.h\
                        rotarymatrices.h\
                        utils.h\
+                       xmlutils.h\
+                       plotfeatureenum.h\
                        stopwatch.h\
                        ansatz_functions.h\
 		       boost_parameters.h\

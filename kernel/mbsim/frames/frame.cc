@@ -33,12 +33,19 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  const std::size_t Frame::position = std::hash<std::string>()("position");
-  const std::size_t Frame::angle = std::hash<std::string>()("angle");
-  const std::size_t Frame::velocity = std::hash<std::string>()("velocity");
-  const std::size_t Frame::angularVelocity = std::hash<std::string>()("angularVelocity");
-  const std::size_t Frame::acceleration = std::hash<std::string>()("acceleration");
-  const std::size_t Frame::angularAcceleration = std::hash<std::string>()("angularAcceleration");
+  const PlotFeatureEnum position;
+  const PlotFeatureEnum angle;
+  const PlotFeatureEnum velocity;
+  const PlotFeatureEnum angularVelocity;
+  const PlotFeatureEnum acceleration;
+  const PlotFeatureEnum angularAcceleration;
+
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, position)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, angle)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, velocity)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, angularVelocity)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, acceleration)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, angularAcceleration)
 
   Frame::Frame(const string &name) : Element(name), AWP(EYE), updGA(true), updPos(true), updVel(true), updAcc(true) {
 

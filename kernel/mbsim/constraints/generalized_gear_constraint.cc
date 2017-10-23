@@ -96,8 +96,8 @@ namespace MBSim {
       gear->addGearInput(bi[i],ratio[i]);
     gear->setGeneralizedForceLaw(new BilateralConstraint);
     gear->setSupportFrame(support);
-    gear->plotFeature[Link::generalizedRelativePosition] = disabled;
-    gear->plotFeature[Link::generalizedRelativeVelocity] = disabled;
+    gear->plotFeature[generalizedRelativePosition] = disabled;
+    gear->plotFeature[generalizedRelativeVelocity] = disabled;
     link = gear;
   }
 

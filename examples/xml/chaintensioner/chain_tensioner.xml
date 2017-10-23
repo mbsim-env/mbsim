@@ -10,7 +10,6 @@
   <contours/>
   <groups>
     <h:Checkvalve name="Checkvalve">
-      <plotFeature feature="+rightHandSide"/>
       <h:basisFrame ref="../Object[Housing]/Frame[CVMount]"/>
       <h:RigidLine>
         <h:length unit="mm">1.5</h:length>
@@ -192,7 +191,6 @@
   </objects>
   <links>
     <SpringDamper name="PistonSpring">
-      <plotFeature feature="+linkKinematics"/>
       <connect ref1="../Object[Housing]/Frame[PistonSpringMount]" ref2="../Object[Piston]/Frame[PistonSpringMount]"/>
       <forceFunction>
         <LinearSpringDamperForce>

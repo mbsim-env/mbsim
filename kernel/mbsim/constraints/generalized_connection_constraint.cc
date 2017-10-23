@@ -56,8 +56,8 @@ namespace MBSim {
     else connection->connect(bd);
     connection->setGeneralizedForceLaw(new BilateralConstraint);
     connection->setSupportFrame(support);
-    connection->plotFeature[Link::generalizedRelativePosition] = disabled;
-    connection->plotFeature[Link::generalizedRelativeVelocity] = disabled;
+    connection->plotFeature[generalizedRelativePosition] = disabled;
+    connection->plotFeature[generalizedRelativeVelocity] = disabled;
     link = connection;
   }
 

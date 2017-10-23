@@ -26,6 +26,7 @@
 #include "mbsim/constraints/constraint.h"
 #include "mbsim/observers/observer.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/utils/xmlutils.h"
 
 #include <openmbvcppinterface/frame.h>
 
@@ -163,8 +164,8 @@ namespace MBSim {
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameI");
     while(e and MBXMLUtils::E(e)->getTagName()==MBSIM%"plotFeatureFrameI") {
-      PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
-      I->setPlotFeature(MBXMLUtils::E(e)->getAttribute("feature").substr(1), status);
+      auto pf=getPlotFeatureFromXML(e);
+      I->setPlotFeature(pf.first, pf.second);
       e=e->getNextElementSibling();
     }
   }

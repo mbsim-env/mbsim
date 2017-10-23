@@ -3,12 +3,12 @@
   <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
   <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
       xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-    <plotFeatureRecursive feature="+generalizedRelativePosition"/>
-    <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
-    <plotFeatureRecursive feature="+generalizedForce"/>
-    <plotFeatureRecursive feature="+generalizedPosition"/>
-    <plotFeatureRecursive feature="+generalizedVelocity"/>
-    <plotFeatureRecursive feature="+deflection"/>
+    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedRelativePosition"/>
+    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedRelativeVelocity"/>
+    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedForce"/>
+    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedPosition"/>
+    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedVelocity"/>
+    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}deflection"/>
     <frames>
       <FixedRelativeFrame name="Q">
         <relativePosition>[2;0;0]</relativePosition>
@@ -70,7 +70,6 @@
                 </openMBVRigidBody>
               </RigidBody>
               <RigidBody name="Box2">
-                <plotFeature feature="-stateDerivative"/>
                 <generalizedInitialPosition>[1.75]</generalizedInitialPosition>
                 <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
                 <frameOfReference ref="../Frame[I]"/>
@@ -141,7 +140,6 @@
         </groups>
         <objects>
           <RigidBody name="Box1">
-            <plotFeature feature="+globalPosition"/>
             <generalizedInitialPosition>[0]</generalizedInitialPosition>
             <generalizedInitialVelocity>[0.1]</generalizedInitialVelocity>
             <frameOfReference ref="../Frame[I]"/>
@@ -174,8 +172,7 @@
         <observers/>
       </Group>
       <Group name="Hauptgruppe2">
-        <plotFeatureRecursive feature="+stateDerivative"/>
-        <plotFeature feature="+separateFilePerGroup"/>
+        <plotFeature feature="+{http://www.mbsim-env.de/MBSim}separateFilePerGroup"/>
         <frameOfReference ref="../Frame[Q]"/>
         <frames>
           <FixedRelativeFrame name="Q">
@@ -228,7 +225,6 @@
                 </openMBVRigidBody>
               </RigidBody>
               <RigidBody name="Box2">
-                <plotFeature feature="-stateDerivative"/>
                 <generalizedInitialPosition>[1.75]</generalizedInitialPosition>
                 <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
                 <frameOfReference ref="../Frame[I]"/>
@@ -299,7 +295,6 @@
         </groups>
         <objects>
           <RigidBody name="Box1">
-            <plotFeature feature="+globalPosition"/>
             <generalizedInitialPosition>[0]</generalizedInitialPosition>
             <generalizedInitialVelocity>[0.1]</generalizedInitialVelocity>
             <frameOfReference ref="../Frame[I]"/>

@@ -31,7 +31,9 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, ExternSignalSource)
 
-  const std::size_t Signal::signal = std::hash<std::string>()("signal");
+  const PlotFeatureEnum signal;
+
+  MBSIM_OBJECTFACTORY_REGISTERENUM(MBSim::PlotFeatureEnum, MBSIMCONTROL, signal)
 
   void Signal::init(InitStage stage) {
     if (stage==plotting) {

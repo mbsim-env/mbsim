@@ -127,9 +127,9 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   dummy2->setDiffuseColor(240./360.,1,1);
   body3->setOpenMBVRigidBody(dummy2);
 
-  setPlotFeatureRecursive("generalizedPosition",enabled);
-  setPlotFeatureRecursive("generalizedVelocity",enabled);
-  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
-  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
-  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive(generalizedPosition,enabled);
+  setPlotFeatureRecursive(generalizedVelocity,enabled);
+  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
+  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
+  setPlotFeatureRecursive(generalizedForce,enabled);
 }

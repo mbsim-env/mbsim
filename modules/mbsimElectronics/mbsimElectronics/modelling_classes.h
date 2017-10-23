@@ -13,6 +13,8 @@ namespace MBSim {
 
 namespace MBSimElectronics {
 
+  extern const MBSim::PlotFeatureEnum charge, current, voltage;
+
   class ElectronicComponent;
   class Branch;
 
@@ -40,8 +42,6 @@ namespace MBSimElectronics {
   void connectBranch(Branch *branch1, Branch *branch2);
 
   class ElectronicComponent : public MBSim::ModellingInterface {
-    public:
-      static const std::size_t charge, current, voltage;
     protected:
       std::vector<Terminal*> terminal;
       Branch* branch;

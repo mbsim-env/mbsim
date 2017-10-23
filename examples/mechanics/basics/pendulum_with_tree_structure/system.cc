@@ -1,6 +1,7 @@
 #include "system.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
+#include "mbsim/links/link.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
@@ -68,10 +69,10 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab2->setOpenMBVRigidBody(obj);
   stab2->setOpenMBVFrameOfReference(stab2->getFrame("R"));
 
-  setPlotFeatureRecursive("generalizedPosition",Element::enabled);
-  setPlotFeatureRecursive("generalizedVelocity",Element::enabled);
-  setPlotFeatureRecursive("generalizedRelativePosition",Element::enabled);
-  setPlotFeatureRecursive("generalizedRelativeVelocity",Element::enabled);
-  setPlotFeatureRecursive("generalizedForce",Element::enabled);
+  setPlotFeatureRecursive(generalizedPosition,enabled);
+  setPlotFeatureRecursive(generalizedVelocity,enabled);
+  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
+  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
+  setPlotFeatureRecursive(generalizedForce,enabled);
 
 }

@@ -947,7 +947,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="feature" type="mbsim:PlotFeatureType" use="required"/>
+              <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

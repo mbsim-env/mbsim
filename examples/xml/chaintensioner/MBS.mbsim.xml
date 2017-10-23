@@ -11,7 +11,7 @@
   <plotFeatureRecursive feature="+generalizedForce"/>
   <plotFeatureRecursive feature="+generalizedPosition"/>
   <plotFeatureRecursive feature="+generalizedVelocity"/>
-  <plotFeatureRecursive feature="+signal"/>
+  <plotFeatureRecursive feature="+c:signal"/>
   <frames/>
   <contours/>
   <groups>

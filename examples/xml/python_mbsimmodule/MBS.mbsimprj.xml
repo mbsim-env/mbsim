@@ -155,10 +155,12 @@
           </enableOpenMBV>
         </SpringDamper>
         <PySpringDamperXMLInit name="Spring1" xmlns="http://mypytest">
+          <plotFeatureRecursive feature="+mypy:pyTestPlotFeature" xmlns="http://www.mbsim-env.de/MBSim" xmlns:mypy="http://mypytest"/>
           <connect ref1="../Frame[I]" ref2="../Object[Box1]/Frame[C]" xmlns="http://www.mbsim-env.de/MBSim"/>
           <stiffness>3*c</stiffness>
         </PySpringDamperXMLInit>
         <PySpringDamperPyScriptInit name="Spring2" xmlns="http://mypytest">
+          <mbsim:plotFeatureRecursive feature="+pyTestPlotFeature" xmlns:mbsim="http://www.mbsim-env.de/MBSim"/>
           <connect ref1="../Frame[I]" ref2="../Object[Box2]/Frame[C]" xmlns="http://www.mbsim-env.de/MBSim"/>
           <pyScript objName="self_x">
             import OpenMBV

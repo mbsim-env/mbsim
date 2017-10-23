@@ -8,8 +8,7 @@
   <plotFeatureRecursive feature="+generalizedForce"/>
   <plotFeatureRecursive feature="+generalizedPosition"/>
   <plotFeatureRecursive feature="+generalizedVelocity"/>
-  <plotFeatureRecursive feature="{if plotSubTypeEnabled, ret='+'; else ret='-'; end}{plotSubType}"/>
-  <plotFeature feature="+separateFilePerGroup"/>
+  <plotFeature feature="{if plotSubTypeEnabled, ret='+'; else ret='-'; end}{plotSubType}"/>
   <frameOfReference ref="../Frame[Q{numHG}]"/>
   <frames>
     <FixedRelativeFrame name="Q">

@@ -378,10 +378,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Theta(2,2) = inertiaDisks(i);//2./5.*massDisks(i)*radiiDisks(i)*radiiDisks(i);
     disk->setInertiaTensor(Theta);
 
-    disk->setPlotFeatureRecursive("position",enabled);
-    disk->setPlotFeatureRecursive("angle",enabled);
-    disk->setPlotFeatureRecursive("velocity",enabled);
-    disk->setPlotFeatureRecursive("angularVelocity",enabled);
+    disk->setPlotFeatureRecursive(position,enabled);
+    disk->setPlotFeatureRecursive(angle,enabled);
+    disk->setPlotFeatureRecursive(velocity,enabled);
+    disk->setPlotFeatureRecursive(angularVelocity,enabled);
 
     Vec JR("[0;0;1.0]");
     if(i==0)
@@ -498,11 +498,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     }
   }
 
-  setPlotFeatureRecursive("generalizedPosition",enabled);
-  setPlotFeatureRecursive("generalizedVelocity",enabled);
-  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
-  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
-  setPlotFeatureRecursive("generalizedForce",enabled);
-  setPlotFeatureRecursive("deflection",enabled);
+  setPlotFeatureRecursive(generalizedPosition,enabled);
+  setPlotFeatureRecursive(generalizedVelocity,enabled);
+  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
+  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
+  setPlotFeatureRecursive(generalizedForce,enabled);
+  setPlotFeatureRecursive(deflection,enabled);
 }
 

@@ -28,6 +28,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/environment.h"
+#include "mbsim/utils/xmlutils.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zxz.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zyx.h"
@@ -301,12 +302,12 @@ namespace MBSim {
     joint->setMomentLaw(new BilateralConstraint);
     joint->connect(R,&Z);
     joint->setBody(this);
-    joint->plotFeature[Link::generalizedRelativePosition] = disabled;
-    joint->plotFeature[Link::generalizedRelativeVelocity] = disabled;
+    joint->plotFeature[ref(generalizedRelativePosition)] = disabled;
+    joint->plotFeature[ref(generalizedRelativeVelocity)] = disabled;
   }
 
   void RigidBody::plot() {
-    if(plotFeature[openMBV]==enabled and openMBVBody) {
+    if(plotFeature[ref(openMBV)]==enabled and openMBVBody) {
       vector<double> data;
       data.push_back(getTime());
       Vec3 WrOS=openMBVFrame->evalPosition();
@@ -616,8 +617,8 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameC");
     while(e and E(e)->getTagName()==MBSIM%"plotFeatureFrameC") {
-      PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
-      C->setPlotFeature(MBXMLUtils::E(e)->getAttribute("feature").substr(1), status);
+      auto pf=getPlotFeatureFromXML(e);
+      C->setPlotFeature(pf.first, pf.second);
       e=e->getNextElementSibling();
     }
   }

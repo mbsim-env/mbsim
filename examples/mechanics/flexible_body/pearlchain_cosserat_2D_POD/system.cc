@@ -228,11 +228,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 		this->addLink(ctrb);
 	}
 
-  setPlotFeatureRecursive("generalizedPosition",enabled);
-  setPlotFeatureRecursive("generalizedVelocity",enabled);
-  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
-  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
-  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive(generalizedPosition,enabled);
+  setPlotFeatureRecursive(generalizedVelocity,enabled);
+  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
+  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
+  setPlotFeatureRecursive(generalizedForce,enabled);
 }
 
 void System::reduce(const string & h5file) {

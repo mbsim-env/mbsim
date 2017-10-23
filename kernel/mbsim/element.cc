@@ -31,6 +31,7 @@
 #include <mbsim/functions/function.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/utils/eps.h>
+#include "mbsim/utils/xmlutils.h"
 #include <hdf5serie/simpleattribute.h>
 
 using namespace std;
@@ -52,17 +53,27 @@ namespace MBSim {
   // we use none signaling (quiet) NaN values for double in MBSim -> Throw compile error if these do not exist.
   static_assert(numeric_limits<double>::has_quiet_NaN, "This platform does not support quiet NaN for double.");
 
-  const std::size_t Element::plotRecursive = std::hash<std::string>()("plotRecursive");
-  const std::size_t Element::openMBV = std::hash<std::string>()("openMBV");
-  const std::size_t Element::debug = std::hash<std::string>()("debug");
-  const std::size_t Element::separateFilePerGroup = std::hash<std::string>()("separateFilePerGroup");
-  const std::size_t Element::energy = std::hash<std::string>()("energy");
+  // this is the root element which uses PlotFeature, hence we define static parts of the enum factory here.
+  template<>
+  map<FQN, reference_wrapper<const PlotFeatureEnum>> EnumFactory<PlotFeatureEnum>::reg={};
+
+  const PlotFeatureEnum plotRecursive;
+  const PlotFeatureEnum openMBV;
+  const PlotFeatureEnum debug;
+  const PlotFeatureEnum separateFilePerGroup;
+  const PlotFeatureEnum energy;
+
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, plotRecursive)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, openMBV)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, debug)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, separateFilePerGroup)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, energy)
 
   Element::Element(const string &name_) : Atom(), parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
   }
 
   void Element::plot() {
-    if(plotFeature[plotRecursive]==enabled) {
+    if(plotFeature[ref(plotRecursive)]==enabled) {
       if(plotColumns.size()>1) {
         plotVector.insert(plotVector.begin(), getTime());
         assert(plotColumns.size()==plotVector.size());
@@ -77,10 +88,10 @@ namespace MBSim {
       updatePlotFeatures();
     else if(stage==plotting) {
 
-      if(plotFeature[plotRecursive]==enabled) {
+      if(plotFeature[ref(plotRecursive)]==enabled) {
         unsigned int numEnabled=0;
         for (auto& x: plotFeature) {
-          if((x.first != plotRecursive) and (x.first != openMBV) and x.second==enabled) {
+          if((x.first.get() != plotRecursive) and (x.first.get() != openMBV) and x.second==enabled) {
             numEnabled++;
             break;
           }
@@ -114,10 +125,10 @@ namespace MBSim {
 
   void Element::updatePlotFeatures() {
     for (auto& x: parent->plotFeatureForChildren) {
-      if(plotFeature[x.first]==unset) plotFeature[x.first]=x.second;
+      if(plotFeature[ref(x.first)]==unset) plotFeature[ref(x.first)]=x.second;
     }
     for (auto& x: parent->plotFeatureForChildren) {
-      if(plotFeatureForChildren[x.first]==unset) plotFeatureForChildren[x.first]=x.second;
+      if(plotFeatureForChildren[ref(x.first)]==unset) plotFeatureForChildren[ref(x.first)]=x.second;
     }
   }
 
@@ -197,26 +208,12 @@ namespace MBSim {
     }
   }
 
-  Element::PlotFeatureStatus Element::initializePlotFeatureStatusUsingXML(DOMElement *e) {
-      PlotFeatureStatus status;
-      if(E(e)->getAttribute("feature")[0]=='+') status=enabled;
-      else if(E(e)->getAttribute("feature")[0]=='-') status=disabled;
-      else {
-        ostringstream str;
-        str<<"Plot feature must start with '+' or '-' but is "<<E(e)->getAttribute("feature");
-        throw DOMEvalException(str.str(), e, e->getAttributeNode(X()%"feature"));
-      }
-      return status;
+  void Element::setPlotFeature(const PlotFeatureEnum &pf, PlotFeatureStatus value) {
+    plotFeature[ref(pf)] = value;
   }
 
-  void Element::setPlotFeature(const string &pf, PlotFeatureStatus value) {
-    std::hash<string> string_hash;
-    plotFeature[string_hash(pf)] = value;
-  }
-
-  void Element::setPlotFeatureForChildren(const string &pf, PlotFeatureStatus value) {
-    std::hash<string> string_hash;
-    plotFeatureForChildren[string_hash(pf)] = value;
+  void Element::setPlotFeatureForChildren(const PlotFeatureEnum &pf, PlotFeatureStatus value) {
+    plotFeatureForChildren[ref(pf)] = value;
   }
 
   void Element::initializeUsingXML(DOMElement *element) {
@@ -230,14 +227,12 @@ namespace MBSim {
     while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
                 E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
                 E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
-      PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
-      std::hash<string> string_hash;
-      size_t feature = string_hash(E(e)->getAttribute("feature").substr(1));
-      if(E(e)->getTagName()==MBSIM%"plotFeature") plotFeature[feature] = status;
-      else if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") plotFeatureForChildren[feature] = status;
+      auto pf=getPlotFeatureFromXML(e);
+      if(E(e)->getTagName()==MBSIM%"plotFeature") plotFeature[pf.first] = pf.second;
+      else if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") plotFeatureForChildren[pf.first] = pf.second;
       else if(E(e)->getTagName()==MBSIM%"plotFeatureRecursive") {
-        plotFeature[feature] = status;
-        plotFeatureForChildren[feature] = status;
+        plotFeature[pf.first] = pf.second;
+        plotFeatureForChildren[pf.first] = pf.second;
       }
       e=e->getNextElementSibling();
     }

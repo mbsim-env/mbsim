@@ -300,11 +300,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   frustumMBV->setInitialRotation(0.,0.,0.);
   groundBase->setOpenMBVRigidBody(frustumMBV);
 
-  setPlotFeatureRecursive("generalizedPosition",enabled);
-  setPlotFeatureRecursive("generalizedVelocity",enabled);
-  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
-  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
-  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive(generalizedPosition,enabled);
+  setPlotFeatureRecursive(generalizedVelocity,enabled);
+  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
+  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
+  setPlotFeatureRecursive(generalizedForce,enabled);
 }
 
 void System::initialize() {

@@ -29,6 +29,8 @@ namespace H5 {
 
 namespace MBSim {
 
+  extern const PlotFeatureEnum generalizedRelativePosition, generalizedRelativeVelocity, generalizedForce;
+
   /** 
    * \brief general link to one or more objects
    * \author Martin Foerg
@@ -45,8 +47,6 @@ namespace MBSim {
   //class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
   class Link : public Element {
     public:
-      static const std::size_t generalizedRelativePosition, generalizedRelativeVelocity, generalizedForce;
-
       /**
        * \brief constructor
        * \param name of link

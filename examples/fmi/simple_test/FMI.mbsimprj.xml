@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML"
+  xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl"
   xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <pv:Embed>
     <DynamicSystemSolver name="MBS" xmlns="http://www.mbsim-env.de/MBSim">
@@ -9,7 +10,7 @@
      <plotFeatureRecursive feature="+generalizedPosition"/>
      <plotFeatureRecursive feature="+generalizedVelocity"/>
      <plotFeatureRecursive feature="+deflection"/>
-     <plotFeatureRecursive feature="+signal"/>
+     <plotFeatureRecursive feature="+mbsimcontrol:signal"/>
       <frames>
         <pv:Embed count="2" counterName="n">
         <FixedRelativeFrame name="Q{n}" xmlns="http://www.mbsim-env.de/MBSim">

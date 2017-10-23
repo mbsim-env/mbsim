@@ -4,6 +4,7 @@
 #include "mbsim/functions/symbolic_function.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/composite_function.h"
+#include "mbsim/links/link.h"
 #include "mbsim/observers/frame_observer.h"
 #include "mbsim/observers/rigid_body_observer.h"
 
@@ -56,12 +57,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setRotation(new CompositeFunction<RotMat3(double(VecV))>(new RotationAboutFixedAxis<double>("[0;0;1]"), angle));
   body->setTranslationDependentRotation(true);
   
-  body->getFrame("C")->setPlotFeature("position",enabled);
-  body->getFrame("C")->setPlotFeature("angle",enabled);
-  body->getFrame("C")->setPlotFeature("velocity",enabled);
-  body->getFrame("C")->setPlotFeature("angularVelocity",enabled);
-  body->getFrame("C")->setPlotFeature("acceleration",enabled);
-  body->getFrame("C")->setPlotFeature("angularAcceleration",enabled);
+  body->getFrame("C")->setPlotFeature(position,enabled);
+  body->getFrame("C")->setPlotFeature(MBSim::angle,enabled);
+  body->getFrame("C")->setPlotFeature(velocity,enabled);
+  body->getFrame("C")->setPlotFeature(angularVelocity,enabled);
+  body->getFrame("C")->setPlotFeature(acceleration,enabled);
+  body->getFrame("C")->setPlotFeature(angularAcceleration,enabled);
 
   FrameObserver *o = new FrameObserver("AKObserver");
   addObserver(o);
@@ -84,9 +85,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   observer->enableOpenMBVJointForce();
   observer->enableOpenMBVJointMoment();
 
-  setPlotFeatureRecursive("generalizedPosition",enabled);
-  setPlotFeatureRecursive("generalizedVelocity",enabled);
-  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
-  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
-  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive(generalizedPosition,enabled);
+  setPlotFeatureRecursive(generalizedVelocity,enabled);
+  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
+  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
+  setPlotFeatureRecursive(generalizedForce,enabled);
 }

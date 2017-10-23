@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Group name="Hauptgruppe{numHG}" xmlns="http://www.mbsim-env.de/MBSim"
+    xmlns:mbsimns="http://www.mbsim-env.de/MBSim"
     xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
     xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-  <plotFeatureRecursive feature="+deflection"/>
+  <plotFeatureRecursive feature="+mbsimns:deflection"/>
   <plotFeatureRecursive feature="+generalizedRelativePosition"/>
   <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
   <plotFeatureRecursive feature="+generalizedForce"/>

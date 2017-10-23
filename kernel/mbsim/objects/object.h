@@ -24,6 +24,8 @@
 
 namespace MBSim {
 
+  extern const PlotFeatureEnum generalizedPosition, generalizedVelocity, derivativeOfGeneralizedPosition, generalizedAcceleration;
+
   class DynamicSystem;
   class Link;
 
@@ -40,8 +42,6 @@ namespace MBSim {
   //class Object : public Element, public ObjectInterface {
   class Object : public Element {
     public: 
-      static const std::size_t generalizedPosition, generalizedVelocity, derivativeOfGeneralizedPosition, generalizedAcceleration;
-
       /**
        * \brief constructor
        */

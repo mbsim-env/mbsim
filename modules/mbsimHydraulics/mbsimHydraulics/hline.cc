@@ -35,8 +35,11 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  const std::size_t HLine::volumeFlow = std::hash<std::string>()("volumeFlow");
-  const std::size_t HLine::pressure = std::hash<std::string>()("pressure");
+  const PlotFeatureEnum volumeFlow;
+  const PlotFeatureEnum pressure;
+
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIMHYDRAULICS, volumeFlow)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIMHYDRAULICS, pressure)
 
   void HLine::calcSize() {
     nu = dependency.size()?0:1;

@@ -23,8 +23,8 @@
 #include "fmatvec/fmatvec.h"
 #include "fmatvec/atom.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/utils/plotfeatureenum.h"
 #include <string>
-#include <unordered_map>
 #include <hdf5serie/vectorserie.h>
 #include <mbxmlutilshelper/dom.h>
 
@@ -47,6 +47,8 @@ namespace MBSim {
   const MBXMLUtils::NamespaceURI MBSIM("http://www.mbsim-env.de/MBSim");
 #endif
 
+  extern const PlotFeatureEnum plotRecursive, openMBV, debug, separateFilePerGroup, energy;
+
   class DynamicSystemSolver;
   class Frame;
 
@@ -58,15 +60,6 @@ namespace MBSim {
    */
   class Element : virtual public fmatvec::Atom {
     public:
-      static const std::size_t plotRecursive, openMBV, debug, separateFilePerGroup, energy;
-
-      /** \brief Plot feature status */
-      enum PlotFeatureStatus {
-        unset, /*!< use the default value for the feature */
-        enabled, /*!< set the feature enabled */
-        disabled /*!< set the feature disabled */
-      };
-
       /** \brief The stages of the initialization
        *
        * see also DynamicSystemSolver::init()
@@ -148,7 +141,7 @@ namespace MBSim {
        */
       H5::GroupBase *getPlotGroup() { return plotGroup; }
 
-      PlotFeatureStatus getPlotFeature(std::size_t pf) { return plotFeature[pf]; }
+      PlotFeatureStatus getPlotFeature(const PlotFeatureEnum &pf) { return plotFeature[std::ref(pf)]; }
 
       /**
        * \brief Set a plot feature
@@ -156,23 +149,22 @@ namespace MBSim {
        * Set the plot feature pf of this object to enabled, disabled or unset.
        * If unset, this object uses the value of the plot feature pf of its parent object.
        */
-      virtual void setPlotFeature(const std::string &pf, PlotFeatureStatus value);
+      virtual void setPlotFeature(const PlotFeatureEnum &pf, PlotFeatureStatus value);
 
       /**
        * \brief Set a plot feature for the children of this object
        *
        * Set the plot feature pf of all children which plot feature is unset to enabled, disabled or unset.
        */
-      void setPlotFeatureForChildren(const std::string &pf, PlotFeatureStatus value);
+      void setPlotFeatureForChildren(const PlotFeatureEnum &pf, PlotFeatureStatus value);
 
       /**
        * \brief Set a plot feature for this object and the children of this object.
        *
        * This is a convenience function. It simply calls setPlotFeature and setPlotFeatureForChildren.
        */
-      void setPlotFeatureRecursive(const std::string &pf, PlotFeatureStatus value) { setPlotFeature(pf,value); setPlotFeatureForChildren(pf,value); }
+      void setPlotFeatureRecursive(const PlotFeatureEnum &pf, PlotFeatureStatus value) { setPlotFeature(pf,value); setPlotFeatureForChildren(pf,value); }
 
-      PlotFeatureStatus initializePlotFeatureStatusUsingXML(xercesc::DOMElement *e);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
       const std::vector<MBXMLUtils::EmbedDOMLocator>& getLocationStack() const { return locationStack; }
@@ -294,7 +286,7 @@ namespace MBSim {
       /**
        * \brief plot feature
        */
-      std::unordered_map<std::size_t,PlotFeatureStatus> plotFeature, plotFeatureForChildren;
+      PlotFeatureMap plotFeature, plotFeatureForChildren;
   };
 
   template<class T>

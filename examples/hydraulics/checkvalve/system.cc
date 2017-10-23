@@ -14,7 +14,7 @@
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/tabular_function.h"
 #include "mbsim/functions/constant_function.h"
-#include "mbsimControl/object_sensors.h"
+#include "mbsimControl/signal_.h"
 
 #include "mbsim/utils/rotarymatrices.h"
 
@@ -91,10 +91,10 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   n1->enableOpenMBVArrows(.01);
   n2->enableOpenMBVArrows(.01);
 
-  setPlotFeatureRecursive("generalizedPosition",enabled);
-  setPlotFeatureRecursive("generalizedVelocity",enabled);
-  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
-  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
-  setPlotFeatureRecursive("generalizedForce",enabled);
-  setPlotFeatureRecursive("signal",enabled);
+  setPlotFeatureRecursive(generalizedPosition,enabled);
+  setPlotFeatureRecursive(generalizedVelocity,enabled);
+  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
+  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
+  setPlotFeatureRecursive(generalizedForce,enabled);
+  setPlotFeatureRecursive(MBSimControl::signal,enabled);
 }

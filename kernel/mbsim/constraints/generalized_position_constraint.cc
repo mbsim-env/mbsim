@@ -75,8 +75,8 @@ namespace MBSim {
     ke->setExcitationFunction(f);
     ke->setGeneralizedForceLaw(new BilateralConstraint);
     ke->setSupportFrame(support);
-    ke->plotFeature[Link::generalizedRelativePosition] = disabled;
-    ke->plotFeature[Link::generalizedRelativeVelocity] = disabled;
+    ke->plotFeature[generalizedRelativePosition] = disabled;
+    ke->plotFeature[generalizedRelativeVelocity] = disabled;
     link = ke;
   }
 

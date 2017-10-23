@@ -33,7 +33,9 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpringDamper)
 
-  const std::size_t SpringDamper::deflection = std::hash<std::string>()("deflection");
+  const PlotFeatureEnum deflection;
+
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, deflection)
 
   SpringDamper::SpringDamper(const string &name) : FixedFrameLink(name), func(NULL), l0(0) {
   }

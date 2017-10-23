@@ -23,7 +23,6 @@
       <groups/>
       <objects>
         <RigidBody name="RigidBody1">
-          <plotFeature feature="+stateDerivative"/>
           <frameForKinematics ref="Frame[K]"/>
           <mass unit="kg">m1</mass>
           <inertiaTensor unit="kg*m^2">
@@ -240,7 +239,6 @@ ret = 0;
 </scalarParameter>
           </Parameter>
           <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR2">
-            <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+stateDerivative"/>
             <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
             <mass unit="kg">load('data.asc','m').m</mass>
             <positionIntegral>load('data.asc','rdm').rdm</positionIntegral>
@@ -299,7 +297,6 @@ ret = 0;
           </FlexibleBodyFFR>
         </Embed>
         <RigidBody name="RigidBody3">
-          <plotFeature feature="+stateDerivative"/>
           <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>l1+l2</ele>

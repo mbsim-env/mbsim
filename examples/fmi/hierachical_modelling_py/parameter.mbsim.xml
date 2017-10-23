@@ -27,7 +27,7 @@
     </xmlMatrix>
   </matrixParameter>
   <stringParameter name="grav">'gravity.txt'</stringParameter>
-  <stringParameter name="plotSubType">u'Derivative'</stringParameter>
+  <stringParameter name="plotSubType">'separateFilePerGroup'</stringParameter>
   <scalarParameter name="plotSubTypeEnabled">True</scalarParameter>
   <stringParameter name="pathPrefix">'py'</stringParameter>
   <stringParameter name="ivdir">'iv'</stringParameter>

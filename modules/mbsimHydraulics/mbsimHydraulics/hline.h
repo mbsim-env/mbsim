@@ -29,6 +29,8 @@ namespace MBSim {
 
 namespace MBSimHydraulics {
 
+  extern const MBSim::PlotFeatureEnum volumeFlow, pressure;
+
   class HNode;
   class HydlinePressureloss;
   class PressureLoss;
@@ -36,8 +38,6 @@ namespace MBSimHydraulics {
   /*! HLine */
   class HLine : public MBSim::Object {
     public:
-      static const std::size_t volumeFlow, pressure;
-
       HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(), QIn(1), QOut(1), Jacobian(), frameOfReference(NULL), updQ(true), saved_frameOfReference("") { }
       virtual std::string getType() const { return "HLine"; }
 

@@ -300,8 +300,8 @@ namespace MBSim {
       joint->setMomentLaw(new BilateralConstraint);
     }
     joint->connect(frame1,frame2);
-    joint->plotFeature[Link::generalizedRelativePosition] = disabled;
-    joint->plotFeature[Link::generalizedRelativeVelocity] = disabled;
+    joint->plotFeature[generalizedRelativePosition] = disabled;
+    joint->plotFeature[generalizedRelativeVelocity] = disabled;
     link = joint;
   }
 

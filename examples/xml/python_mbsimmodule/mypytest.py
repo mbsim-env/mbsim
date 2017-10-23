@@ -70,17 +70,19 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
 
   def init(self, stage):
     if stage==self.plotting:
-      if self.getPlotFeature(mbsim.Element.plotRecursive)==self.enabled:
-        self.plotColumns.push_back("sin")
-      if self.getPlotFeature(mbsim.Element.openMBV)==self.enabled:
+      if self.getPlotFeature(mbsim.plotRecursive)==mbsim.enabled:
+        if self.getPlotFeature(pyTestPlotFeature)==mbsim.enabled:
+          self.plotColumns.push_back("sin")
+      if self.getPlotFeature(mbsim.openMBV)==mbsim.enabled:
         self.coilspringOpenMBV.setName(self.name)
         self.parent.getOpenMBVGrp().addObject(self.coilspringOpenMBV)
     super(PySpringDamperPyScriptInit, self).init(stage)
 
   def plot(self):
-    if self.getPlotFeature(mbsim.Element.plotRecursive)==self.enabled:
-      self.plotVector.push_back(math.sin(10*self.getTime()))
-    if self.getPlotFeature(mbsim.Element.openMBV)==self.enabled:
+    if self.getPlotFeature(mbsim.plotRecursive)==mbsim.enabled:
+      if self.getPlotFeature(pyTestPlotFeature)==mbsim.enabled:
+        self.plotVector.push_back(math.sin(10*self.getTime()))
+    if self.getPlotFeature(mbsim.openMBV)==mbsim.enabled:
       WrOFromPoint=self.frame[0].evalPosition()
       WrOToPoint  =self.frame[1].evalPosition()
       data=[]
@@ -133,11 +135,19 @@ class PyLinearSpringDamper(mbsim.Function_d_d_d):
 
 
 
-# register the classes as a XML name
+# register the classes as a XML name (this makes the class usable from XML)
 mbsim.registerClass(PySpringDamperXMLInit)
 mbsim.registerClass(PySpringDamperPyScriptInit)
 mbsim.registerClass(PySpringDamperEmpty)
 mbsim.registerClass(PyLinearSpringDamper)
+
+
+
+# create a plot feature enum
+pyTestPlotFeature=mbsim.PlotFeatureEnum()
+
+# register the plot feature enum as XML name (this makes the enum usable from XML)
+mbsim.registerEnum_PlotFeatureEnum(NS, pyTestPlotFeature, "pyTestPlotFeature")
 
 
 

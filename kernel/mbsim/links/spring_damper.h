@@ -27,13 +27,13 @@
 
 namespace MBSim {
 
+  extern const PlotFeatureEnum deflection;
+
   /** \brief A spring damper force law.
    * This class connects two frames and applies a force in it, which depends in the
    * distance and relative velocity between the two frames.
    */
   class SpringDamper : public FixedFrameLink {
-    public:
-      static const std::size_t deflection;
     protected:
       Function<double(double,double)> *func;
       double l0;

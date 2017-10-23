@@ -25,6 +25,7 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 
 
 // wrap the following classes
+%include "mbsim/utils/plotfeatureenum.h"
 %include "mbsim/element.h"
 
 
@@ -159,6 +160,7 @@ class MBSim::DistanceFunction<double(double)> : public MBSim::Function<double(do
 
 // wrap part of the MBSim object factory
 %include "mbsim/objectfactory_part.h"
+%template(registerEnum_internal_PlotFeatureEnum) MBSim::registerEnum_internal<MBSim::PlotFeatureEnum>;
 
 
 
@@ -313,6 +315,7 @@ def _extendClass(className):
 
 
 # register class in the MBSim::ObjectFactory.
+# The class name of the class is used as the XML local name (excluding any part after _)
 # This also extents className with some special members.
 def registerClass(className):
   _extendClass(className)
@@ -320,6 +323,7 @@ def registerClass(className):
     _AllocatePython(className).__disown__(), _DeallocatePython().__disown__())
 
 # register singelton class in the MBSim::ObjectFactory
+# The class name of the class is used as the XML local name (excluding any part after _)
 # This also extents className with some special members.
 def registerClassAsSingleton(className):
   _extendClass(className)
@@ -419,6 +423,15 @@ def pyScriptInitializeUsingXML(self, e, className):
   # execute the python script using all variables of the preprocessor
   globals[pys.attrib['objName']]=self # add self to list of variables (under the name ob the objName attribute)
   exec(code, globals)
+
+
+
+# register plot feature enum in MBSim::EnumFactory<PlotFeatureEnum>.
+# The name of the variables enumVar is used as the XML enum name.
+def registerEnum_PlotFeatureEnum(ns, enumVar, enumName):
+  registerEnum_internal_PlotFeatureEnum(_FQN(ns[1:-1], enumName), enumVar)
+
+
 
 # XML namespace of this module (prefixed with { and postfixed with })
 NS="{http://www.mbsim-env.de/MBSim}"

@@ -30,6 +30,8 @@ namespace MBSimControl {
 
   const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://www.mbsim-env.de/MBSimControl");
 
+  extern const MBSim::PlotFeatureEnum signal;
+
   /*!
    * \brief Signal
    * \author Markus Schneider
@@ -37,8 +39,6 @@ namespace MBSimControl {
   class Signal : public MBSim::Link {
 
     public:
-      static const std::size_t signal;
-
       Signal(const std::string &name) : Link(name), upds(true) { }
 
       void init(InitStage stage);

@@ -33,7 +33,7 @@ namespace MBSimFlexibleBody {
   void Contour1s::init(InitStage stage) {
 
     if (stage == plotting) {
-      if(plotFeature[openMBV]==enabled and openMBVSpineExtrusion) {
+      if(plotFeature[MBSim::openMBV]==MBSim::enabled and openMBVSpineExtrusion) {
         openMBVSpineExtrusion->setName(name);
         parent->getOpenMBVGrp()->addObject(openMBVSpineExtrusion);
 //        openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(R->getOrientation()));
@@ -48,7 +48,7 @@ namespace MBSimFlexibleBody {
   }
 
   void Contour1s::plot() {
-    if(plotFeature[openMBV]==enabled and openMBVSpineExtrusion) {
+    if(plotFeature[MBSim::openMBV]==MBSim::enabled and openMBVSpineExtrusion) {
 
       vector<double> data;
       data.push_back(getTime());

@@ -55,6 +55,12 @@ void registerClass_internal(const MBXMLUtils::FQN &name, const AllocateBase *all
 
 void deregisterClass_internal(const MBXMLUtils::FQN &name, const AllocateBase *alloc);
 
+
+
+template<class EV> void registerEnum_internal(const MBXMLUtils::FQN &name, const EV& value);
+
+template<class EV> void deregisterEnum_internal(const MBXMLUtils::FQN &name);
+
 }
 
 #endif

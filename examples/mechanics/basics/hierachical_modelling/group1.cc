@@ -46,8 +46,8 @@ Group1::Group1(const string &name) : Group(name) {
 
   // ----------------------- Definition des 2. Körpers --------------------  
   RigidBody *box2 = new RigidBody("Box2");
-  box2->setPlotFeature("derivativeOfGeneralizedPosition", disabled);
-  box2->setPlotFeature("generalizedAcceleration", disabled);
+  box2->setPlotFeature(derivativeOfGeneralizedPosition, disabled);
+  box2->setPlotFeature(generalizedAcceleration, disabled);
   //box2->setPlotFeatureForChildren(plotRecursive, disabled);
   addObject(box2);
 

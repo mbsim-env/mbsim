@@ -27,6 +27,8 @@
 
 namespace MBSim {
 
+  extern const PlotFeatureEnum position, angle, velocity, angularVelocity, acceleration, angularAcceleration;
+
   /**
    * \brief cartesian frame on bodies used for application of e.g. links and loads
    * \author Martin Foerg
@@ -36,8 +38,6 @@ namespace MBSim {
    */
   class Frame : public Element {
     public:
-      static const std::size_t position, angle, velocity, angularVelocity, acceleration, angularAcceleration;
-
       /**
        * \brief constructor
        * \param name of coordinate system

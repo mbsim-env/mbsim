@@ -10,9 +10,9 @@ using namespace MBSim;
 
 namespace MBSimElectronics {
 
-  const std::size_t ElectronicComponent::charge = std::hash<std::string>()("charge");
-  const std::size_t ElectronicComponent::current = std::hash<std::string>()("current");
-  const std::size_t ElectronicComponent::voltage = std::hash<std::string>()("voltage");
+  const PlotFeatureEnum charge;
+  const PlotFeatureEnum current;
+  const PlotFeatureEnum voltage;
 
   Branch tmpbranch("Dummy");
   

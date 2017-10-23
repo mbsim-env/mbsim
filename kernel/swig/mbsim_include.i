@@ -93,6 +93,8 @@
 
 // disable warning 473
 #pragma SWIG nowarn=SWIGWARN_TYPEMAP_DIRECTOROUT_PTR
+#pragma SWIG nowarn=SWIGWARN_IGNORE_OPERATOR_DELETE
+#pragma SWIG nowarn=SWIGWARN_IGNORE_OPERATOR_DELARR
 
 
 // add code to the generated code

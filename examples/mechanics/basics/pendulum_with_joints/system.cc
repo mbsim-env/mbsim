@@ -128,15 +128,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   observer->setMechanicalLink(joint2);
   observer->enableOpenMBVForce(0.02);
 
-  body1->setPlotFeature("generalizedPosition",Element::enabled);
-  body1->setPlotFeature("generalizedVelocity",Element::enabled);
-  body2->setPlotFeature("generalizedPosition",Element::enabled);
-  body2->setPlotFeature("generalizedVelocity",Element::enabled);
-  joint1->setPlotFeature("generalizedRelativePosition",Element::enabled);
-  joint1->setPlotFeature("generalizedRelativeVelocity",Element::enabled);
-  joint1->setPlotFeature("generalizedForce",Element::enabled);
-  joint2->setPlotFeature("generalizedRelativePosition",Element::enabled);
-  joint2->setPlotFeature("generalizedRelativeVelocity",Element::enabled);
-  joint2->setPlotFeature("generalizedForce",Element::enabled);
+  body1->setPlotFeature(generalizedPosition,enabled);
+  body1->setPlotFeature(generalizedVelocity,enabled);
+  body2->setPlotFeature(generalizedPosition,enabled);
+  body2->setPlotFeature(generalizedVelocity,enabled);
+  joint1->setPlotFeature(generalizedRelativePosition,enabled);
+  joint1->setPlotFeature(generalizedRelativeVelocity,enabled);
+  joint1->setPlotFeature(generalizedForce,enabled);
+  joint2->setPlotFeature(generalizedRelativePosition,enabled);
+  joint2->setPlotFeature(generalizedRelativeVelocity,enabled);
+  joint2->setPlotFeature(generalizedForce,enabled);
 }
 

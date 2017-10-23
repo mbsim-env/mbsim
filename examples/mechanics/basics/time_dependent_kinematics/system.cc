@@ -53,12 +53,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setRotation(new CompositeFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), f2));
   body1->setTranslationDependentRotation(true);
 
-  body1->getFrame("C")->setPlotFeature("position",enabled);
-  body1->getFrame("C")->setPlotFeature("angle",enabled);
-  body1->getFrame("C")->setPlotFeature("velocity",enabled);
-  body1->getFrame("C")->setPlotFeature("angularVelocity",enabled);
-  body1->getFrame("C")->setPlotFeature("acceleration",enabled);
-  body1->getFrame("C")->setPlotFeature("angularAcceleration",enabled);
+  body1->getFrame("C")->setPlotFeature(position,enabled);
+  body1->getFrame("C")->setPlotFeature(angle,enabled);
+  body1->getFrame("C")->setPlotFeature(velocity,enabled);
+  body1->getFrame("C")->setPlotFeature(angularVelocity,enabled);
+  body1->getFrame("C")->setPlotFeature(acceleration,enabled);
+  body1->getFrame("C")->setPlotFeature(angularAcceleration,enabled);
 
   FrameObserver *o = new FrameObserver("Observer");
   addObserver(o);
@@ -84,6 +84,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setInertiaTensor(SymMat3(EYE));
   body2->setTranslation(new LinearTranslation<VecV>("[0; 1; 0]"));
 
-  setPlotFeatureRecursive("generalizedPosition",enabled);
-  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive(generalizedPosition,enabled);
+  setPlotFeatureRecursive(generalizedVelocity,enabled);
 }

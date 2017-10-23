@@ -24,6 +24,7 @@
 #include "mbsim/dynamic_system.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/utils/xmlutils.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz.h"
@@ -406,7 +407,7 @@ namespace MBSimFlexibleBody {
       T.init(Eye());
     }
     else if(stage==plotting) {
-      if(plotFeature[openMBV]==enabled and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
+      if(plotFeature[ref(openMBV)]==enabled and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
         dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
         if(ombvIndices.size())
           dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
@@ -428,7 +429,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::plot() {
-    if(plotFeature[openMBV]==enabled and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
+    if(plotFeature[ref(openMBV)]==enabled and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
       vector<double> data;
       data.push_back(getTime());
       for(unsigned int i=0; i<ombvNodes.size(); i++) {
@@ -929,8 +930,8 @@ namespace MBSimFlexibleBody {
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotFeatureFrameK");
     while(e and E(e)->getTagName()==MBSIMFLEX%"plotFeatureFrameK") {
-      PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
-      K->setPlotFeature(MBXMLUtils::E(e)->getAttribute("feature").substr(1), status);
+      auto pf=getPlotFeatureFromXML(e);
+      K->setPlotFeature(pf.first, pf.second);
       e=e->getNextElementSibling();
     }
   }

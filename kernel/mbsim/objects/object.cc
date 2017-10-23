@@ -31,10 +31,15 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  const std::size_t Object::generalizedPosition = std::hash<std::string>()("generalizedPosition");
-  const std::size_t Object::generalizedVelocity = std::hash<std::string>()("generalizedVelocity");
-  const std::size_t Object::derivativeOfGeneralizedPosition = std::hash<std::string>()("derivativeOfGeneralizedPosition");
-  const std::size_t Object::generalizedAcceleration = std::hash<std::string>()("generalizedAcceleration");
+  const PlotFeatureEnum generalizedPosition;
+  const PlotFeatureEnum generalizedVelocity;
+  const PlotFeatureEnum derivativeOfGeneralizedPosition;
+  const PlotFeatureEnum generalizedAcceleration;
+
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, generalizedPosition)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, generalizedVelocity)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, derivativeOfGeneralizedPosition)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, generalizedAcceleration)
 
   Object::Object(const std::string &name) : Element(name), nq(0), nu(0), qSize(0), uSize{0,0}, hSize{0,0}, qInd(0), uInd{0,0}, hInd{0,0}, updSize(true), updq(true), updu(true), updqd(true), updud(true) {
   }
