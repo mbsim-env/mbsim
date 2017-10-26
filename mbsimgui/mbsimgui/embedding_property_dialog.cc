@@ -38,7 +38,6 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   extern QDir mbsDir;
-  extern unordered_map<string,std::pair<DOMDocument*,int> > hrefMap;
   extern DOMImplementation *impl;
 
   EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, bool name_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_), name(NULL), count(NULL), counterName(NULL) {

@@ -72,7 +72,6 @@ namespace MBSimGUI {
   bool currentTask;
   bool absolutePath = false;
   QDir mbsDir;
-  unordered_map<string,std::pair<DOMDocument*,int> > hrefMap;
 
   MainWindow *mw;
 
@@ -310,7 +309,7 @@ namespace MBSimGUI {
     if(arg.contains("--maximized"))
       showMaximized();
 
-    QString fileProject;
+    QString projectFile;
     QRegExp filterProject(".+\\.mbsimprj\\.xml");
     QDir dir;
     dir.setFilter(QDir::Files);
@@ -320,19 +319,19 @@ namespace MBSimGUI {
       if(dir.exists()) {
         QStringList file=dir.entryList();
         for(int j=0; j<file.size(); j++) {
-          if(fileProject.isEmpty() and filterProject.exactMatch(file[j]))
-            fileProject = dir.path()+"/"+file[j];
+          if(projectFile.isEmpty() and filterProject.exactMatch(file[j]))
+            projectFile = dir.path()+"/"+file[j];
         }
         continue;
       }
       if(QFile::exists(*it)) {
-        if(fileProject.isEmpty() and filterProject.exactMatch(*it))
-          fileProject = *it;
+        if(projectFile.isEmpty() and filterProject.exactMatch(*it))
+          projectFile = *it;
         continue;
       }
     }
-    if(fileProject.size())
-      loadProject(QDir::current().absoluteFilePath(fileProject));
+    if(projectFile.size())
+      loadProject(QDir::current().absoluteFilePath(projectFile));
     else
       newProject(false);
 
@@ -424,10 +423,10 @@ namespace MBSimGUI {
   void MainWindow::changeWorkingDir() {
     QString dir = QFileDialog::getExistingDirectory (0, "Working directory", ".");
     if(not(dir.isEmpty())) {
-      QString absoluteMBSFilePath = QDir::current().absoluteFilePath(fileProject);
+      QString absoluteMBSFilePath = QDir::current().absoluteFilePath(projectFile);
       QDir::setCurrent(dir);
       mbsDir = QFileInfo(absoluteMBSFilePath).absolutePath();
-      fileProject = QDir::current().relativeFilePath(absoluteMBSFilePath);
+      projectFile = QDir::current().relativeFilePath(absoluteMBSFilePath);
       updateRecentProjectFileActions();
     }
   }
@@ -551,7 +550,6 @@ namespace MBSimGUI {
 
   void MainWindow::newProject(bool ask) {
     if(maybeSave()) {
-      hrefMap.clear();
       undos.clear();
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
@@ -587,7 +585,7 @@ namespace MBSimGUI {
       solverView->setSolver(project->getSolver());
 
       actionSaveProject->setDisabled(true);
-      fileProject="";
+      projectFile="";
       mbsimxml(1);
       setWindowTitle("MBS.mbsimprj.xml[*]");
     }
@@ -595,14 +593,13 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject(const QString &file) {
     if(not(file.isEmpty())) {
-      hrefMap.clear();
       undos.clear();
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
       setProjectChanged(false);
       mbsDir = QFileInfo(file).absolutePath();
       QDir::setCurrent(QFileInfo(file).absolutePath());
-      fileProject=QDir::current().relativeFilePath(file);
+      projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       MBSimObjectFactory::initialize();
       std::string message;
@@ -615,7 +612,7 @@ namespace MBSimGUI {
       catch(...) {
         message = "Unknown exception.";
       }
-      setWindowTitle(fileProject+"[*]");
+      setWindowTitle(projectFile+"[*]");
       rebuildTree();
       actionSaveProject->setDisabled(false);
       mbsimxml(1);
@@ -638,9 +635,9 @@ namespace MBSimGUI {
       file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
       mbsDir = QFileInfo(file).absolutePath();
       QDir::setCurrent(QFileInfo(file).absolutePath());
-      fileProject=QDir::current().relativeFilePath(file);
+      projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
-      setWindowTitle(fileProject+"[*]");
+      setWindowTitle(projectFile+"[*]");
       actionSaveProject->setDisabled(false);
       return saveProject();
     }
@@ -649,12 +646,7 @@ namespace MBSimGUI {
 
   bool MainWindow::saveProject(const QString &fileName, bool processDocument, bool modifyStatus) {
     try {
-      serializer->writeToURI(doc, X()%(fileName.isEmpty()?fileProject.toStdString():fileName.toStdString()));
-//      cout << hrefMap.size() << endl;
-      for(auto it=hrefMap.begin(); it!=hrefMap.end(); it++) {
-//        std::cout << "save " << it->first << ":" << it->second.first << endl;
-        serializer->writeToURI(it->second.first, X()%(it->first));
-      }
+      serializer->writeToURI(doc, X()%(fileName.isEmpty()?projectFile.toStdString():fileName.toStdString()));
       if(modifyStatus) setProjectChanged(false);
       return true;
     }

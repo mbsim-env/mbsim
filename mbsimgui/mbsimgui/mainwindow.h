@@ -73,7 +73,7 @@ namespace MBSimGUI {
       EmbeddingView *embeddingView;
       SolverView *solverView;
       ProjectView *projectView;
-      QString fileProject; 
+      QString projectFile;
       Process *mbsim;
       MBSimThread *mbsimThread;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
