@@ -30,7 +30,7 @@ using namespace MBSimGUI;
 
 int main(int argc, char *argv[]) {
 #ifndef _WIN32
-  assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
+//MISSING Qt seems to generate some FPE, hence disabled  assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
 #endif
 
   // environment variables

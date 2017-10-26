@@ -88,6 +88,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
     for(auto &dir: allSearchDirs)
       for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(dir);
           it!=boost::filesystem::directory_iterator(); it++) {
+        if(it->path().string().length()<=string(".mbsimmodule.xml").length()) continue;
         if(it->path().string().substr(it->path().string().length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
         std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
