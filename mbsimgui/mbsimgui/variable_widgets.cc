@@ -1313,16 +1313,16 @@ namespace MBSimGUI {
   }
 
   void PhysicalVariableWidget::openEvalDialog() {
-//    VariableWidget *w=0;
-//    try {
-//      w = widget->getValidatedWidget();
-//    }
-//    catch(MBXMLUtils::DOMEvalException e) {
-//      QMessageBox::warning(0, "Expression evaluation", QString::fromStdString(e.getMessage()));
-//      return;
-//    }
-    EvalDialog evalDialog(widget->getEvalMat());
-    evalDialog.exec();
+    try {
+      EvalDialog evalDialog(widget->getEvalMat());
+      evalDialog.exec();
+    }
+    catch(MBXMLUtils::DOMEvalException e) {
+      QMessageBox::warning(0, "Expression evaluation", QString::fromStdString(e.getMessage()));
+    }
+    catch(...) {
+      QMessageBox::warning(0, "Expression evaluation", "Unknown error");
+    }
   }
 
   DOMElement* PhysicalVariableWidget::initializeUsingXML(DOMElement *parent) {

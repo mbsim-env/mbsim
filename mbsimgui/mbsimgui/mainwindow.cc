@@ -37,9 +37,9 @@
 #include "embedding_view.h"
 #include "solver_view.h"
 #include "project_view.h"
+#include "echo_view.h"
 #include "embed.h"
 #include "project.h"
-#include "mbsim_process.h"
 #include "project_property_dialog.h"
 #include "file_editor.h"
 #include "utils.h"
@@ -99,12 +99,11 @@ namespace MBSimGUI {
 #endif
     bfs::create_directories(uniqueTempDir);
 
-    mbsim = new Process(this);
+    echoView = new EchoView(this);
 
     QString program = (MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str();
     QStringList arguments;
     arguments << "--onlyListSchemas";
-    QProcess process;
     process.start(program,arguments);
     process.waitForFinished(-1);
     QStringList line=QString(process.readAllStandardOutput().data()).split("\n");
@@ -113,10 +112,7 @@ namespace MBSimGUI {
       if(!line.at(i).isEmpty())
         schemas.insert(line.at(i).toStdString());
 
-    mbsimThread = new MBSimThread(this);
     parser=DOMParser::create(schemas);
-    mbsimThread->setParser(parser);
-    connect(mbsimThread, SIGNAL(resultReady(int)), this, SLOT(preprocessFinished(int)));
 
     elementView = new ElementView;
 
@@ -216,7 +212,7 @@ namespace MBSimGUI {
     connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
     toolBar->addAction(actionSimulate);
     QAction *actionInterrupt = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
-    connect(actionInterrupt,SIGNAL(triggered()),mbsim,SLOT(interrupt()));
+    connect(actionInterrupt,SIGNAL(triggered()),this,SLOT(interrupt()));
     toolBar->addAction(actionInterrupt);
     actionRefresh = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh 3D view");
     connect(actionRefresh,SIGNAL(triggered()),this,SLOT(refresh()));
@@ -233,10 +229,10 @@ namespace MBSimGUI {
     actionEigenanalysis->setDisabled(true);
     connect(actionEigenanalysis,SIGNAL(triggered()),this,SLOT(eigenanalysis()));
     toolBar->addAction(actionEigenanalysis);
-    QAction *actionFrequencyResponse = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
+    actionFrequencyResponse = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
 //    actionFrequencyResponse->setDisabled(true);
     connect(actionFrequencyResponse,SIGNAL(triggered()),this,SLOT(frequencyResponse()));
-    QAction *actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
+    actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,SIGNAL(triggered()),this,SLOT(debug()));
     toolBar->addAction(actionDebug);
 
@@ -301,8 +297,8 @@ namespace MBSimGUI {
 
     QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
-    mbsimDW->setWidget(mbsim); 
-    connect(mbsim->getProcess(),SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(simulationFinished(int,QProcess::ExitStatus)));
+    mbsimDW->setWidget(echoView);
+    connect(&process,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(processFinished(int,QProcess::ExitStatus)));
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
@@ -337,9 +333,10 @@ namespace MBSimGUI {
 
     setAcceptDrops(true);
 
-    autoSaveTimer = new QTimer(this);
-    connect(autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSaveProject()));
-    autoSaveTimer->start(autoSaveInterval*60000);
+    connect(&autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSaveProject()));
+    autoSaveTimer.start(autoSaveInterval*60000);
+
+    connect(&echoViewTimer, SIGNAL(timeout()), this, SLOT(updateEchoView()));
 
     setWindowIcon(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"mbsimgui.svg").string())));
   }
@@ -348,7 +345,13 @@ namespace MBSimGUI {
     saveProject("./.MBS.mbsimprj.xml",true,false);
   }
 
-  void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+  void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+    echoViewTimer.stop();
+    updateEchoView();
+    if(exitStatus==QProcess::NormalExit && exitCode==0)
+      echoView->setCurrentIndex(0);
+    else
+      echoView->setCurrentIndex(1);
     if(currentTask==1) {
       inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
       QModelIndex index = elementView->selectionModel()->currentIndex();
@@ -368,7 +371,9 @@ namespace MBSimGUI {
     actionOpenMBV->setDisabled(false);
     actionH5plotserie->setDisabled(false);
     actionEigenanalysis->setDisabled(false);
+    actionFrequencyResponse->setDisabled(false);
     actionRefresh->setDisabled(false);
+    actionDebug->setDisabled(false);
     statusBar()->showMessage(tr("Ready"));
   }
 
@@ -384,8 +389,6 @@ namespace MBSimGUI {
   }
 
   MainWindow::~MainWindow() {
-    delete mbsim;
-    delete mbsimThread;
     // use nothrow boost::filesystem functions to avoid exceptions in this dtor
     boost::system::error_code ec;
     bfs::remove_all(uniqueTempDir, ec);
@@ -449,9 +452,9 @@ namespace MBSimGUI {
       if(not(saveFinalStateVector)) 
         actionSaveStateVectorAs->setDisabled(true);
       if(autoSave)
-        autoSaveTimer->start(autoSaveInterval*60000);
+        autoSaveTimer.start(autoSaveInterval*60000);
       else
-        autoSaveTimer->stop();
+        autoSaveTimer.stop();
       maxUndo = menu.getMaxUndo();
     }
   }
@@ -836,11 +839,11 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/out0.eigenanalysis.mat",file);
   }
 
-  void MainWindow::mbsimxml(int task) {
+  bool MainWindow::mbsimxml(int task) {
     absolutePath = true;
     QModelIndex index = elementView->model()->index(0,0);
     if(not projectView->getProject())
-      return;
+      return false;
 
     currentTask = task;
 
@@ -850,7 +853,9 @@ namespace MBSimGUI {
     doc->insertBefore(newDocElement, NULL);
     projectView->getProject()->processFileID((E(newDocElement)->getTagName()==PV%"Embed")?E(newDocElement)->getFirstElementChildNamed(MBSIMXML%"MBSimProject"):newDocElement);
 
-    QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+QString::number(task)+".mbsimprj.flat.xml";
+    //QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+QString::number(task)+".mbsimprj.flat.xml";
+    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+    QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.flat.xml";
 
     if(task==1) {
       if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
@@ -859,44 +864,72 @@ namespace MBSimGUI {
 
     absolutePath = false;
 
-    mbsimThread->setDocument(doc);
-    mbsimThread->setProjectFile(projectFile);
-    mbsimThread->setEvaluator("octave");
-    mbsimThread->start();
-  }
+    DOMElement *root = doc->getDocumentElement();
 
-  void MainWindow::preprocessFinished(int result) {
-    if(result==0) {
-      QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-      QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.flat.xml";
-      QStringList arg;
-      if(currentTask==1)
-        arg.append("--stopafterfirststep");
-      else if(saveFinalStateVector)
-        arg.append("--savefinalstatevector");
-      arg.append(projectFile);
-      mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
-      mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
+    // GUI-XML-Baum mit OriginalFilename ergaenzen
+    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
+      DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
+          X()%"MBS.mbsimprj.xml");
+      root->insertBefore(filenamePI, root->getFirstChild());
     }
-    else
-      mbsim->preprocessFailed(mbsimThread->getErrorText());
+
+    QString errorText;
+
+    try {
+      D(doc)->validate();
+      vector<boost::filesystem::path> dependencies;
+      std::shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
+      root = doc->getDocumentElement();
+      Preprocess::preprocess(parser, eval, dependencies, root);
+    }
+    catch(exception &ex) {
+      errorText = ex.what();
+    }
+    catch(...) {
+      errorText = "Unknown error";
+    }
+    if(not errorText.isEmpty()) {
+      echoView->setErrorText(errorText);
+      echoView->updateOutputAndError();
+      echoView->setCurrentIndex(1);
+      return false;
+    }
+    // adapt the evaluator in the dom
+    DOMElement *evaluator=D(doc)->createElement(PV%"evaluator");
+    evaluator->appendChild(doc->createTextNode(X()%"xmlflat"));
+    root->insertBefore(evaluator, root->getFirstChild());
+    DOMParser::serialize(doc.get(), projectFile.toStdString(), false);
+    QStringList arg;
+    if(currentTask==1)
+      arg.append("--stopafterfirststep");
+    else if(saveFinalStateVector)
+      arg.append("--savefinalstatevector");
+    arg.append(projectFile);
+    echoView->clearOutputAndError();
+    echoViewTimer.start(250);
+    process.setWorkingDirectory(uniqueTempDir_);
+    process.start((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
+    return true;
   }
 
   void MainWindow::simulate() {
-    mbsimxml(0);
-    actionSaveDataAs->setDisabled(false);
-    actionSaveMBSimH5DataAs->setDisabled(false);
-    actionSaveOpenMBVDataAs->setDisabled(false);
-    if(saveFinalStateVector)
-      actionSaveStateVectorAs->setDisabled(false);
-    if(solverView->getSolverNumber()==7)
-      actionSaveEigenanalysisAs->setDisabled(false);
-    actionSimulate->setDisabled(true);
-    actionOpenMBV->setDisabled(true);
-    actionH5plotserie->setDisabled(true);
-    actionEigenanalysis->setDisabled(true);
-    actionRefresh->setDisabled(true);
-    statusBar()->showMessage(tr("Simulating"));
+    if(mbsimxml(0)) {
+      actionSaveDataAs->setDisabled(false);
+      actionSaveMBSimH5DataAs->setDisabled(false);
+      actionSaveOpenMBVDataAs->setDisabled(false);
+      if(saveFinalStateVector)
+        actionSaveStateVectorAs->setDisabled(false);
+      if(solverView->getSolverNumber()==7)
+        actionSaveEigenanalysisAs->setDisabled(false);
+      actionSimulate->setDisabled(true);
+      actionOpenMBV->setDisabled(true);
+      actionH5plotserie->setDisabled(true);
+      actionEigenanalysis->setDisabled(true);
+      actionFrequencyResponse->setDisabled(true);
+      actionRefresh->setDisabled(true);
+      actionDebug->setDisabled(true);
+      statusBar()->showMessage(tr("Simulating"));
+    }
   }
 
   void MainWindow::refresh() {
@@ -936,8 +969,9 @@ namespace MBSimGUI {
     QStringList arg;
     arg.append("--stopafterfirststep");
     arg.append(projectFile);
-    mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
-    mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
+    echoView->clearOutputAndError();
+    process.setWorkingDirectory(uniqueTempDir_);
+    process.start((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
   }
 
   void MainWindow::frequencyResponse() {
@@ -1865,6 +1899,21 @@ namespace MBSimGUI {
   void MainWindow::applySettings() {
     setProjectChanged(true);
     mbsimxml(1);
+  }
+
+  void MainWindow::interrupt() {
+    echoView->setErrorText("Simulation interrupted\n");
+#ifdef _WIN32
+    process.kill();
+#else
+    process.terminate();
+#endif
+  }
+
+  void MainWindow::updateEchoView() {
+    echoView->addOutputText(process.readAllStandardOutput().data());
+    echoView->addErrorText(process.readAllStandardError().data());
+    echoView->updateOutputAndError();
   }
 
 }

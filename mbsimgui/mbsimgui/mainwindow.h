@@ -22,6 +22,7 @@
 
 #include <QMainWindow>
 #include <QProcess>
+#include <QTimer>
 #include <boost/filesystem/path.hpp>
 #include <xercesc/util/XercesDefs.hpp>
 #include <deque>
@@ -47,12 +48,12 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
-  class Process;
   class MBSimThread;
   class ElementView;
   class EmbeddingView;
   class SolverView;
   class ProjectView;
+  class EchoView;
   class Element;
   class Frame;
   class Contour;
@@ -73,13 +74,13 @@ namespace MBSimGUI {
       EmbeddingView *embeddingView;
       SolverView *solverView;
       ProjectView *projectView;
+      EchoView *echoView;
       QString projectFile;
-      Process *mbsim;
-      MBSimThread *mbsimThread;
+      QProcess process;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs;
-      QTimer *autoSaveTimer;
+      QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionFrequencyResponse, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs;
+      QTimer autoSaveTimer, echoViewTimer;
       QString currentID;
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
@@ -115,7 +116,7 @@ namespace MBSimGUI {
       ~MainWindow();
       std::shared_ptr<MBXMLUtils::DOMParser> parser;
       std::shared_ptr<MBXMLUtils::Eval> eval;
-      void mbsimxml(int task);
+      bool mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
       void addParameter(Parameter *parameter, EmbedItemData *parent);
       void addFrame(Frame *frame, Element *parent);
@@ -212,12 +213,13 @@ namespace MBSimGUI {
       void changeWorkingDir();
       void openOptionsMenu();
       void selectionChanged(const QModelIndex &current);
-      void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);
+      void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void openRecentProjectFile();
-      void preprocessFinished(int result);
       void autoSaveProject();
       void applySettings();
       void settingsFinished(int result);
+      void interrupt();
+      void updateEchoView();
   };
 
 }
