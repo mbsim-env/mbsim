@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <DynamicSystemSolver name="MBS" xmlns="http://www.mbsim-env.de/MBSim" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:ctl="http://www.mbsim-env.de/MBSimControl" xmlns:flex="http://www.mbsim-env.de/MBSimFlexibleBody" xmlns:hyd="http://www.mbsim-env.de/MBSimHydraulics" xmlns:mbsimint="http://www.mbsim-env.de/MBSimIntegrator" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" xmlns:ns_1="http://www.mbsim-env.de/OpenMBV" xmlns:xi="http://www.w3.org/2001/XInclude">
-    <plotFeatureRecursive feature="+generalizedRelativePosition"/>
-    <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
-    <plotFeatureRecursive feature="+generalizedForce"/>
-    <plotFeatureRecursive feature="+generalizedPosition"/>
-    <plotFeatureRecursive feature="+generalizedVelocity"/>
+    <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
     <frames />
     <contours />
     <groups />

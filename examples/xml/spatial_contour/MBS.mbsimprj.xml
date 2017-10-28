@@ -9,11 +9,11 @@
       <scalarParameter name="c">0.7</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-      <plotFeatureRecursive feature="+generalizedRelativePosition"/>
-      <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
-      <plotFeatureRecursive feature="+generalizedForce"/>
-      <plotFeatureRecursive feature="+generalizedPosition"/>
-      <plotFeatureRecursive feature="+generalizedVelocity"/>
+      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
       <frames/>
       <contours/>
       <groups/>

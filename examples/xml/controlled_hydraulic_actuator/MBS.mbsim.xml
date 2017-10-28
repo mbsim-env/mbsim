@@ -2,12 +2,12 @@
 <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
   xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl"
   xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
-  <plotFeatureRecursive feature="+generalizedRelativePosition"/>
-  <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
-  <plotFeatureRecursive feature="+generalizedForce"/>
-  <plotFeatureRecursive feature="+generalizedPosition"/>
-  <plotFeatureRecursive feature="+generalizedVelocity"/>
-  <plotFeatureRecursive feature="+mbsimcontrol:signal"/>
+  <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="mbsimcontrol:signal">true</plotFeatureRecursive>
   <frames>
     <FixedRelativeFrame name="FRocker">
       <relativePosition>[0; 0; 0]</relativePosition>

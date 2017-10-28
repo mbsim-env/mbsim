@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/utils/xmlutils.h"
+#include "mbsim/element.h"
 #include "mbxmlutilshelper/dom.h"
 #include "mbsim/objectfactory.h"
 
@@ -29,20 +30,11 @@ using namespace MBXMLUtils;
 namespace MBSim {
 
 pair<reference_wrapper<const PlotFeatureEnum>, bool> getPlotFeatureFromXML(const xercesc::DOMElement* e) {
-  // get string
-  string str(E(e)->getAttribute("feature"));
-  if(str.empty())
-    throw DOMEvalException("Empty string not allowed for PlotFeature", e);
-  // get status
-  bool enumStatus;
-  switch(str[0]) {
-    case '+': enumStatus=true;  break;
-    case '-': enumStatus=false; break;
-    default: throw DOMEvalException("PlotFeature must start with '+' or '-'.", e);
-  }
-  // get num
-  const PlotFeatureEnum& enumValue=EnumFactory<PlotFeatureEnum>::get(str.substr(1), e);
-  // return
+  FQN fqn(A(E(e)->getAttributeNode("value"))->getQName());
+  const PlotFeatureEnum& enumValue=EnumFactory<PlotFeatureEnum>::get(fqn, e);
+
+  bool enumStatus=Element::getBool(e);
+
   return make_pair(ref(enumValue), enumStatus);
 }
 

@@ -23,9 +23,9 @@
         <scalarParameter name="dR">200</scalarParameter>
     </Parameter>
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-        <plotFeatureRecursive feature="+generalizedPosition"/>
-        <plotFeatureRecursive feature="+generalizedVelocity"/>
-        <plotFeatureRecursive feature="+generalizedAcceleration"/>
+        <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+        <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+        <plotFeatureRecursive value="generalizedAcceleration">true</plotFeatureRecursive>
         <frames>
           <FixedRelativeFrame name="P">
             <enableOpenMBV>

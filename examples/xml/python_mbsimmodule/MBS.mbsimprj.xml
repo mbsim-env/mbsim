@@ -8,11 +8,11 @@
       <stringParameter name="s">'mystring'</stringParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-      <plotFeatureRecursive feature="+generalizedRelativePosition"/>
-      <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
-      <plotFeatureRecursive feature="+generalizedForce"/>
-      <plotFeatureRecursive feature="+generalizedPosition"/>
-      <plotFeatureRecursive feature="+generalizedVelocity"/>
+      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
       <frames>
         <FixedRelativeFrame name="I4">
           <relativePosition>[2;0;0]</relativePosition>
@@ -155,12 +155,12 @@
           </enableOpenMBV>
         </SpringDamper>
         <PySpringDamperXMLInit name="Spring1" xmlns="http://mypytest">
-          <plotFeatureRecursive feature="+mypy:pyTestPlotFeature" xmlns="http://www.mbsim-env.de/MBSim" xmlns:mypy="http://mypytest"/>
+          <plotFeatureRecursive value="mypy:pyTestPlotFeature" xmlns="http://www.mbsim-env.de/MBSim" xmlns:mypy="http://mypytest">true</plotFeatureRecursive>
           <connect ref1="../Frame[I]" ref2="../Object[Box1]/Frame[C]" xmlns="http://www.mbsim-env.de/MBSim"/>
           <stiffness>3*c</stiffness>
         </PySpringDamperXMLInit>
         <PySpringDamperPyScriptInit name="Spring2" xmlns="http://mypytest">
-          <mbsim:plotFeatureRecursive feature="+pyTestPlotFeature" xmlns:mbsim="http://www.mbsim-env.de/MBSim"/>
+          <mbsim:plotFeatureRecursive value="pyTestPlotFeature" xmlns:mbsim="http://www.mbsim-env.de/MBSim">true</mbsim:plotFeatureRecursive>
           <connect ref1="../Frame[I]" ref2="../Object[Box2]/Frame[C]" xmlns="http://www.mbsim-env.de/MBSim"/>
           <pyScript objName="self_x">
             import OpenMBV

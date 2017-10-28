@@ -223,7 +223,11 @@
             Definiert die Plotfeatures für dieses Element.
         </xs:documentation></xs:annotation>
         <xs:complexType>
-          <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
+          <xs:simpleContent>
+            <xs:extension base="pv:booleanFullEval">
+              <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+            </xs:extension>
+          </xs:simpleContent>
         </xs:complexType> 
       </xs:element>  
       <xs:element name="plotFeatureForChildren">
@@ -231,7 +235,11 @@
             Definiert die Plotfeatures für alle Kindelement.
         </xs:documentation></xs:annotation>
         <xs:complexType>
-          <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
+          <xs:simpleContent>
+            <xs:extension base="pv:booleanFullEval">
+              <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+            </xs:extension>
+          </xs:simpleContent>
         </xs:complexType> 
       </xs:element>  
       <xs:element name="plotFeatureRecursive">  
@@ -239,7 +247,11 @@
             Definiert die Plotfeatures für diese Element und alle Kindelement.
         </xs:documentation></xs:annotation>
         <xs:complexType>
-          <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
+          <xs:simpleContent>
+            <xs:extension base="pv:booleanFullEval">
+              <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+            </xs:extension>
+          </xs:simpleContent>
         </xs:complexType> 
       </xs:element>  
     </xs:choice> 
@@ -532,7 +544,11 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
+              <xs:simpleContent>
+                <xs:extension base="pv:booleanFullEval">
+                  <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+                </xs:extension>
+              </xs:simpleContent>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 
@@ -995,7 +1011,11 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
+              <xs:simpleContent>
+                <xs:extension base="pv:booleanFullEval">
+                  <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+                </xs:extension>
+              </xs:simpleContent>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 

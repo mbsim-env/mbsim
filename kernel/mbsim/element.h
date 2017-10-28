@@ -196,17 +196,17 @@ namespace MBSim {
       }
 
       // some convenience function for XML
-      static double getDouble(xercesc::DOMElement *e);
-      static int getInt(xercesc::DOMElement *e);
-      static bool getBool(xercesc::DOMElement *e);
-      static fmatvec::Vec3 getVec3(xercesc::DOMElement *e);
-      static fmatvec::Vec getVec(xercesc::DOMElement *e, int rows=0);
-      static fmatvec::Mat3xV getMat3xV(xercesc::DOMElement *e, int cols=0);
-      static fmatvec::Mat getMat(xercesc::DOMElement *e, int rows=0, int cols=0);
-      static fmatvec::SqrMat3 getSqrMat3(xercesc::DOMElement *e);
-      static fmatvec::SqrMat getSqrMat(xercesc::DOMElement *e, int size=0);
-      static fmatvec::SymMat3 getSymMat3(xercesc::DOMElement *e);
-      static fmatvec::SymMat getSymMat(xercesc::DOMElement *e, int size=0);
+      static double getDouble(const xercesc::DOMElement *e);
+      static int getInt(const xercesc::DOMElement *e);
+      static bool getBool(const xercesc::DOMElement *e);
+      static fmatvec::Vec3 getVec3(const xercesc::DOMElement *e);
+      static fmatvec::Vec getVec(const xercesc::DOMElement *e, int rows=0);
+      static fmatvec::Mat3xV getMat3xV(const xercesc::DOMElement *e, int cols=0);
+      static fmatvec::Mat getMat(const xercesc::DOMElement *e, int rows=0, int cols=0);
+      static fmatvec::SqrMat3 getSqrMat3(const xercesc::DOMElement *e);
+      static fmatvec::SqrMat getSqrMat(const xercesc::DOMElement *e, int size=0);
+      static fmatvec::SymMat3 getSymMat3(const xercesc::DOMElement *e);
+      static fmatvec::SymMat getSymMat(const xercesc::DOMElement *e, int size=0);
 
       virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return std::shared_ptr<OpenMBV::Group>();}
 

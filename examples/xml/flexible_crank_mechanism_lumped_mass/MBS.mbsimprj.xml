@@ -15,18 +15,18 @@
       <scalarParameter name="h2">0.008</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-      <plotFeatureRecursive feature="+generalizedRelativePosition"/>
-      <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
-      <plotFeatureRecursive feature="+generalizedForce"/>
-      <plotFeatureRecursive feature="+generalizedPosition"/>
-      <plotFeatureRecursive feature="+generalizedVelocity"/>
+      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
       <frames/>
       <contours/>
       <groups/>
       <objects>
         <RigidBody name="RigidBody1">
-          <plotFeature feature="+derivativeOfGeneralizedPosition"/>
-          <plotFeature feature="+generalizedAcceleration"/>
+          <plotFeature value="derivativeOfGeneralizedPosition">true</plotFeature>
+          <plotFeature value="generalizedAcceleration">true</plotFeature>
           <frameForKinematics ref="Frame[K]"/>
           <mass unit="kg">m1</mass>
           <inertiaTensor unit="kg*m^2">
@@ -134,8 +134,8 @@
             </matrixParameter>
           </Parameter>
           <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR2">
-          <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+derivativeOfGeneralizedPosition"/>
-          <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+generalizedAcceleration"/>
+          <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="derivativeOfGeneralizedPosition">true</plotFeature>
+          <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="generalizedAcceleration">true</plotFeature>
             <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
             <mass unit="kg">load('data.bin','m').m</mass>
             <positionIntegral>load('data.bin','rdm').rdm</positionIntegral>
@@ -185,8 +185,8 @@
             </stateDependentRotation>
             <frames>
               <NodeFrame name="Q">
-                <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+position"/>
-                <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+angle"/>
+                <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="position">true</plotFeature>
+                <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="angle">true</plotFeature>
                 <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
                   <size unit="cm">1</size>
                 </enableOpenMBV>
@@ -210,8 +210,8 @@
           </FlexibleBodyFFR>
         </Embed>
         <RigidBody name="RigidBody3">
-          <plotFeature feature="+derivativeOfGeneralizedPosition"/>
-          <plotFeature feature="+generalizedAcceleration"/>
+          <plotFeature value="derivativeOfGeneralizedPosition">true</plotFeature>
+          <plotFeature value="generalizedAcceleration">true</plotFeature>
           <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>l1+l2</ele>

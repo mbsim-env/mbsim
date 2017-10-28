@@ -16,12 +16,12 @@
       <scalarParameter name="Om" unit="-">sqrt((3*c1+3*c2-c2)/(3*m))</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-      <plotFeatureRecursive feature="+deflection"/>
-      <plotFeatureRecursive feature="+generalizedRelativePosition"/>
-      <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
-      <plotFeatureRecursive feature="+generalizedForce"/>
-      <plotFeatureRecursive feature="+generalizedPosition"/>
-      <plotFeatureRecursive feature="+generalizedVelocity"/>
+      <plotFeatureRecursive value="deflection">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
       <frames>
         <FixedRelativeFrame name="P1">
           <enableOpenMBV>

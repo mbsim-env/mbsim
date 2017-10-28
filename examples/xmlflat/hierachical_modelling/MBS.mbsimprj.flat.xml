@@ -2,13 +2,14 @@
 <MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML">
   <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
   <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
+      xmlns:mb="http://www.mbsim-env.de/MBSim"
       xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedRelativePosition"/>
-    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedRelativeVelocity"/>
-    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedForce"/>
-    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedPosition"/>
-    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedVelocity"/>
-    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}deflection"/>
+    <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedRelativeVelocity">1</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="mb:generalizedVelocity">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="[http://www.mbsim-env.de/MBSim]deflection">true</plotFeatureRecursive>
     <frames>
       <FixedRelativeFrame name="Q">
         <relativePosition>[2;0;0]</relativePosition>
@@ -172,7 +173,7 @@
         <observers/>
       </Group>
       <Group name="Hauptgruppe2">
-        <plotFeature feature="+{http://www.mbsim-env.de/MBSim}separateFilePerGroup"/>
+        <plotFeature value="separateFilePerGroup">true</plotFeature>
         <frameOfReference ref="../Frame[Q]"/>
         <frames>
           <FixedRelativeFrame name="Q">

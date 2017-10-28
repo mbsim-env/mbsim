@@ -3,14 +3,14 @@
     xmlns:mbsimns="http://www.mbsim-env.de/MBSim"
     xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
     xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-  <plotFeatureRecursive feature="+mbsimns:deflection"/>
-  <plotFeatureRecursive feature="+generalizedRelativePosition"/>
-  <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
-  <plotFeatureRecursive feature="+generalizedForce"/>
-  <plotFeatureRecursive feature="+generalizedPosition"/>
-  <plotFeatureRecursive feature="+generalizedVelocity"/>
-  <plotFeatureRecursive feature="{if plotSubTypeEnabled, ret='+'; else ret='-'; end}{plotSubType}"/>
-  <plotFeature feature="+separateFilePerGroup"/>
+  <plotFeatureRecursive value="mbsimns:deflection">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedRelativePosition">1</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedRelativeVelocity">1</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedForce">1</plotFeatureRecursive>
+  <plotFeatureRecursive value="mbsimns:generalizedPosition">1</plotFeatureRecursive>
+  <plotFeatureRecursive value="[http://www.mbsim-env.de/MBSim]generalizedVelocity">1</plotFeatureRecursive>
+  <plotFeatureRecursive value="{plotSubType}">plotSubTypeEnabled</plotFeatureRecursive>
+  <plotFeature value="separateFilePerGroup">1</plotFeature>
   <frameOfReference ref="../Frame[Q{numHG}]"/>
   <frames>
     <FixedRelativeFrame name="Q">
@@ -30,7 +30,7 @@
   </groups>
   <objects>
     <RigidBody name="Box1">
-      <plotFeature feature="+generalizedAcceleration"/>
+      <plotFeature value="generalizedAcceleration">1</plotFeature>
       <generalizedInitialPosition>[0]</generalizedInitialPosition>
       <generalizedInitialVelocity>[0.1]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>

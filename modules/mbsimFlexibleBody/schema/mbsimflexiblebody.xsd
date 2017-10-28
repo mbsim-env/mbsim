@@ -947,7 +947,11 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="feature" type="pv:enableDisableQNamePartialEval" use="required"/>
+              <xs:simpleContent>
+                <xs:extension base="pv:booleanFullEval">
+                  <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+                </xs:extension>
+              </xs:simpleContent>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

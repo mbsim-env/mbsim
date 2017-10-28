@@ -7,7 +7,7 @@
       <scalarParameter name="Om">10</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-      <plotFeatureRecursive feature="+generalizedVelocity"/>
+      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
       <frames>
         <FixedRelativeFrame name="Q">
           <enableOpenMBV/>

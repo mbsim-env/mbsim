@@ -2,7 +2,7 @@
 <Group name="Hauptgruppe{numHG+1}" xmlns="http://www.mbsim-env.de/MBSim"
     xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
     xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-  <plotFeature feature="{'+' if plotSubTypeEnabled else '-'}separate{plotSubType}"/>
+  <plotFeature value="separate{plotSubType}">plotSubTypeEnabled</plotFeature>
   <frameOfReference ref="../Frame[Q{numHG}]"/>
   <frames>
     <FixedRelativeFrame name="Q">
@@ -22,7 +22,7 @@
   </groups>
   <objects>
     <RigidBody name="Box1">
-      <plotFeature feature="+position"/>
+      <plotFeature value="position">True</plotFeature>
       <generalizedInitialPosition>[0]</generalizedInitialPosition>
       <generalizedInitialVelocity>[0.1]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>

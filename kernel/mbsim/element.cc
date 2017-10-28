@@ -243,7 +243,7 @@ namespace MBSim {
   }
 
   // some convenience function for XML
-  double Element::getDouble(DOMElement *e) {
+  double Element::getDouble(const DOMElement *e) {
     Mat m=Mat((X()%E(e)->getFirstTextChild()->getData()).c_str());
     if(m.rows()==1 && m.cols()==1)
       return m(0,0);
@@ -255,7 +255,7 @@ namespace MBSim {
     }
   }
 
-  int Element::getInt(DOMElement *e) {
+  int Element::getInt(const DOMElement *e) {
     Mat m=Mat((X()%E(e)->getFirstTextChild()->getData()).c_str());
     if(m.rows()==1 && m.cols()==1)
       return lround(m(0,0));
@@ -268,7 +268,7 @@ namespace MBSim {
     return 0;
   }
 
-  bool Element::getBool(DOMElement *e) {
+  bool Element::getBool(const DOMElement *e) {
     string text = X()%E(e)->getFirstTextChild()->getData();
     if(text=="true" || text=="1")
       return true;
@@ -282,12 +282,12 @@ namespace MBSim {
     return 0;
   }
 
-  Vec3 Element::getVec3(DOMElement *e) {
+  Vec3 Element::getVec3(const DOMElement *e) {
     Vec x = getVec(e,3);
     return Vec3(x);
   }
 
-  Vec Element::getVec(DOMElement *e, int rows) {
+  Vec Element::getVec(const DOMElement *e, int rows) {
     Mat m=Mat((X()%E(e)->getFirstTextChild()->getData()).c_str());
     if((rows==0 || m.rows()==rows) && m.cols()==1)
       return m.col(0);
@@ -300,12 +300,12 @@ namespace MBSim {
     return Vec();
   }
 
-  Mat3xV Element::getMat3xV(DOMElement *e, int cols) {
+  Mat3xV Element::getMat3xV(const DOMElement *e, int cols) {
     Mat A = getMat(e,3,cols);
     return Mat3xV(A);
   }
 
-  Mat Element::getMat(DOMElement *e, int rows, int cols) {
+  Mat Element::getMat(const DOMElement *e, int rows, int cols) {
     Mat m=Mat((X()%E(e)->getFirstTextChild()->getData()).c_str());
     if((rows==0 || m.rows()==rows) && (cols==0 || m.cols()==cols))
       return m;
@@ -318,12 +318,12 @@ namespace MBSim {
     return Mat();
   }
 
-  SqrMat3 Element::getSqrMat3(DOMElement *e) {
+  SqrMat3 Element::getSqrMat3(const DOMElement *e) {
     SqrMat A = getSqrMat(e,3);
     return SqrMat3(A);
   }
 
-  SqrMat Element::getSqrMat(DOMElement *e, int size) {
+  SqrMat Element::getSqrMat(const DOMElement *e, int size) {
     Mat m=Mat((X()%E(e)->getFirstTextChild()->getData()).c_str());
     if((size==0 || m.rows()==size) && (size==0 || m.cols()==size) && m.rows()==m.cols())
       return SqrMat(m);
@@ -336,12 +336,12 @@ namespace MBSim {
     return SqrMat();
   }
 
-  fmatvec::SymMat3 Element::getSymMat3(DOMElement *e) {
+  fmatvec::SymMat3 Element::getSymMat3(const DOMElement *e) {
     SymMat A = getSymMat(e,3);
     return SymMat3(A);
   }
 
-  fmatvec::SymMat Element::getSymMat(DOMElement *e, int size) {
+  fmatvec::SymMat Element::getSymMat(const DOMElement *e, int size) {
     Mat m=Mat((X()%E(e)->getFirstTextChild()->getData()).c_str());
     bool isSym=true;
     for(int i=0; i<min(m.rows(),m.cols()); i++) {

@@ -4,13 +4,13 @@
   xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <pv:Embed>
     <DynamicSystemSolver name="MBS" xmlns="http://www.mbsim-env.de/MBSim">
-     <plotFeatureRecursive feature="+generalizedRelativePosition"/>
-     <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
-     <plotFeatureRecursive feature="+generalizedForce"/>
-     <plotFeatureRecursive feature="+generalizedPosition"/>
-     <plotFeatureRecursive feature="+generalizedVelocity"/>
-     <plotFeatureRecursive feature="+deflection"/>
-     <plotFeatureRecursive feature="+mbsimcontrol:signal"/>
+     <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+     <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+     <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+     <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+     <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+     <plotFeatureRecursive value="deflection">true</plotFeatureRecursive>
+     <plotFeatureRecursive value="mbsimcontrol:signal">true</plotFeatureRecursive>
       <frames>
         <pv:Embed count="2" counterName="n">
         <FixedRelativeFrame name="Q{n}" xmlns="http://www.mbsim-env.de/MBSim">

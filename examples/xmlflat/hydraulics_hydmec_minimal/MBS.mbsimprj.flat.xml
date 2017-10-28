@@ -4,11 +4,11 @@
   <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
     xmlns:ombv="http://www.mbsim-env.de/OpenMBV"
     xmlns:h="http://www.mbsim-env.de/MBSimHydraulics">
-    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedRelativePosition"/>
-    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedRelativeVelocity"/>
-    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedForce"/>
-    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedPosition"/>
-    <plotFeatureRecursive feature="+{http://www.mbsim-env.de/MBSim}generalizedVelocity"/>
+    <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
     <frames/>
     <contours/>
     <groups/>

@@ -5,13 +5,13 @@
   xmlns:ombv="http://www.mbsim-env.de/OpenMBV"
   xmlns:h="http://www.mbsim-env.de/MBSimHydraulics"
   xmlns:c="http://www.mbsim-env.de/MBSimControl">
-  <plotFeatureRecursive feature="+deflection"/>
-  <plotFeatureRecursive feature="+generalizedRelativePosition"/>
-  <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
-  <plotFeatureRecursive feature="+generalizedForce"/>
-  <plotFeatureRecursive feature="+generalizedPosition"/>
-  <plotFeatureRecursive feature="+generalizedVelocity"/>
-  <plotFeatureRecursive feature="+c:signal"/>
+  <plotFeatureRecursive value="deflection">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="c:signal">true</plotFeatureRecursive>
   <frames/>
   <contours/>
   <groups>

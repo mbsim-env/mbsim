@@ -271,14 +271,10 @@ class EnumFactory {
     }
 
     /** get an enum value given by the string enumStr **/
-    static const EnumType& get(const std::string &enumStr, const xercesc::DOMElement *e=nullptr, const xercesc::DOMAttr *a=nullptr) {
-      size_t end=enumStr.find('}');
-      if(end==std::string::npos)
-        throw MBXMLUtils::DOMEvalException("No namespace found in enumeration value "+enumStr, e, a);
-      MBXMLUtils::FQN fqn(enumStr.substr(1, end-1), enumStr.substr(end+1));
+    static const EnumType& get(const MBXMLUtils::FQN &fqn, const xercesc::DOMElement *e=nullptr) {
       auto it=reg.find(fqn);
       if(it==reg.end())
-        throw MBXMLUtils::DOMEvalException("No enumeration value named {"+fqn.first+"}"+fqn.second+" registred", e, a);
+        throw MBXMLUtils::DOMEvalException("No enumeration value named {"+fqn.first+"}"+fqn.second+" registred", e);
       return it->second.get();
     }
 
