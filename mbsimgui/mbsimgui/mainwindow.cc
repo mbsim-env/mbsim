@@ -99,8 +99,6 @@ namespace MBSimGUI {
 #endif
     bfs::create_directories(uniqueTempDir);
 
-    echoView = new EchoView(this);
-
     QString program = (MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str();
     QStringList arguments;
     arguments << "--onlyListSchemas";
@@ -114,14 +112,18 @@ namespace MBSimGUI {
 
     parser=DOMParser::create(schemas);
 
+    projectView = new ProjectView;
     elementView = new ElementView;
+    embeddingView = new EmbeddingView;
+    solverView = new SolverView;
+    echoView = new EchoView(this);
 
     initInlineOpenMBV();
 
     MBSimObjectFactory::initialize();
     eval=Eval::createEvaluator("octave", &dependencies);
 
-    QMenu *GUIMenu=new QMenu("GUI", menuBar());
+    QMenu *GUIMenu = new QMenu("GUI", menuBar());
     menuBar()->addMenu(GUIMenu);
 
     QAction *action = GUIMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirHomeIcon)),"Workdir", this, SLOT(changeWorkingDir()));
@@ -131,6 +133,18 @@ namespace MBSimGUI {
     action->setStatusTip(tr("Open options menu"));
 
     GUIMenu->addSeparator();
+
+    OpenMBVGUI::AbstractViewFilter *elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
+    elementViewFilter->hide();
+
+    OpenMBVGUI::AbstractViewFilter *embeddingViewFilter = new OpenMBVGUI::AbstractViewFilter(embeddingView, 0, -2);
+    embeddingViewFilter->hide();
+
+    action = GUIMenu->addAction("Show filter");
+    action->setCheckable(true);
+    connect(action,SIGNAL(toggled(bool)), elementViewFilter, SLOT(setVisible(bool)));
+    connect(action,SIGNAL(toggled(bool)), embeddingViewFilter, SLOT(setVisible(bool)));
+    action->setStatusTip(tr("Show filter"));
 
     GUIMenu->addSeparator();
 
@@ -143,7 +157,7 @@ namespace MBSimGUI {
       recentProjectFileActs[i]->setVisible(false);
       connect(recentProjectFileActs[i], SIGNAL(triggered()), this, SLOT(openRecentProjectFile()));
     }
-    QMenu *menu=new QMenu("Project", menuBar());
+    QMenu *menu = new QMenu("Project", menuBar());
     action = menu->addAction("New", this, SLOT(newProject()));
     action->setShortcut(QKeySequence::New);
     action = menu->addAction("Load", this, SLOT(loadProject()));
@@ -152,16 +166,14 @@ namespace MBSimGUI {
     action->setShortcut(QKeySequence::SaveAs);
     actionSaveProject = menu->addAction("Save", this, SLOT(saveProject()));
     actionSaveProject->setShortcut(QKeySequence::Save);
-   //ProjMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirOpenIcon)),"Load", this, SLOT(loadProj()));
     actionSaveProject->setDisabled(true);
     menu->addSeparator();
-    //separatorAct = menu->addSeparator();
     for (int i = 0; i < maxRecentFiles; ++i)
       menu->addAction(recentProjectFileActs[i]);
     updateRecentProjectFileActions();
     menuBar()->addMenu(menu);
 
-    menu=new QMenu("Edit", menuBar());
+    menu = new QMenu("Edit", menuBar());
     action = menu->addAction("Edit", elementView, SLOT(openEditor()));
     action->setShortcut(QKeySequence("Ctrl+E"));
     menu->addSeparator();
@@ -186,7 +198,7 @@ namespace MBSimGUI {
     action->setShortcut(QKeySequence("Ctrl+Down"));
     menuBar()->addMenu(menu);
 
-    menu=new QMenu("Export", menuBar());
+    menu = new QMenu("Export", menuBar());
     actionSaveDataAs = menu->addAction("Export all data", this, SLOT(saveDataAs()));
     actionSaveMBSimH5DataAs = menu->addAction("Export MBSim data file", this, SLOT(saveMBSimH5DataAs()));
     actionSaveOpenMBVDataAs = menu->addAction("Export OpenMBV data", this, SLOT(saveOpenMBVDataAs()));
@@ -200,7 +212,7 @@ namespace MBSimGUI {
     menuBar()->addMenu(menu);
 
     menuBar()->addSeparator();
-    QMenu *helpMenu=new QMenu("Help", menuBar());
+    QMenu *helpMenu = new QMenu("Help", menuBar());
     helpMenu->addAction("GUI Help...", this, SLOT(help()));
     helpMenu->addAction("XML Help...", this, SLOT(xmlHelp()));
     helpMenu->addAction("About MBSim GUI", this, SLOT(about()));
@@ -230,7 +242,6 @@ namespace MBSimGUI {
     connect(actionEigenanalysis,SIGNAL(triggered()),this,SLOT(eigenanalysis()));
     toolBar->addAction(actionEigenanalysis);
     actionFrequencyResponse = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
-//    actionFrequencyResponse->setDisabled(true);
     connect(actionFrequencyResponse,SIGNAL(triggered()),this,SLOT(frequencyResponse()));
     actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,SIGNAL(triggered()),this,SLOT(debug()));
@@ -241,14 +252,9 @@ namespace MBSimGUI {
     elementView->setColumnWidth(1,200);
     elementView->hideColumn(1);
 
-    embeddingView = new EmbeddingView;
     embeddingView->setModel(new EmbeddingTreeModel);
     embeddingView->setColumnWidth(0,150);
     embeddingView->setColumnWidth(1,200);
-
-    solverView = new SolverView;
-
-    projectView = new ProjectView;
 
     connect(elementView,SIGNAL(pressed(QModelIndex)), this, SLOT(elementViewClicked()));
     connect(embeddingView,SIGNAL(pressed(QModelIndex)), this, SLOT(embeddingViewClicked()));
@@ -260,23 +266,21 @@ namespace MBSimGUI {
 
     QDockWidget *dockWidget1 = new QDockWidget("Multibody system");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
-    QWidget *widget1=new QWidget(dockWidget1);
+    QWidget *widget1 = new QWidget(dockWidget1);
     dockWidget1->setWidget(widget1);
-    QGridLayout *widgetLayout1=new QGridLayout(widget1);
+    QGridLayout *widgetLayout1 = new QGridLayout(widget1);
     widgetLayout1->setContentsMargins(0,0,0,0);
     widget1->setLayout(widgetLayout1);
-    OpenMBVGUI::AbstractViewFilter *elementViewFilter=new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
     widgetLayout1->addWidget(elementViewFilter, 0, 0);
     widgetLayout1->addWidget(elementView, 1, 0);
 
     QDockWidget *dockWidget3 = new QDockWidget("Embeddings");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
-    QWidget *widget3=new QWidget(dockWidget3);
+    QWidget *widget3 = new QWidget(dockWidget3);
     dockWidget3->setWidget(widget3);
-    QGridLayout *widgetLayout3=new QGridLayout(widget3);
+    QGridLayout *widgetLayout3 = new QGridLayout(widget3);
     widgetLayout3->setContentsMargins(0,0,0,0);
     widget3->setLayout(widgetLayout3);
-    OpenMBVGUI::AbstractViewFilter *embeddingViewFilter=new OpenMBVGUI::AbstractViewFilter(embeddingView, 0, -2);
     widgetLayout3->addWidget(embeddingViewFilter, 0, 0);
     widgetLayout3->addWidget(embeddingView, 1, 0);
 
@@ -382,7 +386,7 @@ namespace MBSimGUI {
     arg.push_back("--wst");
     arg.push_back((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
     arg.push_back("/home/foerg/tmp/openmbv");
-    inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
+    inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
 
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
     connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementView, SLOT(openEditor()));
@@ -1010,17 +1014,17 @@ namespace MBSimGUI {
 
   void MainWindow::xmlHelp(const QString &url) {
     if(!helpDialog) {
-      helpDialog=new QDialog();
-      QGridLayout *layout=new QGridLayout(helpDialog);
+      helpDialog = new QDialog();
+      QGridLayout *layout = new QGridLayout(helpDialog);
       helpDialog->setLayout(layout);
-      QPushButton *home=new QPushButton("Home",helpDialog);
+      QPushButton *home = new QPushButton("Home",helpDialog);
       connect(home, SIGNAL(clicked()), this, SLOT(xmlHelp()));
       layout->addWidget(home,0,0);
-      QPushButton *helpBackward=new QPushButton("Backward",helpDialog);
+      QPushButton *helpBackward = new QPushButton("Backward",helpDialog);
       layout->addWidget(helpBackward,0,1);
-      QPushButton *helpForward=new QPushButton("Forward",helpDialog);
+      QPushButton *helpForward = new QPushButton("Forward",helpDialog);
       layout->addWidget(helpForward,0,2);
-      helpViewer=new QWebView(helpDialog);
+      helpViewer = new QWebView(helpDialog);
       layout->addWidget(helpViewer,1,0,1,3);
       connect(helpForward, SIGNAL(clicked()), helpViewer, SLOT(forward()));
       connect(helpBackward, SIGNAL(clicked()), helpViewer, SLOT(back()));
