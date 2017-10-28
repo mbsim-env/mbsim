@@ -108,9 +108,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   std::shared_ptr<OpenMBV::InvisibleBody> obj1=OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>();
   body->setOpenMBVRigidBody(obj1);
 
-  setPlotFeatureRecursive(generalizedPosition,enabled);
-  setPlotFeatureRecursive(generalizedVelocity,enabled);
-  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
-  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
-  setPlotFeatureRecursive(generalizedForce,enabled);
+  setPlotFeatureRecursive(generalizedPosition, true);
+  setPlotFeatureRecursive(generalizedVelocity, true);
+  setPlotFeatureRecursive(generalizedRelativePosition, true);
+  setPlotFeatureRecursive(generalizedRelativeVelocity, true);
+  setPlotFeatureRecursive(generalizedForce, true);
 }

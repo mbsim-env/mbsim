@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBand::init(InitStage stage) {
     if(stage==plotting) {
-      if(plotFeature[openMBV]==enabled and openMBVSpineExtrusion) {
+      if(plotFeature[openMBV] and openMBVSpineExtrusion) {
         openMBVSpineExtrusion->setName(name);
         openMBVSpineExtrusion->setShilouetteEdge(true);
         openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(static_cast<Body*>(parent)->getFrameOfReference()->evalOrientation()));
@@ -86,7 +86,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBand::plot() {
-    if(plotFeature[openMBV]==enabled and openMBVSpineExtrusion) {
+    if(plotFeature[openMBV] and openMBVSpineExtrusion) {
       vector<double> data;
       data.push_back(getTime());
       double L = getEtaNodes()[getEtaNodes().size()-1];

@@ -44,7 +44,7 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       Observer::init(stage);
-      if(plotFeature[openMBV]==enabled) {
+      if(plotFeature[openMBV]) {
         //      if(openMBVForce) plotColumns.push_back("Force");
         //      if(openMBVMoment) plotColumns.push_back("Moment");
         if(openMBVForce) {
@@ -62,7 +62,7 @@ namespace MBSim {
   }
 
   void MechanicalConstraintObserver::plot() {
-    if(plotFeature[openMBV]==enabled) {
+    if(plotFeature[openMBV]) {
       if(openMBVForce) {
         vector<double> data;
         data.push_back(getTime());

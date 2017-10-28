@@ -123,11 +123,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   sw->setInputSignal(vs);
   eswitch->setVoltageSignal(new SignalFunction<VecV(double)>(sw));
 
-  setPlotFeatureRecursive(current,enabled);
-  setPlotFeatureRecursive(charge,enabled);
-  setPlotFeatureRecursive(voltage,enabled);
-  setPlotFeatureRecursive(generalizedForce,enabled);
-  setPlotFeatureRecursive(signal,enabled);
+  setPlotFeatureRecursive(current, true);
+  setPlotFeatureRecursive(charge, true);
+  setPlotFeatureRecursive(voltage, true);
+  setPlotFeatureRecursive(generalizedForce, true);
+  setPlotFeatureRecursive(signal, true);
 }
 
 

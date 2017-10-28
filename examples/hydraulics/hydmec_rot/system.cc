@@ -237,12 +237,12 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n4Inf->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
   n4Inf->enableOpenMBVArrows(.01);
 
-  setPlotFeatureRecursive(generalizedPosition,enabled);
-  setPlotFeatureRecursive(generalizedVelocity,enabled);
-  setPlotFeatureRecursive(derivativeOfGeneralizedPosition,enabled);
-  setPlotFeatureRecursive(generalizedAcceleration,enabled);
-  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
-  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
-  setPlotFeatureRecursive(generalizedForce,enabled);
-  setPlotFeatureRecursive(deflection,enabled);
+  setPlotFeatureRecursive(generalizedPosition, true);
+  setPlotFeatureRecursive(generalizedVelocity, true);
+  setPlotFeatureRecursive(derivativeOfGeneralizedPosition, true);
+  setPlotFeatureRecursive(generalizedAcceleration, true);
+  setPlotFeatureRecursive(generalizedRelativePosition, true);
+  setPlotFeatureRecursive(generalizedRelativeVelocity, true);
+  setPlotFeatureRecursive(generalizedForce, true);
+  setPlotFeatureRecursive(deflection, true);
 }

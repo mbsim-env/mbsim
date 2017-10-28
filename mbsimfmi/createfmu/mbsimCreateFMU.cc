@@ -232,8 +232,8 @@ int main(int argc, char *argv[]) {
     }
 
     // disable all plotting (we wont any output here)
-    dss->setPlotFeatureRecursive(plotRecursive, disabled);
-    dss->setPlotFeatureRecursive(openMBV, disabled);
+    dss->setPlotFeatureRecursive(plotRecursive, false);
+    dss->setPlotFeatureRecursive(openMBV, false);
     // initialize dss
     cout<<"Initialize the model."<<endl;
     dss->initialize();

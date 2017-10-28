@@ -57,12 +57,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setRotation(new CompositeFunction<RotMat3(double(VecV))>(new RotationAboutFixedAxis<double>("[0;0;1]"), angle));
   body->setTranslationDependentRotation(true);
   
-  body->getFrame("C")->setPlotFeature(position,enabled);
-  body->getFrame("C")->setPlotFeature(MBSim::angle,enabled);
-  body->getFrame("C")->setPlotFeature(velocity,enabled);
-  body->getFrame("C")->setPlotFeature(angularVelocity,enabled);
-  body->getFrame("C")->setPlotFeature(acceleration,enabled);
-  body->getFrame("C")->setPlotFeature(angularAcceleration,enabled);
+  body->getFrame("C")->setPlotFeature(position, true);
+  body->getFrame("C")->setPlotFeature(MBSim::angle, true);
+  body->getFrame("C")->setPlotFeature(velocity, true);
+  body->getFrame("C")->setPlotFeature(angularVelocity, true);
+  body->getFrame("C")->setPlotFeature(acceleration, true);
+  body->getFrame("C")->setPlotFeature(angularAcceleration, true);
 
   FrameObserver *o = new FrameObserver("AKObserver");
   addObserver(o);
@@ -85,9 +85,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   observer->enableOpenMBVJointForce();
   observer->enableOpenMBVJointMoment();
 
-  setPlotFeatureRecursive(generalizedPosition,enabled);
-  setPlotFeatureRecursive(generalizedVelocity,enabled);
-  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
-  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
-  setPlotFeatureRecursive(generalizedForce,enabled);
+  setPlotFeatureRecursive(generalizedPosition, true);
+  setPlotFeatureRecursive(generalizedVelocity, true);
+  setPlotFeatureRecursive(generalizedRelativePosition, true);
+  setPlotFeatureRecursive(generalizedRelativeVelocity, true);
+  setPlotFeatureRecursive(generalizedForce, true);
 }

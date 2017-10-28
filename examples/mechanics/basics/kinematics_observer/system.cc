@@ -136,10 +136,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   obs->enableOpenMBVVelocity(_scaleSize=0.1,_scaleLength=0.1);
   obs->enableOpenMBVAngularVelocity(_scaleLength=0.1);
 
-  setPlotFeatureRecursive(generalizedPosition,enabled);
-  setPlotFeatureRecursive(generalizedVelocity,enabled);
-  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
-  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
-  setPlotFeatureRecursive(generalizedForce,enabled);
+  setPlotFeatureRecursive(generalizedPosition, true);
+  setPlotFeatureRecursive(generalizedVelocity, true);
+  setPlotFeatureRecursive(generalizedRelativePosition, true);
+  setPlotFeatureRecursive(generalizedRelativeVelocity, true);
+  setPlotFeatureRecursive(generalizedForce, true);
 }
 

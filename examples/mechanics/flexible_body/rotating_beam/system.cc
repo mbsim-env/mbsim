@@ -155,12 +155,12 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
 
   body->setRotation(new CompositeFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), new Angle));
 
-  body->setPlotFeature(generalizedPosition,enabled);
-  body->setPlotFeature(generalizedVelocity,enabled);
-  body->getFrame("K")->setPlotFeature(position,enabled);
-  body->getFrame("K")->setPlotFeature(angle,enabled);
-  body->getFrame("K")->setPlotFeature(velocity,enabled);
-  body->getFrame("K")->setPlotFeature(angularVelocity,enabled);
-  body->getFrame("K")->setPlotFeature(acceleration,enabled);
-  body->getFrame("K")->setPlotFeature(angularAcceleration,enabled);
+  body->setPlotFeature(generalizedPosition, true);
+  body->setPlotFeature(generalizedVelocity, true);
+  body->getFrame("K")->setPlotFeature(position, true);
+  body->getFrame("K")->setPlotFeature(angle, true);
+  body->getFrame("K")->setPlotFeature(velocity, true);
+  body->getFrame("K")->setPlotFeature(angularVelocity, true);
+  body->getFrame("K")->setPlotFeature(acceleration, true);
+  body->getFrame("K")->setPlotFeature(angularAcceleration, true);
 }

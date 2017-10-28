@@ -72,7 +72,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setInertiaTensor(Theta);
   body->setTranslation(new LinearTranslation<VecV>("[0; 1; 0]"));
 
-  setPlotFeatureRecursive(generalizedPosition,enabled);
-  setPlotFeatureRecursive(generalizedVelocity,enabled);
+  setPlotFeatureRecursive(generalizedPosition, true);
+  setPlotFeatureRecursive(generalizedVelocity, true);
 }
 

@@ -42,7 +42,7 @@ namespace MBSim {
       updateEnclosingSphere();
 
     else if (stage == plotting) {
-      if (plotFeature[openMBV] == enabled and openMBVRigidBody) {
+      if (plotFeature[openMBV] and openMBVRigidBody) {
         static_pointer_cast<OpenMBV::IvBody>(openMBVRigidBody)->setIvFileName((getPath(NULL, ".").substr(1) + ".iv").c_str());
         static_pointer_cast<OpenMBV::IvBody>(openMBVRigidBody)->setBoundaryEdges(true);
         static_pointer_cast<OpenMBV::IvBody>(openMBVRigidBody)->setInitialTranslation(0., 0., 0.);

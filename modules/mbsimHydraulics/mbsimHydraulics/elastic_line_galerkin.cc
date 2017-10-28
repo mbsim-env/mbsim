@@ -119,7 +119,7 @@ namespace MBSimHydraulics {
           D(i,j)=DTmp(i,j);
     }
     else if (stage==plotting) {
-      if(plotFeature[plotRecursive]==enabled) {
+      if(plotFeature[plotRecursive]) {
         plotdim=relPlotPoints.size();
         plotVecW.resize(mdim, plotdim);
         plotVecWS.resize(mdim, plotdim);
@@ -128,11 +128,11 @@ namespace MBSimHydraulics {
           plotVecWS.col(i)=ansatz->VecWS(relPlotPoints(i));
         }
         delete ansatz;
-        if(plotFeature[volumeFlow]==enabled) {
+        if(plotFeature[volumeFlow]) {
           for (int i=0; i<plotdim; i++)
             plotColumns.push_back("Q(x="+numtostr(relPlotPoints(i)*l)+") [l/min]");
         }
-        if(plotFeature[pressure]==enabled) {
+        if(plotFeature[pressure]) {
           for (int i=0; i<plotdim; i++)
             plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
         }
@@ -165,12 +165,12 @@ namespace MBSimHydraulics {
   }
 
   void ElasticLineGalerkin::plot() {
-    if(plotFeature[plotRecursive]==enabled) {
-      if(plotFeature[volumeFlow]==enabled) {
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[volumeFlow]) {
         for (int i=0; i<plotdim; i++)
           plotVector.push_back(Area*trans(u)*plotVecW.col(i)*6e4);
       }
-      if(plotFeature[pressure]==enabled) {
+      if(plotFeature[pressure]) {
         for (int i=0; i<plotdim; i++)
           plotVector.push_back((-E*trans(q)*plotVecWS.col(i)+p0)*1e-5);
       }

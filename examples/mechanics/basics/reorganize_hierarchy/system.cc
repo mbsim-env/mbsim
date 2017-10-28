@@ -122,6 +122,6 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   group->setFrameOfReference(getFrame("Q"));
   addGroup(group);
 
-  setPlotFeatureRecursive(generalizedPosition,enabled);
-  setPlotFeatureRecursive(generalizedVelocity,enabled);
+  setPlotFeatureRecursive(generalizedPosition, true);
+  setPlotFeatureRecursive(generalizedVelocity, true);
 }

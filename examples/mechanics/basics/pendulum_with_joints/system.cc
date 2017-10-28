@@ -128,15 +128,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   observer->setMechanicalLink(joint2);
   observer->enableOpenMBVForce(0.02);
 
-  body1->setPlotFeature(generalizedPosition,enabled);
-  body1->setPlotFeature(generalizedVelocity,enabled);
-  body2->setPlotFeature(generalizedPosition,enabled);
-  body2->setPlotFeature(generalizedVelocity,enabled);
-  joint1->setPlotFeature(generalizedRelativePosition,enabled);
-  joint1->setPlotFeature(generalizedRelativeVelocity,enabled);
-  joint1->setPlotFeature(generalizedForce,enabled);
-  joint2->setPlotFeature(generalizedRelativePosition,enabled);
-  joint2->setPlotFeature(generalizedRelativeVelocity,enabled);
-  joint2->setPlotFeature(generalizedForce,enabled);
+  body1->setPlotFeature(generalizedPosition, true);
+  body1->setPlotFeature(generalizedVelocity, true);
+  body2->setPlotFeature(generalizedPosition, true);
+  body2->setPlotFeature(generalizedVelocity, true);
+  joint1->setPlotFeature(generalizedRelativePosition, true);
+  joint1->setPlotFeature(generalizedRelativeVelocity, true);
+  joint1->setPlotFeature(generalizedForce, true);
+  joint2->setPlotFeature(generalizedRelativePosition, true);
+  joint2->setPlotFeature(generalizedRelativeVelocity, true);
+  joint2->setPlotFeature(generalizedForce, true);
 }
 

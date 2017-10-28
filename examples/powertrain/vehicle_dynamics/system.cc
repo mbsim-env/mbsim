@@ -151,8 +151,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   karosserie->setRotation(new RotationAboutAxesXYZ<VecV>);
   karosserie->setFrameOfReference(getFrame("I"));
   karosserie->setFrameForKinematics(karosserie->getFrame("C"));
-  karosserie->setPlotFeature(derivativeOfGeneralizedPosition,enabled);
-  karosserie->setPlotFeature(generalizedAcceleration,enabled);
+  karosserie->setPlotFeature(derivativeOfGeneralizedPosition, true);
+  karosserie->setPlotFeature(generalizedAcceleration, true);
 
   SrSP(0) = d;
   SrSP(1) = -h+r;
@@ -533,12 +533,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->setOpenMBVRigidBody(cylinder);
   cylinder->setInitialTranslation(0,0,l/2);
 
-  setPlotFeatureRecursive(generalizedPosition,enabled);
-  setPlotFeatureRecursive(generalizedVelocity,enabled);
-  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
-  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
-  setPlotFeatureRecursive(generalizedForce,enabled);
-  setPlotFeatureRecursive(deflection,enabled);
-  setPlotFeatureRecursive(signal,enabled);
+  setPlotFeatureRecursive(generalizedPosition, true);
+  setPlotFeatureRecursive(generalizedVelocity, true);
+  setPlotFeatureRecursive(generalizedRelativePosition, true);
+  setPlotFeatureRecursive(generalizedRelativeVelocity, true);
+  setPlotFeatureRecursive(generalizedForce, true);
+  setPlotFeatureRecursive(deflection, true);
+  setPlotFeatureRecursive(signal, true);
 }
 

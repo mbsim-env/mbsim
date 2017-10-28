@@ -15,10 +15,10 @@ namespace MBSimElectronics {
 	dependency.push_back(branch);
     } 
     else if(stage==plotting) {
-      if(plotFeature[plotRecursive]==enabled) {
-        if(plotFeature[charge]==enabled)
+      if(plotFeature[plotRecursive]) {
+        if(plotFeature[charge])
           plotColumns.push_back("Charge");
-        if(plotFeature[current]==enabled)
+        if(plotFeature[current])
           plotColumns.push_back("Current");
       }
     }
@@ -26,10 +26,10 @@ namespace MBSimElectronics {
   }
 
   void ElectronicObject::plot() {
-    if(plotFeature[plotRecursive]==enabled) {
-      if(plotFeature[charge]==enabled)
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[charge])
         plotVector.push_back(evalCharge());
-      if(plotFeature[current]==enabled)
+      if(plotFeature[current])
         plotVector.push_back(evalCurrent());
     }
     Object::plot();
@@ -61,12 +61,12 @@ namespace MBSimElectronics {
       }
     }
     else if(stage==plotting) {
-      if(plotFeature[plotRecursive]==enabled) {
-        if(plotFeature[charge]==enabled)
+      if(plotFeature[plotRecursive]) {
+        if(plotFeature[charge])
           plotColumns.push_back("Charge");
-        if(plotFeature[current]==enabled)
+        if(plotFeature[current])
           plotColumns.push_back("Current");
-        if(plotFeature[voltage]==enabled)
+        if(plotFeature[voltage])
           plotColumns.push_back("Voltage");
       }
     }
@@ -82,12 +82,12 @@ namespace MBSimElectronics {
   }
 
   void ElectronicLink::plot() {
-    if(plotFeature[plotRecursive]==enabled) {
-      if(plotFeature[charge]==enabled)
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[charge])
         plotVector.push_back(evalCharge());
-      if(plotFeature[current]==enabled)
+      if(plotFeature[current])
         plotVector.push_back(evalCurrent());
-      if(plotFeature[voltage]==enabled)
+      if(plotFeature[voltage])
         plotVector.push_back(evalGeneralizedForce()(0));
     }
     Link::plot();

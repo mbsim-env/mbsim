@@ -119,8 +119,8 @@ namespace MBSimControl {
     else if (stage==unknownStage)
       x.resize(xSize, INIT, 0);
 //    else if (stage==plotting) {
-//      if(getPlotFeature(plotRecursive)==enabled) {
-//        if (getPlotFeature(globalPosition)==enabled) {
+//      if(getPlotFeature(plotRecursive)) {
+//        if (getPlotFeature(globalPosition)) {
 //          plotColumns.push_back("Position");
 //          plotColumns.push_back("Velocity");
 //        }
@@ -141,8 +141,8 @@ namespace MBSimControl {
   }
 
   void MasslessSpringDamper::plot() {
-//    if(getPlotFeature(plotRecursive)==enabled) {
-//      if (getPlotFeature(globalPosition)==enabled) {
+//    if(getPlotFeature(plotRecursive)) {
+//      if (getPlotFeature(globalPosition)) {
 //        plotVector.push_back(x(0));
 //        plotVector.push_back(xdLocal);
 //      }

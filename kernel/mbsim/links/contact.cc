@@ -58,10 +58,10 @@ namespace MBSim {
     delete ftil;
   }
 
-  void Contact::setPlotFeatureContactKinematics(std::string cKName, std::size_t pf, PlotFeatureStatus value) {
+  void Contact::setPlotFeatureContactKinematics(std::string cKName, std::size_t pf, bool value) {
     if (ckNames.end() != find(ckNames.begin(), ckNames.end(), cKName)) {
       pair<string, std::size_t> Pair(cKName, pf);
-      plotFeatureMap.insert(pair<pair<string, std::size_t>, PlotFeatureStatus>(Pair, value));
+      plotFeatureMap.insert(pair<pair<string, std::size_t>, bool>(Pair, value));
     }
   }
 

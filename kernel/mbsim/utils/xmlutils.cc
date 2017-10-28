@@ -28,16 +28,16 @@ using namespace MBXMLUtils;
 
 namespace MBSim {
 
-pair<reference_wrapper<const PlotFeatureEnum>, PlotFeatureStatus> getPlotFeatureFromXML(const xercesc::DOMElement* e) {
+pair<reference_wrapper<const PlotFeatureEnum>, bool> getPlotFeatureFromXML(const xercesc::DOMElement* e) {
   // get string
   string str(E(e)->getAttribute("feature"));
   if(str.empty())
     throw DOMEvalException("Empty string not allowed for PlotFeature", e);
   // get status
-  PlotFeatureStatus enumStatus;
+  bool enumStatus;
   switch(str[0]) {
-    case '+': enumStatus=enabled;  break;
-    case '-': enumStatus=disabled; break;
+    case '+': enumStatus=true;  break;
+    case '-': enumStatus=false; break;
     default: throw DOMEvalException("PlotFeature must start with '+' or '-'.", e);
   }
   // get num

@@ -26,7 +26,7 @@
 
 namespace MBSim {
 
-std::pair<std::reference_wrapper<const PlotFeatureEnum>, PlotFeatureStatus> getPlotFeatureFromXML(const xercesc::DOMElement* e);
+std::pair<std::reference_wrapper<const PlotFeatureEnum>, bool> getPlotFeatureFromXML(const xercesc::DOMElement* e);
 
 }
 

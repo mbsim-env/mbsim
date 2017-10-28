@@ -53,9 +53,9 @@ namespace MBSim {
 
   void SpringDamper::init(InitStage stage) {
     if(stage==plotting) {
-      if(plotFeature[plotRecursive]==enabled and plotFeature[deflection]==enabled)
+      if(plotFeature[plotRecursive] and plotFeature[deflection])
           plotColumns.push_back("deflection");
-      if(plotFeature[openMBV]==enabled and coilspringOpenMBV) {
+      if(plotFeature[openMBV] and coilspringOpenMBV) {
         coilspringOpenMBV->setName(name);
         parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
       }
@@ -65,9 +65,9 @@ namespace MBSim {
   }
 
   void SpringDamper::plot() {
-    if(plotFeature[plotRecursive]==enabled and plotFeature[deflection]==enabled)
+    if(plotFeature[plotRecursive] and plotFeature[deflection])
       plotVector.push_back(evalGeneralizedRelativePosition()(0)-l0);
-    if(plotFeature[openMBV]==enabled and coilspringOpenMBV) {
+    if(plotFeature[openMBV] and coilspringOpenMBV) {
       Vec3 WrOToPoint;
       Vec3 WrOFromPoint;
 

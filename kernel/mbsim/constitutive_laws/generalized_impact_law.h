@@ -35,7 +35,7 @@ namespace MBSim {
        * \brief constructor
        */
       GeneralizedImpactLaw() : Element(uniqueDummyName(this)) {
-        plotFeature[plotRecursive]=disabled;
+        plotFeature[plotRecursive]=false;
       }
 
       /**

@@ -48,7 +48,7 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       Observer::init(stage);
-      if(plotFeature[openMBV]==enabled) {
+      if(plotFeature[openMBV]) {
         if(openMBVPosition) {
           openMBVPosition->setName("Position");
           getOpenMBVGrp()->addObject(openMBVPosition);
@@ -88,7 +88,7 @@ namespace MBSim {
   }
 
   void RigidBodySystemObserver::plot() {
-    if(plotFeature[openMBV]==enabled) {
+    if(plotFeature[openMBV]) {
       double m = 0;
       for(unsigned int i=0; i<body.size(); i++) {
         m += body[i]->getMass();

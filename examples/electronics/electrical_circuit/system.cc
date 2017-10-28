@@ -43,9 +43,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   connectTerminal(inductorR->getTerminal("B"),capacitor->getTerminal("A"));
   connectTerminal(capacitor->getTerminal("B"),resistor->getTerminal("B"));
 
-  setPlotFeatureRecursive(current,enabled);
-  setPlotFeatureRecursive(charge,enabled);
-  setPlotFeatureRecursive(voltage,enabled);
-  setPlotFeatureRecursive(generalizedForce,enabled);
+  setPlotFeatureRecursive(current, true);
+  setPlotFeatureRecursive(charge, true);
+  setPlotFeatureRecursive(voltage, true);
+  setPlotFeatureRecursive(generalizedForce, true);
 }
 

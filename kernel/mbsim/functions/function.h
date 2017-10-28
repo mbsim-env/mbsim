@@ -38,7 +38,7 @@ namespace MBSim {
     public:
       //! Function's have no name hence use a unique dummy name for Element ctor.
       //! The function name is normally changed later by the corresponding setter methode which added the Function a another object.
-      FunctionBase() : Element(uniqueDummyName(this)) { plotFeature[plotRecursive]=disabled; }
+      FunctionBase() : Element(uniqueDummyName(this)) { plotFeature[plotRecursive]=false; }
       virtual Element* getDependency() const { return 0; }
   };
 

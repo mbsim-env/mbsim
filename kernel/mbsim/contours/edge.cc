@@ -31,7 +31,7 @@ namespace MBSim {
 
   void Edge::init(InitStage stage) {
     if (stage == plotting) {
-      if (plotFeature[openMBV] == enabled && openMBVRigidBody)
+      if (plotFeature[openMBV] && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(0, length, 0);
     }
     RigidContour::init(stage);

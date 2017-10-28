@@ -59,40 +59,40 @@ namespace MBSim {
   }
 
   void Frame::plot() {
-    if(plotFeature[plotRecursive]==enabled) {
-      if(plotFeature[position]==enabled) {
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[position]) {
         if(updPos) updatePositions();
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
       }
-      if(plotFeature[angle]==enabled) {
+      if(plotFeature[angle]) {
         if(updPos) updatePositions();
         Vec3 cardan=AIK2Cardan(AWP);
         for(int i=0; i<3; i++)
           plotVector.push_back(cardan(i));
       }
-      if(plotFeature[velocity]==enabled) {
+      if(plotFeature[velocity]) {
         if(updVel) updateVelocities();
         for(int i=0; i<3; i++)
           plotVector.push_back(WvP(i));
       }
-      if(plotFeature[angularVelocity]==enabled) {
+      if(plotFeature[angularVelocity]) {
         if(updVel) updateVelocities();
         for(int i=0; i<3; i++)
           plotVector.push_back(WomegaP(i));
       }
-      if(plotFeature[acceleration]==enabled) {
+      if(plotFeature[acceleration]) {
         if(updAcc) updateAccelerations();
         for(int i=0; i<3; i++)
           plotVector.push_back(WaP(i));
       }
-      if(plotFeature[angularAcceleration]==enabled) {
+      if(plotFeature[angularAcceleration]) {
         if(updAcc) updateAccelerations();
         for(int i=0; i<3; i++)
           plotVector.push_back(WpsiP(i));
       }
     }
-    if(plotFeature[openMBV]==enabled and openMBVFrame && !openMBVFrame->isHDF5Link()) {
+    if(plotFeature[openMBV] and openMBVFrame && !openMBVFrame->isHDF5Link()) {
       if(updPos) updatePositions();
       vector<double> data;
       data.push_back(getTime());
@@ -117,39 +117,39 @@ namespace MBSim {
       WJR[1].resize(hSize[1]);
     }
     else if(stage==plotting) {
-      if(plotFeature[plotRecursive]==enabled) {
-        if(plotFeature[position]==enabled) {
+      if(plotFeature[plotRecursive]) {
+        if(plotFeature[position]) {
           plotColumns.push_back("position (x)");
           plotColumns.push_back("position (y)");
           plotColumns.push_back("position (z)");
         }
-        if(plotFeature[angle]==enabled) {
+        if(plotFeature[angle]) {
           plotColumns.push_back("angle (alpha)");
           plotColumns.push_back("angle (beta)");
           plotColumns.push_back("angle (gamma)");
         }
-        if(plotFeature[velocity]==enabled) {
+        if(plotFeature[velocity]) {
           plotColumns.push_back("velocity (x)");
           plotColumns.push_back("velocity (y)");
           plotColumns.push_back("velocity (z)");
         }
-        if(plotFeature[angularVelocity]==enabled) {
+        if(plotFeature[angularVelocity]) {
           plotColumns.push_back("angular velocity (x)");
           plotColumns.push_back("angular velocity (y)");
           plotColumns.push_back("angular velocity (z)");
         }
-        if(plotFeature[acceleration]==enabled) {
+        if(plotFeature[acceleration]) {
           plotColumns.push_back("acceleration (x)");
           plotColumns.push_back("acceleration (y)");
           plotColumns.push_back("acceleration (z)");
         }
-        if(plotFeature[angularAcceleration]==enabled) {
+        if(plotFeature[angularAcceleration]) {
           plotColumns.push_back("angular acceleration (x)");
           plotColumns.push_back("angular acceleration (y)");
           plotColumns.push_back("angular acceleration (z)");
         }
       }
-      if(plotFeature[openMBV]==enabled and openMBVFrame) {
+      if(plotFeature[openMBV] and openMBVFrame) {
           openMBVFrame->setName(name);
           parent->getOpenMBVGrp()->addObject(openMBVFrame);
       }

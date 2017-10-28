@@ -37,7 +37,7 @@ namespace MBSim {
       GeneralizedForceLaw(Function<double(double,double)> *forceFunc_=NULL) : Element(uniqueDummyName(this)), forceFunc(forceFunc_) { 
         if(forceFunc)
           forceFunc->setParent(this);
-        plotFeature[plotRecursive]=disabled;
+        plotFeature[plotRecursive]=false;
       }
 
       /**

@@ -35,7 +35,7 @@ namespace MBSim {
        * \brief constructor
        */
       FrictionImpactLaw() : Element(uniqueDummyName(this)) {
-        plotFeature[plotRecursive]=disabled;
+        plotFeature[plotRecursive]=false;
       }
 
       /**

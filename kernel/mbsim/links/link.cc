@@ -44,20 +44,20 @@ namespace MBSim {
   }
 
   void Link::plot() {
-    if(plotFeature[plotRecursive]==enabled) {
-      if(plotFeature[generalizedRelativePosition]==enabled) {
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[generalizedRelativePosition]) {
         for(int i=0; i<evalGeneralizedRelativePosition().size(); ++i)
           plotVector.push_back(rrel(i));
       }
-      if(plotFeature[generalizedRelativeVelocity]==enabled) {
+      if(plotFeature[generalizedRelativeVelocity]) {
         for(int i=0; i<evalGeneralizedRelativeVelocity().size(); ++i)
           plotVector.push_back(vrel(i));
       }
-      if(plotFeature[generalizedForce]==enabled) {
+      if(plotFeature[generalizedForce]) {
         for(int i=0; i<evalGeneralizedForce().size(); ++i)
           plotVector.push_back(evalGeneralizedForce()(i));
       }
-      if(plotFeature[energy]==enabled) {
+      if(plotFeature[energy]) {
         plotVector.push_back(evalPotentialEnergy());
       }
     }
@@ -142,20 +142,20 @@ namespace MBSim {
       lambda.resize(nla);
     }
     else if(stage==plotting) {
-      if(plotFeature[plotRecursive]==enabled) {
-        if(plotFeature[generalizedRelativePosition]==enabled) {
+      if(plotFeature[plotRecursive]) {
+        if(plotFeature[generalizedRelativePosition]) {
           for(int i=0; i<rrel.size(); ++i)
             plotColumns.push_back("generalized relative position ("+numtostr(i)+")");
         }
-        if(plotFeature[generalizedRelativeVelocity]==enabled) {
+        if(plotFeature[generalizedRelativeVelocity]) {
           for(int i=0; i<vrel.size(); ++i)
             plotColumns.push_back("generalized relative velocity ("+numtostr(i)+")");
         }
-        if(plotFeature[generalizedForce]==enabled) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
+        if(plotFeature[generalizedForce]) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
           for(int i=0; i<lambda.size(); ++i)
             plotColumns.push_back("generalized force ("+numtostr(i)+")");
         }
-        if(plotFeature[energy]==enabled)
+        if(plotFeature[energy])
           plotColumns.push_back("potential energy");
       }
     }

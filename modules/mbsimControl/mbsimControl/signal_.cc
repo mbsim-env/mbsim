@@ -37,7 +37,7 @@ namespace MBSimControl {
 
   void Signal::init(InitStage stage) {
     if (stage==plotting) {
-      if(plotFeature[plotRecursive]==enabled and plotFeature[signal]==enabled) {
+      if(plotFeature[plotRecursive] and plotFeature[signal]) {
         for (int i=0; i<getSignalSize(); i++)
           plotColumns.push_back("signal (" + numtostr(i) + ")");
       }
@@ -47,7 +47,7 @@ namespace MBSimControl {
 
 
   void Signal::plot() {
-    if(plotFeature[plotRecursive]==enabled and plotFeature[signal]==enabled) {
+    if(plotFeature[plotRecursive] and plotFeature[signal]) {
       for (int i=0; i<evalSignal().size(); i++)
         plotVector.push_back(getSignal()(i));
     }

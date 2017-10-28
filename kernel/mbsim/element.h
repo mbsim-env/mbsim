@@ -141,29 +141,35 @@ namespace MBSim {
        */
       H5::GroupBase *getPlotGroup() { return plotGroup; }
 
-      PlotFeatureStatus getPlotFeature(const PlotFeatureEnum &pf) { return plotFeature[std::ref(pf)]; }
+      /** Get the state of the plot feature pf.
+       * Returns false if the plot feature pf is not set till now. */
+      bool getPlotFeature(const PlotFeatureEnum &pf) {
+        auto it=plotFeature.find(std::ref(pf));
+        if(it==plotFeature.end())
+          return false;
+        return it->second;
+      }
 
       /**
        * \brief Set a plot feature
        *
-       * Set the plot feature pf of this object to enabled, disabled or unset.
-       * If unset, this object uses the value of the plot feature pf of its parent object.
+       * Set the plot feature pf of this object.
        */
-      virtual void setPlotFeature(const PlotFeatureEnum &pf, PlotFeatureStatus value);
+      virtual void setPlotFeature(const PlotFeatureEnum &pf, bool value);
 
       /**
        * \brief Set a plot feature for the children of this object
        *
-       * Set the plot feature pf of all children which plot feature is unset to enabled, disabled or unset.
+       * Set the plot feature pf of all children for set plot features.
        */
-      void setPlotFeatureForChildren(const PlotFeatureEnum &pf, PlotFeatureStatus value);
+      void setPlotFeatureForChildren(const PlotFeatureEnum &pf, bool value);
 
       /**
        * \brief Set a plot feature for this object and the children of this object.
        *
        * This is a convenience function. It simply calls setPlotFeature and setPlotFeatureForChildren.
        */
-      void setPlotFeatureRecursive(const PlotFeatureEnum &pf, PlotFeatureStatus value) { setPlotFeature(pf,value); setPlotFeatureForChildren(pf,value); }
+      void setPlotFeatureRecursive(const PlotFeatureEnum &pf, bool value) { setPlotFeature(pf,value); setPlotFeatureForChildren(pf,value); }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 

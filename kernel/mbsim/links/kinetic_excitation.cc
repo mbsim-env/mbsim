@@ -47,7 +47,7 @@ namespace MBSim {
       if(frame[0]==NULL) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
     }
     else if(stage==plotting) {
-      if(plotFeature[openMBV]==enabled and openMBVArrow) {
+      if(plotFeature[openMBV] and openMBVArrow) {
         if(forceDir.cols()) {
           openMBVForce=OpenMBV::ObjectFactory::create(openMBVArrow);
           openMBVForce->setName(name+"_Force");
@@ -108,7 +108,7 @@ namespace MBSim {
   }
 
   void KineticExcitation::plot() {
-    if(plotFeature[openMBV]==enabled) {
+    if(plotFeature[openMBV]) {
       if(openMBVForce) {
         vector<double> data;
         data.push_back(getTime());

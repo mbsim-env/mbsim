@@ -46,7 +46,7 @@ ALETester::ALETester(const std::string & name_) :
   ring = new FlexibleBody1SReferenceCurve("Ring", ref);
   addObject(ring);
 
-  ring->setPlotFeature(rightHandSide, enabled);
+  ring->setPlotFeature(rightHandSide, true);
 
   ring->setLength(length);
   ring->setDensity(rho);

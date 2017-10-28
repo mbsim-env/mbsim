@@ -136,7 +136,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13::plot() {
-//      if(getPlotFeature(openMBV) == enabled && openMBVBody) {
+//      if(getPlotFeature(openMBV) && openMBVBody) {
 //        vector<double> data;
 //        data.push_back(getTime()); //time
 //

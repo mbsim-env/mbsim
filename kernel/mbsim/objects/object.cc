@@ -99,24 +99,24 @@ namespace MBSim {
   }
 
   void Object::plot() {
-    if (plotFeature[plotRecursive] == enabled) {
-      if (plotFeature[generalizedPosition] == enabled) {
+    if (plotFeature[plotRecursive]) {
+      if (plotFeature[generalizedPosition]) {
         for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
           plotVector.push_back(qRel(i));
       }
-      if (plotFeature[generalizedVelocity] == enabled) {
+      if (plotFeature[generalizedVelocity]) {
         for (int i = 0; i < evalGeneralizedVelocity().size(); ++i)
           plotVector.push_back(uRel(i));
       }
-      if (plotFeature[derivativeOfGeneralizedPosition] == enabled) {
+      if (plotFeature[derivativeOfGeneralizedPosition]) {
         for (int i = 0; i < evalDerivativeOfGeneralizedPosition().size(); ++i)
           plotVector.push_back(qdRel(i));
       }
-      if (plotFeature[generalizedAcceleration] == enabled) {
+      if (plotFeature[generalizedAcceleration]) {
         for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
           plotVector.push_back(udRel(i));
       }
-      if (plotFeature[energy] == enabled) {
+      if (plotFeature[energy]) {
         double Ttemp = evalKineticEnergy();
         double Vtemp = evalPotentialEnergy();
         plotVector.push_back(Ttemp);
@@ -203,24 +203,24 @@ namespace MBSim {
       udRel.resize(nu);
     }
     if (stage == plotting) {
-      if (plotFeature[plotRecursive] == enabled) {
-        if (plotFeature[generalizedPosition] == enabled) {
+      if (plotFeature[plotRecursive]) {
+        if (plotFeature[generalizedPosition]) {
           for (int i = 0; i < qRel.size(); ++i)
             plotColumns.push_back("generalized position (" + numtostr(i) + ")");
         }
-        if (plotFeature[generalizedVelocity] == enabled) {
+        if (plotFeature[generalizedVelocity]) {
           for (int i = 0; i < uRel.size(); ++i)
             plotColumns.push_back("generalized velocity (" + numtostr(i) + ")");
         }
-        if (plotFeature[derivativeOfGeneralizedPosition] == enabled) {
+        if (plotFeature[derivativeOfGeneralizedPosition]) {
           for (int i = 0; i < qdRel.size(); ++i)
             plotColumns.push_back("derivative of generalized position (" + numtostr(i) + ")");
         }
-        if (plotFeature[generalizedAcceleration] == enabled) {
+        if (plotFeature[generalizedAcceleration]) {
           for (int i = 0; i < udRel.size(); ++i)
             plotColumns.push_back("generalized acceleration (" + numtostr(i) + ")");
         }
-        if (plotFeature[energy] == enabled) {
+        if (plotFeature[energy]) {
           plotColumns.push_back("kinetic energy");
           plotColumns.push_back("potential energy");
           plotColumns.push_back("total energy");

@@ -163,7 +163,7 @@ namespace MBSimHydraulics {
         dependency.push_back(dependencyOnOutflow[i]);
     }
     else if(stage==plotting) {
-      if(plotFeature[plotRecursive]==enabled) {
+      if(plotFeature[plotRecursive]) {
         plotColumns.push_back("Volume flow [l/min]");
         plotColumns.push_back("Mass flow [kg/min]");
         if (frameOfReference)
@@ -179,7 +179,7 @@ namespace MBSimHydraulics {
   }
   
   void RigidHLine::plot() {
-    if(plotFeature[plotRecursive]==enabled) {
+    if(plotFeature[plotRecursive]) {
       plotVector.push_back(evalQIn()(0)*6e4);
       plotVector.push_back(getQIn()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
       if (frameOfReference)
@@ -290,7 +290,7 @@ namespace MBSimHydraulics {
         THROW_MBSIMERROR("fromNode and toNode are the same!");
     }
     else if (stage==plotting) {
-      if (plotFeature[plotRecursive]==enabled) {
+      if (plotFeature[plotRecursive]) {
         plotColumns.push_back("pInflow [bar]");
         plotColumns.push_back("pOutflow [bar]");
         plotColumns.push_back("dp [bar]");
@@ -312,7 +312,7 @@ namespace MBSimHydraulics {
   }
 
   void StatelessOrifice::plot() {
-    if (plotFeature[plotRecursive]==enabled) {
+    if (plotFeature[plotRecursive]) {
       double Q = evalQIn()(0);
       plotVector.push_back(pIn*1e-5);
       plotVector.push_back(pOut*1e-5);

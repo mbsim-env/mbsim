@@ -60,7 +60,7 @@ namespace MBSim {
         THROW_MBSIMERROR("(PlanarContour::init): Size of etaNodes must be greater than 1.");
     }
     else if(stage==plotting) {
-      if(plotFeature[openMBV]==enabled && openMBVRigidBody) {
+      if(plotFeature[openMBV] && openMBVRigidBody) {
         shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
         if(not(ombvNodes.size())) {
           ombvNodes.resize(101);

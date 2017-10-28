@@ -73,7 +73,7 @@ namespace MBSim {
   }
 
   void Element::plot() {
-    if(plotFeature[ref(plotRecursive)]==enabled) {
+    if(plotFeature[ref(plotRecursive)]) {
       if(plotColumns.size()>1) {
         plotVector.insert(plotVector.begin(), getTime());
         assert(plotColumns.size()==plotVector.size());
@@ -88,10 +88,10 @@ namespace MBSim {
       updatePlotFeatures();
     else if(stage==plotting) {
 
-      if(plotFeature[ref(plotRecursive)]==enabled) {
+      if(plotFeature[ref(plotRecursive)]) {
         unsigned int numEnabled=0;
         for (auto& x: plotFeature) {
-          if((x.first.get() != plotRecursive) and (x.first.get() != openMBV) and x.second==enabled) {
+          if((x.first.get() != plotRecursive) and (x.first.get() != openMBV) and x.second) {
             numEnabled++;
             break;
           }
@@ -125,10 +125,14 @@ namespace MBSim {
 
   void Element::updatePlotFeatures() {
     for (auto& x: parent->plotFeatureForChildren) {
-      if(plotFeature[ref(x.first)]==unset) plotFeature[ref(x.first)]=x.second;
+      auto it=plotFeature.find(ref(x.first));
+      if(it==plotFeature.end())
+        plotFeature[ref(x.first)]=x.second;
     }
     for (auto& x: parent->plotFeatureForChildren) {
-      if(plotFeatureForChildren[ref(x.first)]==unset) plotFeatureForChildren[ref(x.first)]=x.second;
+      auto it=plotFeatureForChildren.find(ref(x.first));
+      if(it==plotFeatureForChildren.end())
+        plotFeatureForChildren[ref(x.first)]=x.second;
     }
   }
 
@@ -208,11 +212,11 @@ namespace MBSim {
     }
   }
 
-  void Element::setPlotFeature(const PlotFeatureEnum &pf, PlotFeatureStatus value) {
+  void Element::setPlotFeature(const PlotFeatureEnum &pf, bool value) {
     plotFeature[ref(pf)] = value;
   }
 
-  void Element::setPlotFeatureForChildren(const PlotFeatureEnum &pf, PlotFeatureStatus value) {
+  void Element::setPlotFeatureForChildren(const PlotFeatureEnum &pf, bool value) {
     plotFeatureForChildren[ref(pf)] = value;
   }
 

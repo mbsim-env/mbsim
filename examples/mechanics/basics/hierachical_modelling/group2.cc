@@ -18,8 +18,8 @@ Group2::Group2(const string &name) : Group(name) {
 
   // ----------------------- Definition des 1. Körpers --------------------  
   RigidBody *box1 = new RigidBody("Box1");
-  box1->setPlotFeatureRecursive(position, enabled);
-  box1->setPlotFeatureRecursive(angle, enabled);
+  box1->setPlotFeatureRecursive(position, true);
+  box1->setPlotFeatureRecursive(angle, true);
   addObject(box1);
 
   // Masse und Trägheit definieren

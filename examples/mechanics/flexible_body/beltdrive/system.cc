@@ -378,10 +378,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Theta(2,2) = inertiaDisks(i);//2./5.*massDisks(i)*radiiDisks(i)*radiiDisks(i);
     disk->setInertiaTensor(Theta);
 
-    disk->setPlotFeatureRecursive(position,enabled);
-    disk->setPlotFeatureRecursive(angle,enabled);
-    disk->setPlotFeatureRecursive(velocity,enabled);
-    disk->setPlotFeatureRecursive(angularVelocity,enabled);
+    disk->setPlotFeatureRecursive(position, true);
+    disk->setPlotFeatureRecursive(angle, true);
+    disk->setPlotFeatureRecursive(velocity, true);
+    disk->setPlotFeatureRecursive(angularVelocity, true);
 
     Vec JR("[0;0;1.0]");
     if(i==0)
@@ -451,7 +451,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //      contact->connect(disk->getContour("cDisk"),belt->getContour("Top"));
 //    else
     contact->connect(disk->getContour("cDisk"),band[i]);
-//    contact->setPlotFeature(linkLagrangeParameters, enabled);
+//    contact->setPlotFeature(linkLagrangeParameters, true);
     this->addLink(contact);
 
     ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
@@ -498,11 +498,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     }
   }
 
-  setPlotFeatureRecursive(generalizedPosition,enabled);
-  setPlotFeatureRecursive(generalizedVelocity,enabled);
-  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
-  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
-  setPlotFeatureRecursive(generalizedForce,enabled);
-  setPlotFeatureRecursive(deflection,enabled);
+  setPlotFeatureRecursive(generalizedPosition, true);
+  setPlotFeatureRecursive(generalizedVelocity, true);
+  setPlotFeatureRecursive(generalizedRelativePosition, true);
+  setPlotFeatureRecursive(generalizedRelativeVelocity, true);
+  setPlotFeatureRecursive(generalizedForce, true);
+  setPlotFeatureRecursive(deflection, true);
 }
 

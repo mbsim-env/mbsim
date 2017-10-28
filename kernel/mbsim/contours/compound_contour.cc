@@ -59,12 +59,12 @@ namespace MBSim {
         element[i]->sethSize(hSize[0]);
     }
     else if (stage == plotting) {
-      if (plotFeature[openMBV] == enabled and openMBVGroup == 0) {
+      if (plotFeature[openMBV] and openMBVGroup == 0) {
         openMBVGroup = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGroup->setName(name + "Group");
         if (parent)
           parent->getOpenMBVGrp()->addObject(openMBVGroup);
-        if (plotFeature[separateFilePerGroup] == enabled)
+        if (plotFeature[separateFilePerGroup])
           openMBVGroup->setSeparateFile(true);
       }
     }

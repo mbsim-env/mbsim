@@ -74,7 +74,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cnf->setNormalImpactLaw(new UnilateralNewtonImpact(1));
 //  cnf->setTangentialForceLaw(new SpatialCoulombFriction(0.3));
 //  cnf->setTangentialImpactLaw(new SpatialCoulombImpact(0.3));
-  //cnf->setPlotFeature(linkKinematics,disabled);
+  //cnf->setPlotFeature(linkKinematics,false);
   //cnf->setNormalForceLaw(new LinearRegularizedUnilateralConstraint(1e4,100));
   //cnf->setTangentialForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
   cnf->connect(roomBody->getContour("Raum"), body->getContour("Wuerfel"));
@@ -84,10 +84,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setOpenMBVRigidBody(obj);
   obj->setLength(l);
 
-  setPlotFeatureRecursive(generalizedPosition,enabled);
-  setPlotFeatureRecursive(generalizedVelocity,enabled);
-  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
-  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
-  setPlotFeatureRecursive(generalizedForce,enabled);
+  setPlotFeatureRecursive(generalizedPosition, true);
+  setPlotFeatureRecursive(generalizedVelocity, true);
+  setPlotFeatureRecursive(generalizedRelativePosition, true);
+  setPlotFeatureRecursive(generalizedRelativeVelocity, true);
+  setPlotFeatureRecursive(generalizedForce, true);
 }
 

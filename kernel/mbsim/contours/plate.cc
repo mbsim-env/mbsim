@@ -42,7 +42,7 @@ namespace MBSim {
     if (stage == preInit)
       setVertices();
     else if(stage==plotting) {
-      if(plotFeature[openMBV]==enabled && openMBVRigidBody)
+      if(plotFeature[openMBV] && openMBVRigidBody)
         if(openMBVRigidBody) static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(0,yLength,zLength);
     }
     Plane::init(stage);

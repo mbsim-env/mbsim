@@ -189,12 +189,12 @@ namespace MBSimHydraulics {
           relPlot(i, j)=sin(i*M_PI*relPlotPoints(j));
     }
     else if (stage==plotting) {
-      if(plotFeature[plotRecursive]==enabled) {
+      if(plotFeature[plotRecursive]) {
         plotColumns.push_back("QIn [l/min]");
         plotColumns.push_back("QOut [l/min]");
         for (int i=0; i<relPlotPoints.size(); i++)
           plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
-        if(plotFeature[generalizedPosition]==enabled) {
+        if(plotFeature[generalizedPosition]) {
           for (int i=0; i<n; i++)
             plotColumns.push_back("y("+numtostr(i)+")");
         }
@@ -222,7 +222,7 @@ namespace MBSimHydraulics {
   }
 
   void ElasticLineVariational::plot() {
-    if(plotFeature[plotRecursive]==enabled) {
+    if(plotFeature[plotRecursive]) {
       VecV y(n,NONINIT);
       for (int i=0; i<n; i++)
         y(i) = cu(i)*u(i);
@@ -230,7 +230,7 @@ namespace MBSimHydraulics {
       plotVector.push_back(QOut(0)*6e4);
       for (int i=0; i<relPlotPoints.size(); i++)
         plotVector.push_back((nFrom->getGeneralizedForce()(0)*(1-relPlotPoints(i))+nTo->getGeneralizedForce()(0)*relPlotPoints(i)+trans(y)*relPlot.col(i))*1e-5);
-      if(plotFeature[generalizedPosition]==enabled) {
+      if(plotFeature[generalizedPosition]) {
         for (int i=0; i<n; i++)
           plotVector.push_back(y(i));
       }

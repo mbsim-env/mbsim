@@ -249,8 +249,8 @@ namespace MBSimFlexibleBody {
 
     }
     else if (stage == plotting) {
-      if (getPlotFeature(plotRecursive) == enabled) {
-        if (getPlotFeature(notMinimalState) == enabled) {
+      if (getPlotFeature(plotRecursive)) {
+        if (getPlotFeature(notMinimalState)) {
           for (int i = 0; i < qSize; ++i)
             plotColumns.push_back("qF(" + numtostr(i) + ")");
           for (int i = 0; i < uSize[0]; ++i)
@@ -414,8 +414,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1SReferenceCurve::plot(double t, double dt) {
-    if (getPlotFeature(plotRecursive) == enabled) {
-      if (getPlotFeature(notMinimalState) == enabled) {
+    if (getPlotFeature(plotRecursive)) {
+      if (getPlotFeature(notMinimalState)) {
         for (int i = 0; i < qSize; ++i)
           plotVector.push_back(qF(i));
         for (int i = 0; i < uSize[0]; ++i)

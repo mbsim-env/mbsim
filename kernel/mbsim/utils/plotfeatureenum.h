@@ -26,13 +26,6 @@
 
 namespace MBSim {
 
-/** \brief Plot feature status */
-enum PlotFeatureStatus {
-  unset, /*!< use the default value for the feature */
-  enabled, /*!< set the feature enabled */
-  disabled /*!< set the feature disabled */
-};
-
 class PlotFeatureEnum {
   public:
     bool operator==(const PlotFeatureEnum& a) const { return this==&a; }
@@ -59,7 +52,7 @@ struct PlotFeatureEnumOp {
   bool operator()(const PlotFeatureEnum &a, const PlotFeatureEnum &b) const { return &a==&b; }
 };
 
-typedef std::unordered_map<std::reference_wrapper<const PlotFeatureEnum>, PlotFeatureStatus, PlotFeatureEnumOp, PlotFeatureEnumOp> PlotFeatureMap;
+typedef std::unordered_map<std::reference_wrapper<const PlotFeatureEnum>, bool, PlotFeatureEnumOp, PlotFeatureEnumOp> PlotFeatureMap;
 
 #endif
 

@@ -162,7 +162,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact->setTangentialForceLaw(new PlanarCoulombFriction(mu));
     contact->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
     contact->connect(disk->getContour("cDisk"),belt->getContour("Top"));
-    //contact->setPlotFeature(linkLagrangeParameters, enabled);
+    //contact->setPlotFeature(linkLagrangeParameters, true);
     this->addLink(contact);
 
     ContactObserver *observer = new ContactObserver(name.str()+"_Observer");
@@ -173,9 +173,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     observer->enableOpenMBVContactPoints(0.001,true);
   }
 
-  setPlotFeatureRecursive(generalizedPosition,enabled);
-  setPlotFeatureRecursive(generalizedVelocity,enabled);
-  setPlotFeatureRecursive(generalizedRelativePosition,enabled);
-  setPlotFeatureRecursive(generalizedRelativeVelocity,enabled);
-  setPlotFeatureRecursive(generalizedForce,enabled);
+  setPlotFeatureRecursive(generalizedPosition, true);
+  setPlotFeatureRecursive(generalizedVelocity, true);
+  setPlotFeatureRecursive(generalizedRelativePosition, true);
+  setPlotFeatureRecursive(generalizedRelativeVelocity, true);
+  setPlotFeatureRecursive(generalizedForce, true);
 }
