@@ -26,7 +26,6 @@ namespace MBSimGUI {
 
   class Body : public Object {
     public:
-      Body(const QString &str="") : Object(str) { }
       ~Body();
       virtual Element * getChildByContainerAndName(const QString &container, const QString &name) const;
       int getNumberOfFrames() {return frame.size();}

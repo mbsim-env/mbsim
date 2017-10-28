@@ -53,19 +53,19 @@ namespace MBSimGUI {
   }
 
   void EmbeddingContextMenu::addScalarParameter() {
-    mw->addParameter(new ScalarParameter("a"), item);
+    mw->addParameter(new ScalarParameter, item);
   }
 
   void EmbeddingContextMenu::addVectorParameter() {
-    mw->addParameter(new VectorParameter("a"), item);
+    mw->addParameter(new VectorParameter, item);
   }
 
   void EmbeddingContextMenu::addMatrixParameter() {
-    mw->addParameter(new MatrixParameter("a"), item);
+    mw->addParameter(new MatrixParameter, item);
   }
 
   void EmbeddingContextMenu::addStringParameter() {
-    mw->addParameter(new StringParameter("a"), item);
+    mw->addParameter(new StringParameter, item);
   }
 
   void EmbeddingContextMenu::addImportParameter() {

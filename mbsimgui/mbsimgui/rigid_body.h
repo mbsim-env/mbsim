@@ -26,7 +26,7 @@ namespace MBSimGUI {
 
   class RigidBody : public Body {
     public:
-      RigidBody(const QString &str="");
+      RigidBody();
       QString getType() const { return "RigidBody"; }
       xercesc::DOMElement* getXMLFrames() { return frames; }
       xercesc::DOMElement* getXMLContours() { return contours; }

@@ -26,41 +26,28 @@ namespace MBSimGUI {
 
   class Link : public Element {
     public:
-      Link(const QString &str="") : Element(str) { }
       QMenu* createContextMenu() { return new LinkContextMenu(this); }
     private:
       void addPlotFeatures();
   };
 
   class MechanicalLink : public Link {
-    public:
-      MechanicalLink(const QString &str="") : Link(str) { }
   };
 
   class FrameLink : public MechanicalLink {
-    public:
-      FrameLink(const QString &str="") : MechanicalLink(str) { }
   };
 
   class FixedFrameLink : public FrameLink {
-    public:
-      FixedFrameLink(const QString &str="") : FrameLink(str) { }
- };
+  };
 
   class FloatingFrameLink : public FrameLink {
-    public:
-      FloatingFrameLink(const QString &str="") : FrameLink(str) { }
- };
+  };
 
   class RigidBodyLink : public MechanicalLink {
-    public:
-      RigidBodyLink(const QString &str="") : MechanicalLink(str) { }
- };
+  };
 
   class DualRigidBodyLink : public RigidBodyLink {
-    public:
-      DualRigidBodyLink(const QString &str="") : RigidBodyLink(str) { }
- };
+  };
 
 }
 

@@ -26,7 +26,6 @@ namespace MBSimGUI {
 
   class Function : public Element {
     public:
-      Function(const QString &name="") : Element(name) { }
       virtual QString getType() const { return "Function"; }
   };
 

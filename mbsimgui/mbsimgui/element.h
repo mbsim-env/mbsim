@@ -48,7 +48,7 @@ namespace MBSimGUI {
       QString ID;
       bool config;
     public:
-      Element(const QString &name="") : EmbedItemData(name), parent(NULL), ID(QString::number(IDcounter++)), config(false) { }
+      Element() : parent(NULL), ID(QString::number(IDcounter++)), config(false) { }
       QString getXMLPath(Element *ref=0, bool rel=false);
       virtual xercesc::DOMElement* getXMLFrames() { return NULL; }
       virtual xercesc::DOMElement* getXMLContours() { return NULL; }

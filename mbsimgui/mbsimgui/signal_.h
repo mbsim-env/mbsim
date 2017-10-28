@@ -26,49 +26,42 @@ namespace MBSimGUI {
 
   class Signal : public Link {
     public:
-      Signal(const QString &str="") : Link(str) { }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
       void addPlotFeatures() { addPlotFeature("signal"); }
   };
 
   class Multiplexer : public Signal {
     public:
-      Multiplexer(const QString &str="") : Signal(str) { }
       QString getType() const { return "Multiplexer"; }
       ElementPropertyDialog* createPropertyDialog() {return new MultiplexerPropertyDialog(this);}
   };
 
   class Demultiplexer : public Signal {
     public:
-      Demultiplexer(const QString &str="") : Signal(str) { }
       QString getType() const { return "Demultiplexer"; }
       ElementPropertyDialog* createPropertyDialog() {return new DemultiplexerPropertyDialog(this);}
   };
 
   class LinearTransferSystem : public Signal {
     public:
-      LinearTransferSystem(const QString &str="") : Signal(str) { }
       QString getType() const { return "LinearTransferSystem"; }
       ElementPropertyDialog* createPropertyDialog() {return new LinearTransferSystemPropertyDialog(this);}
   };
 
   class SignalOperation : public Signal {
     public:
-      SignalOperation(const QString &str="") : Signal(str) { }
       QString getType() const { return "SignalOperation"; }
       ElementPropertyDialog* createPropertyDialog() {return new SignalOperationPropertyDialog(this);}
   };
 
   class ExternSignalSource : public Signal {
     public:
-      ExternSignalSource(const QString &str="") : Signal(str) { }
       QString getType() const { return "ExternSignalSource"; }
       ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSourcePropertyDialog(this);}
   };
 
   class ExternSignalSink : public Signal {
     public:
-      ExternSignalSink(const QString &str="") : Signal(str) { }
       QString getType() const { return "ExternSignalSink"; }
       ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSinkPropertyDialog(this);}
   };

@@ -26,7 +26,6 @@ namespace MBSimGUI {
 
   class SpringDamper : public FixedFrameLink {
     public:
-      SpringDamper(const QString &str="") : FixedFrameLink(str) { }
       QString getType() const { return "SpringDamper"; }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
@@ -34,7 +33,6 @@ namespace MBSimGUI {
 
   class DirectionalSpringDamper : public FloatingFrameLink {
     public:
-      DirectionalSpringDamper(const QString &str="") : FloatingFrameLink(str) { }
       QString getType() const { return "DirectionalSpringDamper"; }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
@@ -42,7 +40,6 @@ namespace MBSimGUI {
 
   class GeneralizedSpringDamper : public DualRigidBodyLink {
     public:
-      GeneralizedSpringDamper(const QString &str="") : DualRigidBodyLink(str) { }
       QString getType() const { return "GeneralizedSpringDamper"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
   };

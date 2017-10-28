@@ -49,7 +49,7 @@ namespace MBSimGUI {
     element=D(doc)->createElement(getNameSpace()%getType().toStdString());
     E(element)->setAttribute("name","Project");
     parent->insertBefore(element, NULL);
-    setDynamicSystemSolver(new DynamicSystemSolver("MBS"));
+    setDynamicSystemSolver(new DynamicSystemSolver);
     dss->createXMLElement(element);
     setSolver(new DOPRI5Integrator);
     solver->createXMLElement(element);

@@ -28,7 +28,6 @@ namespace MBSimGUI {
 
   class Frame : public Element {
     public:
-      Frame(const QString &str="") : Element(str) { }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() { return new FramePropertyDialog(this); }
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this,false); }
@@ -39,7 +38,7 @@ namespace MBSimGUI {
 
   class InternalFrame : public Frame {
     public:
-      InternalFrame(const QString &str, const MBXMLUtils::FQN &xmlFrameName_, const QString &plotFeatureType_="");
+      InternalFrame(const QString &name_, const MBXMLUtils::FQN &xmlFrameName_, const QString &plotFeatureType_="");
       QString getName() const { return name; }
       QString getType() const { return "InternalFrame"; }
       ElementPropertyDialog* createPropertyDialog() { return new InternalFramePropertyDialog(this); }
@@ -56,7 +55,6 @@ namespace MBSimGUI {
 
   class FixedRelativeFrame : public Frame {
     public:
-      FixedRelativeFrame(const QString &str="") : Frame(str) { }
       QString getType() const { return "FixedRelativeFrame"; }
       ElementPropertyDialog* createPropertyDialog() { return new FixedRelativeFramePropertyDialog(this); }
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }
@@ -64,7 +62,6 @@ namespace MBSimGUI {
 
   class NodeFrame : public Frame {
     public:
-      NodeFrame(const QString &str="") : Frame(str) { }
       QString getType() const { return "NodeFrame"; }
       MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
       ElementPropertyDialog* createPropertyDialog() { return new NodeFramePropertyDialog(this); }

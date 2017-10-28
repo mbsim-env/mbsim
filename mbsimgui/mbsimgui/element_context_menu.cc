@@ -174,7 +174,7 @@ namespace MBSimGUI {
   }
 
   void FixedRelativeFramesContextMenu::addFixedRelativeFrame() {
-    mw->addFrame(new FixedRelativeFrame("P"), element);
+    mw->addFrame(new FixedRelativeFrame, element);
   }
 
   NodeFramesContextMenu::NodeFramesContextMenu(Element *element, const QString &title, QWidget *parent) : FramesContextMenu(element,title,parent) {
@@ -185,7 +185,7 @@ namespace MBSimGUI {
   }
 
   void NodeFramesContextMenu::addNodeFrame() {
-    mw->addFrame(new NodeFrame("P"), element);
+    mw->addFrame(new NodeFrame, element);
   }
 
   ContoursContextMenu::ContoursContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -235,39 +235,39 @@ namespace MBSimGUI {
   }
 
   void ContoursContextMenu::addPoint() {
-    mw->addContour(new Point("Point"), element);
+    mw->addContour(new Point, element);
   }
 
   void ContoursContextMenu::addLine() {
-    mw->addContour(new Line("Line"), element);
+    mw->addContour(new Line, element);
   }
 
   void ContoursContextMenu::addPlane() {
-    mw->addContour(new Plane("Plane"), element);
+    mw->addContour(new Plane, element);
   }
 
   void ContoursContextMenu::addSphere() {
-    mw->addContour(new Sphere("Sphere"), element);
+    mw->addContour(new Sphere, element);
   }
 
   void ContoursContextMenu::addCircle() {
-    mw->addContour(new Circle("Circle"), element);
+    mw->addContour(new Circle, element);
   }
 
   void ContoursContextMenu::addCuboid() {
-    mw->addContour(new Cuboid("Cuboid"), element);
+    mw->addContour(new Cuboid, element);
   }
 
   void ContoursContextMenu::addLineSegment() {
-    mw->addContour(new LineSegment("LineSegment"), element);
+    mw->addContour(new LineSegment, element);
   }
 
   void ContoursContextMenu::addPlanarContour() {
-    mw->addContour(new PlanarContour("PlanarContour"), element);
+    mw->addContour(new PlanarContour, element);
   }
 
   void ContoursContextMenu::addSpatialContour() {
-    mw->addContour(new SpatialContour("SpatialContour"), element);
+    mw->addContour(new SpatialContour, element);
   }
 
   GroupsContextMenu::GroupsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -293,7 +293,7 @@ namespace MBSimGUI {
   }
 
   void GroupsContextMenu::add() {
-    mw->addGroup(new Group("Group"), element);
+    mw->addGroup(new Group, element);
   }
 
   ObjectsContextMenu::ObjectsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -327,11 +327,11 @@ namespace MBSimGUI {
   }
 
   void BodiesContextMenu::addRigidBody() {
-    mw->addObject(new RigidBody("RigidBody"), element);
+    mw->addObject(new RigidBody, element);
   }
 
   void BodiesContextMenu::addFlexibleBodyFFR() {
-    mw->addObject(new FlexibleBodyFFR("FlexibleBodyFFR"), element);
+    mw->addObject(new FlexibleBodyFFR, element);
   }
 
   LinksContextMenu::LinksContextMenu(Element *element_, const QString &title,  QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -386,27 +386,27 @@ namespace MBSimGUI {
   }
 
   void LinksContextMenu::addKineticExcitation() {
-    mw->addLink(new KineticExcitation("KineticExcitation"), element);
+    mw->addLink(new KineticExcitation, element);
   }
 
   void LinksContextMenu::addSpringDamper() {
-    mw->addLink(new SpringDamper("SpringDamper"), element);
+    mw->addLink(new SpringDamper, element);
   }
 
   void LinksContextMenu::addDirectionalSpringDamper() {
-    mw->addLink(new DirectionalSpringDamper("DirectionalSpringDamper"), element);
+    mw->addLink(new DirectionalSpringDamper, element);
   }
 
   void LinksContextMenu::addJoint() {
-    mw->addLink(new Joint("Joint"), element);
+    mw->addLink(new Joint, element);
   }
 
   void LinksContextMenu::addElasticJoint() {
-    mw->addLink(new ElasticJoint("ElasticJoint"), element);
+    mw->addLink(new ElasticJoint, element);
   }
 
   void LinksContextMenu::addContact() {
-    mw->addLink(new Contact("Contact"), element);
+    mw->addLink(new Contact, element);
   }
 
   void LinksContextMenu::addSignal() {
@@ -415,19 +415,19 @@ namespace MBSimGUI {
   }
 
   void LinksContextMenu::addGeneralizedSpringDamper() {
-    mw->addLink(new GeneralizedSpringDamper("GeneralizedSpringDamper"), element);
+    mw->addLink(new GeneralizedSpringDamper, element);
   }
 
   void LinksContextMenu::addGeneralizedFriction() {
-    mw->addLink(new GeneralizedFriction("GeneralizedFriction"), element);
+    mw->addLink(new GeneralizedFriction, element);
   }
 
   void LinksContextMenu::addGeneralizedGear() {
-    mw->addLink(new GeneralizedGear("GeneralizedGear"), element);
+    mw->addLink(new GeneralizedGear, element);
   }
 
   void LinksContextMenu::addGeneralizedElasticConnection() {
-    mw->addLink(new GeneralizedElasticConnection("GeneralizedElasticConnection"), element);
+    mw->addLink(new GeneralizedElasticConnection, element);
   }
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -468,27 +468,27 @@ namespace MBSimGUI {
   }
 
   void ConstraintsContextMenu::addGeneralizedGearConstraint() {
-    mw->addConstraint(new GeneralizedGearConstraint("GeneralizedGearConstraint"), element);
+    mw->addConstraint(new GeneralizedGearConstraint, element);
   }
 
   void ConstraintsContextMenu::addGeneralizedPositionConstraint() {
-    mw->addConstraint(new GeneralizedPositionConstraint("GeneralizedPositionConstraint"), element);
+    mw->addConstraint(new GeneralizedPositionConstraint, element);
   }
 
   void ConstraintsContextMenu::addGeneralizedVelocityConstraint() {
-    mw->addConstraint(new GeneralizedVelocityConstraint("GeneralizedVelocityConstraint"), element);
+    mw->addConstraint(new GeneralizedVelocityConstraint, element);
   }
 
   void ConstraintsContextMenu::addGeneralizedAccelerationConstraint() {
-    mw->addConstraint(new GeneralizedAccelerationConstraint("GeneralizedAccelerationConstraint"), element);
+    mw->addConstraint(new GeneralizedAccelerationConstraint, element);
   }
 
   void ConstraintsContextMenu::addJointConstraint() {
-    mw->addConstraint(new JointConstraint("JointConstraint"), element);
+    mw->addConstraint(new JointConstraint, element);
   }
 
   void ConstraintsContextMenu::addGeneralizedConnectionConstraint() {
-    mw->addConstraint(new GeneralizedConnectionConstraint("GeneralizedConnectionConstraint"), element);
+    mw->addConstraint(new GeneralizedConnectionConstraint, element);
   }
 
   ObserversContextMenu::ObserversContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -535,35 +535,35 @@ namespace MBSimGUI {
   }
 
   void ObserversContextMenu::addMechanicalLinkObserver() {
-    mw->addObserver(new MechanicalLinkObserver("MechanicalLinkObserver"), element);
+    mw->addObserver(new MechanicalLinkObserver, element);
   }
 
   void ObserversContextMenu::addMechanicalConstraintObserver() {
-    mw->addObserver(new MechanicalConstraintObserver("MechanicalConstraintObserver"), element);
+    mw->addObserver(new MechanicalConstraintObserver, element);
   }
 
   void ObserversContextMenu::addContactObserver() {
-    mw->addObserver(new ContactObserver("ContactObserver"), element);
+    mw->addObserver(new ContactObserver, element);
   }
 
   void ObserversContextMenu::addFrameObserver() {
-    mw->addObserver(new FrameObserver("FrameObserver"), element);
+    mw->addObserver(new FrameObserver, element);
   }
 
   void ObserversContextMenu::addRigidBodyObserver() {
-    mw->addObserver(new RigidBodyObserver("RigidBodyObserver"), element);
+    mw->addObserver(new RigidBodyObserver, element);
   }
 
   void ObserversContextMenu::addKinematicCoordinatesObserver() {
-    mw->addObserver(new KinematicCoordinatesObserver("KinematicCoordinatesObserver"), element);
+    mw->addObserver(new KinematicCoordinatesObserver, element);
   }
 
   void ObserversContextMenu::addRelativeKinematicsObserver() {
-    mw->addObserver(new RelativeKinematicsObserver("RelativeKinematicsObserver"), element);
+    mw->addObserver(new RelativeKinematicsObserver, element);
   }
 
   void ObserversContextMenu::addRigidBodySystemObserver() {
-    mw->addObserver(new RigidBodySystemObserver("RigidBodySystemObserver"), element);
+    mw->addObserver(new RigidBodySystemObserver, element);
   }
 
   SignalsContextMenu::SignalsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -595,27 +595,27 @@ namespace MBSimGUI {
   }
 
   void SignalsContextMenu::addMultiplexer() {
-    mw->addLink(new Multiplexer("Multiplexer"), element);
+    mw->addLink(new Multiplexer, element);
   }
 
   void SignalsContextMenu::addDemultiplexer() {
-    mw->addLink(new Demultiplexer("Demultiplexer"), element);
+    mw->addLink(new Demultiplexer, element);
   }
 
   void SignalsContextMenu::addLinearTransferSystem() {
-    mw->addLink(new LinearTransferSystem("LinearTransferSystem"), element);
+    mw->addLink(new LinearTransferSystem, element);
   }
 
   void SignalsContextMenu::addSignalOperation() {
-    mw->addLink(new SignalOperation("SignalOperation"), element);
+    mw->addLink(new SignalOperation, element);
   }
 
   void SignalsContextMenu::addExternSignalSource() {
-    mw->addLink(new ExternSignalSource("ExternSignalSource"), element);
+    mw->addLink(new ExternSignalSource, element);
   }
 
   void SignalsContextMenu::addExternSignalSink() {
-    mw->addLink(new ExternSignalSink("ExternSignalSink"), element);
+    mw->addLink(new ExternSignalSink, element);
   }
 
   SensorsContextMenu::SensorsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -643,31 +643,31 @@ namespace MBSimGUI {
   }
 
   void SensorsContextMenu::addGeneralizedPositionSensor() {
-    mw->addLink(new GeneralizedPositionSensor("GeneralizedPositionSensor"), element);
+    mw->addLink(new GeneralizedPositionSensor, element);
   }
 
   void SensorsContextMenu::addGeneralizedVelocitySensor() {
-    mw->addLink(new GeneralizedVelocitySensor("GeneralizedVelocitySensor"), element);
+    mw->addLink(new GeneralizedVelocitySensor, element);
   }
 
   void SensorsContextMenu::addPositionSensor() {
-    mw->addLink(new PositionSensor("PositionSensor"), element);
+    mw->addLink(new PositionSensor, element);
   }
 
   void SensorsContextMenu::addOrientationSensor() {
-    mw->addLink(new OrientationSensor("OrientationSensor"), element);
+    mw->addLink(new OrientationSensor, element);
   }
 
   void SensorsContextMenu::addVelocitySensor() {
-    mw->addLink(new VelocitySensor("VelocitySensor"), element);
+    mw->addLink(new VelocitySensor, element);
   }
 
   void SensorsContextMenu::addAngularVelocitySensor() {
-    mw->addLink(new AngularVelocitySensor("AngularVelocitySensor"), element);
+    mw->addLink(new AngularVelocitySensor, element);
   }
 
   void SensorsContextMenu::addFunctionSensor() {
-    mw->addLink(new FunctionSensor("FunctionSensor"), element);
+    mw->addLink(new FunctionSensor, element);
   }
 
 }

@@ -36,7 +36,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Group::Group(const QString &str) : Element(str), constraints(NULL), observers(NULL) {
+  Group::Group() : constraints(NULL), observers(NULL) {
 
     InternalFrame *I = new InternalFrame("I",MBSIM%"enableOpenMBVFrameI","plotFeatureFrameI");
     addFrame(I);
