@@ -30,6 +30,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       ContainerItemData(Element *element_) : element(element_) { }
+      QString getValue() const { return ""; }
       QString getType() const { return ""; }
       Element* getElement() { return element; }
   };
