@@ -1921,11 +1921,7 @@ namespace MBSimGUI {
 
   void MainWindow::interrupt() {
     echoView->setErrorText("Simulation interrupted\n");
-#ifdef _WIN32
-    process.kill();
-#else
     process.terminate();
-#endif
   }
 
   void MainWindow::kill() {
