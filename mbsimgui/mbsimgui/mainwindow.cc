@@ -910,8 +910,6 @@ namespace MBSimGUI {
 
     try {
       D(doc)->validate();
-      vector<boost::filesystem::path> dependencies;
-      std::shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
       root = doc->getDocumentElement();
       Preprocess::preprocess(parser, eval, dependencies, root);
     }
