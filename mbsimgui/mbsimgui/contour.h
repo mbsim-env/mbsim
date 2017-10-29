@@ -26,7 +26,6 @@ namespace MBSimGUI {
 
   class Contour : public Element {
     public:
-      Contour(const QString &str="") : Element(str) { }
       xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() {return new ContourPropertyDialog(this);}
       QMenu* createContextMenu() { return new ContourContextMenu(this); }
@@ -34,69 +33,59 @@ namespace MBSimGUI {
 
   class RigidContour : public Contour {
     public:
-      RigidContour(const QString &str="") : Contour(str) { }
       ElementPropertyDialog* createPropertyDialog() {return new RigidContourPropertyDialog(this);}
   };
 
   class Point : public RigidContour {
     public:
-    Point(const QString &str="") : RigidContour(str) { }
     QString getType() const { return "Point"; }
     ElementPropertyDialog* createPropertyDialog() {return new PointPropertyDialog(this);}
   };
 
   class Line : public RigidContour {
     public:
-      Line(const QString &str="") : RigidContour(str) { }
       QString getType() const { return "Line"; }
       ElementPropertyDialog* createPropertyDialog() {return new LinePropertyDialog(this);}
   };
 
   class Plane : public RigidContour {
     public:
-      Plane(const QString &str="") : RigidContour(str) { }
       QString getType() const { return "Plane"; }
       ElementPropertyDialog* createPropertyDialog() {return new PlanePropertyDialog(this);}
   };
 
   class Sphere : public RigidContour {
     public:
-      Sphere(const QString &str="") : RigidContour(str) { }
       QString getType() const { return "Sphere"; }
       ElementPropertyDialog* createPropertyDialog() {return new SpherePropertyDialog(this);}
   };
 
   class Circle : public RigidContour {
     public:
-      Circle(const QString &str="") : RigidContour(str) { }
       QString getType() const { return "Circle"; }
       ElementPropertyDialog* createPropertyDialog() {return new CirclePropertyDialog(this);}
   };
 
   class Cuboid : public RigidContour {
     public:
-      Cuboid(const QString &str="") : RigidContour(str) { }
       QString getType() const { return "Cuboid"; }
       ElementPropertyDialog* createPropertyDialog() {return new CuboidPropertyDialog(this);}
   };
 
   class LineSegment : public RigidContour {
     public:
-      LineSegment(const QString &str="") : RigidContour(str) { }
       QString getType() const { return "LineSegment"; }
       ElementPropertyDialog* createPropertyDialog() {return new LineSegmentPropertyDialog(this);}
   };
 
   class PlanarContour : public RigidContour {
     public:
-      PlanarContour(const QString &str="") : RigidContour(str) { }
       QString getType() const { return "PlanarContour"; }
       ElementPropertyDialog* createPropertyDialog() {return new PlanarContourPropertyDialog(this);}
   };
 
   class SpatialContour : public RigidContour {
     public:
-      SpatialContour(const QString &str="") : RigidContour(str) { }
       QString getType() const { return "SpatialContour"; }
       ElementPropertyDialog* createPropertyDialog() {return new SpatialContourPropertyDialog(this);}
   };

@@ -41,15 +41,14 @@ namespace MBSimGUI {
     Q_OBJECT
     public:
       SolverView();
-      ~SolverView();
+      ~SolverView() { }
       int getSolverNumber() const { return i; }
       void setSolver(int i_) { i = i_; updateText(); }
-      Solver* getSolver() { return solver[i]; }
-      void setSolver(Solver *solver_);
+      void setSolver(Solver *solver);
+      Solver* createSolver(int i_);
       void updateText() { setText(type[i]); }
       QMenu* createContextMenu() { return new SolverViewContextMenu; }
     protected:
-      std::vector<Solver*> solver;
       std::vector<QString> type;
       int i;
     protected slots:

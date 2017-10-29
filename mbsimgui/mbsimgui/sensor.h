@@ -25,19 +25,15 @@
 namespace MBSimGUI {
 
   class Sensor : public Signal {
-    public:
-      Sensor(const QString &str="") : Signal(str) { }
   };
 
   class ObjectSensor : public Sensor {
     public:
-      ObjectSensor(const QString &str="") : Sensor(str) { }
       QString getType() const { return "ObjectSensor"; }
   };
 
   class GeneralizedPositionSensor : public ObjectSensor {
     public:
-      GeneralizedPositionSensor(const QString &str="") : ObjectSensor(str) { }
       QString getType() const { return "GeneralizedPositionSensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionSensorPropertyDialog(this);}
 
@@ -45,48 +41,41 @@ namespace MBSimGUI {
 
   class GeneralizedVelocitySensor : public ObjectSensor {
     public:
-      GeneralizedVelocitySensor(const QString &str="") : ObjectSensor(str) { }
       QString getType() const { return "GeneralizedVelocitySensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocitySensorPropertyDialog(this);}
   };
 
   class FrameSensor : public Sensor {
     public:
-      FrameSensor(const QString &str="") : Sensor(str) { }
       QString getType() const { return "FrameSensor"; }
   };
 
   class PositionSensor : public FrameSensor {
     public:
-      PositionSensor(const QString &str="") : FrameSensor(str) { }
       QString getType() const { return "PositionSensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new PositionSensorPropertyDialog(this);}
   };
 
   class OrientationSensor : public FrameSensor {
     public:
-      OrientationSensor(const QString &str="") : FrameSensor(str) { }
       QString getType() const { return "OrientationSensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new OrientationSensorPropertyDialog(this);}
   };
 
   class VelocitySensor : public FrameSensor {
     public:
-      VelocitySensor(const QString &str="") : FrameSensor(str) { }
       QString getType() const { return "VelocitySensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new VelocitySensorPropertyDialog(this);}
   };
 
   class AngularVelocitySensor : public FrameSensor {
     public:
-      AngularVelocitySensor(const QString &str="") : FrameSensor(str) { }
       QString getType() const { return "AngularVelocitySensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new AngularVelocitySensorPropertyDialog(this);}
   };
 
   class FunctionSensor : public Sensor {
     public:
-      FunctionSensor(const QString &str="") : Sensor(str) { }
       QString getType() const { return "FunctionSensor"; }
       ElementPropertyDialog* createPropertyDialog() {return new FunctionSensorPropertyDialog(this);}
   };

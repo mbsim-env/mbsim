@@ -243,7 +243,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    Function *dummy = new Function("NoName"); // Workaround for correct XML path. TODO: provide a consistent concept
+    Function *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
     dummy->setParent(parent);
     functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(dummy),1),"Function",0,0),false,false,MBSIM%"components");
     layout->addWidget(functions);
@@ -912,7 +912,7 @@ namespace MBSimGUI {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    dummy = new Function("NoName"); // Workaround for correct XML path. TODO: provide a consistent concept
+    dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
     dummy->setParent(element);
     sRef = new ExtWidget("Return signal",new SignalOfReferenceWidget(dummy,0),false,false,MBSIMCONTROL%"returnSignal");
     layout->addWidget(sRef);

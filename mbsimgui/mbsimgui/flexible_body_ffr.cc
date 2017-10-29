@@ -32,7 +32,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const QString &str) : Body(str) {
+  FlexibleBodyFFR::FlexibleBodyFFR() {
     InternalFrame *K = new InternalFrame("K",MBSIMFLEX%"enableOpenMBVFrameK","plotFeatureFrameK");
     addFrame(K);
   }

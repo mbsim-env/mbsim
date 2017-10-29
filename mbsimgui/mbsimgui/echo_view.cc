@@ -18,69 +18,49 @@
 */
 
 #include <config.h>
-#include "mbsim_process.h"
+#include "echo_view.h"
 #include "file_editor.h"
 #include <iostream>
-#include <mbxmlutilshelper/dom.h>
-#include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
-#include <mbxmlutils/eval.h>
-#include <mbsimxml/mbsimflatxml.h>
-#include <mbxmlutils/preprocess.h>
-#include <mbxmlutilshelper/last_write_time.h>
-#include <mbxmlutilshelper/getinstallpath.h>
 #include <QTextStream>
-#include <QApplication>
+#include <QProcessEnvironment>
 
 using namespace std;
-using namespace MBSim;
-using namespace MBXMLUtils;
-using namespace xercesc;
 
 namespace MBSimGUI {
 
   extern bool currentTask;
 
-  Process::Process(QWidget *parent) : QTabWidget(parent) {
-    process=new QProcess(this);
+  EchoView::EchoView(QWidget *parent) : QTabWidget(parent) {
     out=new QTextBrowser(this);
     err=new QTextBrowser(this);
     out->setOpenLinks(false);
     err->setOpenLinks(false);
     connect(out, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(outLinkClicked(const QUrl &)));
     connect(err, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(errLinkClicked(const QUrl &)));
-    connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(processFinished(int,QProcess::ExitStatus)));
     addTab(out, "Out");
     addTab(err, "Err");
     setCurrentIndex(0);
     setMinimumHeight(80);
     setTabPosition(QTabWidget::West);
-    connect(&timer, SIGNAL(timeout()), this, SLOT(updateOutputAndError()));
   }
 
-  void Process::clearOutputAndStart(const QString &program, const QStringList &arguments) {
+  void EchoView::clearOutputAndError() {
     outText="";
     errText="";
     out->clear();
     err->clear();
     setCurrentIndex(0);
-    process->start(program, arguments);
-    timer.start(250);
   }
 
-  void Process::updateOutputAndError() {
-    QByteArray outArray=process->readAllStandardOutput();
-    outText+=outArray.data();
+  void EchoView::updateOutputAndError() {
     out->setHtml(convertToHtml(outText));
     out->moveCursor(QTextCursor::End);
 
-    QByteArray errArray=process->readAllStandardError();
-    errText+=errArray.data();
     err->setHtml(convertToHtml(errText));
     err->moveCursor(QTextCursor::Start);
   }
 
-  QString Process::convertToHtml(QString &text) {
+  QString EchoView::convertToHtml(QString &text) {
     // the following operations modify the original text
 
 #ifdef _WIN32
@@ -105,19 +85,19 @@ namespace MBSimGUI {
     return ret;
   }
 
-  QSize Process::sizeHint() const {
+  QSize EchoView::sizeHint() const {
     QSize size=QTabWidget::sizeHint();
     size.setHeight(80);
     return size;
   }
 
-  QSize Process::minimumSizeHint() const {
+  QSize EchoView::minimumSizeHint() const {
     QSize size=QTabWidget::minimumSizeHint();
     size.setHeight(80);
     return size;
   }
 
-  void Process::linkClicked(const QUrl &link, QTextBrowser *std) {
+  void EchoView::linkClicked(const QUrl &link, QTextBrowser *std) {
     if(QProcessEnvironment::systemEnvironment().contains("MBSIMGUI_EDITOR")) {
       static QString editorCommand=QProcessEnvironment::systemEnvironment().value("MBSIMGUI_EDITOR", "gvim -R %1 +%2");
       cout<<"Opening file using command '"<<editorCommand.toStdString()<<"'. "<<
@@ -133,74 +113,12 @@ namespace MBSimGUI {
     }
   }
 
-  void Process::outLinkClicked(const QUrl &link) {
+  void EchoView::outLinkClicked(const QUrl &link) {
     linkClicked(link, out);
   }
 
-  void Process::errLinkClicked(const QUrl &link) {
+  void EchoView::errLinkClicked(const QUrl &link) {
     linkClicked(link, err);
   }
 
-  void Process::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    timer.stop();
-    updateOutputAndError();
-    if(exitStatus==QProcess::NormalExit && exitCode==0)
-      setCurrentIndex(0);
-    else
-      setCurrentIndex(1);
-  }
-
-  void Process::interrupt() {
-    errText="Simulation interrupted";
-#ifdef _WIN32
-    process->kill();
-#else
-    process->terminate();
-#endif
-  }
-  
-  void Process::preprocessFailed(const QString& errText_) {
-    errText = errText_;
-    processFinished(1,QProcess::NormalExit);
-  }
-
-  void MBSimThread::run() {
-    try {
-      DOMElement *root = doc->getDocumentElement();
-
-      // GUI-XML-Baum mit OriginalFilename ergaenzen
-      if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
-        DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
-            X()%"MBS.mbsimprj.xml");
-        root->insertBefore(filenamePI, root->getFirstChild());
-      }
-
-      D(doc)->validate();
-
-      vector<boost::filesystem::path> dependencies;
-      std::shared_ptr<Eval> eval=Eval::createEvaluator(evaluator, &dependencies);
-
-      // Praeprozessor starten
-      DOMElement *mainxmlele=doc->getDocumentElement();
-      Preprocess::preprocess(parser, eval, dependencies, mainxmlele);
-
-      // adapt the evaluator in the dom
-      DOMElement *evaluator=D(doc)->createElement(PV%"evaluator");
-      evaluator->appendChild(doc->createTextNode(X()%"xmlflat"));
-      mainxmlele->insertBefore(evaluator, mainxmlele->getFirstChild());
-    }
-    catch(exception &ex) {
-      errText = ex.what();
-      emit resultReady(1);
-      return;
-    }
-    catch(...) {
-      errText = "Unknown exception in preprocess";
-      emit resultReady(1);
-      return;
-    }
-    DOMParser::serialize(doc.get(), projectFile.toStdString(), false);
-
-    emit resultReady(0);
-  }
 }

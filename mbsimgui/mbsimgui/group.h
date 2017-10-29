@@ -43,7 +43,7 @@ namespace MBSimGUI {
       xercesc::DOMElement *frames, *contours, *groups, *objects, *links, *constraints, *observers;
 
     public:
-      Group(const QString &str="");
+      Group();
       ~Group();
       QString getType() const { return "Group"; }
       void createXMLConstraints();

@@ -90,7 +90,7 @@ namespace MBSimGUI {
     if(i==7)
       return new PiecewiseDefinedFunctionWidget(parent);
     if(i==8) {
-      Function *dummy = new Function("NoName"); // Workaround for correct XML path. TODO: provide a consistent concept
+      Function *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(parent);
       return new CompositeFunctionWidget(new FunctionWidgetFactory2(dummy), new FunctionWidgetFactory2(dummy));
     }

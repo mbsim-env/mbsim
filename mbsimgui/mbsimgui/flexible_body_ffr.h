@@ -27,7 +27,7 @@ namespace MBSimGUI {
   class FlexibleBodyFFR : public Body {
     friend class FlexibleBodyFFRPropertyDialog;
     public:
-      FlexibleBodyFFR(const QString &str="");
+      FlexibleBodyFFR();
       QString getType() const { return "FlexibleBodyFFR"; }
       MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
       xercesc::DOMElement* getXMLFrames() { return frames; }

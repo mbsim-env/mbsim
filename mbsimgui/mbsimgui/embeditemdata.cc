@@ -20,7 +20,6 @@
 #include <config.h>
 #include "embeditemdata.h"
 #include "parameter.h"
-#include <unordered_map>
 #include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;

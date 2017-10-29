@@ -26,7 +26,6 @@ namespace MBSimGUI {
 
   class Contact : public Link {
     public:
-      Contact(const QString &str="") : Link(str) { }
       QString getType() const { return "Contact"; }
       ElementPropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
   };

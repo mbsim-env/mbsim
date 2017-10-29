@@ -31,7 +31,7 @@ namespace MBSimGUI {
     public:
       virtual ~TreeItemData() { }
       virtual QString getName() const { return "Name"; }
-      virtual QString getValue() const { return ""; }
+      virtual QString getValue() const { return "Value"; }
       virtual QString getType() const { return "Type"; }
       virtual QMenu* createContextMenu() { return NULL; }
   };
