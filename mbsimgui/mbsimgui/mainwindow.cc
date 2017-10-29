@@ -80,7 +80,7 @@ namespace MBSimGUI {
   QDialog *MainWindow::helpDialog = NULL;
   QWebView *MainWindow::helpViewer = NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(false), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(NULL), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
+  MainWindow::MainWindow(QStringList &arg) : project(NULL), inlineOpenMBVMW(0), autoSave(false), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(NULL), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_HTMLOUTPUT=1";
     putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
@@ -166,7 +166,6 @@ namespace MBSimGUI {
     action->setShortcut(QKeySequence::SaveAs);
     actionSaveProject = menu->addAction("Save", this, SLOT(saveProject()));
     actionSaveProject->setShortcut(QKeySequence::Save);
-    actionSaveProject->setDisabled(true);
     menu->addSeparator();
     for (int i = 0; i < maxRecentFiles; ++i)
       menu->addAction(recentProjectFileActs[i]);
@@ -204,11 +203,6 @@ namespace MBSimGUI {
     actionSaveOpenMBVDataAs = menu->addAction("Export OpenMBV data", this, SLOT(saveOpenMBVDataAs()));
     actionSaveStateVectorAs = menu->addAction("Export state vector", this, SLOT(saveStateVectorAs()));
     actionSaveEigenanalysisAs = menu->addAction("Export eigenanalysis", this, SLOT(saveEigenanalysisAs()));
-    actionSaveDataAs->setDisabled(true);
-    actionSaveMBSimH5DataAs->setDisabled(true);
-    actionSaveOpenMBVDataAs->setDisabled(true);
-    actionSaveStateVectorAs->setDisabled(true);
-    actionSaveEigenanalysisAs->setDisabled(true);
     menuBar()->addMenu(menu);
 
     menuBar()->addSeparator();
@@ -230,15 +224,12 @@ namespace MBSimGUI {
     connect(actionRefresh,SIGNAL(triggered()),this,SLOT(refresh()));
     toolBar->addAction(actionRefresh);
     actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
-    actionOpenMBV->setDisabled(true);
     connect(actionOpenMBV,SIGNAL(triggered()),this,SLOT(openmbv()));
     toolBar->addAction(actionOpenMBV);
     actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
-    actionH5plotserie->setDisabled(true);
     connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
     toolBar->addAction(actionH5plotserie);
     actionEigenanalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Eigenanalysis");
-    actionEigenanalysis->setDisabled(true);
     connect(actionEigenanalysis,SIGNAL(triggered()),this,SLOT(eigenanalysis()));
     toolBar->addAction(actionEigenanalysis);
     actionFrequencyResponse = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
@@ -246,6 +237,9 @@ namespace MBSimGUI {
     actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,SIGNAL(triggered()),this,SLOT(debug()));
     toolBar->addAction(actionDebug);
+    QAction *actionKill = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
+    connect(actionKill,SIGNAL(triggered()),this,SLOT(kill()));
+    toolBar->addAction(actionKill);
 
     elementView->setModel(new ElementTreeModel);
     elementView->setColumnWidth(0,250);
@@ -364,18 +358,43 @@ namespace MBSimGUI {
       if(element)
         highlightObject(element->getID());
     }
-    else if(autoExport) {
-      saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
-      saveOpenMBVXMLData(autoExportDir+"/MBS.ombv.xml");
-      saveOpenMBVH5Data(autoExportDir+"/MBS.ombv.h5");
+    else {
+      if(exitStatus == QProcess::NormalExit) {
+      if(autoExport) {
+        saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
+        saveOpenMBVXMLData(autoExportDir+"/MBS.ombv.xml");
+        saveOpenMBVH5Data(autoExportDir+"/MBS.ombv.h5");
+        if(saveFinalStateVector)
+          saveStateVector(autoExportDir+"/statevector.asc");
+      }
+      actionSaveDataAs->setDisabled(false);
+      actionSaveMBSimH5DataAs->setDisabled(false);
+      actionSaveOpenMBVDataAs->setDisabled(false);
       if(saveFinalStateVector)
-        saveStateVector(autoExportDir+"/statevector.asc");
+        actionSaveStateVectorAs->setDisabled(false);
+      if(solverView->getSolverNumber()==7) {
+        actionSaveEigenanalysisAs->setDisabled(false);
+        actionEigenanalysis->setDisabled(false);
+      }
+      if(solverView->getSolverNumber()==8) {
+        actionFrequencyResponse->setDisabled(false);
+      }
+      actionOpenMBV->setDisabled(false);
+      actionH5plotserie->setDisabled(false);
+      }
+      else {
+      actionSaveDataAs->setDisabled(true);
+      actionSaveMBSimH5DataAs->setDisabled(true);
+      actionSaveOpenMBVDataAs->setDisabled(true);
+      actionSaveStateVectorAs->setDisabled(true);
+      actionSaveEigenanalysisAs->setDisabled(true);
+      actionOpenMBV->setDisabled(true);
+      actionH5plotserie->setDisabled(true);
+      actionEigenanalysis->setDisabled(true);
+      actionFrequencyResponse->setDisabled(true);
+      }
     }
     actionSimulate->setDisabled(false);
-    actionOpenMBV->setDisabled(false);
-    actionH5plotserie->setDisabled(false);
-    actionEigenanalysis->setDisabled(false);
-    actionFrequencyResponse->setDisabled(false);
     actionRefresh->setDisabled(false);
     actionDebug->setDisabled(false);
     statusBar()->showMessage(tr("Ready"));
@@ -397,6 +416,7 @@ namespace MBSimGUI {
     boost::system::error_code ec;
     bfs::remove_all(uniqueTempDir, ec);
     bfs::remove("./.MBS.mbsimprj.xml", ec);
+    delete project;
   }
 
   void MainWindow::setProjectChanged(bool changed) { 
@@ -530,18 +550,17 @@ namespace MBSimGUI {
 
   void MainWindow::solverViewClicked() {
     EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    Solver *solver = solverView->getSolver();
-    vector<EmbedItemData*> parents = solver->getParents();
+    vector<EmbedItemData*> parents = getProject()->getSolver()->getParents();
     QModelIndex index = emodel->index(0,0);
     emodel->removeRow(index.row(), index.parent());
     if(parents.size()) {
       index = emodel->createEmbeddingItem(parents[0]);
       for(size_t i=0; i<parents.size()-1; i++)
         index = emodel->createEmbeddingItem(parents[i+1],index);
-      emodel->createEmbeddingItem(solver,index);
+      emodel->createEmbeddingItem(getProject()->getSolver(),index);
     }
     else
-      index = emodel->createEmbeddingItem(solver);
+      index = emodel->createEmbeddingItem(getProject()->getSolver());
     embeddingView->expandAll();
     embeddingView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
   }
@@ -565,16 +584,13 @@ namespace MBSimGUI {
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       actionEigenanalysis->setDisabled(true);
+      actionFrequencyResponse->setDisabled(true);
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
       actionSaveOpenMBVDataAs->setDisabled(true);
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
-
-      doc = impl->createDocument();
-      Project *project = new Project;
-      project->createXMLElement(doc);
-      projectView->setProject(project);
+      actionSaveProject->setDisabled(true);
 
       EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
       QModelIndex index = pmodel->index(0,0);
@@ -582,16 +598,20 @@ namespace MBSimGUI {
 
       ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
       index = model->index(0,0);
-      if(model->rowCount(index))
-        delete model->getItem(index)->getItemData();
       model->removeRow(index.row(), index.parent());
+      delete project;
+
+      doc = impl->createDocument();
+      project = new Project;
+      project->createXMLElement(doc);
+      projectView->setProject(project);
+
       model->createGroupItem(project->getDynamicSystemSolver(),QModelIndex());
 
       elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
-      solverView->setSolver(project->getSolver());
+      solverView->setSolver(0);
 
-      actionSaveProject->setDisabled(true);
       projectFile="";
       mbsimxml(1);
       setWindowTitle("MBS.mbsimprj.xml[*]");
@@ -605,6 +625,16 @@ namespace MBSimGUI {
       parameterBuffer.first = NULL;
       setProjectChanged(false);
       mbsDir = QFileInfo(file).absolutePath();
+      actionOpenMBV->setDisabled(true);
+      actionH5plotserie->setDisabled(true);
+      actionEigenanalysis->setDisabled(true);
+      actionFrequencyResponse->setDisabled(true);
+      actionSaveDataAs->setDisabled(true);
+      actionSaveMBSimH5DataAs->setDisabled(true);
+      actionSaveOpenMBVDataAs->setDisabled(true);
+      actionSaveStateVectorAs->setDisabled(true);
+      actionSaveEigenanalysisAs->setDisabled(true);
+      actionSaveProject->setDisabled(false);
       QDir::setCurrent(QFileInfo(file).absolutePath());
       projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
@@ -621,7 +651,6 @@ namespace MBSimGUI {
       }
       setWindowTitle(projectFile+"[*]");
       rebuildTree();
-      actionSaveProject->setDisabled(false);
       mbsimxml(1);
     }
   }
@@ -671,28 +700,28 @@ namespace MBSimGUI {
 
   void MainWindow::selectSolver(int i) {
     setProjectChanged(true);
-    DOMElement *element = solverView->getSolver()->getXMLElement();
+    DOMElement *element = getProject()->getSolver()->getXMLElement();
     DOMNode *parent = element->getParentNode();
     DOMNode *ps = element->getPreviousSibling();
     if(ps and X()%ps->getNodeName()=="#text")
       parent->removeChild(ps);
     parent->removeChild(element);
-    solverView->setSolver(i);
-    element = solverView->getSolver()->getXMLElement();
+    projectView->getProject()->setSolver(solverView->createSolver(i));
+    element = getProject()->getSolver()->getXMLElement();
     if(element) {
-      for(int i=0; i<solverView->getSolver()->getNumberOfParameters(); i++)
-        solverView->getSolver()->removeParameter(solverView->getSolver()->getParameter(i));
+      for(int i=0; i<getProject()->getSolver()->getNumberOfParameters(); i++)
+        getProject()->getSolver()->removeParameter(getProject()->getSolver()->getParameter(i));
       DOMElement *ele = static_cast<DOMElement*>(doc->importNode(element,true));
       parent->insertBefore(ele,NULL);
-      solverView->getSolver()->initializeUsingXML(ele);
+      getProject()->getSolver()->initializeUsingXML(ele);
     }
     else
-      solverView->getSolver()->createXMLElement(parent);
+      getProject()->getSolver()->createXMLElement(parent);
     std::vector<Parameter*> param;
     DOMElement *ele = MBXMLUtils::E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
     if(ele) param = Parameter::initializeParametersUsingXML(ele);
     for(size_t i=0; i<param.size(); i++)
-      solverView->getSolver()->addParameter(param[i]);
+      getProject()->getSolver()->addParameter(param[i]);
     solverViewClicked();
   }
 
@@ -843,11 +872,11 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/out0.eigenanalysis.mat",file);
   }
 
-  bool MainWindow::mbsimxml(int task) {
+  void MainWindow::mbsimxml(int task) {
     absolutePath = true;
     QModelIndex index = elementView->model()->index(0,0);
     if(not projectView->getProject())
-      return false;
+      return;
 
     currentTask = task;
 
@@ -896,7 +925,7 @@ namespace MBSimGUI {
       echoView->setErrorText(errorText);
       echoView->updateOutputAndError();
       echoView->setCurrentIndex(1);
-      return false;
+      return;
     }
     // adapt the evaluator in the dom
     DOMElement *evaluator=D(doc)->createElement(PV%"evaluator");
@@ -913,30 +942,17 @@ namespace MBSimGUI {
     echoViewTimer.start(250);
     process.setWorkingDirectory(uniqueTempDir_);
     process.start((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
-    return true;
   }
 
   void MainWindow::simulate() {
-    if(mbsimxml(0)) {
-      actionSaveDataAs->setDisabled(false);
-      actionSaveMBSimH5DataAs->setDisabled(false);
-      actionSaveOpenMBVDataAs->setDisabled(false);
-      if(saveFinalStateVector)
-        actionSaveStateVectorAs->setDisabled(false);
-      if(solverView->getSolverNumber()==7)
-        actionSaveEigenanalysisAs->setDisabled(false);
-      actionSimulate->setDisabled(true);
-      actionOpenMBV->setDisabled(true);
-      actionH5plotserie->setDisabled(true);
-      actionEigenanalysis->setDisabled(true);
-      actionFrequencyResponse->setDisabled(true);
-      actionRefresh->setDisabled(true);
-      actionDebug->setDisabled(true);
-      statusBar()->showMessage(tr("Simulating"));
-    }
+    actionSimulate->setDisabled(true);
+    statusBar()->showMessage(tr("Simulate"));
+    mbsimxml(0);
   }
 
   void MainWindow::refresh() {
+    actionRefresh->setDisabled(true);
+    statusBar()->showMessage(tr("Refresh"));
     mbsimxml(1);
   }
 
@@ -1064,23 +1080,23 @@ namespace MBSimGUI {
 
   void MainWindow::rebuildTree() {
 
-    Project *project=Embed<Project>::createAndInit(doc->getDocumentElement());
-    projectView->setProject(project);
-
     EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = pmodel->index(0,0);
     pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
 
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     index = model->index(0,0);
-    if(model->rowCount(index))
-      delete model->getItem(index)->getItemData();
     model->removeRow(index.row(), index.parent());
+    delete project;
+
+    project=Embed<Project>::createAndInit(doc->getDocumentElement());
+    projectView->setProject(project);
+
     model->createGroupItem(project->getDynamicSystemSolver());
 
     elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
-    solverView->setSolver(project->getSolver());
+    solverView->setSolver(getProject()->getSolver());
   }
 
   void MainWindow::undo() {
@@ -1912,6 +1928,11 @@ namespace MBSimGUI {
 #else
     process.terminate();
 #endif
+  }
+
+  void MainWindow::kill() {
+    echoView->setErrorText("Simulation killed\n");
+    process.kill();
   }
 
   void MainWindow::updateEchoView() {

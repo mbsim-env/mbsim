@@ -37,6 +37,7 @@ namespace MBSimGUI {
   class Project : public EmbedItemData {
     public:
       Project() : dss(NULL), solver(NULL) { }
+      ~Project();
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);

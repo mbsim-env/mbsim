@@ -64,12 +64,14 @@ namespace MBSimGUI {
   class Observer;
   class Parameter;
   class EmbedItemData;
+  class Project;
 
   class MainWindow : public QMainWindow {
 
     Q_OBJECT
 
     private:
+      Project *project;
       ElementView *elementView;
       EmbeddingView *embeddingView;
       SolverView *solverView;
@@ -116,7 +118,7 @@ namespace MBSimGUI {
       ~MainWindow();
       std::shared_ptr<MBXMLUtils::DOMParser> parser;
       std::shared_ptr<MBXMLUtils::Eval> eval;
-      bool mbsimxml(int task);
+      void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
       void addParameter(Parameter *parameter, EmbedItemData *parent);
       void addFrame(Frame *frame, Element *parent);
@@ -144,6 +146,7 @@ namespace MBSimGUI {
       void setAllowUndo(bool allowUndo_) { allowUndo = allowUndo_; }
       const std::pair<Element*,bool>& getElementBuffer() const { return elementBuffer; }
       const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
+      Project* getProject() { return project; }
 
     public slots:
       void elementViewClicked();
@@ -219,6 +222,7 @@ namespace MBSimGUI {
       void applySettings();
       void settingsFinished(int result);
       void interrupt();
+      void kill();
       void updateEchoView();
   };
 

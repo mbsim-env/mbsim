@@ -36,6 +36,11 @@ namespace MBSimGUI {
   extern DOMImplementation *impl;
   extern DOMLSSerializer *serializer;
 
+  Project::~Project() {
+    delete dss;
+    delete solver;
+  }
+
   void Project::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     if(E(e)->getTagName()==PV%"evaluator") {
@@ -77,11 +82,13 @@ namespace MBSimGUI {
   }
 
   void Project::setDynamicSystemSolver(DynamicSystemSolver *dss_) {
+    delete dss;
     dss = dss_;
     dss->setProject(this);
   }
 
   void Project::setSolver(Solver *solver_) {
+    delete solver;
     solver = solver_;
     solver->setProject(this);
   }
