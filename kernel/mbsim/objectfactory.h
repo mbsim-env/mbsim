@@ -150,7 +150,6 @@ class ObjectFactory {
     ObjectFactory() {}
 
     // create an singleton instance of the object factory.
-    // only declaration here and defition and explicit instantation for all fmatvec::Atom in objectfactory.cc (required for Windows)
     static ObjectFactory& instance();
 
     // a vector of all registered types
@@ -272,26 +271,28 @@ class EnumFactory {
 
     /** get an enum value given by the string enumStr **/
     static const EnumType& get(const MBXMLUtils::FQN &fqn, const xercesc::DOMElement *e=nullptr) {
-      auto it=reg.find(fqn);
-      if(it==reg.end())
+      auto it=regmap().find(fqn);
+      if(it==regmap().end())
         throw MBXMLUtils::DOMEvalException("No enumeration value named {"+fqn.first+"}"+fqn.second+" registred", e);
       return it->second.get();
     }
 
   private:
     MBXMLUtils::FQN fqn;
-    static std::map<MBXMLUtils::FQN, std::reference_wrapper<const EnumType>> reg;
 
+    // return the register map of the enum factory.
+    // (note: this function must not be defined in this file to avoid any imlicit instantation)
+    static std::map<MBXMLUtils::FQN, std::reference_wrapper<const EnumType>>& regmap();
 };
 
 template<class EV>
 void registerEnum_internal(const MBXMLUtils::FQN &name, const EV& value) {
-  EnumFactory<EV>::reg.insert(std::make_pair(name, std::ref(value)));
+  EnumFactory<EV>::regmap().insert(std::make_pair(name, std::ref(value)));
 }
 
 template<class EV>
 void deregisterEnum_internal(const MBXMLUtils::FQN &name) {
-  EnumFactory<EV>::reg.erase(name);
+  EnumFactory<EV>::regmap().erase(name);
 }
 
 // fix local xml name (remove template and namespace)

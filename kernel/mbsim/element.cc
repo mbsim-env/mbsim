@@ -21,6 +21,7 @@
 #include <cassert>
 #include <cfenv>
 #include <mbsim/element.h>
+#include <mbsim/objectfactory_impl.h>
 #include <mbsim/frames/frame.h>
 #include <mbsim/contours/contour.h>
 #include <mbsim/dynamic_system_solver.h>
@@ -53,9 +54,8 @@ namespace MBSim {
   // we use none signaling (quiet) NaN values for double in MBSim -> Throw compile error if these do not exist.
   static_assert(numeric_limits<double>::has_quiet_NaN, "This platform does not support quiet NaN for double.");
 
-  // this is the root element which uses PlotFeature, hence we define static parts of the enum factory here.
-  template<>
-  map<FQN, reference_wrapper<const PlotFeatureEnum>> EnumFactory<PlotFeatureEnum>::reg={};
+  // this is the root element which uses PlotFeature, hence we explicit instantate the enum factory here.
+  template class EnumFactory<PlotFeatureEnum>;
 
   const PlotFeatureEnum plotRecursive;
   const PlotFeatureEnum openMBV;
