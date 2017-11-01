@@ -413,7 +413,7 @@ namespace MBSim {
         else
           plotGroup = parent->getPlotGroup()->createChildObject<H5::Group>(name)();
 
-        plotGroup->createChildAttribute<H5::SimpleAttribute<string> >("Description")()->write("Object of class: " + getType());
+        plotGroup->createChildAttribute<H5::SimpleAttribute<string> >("Description")()->write(string("Object of class: ")+boost::core::demangle(typeid(*this).name()));
         plotVectorSerie = NULL;
 
         H5::File *file=dynamic_cast<H5::File*>(plotGroup);

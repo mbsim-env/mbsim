@@ -9,13 +9,14 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsimFlexibleBody/utils/cardan.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_cosserat.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 
 using namespace MBSim;
 
 
 namespace MBSimFlexibleBody {
-  
+
   Contour1sNeutralCosserat::Contour1sNeutralCosserat(const std::string &name_) :
       Contour1sNeutralFactory(name_), transNodes(0), rotNodes(0), nodeOffset(0), ANGLE(new Cardan()), NP(NULL), NV(NULL), NA(NULL), NDA(NULL) {
 
@@ -120,7 +121,7 @@ namespace MBSimFlexibleBody {
 
     Mat3xV Jacobian_trans(qSize, INIT, 0.);
 
-    if (parent->getType() == "FlexibleBody1s33Cosserat") {
+    if (typeid(*parent) == typeid(FlexibleBody1s33Cosserat)) {
       // distribute the E to the nearby nodes
       SqrMat Jacobian_trans_total(3, EYE);
       // TODO: only for 1s closed structue, assuming numOfElements = numOfTransNodes
@@ -133,7 +134,7 @@ namespace MBSimFlexibleBody {
         Jacobian_trans.set(RangeV(0, 2), RangeV(6 * currentElementTrans + 6, 6 * currentElementTrans + 8), weightRight * Jacobian_trans_total);
       }
     }
-    else if (parent->getType() == "FlexibleBody1s21Cosserat") {
+    else if (typeid(*parent) == typeid(FlexibleBody1s21Cosserat)) {
       // distribute the E to the nearby nodes
       SqrMat Jacobian_trans_total(2, EYE);
       // TODO: only for 1s closed structue, assuming numOfElements = numOfTransNodes
@@ -161,7 +162,7 @@ namespace MBSimFlexibleBody {
 
     // TODO: index are different for open structure
     Mat3xV Jacobian_rot(qSize, INIT, 0.);
-    if (parent->getType() == "FlexibleBody1s33Cosserat") {
+    if (typeid(*parent) == typeid(FlexibleBody1s33Cosserat)) {
       Vec3 angles = NA->calculateStaggeredAngle(sGlobal);
       SqrMat3 Jacobian_rot_total = ANGLE->computeT(angles);
 
@@ -176,7 +177,7 @@ namespace MBSimFlexibleBody {
         Jacobian_rot.set(RangeV(0, 2), RangeV(6 * currentElementRot + 3, 6 * currentElementRot + 5), weightRight * Jacobian_rot_total);
       }
     }
-    else if (parent->getType() == "FlexibleBody1s21Cosserat") {
+    else if (typeid(*parent) == typeid(FlexibleBody1s21Cosserat)) {
       // TODO: only for 1s closed structue, assuming numOfElements = numOfTransNodes
       if (currentElementRot == 0) { // the first rotational element
         Jacobian_rot(2, qSize - 1) = weightLeft;
@@ -191,8 +192,8 @@ namespace MBSimFlexibleBody {
     frame->setJacobianOfRotation(static_cast<FlexibleBody1sCosserat*>(parent)->transformJacobian(Jacobian_rot),j);
   }
 
-  MBSim::ContactKinematics * Contour1sNeutralCosserat::findContactPairingWith(std::string type0, std::string type1) {
-    return findContactPairingFlexible(type0.c_str(), type1.c_str());
+  MBSim::ContactKinematics * Contour1sNeutralCosserat::findContactPairingWith(const std::type_info &type0, const std::type_info &type1) {
+    return findContactPairingFlexible(type0, type1);
   }
 
   void Contour1sNeutralCosserat::setTransNodes(const fmatvec::VecInt & transNodes_) {

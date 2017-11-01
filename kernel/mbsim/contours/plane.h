@@ -44,9 +44,6 @@ namespace MBSim {
       Plane(const std::string &name="", Frame *R=0) : RigidContour(name,R) { }
       
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const {
-        return "Plane";
-      }
       /***************************************************/
 
       /* INTERFACE OF CONTOUR */

@@ -49,11 +49,6 @@ namespace MBSim {
       virtual double solve(double G, double gdn, double gda) = 0;
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0) = 0;
       virtual void initializeUsingXML(xercesc::DOMElement *element) {}
-
-      /**
-       * \return std::string representation
-       */
-      virtual std::string getType() const { return "GeneralizedImpactLaw"; }
       /***************************************************/
   };
 

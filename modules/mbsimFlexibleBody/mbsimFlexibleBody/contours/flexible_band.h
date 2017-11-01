@@ -47,7 +47,6 @@ namespace MBSimFlexibleBody {
       FlexibleBand(const std::string& name) : Contour1s(name), width(0), ARK(fmatvec::EYE), sOld(-1e12) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "FlexibleBand"; }
       void init(InitStage stage, const MBSim::InitConfigSet &config);
      /***************************************************/
 
@@ -81,7 +80,7 @@ namespace MBSimFlexibleBody {
 
       void setContourOfReference(Contour1s *contour_) { contour = contour_; }
 
-      MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) { return findContactPairingFlexible(type0.c_str(), type1.c_str()); }
+      MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) { return findContactPairingFlexible(type0, type1); }
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 

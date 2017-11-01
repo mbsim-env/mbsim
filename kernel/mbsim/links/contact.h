@@ -137,9 +137,6 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const {
-        return "Contact";
-      }
       virtual void plot();
       virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
       /***************************************************/

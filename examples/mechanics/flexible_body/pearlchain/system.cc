@@ -33,10 +33,10 @@ void Perlchain::initialize() {
   setValuedContacts.clear();
   setValuedJoints.clear();
   for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
-    if ((**i).getType() == "Joint") {  // for joint
+    if (typeid(**i) == typeid(Joint)) {  // for joint
       setValuedJoints.push_back(static_cast<Joint*>(*i));
     }
-    else if ((**i).getType() == "Contact") {  // for contour
+    else if (typeid(**i) == typeid(Contact)) {  // for contour
       setValuedContacts.push_back(static_cast<Contact*>(*i));
     }
     else {
@@ -461,7 +461,7 @@ cs * Perlchain::compressWToCsparse_direct(int j) {
   for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
     for (int col = (**i).getlaInd(); col < (**i).getlaInd() + (**i).getlaSize(); col++) {
       Cp[col] = counter;
-      if ((**i).getType() == "Joint") {  // for joint
+      if (typeid(**i) == typeid(Joint)) {  // for joint
         Joint * i_temp = dynamic_cast<Joint*>(*i);
         for (size_t partner = 0; partner < 2; partner++) {
           int lowerRow = (*i_temp).getFrame(partner)->gethInd(j);
@@ -477,7 +477,7 @@ cs * Perlchain::compressWToCsparse_direct(int j) {
           }
         }
       }
-      else if ((**i).getType() == "Contact") {  // for contact
+      else if (typeid(**i) == typeid(Contact)) {  // for contact
         Contact * i_temp = dynamic_cast<Contact*>(*i);
         for (size_t partner = 0; partner < 2; partner++) {
           int lowerRow = (*i_temp).getContour(partner)->gethInd(j);

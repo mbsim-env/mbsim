@@ -92,11 +92,6 @@ namespace MBSim {
        * \param XML element
        */
       virtual void initializeUsingXML(xercesc::DOMElement *element) {}
-
-      /**
-       * \return std::string representation
-       */
-      virtual std::string getType() const { return "GeneralizedForceLaw"; }
       /***************************************************/
       
       /**

@@ -39,8 +39,6 @@ namespace MBSimHydraulics {
   class HLine : public MBSim::Object {
     public:
       HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(), QIn(1), QOut(1), Jacobian(), frameOfReference(NULL), updQ(true), saved_frameOfReference("") { }
-      virtual std::string getType() const { return "HLine"; }
-
       virtual void calcSize();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -95,7 +93,6 @@ namespace MBSimHydraulics {
   class RigidHLine : public HLine {
     public:
       RigidHLine(const std::string &name) : HLine(name), pressureLossGravity(0), length(0), updPLG(true) { }
-      virtual std::string getType() const { return "RigidHLine"; }
       
       void setLength(double length_) {length=length_; }
       double getLength() const {return length; }
@@ -131,7 +128,6 @@ namespace MBSimHydraulics {
   class ConstrainedLine : public HLine {
     public:
       ConstrainedLine(const std::string &name="") : HLine(name), QFunction(NULL) { }
-      virtual std::string getType() const { return "ConstrainedLine"; }
       
       void setQFunction(MBSim::Function<double(double)> * QFunction_) {
         QFunction=QFunction_;
@@ -155,7 +151,6 @@ namespace MBSimHydraulics {
   class FluidPump : public HLine {
     public:
       FluidPump(const std::string &name="") : HLine(name), QFunction(NULL) { }
-      virtual std::string getType() const { return "FluidPump"; }
       
       void setQFunction(MBSim::Function<double(double)> * QFunction_) { QFunction=QFunction_; }
 
@@ -175,7 +170,6 @@ namespace MBSimHydraulics {
   class StatelessOrifice : public HLine {
     public:
       StatelessOrifice(const std::string &name="") : HLine(name), inflowFunction(NULL), outflowFunction(NULL), openingFunction(NULL), diameter(0), alpha(0.), calcAreaModus(0) {}
-      virtual std::string getType() const { return "StatelessOrifice"; }
       
       void setInflowFunction(MBSim::Function<double(double)> *inflowFunction_) { inflowFunction=inflowFunction_; }
       void setOutflowFunction(MBSim::Function<double(double)> *outflowFunction_) { outflowFunction=outflowFunction_; }

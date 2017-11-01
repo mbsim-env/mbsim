@@ -51,7 +51,6 @@ namespace MBSimFlexibleBody {
       Contour1sFlexible(const std::string & name) : Contour1s(name), sOld(-1e12) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "Contour1sFlexible"; }
       /***************************************************/
 
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
@@ -64,7 +63,7 @@ namespace MBSimFlexibleBody {
 
       virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
 
-      MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) { return findContactPairingFlexible(type0.c_str(), type1.c_str()); }
+      MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) { return findContactPairingFlexible(type0, type1); }
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 

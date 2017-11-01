@@ -32,7 +32,6 @@ namespace MBSim {
   class MechanicalConstraint : public Constraint {
     public:
       MechanicalConstraint(const std::string &name) : Constraint(name), link(NULL) { }
-      std::string getType() const { return "MechanicalConstraint"; }
       MechanicalLink *getMechanicalLink() { return link; }
 
     protected:

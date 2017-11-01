@@ -40,7 +40,6 @@ namespace MBSim {
       virtual void init(InitStage stage, const InitConfigSet &config);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "FixedFrameLink"; }
       /***************************************************/
 
       void updateh(int i=0);

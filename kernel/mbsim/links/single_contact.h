@@ -141,7 +141,6 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "Contact"; }
       /***************************************************/
 
       /* GETTER / SETTER */

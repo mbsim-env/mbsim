@@ -44,7 +44,6 @@ namespace MBSimHydraulics {
       
       /*! Constructor */
       ElasticLineVariational(const std::string &name="");
-      virtual std::string getType() const { return "ElasticLineVariational"; }
 
       /*! set initial pressure of the pipe fluid*/
       void setp0(double p0_) {p0=p0_; }

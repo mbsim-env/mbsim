@@ -34,7 +34,6 @@ namespace MBSim {
       void connect(RigidBody *body);
       void connect(RigidBody *body1, RigidBody *body2);
 
-      std::string getType() const { return "DualRigidBodyLink"; }
       void init(InitStage stage, const InitConfigSet &config);
 
       void initializeUsingXML(xercesc::DOMElement * element);

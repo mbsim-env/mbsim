@@ -50,8 +50,6 @@ namespace MBSim {
       virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd, double laMin=0);
       virtual bool isSetValued() const { return true; }
       /***************************************************/
-
-      virtual std::string getType() const { return "UnilateralConstraint"; }
   };
 
 }

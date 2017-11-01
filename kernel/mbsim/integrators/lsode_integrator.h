@@ -68,8 +68,6 @@ namespace MBSimIntegrator {
       void integrate(MBSim::DynamicSystemSolver& system);
       
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-
-      virtual std::string getType() const { return "LSODEIntegrator"; }
   };
 
 }

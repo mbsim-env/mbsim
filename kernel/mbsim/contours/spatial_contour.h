@@ -50,7 +50,6 @@ namespace MBSim {
       virtual ~SpatialContour();
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "SpatialContour"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */

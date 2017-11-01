@@ -183,7 +183,7 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!");
   }
 
-  ContactKinematics *NurbsCurve1s::findContactPairingWith(std::string type0, std::string type1) {
+  ContactKinematics *NurbsCurve1s::findContactPairingWith(const std::type_info &type0, const std::type_info &type1) {
     THROW_MBSIMERROR("(NurbsCurve1s::findContactPairingWith): Not implemented!");
   }
 

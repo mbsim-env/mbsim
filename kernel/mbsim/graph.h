@@ -58,7 +58,6 @@ namespace MBSim {
       virtual void sethInd(int hInd, int j=0) {(this->*sethInd_[j])(hInd);}
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "Graph"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF SUBSYSTEM */

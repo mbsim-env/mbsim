@@ -42,7 +42,6 @@ namespace MBSimFlexibleBody {
       Contour2sFlexible(const std::string &name) : Contour2s(name) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "Contour2sFlexible"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
@@ -50,8 +49,8 @@ namespace MBSimFlexibleBody {
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0) { neutral->updateJacobiansForFrame(cp); }
       /***************************************************/
 
-      MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
-        return findContactPairingFlexible(type0.c_str(), type1.c_str());
+      MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) {
+        return findContactPairingFlexible(type0, type1);
       }
 
       void setNeutral(Contour2sNeutralFactory* neutral_) {neutral = neutral_;}

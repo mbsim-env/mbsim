@@ -35,8 +35,6 @@ namespace MBSim {
     public:
       FloatingContourFrame(const std::string &name = "dummy") : ContourFrame(name) { }
 
-      std::string getType() const { return "FloatingContourFrame"; }
-
       void updatePositions();
       void updateVelocities();
       void updateAccelerations();

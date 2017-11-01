@@ -29,8 +29,6 @@ namespace MBSimFlexibleBody {
     public:
       Frame2s(const std::string &name = "dummy", const fmatvec::Vec2 &s_ = fmatvec::Vec2()) : Frame(name), s(s_) { }
 
-      std::string getType() const { return "Frame2s"; }
-
       void setParameters(const fmatvec::Vec2 &s_) { s = s_; }
       const fmatvec::Vec2& getParameters() const { return s; }
 

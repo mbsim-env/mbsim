@@ -34,7 +34,7 @@ namespace MBSimFlexibleBody {
    * \author Markus Schneider
    * \date 2010-11-05 initial commit (Markus Schneider)
    */
-  MBSim::ContactKinematics* findContactPairingFlexible(const char *contour0, const char *contour1);
+  MBSim::ContactKinematics* findContactPairingFlexible(const std::type_info &contour0, const std::type_info &contour1);
 
 }
 

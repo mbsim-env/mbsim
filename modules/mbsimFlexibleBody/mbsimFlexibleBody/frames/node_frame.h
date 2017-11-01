@@ -34,8 +34,6 @@ namespace MBSimFlexibleBody {
     public:
       NodeFrame(const std::string &name = "dummy", MBSim::Index node_ = 0) : Frame(name), node(node_) { }
 
-      std::string getType() const { return "NodeFrame"; }
-
       void setNodeNumber(MBSim::Index node_) { node = node_; }
       MBSim::Index getNodeNumber() const { return node; }
 

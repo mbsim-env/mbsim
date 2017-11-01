@@ -52,8 +52,6 @@ namespace MBSim {
       /***************************************************/
 
       bool remainsClosed(double s, double sTol) { return true; }
-
-      virtual std::string getType() const { return "BilateralConstraint"; }
   };
 
 }

@@ -33,7 +33,6 @@ namespace MBSimControl {
     public:   
       LinearTransferSystem(const std::string& name="") : Signal(name), inputSignal(NULL) { }
 
-      virtual std::string getType() const {return "LinearTransferSystem"; }
       void initializeUsingXML(xercesc::DOMElement * element);
       
       void calcxSize() { xSize = A.rows(); }

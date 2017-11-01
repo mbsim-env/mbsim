@@ -46,8 +46,6 @@ namespace MBSim {
       virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0);
       virtual double solve(double G, double gdn, double gda);
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0);
-
-      virtual std::string getType() const { return "BilateralImpact"; }
   };
 
 }

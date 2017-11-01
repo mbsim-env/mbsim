@@ -63,7 +63,6 @@ namespace MBSim {
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
       void updateVRef(const fmatvec::Mat &WParent, int j=0);
 
-      std::string getType() const { return "RigidBodyLink"; }
       void init(InitStage stage, const InitConfigSet &config);
 
       void initializeUsingXML(xercesc::DOMElement * element);

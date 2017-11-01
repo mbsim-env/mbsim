@@ -40,7 +40,6 @@ namespace MBSimHydraulics {
 
       /*! Constructor */
       ElasticLineGalerkin(const std::string &name="");
-      virtual std::string getType() const { return "ElasticLineGalerkin"; }
 
       void calcSize();
 

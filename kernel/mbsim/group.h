@@ -56,7 +56,6 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "Group"; }
       /***************************************************/
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);

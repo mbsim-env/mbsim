@@ -31,8 +31,6 @@ namespace MBSim {
     public:
       FixedContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta = fmatvec::Vec2(), Contour *contour_=NULL) : ContourFrame(name,zeta), contour(contour_) { }
 
-      std::string getType() const { return "FixedContourFrame"; }
-
       void updatePositions();
       void updateVelocities();
       void updateAccelerations();

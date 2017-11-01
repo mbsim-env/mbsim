@@ -29,8 +29,6 @@ namespace MBSim {
     public:
       ContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta_ = fmatvec::Vec2()) : Frame(name), zeta(zeta_) { }
 
-      std::string getType() const { return "ContourFrame"; }
-
       const fmatvec::Vec2& getZeta() const { return zeta; }
       void setZeta(const fmatvec::Vec2 &zeta_) { zeta = zeta_; }
 

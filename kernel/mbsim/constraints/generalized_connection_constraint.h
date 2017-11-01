@@ -31,8 +31,6 @@ namespace MBSim {
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);
       void setUpInverseKinetics();
-
-      virtual std::string getType() const { return "GeneralizedConnectionConstraint"; }
   };
 
 }

@@ -28,7 +28,6 @@ namespace MBSimHydraulics {
   class DimensionlessLine : public HLine {
     public:
       DimensionlessLine(const std::string &name) : HLine(name), length(0) {}
-      virtual std::string getType() const { return "DimensionlessLine"; }
       
       void calcSize() { nu = 0; updSize = false; }
       void setLength(double length_) {length=length_; }
@@ -54,7 +53,6 @@ namespace MBSimHydraulics {
     public:
       Leakage0DOF(const std::string &name) : DimensionlessLine(name), lpl(NULL), s1vFunction(NULL), s2vFunction(NULL), glFunction(NULL) {}
       ~Leakage0DOF();
-      virtual std::string getType() const { return "Leakage0DOF"; }
 
       void setGapLengthFunction(MBSim::Function<double(double)> * s) {
         glFunction=s;
@@ -86,7 +84,6 @@ namespace MBSimHydraulics {
   class PlaneLeakage0DOF : public Leakage0DOF {
     public:
       PlaneLeakage0DOF(const std::string &name="") : Leakage0DOF(name), hGap(0), wGap(0) {}
-      virtual std::string getType() const { return "PlaneLeakage0DOF"; }
 
       void setGapWidth(double wGap_) {wGap=wGap_; }
       double getGapWidth() const {return wGap; }
@@ -102,7 +99,6 @@ namespace MBSimHydraulics {
   class CircularLeakage0DOF : public Leakage0DOF {
     public:
       CircularLeakage0DOF(const std::string &name="") : Leakage0DOF(name), rI(0), rO(0), hGap(0) {}
-      virtual std::string getType() const { return "CircularLeakage0DOF"; }
 
       void setInnerRadius(double rI_) {rI=rI_; }
       double getInnerRadius() const {return rI; }

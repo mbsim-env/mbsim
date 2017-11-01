@@ -39,9 +39,6 @@ namespace MBSim {
       Room(const std::string &name);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const {
-        return "Room";
-      }
       /***************************************************/
 
       /* GETTER / SETTER */

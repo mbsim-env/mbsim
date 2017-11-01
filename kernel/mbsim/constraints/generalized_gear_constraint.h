@@ -41,8 +41,6 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement * element);
 
-      virtual std::string getType() const { return "GeneralizedGearConstraint"; }
-
     private:
       std::vector<RigidBody*> bi;
       RigidBody *bd;

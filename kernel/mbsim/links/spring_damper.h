@@ -47,7 +47,6 @@ namespace MBSim {
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       bool isSingleValued() const { return true; }
-      std::string getType() const { return "SpringDamper"; }
       void init(InitStage stage, const InitConfigSet &config);
       /*****************************/
 

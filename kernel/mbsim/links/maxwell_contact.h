@@ -61,9 +61,6 @@ namespace MBSim {
       virtual ~MaxwellContact();
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const {
-        return "MaxwellContact";
-      }
       /***************************************************/
 
       virtual void init(InitStage stage, const InitConfigSet &config);

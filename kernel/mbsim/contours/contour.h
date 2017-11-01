@@ -51,7 +51,6 @@ namespace MBSim {
       virtual ~Contour() { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "Contour"; }
       /***************************************************/
 
       /**
@@ -59,7 +58,7 @@ namespace MBSim {
        * \author Markus Schneider
        * \date 2010-11-05 initial commit (Markus Schneider)
        */
-      virtual ContactKinematics * findContactPairingWith(std::string type0, std::string type1) = 0;
+      virtual ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) = 0;
 
       virtual ContourFrame* createContourFrame(const std::string &name="P") { return NULL; }
 

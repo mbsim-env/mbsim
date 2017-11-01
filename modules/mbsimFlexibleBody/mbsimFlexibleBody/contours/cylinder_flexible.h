@@ -40,7 +40,6 @@ namespace MBSimFlexibleBody {
       CylinderFlexible(const std::string &name) : Contour1sFlexible(name) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "CylinderFlexible"; }
       /***************************************************/
 
       /* GETTER / SETTER */

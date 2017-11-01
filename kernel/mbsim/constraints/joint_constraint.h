@@ -62,8 +62,6 @@ namespace MBSim {
       void updateGeneralizedJacobians(int j=0);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-      virtual std::string getType() const { return "JointConstraint"; }
-
       void setInitialGuess(const fmatvec::VecV &q0_) { q0 = q0_; }
 
     private:

@@ -49,7 +49,6 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "ContourLink"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */

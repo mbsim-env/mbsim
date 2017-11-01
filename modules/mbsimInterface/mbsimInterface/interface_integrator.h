@@ -52,8 +52,6 @@ namespace MBSimInterface {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-      virtual std::string getType() const { return "InterfaceIntegrator"; }
-
       void integratorCommunication(const char* requestIdentifier, const char* interface2mbsim, unsigned int interface2mbsimLength, std::ostringstream* mbsim2interface);
       bool getExitRequest() {return exitRequest; }
 

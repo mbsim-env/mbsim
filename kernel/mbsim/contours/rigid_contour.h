@@ -52,7 +52,6 @@ namespace MBSim {
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "RigidContour"; }
       virtual void plot();
       virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
@@ -73,7 +72,7 @@ namespace MBSim {
        * \author Markus Schneider
        * \date 2010-11-05 initial commit (Markus Schneider)
        */
-      ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
+      ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1);
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 

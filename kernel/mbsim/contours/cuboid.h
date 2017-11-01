@@ -41,7 +41,6 @@ namespace MBSim {
       Cuboid(const std::string &name, double lx, double ly, double lz, Frame *R=0);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Cuboid"; }
       /***************************************************/
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);

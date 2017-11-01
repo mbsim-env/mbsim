@@ -85,8 +85,8 @@ namespace MBSimFlexibleBody {
 //    //TODO: anything important concerning the Jacobian of rotation (now the ring is not able to transfer momements, but is that one needed?)
 //  }
   
-  MBSim::ContactKinematics * Contour1sNeutralFlexibleBody1SReferenceCurve::findContactPairingWith(std::string type0, std::string type1) {
-    return findContactPairingFlexible(type0.c_str(), type1.c_str());
+  MBSim::ContactKinematics * Contour1sNeutralFlexibleBody1SReferenceCurve::findContactPairingWith(const std::type_info &type0, const std::type_info &type1) {
+    return findContactPairingFlexible(type0, type1);
   }
 
 }

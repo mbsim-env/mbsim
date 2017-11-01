@@ -42,7 +42,6 @@ namespace MBSim {
       PlanarFrustum(const std::string &name) : RigidContour(name), h(0) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "PlanarFrustum"; }
       virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 

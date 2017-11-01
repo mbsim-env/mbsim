@@ -50,7 +50,7 @@ namespace MBSim {
    * \date 2009-07-14 some comments (Thorsten Schindler)
    * \date 2010-11-05 Interface changed (Markus Schneider)
    */
-  ContactKinematics* findContactPairingRigidRigid(const char* contour0, const char* contour1);
+  ContactKinematics* findContactPairingRigidRigid(const std::type_info &contour0, const std::type_info &contour1);
 
 //  /*!
 //   * \brief apply contact between ContourInterpolation surfaces, using node-to-surface pairings, with both as master

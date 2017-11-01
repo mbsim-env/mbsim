@@ -34,7 +34,6 @@ namespace MBSimControl {
       Sensor(const std::string &name) : Signal(name) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Sensor"; }
       /***************************************************/
   };
 

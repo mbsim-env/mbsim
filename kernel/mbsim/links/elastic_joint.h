@@ -74,8 +74,6 @@ namespace MBSim {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-      virtual std::string getType() const { return "ElasticJoint"; }
-
     protected:
       Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
 

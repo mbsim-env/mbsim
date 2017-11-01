@@ -41,7 +41,6 @@ namespace MBSimHydraulics {
     public:
       RigidLinePressureLoss(const std::string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_=false, bool unilateral_=false);
       ~RigidLinePressureLoss();
-      virtual std::string getType() const { return "RigidLinePressureLoss"; }
       void calcSize() { nla = 1; updSize = false; }
       void plot();
 

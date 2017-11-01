@@ -41,7 +41,6 @@ namespace MBSimFlexibleBody {
         ContourContinuum(const std::string &name) : Contour(name) {}
 
         /* INHERITED INTERFACE OF ELEMENT */
-        virtual std::string getType() const { return "ContourContinuum"; }
         /***************************************************/
 
         /* INTERFACE FOR DERIVED CLASSES */

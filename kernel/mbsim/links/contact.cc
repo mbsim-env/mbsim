@@ -676,15 +676,15 @@ namespace MBSim {
     int cK = contactKinematics.size() - 1;
 
     if (contactKinematics[cK] == 0) {
-      contactKinematics[cK] = contour0->findContactPairingWith(contour0->getType(), contour1->getType());
+      contactKinematics[cK] = contour0->findContactPairingWith(typeid(*contour0), typeid(*contour1));
       if (contactKinematics[cK] == 0) {
-        contactKinematics[cK] = contour1->findContactPairingWith(contour1->getType(), contour0->getType());
+        contactKinematics[cK] = contour1->findContactPairingWith(typeid(*contour1), typeid(*contour0));
         if (contactKinematics[cK] == 0) {
-          contactKinematics[cK] = contour0->findContactPairingWith(contour1->getType(), contour0->getType());
+          contactKinematics[cK] = contour0->findContactPairingWith(typeid(*contour1), typeid(*contour0));
           if (contactKinematics[cK] == 0) {
-            contactKinematics[cK] = contour1->findContactPairingWith(contour0->getType(), contour1->getType());
+            contactKinematics[cK] = contour1->findContactPairingWith(typeid(*contour0), typeid(*contour1));
             if (contactKinematics[cK] == 0) {
-              THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour \"" + contour1->getType() + "\"!");
+              THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour0).name()) + "\" and Contour \"" + boost::core::demangle(typeid(*contour1).name()) + "\"!");
             }
           }
         }

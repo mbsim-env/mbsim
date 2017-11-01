@@ -49,7 +49,6 @@ namespace MBSim {
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol);
       virtual int getFrictionDirections() { return 1; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual std::string getType() const { return "PlanarCoulombImpact"; }
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }

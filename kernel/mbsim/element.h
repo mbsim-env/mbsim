@@ -84,11 +84,6 @@ namespace MBSim {
       virtual ~Element() { }
 
       /**
-       * \return std::string representation
-       */
-      virtual std::string getType() const { return "Element"; }
-
-      /**
        * \brief sets the used dynamics system solver to the element
        * \param pointer to the dynamic system solver of which the element is part of
        */

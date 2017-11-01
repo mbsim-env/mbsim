@@ -47,9 +47,6 @@ namespace MBSim {
       Plate(const std::string &name, double yL, double zL, double t, Frame *R=0);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const {
-        return "Plate";
-      }
       virtual void init(InitStage stage, const InitConfigSet &config);
       /**********************************/
 

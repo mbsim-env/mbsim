@@ -65,7 +65,6 @@ namespace MBSimFlexibleBody {
       virtual ~NurbsDisk2s();  
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "NurbsDisk2s"; }
       /***************************************************/
 
       void init(InitStage stage, const MBSim::InitConfigSet &config);
@@ -92,7 +91,7 @@ namespace MBSimFlexibleBody {
 
       virtual void plot();
 
-      virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) { return findContactPairingFlexible(type0.c_str(), type1.c_str()); }
+      virtual MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) { return findContactPairingFlexible(type0, type1); }
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         openMBVNurbsDisk = OpenMBV::ObjectFactory::create<OpenMBV::NurbsDisk>();

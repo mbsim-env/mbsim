@@ -74,7 +74,6 @@ namespace MBSimFlexibleBody {
       virtual void updateh(int i = 0);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "FlexibleBody1sCosserat"; }
       /***************************************************/
 
       /* GETTER / SETTER */

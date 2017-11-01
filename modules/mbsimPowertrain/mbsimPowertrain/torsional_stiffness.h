@@ -52,7 +52,6 @@ namespace MBSimPowertrain {
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       virtual bool isSingleValued() const { return true; }
-      std::string getType() const { return "RotationalSpringDamper"; }
       void init(InitStage stage, const MBSim::InitConfigSet &config) {
         MBSim::LinkMechanics::init(stage, config);
         func->init(stage, config);

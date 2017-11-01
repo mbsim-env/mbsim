@@ -30,8 +30,6 @@ namespace MBSim {
       FloatingRelativeContourFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), Frame *refFrame=0) : ContourFrame(name), R(refFrame), RrRP(r), ARP(A) {
       }
 
-      std::string getType() const { return "FloatingRelativeContourFrame"; }
-
       void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
       void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
       void setFrameOfReference(Frame *frame) { R = frame; }

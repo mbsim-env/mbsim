@@ -81,7 +81,6 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "FlexibleBody2s13MFRMindlin"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLEBODY2s13 */

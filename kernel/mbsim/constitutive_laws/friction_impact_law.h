@@ -51,11 +51,6 @@ namespace MBSim {
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol) = 0;
       virtual int getFrictionDirections() = 0;
       virtual void initializeUsingXML(xercesc::DOMElement *element) {}
-
-      /**
-       * \return std::string representation
-       */
-      virtual std::string getType() const { return "FrictionImpactLaw"; }
       /***************************************************/
   };
 

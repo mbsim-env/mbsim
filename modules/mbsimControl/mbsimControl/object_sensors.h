@@ -35,7 +35,6 @@ namespace MBSimControl {
   class ObjectSensor : public Sensor {
     public:
       ObjectSensor(const std::string &name) : Sensor(name), object(NULL) { }
-      std::string getType() const { return "ObjectSensor"; }
       void setObject(MBSim::Object * object_) { object=object_; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage, const MBSim::InitConfigSet &config);
@@ -51,7 +50,6 @@ namespace MBSimControl {
   class GeneralizedPositionSensor : public ObjectSensor {
     public:
       GeneralizedPositionSensor(const std::string &name="") : ObjectSensor(name) { }
-      std::string getType() const { return "GeneralizedPositionSensor"; }
       int getSignalSize() const;
       void updateSignal();
   };
@@ -63,7 +61,6 @@ namespace MBSimControl {
   class GeneralizedVelocitySensor : public ObjectSensor {
     public:
       GeneralizedVelocitySensor(const std::string &name="") : ObjectSensor(name) { }
-      std::string getType() const { return "GeneralizedVelocitySensor"; }
       int getSignalSize() const;
       void updateSignal();
   };

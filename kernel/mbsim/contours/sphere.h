@@ -49,7 +49,6 @@ namespace MBSim {
       Sphere(const std::string &name, double r_, Frame *R=0) : RigidContour(name,R), r(r_) {}
       
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Sphere"; }
       virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 

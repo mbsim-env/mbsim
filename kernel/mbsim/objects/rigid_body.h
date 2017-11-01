@@ -98,7 +98,6 @@ namespace MBSim {
       /*****************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "RigidBody"; }
       virtual void plot();
       /*****************************************************/
 

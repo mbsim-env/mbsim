@@ -45,8 +45,6 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement * element);
 
-      virtual std::string getType() const { return "GeneralizedPositionConstraint"; }
-
     private:
       Function<fmatvec::VecV(double)> *f;
   };

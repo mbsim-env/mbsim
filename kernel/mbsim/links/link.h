@@ -89,7 +89,6 @@ namespace MBSim {
       virtual void setbInd(int bInd_) { bInd = bInd_; };
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Link"; }
       virtual void plot();
       /***************************************************/
 

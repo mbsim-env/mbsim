@@ -40,7 +40,6 @@ namespace MBSim {
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       virtual bool isSingleValued() const { return true; }
-      std::string getType() const { return "GeneralizedSpringDamper"; }
       void init(InitStage stage, const InitConfigSet &config);
 
       /** \brief Set the function for the generalized force. */

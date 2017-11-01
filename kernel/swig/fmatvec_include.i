@@ -10,6 +10,7 @@
 #include <numpy/arrayobject.h>
 
 #include <typeinfo>
+#include <boost/core/demangle.hpp>
 #include <fmatvec/fmatvec.h>
 
 template<typename AT> void _checkNumPyType(int type);
@@ -125,7 +126,7 @@ void _typemapArgoutVec_R(PyObject *_input, typename std::remove_reference<Vec>::
   PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
   int type=PyArray_TYPE(input);
   if(type!=_numPyType<typename VecBT::AtomicType>())
-    throw std::runtime_error(std::string("Must have atomic type ")+typeid(typename VecBT::AtomicType).name());
+    throw std::runtime_error(std::string("Must have atomic type ")+boost::core::demangle(typeid(typename VecBT::AtomicType).name()));
   std::copy(&localVar(0), &localVar(0)+localVar.size(),
             static_cast<typename VecBT::AtomicType*>(PyArray_GETPTR1(input, 0)));
 }
@@ -189,7 +190,7 @@ void _typemapArgoutMat_R(PyObject *_input, typename std::remove_reference<Mat>::
   PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
   int type=PyArray_TYPE(input);
   if(type!=_numPyType<typename MatBT::AtomicType>())
-    throw std::runtime_error(std::string("Must have atomic type ")+typeid(typename MatBT::AtomicType).name());
+    throw std::runtime_error(std::string("Must have atomic type ")+boost::core::demangle(typeid(typename MatBT::AtomicType).name()));
   for(int r=0; r<localVar.rows(); ++r)
     for(int c=0; c<localVar.cols(); ++c)
       *static_cast<typename MatBT::AtomicType*>(PyArray_GETPTR2(input, r, c))=

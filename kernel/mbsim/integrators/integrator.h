@@ -95,11 +95,6 @@ namespace MBSimIntegrator {
 
       /***************************************************/
 
-      /**
-       * \return std::string representation
-       */
-      virtual std::string getType() const { return "Integrator"; }
-
 //      static void plot(const fmatvec::Vec& z, double t);
 
     protected:

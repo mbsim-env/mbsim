@@ -173,7 +173,6 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "DynamicSystemSolver"; }
       /***************************************************/
 
       /* GETTER / SETTER */

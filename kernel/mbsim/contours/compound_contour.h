@@ -45,9 +45,6 @@ namespace MBSim {
       ~CompoundContour();
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const {
-        return "CompoundContour";
-      }
       virtual void plot();
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGroup; }
       /***************************************************/

@@ -54,7 +54,6 @@ namespace MBSimHydraulics {
     public:
       HNodeMec(const std::string &name);
       ~HNodeMec();
-      virtual std::string getType() const { return "HNodeMec"; }
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVArrows, tag, (optional (size,(double),1))) { 
         openMBVArrowSize=(size>.0)?size:.0;
@@ -118,7 +117,6 @@ namespace MBSimHydraulics {
     public:
       ConstrainedNodeMec(const std::string &name="") : HNodeMec(name), pFun(NULL) {}
       ~ConstrainedNodeMec() { delete pFun; }
-      virtual std::string getType() const { return "ConstrainedNodeMec"; }
 
       void setpFunction(MBSim::Function<double(double)> * pFun_) {
         pFun=pFun_;
@@ -142,7 +140,6 @@ namespace MBSimHydraulics {
   class EnvironmentNodeMec : public HNodeMec {
     public:
       EnvironmentNodeMec(const std::string &name="") : HNodeMec(name) {}
-      virtual std::string getType() const { return "EnvironmentNodeMec"; }
 
       void init(InitStage stage, const MBSim::InitConfigSet &config);
 
@@ -155,7 +152,6 @@ namespace MBSimHydraulics {
     public:
       ElasticNodeMec(const std::string &name="") : HNodeMec(name), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
       ~ElasticNodeMec();
-      virtual std::string getType() const { return "ElasticNode"; }
 
       void setFracAir(double fracAir_) {fracAir=fracAir_; }
       void setp0(double p0_) {p0=p0_; }
@@ -187,7 +183,6 @@ namespace MBSimHydraulics {
     public:
       RigidNodeMec(const std::string &name="");
       ~RigidNodeMec();
-      virtual std::string getType() const { return "RigidNodeMec"; }
 
       bool isSetValued() const {return true; }
       bool isActive() const {return true; }

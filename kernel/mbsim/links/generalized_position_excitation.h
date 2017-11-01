@@ -40,8 +40,6 @@ namespace MBSim {
       void updatexd() { }
       void updatewb();
 
-      std::string getType() const { return "GeneralizedPositionExcitation"; }
-
       void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) {
         f = f_;
         f->setParent(this);

@@ -38,8 +38,6 @@ namespace MBSimFlexibleBody {
     public:
       FloatingRelativeFlexibleContourFrame(const std::string &name = "dummy", MBSim::Contour *contour = NULL);
 
-      std::string getType() const { return "FloatingRelativeFlexibleContourFrame"; }
-
       void updatePositions();
       void updateVelocities();
       void updateAccelerations();

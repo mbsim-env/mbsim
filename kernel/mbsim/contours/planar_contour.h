@@ -50,7 +50,6 @@ namespace MBSim {
       virtual ~PlanarContour();
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "PlanarContour"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */

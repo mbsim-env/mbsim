@@ -56,7 +56,6 @@ namespace MBSimHydraulics {
   class HNode : public MBSim::Link {
     public:
       HNode(const std::string &name);
-      virtual std::string getType() const { return "HNode"; }
 
       void calcSize();
 
@@ -115,7 +114,6 @@ namespace MBSimHydraulics {
     public:
       ConstrainedNode(const std::string &name="") : HNode(name), pFun(NULL) {}
       ~ConstrainedNode() { delete pFun; }
-      virtual std::string getType() const { return "ConstrainedNode"; }
 
       void setpFunction(MBSim::Function<double(double)> * pFun_) {
         pFun=pFun_;
@@ -137,7 +135,6 @@ namespace MBSimHydraulics {
   class EnvironmentNode : public HNode {
     public:
       EnvironmentNode(const std::string &name="") : HNode(name) {}
-      virtual std::string getType() const { return "EnvironmentNode"; }
 
       void init(InitStage stage, const MBSim::InitConfigSet &config);
 
@@ -150,7 +147,6 @@ namespace MBSimHydraulics {
     public:
       ElasticNode(const std::string &name="") : HNode(name), V(0), fracAir(0), p0(0), bulkModulus(NULL) {}
       ~ElasticNode();
-      virtual std::string getType() const { return "ElasticNode"; }
 
       void setVolume(double V_) {V=V_; }
       void setFracAir(double fracAir_) {fracAir=fracAir_; }
@@ -182,7 +178,6 @@ namespace MBSimHydraulics {
     public:
       RigidNode(const std::string &name="");
       ~RigidNode();
-      virtual std::string getType() const { return "RigidNode"; }
 
       bool isSetValued() const {return true; }
       virtual bool isActive() const {return true; }
@@ -223,7 +218,6 @@ namespace MBSimHydraulics {
     public:
       RigidCavitationNode(const std::string &name="");
       ~RigidCavitationNode();
-      virtual std::string getType() const { return "RigidCavitationNode"; }
 
       void setCavitationPressure(double pCav_) {pCav=pCav_; }
 
@@ -282,7 +276,6 @@ namespace MBSimHydraulics {
   class PressurePump : public HNode {
     public:
       PressurePump(const std::string &name="") : HNode(name), pFunction(NULL) { }
-      virtual std::string getType() const { return "PressurePump"; }
 
       void setpFunction(MBSim::Function<double(double)> *pFunction_) { pFunction=pFunction_; }
 

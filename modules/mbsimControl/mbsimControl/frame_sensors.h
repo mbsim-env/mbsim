@@ -35,7 +35,6 @@ namespace MBSimControl {
   class FrameSensor : public Sensor {
     public:
       FrameSensor(const std::string &name) : Sensor(name), frame(NULL) { }
-      std::string getType() const { return "FrameSensor"; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage, const MBSim::InitConfigSet &config);
       void setFrame(MBSim::Frame * frame_) { frame = frame_; }
@@ -52,7 +51,6 @@ namespace MBSimControl {
   class PositionSensor : public FrameSensor {
     public:
       PositionSensor(const std::string &name="") : FrameSensor(name) { }
-      std::string getType() const { return "PositionSensor"; }
       void updateSignal();
   };
 
@@ -63,7 +61,6 @@ namespace MBSimControl {
   class OrientationSensor : public FrameSensor {
     public:
       OrientationSensor(const std::string &name="") : FrameSensor(name) { }
-      std::string getType() const { return "OrientationSensor"; }
       void updateSignal();
       int getSignalSize() const { return 9; }
   };
@@ -75,7 +72,6 @@ namespace MBSimControl {
   class VelocitySensor : public FrameSensor {
     public:
       VelocitySensor(const std::string &name="") : FrameSensor(name) { }
-      std::string getType() const { return "VelocitySensor"; }
       void updateSignal();
   };
 
@@ -86,7 +82,6 @@ namespace MBSimControl {
   class AngularVelocitySensor : public FrameSensor {
     public:
       AngularVelocitySensor(const std::string &name="") : FrameSensor(name) { }
-      std::string getType() const { return "AngularVelocitySensor"; }
       void updateSignal();
   };
   
@@ -97,7 +92,6 @@ namespace MBSimControl {
 //  class RelativeCoordinateSensor : public Sensor {
 //    public:
 //      RelativeCoordinateSensor(const std::string &name) : Sensor(name), refFrame(NULL), relFrame(NULL), direction(), refFrameString(""), relFrameString("") {}
-//      std::string getType() const { return "RelativeCoordinateSensor"; }
 //      void initializeUsingXML(xercesc::DOMElement *element);
 //      void init(InitStage stage);
 //      void setReferenceFrame(MBSim::Frame * refFrame_) {refFrame=refFrame_; }
@@ -123,7 +117,6 @@ namespace MBSimControl {
 //  class RelativePositionSensor : public RelativeCoordinateSensor {
 //    public:
 //      RelativePositionSensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-//      std::string getType() const { return "RelativePositionSensor"; }
 //      void updateSignal();
 //  };
 //
@@ -134,7 +127,6 @@ namespace MBSimControl {
 //  class RelativeVelocitySensor : public RelativeCoordinateSensor {
 //    public:
 //      RelativeVelocitySensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-//      std::string getType() const { return "RelativeVelocitySensor"; }
 //      void updateSignal();
 //  };
 //
@@ -145,7 +137,6 @@ namespace MBSimControl {
 //  class RelativeAngularPositionSensor : public RelativeCoordinateSensor {
 //    public:
 //      RelativeAngularPositionSensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-//      std::string getType() const { return "RelativeAngularPositionSensor"; }
 //      void updateSignal();
 //
 //      void calcxSize() {xSize=direction.cols(); }
@@ -169,7 +160,6 @@ namespace MBSimControl {
 //  class RelativeAngularVelocitySensor : public RelativeCoordinateSensor {
 //    public:
 //      RelativeAngularVelocitySensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-//      std::string getType() const { return "RelativeAngularVelocitySensor"; }
 //      void updateSignal();
 //  };
 

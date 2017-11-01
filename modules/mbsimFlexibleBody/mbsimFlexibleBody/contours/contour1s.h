@@ -41,7 +41,6 @@ namespace MBSimFlexibleBody {
       Contour1s(const std::string &name) : Contour(name) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Contour1s"; }
       void init(InitStage stage_, const MBSim::InitConfigSet &config);
       void plot();
       /***************************************************/

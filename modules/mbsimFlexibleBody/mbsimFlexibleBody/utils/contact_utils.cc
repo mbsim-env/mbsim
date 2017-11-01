@@ -21,6 +21,16 @@
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 
 // --- List of contact kinematic implementations - BEGIN ---
+#include "mbsim/contours/circle.h"
+#include "mbsim/contours/point.h"
+#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
+#include "mbsimFlexibleBody/contours/contour_1s_neutral_factory.h"
+#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
+#include "mbsimFlexibleBody/contours/flexible_band.h"
+#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
+// --- List of contact kinematic implementations - END ---
+
+// --- List of contact kinematic implementations - BEGIN ---
 #include <mbsim/contact_kinematics/point_extrusion.h>
 #include <mbsim/contact_kinematics/circle_extrusion.h>
 
@@ -33,37 +43,39 @@
 //#include <mbsimFlexibleBody/contact_kinematics/point_contour2s.h>
 // --- List of contact kinematic implementations - END ---
 
+using namespace MBSim;
+
 namespace MBSimFlexibleBody {
 
-  MBSim::ContactKinematics* findContactPairingFlexible(const char *contour0, const char *contour1) {
+  MBSim::ContactKinematics* findContactPairingFlexible(const std::type_info &contour0, const std::type_info &contour1) {
 
-//    if(strcmp(contour0, "CircleHollow")==0 && strcmp(contour1, "CylinderFlexible")==0)
+//    if(contour0==typeid(CircleHollow) && contour1==typeid(CylinderFlexible))
 //      return new ContactKinematicsCircleHollowCylinderFlexible;
 //
-//    //else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "CylinderFlexible")==0 )
+//    //else if ( contour0==typeid(Point) && contour1==typeid(CylinderFlexible) )
 //      //return new ContactKinematicsPointCylinderFlexible;
 //
 
-    if(strcmp(contour0, "Point")==0 && strcmp(contour1, "FlexibleBand")==0)
+    if(contour0==typeid(Point) && contour1==typeid(FlexibleBand))
       return new MBSim::ContactKinematicsPointExtrusion;
 
-    else if(strcmp(contour0, "Circle")==0 && strcmp(contour1, "FlexibleBand")==0)
+    else if(contour0==typeid(Circle) && contour1==typeid(FlexibleBand))
       return new ContactKinematicsCircleFlexibleBand;
       //return new MBSim::ContactKinematicsCircleExtrusion;
 
-//    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1sFlexible")==0)
+//    else if(contour0==typeid(Point) && contour1==typeid(Contour1sFlexible))
 //      return new MBSim::ContactKinematicsPointContour1s;
 //
-//    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1sNeutralFactory")==0)
+//    else if(contour0==typeid(Point) && contour1==typeid(Contour1sNeutralFactory))
 //          return new MBSim::ContactKinematicsPointContour1s;
 
-//    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour2sNeutralFactory")==0)
+//    else if(contour0==typeid(Point) && contour1==typeid(Contour2sNeutralFactory))
 //          return new MBSimFlexibleBody::ContactKinematicsPointContour2s;
 //
-    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "NurbsDisk2s")==0)
+    else if(contour0==typeid(Point) && contour1==typeid(NurbsDisk2s))
       return new ContactKinematicsPointNurbsDisk2s;
 //
-//    else if(strcmp(contour0, "Circle")==0 && strcmp(contour1, "NurbsDisk2s")==0)
+//    else if(contour0==typeid(Circle) && contour1==typeid(NurbsDisk2s))
 //      return new ContactKinematicsCircleNurbsDisk2s;  
 //
     else

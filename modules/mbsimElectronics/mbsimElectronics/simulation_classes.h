@@ -127,7 +127,6 @@ namespace MBSimElectronics {
       Resistor(const std::string &name);
       void setResistance(double R_) { R = R_;}
       void updateGeneralizedForces();
-      std::string getType() const { return "Resistor"; }
   };
 
   class Capacitor : public ElectronicLink {
@@ -137,7 +136,6 @@ namespace MBSimElectronics {
       Capacitor(const std::string &name);
       void setCapacity(double C_) { C = C_;}
       void updateGeneralizedForces();
-      std::string getType() const { return "Capacitor"; }
   };
 
   class VoltageSource : public ElectronicLink {
@@ -148,7 +146,6 @@ namespace MBSimElectronics {
       ~VoltageSource() { delete voltageSignal; }
       void setVoltageSignal(MBSim::Function<fmatvec::VecV(double)> *func) {voltageSignal = func;}
       void updateGeneralizedForces();
-      std::string getType() const { return "VoltageSource"; }
   };
 
   class Diode : public ElectronicLink {
@@ -162,7 +159,6 @@ namespace MBSimElectronics {
       virtual bool isSingleValued() const {return not sv;}
       void checkImpactsForTermination();
       void solveImpactsGaussSeidel();
-      std::string getType() const { return "Diode"; }
   };
 
   class Switch : public ElectronicLink {
@@ -179,7 +175,6 @@ namespace MBSimElectronics {
       void checkImpactsForTermination();
       void solveImpactsGaussSeidel();
       void setVoltageSignal(MBSim::Function<fmatvec::VecV(double)> *func) {voltageSignal = func;}
-      std::string getType() const { return "Switch"; }
   };
 
   class ElectronicObject : public MBSim::Object, public ElectronicComponent {

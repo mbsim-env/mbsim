@@ -22,9 +22,6 @@ namespace MBSimFlexibleBody {
     public:
       Contour1sNeutralCosserat(const std::string &name_);
       virtual ~Contour1sNeutralCosserat();
-//      virtual std::string getType() const {
-//        return "Contour1sNeutralCosserat";
-//      }
       virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
       virtual NeutralNurbsPosition1s* createNeutralPosition();
       virtual NeutralNurbsVelocity1s* createNeutralVelocity();
@@ -41,7 +38,7 @@ namespace MBSimFlexibleBody {
       void updateVelocities(MBSim::ContourFrame *frame);
       void updateJacobians(MBSim::ContourFrame *frame, int j=0);
 
-      virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
+      virtual MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1);
 
       void setTransNodes(const fmatvec::VecInt & transNodes_);
       void setRotNodes(const fmatvec::VecInt & rotNodes_);

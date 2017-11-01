@@ -46,7 +46,6 @@ namespace MBSim {
       LineSegment(const std::string& name="", Frame *R=0);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "LineSegment"; }
       virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 

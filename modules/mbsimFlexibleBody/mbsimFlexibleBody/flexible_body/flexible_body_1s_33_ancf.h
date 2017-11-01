@@ -77,7 +77,6 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot();
-      virtual std::string getType() const { return "FlexibleBody1s33ANCF"; }
       /***************************************************/
 
       /* GETTER / SETTER */

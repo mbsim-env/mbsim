@@ -50,7 +50,6 @@ namespace MBSim {
       virtual ~PolynomialFrustum() { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "PolynomialFrustum"; }
       virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 

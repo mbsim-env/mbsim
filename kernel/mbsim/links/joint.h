@@ -109,8 +109,6 @@ namespace MBSim {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-      virtual std::string getType() const { return "Joint"; }
-
     protected:
       /**
        * \brief translational JACOBIAN (not empty for e.g. prismatic joints)

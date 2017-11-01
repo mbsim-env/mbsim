@@ -76,7 +76,6 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "FlexibleBody1s33RCM"; }
       void initializeUsingXML(xercesc::DOMElement * element);
       /***************************************************/
 

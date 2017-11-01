@@ -29,8 +29,6 @@ namespace MBSimFlexibleBody {
     public:
       Frame1s(const std::string &name = "dummy", double s_ = 0) : Frame(name), s(s_) { }
 
-      std::string getType() const { return "Frame1s"; }
-
       void setParameter(double s_) { s = s_; }
       double getParameter() const { return s; }
 

@@ -59,8 +59,6 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement * element);
 
-      virtual std::string getType() const { return "GeneralizedAccelerationConstraint"; }
-
     private:
       Function<fmatvec::VecV(fmatvec::VecV,double)> *f;
   };

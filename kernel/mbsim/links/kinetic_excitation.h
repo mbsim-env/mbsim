@@ -92,8 +92,6 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      virtual std::string getType() const { return "KineticExcitation"; }
-
      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         openMBVArrow=ombv.createOpenMBV(); 

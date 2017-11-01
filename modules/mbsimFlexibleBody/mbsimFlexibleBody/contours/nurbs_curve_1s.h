@@ -48,7 +48,6 @@ namespace MBSimFlexibleBody {
       virtual ~NurbsCurve1s() { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "NurbsCurve1s"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
@@ -59,7 +58,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual MBSim::ContactKinematics *findContactPairingWith(std::string type0, std::string type1);
+      virtual MBSim::ContactKinematics *findContactPairingWith(const std::type_info &type0, const std::type_info &type1);
       /***************************************************/
 
       /* GETTER / SETTER */

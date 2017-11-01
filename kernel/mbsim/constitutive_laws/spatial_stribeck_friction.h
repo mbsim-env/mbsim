@@ -60,7 +60,6 @@ namespace MBSim {
       virtual double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
       virtual bool isSetValued() const { return true; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual std::string getType() const { return "SpatialStribeckFriction"; }
       /***************************************************/
 
       void setFrictionFunction(Function<double(double)> *fmu_) {

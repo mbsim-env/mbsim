@@ -46,7 +46,6 @@ namespace MBSim {
       Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, bool outCont_, Frame *R=0) : RigidContour(name,R), r(r_), h(h_), outCont(outCont_) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Frustum"; }
       virtual void init(InitStage stage, const InitConfigSet &config);
       /***************************************************/
 

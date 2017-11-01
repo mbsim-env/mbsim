@@ -39,7 +39,6 @@ namespace MBSim {
       void updateGeneralizedForces();
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
-      std::string getType() const { return "GeneralizedConnection"; }
       void init(InitStage stage, const InitConfigSet &config);
       bool isSetValued() const;
       bool isSingleValued() const { return not(isSetValued()); }

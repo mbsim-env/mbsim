@@ -58,7 +58,6 @@ namespace MBSimControl {
       virtual bool gActiveChanged() { return false; }
       virtual bool isSingleValued() const { return true; }
 
-      std::string getType() const { return "Signal"; }
       virtual void plot();
       
       const fmatvec::VecV& getSignal(bool check=true) { assert((not check) or (not upds)); return s; }

@@ -34,7 +34,6 @@ namespace MBSimControl {
       FunctionSensor(const std::string &name="") : Sensor(name), function(NULL) {}
       FunctionSensor(const std::string &name, MBSim::Function<fmatvec::VecV(double)>* function_);
       ~FunctionSensor() { delete function; }
-      std::string getType() const { return "FunctionSensor"; }
       void setFunction(MBSim::Function<fmatvec::VecV(double)>* function_);
       void updateSignal();
       void initializeUsingXML(xercesc::DOMElement *element);

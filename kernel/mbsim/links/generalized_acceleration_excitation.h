@@ -41,8 +41,6 @@ namespace MBSim {
       void updatexd();
       void updatewb();
 
-      std::string getType() const { return "GeneralizedAccelerationExcitation"; }
-
       void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { 
         f = f_;
         f->setParent(this);

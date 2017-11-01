@@ -54,7 +54,6 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBodyLinearExternal() {}
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "FlexibleBodyLinearExternal"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */

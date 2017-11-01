@@ -65,11 +65,6 @@ namespace MBSim {
       virtual double getFrictionCoefficient(double gd) { return 0; }
       virtual bool isSetValued() const = 0;
       virtual void initializeUsingXML(xercesc::DOMElement *element) {}
-
-      /**
-       * \return std::string representation
-       */
-      virtual std::string getType() const { return "FrictionForceLaw"; }
       /***************************************************/
       
       fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { assert(frictionForceFunc); return (*frictionForceFunc)(gd,laN); }
