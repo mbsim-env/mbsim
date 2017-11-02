@@ -112,7 +112,7 @@ namespace MBSimControl {
   }
 
   void MasslessSpringDamper::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveXMLPath) {
+    if (stage==resolveStringRef) {
       if (inputSignalString!="")
         setInputSignal(getByPath<Signal>(inputSignalString));
     }

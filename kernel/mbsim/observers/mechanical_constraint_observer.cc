@@ -37,7 +37,7 @@ namespace MBSim {
   }
 
   void MechanicalConstraintObserver::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(saved_constraint!="")
         setMechanicalConstraint(getByPath<MechanicalConstraint>(saved_constraint));
       Observer::init(stage, config);

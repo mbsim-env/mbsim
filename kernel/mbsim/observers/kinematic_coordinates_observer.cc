@@ -38,7 +38,7 @@ namespace MBSim {
   }
 
   void KinematicCoordinatesObserver::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(saved_frame!="")
         setFrame(getByPath<Frame>(saved_frame));
       if(saved_frameOfReference!="")

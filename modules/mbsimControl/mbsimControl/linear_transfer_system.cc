@@ -56,7 +56,7 @@ namespace MBSimControl {
   }
 
   void LinearTransferSystem::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(inputSignalString!="")
         setInputSignal(getByPath<Signal>(inputSignalString));
       if(not inputSignal)

@@ -56,7 +56,7 @@ namespace MBSim {
   }
 
   void GeneralizedGear::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(saved_gearOutput!="")
         setGearOutput(getByPath<RigidBody>(saved_gearOutput));
       for(unsigned int i=0; i<saved_gearInput.size(); i++)

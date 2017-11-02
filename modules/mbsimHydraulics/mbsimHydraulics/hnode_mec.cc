@@ -73,7 +73,7 @@ namespace MBSimHydraulics {
   }
 
   void HNodeMec::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       for (unsigned int i=0; i<saved_translatorial_frameOfReference.size(); i++) {
         addTransMecArea(
             getByPath<Frame>(saved_translatorial_frameOfReference[i]),

@@ -36,7 +36,7 @@ namespace MBSim {
   }
 
   void FrameObserver::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(saved_frame!="")
         setFrame(getByPath<Frame>(saved_frame));
       Observer::init(stage, config);

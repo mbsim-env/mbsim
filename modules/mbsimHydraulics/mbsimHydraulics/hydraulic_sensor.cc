@@ -46,7 +46,7 @@ namespace MBSimHydraulics {
   }
 
   void FlowSensor::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveXMLPath) {
+    if (stage==resolveStringRef) {
       if (lineString!="")
         setHLine(getByPath<HLine>(lineString));
       Sensor::init(stage, config);
@@ -70,7 +70,7 @@ namespace MBSimHydraulics {
   }
 
   void PressureSensor::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveXMLPath) {
+    if (stage==resolveStringRef) {
       if (nodeString!="")
         setHNode(getByPath<HNode>(nodeString));
       Sensor::init(stage, config);

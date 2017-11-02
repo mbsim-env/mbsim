@@ -71,7 +71,7 @@ namespace MBSimControl {
 
   template<typename Ret, typename Arg>
   void SignalFunction<Ret(Arg)>::init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config) {
-    if(stage==MBSim::Element::resolveXMLPath) {
+    if(stage==MBSim::Element::resolveStringRef) {
       if(retString!="")
         setReturnSignal(this->template getByPath<Signal>(retString));
       MBSim::Function<Ret(Arg)>::init(stage, config);
@@ -120,7 +120,7 @@ namespace MBSimControl {
 
   template<typename Ret, typename Arg1, typename Arg2>
   void SignalFunction<Ret(Arg1, Arg2)>::init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config) {
-    if(stage==MBSim::Element::resolveXMLPath) {
+    if(stage==MBSim::Element::resolveStringRef) {
       if(retString!="")
         setReturnSignal(this->template getByPath<Signal>(retString));
       MBSim::Function<Ret(Arg1,Arg2)>::init(stage, config);

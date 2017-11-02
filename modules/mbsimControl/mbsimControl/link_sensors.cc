@@ -37,7 +37,7 @@ namespace MBSimControl {
   }
 
   void LinkSensor::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveXMLPath) {
+    if (stage==resolveStringRef) {
       if (linkString!="")
         setLink(getByPath<Link>(linkString));
       Sensor::init(stage, config);

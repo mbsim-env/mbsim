@@ -36,7 +36,7 @@ namespace MBSimControl {
   }
 
   void FrameSensor::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(frameString!="")
         setFrame(getByPath<Frame>(frameString));
     }
@@ -91,7 +91,7 @@ namespace MBSimControl {
 //  }
 //
 //  void RelativeCoordinateSensor::init(InitStage stage) {
-//    if (stage==resolveXMLPath) {
+//    if (stage==resolveStringRef) {
 //      if (refFrameString!="")
 //        setReferenceFrame(getByPath<Frame>(refFrameString));
 //      if (relFrameString!="")

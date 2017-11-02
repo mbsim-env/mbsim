@@ -29,7 +29,7 @@ using namespace xercesc;
 namespace MBSim {
 
   void DualRigidBodyLink::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(saved_ref!="")
         connect(getByPath<RigidBody>(saved_ref));
       else

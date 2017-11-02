@@ -42,7 +42,7 @@ namespace MBSimControl {
   }
 
   void Multiplexer::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       for(unsigned int i=0; i<signalString.size(); i++)
         addInputSignal(getByPath<Signal>(signalString[i]));
     }
@@ -81,7 +81,7 @@ namespace MBSimControl {
   }
 
   void Demultiplexer::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(signalString!="")
         setInputSignal(getByPath<Signal>(signalString));
     }
@@ -108,7 +108,7 @@ namespace MBSimControl {
   }
 
   void SignalTimeDiscretization::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveXMLPath) {
+    if (stage==resolveStringRef) {
       if (signalString!="")
         setInputSignal(getByPath<Signal>(signalString));
       Signal::init(stage, config);
@@ -142,7 +142,7 @@ namespace MBSimControl {
   }
 
   void SignalOperation::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       for(unsigned int i=0; i<signalString.size(); i++)
         addInputSignal(getByPath<Signal>(signalString[i]));
       if(signal.size()==1)

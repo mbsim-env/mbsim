@@ -72,7 +72,7 @@ namespace MBSim {
   }
 
   void JointConstraint::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       for (unsigned int i=0; i<saved_RigidBodyFirstSide.size(); i++)
         bd1.push_back(getByPath<RigidBody>(saved_RigidBodyFirstSide[i]));
       for (unsigned int i=0; i<saved_RigidBodySecondSide.size(); i++)

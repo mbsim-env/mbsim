@@ -112,7 +112,7 @@ namespace MBSim {
   }
 
   void ContourLink::init(InitStage stage, const InitConfigSet &config) {
-    if(stage == resolveXMLPath) {
+    if(stage ==resolveStringRef) {
       if(saved_ref1 != "" && saved_ref2 != "")
         connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
 

@@ -76,7 +76,7 @@ namespace MBSim {
   }
 
   void MaxwellContact::init(InitStage stage, const InitConfigSet &config) {
-    if (stage == resolveXMLPath) {
+    if (stage ==resolveStringRef) {
 
       // initialize all contour couplings if generalized force law is of maxwell-type
       initializeContourCouplings();

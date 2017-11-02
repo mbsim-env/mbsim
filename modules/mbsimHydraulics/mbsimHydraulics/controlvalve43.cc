@@ -135,7 +135,7 @@ namespace MBSimHydraulics {
   void Controlvalve43::setTOutflow(HLine * hl) {nT->addOutFlow(hl); }
 
   void Controlvalve43::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveXMLPath) {
+    if (stage==resolveStringRef) {
       checkSizeFunctionPA = new ControlvalveAreaFunction("RelativeAlphaPA", 1., 0., position, relAlphaPA);
       checkSizeFunctionPB = new ControlvalveAreaFunction("RelativeAlphaPB", -1., 1., position, relAlphaPA);
       checkSizeFunctionAT = new ControlvalveAreaFunction("RelativeAlphaAT", -1., 1.+offset, position, relAlphaPA);
@@ -148,7 +148,7 @@ namespace MBSimHydraulics {
 
 //      Group::init(stage, config);
 //    }
-//    else if (stage==resolveXMLPath) {
+//    else if (stage==resolveStringRef) {
 
       if (nPInflowString!="")
         setPInflow(getByPath<HLine>(nPInflowString));

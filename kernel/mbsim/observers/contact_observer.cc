@@ -38,7 +38,7 @@ namespace MBSim {
   }
 
   void ContactObserver::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(saved_link!="")
         setContact(getByPath<Contact>(saved_link));
       Observer::init(stage, config);

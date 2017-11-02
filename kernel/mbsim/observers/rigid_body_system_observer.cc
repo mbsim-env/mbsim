@@ -39,7 +39,7 @@ namespace MBSim {
   }
 
   void RigidBodySystemObserver::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       for(unsigned int i=0; i<saved_body.size(); i++)
         body.push_back(getByPath<RigidBody>(saved_body[i]));
       if(saved_frameOfReference!="")

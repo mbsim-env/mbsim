@@ -80,7 +80,7 @@ namespace MBSim {
   void DynamicSystemSolver::initialize() {
 
     std::string InitStageStrings[] = {
-      "resolveXMLPath",
+      "resolveStringRef",
       "preInit",
       "plotting",
       "unknownStage",

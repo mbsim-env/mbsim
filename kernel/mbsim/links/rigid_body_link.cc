@@ -169,7 +169,7 @@ namespace MBSim {
   }
 
   void RigidBodyLink::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(saved_supportFrame!="")
         setSupportFrame(getByPath<Frame>(saved_supportFrame));
     }

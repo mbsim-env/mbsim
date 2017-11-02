@@ -36,7 +36,7 @@ namespace MBSim {
   }
 
   void MechanicalLinkObserver::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(saved_link!="")
         setMechanicalLink(getByPath<MechanicalLink>(saved_link));
       Observer::init(stage, config);

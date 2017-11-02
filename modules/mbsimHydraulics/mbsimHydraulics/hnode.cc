@@ -113,7 +113,7 @@ namespace MBSimHydraulics {
   }
 
   void HNode::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveXMLPath) {
+    if (stage==resolveStringRef) {
       for (unsigned int i=0; i<refInflowString.size(); i++)
         addInFlow(getByPath<HLine>(refInflowString[i]));
       for (unsigned int i=0; i<refOutflowString.size(); i++)

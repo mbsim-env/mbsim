@@ -42,7 +42,7 @@ namespace MBSim {
   }
 
   void KineticExcitation::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(saved_ref!="") connect(getByPath<Frame>(saved_ref));
       if(frame[0]==NULL) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
     }

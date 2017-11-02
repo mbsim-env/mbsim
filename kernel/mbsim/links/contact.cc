@@ -315,7 +315,7 @@ namespace MBSim {
   }
 
   void Contact::init(InitStage stage, const InitConfigSet &config) {
-    if (stage == resolveXMLPath) {
+    if (stage ==resolveStringRef) {
       //connect all contours given in xml file
       for (size_t i = 0; i < saved_ref.size(); i++) {
         if (saved_ref[i].name1 != "" && saved_ref[i].name2 != "")

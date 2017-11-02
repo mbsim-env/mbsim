@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
   void FrameLink::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(frame[0]==NULL or frame[1]==NULL)

@@ -36,7 +36,7 @@ namespace MBSimControl {
   }
 
   void ObjectSensor::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveXMLPath) {
+    if (stage==resolveStringRef) {
       if (objectString!="")
         setObject(getByPath<Object>(objectString));
     }

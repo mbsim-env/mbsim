@@ -55,7 +55,7 @@ namespace MBSimHydraulics {
   }
 
   void LeakageLine::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveXMLPath) {
+    if (stage==resolveStringRef) {
       ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_LeakagePressureLoss", this, lpl, false, false));
       RigidHLine::init(stage, config);
     }

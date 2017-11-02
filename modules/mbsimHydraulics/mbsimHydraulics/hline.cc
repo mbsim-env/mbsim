@@ -47,7 +47,7 @@ namespace MBSimHydraulics {
   }
 
   void HLine::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveXMLPath) {
+    if(stage==resolveStringRef) {
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       Object::init(stage, config);
@@ -150,7 +150,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidHLine::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveXMLPath) {
+    if (stage==resolveStringRef) {
       for (unsigned int i=0; i<refDependencyOnInflowString.size(); i++)
         addInflowDependencyOnInflow(getByPath<RigidHLine>(refDependencyOnInflowString[i]));
       for (unsigned int i=0; i<refDependencyOnOutflowString.size(); i++)
