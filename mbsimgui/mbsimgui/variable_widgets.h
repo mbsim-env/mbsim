@@ -60,7 +60,7 @@ namespace MBSimGUI {
 
     public:
       BoolWidget(const QString &b="0");
-      QString getValue() const {return value->checkState()==Qt::Checked?"1":"0";}
+      QString getValue() const {return value->checkState()==Qt::Checked?"true":"false";}
       void setValue(const QString &str) {value->setCheckState((str=="0"||str=="false")?Qt::Unchecked:Qt::Checked);}
       virtual QString getType() const {return "Boolean";}
       bool validate(const std::vector<std::vector<QString> > &A) const;

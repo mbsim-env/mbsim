@@ -973,7 +973,7 @@ namespace MBSimGUI {
     QStringList labels;
     labels << "Type" << "Value" << "Status";
     tree->setHeaderLabels(labels);
-    layout->addWidget(tree,0,0,6,1);
+    layout->addWidget(tree,0,0,7,1);
 
     type = new CustomComboBox;
     type->addItems(type_);
@@ -983,10 +983,7 @@ namespace MBSimGUI {
     value->setEditable(true);
     layout->addWidget(value,1,1);
 
-    status = new CustomComboBox;
-    status->setEditable(true);
-    status->insertItem(0,"+");
-    status->insertItem(1,"-");
+    status = new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5);
     layout->addWidget(status,2,1);
 
     QPushButton *add = new QPushButton("Add");
@@ -997,9 +994,10 @@ namespace MBSimGUI {
     connect(remove,SIGNAL(pressed()),this,SLOT(removeFeature()));
     layout->addWidget(remove,4,1);
 
-    connect(type,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
-    connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
-    connect(status,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
+    QPushButton *update = new QPushButton("Update");
+    connect(update,SIGNAL(pressed()),this,SLOT(updateFeature()));
+    layout->addWidget(update,5,1);
+
     connect(tree,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),this,SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
   }
 
@@ -1013,7 +1011,7 @@ namespace MBSimGUI {
     QTreeWidgetItem *item = new QTreeWidgetItem;
     item->setText(0, type->currentText());
     item->setText(1, value->currentText());
-    item->setText(2, status->currentText());
+    item->setText(2, static_cast<BoolWidget*>(status->getWidget())->getValue());
     tree->addTopLevelItem(item);
   }
 
@@ -1026,7 +1024,7 @@ namespace MBSimGUI {
     if(item) {
       item->setText(0, type->currentText());
       item->setText(1, value->currentText());
-      item->setText(2, status->currentText());
+      item->setText(2, static_cast<BoolWidget*>(status->getWidget())->getValue());
     }
   }
 
@@ -1036,7 +1034,12 @@ namespace MBSimGUI {
       type->setCurrentIndex(type->findText(item->text(0)));
       type->blockSignals(false);
       value->setEditText(item->text(1));
-      status->setEditText(item->text(2));
+      QString str = item->text(2);
+      if(str=="0" or str=="1" or str=="false" or str=="true")
+        status->setIndex(0);
+      else
+        status->setIndex(1);
+      static_cast<BoolWidget*>(status->getWidget())->setValue(item->text(2));
     }
   }
 
@@ -1045,11 +1048,10 @@ namespace MBSimGUI {
     while(e && (E(e)->getTagName()==uri%"plotFeature" ||
                 E(e)->getTagName()==uri%"plotFeatureForChildren" ||
                 E(e)->getTagName()==uri%"plotFeatureRecursive")) {
-      string feature = E(e)->getAttribute("feature");
       QTreeWidgetItem *item = new QTreeWidgetItem;
       item->setText(0, QString::fromStdString(E(e)->getTagName().second));
-      item->setText(1, QString::fromStdString(feature.substr(1)));
-      item->setText(2, QString::fromStdString(feature.substr(0,1)));
+      item->setText(1, QString::fromStdString(E(e)->getAttribute("value")));
+      item->setText(2, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
       tree->addTopLevelItem(item);
       e=e->getNextElementSibling();
     }
@@ -1060,7 +1062,8 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
-      E(ele)->setAttribute("feature",(tree->topLevelItem(i)->text(2)+tree->topLevelItem(i)->text(1)).toStdString());
+      E(ele)->setAttribute("value",tree->topLevelItem(i)->text(1).toStdString());
+      ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), NULL);
       parent->insertBefore(ele, ref);
     }
     return 0;
