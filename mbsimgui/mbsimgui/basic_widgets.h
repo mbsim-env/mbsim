@@ -491,7 +491,8 @@ namespace MBSimGUI {
     Q_OBJECT
 
     protected:
-      QComboBox *type, *value, *status;
+      QComboBox *type, *value;
+      ChoiceWidget2 *status;
       QTreeWidget *tree;
       MBXMLUtils::NamespaceURI uri;
 
