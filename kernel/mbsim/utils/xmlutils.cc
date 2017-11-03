@@ -30,7 +30,7 @@ using namespace MBXMLUtils;
 namespace MBSim {
 
 pair<reference_wrapper<const PlotFeatureEnum>, bool> getPlotFeatureFromXML(const xercesc::DOMElement* e) {
-  FQN fqn(A(E(e)->getAttributeNode("value"))->getQName());
+  FQN fqn(E(e)->getAttributeQName("value"));
   const PlotFeatureEnum& enumValue=EnumFactory<PlotFeatureEnum>::get(fqn, e);
 
   bool enumStatus=Element::getBool(e);

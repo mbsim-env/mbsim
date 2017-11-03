@@ -9,7 +9,7 @@
     <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
     <plotFeatureRecursive value="mb:generalizedVelocity">true</plotFeatureRecursive>
-    <plotFeatureRecursive value="[http://www.mbsim-env.de/MBSim]deflection">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="mb:deflection">true</plotFeatureRecursive>
     <frames>
       <FixedRelativeFrame name="Q">
         <relativePosition>[2;0;0]</relativePosition>

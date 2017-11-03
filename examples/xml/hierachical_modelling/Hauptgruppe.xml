@@ -8,7 +8,7 @@
   <plotFeatureRecursive value="generalizedRelativeVelocity">1</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedForce">1</plotFeatureRecursive>
   <plotFeatureRecursive value="mbsimns:generalizedPosition">1</plotFeatureRecursive>
-  <plotFeatureRecursive value="[http://www.mbsim-env.de/MBSim]generalizedVelocity">1</plotFeatureRecursive>
+  <plotFeatureRecursive value="mbsimns:generalizedVelocity">1</plotFeatureRecursive>
   <plotFeatureRecursive value="{plotSubType}">plotSubTypeEnabled</plotFeatureRecursive>
   <plotFeature value="separateFilePerGroup">1</plotFeature>
   <frameOfReference ref="../Frame[Q{numHG}]"/>
