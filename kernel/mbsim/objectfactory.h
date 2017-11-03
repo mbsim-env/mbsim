@@ -30,16 +30,23 @@
 #include <xercesc/dom/DOMAttr.hpp>
 #include <mbxmlutilshelper/utils.h>
 #include "fmatvec/atom.h"
-#ifdef HAVE_BOOST_CORE_DEMANGLE_HPP // not available for older boost versions
-# include <boost/core/demangle.hpp>
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 105600
+  #include <boost/core/demangle.hpp>
 #else
-namespace boost {
-  namespace core {
-    inline std::string demangle(const std::string &name) {
-      return name;
+  #include <cxxabi.h>
+  namespace boost {
+    namespace core {
+      inline std::string demangle(const std::string &name) {
+        int status;
+        char* retc=abi::__cxa_demangle(name.c_str(), nullptr, nullptr, &status);
+        if(status!=0) throw std::runtime_error("Cannot demangle c++ symbol.");
+        std::string ret(retc);
+        free(retc);
+        return ret;
+      }
     }
   }
-}
 #endif
 
 #define COMMA ,

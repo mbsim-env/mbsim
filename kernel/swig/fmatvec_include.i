@@ -10,7 +10,24 @@
 #include <numpy/arrayobject.h>
 
 #include <typeinfo>
-#include <boost/core/demangle.hpp>
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 105600
+  #include <boost/core/demangle.hpp>
+#else
+  #include <cxxabi.h>
+  namespace boost {
+    namespace core {
+      inline std::string demangle(const std::string &name) {
+        int status;
+        char* retc=abi::__cxa_demangle(name.c_str(), nullptr, nullptr, &status);
+        if(status!=0) throw std::runtime_error("Cannot demangle c++ symbol.");
+        std::string ret(retc);
+        free(retc);
+        return ret;
+      }
+    }
+  }
+#endif
 #include <fmatvec/fmatvec.h>
 
 template<typename AT> void _checkNumPyType(int type);
