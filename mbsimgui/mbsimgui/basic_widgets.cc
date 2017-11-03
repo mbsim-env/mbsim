@@ -1034,7 +1034,8 @@ namespace MBSimGUI {
       type->setCurrentIndex(type->findText(item->text(0)));
       type->blockSignals(false);
       value->setEditText(item->text(1));
-      if(item->text(2)=="0" or item->text(2)=="1" or item->text(2)=="false" or item->text(2)=="true")
+      QString str = item->text(2);
+      if(str=="0" or str=="1" or str=="false" or str=="true")
         status->setIndex(0);
       else
         status->setIndex(1);
