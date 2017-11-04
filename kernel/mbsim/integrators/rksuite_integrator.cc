@@ -117,7 +117,7 @@ namespace MBSimIntegrator {
       if(result==3 || result==4)
         continue;
       if(result>=5) 
-        throw MBSimError("Integrator RKSUITE failed with result = "+to_string(result));
+        throw MBSimError("Integrator RKSUITE failed with result = "+toString(result));
 
       if (tPlot>tStop)
         tPlot=tStop;

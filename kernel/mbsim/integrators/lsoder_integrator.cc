@@ -145,7 +145,7 @@ namespace MBSimIntegrator {
         istate=1;
         rWork(4)=dt0;
       }
-      if(istate<0) throw MBSimError("Integrator LSODER failed with istate = "+to_string(istate));
+      if(istate<0) throw MBSimError("Integrator LSODER failed with istate = "+MBXMLUtils::toString(istate));
     }
     integPlot.close();
 

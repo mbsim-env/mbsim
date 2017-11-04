@@ -8,6 +8,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <mbsimControl/extern_signal_source.h>
 #include <mbsimControl/extern_signal_sink.h>
+#include <mbxmlutilshelper/toString.h>
 
 namespace MBSim {
   class DynamicSystem;
@@ -24,7 +25,7 @@ namespace {
     boost::replace_all(path, "/", "."); // replace the MBSim separator / by the FMI seperator .
     boost::replace_all(path, "[", "s.'"); // replace "[" with "s.'"; start of container with container plural + FMI seperator + quote
     boost::replace_all(path, "]", "'"); // replace "]" with "'"; end of container with quote
-    return path.substr(1)+(size<=1 ? "" : "["+std::to_string(idx)+"]"); // skip the starting spearotor character
+    return path.substr(1)+(size<=1 ? "" : "["+MBXMLUtils::toString(idx)+"]"); // skip the starting spearotor character
   }
 
   // some platform dependent file suffixes, directory names, ...
@@ -185,7 +186,7 @@ class ExternSignalSourceInput : public Variable {
     ExternSignalSourceInput(MBSimControl::ExternSignalSource *sig_, int idx_) :
       Variable(mbsimToFMIName(sig_->getPath(), idx_, sig_->getSignalSize()),
         "ExternSignalSource", Input, 'r'), sig(sig_), idx(idx_) {}
-    std::string getValueAsString() { return std::to_string(getValue(double())); }
+    std::string getValueAsString() { return MBXMLUtils::toString(getValue(double())); }
     void setValue(const double &v) {
       fmatvec::VecV curv = sig->evalSignal();
       curv(idx) = v;
@@ -205,7 +206,7 @@ class ExternSignalSinkOutput : public Variable {
     ExternSignalSinkOutput(MBSimControl::ExternSignalSink *sig_, int idx_) :
       Variable(mbsimToFMIName(sig_->getPath(), idx_, sig_->getSignalSize()),
         "ExternSignalSink", Output, 'r'), sig(sig_), idx(idx_) {}
-    std::string getValueAsString() { return std::to_string(getValue(double())); }
+    std::string getValueAsString() { return MBXMLUtils::toString(getValue(double())); }
     const double& getValue(const double &) {
       return sig->evalSignal()(idx);
     }
