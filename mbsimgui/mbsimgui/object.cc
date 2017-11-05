@@ -25,11 +25,11 @@ using namespace std;
 namespace MBSimGUI {
 
   void Object::addPlotFeatures() {
-    addPlotFeature("generalizedPosition");
-    addPlotFeature("generalizedVelocity");
-    addPlotFeature("derivativeOfGeneralizedPosition");
-    addPlotFeature("generalizedAcceleration");
-    addPlotFeature("energy");
+    addPlotFeature(MBSIM%"generalizedPosition");
+    addPlotFeature(MBSIM%"generalizedVelocity");
+    addPlotFeature(MBSIM%"derivativeOfGeneralizedPosition");
+    addPlotFeature(MBSIM%"generalizedAcceleration");
+    addPlotFeature(MBSIM%"energy");
   }
 
 }

@@ -171,13 +171,13 @@ namespace MBSimGUI {
   }
 
   void Element::addPlotFeatures() {
-    addPlotFeature("plotRecursive");
-    addPlotFeature("separateFilePerGroup");
-    addPlotFeature("openMBV");
-    addPlotFeature("debug");
+    addPlotFeature(MBSIM%"plotRecursive");
+    addPlotFeature(MBSIM%"separateFilePerGroup");
+    addPlotFeature(MBSIM%"openMBV");
+    addPlotFeature(MBSIM%"debug");
   }
 
-  void Element::addPlotFeature(const QString &pf) {
+  void Element::addPlotFeature(const FQN &pf) {
     for(unsigned int i=0; i<plotFeatures.size(); i++)
       if(plotFeatures[i]==pf)
         return;

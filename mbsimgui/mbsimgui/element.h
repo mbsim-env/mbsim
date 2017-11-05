@@ -44,7 +44,7 @@ namespace MBSimGUI {
     protected:
       Element *parent;
       static int IDcounter;
-      std::vector<QString> plotFeatures;
+      std::vector<MBXMLUtils::FQN> plotFeatures;
       QString ID;
       bool config;
     public:
@@ -112,8 +112,8 @@ namespace MBSimGUI {
       virtual QMenu* createContextMenu() { return new ElementContextMenu(this); }
       virtual QMenu* createFrameContextMenu() {return NULL;}
       Element* getRoot() {return parent?parent->getRoot():this;}
-      void addPlotFeature(const QString &pf);
-      const std::vector<QString>& getPlotFeatures() const { return plotFeatures; }
+      void addPlotFeature(const MBXMLUtils::FQN &pf);
+      const std::vector<MBXMLUtils::FQN>& getPlotFeatures() const { return plotFeatures; }
       virtual QString getPlotFeatureType() const { return ""; }
       bool getConfig() { return config; }
       void setConfig(bool config_) { config = config_; }
