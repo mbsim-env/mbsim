@@ -981,31 +981,45 @@ namespace MBSimGUI {
 
     value = new CustomComboBox;
     value->setEditable(true);
+    connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateNamespace(int)));
     layout->addWidget(value,1,1);
+
+    nspace = new CustomComboBox;
+    nspace->setEditable(true);
+    layout->addWidget(nspace,3,1);
 
     status = new ChoiceWidget2(new BoolWidgetFactory("true"),QBoxLayout::RightToLeft,5);
     layout->addWidget(status,2,1);
 
+    nspace->blockSignals(true);
+    nspace->addItem(QString::fromStdString(MBSIM.getNamespaceURI()));
+    nspace->addItem(QString::fromStdString(MBSIMCONTROL.getNamespaceURI()));
+    nspace->blockSignals(false);
+
     QPushButton *add = new QPushButton("Add");
     connect(add,SIGNAL(pressed()),this,SLOT(addFeature()));
-    layout->addWidget(add,3,1);
+    layout->addWidget(add,4,1);
 
     QPushButton *remove = new QPushButton("Remove");
     connect(remove,SIGNAL(pressed()),this,SLOT(removeFeature()));
-    layout->addWidget(remove,4,1);
+    layout->addWidget(remove,5,1);
 
     QPushButton *update = new QPushButton("Update");
     connect(update,SIGNAL(pressed()),this,SLOT(updateFeature()));
-    layout->addWidget(update,5,1);
+    layout->addWidget(update,6,1);
 
     connect(tree,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),this,SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
   }
 
-  void PlotFeatureStatusWidget::addFeature(const FQN &feature) {
+  void PlotFeatureStatusWidget::updateNamespace(int i) {
+    nspace->setEditText(QString::fromStdString(feature[i].first));
+  }
+
+  void PlotFeatureStatusWidget::addFeature(const FQN &feature_) {
     value->blockSignals(true);
-    value->addItem(QString::fromStdString(feature.second));
+    value->addItem(QString::fromStdString(feature_.second));
     value->blockSignals(false);
-    ns.push_back(feature.first);
+    feature.push_back(feature_);
   }
 
   void PlotFeatureStatusWidget::addFeature() {
@@ -1013,7 +1027,7 @@ namespace MBSimGUI {
     item->setText(0, type->currentText());
     item->setText(1, value->currentText());
     item->setText(2, static_cast<BoolWidget*>(status->getWidget())->getValue());
-    item->setText(3, QString::fromStdString(ns[value->currentIndex()].getNamespaceURI()));
+    item->setText(3, nspace->currentText());
     tree->addTopLevelItem(item);
   }
 
@@ -1027,6 +1041,7 @@ namespace MBSimGUI {
       item->setText(0, type->currentText());
       item->setText(1, value->currentText());
       item->setText(2, static_cast<BoolWidget*>(status->getWidget())->getValue());
+      item->setText(3, nspace->currentText());
     }
   }
 
@@ -1042,6 +1057,7 @@ namespace MBSimGUI {
       else
         status->setIndex(1);
       static_cast<BoolWidget*>(status->getWidget())->setValue(item->text(2));
+      nspace->setEditText(item->text(3));
     }
   }
 
@@ -1075,11 +1091,11 @@ namespace MBSimGUI {
   DOMElement* PlotFeatureStatusWidget::initializeUsingXML2(DOMElement *parent) {
     DOMElement *e=E(parent)->getFirstElementChildNamed(uri%type->itemText(0).toStdString());
     while(e && E(e)->getTagName()==uri%type->itemText(0).toStdString()) {
-      string feature = E(e)->getAttribute("feature");
       QTreeWidgetItem *item = new QTreeWidgetItem;
       item->setText(0, QString::fromStdString(E(e)->getTagName().second));
-      item->setText(1, QString::fromStdString(feature.substr(1)));
-      item->setText(2, QString::fromStdString(feature.substr(0,1)));
+      item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
+      item->setText(2, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
+      item->setText(3, QString::fromStdString(E(e)->getAttributeQName("value").first));
       tree->addTopLevelItem(item);
       e=e->getNextElementSibling();
     }
@@ -1090,7 +1106,8 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
-      E(ele)->setAttribute("feature",(tree->topLevelItem(i)->text(2)+tree->topLevelItem(i)->text(1)).toStdString());
+      E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());
+      ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), NULL);
       parent->insertBefore(ele, NULL);
     }
     return 0;

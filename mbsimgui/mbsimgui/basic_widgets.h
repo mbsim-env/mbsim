@@ -491,8 +491,8 @@ namespace MBSimGUI {
     Q_OBJECT
 
     protected:
-      std::vector<MBXMLUtils::NamespaceURI> ns;
-      QComboBox *type, *value;
+      std::vector<MBXMLUtils::FQN> feature;
+      QComboBox *type, *value, *nspace;
       ChoiceWidget2 *status;
       QTreeWidget *tree;
       MBXMLUtils::NamespaceURI uri;
@@ -506,6 +506,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element);
 
     protected slots:
+      void updateNamespace(int i);
       void addFeature();
       void removeFeature();
       void updateFeature();
