@@ -482,11 +482,11 @@ namespace MBSim {
   void Joint::initializeUsingXML(DOMElement *element) {
     FloatingFrameLink::initializeUsingXML(element);
     DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
-    if(e) setForceDirection(getMat(e,3,0));
+    if(e) setForceDirection(E(e)->getText<Mat>(3,0));
     e = E(element)->getFirstElementChildNamed(MBSIM%"forceLaw");
     if(e) setForceLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
     e = E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
-    if(e) setMomentDirection(getMat(e,3,0));
+    if(e) setMomentDirection(E(e)->getText<Mat>(3,0));
     e = E(element)->getFirstElementChildNamed(MBSIM%"momentLaw");
     if(e) setMomentLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
   }

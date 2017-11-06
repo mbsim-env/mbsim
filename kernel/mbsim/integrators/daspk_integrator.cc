@@ -133,21 +133,21 @@
 //     TiXmlElement * e;
 //     e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
 //     if (e)
-//       setAbsoluteTolerance(Element::getVec(e));
+//       setAbsoluteTolerance(E(e)->getText<Vec>());
 //     else {
 //       e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
-//       setAbsoluteTolerance(Element::getDouble(e));
+//       setAbsoluteTolerance(E(e)->getText<double>());
 //     }
 //     e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
-//     setRelativeTolerance(Element::getDouble(e));
+//     setRelativeTolerance(E(e)->getText<double>());
 //     e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
-//     setInitialStepSize(Element::getDouble(e));
+//     setInitialStepSize(E(e)->getText<double>());
 //     e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
-//     setMaximalStepSize(Element::getDouble(e));
+//     setMaximalStepSize(E(e)->getText<double>());
 //     e=element->FirstChildElement(MBSIMINTNS"minimalStepSize");
-//     setMinimalStepSize(Element::getDouble(e));
+//     setMinimalStepSize(E(e)->getText<double>());
 //     e=element->FirstChildElement(MBSIMINTNS"numberOfMaximalSteps");
-//     setmaxSteps(Element::getInt(e));
+//     setmaxSteps(E(e)->getText<int>());
 //     setStiff(element->FirstChildElement(MBSIMINTNS"stiffModus"));
 //       
 //   }

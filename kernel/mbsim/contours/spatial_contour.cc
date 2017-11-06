@@ -138,19 +138,19 @@ namespace MBSim {
     RigidContour::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"etaNodes");
-    etaNodes=getVec(e);
+    etaNodes=E(e)->getText<Vec>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"xiNodes");
-    xiNodes=getVec(e);
+    xiNodes=E(e)->getText<Vec>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
     setContourFunction(ObjectFactory::createAndInit<Function<Vec3(Vec2)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"open");
-    if(e) setOpen(Element::getBool(e));
+    if(e) setOpen(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"etaNodes");
-      if(ee) ombvEtaNodes=getVec(ee);
+      if(ee) ombvEtaNodes=E(ee)->getText<Vec>();
       ee=E(e)->getFirstElementChildNamed(MBSIM%"xiNodes");
-      if(ee) ombvXiNodes=getVec(ee);
+      if(ee) ombvXiNodes=E(ee)->getText<Vec>();
       OpenMBVIndexedFaceSet ombv;
       openMBVRigidBody=ombv.createOpenMBV(e);
     }

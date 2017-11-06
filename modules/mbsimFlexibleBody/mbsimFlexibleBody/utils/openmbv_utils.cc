@@ -35,9 +35,9 @@ namespace MBSimFlexibleBody {
     OpenMBVBody::initializeUsingXML(e);
     DOMElement *ee;
     ee = E(e)->getFirstElementChildNamed(MBSIMFLEX%"minimalColorValue");
-    if(ee) minCol = Element::getDouble(ee);
+    if(ee) minCol = E(ee)->getText<double>();
     ee = E(e)->getFirstElementChildNamed(MBSIMFLEX%"maximalColorValue");
-    if(ee) maxCol = Element::getDouble(ee);
+    if(ee) maxCol = E(ee)->getText<double>();
   }
 
   void OpenMBVDynamicIndexedFaceSet::initializeObject(const shared_ptr<OpenMBV::DynamicIndexedFaceSet> &object) {

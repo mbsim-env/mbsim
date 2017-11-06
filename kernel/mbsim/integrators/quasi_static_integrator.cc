@@ -216,7 +216,7 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIMINT % "stepSize");
-    setStepSize(Element::getDouble(e));
+    setStepSize(E(e)->getText<double>());
   }
 
   fmatvec::Vec hgFun::operator()(const fmatvec::Vec& qla) {

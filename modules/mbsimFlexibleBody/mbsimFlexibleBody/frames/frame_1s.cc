@@ -57,7 +57,7 @@ namespace MBSimFlexibleBody {
 
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"parameter");
-    setParameter(getDouble(e));
+    setParameter(E(e)->getText<double>());
   }
 
 }

@@ -327,13 +327,13 @@ namespace MBSim {
     saved_ref1=E(e)->getAttribute("ref1");
     saved_ref2=E(e)->getAttribute("ref2");
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
-    if(e) refFrameID=getInt(e)-1;
+    if(e) refFrameID=E(e)->getText<int>()-1;
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
-    if(e) setForceDirection(getMat3xV(e,0));
+    if(e) setForceDirection(E(e)->getText<Mat3xV>(3));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
-    if(e) setMomentDirection(getMat3xV(e,3));
+    if(e) setMomentDirection(E(e)->getText<Mat3xV>(3));
     e=E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
-    if (e) setInitialGuess(getVec(e));
+    if (e) setInitialGuess(E(e)->getText<Vec>());
   }
 
   void JointConstraint::setForceDirection(const Mat3xV &fd) {

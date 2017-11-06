@@ -384,25 +384,25 @@ namespace MBSimHydraulics {
   void HNodeMec::initializeUsingXML(DOMElement *element) {
     HNode::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"initialVolume");
-    V0=getDouble(e);
+    V0=MBXMLUtils::E(e)->getText<double>();
     e=e->getNextElementSibling();
     while (e && (E(e)->getTagName()==MBSIMHYDRAULICS%"translatorialBoundarySourface" || E(e)->getTagName()==MBSIMHYDRAULICS%"rotatorialBoundarySourface")) {
       if (E(e)->getTagName()==MBSIMHYDRAULICS%"translatorialBoundarySourface") {
         DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"frameOfReference");
         saved_translatorial_frameOfReference.push_back(E(ee)->getAttribute("ref"));
         ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"normal");
-        saved_translatorial_normal.push_back(getVec(ee));
+        saved_translatorial_normal.push_back(E(ee)->getText<Vec>());
         ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"area");
-        saved_translatorial_area.push_back(getDouble(ee));
+        saved_translatorial_area.push_back(MBXMLUtils::E(ee)->getText<double>());
         saved_translatorial_noVolumeChange.push_back(E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"noVolumeChange"));
       }
       else {
         DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"frameOfReference");
         saved_rotatorial_frameOfReference.push_back(E(ee)->getAttribute("ref"));
         ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"normal");
-        saved_rotatorial_normal.push_back(getVec(ee));
+        saved_rotatorial_normal.push_back(E(ee)->getText<Vec>());
         ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"area");
-        saved_rotatorial_area.push_back(getDouble(ee));
+        saved_rotatorial_area.push_back(MBXMLUtils::E(ee)->getText<double>());
         ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"frameOfRotationCenter");
         saved_rotatorial_frameOfRotationCenter.push_back(E(ee)->getAttribute("ref"));
         saved_rotatorial_noVolumeChange.push_back(E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"noVolumeChange"));
@@ -411,7 +411,7 @@ namespace MBSimHydraulics {
     }
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"enableOpenMBVArrows");
     if (e)
-      enableOpenMBVArrows(getDouble(E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"size")));
+      enableOpenMBVArrows(MBXMLUtils::E(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"size"))->getText<double>());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ConstrainedNodeMec)
@@ -497,9 +497,9 @@ namespace MBSimHydraulics {
     HNodeMec::initializeUsingXML(element);
     DOMElement * e;
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"initialPressure");
-    p0=getDouble(e);
+    p0=MBXMLUtils::E(e)->getText<double>();
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"fracAir");
-    fracAir=getDouble(e);
+    fracAir=MBXMLUtils::E(e)->getText<double>();
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, RigidNodeMec)

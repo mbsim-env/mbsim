@@ -78,7 +78,7 @@ namespace MBSim {
     GeneralizedDualConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
     if(e)
-      x0 = getVec(e);
+      x0 = E(e)->getText<Vec>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
     if(e) {
       Function<VecV(VecV,double)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());

@@ -235,7 +235,7 @@ namespace MBSim {
   void Contour::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"thickness");
-    if(e) setThickness(getDouble(e));
+    if(e) setThickness(E(e)->getText<double>());
   }
 
 }

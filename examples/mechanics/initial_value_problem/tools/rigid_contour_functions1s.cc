@@ -272,7 +272,7 @@ void FuncCrPC::initializeUsingXML(DOMElement * element) {
   ContourFunction1s::initializeUsingXML(element);
 /* DOMElement * e;
   e=element->FirstChildElement(MBSIMVALVETRAINNS"YZ");
-  Mat YZ=Element::getMat(e);
+  Mat YZ=Element::E(e)->getText<Mat>();
   int dis=1;
   e=element->FirstChildElement(MBSIMVALVETRAINNS"discretization");
   if (e)
@@ -280,11 +280,11 @@ void FuncCrPC::initializeUsingXML(DOMElement * element) {
   Vec rYZ(3);
   e=element->FirstChildElement(MBSIMVALVETRAINNS"rYZ");
   if (e)
-    rYZ=Element::getVec(e, 3);
+    rYZ=E(e)->getText<Vec>(3);
   setYZ(YZ, dis, rYZ);
   e=element->FirstChildElement(MBSIMVALVETRAINNS"enableTabularFit");
   if (e)
-    enableTabularFit(Element::getDouble(e->FirstChildElement(MBSIMVALVETRAINNS"fitLength")));*/
+    enableTabularFit(E(e->FirstChildElement(MBSIMVALVETRAINNS"fitLength")))->getText<double>());*/
 }
 
 

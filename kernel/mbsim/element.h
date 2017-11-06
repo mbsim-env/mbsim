@@ -169,6 +169,8 @@ namespace MBSim {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
+      //! Special XML helper function to return the XML (DOM) location stack of this element.
+      //! This stack is set uing Element::initializeUsingXML.
       const std::vector<MBXMLUtils::EmbedDOMLocator>& getLocationStack() const { return locationStack; }
 
       /**
@@ -190,19 +192,6 @@ namespace MBSim {
       virtual Element* getChildByContainerAndName(const std::string &container, const std::string &name) const {
         THROW_MBSIMERROR("This element has no containers with childs.");
       }
-
-      // some convenience function for XML
-      static double getDouble(const xercesc::DOMElement *e);
-      static int getInt(const xercesc::DOMElement *e);
-      static bool getBool(const xercesc::DOMElement *e);
-      static fmatvec::Vec3 getVec3(const xercesc::DOMElement *e);
-      static fmatvec::Vec getVec(const xercesc::DOMElement *e, int rows=0);
-      static fmatvec::Mat3xV getMat3xV(const xercesc::DOMElement *e, int cols=0);
-      static fmatvec::Mat getMat(const xercesc::DOMElement *e, int rows=0, int cols=0);
-      static fmatvec::SqrMat3 getSqrMat3(const xercesc::DOMElement *e);
-      static fmatvec::SqrMat getSqrMat(const xercesc::DOMElement *e, int size=0);
-      static fmatvec::SymMat3 getSymMat3(const xercesc::DOMElement *e);
-      static fmatvec::SymMat getSymMat(const xercesc::DOMElement *e, int size=0);
 
       virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return std::shared_ptr<OpenMBV::Group>();}
 
@@ -251,6 +240,7 @@ namespace MBSim {
        */
       std::string path;
 
+      //! Special XML helper variable. See getLocationStack for details.
       std::vector<MBXMLUtils::EmbedDOMLocator> locationStack;
 
       /**

@@ -333,16 +333,16 @@ namespace MBSim {
   void Cuboid::initializeUsingXML(DOMElement *element) {
     CompoundContour::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"length");
-    setLength(getVec3(e));
+    setLength(E(e)->getText<Vec3>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       DOMElement *d, *t;
       d=E(e)->getFirstElementChildNamed(MBSIM%"diffuseColor");
       t=E(e)->getFirstElementChildNamed(MBSIM%"transparency");
-      if( d &&  t) enableOpenMBV(_diffuseColor=getVec3(d), _transparency=getDouble(t));
-      if(!d &&  t) enableOpenMBV(                          _transparency=getDouble(t));
-      if( d && !t) enableOpenMBV(_diffuseColor=getVec3(d)                            );
-      if(!d && !t) enableOpenMBV(                                                    );
+      if( d &&  t) enableOpenMBV(_diffuseColor=E(d)->getText<Vec3>(), _transparency=E(e)->getText<double>());
+      if(!d &&  t) enableOpenMBV(                          _transparency=E(e)->getText<double>());
+      if( d && !t) enableOpenMBV(_diffuseColor=E(d)->getText<Vec3>()                                       );
+      if(!d && !t) enableOpenMBV(                                                                          );
     }
   }
 

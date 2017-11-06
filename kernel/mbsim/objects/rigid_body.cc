@@ -549,9 +549,9 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameForKinematics");
     if(e) setFrameForKinematics(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
     e=E(element)->getFirstElementChildNamed(MBSIM%"mass");
-    setMass(getDouble(e));
+    setMass(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"inertiaTensor");
-    setInertiaTensor(getSymMat3(e));
+    setInertiaTensor(E(e)->getText<SymMat3>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameForInertiaTensor");
     if(e) setFrameForInertiaTensor(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalTranslation");
@@ -593,11 +593,11 @@ namespace MBSim {
       }
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"translationDependentRotation");
-    if(e) translationDependentRotation = getBool(e);
+    if(e) translationDependentRotation = E(e)->getText<bool>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"coordinateTransformationForRotation");
-    if(e) coordinateTransformation = getBool(e);
+    if(e) coordinateTransformation = E(e)->getText<bool>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"bodyFixedRepresentationOfAngularVelocity");
-    if(e) bodyFixedRepresentationOfAngularVelocity = getBool(e);
+    if(e) bodyFixedRepresentationOfAngularVelocity = E(e)->getText<bool>();
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
     if(e) {

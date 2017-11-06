@@ -41,7 +41,7 @@ namespace MBSim {
       Ret parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
-        a0=Element::getDouble(e);
+        a0=MBXMLUtils::E(e)->getText<double>();
       }
   };
 

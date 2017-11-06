@@ -62,23 +62,23 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
-    if(e) setAbsoluteTolerance(Element::getVec(e));
+    if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
-    if(e) setAbsoluteTolerance(Element::getDouble(e));
+    if(e) setAbsoluteTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-    if(e) setRelativeTolerance(Element::getDouble(e));
+    if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
-    if(e) setInitialStepSize(Element::getDouble(e));
+    if(e) setInitialStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimalStepSize");
-    if(e) setMinimalStepSize(Element::getDouble(e));
+    if(e) setMinimalStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if(e) setMaximalStepSize(Element::getDouble(e));
+    if(e) setMaximalStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
-    if(e) setPlotOnRoot(Element::getBool(e));
+    if(e) setPlotOnRoot(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
-    if(e) setToleranceForPositionConstraints(Element::getDouble(e));
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
-    if(e) setToleranceForVelocityConstraints(Element::getDouble(e));
+    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
   void LSODARIntegrator::integrate(DynamicSystemSolver& system) {

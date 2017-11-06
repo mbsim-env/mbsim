@@ -1414,34 +1414,34 @@ namespace MBSim {
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"numberOfMaximalIterations");
     if (e)
-      setMaxIter(getInt(e));
+      setMaxIter(E(e)->getText<int>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"projectionTolerance");
     if (e)
-      setProjectionTolerance(getDouble(e));
+      setProjectionTolerance(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedRelativePositionTolerance");
     if (e)
-      setGeneralizedRelativePositionTolerance(getDouble(e));
+      setGeneralizedRelativePositionTolerance(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedRelativeVelocityTolerance");
     if (e)
-      setGeneralizedRelativeVelocityTolerance(getDouble(e));
+      setGeneralizedRelativeVelocityTolerance(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedRelativeAccelerationTolerance");
     if (e)
-      setGeneralizedRelativeAccelerationTolerance(getDouble(e));
+      setGeneralizedRelativeAccelerationTolerance(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceTolerance");
     if (e)
-      setGeneralizedForceTolerance(getDouble(e));
+      setGeneralizedForceTolerance(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedImpulseTolerance");
     if (e)
-      setGeneralizedImpulseTolerance(getDouble(e));
+      setGeneralizedImpulseTolerance(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"inverseKinetics");
     if (e)
-      setInverseKinetics(Element::getBool(e));
+      setInverseKinetics(E(e)->getText<bool>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"initialProjection");
     if (e)
-      setInitialProjection(Element::getBool(e));
+      setInitialProjection(E(e)->getText<bool>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"useConstraintSolverForPlot");
     if (e)
-      setUseConstraintSolverForPlot(Element::getBool(e));
+      setUseConstraintSolverForPlot(E(e)->getText<bool>());
   }
 
   DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {

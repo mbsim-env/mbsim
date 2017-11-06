@@ -33,7 +33,7 @@ namespace MBSimControl {
       void setSignal(const fmatvec::VecV& input) { assert(s.size()==input.size()); s=input; }
       void initializeUsingXML(xercesc::DOMElement *element) {
         Signal::initializeUsingXML(element);
-        setSourceSize(getInt(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"sourceSize")));
+        setSourceSize(MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"sourceSize"))->getText<int>());
       }
   };
 

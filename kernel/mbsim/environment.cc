@@ -37,7 +37,7 @@ namespace MBSim {
     Environment::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
-    setAccelerationOfGravity(Element::getVec3(e));
+    setAccelerationOfGravity(E(e)->getText<Vec3>());
   }
 
 }

@@ -100,12 +100,12 @@ namespace MBSim {
   void DirectionalSpringDamper::initializeUsingXML(DOMElement *element) {
     FloatingFrameLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
-    setForceDirection(getVec(e,3));
+    setForceDirection(E(e)->getText<Vec>(3));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
     e=E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
-    l0 = Element::getDouble(e);
+    l0 = E(e)->getText<double>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVCoilSpring ombv;

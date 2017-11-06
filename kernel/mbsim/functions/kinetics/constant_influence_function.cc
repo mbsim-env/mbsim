@@ -31,7 +31,7 @@ namespace MBSim {
 
   void ConstantInfluenceFunction::initializeUsingXML(DOMElement *element) {
     InfluenceFunction::initializeUsingXML(element);
-    couplingValue = Element::getDouble(E(element)->getFirstElementChildNamed(MBSIM%"CouplingValue"));
+    couplingValue = E(E(element)->getFirstElementChildNamed(MBSIM%"CouplingValue"))->getText<double>();
   }
 
 }

@@ -89,9 +89,9 @@ namespace MBSim {
     RigidContour::initializeUsingXML(element);
     DOMElement* e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"radius");
-    setRadius(getDouble(e));
+    setRadius(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"solid");
-    if(e) setSolid(getBool(e));
+    if(e) setSolid(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVCircle ombv;

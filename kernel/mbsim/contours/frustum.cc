@@ -69,11 +69,11 @@ namespace MBSim {
     RigidContour::initializeUsingXML(element);
     DOMElement* e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"baseRadius");
-    r(0)=getDouble(e);
+    r(0)=E(e)->getText<double>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"topRadius");
-    r(1)=getDouble(e);
+    r(1)=E(e)->getText<double>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"height");
-    h=getDouble(e);
+    h=E(e)->getText<double>();
     if (E(element)->getFirstElementChildNamed(MBSIM%"solid"))
       outCont=true;
     else

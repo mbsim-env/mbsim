@@ -41,9 +41,9 @@ namespace MBSim {
     ec=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
     if(ec) setFrameOfReference(E(ec)->getAttribute("ref"));
     ec=E(element)->getFirstElementChildNamed(MBSIM%"relativePosition");
-    if(ec) setRelativePosition(getVec3(ec));
+    if(ec) setRelativePosition(E(ec)->getText<Vec3>());
     ec=E(element)->getFirstElementChildNamed(MBSIM%"relativeOrientation");
-    if(ec) setRelativeOrientation(getSqrMat3(ec));
+    if(ec) setRelativeOrientation(E(ec)->getText<SqrMat3>());
   }
 
   void FixedRelativeFrame::updatePositions() {

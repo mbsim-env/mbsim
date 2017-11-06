@@ -93,7 +93,7 @@ namespace MBSim {
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
     e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
-    l0 = Element::getDouble(e);
+    l0 = E(e)->getText<double>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVCoilSpring ombv;

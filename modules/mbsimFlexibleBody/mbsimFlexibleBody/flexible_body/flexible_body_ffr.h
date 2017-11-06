@@ -50,8 +50,8 @@ namespace MBSimFlexibleBody {
     struct BaseType<fmatvec::Vec3> {
       typedef fmatvec::VecV type;
       static int size;
-      static fmatvec::Vec3 getEle(xercesc::DOMElement *element) { return MBSim::Element::getVec3(element); }
-      static fmatvec::VecV getMat(xercesc::DOMElement *element) { return MBSim::Element::getVec(element); }
+      static fmatvec::Vec3 getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Vec3>(); }
+      static fmatvec::VecV getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Vec>(); }
     };
 
   int BaseType<fmatvec::Vec3>::size = 3;
@@ -60,8 +60,8 @@ namespace MBSimFlexibleBody {
     struct BaseType<fmatvec::Vector<fmatvec::Fixed<6>, double> > {
       typedef fmatvec::VecV type;
       static int size;
-      static fmatvec::Vector<fmatvec::Fixed<6>, double> getEle(xercesc::DOMElement *element) { return MBSim::Element::getVec(element); }
-      static fmatvec::VecV getMat(xercesc::DOMElement *element) { return MBSim::Element::getVec(element); }
+      static fmatvec::Vector<fmatvec::Fixed<6>, double> getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Vec>(); }
+      static fmatvec::VecV getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Vec>(); }
     };
 
   int BaseType<fmatvec::Vector<fmatvec::Fixed<6>, double> >::size = 6;
@@ -70,8 +70,8 @@ namespace MBSimFlexibleBody {
     struct BaseType<fmatvec::SqrMat3> {
       typedef fmatvec::MatVx3 type;
       static int size;
-      static fmatvec::SqrMat3 getEle(xercesc::DOMElement *element) { return MBSim::Element::getSqrMat3(element); }
-      static fmatvec::MatVx3 getMat(xercesc::DOMElement *element) { return MBSim::Element::getMat(element); }
+      static fmatvec::SqrMat3 getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::SqrMat3>(); }
+      static fmatvec::MatVx3 getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::MatVx3>(); }
     };
 
   int BaseType<fmatvec::SqrMat3>::size = 3;
@@ -80,8 +80,8 @@ namespace MBSimFlexibleBody {
     struct BaseType<fmatvec::SqrMatV> {
       typedef fmatvec::MatV type;
       static int size;
-      static fmatvec::SqrMatV getEle(xercesc::DOMElement *element) { return MBSim::Element::getSqrMat(element); }
-      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBSim::Element::getMat(element); }
+      static fmatvec::SqrMatV getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::SqrMat>(); }
+      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::MatV>(); }
     };
 
   int BaseType<fmatvec::SqrMatV>::size = 0;
@@ -90,8 +90,8 @@ namespace MBSimFlexibleBody {
     struct BaseType<fmatvec::Mat3xV> {
       typedef fmatvec::MatV type;
       static int size;
-      static fmatvec::Mat3xV getEle(xercesc::DOMElement *element) { return MBSim::Element::getMat3xV(element); }
-      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBSim::Element::getMat(element); }
+      static fmatvec::Mat3xV getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Mat3xV>(); }
+      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::MatV>(); }
     };
 
   int BaseType<fmatvec::Mat3xV>::size = 3;
@@ -100,8 +100,8 @@ namespace MBSimFlexibleBody {
     struct BaseType<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > {
       typedef fmatvec::MatV type;
       static int size;
-      static fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> getEle(xercesc::DOMElement *element) { return MBSim::Element::getMat(element); }
-      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBSim::Element::getMat(element); }
+      static fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>>(); }
+      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::MatV>(); }
     };
 
   int BaseType<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> >::size = 6;

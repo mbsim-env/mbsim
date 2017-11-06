@@ -81,13 +81,13 @@ namespace MBSim {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");
         xercesc::DOMElement *ee=e->getFirstElementChild();
         while(ee && MBXMLUtils::E(ee)->getTagName()==MBSIM%"LimitedFunction") {
-          addLimitedFunction(LimitedFunction<Ret(double)>(ObjectFactory::createAndInit<Function<Ret(double)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()),Element::getDouble(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit"))));
+          addLimitedFunction(LimitedFunction<Ret(double)>(ObjectFactory::createAndInit<Function<Ret(double)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()),MBXMLUtils::E(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit"))->getText<double>()));
           ee=ee->getNextElementSibling();
         }
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftAbscissa");
-        if(e) shiftAbscissa=Element::getBool(e);
+        if(e) shiftAbscissa=MBXMLUtils::E(e)->getText<bool>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftOrdinate");
-        if(e) shiftOrdinate=Element::getBool(e);
+        if(e) shiftOrdinate=MBXMLUtils::E(e)->getText<bool>();
       }
       void init(Element::InitStage stage, const InitConfigSet &config) {
         Function<Ret(double)>::init(stage, config);
@@ -158,13 +158,13 @@ namespace MBSim {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");
         xercesc::DOMElement *ee=e->getFirstElementChild();
         while(ee && MBXMLUtils::E(ee)->getTagName()==MBSIM%"LimitedFunction") {
-          addLimitedFunction(LimitedFunction<Ret(Arg)>(ObjectFactory::createAndInit<Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()),Element::getDouble(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit"))));
+          addLimitedFunction(LimitedFunction<Ret(Arg)>(ObjectFactory::createAndInit<Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()),MBXMLUtils::E(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit"))->getText<double>()));
           ee=ee->getNextElementSibling();
         }
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftAbscissa");
-        if(e) shiftAbscissa=Element::getBool(e);
+        if(e) shiftAbscissa=MBXMLUtils::E(e)->getText<bool>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftOrdinate");
-        if(e) shiftOrdinate=Element::getBool(e);
+        if(e) shiftOrdinate=MBXMLUtils::E(e)->getText<bool>();
       }
       void init(Element::InitStage stage, const InitConfigSet &config) {
         Function<Ret(Arg)>::init(stage, config);

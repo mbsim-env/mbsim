@@ -204,25 +204,25 @@ namespace MBSimHydraulics {
 
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"length");
-    setLength(getDouble(e));
+    setLength(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
-    setDiameter(getDouble(e));
+    setDiameter(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alpha");
-    double a=getDouble(e);
+    double a=E(e)->getText<double>();
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alphaBackflow");
     double aT=0;
     if (e)
-      aT=getDouble(e);
+      aT=E(e)->getText<double>();
     setAlpha(a, aT);
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativeAlphaPA");
     setPARelativeAlphaFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalRelativeAlpha");
-    setMinimalRelativeAlpha(getDouble(e));
+    setMinimalRelativeAlpha(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"bilateralConstrained");
     if (e)
       setSetValued(true);
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"offset");
-    setOffset(getDouble(e));
+    setOffset(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativePosition");
     setRelativePositionFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflowP");

@@ -44,14 +44,14 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement * e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
         if(e) {
-          setx(Element::getVec(e));
+          setx(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
           e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
-          sety(Element::getVec(e));
+          sety(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
           e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"z");
-          setz(Element::getMat(e, y.size(), x.size()));
+          setz(MBXMLUtils::E(e)->getText<fmatvec::Mat>(y.size(), x.size()));
         }
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xyz");
-        if(e) setxyz(Element::getMat(e));
+        if(e) setxyz(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethodFirstDimension");
         if(e) { 
           std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();

@@ -36,13 +36,13 @@ namespace MBSimIntegrator {
   void Integrator::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"startTime");
-    setStartTime(Element::getDouble(e));
+    setStartTime(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"endTime");
-    setEndTime(Element::getDouble(e));
+    setEndTime(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotStepSize");
-    setPlotStepSize(Element::getDouble(e));
+    setPlotStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialState");
-    if(e) setInitialState(Element::getVec(e));
+    if(e) setInitialState(E(e)->getText<fmatvec::Vec>());
   }
 
   Integrator* Integrator::readXMLFile(const string &filename) {

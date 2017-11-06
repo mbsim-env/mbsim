@@ -39,9 +39,9 @@ namespace MBSim {
   void LinearElasticFunction::initializeUsingXML(DOMElement *element) {
     Function<VecV(VecV,VecV)>::initializeUsingXML(element);
     DOMElement *e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"stiffnessMatrix");
-    K = Element::getSymMat(e);
+    K = E(e)->getText<SymMat>();
     e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"dampingMatrix");
-    if(e) D = Element::getSymMat(e);
+    if(e) D = E(e)->getText<SymMat>();
   }
 
 }

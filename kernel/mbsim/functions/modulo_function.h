@@ -41,7 +41,7 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e;
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"denominator");
-        denom=Element::getDouble(e);
+        denom=MBXMLUtils::E(e)->getText<double>();
       }
   };
 

@@ -57,7 +57,7 @@ namespace MBSimFlexibleBody {
 
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"parameters");
-    setParameters(getVec(e));
+    setParameters(E(e)->getText<fmatvec::Vec>());
   }
 
 }

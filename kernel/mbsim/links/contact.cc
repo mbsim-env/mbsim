@@ -822,10 +822,10 @@ namespace MBSim {
     }
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"searchAllContactPoints");
-    if (e) setSearchAllContactPoints(getBool(e));
+    if (e) setSearchAllContactPoints(E(e)->getText<bool>());
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
-    if (e) setInitialGuess(getVec(e));
+    if (e) setInitialGuess(E(e)->getText<Vec>());
   }
 
   void Contact::updatecorrRef(const Vec& corrParent) {

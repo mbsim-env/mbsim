@@ -79,7 +79,7 @@ namespace MBSim {
     FrictionImpactLaw::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"frictionCoefficient");
-    setFrictionCoefficient(Element::getDouble(e));
+    setFrictionCoefficient(E(e)->getText<double>());
   }
 
 }

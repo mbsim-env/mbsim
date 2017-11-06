@@ -33,9 +33,9 @@ namespace MBSim {
     Function<double(double,double)>::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"stiffnessCoefficient");
-    c = Element::getDouble(e);
+    c = E(e)->getText<double>();
     e = E(element)->getFirstElementChildNamed(MBSIM%"dampingCoefficient");
-    d = Element::getDouble(e);
+    d = E(e)->getText<double>();
   }
 
 }

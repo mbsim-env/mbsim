@@ -77,13 +77,13 @@ namespace MBSimHydraulics {
       double size=1, pMin=0e5, pMax=10e5;
       Vec3 localWrON;
       ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"size");
-      if(ee) size=Element::getDouble(ee);
+      if(ee) size=E(ee)->getText<double>();
       ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalPressure");
-      if(ee) pMin=Element::getDouble(ee);
+      if(ee) pMin=E(ee)->getText<double>();
       ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"maximalPressure");
-      if(ee) pMax=Element::getDouble(ee);
+      if(ee) pMax=E(ee)->getText<double>();
       ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"position");
-      if (ee) localWrON=Element::getVec(ee, 3);
+      if (ee) localWrON=E(ee)->getText<Vec>(3);
       enableOpenMBVSphere(size, pMin, pMax, localWrON);
     }
   }
@@ -330,11 +330,11 @@ namespace MBSimHydraulics {
     HNode::initializeUsingXML(element);
     DOMElement * e;
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"volume");
-    V=getDouble(e);
+    V=E(e)->getText<double>();
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"initialPressure");
-    p0=getDouble(e);
+    p0=E(e)->getText<double>();
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"fracAir");
-    fracAir=getDouble(e);
+    fracAir=E(e)->getText<double>();
   }
 
   void ElasticNode::updateGeneralizedForces() {
@@ -609,7 +609,7 @@ namespace MBSimHydraulics {
     HNode::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"cavitationPressure");
-    setCavitationPressure(getDouble(e));
+    setCavitationPressure(E(e)->getText<double>());
   }
 
   void RigidCavitationNode::checkActive(int j) {

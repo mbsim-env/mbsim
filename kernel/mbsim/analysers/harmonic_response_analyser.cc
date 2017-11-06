@@ -167,15 +167,15 @@ namespace MBSimAnalyser {
   void HarmonicResponseAnalyser::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"startTime");
-    if(e) setStartTime(Element::getDouble(e));
+    if(e) setStartTime(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"excitationFrequencies");
-    if(e) setExcitationFrequencies(Element::getVec(e));
+    if(e) setExcitationFrequencies(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"systemFrequencies");
-    if(e) setSystemFrequencies(Element::getVec(e));
+    if(e) setSystemFrequencies(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"plotStepSize");
-    if(e) setPlotStepSize(Element::getDouble(e));
+    if(e) setPlotStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"initialState");
-    if(e) setInitialState(Element::getVec(e));
+    if(e) setInitialState(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"task");
     if(e) {
       string str=X()%E(e)->getFirstTextChild()->getData();
@@ -183,7 +183,7 @@ namespace MBSimAnalyser {
       if(str=="frequencyResponse") task=frequencyResponse;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"determineEquilibriumState");
-    if(e) setDetermineEquilibriumState(Element::getBool(e));
+    if(e) setDetermineEquilibriumState(E(e)->getText<bool>());
   }
 
 }

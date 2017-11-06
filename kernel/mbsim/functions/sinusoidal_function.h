@@ -52,13 +52,13 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"amplitude");
-        A=Element::getDouble(e);
+        A=MBXMLUtils::E(e)->getText<double>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"frequency");
-        f=Element::getDouble(e);
+        f=MBXMLUtils::E(e)->getText<double>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"phase");
-        if(e) phi0=Element::getDouble(e);
+        if(e) phi0=MBXMLUtils::E(e)->getText<double>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");
-        if(e) y0=Element::getDouble(e);
+        if(e) y0=MBXMLUtils::E(e)->getText<double>();
       }
   };
 

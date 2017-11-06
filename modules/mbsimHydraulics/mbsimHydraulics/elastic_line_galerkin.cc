@@ -203,32 +203,32 @@ namespace MBSimHydraulics {
     HLine::initializeUsingXML(element);
     DOMElement * e;
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"initialPressure");
-    setp0(getDouble(e));
+    setp0(MBXMLUtils::E(e)->getText<double>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"fracAir");
-    setFracAir(getDouble(e));
+    setFracAir(MBXMLUtils::E(e)->getText<double>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"heightDifference");
-    setdh(getDouble(e));
+    setdh(MBXMLUtils::E(e)->getText<double>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"dLehr");
-    setDLehr(getDouble(e));
+    setDLehr(MBXMLUtils::E(e)->getText<double>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
-    setDiameter(getDouble(e));
+    setDiameter(MBXMLUtils::E(e)->getText<double>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"length");
-    setLength(getDouble(e));
+    setLength(MBXMLUtils::E(e)->getText<double>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"AnsatzFunction");
     DOMElement * ee = e->getFirstElementChild();
     if (MBXMLUtils::E(ee)->getTagName()==MBSIMHYDRAULICS%"BSplineOrder3")
-      setAnsatzFunction(BSplineOrd3, getInt(ee->getNextElementSibling()));
+      setAnsatzFunction(BSplineOrd3, MBXMLUtils::E(ee->getNextElementSibling())->getText<int>());
     else if (MBXMLUtils::E(ee)->getTagName()==MBSIMHYDRAULICS%"BSplineOrder4")
-      setAnsatzFunction(BSplineOrd4, getInt(ee->getNextElementSibling()));
+      setAnsatzFunction(BSplineOrd4, MBXMLUtils::E(ee->getNextElementSibling())->getText<int>());
     else if (MBXMLUtils::E(ee)->getTagName()==MBSIMHYDRAULICS%"Polynom")
-      setAnsatzFunction(Polynom, getInt(ee->getNextElementSibling()));
+      setAnsatzFunction(Polynom, MBXMLUtils::E(ee->getNextElementSibling())->getText<int>());
     else if (MBXMLUtils::E(ee)->getTagName()==MBSIMHYDRAULICS%"Harmonic")
-      setAnsatzFunction(Harmonic, getInt(ee->getNextElementSibling()));
+      setAnsatzFunction(Harmonic, MBXMLUtils::E(ee->getNextElementSibling())->getText<int>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"flow2d");
     if (e)
       setFlow2D(true);
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativePlotPoints");
-    setRelativePlotPoints(getVec(e));
+    setRelativePlotPoints(MBXMLUtils::E(e)->getText<Vec>());
   }
 
 }

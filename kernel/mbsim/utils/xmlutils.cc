@@ -33,7 +33,7 @@ pair<reference_wrapper<const PlotFeatureEnum>, bool> getPlotFeatureFromXML(const
   FQN fqn(E(e)->getAttributeQName("value"));
   const PlotFeatureEnum& enumValue=EnumFactory<PlotFeatureEnum>::get(fqn, e);
 
-  bool enumStatus=Element::getBool(e);
+  bool enumStatus=E(e)->getText<bool>();
 
   return make_pair(ref(enumValue), enumStatus);
 }
