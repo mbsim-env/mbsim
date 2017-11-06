@@ -1003,17 +1003,16 @@ namespace MBSimGUI {
     type = new CustomComboBox;
     type->addItems(type_);
     layout->addWidget(type,3,1);
+    type->setCurrentIndex(2);
 
     layout->addWidget(new QLabel("Value:"),4,0);
     value = new CustomComboBox;
     value->setEditable(true);
-    connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateNamespace(int)));
     layout->addWidget(value,4,1);
-
-    value->blockSignals(true);
     for(size_t i=0; i<feature.size(); i++)
       value->addItem(QString::fromStdString(feature[i].second));
-    value->blockSignals(false);
+    value->setCurrentIndex(4);
+    connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateNamespace(int)));
 
     layout->addWidget(new QLabel("Namespace:"),6,0);
     nspace = new CustomComboBox;
