@@ -38,15 +38,6 @@ namespace MBSimGUI {
     return element;
   }
 
-  void Frame::addPlotFeatures() {
-    addPlotFeature(MBSIM%"position");
-    addPlotFeature(MBSIM%"angle");
-    addPlotFeature(MBSIM%"velocity");
-    addPlotFeature(MBSIM%"angularVelocity");
-    addPlotFeature(MBSIM%"acceleration");
-    addPlotFeature(MBSIM%"angularAcceleration");
-  }
-
   InternalFrame::InternalFrame(const QString &name_, const MBXMLUtils::FQN &xmlFrameName_, const QString &plotFeatureType_) : name(name_), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) {
     config = true;
   }

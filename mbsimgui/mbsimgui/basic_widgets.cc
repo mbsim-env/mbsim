@@ -955,10 +955,30 @@ namespace MBSimGUI {
     return 0;
   }
  
-  PlotFeatureStatusWidget::PlotFeatureStatusWidget(const QString &types, const NamespaceURI &uri_) : uri(uri_) {
+  PlotFeatureWidget::PlotFeatureWidget(const QString &types, const NamespaceURI &uri_) : uri(uri_) {
     QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
+
+    feature.push_back(MBSIM%"plotRecursive");
+    feature.push_back(MBSIM%"separateFilePerGroup");
+    feature.push_back(MBSIM%"openMBV");
+    feature.push_back(MBSIM%"debug");
+    feature.push_back(MBSIM%"position");
+    feature.push_back(MBSIM%"angle");
+    feature.push_back(MBSIM%"velocity");
+    feature.push_back(MBSIM%"angularVelocity");
+    feature.push_back(MBSIM%"acceleration");
+    feature.push_back(MBSIM%"angularAcceleration");
+    feature.push_back(MBSIM%"generalizedPosition");
+    feature.push_back(MBSIM%"generalizedVelocity");
+    feature.push_back(MBSIM%"derivativeOfGeneralizedPosition");
+    feature.push_back(MBSIM%"generalizedAcceleration");
+    feature.push_back(MBSIM%"generalizedRelativePosition");
+    feature.push_back(MBSIM%"generalizedRelativeVelocity");
+    feature.push_back(MBSIM%"generalizedForce");
+    feature.push_back(MBSIM%"energy");
+    feature.push_back(MBSIMCONTROL%"signal");
 
     QStringList type_;
     if(types.isEmpty()) {
@@ -983,6 +1003,11 @@ namespace MBSimGUI {
     value->setEditable(true);
     connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateNamespace(int)));
     layout->addWidget(value,1,1);
+
+    value->blockSignals(true);
+    for(size_t i=0; i<feature.size(); i++)
+      value->addItem(QString::fromStdString(feature[i].second));
+    value->blockSignals(false);
 
     nspace = new CustomComboBox;
     nspace->setEditable(true);
@@ -1011,18 +1036,18 @@ namespace MBSimGUI {
     connect(tree,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),this,SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
   }
 
-  void PlotFeatureStatusWidget::updateNamespace(int i) {
+  void PlotFeatureWidget::updateNamespace(int i) {
     nspace->setEditText(QString::fromStdString(feature[i].first));
   }
 
-  void PlotFeatureStatusWidget::addFeature(const FQN &feature_) {
+  void PlotFeatureWidget::addFeature(const FQN &feature_) {
     value->blockSignals(true);
     value->addItem(QString::fromStdString(feature_.second));
     value->blockSignals(false);
     feature.push_back(feature_);
   }
 
-  void PlotFeatureStatusWidget::addFeature() {
+  void PlotFeatureWidget::addFeature() {
     QTreeWidgetItem *item = new QTreeWidgetItem;
     item->setText(0, type->currentText());
     item->setText(1, value->currentText());
@@ -1031,11 +1056,11 @@ namespace MBSimGUI {
     tree->addTopLevelItem(item);
   }
 
-  void PlotFeatureStatusWidget::removeFeature() {
+  void PlotFeatureWidget::removeFeature() {
     tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
   }
 
-  void PlotFeatureStatusWidget::updateFeature() {
+  void PlotFeatureWidget::updateFeature() {
     QTreeWidgetItem *item = tree->currentItem();
     if(item) {
       item->setText(0, type->currentText());
@@ -1045,7 +1070,7 @@ namespace MBSimGUI {
     }
   }
 
-  void PlotFeatureStatusWidget::currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev) {
+  void PlotFeatureWidget::currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev) {
     if(item) {
       type->blockSignals(true);
       type->setCurrentIndex(type->findText(item->text(0)));
@@ -1061,7 +1086,7 @@ namespace MBSimGUI {
     }
   }
 
-  DOMElement* PlotFeatureStatusWidget::initializeUsingXML(DOMElement *parent) {
+  DOMElement* PlotFeatureWidget::initializeUsingXML(DOMElement *parent) {
     DOMElement *e=parent->getFirstElementChild();
     while(e && (E(e)->getTagName()==uri%"plotFeature" ||
                 E(e)->getTagName()==uri%"plotFeatureForChildren" ||
@@ -1077,7 +1102,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  DOMElement* PlotFeatureStatusWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* PlotFeatureWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
@@ -1088,7 +1113,7 @@ namespace MBSimGUI {
     return 0;
   }
 
-  DOMElement* PlotFeatureStatusWidget::initializeUsingXML2(DOMElement *parent) {
+  DOMElement* PlotFeatureWidget::initializeUsingXML2(DOMElement *parent) {
     DOMElement *e=E(parent)->getFirstElementChildNamed(uri%type->itemText(0).toStdString());
     while(e && E(e)->getTagName()==uri%type->itemText(0).toStdString()) {
       QTreeWidgetItem *item = new QTreeWidgetItem;
@@ -1102,7 +1127,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  DOMElement* PlotFeatureStatusWidget::writeXMLFile2(DOMNode *parent, DOMNode *ref) {
+  DOMElement* PlotFeatureWidget::writeXMLFile2(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());

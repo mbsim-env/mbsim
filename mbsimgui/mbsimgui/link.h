@@ -27,8 +27,6 @@ namespace MBSimGUI {
   class Link : public Element {
     public:
       QMenu* createContextMenu() { return new LinkContextMenu(this); }
-    private:
-      void addPlotFeatures();
   };
 
   class MechanicalLink : public Link {

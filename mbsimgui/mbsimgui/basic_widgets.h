@@ -487,7 +487,7 @@ namespace MBSimGUI {
       void setColor(); 
   };
 
-  class PlotFeatureStatusWidget : public Widget {
+  class PlotFeatureWidget : public Widget {
     Q_OBJECT
 
     protected:
@@ -498,7 +498,7 @@ namespace MBSimGUI {
       MBXMLUtils::NamespaceURI uri;
 
     public:
-      PlotFeatureStatusWidget(const QString &types="", const MBXMLUtils::NamespaceURI &uri=MBSIM);
+      PlotFeatureWidget(const QString &types="", const MBXMLUtils::NamespaceURI &uri=MBSIM);
       void addFeature(const MBXMLUtils::FQN &feature);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);

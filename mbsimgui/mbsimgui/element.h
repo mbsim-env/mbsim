@@ -107,18 +107,15 @@ namespace MBSimGUI {
       void setID(const QString &ID_) { ID = ID_; }
       Element* getParent() { return parent; }
       std::vector<EmbedItemData*> getParents();
-      void setParent(Element* parent_) { parent = parent_; addPlotFeatures(); }
+      void setParent(Element* parent_) { parent = parent_; }
       virtual ElementPropertyDialog* createPropertyDialog() { return new ElementPropertyDialog(this); }
       virtual QMenu* createContextMenu() { return new ElementContextMenu(this); }
       virtual QMenu* createFrameContextMenu() {return NULL;}
       Element* getRoot() {return parent?parent->getRoot():this;}
-      void addPlotFeature(const MBXMLUtils::FQN &pf);
       const std::vector<MBXMLUtils::FQN>& getPlotFeatures() const { return plotFeatures; }
       virtual QString getPlotFeatureType() const { return ""; }
       bool getConfig() { return config; }
       void setConfig(bool config_) { config = config_; }
-    private:
-      virtual void addPlotFeatures();
   };
 
   template<class T>
