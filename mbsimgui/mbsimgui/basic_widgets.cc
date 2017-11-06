@@ -991,30 +991,38 @@ namespace MBSimGUI {
 
     tree = new QTreeWidget;
     QStringList labels;
-    labels << "Type" << "Value" << "Status" << "URI";
+    labels << "Type" << "Value" << "Status" << "Namespace";
     tree->setHeaderLabels(labels);
-    layout->addWidget(tree,0,0,7,1);
+    layout->addWidget(tree,0,0,1,3);
+    tree->setColumnWidth(0,200);
+    tree->setColumnWidth(1,150);
+    tree->setColumnWidth(2,50);
+    tree->setColumnWidth(3,250);
 
+    layout->addWidget(new QLabel("Type:"),3,0);
     type = new CustomComboBox;
     type->addItems(type_);
-    layout->addWidget(type,0,1);
+    layout->addWidget(type,3,1);
 
+    layout->addWidget(new QLabel("Value:"),4,0);
     value = new CustomComboBox;
     value->setEditable(true);
     connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateNamespace(int)));
-    layout->addWidget(value,1,1);
+    layout->addWidget(value,4,1);
 
     value->blockSignals(true);
     for(size_t i=0; i<feature.size(); i++)
       value->addItem(QString::fromStdString(feature[i].second));
     value->blockSignals(false);
 
+    layout->addWidget(new QLabel("Namespace:"),6,0);
     nspace = new CustomComboBox;
     nspace->setEditable(true);
-    layout->addWidget(nspace,3,1);
+    layout->addWidget(nspace,6,1);
 
+    layout->addWidget(new QLabel("Status:"),5,0);
     status = new ChoiceWidget2(new BoolWidgetFactory("true"),QBoxLayout::RightToLeft,5);
-    layout->addWidget(status,2,1);
+    layout->addWidget(status,5,1);
 
     nspace->blockSignals(true);
     nspace->addItem(QString::fromStdString(MBSIM.getNamespaceURI()));
@@ -1023,15 +1031,17 @@ namespace MBSimGUI {
 
     QPushButton *add = new QPushButton("Add");
     connect(add,SIGNAL(pressed()),this,SLOT(addFeature()));
-    layout->addWidget(add,4,1);
+    layout->addWidget(add,3,2);
 
     QPushButton *remove = new QPushButton("Remove");
     connect(remove,SIGNAL(pressed()),this,SLOT(removeFeature()));
-    layout->addWidget(remove,5,1);
+    layout->addWidget(remove,4,2);
 
     QPushButton *update = new QPushButton("Update");
     connect(update,SIGNAL(pressed()),this,SLOT(updateFeature()));
-    layout->addWidget(update,6,1);
+    layout->addWidget(update,5,2);
+
+    layout->setColumnStretch(1,10);
 
     connect(tree,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),this,SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
   }
