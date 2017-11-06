@@ -27,7 +27,10 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   EmbeddingContextMenu::EmbeddingContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
-    QAction *action = new QAction("Paste", this);
+    QAction *action = new QAction("Load", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    addAction(action);
+    action = new QAction("Paste", this);
     action->setEnabled(mw->getParameterBuffer().first);
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
     addAction(action);
@@ -46,6 +49,10 @@ namespace MBSimGUI {
     action = new QAction("Add import parameter", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addImportParameter()));
     addAction(action);
+  }
+
+  void EmbeddingContextMenu::load() {
+    mw->loadParameter(item);
   }
 
   void EmbeddingContextMenu::paste() {
