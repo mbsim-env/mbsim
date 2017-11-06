@@ -1102,13 +1102,13 @@ namespace MBSimGUI {
     return e;
   }
 
-  DOMElement* PlotFeatureStatusWidget::writeXMLFile2(DOMNode *parent) {
+  DOMElement* PlotFeatureStatusWidget::writeXMLFile2(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
       E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());
       ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), NULL);
-      parent->insertBefore(ele, NULL);
+      parent->insertBefore(ele, ref);
     }
     return 0;
   }

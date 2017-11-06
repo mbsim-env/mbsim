@@ -196,8 +196,9 @@ namespace MBSimGUI {
 
   DOMElement* InternalFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     element->removeXMLElements();
-    visu->writeXMLFile(element->getParent()->getXMLElement(),element->getParent()->getXMLFrame());
-    static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->writeXMLFile2(element->getParent()->getXMLElement());
+    DOMElement *ele = element->getParent()->getXMLFrame();
+    visu->writeXMLFile(element->getParent()->getXMLElement(),ele);
+    static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->writeXMLFile2(element->getParent()->getXMLElement(),ele);
     return NULL;
   }
 

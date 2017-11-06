@@ -39,10 +39,9 @@ namespace MBSimGUI {
 
   void FlexibleBodyFFR::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
-    DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");
     while(e) {
       DOMNode *en=e->getNextSibling();
-      if((e != frames) and (e != contours) and (e != ombvFrame))
+      if((e != frames) and (e != contours) and (E(e)->getTagName() != MBSIM%"enableOpenMBVFrameK") and (E(e)->getTagName() != MBSIM%"plotFeatureFrameK"))
         element->removeChild(e);
       e = en;
     }

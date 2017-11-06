@@ -503,7 +503,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
       xercesc::DOMElement* initializeUsingXML2(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element);
+      xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected slots:
       void updateNamespace(int i);
