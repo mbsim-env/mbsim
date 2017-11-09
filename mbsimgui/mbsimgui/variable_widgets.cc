@@ -1162,10 +1162,7 @@ namespace MBSimGUI {
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
       return NULL;
-    string str = X()%text->getData();
-    if(str.find("\n")!=string::npos)
-      return NULL;
-    setValue(QString::fromStdString(str));
+    setValue(QString::fromStdString(X()%text->getData()));
     if(E(element)->hasAttribute("unit"))
       setUnit(QString::fromStdString(E(element)->getAttribute("unit")));
     return element;
@@ -1217,10 +1214,7 @@ namespace MBSimGUI {
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
       return NULL;
-    string str = X()%text->getData();
-    if(str.find("\n")!=string::npos)
-      return NULL;
-    setValue(QString::fromStdString(str));
+    setValue(QString::fromStdString(X()%text->getData()));
     if(E(element)->hasAttribute("unit"))
       setUnit(QString::fromStdString(E(element)->getAttribute("unit")));
     return element;
@@ -1272,10 +1266,7 @@ namespace MBSimGUI {
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
       return NULL;
-    string str = X()%text->getData();
-    if(str.find("\n")!=string::npos)
-      return NULL;
-    setValue(QString::fromStdString(str));
+    setValue(QString::fromStdString(X()%text->getData()));
     if(E(element)->hasAttribute("unit"))
       setUnit(QString::fromStdString(E(element)->getAttribute("unit")));
     return element;

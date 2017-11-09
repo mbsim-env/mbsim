@@ -34,6 +34,7 @@ namespace MBSimGUI {
     action->setEnabled(mw->getParameterBuffer().first);
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
     addAction(action);
+    addSeparator();
     action = new QAction("Add scalar parameter", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
     addAction(action);
