@@ -170,19 +170,19 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
-    if(e) setAbsoluteTolerance(Element::getVec(e));
+    if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
-    if(e) setAbsoluteTolerance(Element::getDouble(e));
+    if(e) setAbsoluteTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
-    if(e) setRelativeTolerance(Element::getVec(e));
+    if(e) setRelativeTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-    if(e) setRelativeTolerance(Element::getDouble(e));
+    if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
-    if(e) setInitialStepSize(Element::getDouble(e));
+    if(e) setInitialStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if(e) setMaximalStepSize(Element::getDouble(e));
+    if(e) setMaximalStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalNumberOfSteps");
-    if(e) setMaxStepNumber(Element::getInt(e));
+    if(e) setMaxStepNumber(E(e)->getText<int>());
   }
 
 }

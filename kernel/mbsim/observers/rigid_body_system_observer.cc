@@ -236,49 +236,57 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(e) {
       OpenMBVArrow ombv;
-      openMBVPosition=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      openMBVPosition=ombv.createOpenMBV();
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
     if(e) {
       OpenMBVArrow ombv;
-      openMBVVelocity=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      openMBVVelocity=ombv.createOpenMBV();
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
     if(e) {
       OpenMBVArrow ombv;
-      openMBVAcceleration=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      openMBVAcceleration=ombv.createOpenMBV();
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      openMBVWeight=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      openMBVWeight=ombv.createOpenMBV();
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMomentum");
     if(e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      openMBVMomentum=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      openMBVMomentum=ombv.createOpenMBV();
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularMomentum");
     if(e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      openMBVAngularMomentum=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      openMBVAngularMomentum=ombv.createOpenMBV();
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivatveOfMomentum");
     if(e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      openMBVDerivativeOfMomentum=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      openMBVDerivativeOfMomentum=ombv.createOpenMBV();
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivativeOfAngularMomentum");
     if(e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      openMBVDerivativeOfAngularMomentum=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      openMBVDerivativeOfAngularMomentum=ombv.createOpenMBV();
     }
   }
 

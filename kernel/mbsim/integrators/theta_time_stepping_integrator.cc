@@ -178,14 +178,14 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
-    setStepSize(Element::getDouble(e));
+    setStepSize(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIMINT%"theta");
-    const double theta = Element::getDouble(e);
+    const double theta = E(e)->getText<double>();
     assert(theta >= 0);
     assert(theta <= 1);
     setTheta(theta);
     e = E(element)->getFirstElementChildNamed(MBSIMINT%"driftCompensation");
-    setDriftCompensation(Element::getBool(e));
+    setDriftCompensation(E(e)->getText<bool>());
   }
 
 }

@@ -45,9 +45,9 @@ namespace MBSim {
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"marginalVelocity");
     if (e)
-      gdLim = Element::getDouble(e);
+      gdLim = E(e)->getText<double>();
     e = E(element)->getFirstElementChildNamed(MBSIM%"frictionCoefficient");
-    mu = Element::getDouble(e);
+    mu = E(e)->getText<double>();
   }
 
 }

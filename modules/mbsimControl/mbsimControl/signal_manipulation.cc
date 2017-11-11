@@ -74,7 +74,7 @@ namespace MBSimControl {
     Signal::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
     signalString=E(e)->getAttribute("ref");
-    Vec indices = Element::getVec(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"indices"));
+    Vec indices = E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"indices"))->getText<Vec>();
     index.resize(indices.size());
     for(unsigned int i=0; i<index.size(); i++)
       index[i] = static_cast<Index>(indices(i))-1;

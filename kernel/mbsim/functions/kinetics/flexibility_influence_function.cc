@@ -31,7 +31,7 @@ namespace MBSim {
 
   void FlexibilityInfluenceFunction::initializeUsingXML(DOMElement *element) {
     InfluenceFunction::initializeUsingXML(element);
-    flexibility = Element::getDouble(E(element)->getFirstElementChildNamed(MBSIM%"Flexibility"));
+    flexibility = E(E(element)->getFirstElementChildNamed(MBSIM%"Flexibility"))->getText<double>();
   }
 
 }

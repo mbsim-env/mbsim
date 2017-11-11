@@ -31,8 +31,9 @@ namespace MBSimFlexibleBody {
     public:
       OpenMBVDynamicIndexedFaceSet(double minCol=0, double maxCol=1) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::DynamicIndexedFaceSet> createOpenMBV();
+    protected:
       void initializeObject(const std::shared_ptr<OpenMBV::DynamicIndexedFaceSet> &object);
-      std::shared_ptr<OpenMBV::DynamicIndexedFaceSet> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
 }

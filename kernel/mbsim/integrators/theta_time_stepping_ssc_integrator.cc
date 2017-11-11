@@ -168,14 +168,14 @@ namespace MBSimIntegrator {
     //Integrator::initializeUsingXML(element);
     //TiXmlElement *e;
     //e=element->FirstChildElement(MBSIMINTNS"stepSize");
-    //setStepSize(Element::getDouble(e));
+    //setStepSize(E(e)->getText<double>());
     //e=element->FirstChildElement(MBSIMINTNS"theta");
-    //const double theta=Element::getDouble(e);
+    //const double theta=E(e)->getText<double>();
     //assert(theta>=0);
     //assert(theta<=1);
     //setTheta(theta);
     //e=element->FirstChildElement(MBSIMINTNS"driftCompensation");
-    //setDriftCompensation(Element::getBool(e));
+    //setDriftCompensation(E(e)->getText<bool>());
   }
 
 }

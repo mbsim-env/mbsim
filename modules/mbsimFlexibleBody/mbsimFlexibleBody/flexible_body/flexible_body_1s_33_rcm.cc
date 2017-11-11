@@ -347,35 +347,35 @@ namespace MBSimFlexibleBody {
 //      Frame *f=new Frame(MBXMLUtils::E(ec)->getAttribute("name"));
 //      f->initializeUsingXML(ec);
 //      ec=ec->getNextElementSibling();
-//      addFrame(f, getDouble(ec));
+//      addFrame(f, MBXMLUtils::E(ec)->getText<double>());
 //      e=e->getNextElementSibling();
 //    }
 
     //other properties
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfElements");
-    setNumberElements(getInt(e));
+    setNumberElements(MBXMLUtils::E(e)->getText<int>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"length");
-    setLength(getDouble(e));
+    setLength(MBXMLUtils::E(e)->getText<double>());
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"youngsModulus");
-    double E=getDouble(e);
+    double E=MBXMLUtils::E(e)->getText<double>();
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shearModulus");
-    double G=getDouble(e);
+    double G=MBXMLUtils::E(e)->getText<double>();
     setEGModuls(E, G);
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"density");
-    setDensity(getDouble(e));
+    setDensity(MBXMLUtils::E(e)->getText<double>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"crossSectionArea");
-    setCrossSectionalArea(getDouble(e));
+    setCrossSectionalArea(MBXMLUtils::E(e)->getText<double>());
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"momentOfInertia");
-    Vec TempVec2=getVec(e);
+    Vec TempVec2=MBXMLUtils::E(e)->getText<Vec>();
     setMomentsInertia(TempVec2(0),TempVec2(1),TempVec2(2));
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"dampingOfMaterial");
-    double thetaEps=getDouble(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"prolongational"));
-    double thetaKappa0=getDouble(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"torsional"));
+    double thetaEps=MBXMLUtils::E(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"prolongational"))->getText<double>();
+    double thetaKappa0=MBXMLUtils::E(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"torsional"))->getText<double>();
     setMaterialDamping(thetaEps, thetaKappa0);
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVBody");

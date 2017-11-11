@@ -145,17 +145,18 @@ namespace MBSim {
   void KineticExcitation::initializeUsingXML(DOMElement *element) {
     FloatingFrameLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
-    if(e) setForceDirection(getMat(e,3,0));
+    if(e) setForceDirection(E(e)->getText<Mat>(3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     if(e) setForceFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
-    if(e) setMomentDirection(getMat(e,3,0));
+    if(e) setMomentDirection(E(e)->getText<Mat>(3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentFunction");
     if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
         OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-        openMBVArrow=ombv.createOpenMBV(e); 
+        ombv.initializeUsingXML(e);
+        openMBVArrow=ombv.createOpenMBV(); 
     }
   }
 

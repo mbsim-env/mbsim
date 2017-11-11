@@ -254,7 +254,7 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
-    setStepSize(Element::getDouble(e));
+    setStepSize(E(e)->getText<double>());
   }
 
   bool HETS2Integrator::evaluateStage(DynamicSystemSolver& system) {

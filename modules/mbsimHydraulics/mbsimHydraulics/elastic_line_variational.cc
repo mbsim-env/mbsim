@@ -242,18 +242,18 @@ namespace MBSimHydraulics {
     Object::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"initialPressure");
-    setp0(getDouble(e));
+    setp0(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"fracAir");
-    setFracAir(getDouble(e));
+    setFracAir(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
-    setDiameter(getDouble(e));
+    setDiameter(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"length");
-    setLength(getDouble(e));
+    setLength(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativePlotPoints");
     if (e)
-      setRelativePlotPoints(getVec(e));
+      setRelativePlotPoints(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"numberOfAnsatzFunctions");
-    setNumberOfAnsatzFunctions((unsigned int)(getInt(e)));
+    setNumberOfAnsatzFunctions((unsigned int)(E(e)->getText<int>()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"windowNone");
     if (e)
       setWindowFunction(None);

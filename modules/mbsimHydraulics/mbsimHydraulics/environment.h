@@ -52,7 +52,6 @@ namespace MBSimHydraulics {
     public:
       static HydraulicEnvironment * getInstance() {return instance.get(); }
       virtual void initializeUsingXML(xercesc::DOMElement *e);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0;}
       virtual void initializeFluidData();
 
       /*! set the basic (air-free) bulk modulus*/

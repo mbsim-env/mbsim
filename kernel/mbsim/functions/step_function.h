@@ -40,11 +40,11 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"time");
-        stepTime=Element::getDouble(e);
+        stepTime=MBXMLUtils::E(e)->getText<double>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"size");
-        stepSize=Element::getDouble(e);
+        stepSize=MBXMLUtils::E(e)->getText<double>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"init");
-        stepSize=Element::getDouble(e);
+        stepSize=MBXMLUtils::E(e)->getText<double>();
       }
   };
 

@@ -53,13 +53,13 @@ namespace MBSim {
     RigidContour::initializeUsingXML(element);
     DOMElement* e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"baseRadius");
-    rFrustumOnPlane=getDouble(e);
+    rFrustumOnPlane=E(e)->getText<double>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"topRadius");
-    rFrustumOnTop=getDouble(e);
+    rFrustumOnTop=E(e)->getText<double>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"height");
-    hFrustum=getDouble(e);
+    hFrustum=E(e)->getText<double>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"roundingRadius");
-    rho=getDouble(e);
+    rho=E(e)->getText<double>();
     if(E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV"))
       enableOpenMBV();
     checkInput();

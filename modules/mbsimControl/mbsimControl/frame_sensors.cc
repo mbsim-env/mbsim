@@ -85,7 +85,7 @@ namespace MBSimControl {
 //    refFrameString=E(e)->getAttribute("ref");
 //    relFrameString=E(e)->getAttribute("rel");
 //    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"direction");
-//    direction=getMat(e,3,0);
+//    direction=E(e)->getText<Mat>(3,0);
 //    for (int i=0; i<direction.cols(); i++)
 //      direction.col(i)=direction.col(i)/nrm2(direction.col(i));
 //  }

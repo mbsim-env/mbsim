@@ -94,7 +94,7 @@ namespace MBSim {
     GeneralizedImpactLaw::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"restitutionCoefficient");
-    epsilon = Element::getDouble(e);
+    epsilon = E(e)->getText<double>();
   }
 
 }

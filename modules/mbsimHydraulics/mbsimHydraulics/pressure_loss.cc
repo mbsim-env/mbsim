@@ -89,7 +89,7 @@ namespace MBSimHydraulics {
     LinePressureLoss::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"number");
-    int n=Element::getInt(e);
+    int n=E(e)->getText<int>();
     e=e->getNextElementSibling();
     LinePressureLoss *p=MBSim::ObjectFactory::createAndInit<LinePressureLoss>(e);
     setLinePressureLoss(p, n);
@@ -112,7 +112,7 @@ namespace MBSimHydraulics {
     LinePressureLoss::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"zeta");
-    setZeta(Element::getDouble(e));
+    setZeta(E(e)->getText<double>());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ZetaPosNegLinePressureLoss)
@@ -133,9 +133,9 @@ namespace MBSimHydraulics {
     LinePressureLoss::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"zetaPos");
-    setZetaPos(Element::getDouble(e));
+    setZetaPos(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"zetaNeg");
-    setZetaNeg(Element::getDouble(e));
+    setZetaNeg(E(e)->getText<double>());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, LaminarTubeFlowLinePressureLoss)
@@ -229,17 +229,17 @@ namespace MBSimHydraulics {
     PressureLoss::initializeUsingXML(element);
     DOMElement * e;
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"referenceDiameter");
-    double dR=Element::getDouble(e);
+    double dR=E(e)->getText<double>();
     setReferenceDiameter(dR);
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"hydraulicDiameter");
-    double dH=Element::getDouble(e);
+    double dH=E(e)->getText<double>();
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"negativeHydraulicDiameter");
     double dHNeg=0;
     if (e)
-     dHNeg=Element::getDouble(e);
+     dHNeg=E(e)->getText<double>();
     setHydraulicDiameter(dH, dHNeg);
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"surfaceRoughness");
-    double kS=Element::getDouble(e);
+    double kS=E(e)->getText<double>();
     setSurfaceRoughness(kS);
   }
 
@@ -258,12 +258,12 @@ namespace MBSimHydraulics {
 
   void CurveFittedLinePressureLoss::initializeUsingXML(DOMElement * element) {
     PressureLoss::initializeUsingXML(element);
-    dRef=Element::getDouble(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"referenceDiameter"));
-    dHyd=Element::getDouble(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"hydraulicDiameter"));
-    aPos=Element::getDouble(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"aPositive"));
-    bPos=Element::getDouble(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"bPositive"));
-    aNeg=Element::getDouble(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"aNegative"));
-    bNeg=Element::getDouble(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"bNegative"));
+    dRef=E(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"referenceDiameter"))->getText<double>();
+    dHyd=E(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"hydraulicDiameter"))->getText<double>();
+    aPos=E(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"aPositive"))->getText<double>();
+    bPos=E(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"bPositive"))->getText<double>();
+    aNeg=E(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"aNegative"))->getText<double>();
+    bNeg=E(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"bNegative"))->getText<double>();
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, TabularLinePressureLoss)
@@ -309,10 +309,10 @@ namespace MBSimHydraulics {
     ClosablePressureLoss::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"zeta");
-    setZeta(Element::getDouble(e));
+    setZeta(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"zetaNegative");
     if (e)
-      setZetaNegative(Element::getDouble(e));
+      setZetaNegative(E(e)->getText<double>());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, GapHeightClosablePressureLoss)
@@ -329,8 +329,8 @@ namespace MBSimHydraulics {
 
   void GapHeightClosablePressureLoss::initializeUsingXML(DOMElement * element) {
     ClosablePressureLoss::initializeUsingXML(element);
-    setLength(Element::getDouble(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"length")));
-    setWidth(Element::getDouble(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"width")));
+    setLength(E(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"length"))->getText<double>());
+    setWidth(E(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"width"))->getText<double>());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ReynoldsClosablePressureLoss)
@@ -386,14 +386,14 @@ namespace MBSimHydraulics {
   void RelativeAlphaClosablePressureLoss::initializeUsingXML(DOMElement * element) {
     ClosablePressureLoss::initializeUsingXML(element);
     DOMElement * e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alpha");
-    setAlpha(Element::getDouble(e));
+    setAlpha(E(e)->getText<double>());
   }
 
 
   void CheckvalveClosablePressureLoss::initializeUsingXML(DOMElement * element) {
     ClosablePressureLoss::initializeUsingXML(element);
     DOMElement * e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"ballRadius");
-    setBallRadius(Element::getDouble(e));
+    setBallRadius(E(e)->getText<double>());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, GammaCheckvalveClosablePressureLoss)
@@ -415,9 +415,9 @@ namespace MBSimHydraulics {
     CheckvalveClosablePressureLoss::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alpha");
-    setAlpha(Element::getDouble(e));
+    setAlpha(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"gamma");
-    setGamma(Element::getDouble(e));
+    setGamma(E(e)->getText<double>());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, IdelchickCheckvalveClosablePressureLoss)
@@ -464,7 +464,7 @@ namespace MBSimHydraulics {
     CheckvalveClosablePressureLoss::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alpha");
-    setAlpha(Element::getDouble(e));
+    setAlpha(E(e)->getText<double>());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, PlaneLeakagePressureLoss)
@@ -547,7 +547,7 @@ namespace MBSimHydraulics {
     CircularLeakagePressureLoss::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"eccentricity");
-    setEccentricity(Element::getDouble(e));
+    setEccentricity(E(e)->getText<double>());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, RealCircularLeakagePressureLoss)
@@ -608,7 +608,7 @@ namespace MBSimHydraulics {
     PressureLoss::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"zeta");
-    setZeta(Element::getDouble(e));
+    setZeta(E(e)->getText<double>());
   }
 
 

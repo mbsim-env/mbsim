@@ -62,12 +62,12 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement * element) {
         xercesc::DOMElement *e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
         if (e) {
-          setx(Element::getVec(e));
+          setx(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
           e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
-          sety(Element::getMat(e, x.size(), 0));
+          sety(MBXMLUtils::E(e)->getText<fmatvec::Mat>(x.size(), 0));
         }
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
-        if (e) setxy(Element::getMat(e));
+        if (e) setxy(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
       }
       void setx(const fmatvec::VecV &x_) { x = x_; }
       void sety(const fmatvec::MatV &y_) { y = y_; }

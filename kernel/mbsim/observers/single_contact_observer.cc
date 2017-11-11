@@ -119,19 +119,22 @@ namespace MBSim {
     DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
     if (e) {
       OpenMBVFrame ombv;
-      openMBVContactFrame[0] = ombv.createOpenMBV(e); 
+      ombv.initializeUsingXML(e);
+      openMBVContactFrame[0] = ombv.createOpenMBV(); 
       openMBVContactFrame[1]=OpenMBV::ObjectFactory::create(openMBVContactFrame[0]);
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
-      contactArrow = ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      contactArrow = ombv.createOpenMBV();
     }
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVTangentialForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
-      frictionArrow = ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      frictionArrow = ombv.createOpenMBV();
     }
   }
 

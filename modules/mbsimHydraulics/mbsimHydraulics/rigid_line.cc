@@ -77,7 +77,7 @@ namespace MBSimHydraulics {
   void RigidLine::initializeUsingXML(DOMElement * element) {
     RigidHLine::initializeUsingXML(element);
     DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
-    setDiameter(getDouble(e));
+    setDiameter(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"linePressureLoss");
     LinePressureLoss *p=MBSim::ObjectFactory::createAndInit<LinePressureLoss>(e->getFirstElementChild());
     setLinePressureLoss(p);
@@ -128,7 +128,7 @@ namespace MBSimHydraulics {
     ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"checksizeFunction");
     setFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(ee->getFirstElementChild())); 
     ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalChecksizeValue");
-    setMinimalValue(getDouble(ee));
+    setMinimalValue(E(ee)->getText<double>());
     ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"setValued");
     if (ee)
       setBilateral(true);
@@ -158,7 +158,7 @@ namespace MBSimHydraulics {
       setUnidirectionalPressureLoss(p);
     }
     ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalPressureDrop");
-    setMinimalPressureDrop(getDouble(ee));
+    setMinimalPressureDrop(E(ee)->getText<double>());
   }
 
 }

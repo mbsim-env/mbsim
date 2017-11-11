@@ -91,7 +91,8 @@ namespace MBSim {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVSphere ombv(0.001,"[-1;1;1]",0,"size");
-      openMBVRigidBody=ombv.createOpenMBV(e); 
+      ombv.initializeUsingXML(e);
+      openMBVRigidBody=ombv.createOpenMBV(); 
     }
   }
 

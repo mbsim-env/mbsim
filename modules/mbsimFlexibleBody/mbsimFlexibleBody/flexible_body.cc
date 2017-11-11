@@ -126,7 +126,7 @@ namespace MBSimFlexibleBody {
     
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"massProportionalDamping");
-    setMassProportionalDamping(getDouble(e));
+    setMassProportionalDamping(E(e)->getText<double>());
   }
 
   void FlexibleBody::resetUpToDate() {

@@ -51,11 +51,12 @@ namespace MBSim {
   void LineSegment::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"length");
-    setLength(getDouble(e));
+    setLength(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVLine ombv;
-      openMBVRigidBody=ombv.createOpenMBV(e); 
+      ombv.initializeUsingXML(e);
+      openMBVRigidBody=ombv.createOpenMBV(); 
     }
   }
 

@@ -37,8 +37,9 @@ namespace MBSim {
       std::string id;
     public:
       OpenMBVBody() { }
-      void initializeObject(const std::shared_ptr<OpenMBV::Body> &object);
       void initializeUsingXML(xercesc::DOMElement *element);
+    protected:
+      void initializeObject(const std::shared_ptr<OpenMBV::Body> &object);
   };
 
   class OpenMBVDynamicColoredBody : public OpenMBVBody {
@@ -47,8 +48,9 @@ namespace MBSim {
       double tp;
     public:
       OpenMBVDynamicColoredBody(const fmatvec::Vec3 &dc_="[-1;1;1]", double tp_=0) : dc(dc_), tp(tp_) { }
-      void initializeObject(const std::shared_ptr<OpenMBV::DynamicColoredBody> &object);
       void initializeUsingXML(xercesc::DOMElement *element);
+    protected:
+      void initializeObject(const std::shared_ptr<OpenMBV::DynamicColoredBody> &object);
   };
 
   class OpenMBVArrow : public OpenMBVDynamicColoredBody {
@@ -59,8 +61,9 @@ namespace MBSim {
     public:
       OpenMBVArrow(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, const OpenMBV::Arrow::Type &type_=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint_=OpenMBV::Arrow::fromPoint, double sL_=1, double sS_=1, double minCol_=0, double maxCol_=1) : OpenMBVDynamicColoredBody(dc,tp), type(type_), refPoint(refPoint_), sL(sL_), sS(sS_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::Arrow> createOpenMBV();
+    protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Arrow> &object);
-      std::shared_ptr<OpenMBV::Arrow> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVFrame : public OpenMBVDynamicColoredBody {
@@ -69,8 +72,9 @@ namespace MBSim {
     public:
       OpenMBVFrame(double size_=1, double offset_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp), size(size_), offset(offset_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::Frame> createOpenMBV();
+    protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Frame> &object);
-      std::shared_ptr<OpenMBV::Frame> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVSphere : public OpenMBVDynamicColoredBody {
@@ -80,8 +84,9 @@ namespace MBSim {
     public:
       OpenMBVSphere(double r_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, std::string xml_="radius") : OpenMBVDynamicColoredBody(dc,tp), r(r_), xml(xml_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::Sphere> createOpenMBV();
+    protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Sphere> &object);
-      std::shared_ptr<OpenMBV::Sphere> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVLine : public OpenMBVDynamicColoredBody {
@@ -90,8 +95,9 @@ namespace MBSim {
     public:
       OpenMBVLine(double l_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp), l(l_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::Cuboid> createOpenMBV();
+    protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Cuboid> &object);
-      std::shared_ptr<OpenMBV::Cuboid> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVPlane : public OpenMBVDynamicColoredBody {
@@ -100,8 +106,9 @@ namespace MBSim {
     public:
       OpenMBVPlane(const fmatvec::Vec2 &l_=fmatvec::Vec2(fmatvec::INIT,1.), const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp), l(l_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::Cuboid> createOpenMBV();
+    protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Cuboid> &object);
-      std::shared_ptr<OpenMBV::Cuboid> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVCuboid : public OpenMBVDynamicColoredBody {
@@ -110,8 +117,9 @@ namespace MBSim {
     public:
       OpenMBVCuboid(const fmatvec::Vec3 &l_=fmatvec::Vec3(fmatvec::INIT,1.), const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp), l(l_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::Cuboid> createOpenMBV();
+    protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Cuboid> &object);
-      std::shared_ptr<OpenMBV::Cuboid> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVCircle : public OpenMBVDynamicColoredBody {
@@ -120,8 +128,9 @@ namespace MBSim {
     public:
       OpenMBVCircle(double r_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp), r(r_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::Frustum> createOpenMBV();
+    protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Frustum> &object);
-      std::shared_ptr<OpenMBV::Frustum> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVFrustum : public OpenMBVDynamicColoredBody {
@@ -130,8 +139,9 @@ namespace MBSim {
     public:
       OpenMBVFrustum(double t_=1, double b_=1, double h_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp), t(t_), b(b_), h(h_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::Frustum> createOpenMBV();
+    protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Frustum> &object);
-      std::shared_ptr<OpenMBV::Frustum> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVExtrusion : public OpenMBVDynamicColoredBody {
@@ -140,8 +150,9 @@ namespace MBSim {
     public:
       OpenMBVExtrusion(double h_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp), h(h_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::Extrusion> createOpenMBV();
+    protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Extrusion> &object);
-      std::shared_ptr<OpenMBV::Extrusion> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVCoilSpring : public OpenMBVDynamicColoredBody {
@@ -151,14 +162,15 @@ namespace MBSim {
     public:
       OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBV::CoilSpring::Type type_=OpenMBV::CoilSpring::tube, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double minCol_=0, double maxCol_=1) : OpenMBVDynamicColoredBody(dc,tp), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), minCol(minCol_), maxCol(maxCol_), type(type_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::CoilSpring> createOpenMBV();
+    protected:
       void initializeObject(const std::shared_ptr<OpenMBV::CoilSpring> &object);
-      std::shared_ptr<OpenMBV::CoilSpring> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVIndexedFaceSet : public OpenMBVDynamicColoredBody {
     public:
       OpenMBVIndexedFaceSet(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp) { }
-      std::shared_ptr<OpenMBV::IndexedFaceSet> createOpenMBV(xercesc::DOMElement* e=0);
+      std::shared_ptr<OpenMBV::IndexedFaceSet> createOpenMBV();
   };
 
 }

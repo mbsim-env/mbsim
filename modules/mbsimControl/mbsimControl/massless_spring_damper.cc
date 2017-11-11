@@ -46,26 +46,26 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
     inputSignalString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"springStiffness");
-    setSpringStiffness(getDouble(e));
+    setSpringStiffness(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"basicSpringForce");
-    setBasicSpringForce(getDouble(e));
+    setBasicSpringForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"dampingCoefficient");
-    setDampingCoefficient(getDouble(e));
+    setDampingCoefficient(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"negativeDampingCoefficient");
     if (e)
-      setNegativeDampingCoefficient(getDouble(e));
+      setNegativeDampingCoefficient(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frictionForce");
     if (e)
-      setFrictionForce(getDouble(e));
+      setFrictionForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"negativeFrictionForce");
     if (e)
-      setNegativeFrictionForce(getDouble(e));
+      setNegativeFrictionForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"minimalPositionValue");
     if (e)
-      setMinimumPositionValue(getDouble(e));
+      setMinimumPositionValue(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"maximalPositionValue");
     if (e)
-      setMaximumPositionValue(getDouble(e));
+      setMaximumPositionValue(E(e)->getText<double>());
   }
 
   void MasslessSpringDamper::updatexd() {

@@ -173,10 +173,10 @@ namespace MBSim {
     Object::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedInitialPosition");
     if (e)
-      setGeneralizedInitialPosition(getVec(e));
+      setGeneralizedInitialPosition(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedInitialVelocity");
     if (e)
-      setGeneralizedInitialVelocity(getVec(e));
+      setGeneralizedInitialVelocity(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
     if(e) saved_frameOfReference=E(e)->getAttribute("ref");
   }

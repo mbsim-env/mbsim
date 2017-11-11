@@ -514,13 +514,13 @@ namespace MBSim {
     fmatvec::MatV y;
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
     if (e) {
-      setx(Element::getVec(e));
+      setx(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
-      sety(Element::getMat(e, x.size(), 0));
+      sety(MBXMLUtils::E(e)->getText<fmatvec::Mat>(x.size(), 0));
     }
     else {
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
-      setxy(Element::getMat(e));
+      setxy(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
     }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethod");
     if(e) { 

@@ -75,7 +75,7 @@ namespace MBSim {
       }
 
       void initializeUsingXML(xercesc::DOMElement *element) {
-        a = Element::getVec(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients"));
+        a = MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients"))->getText<fmatvec::Vec>();
       }
 
     private:

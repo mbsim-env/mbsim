@@ -233,13 +233,13 @@ namespace MBSimAnalyser {
   void Eigenanalyser::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"startTime");
-    if(e) setStartTime(Element::getDouble(e));
+    if(e) setStartTime(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"endTime");
-    if(e) setEndTime(Element::getDouble(e));
+    if(e) setEndTime(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"plotStepSize");
-    if(e) setPlotStepSize(Element::getDouble(e));
+    if(e) setPlotStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"initialState");
-    if(e) setInitialState(Element::getVec(e));
+    if(e) setInitialState(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"task");
     if(e) {
       string str=X()%E(e)->getFirstTextChild()->getData();
@@ -250,11 +250,11 @@ namespace MBSimAnalyser {
       else if(str=="eigenmotion") task=eigenmotion;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"amplitude");
-    if(e) setAmplitude(Element::getDouble(e));
+    if(e) setAmplitude(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"mode");
-    if(e) setMode(Element::getInt(e));
+    if(e) setMode(E(e)->getText<int>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"determineEquilibriumState");
-    if(e) setDetermineEquilibriumState(Element::getBool(e));
+    if(e) setDetermineEquilibriumState(E(e)->getText<bool>());
   }
 
 }

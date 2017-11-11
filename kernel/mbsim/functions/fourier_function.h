@@ -71,24 +71,24 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement * element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"frequency");
-        f=Element::getDouble(e);
+        f=MBXMLUtils::E(e)->getText<double>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
-        if(e) a0=Element::getDouble(e);
+        if(e) a0=MBXMLUtils::E(e)->getText<double>();
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a");
         if(e) {
-          a = Element::getVec(e);
+          a = MBXMLUtils::E(e)->getText<fmatvec::Vec>();
           e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"b");
-          b = Element::getVec(e);
+          b = MBXMLUtils::E(e)->getText<fmatvec::Vec>();
         }
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"ab");
         if(e) {
-          fmatvec::MatV xy = Element::getMat(e);
+          fmatvec::MatV xy = MBXMLUtils::E(e)->getText<fmatvec::Mat>();
           assert(xy.cols() == 2);
           a = xy.col(0);
           b = xy.col(1);
         }
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"amplitudePhaseAngleForm");
-        if(e) amplitudePhaseAngleForm = Element::getBool(e);
+        if(e) amplitudePhaseAngleForm = MBXMLUtils::E(e)->getText<bool>();
       }
       void init(Element::InitStage stage, const InitConfigSet &config) {
         Function<Ret(Arg)>::init(stage, config);

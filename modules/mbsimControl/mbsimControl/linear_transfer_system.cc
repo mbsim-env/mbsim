@@ -37,13 +37,13 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
     inputSignalString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"systemMatrix");
-    if(e) A = Element::getSqrMat(e);
+    if(e) A = E(e)->getText<SqrMat>();
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputMatrix");
-    if(e) B = Element::getMat(e, A.rows(), 0);
+    if(e) B = E(e)->getText<Mat>(A.rows(), 0);
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"outputMatrix");
-    if(e) C = Element::getMat(e, 0, A.cols());
+    if(e) C = E(e)->getText<Mat>(0, A.cols());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"feedthroughMatrix");
-    if(e) D = Element::getSqrMat(e);
+    if(e) D = E(e)->getText<SqrMat>();
   }
 
   void LinearTransferSystem::updateSignal() {

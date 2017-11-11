@@ -177,7 +177,7 @@ namespace MBSim {
   void FloatingFrameLink::initializeUsingXML(DOMElement *element) {
     FrameLink::initializeUsingXML(element);
     DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
-    if (e) refFrameID = getInt(e)-1;
+    if (e) refFrameID = E(e)->getText<int>()-1;
   }
 
 }

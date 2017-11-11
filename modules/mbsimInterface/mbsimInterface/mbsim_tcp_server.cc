@@ -79,10 +79,10 @@ namespace MBSimInterface {
   void MBSimTcpServer::initializeUsingXML(xercesc::DOMElement *element) {
     xercesc::DOMElement* e;
     e=E(element)->getFirstElementChildNamed(MBSIMINTERFACE%"port");
-    setPort(MBSim::Element::getInt(e));
+    setPort(E(e)->getText<int>());
     e=E(element)->getFirstElementChildNamed(MBSIMINTERFACE%"outputPrecision");
     if (e)
-      setOutputPrecision(MBSim::Element::getInt(e));
+      setOutputPrecision(E(e)->getText<int>());
   }
 
 }

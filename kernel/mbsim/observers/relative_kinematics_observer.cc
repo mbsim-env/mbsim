@@ -481,27 +481,32 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVPosition=ombv.createOpenMBV(e);
+        ombv.initializeUsingXML(e);
+        openMBVPosition=ombv.createOpenMBV();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVVelocity=ombv.createOpenMBV(e);
+        ombv.initializeUsingXML(e);
+        openMBVVelocity=ombv.createOpenMBV();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularVelocity");
     if(e) {
         OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
-        openMBVAngularVelocity=ombv.createOpenMBV(e);
+        ombv.initializeUsingXML(e);
+        openMBVAngularVelocity=ombv.createOpenMBV();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVAcceleration=ombv.createOpenMBV(e);
+        ombv.initializeUsingXML(e);
+        openMBVAcceleration=ombv.createOpenMBV();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularAcceleration");
     if(e) {
         OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
-        openMBVAngularAcceleration=ombv.createOpenMBV(e);
+        ombv.initializeUsingXML(e);
+        openMBVAngularAcceleration=ombv.createOpenMBV();
     }
   }
 

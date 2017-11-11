@@ -159,7 +159,8 @@ namespace MBSim {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
     if(e) {
       OpenMBVFrame ombv;
-      I->setOpenMBVFrame(ombv.createOpenMBV(e));
+      ombv.initializeUsingXML(e);
+      I->setOpenMBVFrame(ombv.createOpenMBV());
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameI");

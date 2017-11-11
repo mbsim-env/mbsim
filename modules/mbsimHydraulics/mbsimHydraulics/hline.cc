@@ -75,7 +75,7 @@ namespace MBSimHydraulics {
     if (e) {
       saved_frameOfReference=E(e)->getAttribute("ref");
       e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"direction");
-      setDirection(getVec(e,3));
+      setDirection(E(e)->getText<Vec>(3));
     }
   }
 
@@ -207,7 +207,7 @@ namespace MBSimHydraulics {
       e=e->getNextElementSibling();
     }
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"length");
-    setLength(getDouble(e));
+    setLength(E(e)->getText<double>());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ConstrainedLine)
@@ -275,11 +275,11 @@ namespace MBSimHydraulics {
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"openingFunction");
     setOpeningFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
-    setDiameter(getDouble(e));
+    setDiameter(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alpha");
-    setAlpha(getDouble(e));
+    setAlpha(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"areaModus");
-    setCalcAreaModus(getInt(e));
+    setCalcAreaModus(E(e)->getText<int>());
   }
 
   void StatelessOrifice::init(InitStage stage, const InitConfigSet &config) {

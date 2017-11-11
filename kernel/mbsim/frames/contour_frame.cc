@@ -11,7 +11,7 @@ namespace MBSim {
 
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"zeta");
-    setZeta(getVec(e));
+    setZeta(E(e)->getText<fmatvec::Vec>());
   }
 
 }

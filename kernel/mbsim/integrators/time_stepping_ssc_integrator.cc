@@ -1488,16 +1488,16 @@ namespace MBSimIntegrator {
     DOMElement *e;
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
-    if (e) setInitialStepSize(Element::getDouble(e));
+    if (e) setInitialStepSize(E(e)->getText<double>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if (e) setStepSizeMax(Element::getDouble(e));
+    if (e) setStepSizeMax(E(e)->getText<double>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimalStepSize");
-    if (e) setStepSizeMin(Element::getDouble(e));
+    if (e) setStepSizeMin(E(e)->getText<double>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"outputInterpolation");
-    if (e) setOutputInterpolation(Element::getBool(e));
+    if (e) setOutputInterpolation(E(e)->getText<bool>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"gapControl");
     if (e) {
@@ -1512,7 +1512,7 @@ namespace MBSimIntegrator {
     if (e) {
       DOMElement *ee;
       ee=E(e)->getFirstElementChildNamed(MBSIMINT%"order");
-      int orderXML=Element::getInt(ee);
+      int orderXML=E(ee)->getText<int>();
       int methodXML=0; 
       ee=E(e)->getFirstElementChildNamed(MBSIMINT%"method");
       if(ee) {
@@ -1537,28 +1537,28 @@ namespace MBSimIntegrator {
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
-    if(e) setAbsoluteTolerance(Element::getVec(e));
+    if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
-    if(e) setAbsoluteTolerance(Element::getDouble(e));
+    if(e) setAbsoluteTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
-    if(e) setRelativeTolerance(Element::getVec(e));
+    if(e) setRelativeTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-    if(e) setRelativeTolerance(Element::getDouble(e));
+    if(e) setRelativeTolerance(E(e)->getText<double>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"advancedOptions");
     if (e) {
       DOMElement *ee;
       ee=E(e)->getFirstElementChildNamed(MBSIMINT%"deactivateSSC");
-      if (ee) deactivateSSC(!(Element::getBool(ee)));
+      if (ee) deactivateSSC(!(E(ee)->getText<bool>()));
 
       ee=E(e)->getFirstElementChildNamed(MBSIMINT%"gapTolerance");
-      if (ee) setgapTolerance(Element::getDouble(ee));
+      if (ee) setgapTolerance(E(ee)->getText<double>());
 
       ee=E(e)->getFirstElementChildNamed(MBSIMINT%"maximalSSCGain");
-      if (ee) setmaxGainSSC(Element::getDouble(ee));
+      if (ee) setmaxGainSSC(E(ee)->getText<double>());
 
       ee=E(e)->getFirstElementChildNamed(MBSIMINT%"safetyFactorSSC");
-      if (ee) setSafetyFactorSSC(Element::getDouble(ee));
+      if (ee) setSafetyFactorSSC(E(ee)->getText<double>());
     }
 
   }
