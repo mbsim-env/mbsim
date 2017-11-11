@@ -56,6 +56,7 @@ namespace MBSim {
         if(momentDir.cols()) {
           openMBVMoment=OpenMBV::ObjectFactory::create(openMBVArrow);
           openMBVMoment->setName(name+"_Moment");
+          openMBVMoment->setType(OpenMBV::Arrow::toDoubleHead);
           parent->getOpenMBVGrp()->addObject(openMBVMoment);
         }
       }
