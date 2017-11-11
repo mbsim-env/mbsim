@@ -34,77 +34,28 @@ namespace MBSim {
 
 namespace MBSimFlexibleBody {
 
-  class ErrorType {
-    public:
-      ErrorType() {
-        throw std::runtime_error("Impossible type.");
-      }
-  };
-
   template<typename Dep>
-    struct BaseType {
-      typedef ErrorType type;
-    };
+    struct BaseType;
 
-  template<>
-    struct BaseType<fmatvec::Vec3> {
+  template<int N>
+    struct BaseType<fmatvec::Vector<fmatvec::Fixed<N>, double>> {
       typedef fmatvec::VecV type;
-      static int size;
-      static fmatvec::Vec3 getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Vec3>(); }
-      static fmatvec::VecV getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Vec>(); }
     };
-
-  int BaseType<fmatvec::Vec3>::size = 3;
-
-  template<>
-    struct BaseType<fmatvec::Vector<fmatvec::Fixed<6>, double> > {
-      typedef fmatvec::VecV type;
-      static int size;
-      static fmatvec::Vector<fmatvec::Fixed<6>, double> getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Vec>(); }
-      static fmatvec::VecV getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Vec>(); }
-    };
-
-  int BaseType<fmatvec::Vector<fmatvec::Fixed<6>, double> >::size = 6;
 
   template<>
     struct BaseType<fmatvec::SqrMat3> {
       typedef fmatvec::MatVx3 type;
-      static int size;
-      static fmatvec::SqrMat3 getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::SqrMat3>(); }
-      static fmatvec::MatVx3 getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::MatVx3>(); }
     };
-
-  int BaseType<fmatvec::SqrMat3>::size = 3;
 
   template<>
     struct BaseType<fmatvec::SqrMatV> {
       typedef fmatvec::MatV type;
-      static int size;
-      static fmatvec::SqrMatV getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::SqrMat>(); }
-      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::MatV>(); }
     };
 
-  int BaseType<fmatvec::SqrMatV>::size = 0;
-
-  template<>
-    struct BaseType<fmatvec::Mat3xV> {
+  template<int N>
+    struct BaseType<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<N>, fmatvec::Var, double>> {
       typedef fmatvec::MatV type;
-      static int size;
-      static fmatvec::Mat3xV getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Mat3xV>(); }
-      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::MatV>(); }
     };
-
-  int BaseType<fmatvec::Mat3xV>::size = 3;
-
-  template<>
-    struct BaseType<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > {
-      typedef fmatvec::MatV type;
-      static int size;
-      static fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> getEle(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>>(); }
-      static fmatvec::MatV getMat(xercesc::DOMElement *element) { return MBXMLUtils::E(element)->getText<fmatvec::MatV>(); }
-    };
-
-  int BaseType<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> >::size = 6;
 
   /*!
    *  \brief Flexible body using a floating frame of reference formulation
@@ -377,7 +328,7 @@ namespace MBSimFlexibleBody {
         xercesc::DOMElement* e=element->getFirstElementChild();
         if(MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"ele") {
           while(e) {
-            array.push_back(BaseType<T>::getEle(e));
+            array.push_back(MBXMLUtils::E(e)->getText<T>());
             e=e->getNextElementSibling();
           }
         }
@@ -388,7 +339,7 @@ namespace MBSimFlexibleBody {
       static std::vector<T> getCellArray1D(const typename BaseType<T>::type &A) {
         std::vector<T> array;
         int n = A.cols();
-        int m = BaseType<T>::size?BaseType<T>::size:n;
+        int m = fmatvec::StaticSize<T>::size1?fmatvec::StaticSize<T>::size1:n;
         array.resize(A.rows()/m);
         for(unsigned int i=0; i<array.size(); i++)
           array[i] = T(A(fmatvec::RangeV(m*i,m*i+(m-1)),fmatvec::RangeV(0,n-1)));
@@ -404,7 +355,7 @@ namespace MBSimFlexibleBody {
             array.push_back(std::vector<T>());
             xercesc::DOMElement *ee=e->getFirstElementChild();
             while(ee) {
-              array[array.size()-1].push_back(BaseType<T>::getEle(ee));
+              array[array.size()-1].push_back(MBXMLUtils::E(ee)->getText<T>());
               ee=ee->getNextElementSibling();
             }
             e=e->getNextElementSibling();
@@ -417,7 +368,7 @@ namespace MBSimFlexibleBody {
       static std::vector<std::vector<T> > getCellArray2D(const typename BaseType<T>::type &A) {
         std::vector<std::vector<T> > array;
         int n = A.cols();
-        int m = BaseType<T>::size?BaseType<T>::size:n;
+        int m = fmatvec::StaticSize<T>::size1?fmatvec::StaticSize<T>::size1:n;
         int k = 0;
         array.resize(A.rows()/m/n);
         for(unsigned int i=0; i<array.size(); i++) {
