@@ -46,9 +46,8 @@ namespace MBSimFlexibleBody {
     object->setMaximalColorValue(maxCol);
   }
 
-  shared_ptr<OpenMBV::DynamicIndexedFaceSet> OpenMBVDynamicIndexedFaceSet::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::DynamicIndexedFaceSet> OpenMBVDynamicIndexedFaceSet::createOpenMBV() {
     shared_ptr<OpenMBV::DynamicIndexedFaceSet> object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicIndexedFaceSet>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }

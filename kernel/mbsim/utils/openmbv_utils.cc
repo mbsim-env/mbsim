@@ -70,9 +70,8 @@ namespace MBSim {
     }
   }
 
-  shared_ptr<OpenMBV::Arrow> OpenMBVArrow::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::Arrow> OpenMBVArrow::createOpenMBV() {
     shared_ptr<OpenMBV::Arrow> object = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -95,9 +94,8 @@ namespace MBSim {
     if(ee) offset = E(ee)->getText<double>();
   }
 
-  shared_ptr<OpenMBV::Frame> OpenMBVFrame::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::Frame> OpenMBVFrame::createOpenMBV() {
     shared_ptr<OpenMBV::Frame> object = OpenMBV::ObjectFactory::create<OpenMBV::Frame>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -115,9 +113,8 @@ namespace MBSim {
     if(ee) r = E(ee)->getText<double>();
   }
 
-  shared_ptr<OpenMBV::Sphere> OpenMBVSphere::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::Sphere> OpenMBVSphere::createOpenMBV() {
     shared_ptr<OpenMBV::Sphere> object = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -134,9 +131,8 @@ namespace MBSim {
     if(ee) l = E(ee)->getText<double>();
   }
 
-  shared_ptr<OpenMBV::Cuboid> OpenMBVLine::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::Cuboid> OpenMBVLine::createOpenMBV() {
     shared_ptr<OpenMBV::Cuboid> object = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -153,9 +149,8 @@ namespace MBSim {
     if(ee) l = E(ee)->getText<Vec>(2);
   }
 
-  shared_ptr<OpenMBV::Cuboid> OpenMBVPlane::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::Cuboid> OpenMBVPlane::createOpenMBV() {
     shared_ptr<OpenMBV::Cuboid> object = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -172,9 +167,8 @@ namespace MBSim {
     if(ee) l = E(ee)->getText<Vec>(3);
   }
 
-  shared_ptr<OpenMBV::Cuboid> OpenMBVCuboid::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::Cuboid> OpenMBVCuboid::createOpenMBV() {
     shared_ptr<OpenMBV::Cuboid> object = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -191,9 +185,8 @@ namespace MBSim {
     if(ee) r = E(ee)->getText<double>();
   }
 
-  shared_ptr<OpenMBV::Frustum> OpenMBVCircle::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::Frustum> OpenMBVCircle::createOpenMBV() {
     shared_ptr<OpenMBV::Frustum> object = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -216,9 +209,8 @@ namespace MBSim {
     if(ee) h = E(ee)->getText<double>();
   }
 
-  shared_ptr<OpenMBV::Frustum> OpenMBVFrustum::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::Frustum> OpenMBVFrustum::createOpenMBV() {
     shared_ptr<OpenMBV::Frustum> object = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -236,9 +228,8 @@ namespace MBSim {
     if(ee) h = E(ee)->getText<double>();
   }
 
-  shared_ptr<OpenMBV::Extrusion> OpenMBVExtrusion::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::Extrusion> OpenMBVExtrusion::createOpenMBV() {
     shared_ptr<OpenMBV::Extrusion> object = OpenMBV::ObjectFactory::create<OpenMBV::Extrusion>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -273,9 +264,8 @@ namespace MBSim {
     if(ee) maxCol = E(ee)->getText<double>();
   }
 
-  shared_ptr<OpenMBV::CoilSpring> OpenMBVCoilSpring::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::CoilSpring> OpenMBVCoilSpring::createOpenMBV() {
     shared_ptr<OpenMBV::CoilSpring> object = OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -292,9 +282,8 @@ namespace MBSim {
     object->setMaximalColorValue(maxCol);
   }
 
-  shared_ptr<OpenMBV::IndexedFaceSet> OpenMBVIndexedFaceSet::createOpenMBV(DOMElement *e) {
+  shared_ptr<OpenMBV::IndexedFaceSet> OpenMBVIndexedFaceSet::createOpenMBV() {
     shared_ptr<OpenMBV::IndexedFaceSet> object = OpenMBV::ObjectFactory::create<OpenMBV::IndexedFaceSet>();
-    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }

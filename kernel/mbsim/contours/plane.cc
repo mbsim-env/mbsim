@@ -62,7 +62,8 @@ namespace MBSim {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVPlane ombv;
-      openMBVRigidBody=ombv.createOpenMBV(e); 
+      ombv.initializeUsingXML(e);
+      openMBVRigidBody=ombv.createOpenMBV(); 
     }
   }
 

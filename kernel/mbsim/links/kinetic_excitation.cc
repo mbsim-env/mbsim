@@ -154,7 +154,8 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
         OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-        openMBVArrow=ombv.createOpenMBV(e); 
+        ombv.initializeUsingXML(e);
+        openMBVArrow=ombv.createOpenMBV(); 
     }
   }
 

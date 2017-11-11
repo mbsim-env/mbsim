@@ -152,7 +152,8 @@ namespace MBSim {
       ee=E(e)->getFirstElementChildNamed(MBSIM%"xiNodes");
       if(ee) ombvXiNodes=E(ee)->getText<Vec>();
       OpenMBVIndexedFaceSet ombv;
-      openMBVRigidBody=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      openMBVRigidBody=ombv.createOpenMBV();
     }
   }
 

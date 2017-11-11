@@ -109,7 +109,8 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVCoilSpring ombv;
-      coilspringOpenMBV=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      coilspringOpenMBV=ombv.createOpenMBV();
     }
   }
 

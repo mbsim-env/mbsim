@@ -297,17 +297,20 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVPosition=ombv.createOpenMBV(e);
+        ombv.initializeUsingXML(e);
+        openMBVPosition=ombv.createOpenMBV();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVVelocity=ombv.createOpenMBV(e);
+        ombv.initializeUsingXML(e);
+        openMBVVelocity=ombv.createOpenMBV();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVAcceleration=ombv.createOpenMBV(e);
+        ombv.initializeUsingXML(e);
+        openMBVAcceleration=ombv.createOpenMBV();
     }
   }
 

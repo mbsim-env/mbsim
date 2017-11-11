@@ -55,7 +55,8 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVLine ombv;
-      openMBVRigidBody=ombv.createOpenMBV(e); 
+      ombv.initializeUsingXML(e);
+      openMBVRigidBody=ombv.createOpenMBV(); 
     }
   }
 

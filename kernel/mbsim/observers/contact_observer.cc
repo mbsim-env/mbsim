@@ -103,28 +103,33 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(e) {
         OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-        openMBVForce=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+        openMBVForce=ombv.createOpenMBV();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if(e) {
         OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-        openMBVMoment=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+        openMBVMoment=ombv.createOpenMBV();
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
     if (e) {
       OpenMBVFrame ombv;
-      openMBVContactFrame=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      openMBVContactFrame=ombv.createOpenMBV();
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
-      contactArrow = ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      contactArrow = ombv.createOpenMBV();
     }
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVTangentialForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
-      frictionArrow = ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      frictionArrow = ombv.createOpenMBV();
     }
   }
 

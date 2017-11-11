@@ -105,7 +105,8 @@ namespace MBSim {
       DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"nodes");
       if(ee) ombvNodes=E(ee)->getText<Vec>();
       OpenMBVExtrusion ombv;
-      openMBVRigidBody=ombv.createOpenMBV(e); 
+      ombv.initializeUsingXML(e);
+      openMBVRigidBody=ombv.createOpenMBV(); 
     }
   }
 

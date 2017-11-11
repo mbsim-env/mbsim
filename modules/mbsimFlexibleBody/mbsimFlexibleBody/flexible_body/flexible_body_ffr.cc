@@ -918,14 +918,16 @@ namespace MBSimFlexibleBody {
       for(int i=0; i<indices.size(); i++)
         ombvIndices[i] = static_cast<Index>(indices(i))-1;
       OpenMBVDynamicIndexedFaceSet ombv;
-      openMBVBody=ombv.createOpenMBV(e);
+      ombv.initializeUsingXML(e);
+      openMBVBody=ombv.createOpenMBV();
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");
     if(e) {
 //      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVFrame ombv;
-      K->setOpenMBVFrame(ombv.createOpenMBV(e));
+      ombv.initializeUsingXML(e);
+      K->setOpenMBVFrame(ombv.createOpenMBV());
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotFeatureFrameK");

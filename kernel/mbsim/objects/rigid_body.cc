@@ -612,7 +612,8 @@ namespace MBSim {
     if(e) {
       if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVFrame ombv;
-      C->setOpenMBVFrame(ombv.createOpenMBV(e));
+      ombv.initializeUsingXML(e);
+      C->setOpenMBVFrame(ombv.createOpenMBV());
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameC");
