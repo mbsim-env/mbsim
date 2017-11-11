@@ -15,11 +15,9 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   contour.cc \
 		   group.cc \
 		   dynamic_system_solver.cc \
-		   object.cc \
 		   body.cc \
 		   rigid_body.cc \
 		   flexible_body_ffr.cc \
-		   link.cc \
 		   observer.cc \
 		   kinetic_excitation.cc \
 		   spring_damper.cc \

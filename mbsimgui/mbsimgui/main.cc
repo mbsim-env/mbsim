@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
   QLocale::setDefault(QLocale::C);
   setlocale(LC_ALL, "C");
   MainWindow mainwindow(arg);
-  mainwindow.showMaximized();
+  mainwindow.show();
   if(arg.contains("--fullscreen")) mainwindow.showFullScreen(); // must be done after mainwindow.show()
   //mainwindow.showMaximized();
   //mainwindow->resize(1400, 900);

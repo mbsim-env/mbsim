@@ -113,10 +113,8 @@ namespace MBSimGUI {
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
     addTab("Plot");
-    plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget(element->getPlotFeatureType()));
+    plotFeature = new ExtWidget("Plot features",new PlotFeatureWidget(element->getPlotFeatureType()));
     addToTab("Plot", plotFeature);
-    for(unsigned int i=0; i<element->getPlotFeatures().size(); i++)
-      static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->addFeature(element->getPlotFeatures()[i]);
   }
 
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -190,14 +188,15 @@ namespace MBSimGUI {
 
   DOMElement* InternalFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
     visu->initializeUsingXML(element->getParent()->getXMLElement());
-    static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->initializeUsingXML2(element->getParent()->getXMLElement());
+    static_cast<PlotFeatureWidget*>(plotFeature->getWidget())->initializeUsingXML2(element->getParent()->getXMLElement());
     return parent;
   }
 
   DOMElement* InternalFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     element->removeXMLElements();
-    visu->writeXMLFile(element->getParent()->getXMLElement(),element->getParent()->getXMLFrame());
-    static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->writeXMLFile2(element->getParent()->getXMLElement());
+    DOMElement *ele = element->getParent()->getXMLFrame();
+    visu->writeXMLFile(element->getParent()->getXMLElement(),ele);
+    static_cast<PlotFeatureWidget*>(plotFeature->getWidget())->writeXMLFile2(element->getParent()->getXMLElement(),ele);
     return NULL;
   }
 

@@ -1579,25 +1579,48 @@ namespace MBSimGUI {
 
   void MainWindow::loadParameter(EmbedItemData *parent, Parameter *param) {
     setProjectChanged(true);
-    DOMElement *ele = static_cast<DOMElement*>(doc->importNode(param->getXMLElement(),true));
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    if(parameterBuffer.second) {
-      parameterBuffer.first = NULL;
-      DOMNode *ps = param->getXMLElement()->getPreviousSibling();
-      if(ps and X()%ps->getNodeName()=="#text")
-        param->getXMLElement()->getParentNode()->removeChild(ps);
-      param->getXMLElement()->getParentNode()->removeChild(param->getXMLElement());
-      param->getParent()->removeParameter(param);
-      QModelIndex index = model->findItem(param,model->index(0,0));
-      if(index.isValid())
-        model->removeRow(index.row(), index.parent());
-    }
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
-    parent->getParameterXMLElement()->insertBefore(ele,NULL);
-    Parameter *parameter=ObjectFactory::getInstance()->createParameter(ele);
-    parameter->initializeUsingXML(ele);
-    parent->addParameter(parameter);
-    QModelIndex newIndex = model->createParameterItem(parameter,index);
+    vector<DOMElement*> elements;
+    if(param) {
+      elements.push_back(static_cast<DOMElement*>(doc->importNode(param->getXMLElement(),true)));
+      if(parameterBuffer.second) {
+        parameterBuffer.first = NULL;
+        DOMNode *ps = param->getXMLElement()->getPreviousSibling();
+        if(ps and X()%ps->getNodeName()=="#text")
+          param->getXMLElement()->getParentNode()->removeChild(ps);
+        param->getXMLElement()->getParentNode()->removeChild(param->getXMLElement());
+        param->getParent()->removeParameter(param);
+        QModelIndex index = model->findItem(param,model->index(0,0));
+        if(index.isValid())
+          model->removeRow(index.row(), index.parent());
+      }
+    }
+    else {
+      QString file=QFileDialog::getOpenFileName(0, "XML frame files", ".", "XML files (*.xml)");
+      if(not file.isEmpty()) {
+        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true))->getFirstElementChild();
+        while(ele) {
+          elements.push_back(ele);
+          ele = ele->getNextElementSibling();
+        }
+      }
+      else
+        return;
+    }
+    QModelIndex newIndex;
+    for(size_t i=0; i<elements.size(); i++) {
+      Parameter *parameter=ObjectFactory::getInstance()->createParameter(elements[i]);
+      if(not parameter) {
+        QMessageBox::warning(0, "Load", "Cannot load file.");
+        return;
+      }
+      parent->getParameterXMLElement()->insertBefore(elements[i],NULL);
+      parameter->initializeUsingXML(elements[i]);
+      parent->addParameter(parameter);
+      newIndex = model->createParameterItem(parameter,index);
+    }
     embeddingView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
   }
 
@@ -1625,10 +1648,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementView->selectionModel()->currentIndex();
-    parent->getXMLFrames()->insertBefore(ele, NULL);
     Frame *frame = Embed<Frame>::createAndInit(ele);
-    if(frame) parent->addFrame(frame);
+    if(not frame) {
+      QMessageBox::warning(0, "Load", "Cannot load file.");
+      return;
+    }
+    parent->getXMLFrames()->insertBefore(ele, NULL);
+    parent->addFrame(frame);
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createFrameItem(frame,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1659,10 +1686,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementView->selectionModel()->currentIndex();
-    parent->getXMLContours()->insertBefore(ele, NULL);
     Contour *contour = Embed<Contour>::createAndInit(ele);
-    if(contour) parent->addContour(contour);
+    if(not contour) {
+      QMessageBox::warning(0, "Load", "Cannot load file.");
+      return;
+    }
+    parent->getXMLContours()->insertBefore(ele, NULL);
+    parent->addContour(contour);
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createContourItem(contour,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1693,10 +1724,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementView->selectionModel()->currentIndex();
-    parent->getXMLGroups()->insertBefore(ele, NULL);
     Group *group = Embed<Group>::createAndInit(ele);
-    if(group) parent->addGroup(group);
+    if(not group) {
+      QMessageBox::warning(0, "Load", "Cannot load file.");
+      return;
+    }
+    parent->getXMLGroups()->insertBefore(ele, NULL);
+    parent->addGroup(group);
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createGroupItem(group,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1727,10 +1762,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementView->selectionModel()->currentIndex();
-    parent->getXMLObjects()->insertBefore(ele, NULL);
     Object *object = Embed<Object>::createAndInit(ele);
-    if(object) parent->addObject(object);
+    if(not object) {
+      QMessageBox::warning(0, "Load", "Cannot load file.");
+      return;
+    }
+    parent->getXMLObjects()->insertBefore(ele, NULL);
+    parent->addObject(object);
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createObjectItem(object,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1761,10 +1800,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementView->selectionModel()->currentIndex();
-    parent->getXMLLinks()->insertBefore(ele, NULL);
     Link *link = Embed<Link>::createAndInit(ele);
-    if(link) parent->addLink(link);
+    if(not link) {
+      QMessageBox::warning(0, "Load", "Cannot load file.");
+      return;
+    }
+    parent->getXMLLinks()->insertBefore(ele, NULL);
+    parent->addLink(link);
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createLinkItem(link,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1795,10 +1838,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementView->selectionModel()->currentIndex();
-    parent->getXMLConstraints()->insertBefore(ele, NULL);
     Constraint *constraint = Embed<Constraint>::createAndInit(ele);
-    if(constraint) parent->addConstraint(constraint);
+    if(not constraint) {
+      QMessageBox::warning(0, "Load", "Cannot load file.");
+      return;
+    }
+    parent->getXMLConstraints()->insertBefore(ele, NULL);
+    parent->addConstraint(constraint);
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createConstraintItem(constraint,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
@@ -1829,10 +1876,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    QModelIndex index = elementView->selectionModel()->currentIndex();
-    parent->getXMLObservers()->insertBefore(ele, NULL);
     Observer *observer = Embed<Observer>::createAndInit(ele);
-    if(observer) parent->addObserver(observer);
+    if(not observer) {
+      QMessageBox::warning(0, "Load", "Cannot load file.");
+      return;
+    }
+    parent->getXMLObservers()->insertBefore(ele, NULL);
+    parent->addObserver(observer);
+    QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createObserverItem(observer,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);

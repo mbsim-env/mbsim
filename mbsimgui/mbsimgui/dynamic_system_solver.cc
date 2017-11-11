@@ -35,7 +35,6 @@ namespace MBSimGUI {
 
   void DynamicSystemSolver::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
-    DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
     while(e) {
       DOMNode *en=e->getNextSibling();
       if(e == environments) {
@@ -49,7 +48,7 @@ namespace MBSimGUI {
           ee = een;
         }
       }
-      else if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (e != ombvFrame))
+      else if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (E(e)->getTagName() != MBSIM%"enableOpenMBVFrameI") and (E(e)->getTagName() != MBSIM%"plotFeatureFrameI"))
         element->removeChild(e);
       e = en;
     }

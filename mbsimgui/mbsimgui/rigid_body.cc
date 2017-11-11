@@ -39,10 +39,9 @@ namespace MBSimGUI {
 
   void RigidBody::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
-    DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
     while(e) {
       DOMNode *en=e->getNextSibling();
-      if((e != frames) and (e != contours) and (e != ombvFrame))
+      if((e != frames) and (e != contours) and (E(e)->getTagName() != MBSIM%"enableOpenMBVFrameC") and (E(e)->getTagName() != MBSIM%"plotFeatureFrameC"))
         element->removeChild(e);
       e = en;
     }

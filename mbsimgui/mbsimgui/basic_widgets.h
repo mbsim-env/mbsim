@@ -487,24 +487,26 @@ namespace MBSimGUI {
       void setColor(); 
   };
 
-  class PlotFeatureStatusWidget : public Widget {
+  class PlotFeatureWidget : public Widget {
     Q_OBJECT
 
     protected:
-      QComboBox *type, *value;
+      std::vector<MBXMLUtils::FQN> feature;
+      QComboBox *type, *value, *nspace;
       ChoiceWidget2 *status;
       QTreeWidget *tree;
       MBXMLUtils::NamespaceURI uri;
 
     public:
-      PlotFeatureStatusWidget(const QString &types="", const MBXMLUtils::NamespaceURI &uri=MBSIM);
-      void addFeature(const QString &feature);
+      PlotFeatureWidget(const QString &types="", const MBXMLUtils::NamespaceURI &uri=MBSIM);
+      void addFeature(const MBXMLUtils::FQN &feature);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
       xercesc::DOMElement* initializeUsingXML2(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element);
+      xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected slots:
+      void updateNamespace(int i);
       void addFeature();
       void removeFeature();
       void updateFeature();

@@ -151,10 +151,9 @@ namespace MBSimGUI {
 
   void Group::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
-    DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
     while(e) {
       DOMNode *en=e->getNextSibling();
-      if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (e != ombvFrame))
+      if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (E(e)->getTagName() != MBSIM%"enableOpenMBVFrameI") and (E(e)->getTagName() != MBSIM%"plotFeatureFrameI"))
         element->removeChild(e);
       e = en;
     }
