@@ -312,7 +312,7 @@ namespace MBSimHydraulics {
     }
     else if (stage==unknownStage) {
       double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
-      if (fabs(p0)<epsroot()) {
+      if (fabs(p0)<epsroot) {
         msg(Warn) << "ElasticNode \"" << getPath() << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
         p0=pinf;
       }
@@ -395,8 +395,8 @@ namespace MBSimHydraulics {
 
   void RigidNode::updategd() {
     HNode::updategd();
-    if (getTime()<epsroot()) {
-      if (fabs(QHyd)>epsroot())
+    if (getTime()<epsroot) {
+      if (fabs(QHyd)>epsroot)
         msg(Warn) << "RigidNode \"" << getPath() << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
     }
   }

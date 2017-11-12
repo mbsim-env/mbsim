@@ -239,12 +239,12 @@ void CVTReferenceSurface::setConstraints(double length_, double pulleyDistance_,
 //    int num = nTheta * 2;
 //    for (int i = 0; i < num; i++) {
 //      double theta = thetaLower + i * (thetaUpper - thetaLower) / (num - 1);
-//      thetaStr += numtostr(theta) + ",";
+//      thetaStr += toString(theta) + ",";
 //      centerPositions.deriveAtH(theta, 2, ders);
-//      mAPRI += numtostr(ders(0, 0)) + ",";
-//      dmAPRI1 += numtostr(ders(1, 0)) + ",";
-//      mASEC += numtostr(ders(0, 1)) + ",";
-//      dmASEC1 += numtostr(ders(1, 1)) + ",";
+//      mAPRI += toString(ders(0, 0)) + ",";
+//      dmAPRI1 += toString(ders(1, 0)) + ",";
+//      mASEC += toString(ders(0, 1)) + ",";
+//      dmASEC1 += toString(ders(1, 1)) + ",";
 //    }
 //    cout << thetaStr << "];" << endl;
 //    cout << mAPRI << "];" << endl;
@@ -260,17 +260,17 @@ void CVTReferenceSurface::setConstraints(double length_, double pulleyDistance_,
 //    int numTheta = 20;
 //    for (int iTh = 0; iTh < numTheta; iTh++) {
 //      double theta = thetaLower + iTh * (thetaUpper - thetaLower) / (numTheta - 1);
-//      string posStr("rP{" + numtostr(iTh + 1) + "} = [");
-//      string dposdXiStr("dposdXi{" + numtostr(iTh + 1) + "} = [");
-//      string d2posdXi2Str("d2posdXi2{" + numtostr(iTh + 1) + "} = [");
+//      string posStr("rP{" + toString(iTh + 1) + "} = [");
+//      string dposdXiStr("dposdXi{" + toString(iTh + 1) + "} = [");
+//      string d2posdXi2Str("d2posdXi2{" + toString(iTh + 1) + "} = [");
 //      for (int iXi = 0; iXi < numXi; iXi++) {
 //        double xi = iXi * length / (numXi - 1);
 //        Vec3 pos = computeVecAt(xi, theta, 0, 0);
 //        Vec3 dposdXi = computeVecAt(xi, theta, 1, 0);
 //        Vec3 d2posdXi2 = computeVecAt(xi, theta, 2, 0);
-//        posStr += numtostr(pos(0)) + "," + numtostr(pos(1)) + ";";
-//        dposdXiStr += numtostr(dposdXi(0)) + "," + numtostr(dposdXi(1)) + ";";
-//        d2posdXi2Str += numtostr(d2posdXi2(0)) + "," + numtostr(d2posdXi2(1)) + ";";
+//        posStr += toString(pos(0)) + "," + toString(pos(1)) + ";";
+//        dposdXiStr += toString(dposdXi(0)) + "," + toString(dposdXi(1)) + ";";
+//        d2posdXi2Str += toString(d2posdXi2(0)) + "," + toString(d2posdXi2(1)) + ";";
 //      }
 //      posStr += "];";
 //      dposdXiStr += "];";
@@ -286,17 +286,17 @@ void CVTReferenceSurface::setConstraints(double length_, double pulleyDistance_,
 //    int numTheta = 100;
 //    for (int iXi = 0; iXi < numXi; iXi++) {
 //      double xi = iXi * length / (numXi - 1);
-//      string posStr("rP{" + numtostr(iXi + 1) + "} = [");
-//      string dposdThStr("dposdTh{" + numtostr(iXi + 1) + "} = [");
-//      string d2posdTh2Str("d2posdTh2{" + numtostr(iXi + 1) + "} = [");
+//      string posStr("rP{" + toString(iXi + 1) + "} = [");
+//      string dposdThStr("dposdTh{" + toString(iXi + 1) + "} = [");
+//      string d2posdTh2Str("d2posdTh2{" + toString(iXi + 1) + "} = [");
 //      for (int iTh = 0; iTh < numTheta; iTh++) {
 //        double theta = thetaLower + iTh * (thetaUpper - thetaLower) / (numTheta - 1);
 //        Vec3 pos = computeVecAt(xi, theta, 0, 0);
 //        Vec3 dposdTh = computeVecAt(xi, theta, 0, 1);
 //        Vec3 d2posdTh2 = computeVecAt(xi, theta, 0, 2);
-//        posStr += numtostr(pos(0)) + "," + numtostr(pos(1)) + ";";
-//        dposdThStr += numtostr(dposdTh(0)) + "," + numtostr(dposdTh(1)) + ";";
-//        d2posdTh2Str += numtostr(d2posdTh2(0)) + "," + numtostr(d2posdTh2(1)) + ";";
+//        posStr += toString(pos(0)) + "," + toString(pos(1)) + ";";
+//        dposdThStr += toString(dposdTh(0)) + "," + toString(dposdTh(1)) + ";";
+//        d2posdTh2Str += toString(d2posdTh2(0)) + "," + toString(d2posdTh2(1)) + ";";
 //      }
 //      posStr += "];";
 //      dposdThStr += "];";
@@ -400,12 +400,12 @@ void CVTReferenceSurfaceParts::computeReference() {
     int num = nTheta * 2;
     for (int i = 0; i < num; i++) {
       double theta = thetaLower + i * (thetaUpper - thetaLower) / (num - 1);
-      thetaStr += numtostr(theta) + ",";
+      thetaStr += toString(theta) + ",";
       primaryRadius.deriveAtH(theta, 4, ders);
-      rP += numtostr(ders(0, 0)) + ",";
-      rPD1 += numtostr(ders(1, 0)) + ",";
-      rPD2 += numtostr(ders(2, 0)) + ",";
-      rPD3 += numtostr(ders(3, 0)) + ",";
+      rP += toString(ders(0, 0)) + ",";
+      rPD1 += toString(ders(1, 0)) + ",";
+      rPD2 += toString(ders(2, 0)) + ",";
+      rPD3 += toString(ders(3, 0)) + ",";
     }
     cout << thetaStr << "];" << endl;
     cout << rP << "];" << endl;
@@ -420,17 +420,17 @@ void CVTReferenceSurfaceParts::computeReference() {
     int numTheta = 20;
     for (int iTh = 0; iTh < numTheta; iTh++) {
       double theta = thetaLower + iTh * (thetaUpper - thetaLower) / (numTheta - 1);
-      string posStr("rP{" + numtostr(iTh + 1) + "} = [");
-      string dposdXiStr("dposdXi{" + numtostr(iTh + 1) + "} = [");
-      string d2posdXi2Str("d2posdXi2{" + numtostr(iTh + 1) + "} = [");
+      string posStr("rP{" + toString(iTh + 1) + "} = [");
+      string dposdXiStr("dposdXi{" + toString(iTh + 1) + "} = [");
+      string d2posdXi2Str("d2posdXi2{" + toString(iTh + 1) + "} = [");
       for (int iXi = 0; iXi < numXi; iXi++) {
         double xi = iXi * length / (numXi - 1);
         Vec3 pos = computeVecAt(xi, theta, 0, 0);
         Vec3 dposdXi = computeVecAt(xi, theta, 1, 0);
         Vec3 d2posdXi2 = computeVecAt(xi, theta, 2, 0);
-        posStr += numtostr(pos(0)) + "," + numtostr(pos(1)) + ";";
-        dposdXiStr += numtostr(dposdXi(0)) + "," + numtostr(dposdXi(1)) + ";";
-        d2posdXi2Str += numtostr(d2posdXi2(0)) + "," + numtostr(d2posdXi2(1)) + ";";
+        posStr += toString(pos(0)) + "," + toString(pos(1)) + ";";
+        dposdXiStr += toString(dposdXi(0)) + "," + toString(dposdXi(1)) + ";";
+        d2posdXi2Str += toString(d2posdXi2(0)) + "," + toString(d2posdXi2(1)) + ";";
       }
       posStr += "];";
       dposdXiStr += "];";
@@ -446,17 +446,17 @@ void CVTReferenceSurfaceParts::computeReference() {
     int numTheta = 100;
     for (int iXi = 0; iXi < numXi; iXi++) {
       double xi = iXi * length / (numXi - 1);
-      string posStr("rP{" + numtostr(iXi + 1) + "} = [");
-      string dposdThStr("dposdTh{" + numtostr(iXi + 1) + "} = [");
-      string d2posdTh2Str("d2posdTh2{" + numtostr(iXi + 1) + "} = [");
+      string posStr("rP{" + toString(iXi + 1) + "} = [");
+      string dposdThStr("dposdTh{" + toString(iXi + 1) + "} = [");
+      string d2posdTh2Str("d2posdTh2{" + toString(iXi + 1) + "} = [");
       for (int iTh = 0; iTh < numTheta; iTh++) {
         double theta = thetaLower + iTh * (thetaUpper - thetaLower) / (numTheta - 1);
         Vec3 pos = computeVecAt(xi, theta, 0, 0);
         Vec3 dposdTh = computeVecAt(xi, theta, 0, 1);
         Vec3 d2posdTh2 = computeVecAt(xi, theta, 0, 2);
-        posStr += numtostr(pos(0)) + "," + numtostr(pos(1)) + ";";
-        dposdThStr += numtostr(dposdTh(0)) + "," + numtostr(dposdTh(1)) + ";";
-        d2posdTh2Str += numtostr(d2posdTh2(0)) + "," + numtostr(d2posdTh2(1)) + ";";
+        posStr += toString(pos(0)) + "," + toString(pos(1)) + ";";
+        dposdThStr += toString(dposdTh(0)) + "," + toString(dposdTh(1)) + ";";
+        d2posdTh2Str += toString(d2posdTh2(0)) + "," + toString(d2posdTh2(1)) + ";";
       }
       posStr += "];";
       dposdThStr += "];";

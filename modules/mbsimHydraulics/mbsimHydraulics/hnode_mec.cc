@@ -119,9 +119,9 @@ namespace MBSimHydraulics {
           plotColumns.push_back("QRot [mm^3/s]");
           plotColumns.push_back("Mechanical surface flow into and out the node [mm^3/s]");
           for (unsigned int i=0; i<nTrans; i++)
-            plotColumns.push_back("interface force on area " + numtostr(int(i)));
+            plotColumns.push_back("interface force on area " + toString(int(i)));
           for (unsigned int i=0; i<nRot; i++)
-            plotColumns.push_back("interface force on area " + numtostr(int(i)));
+            plotColumns.push_back("interface force on area " + toString(int(i)));
         }
       }
       if(plotFeature[openMBV] and openMBVSphere) {
@@ -139,14 +139,14 @@ namespace MBSimHydraulics {
             openMBVArrows[i]->setName(
                 "ForceOn_"+
                 connectedTransFrames[i].frame->getName()+
-                "_"+numtostr(int(i)));
+                "_"+toString(int(i)));
             openMBVGrp->addObject(openMBVArrows[i]);
           }
           for (unsigned int i=0; i<nRot; i++) {
             openMBVArrows[nTrans+i]->setName(
                 "ForceOn_"+
                 connectedRotFrames[i].frame->getName()+
-                "_"+numtostr(int(nTrans+i)));
+                "_"+toString(int(nTrans+i)));
             openMBVGrp->addObject(openMBVArrows[nTrans+i]);
           }
         }
@@ -461,7 +461,7 @@ namespace MBSimHydraulics {
     }
     else if (stage==unknownStage) {
       double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
-      if (fabs(p0)<epsroot()) {
+      if (fabs(p0)<epsroot) {
         msg(Warn) << "ElasticNodeMec \"" << getPath() << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
         p0=pinf;
       }
@@ -528,7 +528,7 @@ namespace MBSimHydraulics {
         Vec u0=connectedLines[i].line->getu0();
 //        bool zero=true;
 //        for (int j=0; j<u0.size(); j++)
-//          if (fabs(u0(j))>epsroot())
+//          if (fabs(u0(j))>epsroot)
 //            zero=false;
 //        if (!zero)
 //          cerr << "WARNING in RigidNodeMec \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an generalizedInitialVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
@@ -538,7 +538,7 @@ namespace MBSimHydraulics {
           Vec u0=((Object*)connectedTransFrames[i].frame->getParent())->getu0();
 //          bool zero=true;
 //          for (int j=0; j<u0.size(); j++)
-//            if (fabs(u0(j))>epsroot())
+//            if (fabs(u0(j))>epsroot)
 //              zero=false;
 //          if (!zero)
 //            cerr << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedTransFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedTransFrames[i].frame->getName() << "\" has an generalizedInitialVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
@@ -549,7 +549,7 @@ namespace MBSimHydraulics {
           Vec u0=((Object*)connectedRotFrames[i].frame->getParent())->getu0();
 //          bool zero=true;
 //          for (int j=0; j<u0.size(); j++)
-//            if (fabs(u0(j))>epsroot())
+//            if (fabs(u0(j))>epsroot)
 //              zero=false;
 //          if (!zero)
 //            cerr << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedRotFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedRotFrames[i].frame->getName() << "\" has an generalizedInitialVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
@@ -573,12 +573,12 @@ namespace MBSimHydraulics {
 
   void RigidNodeMec::updategd() {
     HNodeMec::updategd();
-    if (getTime()<epsroot()) {
-      if (fabs(evalQHyd())>epsroot())
+    if (getTime()<epsroot) {
+      if (fabs(evalQHyd())>epsroot)
         msg(Warn) << "RigidNodeMec \"" << getPath() << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly (QHyd=" << QHyd << ")." << endl;
-      if (fabs(evalQMecTrans())>epsroot())
+      if (fabs(evalQMecTrans())>epsroot)
         msg(Warn) << "RigidNodeMec \"" << getPath() << "\": has an initial mechanical flow due to translatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecTrans=" << QMecTrans << ")." << endl;
-      if (fabs(evalQMecRot())>epsroot())
+      if (fabs(evalQMecRot())>epsroot)
         msg(Warn) << "RigidNodeMec \"" << getPath() << "\": has an initial mechanical flow due to rotatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecRot=" << QMecRot << ")." << endl;
     }
   }

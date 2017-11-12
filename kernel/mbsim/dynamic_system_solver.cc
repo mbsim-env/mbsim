@@ -193,12 +193,12 @@ namespace MBSim {
       int nt = 0;
       for (int i = 0; i < A.size(); i++) {
         double a = max(A.T().col(i));
-        if (a > 0 && fabs(A(i, i) + 1) > epsroot()) { // root of relativ kinematics
+        if (a > 0 && fabs(A(i, i) + 1) > epsroot) { // root of relativ kinematics
           Graph *graph = new Graph("InvisibleGraph_"+toString(nt++));
           addToGraph(graph, A, i, eleList);
           bufGraph.push_back(graph);
         }
-        else if (fabs(a) < epsroot()) { // absolut kinematics
+        else if (fabs(a) < epsroot) { // absolut kinematics
           Object *obj = dynamic_cast<Object*>(eleList[i]);
           if(obj) {
             eleList[i]->setName("Object_absolute_"+toString(i)); // just a unique local name
@@ -549,11 +549,11 @@ namespace MBSim {
       if (numJac) {
         for (int j = 0; j < la.size(); j++) {
           const double xj = la(j);
-          double dx = epsroot() / 2.;
+          double dx = epsroot / 2.;
           
           do
             dx += dx;
-          while (fabs(xj + dx - la(j)) < epsroot());
+          while (fabs(xj + dx - la(j)) < epsroot);
 
           la(j) += dx;
           Group::solveConstraintsRootFinding();
@@ -625,11 +625,11 @@ namespace MBSim {
       if (numJac) {
         for (int j = 0; j < La.size(); j++) {
           const double xj = La(j);
-          double dx = .5 * epsroot();
+          double dx = .5 * epsroot;
           
           do
             dx += dx;
-          while (fabs(xj + dx - La(j)) < epsroot());
+          while (fabs(xj + dx - La(j)) < epsroot);
           
           La(j) += dx;
           Group::solveImpactsRootFinding();
@@ -713,7 +713,7 @@ namespace MBSim {
 //      lb = 0;
 //      ub = qSize;
 //    }
-//    double delta = epsroot();
+//    double delta = epsroot;
 //    Mat J(hSize[0], qSize, INIT, 0.0);
 //    throw;
 //    updateg();
@@ -751,7 +751,7 @@ namespace MBSim {
 //      lb = 0;
 //      ub = uSize[0];
 //    }
-//    double delta = epsroot();
+//    double delta = epsroot;
 //    Mat J(hSize[0], uSize[0], INIT, 0.0);
 //    throw;
 //    updateg();
@@ -877,7 +877,7 @@ namespace MBSim {
     if (checkGSize)
       ; // Gs.resize();
     else if (Gs.cols() != G.size()) {
-      if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot())
+      if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot)
         facSizeGs = double(countElements(G)) / double(G.size() * G.size()) * 1.5;
       Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
     }
@@ -1461,7 +1461,7 @@ namespace MBSim {
     A(i, i) = -1;
 
     for (int j = 0; j < A.cols(); j++)
-      if (A(i, j) > 0 && fabs(A(j, j) + 1) > epsroot()) // child node of object i
+      if (A(i, j) > 0 && fabs(A(j, j) + 1) > epsroot) // child node of object i
         addToGraph(graph, A, j, eleList);
   }
 

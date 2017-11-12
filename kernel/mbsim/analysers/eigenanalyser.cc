@@ -73,7 +73,7 @@ namespace MBSimAnalyser {
   void Eigenanalyser::computeEigenfrequencies() {
     f.clear();
     for (int i=0; i<w.size(); i++) {
-      if((abs(imag(w(i))) > macheps()) and (i < w.size()-1) and (w(i+1)==conj(w(i)))) {
+      if((abs(imag(w(i))) > macheps) and (i < w.size()-1) and (w(i+1)==conj(w(i)))) {
         f.push_back(pair<double,int>(imag(w(i))/2/M_PI,i));
         i++;
       }
@@ -97,7 +97,6 @@ namespace MBSimAnalyser {
         throw MBSimError("In Eigenanalysis: computation of equilibrium state failed!");
     }
 
-    double delta = epsroot();
     SqrMat A(system->getzSize());
     Vec zd, zdOld;
     system->setTime(tStart);
@@ -106,10 +105,10 @@ namespace MBSimAnalyser {
     zdOld = system->evalzd();
     for (int i=0; i<system->getzSize(); i++) {
       double ztmp = system->getState()(i);
-      system->getState()(i) += delta;
+      system->getState()(i) += epsroot;
       system->resetUpToDate();
       zd = system->evalzd();
-      A.col(i) = (zd - zdOld) / delta;
+      A.col(i) = (zd - zdOld) / epsroot;
       system->getState()(i) = ztmp;
     }
     eigvec(A,V,w);

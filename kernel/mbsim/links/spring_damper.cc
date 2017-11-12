@@ -46,7 +46,7 @@ namespace MBSim {
 
   void SpringDamper::updatelaF() {
     lambdaF(0)=-(*func)(evalGeneralizedRelativePosition()(0)-l0,evalGeneralizedRelativeVelocity()(0));
-    if(rrel(0)<=epsroot() && abs(lambda(0))>epsroot())
+    if(rrel(0)<=epsroot && abs(lambda(0))>epsroot)
       msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<getTime()<<endl;
     updlaF = false;
   }

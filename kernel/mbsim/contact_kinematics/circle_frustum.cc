@@ -117,7 +117,7 @@ namespace MBSim {
       g = 1.;
     else { // possible contact
 
-      if (fabs(z_CF_nrm2) < epsroot()) { // circle - circle
+      if (fabs(z_CF_nrm2) < epsroot) { // circle - circle
         if (u_CF < 0. || u_CF > h_F)
           g = 1.; // not in relevant plate
         else { // relevant plate
@@ -137,7 +137,7 @@ namespace MBSim {
 
           if (g < eps) {
             if (outCont_F && !outCont_C) { // inner circle, outer frustum
-              if (fabs(c_CF_nrm2) < epsroot())
+              if (fabs(c_CF_nrm2) < epsroot)
                 throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
               else {
                 cFrame[icircle]->setPosition(circle->getFrame()->getPosition() - r_C * c_CF / c_CF_nrm2);
@@ -148,7 +148,7 @@ namespace MBSim {
             /********************************/
             else if (!outCont_F && outCont_C) { // outer circle, inner frustum
               if (g < eps) {
-                if (fabs(c_CF_nrm2) < epsroot())
+                if (fabs(c_CF_nrm2) < epsroot)
                   throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
                 else {
                   cFrame[icircle]->setPosition(circle->getFrame()->getPosition() + r_C * c_CF / c_CF_nrm2);
@@ -179,8 +179,8 @@ namespace MBSim {
         if (xi_2 < -sin(al_CF) * r_C || xi_2 > h_F + sin(al_CF) * r_C)
           g = 1.;
 
-        else if (fabs(phi_F) < epsroot()) { // special case: frustum=cylinder (circle-ellipse)
-          if (fabs(al_CF - M_PI / 2.) < epsroot()) {
+        else if (fabs(phi_F) < epsroot) { // special case: frustum=cylinder (circle-ellipse)
+          if (fabs(al_CF - M_PI / 2.) < epsroot) {
             throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Circle axis-Cylinder axis angle equals 90° -> indefinite contact configuration!");
           }
           double cE1_star_nrm2 = r_F(0) / t_CF;

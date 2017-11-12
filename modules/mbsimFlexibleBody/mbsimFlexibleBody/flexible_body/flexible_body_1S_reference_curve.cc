@@ -252,9 +252,9 @@ namespace MBSimFlexibleBody {
       if (getPlotFeature(plotRecursive)) {
         if (getPlotFeature(notMinimalState)) {
           for (int i = 0; i < qSize; ++i)
-            plotColumns.push_back("qF(" + numtostr(i) + ")");
+            plotColumns.push_back("qF(" + toString(i) + ")");
           for (int i = 0; i < uSize[0]; ++i)
-            plotColumns.push_back("uF(" + numtostr(i) + ")");
+            plotColumns.push_back("uF(" + toString(i) + ")");
         }
       }
     }
@@ -824,14 +824,14 @@ namespace MBSimFlexibleBody {
     Vec3 t = computerRef(xi, 1, derTheta);
     double len = nrm2(t);
     if (derXi == 0) {
-      if (len > macheps()) {
+      if (len > macheps) {
         // if len is zero than that means that the tangential does no change at the xi-position with theta (i.e. at xi = 0 and xi = length/2)
         t = t / len;
       }
     }
     else {
       Vec3 rRefdxidxi = computerRef(xi, derXi, derTheta);
-      if (len > macheps()) {
+      if (len > macheps) {
         // if len is zero than that means that the tangential does no change at the xi-position with theta (i.e. at xi = 0 and xi = length/2)
         t = rRefdxidxi / len;
       }

@@ -37,7 +37,7 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, MasslessSpringDamper)
 
-  MasslessSpringDamper::MasslessSpringDamper(const string& name) : Signal(name), c(0), F0(0), dPos(0), dNeg(0), FFricPos(0), FFricNeg(1./epsroot()), xMin(-1./epsroot()), xMax(1./epsroot()), inputSignal(NULL) {
+  MasslessSpringDamper::MasslessSpringDamper(const string& name) : Signal(name), c(0), F0(0), dPos(0), dNeg(0), FFricPos(0), FFricNeg(1./epsroot), xMin(-1./epsroot), xMax(1./epsroot), inputSignal(NULL) {
   }
 
   void MasslessSpringDamper::initializeUsingXML(DOMElement * element) {
@@ -127,13 +127,13 @@ namespace MBSimControl {
 //      }
 //    }
     else if (stage==unknownStage) {
-      assert(dPos>epsroot());
-      if (fabs(dNeg)<epsroot())
+      assert(dPos>epsroot);
+      if (fabs(dNeg)<epsroot)
         dNeg=dPos;
-      assert(dNeg>epsroot());
+      assert(dNeg>epsroot);
 
       assert(!(FFricPos<0));
-      if (fabs(FFricNeg) > (1./epsroot()-1))
+      if (fabs(FFricNeg) > (1./epsroot-1))
         FFricNeg=FFricPos;
       assert(!(FFricNeg<0));
     }

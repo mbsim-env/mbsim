@@ -39,7 +39,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s21ANCF::setCurlRadius(double R) {
-    if (fabs(R) < epsroot()) throw MBSimError("CurlRadius must not be 0!\n");
+    if (fabs(R) < epsroot) throw MBSimError("CurlRadius must not be 0!\n");
     wss0 = 1/R;
   }
 

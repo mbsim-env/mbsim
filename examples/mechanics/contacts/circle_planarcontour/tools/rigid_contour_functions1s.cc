@@ -67,13 +67,13 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
   angleRxyTMP0 = bubbleSort(angleRxyTMP0,0); 
   int identXY =0;
   for (i=1;i < N; i++) 
-    if ((abs(angleRxyTMP0(i,2)-angleRxyTMP0(i-1,2))<epsroot())&&(abs(angleRxyTMP0(i,3)-angleRxyTMP0(i-1,3))<epsroot())) 
+    if ((abs(angleRxyTMP0(i,2)-angleRxyTMP0(i-1,2))<epsroot)&&(abs(angleRxyTMP0(i,3)-angleRxyTMP0(i-1,3))<epsroot)) 
       identXY++;
   Mat angleRxyTMP(N-identXY,4);
   int j=0;
   angleRxyTMP.row(0) = angleRxyTMP0.row(0);
   for (i=1; i<N;i++) {
-    if (!((abs(angleRxyTMP0(i,2)-angleRxyTMP0(i-1,2))<epsroot())&&(abs(angleRxyTMP0(i,3)-angleRxyTMP0(i-1,3))<epsroot())))
+    if (!((abs(angleRxyTMP0(i,2)-angleRxyTMP0(i-1,2))<epsroot)&&(abs(angleRxyTMP0(i,3)-angleRxyTMP0(i-1,3))<epsroot)))
       j++;
     angleRxyTMP.row(j) = angleRxyTMP0.row(i); 
   }
@@ -86,7 +86,7 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
   rPhi0 =  (r0 - rN) / (phi0 - (phiN-2*M_PI)) * (0 - (phiN-2*M_PI)) + rN;
   double dAngleGrenz= 10.0;
   for (i=1; i<N; i++)
-    if (((angleRxyTMP(i,0)-angleRxyTMP(i-1,0)) < dAngleGrenz)&&(abs(angleRxyTMP(i,2)-angleRxyTMP(i-1,2))>epsroot())&&(abs(angleRxyTMP(i,3)-angleRxyTMP(i-1,3))>epsroot())) 
+    if (((angleRxyTMP(i,0)-angleRxyTMP(i-1,0)) < dAngleGrenz)&&(abs(angleRxyTMP(i,2)-angleRxyTMP(i-1,2))>epsroot)&&(abs(angleRxyTMP(i,3)-angleRxyTMP(i-1,3))>epsroot)) 
       dAngleGrenz = angleRxyTMP(i,0)-angleRxyTMP(i-1,0); 
   dAngleGrenz *= 0.2; 
   int index0, indexE;
@@ -177,7 +177,7 @@ Vec3 FuncCrPC_PlanePolar::parDerParDer(const double& alpha) {
 }
 
 void FuncCrPC_PlanePolar::updateData(const double& alpha) {
-  if (fabs(calculateLocalAlpha(alpha)-alphaSave)>epsroot()*epsroot()) {
+  if (fabs(calculateLocalAlpha(alpha)-alphaSave)>macheps) {
     alphaSave=calculateLocalAlpha(alpha);
     salphaSave=sin(alphaSave);
     calphaSave=cos(alphaSave);

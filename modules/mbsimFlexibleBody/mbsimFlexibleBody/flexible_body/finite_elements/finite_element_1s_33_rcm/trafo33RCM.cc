@@ -234,7 +234,7 @@ namespace MBSimFlexibleBody {
     MultiDimNewtonMethod rf(&fun,&jac);
     rf.setMaximumNumberOfIterations(10);	
 
-    if(nrm2(be)<epsroot()) {
+    if(nrm2(be)<epsroot) {
       Vec s0 = computes0(qG); // initial value
       be = rf.solve(s0); // Newton method according to Deuflhard (nonlinear_algebra.h)
     }

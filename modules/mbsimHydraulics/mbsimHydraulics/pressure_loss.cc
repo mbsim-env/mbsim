@@ -162,7 +162,7 @@ namespace MBSimHydraulics {
     assert(dHyd_>=0);
     assert(dHydNeg_>=0);
     dHyd=dHyd_; 
-    dHydNeg=((fabs(dHydNeg_)<epsroot())?dHyd_:dHydNeg_); 
+    dHydNeg=((fabs(dHydNeg_)<epsroot)?dHyd_:dHydNeg_); 
   }
   
   double TurbulentTubeFlowLinePressureLoss::operator()(const double& Q) {
@@ -189,13 +189,13 @@ namespace MBSimHydraulics {
       re.push_back(2320.);
       Lambda fLambda(re.back(), k, d);
       RegulaFalsi solver(&fLambda);
-      solver.setTolerance(epsroot());
+      solver.setTolerance(epsroot);
       la.push_back(solver.solve(1e-4, 1e-1));
       do {
         re.push_back(re.back()*1.1);
         Lambda l(re.back(), k, d);
         RegulaFalsi solver(&l);
-        solver.setTolerance(epsroot());
+        solver.setTolerance(epsroot);
         la.push_back(solver.solve(1e-4, 1e-1));
       } while (fabs(la.back()-la[la.size()-2])>1e-6);
       Vec ReValues(re.size(), INIT, 0);

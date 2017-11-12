@@ -88,7 +88,7 @@ namespace MBSim {
         return currentGuess;
       }
 
-      if(fabs(norms[norms.size() - 2] - norms[norms.size() - 1])  < macheps()) {
+      if(fabs(norms[norms.size() - 2] - norms[norms.size() - 1])  < macheps) {
         info = 1; //no more convergence possible --> stop
         return currentGuess;
       }
@@ -131,7 +131,7 @@ namespace MBSim {
       if(jac)
         J = (*jac)(x);
       else {
-        double delta = epsroot();
+        double delta = epsroot;
         double xtmp = x;
         x += delta;
         double f_new = (*fct)(x);
@@ -211,10 +211,10 @@ namespace MBSim {
         for(int j=0; j<x.size(); j++) {
           xj = x(j);
 
-          dx = (epsroot() * 0.5);
+          dx = (epsroot * 0.5);
           do {
             dx += dx;
-          } while (fabs(xj + dx - x(j))<epsroot());
+          } while (fabs(xj + dx - x(j))<epsroot);
 
           x(j)+=dx;
           f2 = (*fct)(x);
@@ -247,7 +247,7 @@ namespace MBSim {
         return xold;
       }
 
-      if(fabs(norms[norms.size() - 2] - norms[norms.size() - 1]) < macheps()) {
+      if(fabs(norms[norms.size() - 2] - norms[norms.size() - 1]) < macheps) {
         info = -1; //divergence --> stop
         return x;
       }

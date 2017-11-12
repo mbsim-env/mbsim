@@ -1,6 +1,5 @@
 noinst_LTLIBRARIES = libutils.la
 libutils_la_SOURCES = colors.cc\
-                      eps.cc\
                       nonlinear_algebra.cc\
                       nonsmooth_algebra.cc\
                       contact_utils.cc\

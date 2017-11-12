@@ -50,7 +50,7 @@ class initLink : public Link {
         };
         CamRockerDistance gCamRocker(rocker, contactCamRocker);
         RegulaFalsi gCamRockerSolver(&gCamRocker);
-        gCamRockerSolver.setTolerance(2.*epsroot()*epsroot());
+        gCamRockerSolver.setTolerance(2.*macheps);
         const double phi0Rocker=gCamRockerSolver.solve(-M_PI/2., M_PI/20.);
         rocker->setGeneralizedInitialPosition(phi0Rocker);
         rocker->initz();
@@ -59,7 +59,7 @@ class initLink : public Link {
 
         int nltol=0;
         while (!((contactCamRocker->getg()(0))<0)) {
-          const double phi0RockerNew = phi0Rocker+nltol*epsroot();
+          const double phi0RockerNew = phi0Rocker+nltol*epsroot;
           rocker->setGeneralizedInitialPosition(phi0RockerNew);
           rocker->initz();
           rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
@@ -85,7 +85,7 @@ class initLink : public Link {
         };
         CamRockerVelocity gdCamRocker(rocker, contactCamRocker);
         RegulaFalsi gdCamRockerSolver(&gdCamRocker);
-        gdCamRockerSolver.setTolerance(2.*epsroot()*epsroot());
+        gdCamRockerSolver.setTolerance(2.*macheps);
         const double omega0Rocker=gdCamRockerSolver.solve(-1e3, 1e3);
 
         rocker->setGeneralizedInitialPosition(phi0Rocker);

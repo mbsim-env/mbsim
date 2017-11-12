@@ -88,7 +88,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13Disk::updatePositions(Frame2s *frame) {
-    if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
+    if(nrm2(frame->getParameters()) < epsroot) { // center of gravity
       frame->setOrientation(evalOrientation());
       frame->setPosition(evalPosition());
     }
@@ -97,7 +97,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13Disk::updateVelocities(Frame2s *frame) {
-    if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
+    if(nrm2(frame->getParameters()) < epsroot) { // center of gravity
       switch(RefDofs) {
         case 2:
         frame->setVelocity(R->evalOrientation() * Vec3("[0;0;1]") * getu()(0));
@@ -126,7 +126,7 @@ namespace MBSimFlexibleBody {
 
     Vec2 alpha = frame->getParameters();
 
-    if (nrm2(alpha) < epsroot()) { // center of gravity
+    if (nrm2(alpha) < epsroot) { // center of gravity
       Wext(0, 0) = 1.;
       Wext(1, 1) = 1.;
     }

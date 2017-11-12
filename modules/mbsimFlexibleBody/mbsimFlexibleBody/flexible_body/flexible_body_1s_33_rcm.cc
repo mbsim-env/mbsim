@@ -245,10 +245,10 @@ namespace MBSimFlexibleBody {
         qElement.push_back(Vec(discretization[0]->getqSize(), INIT, 0.));
         uElement.push_back(Vec(discretization[0]->getuSize(), INIT, 0.));
         static_cast<FiniteElement1s33RCM*>(discretization[i])->setGauss(nGauss);
-        if (fabs(R1) > epsroot() || fabs(R2) > epsroot())
+        if (fabs(R1) > epsroot || fabs(R2) > epsroot)
           static_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1, R2);
         static_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements * epstD, Elements * k0D);
-        if (fabs(epstD) < epsroot())
+        if (fabs(epstD) < epsroot)
           static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements * epstL, Elements * k0L);
       }
     }

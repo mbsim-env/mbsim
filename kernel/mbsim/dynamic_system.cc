@@ -882,30 +882,30 @@ namespace MBSim {
 
   void DynamicSystem::writez(H5::GroupBase *parent) {
     for (unsigned i = 0; i < dynamicsystem.size(); i++) {
-      H5::Group *group = parent->createChildObject<H5::Group>("System_" + numtostr((int) i))();
+      H5::Group *group = parent->createChildObject<H5::Group>("System_" + toString((int) i))();
       dynamicsystem[i]->writez(group);
     }
     for (unsigned i = 0; i < object.size(); i++) {
-      H5::Group *group = parent->createChildObject<H5::Group>("Object_" + numtostr((int) i))();
+      H5::Group *group = parent->createChildObject<H5::Group>("Object_" + toString((int) i))();
       object[i]->writez(group);
     }
     for (unsigned i = 0; i < link.size(); i++) {
-      H5::Group *group = parent->createChildObject<H5::Group>("Link_" + numtostr((int) i))();
+      H5::Group *group = parent->createChildObject<H5::Group>("Link_" + toString((int) i))();
       link[i]->writez(group);
     }
   }
 
   void DynamicSystem::readz0(H5::GroupBase *parent) {
     for (unsigned i = 0; i < dynamicsystem.size(); i++) {
-      H5::Group *group = parent->openChildObject<H5::Group>("System_" + numtostr((int) i));
+      H5::Group *group = parent->openChildObject<H5::Group>("System_" + toString((int) i));
       dynamicsystem[i]->readz0(group);
     }
     for (unsigned i = 0; i < object.size(); i++) {
-      H5::Group *group = parent->openChildObject<H5::Group>("Object_" + numtostr((int) i));
+      H5::Group *group = parent->openChildObject<H5::Group>("Object_" + toString((int) i));
       object[i]->readz0(group);
     }
     for (unsigned i = 0; i < link.size(); i++) {
-      H5::Group *group = parent->openChildObject<H5::Group>("Link_" + numtostr((int) i));
+      H5::Group *group = parent->openChildObject<H5::Group>("Link_" + toString((int) i));
       link[i]->readz0(group);
     }
   }

@@ -40,7 +40,7 @@ namespace MBSim {
     Wd = Wd/l;
     g = l-sphere0->getRadius()-sphere1->getRadius();
     Vec3 t_;
-    if(fabs(Wd(0))<epsroot() && fabs(Wd(1))<epsroot()) {
+    if(fabs(Wd(0))<epsroot && fabs(Wd(1))<epsroot) {
       t_(0) = 1.;
       t_(1) = 0.;
       t_(2) = 0.;

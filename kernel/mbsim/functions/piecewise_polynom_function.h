@@ -278,7 +278,7 @@ namespace MBSim {
   void PiecewisePolynomFunction<Ret(Arg)>::calculateSplinePeriodic() {
     double hi, hii;
     int N = x.size();
-    if(nrm2(y.row(0)-y.row(y.rows()-1))>epsroot()) THROW_MBSIMERROR("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+numtostr(y.row(0))+"!="+numtostr(y.row(y.rows()-1))+" =f(end)");
+    if(nrm2(y.row(0)-y.row(y.rows()-1))>epsroot) THROW_MBSIMERROR("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+fmatvec::toString(y.row(0))+"!="+fmatvec::toString(y.row(y.rows()-1))+" =f(end)");
     fmatvec::SqrMat C(N-1,fmatvec::INIT,0.0);
     fmatvec::Mat rs(N-1,y.cols(),fmatvec::INIT,0.0);
 
@@ -422,11 +422,11 @@ namespace MBSim {
   Ret PiecewisePolynomFunction<Ret(Arg)>::ZerothDerivative::operator()(const Arg& x_) {
     double x = ToDouble<Arg>::cast(x_);
     if(x>(parent->breaks)(parent->nPoly)) 
-      throw MBSimError("(PiecewisePolynomFunction::operator()): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
+      throw MBSimError("(PiecewisePolynomFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) 
-      throw MBSimError("(PiecewisePolynomFunction::operator()): x out of range! x= "+numtostr(x)+", lower bound= "+numtostr((parent->breaks)(0)));
+      throw MBSimError("(PiecewisePolynomFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", lower bound= "+fmatvec::toString((parent->breaks)(0)));
 
-    if ((fabs(x-xSave)<macheps()) && !firstCall)
+    if ((fabs(x-xSave)<macheps) && !firstCall)
       return FromVecV<Ret>::cast(ySave);
     else {
       firstCall = false;
@@ -452,10 +452,10 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   Ret PiecewisePolynomFunction<Ret(Arg)>::FirstDerivative::operator()(const Arg& x_) {
     double x = ToDouble<Arg>::cast(x_);
-    if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("(PiecewisePolynomFunction::diff1): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
-    if(x<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff1): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
+    if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("(PiecewisePolynomFunction::diff1): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
+    if(x<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff1): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
 
-    if ((fabs(x-xSave)<macheps()) && !firstCall)
+    if ((fabs(x-xSave)<macheps) && !firstCall)
       return FromVecV<Ret>::cast(ySave);
     else {
       firstCall = false;
@@ -481,10 +481,10 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   Ret PiecewisePolynomFunction<Ret(Arg)>::SecondDerivative::operator()(const Arg& x_) {
     double x = ToDouble<Arg>::cast(x_);
-    if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("(PiecewisePolynomFunction::diff2): x out of range!   x= "+numtostr(x)+" upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
-    if(x<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff2): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
+    if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
+    if(x<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
 
-    if ((fabs(x-xSave)<macheps()) && !firstCall)
+    if ((fabs(x-xSave)<macheps) && !firstCall)
       return FromVecV<Ret>::cast(ySave);
     else {
       firstCall = false;

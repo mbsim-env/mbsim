@@ -206,7 +206,7 @@ namespace MBSim {
       }
     }
 
-    if (fabs(FactorC) <= macheps()) {
+    if (fabs(FactorC) <= macheps) {
       throw MBSimError("No elasticity is given for one of the following contours:\n  -" + contacts[contactIndex.first][contactIndex.second].getContour(0)->getPath() + "\n  -" + contacts[contactIndex.first][contactIndex.second].getContour(0)->getPath() + "\nThat is not an option!");
     }
 

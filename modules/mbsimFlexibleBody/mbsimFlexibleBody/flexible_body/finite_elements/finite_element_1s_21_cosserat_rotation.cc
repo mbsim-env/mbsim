@@ -33,7 +33,7 @@ namespace MBSimFlexibleBody {
   FiniteElement1s21CosseratRotation::~FiniteElement1s21CosseratRotation() {}
 
   void FiniteElement1s21CosseratRotation::setCurlRadius(double R1) {
-    if (fabs(R1)>epsroot()) k10 = 1./R1;
+    if (fabs(R1)>epsroot) k10 = 1./R1;
   }
 
   void FiniteElement1s21CosseratRotation::computeh(const Vec& qG, const Vec& qGt) {

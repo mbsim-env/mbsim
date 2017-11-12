@@ -80,9 +80,9 @@ class SinusExcitedOnConstVelocity : public MBSim::Function<double(double)> {
       MBSim::Function<Vec(double)>* acceleration;
    public:
       SinusExcitedOnConstVelocity(Vec &JR_, double phi0_, double omega0_, double amplitudeExcitation_, double omegaExcitation_): JR(JR_), omega0(omega0_), phi0(phi0_), omegaExcitation(omegaExcitation_), amplitudeExcitation(amplitudeExcitation_) {
-        position     = new tpCos(JR,   phi0, omega0,omegaExcitation>epsroot()?-amplitudeExcitation/omegaExcitation:0.0, omegaExcitation);
-        velocity     = new tpSin(JR, omega0,    0.0,omegaExcitation>epsroot()? amplitudeExcitation                :0.0, omegaExcitation);
-        acceleration = new tpCos(JR,    0.0,    0.0,omegaExcitation>epsroot()? amplitudeExcitation*omegaExcitation:0.0, omegaExcitation);
+        position     = new tpCos(JR,   phi0, omega0,omegaExcitation>epsroot?-amplitudeExcitation/omegaExcitation:0.0, omegaExcitation);
+        velocity     = new tpSin(JR, omega0,    0.0,omegaExcitation>epsroot? amplitudeExcitation                :0.0, omegaExcitation);
+        acceleration = new tpCos(JR,    0.0,    0.0,omegaExcitation>epsroot? amplitudeExcitation*omegaExcitation:0.0, omegaExcitation);
       }
       ~SinusExcitedOnConstVelocity() {
         delete position;
@@ -91,13 +91,13 @@ class SinusExcitedOnConstVelocity : public MBSim::Function<double(double)> {
       }
 //      Vec operator() (const double &t, const void *) { return (*position)(t);}
       double operator ()(const double &t) {
-         return phi0 + omega0 * t - ( omegaExcitation>epsroot()?-amplitudeExcitation/omegaExcitation:0.0 ) * (cos(omegaExcitation*t) - 1);
+         return phi0 + omega0 * t - ( omegaExcitation>epsroot?-amplitudeExcitation/omegaExcitation:0.0 ) * (cos(omegaExcitation*t) - 1);
       }
       double parDer(const double &t) {
-         return omega0 + ( omegaExcitation>epsroot()?-amplitudeExcitation/omegaExcitation:0.0 ) * sin(omegaExcitation*t) * omegaExcitation;
+         return omega0 + ( omegaExcitation>epsroot?-amplitudeExcitation/omegaExcitation:0.0 ) * sin(omegaExcitation*t) * omegaExcitation;
       }
       double parDerParDer(const double &t) {
-         return ( omegaExcitation>epsroot()?-amplitudeExcitation/omegaExcitation:0.0 ) * cos(omegaExcitation*t) * omegaExcitation * omegaExcitation;
+         return ( omegaExcitation>epsroot?-amplitudeExcitation/omegaExcitation:0.0 ) * cos(omegaExcitation*t) * omegaExcitation * omegaExcitation;
       }
 
       const MBSim::Function<Vec(double)>& getPositionFunction    () const {return *position    ;}

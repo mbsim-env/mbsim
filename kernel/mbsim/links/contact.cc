@@ -693,7 +693,7 @@ namespace MBSim {
 
     //Create a single contact(with all the information) for every sub contact of each contact kinematics that is part of the multiple contact
     if (name_ == "")
-      ckNames.push_back(name + "_" + numtostr(cK));
+      ckNames.push_back(name + "_" + toString(cK));
     else
       ckNames.push_back(name_);
 

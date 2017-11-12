@@ -104,7 +104,7 @@
 //     while(t<tEnd) {
 //       DDASPK (res, &zSize, &t, z(), zdot(), &tPlot, info(), &rTol, aTol(), 
 // 	  &idid, rWork(), &lrWork, iWork(), &liWork, rpar(),ipar(), 0, 0);
-//       if(fabs(t-tPlot)<epsroot()) {
+//       if(fabs(t-tPlot)<epsroot) {
 // 	system->plot(z, t);
 // 	if(output)
 // 	  cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;

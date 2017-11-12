@@ -262,8 +262,8 @@ int main(int argc, char *argv[]) {
     desc.replace_extension();
     desc.replace_extension();
     E(modelDesc)->setAttribute("modelName", desc.string());
-    E(modelDesc)->setAttribute("numberOfContinuousStates", toString(dss->getzSize()));
-    E(modelDesc)->setAttribute("numberOfEventIndicators", toString(dss->getsvSize()));
+    E(modelDesc)->setAttribute("numberOfContinuousStates", fmatvec::toString(dss->getzSize()));
+    E(modelDesc)->setAttribute("numberOfEventIndicators", fmatvec::toString(dss->getsvSize()));
     E(modelDesc)->setAttribute("variableNamingConvention", "structured");
 
       // Type definition
@@ -282,7 +282,7 @@ int main(int argc, char *argv[]) {
             DOMElement *enumEle=D(modelDescDoc)->createElement("EnumerationType");
             type->appendChild(enumEle);
             E(enumEle)->setAttribute("min", "1");
-            E(enumEle)->setAttribute("max", toString((*it)->size()));
+            E(enumEle)->setAttribute("max", fmatvec::toString((*it)->size()));
             for(size_t id=0; id<(*it)->size(); ++id) {
               DOMElement *item=D(modelDescDoc)->createElement("Item");
               enumEle->appendChild(item);
@@ -295,9 +295,9 @@ int main(int argc, char *argv[]) {
       if(integrator) {
         DOMElement *defaultExp=D(modelDescDoc)->createElement("DefaultExperiment");
         modelDesc->appendChild(defaultExp);
-        E(defaultExp)->setAttribute("startTime", toString(integrator->getStartTime()));
-        E(defaultExp)->setAttribute("stopTime", toString(integrator->getEndTime()));
-        E(defaultExp)->setAttribute("tolerance", toString(1e-5));
+        E(defaultExp)->setAttribute("startTime", fmatvec::toString(integrator->getStartTime()));
+        E(defaultExp)->setAttribute("stopTime", fmatvec::toString(integrator->getEndTime()));
+        E(defaultExp)->setAttribute("tolerance", fmatvec::toString(1e-5));
       }
 
       // ModelVariables element
@@ -325,13 +325,13 @@ int main(int argc, char *argv[]) {
             if(var[vr]->getEnumerationList()) {
               E(varType)->setAttribute("declaredType", "EnumType_"+boost::lexical_cast<string>(var[vr]->getEnumerationList()));
               E(varType)->setAttribute("min", "1");
-              E(varType)->setAttribute("max", toString(var[vr]->getEnumerationList()->size()));
+              E(varType)->setAttribute("max", fmatvec::toString(var[vr]->getEnumerationList()->size()));
             }
 
           // attributes on ScalarVariable element
           E(scalarVar)->setAttribute("name", var[vr]->getName());
           E(scalarVar)->setAttribute("description", var[vr]->getDescription());
-          E(scalarVar)->setAttribute("valueReference", toString(vr));
+          E(scalarVar)->setAttribute("valueReference", fmatvec::toString(vr));
           switch(var[vr]->getType()) {
             case Parameter:
               E(scalarVar)->setAttribute("causality", "internal");

@@ -27,18 +27,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  std::string numtostr(int i) {
-    std::ostringstream oss;
-    oss << i;
-    return oss.str();
-  }
-
-  std::string numtostr(double d) {
-    std::ostringstream oss;
-    oss << d;
-    return oss.str();
-  }
-
   double sign(double x) {
     if (x > 0.)
       return 1.;
@@ -52,7 +40,7 @@ namespace MBSim {
     double phi;
     phi = atan2(y, x);
 
-    if (phi < -MBSim::macheps())
+    if (phi < -MBSim::macheps)
       phi += 2 * M_PI;
     return phi;
   }

@@ -78,7 +78,7 @@ void Perlchain::updateG() {
         for (int k = 1; k < nDofs; k++)
           val += yy[i * nDofs + k] * yy[j * nDofs + k];
         Gsym(i, j) = val;
-        if (val > macheps())
+        if (val > macheps)
           nzEles++;
 //          G(i, j) = val;
       }
@@ -95,7 +95,7 @@ void Perlchain::updateG() {
       ;  // Gs.resize();
     else if (Gs.cols() != Gsym.size()) {
       static double facSizeGs = 1;
-      if (Gsym.size() > limitGSize && fabs(facSizeGs - 1) < epsroot())
+      if (Gsym.size() > limitGSize && fabs(facSizeGs - 1) < epsroot)
         facSizeGs = double(nzEles) / double(Gsym.size() * Gsym.size()) * 1.5;
       Gs.resize(Gsym.size(), int(Gsym.size() * Gsym.size() * facSizeGs));
     }
@@ -262,7 +262,7 @@ void Perlchain::updateG() {
       ;  // Gs.resize();
     else if (Gs.cols() != G.size()) {
       static double facSizeGs = 1;
-      if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot())
+      if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot)
         facSizeGs = double(countElements(G)) / double(G.size() * G.size()) * 1.5;
       Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
     }

@@ -28,6 +28,7 @@
 #include <QtGui>
 #include "mainwindow.h"
 #include <mbxmlutils/eval.h>
+#include <fmatvec/toString.h>
 #include <boost/lexical_cast.hpp>
 
 using namespace std;
@@ -421,7 +422,7 @@ namespace MBSimGUI {
       string istr = toStr(int(i+1));
       E(ele0)->setAttribute("arg"+istr, static_cast<TextWidget*>(argname[i]->getWidget())->getText().toStdString());
 //      if(ext[i]=='V')
-        E(ele0)->setAttribute("arg"+istr+"Dim",toString(static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->getValue()));
+        E(ele0)->setAttribute("arg"+istr+"Dim",fmatvec::toString(static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->getValue()));
     }
     f->writeXMLFile(ele0);
     return ele0;

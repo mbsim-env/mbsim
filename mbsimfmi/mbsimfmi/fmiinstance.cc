@@ -194,7 +194,7 @@ namespace MBSimFMI {
   void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const FMIDatatype value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
-        throw runtime_error("No such value reference "+toString(vr[i]));
+        throw runtime_error("No such value reference "+fmatvec::toString(vr[i]));
       try { var[vr[i]]->setValue(CppDatatype(value[i])); } RETHROW_VR(vr[i])
     }
     if(dss)
@@ -261,17 +261,17 @@ namespace MBSimFMI {
 
     if(zDim!=dss->getzSize())
       throw runtime_error("The number of continuous states in modelDescription.xml and the current model differ: "+
-                          toString(zDim)+", "+toString(dss->getzSize())+". "+
+                          fmatvec::toString(zDim)+", "+fmatvec::toString(dss->getzSize())+". "+
                           "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
      
     if(svDim!=dss->getsvSize())
       throw runtime_error("The number of event indicators in modelDescription.xml and the current model differ: "+
-                          toString(svDim)+", "+toString(dss->getsvSize())+". "+
+                          fmatvec::toString(svDim)+", "+fmatvec::toString(dss->getsvSize())+". "+
                           "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
 
     if(var.size()!=varSim.size())
       throw runtime_error("The number of parameters in modelDescription.xml and the current model differ: "
-                          +toString(var.size())+", "+toString(varSim.size())+". "+
+                          +fmatvec::toString(var.size())+", "+fmatvec::toString(varSim.size())+". "+
                           "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
 
     vector<shared_ptr<Variable> >::iterator varSimIt=varSim.begin();
@@ -285,8 +285,8 @@ namespace MBSimFMI {
                               "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
         if((*varSimIt)->getType()!=(*varIt)->getType())
           throw runtime_error("Variable type (parameter, input, output) in modelDescription.xml and the current model does not match: "
-                              +toString((*varIt)->getType())+", "
-                              +toString((*varSimIt)->getType())+". "+
+                              +fmatvec::toString((*varIt)->getType())+", "
+                              +fmatvec::toString((*varSimIt)->getType())+". "+
                               "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
         if((*varSimIt)->getDatatypeChar()!=(*varIt)->getDatatypeChar())
           throw runtime_error(string("Variable datatype in modelDescription.xml and the current model does not match: ")
@@ -372,7 +372,7 @@ namespace MBSimFMI {
   void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, FMIDatatype value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
-        throw runtime_error("No such value reference "+toString(vr[i]));
+        throw runtime_error("No such value reference "+fmatvec::toString(vr[i]));
       try { value[i]=cppDatatypeToFMIDatatype<FMIDatatype, CppDatatype>(var[vr[i]]->getValue(CppDatatype())); } RETHROW_VR(vr[i])
     }
   }
@@ -501,7 +501,7 @@ namespace MBSimFMI {
 
   // rethrow a exception thrown during a operation on a valueReference: prefix the exception text with the variable name.
   void FMIInstance::rethrowVR(size_t vr, const std::exception &ex) {
-    throw runtime_error(string("In variable '#")+var[vr]->getDatatypeChar()+toString(vr)+"#': "+ex.what());
+    throw runtime_error(string("In variable '#")+var[vr]->getDatatypeChar()+fmatvec::toString(vr)+"#': "+ex.what());
   }
 
 }

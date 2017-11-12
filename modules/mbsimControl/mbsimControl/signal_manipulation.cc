@@ -118,7 +118,7 @@ namespace MBSimControl {
   }
 
   void SignalTimeDiscretization::updateSignal() {
-    if (fabs(tOld-getTime())>epsroot()) {
+    if (fabs(tOld-getTime())>epsroot) {
       Signal::s=s->evalSignal();
       tOld=getTime();
     }

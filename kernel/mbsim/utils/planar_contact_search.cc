@@ -60,12 +60,12 @@ namespace MBSim {
           gbuf(nRoots) = (*func)[alphaC(nRoots)];
           nRoots++;
         }
-        else if (fabs(fa) < epsroot()) {
+        else if (fabs(fa) < epsroot) {
           alphaC(nRoots) = nodes(i);
           gbuf(nRoots) = (*func)[alphaC(nRoots)];
           nRoots++;
         }
-        else if (fabs(fb) < epsroot()) {
+        else if (fabs(fb) < epsroot) {
           alphaC(nRoots) = nodes(i + 1);
           gbuf(nRoots) = (*func)[alphaC(nRoots)];
           nRoots++;
@@ -103,17 +103,17 @@ namespace MBSim {
         gbuf(nRoots) = (*func)[alphaC(nRoots)];
         nRoots++;
       }
-      else if (fabs(fa) < epsroot() && fabs(fb) < epsroot()) {
+      else if (fabs(fa) < epsroot && fabs(fb) < epsroot) {
         alphaC(nRoots) = 0.5 * (nodes(i) + nodes(i + 1));
         gbuf(nRoots) = (*func)[alphaC(nRoots)];
         nRoots++;
       }
-      else if (fabs(fa) < epsroot()) {
+      else if (fabs(fa) < epsroot) {
         alphaC(nRoots) = nodes(i);
         gbuf(nRoots) = (*func)[alphaC(nRoots)];
         nRoots++;
       }
-      else if (fabs(fb) < epsroot()) {
+      else if (fabs(fb) < epsroot) {
         alphaC(nRoots) = nodes(i + 1);
         gbuf(nRoots) = (*func)[alphaC(nRoots)];
         nRoots++;

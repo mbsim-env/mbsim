@@ -156,7 +156,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
     for (int i = 0; i < transNodes.rows(); i++)
       for (int j = 0; j < transNodes.cols(); j++) {
         int nodeNumber = transNodes(i, j);
-        NodeFrame * refFrame = new NodeFrame("ContourFrame" + numtostr(nodeNumber), nodeNumber);
+        NodeFrame * refFrame = new NodeFrame("ContourFrame" + toString(nodeNumber), nodeNumber);
         rod->addFrame(refFrame);
         refFrame->enableOpenMBV(1e-3);
       }
@@ -240,7 +240,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   Vec3 pointRelPos;
   int numberOfPoints = 10;
   for (int i = 0; i < numberOfPoints; i++) {
-    string pointName = "Point" + numtostr(i);
+    string pointName = "Point" + toString(i);
     double phi = i * 2 * M_PI / numberOfPoints;
     pointRelPos(0) = innerRadius * cos(phi);
     pointRelPos(1) = innerRadius * sin(phi);

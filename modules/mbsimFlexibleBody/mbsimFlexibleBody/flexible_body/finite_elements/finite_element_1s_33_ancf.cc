@@ -33,10 +33,10 @@ namespace MBSimFlexibleBody {
   FiniteElement1s33ANCF::FiniteElement1s33ANCF(double sl0, double srho, double sE, double sG, double sA, double sI0, double sI1, double sI2, Vec sg) :l0(sl0), rho(srho), E(sE), G(sG), A(sA), I0(sI0), I1(sI1), I2(sI2), wss01(0.), wss02(0.), depsilon(0.), g(sg), M(12,INIT,0.), h(12,INIT,0.), Damp(12,INIT,0.), Dhq(12,INIT,0.), Dhqp(12,INIT,0.) {}
 
   void FiniteElement1s33ANCF::setCurlRadius(double R1, double R2) {
-    if (fabs(R1) > epsroot()) {
+    if (fabs(R1) > epsroot) {
       wss01 = 1/R1;
     }
-    if (fabs(R2) > epsroot()) {
+    if (fabs(R2) > epsroot) {
       wss02 = 1/R2;
     }
   }

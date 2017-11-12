@@ -51,14 +51,14 @@ namespace MBSim {
     func = new FuncPairPlanarContourCircle(circle,extrusion);
 
 //    if (dynamic_cast<Contour*>(extrusion)) {
-//      double minRadius=1./epsroot();
+//      double minRadius=1./epsroot;
 //      for (double alpha=extrusion->getAlphaStart(); alpha<=extrusion->getAlphaEnd(); alpha+=(extrusion->getAlphaEnd()-extrusion->getAlphaStart())*1e-4) {
 //        zeta(0) = alpha;
 //        double radius=1./extrusion->getCurvature(zeta);
 //        minRadius=(radius<minRadius)?radius:minRadius;
 //      }
 //      if (circle->getRadius()>minRadius)
-//        throw MBSimError("Just one contact circle is allowed in Contactpairing Contour-SolidCircle, but either the circle radius is to big or the minimal Radius of Contour is to small.\n minimal radius of Contour="+numtostr(minRadius)+"\n Radius of SolidCircle="+numtostr(circle->getRadius()));
+//        throw MBSimError("Just one contact circle is allowed in Contactpairing Contour-SolidCircle, but either the circle radius is to big or the minimal Radius of Contour is to small.\n minimal radius of Contour="+toString(minRadius)+"\n Radius of SolidCircle="+toString(circle->getRadius()));
 //    }
 
   }

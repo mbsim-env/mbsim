@@ -85,7 +85,7 @@ namespace MBSim {
   }
 
   void FixedFrameLink::updateForceDirections() {
-    if(evalGeneralizedRelativePosition()(0)>epsroot())
+    if(evalGeneralizedRelativePosition()(0)>epsroot)
       DF=evalGlobalRelativePosition()/rrel(0);
     else
       DF.init(0);

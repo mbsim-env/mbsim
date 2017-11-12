@@ -195,7 +195,7 @@ namespace MBSim {
     if (DEBUGLEVEL)
       cout << "v " << v << endl;
 
-    while(i < v.size()-1 and fabs(v(i)) < macheps())
+    while(i < v.size()-1 and fabs(v(i)) < macheps)
       i++;
     if (v(i) > 0)
       return true;

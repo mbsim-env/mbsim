@@ -208,7 +208,7 @@ namespace MBSimFlexibleBody {
         qElement.push_back(Vec(8,INIT,0.));
         uElement.push_back(Vec(8,INIT,0.));
         discretization.push_back(new FiniteElement1s21ANCF(l0, A*rho, E*A, E*I, g, Euler, v0));
-        if(fabs(rc) > epsroot())
+        if(fabs(rc) > epsroot)
           static_cast<FiniteElement1s21ANCF*>(discretization[i])->setCurlRadius(rc);
         static_cast<FiniteElement1s21ANCF*>(discretization[i])->setMaterialDamping(deps,dkappa);
       }
@@ -216,7 +216,7 @@ namespace MBSimFlexibleBody {
     }
     else if(stage==plotting) {
       for(int i=0;i<qRel.size()/4;i++) {
-        plotColumns.push_back("vel_abs node ("+numtostr(i)+")");
+        plotColumns.push_back("vel_abs node ("+toString(i)+")");
       }
       FlexibleBody1s::init(stage, config);
     }

@@ -72,9 +72,9 @@ namespace MBSimFlexibleBody {
 
       void updatePositions(double s);
 
-      fmatvec::Vec3 evalPosition(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return WrOP; }
-      fmatvec::Vec3 evalWs(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return Ws; }
-      fmatvec::Vec3 evalWt(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return Wt; }
+      fmatvec::Vec3 evalPosition(double s) { if(fabs(s-sOld)>MBSim::macheps) updatePositions(s); return WrOP; }
+      fmatvec::Vec3 evalWs(double s) { if(fabs(s-sOld)>MBSim::macheps) updatePositions(s); return Ws; }
+      fmatvec::Vec3 evalWt(double s) { if(fabs(s-sOld)>MBSim::macheps) updatePositions(s); return Wt; }
 
       virtual void plot();
 

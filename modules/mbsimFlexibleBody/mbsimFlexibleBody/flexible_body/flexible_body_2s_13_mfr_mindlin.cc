@@ -206,7 +206,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::updatePositions(Frame2s *frame) {
-    if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
+    if(nrm2(frame->getParameters()) < epsroot) { // center of gravity
       frame->setOrientation(R->evalOrientation()*evalA());
       switch(RefDofs) {
       case 2:
@@ -224,7 +224,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::updateVelocities(Frame2s *frame) {
-   if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
+   if(nrm2(frame->getParameters()) < epsroot) { // center of gravity
       switch(RefDofs) {
         case 2:
         frame->setVelocity(R->evalOrientation() * Vec3("[0;0;1]") * getu()(0));
@@ -250,7 +250,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody2s13MFRMindlin::updateJacobians(Frame2s *frame, int j) {
     Vec2 alpha = frame->getParameters();
 
-    if (nrm2(alpha) < epsroot()) { // center of gravity
+    if (nrm2(alpha) < epsroot) { // center of gravity
       Mat Jacext_trans(3, Dofs, INIT, 0.), Jacext_rot(3, Dofs, INIT, 0.);
 
       Jacext_trans(0, 0, 2, 2) = SqrMat(3, EYE);

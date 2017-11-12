@@ -45,10 +45,10 @@ namespace MBSim {
     for (int j = 0; j < x2.size(); j++) {
       xj = x2(j);
 
-      dx = (epsroot() * 0.5);
+      dx = (epsroot * 0.5);
       do {
         dx += dx;
-      } while (fabs(xj + dx - x2(j)) < epsroot());
+      } while (fabs(xj + dx - x2(j)) < epsroot);
 
       x2(j) += dx;
       f2 = (*function)(x2);

@@ -126,10 +126,10 @@ namespace MBSimFlexibleBody {
     for(int i=0;i<v.size();i++) {  
       double vi = v_tmp(i); // save correct position
 
-      v_tmp(i) += epsroot(); // update with disturbed positions assuming same active links
+      v_tmp(i) += epsroot; // update with disturbed positions assuming same active links
       computeh(q_tmp,v_tmp);
 
-      Dhqp.col(i) = (h-h0)/epsroot();
+      Dhqp.col(i) = (h-h0)/epsroot;
       v_tmp(i) = vi;
     }
 
@@ -137,10 +137,10 @@ namespace MBSimFlexibleBody {
     for(int i=0;i<q.size();i++) { 
       double qi = q_tmp(i); // save correct position
 
-      q_tmp(i) += epsroot(); // update with disturbed positions assuming same active links
+      q_tmp(i) += epsroot; // update with disturbed positions assuming same active links
       computeh(q_tmp,v_tmp);
 
-      Dhq.col(i) = (h-h0)/epsroot();
+      Dhq.col(i) = (h-h0)/epsroot;
       q_tmp(i) = qi;
     }
 

@@ -679,7 +679,7 @@ namespace MBSimIntegrator {
 
   void AutoTimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& system_) {
     debugInit();
-    if (theta>epsroot()) expInt=false;
+    if (theta>epsroot) expInt=false;
     else expInt=true;
     parInt=false;
     parJac=false;
@@ -687,7 +687,7 @@ namespace MBSimIntegrator {
   }
 
   void AutoTimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& system_, vector<DynamicSystemSolver*> systems) {
-    if (theta>epsroot()) expInt=false;
+    if (theta>epsroot) expInt=false;
     else expInt=true;
     parJac=true;
     parInt=false;
@@ -696,7 +696,7 @@ namespace MBSimIntegrator {
   }
 
   void AutoTimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, DynamicSystemSolver& systemTP_, int Threads) { 
-    if (theta>epsroot()) expInt=false;
+    if (theta>epsroot) expInt=false;
     else expInt=true;
     numThreads = Threads;
     preIntegrate(systemT1_, systemT2_, systemT3_, systemTP_);
@@ -705,7 +705,7 @@ namespace MBSimIntegrator {
   }
 
   void AutoTimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, DynamicSystemSolver& systemTP_, vector<DynamicSystemSolver*> systems, int Threads) { 
-    if (theta>epsroot()) expInt=false;
+    if (theta>epsroot) expInt=false;
     else expInt=true;
     parJac=true;
     parInt=true;
@@ -730,7 +730,7 @@ namespace MBSimIntegrator {
     t = tStart;
 
     if (dtMin<=0) {
-      double eps1 = epsroot();
+      double eps1 = epsroot;
       dtMin = eps1;
       if (!(method==0 && maxOrder==1 && !FlagSSC)) dtMin =2.0*eps1;
       if (maxOrder>=2) dtMin = 4.0*eps1;
@@ -868,15 +868,15 @@ namespace MBSimIntegrator {
       la.init(0.0);
     }
 
-    if (theta>epsroot() && (method || FlagGapControl)) { // SSC-Methode und Gap-Control fuer implizite Integration pruefen
+    if (theta>epsroot && (method || FlagGapControl)) { // SSC-Methode und Gap-Control fuer implizite Integration pruefen
       throw MBSimError("Using implicit integration only method=0 and FlagGapControl=0 allowed!");
     }
 
-    if (theta>epsroot() && (inexactJac && itMax==1 && !FlagSSC)) { // linear implizite Integration mit inexakter Jakobi nur mit SSC (Kopplung des Updatens an SSC)
+    if (theta>epsroot && (inexactJac && itMax==1 && !FlagSSC)) { // linear implizite Integration mit inexakter Jakobi nur mit SSC (Kopplung des Updatens an SSC)
       throw MBSimError("Linear implicit Integration with inexact Jabobians only allowed with SSC!");
     }
 
-    if (theta>epsroot() && inexactJac && itMax>1 && !((FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==2))) { // schließe noch nicht getestete Versionen aus
+    if (theta>epsroot && inexactJac && itMax>1 && !((FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==2))) { // schließe noch nicht getestete Versionen aus
       throw MBSimError("Implicit Integration with inexact Jabobians only tested with (FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==2)!");
     }    
 
@@ -974,7 +974,7 @@ namespace MBSimIntegrator {
       numThreads=1;
     }
     
-    //if (theta > epsroot() && inexactJac==true) {
+    //if (theta > epsroot && inexactJac==true) {
 //      sysT1->update(zi,t);
 //      sysT2->update(zi,t);
 //      sysT3->update(zi,t);
@@ -1501,13 +1501,13 @@ namespace MBSimIntegrator {
         refusedSteps++;
         if (ConstraintsChanged) refusedStepsWithImpact++;
         StepTrials++;
-        if (dtOld<=dtMin+macheps()) {
+        if (dtOld<=dtMin+macheps) {
           StepFinished = -1;
           //msg(Warn) << " TimeStepperSSC reached minimum stepsize dt= "<<dt<<" at t= "<<t<<endl;
           //exit(StepFinished);
         }
       }
-      if (fabs(dt-dtOld)>epsroot() && itMax==1 && expInt==false) {
+      if (fabs(dt-dtOld)>epsroot && itMax==1 && expInt==false) {
         upgedated_T1=false;
         upgedated_T2=false;
         upgedated_T2=false;
@@ -1550,7 +1550,7 @@ namespace MBSimIntegrator {
       }
 
       if(ConstraintsChanged) integrationStepswithChange++;
-      if (t+t*10.0*macheps()>tStop) ExitIntegration = 1;
+      if (t+t*10.0*macheps>tStop) ExitIntegration = 1;
       else ExitIntegration=0;
       if (t+dt+dtMin>tStop) dt= tStop-t;
       if (StepsWithUnchangedConstraints>=0) {

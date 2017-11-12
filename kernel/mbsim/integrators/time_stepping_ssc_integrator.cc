@@ -127,13 +127,12 @@ namespace MBSimIntegrator {
     t = tStart;
 
     if (dtMin<=0) {
-      double eps1 = epsroot();
-      dtMin = eps1;
-      if (!(method==0 && maxOrder==1 && !FlagSSC)) dtMin =2.0*eps1;
-      if (maxOrder>=2) dtMin = 4.0*eps1;
-      if (maxOrder>=3) dtMin = 6.0*eps1;
-      if (method==0 && maxOrder==3 && !FlagSSC) dtMin = 3.0*eps1;
-      if (method==0 && maxOrder==2 && !FlagSSC) dtMin = 2.0*eps1;
+      dtMin = epsroot;
+      if (!(method==0 && maxOrder==1 && !FlagSSC)) dtMin =2.0*epsroot;
+      if (maxOrder>=2) dtMin = 4.0*epsroot;
+      if (maxOrder>=3) dtMin = 6.0*epsroot;
+      if (method==0 && maxOrder==3 && !FlagSSC) dtMin = 3.0*epsroot;
+      if (method==0 && maxOrder==2 && !FlagSSC) dtMin = 2.0*epsroot;
     }
 
     if ( safetyFactorGapControl <0) {
@@ -830,7 +829,7 @@ namespace MBSimIntegrator {
           refusedSteps++;
           if (ConstraintsChanged) refusedStepsWithImpact++;
           StepTrials++;
-          if (dtOld<=dtMin+macheps()) {
+          if (dtOld<=dtMin+macheps) {
             StepFinished = -1;
             msg(Warn) << " TimeStepperSSC reached minimum stepsize dt= "<<dt<<" at t= "<<t<<endl;
             //exit(StepFinished);
@@ -853,7 +852,7 @@ namespace MBSimIntegrator {
       }
 
       if(ConstraintsChanged) integrationStepswithChange++;
-      if (t+t*10.0*macheps()>tStop) ExitIntegration = 1;
+      if (t+t*10.0*macheps>tStop) ExitIntegration = 1;
       else ExitIntegration=0;
       if (t+dt+dtMin>tStop) dt= tStop-t;
       if (StepsWithUnchangedConstraints>=0) {

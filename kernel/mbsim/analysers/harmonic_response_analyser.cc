@@ -91,7 +91,6 @@ namespace MBSimAnalyser {
     system->resetUpToDate();
     bi(n/2,n-1) = system->evalzd()(n/2,n-1);
 
-    double delta = epsroot();
     SqrMat A(n);
     Vec zd, zdOld;
     system->setTime(tStart);
@@ -99,10 +98,10 @@ namespace MBSimAnalyser {
     zdOld = system->evalzd();
     for (int i=0; i<n; i++) {
       double ztmp = system->getState()(i);
-      system->getState()(i) += delta;
+      system->getState()(i) += epsroot;
       system->resetUpToDate();
       zd = system->evalzd();
-      A.col(i) = (zd - zdOld) / delta;
+      A.col(i) = (zd - zdOld) / epsroot;
       system->getState()(i) = ztmp;
     }
     SqrMat Q(2*n);

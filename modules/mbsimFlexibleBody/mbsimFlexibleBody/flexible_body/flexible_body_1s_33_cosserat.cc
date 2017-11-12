@@ -252,7 +252,7 @@ namespace MBSimFlexibleBody {
         rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0, E, G, I1, I2, I0, angle));
         qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(), INIT, 0.));
         uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(), INIT, 0.));
-        if (fabs(R1) > epsroot() || fabs(R2) > epsroot())
+        if (fabs(R1) > epsroot || fabs(R2) > epsroot)
           static_cast<FiniteElement1s33CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1, R2);
       }
 

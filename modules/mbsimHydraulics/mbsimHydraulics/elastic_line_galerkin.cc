@@ -130,11 +130,11 @@ namespace MBSimHydraulics {
         delete ansatz;
         if(plotFeature[volumeFlow]) {
           for (int i=0; i<plotdim; i++)
-            plotColumns.push_back("Q(x="+numtostr(relPlotPoints(i)*l)+") [l/min]");
+            plotColumns.push_back("Q(x="+toString(relPlotPoints(i)*l, -1)+") [l/min]");
         }
         if(plotFeature[pressure]) {
           for (int i=0; i<plotdim; i++)
-            plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
+            plotColumns.push_back("p(x="+toString(relPlotPoints(i)*l, -1)+") [bar]");
         }
       }
     }

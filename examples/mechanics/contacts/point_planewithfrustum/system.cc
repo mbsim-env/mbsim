@@ -92,7 +92,7 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
     b->setRotation(new RotationAboutAxesXYZ<VecV>);
   }
   for (int i=0; i<5; i++)
-    b->addContour(new Point("Point"+numtostr(i), b->getFrame("Top"+numtostr(i))));
+    b->addContour(new Point("Point"+toString(i), b->getFrame("Top"+toString(i))));
   if (considerRotation) {
     b->setGeneralizedInitialPosition("[.01; -.14; -.02; 0; 0; 0]");
     b->setGeneralizedInitialVelocity("[-1; 0; .5; 0; 2; 1]");
@@ -111,12 +111,12 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
 
   b->getFrame("C")->enableOpenMBV(2.*rBar, .9);
   for (int i=0; i<5; i++)
-    b->getFrame("Top"+numtostr(i))->enableOpenMBV(.2*rBar, .9);
+    b->getFrame("Top"+toString(i))->enableOpenMBV(.2*rBar, .9);
 
   for (int i=1; i<5; i++) {
-    Contact * c = new Contact("ContactPointPlane"+numtostr(i));
+    Contact * c = new Contact("ContactPointPlane"+toString(i));
     addLink(c);
-    c->connect(b->getContour("Point"+numtostr(i)), getContour("Plane"));
+    c->connect(b->getContour("Point"+toString(i)), getContour("Plane"));
     if (setValued) {
       c->setNormalForceLaw(new UnilateralConstraint());
       c->setNormalImpactLaw(new UnilateralNewtonImpact());
@@ -127,7 +127,7 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
       c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
       c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mue)));
     }
-    ContactObserver *observer = new ContactObserver("ContactPointPlane"+numtostr(i)+"_Observer");
+    ContactObserver *observer = new ContactObserver("ContactPointPlane"+toString(i)+"_Observer");
     addObserver(observer);
     observer->setContact(c);
     observer->enableOpenMBVContactPoints(.1*rBar);

@@ -84,7 +84,7 @@ namespace MBSim {
   }
 
   void PolarContourFunction::updateData(const double& alpha) {
-    if (fabs(alpha-alphaSave)>macheps()) {
+    if (fabs(alpha-alphaSave)>macheps) {
       alphaSave = alpha;
       salphaSave = sin(alphaSave);
       calphaSave = cos(alphaSave);

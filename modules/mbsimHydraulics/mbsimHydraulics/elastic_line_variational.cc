@@ -148,8 +148,8 @@ namespace MBSimHydraulics {
       BGes=inv(FF)*BGes;
       CGes=CGes*FF;
 
-      assert(nrm2(trans(CGes.row(0))-BGes.col(0))<epsroot());
-      assert(nrm2(trans(CGes.row(1))-BGes.col(1))<epsroot());
+      assert(nrm2(trans(CGes.row(0))-BGes.col(0))<epsroot);
+      assert(nrm2(trans(CGes.row(1))-BGes.col(1))<epsroot);
 
       Tlocal.resize(n-1, n, INIT, 0);
       for (int i=0; i<n-1; i++)
@@ -193,10 +193,10 @@ namespace MBSimHydraulics {
         plotColumns.push_back("QIn [l/min]");
         plotColumns.push_back("QOut [l/min]");
         for (int i=0; i<relPlotPoints.size(); i++)
-          plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
+          plotColumns.push_back("p(x="+toString(relPlotPoints(i)*l, -1)+") [bar]");
         if(plotFeature[generalizedPosition]) {
           for (int i=0; i<n; i++)
-            plotColumns.push_back("y("+numtostr(i)+")");
+            plotColumns.push_back("y("+toString(i)+")");
         }
       }
     }

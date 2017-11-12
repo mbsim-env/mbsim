@@ -263,7 +263,7 @@ namespace MBSimFlexibleBody {
 
     for (int i = 0; i < numbers.size(); i++) {
       int nodeNumber = numbers(i);
-      NodeFrame * refFrame = new NodeFrame("RefFrame" + numtostr(nodeNumber), nodeNumber);
+      NodeFrame * refFrame = new NodeFrame("RefFrame" + toString(nodeNumber), nodeNumber);
       addFrame(refFrame);
       refFrame->enableOpenMBV(size);
     }
@@ -549,7 +549,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyLinearExternalFFR::updatePositions(Frame *frame) {
-    if (nrm2(R->evalVelocity()) > epsroot()) {
+    if (nrm2(R->evalVelocity()) > epsroot) {
       THROW_MBSIMERROR("Only absolute description of FFR-bodies possible (right now)!");
     }
     frame->setOrientation(R->evalOrientation() * evalA());
@@ -557,7 +557,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyLinearExternalFFR::updateVelocities(Frame *frame) {
-    if (nrm2(R->evalVelocity()) > epsroot()) {
+    if (nrm2(R->evalVelocity()) > epsroot) {
       THROW_MBSIMERROR("Only absolute description of FFR-bodies possible (right now)!");
     }
     // Update kinematics part

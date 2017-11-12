@@ -20,7 +20,7 @@ using namespace std;
 using namespace MBSim;
 using namespace fmatvec;
 
-System::System(unsigned int type, double dDisk) : Group("System"+numtostr(int(type))) {
+System::System(unsigned int type, double dDisk) : Group("System"+toString(int(type))) {
 
   // input values
   double rhoDisk=800;

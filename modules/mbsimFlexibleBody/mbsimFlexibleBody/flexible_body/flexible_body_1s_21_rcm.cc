@@ -222,7 +222,7 @@ namespace MBSimFlexibleBody {
         qElement.push_back(Vec(8, INIT, 0.));
         uElement.push_back(Vec(8, INIT, 0.));
         discretization.push_back(new FiniteElement1s21RCM(l0, A * rho, E * A, E * I, g));
-        if (fabs(rc) > epsroot())
+        if (fabs(rc) > epsroot)
           static_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
         static_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
         static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
@@ -230,14 +230,14 @@ namespace MBSimFlexibleBody {
     }
     else if (stage == plotting) {
       for (int i = 0; i < plotElements.size(); i++) {
-        plotColumns.push_back("eps (" + numtostr(plotElements(i)) + ")"); // 0
-        plotColumns.push_back("epsp(" + numtostr(plotElements(i)) + ")"); // 1
-        plotColumns.push_back("xS  (" + numtostr(plotElements(i)) + ")"); // 2
-        plotColumns.push_back("yS  (" + numtostr(plotElements(i)) + ")"); // 3
-        plotColumns.push_back("xSp (" + numtostr(plotElements(i)) + ")"); // 4
-        plotColumns.push_back("ySp (" + numtostr(plotElements(i)) + ")"); // 5
-        plotColumns.push_back("Dal (" + numtostr(plotElements(i)) + ")"); // 6
-        plotColumns.push_back("Dalp(" + numtostr(plotElements(i)) + ")"); // 7
+        plotColumns.push_back("eps (" + toString(plotElements(i)) + ")"); // 0
+        plotColumns.push_back("epsp(" + toString(plotElements(i)) + ")"); // 1
+        plotColumns.push_back("xS  (" + toString(plotElements(i)) + ")"); // 2
+        plotColumns.push_back("yS  (" + toString(plotElements(i)) + ")"); // 3
+        plotColumns.push_back("xSp (" + toString(plotElements(i)) + ")"); // 4
+        plotColumns.push_back("ySp (" + toString(plotElements(i)) + ")"); // 5
+        plotColumns.push_back("Dal (" + toString(plotElements(i)) + ")"); // 6
+        plotColumns.push_back("Dalp(" + toString(plotElements(i)) + ")"); // 7
       }
       FlexibleBody1s::init(stage, config);
     }

@@ -145,15 +145,15 @@ namespace MBSim {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[generalizedRelativePosition]) {
           for(int i=0; i<rrel.size(); ++i)
-            plotColumns.push_back("generalized relative position ("+numtostr(i)+")");
+            plotColumns.push_back("generalized relative position ("+toString(i)+")");
         }
         if(plotFeature[generalizedRelativeVelocity]) {
           for(int i=0; i<vrel.size(); ++i)
-            plotColumns.push_back("generalized relative velocity ("+numtostr(i)+")");
+            plotColumns.push_back("generalized relative velocity ("+toString(i)+")");
         }
         if(plotFeature[generalizedForce]) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
           for(int i=0; i<lambda.size(); ++i)
-            plotColumns.push_back("generalized force ("+numtostr(i)+")");
+            plotColumns.push_back("generalized force ("+toString(i)+")");
         }
         if(plotFeature[energy])
           plotColumns.push_back("potential energy");

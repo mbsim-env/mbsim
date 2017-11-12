@@ -175,7 +175,7 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt_) {dt = dt_;}
       /*! Set maximal step size */
       void setStepSizeMax(double dtMax_) {dtMax = dtMax_;}
-      /*! Set minimal step size (default 2*maxOrder*epsroot() */
+      /*! Set minimal step size (default 2*maxOrder*epsroot */
       void setStepSizeMin(double dtMin_) {dtMin = dtMin_;}
       /*! Set maximal gain for increasing dt by stepsize control */
       void setmaxGainSSC(double maxGain) {maxGainSSC = maxGain;}

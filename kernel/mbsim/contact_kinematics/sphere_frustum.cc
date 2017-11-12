@@ -68,7 +68,7 @@ namespace MBSim {
     double r_h = r(0) + (r(1)-r(0))/h * loc; // Radius an der Stelle des Kreismittelpunkts
     
 
-    if(loc<-sphere->getRadius() || loc>h+sphere->getRadius() || fabs(l)<epsroot()) { // TODO! rudimentäre Bestimmung ob Kontakt
+    if(loc<-sphere->getRadius() || loc>h+sphere->getRadius() || fabs(l)<epsroot) { // TODO! rudimentäre Bestimmung ob Kontakt
       g = 1;
     }
     else {
@@ -80,7 +80,7 @@ namespace MBSim {
       double out = 1;
 
       // Fallabfrage
-      if(fabs(psi)<epsroot()) {
+      if(fabs(psi)<epsroot) {
         // Zylinder
         if(l-r(0) > 0) {
           //fall = 1; // außen

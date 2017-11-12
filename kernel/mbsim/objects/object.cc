@@ -57,12 +57,12 @@ namespace MBSim {
 //
 //      double ui = u(i); // save correct position
 //
-//      u(i) += epsroot(); // update with disturbed positions assuming same active links
+//      u(i) += epsroot; // update with disturbed positions assuming same active links
 //      throw;
 //      //updateStateDependentVariables(t);
 //      updateh();
 //
-//      //dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
+//      //dhdu.col(i) = (hObject-hObjectEnd)/epsroot;
 //      u(i) = ui;
 //    }
 //
@@ -72,10 +72,10 @@ namespace MBSim {
 //
 //      double qi = q(i); // save correct position
 //
-//      q(i) += epsroot(); // update with disturbed positions assuming same active links
+//      q(i) += epsroot; // update with disturbed positions assuming same active links
 //      throw;
 //
-//      //dhdq.col(i) = (hObject-hObjectEnd)/epsroot();
+//      //dhdq.col(i) = (hObject-hObjectEnd)/epsroot;
 //      q(i) = qi;
 //    }
 //
@@ -83,12 +83,12 @@ namespace MBSim {
 //    // hObject = hObject0; // set to old values
 //    // h = h0;
 //    // double t0 = t; // save correct position
-//    // t += epsroot(); // update with disturbed positions assuming same active links
+//    // t += epsroot; // update with disturbed positions assuming same active links
 //    // updateStateDependentVariables(t); 
 //    // updateT();
 //    // updateJacobians(t);
 //    // updateh();
-//    // dhdt = (hObject-hObjectEnd)/epsroot();
+//    // dhdt = (hObject-hObjectEnd)/epsroot;
 //    // t = t0;
 //    /******************* back to initial state **********************/
 //    h[0] = hEnd;
@@ -206,19 +206,19 @@ namespace MBSim {
       if (plotFeature[plotRecursive]) {
         if (plotFeature[generalizedPosition]) {
           for (int i = 0; i < qRel.size(); ++i)
-            plotColumns.push_back("generalized position (" + numtostr(i) + ")");
+            plotColumns.push_back("generalized position (" + toString(i) + ")");
         }
         if (plotFeature[generalizedVelocity]) {
           for (int i = 0; i < uRel.size(); ++i)
-            plotColumns.push_back("generalized velocity (" + numtostr(i) + ")");
+            plotColumns.push_back("generalized velocity (" + toString(i) + ")");
         }
         if (plotFeature[derivativeOfGeneralizedPosition]) {
           for (int i = 0; i < qdRel.size(); ++i)
-            plotColumns.push_back("derivative of generalized position (" + numtostr(i) + ")");
+            plotColumns.push_back("derivative of generalized position (" + toString(i) + ")");
         }
         if (plotFeature[generalizedAcceleration]) {
           for (int i = 0; i < udRel.size(); ++i)
-            plotColumns.push_back("generalized acceleration (" + numtostr(i) + ")");
+            plotColumns.push_back("generalized acceleration (" + toString(i) + ")");
         }
         if (plotFeature[energy]) {
           plotColumns.push_back("kinetic energy");

@@ -79,7 +79,7 @@ namespace MBSim {
             }
           }
         }
-        else if (fabs(fa) < epsroot()) {
+        else if (fabs(fa) < epsroot) {
           startingValue(0) = nodesU(i);  // get the starting value for the U direction
           std::vector<double> startingValueV = searchVdirection(nodesU(i));
           for (size_t j = 0; j < startingValueV.size(); j++) {
@@ -91,7 +91,7 @@ namespace MBSim {
             }
           }
         }
-        else if (fabs(fb) < epsroot()) {
+        else if (fabs(fb) < epsroot) {
           startingValue(0) = nodesU(i + 1);  // get the starting value for the U direction
           std::vector<double> startingValueV = searchVdirection(nodesU(i+1));
           for (size_t j = 0; j < startingValueV.size(); j++) {
@@ -137,10 +137,10 @@ namespace MBSim {
       if (fa * fb < 0) {
         startingValueV.push_back(nodesV(i));  // get the starting value for the U direction
       }
-      else if (fabs(fa) < epsroot()) {
+      else if (fabs(fa) < epsroot) {
         startingValueV.push_back(nodesV(i));  // get the starting value for the U direction
       }
-      else if (fabs(fb) < epsroot()) {
+      else if (fabs(fb) < epsroot) {
         startingValueV.push_back(nodesV(i + 1));  // get the starting value for the U direction
       }
     }

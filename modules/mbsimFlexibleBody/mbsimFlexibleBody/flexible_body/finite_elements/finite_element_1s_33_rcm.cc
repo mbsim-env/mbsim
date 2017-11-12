@@ -36,8 +36,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s33RCM::setCurlRadius(double R1, double R2) {
-    if (fabs(R1)>epsroot()) k10 = 1./R1;
-    if (fabs(R2)>epsroot()) k20 = 1./R2;
+    if (fabs(R1)>epsroot) k10 = 1./R1;
+    if (fabs(R2)>epsroot) k20 = 1./R2;
 
     wt->setCurvature(k10,k20);
   }
@@ -211,10 +211,10 @@ namespace MBSimFlexibleBody {
     for(int i=0;i<qGt.size();i++) {  
       double qGti = qGt_tmp(i); // save correct position
 
-      qGt_tmp(i) += epsroot(); // update with disturbed positions assuming same active links
+      qGt_tmp(i) += epsroot; // update with disturbed positions assuming same active links
       computeh(qG_tmp,qGt_tmp);
 
-      dhdu.col(i) = (h-h0)/epsroot();
+      dhdu.col(i) = (h-h0)/epsroot;
       qGt_tmp(i) = qGti;
     }
 
@@ -222,10 +222,10 @@ namespace MBSimFlexibleBody {
     for(int i=0;i<qG.size();i++) { 
       double qGi = qG_tmp(i); // save correct position
 
-      qG_tmp(i) += epsroot(); // update with disturbed positions assuming same active links
+      qG_tmp(i) += epsroot; // update with disturbed positions assuming same active links
       computeh(qG_tmp,qGt_tmp);
 
-      dhdq.col(i) = (h-h0)/epsroot();
+      dhdq.col(i) = (h-h0)/epsroot;
       qG_tmp(i) = qGi;
     }
 
@@ -337,7 +337,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vector<Fixed<6>, double> FiniteElement1s33RCM::getPositions(const Vec& qG, double x) {
-//    if(nrm2(qG-qG_Old)<tol_comp && fabs(x-x_Old)<epsroot()) return X;
+//    if(nrm2(qG-qG_Old)<tol_comp && fabs(x-x_Old)<epsroot) return X;
 //    else {
 //      if(nrm2(qG-qG_Old)>tol_comp)
         wt->computewhcoefPos(qG);
@@ -359,7 +359,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vector<Fixed<6>, double> FiniteElement1s33RCM::getVelocities(const Vec& qG, const Vec& qGt, double x) {
-  //  if(nrm2(qG-qG_Old)<tol_comp && nrm2(qGt-qGt_Old)<tol_comp && fabs(x-x_Old)<epsroot()) return X;
+  //  if(nrm2(qG-qG_Old)<tol_comp && nrm2(qGt-qGt_Old)<tol_comp && fabs(x-x_Old)<epsroot) return X;
   //  else {
 //      if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp)
       wt->computewhcoefVel(qG,qGt);

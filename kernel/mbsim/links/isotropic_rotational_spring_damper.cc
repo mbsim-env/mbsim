@@ -44,11 +44,11 @@ namespace MBSim {
 
     double alpha;
 
-    if (r1.T() * r2 < -1 + epsroot()) {
+    if (r1.T() * r2 < -1 + epsroot) {
       alpha = M_PI;
 
     }
-    else if (r1.T() * r2 > 1 - epsroot()) {
+    else if (r1.T() * r2 > 1 - epsroot) {
       alpha = 0;
 
     }
@@ -57,7 +57,7 @@ namespace MBSim {
 
     Vec3 normal = crossProduct(r1, r2); // normal for rotation from r1 to r2
 
-    if (nrm2(normal) < epsroot()) { // r1 and r2 parallel -> rotation less than 180°
+    if (nrm2(normal) < epsroot) { // r1 and r2 parallel -> rotation less than 180°
       normal(0) = 0;
       normal(1) = 0;
       normal(2) = 0;

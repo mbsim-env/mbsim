@@ -256,7 +256,7 @@ void BlockCompression::addBlocks() {
   SymMat3 Theta(EYE);
 
   for (int i = 0; i < NoBlocks; i++) {
-    string name = "Block" + numtostr(i);
+    string name = "Block" + toString(i);
     blocks.push_back(new Block(name));
     blocks[i]->width = width;
     blocks[i]->height = height;
@@ -269,7 +269,7 @@ void BlockCompression::addBlocks() {
 
   for (int i = 1; i < NoBlocks - 1; i++) { // do not let the blocks rotate at the start or the end (joints are used only to measre the force...)
     Vec trans(3, INIT, 0);
-    string name = "Block" + numtostr(i);
+    string name = "Block" + toString(i);
     trans(0) = hingeDistanceLeft + l0 - endShift - i * dxElement;
     FixedRelativeFrame * frame = new FixedRelativeFrame("Frame_" + name, trans);
     addFrame(frame);

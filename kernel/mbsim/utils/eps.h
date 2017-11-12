@@ -19,11 +19,14 @@
 #ifndef _EPS_H_
 #define _EPS_H_
 
+#include <limits>
+#include <cmath>
+
 namespace MBSim {
 
-  double macheps();
+  constexpr double macheps = std::numeric_limits<double>::epsilon();
 
-  double epsroot();
+  constexpr double epsroot = std::sqrt(macheps);
 
 }
 

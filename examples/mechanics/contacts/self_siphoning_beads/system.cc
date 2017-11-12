@@ -135,7 +135,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
     theta(2, 2) = theta(1, 1);
 
     for (int ele = 0; ele < elements; ele++) {
-      balls.push_back(new RigidBody("Ball" + numtostr(ele)));
+      balls.push_back(new RigidBody("Ball" + toString(ele)));
       balls[ele]->setMass(mass);
       balls[ele]->setInertiaTensor(theta);
       balls[ele]->setRotation(new RotationAboutAxesYZ<VecV>);
@@ -164,7 +164,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
       balls[ele]->addFrame(refFrame);
 
       if (ele > 1) {
-        IsotropicRotationalSpringDamper * iso = new IsotropicRotationalSpringDamper("Iso" + numtostr(ele));
+        IsotropicRotationalSpringDamper * iso = new IsotropicRotationalSpringDamper("Iso" + toString(ele));
         iso->setParameters(0, isoDamping, 0);
         iso->setMomentDirection(Mat("[0,0;1,0;0,1]"));
         iso->connect(balls[ele - 1]->getFrameC(), balls[ele]->getFrameC());

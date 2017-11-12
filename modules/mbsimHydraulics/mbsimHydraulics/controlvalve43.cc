@@ -98,7 +98,7 @@ namespace MBSimHydraulics {
     lBT->setDiameter(d);
   }
   void Controlvalve43::setAlpha(double alpha, double alphaBack) {
-    if (alphaBack<epsroot())
+    if (alphaBack<epsroot)
       alphaBack=alpha;
     if ((alpha<0)||(alpha>1))
       THROW_MBSIMERROR("alpha must be in the range of 0..1!");

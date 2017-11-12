@@ -187,7 +187,7 @@ namespace MBSimFlexibleBody {
         qElement.push_back(Vec(12,INIT,0.));
         uElement.push_back(Vec(12,INIT,0.));
         discretization.push_back(new FiniteElement1s33ANCF(l0, rho, E, G, A, I0, I1, I2, g));
-        if((fabs(rc1) > epsroot()) or (fabs(rc2) > epsroot()))
+        if((fabs(rc1) > epsroot) or (fabs(rc2) > epsroot))
           static_cast<FiniteElement1s33ANCF*>(discretization[i])->setCurlRadius(rc1,rc2);
       }
       initM();

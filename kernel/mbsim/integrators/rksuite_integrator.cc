@@ -91,14 +91,14 @@ namespace MBSimIntegrator {
     SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
         &errass, &dt0, dworkarray, &ndworkarray, &messages);
 
-    while((tStop-t)>epsroot()) {
+    while((tStop-t)>epsroot) {
 
       integrationSteps++;
 
       double dtLast = 0;
       UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, &result, &dtLast);
 
-      if(result==1 || result==2 || fabs(t-tPlot)<epsroot()) {
+      if(result==1 || result==2 || fabs(t-tPlot)<epsroot) {
         system->setTime(t);
         system->setState(z);
         system->resetUpToDate();

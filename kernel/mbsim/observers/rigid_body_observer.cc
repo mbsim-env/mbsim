@@ -142,15 +142,15 @@ namespace MBSim {
         data.push_back(getTime());
         Vec3 dr;
         double absom = nrm2(om);
-        if(abs(om(2))>macheps()) {
+        if(abs(om(2))>macheps) {
           dr(0) = -vS(1)/om(2);
           dr(1) = vS(0)/om(2);
         }
-        else if(abs(om(1))>macheps()) {
+        else if(abs(om(1))>macheps) {
           dr(0) = vS(2)/om(1);
           dr(2) = -vS(0)/om(1);
         }
-        else if(abs(om(0))>macheps()) {
+        else if(abs(om(0))>macheps) {
           dr(1) = -vS(2)/om(0);
           dr(2) = vS(1)/om(0);
         }

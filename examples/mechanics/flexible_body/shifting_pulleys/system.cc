@@ -125,7 +125,7 @@ ALETester::ALETester(const std::string & name_) :
   // print frames
   if (0) {
     for (int i = 0; i < elements / 2 + 1; i++) {
-      MBSimFlexibleBody::NodeFrame * frame = new MBSimFlexibleBody::NodeFrame("Frame" + numtostr(i), i);
+      MBSimFlexibleBody::NodeFrame * frame = new MBSimFlexibleBody::NodeFrame("Frame" + toString(i), i);
       ring->addFrame(frame);
       frame->enableOpenMBV(1e-1);
     }

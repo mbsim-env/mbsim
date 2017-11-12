@@ -246,7 +246,7 @@ namespace MBSimFlexibleBody {
     if ((xiGlob >= alpha(0)) and (xiGlob <= alpha(1))) {
       return (2 * xiGlob - alpha(1) - alpha(0)) / (alpha(1) - alpha(0));
     }
-    throw MBSimError("Invalid global coordinate xiGlob = " + numtostr(xiGlob) + " given.");
+    throw MBSimError("Invalid global coordinate xiGlob = " + toString(xiGlob) + " given.");
     return -2.;
   }
 
@@ -254,7 +254,7 @@ namespace MBSimFlexibleBody {
     if (xiLoc >= -1 and xiLoc <= 1) {
       return ((alpha(1) - alpha(0)) * xiLoc + (alpha(1) + alpha(0))) / 2;
     }
-    throw MBSimError("Invalid local coordinate xiloc = " + numtostr(xiLoc) + " given.");
+    throw MBSimError("Invalid local coordinate xiloc = " + toString(xiLoc) + " given.");
     return -2.;
   }
 
@@ -1057,7 +1057,7 @@ namespace MBSimFlexibleBody {
     for (int i = 0; i < C1Pos.size(); i++) {
       if (alpha(0) < C1Pos(i) and alpha(1) > C1Pos(i)) {
         borders.push_back(C1Pos(i));
-        borders.push_back(C1Pos(i) + macheps());
+        borders.push_back(C1Pos(i) + macheps);
       }
     }
 
