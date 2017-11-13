@@ -31,7 +31,7 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  FunctionWidgetFactory2::FunctionWidgetFactory2(Element *parent_) : parent(parent_) {
+  FunctionWidgetFactory2::FunctionWidgetFactory2(Element *parent_, bool fixedSize_) : parent(parent_), fixedSize(fixedSize_) {
     name.push_back("Constant function");
     name.push_back("Linear function");
     name.push_back("Quadratic function");
@@ -95,7 +95,7 @@ namespace MBSimGUI {
       return new CompositeFunctionWidget(new FunctionWidgetFactory2(dummy), new FunctionWidgetFactory2(dummy));
     }
     if(i==9)
-      return new SymbolicFunctionWidget(QStringList("x"),1,3);
+      return new SymbolicFunctionWidget(QStringList("x"),1,3,fixedSize);
     if(i==10)
       return new TabularFunctionWidget(1);
     if(i==11)

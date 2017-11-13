@@ -29,7 +29,7 @@ namespace MBSimGUI {
 
   class FunctionWidgetFactory2 : public WidgetFactory {
     public:
-      FunctionWidgetFactory2(Element *parent_);
+      FunctionWidgetFactory2(Element *parent_, bool fixedSize_=true);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
@@ -38,6 +38,7 @@ namespace MBSimGUI {
       Element *parent;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      bool fixedSize;
   };
 
   class TranslationWidgetFactory2 : public WidgetFactory {
