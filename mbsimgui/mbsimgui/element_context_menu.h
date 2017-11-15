@@ -35,7 +35,7 @@ namespace MBSimGUI {
 
   class ElementContextMenu : public QMenu {
     public:
-      ElementContextMenu(Element *element, QWidget * parent = 0, bool removable=true);
+      ElementContextMenu(Element *element, QWidget * parent = 0, bool removable=true, bool saveable=true);
 
     protected:
       Element *element;

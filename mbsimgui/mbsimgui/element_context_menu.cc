@@ -41,10 +41,16 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable) : QMenu(parent), element(element_) {
+  ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable, bool saveable) : QMenu(parent), element(element_) {
     QAction *action=new QAction("Edit", this);
     connect(action,SIGNAL(triggered()),mw->getElementView(),SLOT(openEditor()));
     addAction(action);
+    if(saveable) {
+      addSeparator();
+      action=new QAction("Save as", this);
+      connect(action,SIGNAL(triggered()),mw,SLOT(saveElementAs()));
+      addAction(action);
+    }
     if(removable) {
       addSeparator();
       action=new QAction("Copy", this);
@@ -53,14 +59,10 @@ namespace MBSimGUI {
       action=new QAction("Cut", this);
       connect(action,SIGNAL(triggered()),mw,SLOT(cutElement()));
       addAction(action);
-      action=new QAction("Save as", this);
-      connect(action,SIGNAL(triggered()),mw,SLOT(saveElementAs()));
-      addAction(action);
       addSeparator();
       action=new QAction("Remove", this);
       connect(action,SIGNAL(triggered()),mw,SLOT(removeElement()));
       addAction(action);
-      addSeparator();
     }
   }
 

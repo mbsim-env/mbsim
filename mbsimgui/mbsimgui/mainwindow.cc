@@ -422,7 +422,7 @@ namespace MBSimGUI {
   void MainWindow::setProjectChanged(bool changed) { 
     setWindowModified(changed);
     if(changed) {
-      undos.push_back(static_cast<xercesc::DOMDocument*>(doc->cloneNode(true)));
+      undos.push_back(static_cast<DOMDocument*>(doc->cloneNode(true)));
       if(undos.size() > maxUndo)
         undos.pop_front();
       redos.clear();
@@ -727,7 +727,7 @@ namespace MBSimGUI {
 
   // update model parameters including additional paramters from paramList
   void MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
-    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
+    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,NULL);
 
@@ -880,8 +880,8 @@ namespace MBSimGUI {
 
     currentTask = task;
 
-//    shared_ptr<xercesc::DOMDocument> doc(static_cast<xercesc::DOMDocument*>(this->doc->cloneNode(true)));
-    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
+//    shared_ptr<DOMDocument> doc(static_cast<DOMDocument*>(this->doc->cloneNode(true)));
+    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, NULL);
     projectView->getProject()->processFileID((E(newDocElement)->getTagName()==PV%"Embed")?E(newDocElement)->getFirstElementChildNamed(MBSIMXML%"MBSimProject"):newDocElement);
@@ -1464,10 +1464,29 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+element->getName()+".mbsim.xml", "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+element->getName()+".mbsimele.xml", "XML files (*.xml)");
     if(not file.isEmpty()) {
-      xercesc::DOMDocument *edoc = impl->createDocument();
-      DOMNode *node = edoc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true);
+      DOMDocument *edoc = impl->createDocument();
+      DOMNode *node = edoc->importNode(element->getXMLElement(),true);
+      edoc->insertBefore(node,NULL);
+      serializer->writeToURI(edoc, X()%file.toStdString());
+    }
+  }
+
+  void MainWindow::saveEmbeddingAs(bool includeObject, bool includeParameter) {
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    EmbedItemData *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
+    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+item->getName()+".mbsimembed.xml", "XML files (*.xml)");
+    if(not file.isEmpty()) {
+      DOMDocument *edoc = impl->createDocument();
+      DOMNode *node;
+      if(includeObject and includeParameter)
+        node = edoc->importNode(item->getXMLElement()->getParentNode(),true);
+      else if(includeObject)
+        node = edoc->importNode(item->getXMLElement(),true);
+      else
+        node = edoc->importNode(static_cast<DOMElement*>(item->getXMLElement()->getParentNode())->getFirstElementChild(),true);
       edoc->insertBefore(node,NULL);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }
@@ -1599,7 +1618,7 @@ namespace MBSimGUI {
     else {
       QString file=QFileDialog::getOpenFileName(0, "XML frame files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true))->getFirstElementChild();
         while(ele) {
           elements.push_back(ele);
@@ -1642,7 +1661,7 @@ namespace MBSimGUI {
     else {
       QString file=QFileDialog::getOpenFileName(0, "XML frame files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1680,7 +1699,7 @@ namespace MBSimGUI {
     else {
       QString file=QFileDialog::getOpenFileName(0, "XML contour files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1718,7 +1737,7 @@ namespace MBSimGUI {
     else {
       QString file=QFileDialog::getOpenFileName(0, "XML group files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1756,7 +1775,7 @@ namespace MBSimGUI {
     else {
       QString file=QFileDialog::getOpenFileName(0, "XML object files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1794,7 +1813,7 @@ namespace MBSimGUI {
     else {
       QString file=QFileDialog::getOpenFileName(0, "XML link files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1832,7 +1851,7 @@ namespace MBSimGUI {
     else {
       QString file=QFileDialog::getOpenFileName(0, "XML constraint files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1870,7 +1889,7 @@ namespace MBSimGUI {
     else {
       QString file=QFileDialog::getOpenFileName(0, "XML observer files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else

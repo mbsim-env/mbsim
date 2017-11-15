@@ -210,6 +210,7 @@ namespace MBSimGUI {
       void moveUpObserver() { moveObserver(true); }
       void moveDownObserver() { moveObserver(false); }
       void saveElementAs();
+      void saveEmbeddingAs(bool includeObject, bool includeParameter);
 
     private slots:
       void selectElement(std::string ID);
