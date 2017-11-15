@@ -50,7 +50,7 @@ namespace MBSimGUI {
 
     object = new QCheckBox("Embedded object");
     layout->addWidget(object);
-    parameter = new QCheckBox("Embedded parameter");
+    parameter = new QCheckBox("Embedded parameters");
     layout->addWidget(parameter);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
