@@ -57,6 +57,7 @@
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include "octave_utils.h"
 #include "data_plot.h"
+#include "dialogs.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -700,23 +701,10 @@ namespace MBSimGUI {
 
   void MainWindow::selectSolver(int i) {
     setProjectChanged(true);
-    DOMElement *element = getProject()->getSolver()->getXMLElement();
-    DOMNode *parent = element->getParentNode();
-    DOMNode *ps = element->getPreviousSibling();
-    if(ps and X()%ps->getNodeName()=="#text")
-      parent->removeChild(ps);
-    parent->removeChild(element);
+    DOMNode *parent = getProject()->getSolver()->getXMLElement()->getParentNode();
+    getProject()->getSolver()->removeXMLElement(false);
     projectView->getProject()->setSolver(solverView->createSolver(i));
-    element = getProject()->getSolver()->getXMLElement();
-    if(element) {
-      for(int i=0; i<getProject()->getSolver()->getNumberOfParameters(); i++)
-        getProject()->getSolver()->removeParameter(getProject()->getSolver()->getParameter(i));
-      DOMElement *ele = static_cast<DOMElement*>(doc->importNode(element,true));
-      parent->insertBefore(ele,NULL);
-      getProject()->getSolver()->initializeUsingXML(ele);
-    }
-    else
-      getProject()->getSolver()->createXMLElement(parent);
+    getProject()->getSolver()->createXMLElement(parent);
     std::vector<Parameter*> param;
     DOMElement *ele = MBXMLUtils::E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
     if(ele) param = Parameter::initializeParametersUsingXML(ele);
@@ -1464,16 +1452,39 @@ namespace MBSimGUI {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
+    bool includeParameter = false;
+    if(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed") {
+      SaveDialog saveDialog;
+      saveDialog.exec();
+      includeParameter = saveDialog.includeParameter();
+    }
     QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+element->getName()+".mbsimele.xml", "XML files (*.xml)");
     if(not file.isEmpty()) {
       DOMDocument *edoc = impl->createDocument();
-      DOMNode *node = edoc->importNode(element->getXMLElement(),true);
+      DOMNode *node = edoc->importNode(includeParameter?element->getXMLElement()->getParentNode():element->getXMLElement(),true);
       edoc->insertBefore(node,NULL);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }
   }
 
-  void MainWindow::saveEmbeddingAs(bool includeObject, bool includeParameter) {
+  void MainWindow::saveSolverAs() {
+    Solver *solver = project->getSolver();
+    bool includeParameter = false;
+    if(X()%solver->getXMLElement()->getParentNode()->getNodeName()=="Embed") {
+      SaveDialog saveDialog;
+      saveDialog.exec();
+      includeParameter = saveDialog.includeParameter();
+    }
+    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+solver->getName()+".mbsimslv.xml", "XML files (*.xml)");
+    if(not file.isEmpty()) {
+      DOMDocument *edoc = impl->createDocument();
+      DOMNode *node = edoc->importNode(includeParameter?solver->getXMLElement()->getParentNode():solver->getXMLElement(),true);
+      edoc->insertBefore(node,NULL);
+      serializer->writeToURI(edoc, X()%file.toStdString());
+    }
+  }
+
+  void MainWindow::saveEmbeddingAs() {
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
     EmbedItemData *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
@@ -1481,12 +1492,7 @@ namespace MBSimGUI {
     if(not file.isEmpty()) {
       DOMDocument *edoc = impl->createDocument();
       DOMNode *node;
-      if(includeObject and includeParameter)
-        node = edoc->importNode(item->getXMLElement()->getParentNode(),true);
-      else if(includeObject)
-        node = edoc->importNode(item->getXMLElement(),true);
-      else
-        node = edoc->importNode(static_cast<DOMElement*>(item->getXMLElement()->getParentNode())->getFirstElementChild(),true);
+      node = edoc->importNode(static_cast<DOMElement*>(item->getXMLElement()->getParentNode())->getFirstElementChild(),true);
       edoc->insertBefore(node,NULL);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }
@@ -1907,6 +1913,28 @@ namespace MBSimGUI {
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     mbsimxml(1);
+  }
+
+  void MainWindow::loadSolver() {
+    setProjectChanged(true);
+    project->getSolver()->removeXMLElement();
+    DOMElement *ele = NULL;
+    QString file=QFileDialog::getOpenFileName(0, "XML frame files", ".", "XML files (*.xml)");
+    if(not file.isEmpty()) {
+      DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+      ele = static_cast<DOMElement*>(project->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+    }
+    else
+      return;
+    Solver *solver = Embed<Solver>::createAndInit(ele);
+    if(not solver) {
+      QMessageBox::warning(0, "Load", "Cannot load file.");
+      return;
+    }
+    project->getXMLElement()->insertBefore(ele, NULL);
+    project->setSolver(solver);
+    solverView->setSolver(solver);
+    solverViewClicked();
   }
 
   void MainWindow::dragEnterEvent(QDragEnterEvent *event) {

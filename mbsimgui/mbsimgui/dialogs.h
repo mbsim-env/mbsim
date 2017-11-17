@@ -23,6 +23,7 @@
 #include <QDialog>
 #include <QPushButton>
 #include <QTreeWidgetItem>
+#include <QCheckBox>
 
 class QTableWidget;
 class QSpinBox;
@@ -38,8 +39,6 @@ namespace MBSimGUI {
   class Frame;
   class Contour;
   class Signal;
-//  class VariableWidget;
-//  class TabularWidget;
 
   class ElementItem : public QTreeWidgetItem {
     private:
@@ -213,6 +212,14 @@ namespace MBSimGUI {
       void mbs2SignalTree(Element* item, QTreeWidgetItem* parentItem);
       protected slots:
         void checkForSignal(QTreeWidgetItem* item_,int);
+  };
+
+  class SaveDialog : public QDialog {
+    public:
+      SaveDialog(QWidget *parent=0);
+      bool includeParameter() const { return parameter->checkState()==Qt::Checked; }
+    private:
+      QCheckBox *parameter;
   };
 
 }

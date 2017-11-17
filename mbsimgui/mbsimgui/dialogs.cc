@@ -572,4 +572,15 @@ namespace MBSimGUI {
       okButton->setDisabled(true);
   }
 
+  SaveDialog::SaveDialog(QWidget *parent) : QDialog(parent) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    setLayout(layout);
+    parameter = new QCheckBox("Include parameters");
+    layout->addWidget(parameter);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    layout->addWidget(buttonBox);
+  }
+
 }

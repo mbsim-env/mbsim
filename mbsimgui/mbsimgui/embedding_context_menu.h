@@ -33,7 +33,6 @@ namespace MBSimGUI {
       EmbeddingContextMenu(EmbedItemData *item, const QString &title="", QWidget * parent = 0);
 
     protected slots:
-      void saveAs();
       void load();
       void paste();
       void addScalarParameter();
