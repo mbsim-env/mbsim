@@ -320,32 +320,32 @@ std::string fixXMLLocalName(std::string name);
  * Class must have a public default ctor and a public dtor and a getXMLFQN() static member function. */
 #define MBSIM_OBJECTFACTORY_REGISTERCLASS(NS, Class) \
   static MBSim::ObjectFactoryRegisterClassHelper<Class> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(NS%MBSim::fixXMLLocalName(#Class));
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)((NS)%MBSim::fixXMLLocalName(#Class));
 
 /** Use this macro somewhere at the class definition of Class to register it by the ObjectFactory (as a singleton).
  * fmatvec::Atom is the base of Class and also the template parameter of ObjectFactory.
  * Class must have a public Class* getInstance() function and should not have a public dtor and a getXMLFQN() static member function. */
 #define MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON(NS, Class) \
   static MBSim::ObjectFactoryRegisterClassHelperAsSingleton<Class> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(NS%MBSim::fixXMLLocalName(#Class));
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)((NS)%MBSim::fixXMLLocalName(#Class));
 
 /** Same as MBSIM_OBJECTFACTORY_REGISTERCLASS but also explicitly instantiates the template class Class.
  * Please note that template member functions of Class must be explicitly instantated by hand. */
 #define MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(NS, Class) \
   template class Class; \
   static MBSim::ObjectFactoryRegisterClassHelper<Class> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(NS%MBSim::fixXMLLocalName(#Class));
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)((NS)%MBSim::fixXMLLocalName(#Class));
 
 /** Same as MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON but also explicitly instantiates the template class Class.
  * Please note that template member functions of Class must be explicitly instantated by hand. */
 #define MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON_AND_INSTANTIATE(NS, Class) \
   template class Class; \
   static MBSim::ObjectFactoryRegisterClassHelperAsSingleton<Class> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(NS%MBSim::fixXMLLocalName(#Class));
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)((NS)%MBSim::fixXMLLocalName(#Class));
 
 /** Use this macro somewhere at the definition of PlotFeatureEnum enumName to register it by the ObjectFactory. */
 #define MBSIM_OBJECTFACTORY_REGISTERENUM(EnumType, NS, enumName) \
   static MBSim::EnumFactory<EnumType> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(enumName, NS%#enumName);
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(enumName, (NS)%#enumName);
 
 #endif
