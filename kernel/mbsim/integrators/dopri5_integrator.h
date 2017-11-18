@@ -50,16 +50,16 @@ namespace MBSimIntegrator {
       /** Relative Toleranz */
       fmatvec::Vec rTol;
       /** step size for the first step */
-      double dt0;
+      double dt0{0};
       /** maximum number of steps */
-      int maxSteps;  
+      int maxSteps{2000000000};  
       /** maximale step size */
-      double dtMax;
+      double dtMax{0};
 
     public:
 
       DOPRI5Integrator();
-      ~DOPRI5Integrator() {}
+      ~DOPRI5Integrator() override = default;
 
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
       void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
@@ -74,9 +74,9 @@ namespace MBSimIntegrator {
       int getMaxStepNumber() const { return maxSteps; }
       double getMaximalStepSize() const { return dtMax; }
 
-      void integrate(MBSim::DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system) override;
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }

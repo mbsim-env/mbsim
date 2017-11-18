@@ -50,10 +50,10 @@ namespace MBSim {
       ContactObserver(const std::string &name="");
       void setContact(Contact *link_) { link = link_; }
 
-      void init(InitStage stage, const InitConfigSet &config);
-      void plot();
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void setDynamicSystemSolver(DynamicSystemSolver *sys);
+      void init(InitStage stage, const InitConfigSet &config) override;
+      void plot() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void setDynamicSystemSolver(DynamicSystemSolver *sys) override;
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);

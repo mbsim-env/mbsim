@@ -109,12 +109,12 @@ namespace MBSimHydraulics {
     else {
       JLocal=Mat(1,getGeneralizedVelocitySize(),INIT,0);
       dep_check.push_back(this);
-      for (unsigned int i=0; i<dependencyOnOutflow.size(); i++) {
-        const Mat Jdep=((RigidHLine*)dependencyOnOutflow[i])->calculateJacobian(dep_check);
+      for (auto & i : dependencyOnOutflow) {
+        const Mat Jdep=((RigidHLine*)i)->calculateJacobian(dep_check);
         JLocal(0,RangeV(0,Jdep.cols()-1))+=Jdep;
       }
-      for (unsigned int i=0; i<dependencyOnInflow.size(); i++) {
-        const Mat Jdep=((RigidHLine*)dependencyOnInflow[i])->calculateJacobian(dep_check);
+      for (auto & i : dependencyOnInflow) {
+        const Mat Jdep=((RigidHLine*)i)->calculateJacobian(dep_check);
         JLocal(0,RangeV(0,Jdep.cols()-1))-=Jdep;
       }
     }
@@ -126,10 +126,10 @@ namespace MBSimHydraulics {
       QIn(0)=u(0);
     else {
       QIn.init(0);
-      for (unsigned int i=0; i<dependencyOnOutflow.size(); i++)
-        QIn+=(dependencyOnOutflow[i])->evalQIn();
-      for (unsigned int i=0; i<dependencyOnInflow.size(); i++)
-        QIn-=(dependencyOnInflow[i])->evalQIn();
+      for (auto & i : dependencyOnOutflow)
+        QIn+=i->evalQIn();
+      for (auto & i : dependencyOnInflow)
+        QIn-=i->evalQIn();
     }
     QOut = -QIn;
     updQ = false;
@@ -151,23 +151,23 @@ namespace MBSimHydraulics {
 
   void RigidHLine::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveStringRef) {
-      for (unsigned int i=0; i<refDependencyOnInflowString.size(); i++)
-        addInflowDependencyOnInflow(getByPath<RigidHLine>(refDependencyOnInflowString[i]));
-      for (unsigned int i=0; i<refDependencyOnOutflowString.size(); i++)
-        addInflowDependencyOnOutflow(getByPath<RigidHLine>(refDependencyOnOutflowString[i]));
+      for (const auto & i : refDependencyOnInflowString)
+        addInflowDependencyOnInflow(getByPath<RigidHLine>(i));
+      for (const auto & i : refDependencyOnOutflowString)
+        addInflowDependencyOnOutflow(getByPath<RigidHLine>(i));
     }
     else if (stage==preInit) {
-      for (unsigned int i=0; i<dependencyOnInflow.size(); i++)
-        dependency.push_back(dependencyOnInflow[i]);
-      for (unsigned int i=0; i<dependencyOnOutflow.size(); i++)
-        dependency.push_back(dependencyOnOutflow[i]);
+      for (auto & i : dependencyOnInflow)
+        dependency.push_back(i);
+      for (auto & i : dependencyOnOutflow)
+        dependency.push_back(i);
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        plotColumns.push_back("Volume flow [l/min]");
-        plotColumns.push_back("Mass flow [kg/min]");
+        plotColumns.emplace_back("Volume flow [l/min]");
+        plotColumns.emplace_back("Mass flow [kg/min]");
         if (frameOfReference)
-          plotColumns.push_back("pressureLoss due to gravity [bar]");
+          plotColumns.emplace_back("pressureLoss due to gravity [bar]");
       }
     }
     else if(stage==unknownStage) {
@@ -291,14 +291,14 @@ namespace MBSimHydraulics {
     }
     else if (stage==plotting) {
       if (plotFeature[plotRecursive]) {
-        plotColumns.push_back("pInflow [bar]");
-        plotColumns.push_back("pOutflow [bar]");
-        plotColumns.push_back("dp [bar]");
-        plotColumns.push_back("sign [-]");
-        plotColumns.push_back("opening [mm]");
-        plotColumns.push_back("area [mm^2]");
-        plotColumns.push_back("sqrt_dp [sqrt(bar)]");
-        plotColumns.push_back("Q [l/min]");
+        plotColumns.emplace_back("pInflow [bar]");
+        plotColumns.emplace_back("pOutflow [bar]");
+        plotColumns.emplace_back("dp [bar]");
+        plotColumns.emplace_back("sign [-]");
+        plotColumns.emplace_back("opening [mm]");
+        plotColumns.emplace_back("area [mm^2]");
+        plotColumns.emplace_back("sqrt_dp [sqrt(bar)]");
+        plotColumns.emplace_back("Q [l/min]");
       }
     }
     else if (stage==unknownStage) {

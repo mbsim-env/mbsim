@@ -144,14 +144,14 @@ int main(int argc, char *argv[]) {
       convertXPathParamSetToVariable(param, xmlParam, eval);
       // remove all variables which are not in useParam
       vector<std::shared_ptr<Variable> > xmlParam2;
-      for(vector<std::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it) {
-        string name=(*it)->getName();
+      for(auto & it : xmlParam) {
+        string name=it->getName();
         size_t pos=name.find('[');
         if(pos!=string::npos)
           name=name.substr(0, pos);
         if(!noParam && (useParam.size()==0 || useParam.find(name)!=useParam.end())) {
           cout<<"Using DynamicSystemSolver parameter '"<<name<<"'."<<endl;
-          xmlParam2.push_back(*it);
+          xmlParam2.push_back(it);
         }
       }
       xmlParam=xmlParam2;
@@ -192,14 +192,14 @@ int main(int argc, char *argv[]) {
         fmuFile.add(path("resources")/"model"/absolute(inputFilename).relative_path(), inputFilename);
         // copy dependencies
         cout<<"Copy dependent files of the original XML model file to FMU."<<endl;
-        for(vector<path>::iterator it=dependencies.begin(); it!=dependencies.end(); ++it)
-          if(!is_directory(*it)) {
-            if(it->is_absolute())
+        for(auto & dependencie : dependencies)
+          if(!is_directory(dependencie)) {
+            if(dependencie.is_absolute())
               throw runtime_error("A XML model file with parameters may only reference files by a relative path.\n"
-                                  "However the model references the absolute file '"+it->string()+"'.\n"+
+                                  "However the model references the absolute file '"+dependencie.string()+"'.\n"+
                                   "Use the --noparam options OR rework the model to not contain any absolute file path.");
             cout<<"."<<flush;
-            fmuFile.add(path("resources")/"model"/current_path().relative_path()/(*it), *it);
+            fmuFile.add(path("resources")/"model"/current_path().relative_path()/dependencie, dependencie);
           }
         cout<<endl;
       }
@@ -269,25 +269,25 @@ int main(int argc, char *argv[]) {
       // Type definition
       // get a unique list of all enumeration types
       set<Variable::EnumList> enumType;
-      for(size_t vr=0; vr<var.size(); ++vr)
-        if(var[vr]->getEnumerationList())
-          enumType.insert(var[vr]->getEnumerationList());
+      for(auto & vr : var)
+        if(vr->getEnumerationList())
+          enumType.insert(vr->getEnumerationList());
       // write all enumeration type to xml file
       DOMElement *typeDef=D(modelDescDoc)->createElement("TypeDefinitions");
       modelDesc->appendChild(typeDef);
-        for(set<Variable::EnumList>::iterator it=enumType.begin(); it!=enumType.end(); ++it) {
+        for(const auto & it : enumType) {
           DOMElement *type=D(modelDescDoc)->createElement("Type");
           typeDef->appendChild(type);
-          E(type)->setAttribute("name", "EnumType_"+boost::lexical_cast<string>(*it));
+          E(type)->setAttribute("name", "EnumType_"+boost::lexical_cast<string>(it));
             DOMElement *enumEle=D(modelDescDoc)->createElement("EnumerationType");
             type->appendChild(enumEle);
             E(enumEle)->setAttribute("min", "1");
-            E(enumEle)->setAttribute("max", fmatvec::toString((*it)->size()));
-            for(size_t id=0; id<(*it)->size(); ++id) {
+            E(enumEle)->setAttribute("max", fmatvec::toString(it->size()));
+            for(size_t id=0; id<it->size(); ++id) {
               DOMElement *item=D(modelDescDoc)->createElement("Item");
               enumEle->appendChild(item);
-              E(item)->setAttribute("name", (**it)[id].second);
-              E(item)->setAttribute("description", (**it)[id].second);
+              E(item)->setAttribute("name", (*it)[id].second);
+              E(item)->setAttribute("description", (*it)[id].second);
             }
         }
 
@@ -402,13 +402,13 @@ int main(int argc, char *argv[]) {
           evalFile="libmbxmlutils-eval-"+evalName+SHEXT;
         copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/evalFile,
                        path("resources")/"local"/LIBDIR, getInstallPath()/LIBDIR/evalFile);
-        for(map<path, pair<path, bool> >::iterator it=files.begin(); it!=files.end(); ++it) {
+        for(auto & file : files) {
           cout<<"."<<flush;
-          if(!it->second.second)
-            fmuFile.add(path("resources")/"local"/it->second.first/it->first.filename(), it->first);
+          if(!file.second.second)
+            fmuFile.add(path("resources")/"local"/file.second.first/file.first.filename(), file.first);
           else
-            copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/it->second.first/it->first.filename(),
-                           path("resources")/"local"/LIBDIR, it->first);
+            copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/file.second.first/file.first.filename(),
+                           path("resources")/"local"/LIBDIR, file.first);
         }
         cout<<endl;
       }
@@ -420,10 +420,10 @@ int main(int argc, char *argv[]) {
         fmuFile.add(path("resources")/"local"/"share"/"mbsimmodules"/srcIt->path().filename(), srcIt->path());
       }
       cout<<endl;
-      for(set<path>::iterator it=moduleLibs.begin(); it!=moduleLibs.end(); ++it) {
-        cout<<"Copy MBSim module "<<it->filename()<<" and dependencies to FMU."<<endl;
-        copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/it->filename(), path("resources")/"local"/LIBDIR,
-                       *it);
+      for(const auto & moduleLib : moduleLibs) {
+        cout<<"Copy MBSim module "<<moduleLib.filename()<<" and dependencies to FMU."<<endl;
+        copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/moduleLib.filename(), path("resources")/"local"/LIBDIR,
+                       moduleLib);
         cout<<endl;
       }
     }
@@ -471,7 +471,7 @@ namespace {
 
     // read *.deplibs file
     std::shared_ptr<xercesc::DOMDocument> depDoc=parser->parse(depFile);
-    for(DOMElement *e=depDoc->getDocumentElement()->getFirstElementChild(); e!=NULL; e=e->getNextElementSibling()) {
+    for(DOMElement *e=depDoc->getDocumentElement()->getFirstElementChild(); e!=nullptr; e=e->getNextElementSibling()) {
       string file=X()%E(e)->getFirstTextChild()->getData();
 
       // check for file in reldir and copy it to FMU

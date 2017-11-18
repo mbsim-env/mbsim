@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  Integrator::Integrator() : tStart(0.), tEnd(1.), dtPlot(1e-4), warnLevel(0), output(true), name("Integrator") {}
+  Integrator::Integrator() :  name("Integrator") {}
 
   void Integrator::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
@@ -49,7 +49,7 @@ namespace MBSimIntegrator {
     shared_ptr<DOMParser> parser=DOMParser::create();
     shared_ptr<DOMDocument> doc=parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    Integrator *integrator=ObjectFactory::createAndInit<Integrator>(e);
+    auto *integrator=ObjectFactory::createAndInit<Integrator>(e);
     return integrator;
   }
 
@@ -57,7 +57,7 @@ namespace MBSimIntegrator {
   // We modify here some integrator date for debugging (valgrind) purposes.
   void Integrator::debugInit() {
     // set a minimal end time: integrate only up to the first plot time (+10%) after the plot at tStart
-    if(getenv("MBSIM_SET_MINIMAL_TEND")!=NULL)
+    if(getenv("MBSIM_SET_MINIMAL_TEND")!=nullptr)
       setEndTime(getStartTime()+1.1*getPlotStepSize());
   }
 

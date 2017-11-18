@@ -21,25 +21,26 @@
 #include <mbsim/mbsim_event.h>
 #include <mbsim/element.h>
 #include <iostream>
+#include <utility>
 
 using namespace std;
 using namespace xercesc;
 
 namespace MBSim {
   
-  MBSimError::MBSimError(const Element *context, const std::string &mbsim_error_message_) throw() : exception(),
-    mbsim_error_message(mbsim_error_message_), path(context->getPath()), locationStack(context->getLocationStack()) {
+  MBSimError::MBSimError(const Element *context, std::string mbsim_error_message_) noexcept : exception(),
+    mbsim_error_message(std::move(mbsim_error_message_)), path(context->getPath()), locationStack(context->getLocationStack()) {
   }
 
-  MBSimError::MBSimError(const std::string &mbsim_error_message_) throw() : exception(),
-    mbsim_error_message(mbsim_error_message_), path() {
+  MBSimError::MBSimError(std::string mbsim_error_message_) noexcept : exception(),
+    mbsim_error_message(std::move(mbsim_error_message_)), path() {
   }
 
   void MBSimError::setContext(const Element *context) {
     path=context->getPath();
   }
 
-  const char* MBSimError::what() const throw() {
+  const char* MBSimError::what() const noexcept {
     stringstream str;
     str<<mbsim_error_message<<endl;
     if(!path.empty())

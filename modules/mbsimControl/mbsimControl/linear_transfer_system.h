@@ -31,16 +31,16 @@ namespace MBSimControl {
   class LinearTransferSystem : public Signal {
 
     public:   
-      LinearTransferSystem(const std::string& name="") : Signal(name), inputSignal(NULL) { }
+      LinearTransferSystem(const std::string& name="") : Signal(name), inputSignal(nullptr) { }
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
       
-      void calcxSize() { xSize = A.rows(); }
+      void calcxSize() override { xSize = A.rows(); }
       
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void updateSignal();
-      void updatexd();
+      void updateSignal() override;
+      void updatexd() override;
       
       void setSystemMatrix(fmatvec::SqrMatV A_) { A = A_; }
       void setInputMatrix(fmatvec::MatV B_) { B = B_; }
@@ -48,7 +48,7 @@ namespace MBSimControl {
       void setFeedthroughMatrix(fmatvec::SqrMatV D_) { D = D_; }
 
       void setInputSignal(Signal * inputSignal_) { inputSignal = inputSignal_; }
-      int getSignalSize() const { return inputSignal->getSignalSize(); }
+      int getSignalSize() const override { return inputSignal->getSignalSize(); }
 
     protected:
       Signal* inputSignal;

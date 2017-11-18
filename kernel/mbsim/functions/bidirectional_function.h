@@ -30,30 +30,30 @@ namespace MBSim {
   class BidirectionalFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     using B = fmatvec::Function<Ret(Arg)>; 
     public:
-      BidirectionalFunction(Function<Ret(Arg)> *fn_=0, Function<Ret(Arg)> *fp_=0) : fn(fn_), fp(fp_) {
+      BidirectionalFunction(Function<Ret(Arg)> *fn_=nullptr, Function<Ret(Arg)> *fp_=nullptr) : fn(fn_), fp(fp_) {
         if(fn) fn->setParent(this);
         if(fp) fp->setParent(this);
       }
-      ~BidirectionalFunction() {
+      ~BidirectionalFunction() override {
         delete fn;
         delete fp;
       }
-      int getArgSize() const {
+      int getArgSize() const override {
         return fn->getArgSize();
       }
-      std::pair<int, int> getRetSize() const {
+      std::pair<int, int> getRetSize() const override {
         return fp->getRetSize();
       }
-      Ret operator()(const Arg &x) {
+      Ret operator()(const Arg &x) override {
         return (ToDouble<Arg>::cast(x)>=0)?(*fp)(x):(*fn)(-x);
       }
-      typename B::DRetDArg parDer(const double &x) {
+      typename B::DRetDArg parDer(const double &x) override {
         return (ToDouble<Arg>::cast(x)>=0)?fp->parDer(x):fn->parDer(-x);
       }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) {
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override {
         return (ToDouble<Arg>::cast(x)>=0)?fp->parDerDirDer(xDir,x):fn->parDerDirDer(-xDir,-x);
       }
-      typename B::DDRetDDArg parDerParDer(const double &x) {
+      typename B::DDRetDDArg parDerParDer(const double &x) override {
         return (ToDouble<Arg>::cast(x)>=0)?fp->parDerParDer(x):fn->parDerParDer(-x);
       }
       void setNegativeDirectionalFunction(Function<Ret(Arg)> *fn_) {
@@ -66,14 +66,14 @@ namespace MBSim {
         fp->setParent(this);
         fp->setName("PostiveDirectional");
       }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e;
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"negativeDirectionalFunction");
         setNegativeDirectionalFunction(ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild()));
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"positiveDirectionalFunction");
         setPositiveDirectionalFunction(ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild()));
       }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg)>::init(stage, config);
         fn->init(stage, config);
         fp->init(stage, config);

@@ -42,15 +42,15 @@ namespace MBSim {
        * \param message to be written
        * \param context the conext MBSim::Element where the error occured
        */
-      MBSimError(const Element *context, const std::string &mbsim_error_message_) throw(); 
+      MBSimError(const Element *context, std::string mbsim_error_message_) noexcept; 
 
       /**
        * \brief constructor
        * ctor variant without a context
        */
-      MBSimError(const std::string &mbsim_error_message_) throw(); 
+      MBSimError(std::string mbsim_error_message_) noexcept; 
       
-      virtual ~MBSimError() throw() {}
+      ~MBSimError() noexcept override = default;
 
       /* \brief set the context of the error
        * Use this function to set the context in a catch(...) block if the context is not known
@@ -63,7 +63,7 @@ namespace MBSim {
 
       const std::vector<MBXMLUtils::EmbedDOMLocator>& getLocationStack() const { return locationStack; }
 
-      virtual const char* what() const throw();
+      const char* what() const noexcept override;
 
     private:
       /**

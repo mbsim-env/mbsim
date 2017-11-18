@@ -24,8 +24,7 @@ using namespace fmatvec;
 ansatz_function::ansatz_function(int n, double l): Ord(n), L(l) {
 }
 
-ansatz_function::~ansatz_function() {
-}
+ansatz_function::~ansatz_function() = default;
 
 SymMat ansatz_function::MatIntWWT() {
   SymMat retMat(Dim, INIT, 0);

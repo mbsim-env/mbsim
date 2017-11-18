@@ -41,7 +41,7 @@ namespace MBSimHydraulics {
       /*! Constructor */
       ElasticLineGalerkin(const std::string &name="");
 
-      void calcSize();
+      void calcSize() override;
 
       /*! set initial pressure of the pipe fluid*/
       void setp0(double p0_) {p0=p0_; }
@@ -65,38 +65,38 @@ namespace MBSimHydraulics {
 
       fmatvec::Vec getQIn() {return QIn; }
       fmatvec::Vec getQOut() {return QOut; }
-      fmatvec::VecV getInflowFactor() {return -Area*wE; }
-      fmatvec::VecV getOutflowFactor() {return Area*wA; }
+      fmatvec::VecV getInflowFactor() override {return -Area*wE; }
+      fmatvec::VecV getOutflowFactor() override {return Area*wA; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void calcqSize() {qSize=mdim; }
-      void calcuSize(int j) {uSize[j]=mdim; }
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void calcqSize() override {qSize=mdim; }
+      void calcuSize(int j) override {uSize[j]=mdim; }
 
-      void updateQ();
-      void updateh(int j=0);
-      void updateT();
-      void updateM();
+      void updateQ() override;
+      void updateh(int j=0) override;
+      void updateT() override;
+      void updateM() override;
 
-      void plot();
+      void plot() override;
       void plotParameters();
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
     
     private:
-      int mdim, plotdim;
-      double nu, g, E, k;
+      int mdim{0}, plotdim{0};
+      double nu, g{0}, E{0}, k{0};
       fmatvec::Vec WInt, wA, wE, lambda;
       fmatvec::SymMat MatIntWWT, MatIntWSWST, K, D, N, Omega, MFac;
       fmatvec::SqrMat phi;
       ansatz_function * ansatz;
       fmatvec::Mat plotVecW, plotVecWS;
-      double l, d, Area;
+      double l{0}, d{0}, Area{0};
 
     protected:
       AnsatzTypes ansatzType;
-      bool Flow2D;
-      int nAnsatz;
-      double p0, Q0, fracAir, delta_h, DLehr;
+      bool Flow2D{false};
+      int nAnsatz{0};
+      double p0{0}, Q0{0}, fracAir{0}, delta_h{0}, DLehr{0};
       fmatvec::Vec relPlotPoints;
   };
 }

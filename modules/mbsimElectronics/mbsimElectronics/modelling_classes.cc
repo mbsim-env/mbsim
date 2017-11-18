@@ -35,20 +35,20 @@ namespace MBSimElectronics {
   }
 
   void Terminal::findEndOfBranch(Terminal* callingTerminal, Branch* currentBranch) {
-    for(unsigned int i=0; i<connectedTerminal.size(); i++) {
-      if(callingTerminal != connectedTerminal[i]) {
-        if(connectedTerminal[i]->getFlag() == 0)
-          connectedTerminal[i]->findEndOfBranch(this,currentBranch);
-        else if(connectedTerminal[i]->getFlag() == 2) {
-          currentBranch->setEndTerminal(connectedTerminal[i]);
+    for(auto & i : connectedTerminal) {
+      if(callingTerminal != i) {
+        if(i->getFlag() == 0)
+          i->findEndOfBranch(this,currentBranch);
+        else if(i->getFlag() == 2) {
+          currentBranch->setEndTerminal(i);
         }
         else {
           stringstream error;
-          error << "Fehler wegen flag = "<< (connectedTerminal[i]->getFlag()) << endl;
+          error << "Fehler wegen flag = "<< (i->getFlag()) << endl;
           throw runtime_error(error.str());
         }
 
-        if(getParent() == connectedTerminal[i]->getParent()) {
+        if(getParent() == i->getParent()) {
      	  int vz = name=="A" ? 1 : -1;
 	  dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
         }
@@ -59,23 +59,23 @@ namespace MBSimElectronics {
 
   vector<Branch*> Terminal::buildBranches(Branch* currentBranch) {
     vector<Branch*> branch;
-    for(unsigned int i=0; i<connectedTerminal.size(); i++) {
-      if(connectedTerminal[i]->getFlag()==0) {
+    for(auto & i : connectedTerminal) {
+      if(i->getFlag()==0) {
         currentBranch = new Branch("Name");
         branch.push_back(currentBranch);
         currentBranch->setStartTerminal(this);
-        if(getParent() == connectedTerminal[i]->getParent()) {
+        if(getParent() == i->getParent()) {
 	  int vz = name=="A" ? 1 : -1;
           dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
         }
-        connectedTerminal[i]->findEndOfBranch(this,currentBranch);
+        i->findEndOfBranch(this,currentBranch);
       }
-      else if(connectedTerminal[i]->getFlag()==2) {
+      else if(i->getFlag()==2) {
         currentBranch = new Branch("Name");
         branch.push_back(currentBranch);
         currentBranch->setStartTerminal(this);
-        currentBranch->setEndTerminal(connectedTerminal[i]);
-        if(getParent() == connectedTerminal[i]->getParent()) {
+        currentBranch->setEndTerminal(i);
+        if(getParent() == i->getParent()) {
 	  int vz = name=="A" ? 1 : -1;
           dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
         }
@@ -90,7 +90,7 @@ namespace MBSimElectronics {
   void ElectronicComponent::addTerminal(Terminal *terminal_) {
     if(getTerminal(terminal_->getName(),false)) {
       cerr << "Error: The Component " << getName() << " can only comprise one Object by the name " <<  terminal_->getName() << "!" << endl;
-      assert(getTerminal(terminal_->getName(),false) == NULL); 
+      assert(getTerminal(terminal_->getName(),false) == nullptr); 
     }
     terminal.push_back(terminal_);
     //terminal_->setParent(this);
@@ -111,51 +111,51 @@ namespace MBSimElectronics {
       if(!(i<terminal.size())) cerr << "Error: The Component " << this->getName() <<" comprises no terminal " << name << "!" << endl; 
       assert(i<terminal.size());
     }
-    return NULL;
+    return nullptr;
   }
 
   void ElectronicComponent::buildListOfTerminals(std::vector<Terminal*> &terminalList) {
-    for(unsigned int i=0; i<terminal.size(); i++)
-      terminalList.push_back(terminal[i]);
+    for(auto i : terminal)
+      terminalList.push_back(i);
   }
 
   void ElectronicComponent::processModellList(vector<ModellingInterface*> &modellList, vector<Object*> &objectList, vector<Link*> &linkList) {
 
     vector<ElectronicComponent*> compList;
     vector<ModellingInterface*> remainingModells;
-    for(unsigned int i=0; i<modellList.size(); i++) {
-      ElectronicComponent *comp = dynamic_cast<ElectronicComponent*>(modellList[i]);
+    for(auto & i : modellList) {
+      auto *comp = dynamic_cast<ElectronicComponent*>(i);
       if(comp)
         compList.push_back(comp);
       else
-        remainingModells.push_back(modellList[i]);
+        remainingModells.push_back(i);
     }
 
     modellList.clear();
-    for(unsigned int i=0; i<remainingModells.size(); i++) {
-      modellList.push_back(remainingModells[i]);
+    for(auto remainingModell : remainingModells) {
+      modellList.push_back(remainingModell);
     }
 
     vector<Terminal*> terminalList;
-    for(unsigned int i=0; i<compList.size(); i++)
-      compList[i]->buildListOfTerminals(terminalList);
+    for(auto & i : compList)
+      i->buildListOfTerminals(terminalList);
 
     vector<Terminal*> nodeList;
-    for(unsigned int i=0; i<terminalList.size(); i++) {
-      if(terminalList[i]->getNumberOfConnectedTerminals() > 2) {
-        nodeList.push_back(terminalList[i]);
-        terminalList[i]->setFlag(2); // root
+    for(auto & i : terminalList) {
+      if(i->getNumberOfConnectedTerminals() > 2) {
+        nodeList.push_back(i);
+        i->setFlag(2); // root
       }
     }
     vector<Branch*> branchList;
     int k=0;
-    for(unsigned int i=0; i<nodeList.size(); i++) {
-      vector<Branch*> branchs_tmp = nodeList[i]->buildBranches(0);
-      for(size_t j=0; j<branchs_tmp.size(); j++) {
-        branchList.push_back(branchs_tmp[j]);
+    for(auto & i : nodeList) {
+      vector<Branch*> branchs_tmp = i->buildBranches(nullptr);
+      for(auto & j : branchs_tmp) {
+        branchList.push_back(j);
         stringstream str;
         str << "Branch" << k++;
-        branchs_tmp[j]->setName(str.str());
+        j->setName(str.str());
       }
     }
 
@@ -169,66 +169,66 @@ namespace MBSimElectronics {
     }
     vector<Branch*> treeBranch, linkBranch;
     unsigned int numberOfTreeBranches = nodeList.size() - 1;
-    branchList[0]->buildTreeBranches(0, treeBranch, numberOfTreeBranches);
-    for(unsigned int i=0; i<branchList.size(); i++) {
+    branchList[0]->buildTreeBranches(nullptr, treeBranch, numberOfTreeBranches);
+    for(auto & i : branchList) {
       bool flag = false;
-      for(unsigned int j=0; j<treeBranch.size(); j++) {
-        if(branchList[i]==treeBranch[j])
+      for(auto & j : treeBranch) {
+        if(i==j)
           flag = true;
       }
       if(!flag)
-        linkBranch.push_back(branchList[i]);
+        linkBranch.push_back(i);
     }
-    for(unsigned int j=0; j<treeBranch.size(); j++) {
-      treeBranch[j]->setFlag(3);
+    for(auto & j : treeBranch) {
+      j->setFlag(3);
     }
 
     vector<Mesh*> meshList;
     k=0;
-    for(unsigned int i=0; i<linkBranch.size(); i++) {
+    for(auto & i : linkBranch) {
       bool flag = false;
       stringstream str;
       str << "Mesh" << k++;
       Mesh* mesh = new Mesh(str.str());
-      linkBranch[i]->buildMeshes(0, 0, mesh, flag);
+      i->buildMeshes(nullptr, nullptr, mesh, flag);
       meshList.push_back(mesh);
     }
 
-    for(unsigned int i=0; i<meshList.size(); i++) {
-      meshList[i]->getBranch(0)->setvz(1,meshList[i]);
-      for(int j=1; j<meshList[i]->getNumberOfBranches(); j++) {
-	if(meshList[i]->getBranch(j)->getEndTerminal() == meshList[i]->getBranch(j-1)->getStartTerminal())
-	  meshList[i]->getBranch(j)->setvz(1,meshList[i]);
-	else if(meshList[i]->getBranch(j)->getStartTerminal() == meshList[i]->getBranch(j-1)->getStartTerminal())
-	  meshList[i]->getBranch(j)->setvz(-1,meshList[i]);
-	else if(meshList[i]->getBranch(j)->getStartTerminal() == meshList[i]->getBranch(j-1)->getEndTerminal())
-	  meshList[i]->getBranch(j)->setvz(1,meshList[i]);
-	else if(meshList[i]->getBranch(j)->getEndTerminal() == meshList[i]->getBranch(j-1)->getEndTerminal())
-	  meshList[i]->getBranch(j)->setvz(-1,meshList[i]);
+    for(auto & i : meshList) {
+      i->getBranch(0)->setvz(1,i);
+      for(int j=1; j<i->getNumberOfBranches(); j++) {
+	if(i->getBranch(j)->getEndTerminal() == i->getBranch(j-1)->getStartTerminal())
+	  i->getBranch(j)->setvz(1,i);
+	else if(i->getBranch(j)->getStartTerminal() == i->getBranch(j-1)->getStartTerminal())
+	  i->getBranch(j)->setvz(-1,i);
+	else if(i->getBranch(j)->getStartTerminal() == i->getBranch(j-1)->getEndTerminal())
+	  i->getBranch(j)->setvz(1,i);
+	else if(i->getBranch(j)->getEndTerminal() == i->getBranch(j-1)->getEndTerminal())
+	  i->getBranch(j)->setvz(-1,i);
 	else
 	  throw runtime_error("Error 2 in ElectronicComponent::processModellList");
       }
-      objectList.push_back(meshList[i]);
+      objectList.push_back(i);
       // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
-      meshList[i]->setPath("<created_by_ModellingInterface_"+toString(objectList.size()-1));
+      i->setPath("<created_by_ModellingInterface_"+toString(objectList.size()-1));
     }
 
-    for(unsigned int i=0; i<branchList.size(); i++) {
-      objectList.push_back(branchList[i]);
+    for(auto & i : branchList) {
+      objectList.push_back(i);
       // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
-      branchList[i]->setPath("<created_by_ModellingInterface_"+toString(objectList.size()-1));
-      for(int j=0; j<branchList[i]->getNumberOfConnectedMeshes(); j++)
-	branchList[i]->addDependency(branchList[i]->getMesh(j));
+      i->setPath("<created_by_ModellingInterface_"+toString(objectList.size()-1));
+      for(int j=0; j<i->getNumberOfConnectedMeshes(); j++)
+	i->addDependency(i->getMesh(j));
     }
 
-    for(unsigned int i=0; i<compList.size(); i++) {
-      Object* objectcomp = dynamic_cast<Object*>(compList[i]);
-      Link* linkcomp = dynamic_cast<Link*>(compList[i]);
+    for(auto & i : compList) {
+      auto* objectcomp = dynamic_cast<Object*>(i);
+      auto* linkcomp = dynamic_cast<Link*>(i);
       if(objectcomp) {
 	objectList.push_back(objectcomp);
         // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
         objectcomp->setPath("<created_by_ModellingInterface_"+toString(objectList.size()-1));
-	objectcomp->addDependency(compList[i]->getBranch());
+	objectcomp->addDependency(i->getBranch());
       }
       else if(linkcomp) {
 	linkList.push_back(linkcomp);
@@ -241,13 +241,13 @@ namespace MBSimElectronics {
     }
   }
 
-  ElectronicComponent::ElectronicComponent() : branch(0), vz(0), Q(0), I(0), updQ(true), updI(true) {
+  ElectronicComponent::ElectronicComponent()  {
     branch = &tmpbranch;
   }
 
   ElectronicComponent::~ElectronicComponent() { 
-    for(unsigned int i=0; i<terminal.size(); i++)
-      delete terminal[i];
+    for(auto & i : terminal)
+      delete i;
   }
 
   void ElectronicComponent::connect(Branch *branch_, double vz_) {

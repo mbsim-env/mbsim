@@ -81,17 +81,17 @@ namespace MBSim {
       x0 = E(e)->getText<Vec>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
     if(e) {
-      Function<VecV(VecV,double)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
+      auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
       setGeneralConstraintFunction(f);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentConstraintFunction");
     if(e) {
-      Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
+      auto *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
       setTimeDependentConstraintFunction(f);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentConstraintFunction");
     if(e) {
-      Function<VecV(VecV)> *f=ObjectFactory::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
+      auto *f=ObjectFactory::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
       setStateDependentConstraintFunction(f);
     }
   }

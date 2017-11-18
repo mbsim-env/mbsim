@@ -12,11 +12,9 @@ using namespace fmatvec;
 namespace MBSim {
 
   NurbsCurve::NurbsCurve() :
-      P(), inverse(), u(), U(), deg(0) {
+      P(), inverse(), u(), U() {
   }
-  NurbsCurve::~NurbsCurve() {
-
-  }
+  NurbsCurve::~NurbsCurve() = default;
 
   HPoint<3> NurbsCurve::operator()(double u) const {
     return hpointAt(u, findSpan(u));
@@ -615,7 +613,7 @@ namespace MBSim {
   }
 
   void basisFuns(double u, int span, int deg, const Vec & U, Vec& funs) {
-    double* left = (double*) alloca(2 * (deg + 1) * sizeof(double));
+    auto* left = (double*) alloca(2 * (deg + 1) * sizeof(double));
     double* right = &left[deg + 1];
 
     double temp, saved;
@@ -637,7 +635,7 @@ namespace MBSim {
   }
 
   void dersBasisFuns(int n, double u, int span, int deg, const Vec & U, Mat & ders) {
-    double* left = (double*) alloca(2 * (deg + 1) * sizeof(double));
+    auto* left = (double*) alloca(2 * (deg + 1) * sizeof(double));
     double* right = &left[deg + 1];
 
     SqrMat ndu(deg + 1);

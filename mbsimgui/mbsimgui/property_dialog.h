@@ -42,13 +42,13 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      PropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+      PropertyDialog(QWidget * parent = nullptr, Qt::WindowFlags f = nullptr);
       void setParentObject(QObject *obj);
       void addToTab(const QString &name, QWidget* widget_);
       void addTab(const QString &name, int i=-1);
       void addStretch(int s=1);
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return 0; }
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL) { return 0; }
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return nullptr; }
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) { return nullptr; }
       void setCancel(bool on);
       bool getCancel() const;
     protected:

@@ -26,12 +26,12 @@ namespace MBSim {
 
   class RegularizedSpatialFriction : public FrictionForceLaw {
     public:
-      RegularizedSpatialFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=NULL) : FrictionForceLaw(frictionForceFunc_) { }
-      virtual ~RegularizedSpatialFriction() {}
-      int getFrictionDirections() { return 2; }
-      bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
-      bool isSetValued() const { return false; }
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      RegularizedSpatialFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=nullptr) : FrictionForceLaw(frictionForceFunc_) { }
+      ~RegularizedSpatialFriction() override = default;
+      int getFrictionDirections() override { return 2; }
+      bool isSticking(const fmatvec::Vec& s, double sTol) override { return nrm2(s(0,1)) <= sTol; }
+      bool isSetValued() const override { return false; }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }

@@ -18,8 +18,7 @@ namespace MBSimFlexibleBody {
     
   }
   
-  NeutralNurbsLocalPosition2s::~NeutralNurbsLocalPosition2s() {
-  }
+  NeutralNurbsLocalPosition2s::~NeutralNurbsLocalPosition2s() = default;
 
   Vec3 NeutralNurbsLocalPosition2s::evalLocalPosition(const Vec2 &zeta){
 //    if(updSurface) computeCurve(true);

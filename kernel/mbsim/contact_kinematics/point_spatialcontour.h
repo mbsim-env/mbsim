@@ -36,40 +36,41 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointSpatialContour() : ContactKinematics(), ipoint(0), ispatialcontour(0), point(0), spatialcontour(0), searchAllCP(false) { }
+      ContactKinematicsPointSpatialContour() : ContactKinematics() { }
 
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsPointSpatialContour();
+      ~ContactKinematicsPointSpatialContour() override;
 
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame);
+      void assignContours(const std::vector<Contour*> &contour) override;
+      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override;
       /***************************************************/
 
-      void setSearchAllContactPoints(bool searchAllCP_=true) { searchAllCP = searchAllCP_; }
-      void setInitialGuess(const fmatvec::VecV &zeta0_) { zeta0 = zeta0_; }
+      void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
+      void setInitialGuess(const fmatvec::VecV &zeta0_) override { zeta0 = zeta0_; }
 
    private:
       /**
        * \brief contour index
        */
-      int ipoint, ispatialcontour;
+      int ipoint{0};
+      int ispatialcontour{0};
 
       /** 
        * \brief contour classes
        */
-      Point *point;
-      Contour *spatialcontour;
+      Point *point{nullptr};
+      Contour *spatialcontour{nullptr};
 
       /**
        * \brief root function
        */
       MBSim::FuncPairSpatialContourPoint *func;
 
-      bool searchAllCP;
+      bool searchAllCP{false};
 
       fmatvec::VecV zeta0;
   };

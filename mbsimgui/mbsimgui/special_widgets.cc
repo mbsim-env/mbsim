@@ -32,7 +32,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   OneDimVecArrayWidget::OneDimVecArrayWidget(int size, int m_, bool var) : m(m_) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     if(var) {
@@ -53,10 +53,10 @@ namespace MBSimGUI {
   void OneDimVecArrayWidget::resize_(int size, int m, int n) {
     if(ele.size()!=size) {
 //      vector<QString> buf(box.size());
-      for(unsigned int i=0; i<ele.size(); i++) {
-        layout()->removeWidget(ele[i]);
+      for(auto & i : ele) {
+        layout()->removeWidget(i);
 //        buf[i] = box[i]->text();
-        delete ele[i];
+        delete i;
       }
       ele.resize(size);
       for(int i=0; i<size; i++) {
@@ -70,8 +70,8 @@ namespace MBSimGUI {
   }
 
   void OneDimVecArrayWidget::resize_(int m, int n) {
-    for(int i=0; i<ele.size(); i++)
-      ele[i]->resize_(m,1);
+    for(auto & i : ele)
+      i->resize_(m,1);
   }
 
   DOMElement* OneDimVecArrayWidget::initializeUsingXML(DOMElement *element) {
@@ -89,8 +89,8 @@ namespace MBSimGUI {
       }
     }
     else {
-      for(int i=0; i<ele.size(); i++) {
-        ele[i]->initializeUsingXML(e);
+      for(auto & i : ele) {
+        i->initializeUsingXML(e);
         e=e->getNextElementSibling();
       }
     }
@@ -100,16 +100,16 @@ namespace MBSimGUI {
   DOMElement* OneDimVecArrayWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMNode *e = parent;
-    for(int i=0; i<ele.size(); i++) {
+    for(auto & i : ele) {
       DOMElement *ee=D(doc)->createElement(MBSIMFLEX%"ele");
-      e->insertBefore(ee, NULL);
-      ele[i]->writeXMLFile(ee);
+      e->insertBefore(ee, nullptr);
+      i->writeXMLFile(ee);
     }
-    return NULL;
+    return nullptr;
   }
 
   OneDimMatArrayWidget::OneDimMatArrayWidget(int size, int m, int n) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     if(size) resize_(size,m,n);
@@ -118,10 +118,10 @@ namespace MBSimGUI {
   void OneDimMatArrayWidget::resize_(int size, int m, int n) {
     if(ele.size()!=size) {
 //      vector<QString> buf(box.size());
-      for(unsigned int i=0; i<ele.size(); i++) {
-        layout()->removeWidget(ele[i]);
+      for(auto & i : ele) {
+        layout()->removeWidget(i);
 //        buf[i] = box[i]->text();
-        delete ele[i];
+        delete i;
       }
       ele.resize(size);
       for(int i=0; i<size; i++) {
@@ -133,8 +133,8 @@ namespace MBSimGUI {
   }
 
   void OneDimMatArrayWidget::resize_(int m, int n) {
-    for(int i=0; i<ele.size(); i++)
-      ele[i]->resize_(m,n);
+    for(auto & i : ele)
+      i->resize_(m,n);
   }
 
   DOMElement* OneDimMatArrayWidget::initializeUsingXML(DOMElement *element) {
@@ -152,8 +152,8 @@ namespace MBSimGUI {
       }
     }
     else {
-      for(int i=0; i<ele.size(); i++) {
-        ele[i]->initializeUsingXML(e);
+      for(auto & i : ele) {
+        i->initializeUsingXML(e);
         e=e->getNextElementSibling();
       }
     }
@@ -163,16 +163,16 @@ namespace MBSimGUI {
   DOMElement* OneDimMatArrayWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMNode *e = parent;
-    for(int i=0; i<ele.size(); i++) {
+    for(auto & i : ele) {
       DOMElement *ee=D(doc)->createElement(MBSIMFLEX%"ele");
-      e->insertBefore(ee, NULL);
-      ele[i]->writeXMLFile(ee);
+      e->insertBefore(ee, nullptr);
+      i->writeXMLFile(ee);
     }
-    return NULL;
+    return nullptr;
   }
 
   TwoDimMatArrayWidget::TwoDimMatArrayWidget(int size, int m, int n) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     if(size) resize_(size,size,m,n);
@@ -180,10 +180,10 @@ namespace MBSimGUI {
 
   void TwoDimMatArrayWidget::resize_(int rsize, int csize, int m, int n) {
     if(ele.size()!=rsize or ele[0].size()!=csize) {
-      for(unsigned int i=0; i<ele.size(); i++) {
+      for(auto & i : ele) {
         for(unsigned int j=0; j<ele.size(); j++) {
-          layout()->removeWidget(ele[i][j]);
-          delete ele[i][j];
+          layout()->removeWidget(i[j]);
+          delete i[j];
         }
       }
       ele.resize(rsize);
@@ -199,9 +199,9 @@ namespace MBSimGUI {
   }
 
   void TwoDimMatArrayWidget::resize_(int m, int n) {
-    for(int i=0; i<ele.size(); i++)
-      for(int j=0; j<ele[i].size(); j++)
-        ele[i][j]->resize_(m,n);
+    for(auto & i : ele)
+      for(int j=0; j<i.size(); j++)
+        i[j]->resize_(m,n);
   }
 
   DOMElement* TwoDimMatArrayWidget::initializeUsingXML(DOMElement *element) {
@@ -212,7 +212,7 @@ namespace MBSimGUI {
       while(e) {
         DOMElement *ee=e->getFirstElementChild();
         int j=0;
-        ele.push_back(vector<ExtWidget*>());
+        ele.emplace_back();
         while(ee) {
           QString name = QString("ele")+QString::number(i+1)+QString::number(j+1);
           ele[i].push_back(new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(0,0),QHBoxLayout::RightToLeft,5),false,false));
@@ -226,10 +226,10 @@ namespace MBSimGUI {
       }
     }
     else {
-      for(int i=0; i<ele.size(); i++) {
+      for(auto & i : ele) {
         DOMElement *ee=e->getFirstElementChild();
         for(int j=0; j<ele.size(); j++) {
-          ele[i][j]->initializeUsingXML(ee);
+          i[j]->initializeUsingXML(ee);
           ee=ee->getNextElementSibling();
         }
         e=e->getNextElementSibling();
@@ -241,16 +241,16 @@ namespace MBSimGUI {
   DOMElement* TwoDimMatArrayWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMNode *e = parent;
-    for(int i=0; i<ele.size(); i++) {
+    for(auto & i : ele) {
       DOMElement *ee=D(doc)->createElement(MBSIMFLEX%"row");
-      e->insertBefore(ee, NULL);
+      e->insertBefore(ee, nullptr);
       for(int j=0; j<ele.size(); j++) {
         DOMElement *eee=D(doc)->createElement(MBSIMFLEX%"ele");
-        ee->insertBefore(eee, NULL);
-        ele[i][j]->writeXMLFile(eee);
+        ee->insertBefore(eee, nullptr);
+        i[j]->writeXMLFile(eee);
       }
     }
-    return NULL;
+    return nullptr;
   }
 
   OneDimVecArrayWidgetFactory::OneDimVecArrayWidgetFactory(const FQN &xmlBase, int size_, int m_, bool var_) : name(2), xmlName(2,xmlBase), size(size_), m(m_), var(var_) {
@@ -264,7 +264,7 @@ namespace MBSimGUI {
       return new OneDimVecArrayWidget(size,m,var);
     if(i==1)
       return var?new ChoiceWidget2(new VecSizeVarWidgetFactory(size*m,3),QBoxLayout::RightToLeft,5):new ChoiceWidget2(new VecWidgetFactory(size*m),QBoxLayout::RightToLeft,5);
-    return NULL;
+    return nullptr;
   }
 
   OneDimMatArrayWidgetFactory::OneDimMatArrayWidgetFactory(const FQN &xmlBase, int size_, int m_, int n_) : name(2), xmlName(2,xmlBase), size(size_), m(m_), n(n_) {
@@ -278,7 +278,7 @@ namespace MBSimGUI {
       return new OneDimMatArrayWidget(size,m,n);
     if(i==1)
       return new ChoiceWidget2(new MatWidgetFactory(size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,5);
-    return NULL;
+    return nullptr;
   }
 
   TwoDimMatArrayWidgetFactory::TwoDimMatArrayWidgetFactory(const FQN &xmlBase, int size_, int m_, int n_) : name(2), xmlName(2,xmlBase), size(size_), m(m_), n(n_) {
@@ -292,7 +292,7 @@ namespace MBSimGUI {
       return new TwoDimMatArrayWidget(size,m,n);
     if(i==1)
       return new ChoiceWidget2(new MatWidgetFactory(size*size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,5);
-    return NULL;
+    return nullptr;
   }
 
 }

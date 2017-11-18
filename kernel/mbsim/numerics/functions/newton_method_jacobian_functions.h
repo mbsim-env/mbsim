@@ -38,8 +38,7 @@ namespace MBSim {
     /*
      * \brief destructor
      */
-    virtual ~NewtonJacobianFunction() {
-    }
+    ~NewtonJacobianFunction() override = default;
 
     /* GETTER / SETTER*/
     virtual void setFunction(Function<fmatvec::Vec(fmatvec::Vec)> * function_) {
@@ -48,7 +47,7 @@ namespace MBSim {
     /*****************/
 
     /*INHERITED INTERFACE*/
-    virtual fmatvec::SqrMat operator ()(const fmatvec::Vec &x) = 0;
+    fmatvec::SqrMat operator ()(const fmatvec::Vec &x) override = 0;
     /*********************/
 
     protected:
@@ -68,11 +67,10 @@ namespace MBSim {
       /*
        * \brief destructor
        */
-      virtual ~NumericalNewtonJacobianFunction() {
-      }
+      ~NumericalNewtonJacobianFunction() override = default;
 
       /*INHERITED INTERFACE*/
-      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec &x);
+      fmatvec::SqrMat operator ()(const fmatvec::Vec &x) override;
   };
 
 //  /*!

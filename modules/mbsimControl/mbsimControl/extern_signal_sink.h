@@ -30,15 +30,15 @@ namespace MBSimControl {
    * and use all these elements as signal outputs of the system. */
   class ExternSignalSink : public Signal {
     protected:
-      Signal *signal;
+      Signal *signal{nullptr};
       std::string signalString;
     public:
-      ExternSignalSink(const std::string &name="") : Signal(name), signal(NULL) {}
-      void updateSignal();
+      ExternSignalSink(const std::string &name="") : Signal(name) {}
+      void updateSignal() override;
       void setSignal(Signal *sig) { signal=sig; }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      int getSignalSize() const { return signal->getSignalSize(); }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      int getSignalSize() const override { return signal->getSignalSize(); }
   };
 
 }

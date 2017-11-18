@@ -81,7 +81,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Element() { }
+      ~Element() override = default;
 
       /**
        * \brief sets the used dynamics system solver to the element
@@ -184,7 +184,7 @@ namespace MBSim {
        * If relativeTo is not NULL return a relative path to relativeTo.
        * Do not set any argurment other than relTo and sep!
        */
-      std::string getPath(const Element *relTo=NULL, std::string sep="/") const;
+      std::string getPath(const Element *relTo=nullptr, std::string sep="/") const;
 
       /**
        * \brief Get the Element named name in the container named container.
@@ -315,7 +315,7 @@ namespace MBSim {
         if(!rest.empty())
           return e->getByPath<T>(rest, false);
         // this is the last relative path -> check type and return
-        T *t=dynamic_cast<T*>(e);
+        auto *t=dynamic_cast<T*>(e);
         if(t)
           return t;
         else

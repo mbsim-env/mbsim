@@ -34,14 +34,14 @@ namespace MBSim {
 
     numberOfPotentialContactPoints = 0;
 
-    for(size_t i = 0; i < contactKinematics.size(); i++)
-      delete contactKinematics[i];
+    for(auto & contactKinematic : contactKinematics)
+      delete contactKinematic;
     contactKinematics.clear();
 
     for(unsigned int i=0; i<contour0->getNumberOfElements(); i++) {
       for(unsigned int j=0; j<contour1->getNumberOfElements(); j++) {
         ContactKinematics *tmp = findContactPairingRigidRigid(typeid(*contour0->getContourElement(i)), typeid(*contour1->getContourElement(j)));
-        if (tmp == 0)
+        if (tmp == nullptr)
           tmp = findContactPairingRigidRigid(typeid(*contour1->getContourElement(j)), typeid(*contour0->getContourElement(i)));
         if(tmp) {
           contactKinematics.push_back(tmp); 

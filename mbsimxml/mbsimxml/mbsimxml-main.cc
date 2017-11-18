@@ -3,13 +3,13 @@
 #include <list>
 #include <vector>
 #include <algorithm>
-#include <string.h>
+#include <cstring>
 #include <fstream>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/last_write_time.h>
 #include <mbsim/element.h>
 #include <mbsim/integrators/integrator.h>
-#include <stdio.h>
+#include <cstdio>
 #if !defined _WIN32
 #  include <spawn.h>
 #  include <sys/types.h>
@@ -28,10 +28,10 @@ namespace bfs=boost::filesystem;
 
 int runProgram(const vector<string> &arg) {
   // convert arg to c style
-  char **argv=new char*[arg.size()+1];
+  auto **argv=new char*[arg.size()+1];
   for(size_t i=0; i<arg.size(); i++)
     argv[i]=const_cast<char*>(arg[i].c_str());
-  argv[arg.size()]=NULL;
+  argv[arg.size()]=nullptr;
 
 #if !defined _WIN32
   pid_t child;
@@ -44,7 +44,7 @@ int runProgram(const vector<string> &arg) {
       __asm__(".symver posix_spawn, posix_spawn@GLIBC_2.2.5");
     #endif
   #endif
-  spawnRet=posix_spawn(&child, argv[0], NULL, NULL, argv, environ);
+  spawnRet=posix_spawn(&child, argv[0], nullptr, nullptr, argv, environ);
   delete[]argv;
   if(spawnRet!=0)
     throw runtime_error("Unable to spawn process.");
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
     list<string> arg;
     list<string>::iterator i, i2;
     for(int i=1; i<argc; i++)
-      arg.push_back(argv[i]);
+      arg.emplace_back(argv[i]);
 
     bool ONLYLISTSCHEMAS=std::find(arg.begin(), arg.end(), "--onlyListSchemas")!=arg.end();
   
@@ -194,7 +194,7 @@ int main(int argc, char *argv[]) {
   
     vector<string> AUTORELOAD;
     if(AUTORELOADTIME>0) { // AUTORELOAD is now set (see above)
-      AUTORELOAD.push_back("--dependencies");
+      AUTORELOAD.emplace_back("--dependencies");
       AUTORELOAD.push_back(DEPMBSIMPRJ);
     }
   
@@ -245,8 +245,8 @@ int main(int argc, char *argv[]) {
 #else
           Sleep(AUTORELOADTIME);
 #endif
-          for(size_t i=0; i<depfiles.size(); i++) {
-            if(newer(depfiles[i], PPMBSIMPRJ) || newer(depfiles[i], ERRFILE)) {
+          for(const auto & depfile : depfiles) {
+            if(newer(depfile, PPMBSIMPRJ) || newer(depfile, ERRFILE)) {
               runAgain=true;
               break;
             }

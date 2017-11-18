@@ -37,16 +37,13 @@ namespace MBSim {
     assert(M_.size() == NumberOfContacts);
   }
 
-  LCPReformulationFunction::~LCPReformulationFunction() {
-
-  }
+  LCPReformulationFunction::~LCPReformulationFunction() = default;
 
   LCPNewtonReformulationFunction::LCPNewtonReformulationFunction(const fmatvec::Vec & q_, const SqrMat &M_, const double &r_ /*= 10*/, const unsigned int & DEBUGLEVEL_ /*= 0*/) :
       LCPReformulationFunction(q_, M_, r_, DEBUGLEVEL_) {
   }
 
-  LCPNewtonReformulationFunction::~LCPNewtonReformulationFunction() {
-  }
+  LCPNewtonReformulationFunction::~LCPNewtonReformulationFunction() = default;
 
   Vec LCPNewtonReformulationFunction::operator ()(const Vec &currentSolution) {
 
@@ -95,8 +92,7 @@ namespace MBSim {
     assert(M_.size() == NumberOfContacts);
   }
 
-  LCPFixpointReformulationFunction::~LCPFixpointReformulationFunction() {
-  }
+  LCPFixpointReformulationFunction::~LCPFixpointReformulationFunction() = default;
 
   Vec LCPFixpointReformulationFunction::operator ()(const Vec &currentSolution) {
 
@@ -140,8 +136,7 @@ namespace MBSim {
     NewtonJacobianFunction() {
   }
 
-  LinearComplementarityJacobianFunction::~LinearComplementarityJacobianFunction() {
-  }
+  LinearComplementarityJacobianFunction::~LinearComplementarityJacobianFunction() = default;
 
   void LinearComplementarityJacobianFunction::setFunction(Function<Vec(Vec)> *function_) {
     if (dynamic_cast<LCPNewtonReformulationFunction*>(function_)) {

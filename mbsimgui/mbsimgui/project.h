@@ -36,25 +36,25 @@ namespace MBSimGUI {
 
   class Project : public EmbedItemData {
     public:
-      Project() : dss(NULL), solver(NULL) { }
-      ~Project();
+      Project()  = default;
+      ~Project() override;
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual QString getType() const { return "MBSimProject"; }
+      QString getType() const override { return "MBSimProject"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMXML; }
       virtual ProjectPropertyDialog* createPropertyDialog() { return new ProjectPropertyDialog(this); }
-      virtual QMenu* createContextMenu() { return NULL; }
-      virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this,true,false); }
-      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
+      QMenu* createContextMenu() override { return nullptr; }
+      EmbeddingPropertyDialog* createEmbeddingPropertyDialog() override { return new EmbeddingPropertyDialog(this,true,false); }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
       void setDynamicSystemSolver(DynamicSystemSolver *dss_);
       void setSolver(Solver *solver_);
       DynamicSystemSolver* getDynamicSystemSolver() const { return dss; }
       Solver* getSolver() const { return solver; }
-      virtual xercesc::DOMElement* getParameterXMLElement();
+      xercesc::DOMElement* getParameterXMLElement() override;
     private:
-      DynamicSystemSolver *dss;
-      Solver *solver;
+      DynamicSystemSolver *dss{nullptr};
+      Solver *solver{nullptr};
   };
 
 }

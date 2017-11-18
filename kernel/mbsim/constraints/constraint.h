@@ -46,10 +46,10 @@ namespace MBSim {
       virtual void writez(H5::GroupBase *group);
       virtual void readz0(H5::GroupBase *group);
       virtual void setUpInverseKinetics() { }
-      virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return std::shared_ptr<OpenMBV::Group>();}
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override {return std::shared_ptr<OpenMBV::Group>();}
       bool getUpdateGeneralizedCoordinates() const { return updGC; }
       bool getUpdateGeneralizedJacobians() const { return updGJ; }
-      void resetUpToDate() { updGC = true; updGJ = true; }
+      void resetUpToDate() override { updGC = true; updGJ = true; }
 
       const fmatvec::Vec& evalxd();
 

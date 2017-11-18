@@ -37,8 +37,8 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       if(saved_DependentBody!="")
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
-      for(unsigned int i=0; i<saved_IndependentBody.size(); i++)
-        bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
+      for(const auto & i : saved_IndependentBody)
+        bi.push_back(getByPath<RigidBody>(i));
       if(not bd)
         THROW_MBSIMERROR("No dependent rigid body given!");
       if(bi.size()==0)
@@ -46,8 +46,8 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       bd->addDependency(this);
-      for(unsigned int i=0; i<bi.size(); i++)
-        addDependency(bi[i]);
+      for(auto & i : bi)
+        addDependency(i);
     }
     GeneralizedConstraint::init(stage, config);
   }

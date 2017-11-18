@@ -66,7 +66,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~DynamicSystem();
+      ~DynamicSystem() override;
 
       /* INTERFACE FOR DERIVED CLASSES */
       virtual void updateT();
@@ -100,7 +100,7 @@ namespace MBSim {
       void setx(const fmatvec::Vec& x_) { x = x_; }
       void setjsv(const fmatvec::VecInt& jsv_) { jsv = jsv_;}
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
-      virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override;
 
       virtual void updatewb();
       virtual void updateW(int j=0);
@@ -122,7 +122,7 @@ namespace MBSim {
       void updatexRef(const fmatvec::Vec &ref);
       void updatexdRef(const fmatvec::Vec &ref);
       void updatedxRef(const fmatvec::Vec &ref);
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       virtual void initz();
       virtual void writez(H5::GroupBase *group);
       virtual void readz0(H5::GroupBase *parent);
@@ -130,9 +130,9 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       /** DEPRECATED */
-      virtual void setDynamicSystemSolver(DynamicSystemSolver* sys);
-      virtual void plot();
-      virtual void plotAtSpecialEvent();
+      void setDynamicSystemSolver(DynamicSystemSolver* sys) override;
+      void plot() override;
+      void plotAtSpecialEvent() override;
       /*****************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */
@@ -747,7 +747,7 @@ namespace MBSim {
       /** Return frame "I" */
       Frame *getFrameI() { return I; }
 
-      virtual Element *getChildByContainerAndName(const std::string &container, const std::string &name) const;
+      Element *getChildByContainerAndName(const std::string &container, const std::string &name) const override;
 
       virtual void updatecorr(int j);
       void updatecorrRef(const fmatvec::Vec &ref);
@@ -755,7 +755,7 @@ namespace MBSim {
 
       void checkRoot();
 
-      void resetUpToDate();
+      void resetUpToDate() override;
 
     private:
       friend class DynamicSystemSolver;

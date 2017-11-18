@@ -27,7 +27,7 @@ namespace MBSim {
   class FloatingRelativeContourFrame : public ContourFrame {
 
     public:
-      FloatingRelativeContourFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), Frame *refFrame=0) : ContourFrame(name), R(refFrame), RrRP(r), ARP(A) {
+      FloatingRelativeContourFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), Frame *refFrame=nullptr) : ContourFrame(name), R(refFrame), RrRP(r), ARP(A) {
       }
 
       void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
@@ -40,11 +40,11 @@ namespace MBSim {
 
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrRP; }
 
-      void updatePositions();
-      void updateVelocities();
-      void updateAccelerations();
-      void updateJacobians(int j=0);
-      void updateGyroscopicAccelerations();
+      void updatePositions() override;
+      void updateVelocities() override;
+      void updateAccelerations() override;
+      void updateJacobians(int j=0) override;
+      void updateGyroscopicAccelerations() override;
 
     protected:
       Frame *R;

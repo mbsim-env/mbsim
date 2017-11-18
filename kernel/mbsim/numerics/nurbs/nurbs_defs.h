@@ -33,8 +33,7 @@ namespace fmatvec {
   }
 
   template <int N>
-  Point<N>::~Point() {
-  }
+  Point<N>::~Point() = default;
 
   /*!
    * \brief wrapper class for nurbs type HPoint
@@ -68,8 +67,7 @@ namespace fmatvec {
   }
 
   template <int N>
-  HPoint<N>::~HPoint() {
-  }
+  HPoint<N>::~HPoint() = default;
 
   template <int N>
   Point<N> HPoint<N>::projectW() {
@@ -119,13 +117,13 @@ namespace fmatvec {
       template <typename J>
       friend std::ostream& operator<<(std::ostream &os, const GeneralMatrix<J> &A);
     private:
-      int nrows, ncols;
+      int nrows{0}, ncols{0};
       T* data;
   };
 
   template <typename T>
   inline GeneralMatrix<T>::GeneralMatrix() :
-      nrows(0), ncols(0), data(NULL) {
+       data(nullptr) {
   }
 
   template <typename T>
@@ -190,7 +188,7 @@ namespace fmatvec {
     if (nrows_ == nrows && ncols_ == ncols)
       return;
 
-    T* newData = new T[nrows_ * ncols_];
+    auto* newData = new T[nrows_ * ncols_];
 
     delete[] data;
     data = newData;

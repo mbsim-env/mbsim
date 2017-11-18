@@ -31,7 +31,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, ElasticJoint)
 
-  ElasticJoint::ElasticJoint(const string &name) : FloatingFrameLink(name), func(NULL) {
+  ElasticJoint::ElasticJoint(const string &name) : FloatingFrameLink(name), func(nullptr) {
   }
 
   ElasticJoint::~ElasticJoint() {
@@ -80,7 +80,7 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
     if(e) setMomentDirection(E(e)->getText<Mat>(3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
-    Function<VecV(VecV,VecV)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
+    auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
   }
 

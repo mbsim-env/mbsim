@@ -26,14 +26,14 @@ namespace MBSimGUI {
 
   class Joint : public FloatingFrameLink {
     public:
-      QString getType() const { return "Joint"; }
-      ElementPropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
+      QString getType() const override { return "Joint"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new JointPropertyDialog(this);}
   };
 
   class ElasticJoint : public FloatingFrameLink {
     public:
-      QString getType() const { return "ElasticJoint"; }
-      ElementPropertyDialog* createPropertyDialog() {return new ElasticJointPropertyDialog(this);}
+      QString getType() const override { return "ElasticJoint"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new ElasticJointPropertyDialog(this);}
   };
 
 }

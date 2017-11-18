@@ -15,11 +15,11 @@ namespace MBSimFlexibleBody {
   class NeutralNurbsLocalPosition1s : public MBSimFlexibleBody::NeutralNurbs1s {
     public:
       NeutralNurbsLocalPosition1s(MBSim::Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
-      virtual ~NeutralNurbsLocalPosition1s();
+      ~NeutralNurbsLocalPosition1s() override;
       fmatvec::Vec3 evalLocalPosition(double s);
-      virtual void update(MBSim::ContourFrame *frame);
+      void update(MBSim::ContourFrame *frame) override;
     protected:
-      virtual void buildNodelist();
+      void buildNodelist() override;
   };
 
 } /* namespace MBSimFlexibleBody */

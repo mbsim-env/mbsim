@@ -31,15 +31,15 @@ namespace MBSim {
       fmatvec::Vec3 a;
       fmatvec::Vec3 zeros(const typename B::DRetDArg &x) { return fmatvec::Vec3(x.rows()); }
     public:
-      TranslationAlongFixedAxis() { }
+      TranslationAlongFixedAxis() = default;
       TranslationAlongFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
-      int getArgSize() const { return 1; }
-      fmatvec::Vec3 operator()(const Arg &arg) { return a*arg; }
-      typename B::DRetDArg parDer(const Arg &arg) { return a; }
-      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename B::DRetDArg(1); }
-      typename B::DDRetDDArg parDerParDer(const double &arg) { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
-      bool constParDer() const { return true; }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      int getArgSize() const override { return 1; }
+      fmatvec::Vec3 operator()(const Arg &arg) override { return a*arg; }
+      typename B::DRetDArg parDer(const Arg &arg) override { return a; }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(1); }
+      typename B::DDRetDDArg parDerParDer(const Arg &arg) override { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
+      bool constParDer() const override { return true; }
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"axisOfTranslation");
         a=FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
       }

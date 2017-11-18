@@ -31,32 +31,32 @@ namespace MBSim {
   class CompositeFunction<Ret(Argo(double))> : public Function<Ret(double)> {
     using B = Function<Ret(double)>; 
     public:
-      CompositeFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(double)> *fi_=0) : fo(fo_), fi(fi_) {
+      CompositeFunction(Function<Ret(Argo)> *fo_=nullptr, Function<Argo(double)> *fi_=nullptr) : fo(fo_), fi(fi_) {
         if(fo)
           fo->setParent(this);
         if(fi)
           fi->setParent(this);
       }
-      ~CompositeFunction() {
+      ~CompositeFunction() override {
         delete fo;
         delete fi;
       }
-      int getArgSize() const {
+      int getArgSize() const override {
         return fi->getArgSize();
       }
-      std::pair<int, int> getRetSize() const {
+      std::pair<int, int> getRetSize() const override {
         return fo->getRetSize();
       }
-      Ret operator()(const double &arg) {
+      Ret operator()(const double &arg) override {
         return (*fo)((*fi)(arg));
       }
-      typename B::DRetDArg parDer(const double &arg) {
+      typename B::DRetDArg parDer(const double &arg) override {
         return fo->parDer((*fi)(arg))*fi->parDer(arg);
       }
-      typename B::DRetDArg parDerDirDer(const double &argDir, const double &arg) {
+      typename B::DRetDArg parDerDirDer(const double &argDir, const double &arg) override {
         return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg);
       }
-      typename B::DDRetDDArg parDerParDer(const double &arg) {
+      typename B::DDRetDDArg parDerParDer(const double &arg) override {
         return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg);
       }
       void setOuterFunction(Function<Ret(Argo)> *fo_) {
@@ -69,13 +69,13 @@ namespace MBSim {
         fi->setParent(this);
         fi->setName("Inner");
       }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
         setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild()));
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
         setInnerFunction(ObjectFactory::createAndInit<Function<Argo(double)> >(e->getFirstElementChild()));
       }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(double)>::init(stage, config);
         fo->init(stage, config);
         fi->init(stage, config);
@@ -90,29 +90,29 @@ namespace MBSim {
   class CompositeFunction<Ret(Argo(Argi))> : public Function<Ret(Argi)> {
     using B = Function<Ret(Argi)>; 
     public:
-      CompositeFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) {
+      CompositeFunction(Function<Ret(Argo)> *fo_=nullptr, Function<Argo(Argi)> *fi_=nullptr) : fo(fo_), fi(fi_) {
         if(fo)
           fo->setParent(this);
         if(fi)
           fi->setParent(this);
       }
-      ~CompositeFunction() {
+      ~CompositeFunction() override {
         delete fo;
         delete fi;
       }
-      int getArgSize() const {
+      int getArgSize() const override {
         return fi->getArgSize();
       }
-      std::pair<int, int> getRetSize() const {
+      std::pair<int, int> getRetSize() const override {
         return fo->getRetSize();
       }
-      Ret operator()(const Argi &arg) {
+      Ret operator()(const Argi &arg) override {
         return (*fo)((*fi)(arg));
       }
-      typename B::DRetDArg parDer(const Argi &arg) {
+      typename B::DRetDArg parDer(const Argi &arg) override {
         return fo->parDer((*fi)(arg))*fi->parDer(arg);
       }
-      typename B::DRetDArg parDerDirDer(const Argi &argDir, const Argi &arg) {
+      typename B::DRetDArg parDerDirDer(const Argi &argDir, const Argi &arg) override {
         return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg);
       }
       void setOuterFunction(Function<Ret(Argo)> *fo_) {
@@ -125,13 +125,13 @@ namespace MBSim {
         fi->setParent(this);
         fi->setName("Inner");
       }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
         setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild()));
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
         setInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)> >(e->getFirstElementChild()));
       }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Argi)>::init(stage, config);
         fo->init(stage, config);
         fi->init(stage, config);

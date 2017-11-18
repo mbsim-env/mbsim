@@ -32,42 +32,44 @@ namespace MBSim {
       std::vector<RigidBody*> body;
       std::vector<double> ratio;
       std::vector<FloatingRelativeFrame> C;
-      bool updPos, updVel, updFD;
+      bool updPos{true};
+      bool updVel{true};
+      bool updFD{true};
       std::vector<fmatvec::Mat3xV> DF, DM;
       Frame *support;
 
     public:
       RigidBodyLink(const std::string &name="");
 
-      void calcSize();
-      void calclaSize(int j) { laSize = 1; }
-      void calcgSize(int j) { gSize = 1; }
-      void calcgdSize(int j) { gdSize = 1; }
+      void calcSize() override;
+      void calclaSize(int j) override { laSize = 1; }
+      void calcgSize(int j) override { gSize = 1; }
+      void calcgdSize(int j) override { gdSize = 1; }
 
-      void updateh(int i=0);
-      void updateW(int i=0);
-      void updateg();
-      void updategd();
-      void updatePositions();
-      void updateGeneralizedPositions();
-      void updateGeneralizedVelocities();
-      void updateForce();
-      void updateMoment();
-      void updateForceDirections();
-      void updateR();
-      void updatewb();
+      void updateh(int i=0) override;
+      void updateW(int i=0) override;
+      void updateg() override;
+      void updategd() override;
+      void updatePositions() override;
+      void updateGeneralizedPositions() override;
+      void updateGeneralizedVelocities() override;
+      void updateForce() override;
+      void updateMoment() override;
+      void updateForceDirections() override;
+      void updateR() override;
+      void updatewb() override;
       const fmatvec::Mat3xV& evalGlobalForceDirection(int i) { if(updFD) updateForceDirections(); return DF[i]; }
       const fmatvec::Mat3xV& evalGlobalMomentDirection(int i) { if(updFD) updateForceDirections(); return DM[i]; }
-      void updatehRef(const fmatvec::Vec &hParent, int j=0);
-      void updaterRef(const fmatvec::Vec &hParent, int j=0);
-      void updateWRef(const fmatvec::Mat &WParent, int j=0);
-      void updateVRef(const fmatvec::Mat &WParent, int j=0);
+      void updatehRef(const fmatvec::Vec &hParent, int j=0) override;
+      void updaterRef(const fmatvec::Vec &hParent, int j=0) override;
+      void updateWRef(const fmatvec::Mat &WParent, int j=0) override;
+      void updateVRef(const fmatvec::Mat &WParent, int j=0) override;
 
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
 
-      void resetUpToDate(); 
+      void resetUpToDate() override; 
 
       virtual void setSupportFrame(Frame *frame) { support = frame; }
 

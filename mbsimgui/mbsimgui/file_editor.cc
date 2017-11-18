@@ -31,7 +31,7 @@ namespace MBSimGUI {
 
     resize(QSize(800,400));
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
 
     setWindowTitle(title);
@@ -39,7 +39,7 @@ namespace MBSimGUI {
     edit=new QTextEdit(this);
     layout->addWidget(edit);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    auto *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Close);
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
     layout->addWidget(buttonBox);

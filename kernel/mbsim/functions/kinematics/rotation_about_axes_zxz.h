@@ -32,8 +32,8 @@ namespace MBSim {
       fmatvec::Mat3xV J, Jd;
     public:
       RotationAboutAxesZXZ() : J(3), Jd(3) { J.e(2,0) = 1; }
-      int getArgSize() const { return 3; }
-      fmatvec::RotMat3 operator()(const Arg &q) {
+      int getArgSize() const override { return 3; }
+      fmatvec::RotMat3 operator()(const Arg &q) override {
         double psi=q.e(0);
         double theta=q.e(1);
         double phi=q.e(2);
@@ -54,7 +54,7 @@ namespace MBSim {
         A.e(2,2) = ctheta;
         return A;
       }
-      typename B::DRetDArg parDer(const Arg &q) {
+      typename B::DRetDArg parDer(const Arg &q) override {
         double psi=q.e(0);
         double theta=q.e(1);
         //J.e(0,0) = 0;
@@ -68,7 +68,7 @@ namespace MBSim {
         J.e(2,2) = cos(theta);
         return J;
       }
-      typename B::DRetDArg parDerDirDer(const Arg &qd, const Arg &q) {
+      typename B::DRetDArg parDerDirDer(const Arg &qd, const Arg &q) override {
         double psi=q.e(0);
         double theta=q.e(1);
         double psid=qd.e(0);

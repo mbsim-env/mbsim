@@ -42,29 +42,29 @@ namespace MBSimGUI {
 
   class Element : public EmbedItemData {
     protected:
-      Element *parent;
+      Element *parent{nullptr};
       static int IDcounter;
       std::vector<MBXMLUtils::FQN> plotFeatures;
       QString ID;
-      bool config;
+      bool config{false};
     public:
-      Element() : parent(NULL), ID(QString::number(IDcounter++)), config(false) { }
-      QString getXMLPath(Element *ref=0, bool rel=false);
-      virtual xercesc::DOMElement* getXMLFrames() { return NULL; }
-      virtual xercesc::DOMElement* getXMLContours() { return NULL; }
-      virtual xercesc::DOMElement* getXMLGroups() { return NULL; }
-      virtual xercesc::DOMElement* getXMLObjects() { return NULL; }
-      virtual xercesc::DOMElement* getXMLLinks() { return NULL; }
-      virtual xercesc::DOMElement* getXMLConstraints() { return NULL; }
-      virtual xercesc::DOMElement* getXMLObservers() { return NULL; }
-      virtual xercesc::DOMElement* getXMLFrame() { return NULL; }
+      Element() :  ID(QString::number(IDcounter++)) { }
+      QString getXMLPath(Element *ref=nullptr, bool rel=false);
+      virtual xercesc::DOMElement* getXMLFrames() { return nullptr; }
+      virtual xercesc::DOMElement* getXMLContours() { return nullptr; }
+      virtual xercesc::DOMElement* getXMLGroups() { return nullptr; }
+      virtual xercesc::DOMElement* getXMLObjects() { return nullptr; }
+      virtual xercesc::DOMElement* getXMLLinks() { return nullptr; }
+      virtual xercesc::DOMElement* getXMLConstraints() { return nullptr; }
+      virtual xercesc::DOMElement* getXMLObservers() { return nullptr; }
+      virtual xercesc::DOMElement* getXMLFrame() { return nullptr; }
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       virtual QString getFileExtension() const { return ".xml"; }
       template<class T> T* getByPath(const QString &path, bool initialCaller=true) const;
-      virtual Element* getChildByContainerAndName(const QString &container, const QString &name) const { return 0; }
+      virtual Element* getChildByContainerAndName(const QString &container, const QString &name) const { return nullptr; }
       virtual int getNumberOfFrames() { return 0; }
       virtual int getNumberOfContours() { return 0; }
       virtual int getNumberOfGroups() { return 0; }
@@ -80,14 +80,14 @@ namespace MBSimGUI {
       virtual int getIndexOfLink(Link *link) { return -1; }
       virtual int getIndexOfConstraint(Constraint *constraint) { return -1; }
       virtual int getIndexOfObserver(Observer *observer) { return -1; }
-      virtual Frame* getFrame(int i) const { return 0; }
-      virtual Contour* getContour(int i) const { return 0; }
-      virtual Group* getGroup(int i) const { return 0; }
-      virtual Object* getObject(int i) const { return 0; }
-      virtual Link* getLink(int i) const { return 0; }
-      virtual Constraint* getConstraint(int i) const { return 0; }
-      virtual Observer* getObserver(int i) const { return 0; }
-      virtual Frame* getFrame(const QString &name) const { return 0; }
+      virtual Frame* getFrame(int i) const { return nullptr; }
+      virtual Contour* getContour(int i) const { return nullptr; }
+      virtual Group* getGroup(int i) const { return nullptr; }
+      virtual Object* getObject(int i) const { return nullptr; }
+      virtual Link* getLink(int i) const { return nullptr; }
+      virtual Constraint* getConstraint(int i) const { return nullptr; }
+      virtual Observer* getObserver(int i) const { return nullptr; }
+      virtual Frame* getFrame(const QString &name) const { return nullptr; }
       virtual void setFrame(Frame *frame, int i) { }
       virtual void setContour(Contour *contour, int i) { }
       virtual void setGroup(Group *group, int i) { }
@@ -106,11 +106,11 @@ namespace MBSimGUI {
       const QString& getID() const { return ID; }
       void setID(const QString &ID_) { ID = ID_; }
       Element* getParent() { return parent; }
-      std::vector<EmbedItemData*> getParents();
+      std::vector<EmbedItemData*> getParents() override;
       void setParent(Element* parent_) { parent = parent_; }
       virtual ElementPropertyDialog* createPropertyDialog() { return new ElementPropertyDialog(this); }
-      virtual QMenu* createContextMenu() { return new ElementContextMenu(this); }
-      virtual QMenu* createFrameContextMenu() {return NULL;}
+      QMenu* createContextMenu() override { return new ElementContextMenu(this); }
+      virtual QMenu* createFrameContextMenu() {return nullptr;}
       Element* getRoot() {return parent?parent->getRoot():this;}
       const std::vector<MBXMLUtils::FQN>& getPlotFeatures() const { return plotFeatures; }
       virtual QString getPlotFeatureType() const { return ""; }
@@ -138,10 +138,10 @@ namespace MBSimGUI {
           // get the object of the first child path by calling the virtual function getChildByContainerAndName
           size_t pos0=first.indexOf('[');
           if(pos0==-1)
-            return 0;
+            return nullptr;
           QString container=first.mid(0, pos0);
           if(first[first.size()-1]!=']')
-            return 0;
+            return nullptr;
           QString name=first.mid(pos0+1, first.size()-pos0-2);
           Element *e=getChildByContainerAndName(container, name);
           // if their are other child paths call getByPath of e for this

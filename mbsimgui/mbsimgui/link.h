@@ -26,7 +26,7 @@ namespace MBSimGUI {
 
   class Link : public Element {
     public:
-      QMenu* createContextMenu() { return new LinkContextMenu(this); }
+      QMenu* createContextMenu() override { return new LinkContextMenu(this); }
   };
 
   class MechanicalLink : public Link {

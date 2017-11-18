@@ -21,7 +21,7 @@
 #include "hets2_integrator.h"
 #include <mbsim/dynamic_system_solver.h>
 
-#include <time.h>
+#include <ctime>
 #include <boost/iostreams/tee.hpp>
 #include <boost/iostreams/stream.hpp>
 
@@ -40,17 +40,7 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  HETS2Integrator::HETS2Integrator() : dt(1e-3),
-  dtImpulsive(1e-4), 
-  dtInfo(1e-3), 
-  tPlot(0.),
-  integrationSteps(0), 
-  integrationStepsConstraint(0), 
-  integrationStepsImpact(0), 
-  maxIter(0), 
-  sumIter(0), 
-  s0(0.), 
-  time(0.), 
+  HETS2Integrator::HETS2Integrator() :  
   integPlot() {}
 
   void HETS2Integrator::preIntegrate(DynamicSystemSolver& system) {

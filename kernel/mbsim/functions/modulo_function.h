@@ -32,13 +32,13 @@ namespace MBSim {
       double denom;
     public:
       void setDenominator(double denom_) { denom = denom_; }
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
-      Ret operator()(const Arg &x_) {
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
+      Ret operator()(const Arg &x_) override {
         double x = ToDouble<Arg>::cast(x_);
         return FromDouble<Ret>::cast(x-denom*floor(x/denom));
       }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e;
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"denominator");
         denom=MBXMLUtils::E(e)->getText<double>();

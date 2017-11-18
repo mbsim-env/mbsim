@@ -53,7 +53,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBody)
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGJ(true), updWTS(true), updateByReference(true), Z("Z"), bodyFixedRepresentationOfAngularVelocity(false) {
+  RigidBody::RigidBody(const string &name) : Body(name),  APK(EYE),  Z("Z") {
     
     Z.setParent(this);
 
@@ -69,9 +69,9 @@ namespace MBSim {
   }
 
   RigidBody::~RigidBody() {
-    if(fPrPK) { delete fPrPK; fPrPK=0; }
-    if(fAPK) { delete fAPK; fAPK=0; }
-    if(fTR) { delete fTR; fTR=0; }
+    if(fPrPK) { delete fPrPK; fPrPK=nullptr; }
+    if(fAPK) { delete fAPK; fAPK=nullptr; }
+    if(fTR) { delete fTR; fTR=nullptr; }
   }
 
   void RigidBody::setFrameForKinematics(Frame *frame) { 
@@ -155,9 +155,9 @@ namespace MBSim {
           static_cast<FixedRelativeFrame*>(frame[k])->setFrameOfReference(C);
       }
 
-      for(unsigned int k=0; k<contour.size(); k++) {
-        if(not(static_cast<RigidContour*>(contour[k]))->getFrameOfReference())
-          static_cast<RigidContour*>(contour[k])->setFrameOfReference(C);
+      for(auto & k : contour) {
+        if(not(static_cast<RigidContour*>(k))->getFrameOfReference())
+          static_cast<RigidContour*>(k)->setFrameOfReference(C);
       }
 
       if(K!=C) {
@@ -204,7 +204,7 @@ namespace MBSim {
       Z.getJacobianOfTranslation(1,false) = PJT[1];
       Z.getJacobianOfRotation(1,false) = PJR[1];
 
-      StateDependentFunction<RotMat3> *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
+      auto *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
       if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesXYZ<VecV>*>(Atmp->getFunction())) {
         if(bodyFixedRepresentationOfAngularVelocity)
           fTR = new RotationAboutAxesXYZTransformedMapping<VecV>;
@@ -469,9 +469,9 @@ namespace MBSim {
   }
 
   void RigidBody::updateJacobians2(Frame *frame_) {
-    for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
-      (*i)->getJacobianOfTranslation(2,false).resize();
-      (*i)->getJacobianOfRotation(2,false).resize();
+    for(auto & i : frame) {
+      i->getJacobianOfTranslation(2,false).resize();
+      i->getJacobianOfRotation(2,false).resize();
     }
     if(updateByReference) {
       frame_->getJacobianOfTranslation(2,false).resize() = R->evalJacobianOfTranslation(2) - tilde(evalGlobalRelativePosition())*R->evalJacobianOfRotation(2);
@@ -541,7 +541,7 @@ namespace MBSim {
     // contours
     e=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
     while(e) {
-      RigidContour *c=ObjectFactory::createAndInit<RigidContour>(e);
+      auto *c=ObjectFactory::createAndInit<RigidContour>(e);
       addContour(c);
       e=e->getNextElementSibling();
     }
@@ -556,38 +556,38 @@ namespace MBSim {
     if(e) setFrameForInertiaTensor(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalTranslation");
     if(e) {
-      Function<Vec3(VecV,double)> *trans=ObjectFactory::createAndInit<Function<Vec3(VecV,double)> >(e->getFirstElementChild());
+      auto *trans=ObjectFactory::createAndInit<Function<Vec3(VecV,double)> >(e->getFirstElementChild());
       setGeneralTranslation(trans);
     }
     else {
       e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentTranslation");
       if(e) {
-        Function<Vec3(double)> *trans=ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild());
+        auto *trans=ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild());
         setTimeDependentTranslation(trans);
       }
       else {
         e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentTranslation");
         if(e) {
-          Function<Vec3(VecV)> *trans=ObjectFactory::createAndInit<Function<Vec3(VecV)> >(e->getFirstElementChild());
+          auto *trans=ObjectFactory::createAndInit<Function<Vec3(VecV)> >(e->getFirstElementChild());
           setStateDependentTranslation(trans);
         }
       }
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalRotation");
     if(e) {
-      Function<RotMat3(VecV,double)> *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV,double)> >(e->getFirstElementChild());
+      auto *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV,double)> >(e->getFirstElementChild());
       setGeneralRotation(rot);
     }
     else {
       e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentRotation");
       if(e) {
-        Function<RotMat3(double)> *rot=ObjectFactory::createAndInit<Function<RotMat3(double)> >(e->getFirstElementChild());
+        auto *rot=ObjectFactory::createAndInit<Function<RotMat3(double)> >(e->getFirstElementChild());
         setTimeDependentRotation(rot);
       }
       else {
         e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentRotation");
         if(e) {
-          Function<RotMat3(VecV)> *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV)> >(e->getFirstElementChild());
+          auto *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV)> >(e->getFirstElementChild());
           setStateDependentRotation(rot);
         }
       }

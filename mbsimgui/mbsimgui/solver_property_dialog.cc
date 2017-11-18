@@ -32,8 +32,8 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   ToleranceWidgetFactory::ToleranceWidgetFactory(const QString &type_) : type(type_) {
-    name.push_back("Scalar");
-    name.push_back("Vector");
+    name.emplace_back("Scalar");
+    name.emplace_back("Vector");
     xmlName.push_back(MBSIMINT%(type.toStdString()+"ToleranceScalar"));
     xmlName.push_back(MBSIMINT%(type.toStdString()+"Tolerance"));
   }
@@ -43,7 +43,7 @@ namespace MBSimGUI {
       return new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5);
     if(i==1)
       return new ChoiceWidget2(new VecWidgetFactory(0),QBoxLayout::RightToLeft,5);
-    return NULL;
+    return nullptr;
   }
 
   SolverPropertyDialog::SolverPropertyDialog(Solver *solver_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), solver(solver_) {
@@ -55,7 +55,7 @@ namespace MBSimGUI {
 
   DOMElement* SolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     solver->removeXMLElements();
-    return NULL;
+    return nullptr;
   }
 
   void SolverPropertyDialog::toWidget(Solver *solver) {
@@ -98,7 +98,7 @@ namespace MBSimGUI {
     endTime->writeXMLFile(solver->getXMLElement());
     plotStepSize->writeXMLFile(solver->getXMLElement());
     initialState->writeXMLFile(solver->getXMLElement());
-    return NULL;
+    return nullptr;
   }
 
   DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
@@ -138,7 +138,7 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(solver->getXMLElement());
     maximalStepSize->writeXMLFile(solver->getXMLElement());
     maxSteps->writeXMLFile(solver->getXMLElement());
-    return NULL;
+    return nullptr;
   }
 
   RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(RADAU5Integrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
@@ -178,7 +178,7 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(solver->getXMLElement());
     maximalStepSize->writeXMLFile(solver->getXMLElement());
     maxSteps->writeXMLFile(solver->getXMLElement());
-    return NULL;
+    return nullptr;
   }
 
   LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(LSODEIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
@@ -229,7 +229,7 @@ namespace MBSimGUI {
     minimalStepSize->writeXMLFile(solver->getXMLElement());
     maxSteps->writeXMLFile(solver->getXMLElement());
     stiff->writeXMLFile(solver->getXMLElement());
-    return NULL;
+    return nullptr;
   }
 
   LSODARIntegratorPropertyDialog::LSODARIntegratorPropertyDialog(LSODARIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
@@ -285,7 +285,7 @@ namespace MBSimGUI {
     plotOnRoot->writeXMLFile(solver->getXMLElement());
     gMax->writeXMLFile(solver->getXMLElement());
     gdMax->writeXMLFile(solver->getXMLElement());
-    return NULL;
+    return nullptr;
   }
 
   TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
@@ -304,7 +304,7 @@ namespace MBSimGUI {
   DOMElement* TimeSteppingIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
     stepSize->writeXMLFile(solver->getXMLElement());
-    return NULL;
+    return nullptr;
   }
 
   EulerExplicitIntegratorPropertyDialog::EulerExplicitIntegratorPropertyDialog(EulerExplicitIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
@@ -323,7 +323,7 @@ namespace MBSimGUI {
   DOMElement* EulerExplicitIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
     stepSize->writeXMLFile(solver->getXMLElement());
-    return NULL;
+    return nullptr;
   }
 
   RKSuiteIntegratorPropertyDialog::RKSuiteIntegratorPropertyDialog(RKSuiteIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
@@ -331,9 +331,9 @@ namespace MBSimGUI {
     addTab("Step size");
 
     vector<QString> list;
-    list.push_back("\"RK23\"");
-    list.push_back("\"RK45\"");
-    list.push_back("\"RK67\"");
+    list.emplace_back("\"RK23\"");
+    list.emplace_back("\"RK45\"");
+    list.emplace_back("\"RK67\"");
     method = new ExtWidget("Method",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"method");
     addToTab("General", method);
 
@@ -362,7 +362,7 @@ namespace MBSimGUI {
     relTol->writeXMLFile(solver->getXMLElement());
     threshold->writeXMLFile(solver->getXMLElement());
     initialStepSize->writeXMLFile(solver->getXMLElement());
-    return NULL;
+    return nullptr;
   }
 
   EigenanalyserPropertyDialog::EigenanalyserPropertyDialog(Eigenanalyser *eigenanalyser, QWidget *parent, Qt::WindowFlags f) : SolverPropertyDialog(eigenanalyser,parent,f) {
@@ -382,10 +382,10 @@ namespace MBSimGUI {
     addToTab("Initial conditions", initialState);
 
     vector<QString> list;
-    list.push_back("\"eigenfrequencies\"");
-    list.push_back("\"eigenmodes\"");
-    list.push_back("\"eigenmode\"");
-    list.push_back("\"eigenmotion\"");
+    list.emplace_back("\"eigenfrequencies\"");
+    list.emplace_back("\"eigenmodes\"");
+    list.emplace_back("\"eigenmode\"");
+    list.emplace_back("\"eigenmotion\"");
     task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIMANALYSER%"task");
     addToTab("General",task);
 
@@ -422,7 +422,7 @@ namespace MBSimGUI {
     amplitude->writeXMLFile(solver->getXMLElement());
     mode->writeXMLFile(solver->getXMLElement());
     determineEquilibriumState->writeXMLFile(solver->getXMLElement());
-    return NULL;
+    return nullptr;
   }
 
   HarmonicResponseAnalyserPropertyDialog::HarmonicResponseAnalyserPropertyDialog(HarmonicResponseAnalyser *eigenanalyser, QWidget *parent, Qt::WindowFlags f) : SolverPropertyDialog(eigenanalyser,parent,f) {
@@ -445,7 +445,7 @@ namespace MBSimGUI {
     addToTab("Initial conditions", initialState);
 
     vector<QString> list;
-    list.push_back("\"frequencyResponse\"");
+    list.emplace_back("\"frequencyResponse\"");
     task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIMANALYSER%"task");
     addToTab("General",task);
 
@@ -474,7 +474,7 @@ namespace MBSimGUI {
     initialState->writeXMLFile(solver->getXMLElement());
     task->writeXMLFile(solver->getXMLElement());
     determineEquilibriumState->writeXMLFile(solver->getXMLElement());
-    return NULL;
+    return nullptr;
   }
 
 }

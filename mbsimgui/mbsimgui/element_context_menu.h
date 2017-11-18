@@ -35,7 +35,7 @@ namespace MBSimGUI {
 
   class ElementContextMenu : public QMenu {
     public:
-      ElementContextMenu(Element *element, QWidget * parent = 0, bool removable=true);
+      ElementContextMenu(Element *element, QWidget * parent = nullptr, bool removable=true);
 
     protected:
       Element *element;
@@ -43,44 +43,44 @@ namespace MBSimGUI {
 
   class FrameContextMenu : public ElementContextMenu {
     public:
-      FrameContextMenu(Frame *frame, QWidget * parent = 0, bool removable=true);
+      FrameContextMenu(Frame *frame, QWidget * parent = nullptr, bool removable=true);
   };
 
   class ContourContextMenu : public ElementContextMenu {
     public:
-      ContourContextMenu(Contour *contour, QWidget * parent = 0, bool removable=true);
+      ContourContextMenu(Contour *contour, QWidget * parent = nullptr, bool removable=true);
   };
 
   class GroupContextMenu : public ElementContextMenu {
     public:
-      GroupContextMenu(Group *group, QWidget * parent = 0, bool removable=true);
+      GroupContextMenu(Group *group, QWidget * parent = nullptr, bool removable=true);
   };
 
   class ObjectContextMenu : public ElementContextMenu {
     public:
-      ObjectContextMenu(Object *object, QWidget * parent = 0, bool removable=true);
+      ObjectContextMenu(Object *object, QWidget * parent = nullptr, bool removable=true);
   };
 
   class LinkContextMenu : public ElementContextMenu {
     public:
-      LinkContextMenu(Link *link, QWidget * parent = 0, bool removable=true);
+      LinkContextMenu(Link *link, QWidget * parent = nullptr, bool removable=true);
   };
 
   class ConstraintContextMenu : public ElementContextMenu {
     public:
-      ConstraintContextMenu(Constraint *constraint, QWidget * parent = 0, bool removable=true);
+      ConstraintContextMenu(Constraint *constraint, QWidget * parent = nullptr, bool removable=true);
   };
 
   class ObserverContextMenu : public ElementContextMenu {
     public:
-      ObserverContextMenu(Observer *observer, QWidget * parent = 0, bool removable=true);
+      ObserverContextMenu(Observer *observer, QWidget * parent = nullptr, bool removable=true);
   };
 
   class FramesContextMenu : public QMenu {
     Q_OBJECT
 
     public:
-      FramesContextMenu(Element *frame, const QString &title="", QWidget * parent = 0);
+      FramesContextMenu(Element *frame, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void paste();
@@ -94,7 +94,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      FixedRelativeFramesContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
+      FixedRelativeFramesContextMenu(Element *contour, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addFixedRelativeFrame();
@@ -104,7 +104,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      NodeFramesContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
+      NodeFramesContextMenu(Element *contour, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addNodeFrame();
@@ -114,7 +114,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ContoursContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
+      ContoursContextMenu(Element *contour, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addPoint();
@@ -137,7 +137,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      GroupsContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
+      GroupsContextMenu(Element *contour, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void add();
@@ -152,7 +152,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ObjectsContextMenu(Element *object, const QString &title="", QWidget * parent = 0);
+      ObjectsContextMenu(Element *object, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void paste();
@@ -166,7 +166,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      BodiesContextMenu(Element *object, const QString &title="", QWidget * parent = 0);
+      BodiesContextMenu(Element *object, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addRigidBody();
@@ -180,7 +180,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      LinksContextMenu(Element *link, const QString &title="", QWidget * parent = 0);
+      LinksContextMenu(Element *link, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addSpringDamper();
@@ -205,7 +205,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ConstraintsContextMenu(Element *object, const QString &title="", QWidget * parent = 0);
+      ConstraintsContextMenu(Element *object, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addGeneralizedGearConstraint();
@@ -226,7 +226,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ObserversContextMenu(Element *observer, const QString &title="", QWidget * parent = 0);
+      ObserversContextMenu(Element *observer, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addMechanicalLinkObserver();
@@ -248,7 +248,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      SignalsContextMenu(Element *signal, const QString &title="", QWidget * parent = 0);
+      SignalsContextMenu(Element *signal, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addSensor();
@@ -267,7 +267,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      SensorsContextMenu(Element *sensor, const QString &title="", QWidget * parent = 0);
+      SensorsContextMenu(Element *sensor, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addGeneralizedPositionSensor();

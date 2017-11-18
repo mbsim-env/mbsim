@@ -35,7 +35,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Joint)
 
-  Joint::Joint(const string &name) : FloatingFrameLink(name), ffl(0), fml(0), fifl(0), fiml(0) {
+  Joint::Joint(const string &name) : FloatingFrameLink(name) {
   }
 
   Joint::~Joint() {
@@ -491,7 +491,7 @@ namespace MBSim {
     if(e) setMomentLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
   }
 
-  InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), body(0) {
+  InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), body(nullptr) {
   }
 
   void InverseKineticsJoint::calcbSize() {

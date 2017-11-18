@@ -35,13 +35,13 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBodySystemObserver)
 
-  RigidBodySystemObserver::RigidBodySystemObserver(const std::string &name) : Observer(name), frameOfReference(NULL) {
+  RigidBodySystemObserver::RigidBodySystemObserver(const std::string &name) : Observer(name), frameOfReference(nullptr) {
   }
 
   void RigidBodySystemObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      for(unsigned int i=0; i<saved_body.size(); i++)
-        body.push_back(getByPath<RigidBody>(saved_body[i]));
+      for(const auto & i : saved_body)
+        body.push_back(getByPath<RigidBody>(i));
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       Observer::init(stage, config);
@@ -90,17 +90,17 @@ namespace MBSim {
   void RigidBodySystemObserver::plot() {
     if(plotFeature[openMBV]) {
       double m = 0;
-      for(unsigned int i=0; i<body.size(); i++) {
-        m += body[i]->getMass();
+      for(auto & i : body) {
+        m += i->getMass();
       }
       Vec3 mpos, mvel, macc;
       Vec3 &p = mvel;
       Vec3 &pd = macc;
       Vec3 L, Ld;
-      for(unsigned int i=0; i<body.size(); i++) {
-        mpos += body[i]->getMass()*body[i]->getFrameC()->evalPosition();
-        mvel += body[i]->getMass()*body[i]->getFrameC()->evalVelocity();
-        macc += body[i]->getMass()*body[i]->getFrameC()->evalAcceleration();
+      for(auto & i : body) {
+        mpos += i->getMass()*i->getFrameC()->evalPosition();
+        mvel += i->getMass()*i->getFrameC()->evalVelocity();
+        macc += i->getMass()*i->getFrameC()->evalAcceleration();
       }
       Vec3 rOS = mpos/m;
       Vec3 vS = mvel/m;
@@ -108,15 +108,15 @@ namespace MBSim {
       Vec3 rOR = frameOfReference?frameOfReference->evalPosition():rOS;
       Vec3 vR = frameOfReference?frameOfReference->evalVelocity():vS;
       Vec3 aR = frameOfReference?frameOfReference->evalAcceleration():aS;
-      for(unsigned int i=0; i<body.size(); i++) {
-        SqrMat3 AIK = body[i]->getFrameC()->getOrientation();
-        Vec3 rRSi = body[i]->getFrameC()->getPosition() - rOR;
-        Vec3 vRSi = body[i]->getFrameC()->getVelocity() - vR;
-        Vec3 aRSi = body[i]->getFrameC()->getAcceleration() - aR;
-        Vec3 omi = body[i]->getFrameC()->getAngularVelocity();
-        Vec3 psii = body[i]->getFrameC()->getAngularAcceleration();
-        double mi = body[i]->getMass();
-        Mat3x3 WThetaS = AIK*body[i]->getInertiaTensor()*AIK.T();
+      for(auto & i : body) {
+        SqrMat3 AIK = i->getFrameC()->getOrientation();
+        Vec3 rRSi = i->getFrameC()->getPosition() - rOR;
+        Vec3 vRSi = i->getFrameC()->getVelocity() - vR;
+        Vec3 aRSi = i->getFrameC()->getAcceleration() - aR;
+        Vec3 omi = i->getFrameC()->getAngularVelocity();
+        Vec3 psii = i->getFrameC()->getAngularAcceleration();
+        double mi = i->getMass();
+        Mat3x3 WThetaS = AIK*i->getInertiaTensor()*AIK.T();
         L += WThetaS*omi + crossProduct(rRSi,mi*vRSi);
         Ld += WThetaS*psii + crossProduct(omi,WThetaS*omi) + crossProduct(rRSi,mi*aRSi);
       }

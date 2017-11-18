@@ -29,7 +29,7 @@ namespace MBSimGUI {
   class ParameterContextMenu : public QMenu {
 
     public:
-      ParameterContextMenu(Parameter *parameter, QWidget * parent = 0);
+      ParameterContextMenu(Parameter *parameter, QWidget * parent = nullptr);
 
     private:
       Parameter *parameter;

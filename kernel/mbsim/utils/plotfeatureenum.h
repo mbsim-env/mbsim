@@ -31,18 +31,19 @@ class PlotFeatureEnum {
     bool operator==(const PlotFeatureEnum& a) const { return this==&a; }
     bool operator!=(const PlotFeatureEnum& a) const { return this!=&a; }
 
-    PlotFeatureEnum() {}
-    ~PlotFeatureEnum() {}
+    PlotFeatureEnum() = default;
+    ~PlotFeatureEnum() = default;
     // must be defined due to SWIG
     // static void* operator new(std::size_t);
     // static void operator delete(void*, std::size_t);
-  private:
-    static void operator delete[](void*, std::size_t);
-    static void* operator new[](std::size_t);
+
     PlotFeatureEnum(const PlotFeatureEnum&)=delete;
     PlotFeatureEnum(PlotFeatureEnum&&)=delete;
     PlotFeatureEnum& operator=(const PlotFeatureEnum&)=delete;
     PlotFeatureEnum& operator=(PlotFeatureEnum&&)=delete;
+  private:
+    static void operator delete[](void*, std::size_t);
+    static void* operator new[](std::size_t);
 };
 
 #ifndef SWIG

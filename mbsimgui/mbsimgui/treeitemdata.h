@@ -29,11 +29,11 @@ namespace MBSimGUI {
   class TreeItemData {
 
     public:
-      virtual ~TreeItemData() { }
+      virtual ~TreeItemData() = default;
       virtual QString getName() const { return "Name"; }
       virtual QString getValue() const { return "Value"; }
       virtual QString getType() const { return "Type"; }
-      virtual QMenu* createContextMenu() { return NULL; }
+      virtual QMenu* createContextMenu() { return nullptr; }
   };
 
 }

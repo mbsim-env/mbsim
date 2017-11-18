@@ -30,11 +30,11 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FiniteElement2s13MFRMindlin::FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_,double d0_,double d1_,double d2_,const fmatvec::Vec &NodeCoordinates) : DiscretizationInterface(),E(E_),nu(nu_),G(E/(2.*(1.+nu))),d0(d0_),d1(d1_),d2(d2_),rho(rho_),RefDofs(6),NodeDofs(3),Nodes(4),K(0),M_RR(0),N_compl(0),R_compl(0),R_ij(0) {
+  FiniteElement2s13MFRMindlin::FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_,double d0_,double d1_,double d2_,const fmatvec::Vec &NodeCoordinates) : DiscretizationInterface(),E(E_),nu(nu_),G(E/(2.*(1.+nu))),d0(d0_),d1(d1_),d2(d2_),rho(rho_),RefDofs(6),NodeDofs(3),Nodes(4),K(nullptr),M_RR(nullptr),N_compl(nullptr),R_compl(nullptr),R_ij(nullptr) {
     for(int i=0;i<3;i++) 
       for(int j=0;j<3;j++) {
-        N_ij[i][j]=0;
-        NR_ij[i][j]=0;
+        N_ij[i][j]=nullptr;
+        NR_ij[i][j]=nullptr;
       }
 
     this->NodeCoordinates = NodeCoordinates.copy();
@@ -53,16 +53,16 @@ namespace MBSimFlexibleBody {
   }
 
   FiniteElement2s13MFRMindlin::~FiniteElement2s13MFRMindlin() {
-    if(K!=0) delete K;
-    if(M_RR!=0) delete M_RR;
+    if(K!=nullptr) delete K;
+    if(M_RR!=nullptr) delete M_RR;
     for(int i=0;i<3;i++) 
       for(int j=0;j<3;j++) {
-        if(N_ij[i][j]!=0) delete N_ij[i][j];
-        if(NR_ij[i][j]!=0) delete NR_ij[i][j];
+        if(N_ij[i][j]!=nullptr) delete N_ij[i][j];
+        if(NR_ij[i][j]!=nullptr) delete NR_ij[i][j];
       }
-    if(N_compl!=0) delete N_compl;
-    if(R_compl!=0) delete R_compl;
-    if(R_ij!=0) delete R_ij;
+    if(N_compl!=nullptr) delete N_compl;
+    if(R_compl!=nullptr) delete R_compl;
+    if(R_ij!=nullptr) delete R_ij;
   }    
 
   void FiniteElement2s13MFRMindlin::computeN_ij(int i, int j) {

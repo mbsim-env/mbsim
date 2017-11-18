@@ -27,19 +27,19 @@ namespace MBSimGUI {
   class RigidBody : public Body {
     public:
       RigidBody();
-      QString getType() const { return "RigidBody"; }
-      xercesc::DOMElement* getXMLFrames() { return frames; }
-      xercesc::DOMElement* getXMLContours() { return contours; }
-      void removeXMLElements();
-      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      QString getType() const override { return "RigidBody"; }
+      xercesc::DOMElement* getXMLFrames() override { return frames; }
+      xercesc::DOMElement* getXMLContours() override { return contours; }
+      void removeXMLElements() override;
+      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       bool isConstrained() const {return constrained;}
       void setConstrained(bool b) {constrained = b;}
-      ElementPropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
-      QMenu* createFrameContextMenu() {return new FixedRelativeFramesContextMenu(this);}
+      ElementPropertyDialog* createPropertyDialog() override {return new RigidBodyPropertyDialog(this);}
+      QMenu* createFrameContextMenu() override {return new FixedRelativeFramesContextMenu(this);}
     protected:
-      bool constrained;
+      bool constrained{false};
       xercesc::DOMElement *frames, *contours;
   };
 

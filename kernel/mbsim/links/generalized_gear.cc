@@ -59,16 +59,16 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       if(saved_gearOutput!="")
         setGearOutput(getByPath<RigidBody>(saved_gearOutput));
-      for(unsigned int i=0; i<saved_gearInput.size(); i++)
-        body.push_back(getByPath<RigidBody>(saved_gearInput[i]));
+      for(const auto & i : saved_gearInput)
+        body.push_back(getByPath<RigidBody>(i));
       if(not body[0])
         THROW_MBSIMERROR("No gear output given!");
       if(body.size()==1)
         THROW_MBSIMERROR("No gear inputs given!");
     }
     else if(stage==unknownStage) {
-      for(unsigned int i=0; i<body.size(); i++) {
-        if(body[i]->getGeneralizedVelocitySize()!=1)
+      for(auto & i : body) {
+        if(i->getGeneralizedVelocitySize()!=1)
           THROW_MBSIMERROR("rigid bodies must have of 1 dof!");
       }
       if(fl->isSetValued()) {

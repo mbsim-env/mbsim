@@ -33,18 +33,18 @@ namespace MBSimGUI {
     DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"startTime" );
     E(ele1)->setAttribute("unit", "s");
     DOMText *text = doc->createTextNode(X()%"0");
-    ele1->insertBefore(text, NULL);
-    element->insertBefore( ele1, NULL );
+    ele1->insertBefore(text, nullptr);
+    element->insertBefore( ele1, nullptr );
     ele1 = D(doc)->createElement( MBSIMINT%"endTime" );
     E(ele1)->setAttribute("unit", "s");
     text = doc->createTextNode(X()%"1");
-    ele1->insertBefore(text, NULL);
-    element->insertBefore( ele1, NULL );
+    ele1->insertBefore(text, nullptr);
+    element->insertBefore( ele1, nullptr );
     ele1 = D(doc)->createElement( MBSIMINT%"plotStepSize" );
     E(ele1)->setAttribute("unit", "s");
     text = doc->createTextNode(X()%"1e-2");
-    ele1->insertBefore(text, NULL);
-    element->insertBefore( ele1, NULL );
+    ele1->insertBefore(text, nullptr);
+    element->insertBefore( ele1, nullptr );
     return element;
   }
 

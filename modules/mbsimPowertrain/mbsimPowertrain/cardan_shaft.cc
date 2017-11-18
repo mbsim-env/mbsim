@@ -1,4 +1,6 @@
 #include <config.h>
+
+#include <utility>
 #include "cardan_shaft.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematics/translation_along_z_axis.h"
@@ -29,7 +31,7 @@ namespace MBSimPowertrain {
     lengthOutputShaft = radiusOutputShaft*3;
   }
 
-  CardanShaft::CardanShaft(const std::string &name, Data param) : Group(name), data(param) {
+  CardanShaft::CardanShaft(const std::string &name, Data param) : Group(name), data(std::move(param)) {
 
     double density = 785;
 

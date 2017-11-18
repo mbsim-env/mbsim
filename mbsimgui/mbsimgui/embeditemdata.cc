@@ -29,10 +29,10 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   EmbedItemData::~EmbedItemData() {
-    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++)
-      delete (*it);
-    for(vector<Parameter*>::iterator i = removedParameter.begin(); i != removedParameter.end(); ++i)
-      delete *i;
+    for (auto & it : parameter)
+      delete it;
+    for(auto & i : removedParameter)
+      delete i;
   }
 
 //  QString EmbedItemData::getName() const {
@@ -46,7 +46,7 @@ namespace MBSimGUI {
   }
 
   void EmbedItemData::removeParameter(Parameter *param) {
-    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++) {
+    for (auto it = parameter.begin(); it != parameter.end(); it++) {
       if(*it == param) {
         parameter.erase(it);
         break;
@@ -86,14 +86,14 @@ namespace MBSimGUI {
 
   DOMElement* EmbedItemData::getParameterXMLElement() {
     DOMDocument *doc=element->getOwnerDocument();
-    DOMElement* embed = static_cast<DOMElement*>(element->getParentNode());
+    auto* embed = static_cast<DOMElement*>(element->getParentNode());
     if(X()%embed->getNodeName()!="Embed") {
       DOMElement *ele=D(doc)->createElement(PV%"Embed");
       embed->insertBefore(ele,element);
       embed = ele;
       ele=D(doc)->createElement(PV%"Parameter");
-      embed->insertBefore(ele,NULL);
-      embed->insertBefore(element,NULL);
+      embed->insertBefore(ele,nullptr);
+      embed->insertBefore(element,nullptr);
       return ele;
     }
     else if(X()%embed->getFirstElementChild()->getNodeName()!="Parameter") {

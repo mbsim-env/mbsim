@@ -37,25 +37,25 @@ namespace MBSim {
     sethInd_[1] = &Graph::sethInd1;
   }
 
-  Graph::~Graph() {}
+  Graph::~Graph() = default;
 
   void Graph::updatedu() {
     du = slvLLFac(evalLLM(), evalh()*getStepSize()+evalrdt());
   }
 
   void Graph::updatezd() {
-    for(vector<Object*>::iterator i = object.begin(); i!= object.end(); ++i)
-      (**i).updateqd();
+    for(auto & i : object)
+      (*i).updateqd();
     ud = slvLLFac(evalLLM(), evalh()+evalr());
   }
 
   void Graph::sethSize0(int hSize_) {
     hSize[0] = hSize_;
     int buf = 0;
-    for(unsigned int i=0; i<obj.size(); i++) 
-      for(unsigned int j=0; j<obj[i].size(); j++)  {
-      buf += obj[i][j]->getuSize(0);
-      obj[i][j]->sethSize(buf,0);
+    for(auto & i : obj) 
+      for(unsigned int j=0; j<i.size(); j++)  {
+      buf += i[j]->getuSize(0);
+      i[j]->sethSize(buf,0);
       //(*i)->sethInd(0,0);
     }
   } 
@@ -66,8 +66,8 @@ namespace MBSim {
 
   void Graph::sethInd0(int hInd_) {
     hInd[0] = hInd_;
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (*i)->sethInd(hInd_,0);
+    for(auto & i : object) {
+      i->sethInd(hInd_,0);
     }
   } 
 
@@ -77,39 +77,39 @@ namespace MBSim {
 
   void Graph::calcqSize() {
     qSize = 0;
-    for(unsigned int i=0; i<obj.size(); i++) 
-      for(unsigned int j=0; j<obj[i].size(); j++) {
-	obj[i][j]->calcqSize();
+    for(auto & i : obj) 
+      for(unsigned int j=0; j<i.size(); j++) {
+	i[j]->calcqSize();
 	//obj[i][j]->setqInd(qSize);
-	qSize += obj[i][j]->getqSize();
+	qSize += i[j]->getqSize();
       }
   }
 
   void Graph::setqInd(int qInd_) {
     qInd = qInd_;
-    for(unsigned int i=0; i<obj.size(); i++) 
-      for(unsigned int j=0; j<obj[i].size(); j++) {
-	obj[i][j]->setqInd(qInd_);
-	qInd_ += obj[i][j]->getqSize();
+    for(auto & i : obj) 
+      for(unsigned int j=0; j<i.size(); j++) {
+	i[j]->setqInd(qInd_);
+	qInd_ += i[j]->getqSize();
       }
   }
 
   void Graph::calcuSize0() {
     uSize[0] = 0;
-    for(unsigned int i=0; i<obj.size(); i++) 
-      for(unsigned int j=0; j<obj[i].size(); j++) {
-	obj[i][j]->calcuSize(0);
+    for(auto & i : obj) 
+      for(unsigned int j=0; j<i.size(); j++) {
+	i[j]->calcuSize(0);
 	//obj[i][j]->setuInd(uSize[0],0);
-	uSize[0] += obj[i][j]->getuSize(0);
+	uSize[0] += i[j]->getuSize(0);
       }
   }
 
   void Graph::setuInd0(int uInd_) {
     uInd[0] = uInd_;
-    for(unsigned int i=0; i<obj.size(); i++) 
-      for(unsigned int j=0; j<obj[i].size(); j++) {
-	obj[i][j]->setuInd(uInd_,0);
-	uInd_ += obj[i][j]->getuSize(0);
+    for(auto & i : obj) 
+      for(unsigned int j=0; j<i.size(); j++) {
+	i[j]->setuInd(uInd_,0);
+	uInd_ += i[j]->getuSize(0);
       }
   }
 
@@ -141,9 +141,9 @@ namespace MBSim {
       msg(Debug) << "Content of object graph "<< name << ":" << endl;
       for(unsigned int i=0; i<obj.size(); i++) {
         msg(Debug) << "  Objects in level "<< i << ":"<< endl;
-        for(unsigned int j=0; j<obj[i].size(); j++)
-          msg(Debug) << "    "<< obj[i][j]->getPath()<<" (uSize=" <<obj[i][j]->getuSize()<<", hSize="<< obj[i][j]->gethSize()<<
-            ", uInd=" << obj[i][j]->getuInd()<<", hInd=" << obj[i][j]->gethInd()<< ")"<<endl;
+        for(auto & j : obj[i])
+          msg(Debug) << "    "<< j->getPath()<<" (uSize=" <<j->getuSize()<<", hSize="<< j->gethSize()<<
+            ", uInd=" << j->getuInd()<<", hInd=" << j->gethInd()<< ")"<<endl;
       }
     }
   }

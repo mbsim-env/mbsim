@@ -32,16 +32,16 @@ namespace MBSim {
       fmatvec::Vec3 b;
       fmatvec::Vec3 zeros(const typename B::DRetDArg &x) { return fmatvec::Vec3(x.rows()); }
     public:
-      LinearTranslation() { }
+      LinearTranslation() = default;
       LinearTranslation(const typename B::DRetDArg &A_) : A(A_) { }
       LinearTranslation(const typename B::DRetDArg &A_, const fmatvec::Vec3 &b_) : A(A_), b(b_) { }
-      int getArgSize() const { return A.cols(); }
-      fmatvec::Vec3 operator()(const Arg &arg) { return A*arg+b; }
-      typename B::DRetDArg parDer(const Arg &arg) { return A; }
-      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename B::DRetDArg(A.rows(),A.cols()); }
-      typename B::DDRetDDArg parDerParDer(const double &arg) { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
-      bool constParDer() const { return true; }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      int getArgSize() const override { return A.cols(); }
+      fmatvec::Vec3 operator()(const Arg &arg) override { return A*arg+b; }
+      typename B::DRetDArg parDer(const Arg &arg) override { return A; }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(A.rows(),A.cols()); }
+      typename B::DDRetDDArg parDerParDer(const Arg &arg) override { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
+      bool constParDer() const override { return true; }
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"translationVectors");
         A=FromMatStr<typename B::DRetDArg>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");

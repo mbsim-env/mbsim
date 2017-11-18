@@ -32,7 +32,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, KineticExcitation)
 
-  KineticExcitation::KineticExcitation(const string &name) : FloatingFrameLink(name), F(NULL), M(NULL) {
+  KineticExcitation::KineticExcitation(const string &name) : FloatingFrameLink(name), F(nullptr), M(nullptr) {
     refFrameID = 1;
   }
 
@@ -44,7 +44,7 @@ namespace MBSim {
   void KineticExcitation::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
       if(saved_ref!="") connect(getByPath<Frame>(saved_ref));
-      if(frame[0]==NULL) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
+      if(frame[0]==nullptr) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] and openMBVArrow) {

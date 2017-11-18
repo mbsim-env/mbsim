@@ -26,43 +26,43 @@ namespace MBSimGUI {
 
   class Signal : public Link {
     public:
-      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMCONTROL; }
   };
 
   class Multiplexer : public Signal {
     public:
-      QString getType() const { return "Multiplexer"; }
-      ElementPropertyDialog* createPropertyDialog() {return new MultiplexerPropertyDialog(this);}
+      QString getType() const override { return "Multiplexer"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new MultiplexerPropertyDialog(this);}
   };
 
   class Demultiplexer : public Signal {
     public:
-      QString getType() const { return "Demultiplexer"; }
-      ElementPropertyDialog* createPropertyDialog() {return new DemultiplexerPropertyDialog(this);}
+      QString getType() const override { return "Demultiplexer"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new DemultiplexerPropertyDialog(this);}
   };
 
   class LinearTransferSystem : public Signal {
     public:
-      QString getType() const { return "LinearTransferSystem"; }
-      ElementPropertyDialog* createPropertyDialog() {return new LinearTransferSystemPropertyDialog(this);}
+      QString getType() const override { return "LinearTransferSystem"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new LinearTransferSystemPropertyDialog(this);}
   };
 
   class SignalOperation : public Signal {
     public:
-      QString getType() const { return "SignalOperation"; }
-      ElementPropertyDialog* createPropertyDialog() {return new SignalOperationPropertyDialog(this);}
+      QString getType() const override { return "SignalOperation"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new SignalOperationPropertyDialog(this);}
   };
 
   class ExternSignalSource : public Signal {
     public:
-      QString getType() const { return "ExternSignalSource"; }
-      ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSourcePropertyDialog(this);}
+      QString getType() const override { return "ExternSignalSource"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new ExternSignalSourcePropertyDialog(this);}
   };
 
   class ExternSignalSink : public Signal {
     public:
-      QString getType() const { return "ExternSignalSink"; }
-      ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSinkPropertyDialog(this);}
+      QString getType() const override { return "ExternSignalSink"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new ExternSignalSinkPropertyDialog(this);}
   };
 
 }

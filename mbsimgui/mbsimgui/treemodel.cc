@@ -35,7 +35,7 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent), rootItem(0) {
+  TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent) {
   }
 
   TreeModel::~TreeModel() {
@@ -67,7 +67,7 @@ namespace MBSimGUI {
 
   TreeItem* TreeModel::getItem(const QModelIndex &index) const {
     if(index.isValid()) {
-      TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
+      auto *item = static_cast<TreeItem*>(index.internalPointer());
       if(item) return item;
     }
     return rootItem;

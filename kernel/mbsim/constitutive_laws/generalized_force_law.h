@@ -34,7 +34,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      GeneralizedForceLaw(Function<double(double,double)> *forceFunc_=NULL) : Element(uniqueDummyName(this)), forceFunc(forceFunc_) { 
+      GeneralizedForceLaw(Function<double(double,double)> *forceFunc_=nullptr) : Element(uniqueDummyName(this)), forceFunc(forceFunc_) { 
         if(forceFunc)
           forceFunc->setParent(this);
         plotFeature[plotRecursive]=false;
@@ -43,9 +43,9 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~GeneralizedForceLaw() { if(forceFunc) delete forceFunc; forceFunc = NULL; };
+      ~GeneralizedForceLaw() override { if(forceFunc) delete forceFunc; forceFunc = nullptr; };
 
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Element::init(stage, config);
         if(forceFunc)
           forceFunc->init(stage, config);
@@ -91,7 +91,7 @@ namespace MBSim {
        * \brief initialize the force law using XML
        * \param XML element
        */
-      virtual void initializeUsingXML(xercesc::DOMElement *element) {}
+      void initializeUsingXML(xercesc::DOMElement *element) override {}
       /***************************************************/
       
       /**

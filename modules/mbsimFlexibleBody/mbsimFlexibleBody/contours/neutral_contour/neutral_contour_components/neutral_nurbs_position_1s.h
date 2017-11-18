@@ -15,11 +15,11 @@ namespace MBSimFlexibleBody {
   class NeutralNurbsPosition1s : public MBSimFlexibleBody::NeutralNurbs1s {
     public:
       NeutralNurbsPosition1s(MBSim::Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
-      virtual ~NeutralNurbsPosition1s();
+      ~NeutralNurbsPosition1s() override;
       fmatvec::Vec3 evalPosition(double s);
       fmatvec::Vec3 evalWs(double s);
       fmatvec::Vec3 evalWt(double s);
-      virtual void update(MBSim::ContourFrame *frame);
+      void update(MBSim::ContourFrame *frame) override;
       virtual void updatePositionNormal(MBSim::ContourFrame *frame);
       virtual void updatePositionFirstTangent(MBSim::ContourFrame *frame);
       virtual void updatePositionSecondTangent(MBSim::ContourFrame *frame);
@@ -30,7 +30,7 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec3 binormalDir;
 
-      virtual void buildNodelist();
+      void buildNodelist() override;
   };
 
 } /* namespace MBSimFlexibleBody */

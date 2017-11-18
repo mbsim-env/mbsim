@@ -30,17 +30,17 @@ namespace MBSim {
   class GeneralizedSpringDamper : public DualRigidBodyLink {
     protected:
       Function<double(double,double)> *func;
-      double l0;
+      double l0{0};
     public:
-      GeneralizedSpringDamper(const std::string &name="") : DualRigidBodyLink(name), func(NULL), l0(0) { }
-      ~GeneralizedSpringDamper();
+      GeneralizedSpringDamper(const std::string &name="") : DualRigidBodyLink(name), func(nullptr) { }
+      ~GeneralizedSpringDamper() override;
 
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
 
-      bool isActive() const { return true; }
-      bool gActiveChanged() { return false; }
-      virtual bool isSingleValued() const { return true; }
-      void init(InitStage stage, const InitConfigSet &config);
+      bool isActive() const override { return true; }
+      bool gActiveChanged() override { return false; }
+      bool isSingleValued() const override { return true; }
+      void init(InitStage stage, const InitConfigSet &config) override;
 
       /** \brief Set the function for the generalized force. */
       void setGeneralizedForceFunction(Function<double(double,double)> *func_) {
@@ -52,7 +52,7 @@ namespace MBSim {
       /** \brief Set unloaded generalized length. */
       void setGeneralizedUnloadedLength(double l0_) { l0 = l0_; }
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }

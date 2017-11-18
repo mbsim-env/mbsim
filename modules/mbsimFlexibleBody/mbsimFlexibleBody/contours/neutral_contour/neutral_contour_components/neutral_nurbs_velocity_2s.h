@@ -15,10 +15,10 @@ namespace MBSimFlexibleBody {
   class NeutralNurbsVelocity2s : public MBSimFlexibleBody::NeutralNurbs2s {
     public:
       NeutralNurbsVelocity2s(MBSim::Element* parent_, const fmatvec::MatVI & nodes, double nodeOffset, int degU_, int degV_, bool openStructure_);
-      virtual ~NeutralNurbsVelocity2s();
-      virtual void update(MBSim::ContourFrame *frame);
+      ~NeutralNurbsVelocity2s() override;
+      void update(MBSim::ContourFrame *frame) override;
     protected:
-      virtual void buildNodelist();
+      void buildNodelist() override;
   };
 
 } /* namespace MBSimFlexibleBody */

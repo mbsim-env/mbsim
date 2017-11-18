@@ -39,10 +39,10 @@ namespace MBSimFlexibleBody {
   FlexibleBody::FlexibleBody(const string &name) : NodeBasedBody(name), d_massproportional(0.), updEle(true) { }
 
   FlexibleBody::~FlexibleBody() {
-    for (unsigned int i = 0; i < discretization.size(); i++) {
-      if (discretization[i]) {
-        delete discretization[i];
-        discretization[i] = NULL;
+    for (auto & i : discretization) {
+      if (i) {
+        delete i;
+        i = nullptr;
       }
     }
   }

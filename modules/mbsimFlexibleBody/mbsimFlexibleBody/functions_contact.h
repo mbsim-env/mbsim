@@ -45,9 +45,9 @@ namespace MBSimFlexibleBody {
       FuncPairCircleNurbsDisk2s(MBSim::Circle* circle_, NurbsDisk2s* nurbsdisk_) : nurbsdisk(nurbsdisk_), circle(circle_) { }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      double operator()(const double &alpha);
+      double operator()(const double &alpha) override;
 
-      fmatvec::Vec3 evalWrD(const double &alpha);
+      fmatvec::Vec3 evalWrD(const double &alpha) override;
       /***************************************************/
 
     private:

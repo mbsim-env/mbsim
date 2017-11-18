@@ -32,49 +32,49 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Body::Body(const string &name) : Object(name), R(0), updPos(true), updVel(true), updPJ(true), saved_frameOfReference("") { }
+  Body::Body(const string &name) : Object(name), R(nullptr), updPos(true), updVel(true), updPJ(true), saved_frameOfReference("") { }
 
   Body::~Body() {
-    for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i) 
-      delete *i;
-    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
-      delete *i;
+    for(auto & i : frame) 
+      delete i;
+    for(auto & i : contour) 
+      delete i;
   }
 
   void Body::sethSize(int hSize_, int j) {
     Object::sethSize(hSize_, j);
 
-    for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++)
-      (*i)->sethSize(hSize[j],j);
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->sethSize(hSize[j],j);
+    for(auto & i : frame)
+      i->sethSize(hSize[j],j);
+    for(auto & i : contour) 
+      i->sethSize(hSize[j],j);
   }
 
   void Body::sethInd(int hInd_, int j) {
     Object::sethInd(hInd_, j);
 
-    for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) 
-      (*i)->sethInd(hInd[j],j);
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->sethInd(hInd[j],j);
+    for(auto & i : frame) 
+      i->sethInd(hInd[j],j);
+    for(auto & i : contour) 
+      i->sethInd(hInd[j],j);
   }  
 
   void Body::plot() {
     Object::plot();
 
-    for(unsigned int j=0; j<frame.size(); j++)
-      frame[j]->plot();
-    for(unsigned int j=0; j<contour.size(); j++)
-      contour[j]->plot();
+    for(auto & j : frame)
+      j->plot();
+    for(auto & j : contour)
+      j->plot();
   }
 
   void Body::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Object::setDynamicSystemSolver(sys);
 
-    for(unsigned i=0; i<frame.size(); i++)
-      frame[i]->setDynamicSystemSolver(sys);
-    for(unsigned i=0; i<contour.size(); i++)
-      contour[i]->setDynamicSystemSolver(sys);
+    for(auto & i : frame)
+      i->setDynamicSystemSolver(sys);
+    for(auto & i : contour)
+      i->setDynamicSystemSolver(sys);
   }
 
   void Body::init(InitStage stage, const InitConfigSet &config) {
@@ -101,16 +101,16 @@ namespace MBSim {
     }
     Object::init(stage, config);
 
-    for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) 
-      (*i)->init(stage, config);
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->init(stage, config);
+    for(auto & i : frame) 
+      i->init(stage, config);
+    for(auto & i : contour) 
+      i->init(stage, config);
   }
 
   void Body::addContour(Contour* contour_) {
     if(getContour(contour_->getName(),false)) { //Contourname exists already
       THROW_MBSIMERROR("(Body::addContour): The body can only comprise one contour by the name \""+contour_->getName()+"\"!");
-      assert(getContour(contour_->getName(),false)==NULL);
+      assert(getContour(contour_->getName(),false)==nullptr);
     }
     contour.push_back(contour_);
     contour_->setParent(this);
@@ -119,7 +119,7 @@ namespace MBSim {
   void Body::addFrame(Frame* frame_) {
     if(getFrame(frame_->getName(),false)) { //Contourname exists already
       THROW_MBSIMERROR("(Body::addFrame): The body can only comprise one frame by the name \""+frame_->getName()+"\"!");
-      assert(getFrame(frame_->getName(),false)==NULL);
+      assert(getFrame(frame_->getName(),false)==nullptr);
     }
     frame.push_back(frame_);
     frame_->setParent(this);
@@ -136,7 +136,7 @@ namespace MBSim {
         THROW_MBSIMERROR("(Body::getContour): The body comprises no contour \""+name_+"\"!"); 
       assert(i<contour.size());
     }
-    return NULL;
+    return nullptr;
   }
 
   Frame* Body::getFrame(const string &name_, bool check) const {
@@ -150,7 +150,7 @@ namespace MBSim {
         THROW_MBSIMERROR("(Body::getFrame): The body comprises no frame \""+name_+"\"!"); 
       assert(i<frame.size());
     }
-    return NULL;
+    return nullptr;
   }
 
   int Body::frameIndex(const Frame *frame_) const {
@@ -195,28 +195,28 @@ namespace MBSim {
     updPos = true;
     updVel = true;
     updPJ = true;
-    for(unsigned int i=0; i<frame.size(); i++)
-      frame[i]->resetUpToDate();
-    for(unsigned int i=0; i<contour.size(); i++)
-      contour[i]->resetUpToDate();
+    for(auto & i : frame)
+      i->resetUpToDate();
+    for(auto & i : contour)
+      i->resetUpToDate();
   }
   void Body::resetPositionsUpToDate() {
     updPos = true;
-    for(unsigned int i=0; i<frame.size(); i++)
-      frame[i]->resetPositionsUpToDate();
+    for(auto & i : frame)
+      i->resetPositionsUpToDate();
   }
   void Body::resetVelocitiesUpToDate() {
     updVel = true;
-    for(unsigned int i=0; i<frame.size(); i++)
-      frame[i]->resetVelocitiesUpToDate();
+    for(auto & i : frame)
+      i->resetVelocitiesUpToDate();
   }
   void Body::resetJacobiansUpToDate() {
-    for(unsigned int i=0; i<frame.size(); i++)
-      frame[i]->resetJacobiansUpToDate();
+    for(auto & i : frame)
+      i->resetJacobiansUpToDate();
   }
   void Body::resetGyroscopicAccelerationsUpToDate() {
-    for(unsigned int i=0; i<frame.size(); i++)
-      frame[i]->resetGyroscopicAccelerationsUpToDate();
+    for(auto & i : frame)
+      i->resetGyroscopicAccelerationsUpToDate();
   }
 
 }

@@ -39,28 +39,28 @@ namespace MBSimFlexibleBody {
       /*! 
        * \brief destructor
        */
-      virtual ~Cardan();
+      ~Cardan() override;
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 3; }
       /********************************************************/
 
       /* INTERFACE OF ANGLES */
-      virtual fmatvec::Vec3 computet(const fmatvec::Vec& q) const;
-      virtual fmatvec::Vec3 computen(const fmatvec::Vec& q) const;
-      virtual fmatvec::Vec3 computeb(const fmatvec::Vec& q) const;
-      virtual fmatvec::Vec computentil(const fmatvec::Vec& q) const;		
-      virtual fmatvec::Vec computebtil(const fmatvec::Vec& q) const;	
-      virtual fmatvec::SqrMat computetq(const fmatvec::Vec& q) const;		
-      virtual fmatvec::SqrMat computenq(const fmatvec::Vec& q) const;		
-      virtual fmatvec::SqrMat computebq(const fmatvec::Vec& q) const;
-      virtual fmatvec::SqrMat computentilq(const fmatvec::Vec& q) const;		
-      virtual fmatvec::SqrMat computebtilq(const fmatvec::Vec& q) const;
-      virtual fmatvec::Mat computetq2(const fmatvec::Vec& q) const;		
-      virtual fmatvec::Mat computenq2(const fmatvec::Vec& q) const;		
-      virtual fmatvec::Mat computebq2(const fmatvec::Vec& q) const;
-      virtual fmatvec::Mat computentilq2(const fmatvec::Vec& q) const;		
-      virtual fmatvec::Mat computebtilq2(const fmatvec::Vec& q) const;
+      fmatvec::Vec3 computet(const fmatvec::Vec& q) const override;
+      fmatvec::Vec3 computen(const fmatvec::Vec& q) const override;
+      fmatvec::Vec3 computeb(const fmatvec::Vec& q) const override;
+      fmatvec::Vec computentil(const fmatvec::Vec& q) const override;		
+      fmatvec::Vec computebtil(const fmatvec::Vec& q) const override;	
+      fmatvec::SqrMat computetq(const fmatvec::Vec& q) const override;		
+      fmatvec::SqrMat computenq(const fmatvec::Vec& q) const override;		
+      fmatvec::SqrMat computebq(const fmatvec::Vec& q) const override;
+      fmatvec::SqrMat computentilq(const fmatvec::Vec& q) const override;		
+      fmatvec::SqrMat computebtilq(const fmatvec::Vec& q) const override;
+      fmatvec::Mat computetq2(const fmatvec::Vec& q) const override;		
+      fmatvec::Mat computenq2(const fmatvec::Vec& q) const override;		
+      fmatvec::Mat computebq2(const fmatvec::Vec& q) const override;
+      fmatvec::Mat computentilq2(const fmatvec::Vec& q) const override;		
+      fmatvec::Mat computebtilq2(const fmatvec::Vec& q) const override;
       /********************************************************/
 
       /* OVERWRITE FUNCTIONS OF ANGLES */
@@ -69,13 +69,13 @@ namespace MBSimFlexibleBody {
        * \param derivative of angles
        * \return angular velocity
        */
-      virtual fmatvec::Vec computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
+      fmatvec::Vec computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const override;
 
       /**
        * \param angles
        * \return T-matrix (transformation matrix from differentiated angles to angular velocity omega)
        */
-      virtual fmatvec::SqrMat computeT(const fmatvec::Vec& q) const;
+      fmatvec::SqrMat computeT(const fmatvec::Vec& q) const override;
       /********************************************************/
   };
 

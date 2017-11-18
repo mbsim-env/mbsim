@@ -36,13 +36,13 @@ namespace MBSimGUI {
   class ParameterPropertyDialog : public PropertyDialog {
 
     public:
-      ParameterPropertyDialog(Parameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0, bool readOnly=false);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      ParameterPropertyDialog(Parameter *parameter, QWidget * parent = nullptr, Qt::WindowFlags f = nullptr, bool readOnly=false);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       virtual void toWidget(Parameter *parameter);
       virtual void fromWidget(Parameter *parameter);
-      void toWidget() {toWidget(parameter);}
-      void fromWidget() {fromWidget(parameter);}
+      void toWidget() override {toWidget(parameter);}
+      void fromWidget() override {fromWidget(parameter);}
     protected:
       Parameter *parameter;
       ExtWidget *name;
@@ -51,9 +51,9 @@ namespace MBSimGUI {
   class StringParameterPropertyDialog : public ParameterPropertyDialog {
 
     public:
-      StringParameterPropertyDialog(StringParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      StringParameterPropertyDialog(StringParameter *parameter, QWidget * parent = nullptr, Qt::WindowFlags f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *value;
   };
@@ -61,9 +61,9 @@ namespace MBSimGUI {
   class ScalarParameterPropertyDialog : public ParameterPropertyDialog {
 
     public:
-      ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget * parent = nullptr, Qt::WindowFlags f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *value;
   };
@@ -71,9 +71,9 @@ namespace MBSimGUI {
   class VectorParameterPropertyDialog : public ParameterPropertyDialog {
 
     public:
-      VectorParameterPropertyDialog(VectorParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      VectorParameterPropertyDialog(VectorParameter *parameter, QWidget * parent = nullptr, Qt::WindowFlags f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *value;
   };
@@ -81,9 +81,9 @@ namespace MBSimGUI {
   class MatrixParameterPropertyDialog : public ParameterPropertyDialog {
 
     public:
-      MatrixParameterPropertyDialog(MatrixParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      MatrixParameterPropertyDialog(MatrixParameter *parameter, QWidget * parent = nullptr, Qt::WindowFlags f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *value;
   };
@@ -91,9 +91,9 @@ namespace MBSimGUI {
   class ImportParameterPropertyDialog : public ParameterPropertyDialog {
 
     public:
-      ImportParameterPropertyDialog(ImportParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      ImportParameterPropertyDialog(ImportParameter *parameter, QWidget * parent = nullptr, Qt::WindowFlags f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *value;
   };

@@ -30,28 +30,28 @@ namespace MBSimHydraulics {
   /*! HydraulicEnvironment */
   class HydraulicEnvironment : public MBSim::Environment {
     private:
-      double rhoConstant, dVdT, rho0, T0, dRhodT;
+      double rhoConstant{0}, dVdT{0}, rho0{0}, T0{0}, dRhodT{0};
       double (HydraulicEnvironment::*calcRho)(double T);
       double calcConstantSpecificMass(double T) {return rhoConstant; }
       double calcVolumeDependingOnTemperature(double T) {return rho0*(1./(1.+dVdT*(T-T0))); }
       double calcSpecificMassDependingOnTemperature(double T) {return rho0  + dRhodT*(T- T0 ); }
 
-      double nuConstant, Tm, Wm, T2, m;
+      double nuConstant{0}, Tm{0}, Wm{0}, T2{0}, m{0};
       double (HydraulicEnvironment::*calcNu)(double T);
       double calcConstantKinematicViscosity(double T) {return nuConstant; }
       double calcWalterUbbelohdeKinematicViscosity(double T);
 
-      double T;
+      double T{0};
 
     protected:
-      double E0, kappa, rho, nu;
-      double pinf;
+      double E0{0}, kappa{0}, rho{0}, nu{0};
+      double pinf{0};
       static std::unique_ptr<HydraulicEnvironment> instance;
-      HydraulicEnvironment() : Environment(), rhoConstant(0), dVdT(0), rho0(0), T0(0), dRhodT(0), nuConstant(0), Tm(0), Wm(0), T2(0), m(0), T(0), E0(0), kappa(0), rho(0), nu(0), pinf(0) {}
+      HydraulicEnvironment() : Environment() {}
 
     public:
       static HydraulicEnvironment * getInstance() {return instance.get(); }
-      virtual void initializeUsingXML(xercesc::DOMElement *e);
+      void initializeUsingXML(xercesc::DOMElement *e) override;
       virtual void initializeFluidData();
 
       /*! set the basic (air-free) bulk modulus*/

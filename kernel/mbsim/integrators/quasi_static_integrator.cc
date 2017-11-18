@@ -23,7 +23,7 @@
 #include <mbsim/utils/nonlinear_algebra.h>
 #include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
 
-#include <time.h>
+#include <ctime>
 #include <boost/iostreams/tee.hpp>
 #include <boost/iostreams/stream.hpp>
 
@@ -44,8 +44,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, QuasiStaticIntegrator)
 
-  QuasiStaticIntegrator::QuasiStaticIntegrator() :
-      dt(1e-3), t(0.), tPlot(0.), gTol(1e-10), hTol(1e-10), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), maxExtraPolate(0), extraPolateAfter(2), updateJacobianEvery(1), s0(0.), time(0.), stepPlot(0) {
+  QuasiStaticIntegrator::QuasiStaticIntegrator()  {
   }
 
   void QuasiStaticIntegrator::preIntegrate(DynamicSystemSolver& system) {

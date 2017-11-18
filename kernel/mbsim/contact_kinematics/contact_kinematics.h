@@ -41,12 +41,12 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematics() : numberOfPotentialContactPoints(1) {}
+      ContactKinematics()  = default;
 
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematics() {}
+      ~ContactKinematics() override = default;
 
       /* INTERFACE FOR DERIVED CLASSES */
       /** 
@@ -85,7 +85,7 @@ namespace MBSim {
        */
       int getNumberOfPotentialContactPoints() const { return numberOfPotentialContactPoints; }
 
-      virtual ContactKinematics* getContactKinematics(int i=0) const { return 0; }
+      virtual ContactKinematics* getContactKinematics(int i=0) const { return nullptr; }
 
       virtual void setSearchAllContactPoints(bool searchAllCP_=true) { }
       virtual void setInitialGuess(const fmatvec::VecV &zeta0_) { }
@@ -94,7 +94,7 @@ namespace MBSim {
       /**
        * \brief number of potential contact points
        */
-      int numberOfPotentialContactPoints;
+      int numberOfPotentialContactPoints{1};
   };
 
 }

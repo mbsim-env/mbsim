@@ -1,8 +1,8 @@
 #include <config.h>
 //#include "plib.h"
-#include <string.h>
+#include <cstring>
 //#include <matrixRT.h>
-#include <math.h>
+#include <cmath>
 #include "nurbs_surface.h"
 
 //#include "integrate.h"
@@ -23,7 +23,7 @@ namespace MBSim {
    a read function to set them to correct values.
    */
   NurbsSurface::NurbsSurface() :
-      U(1), V(1), P(1, 1), degU(0), degV(0) {
+      U(1), V(1), P(1, 1) {
   }
 
   /*!
@@ -758,7 +758,7 @@ namespace MBSim {
     int n, m, k, l, num;
     double d, total;
     //Vector<T> cds(Q.rows()) ;
-    double* cds = new double[ (Q.rows() >= Q.cols()) ? Q.rows():Q.cols()]; // alloca might not have enough space
+    auto* cds = new double[ (Q.rows() >= Q.cols()) ? Q.rows():Q.cols()]; // alloca might not have enough space
 
     n = Q.rows();
     m = Q.cols();

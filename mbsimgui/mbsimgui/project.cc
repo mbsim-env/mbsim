@@ -50,10 +50,10 @@ namespace MBSimGUI {
   }
 
   DOMElement* Project::createXMLElement(DOMNode *parent) {
-    DOMDocument *doc=static_cast<DOMDocument*>(parent);
+    auto *doc=static_cast<DOMDocument*>(parent);
     element=D(doc)->createElement(getNameSpace()%getType().toStdString());
     E(element)->setAttribute("name","Project");
-    parent->insertBefore(element, NULL);
+    parent->insertBefore(element, nullptr);
     setDynamicSystemSolver(new DynamicSystemSolver);
     dss->createXMLElement(element);
     setSolver(new DOPRI5Integrator);
@@ -99,11 +99,11 @@ namespace MBSimGUI {
     if(X()%embed->getNodeName()!="Embed") {
       DOMElement *ele=D(doc)->createElement(PV%"Embed");
       doc->removeChild(element);
-      doc->insertBefore(ele,NULL);
+      doc->insertBefore(ele,nullptr);
       embed = ele;
       ele=D(doc)->createElement(PV%"Parameter");
-      embed->insertBefore(ele,NULL);
-      embed->insertBefore(element,NULL);
+      embed->insertBefore(ele,nullptr);
+      embed->insertBefore(element,nullptr);
       return ele;
     }
     else if(X()%embed->getFirstElementChild()->getNodeName()!="Parameter") {

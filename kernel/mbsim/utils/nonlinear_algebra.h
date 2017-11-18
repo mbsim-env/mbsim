@@ -158,7 +158,7 @@ namespace MBSim {
        * \param root function
        * \param Jacobian matrix
        */
-      NewtonMethod(Function<double(double)> *fct_, Function<double(double)> *jac_=0);
+      NewtonMethod(Function<double(double)> *fct_, Function<double(double)> *jac_=nullptr);
 
       /* GETTER / SETTER */
       int getNumberOfIterations() const { return iter; }
@@ -208,7 +208,7 @@ namespace MBSim {
        * \param root function
        * \param Jacobian matrix
        */
-      MultiDimNewtonMethod(Function<fmatvec::Vec(fmatvec::Vec)> *fct_, Function<fmatvec::SqrMat(fmatvec::Vec)> *jac_=0);
+      MultiDimNewtonMethod(Function<fmatvec::Vec(fmatvec::Vec)> *fct_, Function<fmatvec::SqrMat(fmatvec::Vec)> *jac_=nullptr);
 
       /* GETTER / SETTER */
       int getNumberOfIterations() const { return iter; }

@@ -38,21 +38,21 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief destructor
        */
-      virtual ~FiniteElementLinearExternalLumpedNode();
+      ~FiniteElementLinearExternalLumpedNode() override;
 
       /* INTERFACE OF DISCRETIZATIONINTERFACE */
-      virtual const fmatvec::SymMat& getM() const;
-      virtual const fmatvec::Vec& geth() const;
-      virtual const fmatvec::SqrMat& getdhdq() const;
-      virtual const fmatvec::SqrMat& getdhdu() const;
-      virtual int getqSize() const;
-      virtual int getuSize() const;
-      virtual void computeM(const fmatvec::Vec& qG);
-      virtual void computeh(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
-      virtual void computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
-      virtual double computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& qG);
-      virtual double computeElasticEnergy(const fmatvec::Vec& qG);
+      const fmatvec::SymMat& getM() const override;
+      const fmatvec::Vec& geth() const override;
+      const fmatvec::SqrMat& getdhdq() const override;
+      const fmatvec::SqrMat& getdhdu() const override;
+      int getqSize() const override;
+      int getuSize() const override;
+      void computeM(const fmatvec::Vec& qG) override;
+      void computeh(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) override;
+      void computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) override;
+      double computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) override;
+      double computeGravitationalEnergy(const fmatvec::Vec& qG) override;
+      double computeElasticEnergy(const fmatvec::Vec& qG) override;
       virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, double s);
       virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, double s);
       virtual fmatvec::Vec3 getVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);

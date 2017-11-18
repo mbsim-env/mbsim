@@ -185,12 +185,12 @@ namespace MBSim {
     casadi::SX pddd_, pdpd_;
     casadi::Function f, pd, dd, pddd, pdpd, dddd;
   public:
-    SymbolicFunction() {}
+    SymbolicFunction() = default;
     SymbolicFunction(const casadi::SX &ret_, const casadi::SX &arg_) : ret(ret_), arg(arg_) {
       checkFunctionIODim();
     }
 
-    void init(Element::InitStage stage, const InitConfigSet &config) {
+    void init(Element::InitStage stage, const InitConfigSet &config) override {
       Function<Ret(Arg)>::init(stage, config);
       if(stage == Element::preInit) {
         casadi::SX argd=casadi::SX::sym("argd", getArgSize());
@@ -294,12 +294,12 @@ namespace MBSim {
     casadi::SX pd1dd1_, pd1dd2_, pd1pd2_, pd2dd1_, pd2dd2_, pd2pd2_;
     casadi::Function f, pd1, pd2, pd1dd1, pd1dd2, pd1pd2, pd2dd1, pd2dd2, pd2pd2;
   public:
-    SymbolicFunction() {}
+    SymbolicFunction() = default;
     SymbolicFunction(const casadi::SX &ret_, const casadi::SX &arg1_, const casadi::SX &arg2_) : ret(ret_), arg1(arg1_), arg2(arg2_) {
       checkFunctionIODim();
     }
 
-    void init(Element::InitStage stage, const InitConfigSet &config) {
+    void init(Element::InitStage stage, const InitConfigSet &config) override {
       Function<Ret(Arg1, Arg2)>::init(stage, config);
       if(stage == Element::preInit) {
         casadi::SX arg1d=casadi::SX::sym("arg1d", getArg1Size());
@@ -433,7 +433,7 @@ namespace MBSim {
       return c<typename B::DRetDArg2>(pd2dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
     }
 
-    void initializeUsingXML(xercesc::DOMElement *element) {
+    void initializeUsingXML(xercesc::DOMElement *element) override {
       auto io=casadi::createCasADiFunctionFromXML(element->getFirstElementChild());
       arg1=io.first[0];
       arg2=io.first[1];

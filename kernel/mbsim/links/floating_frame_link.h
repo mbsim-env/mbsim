@@ -37,24 +37,24 @@ namespace MBSim {
        */
       FloatingFrameLink(const std::string &name);
 
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
-      void calcSize();
-      void calclaSize(int j);
-      void calcgSize(int j);
-      void calcgdSize(int j);
-      void calcrFactorSize(int j);
-      void calccorrSize(int j);
+      void calcSize() override;
+      void calclaSize(int j) override;
+      void calcgSize(int j) override;
+      void calcgdSize(int j) override;
+      void calcrFactorSize(int j) override;
+      void calccorrSize(int j) override;
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void updateW(int i = 0);
-      void updateh(int i = 0);
-      void updateg();
-      void updategd();
+      void updateW(int i = 0) override;
+      void updateh(int i = 0) override;
+      void updateg() override;
+      void updategd() override;
 
       const fmatvec::Mat3xV& evalGlobalForceDirection(int i=0) { if(updDF) updateForceDirections(); return DF; }
       const fmatvec::Mat3xV& evalGlobalMomentDirection(int i=0) { if(updDF) updateForceDirections(); return DM; }
@@ -64,16 +64,16 @@ namespace MBSim {
        */
       void setFrameOfReferenceID(Index ID) { refFrameID = ID; }
 
-      void resetUpToDate();
-      void updatePositions(Frame *frame);
-      void updatePositions();
-      void updateVelocities();
-      void updateGeneralizedPositions();
-      void updateGeneralizedVelocities();
-      void updateForce();
-      void updateMoment();
-      void updateForceDirections();
-      void updateR();
+      void resetUpToDate() override;
+      void updatePositions(Frame *frame) override;
+      void updatePositions() override;
+      void updateVelocities() override;
+      void updateGeneralizedPositions() override;
+      void updateGeneralizedVelocities() override;
+      void updateForce() override;
+      void updateMoment() override;
+      void updateForceDirections() override;
+      void updateR() override;
 
     protected:
       /**

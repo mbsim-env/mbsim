@@ -43,22 +43,22 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Group();
+      ~Group() override;
 
       /* INHERITED INTERFACE OF DYNAMICSYSTEM */
-      virtual void updateLLM();
+      void updateLLM() override;
       using DynamicSystem::addObject;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updatedu();
-      virtual void updatezd();
+      void updatedu() override;
+      void updatezd() override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       fmatvec::Vec RrRD;
       fmatvec::SqrMat ARD;

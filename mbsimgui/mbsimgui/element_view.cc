@@ -67,8 +67,8 @@ namespace MBSimGUI {
       mw->mbsimxml(1);
       element->setConfig(true);
     }
-    editor = 0;
-    element = 0;
+    editor = nullptr;
+    element = nullptr;
     mw->setAllowUndo(true);
   }
 

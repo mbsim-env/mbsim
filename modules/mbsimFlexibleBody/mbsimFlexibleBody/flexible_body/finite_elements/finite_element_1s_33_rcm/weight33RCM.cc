@@ -18,6 +18,8 @@
  */
 
 #include<config.h>
+
+#include <utility>
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/weight33RCM.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/trafo33RCM.h"
 #include "mbsim/mbsim_event.h"
@@ -29,7 +31,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   Weight33RCM::Weight33RCM(double l0_,double l0h2_,double l0h3_,Trafo33RCMPtr tf_) : 
-    tf(tf_),l0(l0_),l0h2(l0h2_),l0h3(l0h3_),l0h4(l0h3*l0),l0h5(l0h3*l0h2),l0h7(l0h5*l0h2),l0h9(l0h7*l0h2),l0h11(l0h9*l0h2),
+    tf(std::move(tf_)),l0(l0_),l0h2(l0h2_),l0h3(l0h3_),l0h4(l0h3*l0),l0h5(l0h3*l0h2),l0h7(l0h5*l0h2),l0h9(l0h7*l0h2),l0h11(l0h9*l0h2),
     k10(0.),k20(0.),Ivvt(4,INIT,0.),Ivxvt(4,INIT,0.),Ixvvt(4,INIT,0.),Ixvxvt(4,INIT,0.),Ivvtwwt(4,INIT,0.),Ivxvtwxwt(4,INIT,0.),
     Iwh1(0.),Iwh2(0.),Iwh1t(0.),Iwh2t(0.),Ixwh1(0.),Ixwh2(0.),Ixwh1t(0.),Ixwh2t(0.),
     Iwh1twh1(0.),Iwh1twh2(0.),Iwh1twh1t(0.),Iwh1wh1(0.),Iwh1wh2t(0.),Iwh1wh2(0.),Iwh2twh2t(0.),	
@@ -69,7 +71,7 @@ namespace MBSimFlexibleBody {
     computedpS();
   }
 
-  Weight33RCM::~Weight33RCM() {}
+  Weight33RCM::~Weight33RCM() = default;
 
   void Weight33RCM::setGauss(int nGauss) {
     gp = Vec(nGauss); // Gauss weights

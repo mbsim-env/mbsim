@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  RigidBodyLink::RigidBodyLink(const string &name) : MechanicalLink(name), updPos(true), updVel(true), updFD(true), support(NULL) {
+  RigidBodyLink::RigidBodyLink(const string &name) : MechanicalLink(name),  support(nullptr) {
   }
 
   void RigidBodyLink::updatehRef(const Vec &hParent, int j) {
@@ -223,8 +223,8 @@ namespace MBSim {
     updPos = true;
     updVel = true;
     updFD = true;
-    for(unsigned int i=0; i<C.size(); i++)
-      C[i].resetUpToDate();
+    for(auto & i : C)
+      i.resetUpToDate();
   }
 
 }

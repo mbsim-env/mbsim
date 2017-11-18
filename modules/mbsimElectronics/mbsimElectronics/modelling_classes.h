@@ -24,7 +24,7 @@ namespace MBSimElectronics {
     int flag;
     ElectronicComponent* parent;
     public:
-    Terminal(const std::string &name) : Element(name), flag(0), parent(0) {}
+    Terminal(const std::string &name) : Element(name), flag(0), parent(nullptr) {}
     void addConnectedTerminal(Terminal* terminal);
     void addConnectedBranch(Branch* branch);
     void setFlag(int f) { flag = f; }
@@ -44,20 +44,20 @@ namespace MBSimElectronics {
   class ElectronicComponent : public MBSim::ModellingInterface {
     protected:
       std::vector<Terminal*> terminal;
-      Branch* branch;
-      double vz;
-      double Q, I;
-      bool updQ, updI;
+      Branch* branch{nullptr};
+      double vz{0};
+      double Q{0}, I{0};
+      bool updQ{true}, updI{true};
     public:
       ElectronicComponent();
-      ~ElectronicComponent();
+      ~ElectronicComponent() override;
       void addTerminal(Terminal *terminal);
       void addTerminal(const std::string &str);
       Terminal* getTerminal(const std::string &name, bool check=true);
       void buildListOfTerminals(std::vector<Terminal*> &terminal);
       void connect(Branch *branch_,double vz=0);
       Branch* getBranch() {return branch;}
-      void processModellList(std::vector<ModellingInterface*> &modellList, std::vector<MBSim::Object*> &objectList, std::vector<MBSim::Link*> &linkList);
+      void processModellList(std::vector<ModellingInterface*> &modellList, std::vector<MBSim::Object*> &objectList, std::vector<MBSim::Link*> &linkList) override;
       double getvz() const { return vz;}
       virtual void updateCharge();
       virtual void updateCurrent();

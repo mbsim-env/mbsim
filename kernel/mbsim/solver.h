@@ -45,7 +45,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Solver() { }
+      ~Solver() override = default;
       
       /* INTERFACE FOR DERIVED CLASSES */
       /*! 

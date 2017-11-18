@@ -26,8 +26,8 @@ namespace MBSimGUI {
 
   class GeneralizedFriction : public DualRigidBodyLink {
     public:
-      QString getType() const { return "GeneralizedFriction"; }
-      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedFrictionPropertyDialog(this);}
+      QString getType() const override { return "GeneralizedFriction"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new GeneralizedFrictionPropertyDialog(this);}
   };
 
 }

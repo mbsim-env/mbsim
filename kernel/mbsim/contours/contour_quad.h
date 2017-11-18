@@ -37,7 +37,7 @@ namespace MBSim {
        */
       ContourQuad(const std::string & name);
 
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
 //      bool testInsideBounds(const ContourPointData &cp);
       double computePointWeight(const fmatvec::Vec &s, int i);

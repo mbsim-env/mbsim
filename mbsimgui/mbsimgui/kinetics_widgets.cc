@@ -47,7 +47,7 @@ namespace MBSimGUI {
 
   RegularizedBilateralConstraintWidget::RegularizedBilateralConstraintWidget() {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
     forceFunc = new ExtWidget("Force function",new ChoiceWidget2(new RegularizedBilateralConstraintFunctionFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
     layout->addWidget(forceFunc);
@@ -55,7 +55,7 @@ namespace MBSimGUI {
 
   RegularizedUnilateralConstraintWidget::RegularizedUnilateralConstraintWidget() {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
     forceFunc = new ExtWidget("Force function",new ChoiceWidget2(new RegularizedUnilateralConstraintFunctionFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
     layout->addWidget(forceFunc);
@@ -73,7 +73,7 @@ namespace MBSimGUI {
   }
 
   UnilateralNewtonImpactWidget::UnilateralNewtonImpactWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
     restitutionCoefficient = new ExtWidget("Restitution coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"restitutionCoefficient");
     layout->addWidget(restitutionCoefficient);
@@ -105,7 +105,7 @@ namespace MBSimGUI {
   }
 
   PlanarCoulombFrictionWidget::PlanarCoulombFrictionWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
     frictionCoefficient = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(frictionCoefficient);
@@ -124,7 +124,7 @@ namespace MBSimGUI {
   }
 
   SpatialCoulombFrictionWidget::SpatialCoulombFrictionWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
     frictionCoefficient = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(frictionCoefficient);
@@ -143,9 +143,9 @@ namespace MBSimGUI {
   }
 
   PlanarStribeckFrictionWidget::PlanarStribeckFrictionWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -162,9 +162,9 @@ namespace MBSimGUI {
   }
 
   SpatialStribeckFrictionWidget::SpatialStribeckFrictionWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -181,14 +181,14 @@ namespace MBSimGUI {
   }
 
   RegularizedPlanarFrictionWidget::RegularizedPlanarFrictionWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
     frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget2(new FrictionFunctionFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
     layout->addWidget(frictionForceFunc);
   }
 
   RegularizedSpatialFrictionWidget::RegularizedSpatialFrictionWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
     frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget2(new FrictionFunctionFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
     layout->addWidget(frictionForceFunc);
@@ -206,7 +206,7 @@ namespace MBSimGUI {
   }
 
   PlanarCoulombImpactWidget::PlanarCoulombImpactWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
     frictionCoefficient = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(frictionCoefficient);
@@ -225,7 +225,7 @@ namespace MBSimGUI {
   }
 
   SpatialCoulombImpactWidget::SpatialCoulombImpactWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
     frictionCoefficient = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(frictionCoefficient);
@@ -244,9 +244,9 @@ namespace MBSimGUI {
   }
 
   PlanarStribeckImpactWidget::PlanarStribeckImpactWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -263,9 +263,9 @@ namespace MBSimGUI {
   }
 
   SpatialStribeckImpactWidget::SpatialStribeckImpactWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -282,10 +282,10 @@ namespace MBSimGUI {
   }
 
   GeneralizedForceLawWidgetFactory::GeneralizedForceLawWidgetFactory() {
-    name.push_back("Bilateral constraint");
-    name.push_back("Regularized bilateral constraint");
-    name.push_back("Unilateral constraint");
-    name.push_back("Regularized unilateral constraint");
+    name.emplace_back("Bilateral constraint");
+    name.emplace_back("Regularized bilateral constraint");
+    name.emplace_back("Unilateral constraint");
+    name.emplace_back("Regularized unilateral constraint");
     xmlName.push_back(MBSIM%"BilateralConstraint");
     xmlName.push_back(MBSIM%"RegularizedBilateralConstraint");
     xmlName.push_back(MBSIM%"UnilateralConstraint");
@@ -301,16 +301,16 @@ namespace MBSimGUI {
       return new UnilateralConstraintWidget;
     if(i==3)
       return new RegularizedUnilateralConstraintWidget;
-    return NULL;
+    return nullptr;
   }
 
   FrictionForceLawWidgetFactory::FrictionForceLawWidgetFactory() {
-    name.push_back("Planar Coulomb friction");
-    name.push_back("Planar Stribeck friction");
-    name.push_back("Regularized planar friction");
-    name.push_back("Spatial Coulomb friction");
-    name.push_back("Spatial Stribeck friction");
-    name.push_back("Regularized spatial friction");
+    name.emplace_back("Planar Coulomb friction");
+    name.emplace_back("Planar Stribeck friction");
+    name.emplace_back("Regularized planar friction");
+    name.emplace_back("Spatial Coulomb friction");
+    name.emplace_back("Spatial Stribeck friction");
+    name.emplace_back("Regularized spatial friction");
     xmlName.push_back(MBSIM%"PlanarCoulombFriction");
     xmlName.push_back(MBSIM%"PlanarStribeckFriction");
     xmlName.push_back(MBSIM%"RegularizedPlanarFriction");
@@ -332,12 +332,12 @@ namespace MBSimGUI {
       return new SpatialStribeckFrictionWidget;
     if(i==5)
       return new RegularizedSpatialFrictionWidget;
-    return NULL;
+    return nullptr;
   }
 
   GeneralizedImpactLawWidgetFactory::GeneralizedImpactLawWidgetFactory() {
-    name.push_back("Bilateral impact");
-    name.push_back("Unilateral Newton impact");
+    name.emplace_back("Bilateral impact");
+    name.emplace_back("Unilateral Newton impact");
     xmlName.push_back(MBSIM%"BilateralImpact");
     xmlName.push_back(MBSIM%"UnilateralNewtonImpact");
   }
@@ -347,14 +347,14 @@ namespace MBSimGUI {
       return new BilateralImpactWidget;
     if(i==1)
       return new UnilateralNewtonImpactWidget;
-    return NULL;
+    return nullptr;
   }
 
   FrictionImpactLawWidgetFactory::FrictionImpactLawWidgetFactory() {
-    name.push_back("Planar Coulomb impact");
-    name.push_back("Planar Stribeck impact");
-    name.push_back("Spatial Coulomb impact");
-    name.push_back("Spatial Stribeck impact");
+    name.emplace_back("Planar Coulomb impact");
+    name.emplace_back("Planar Stribeck impact");
+    name.emplace_back("Spatial Coulomb impact");
+    name.emplace_back("Spatial Stribeck impact");
     xmlName.push_back(MBSIM%"PlanarCoulombImpact");
     xmlName.push_back(MBSIM%"PlanarStribeckImpact");
     xmlName.push_back(MBSIM%"SpatialCoulombImpact");
@@ -370,35 +370,35 @@ namespace MBSimGUI {
       return new SpatialCoulombImpactWidget;
     if(i==3)
       return new SpatialStribeckImpactWidget;
-    return NULL;
+    return nullptr;
   }
 
   RegularizedBilateralConstraintFunctionFactory::RegularizedBilateralConstraintFunctionFactory() {
-    name.push_back("Linear regularized bilateral constraint");
+    name.emplace_back("Linear regularized bilateral constraint");
     xmlName.push_back(MBSIM%"LinearRegularizedBilateralConstraint");
   }
 
   QWidget* RegularizedBilateralConstraintFunctionFactory::createWidget(int i) {
     if(i==0)
       return new LinearRegularizedBilateralConstraintWidget;
-    return NULL;
+    return nullptr;
   }
 
   RegularizedUnilateralConstraintFunctionFactory::RegularizedUnilateralConstraintFunctionFactory() {
-    name.push_back("Linear regularized unilateral constraint");
+    name.emplace_back("Linear regularized unilateral constraint");
     xmlName.push_back(MBSIM%"LinearRegularizedUnilateralConstraint");
   }
 
   QWidget* RegularizedUnilateralConstraintFunctionFactory::createWidget(int i) {
     if(i==0)
       return new LinearRegularizedUnilateralConstraintWidget;
-    return NULL;
+    return nullptr;
   }
 
   FrictionFunctionFactory::FrictionFunctionFactory() {
-    name.push_back("Linear regularized Coulomb friction");
-    name.push_back("Linear regularized Stribeck friction");
-    name.push_back("Symbolic function");
+    name.emplace_back("Linear regularized Coulomb friction");
+    name.emplace_back("Linear regularized Stribeck friction");
+    name.emplace_back("Symbolic function");
     xmlName.push_back(MBSIM%"LinearRegularizedCoulombFriction");
     xmlName.push_back(MBSIM%"LinearRegularizedStribeckFriction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
@@ -414,7 +414,7 @@ namespace MBSimGUI {
       var << "gd" << "laN";
       return new SymbolicFunctionWidget(var,1,1);
     }
-    return NULL;
+    return nullptr;
   }
 
 }

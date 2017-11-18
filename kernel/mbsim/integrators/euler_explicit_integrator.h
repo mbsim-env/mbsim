@@ -35,15 +35,15 @@ namespace MBSimIntegrator {
       /**
        * \brief destructor
        */
-      virtual ~EulerExplicitIntegrator() {}
+      ~EulerExplicitIntegrator() override = default;
 
-      void preIntegrate(MBSim::DynamicSystemSolver& system);
-      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
-      void postIntegrate(MBSim::DynamicSystemSolver& system);
+      void preIntegrate(MBSim::DynamicSystemSolver& system) override;
+      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop) override;
+      void postIntegrate(MBSim::DynamicSystemSolver& system) override;
 
       /* INHERITED INTERFACE OF INTEGRATOR */
-      virtual void integrate(MBSim::DynamicSystemSolver& system);
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void integrate(MBSim::DynamicSystemSolver& system) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -54,7 +54,7 @@ namespace MBSimIntegrator {
       /**
        * \brief step size
        */
-      double dt;
+      double dt{1e-3};
 
       double tPlot;
       int iter, step, integrationSteps;

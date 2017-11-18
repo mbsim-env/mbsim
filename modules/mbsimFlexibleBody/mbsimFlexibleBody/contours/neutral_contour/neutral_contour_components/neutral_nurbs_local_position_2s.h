@@ -15,13 +15,13 @@ namespace MBSimFlexibleBody {
   class NeutralNurbsLocalPosition2s : public MBSimFlexibleBody::NeutralNurbs2s {
     public:
       NeutralNurbsLocalPosition2s(MBSim::Element* parent_, const fmatvec::MatVI & nodes, double nodeOffset, int degU_, int degV_, bool openStructure_);
-      virtual ~NeutralNurbsLocalPosition2s();
+      ~NeutralNurbsLocalPosition2s() override;
       fmatvec::Vec3 evalLocalPosition(const fmatvec::Vec2 &zeta);
-      virtual void update(MBSim::ContourFrame *frame);
+      void update(MBSim::ContourFrame *frame) override;
       void surfMeshParamsClosedU(Vec& uk, Vec& vl);
       void surfMeshParams(Vec& uk, Vec& vl);
     protected:
-      virtual void buildNodelist();  // make this method public for calculating the lagrange parameters for nurbs interpolation
+      void buildNodelist() override;  // make this method public for calculating the lagrange parameters for nurbs interpolation
   };
 
 } /* namespace MBSimFlexibleBody */

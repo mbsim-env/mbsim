@@ -48,7 +48,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Contour() { }
+      ~Contour() override = default;
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
@@ -60,7 +60,7 @@ namespace MBSim {
        */
       virtual ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) = 0;
 
-      virtual ContourFrame* createContourFrame(const std::string &name="P") { return NULL; }
+      virtual ContourFrame* createContourFrame(const std::string &name="P") { return nullptr; }
 
       const std::vector<double>& getEtaNodes() const { return etaNodes; }
       const std::vector<double>& getXiNodes() const { return xiNodes; }
@@ -221,7 +221,7 @@ namespace MBSim {
       virtual void updateJacobians(ContourFrame *frame, int j=0);
       virtual void updateGyroscopicAccelerations(ContourFrame *frame);
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void setThickness(double thickness_) { thickness = thickness_; }
       double getThickness() const { return thickness; }

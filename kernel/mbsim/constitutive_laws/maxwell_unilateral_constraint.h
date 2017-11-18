@@ -34,17 +34,17 @@ namespace MBSim {
       /*!
        * \brief constructor
        */
-      MaxwellUnilateralConstraint() { }
+      MaxwellUnilateralConstraint() = default;
 
       /*!
        * \brief destructor
        */
-      virtual ~MaxwellUnilateralConstraint() { }
+      ~MaxwellUnilateralConstraint() override = default;
 
       /* INHERITED INTERFACE */
-      virtual bool isClosed(double g, double gTol) { return g < gTol ? true : false; }
-      virtual bool remainsClosed(double s, double sTol) {return true; }
-      virtual bool isSetValued() const { return false; }
+      bool isClosed(double g, double gTol) override { return g < gTol ? true : false; }
+      bool remainsClosed(double s, double sTol) override {return true; }
+      bool isSetValued() const override { return false; }
   };
 
 }

@@ -28,22 +28,22 @@ namespace MBSim {
   class GeneralizedGearConstraint : public GeneralizedConstraint {
 
     public:
-      GeneralizedGearConstraint(const std::string &name="") : GeneralizedConstraint(name), bd(NULL) { }
+      GeneralizedGearConstraint(const std::string &name="") : GeneralizedConstraint(name) { }
 
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
       void setDependentRigidBody(RigidBody* body_) { bd=body_; }
       void addIndependentRigidBody(RigidBody *body, double ratio);
 
-      void updateGeneralizedCoordinates();
-      void updateGeneralizedJacobians(int j=0);
-      void setUpInverseKinetics();
+      void updateGeneralizedCoordinates() override;
+      void updateGeneralizedJacobians(int j=0) override;
+      void setUpInverseKinetics() override;
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
 
     private:
       std::vector<RigidBody*> bi;
-      RigidBody *bd;
+      RigidBody *bd{nullptr};
       std::vector<double> ratio;
 
       std::string saved_DependentBody;

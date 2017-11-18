@@ -19,8 +19,7 @@ namespace MBSimFlexibleBody {
     
   }
   
-  NeutralNurbsVelocity2s::~NeutralNurbsVelocity2s() {
-  }
+  NeutralNurbsVelocity2s::~NeutralNurbsVelocity2s() = default;
 
   void NeutralNurbsVelocity2s::update(ContourFrame *frame) {
     if(updSurface) computeCurve(true);

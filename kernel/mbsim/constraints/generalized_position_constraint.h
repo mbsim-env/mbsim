@@ -27,10 +27,10 @@ namespace MBSim {
   class GeneralizedPositionConstraint : public GeneralizedDualConstraint {
 
     public:
-      GeneralizedPositionConstraint(const std::string &name="") : GeneralizedDualConstraint(name), f(NULL) { }
-      ~GeneralizedPositionConstraint() { delete f; }
+      GeneralizedPositionConstraint(const std::string &name="") : GeneralizedDualConstraint(name), f(nullptr) { }
+      ~GeneralizedPositionConstraint() override { delete f; }
 
-      void init(Element::InitStage stage, const InitConfigSet &config);
+      void init(Element::InitStage stage, const InitConfigSet &config) override;
 
       void setConstraintFunction(Function<fmatvec::VecV(double)>* f_) {
         f = f_;
@@ -38,12 +38,12 @@ namespace MBSim {
         f->setName("Constraint");
       }
 
-      void setUpInverseKinetics();
+      void setUpInverseKinetics() override;
 
-      void updateGeneralizedCoordinates();
-      void updateGeneralizedJacobians(int j=0);
+      void updateGeneralizedCoordinates() override;
+      void updateGeneralizedJacobians(int j=0) override;
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
 
     private:
       Function<fmatvec::VecV(double)> *f;

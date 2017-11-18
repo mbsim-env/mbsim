@@ -40,16 +40,16 @@ namespace MBSimGUI {
 
     public:
       IdentityFunctionWidget(int m=1) { }
-      QString getType() const { return "IdentityFunction"; }
+      QString getType() const override { return "IdentityFunction"; }
   };
 
   class ConstantFunctionWidget : public FunctionWidget {
 
     public:
       ConstantFunctionWidget(int m=1);
-      QString getType() const { return "ConstantFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "ConstantFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *a0;
   };
@@ -58,9 +58,9 @@ namespace MBSimGUI {
 
     public:
       LinearFunctionWidget(int m=1);
-      QString getType() const { return "LinearFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "LinearFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *a0, *a1;
   };
@@ -69,9 +69,9 @@ namespace MBSimGUI {
 
     public:
       QuadraticFunctionWidget(int m=1);
-      QString getType() const { return "QuadraticFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "QuadraticFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *a0, *a1, *a2;
   };
@@ -80,9 +80,9 @@ namespace MBSimGUI {
 
     public:
       PolynomFunctionWidget(int m=1);
-      QString getType() const { return "PolynomFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "PolynomFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *a;
   };
@@ -91,9 +91,9 @@ namespace MBSimGUI {
 
     public:
       SinusoidalFunctionWidget(int m=1);
-      QString getType() const { return "SinusoidalFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "SinusoidalFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *a, *f, *p, *o;
   };
@@ -102,16 +102,16 @@ namespace MBSimGUI {
 
     public:
       AbsoluteValueFunctionWidget(int m=0) { }
-      QString getType() const { return "AbsoluteValueFunction"; }
+      QString getType() const override { return "AbsoluteValueFunction"; }
   };
 
   class ModuloFunctionWidget : public FunctionWidget {
 
     public:
       ModuloFunctionWidget(int m=0);
-      QString getType() const { return "ModuloFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "ModuloFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *denom;
   };
@@ -120,9 +120,9 @@ namespace MBSimGUI {
 
     public:
       BoundedFunctionWidget(int m=0);
-      QString getType() const { return "BoundedFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "BoundedFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *lowerBound, *upperBound;
   };
@@ -131,17 +131,17 @@ namespace MBSimGUI {
 
     public:
       SignumFunctionWidget(int m=0) { }
-      QString getType() const { return "SignumFunction"; }
+      QString getType() const override { return "SignumFunction"; }
   };
 
   class VectorValuedFunctionWidget : public FunctionWidget {
 
     public:
       VectorValuedFunctionWidget(Element *parent, int m=0, bool fixedSize=false);
-      QString getType() const { return "VectorValuedFunction"; }
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "VectorValuedFunction"; }
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *functions;
   };
@@ -151,12 +151,12 @@ namespace MBSimGUI {
 
     public:
       CompositeFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi);
-      QString getType() const { return "CompositeFunction"; }
-      int getArg1Size() const;
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
-      void updateWidget();
+      QString getType() const override { return "CompositeFunction"; }
+      int getArg1Size() const override;
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      void updateWidget() override;
     protected:
       QString ext;
       ExtWidget *fo, *fi;
@@ -166,10 +166,10 @@ namespace MBSimGUI {
 
     public:
       LimitedFunctionWidget(Element *parent);
-      QString getType() const { return "LimitedFunction"; }
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "LimitedFunction"; }
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *function, *limit;
   };
@@ -178,10 +178,10 @@ namespace MBSimGUI {
 
     public:
       PiecewiseDefinedFunctionWidget(Element *parent, int n=0);
-      QString getType() const { return "PiecewiseDefinedFunction"; }
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "PiecewiseDefinedFunction"; }
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *functions, *shiftAbscissa, *shiftOrdinate;
   };
@@ -191,13 +191,13 @@ namespace MBSimGUI {
 
     public:
       SymbolicFunctionWidget(const QStringList &var, int m, int max, bool fixedSize=true);
-      QString getType() const { return "SymbolicFunction"; }
-      int getArg1Size() const;
-      int getArg2Size() const;
-      void setArg1Size(int i);
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "SymbolicFunction"; }
+      int getArg1Size() const override;
+      int getArg2Size() const override;
+      void setArg1Size(int i) override;
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *f;
       std::vector<ExtWidget*> argname, argdim;
@@ -208,15 +208,15 @@ namespace MBSimGUI {
 
     public:
       TabularFunctionWidget(int n);
-      QString getType() const { return "TabularFunction"; }
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "TabularFunction"; }
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ChoiceWidget2* choice;
     protected slots:
       void choiceChanged();
-      void updateWidget();
+      void updateWidget() override;
   };
 
   class TwoDimensionalTabularFunctionWidget : public FunctionWidget {
@@ -224,14 +224,14 @@ namespace MBSimGUI {
 
     public:
       TwoDimensionalTabularFunctionWidget(int n);
-      QString getType() const { return "TwoDimensionalTabularFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "TwoDimensionalTabularFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ChoiceWidget2* choice;
     protected slots:
       void choiceChanged();
-      void updateWidget();
+      void updateWidget() override;
   };
 
   class PiecewisePolynomFunctionWidget : public FunctionWidget {
@@ -239,16 +239,16 @@ namespace MBSimGUI {
 
     public:
       PiecewisePolynomFunctionWidget(int n);
-      QString getType() const { return "PiecewisePolynomFunction"; }
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "PiecewisePolynomFunction"; }
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ChoiceWidget2* choice;
       ExtWidget *method;
     protected slots:
       void choiceChanged();
-      void updateWidget();
+      void updateWidget() override;
   };
 
   class TwoDimensionalPiecewisePolynomFunctionWidget : public FunctionWidget {
@@ -256,25 +256,25 @@ namespace MBSimGUI {
 
     public:
       TwoDimensionalPiecewisePolynomFunctionWidget(int n);
-      QString getType() const { return "TwoDimensionalPiecewisePolynomFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "TwoDimensionalPiecewisePolynomFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ChoiceWidget2* choice;
       ExtWidget *method;
     protected slots:
       void choiceChanged();
-      void updateWidget();
+      void updateWidget() override;
   };
 
   class FourierFunctionWidget : public FunctionWidget {
 
     public:
       FourierFunctionWidget(int n);
-      QString getType() const { return "FourierFunction"; }
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "FourierFunction"; }
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *f, *a0, *amplitudePhaseAngleForm;
       ChoiceWidget2* choice;
@@ -285,10 +285,10 @@ namespace MBSimGUI {
 
     public:
       BidirectionalFunctionWidget();
-      QString getType() const { return "BidirectionalFunction"; }
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "BidirectionalFunction"; }
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *fn, *fp;
   };
@@ -298,10 +298,10 @@ namespace MBSimGUI {
 
     public:
       ContinuedFunctionWidget(WidgetFactory *factoryf, WidgetFactory *factoryr);
-      QString getType() const { return "ContinuedFunction"; }
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "ContinuedFunction"; }
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *f, *r;
   };
@@ -310,9 +310,9 @@ namespace MBSimGUI {
 
     public:
       LinearSpringDamperForceWidget();
-      QString getType() const { return "LinearSpringDamperForce"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "LinearSpringDamperForce"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *c, *d;
   };
@@ -321,9 +321,9 @@ namespace MBSimGUI {
 
     public:
       NonlinearSpringDamperForceWidget(Element *parent);
-      QString getType() const { return "NonlinearSpringDamperForce"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "NonlinearSpringDamperForce"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *s, *sd;
   };
@@ -332,10 +332,10 @@ namespace MBSimGUI {
 
     public:
       LinearElasticFunctionWidget();
-      QString getType() const { return "LinearElasticFunction"; }
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "LinearElasticFunction"; }
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *K, *D;
   };
@@ -344,9 +344,9 @@ namespace MBSimGUI {
 
     public:
       LinearRegularizedBilateralConstraintWidget();
-      QString getType() const { return "LinearRegularizedBilateralConstraint"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "LinearRegularizedBilateralConstraint"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *c, *d;
   };
@@ -355,9 +355,9 @@ namespace MBSimGUI {
 
     public:
       LinearRegularizedUnilateralConstraintWidget();
-      QString getType() const { return "LinearRegularizedUnilateralConstraint"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "LinearRegularizedUnilateralConstraint"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *c, *d;
   };
@@ -366,9 +366,9 @@ namespace MBSimGUI {
 
     public:
       LinearRegularizedCoulombFrictionWidget();
-      QString getType() const { return "LinearRegularizedCoulombFriction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "LinearRegularizedCoulombFriction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *gd, *mu;
   };
@@ -377,9 +377,9 @@ namespace MBSimGUI {
 
     public:
       LinearRegularizedStribeckFrictionWidget();
-      QString getType() const { return "LinearRegularizedStribeckFriction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "LinearRegularizedStribeckFriction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *gd, *mu;
   };
@@ -388,12 +388,12 @@ namespace MBSimGUI {
 
     public:
       SignalFunctionWidget(Element *element);
-      ~SignalFunctionWidget();
-      QString getType() const { return "SignalFunction"; }
-      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
-      void updateWidget();
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      ~SignalFunctionWidget() override;
+      QString getType() const override { return "SignalFunction"; }
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMCONTROL; }
+      void updateWidget() override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *sRef;
       Element *dummy;
@@ -403,9 +403,9 @@ namespace MBSimGUI {
 
     public:
       PolarContourFunctionWidget();
-      QString getType() const { return "PolarContourFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      QString getType() const override { return "PolarContourFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *radiusFunction;
   };

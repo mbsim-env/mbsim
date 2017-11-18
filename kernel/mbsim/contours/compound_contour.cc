@@ -32,10 +32,10 @@ namespace MBSim {
   }
 
   CompoundContour::~CompoundContour() {
-    for(unsigned int i=0; i<element.size(); i++)
-      delete element[i];
-    for(unsigned int i=0; i<frame.size(); i++)
-      delete frame[i];
+    for(auto & i : element)
+      delete i;
+    for(auto & i : frame)
+      delete i;
   }
 
   void CompoundContour::addContour(RigidContour* c) {
@@ -44,8 +44,8 @@ namespace MBSim {
   }
 
   void CompoundContour::plot() {
-    for (size_t i = 0; i < element.size(); i++)
-      element[i]->plot();
+    for (auto & i : element)
+      i->plot();
   }
 
   void CompoundContour::addFrame(FixedRelativeFrame* f) {
@@ -55,11 +55,11 @@ namespace MBSim {
 
   void CompoundContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == unknownStage) {
-      for (unsigned int i = 0; i < element.size(); i++)
-        element[i]->sethSize(hSize[0]);
+      for (auto & i : element)
+        i->sethSize(hSize[0]);
     }
     else if (stage == plotting) {
-      if (plotFeature[openMBV] and openMBVGroup == 0) {
+      if (plotFeature[openMBV] and openMBVGroup == nullptr) {
         openMBVGroup = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGroup->setName(name + "Group");
         if (parent)
@@ -70,13 +70,13 @@ namespace MBSim {
     }
     RigidContour::init(stage, config);
 
-    for (unsigned int i = 0; i < element.size(); i++)
-      element[i]->init(stage, config);
+    for (auto & i : element)
+      i->init(stage, config);
   }
 
   void CompoundContour::resetUpToDate() {
-    for (unsigned int i = 0; i < frame.size(); i++)
-      frame[i]->resetUpToDate();
+    for (auto & i : frame)
+      i->resetUpToDate();
   }
 
 }

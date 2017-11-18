@@ -19,7 +19,7 @@
 
 #include <config.h>
 
-#include <time.h>
+#include <ctime>
 #include <iostream>
 
 #include "linear_complementarity_problem.h"
@@ -74,7 +74,7 @@ namespace MBSim {
   }
 
   LinearComplementarityProblem::LinearComplementarityProblem(const SymMat & M_, const Vec & q_, const LCPSolvingStrategy & strategy_ /*= Standard*/, const JacobianType & jacobianType_ /*= LCPSpecial*/, const unsigned int & DEBUGLEVEL_ /*= 0*/) :
-      strategy(strategy_), mediumEigenValue(0.0), jacobianType(jacobianType_), lemkeSolver(), newtonSolver(0), newtonFunction(0), jacobianFunction(0), criteriaNewton(0), fixpointSolver(0), fixpointFunction(0), criteriaFixedpoint(0), DEBUGLEVEL(DEBUGLEVEL_) {
+      strategy(strategy_), mediumEigenValue(0.0), jacobianType(jacobianType_), lemkeSolver(), newtonSolver(nullptr), newtonFunction(nullptr), jacobianFunction(nullptr), criteriaNewton(nullptr), fixpointSolver(nullptr), fixpointFunction(nullptr), criteriaFixedpoint(nullptr), DEBUGLEVEL(DEBUGLEVEL_) {
 
     //set properties
 

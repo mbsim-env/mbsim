@@ -32,7 +32,7 @@ namespace MBSimGUI {
 
   PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,f) {
 
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     setLayout(layout);
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,0,0,1,2);
@@ -64,8 +64,8 @@ namespace MBSimGUI {
   }
 
   void PropertyDialog::addStretch(int s) {
-    for ( std::map<QString,QVBoxLayout*>::iterator it=layout.begin() ; it != layout.end(); it++ )
-      (*it).second->addStretch(s);
+    for (auto & it : layout)
+      it.second->addStretch(s);
   }
 
 //  void PropertyDialog::updateWidget() {
@@ -75,11 +75,11 @@ namespace MBSimGUI {
 //  }
 
   void PropertyDialog::addTab(const QString &name, int i) {  
-    QScrollArea *tab = new QScrollArea;
+    auto *tab = new QScrollArea;
     tab->setWidgetResizable(true);
 
     QWidget *box = new QWidget;
-    QVBoxLayout *layout_ = new QVBoxLayout;
+    auto *layout_ = new QVBoxLayout;
     box->setLayout(layout_);
     layout[name] = layout_;
 

@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "frame.h"
+#include <utility>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
@@ -33,12 +34,12 @@ namespace MBSimGUI {
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
-      ELE->insertBefore(id, NULL);
+      ELE->insertBefore(id, nullptr);
     }
     return element;
   }
 
-  InternalFrame::InternalFrame(const QString &name_, const MBXMLUtils::FQN &xmlFrameName_, const QString &plotFeatureType_) : name(name_), xmlFrameName(xmlFrameName_), plotFeatureType(plotFeatureType_) {
+  InternalFrame::InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const QString &plotFeatureType_) : name(name_), xmlFrameName(std::move(xmlFrameName_)), plotFeatureType(plotFeatureType_) {
     config = true;
   }
 

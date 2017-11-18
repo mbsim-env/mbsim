@@ -3,6 +3,7 @@
 
 #include <boost/filesystem.hpp>
 #include <sstream>
+#include <utility>
 
 extern "C" {
   #include <3rdparty/fmiModelFunctions.h>
@@ -17,14 +18,14 @@ namespace MBSimFMI {
   //! stream buffer used by fmatvec::Atom for FMI logging
   class LoggerBuffer : public std::stringbuf {
     public:
-      LoggerBuffer(fmiCallbackLogger logger_, fmiComponent c_, const std::string &instanceName_,
-                   fmiStatus status_, const std::string &category_) :
+      LoggerBuffer(fmiCallbackLogger logger_, fmiComponent c_, std::string instanceName_,
+                   fmiStatus status_, std::string category_) :
           std::stringbuf(std::ios_base::out),
           logger(logger_),
           c(c_),
-          instanceName(instanceName_),
+          instanceName(std::move(instanceName_)),
           status(status_),
-          category(category_) {
+          category(std::move(category_)) {
       }
     protected:
       fmiCallbackLogger logger;
@@ -33,7 +34,7 @@ namespace MBSimFMI {
       fmiStatus status;
       std::string category;
   
-      int sync(); // overwrite the sync function from stringbuf
+      int sync() override; // overwrite the sync function from stringbuf
   };
 
 }

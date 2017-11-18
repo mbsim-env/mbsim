@@ -36,9 +36,9 @@ namespace MBSim {
   class ContactKinematicsEdgeEdge : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) { throw MBSimError("(ContactKinematicsEdgeEdge::updatewb): Not implemented!"); };
+      void assignContours(const std::vector<Contour*> &contour) override;
+      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw MBSimError("(ContactKinematicsEdgeEdge::updatewb): Not implemented!"); };
       /***************************************************/
 
     private:

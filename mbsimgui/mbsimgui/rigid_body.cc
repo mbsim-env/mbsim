@@ -32,7 +32,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  RigidBody::RigidBody() : constrained(false) {
+  RigidBody::RigidBody()  {
     InternalFrame *C = new InternalFrame("C",MBSIM%"enableOpenMBVFrameC","plotFeatureFrameC");
     addFrame(C);
   }
@@ -51,17 +51,17 @@ namespace MBSimGUI {
     DOMElement *ele0 = Element::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
     frames = D(doc)->createElement( MBSIM%"frames" );
-    ele0->insertBefore( frames, NULL );
+    ele0->insertBefore( frames, nullptr );
     contours = D(doc)->createElement( MBSIM%"contours" );
-    ele0->insertBefore( contours, NULL );
+    ele0->insertBefore( contours, nullptr );
 
     DOMElement *ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
-    ele0->insertBefore( ele1, NULL );
+    ele0->insertBefore( ele1, nullptr );
 
     for(size_t i=1; i<frame.size(); i++)
       frame[i]->createXMLElement(frames);
-    for(size_t i=0; i<contour.size(); i++)
-      contour[i]->createXMLElement(contours);
+    for(auto & i : contour)
+      i->createXMLElement(contours);
     return ele0;
   }
 
@@ -75,8 +75,8 @@ namespace MBSimGUI {
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
-    for(size_t i=0; i<contour.size(); i++) {
-      contour[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+    for(auto & i : contour) {
+      i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 
@@ -86,7 +86,7 @@ namespace MBSimGUI {
       if(ELE) {
         DOMDocument *doc=element->getOwnerDocument();
         DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
-        ELE->insertBefore(id, NULL);
+        ELE->insertBefore(id, nullptr);
       }
     }
 
@@ -94,7 +94,7 @@ namespace MBSimGUI {
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID().toStdString());
-      ELE->insertBefore(id, NULL);
+      ELE->insertBefore(id, nullptr);
     }
 
     return element;

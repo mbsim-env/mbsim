@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
   // environment variables
   // Disable COIN VBO per default (see --help)
   static char COIN_VBO[11];
-  if(getenv("COIN_VBO")==NULL) putenv(strcpy(COIN_VBO, "COIN_VBO=0"));
+  if(getenv("COIN_VBO")==nullptr) putenv(strcpy(COIN_VBO, "COIN_VBO=0"));
 
   QStringList arg;
   for(int i=1; i<argc; i++)

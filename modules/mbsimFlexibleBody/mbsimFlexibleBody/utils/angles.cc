@@ -24,9 +24,9 @@ using namespace fmatvec;
 
 namespace MBSimFlexibleBody {
 
-  Angles::Angles() {}
+  Angles::Angles() = default;
 
-  Angles::~Angles() {}
+  Angles::~Angles() = default;
 
   RotMat3 Angles::operator()(const fmatvec::VecV &q, const double &t) {
     RotMat3 AWK;

@@ -30,16 +30,16 @@ namespace MBSim {
   class GeneralizedFriction : public DualRigidBodyLink {
     protected:
       FrictionForceLaw *func;
-      Function<double(double)> *laN;
+      Function<double(double)> *laN{0};
     public:
-      GeneralizedFriction(const std::string &name="") : DualRigidBodyLink(name), func(NULL), laN(0) { }
-      ~GeneralizedFriction();
-      void updateGeneralizedForces();
+      GeneralizedFriction(const std::string &name="") : DualRigidBodyLink(name), func(nullptr) { }
+      ~GeneralizedFriction() override;
+      void updateGeneralizedForces() override;
 
-      bool isActive() const { return true; }
-      bool gActiveChanged() { return false; }
-      virtual bool isSingleValued() const { return true; }
-      void init(InitStage stage, const InitConfigSet &config);
+      bool isActive() const override { return true; }
+      bool gActiveChanged() override { return false; }
+      bool isSingleValued() const override { return true; }
+      void init(InitStage stage, const InitConfigSet &config) override;
 
       void setGeneralizedFrictionForceLaw(FrictionForceLaw *func_);
       void setGeneralizedNormalForceFunction(Function<double(double)> *laN_) { 
@@ -47,7 +47,7 @@ namespace MBSim {
         laN->setParent(this);
       }
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }

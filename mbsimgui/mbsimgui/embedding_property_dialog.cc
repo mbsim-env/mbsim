@@ -40,7 +40,7 @@ namespace MBSimGUI {
   extern QDir mbsDir;
   extern DOMImplementation *impl;
 
-  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, bool name_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_), name(NULL), count(NULL), counterName(NULL) {
+  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, bool name_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_), name(nullptr), count(nullptr), counterName(nullptr) {
     addTab("Embedding");
     if(embedding) {
       if(name_) {
@@ -63,7 +63,7 @@ namespace MBSimGUI {
   DOMElement* EmbeddingPropertyDialog::initializeUsingXML(DOMElement *ele) {
     if(href) {
       if(name) static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
-      DOMElement *parent = static_cast<DOMElement*>(ele->getParentNode());
+      auto *parent = static_cast<DOMElement*>(ele->getParentNode());
       if(E(parent)->getTagName()==PV%"Embed") {
         if(count and E(parent)->hasAttribute("count")) {
           count->setActive(true);
@@ -79,7 +79,7 @@ namespace MBSimGUI {
 //        }
       }
     }
-    return NULL;
+    return nullptr;
   }
 
   DOMElement* EmbeddingPropertyDialog::writeXMLFile(DOMNode *node, DOMNode *ref) {
@@ -90,9 +90,9 @@ namespace MBSimGUI {
         DOMNode *ele=D(doc)->createElement(PV%"Embed");
         embedNode->insertBefore(ele,node);
         embedNode = ele;
-        embedNode->insertBefore(node,NULL);
+        embedNode->insertBefore(node,nullptr);
       }
-      DOMElement *element = static_cast<DOMElement*>(embedNode);
+      auto *element = static_cast<DOMElement*>(embedNode);
       if(name)
         E(element->getLastElementChild())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
       if(count) {
@@ -113,7 +113,7 @@ namespace MBSimGUI {
         embedNode->getParentNode()->removeChild(embedNode);
       }
     }
-    return NULL;
+    return nullptr;
   }
 
   void EmbeddingPropertyDialog::toWidget(EmbedItemData *item) {

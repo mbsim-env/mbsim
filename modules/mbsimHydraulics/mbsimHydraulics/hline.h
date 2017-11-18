@@ -38,14 +38,14 @@ namespace MBSimHydraulics {
   /*! HLine */
   class HLine : public MBSim::Object {
     public:
-      HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(), QIn(1), QOut(1), Jacobian(), frameOfReference(NULL), updQ(true), saved_frameOfReference("") { }
-      virtual void calcSize();
+      HLine(const std::string &name) : MBSim::Object(name), nFrom(nullptr), nTo(nullptr), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(), QIn(1), QOut(1), Jacobian(), frameOfReference(nullptr), updQ(true), saved_frameOfReference("") { }
+      void calcSize() override;
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      void updateh(int j=0) { }
+      void updateh(int j=0) override { }
       void updateJacobians(int j=0) { }
       void updateInverseKineticsJacobians() { }
-      virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return std::shared_ptr<OpenMBV::Group>(); }
       /***************************************************/
 
       virtual void setFrameOfReference(MBSim::Frame *frame);
@@ -66,14 +66,14 @@ namespace MBSimHydraulics {
       const fmatvec::MatV& getJacobian() const { return Jacobian; }
 
       virtual void updateQ() { }
-      void updateM() { M=Mlocal; }
+      void updateM() override { M=Mlocal; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      virtual Element* getDependency() const { return 0; }
+      virtual Element* getDependency() const { return nullptr; }
 
-      void resetUpToDate() { MBSim::Object::resetUpToDate(); updQ = true; }
+      void resetUpToDate() override { MBSim::Object::resetUpToDate(); updQ = true; }
 
     protected:
       HNode * nFrom;
@@ -99,22 +99,22 @@ namespace MBSimHydraulics {
       void addInflowDependencyOnOutflow(RigidHLine* line);
       void addInflowDependencyOnInflow(RigidHLine* line);
 
-      void calcqSize() { qSize=0; }
-      void calcuSize(int j=0) { uSize[j]=getGeneralizedVelocitySize(); }
+      void calcqSize() override { qSize=0; }
+      void calcuSize(int j=0) override { uSize[j]=getGeneralizedVelocitySize(); }
       fmatvec::Mat calculateJacobian(std::vector<RigidHLine*> dep_check);
       
       void updatePressureLossGravity();
       double evalPressureLossGravity() { if(updPLG) updatePressureLossGravity(); return pressureLossGravity; }
 
-      void updateQ();
-      void updateh(int j=0);
-      void updateM();
+      void updateQ() override;
+      void updateh(int j=0) override;
+      void updateM() override;
       
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void plot();
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void plot() override;
       
-      void resetUpToDate() { HLine::resetUpToDate(); updPLG = true; }
+      void resetUpToDate() override { HLine::resetUpToDate(); updPLG = true; }
 
     protected:
       double pressureLossGravity;
@@ -127,7 +127,7 @@ namespace MBSimHydraulics {
   /*! ConstrainedLine */
   class ConstrainedLine : public HLine {
     public:
-      ConstrainedLine(const std::string &name="") : HLine(name), QFunction(NULL) { }
+      ConstrainedLine(const std::string &name="") : HLine(name) { }
       
       void setQFunction(MBSim::Function<double(double)> * QFunction_) {
         QFunction=QFunction_;
@@ -135,41 +135,41 @@ namespace MBSimHydraulics {
         QFunction->setName("Q");
       }
 
-      void calcqSize() { qSize=0; }
-      void calcuSize(int j) { uSize[j]=0; }
+      void calcqSize() override { qSize=0; }
+      void calcuSize(int j) override { uSize[j]=0; }
       
-      void updateQ();
+      void updateQ() override;
       
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       
     private:
-      MBSim::Function<double(double)> * QFunction;
+      MBSim::Function<double(double)> * QFunction{nullptr};
   };
 
   /*! FluidPump */
   class FluidPump : public HLine {
     public:
-      FluidPump(const std::string &name="") : HLine(name), QFunction(NULL) { }
+      FluidPump(const std::string &name="") : HLine(name) { }
       
       void setQFunction(MBSim::Function<double(double)> * QFunction_) { QFunction=QFunction_; }
 
-      void calcqSize() { qSize=0; }
-      void calcuSize(int j) { uSize[j]=0; }
+      void calcqSize() override { qSize=0; }
+      void calcuSize(int j) override { uSize[j]=0; }
       
-      void updateQ();
+      void updateQ() override;
       
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       
     private:
-      MBSim::Function<double(double)> *QFunction;
+      MBSim::Function<double(double)> *QFunction{nullptr};
   };
 
   /*! StatelessOrifice */
   class StatelessOrifice : public HLine {
     public:
-      StatelessOrifice(const std::string &name="") : HLine(name), inflowFunction(NULL), outflowFunction(NULL), openingFunction(NULL), diameter(0), alpha(0.), calcAreaModus(0) {}
+      StatelessOrifice(const std::string &name="") : HLine(name) {}
       
       void setInflowFunction(MBSim::Function<double(double)> *inflowFunction_) { inflowFunction=inflowFunction_; }
       void setOutflowFunction(MBSim::Function<double(double)> *outflowFunction_) { outflowFunction=outflowFunction_; }
@@ -178,19 +178,19 @@ namespace MBSimHydraulics {
       void setAlpha(double alpha_) { alpha=alpha_; }
       void setCalcAreaModus(int calcAreaModus_) { calcAreaModus=calcAreaModus_; }
 
-      void calcqSize() { qSize=0; }
-      void calcuSize(int j) { uSize[j]=0; }
+      void calcqSize() override { qSize=0; }
+      void calcuSize(int j) override { uSize[j]=0; }
       
-      void updateQ();
+      void updateQ() override;
       
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void plot();
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void plot() override;
       
     private:
-      MBSim::Function<double(double)> *inflowFunction, *outflowFunction, *openingFunction;
-      double diameter, alpha;
-      int calcAreaModus;
+      MBSim::Function<double(double)> *inflowFunction{nullptr}, *outflowFunction{nullptr}, *openingFunction{nullptr};
+      double diameter{0}, alpha{0.};
+      int calcAreaModus{0};
 
       double pIn, pOut, dp, sign, opening, area, sqrt_dp;
   };

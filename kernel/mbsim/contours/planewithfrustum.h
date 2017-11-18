@@ -41,10 +41,10 @@ namespace MBSim {
        * \param height of frustum (positive in "free" space, negative in "solid" space)
        * \param radius of the (small) rouding 
        */
-      PlaneWithFrustum(const std::string &name="", Frame *R=0) : RigidContour(name,R), rFrustumOnPlane(0), rFrustumOnTop(0), hFrustum(0), rho(0) {
+      PlaneWithFrustum(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) {
       }
       
-      PlaneWithFrustum(const std::string &name, double rFrustumOnPlane_, double rFrustumOnTop_, double hFrustum_, double rho_, Frame *R=0) : RigidContour(name,R), rFrustumOnPlane(rFrustumOnPlane_), rFrustumOnTop(rFrustumOnTop_), hFrustum(hFrustum_), rho(rho_) {
+      PlaneWithFrustum(const std::string &name, double rFrustumOnPlane_, double rFrustumOnTop_, double hFrustum_, double rho_, Frame *R=nullptr) : RigidContour(name,R), rFrustumOnPlane(rFrustumOnPlane_), rFrustumOnTop(rFrustumOnTop_), hFrustum(hFrustum_), rho(rho_) {
         checkInput();
       }
 
@@ -60,13 +60,13 @@ namespace MBSim {
 
       void enableOpenMBV();
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     private:
-      double rFrustumOnPlane;
-      double rFrustumOnTop;
-      double hFrustum;
-      double rho;
+      double rFrustumOnPlane{0};
+      double rFrustumOnTop{0};
+      double hFrustum{0};
+      double rho{0};
 
       void checkInput() {
         assert(rFrustumOnTop<rFrustumOnPlane); //TODO

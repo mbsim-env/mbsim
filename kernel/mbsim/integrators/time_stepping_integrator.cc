@@ -21,7 +21,7 @@
 #include <mbsim/dynamic_system_solver.h>
 #include "time_stepping_integrator.h"
 
-#include <time.h>
+#include <ctime>
 #include <boost/iostreams/tee.hpp>
 #include <boost/iostreams/stream.hpp>
 
@@ -42,7 +42,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, TimeSteppingIntegrator)
 
-  TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), tPlot(0.), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
+  TimeSteppingIntegrator::TimeSteppingIntegrator()  {}
 
   void TimeSteppingIntegrator::preIntegrate(DynamicSystemSolver& system) {
     // initialisation

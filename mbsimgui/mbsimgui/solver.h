@@ -35,21 +35,21 @@ namespace MBSimGUI {
 
   class Solver : public EmbedItemData {
     protected:
-      Project *project;
+      Project *project{nullptr};
     public:
-      Solver() : project(NULL) { }
+      Solver()  = default;
       void setProject(Project* project_) { project = project_; }
       Project* getProject() { return project; }
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual QString getName() const { return getType(); }
-      virtual QString getType() const { return "Solver"; }
+      QString getName() const override { return getType(); }
+      QString getType() const override { return "Solver"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const = 0;
       virtual SolverPropertyDialog* createPropertyDialog() { return new SolverPropertyDialog(this); }
-      virtual QMenu* createContextMenu() { return NULL; }
-      virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this,true,false); }
-      std::vector<EmbedItemData*> getParents();
+      QMenu* createContextMenu() override { return nullptr; }
+      EmbeddingPropertyDialog* createEmbeddingPropertyDialog() override { return new EmbeddingPropertyDialog(this,true,false); }
+      std::vector<EmbedItemData*> getParents() override;
   };
 
 }

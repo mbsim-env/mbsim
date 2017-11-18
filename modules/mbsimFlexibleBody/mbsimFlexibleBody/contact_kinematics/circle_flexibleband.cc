@@ -33,10 +33,10 @@ namespace MBSimFlexibleBody {
 
   class ContactKinematicsCircleNode : public ContactKinematics {
     public:
-      ContactKinematicsCircleNode(double node_) : node(node_), circle(0), extrusion(0) { }
-      virtual void assignContours(const vector<Contour*> &contour);
-      virtual void updateg(double &g, vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSimError("ContactKinematicsCircleNode::updatewb not implemented!"); }
+      ContactKinematicsCircleNode(double node_) : node(node_), circle(nullptr), extrusion(nullptr) { }
+      void assignContours(const vector<Contour*> &contour) override;
+      void updateg(double &g, vector<ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) override { throw MBSimError("ContactKinematicsCircleNode::updatewb not implemented!"); }
     private:
       double node;
       int icircle, inode;
@@ -89,10 +89,10 @@ namespace MBSimFlexibleBody {
 
   class ContactKinematicsCircleNodeInterpolation : public ContactKinematics {
     public:
-      ContactKinematicsCircleNodeInterpolation(const Vec &nodes_) : nodes(nodes_), circle(0), extrusion(0) { }
-      virtual void assignContours(const vector<Contour*> &contour);
-      virtual void updateg(double &g, vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSimError("ContactKinematicsCircleNodeInterpolation::updatewb not implemented!"); }
+      ContactKinematicsCircleNodeInterpolation(const Vec &nodes_) : nodes(nodes_), circle(nullptr), extrusion(nullptr) { }
+      void assignContours(const vector<Contour*> &contour) override;
+      void updateg(double &g, vector<ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) override { throw MBSimError("ContactKinematicsCircleNodeInterpolation::updatewb not implemented!"); }
     private:
       Vec nodes;
       int icircle, inode;
@@ -116,7 +116,7 @@ namespace MBSimFlexibleBody {
   }
 
   void ContactKinematicsCircleNodeInterpolation::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
-    FuncPairPlanarContourCircle *func = new FuncPairPlanarContourCircle(circle, extrusion); // root function for searching contact parameters
+    auto *func = new FuncPairPlanarContourCircle(circle, extrusion); // root function for searching contact parameters
     PlanarContactSearch search(func);
 
     search.setNodes(nodes); // defining search areas for contacts
@@ -149,7 +149,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  ContactKinematicsCircleFlexibleBand::ContactKinematicsCircleFlexibleBand() : ContactKinematics(), icircle(0), icontour(0), possibleContactsPerNode(1), circle(0), extrusion(0) { }
+  ContactKinematicsCircleFlexibleBand::ContactKinematicsCircleFlexibleBand() : ContactKinematics() { }
 
   void ContactKinematicsCircleFlexibleBand::assignContours(const vector<Contour*>& contour) {
     if (dynamic_cast<Circle*>(contour[0])) {
@@ -174,7 +174,7 @@ namespace MBSimFlexibleBody {
     cout << possibleContactsPerNode << endl;
     cout << staticNodes.size() << endl;
     for (int i = 0; i < staticNodes.size(); i++) {
-      ContactKinematicsCircleNode *ck = new ContactKinematicsCircleNode(staticNodes(i));
+      auto *ck = new ContactKinematicsCircleNode(staticNodes(i));
       ck->assignContours(contour);
       contactKinematics.push_back(ck);
     }

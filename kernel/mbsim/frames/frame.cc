@@ -47,7 +47,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, acceleration)
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, angularAcceleration)
 
-  Frame::Frame(const string &name) : Element(name), AWP(EYE), updGA(true), updPos(true), updVel(true), updAcc(true) {
+  Frame::Frame(const string &name) : Element(name), AWP(EYE) {
 
     hSize[0] = 0;
     hSize[1] = 0;
@@ -119,34 +119,34 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[position]) {
-          plotColumns.push_back("position (x)");
-          plotColumns.push_back("position (y)");
-          plotColumns.push_back("position (z)");
+          plotColumns.emplace_back("position (x)");
+          plotColumns.emplace_back("position (y)");
+          plotColumns.emplace_back("position (z)");
         }
         if(plotFeature[angle]) {
-          plotColumns.push_back("angle (alpha)");
-          plotColumns.push_back("angle (beta)");
-          plotColumns.push_back("angle (gamma)");
+          plotColumns.emplace_back("angle (alpha)");
+          plotColumns.emplace_back("angle (beta)");
+          plotColumns.emplace_back("angle (gamma)");
         }
         if(plotFeature[velocity]) {
-          plotColumns.push_back("velocity (x)");
-          plotColumns.push_back("velocity (y)");
-          plotColumns.push_back("velocity (z)");
+          plotColumns.emplace_back("velocity (x)");
+          plotColumns.emplace_back("velocity (y)");
+          plotColumns.emplace_back("velocity (z)");
         }
         if(plotFeature[angularVelocity]) {
-          plotColumns.push_back("angular velocity (x)");
-          plotColumns.push_back("angular velocity (y)");
-          plotColumns.push_back("angular velocity (z)");
+          plotColumns.emplace_back("angular velocity (x)");
+          plotColumns.emplace_back("angular velocity (y)");
+          plotColumns.emplace_back("angular velocity (z)");
         }
         if(plotFeature[acceleration]) {
-          plotColumns.push_back("acceleration (x)");
-          plotColumns.push_back("acceleration (y)");
-          plotColumns.push_back("acceleration (z)");
+          plotColumns.emplace_back("acceleration (x)");
+          plotColumns.emplace_back("acceleration (y)");
+          plotColumns.emplace_back("acceleration (z)");
         }
         if(plotFeature[angularAcceleration]) {
-          plotColumns.push_back("angular acceleration (x)");
-          plotColumns.push_back("angular acceleration (y)");
-          plotColumns.push_back("angular acceleration (z)");
+          plotColumns.emplace_back("angular acceleration (x)");
+          plotColumns.emplace_back("angular acceleration (y)");
+          plotColumns.emplace_back("angular acceleration (z)");
         }
       }
       if(plotFeature[openMBV] and openMBVFrame) {

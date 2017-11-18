@@ -47,7 +47,7 @@ namespace MBSimIntegrator {
       /**
        * \brief destructor
        */
-      virtual ~Integrator() {};
+      ~Integrator() override = default;
       
       /* GETTER / SETTER */
       void setStartTime(double tStart_) { tStart=tStart_; }
@@ -59,12 +59,12 @@ namespace MBSimIntegrator {
       double getStartTime() const { return tStart; }
       double getEndTime() const { return tEnd; }
       double getPlotStepSize() const { return dtPlot; }
-      const fmatvec::Vec& getInitialState() const { return z0; }
+      const fmatvec::Vec& getInitialState() const override { return z0; }
       int getWarnLevel() const { return warnLevel; }
       bool getOutput() const { return output; }
       /***************************************************/
       
-      void execute(MBSim::DynamicSystemSolver& system) { integrate(system); }
+      void execute(MBSim::DynamicSystemSolver& system) override { integrate(system); }
 
       /* INTERFACE FOR DERIVED CLASSES */
       /*! 
@@ -89,7 +89,7 @@ namespace MBSimIntegrator {
        * \brief initialize integrator
        * \param XML description
        */
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       static Integrator* readXMLFile(const std::string &filename);
 
@@ -101,7 +101,7 @@ namespace MBSimIntegrator {
       /**
        * \brief start, end, plot time
        */
-      double tStart, tEnd, dtPlot;
+      double tStart{0.}, tEnd{1.}, dtPlot{1e-4};
 
       /**
        * \brief initial state
@@ -111,12 +111,12 @@ namespace MBSimIntegrator {
       /**
        * \brief warn level
        */
-      int warnLevel;
+      int warnLevel{0};
 
       /**
        * \brief flag for ouput printing
        */
-      bool output;
+      bool output{true};
 
       /**
        * \brief name of integrator

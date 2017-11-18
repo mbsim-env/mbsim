@@ -49,12 +49,12 @@ namespace MBSimIntegrator {
       /** Relative Toleranz */
       fmatvec::Vec rTol;
       /** step size for the first step */
-      double dt0;
+      double dt0{0};
 
     public:
 
       DOP853Integrator();
-      ~DOP853Integrator() {}
+      ~DOP853Integrator() override = default;
 
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
       void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
@@ -63,7 +63,7 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
 
 
-      void integrate(MBSim::DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system) override;
 
   };
 

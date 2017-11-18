@@ -34,14 +34,14 @@ namespace MBSim {
   template <typename Ret, typename Arg>
   class DistanceFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     public:
-      virtual ~DistanceFunction() { }
+      ~DistanceFunction() override = default;
 
       /* INTERFACE FOR DERIVED CLASSES */
       /*!
        * \param contour parameter
        * \return root function evaluation at contour parameter
        */
-      virtual Ret operator()(const Arg &x) = 0;
+      Ret operator()(const Arg &x) override = 0;
 
       /*!
        * \param contour parameter

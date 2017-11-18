@@ -294,7 +294,7 @@ namespace MBSim {
       fmatvec::SqrMat inverse; //Inverse of Ansatz-functions in case of only update later (different points, same knot-Vecs and same degree)
       fmatvec::Vec u;  // the knot vector
       fmatvec::Vec U;  // the knot vector
-      int deg;  // the degree of the NURBS curve
+      int deg{0};  // the degree of the NURBS curve
 
       void resize(int n, int Deg);
 

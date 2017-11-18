@@ -41,7 +41,7 @@ namespace MBSim {
       /*! 
        * \brief standard constructor
        */
-     PlanarContactSearch() : func(0), jac(0), s0(0.), searchAll(false) { }
+     PlanarContactSearch()  = default;
 
       /*!
        * \brief constructor 
@@ -49,7 +49,7 @@ namespace MBSim {
        * \default numerical Jacobian evaluation
        * \default only local search
        */
-      PlanarContactSearch(DistanceFunction<double(double)> *func_) : func(func_), jac(0), s0(0.), searchAll(false) { }
+      PlanarContactSearch(DistanceFunction<double(double)> *func_) : func(func_), jac(nullptr) { }
 
       /*! 
        * \brief constructor 
@@ -57,7 +57,7 @@ namespace MBSim {
        * \param Jacobian evaluation
        * \default only local search
        */
-      PlanarContactSearch(DistanceFunction<double(double)> *func_, Function<double(double)> *jac_) : func(func_), jac(jac_), s0(0.), searchAll(false) { }
+      PlanarContactSearch(DistanceFunction<double(double)> *func_, Function<double(double)> *jac_) : func(func_), jac(jac_) { }
 
       /* GETTER / SETTER */
       void setFunction(DistanceFunction<double(double)> *func_) { func = func_; }
@@ -92,17 +92,17 @@ namespace MBSim {
       /** 
        * \brief distance-function holding all information for contact-search 
        */
-      DistanceFunction<double(double)> *func;
+      DistanceFunction<double(double)> *func{nullptr};
 
       /** 
        * \brief Jacobian of root function part of distance function
        */
-      Function<double(double)> *jac;
+      Function<double(double)> *jac{nullptr};
 
       /**
        * \brief initial value for Newton method 
        */
-      double s0;
+      double s0{0.};
 
       /** 
        * nodes defining search-areas for Regula-Falsi 
@@ -112,7 +112,7 @@ namespace MBSim {
       /**
        * \brief all area searching by Regular-Falsi or known initial value for Newton-Method? 
        */
-      bool searchAll;
+      bool searchAll{false};
   };
 
 }

@@ -26,68 +26,68 @@ namespace MBSimGUI {
 
   class Contour : public Element {
     public:
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
-      ElementPropertyDialog* createPropertyDialog() {return new ContourPropertyDialog(this);}
-      QMenu* createContextMenu() { return new ContourContextMenu(this); }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      ElementPropertyDialog* createPropertyDialog() override {return new ContourPropertyDialog(this);}
+      QMenu* createContextMenu() override { return new ContourContextMenu(this); }
   };
 
   class RigidContour : public Contour {
     public:
-      ElementPropertyDialog* createPropertyDialog() {return new RigidContourPropertyDialog(this);}
+      ElementPropertyDialog* createPropertyDialog() override {return new RigidContourPropertyDialog(this);}
   };
 
   class Point : public RigidContour {
     public:
-    QString getType() const { return "Point"; }
-    ElementPropertyDialog* createPropertyDialog() {return new PointPropertyDialog(this);}
+    QString getType() const override { return "Point"; }
+    ElementPropertyDialog* createPropertyDialog() override {return new PointPropertyDialog(this);}
   };
 
   class Line : public RigidContour {
     public:
-      QString getType() const { return "Line"; }
-      ElementPropertyDialog* createPropertyDialog() {return new LinePropertyDialog(this);}
+      QString getType() const override { return "Line"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new LinePropertyDialog(this);}
   };
 
   class Plane : public RigidContour {
     public:
-      QString getType() const { return "Plane"; }
-      ElementPropertyDialog* createPropertyDialog() {return new PlanePropertyDialog(this);}
+      QString getType() const override { return "Plane"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new PlanePropertyDialog(this);}
   };
 
   class Sphere : public RigidContour {
     public:
-      QString getType() const { return "Sphere"; }
-      ElementPropertyDialog* createPropertyDialog() {return new SpherePropertyDialog(this);}
+      QString getType() const override { return "Sphere"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new SpherePropertyDialog(this);}
   };
 
   class Circle : public RigidContour {
     public:
-      QString getType() const { return "Circle"; }
-      ElementPropertyDialog* createPropertyDialog() {return new CirclePropertyDialog(this);}
+      QString getType() const override { return "Circle"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new CirclePropertyDialog(this);}
   };
 
   class Cuboid : public RigidContour {
     public:
-      QString getType() const { return "Cuboid"; }
-      ElementPropertyDialog* createPropertyDialog() {return new CuboidPropertyDialog(this);}
+      QString getType() const override { return "Cuboid"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new CuboidPropertyDialog(this);}
   };
 
   class LineSegment : public RigidContour {
     public:
-      QString getType() const { return "LineSegment"; }
-      ElementPropertyDialog* createPropertyDialog() {return new LineSegmentPropertyDialog(this);}
+      QString getType() const override { return "LineSegment"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new LineSegmentPropertyDialog(this);}
   };
 
   class PlanarContour : public RigidContour {
     public:
-      QString getType() const { return "PlanarContour"; }
-      ElementPropertyDialog* createPropertyDialog() {return new PlanarContourPropertyDialog(this);}
+      QString getType() const override { return "PlanarContour"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new PlanarContourPropertyDialog(this);}
   };
 
   class SpatialContour : public RigidContour {
     public:
-      QString getType() const { return "SpatialContour"; }
-      ElementPropertyDialog* createPropertyDialog() {return new SpatialContourPropertyDialog(this);}
+      QString getType() const override { return "SpatialContour"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new SpatialContourPropertyDialog(this);}
   };
 
 }

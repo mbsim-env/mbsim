@@ -22,15 +22,15 @@ namespace MBSimElectronics {
       Object* precessor;
       std::vector<Branch*> branch;
     public:
-      Mesh(const std::string &name) : MBSim::Object(name), precessor(0) {}
-      void calcqSize() { qSize = 1;}
-      void calcuSize(int j) { uSize[j] = (j==0) ? 1 : 0;}
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      Mesh(const std::string &name) : MBSim::Object(name), precessor(nullptr) {}
+      void calcqSize() override { qSize = 1;}
+      void calcuSize(int j) override { uSize[j] = (j==0) ? 1 : 0;}
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setPrecessor(Object* obj) {precessor = obj;}
       void addBranch(Branch* branch_) {branch.push_back(branch_);}
       int getNumberOfBranches() {return branch.size();}
       Branch* getBranch(int i) {return branch[i];}
-      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return std::shared_ptr<OpenMBV::Group>(); }
   };
 
   class Branch : public MBSim::Object {
@@ -45,8 +45,8 @@ namespace MBSimElectronics {
       Object* precessor;
       bool updQ, updI;
     public:
-      Branch(const std::string &name) : Object(name), Q(1), I(1), flag(0), precessor(0), updQ(true), updI(true) { }
-      void calcuSize(int j) { uSize[j] = (j==0) ? 0 : 1;}
+      Branch(const std::string &name) : Object(name), Q(1), I(1), flag(0), precessor(nullptr), updQ(true), updI(true) { }
+      void calcuSize(int j) override { uSize[j] = (j==0) ? 0 : 1;}
       void updateCharge();
       void updateCurrent();
       const fmatvec::Mat& getJacobian(int j, bool check=true) const { return J[j];}
@@ -62,7 +62,7 @@ namespace MBSimElectronics {
       void clearMeshList() {mesh.clear();}
       int getNumberOfConnectedMeshes() const {return mesh.size();}
       Mesh* getMesh(int i) {return mesh[i];}
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setStartTerminal(Terminal* p) {startTerminal = p; p->addConnectedBranch(this);}
       void setEndTerminal(Terminal* p) {endTerminal = p; p->addConnectedBranch(this);}
       Terminal* getStartTerminal() {return startTerminal;}
@@ -74,8 +74,8 @@ namespace MBSimElectronics {
       void setFlag(int f) { flag = f; }
       int getFlag() const { return flag; }
       void setPrecessor(Object* obj) {precessor = obj;}
-      void resetUpToDate() { Object::resetUpToDate(); updQ = true; updI = true; }
-      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
+      void resetUpToDate() override { Object::resetUpToDate(); updQ = true; updI = true; }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return std::shared_ptr<OpenMBV::Group>(); }
   };
 
   class ElectronicLink : public MBSim::Link, public ElectronicComponent {
@@ -83,40 +83,40 @@ namespace MBSimElectronics {
       fmatvec::Vec gdn, gdd;
     public:
       ElectronicLink(const std::string &name) : Link(name) {}
-      virtual Element* getParent() {return parent;}
-      virtual const Element* getParent() const {return parent;}
-      virtual void setParent(Element* parent_) {parent = parent_;}
+      Element* getParent() override {return parent;}
+      const Element* getParent() const override {return parent;}
+      void setParent(Element* parent_) override {parent = parent_;}
 
-      void calcSize() { ng = 1; ngd = 1; nla = 1; }
+      void calcSize() override { ng = 1; ngd = 1; nla = 1; }
 
-      void calcgSize(int j);
-      void calcgdSize(int j);
-      void calclaSize(int j);
-      void updateg();
-      void updategd();
-      void updateW(int j=0);
-      void updateh(int j=0);
-      void plot();
-      virtual std::string getName() const {return Link::getName();}
-      virtual void setName(std::string name) {Link::setName(name);}
-      bool isActive() const {return true;}
-      bool gActiveChanged() {return true;}
-      virtual bool isSingleValued() const { return true; }
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void updatehRef(const fmatvec::Vec &hParent, int j=0);
-      void updaterRef(const fmatvec::Vec &rParent, int j=0);
+      void calcgSize(int j) override;
+      void calcgdSize(int j) override;
+      void calclaSize(int j) override;
+      void updateg() override;
+      void updategd() override;
+      void updateW(int j=0) override;
+      void updateh(int j=0) override;
+      void plot() override;
+      std::string getName() const override {return Link::getName();}
+      void setName(std::string name) override {Link::setName(name);}
+      bool isActive() const override {return true;}
+      bool gActiveChanged() override {return true;}
+      bool isSingleValued() const override { return true; }
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void updatehRef(const fmatvec::Vec &hParent, int j=0) override;
+      void updaterRef(const fmatvec::Vec &rParent, int j=0) override;
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updater() { THROW_MBSIMERROR("(ElectronicLink::updater): Not implemented!"); }
       /*****************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void updateWRef(const fmatvec::Mat& ref, int j); 
-      virtual void updateVRef(const fmatvec::Mat& ref, int j);
+      void updateWRef(const fmatvec::Mat& ref, int j) override; 
+      void updateVRef(const fmatvec::Mat& ref, int j) override;
       virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) {}
       virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) {}
       virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) {}
-      void resetUpToDate() { Link::resetUpToDate(); updQ = true; updI = true; }
+      void resetUpToDate() override { Link::resetUpToDate(); updQ = true; updI = true; }
       /*****************************************************/
   };
 
@@ -126,7 +126,7 @@ namespace MBSimElectronics {
     public:
       Resistor(const std::string &name);
       void setResistance(double R_) { R = R_;}
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
   };
 
   class Capacitor : public ElectronicLink {
@@ -135,7 +135,7 @@ namespace MBSimElectronics {
     public:
       Capacitor(const std::string &name);
       void setCapacity(double C_) { C = C_;}
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
   };
 
   class VoltageSource : public ElectronicLink {
@@ -143,9 +143,9 @@ namespace MBSimElectronics {
       MBSim::Function<fmatvec::VecV(double)> *voltageSignal;
     public:
       VoltageSource(const std::string &name);
-      ~VoltageSource() { delete voltageSignal; }
+      ~VoltageSource() override { delete voltageSignal; }
       void setVoltageSignal(MBSim::Function<fmatvec::VecV(double)> *func) {voltageSignal = func;}
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
   };
 
   class Diode : public ElectronicLink {
@@ -154,11 +154,11 @@ namespace MBSimElectronics {
    public:
       Diode(const std::string &name);
       void setSetValued(bool flag) {sv = flag;}
-      void updateGeneralizedForces();
-      bool isSetValued() const {return sv;}
-      virtual bool isSingleValued() const {return not sv;}
-      void checkImpactsForTermination();
-      void solveImpactsGaussSeidel();
+      void updateGeneralizedForces() override;
+      bool isSetValued() const override {return sv;}
+      bool isSingleValued() const override {return not sv;}
+      void checkImpactsForTermination() override;
+      void solveImpactsGaussSeidel() override;
   };
 
   class Switch : public ElectronicLink {
@@ -167,13 +167,13 @@ namespace MBSimElectronics {
       bool sv;
     public:
       Switch(const std::string &name);
-      ~Switch() { delete voltageSignal; }
+      ~Switch() override { delete voltageSignal; }
       void setSetValued(bool flag) {sv = flag;}
-      bool isSetValued() const {return sv;}
-      virtual bool isSingleValued() const {return not sv;}
-      void updateGeneralizedForces();
-      void checkImpactsForTermination();
-      void solveImpactsGaussSeidel();
+      bool isSetValued() const override {return sv;}
+      bool isSingleValued() const override {return not sv;}
+      void updateGeneralizedForces() override;
+      void checkImpactsForTermination() override;
+      void solveImpactsGaussSeidel() override;
       void setVoltageSignal(MBSim::Function<fmatvec::VecV(double)> *func) {voltageSignal = func;}
   };
 
@@ -181,16 +181,16 @@ namespace MBSimElectronics {
     protected:
     public:
       ElectronicObject(const std::string &name) : Object(name) {}
-      void calcSize() { nq = 0; nu = 1; }
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      virtual Element* getParent() {return parent;}
-      virtual const Element* getParent() const {return parent;}
-      virtual void setParent(Element* parent_) {parent = parent_;}
-      void plot();
-      virtual std::string getName() const {return Object::getName();}
-      virtual void setName(std::string name) {Object::setName(name);}
-      void resetUpToDate() { Object::resetUpToDate(); updQ = true; updI = true; }
-      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
+      void calcSize() override { nq = 0; nu = 1; }
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      Element* getParent() override {return parent;}
+      const Element* getParent() const override {return parent;}
+      void setParent(Element* parent_) override {parent = parent_;}
+      void plot() override;
+      std::string getName() const override {return Object::getName();}
+      void setName(std::string name) override {Object::setName(name);}
+      void resetUpToDate() override { Object::resetUpToDate(); updQ = true; updI = true; }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return std::shared_ptr<OpenMBV::Group>(); }
   };
 
   class Inductor : public ElectronicObject {
@@ -198,7 +198,7 @@ namespace MBSimElectronics {
       double L;
     public:
       Inductor(const std::string &name);
-      void updateM();
+      void updateM() override;
       void setInductance(double L_) { L = L_;}
   };
 

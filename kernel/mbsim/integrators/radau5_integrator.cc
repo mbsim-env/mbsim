@@ -24,7 +24,7 @@
 #include <mbsim/dynamic_system_solver.h>
 #include "fortran/fortran_wrapper.h"
 #include "radau5_integrator.h"
-#include <time.h>
+#include <ctime>
 #include <fstream>
 
 #ifndef NO_ISO_14882
@@ -40,7 +40,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RADAU5Integrator)
 
-  RADAU5Integrator::RADAU5Integrator() : dt0(0), maxSteps(0), dtMax(0) {
+  RADAU5Integrator::RADAU5Integrator()  {
   }
 
   double RADAU5Integrator::tPlot = 0;
@@ -164,8 +164,8 @@ namespace MBSimIntegrator {
 
     RADAU5(&zSize,fzdot,&t,z(),&tEnd,&dt0,
 	rTol(),aTol(),&iTol,
-	0,&iJac,&mlJac,&muJac,
-	0,&iMas,&mlMas,&muMas,
+	nullptr,&iJac,&mlJac,&muJac,
+	nullptr,&iMas,&mlMas,&muMas,
 	plot,&out,
 	work(),&lWork,iWork(),&liWork,&rPar,&iPar,&idid);
 

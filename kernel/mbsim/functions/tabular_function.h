@@ -31,11 +31,11 @@ namespace MBSim {
   class TabularFunction<Ret(Arg)> : public Function<Ret(Arg)> {
 
     public:
-      TabularFunction() : xIndexOld(0) { }
+      TabularFunction()  { }
       TabularFunction(const fmatvec::VecV &x_, const fmatvec::MatV &y_) : x(x_), y(y_), xIndexOld(0) { }
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(y.cols(),1); }
-      Ret operator()(const Arg& xVal_) {
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(y.cols(),1); }
+      Ret operator()(const Arg& xVal_) override {
         double xVal = ToDouble<Arg>::cast(xVal_);
         int i = xIndexOld;
         if (xVal <= x(0)) {
@@ -59,7 +59,7 @@ namespace MBSim {
         xIndexOld = i;
         return FromVecV<Ret>::cast(trans(y.row(i) + (xVal - x(i)) * (y.row(i + 1) - y.row(i)) / (x(i + 1) - x(i))));
       }
-      void initializeUsingXML(xercesc::DOMElement * element) {
+      void initializeUsingXML(xercesc::DOMElement * element) override {
         xercesc::DOMElement *e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
         if (e) {
           setx(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
@@ -77,7 +77,7 @@ namespace MBSim {
         x = xy.col(0);
         y = xy(fmatvec::RangeV(0, xy.rows() - 1), fmatvec::RangeV(1, xy.cols() - 1));
       }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg)>::init(stage, config);
         if(stage==Element::preInit) {
           for(int i=1; i<x.size(); i++)
@@ -91,7 +91,7 @@ namespace MBSim {
       fmatvec::VecV x;
       fmatvec::MatV y;
     private:
-      int xIndexOld;
+      int xIndexOld{0};
   };
 }
 

@@ -39,19 +39,19 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~PlanarCoulombFriction() { }
+      ~PlanarCoulombFriction() override = default;
 
       /* INHERITED INTERFACE */
-      virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
-      virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
-      virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
-      virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
-      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd);
-      virtual int getFrictionDirections() { return 1; }
-      virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
-      virtual double getFrictionCoefficient(double gd) { return mu; }
-      virtual bool isSetValued() const { return true; }
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) override;
+      fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) override;
+      fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) override;
+      bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd) override;
+      fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd) override;
+      int getFrictionDirections() override { return 1; }
+      bool isSticking(const fmatvec::Vec& s, double sTol) override { return fabs(s(0)) <= sTol; }
+      double getFrictionCoefficient(double gd) override { return mu; }
+      bool isSetValued() const override { return true; }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }

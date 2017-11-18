@@ -38,7 +38,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of line
        */
-      Line(const std::string& name="", Frame *R=0) : RigidContour(name,R) {}
+      Line(const std::string& name="", Frame *R=nullptr) : RigidContour(name,R) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
@@ -52,7 +52,7 @@ namespace MBSim {
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
       
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
   };      
 }
 

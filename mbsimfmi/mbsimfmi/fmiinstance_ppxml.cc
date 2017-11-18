@@ -73,15 +73,15 @@ namespace MBSimFMI {
     convertXPathParamSetToVariable(param, xmlParam, eval);
     // build a set of all Parameter's in var
     set<string> useParam;
-    for(vector<std::shared_ptr<Variable> >::iterator it=var.begin(); it!=var.end(); ++it)
-      if((*it)->getType()==Parameter)
-        useParam.insert((*it)->getName());
+    for(auto & it : var)
+      if(it->getType()==Parameter)
+        useParam.insert(it->getName());
     // remove all variables in xmlParam which are not in var (these were not added as a parameter by the --param
     // option during creating of the FMU
     vector<std::shared_ptr<Variable> > xmlParam2;
-    for(vector<std::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it)
-      if(useParam.find((*it)->getName())!=useParam.end())
-        xmlParam2.push_back(*it);
+    for(auto & it : xmlParam)
+      if(useParam.find(it->getName())!=useParam.end())
+        xmlParam2.push_back(it);
     xmlParam=xmlParam2;
     // add model parameters to varSim
     msg(Debug)<<"Create model parameter variables."<<endl;
@@ -127,13 +127,13 @@ namespace {
     Preprocess::ParamSet &p=param->insert(make_pair(
       "/{"+MBSIMXML.getNamespaceURI()+"}MBSimProject[1]/{"+MBSIM.getNamespaceURI()+"}DynamicSystemSolver[1]",
       Preprocess::ParamSet())).first->second;
-    for(vector<std::shared_ptr<MBSimFMI::Variable> >::const_iterator it=var.begin()+startIndex; it!=var.end(); ++it) {
+    for(auto it=var.begin()+startIndex; it!=var.end(); ++it) {
       // skip all but parameters
       if((*it)->getType()!=MBSimFMI::Parameter)
         continue;
       // handle string parameters (can only be scalars)
       if((*it)->getDatatypeChar()=='s')
-        p.push_back(make_pair((*it)->getName(), eval->create((*it)->getValue(string()))));
+        p.emplace_back((*it)->getName(), eval->create((*it)->getValue(string())));
       // handle none string parameters (can be scalar, vector or matrix)
       else {
         // get name and type (scalar, vector or matrix)
@@ -174,7 +174,7 @@ namespace {
           default:
             throw runtime_error("Internal error: Unknwon type.");
         }
-        p.push_back(make_pair(name, value));
+        p.emplace_back(name, value);
       }
     }
   }

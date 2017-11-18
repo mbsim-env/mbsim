@@ -44,7 +44,7 @@ namespace MBSim {
        */
       MultiDimensionalFixpointSolver(Function<fmatvec::Vec(fmatvec::Vec)> *function_);
 
-      virtual ~MultiDimensionalFixpointSolver(){};
+      virtual ~MultiDimensionalFixpointSolver()= default;;
 
       /* GETTER / SETTER */
       /*!
@@ -80,24 +80,24 @@ namespace MBSim {
       /**
        * \brief fixpoint function
        */
-      Function<fmatvec::Vec(fmatvec::Vec)> *function;
+      Function<fmatvec::Vec(fmatvec::Vec)> *function{0};
 
       /*
        * \brief criteria function
        *
        * This function defines the criteria when to stop the fixpoint iteration
        */
-      CriteriaFunction *criteria;
+      CriteriaFunction *criteria{0};
 
       /**
        *  \brief number of iterations
        */
-      int iter;
+      int iter{0};
 
       /**
        * \brief maximal iterations
        */
-      double itermax;
+      double itermax{1e3};
 
       /**
        *  \brief vector of norms
@@ -107,7 +107,7 @@ namespace MBSim {
       /**
        *  \brief information variable about success of iteration
        */
-      int info;
+      int info{1};
   };
 
 } /* namespace MBSim */

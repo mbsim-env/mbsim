@@ -32,7 +32,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RelativeKinematicsObserver)
 
-  RelativeKinematicsObserver::RelativeKinematicsObserver(const std::string &name) : Observer(name), frame(NULL), refFrame(NULL) {
+  RelativeKinematicsObserver::RelativeKinematicsObserver(const std::string &name) : Observer(name), frame(nullptr), refFrame(nullptr) {
   }
 
   void RelativeKinematicsObserver::init(InitStage stage, const InitConfigSet &config) {

@@ -34,21 +34,21 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      UnilateralConstraint() { }
+      UnilateralConstraint() = default;
 
       /**
        * \brief destructor
        */
-      virtual ~UnilateralConstraint() { }
+      ~UnilateralConstraint() override = default;
 
       /* INHERITED INTERFACE */
-      virtual bool isClosed(double g, double gTol) { return g<=gTol; }
-      virtual bool remainsClosed(double gd, double gdTol) { return gd<=gdTol; }
-      virtual double project(double la, double gdn, double r, double laMin=0);
-      virtual fmatvec::Vec diff(double la, double gdn, double r, double laMin=0);
-      virtual double solve(double G, double gdn);
-      virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd, double laMin=0);
-      virtual bool isSetValued() const { return true; }
+      bool isClosed(double g, double gTol) override { return g<=gTol; }
+      bool remainsClosed(double gd, double gdTol) override { return gd<=gdTol; }
+      double project(double la, double gdn, double r, double laMin=0) override;
+      fmatvec::Vec diff(double la, double gdn, double r, double laMin=0) override;
+      double solve(double G, double gdn) override;
+      bool isFulfilled(double la,  double gdn, double tolla, double tolgd, double laMin=0) override;
+      bool isSetValued() const override { return true; }
       /***************************************************/
   };
 

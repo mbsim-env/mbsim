@@ -40,14 +40,14 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Plate(const std::string &name="", Frame *R=0);
+      Plate(const std::string &name="", Frame *R=nullptr);
 
-      Plate(const std::string &name, double yL, double zL, Frame *R=0);
+      Plate(const std::string &name, double yL, double zL, Frame *R=nullptr);
 
-      Plate(const std::string &name, double yL, double zL, double t, Frame *R=0);
+      Plate(const std::string &name, double yL, double zL, double t, Frame *R=nullptr);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       /**********************************/
 
       /* GETTER / SETTER */
@@ -119,7 +119,8 @@ namespace MBSim {
       }
 
     protected:
-      double yLength, zLength;
+      double yLength{1};
+      double zLength{1};
       //vertices under reference frame
       /*!
        * \brief vertex for y = limy/2, z = limz/2

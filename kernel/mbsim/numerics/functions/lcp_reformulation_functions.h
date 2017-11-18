@@ -32,7 +32,7 @@ namespace MBSim {
        * \brief standard constructor
        */
       LCPReformulationFunction(const double &r_ = 10) :
-          r(r_), DEBUGLEVEL(0) {
+          r(r_) {
       }
 
       /**
@@ -43,18 +43,18 @@ namespace MBSim {
       /*
        * \brief destructor
        */
-      virtual ~LCPReformulationFunction();
+      ~LCPReformulationFunction() override;
 
       /* INHERITED INTERFACE */
       /**
        * \param q: solution vector with
        *           first entries: w, last entries: z
        */
-      virtual fmatvec::Vec operator()(const fmatvec::Vec &q) = 0;
+      fmatvec::Vec operator()(const fmatvec::Vec &q) override = 0;
       /***************************************************/
 
       /**GETTER / SETTER*/
-      fmatvec::Vec getq(void) {
+      fmatvec::Vec getq() {
         return q;
       }
       void setSystem(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_) {
@@ -63,10 +63,10 @@ namespace MBSim {
         assert(M.rows() == q.rows());
         NumberOfContacts = q.rows();
       }
-      fmatvec::SqrMat getM(void) {
+      fmatvec::SqrMat getM() {
         return M;
       }
-      double getr(void) {
+      double getr() {
         return r;
       }
       void setr(const double & r_) {
@@ -98,7 +98,7 @@ namespace MBSim {
       /**
        * \brief parameter to print information
        */
-      unsigned int DEBUGLEVEL;
+      unsigned int DEBUGLEVEL{0};
   };
 
   class LCPNewtonReformulationFunction : public LCPReformulationFunction {
@@ -122,10 +122,10 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~LCPNewtonReformulationFunction();
+      ~LCPNewtonReformulationFunction() override;
 
       /* INHERITED INTERFACE */
-      fmatvec::Vec operator()(const fmatvec::Vec &q);
+      fmatvec::Vec operator()(const fmatvec::Vec &q) override;
       /***************************************************/
 
     protected:
@@ -153,10 +153,10 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~LCPFixpointReformulationFunction();
+      ~LCPFixpointReformulationFunction() override;
 
       /* INHERITED INTERFACE */
-      fmatvec::Vec operator()(const fmatvec::Vec &q);
+      fmatvec::Vec operator()(const fmatvec::Vec &q) override;
       /***************************************************/
   };
 
@@ -170,11 +170,11 @@ namespace MBSim {
       /*
        * \brief destructor
        */
-      virtual ~LinearComplementarityJacobianFunction();
+      ~LinearComplementarityJacobianFunction() override;
 
-      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x);
+      fmatvec::SqrMat operator ()(const fmatvec::Vec & x) override;
 
-      virtual void setFunction(Function<fmatvec::Vec(fmatvec::Vec)> *function_);
+      void setFunction(Function<fmatvec::Vec(fmatvec::Vec)> *function_) override;
 
       void updateJacobian(const fmatvec::Vec & x);
 

@@ -36,11 +36,11 @@ namespace MBSim {
        */
       MechanicalLink(const std::string &name);
 
-      void resetUpToDate();
+      void resetUpToDate() override;
 
       virtual void updatePositions() { }
       virtual void updateVelocities() { }
-      virtual void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
       virtual void updateForce() { }
       virtual void updateMoment() { }
       virtual void updateForceDirections() { }

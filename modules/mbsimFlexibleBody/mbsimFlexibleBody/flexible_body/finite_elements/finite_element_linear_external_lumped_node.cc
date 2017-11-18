@@ -37,8 +37,7 @@ namespace MBSimFlexibleBody {
 //    cout << "From lumpedNode phi =" << phi<< endl;
   }
 
-  FiniteElementLinearExternalLumpedNode::~FiniteElementLinearExternalLumpedNode(){
-  }
+  FiniteElementLinearExternalLumpedNode::~FiniteElementLinearExternalLumpedNode()= default;
 
   const SymMat& FiniteElementLinearExternalLumpedNode::getM() const {
     throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::getM): Not implemented");

@@ -31,8 +31,8 @@ class InitConfigEnum {
     bool operator==(const InitConfigEnum& a) const { return this==&a; }
     bool operator!=(const InitConfigEnum& a) const { return this!=&a; }
 
-    InitConfigEnum() {}
-    ~InitConfigEnum() {}
+    InitConfigEnum() = default;
+    ~InitConfigEnum() = default;
     // must be defined due to SWIG
     // static void* operator new(std::size_t);
     // static void operator delete(void*, std::size_t);

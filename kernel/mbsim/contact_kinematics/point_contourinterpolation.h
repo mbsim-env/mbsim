@@ -40,12 +40,12 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsPointContourInterpolation();
+      ~ContactKinematicsPointContourInterpolation() override;
 
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) { throw MBSimError("(ContactKinematicsPointContourInterpolation::updatewb): Not implemented!"); };
+      void assignContours(const std::vector<Contour*> &contour) override;
+      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw MBSimError("(ContactKinematicsPointContourInterpolation::updatewb): Not implemented!"); };
       /***************************************************/
 
     private:

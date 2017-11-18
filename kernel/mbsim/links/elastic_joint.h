@@ -40,20 +40,20 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~ElasticJoint();
+      ~ElasticJoint() override;
 
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
-      virtual void updatexd();
-      virtual void calcxSize();
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void updatexd() override;
+      void calcxSize() override;
+      void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual bool isSingleValued() const { return true; }
-      virtual bool isActive() const { return true; }
-      virtual bool gActiveChanged() { return false; }
+      bool isSingleValued() const override { return true; }
+      bool isActive() const override { return true; }
+      bool gActiveChanged() override { return false; }
       /***************************************************/
 
       void setGeneralizedForceFunction(Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func_) {
@@ -72,7 +72,7 @@ namespace MBSim {
        */
       void setMomentDirection(const fmatvec::Mat3xV& md);
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;

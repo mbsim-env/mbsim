@@ -39,14 +39,14 @@ namespace MBSim {
        * \brief constructor
        * \param name of line segment
        */
-      LineSegment(const std::string& name, double l, double t, Frame *R=0);
+      LineSegment(const std::string& name, double l, double t, Frame *R=nullptr);
 
-      LineSegment(const std::string& name, double l, Frame *R=0);
+      LineSegment(const std::string& name, double l, Frame *R=nullptr);
 
-      LineSegment(const std::string& name="", Frame *R=0);
+      LineSegment(const std::string& name="", Frame *R=nullptr);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
@@ -58,7 +58,7 @@ namespace MBSim {
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       /* GETTER / SETTER */
       void setLength(double length_) {length = length_; }
@@ -69,7 +69,7 @@ namespace MBSim {
       /**
        * \brief length of line segment
        */
-      double length;
+      double length{1};
 
   };      
 }

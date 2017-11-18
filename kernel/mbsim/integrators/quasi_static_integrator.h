@@ -43,12 +43,11 @@ namespace MBSimIntegrator {
       /*!
        * \brief destructor
        */
-      virtual ~hgFun() {
-      }
+      ~hgFun() override = default;
       ;
 
       /* INHERITED INTERFACE */
-      fmatvec::Vec operator()(const fmatvec::Vec& qla);
+      fmatvec::Vec operator()(const fmatvec::Vec& qla) override;
 
       void setT(double t) {
         this->t = t;
@@ -80,12 +79,11 @@ namespace MBSimIntegrator {
       /*!
        * \brief destructor
        */
-      virtual ~jacFun() {
-      }
+      ~jacFun() override = default;
       ;
 
       /* INHERITED INTERFACE */
-      fmatvec::SqrMat operator()(const fmatvec::Vec& q);
+      fmatvec::SqrMat operator()(const fmatvec::Vec& q) override;
       /*******************************************************/
 
     private:
@@ -110,16 +108,15 @@ namespace MBSimIntegrator {
       /**
        * \brief destructor
        */
-      virtual ~QuasiStaticIntegrator() {
-      }
+      ~QuasiStaticIntegrator() override = default;
 
-      void preIntegrate(MBSim::DynamicSystemSolver& system);
-      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
-      void postIntegrate(MBSim::DynamicSystemSolver& system);
+      void preIntegrate(MBSim::DynamicSystemSolver& system) override;
+      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop) override;
+      void postIntegrate(MBSim::DynamicSystemSolver& system) override;
 
       /* INHERITED INTERFACE OF INTEGRATOR */
-      virtual void integrate(MBSim::DynamicSystemSolver& system);
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void integrate(MBSim::DynamicSystemSolver& system) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -147,52 +144,52 @@ namespace MBSimIntegrator {
       /**
        * \brief step size
        */
-      double dt;
+      double dt{1e-3};
 
       /**
        * \brief time and plot time
        */
-      double t, tPlot;
+      double t{0.}, tPlot{0.};
 
       /*!
        * \brief tolerance for the newton iteration for distances
        */
-      double gTol;
+      double gTol{1e-10};
 
       /*!
        * \brief tolerance for newton iteration for forces
        */
-      double hTol;
+      double hTol{1e-10};
 
       /**
        * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
        */
-      int iter, step, integrationSteps, maxIter, sumIter;
+      int iter{0}, step{0}, integrationSteps{0}, maxIter{0}, sumIter{0};
 
       /*!
        * \brief value of how many points in the past should be used to extrapolate for new value
        */
-      int maxExtraPolate;
+      int maxExtraPolate{0};
 
       /*!
        * \brief extrapolate after such and that integration steps
        */
-      int extraPolateAfter;
+      int extraPolateAfter{2};
 
       /*!
        * \brief value of how often the Jacobian should be updated every step
        */
-      int updateJacobianEvery;
+      int updateJacobianEvery{1};
 
       /**
        * \brief computing time counter
        */
-      double s0, time;
+      double s0{0.}, time{0.};
 
       /**
        * \brief plot step difference
        */
-      int stepPlot;
+      int stepPlot{0};
 
       /**
        * \brief state, position, velocity, order coordinate of dynamical system

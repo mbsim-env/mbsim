@@ -37,7 +37,7 @@ namespace MBSim {
       void setEta(double eta) { zeta(0) = eta; }
       void setXi(double xi) { zeta(1) = xi; }
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       /*!

@@ -35,7 +35,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      LinearRegularizedUnilateralConstraint() : c(0), d(0) {}
+      LinearRegularizedUnilateralConstraint()  {}
 
       /**
        * \brief constructor
@@ -45,7 +45,7 @@ namespace MBSim {
       LinearRegularizedUnilateralConstraint(double c_, double d_) : c(c_), d(d_) {}
 
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const double& g, const double& gd) { 
+      double operator()(const double& g, const double& gd) override { 
         if(g>0)
           return 0;
         else if(gd<0) 
@@ -53,7 +53,7 @@ namespace MBSim {
         else
           return -c*g;
       }
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -64,7 +64,7 @@ namespace MBSim {
       /**
        * \brief stiffness, damping
        */
-      double c, d;
+      double c{0}, d{0};
   };
 
 }

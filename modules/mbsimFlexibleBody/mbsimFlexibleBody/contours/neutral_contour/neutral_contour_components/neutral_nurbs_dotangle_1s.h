@@ -15,11 +15,11 @@ namespace MBSimFlexibleBody {
   class NeutralNurbsDotangle1s : public MBSimFlexibleBody::NeutralNurbs1s {
     public:
       NeutralNurbsDotangle1s(MBSim::Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
-      virtual ~NeutralNurbsDotangle1s();
-      virtual void update(MBSim::ContourFrame *frame);
-      virtual void computeCurve(bool update);
+      ~NeutralNurbsDotangle1s() override;
+      void update(MBSim::ContourFrame *frame) override;
+      void computeCurve(bool update) override;
     protected:
-      virtual void buildNodelist();
+      void buildNodelist() override;
   };
 
 } /* namespace MBSimFlexibleBody */

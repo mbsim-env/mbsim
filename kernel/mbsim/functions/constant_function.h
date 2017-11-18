@@ -33,13 +33,12 @@ namespace MBSim {
       double a0;
     public:
       ConstantFunction(double a0_=0) : a0(a0_) {}
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
-      Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(a0); }
-      typename B::DRetDArg parDer(const Arg &x) { return FromDouble<Ret>::cast(0); }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }
-      Ret parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
+      Ret operator()(const Arg &x) override { return FromDouble<Ret>::cast(a0); }
+      typename B::DRetDArg parDer(const Arg &x) override { return FromDouble<Ret>::cast(0); }
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { return FromDouble<Ret>::cast(0); }
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
         a0=MBXMLUtils::E(e)->getText<double>();
       }

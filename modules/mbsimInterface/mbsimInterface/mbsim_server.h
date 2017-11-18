@@ -47,8 +47,8 @@ namespace MBSimInterface {
       MBSimTcpServer(InterfaceIntegrator *ii);
       void setPort(unsigned short port_) {port=port_; }
       void setOutputPrecision(unsigned int p) {outputPrecision=p; }
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
-      void start();
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void start() override;
     private:
       unsigned int port;
       unsigned int outputPrecision;
@@ -58,8 +58,8 @@ namespace MBSimInterface {
     public:
       MBSimUdpServer(InterfaceIntegrator *ii);
       void setPort(unsigned short port_) {port=port_; }
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
-      void start();
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void start() override;
     private:
       unsigned int port;
   };

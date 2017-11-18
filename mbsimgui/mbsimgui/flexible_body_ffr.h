@@ -28,16 +28,16 @@ namespace MBSimGUI {
     friend class FlexibleBodyFFRPropertyDialog;
     public:
       FlexibleBodyFFR();
-      QString getType() const { return "FlexibleBodyFFR"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
-      xercesc::DOMElement* getXMLFrames() { return frames; }
-      xercesc::DOMElement* getXMLContours() { return contours; }
-      void removeXMLElements();
-      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      ElementPropertyDialog* createPropertyDialog() {return new FlexibleBodyFFRPropertyDialog(this);}
-      QMenu* createFrameContextMenu() {return new NodeFramesContextMenu(this);}
+      QString getType() const override { return "FlexibleBodyFFR"; }
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
+      xercesc::DOMElement* getXMLFrames() override { return frames; }
+      xercesc::DOMElement* getXMLContours() override { return contours; }
+      void removeXMLElements() override;
+      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      ElementPropertyDialog* createPropertyDialog() override {return new FlexibleBodyFFRPropertyDialog(this);}
+      QMenu* createFrameContextMenu() override {return new NodeFramesContextMenu(this);}
     protected:
       xercesc::DOMElement *frames, *contours;
   };

@@ -38,25 +38,25 @@ namespace MBSim {
        * \brief constructor
        * \param name of point
        */
-      Point(const std::string& name="", Frame *R=0) : RigidContour(name,R) {}
+      Point(const std::string& name="", Frame *R=nullptr) : RigidContour(name,R) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
-      virtual fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta) override;
 
       /* INHERITED INTERFACE OF CONTOUR */
-      fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPS) { return fmatvec::Vec2(fmatvec::INIT,0.); }
+      fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPS) override { return fmatvec::Vec2(fmatvec::INIT,0.); }
       /**********************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),0.001)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
@@ -64,7 +64,7 @@ namespace MBSim {
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
       
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }

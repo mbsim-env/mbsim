@@ -46,7 +46,7 @@ namespace MBSim {
   void GeneralizedElasticConnection::initializeUsingXML(DOMElement *element) {
     DualRigidBodyLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
-    Function<VecV(VecV,VecV)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
+    auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
   }
 

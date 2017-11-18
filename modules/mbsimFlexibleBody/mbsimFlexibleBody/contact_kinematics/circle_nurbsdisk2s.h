@@ -44,12 +44,12 @@ namespace MBSimFlexibleBody {
       /*! 
        * \brief destructor
        */
-      virtual ~ContactKinematicsCircleNurbsDisk2s();
+      ~ContactKinematicsCircleNurbsDisk2s() override;
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
-      virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
-      virtual void updateg(double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame);
+      void assignContours(const std::vector<MBSim::Contour*> &contour) override;
+      void updateg(double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame) override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -60,18 +60,18 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief contour index
        */
-      int icircle, inurbsdisk;
+      int icircle{0}, inurbsdisk{0};
 
       /** 
        * \brief contour classes 
        */
-      NurbsDisk2s *nurbsdisk; 
-      MBSim::Circle *circle;
+      NurbsDisk2s *nurbsdisk{0}; 
+      MBSim::Circle *circle{0};
 
       /**
        * \brief local contact search?
        */
-      bool LOCALSEARCH;
+      bool LOCALSEARCH{false};
   };
 
 }

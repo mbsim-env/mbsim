@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  GeneralizedKinematicExcitation::GeneralizedKinematicExcitation(const string &name) : DualRigidBodyLink(name), fl(NULL), il(NULL) {
+  GeneralizedKinematicExcitation::GeneralizedKinematicExcitation(const string &name) : DualRigidBodyLink(name), fl(nullptr), il(nullptr) {
     body.resize(1);
     ratio.resize(1);
     ratio[0] = 1;

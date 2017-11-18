@@ -23,6 +23,7 @@
 #include "dialogs.h"
 #include "custom_widgets.h"
 #include <mbxmlutils/eval.h>
+#include <utility>
 #include <vector>
 #include <QtGui>
 
@@ -43,21 +44,21 @@ namespace MBSimGUI {
 
     { // numbers
       QTextCharFormat format;
-      QString regex="\\b[0-9]+\\.?[0-9]*[eE]?[0-9]*\\b";
+      QString regex=R"(\b[0-9]+\.?[0-9]*[eE]?[0-9]*\b)";
       if(dark)
         format.setForeground(QColor(255, 160, 160));
       else
         format.setForeground(QColor(255, 0, 255));
-      rule.push_back(pair<QRegExp, QTextCharFormat>(QRegExp(regex), format));
+      rule.emplace_back(QRegExp(regex), format);
     }
     { // numbers
       QTextCharFormat format;
-      QString regex="\\b[0-9]*\\.?[0-9]+[eE]?[0-9]*\\b";
+      QString regex=R"(\b[0-9]*\.?[0-9]+[eE]?[0-9]*\b)";
       if(dark)
         format.setForeground(QColor(255, 160, 160));
       else
         format.setForeground(QColor(255, 0, 255));
-      rule.push_back(pair<QRegExp, QTextCharFormat>(QRegExp(regex), format));
+      rule.emplace_back(QRegExp(regex), format);
     }
     { // keywords
       QTextCharFormat format;
@@ -67,7 +68,7 @@ namespace MBSimGUI {
       else
         format.setForeground(QColor(165, 42, 42));
       format.setFontWeight(QFont::Bold);
-      rule.push_back(pair<QRegExp, QTextCharFormat>(QRegExp(regex), format));
+      rule.emplace_back(QRegExp(regex), format);
     }
     { // functions
       QTextCharFormat format;
@@ -77,25 +78,25 @@ namespace MBSimGUI {
       else
         format.setForeground(QColor(165, 42, 42));
       format.setFontWeight(QFont::Bold);
-      rule.push_back(pair<QRegExp, QTextCharFormat>(QRegExp(regex), format));
+      rule.emplace_back(QRegExp(regex), format);
     }
     { // operators
       QTextCharFormat format;
-      QString regex="[-+*/^=&~'();,[\\]]|\\.[-+*/^]|==|[<>]=|~=|<>|\\.{3}";
+      QString regex=R"([-+*/^=&~'();,[\]]|\.[-+*/^]|==|[<>]=|~=|<>|\.{3})";
       if(dark)
         format.setForeground(QColor(64, 255, 255));
       else
         format.setForeground(QColor(0, 139, 139));
-      rule.push_back(pair<QRegExp, QTextCharFormat>(QRegExp(regex), format));
+      rule.emplace_back(QRegExp(regex), format);
     }
     { // strings
       QTextCharFormat format;
-      QString regex="\"[^\"]*\"";
+      QString regex=R"("[^"]*")";
       if(dark)
         format.setForeground(QColor(255, 160, 160));
       else
         format.setForeground(QColor(255, 0, 255));
-      rule.push_back(pair<QRegExp, QTextCharFormat>(QRegExp(regex), format));
+      rule.emplace_back(QRegExp(regex), format);
     }
     { // strings
       QTextCharFormat format;
@@ -104,7 +105,7 @@ namespace MBSimGUI {
         format.setForeground(QColor(255, 160, 160));
       else
         format.setForeground(QColor(255, 0, 255));
-      rule.push_back(pair<QRegExp, QTextCharFormat>(QRegExp(regex), format));
+      rule.emplace_back(QRegExp(regex), format);
     }
     { // comments
       QTextCharFormat format;
@@ -113,18 +114,18 @@ namespace MBSimGUI {
         format.setForeground(QColor(128, 160, 255));
       else
         format.setForeground(QColor(0, 0, 255));
-      rule.push_back(pair<QRegExp, QTextCharFormat>(QRegExp(regex), format));
+      rule.emplace_back(QRegExp(regex), format);
     }
   }
 
   void OctaveHighlighter::highlightBlock(const QString &text) {
-    for(size_t i=0; i<rule.size(); i++) {
+    for(auto & i : rule) {
       int index=0;
       do {
-        index=rule[i].first.indexIn(text, index);
+        index=i.first.indexIn(text, index);
         if(index>=0) {
-          setFormat(index, rule[i].first.matchedLength(), rule[i].second);
-          index+=rule[i].first.matchedLength();
+          setFormat(index, i.first.matchedLength(), i.second);
+          index+=i.first.matchedLength();
         }
       }
       while(index>=0);
@@ -142,7 +143,7 @@ namespace MBSimGUI {
   BoolWidget::BoolWidget(const QString &b) { 
     value = new QCheckBox;
     setValue(b);
-    QHBoxLayout* layout = new QHBoxLayout;
+    auto* layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     layout->addWidget(value);
@@ -163,10 +164,10 @@ namespace MBSimGUI {
   DOMElement* BoolWidget::initializeUsingXML(DOMElement *element) {
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
-      return 0;
+      return nullptr;
     string str = X()%text->getData();
     if(str!="0" and str!="1" and str!="false" and str!="true")
-      return 0;
+      return nullptr;
     setValue(QString::fromStdString(str));
     return element;
   }
@@ -175,11 +176,11 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
     parent->insertBefore(text, ref);
-    return 0;
+    return nullptr;
   }
 
   ExpressionWidget::ExpressionWidget(const QString &str) {
-    QVBoxLayout *layout=new QVBoxLayout;
+    auto *layout=new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     value=new QPlainTextEdit;
@@ -200,7 +201,7 @@ namespace MBSimGUI {
   DOMElement* ExpressionWidget::initializeUsingXML(DOMElement *element) {
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
-      return 0;
+      return nullptr;
     setValue(QString::fromStdString(X()%text->getData()));
     return element;
   }
@@ -209,12 +210,12 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
     parent->insertBefore(text, ref);
-    return 0;
+    return nullptr;
   }
 
   ScalarWidget::ScalarWidget(const QString &d) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     box = new QLineEdit(this);
@@ -238,10 +239,10 @@ namespace MBSimGUI {
   DOMElement* ScalarWidget::initializeUsingXML(DOMElement *element) {
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
-      return 0;
+      return nullptr;
     string str = X()%text->getData();
     if(str.find("\n")!=string::npos)
-      return 0;
+      return nullptr;
     setValue(QString::fromStdString(str));
     return element;
   }
@@ -250,7 +251,7 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
     parent->insertBefore(text, ref);
-    return 0;
+    return nullptr;
   }
 
   vector<vector<QString> > BasicVecWidget::getEvalMat() const {
@@ -264,7 +265,7 @@ namespace MBSimGUI {
   DOMElement* BasicVecWidget::initializeUsingXML(DOMElement *parent) {
    DOMElement *element=parent->getFirstElementChild();
     if(!element || E(element)->getTagName() != PV%"xmlVector")
-      return 0;
+      return nullptr;
     DOMElement *ei=element->getFirstElementChild();
     vector<QString> value;
     while(ei && E(ei)->getTagName()==PV%"ele") {
@@ -281,16 +282,16 @@ namespace MBSimGUI {
     for(int i=0; i<rows(); i++) {
       DOMElement *elei = D(doc)->createElement(PV%"ele");
       DOMText *text = doc->createTextNode(X()%getVec()[i].toStdString());
-      elei->insertBefore(text, NULL);
-      ele->insertBefore(elei, NULL);
+      elei->insertBefore(text, nullptr);
+      ele->insertBefore(elei, nullptr);
     }
-    parent->insertBefore(ele, NULL);
-    return NULL;
+    parent->insertBefore(ele, nullptr);
+    return nullptr;
   }
 
   VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
 
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
     resize_(size);
@@ -298,7 +299,7 @@ namespace MBSimGUI {
 
   VecWidget::VecWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_) {
 
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
     setVec(x);
@@ -343,8 +344,8 @@ namespace MBSimGUI {
   }
 
   void VecWidget::setReadOnly(bool flag) {
-    for(unsigned int i=0; i<box.size(); i++) {
-      box[i]->setReadOnly(flag);
+    for(auto & i : box) {
+      i->setReadOnly(flag);
     }
   }
 
@@ -358,7 +359,7 @@ namespace MBSimGUI {
 
   VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_, int singleStep, bool transpose, bool table) : minSize(minSize_), maxSize(maxSize_) {
 
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     sizeCombo = new CustomSpinBox;
     sizeCombo->setRange(minSize,maxSize);
@@ -404,7 +405,7 @@ namespace MBSimGUI {
 
   VecTableWidget::VecTableWidget(int size) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     table = new QTableWidget(this);
     table->setMinimumSize(100,200);
     layout->setMargin(0);
@@ -415,7 +416,7 @@ namespace MBSimGUI {
 
   VecTableWidget::VecTableWidget(const vector<QString> &x) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     table = new QTableWidget(this);
     table->setMinimumSize(100,200);
     layout->setMargin(0);
@@ -473,21 +474,21 @@ namespace MBSimGUI {
 
   vector<vector<QString> > BasicMatWidget::getEvalMat() const {
     vector<vector<QString> > A = getMat();
-    for(size_t i=0; i<A.size(); i++)
-      for(size_t j=0; j<A[i].size(); j++)
-        A[i][j] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(A[i][j].toStdString())));
+    for(auto & i : A)
+      for(size_t j=0; j<i.size(); j++)
+        i[j] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(i[j].toStdString())));
     return A;
   }
 
   DOMElement* BasicMatWidget::initializeUsingXML(DOMElement *parent) {
    DOMElement *element=parent->getFirstElementChild();
     if(!element || E(element)->getTagName() != PV%"xmlMatrix")
-      return 0;
+      return nullptr;
     DOMElement *ei=element->getFirstElementChild();
     vector<vector<QString> > value;
     while(ei && E(ei)->getTagName()==PV%"row") {
       DOMElement *ej=ei->getFirstElementChild();
-      value.push_back(vector<QString>());
+      value.emplace_back();
       while(ej && E(ej)->getTagName()==PV%"ele") {
         value[value.size()-1].push_back(QString::fromStdString(X()%E(ej)->getFirstTextChild()->getData()));
         ej=ej->getNextElementSibling();
@@ -506,18 +507,18 @@ namespace MBSimGUI {
       for(int j=0; j<cols(); j++) {
         DOMElement *elej = D(doc)->createElement(PV%"ele");
         DOMText *text = doc->createTextNode(X()%getMat()[i][j].toStdString());
-        elej->insertBefore(text, NULL);
-        elei->insertBefore(elej, NULL);
+        elej->insertBefore(text, nullptr);
+        elei->insertBefore(elej, nullptr);
       }
-      ele->insertBefore(elei, NULL);
+      ele->insertBefore(elei, nullptr);
     }
-    parent->insertBefore(ele, NULL);
-    return NULL;
+    parent->insertBefore(ele, nullptr);
+    return nullptr;
   }
 
   MatWidget::MatWidget(int rows, int cols) {
 
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
     resize_(rows,cols);
@@ -525,7 +526,7 @@ namespace MBSimGUI {
 
   MatWidget::MatWidget(const vector<vector<QString> > &A) {
 
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
     setMat(A);
@@ -581,9 +582,9 @@ namespace MBSimGUI {
   }
 
   void MatWidget::setReadOnly(bool flag) {
-    for(unsigned int i=0; i<box.size(); i++) {
-      for(unsigned int j=0; j<box[i].size(); j++) {
-        box[i][j]->setReadOnly(flag);
+    for(auto & i : box) {
+      for(unsigned int j=0; j<i.size(); j++) {
+        i[j]->setReadOnly(flag);
       }
     }
   }
@@ -597,7 +598,7 @@ namespace MBSimGUI {
 
   MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_, int table) : minCols(minCols_), maxCols(maxCols_) {
 
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     rowsLabel = new QLabel(QString::number(rows));
     layout->addWidget(new QLabel("Size:"),0,0);
@@ -647,7 +648,7 @@ namespace MBSimGUI {
 
   MatRowsVarWidget::MatRowsVarWidget(int rows, int cols, int minRows_, int maxRows_, int table) : minRows(minRows_), maxRows(maxRows_) {
 
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     colsLabel = new QLabel(QString::number(cols));
     layout->addWidget(new QLabel("Size:"),0,0);
@@ -697,10 +698,10 @@ namespace MBSimGUI {
 
   MatRowsColsVarWidget::MatRowsColsVarWidget(int rows, int cols, int minRows_, int maxRows_, int minCols_, int maxCols_, int table) : minRows(minRows_), maxRows(maxRows_), minCols(minCols_), maxCols(maxCols_) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     QWidget *box = new QWidget;
-    QHBoxLayout *hbox = new QHBoxLayout;
+    auto *hbox = new QHBoxLayout;
     box->setLayout(hbox);
     hbox->setMargin(0);
     layout->addWidget(box);
@@ -762,10 +763,10 @@ namespace MBSimGUI {
 
   SqrMatSizeVarWidget::SqrMatSizeVarWidget(int size, int minSize_, int maxSize_) : minSize(minSize_), maxSize(maxSize_) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     QWidget *box = new QWidget;
-    QHBoxLayout *hbox = new QHBoxLayout;
+    auto *hbox = new QHBoxLayout;
     box->setLayout(hbox);
     hbox->setMargin(0);
     layout->addWidget(box);
@@ -809,7 +810,7 @@ namespace MBSimGUI {
 
   SymMatWidget::SymMatWidget(int rows) {
 
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
     resize_(rows);
@@ -817,7 +818,7 @@ namespace MBSimGUI {
 
   SymMatWidget::SymMatWidget(const vector<vector<QString> > &A) {
 
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
     setMat(A);
@@ -884,9 +885,9 @@ namespace MBSimGUI {
   }
 
   void SymMatWidget::setReadOnly(bool flag) {
-    for(unsigned int i=0; i<box.size(); i++) {
-      for(unsigned int j=0; j<box[i].size(); j++) {
-        box[i][j]->setReadOnly(flag);
+    for(auto & i : box) {
+      for(unsigned int j=0; j<i.size(); j++) {
+        i[j]->setReadOnly(flag);
       }
     }
   }
@@ -905,10 +906,10 @@ namespace MBSimGUI {
 
   SymMatSizeVarWidget::SymMatSizeVarWidget(int size, int minSize_, int maxSize_) : minSize(minSize_), maxSize(maxSize_) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     QWidget *box = new QWidget;
-    QHBoxLayout *hbox = new QHBoxLayout;
+    auto *hbox = new QHBoxLayout;
     box->setLayout(hbox);
     hbox->setMargin(0);
     layout->addWidget(box);
@@ -952,7 +953,7 @@ namespace MBSimGUI {
 
   MatTableWidget::MatTableWidget(int rows, int cols) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     table = new QTableWidget(this);
     table->setMinimumSize(200,200);
     layout->setMargin(0);
@@ -963,7 +964,7 @@ namespace MBSimGUI {
 
   MatTableWidget::MatTableWidget(const vector<vector<QString> > &A) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     table = new QTableWidget(this);
     table->setMinimumSize(200,200);
     layout->setMargin(0);
@@ -1034,10 +1035,10 @@ namespace MBSimGUI {
 
   CardanWidget::CardanWidget() {
 
-    QHBoxLayout *mainlayout = new QHBoxLayout;
+    auto *mainlayout = new QHBoxLayout;
     mainlayout->setMargin(0);
     setLayout(mainlayout);
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     mainlayout->addLayout(layout);
     box.resize(3);
     for(int i=0; i<3; i++) {
@@ -1067,8 +1068,8 @@ namespace MBSimGUI {
   }
 
   void CardanWidget::setReadOnly(bool flag) {
-    for(unsigned int i=0; i<box.size(); i++) {
-      box[i]->setReadOnly(flag);
+    for(auto & i : box) {
+      i->setReadOnly(flag);
     }
   }
 
@@ -1091,7 +1092,7 @@ namespace MBSimGUI {
   DOMElement* CardanWidget::initializeUsingXML(DOMElement *parent) {
     DOMElement *element=parent->getFirstElementChild();
     if(!element || E(element)->getTagName() != (PV%"cardan"))
-      return NULL;
+      return nullptr;
     vector<QString> angles;
     DOMElement *ei=E(element)->getFirstElementChildNamed(PV%"alpha");
     angles.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
@@ -1111,28 +1112,28 @@ namespace MBSimGUI {
     DOMElement *elei = D(doc)->createElement(PV%"alpha");
     vector<QString> angles = getAngles();
     DOMText *text = doc->createTextNode(X()%angles[0].toStdString());
-    elei->insertBefore(text, NULL);
-    ele->insertBefore(elei, NULL);
+    elei->insertBefore(text, nullptr);
+    ele->insertBefore(elei, nullptr);
     elei = D(doc)->createElement(PV%"beta");
     text = doc->createTextNode(X()%angles[1].toStdString());
-    elei->insertBefore(text, NULL);
-    ele->insertBefore(elei, NULL);
+    elei->insertBefore(text, nullptr);
+    ele->insertBefore(elei, nullptr);
     elei = D(doc)->createElement(PV%"gamma");
     text = doc->createTextNode(X()%angles[2].toStdString());
-    elei->insertBefore(text, NULL);
-    ele->insertBefore(elei, NULL);
+    elei->insertBefore(text, nullptr);
+    ele->insertBefore(elei, nullptr);
     if(not getUnit().isEmpty())
       E(ele)->setAttribute("unit", getUnit().toStdString());
-    parent->insertBefore(ele, NULL);
-    return NULL;
+    parent->insertBefore(ele, nullptr);
+    return nullptr;
   }
 
   AboutXWidget::AboutXWidget() {
 
-    QHBoxLayout *mainlayout = new QHBoxLayout;
+    auto *mainlayout = new QHBoxLayout;
     mainlayout->setMargin(0);
     setLayout(mainlayout);
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     mainlayout->addLayout(layout);
     box = new QLineEdit(this);
     box->setPlaceholderText("0");
@@ -1158,10 +1159,10 @@ namespace MBSimGUI {
   DOMElement* AboutXWidget::initializeUsingXML(DOMElement *parent) {
     DOMElement *element=parent->getFirstElementChild();
     if(!element || E(element)->getTagName() != (PV%"aboutX"))
-      return NULL;
+      return nullptr;
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
-      return NULL;
+      return nullptr;
     setValue(QString::fromStdString(X()%text->getData()));
     if(E(element)->hasAttribute("unit"))
       setUnit(QString::fromStdString(E(element)->getAttribute("unit")));
@@ -1172,19 +1173,19 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"aboutX");
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
-    ele->insertBefore(text, NULL);
+    ele->insertBefore(text, nullptr);
     if(not getUnit().isEmpty())
       E(ele)->setAttribute("unit", getUnit().toStdString());
-    parent->insertBefore(ele, NULL);
-    return NULL;
+    parent->insertBefore(ele, nullptr);
+    return nullptr;
   }
 
   AboutYWidget::AboutYWidget() {
 
-    QHBoxLayout *mainlayout = new QHBoxLayout;
+    auto *mainlayout = new QHBoxLayout;
     mainlayout->setMargin(0);
     setLayout(mainlayout);
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     mainlayout->addLayout(layout);
     box = new QLineEdit(this);
     box->setPlaceholderText("0");
@@ -1210,10 +1211,10 @@ namespace MBSimGUI {
   DOMElement* AboutYWidget::initializeUsingXML(DOMElement *parent) {
     DOMElement *element=parent->getFirstElementChild();
     if(!element || E(element)->getTagName() != (PV%"aboutY"))
-      return NULL;
+      return nullptr;
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
-      return NULL;
+      return nullptr;
     setValue(QString::fromStdString(X()%text->getData()));
     if(E(element)->hasAttribute("unit"))
       setUnit(QString::fromStdString(E(element)->getAttribute("unit")));
@@ -1224,19 +1225,19 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"aboutY");
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
-    ele->insertBefore(text, NULL);
+    ele->insertBefore(text, nullptr);
     if(not getUnit().isEmpty())
       E(ele)->setAttribute("unit", getUnit().toStdString());
-    parent->insertBefore(ele, NULL);
-    return NULL;
+    parent->insertBefore(ele, nullptr);
+    return nullptr;
   }
 
   AboutZWidget::AboutZWidget() {
 
-    QHBoxLayout *mainlayout = new QHBoxLayout;
+    auto *mainlayout = new QHBoxLayout;
     mainlayout->setMargin(0);
     setLayout(mainlayout);
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     mainlayout->addLayout(layout);
     box = new QLineEdit(this);
     box->setPlaceholderText("0");
@@ -1262,10 +1263,10 @@ namespace MBSimGUI {
   DOMElement* AboutZWidget::initializeUsingXML(DOMElement *parent) {
     DOMElement *element=parent->getFirstElementChild();
     if(!element || E(element)->getTagName() != (PV%"aboutZ"))
-      return NULL;
+      return nullptr;
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
-      return NULL;
+      return nullptr;
     setValue(QString::fromStdString(X()%text->getData()));
     if(E(element)->hasAttribute("unit"))
       setUnit(QString::fromStdString(E(element)->getAttribute("unit")));
@@ -1276,15 +1277,15 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"aboutZ");
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
-    ele->insertBefore(text, NULL);
+    ele->insertBefore(text, nullptr);
     if(not getUnit().isEmpty())
       E(ele)->setAttribute("unit", getUnit().toStdString());
-    parent->insertBefore(ele, NULL);
-    return NULL;
+    parent->insertBefore(ele, nullptr);
+    return nullptr;
   }
 
   PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_, bool eval) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     setLayout(layout);
     layout->setMargin(0);
     unit = new CustomComboBox;
@@ -1309,10 +1310,10 @@ namespace MBSimGUI {
       evalDialog.exec();
     }
     catch(MBXMLUtils::DOMEvalException e) {
-      QMessageBox::warning(0, "Expression evaluation", QString::fromStdString(e.getMessage()));
+      QMessageBox::warning(nullptr, "Expression evaluation", QString::fromStdString(e.getMessage()));
     }
     catch(...) {
-      QMessageBox::warning(0, "Expression evaluation", "Unknown error");
+      QMessageBox::warning(nullptr, "Expression evaluation", "Unknown error");
     }
   }
 
@@ -1325,18 +1326,18 @@ namespace MBSimGUI {
         return parent;
       }
 //    }
-    return NULL;
+    return nullptr;
   }
 
   DOMElement* PhysicalVariableWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     if(getUnit()!="")
       E(static_cast<DOMElement*>(parent))->setAttribute("unit", getUnit().toStdString());
     widget->writeXMLFile(parent);
-    return NULL;
+    return nullptr;
   }
 
   FromFileWidget::FromFileWidget() {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -1353,7 +1354,7 @@ namespace MBSimGUI {
 
   void FromFileWidget::selectFile() {
     QString file = getFile();
-    file=QFileDialog::getOpenFileName(0, "ASCII files", file, "all files (*.*)");
+    file=QFileDialog::getOpenFileName(nullptr, "ASCII files", file, "all files (*.*)");
     if(file!="")
       setFile(mbsDir.relativeFilePath(file));
   }
@@ -1363,7 +1364,7 @@ namespace MBSimGUI {
   }
 
   vector<vector<QString> > FromFileWidget::getEvalMat() const {
-    string file = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getFile().toStdString(),0,false));
+    string file = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getFile().toStdString(),nullptr,false));
     QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue("ret=load(" + file + ")")));
     str = removeWhiteSpace(str);
     return strToMat((str));
@@ -1372,7 +1373,7 @@ namespace MBSimGUI {
   DOMElement* FromFileWidget::initializeUsingXML(DOMElement *parent) {
     DOMElement *element=parent->getFirstElementChild();
     if(!element || E(element)->getTagName() != (PV%"fromFile"))
-      return 0;
+      return nullptr;
 
     setFile(QString::fromStdString((E(element)->getAttribute("href"))));
 
@@ -1383,8 +1384,8 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"fromFile");
     E(ele)->setAttribute("href",getFile().toStdString());
-    parent->insertBefore(ele, NULL);
-    return 0;
+    parent->insertBefore(ele, nullptr);
+    return nullptr;
   }
 
   BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,0) {
@@ -1397,10 +1398,10 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new BoolWidget(value), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[1], defaultUnit[1]);
-    return NULL;
+    return nullptr;
   }
 
-  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : value(value_), name(2), unit(unit_), defaultUnit(defaultUnit_) {
+  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, vector<QStringList> unit_, vector<int> defaultUnit_) : value(value_), name(2), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
     name[0] = "Scalar";
     name[1] = "Editor";
   }
@@ -1410,16 +1411,16 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[1], defaultUnit[1]);
-    return NULL;
+    return nullptr;
   }
 
-  VecWidgetFactory::VecWidgetFactory(int m, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_, bool table_, bool eval_) : x(getVec<QString>(m,"0")), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_), table(table_), eval(eval_) {
+  VecWidgetFactory::VecWidgetFactory(int m, vector<QStringList> unit_, vector<int> defaultUnit_, bool transpose_, bool table_, bool eval_) : x(getVec<QString>(m,"0")), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), transpose(transpose_), table(table_), eval(eval_) {
     name[0] = table?"Table":"Vector";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  VecWidgetFactory::VecWidgetFactory(const vector<QString> &x_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_, bool eval_) : x(x_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_), table(false), eval(eval_) {
+  VecWidgetFactory::VecWidgetFactory(vector<QString> x_, vector<QStringList> unit_, vector<int> defaultUnit_, bool transpose_, bool eval_) : x(std::move(x_)), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), transpose(transpose_), table(false), eval(eval_) {
     name[0] = "Vector";
     name[1] = "File";
     name[2] = "Editor";
@@ -1432,10 +1433,10 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1], eval);
     if(i==2)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2], eval);
-    return NULL;
+    return nullptr;
   }
 
-  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, int singleStep_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_, bool table_, bool eval_) : m(m_), singleStep(singleStep_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_), table(table_), eval(eval_) {
+  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, int singleStep_, vector<QStringList> unit_, vector<int> defaultUnit_, bool transpose_, bool table_, bool eval_) : m(m_), singleStep(singleStep_), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), transpose(transpose_), table(table_), eval(eval_) {
     name[0] = table?"Table":"Vector";
     name[1] = "File";
     name[2] = "Editor";
@@ -1448,16 +1449,16 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1], eval);
     if(i==2)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2], eval);
-    return NULL;
+    return nullptr;
   }
 
-  MatWidgetFactory::MatWidgetFactory(int m, int n, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool table_) : A(getMat<QString>(m,n,"0")), name(3), unit(unit_), defaultUnit(defaultUnit_), table(table_) {
+  MatWidgetFactory::MatWidgetFactory(int m, int n, vector<QStringList> unit_, vector<int> defaultUnit_, bool table_) : A(getMat<QString>(m,n,"0")), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), table(table_) {
     name[0] = table?"Table":"Matrix";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  MatWidgetFactory::MatWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_), table(false) {
+  MatWidgetFactory::MatWidgetFactory(vector<vector<QString> > A_, vector<QStringList> unit_, vector<int> defaultUnit_) : A(std::move(A_)), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), table(false) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
@@ -1470,10 +1471,10 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
-    return NULL;
+    return nullptr;
   }
 
-  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory(int m_, int n_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool table_) : m(m_), n(n_), name(3), unit(unit_), defaultUnit(defaultUnit_), table(table_) {
+  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory(int m_, int n_, vector<QStringList> unit_, vector<int> defaultUnit_, bool table_) : m(m_), n(n_), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), table(table_) {
     name[0] = table?"Table":"Matrix";
     name[1] = "File";
     name[2] = "Editor";
@@ -1486,10 +1487,10 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
-    return NULL;
+    return nullptr;
   }
 
-  MatColsVarWidgetFactory::MatColsVarWidgetFactory(int m_, int n_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool table_) : m(m_), n(n_), name(3), unit(unit_), defaultUnit(defaultUnit_), table(table_) {
+  MatColsVarWidgetFactory::MatColsVarWidgetFactory(int m_, int n_, vector<QStringList> unit_, vector<int> defaultUnit_, bool table_) : m(m_), n(n_), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), table(table_) {
     name[0] = table?"Table":"Matrix";
     name[1] = "File";
     name[2] = "Editor";
@@ -1502,7 +1503,7 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
-    return NULL;
+    return nullptr;
   }
 
   MatRowsColsVarWidgetFactory::MatRowsColsVarWidgetFactory(int m, int n, bool table_) : A(getScalars<QString>(m,n,"0")), name(3), unit(3,QStringList()), defaultUnit(3,1), table(table_) {
@@ -1518,10 +1519,10 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
-    return NULL;
+    return nullptr;
   }
 
-  SqrMatSizeVarWidgetFactory::SqrMatSizeVarWidgetFactory(int m_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
+  SqrMatSizeVarWidgetFactory::SqrMatSizeVarWidgetFactory(int m_, vector<QStringList> unit_, vector<int> defaultUnit_) : m(m_), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
@@ -1534,10 +1535,10 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
-    return NULL;
+    return nullptr;
   }
 
-  SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
+  SymMatWidgetFactory::SymMatWidgetFactory(vector<vector<QString> > A_, vector<QStringList> unit_, vector<int> defaultUnit_) : A(std::move(A_)), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
@@ -1550,7 +1551,7 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
-    return NULL;
+    return nullptr;
   }
 
   SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
@@ -1559,13 +1560,13 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
+  SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory(vector<vector<QString> > A_, vector<QStringList> unit_, vector<int> defaultUnit_) : A(std::move(A_)), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory(const vector<vector<QString> > &A_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+  SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory(vector<vector<QString> > A_, vector<QString> name_, vector<QStringList> unit_, vector<int> defaultUnit_) : A(std::move(A_)), name(std::move(name_)), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
   }
 
   QWidget* SymMatSizeVarWidgetFactory::createWidget(int i) {
@@ -1575,7 +1576,7 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
-    return NULL;
+    return nullptr;
   }
 
   RotMatWidgetFactory::RotMatWidgetFactory() : name(6), unit(6,QStringList()), defaultUnit(6,0) {
@@ -1587,7 +1588,7 @@ namespace MBSimGUI {
     name[5] = "Editor";
   }
 
-  RotMatWidgetFactory::RotMatWidgetFactory(const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+  RotMatWidgetFactory::RotMatWidgetFactory(vector<QString> name_, vector<QStringList> unit_, vector<int> defaultUnit_) : name(std::move(name_)), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
   }
 
   QWidget* RotMatWidgetFactory::createWidget(int i) {
@@ -1603,7 +1604,7 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[4],defaultUnit[4]);
     if(i==5)
       return new PhysicalVariableWidget(new ExpressionWidget,unit[5],defaultUnit[5]);
-    return NULL;
+    return nullptr;
   }
 
 }

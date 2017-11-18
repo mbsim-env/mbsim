@@ -36,14 +36,14 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Cuboid(const std::string &name="", Frame *R=0);
+      Cuboid(const std::string &name="", Frame *R=nullptr);
 
-      Cuboid(const std::string &name, double lx, double ly, double lz, Frame *R=0);
+      Cuboid(const std::string &name, double lx, double ly, double lz, Frame *R=nullptr);
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       /* GETTER / SETTER */
       void setXLength(double lx_) { lx = lx_; }
@@ -61,9 +61,11 @@ namespace MBSim {
       /**
        * \brief x-, y- and z-length of cuboid
        */
-      double lx,ly,lz;
+      double lx{1.0};
+      double ly{1.0};
+      double lz{1.0};
 
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
   };
 }
 

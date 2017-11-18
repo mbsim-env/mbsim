@@ -31,14 +31,14 @@ namespace MBSim {
       fmatvec::Vec3 r, a;
     public:
       TranslationAlongYAxis() { a.e(1) = 1; }
-      int getArgSize() const { return 1; }
-      fmatvec::Vec3 operator()(const Arg &q) { 
+      int getArgSize() const override { return 1; }
+      fmatvec::Vec3 operator()(const Arg &q) override { 
         r.e(1) = ToDouble<Arg>::cast(q);
         return r; 
       }
-      typename B::DRetDArg parDer(const Arg &arg) { return a; }
-      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename B::DRetDArg(1); }
-      bool constParDer() const { return true; }
+      typename B::DRetDArg parDer(const Arg &arg) override { return a; }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(1); }
+      bool constParDer() const override { return true; }
   };
 
 }

@@ -30,9 +30,9 @@ namespace MBSim {
   class PolynomFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     using B = fmatvec::Function<Ret(Arg)>; 
     public:
-      PolynomFunction() { }
+      PolynomFunction() = default;
       PolynomFunction(const fmatvec::VecV &a_) : a(a_) { }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg)>::init(stage, config);
         if(stage == Element::preInit) {
           ad.resize(a.size()-1);
@@ -43,23 +43,23 @@ namespace MBSim {
             add.e(i-1) = double(i)*ad(i);
         }
       }
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
-      Ret operator()(const Arg &x_) {
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
+      Ret operator()(const Arg &x_) override {
         double x = ToDouble<Arg>::cast(x_);
         double value=a(a.size()-1);
         for (int i=int(a.size())-2; i>-1; i--)
           value=value*x+a.e(i);
         return FromDouble<Ret>::cast(value);
       }
-      typename B::DRetDArg parDer(const Arg &x_) {  
+      typename B::DRetDArg parDer(const Arg &x_) override {  
         double x = ToDouble<Arg>::cast(x_);
         double value=ad(ad.size()-1);
         for (int i=int(ad.size())-2; i>-1; i--)
           value=value*x+ad.e(i);
         return FromDouble<Ret>::cast(value);
       }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir_, const Arg &x_) { 
+      typename B::DRetDArg parDerDirDer(const Arg &xDir_, const Arg &x_) override { 
         double x = ToDouble<Arg>::cast(x_);
         double xDir = ToDouble<Arg>::cast(xDir_);
         double value=add(add.size()-1);
@@ -67,14 +67,8 @@ namespace MBSim {
           value=value*x+add.e(i);
         return FromDouble<Ret>::cast(value*xDir);
       }
-      Ret parDerParDer(const double &x) {  
-        double value=add(add.size()-1);
-        for (int i=int(add.size())-2; i>-1; i--)
-          value=value*x+add.e(i);
-        return FromDouble<Ret>::cast(value);
-      }
 
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         a = MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients"))->getText<fmatvec::Vec>();
       }
 

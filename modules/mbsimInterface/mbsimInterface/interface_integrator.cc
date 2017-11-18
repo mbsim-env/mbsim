@@ -49,7 +49,7 @@ namespace MBSimInterface {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINTERFACE, InterfaceIntegrator)
 
-    InterfaceIntegrator::InterfaceIntegrator(): MBSimIntegrator::Integrator(), zSize(0), svSize(0), printCommunication(true), exitRequest(false), mbsimServer(NULL) {
+    InterfaceIntegrator::InterfaceIntegrator(): MBSimIntegrator::Integrator(),  mbsimServer(nullptr) {
     }
 
   void InterfaceIntegrator::initializeUsingXML(xercesc::DOMElement *element) {
@@ -141,81 +141,81 @@ namespace MBSimInterface {
   void InterfaceIntegrator::resolveInputOutputNames() {
 
     std::vector<string> toErase;
-    toErase.push_back("ExternSignalSource");
-    toErase.push_back("Group");
-    toErase.push_back("[");
-    toErase.push_back("]");
-    toErase.push_back("Signal");
+    toErase.emplace_back("ExternSignalSource");
+    toErase.emplace_back("Group");
+    toErase.emplace_back("[");
+    toErase.emplace_back("]");
+    toErase.emplace_back("Signal");
 
-    for (unsigned int i=0; i<outputSignalRef.size(); i++) {
-      string lstr=outputSignalRef[i];
+    for (auto & i : outputSignalRef) {
+      string lstr=i;
       size_t pos;
-      for (unsigned int j=0; j<toErase.size(); j++) {
-        size_t len=toErase[j].length();
-        pos=lstr.find(toErase[j]);
+      for (auto & j : toErase) {
+        size_t len=j.length();
+        pos=lstr.find(j);
         while (pos!=string::npos) {
           lstr.erase(pos, len);
-          pos=lstr.find(toErase[j]);
+          pos=lstr.find(j);
         }
       }
       lstr.erase(0, 1);
-      outputSignalRef[i]=lstr;
+      i=lstr;
     }
-    for (unsigned int i=0; i<inputSignalRef.size(); i++) {
-      string lstr=inputSignalRef[i];
+    for (auto & i : inputSignalRef) {
+      string lstr=i;
       size_t pos;
-      for (unsigned int j=0; j<toErase.size(); j++) {
-        size_t len=toErase[j].length();
-        pos=lstr.find(toErase[j]);
+      for (auto & j : toErase) {
+        size_t len=j.length();
+        pos=lstr.find(j);
         while (pos!=string::npos) {
           lstr.erase(pos, len);
-          pos=lstr.find(toErase[j]);
+          pos=lstr.find(j);
         }
       }
       lstr.erase(0, 1);
-      inputSignalRef[i]=lstr;
+      i=lstr;
     }
 
     std::vector<MBSim::Link*> mbsLinks=system->getLinks();
-    for (unsigned int i=0; i<outputSignalRef.size(); i++) {
-      MBSim::Link *ll=NULL;
+    for (const auto & i : outputSignalRef) {
+      MBSim::Link *ll=nullptr;
       unsigned int iL=0;
       do {
-        if (mbsLinks[iL]->getName() == outputSignalRef[i])
+        if (mbsLinks[iL]->getName() == i)
           ll=mbsLinks[iL];
         iL++;
         if (iL==mbsLinks.size())
           break;
-      } while (ll==NULL);
-      if (ll==NULL)
-        cerr << "Could not find Signal >>" << outputSignalRef[i] << "<<" << endl;
+      } while (ll==nullptr);
+      if (ll==nullptr)
+        cerr << "Could not find Signal >>" << i << "<<" << endl;
       else
         if (dynamic_cast<MBSimControl::Signal*>(ll)) {
           outputSignal.push_back((MBSimControl::Signal*)ll);
           outputSignalName.push_back(outputSignal.back()->getName());
         }
         else
-          cerr << "Link >>" << outputSignalRef[i] << "<< is not of MBSimControl::Signal-Type." << endl;
+          cerr << "Link >>" << i << "<< is not of MBSimControl::Signal-Type." << endl;
     }
-    for (unsigned int i=0; i<inputSignalRef.size(); i++) {
-      MBSim::Link *ll=NULL;
+    for (const auto & i : inputSignalRef) {
+      MBSim::Link *ll=nullptr;
       unsigned int iL=0;
       do {
-        if (mbsLinks[iL]->getName() == inputSignalRef[i])
+        if (mbsLinks[iL]->getName() == i)
           ll=mbsLinks[iL];
         iL++;
         if (iL==mbsLinks.size())
           break;
-      } while (ll==NULL);
-      if (ll==NULL)
-        cerr << "Could not find ExternSignalSource >>" << inputSignalRef[i] << "<<" << endl;
+      } while (ll==nullptr);
+      if (ll==nullptr)
+        cerr << "Could not find ExternSignalSource >>" << i << "<<" << endl;
       else
         if (dynamic_cast<MBSimControl::ExternSignalSource*>(ll)) {
           inputSignal.push_back((MBSimControl::ExternSignalSource*)ll);
           inputSignalName.push_back(inputSignal.back()->getName());
         }
         else
-          cerr << "Link >>" << inputSignalRef[i] << "<< is not of MBSimControl::ExternSignalSource-Type." << endl;
+          cerr << "Link >>" << i << "<< is not of MBSimControl::ExternSignalSource-Type." << endl;
     }
 
     cout << "interfaceIntegrator: " << endl;
@@ -313,14 +313,14 @@ namespace MBSimInterface {
         // getStateVector
       case _SI_getStateVector_asciiString_SI_:
         {
-          double* p=NULL;
+          double* p=nullptr;
           getz(&p);
           double2str(mbsim2interface, p, zSize);
         }
         break;
       case _SI_getStateVector_memoryDump_SI_:
         {
-          double* p=NULL;
+          double* p=nullptr;
           getz(&p);
           dumpMemory(mbsim2interface, p, zSize*sizeof(double));
         }
@@ -341,7 +341,7 @@ namespace MBSimInterface {
             cout << "  zSize: " << zSize << endl;
             throw MBSim::MBSimError("wrong size of given vector z!");
           }
-          double* p=NULL;
+          double* p=nullptr;
           getz(&p);
           for (int i=0; i<zSize; i++)
           {
@@ -353,14 +353,14 @@ namespace MBSimInterface {
         // getTimeDerivativeOfStateVector
       case _SI_getTimeDerivativeOfStateVector_asciiString_SI_:
         {
-          double *p=NULL;
+          double *p=nullptr;
           getzdot(&p);
           double2str(mbsim2interface, p, zSize);
         }
         break;
       case _SI_getTimeDerivativeOfStateVector_memoryDump_SI_:
         {
-          double* p=NULL;
+          double* p=nullptr;
           getzdot(&p);
           dumpMemory(mbsim2interface, p, zSize*sizeof(double));
         }
@@ -379,14 +379,14 @@ namespace MBSimInterface {
         // getStopVector
       case _SI_getStopVector_asciiString_SI_:
         {
-          double *p=NULL;
+          double *p=nullptr;
           getsv(&p);
           double2str(mbsim2interface, p, svSize);
         }
         break;
       case _SI_getStopVector_memoryDump_SI_:
         {
-          double *p=NULL;
+          double *p=nullptr;
           getsv(&p);
           dumpMemory(mbsim2interface, p, svSize*sizeof(double));
         }
@@ -494,7 +494,7 @@ namespace MBSimInterface {
 
 
   void InterfaceIntegrator::dumpMemory(ostringstream *out, void *p, unsigned int N) {
-    char *c=(char*)p;
+    auto *c=(char*)p;
     for (unsigned int i=0; i<N; i++) {
       (*out) << *c;
       c++;

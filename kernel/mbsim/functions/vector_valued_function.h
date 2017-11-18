@@ -31,12 +31,12 @@ namespace MBSim {
   class VectorValuedFunction<Ret(double)> : public Function<Ret(double)> {
     using B = fmatvec::Function<Ret(double)>; 
     public:
-      VectorValuedFunction() { }
-      VectorValuedFunction(const std::vector<Function<double(double)> *> &component_) : component(component_) {
-        for(std::vector<Function<double(double)> *>::iterator it=component.begin(); it!=component.end(); ++it)
+      VectorValuedFunction() = default;
+      VectorValuedFunction(std::vector<Function<double(double)> *> component_) : component(std::move(component_)) {
+        for(auto it=component.begin(); it!=component.end(); ++it)
           (*it)->setParent(this);
       }
-      ~VectorValuedFunction() {
+      ~VectorValuedFunction() override {
         for (unsigned int i=1; i<component.size(); i++)
           delete component[i];
       }
@@ -44,37 +44,37 @@ namespace MBSim {
         component.push_back(function);
         function->setParent(this);
       }
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(component.size(),1); }
-      Ret operator()(const double &x) {
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(component.size(),1); }
+      Ret operator()(const double &x) override {
         Ret y(component.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++)
           y(i)=(*component[i])(x);
         return y;
       }
-      typename B::DRetDArg parDer(const double &x) {
+      typename B::DRetDArg parDer(const double &x) override {
         typename B::DRetDArg y(component.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++)
           y(i)=component[i]->parDer(x);
         return y;
       }
-      typename B::DDRetDDArg parDerParDer(const double &x) {
+      typename B::DDRetDDArg parDerParDer(const double &x) override {
         typename B::DDRetDDArg y(component.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++)
           y(i)=component[i]->parDerParDer(x);
         return y;
       }
 
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"components")->getFirstElementChild();
         while (e) {
           addComponent(ObjectFactory::createAndInit<Function<double(double)> >(e));
           e=e->getNextElementSibling();
         }
       }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(double)>::init(stage, config);
-        for(std::vector<Function<double(double)> *>::iterator it=component.begin(); it!=component.end(); ++it)
+        for(auto it=component.begin(); it!=component.end(); ++it)
           (*it)->init(stage, config);
       }
     private:
@@ -86,12 +86,12 @@ namespace MBSim {
   class VectorValuedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     using B = fmatvec::Function<Ret(Arg)>; 
     public:
-      VectorValuedFunction() { }
-      VectorValuedFunction(const std::vector<Function<double(Arg)> *> &component_) : component(component_) {
-        for(typename std::vector<Function<double(Arg)>*>::iterator it=component.begin(); it!=component.end(); ++it)
+      VectorValuedFunction() = default;
+      VectorValuedFunction(std::vector<Function<double(Arg)> *> component_) : component(std::move(component_)) {
+        for(auto it=component.begin(); it!=component.end(); ++it)
           (*it)->setParent(this);
       }
-      ~VectorValuedFunction() {
+      ~VectorValuedFunction() override {
         for (unsigned int i=1; i<component.size(); i++)
           delete component[i];
       }
@@ -99,15 +99,15 @@ namespace MBSim {
         component.push_back(function);
         function->setParent(this);
       }
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(component.size(),1); }
-      Ret operator()(const Arg &x) {
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(component.size(),1); }
+      Ret operator()(const Arg &x) override {
         Ret y(component.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++)
           y(i)=(*component[i])(x);
         return y;
       }
-      typename B::DRetDArg parDer(const Arg &x) {
+      typename B::DRetDArg parDer(const Arg &x) override {
         typename B::DRetDArg y(component.size(),x.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++) {
           auto row=component[i]->parDer(x);
@@ -117,16 +117,16 @@ namespace MBSim {
         return y;
       }
 
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"components")->getFirstElementChild();
         while (e) {
           addComponent(ObjectFactory::createAndInit<Function<double(Arg)> >(e));
           e=e->getNextElementSibling();
         }
       }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg)>::init(stage, config);
-        for(typename std::vector<Function<double(Arg)> *>::iterator it=component.begin(); it!=component.end(); ++it)
+        for(auto it=component.begin(); it!=component.end(); ++it)
           (*it)->init(stage, config);
       }
     private:

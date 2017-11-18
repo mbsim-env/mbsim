@@ -35,8 +35,7 @@ namespace MBSim {
       frustum(frustum_), A(), dir() {
   }
 
-  edgePolyFrustum::~edgePolyFrustum() {
-  }
+  edgePolyFrustum::~edgePolyFrustum() = default;
 
   void edgePolyFrustum::setAdir(const Vec3 & A_, const Vec3 & dir_) {
     A = A_;
@@ -65,7 +64,7 @@ namespace MBSim {
   }
 
   edgePolyFrustumCriteria::edgePolyFrustumCriteria(const double & tolerance_) :
-      tolerance(tolerance_), frustumHeight(-1), criteriaResults(0), ax(0.), dx(0.) {
+      tolerance(tolerance_),  criteriaResults(0) {
   }
 
   int edgePolyFrustumCriteria::operator ()(const Vec &xin) {
@@ -103,7 +102,7 @@ namespace MBSim {
   }
 
   ContactKinematicsPlatePolynomialFrustum::ContactKinematicsPlatePolynomialFrustum() :
-      ContactKinematics(), iplate(-1), ifrustum(-1), plate(0), frustum(0), signh(1.), gridSizeY(5), gridSizeZ(5), x1(-1), x2(-1), funcProjectAlongNormal(0), newtonProjectAlongNormal(), jacobianProjectAlongNormal(0), criteriaProjectAlongNormal(), dampingProjectAlongNormal(), funcEdge(0), newtonEdge(), jacobianEdge(), criteriaEdge(), dampingEdge(), ilast(-1), xi(1, INIT, 0.5) {
+      ContactKinematics(),  newtonProjectAlongNormal(),  criteriaProjectAlongNormal(), dampingProjectAlongNormal(),  newtonEdge(), jacobianEdge(), criteriaEdge(), dampingEdge(),  xi(1, INIT, 0.5) {
   }
 
   ContactKinematicsPlatePolynomialFrustum::~ContactKinematicsPlatePolynomialFrustum() {
@@ -380,8 +379,8 @@ namespace MBSim {
     cornerPoints[2] = plate->getC();
     cornerPoints[3] = plate->getD();
 
-    for (int i = 0; i < 4; i++) {
-      cornerPoints[i] = frustum->getFrame()->evalOrientation().T() * (plate->getFrame()->evalPosition() + plate->getFrame()->evalOrientation() * cornerPoints[i] - frustum->getFrame()->evalPosition());
+    for (auto & cornerPoint : cornerPoints) {
+      cornerPoint = frustum->getFrame()->evalOrientation().T() * (plate->getFrame()->evalPosition() + plate->getFrame()->evalOrientation() * cornerPoint - frustum->getFrame()->evalPosition());
     }
 
     for (int i = 0; i < 4; i++) {

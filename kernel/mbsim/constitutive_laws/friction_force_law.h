@@ -34,7 +34,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      FrictionForceLaw(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=NULL) : Element(uniqueDummyName(this)), frictionForceFunc(frictionForceFunc_) {
+      FrictionForceLaw(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=nullptr) : Element(uniqueDummyName(this)), frictionForceFunc(frictionForceFunc_) {
         if(frictionForceFunc)
           frictionForceFunc->setParent(this);
         plotFeature[plotRecursive]=false;
@@ -43,9 +43,9 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~FrictionForceLaw() { if(frictionForceFunc) delete frictionForceFunc; frictionForceFunc = NULL; };
+      ~FrictionForceLaw() override { if(frictionForceFunc) delete frictionForceFunc; frictionForceFunc = nullptr; };
 
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Element::init(stage, config);
         if(frictionForceFunc)
           frictionForceFunc->init(stage, config);
@@ -64,7 +64,7 @@ namespace MBSim {
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) = 0;
       virtual double getFrictionCoefficient(double gd) { return 0; }
       virtual bool isSetValued() const = 0;
-      virtual void initializeUsingXML(xercesc::DOMElement *element) {}
+      void initializeUsingXML(xercesc::DOMElement *element) override {}
       /***************************************************/
       
       fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { assert(frictionForceFunc); return (*frictionForceFunc)(gd,laN); }

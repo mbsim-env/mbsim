@@ -35,31 +35,31 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      SpatialStribeckFriction(Function<double(double)> *fmu_=NULL) : fmu(fmu_) {
+      SpatialStribeckFriction(Function<double(double)> *fmu_=nullptr) : fmu(fmu_) {
         if(fmu) fmu->setParent(this);
       }
 
       /**
        * \brief destructor
        */
-      virtual ~SpatialStribeckFriction() { if(fmu) delete fmu; fmu=0; }
+      ~SpatialStribeckFriction() override { if(fmu) delete fmu; fmu=nullptr; }
 
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         FrictionForceLaw::init(stage, config);
         fmu->init(stage, config);
       }
 
       /* INHERITED INTERFACE */
-      virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
-      virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
-      virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
-      virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
-      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd);
-      virtual int getFrictionDirections() { return 2; }
-      virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
-      virtual double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
-      virtual bool isSetValued() const { return true; }
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) override;
+      fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) override;
+      fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) override;
+      bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd) override;
+      fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd) override;
+      int getFrictionDirections() override { return 2; }
+      bool isSticking(const fmatvec::Vec& s, double sTol) override { return nrm2(s(0,1)) <= sTol; }
+      double getFrictionCoefficient(double gd) override { return (*fmu)(gd); }
+      bool isSetValued() const override { return true; }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       void setFrictionFunction(Function<double(double)> *fmu_) {

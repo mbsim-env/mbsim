@@ -35,11 +35,11 @@ namespace MBSim {
     public:
       FloatingContourFrame(const std::string &name = "dummy") : ContourFrame(name) { }
 
-      void updatePositions();
-      void updateVelocities();
-      void updateAccelerations();
-      void updateJacobians(int j=0);
-      void updateGyroscopicAccelerations();
+      void updatePositions() override;
+      void updateVelocities() override;
+      void updateAccelerations() override;
+      void updateJacobians(int j=0) override;
+      void updateGyroscopicAccelerations() override;
 
       void setContourOfReference(Contour *contour_) { contour = contour_; }
 

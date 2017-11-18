@@ -27,11 +27,11 @@ namespace MBSimGUI {
 
   class CustomComboBox :public QComboBox {
     public:
-      CustomComboBox(QWidget* parent = 0) : QComboBox(parent) {
+      CustomComboBox(QWidget* parent = nullptr) : QComboBox(parent) {
         setFocusPolicy(Qt::StrongFocus);
       }
 
-      void wheelEvent(QWheelEvent *e) {
+      void wheelEvent(QWheelEvent *e) override {
         if(hasFocus())
           QComboBox::wheelEvent(e);
       }
@@ -39,11 +39,11 @@ namespace MBSimGUI {
 
   class CustomSpinBox :public QSpinBox {
     public:
-      CustomSpinBox(QWidget* parent = 0) : QSpinBox(parent) {
+      CustomSpinBox(QWidget* parent = nullptr) : QSpinBox(parent) {
         setFocusPolicy(Qt::StrongFocus);
       }
 
-      void wheelEvent(QWheelEvent *e) {
+      void wheelEvent(QWheelEvent *e) override {
         if(hasFocus())
           QSpinBox::wheelEvent(e);
       }

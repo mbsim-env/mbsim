@@ -21,6 +21,7 @@
 #define _MBSIM_OBJECTFACTORY_H_
 
 #include "objectfactory_part.h"
+#include <utility>
 #include <vector>
 #include <functional>
 #include <stdexcept>
@@ -62,9 +63,9 @@ class DOMEvalExceptionStack : public MBXMLUtils::DOMEvalException {
   public:
     DOMEvalExceptionStack(const xercesc::DOMElement *element) : MBXMLUtils::DOMEvalException("", element) {}
     DOMEvalExceptionStack(const DOMEvalExceptionStack &src) : MBXMLUtils::DOMEvalException(src), exVec(src.exVec) {}
-    ~DOMEvalExceptionStack() throw() {}
+    ~DOMEvalExceptionStack() noexcept override = default;
     void add(const std::string &type, const std::shared_ptr<MBXMLUtils::DOMEvalException> &ex);
-    const char* what() const throw();
+    const char* what() const noexcept override;
     std::vector<std::pair<std::string, std::shared_ptr<MBXMLUtils::DOMEvalException> > > &getExceptionVector();
   protected:
     std::vector<std::pair<std::string, std::shared_ptr<MBXMLUtils::DOMEvalException> > > exVec;
@@ -78,8 +79,8 @@ class DOMEvalExceptionWrongType : public MBXMLUtils::DOMEvalException {
   public:
     DOMEvalExceptionWrongType(const std::string &type, const xercesc::DOMElement *element) :
       MBXMLUtils::DOMEvalException(type, element) {}
-    DOMEvalExceptionWrongType(const DOMEvalExceptionWrongType &src) : MBXMLUtils::DOMEvalException(src) {}
-    ~DOMEvalExceptionWrongType() throw() {}
+    DOMEvalExceptionWrongType(const DOMEvalExceptionWrongType &src)  = default;
+    ~DOMEvalExceptionWrongType() noexcept override = default;
 };
 
 /** A object factory.
@@ -101,26 +102,26 @@ class ObjectFactory {
       static_assert(std::is_convertible<ContainerType*, fmatvec::Atom*>::value,
         "In MBSim::ObjectFactory::create<ContainerType>(...) ContainerType must be derived from fmatvec::Atom.");
       // throw error if NULL is supplied as element
-      if(element==NULL)
+      if(element==nullptr)
         throw MBSimError("Internal error: NULL argument specified.");
       // get all allocate functions for the given name
       MBXMLUtils::FQN fqn=MBXMLUtils::E(element)->getTagName();
-      NameMapIt nameIt=instance().registeredType.find(fqn);
+      auto nameIt=instance().registeredType.find(fqn);
       if(nameIt==instance().registeredType.end())
         throw MBXMLUtils::DOMEvalException("Internal error: No objects of name {"+fqn.first+"}"+fqn.second+" registred", element);
       DOMEvalExceptionStack allErrors(static_cast<xercesc::DOMElement*>(element->getParentNode()));
       // try to create and init a object which each of the allocate function
-      for(AllocDeallocVectorIt allocDeallocIt=nameIt->second.begin(); allocDeallocIt!=nameIt->second.end(); ++allocDeallocIt) {
+      for(auto & allocDeallocIt : nameIt->second) {
         // create element
-        fmatvec::Atom *ele=(*allocDeallocIt->first)();
+        fmatvec::Atom *ele=(*allocDeallocIt.first)();
         // try to cast the element to ContainerType
-        ContainerType *ret=dynamic_cast<ContainerType*>(ele);
+        auto *ret=dynamic_cast<ContainerType*>(ele);
         if(!ret) {
           // cast not possible -> deallocate again and try next
           allErrors.add(boost::core::demangle(typeid(*ele).name()),
                         std::make_shared<DOMEvalExceptionWrongType>(
                         boost::core::demangle(typeid(ContainerType).name()), element));
-          (*allocDeallocIt->second)(ele); 
+          (*allocDeallocIt.second)(ele); 
           continue;
         }
         try {
@@ -141,7 +142,7 @@ class ObjectFactory {
           allErrors.add(boost::core::demangle(typeid(*ele).name()),
                         std::make_shared<MBXMLUtils::DOMEvalException>("Unknwon exception", element));
         }
-        (*allocDeallocIt->second)(ele);
+        (*allocDeallocIt.second)(ele);
       }
       // if all failed -> return errors of all trys
       throw allErrors;
@@ -157,7 +158,7 @@ class ObjectFactory {
     typedef NameMap::iterator NameMapIt;
 
     // private ctor
-    ObjectFactory() {}
+    ObjectFactory() = default;
 
     // create an singleton instance of the object factory.
     static ObjectFactory& instance();
@@ -221,7 +222,7 @@ class ObjectFactoryRegisterClassHelper {
   public:
 
     /** ctor registring the new type */
-    ObjectFactoryRegisterClassHelper(const MBXMLUtils::FQN &name_) : name(name_) {
+    ObjectFactoryRegisterClassHelper(MBXMLUtils::FQN name_) : name(std::move(name_)) {
       MBSim::registerClass_internal(name, new Allocate<CreateType>(), new Deallocate());
     }
 
@@ -244,7 +245,7 @@ class ObjectFactoryRegisterClassHelperAsSingleton {
   public:
 
     /** ctor registring the new type */
-    ObjectFactoryRegisterClassHelperAsSingleton(const MBXMLUtils::FQN &name_) : name(name_) {
+    ObjectFactoryRegisterClassHelperAsSingleton(MBXMLUtils::FQN name_) : name(std::move(name_)) {
       MBSim::registerClass_internal(name, new GetSingleton<CreateType>(), new DeallocateSingleton());
     }
 
@@ -270,7 +271,7 @@ class EnumFactory {
   public:
 
     /** ctor registring the new enum */
-    EnumFactory(const EnumType &enumVar, const MBXMLUtils::FQN &fqn_) : fqn(fqn_) {
+    EnumFactory(const EnumType &enumVar, MBXMLUtils::FQN fqn_) : fqn(std::move(fqn_)) {
       registerEnum_internal<EnumType>(fqn, enumVar);
     }
 

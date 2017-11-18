@@ -32,16 +32,16 @@ namespace MBSimGUI {
 
   class Eigenanalyser : public Solver {
     public:
-      virtual QString getType() const { return "Eigenanalyser"; }
-      virtual EigenanalyserPropertyDialog* createPropertyDialog() {return new EigenanalyserPropertyDialog(this);}
-      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMANALYSER; }
+      QString getType() const override { return "Eigenanalyser"; }
+      EigenanalyserPropertyDialog* createPropertyDialog() override {return new EigenanalyserPropertyDialog(this);}
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMANALYSER; }
   };
 
   class HarmonicResponseAnalyser : public Solver {
     public:
-      virtual QString getType() const { return "HarmonicResponseAnalyser"; }
-      virtual HarmonicResponseAnalyserPropertyDialog* createPropertyDialog() {return new HarmonicResponseAnalyserPropertyDialog(this);}
-      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMANALYSER; }
+      QString getType() const override { return "HarmonicResponseAnalyser"; }
+      HarmonicResponseAnalyserPropertyDialog* createPropertyDialog() override {return new HarmonicResponseAnalyserPropertyDialog(this);}
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMANALYSER; }
   };
 
 }

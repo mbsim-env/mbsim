@@ -25,8 +25,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DampingFunction::DampingFunction() :
-    function(0), criteria(0){
+  DampingFunction::DampingFunction()  {
 
   }
 

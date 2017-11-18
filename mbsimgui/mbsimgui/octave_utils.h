@@ -21,6 +21,7 @@
 #define OCTAVE_UTILS_H_
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <fmatvec/fmatvec.h>
 
@@ -31,14 +32,14 @@ namespace MBSimGUI {
       std::string name;
       std::string type;
     public:
-      OctaveElement(const std::string &name_, const std::string &type_) : name(name_), type(type_) { }
-      virtual ~OctaveElement() { }
+      OctaveElement(std::string name_, std::string type_) : name(std::move(name_)), type(std::move(type_)) { }
+      virtual ~OctaveElement() = default;
       const std::string& getName() const { return name; }
       const std::string& getType() const { return type; }
       void setName(const std::string &name_) { name = name_; }
       void setType(const std::string &type_) { type = type_; }
       virtual void toStream(std::ostream &os=std::cout) const;
-      virtual OctaveElement* find(const std::string &name) { return 0; }
+      virtual OctaveElement* find(const std::string &name) { return nullptr; }
   };
 
   class OctaveStruct : public OctaveElement {
@@ -46,15 +47,15 @@ namespace MBSimGUI {
       std::vector<OctaveElement*> ele;
     public:
       OctaveStruct(const std::string &name, int m) : OctaveElement(name,"scalar struct"), ele(m) { }
-      ~OctaveStruct() {
-        for(unsigned int i=0; i<ele.size(); i++)
-          delete ele[i];
+      ~OctaveStruct() override {
+        for(auto & i : ele)
+          delete i;
       }
       int getNumberOfElements() const { return ele.size(); }
       void setElement(int i, OctaveElement *ele_) { ele[i] = ele_; }
       const OctaveElement* getElement(int i) const { return ele[i]; }
-      void toStream(std::ostream &os=std::cout) const;
-      OctaveElement* find(const std::string &name);
+      void toStream(std::ostream &os=std::cout) const override;
+      OctaveElement* find(const std::string &name) override;
   };
 
   class OctaveScalar : public OctaveElement {
@@ -62,7 +63,7 @@ namespace MBSimGUI {
       double a;
     public:
       OctaveScalar(const std::string &name, double a_) : OctaveElement(name,"scalar"), a(a_) { }
-      void toStream(std::ostream &os=std::cout) const;
+      void toStream(std::ostream &os=std::cout) const override;
       double get() const { return a; }
   };
 
@@ -71,7 +72,7 @@ namespace MBSimGUI {
       fmatvec::MatV A;
     public:
       OctaveMatrix(const std::string &name, const fmatvec::MatV &A_) : OctaveElement(name,"matrix"), A(A_) { }
-      void toStream(std::ostream &os=std::cout) const;
+      void toStream(std::ostream &os=std::cout) const override;
       template <class T>
       T get() const { return T(A); }
   };
@@ -81,7 +82,7 @@ namespace MBSimGUI {
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,std::complex<double> > A;
     public:
       OctaveComplexMatrix(const std::string &name, const fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,std::complex<double> > &A_) : OctaveElement(name,"complex matrix"), A(A_) { }
-      void toStream(std::ostream &os=std::cout) const;
+      void toStream(std::ostream &os=std::cout) const override;
       template <class T> T get() const { return T(A); }
   };
 
@@ -93,10 +94,10 @@ namespace MBSimGUI {
         for(int i=0; i<m; i++)
           ele[i].resize(n);
       }
-      ~OctaveCell() {
-        for(unsigned int i=0; i<ele.size(); i++)
-          for(unsigned int j=0; j<ele[i].size(); j++)
-            delete ele[i][j];
+      ~OctaveCell() override {
+        for(auto & i : ele)
+          for(auto & j : i)
+            delete j;
       }
       int getNumberOfRows() const { return ele.size(); }
       int getNumberOfColumns() const { return ele[0].size(); }
@@ -107,7 +108,7 @@ namespace MBSimGUI {
           std::vector<std::vector<T> > A(ele.size());
           for(unsigned int i=0; i<ele.size(); i++) {
             for(unsigned int j=0; j<ele[i].size(); j++) {
-              OctaveMatrix *octMat = dynamic_cast<OctaveMatrix*>(ele[i][j]);
+              auto *octMat = dynamic_cast<OctaveMatrix*>(ele[i][j]);
               if(octMat) 
                 A[i].push_back(T(octMat->get<T>()));
               else 
@@ -116,7 +117,7 @@ namespace MBSimGUI {
           }
           return A;
         } 
-      void toStream(std::ostream &os=std::cout) const;
+      void toStream(std::ostream &os=std::cout) const override;
   };
 
   class OctaveParser {
@@ -139,8 +140,8 @@ namespace MBSimGUI {
       }
 
       ~OctaveParser() {
-        for(unsigned int i=0; i<ele.size(); i++)
-          delete ele[i];
+        for(auto & i : ele)
+          delete i;
         is.close();
       }
 

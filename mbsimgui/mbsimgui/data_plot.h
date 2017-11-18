@@ -30,7 +30,7 @@ namespace MBSimGUI {
   class DataPlot : public QDialog {
     Q_OBJECT
     public:
-      DataPlot(const QVector<double> &f_, const QVector<QVector<double> > &A_, const QString &title="", const QString &xLabel="", const QString &yLabel="",  QWidget *parent=NULL);
+      DataPlot(const QVector<double> &f_, const QVector<QVector<double> > &A_, const QString &title="", const QString &xLabel="", const QString &yLabel="",  QWidget *parent=nullptr);
     private:
       QVector<double> f;
       QVector<QVector<double> > A;

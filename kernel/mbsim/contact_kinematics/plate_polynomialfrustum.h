@@ -42,14 +42,14 @@ namespace MBSim {
       /*!
        * \brief standard destructor
        */
-      virtual ~edgePolyFrustum();
+      ~edgePolyFrustum() override;
 
       /*!
        * \brief set the one corner point A and the direction of the edge with (A + dir) is the other corner point
        */
       void setAdir(const fmatvec::Vec3 & A, const fmatvec::Vec3 & dir);
 
-      fmatvec::Vec operator()(const fmatvec::Vec &x);
+      fmatvec::Vec operator()(const fmatvec::Vec &x) override;
 
     protected:
       /*!
@@ -78,7 +78,7 @@ namespace MBSim {
       /**
        * \brief Destructor
        */
-      virtual ~edgePolyFrustumCriteria(){};
+      ~edgePolyFrustumCriteria() override= default;;
 
       /*!
        * \brief set frustum height
@@ -102,9 +102,9 @@ namespace MBSim {
       }
 
       /* INHERITED INTERFACE */
-      virtual int operator ()(const fmatvec::Vec &x);
-      virtual bool isBetter(const fmatvec::Vec &x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
-      virtual void clear(){criteriaResults.clear();}
+      int operator ()(const fmatvec::Vec &x) override;
+      bool isBetter(const fmatvec::Vec &x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT)) override;
+      void clear() override{criteriaResults.clear();}
       /*END - INHERITED INTERFACE*/
 
       const std::vector<double> & getResults() {
@@ -124,7 +124,7 @@ namespace MBSim {
       /*!
        * \brief height of frustum
        */
-      double frustumHeight;
+      double frustumHeight{-1};
 
       /**
        * \brief saves the results of the criteria
@@ -134,12 +134,12 @@ namespace MBSim {
       /*!
        * \brief xPosition of starting Point
        */
-      double ax;
+      double ax{0.};
 
       /*!
        * \brief xdirection
        */
-      double dx;
+      double dx{0.};
   };
 
   /*!
@@ -151,12 +151,12 @@ namespace MBSim {
   class ContactKinematicsPlatePolynomialFrustum : public MBSim::ContactKinematics {
     public:
       ContactKinematicsPlatePolynomialFrustum();
-      virtual ~ContactKinematicsPlatePolynomialFrustum();
+      ~ContactKinematicsPlatePolynomialFrustum() override;
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
-      void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double & g, std::vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec& wb, double g, std::vector<ContourFrame*> &cFrame) {
+      void assignContours(const std::vector<Contour*> &contour) override;
+      void updateg(double & g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(fmatvec::Vec& wb, double g, std::vector<ContourFrame*> &cFrame) override {
         throw MBSimError("(ContactKinematicsPlatePolynomialFrustum::updatewb): not implemented!");
       }
 
@@ -235,47 +235,47 @@ namespace MBSim {
       /**
        * \brief contour index of plate (in cpData)
        */
-      int iplate;
+      int iplate{-1};
 
       /**
        * \brief contour index of frustum (in cpData)
        */
-      int ifrustum;
+      int ifrustum{-1};
 
       /**
        * \brief pointer to the contour class for the plate
        */
-      Plate *plate;
+      Plate *plate{nullptr};
 
       /*!
        * \brief pointer to the contour class for the polynomial frustum
        */
-      PolynomialFrustum *frustum;
+      PolynomialFrustum *frustum{nullptr};
 
       /*!
        * \brief sign of height-direction
        */
-      double signh;
+      double signh{1.};
 
       /*!
        * \brief grid size in y-direction for the search with grid points
        */
-      int gridSizeY;
+      int gridSizeY{5};
 
       /*!
        * \brief grid size in z-direction for the search with grid points
        */
-      int gridSizeZ;
+      int gridSizeZ{5};
 
       /*!
        * \brief save last value to use it again as starting value for equation 1
        */
-      double x1;
+      double x1{-1};
 
       /*!
        * \brief save last value to use it again as starting value for equation 2
        */
-      double x2;
+      double x2{-1};
 
       /*!
        * \brief array of the four corner points of the plate in the frame of the frustum
@@ -290,7 +290,7 @@ namespace MBSim {
       /*!
        * \brief function for intersection point
        */
-      MBSim::projectPointAlongNormal * funcProjectAlongNormal;
+      MBSim::projectPointAlongNormal * funcProjectAlongNormal{nullptr};
 
       /*!
        * \brief newton method for solving the edge contact
@@ -300,7 +300,7 @@ namespace MBSim {
       /*!
        * \brief Jacobian for newton method
        */
-      MBSim::projectPointAlongNormalJacobian * jacobianProjectAlongNormal;
+      MBSim::projectPointAlongNormalJacobian * jacobianProjectAlongNormal{nullptr};
 
       /*!
        * \brief criteria for newton method
@@ -315,7 +315,7 @@ namespace MBSim {
       /*!
        * \brief function for intersection point
        */
-      edgePolyFrustum * funcEdge;
+      edgePolyFrustum * funcEdge{nullptr};
 
       /*!
        * \brief newton method for solving the edge contact
@@ -340,7 +340,7 @@ namespace MBSim {
       /*!
        * \brief index of last edge contact
        */
-      int ilast;
+      int ilast{-1};
 
       /*!
        * \brief last position of edge contact

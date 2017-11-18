@@ -30,12 +30,12 @@ namespace MBSim {
   template<typename Ret, typename Arg1, typename Arg2>
   class TwoDimensionalTabularFunction<Ret(Arg1, Arg2)> : public Function<Ret(Arg1, Arg2)> {
     public:
-      TwoDimensionalTabularFunction() : x0Index(0), x1Index(0), y0Index(0), y1Index(0), zVal(4,fmatvec::INIT,1), zInd(4,fmatvec::INIT,0), zFac(4, 4,fmatvec::INIT,0) { }
+      TwoDimensionalTabularFunction() :  zVal(4,fmatvec::INIT,1), zInd(4,fmatvec::INIT,0), zFac(4, 4,fmatvec::INIT,0) { }
       /* INHERITED INTERFACE OF FUNCTION2 */
-      int getArg1Size() const { return 1; }
-      int getArg2Size() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
-      virtual void initializeUsingXML(xercesc::DOMElement *element) {
+      int getArg1Size() const override { return 1; }
+      int getArg2Size() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement * e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
         if(e) {
           setx(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
@@ -47,7 +47,7 @@ namespace MBSim {
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xyz");
         if(e) setxyz(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
       }
-      virtual Ret operator()(const Arg1& xVal_, const Arg2& yVal_) {
+      Ret operator()(const Arg1& xVal_, const Arg2& yVal_) override {
         double xVal = ToDouble<Arg1>::cast(xVal_);
         double yVal = ToDouble<Arg2>::cast(yVal_);
         calcIndex(xVal, x, x.size(), x0Index, x1Index);
@@ -103,7 +103,7 @@ namespace MBSim {
       double getyMax() { return y(y.size() - 1); }
       /***************************************************/
 
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg1, Arg2)>::init(stage, config);
         if(stage==Element::preInit) {
           if (z.cols() != x.size())
@@ -123,8 +123,8 @@ namespace MBSim {
       fmatvec::VecV y;
       fmatvec::MatV z;
 
-      int x0Index, x1Index;
-      int y0Index, y1Index;
+      int x0Index{0}, x1Index{0};
+      int y0Index{0}, y1Index{0};
 
       fmatvec::VecV zVal;
       fmatvec::VecV zInd;

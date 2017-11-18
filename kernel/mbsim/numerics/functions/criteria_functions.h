@@ -41,7 +41,7 @@ namespace MBSim {
       /**
        * \brief Destructor
        */
-      virtual ~CriteriaFunction();
+      ~CriteriaFunction() override;
 
       /* GETTER / SETTER*/
       void setFunction(Function<fmatvec::Vec(fmatvec::Vec)> *function_) {
@@ -58,7 +58,7 @@ namespace MBSim {
        *   - result =  2: the algorithm has slow convergence and should stop
        *   - result = -1: the algorithm diverges and should stop
        */
-      virtual int operator ()(const fmatvec::Vec & vector) = 0;
+      int operator ()(const fmatvec::Vec & vector) override = 0;
 
       /*!
        * \brief deletes the list of criteria results
@@ -74,7 +74,7 @@ namespace MBSim {
       /**
        * \brief function that computes the values
        */
-      Function<fmatvec::Vec(fmatvec::Vec)> *function;
+      Function<fmatvec::Vec(fmatvec::Vec)> *function{nullptr};
 
   };
 
@@ -92,12 +92,12 @@ namespace MBSim {
       /**
        * \brief Destructor
        */
-      virtual ~GlobalCriteriaFunction();
+      ~GlobalCriteriaFunction() override;
 
       /* INHERITED INTERFACE */
-      virtual int operator ()(const fmatvec::Vec & vector);
-      virtual bool isBetter(const fmatvec::Vec & vector, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
-      virtual void clear();
+      int operator ()(const fmatvec::Vec & vector) override;
+      bool isBetter(const fmatvec::Vec & vector, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT)) override;
+      void clear() override;
       /*END - INHERITED INTERFACE*/
 
       const std::vector<double> & getResults() {
@@ -133,17 +133,17 @@ namespace MBSim {
       /**
        * \brief Constructor
        */
-      LocalCriteriaFunction(const std::map<fmatvec::RangeV, double> & tolerances_);
+      LocalCriteriaFunction(std::map<fmatvec::RangeV, double>  tolerances_);
 
       /**
        * \brief Destructor
        */
-      virtual ~LocalCriteriaFunction();
+      ~LocalCriteriaFunction() override;
 
       /* INHERITED INTERFACE */
-      virtual int operator ()(const fmatvec::Vec & vector);
-      virtual bool isBetter(const fmatvec::Vec & vector, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
-      virtual void clear();
+      int operator ()(const fmatvec::Vec & vector) override;
+      bool isBetter(const fmatvec::Vec & vector, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT)) override;
+      void clear() override;
       /*END - INHERITED INTERFACE*/
 
       virtual void setTolerances(const std::map<fmatvec::RangeV, double> & tolerances_) {
@@ -178,11 +178,11 @@ namespace MBSim {
       /**
        * \brief Destructor
        */
-      virtual ~GlobalResidualCriteriaFunction();
+      ~GlobalResidualCriteriaFunction() override;
 
     protected:
       /* INHERITED INTERFACE */
-      virtual double computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
+      double computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT)) override;
       /*END - INHERITED INTERFACE*/
   };
 
@@ -200,11 +200,11 @@ namespace MBSim {
       /**
        * \brief Destructor
        */
-      virtual ~LocalResidualCriteriaFunction();
+      ~LocalResidualCriteriaFunction() override;
 
     protected:
 
-      virtual std::vector<double> computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
+      std::vector<double> computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT)) override;
   };
 
   /*!
@@ -220,7 +220,7 @@ namespace MBSim {
       /**
        * \brief Destructor
        */
-      virtual ~GlobalShiftCriteriaFunction();
+      ~GlobalShiftCriteriaFunction() override;
 
       virtual fmatvec::Vec getLastPoint() {
         return lastPoint;
@@ -228,7 +228,7 @@ namespace MBSim {
 
     protected:
       /* INHERITED INTERFACE */
-      virtual double computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
+      double computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT)) override;
       /*END - INHERITED INTERFACE*/
 
       /*!
@@ -252,14 +252,14 @@ namespace MBSim {
       /**
        * \brief Destructor
        */
-      virtual ~LocalShiftCriteriaFunction();
+      ~LocalShiftCriteriaFunction() override;
 
       virtual fmatvec::Vec getLastPoint() {
         return lastPoint;
       }
 
     protected:
-      virtual std::vector<double> computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
+      std::vector<double> computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT)) override;
 
       /*!
        * \brief save the point of the last step for comparison
@@ -267,12 +267,12 @@ namespace MBSim {
       fmatvec::Vec lastPoint;
   };
 
-  inline CriteriaFunction::~CriteriaFunction(){}
-  inline GlobalCriteriaFunction::~GlobalCriteriaFunction(){}
-  inline LocalCriteriaFunction::~LocalCriteriaFunction(){}
-  inline GlobalResidualCriteriaFunction::~GlobalResidualCriteriaFunction() {}
-  inline GlobalShiftCriteriaFunction::~GlobalShiftCriteriaFunction() {}
-  inline LocalResidualCriteriaFunction::~LocalResidualCriteriaFunction() {}
-  inline LocalShiftCriteriaFunction::~LocalShiftCriteriaFunction() {}
+  inline CriteriaFunction::~CriteriaFunction()= default;
+  inline GlobalCriteriaFunction::~GlobalCriteriaFunction()= default;
+  inline LocalCriteriaFunction::~LocalCriteriaFunction()= default;
+  inline GlobalResidualCriteriaFunction::~GlobalResidualCriteriaFunction() = default;
+  inline GlobalShiftCriteriaFunction::~GlobalShiftCriteriaFunction() = default;
+  inline LocalResidualCriteriaFunction::~LocalResidualCriteriaFunction() = default;
+  inline LocalShiftCriteriaFunction::~LocalShiftCriteriaFunction() = default;
 }
 #endif //NUMERICSCRITERIAFUNCTIONS_H_

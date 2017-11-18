@@ -40,11 +40,11 @@ namespace MBSim {
        * \brief constructor
        * \param name of point
        */
-      RigidContour(const std::string &name, Frame *R_=NULL) : Contour(name), R(R_) {}
+      RigidContour(const std::string &name, Frame *R_=nullptr) : Contour(name), R(R_) {}
 
-      virtual ~RigidContour() { }
+      ~RigidContour() override = default;
 
-      ContourFrame* createContourFrame(const std::string &name="P");
+      ContourFrame* createContourFrame(const std::string &name="P") override;
 
       Frame* getFrame() { return R; }
       Frame* getFrameOfReference() { return R; }
@@ -52,29 +52,29 @@ namespace MBSim {
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot();
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void plot() override;
+      void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 
-      fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalParDer1Wu(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalParDer2Wu(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalParDer1Wv(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalParDer2Wv(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalWrPS(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer1Wu(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer2Wu(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer1Wv(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer2Wv(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalWrPS(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override;
 
       /**
        * \brief contact search for RigidContours
        * \author Markus Schneider
        * \date 2010-11-05 initial commit (Markus Schneider)
        */
-      ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1);
+      ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override;
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       std::shared_ptr<OpenMBV::RigidBody>& getOpenMBVRigidBody() { return openMBVRigidBody; }
 

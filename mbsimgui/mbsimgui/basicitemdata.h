@@ -30,59 +30,59 @@ namespace MBSimGUI {
       Element *element;
     public:
       ContainerItemData(Element *element_) : element(element_) { }
-      QString getValue() const { return ""; }
-      QString getType() const { return ""; }
+      QString getValue() const override { return ""; }
+      QString getType() const override { return ""; }
       Element* getElement() { return element; }
   };
 
   class FrameItemData : public ContainerItemData {
     public:
       FrameItemData(Element *element) : ContainerItemData(element) { }
-      QString getName() const { return "frames"; }
-      virtual QMenu* createContextMenu() { return element->createFrameContextMenu(); }
+      QString getName() const override { return "frames"; }
+      QMenu* createContextMenu() override { return element->createFrameContextMenu(); }
   };
 
   class ContourItemData : public ContainerItemData {
     public:
       ContourItemData(Element *element) : ContainerItemData(element) { }
-      QString getName() const { return "contours"; }
-      virtual QMenu* createContextMenu() { return new ContoursContextMenu(element); }
+      QString getName() const override { return "contours"; }
+      QMenu* createContextMenu() override { return new ContoursContextMenu(element); }
   };
 
   class GroupItemData : public ContainerItemData {
     public:
       GroupItemData(Element *element) : ContainerItemData(element) { }
-      QString getName() const { return "groups"; }
-      virtual QMenu* createContextMenu() { return new GroupsContextMenu(element); }
+      QString getName() const override { return "groups"; }
+      QMenu* createContextMenu() override { return new GroupsContextMenu(element); }
   };
 
 
   class ObjectItemData : public ContainerItemData {
     public:
       ObjectItemData(Element *element) : ContainerItemData(element) { }
-      QString getName() const { return "objects"; }
-      virtual QMenu* createContextMenu() { return new ObjectsContextMenu(element); }
+      QString getName() const override { return "objects"; }
+      QMenu* createContextMenu() override { return new ObjectsContextMenu(element); }
   };
 
   class LinkItemData : public ContainerItemData {
     public:
       LinkItemData(Element *element) : ContainerItemData(element) { }
-      QString getName() const { return "links"; }
-      virtual QMenu* createContextMenu() { return new LinksContextMenu(element); }
+      QString getName() const override { return "links"; }
+      QMenu* createContextMenu() override { return new LinksContextMenu(element); }
   };
 
   class ConstraintItemData : public ContainerItemData {
     public:
       ConstraintItemData(Element *element) : ContainerItemData(element) { }
-      QString getName() const { return "constraints"; }
-      virtual QMenu* createContextMenu() { return new ConstraintsContextMenu(element); }
+      QString getName() const override { return "constraints"; }
+      QMenu* createContextMenu() override { return new ConstraintsContextMenu(element); }
   };
 
   class ObserverItemData : public ContainerItemData {
     public:
       ObserverItemData(Element *element) : ContainerItemData(element) { }
-      QString getName() const { return "observers"; }
-      virtual QMenu* createContextMenu() { return new ObserversContextMenu(element); }
+      QString getName() const override { return "observers"; }
+      QMenu* createContextMenu() override { return new ObserversContextMenu(element); }
   };
 
 }

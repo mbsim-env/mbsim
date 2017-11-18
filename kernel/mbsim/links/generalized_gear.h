@@ -30,26 +30,26 @@ namespace MBSim {
   class GeneralizedGear : public RigidBodyLink {
     friend class GeneralizedGearConstraint;
     protected:
-      GeneralizedForceLaw *fl;
-      GeneralizedImpactLaw *il;
+      GeneralizedForceLaw *fl{nullptr};
+      GeneralizedImpactLaw *il{nullptr};
       std::string saved_gearOutput;
       std::vector<std::string> saved_gearInput;
     public:
-      GeneralizedGear(const std::string &name="") : RigidBodyLink(name), fl(NULL), il(NULL) { body.resize(1); ratio.resize(1); }
-      ~GeneralizedGear();
-      void updateGeneralizedForces();
+      GeneralizedGear(const std::string &name="") : RigidBodyLink(name) { body.resize(1); ratio.resize(1); }
+      ~GeneralizedGear() override;
+      void updateGeneralizedForces() override;
       void setGearOutput(RigidBody* body_) { body[0] = body_; ratio[0] = -1; }
       void addGearInput(RigidBody* body_, double ratio_) { body.push_back(body_); ratio.push_back(ratio_); }
 
-      bool isActive() const { return true; }
-      bool gActiveChanged() { return false; }
-      void init(InitStage stage, const InitConfigSet &config);
-      bool isSetValued() const;
-      bool isSingleValued() const { return not(isSetValued()); }
+      bool isActive() const override { return true; }
+      bool gActiveChanged() override { return false; }
+      void init(InitStage stage, const InitConfigSet &config) override;
+      bool isSetValued() const override;
+      bool isSingleValued() const override { return not(isSetValued()); }
 
       void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
   };
 
 }

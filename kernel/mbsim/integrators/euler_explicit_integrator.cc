@@ -20,7 +20,7 @@
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
 #include "euler_explicit_integrator.h"
-#include <time.h>
+#include <ctime>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -35,7 +35,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, EulerExplicitIntegrator)
 
-  EulerExplicitIntegrator::EulerExplicitIntegrator() : dt(1e-3) {
+  EulerExplicitIntegrator::EulerExplicitIntegrator()  {
   }
 
   void EulerExplicitIntegrator::preIntegrate(DynamicSystemSolver& system_) {

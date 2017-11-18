@@ -41,10 +41,10 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~Angles();
+      ~Angles() override;
 
       /* INTERFACE OF ROTATION */
-      virtual fmatvec::RotMat3 operator()(const fmatvec::VecV &q, const double &t);
+      fmatvec::RotMat3 operator()(const fmatvec::VecV &q, const double &t) override;
       /***************************************************/
 
       /* INTERFACE */

@@ -33,15 +33,14 @@ namespace MBSim {
       PolyFurstumSphereContact(const PolynomialFrustum * frustum) : sphereCenter(fmatvec::Vec3()), rS(0.), frustum(frustum) {
       }
 
-      virtual ~PolyFurstumSphereContact() {
-      }
+      ~PolyFurstumSphereContact() override = default;
 
       void setCenter(const fmatvec::Vec3 & sphereCenter_) {
         sphereCenter = sphereCenter_;
         rS = sqrt(sphereCenter(1) * sphereCenter(1) + sphereCenter(2) * sphereCenter(2));
       }
 
-      fmatvec::Vec operator()(const fmatvec::Vec &x);
+      fmatvec::Vec operator()(const fmatvec::Vec &x) override;
 
     protected:
       /*!
@@ -65,15 +64,14 @@ namespace MBSim {
       PolyFurstumSphereContactJacobian(const PolynomialFrustum * frustum) : rS(0.), frustum(frustum) {
       }
 
-      virtual ~PolyFurstumSphereContactJacobian() {
-      }
+      ~PolyFurstumSphereContactJacobian() override = default;
 
       void setCenter(const fmatvec::Vec3 & sphereCenter_) {
         sphereCenter = sphereCenter_;
         rS = sqrt(sphereCenter(1) * sphereCenter(1) + sphereCenter(2) * sphereCenter(2));
       }
 
-      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x);
+      fmatvec::SqrMat operator ()(const fmatvec::Vec & x) override;
 
     protected:
       /*!
@@ -100,12 +98,12 @@ namespace MBSim {
   class ContactKinematicsSpherePolynomialFrustum : public MBSim::ContactKinematics {
     public:
       ContactKinematicsSpherePolynomialFrustum();
-      virtual ~ContactKinematicsSpherePolynomialFrustum();
+      ~ContactKinematicsSpherePolynomialFrustum() override;
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
-      void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double& g, std::vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec& wb, double g, std::vector<ContourFrame*> &cFrame) {
+      void assignContours(const std::vector<Contour*> &contour) override;
+      void updateg(double& g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(fmatvec::Vec& wb, double g, std::vector<ContourFrame*> &cFrame) override {
         throw MBSimError("(ContactKinematicsAreaPolynomialFrustum::updatewb): not implemented!");
       }
 
@@ -114,22 +112,22 @@ namespace MBSim {
       /**
        * \brief contour index of sphere (in cpData)
        */
-      int isphere;
+      int isphere{-1};
 
       /**
        * \brief contour index of frustum (in cpData)
        */
-      int ifrustum;
+      int ifrustum{-1};
 
       /**
        * \brief pointer to the contour class for the sphere
        */
-      Sphere *sphere;
+      Sphere *sphere{nullptr};
 
       /*!
        * \brief pointer to the contour class for the polynomial frustum
        */
-      PolynomialFrustum *frustum;
+      PolynomialFrustum *frustum{nullptr};
 
       /*!
        * \brief Newton solver for nonlinear problem
@@ -139,12 +137,12 @@ namespace MBSim {
       /*
        * \brief function for contact search
        */
-      PolyFurstumSphereContact * func;
+      PolyFurstumSphereContact * func{nullptr};
 
       /*!
        * \brief jacobian function for solution
        */
-      PolyFurstumSphereContactJacobian* jacobian;
+      PolyFurstumSphereContactJacobian* jacobian{nullptr};
 
       /*!
        * \brief residual function for newton

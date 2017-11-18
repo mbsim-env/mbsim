@@ -35,12 +35,12 @@ namespace MBSim {
   class ContactKinematicsCompoundContourContour : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<Contour*> &contour);
+      void assignContours(const std::vector<Contour*> &contour) override;
 
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) { }
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) { }
+      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override { }
+      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { }
 
-      ContactKinematics* getContactKinematics(int i=0) const { return contactKinematics[i]; }
+      ContactKinematics* getContactKinematics(int i=0) const override { return contactKinematics[i]; }
       /***************************************************/
 
     private:

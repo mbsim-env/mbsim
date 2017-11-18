@@ -62,36 +62,36 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~NurbsDisk2s();  
+      ~NurbsDisk2s() override;  
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
+      MBSim::ContourFrame* createContourFrame(const std::string &name="P") override;
 
-      virtual fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) { return evalWs(zeta); }
-      virtual fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) { return evalWt(zeta); }
-      virtual fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) override { return evalWs(zeta); }
+      fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) override { return evalWt(zeta); }
+      fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta) override;
 
-      virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
+      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
 
-      void updatePositions(MBSim::ContourFrame *frame);
-      void updateVelocities(MBSim::ContourFrame *frame);
-      void updateAccelerations(MBSim::ContourFrame *frame);
-      void updateJacobians(MBSim::ContourFrame *frame, int j=0);
-      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame);
+      void updatePositions(MBSim::ContourFrame *frame) override;
+      void updateVelocities(MBSim::ContourFrame *frame) override;
+      void updateAccelerations(MBSim::ContourFrame *frame) override;
+      void updateJacobians(MBSim::ContourFrame *frame, int j=0) override;
+      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame) override;
 
       fmatvec::Vec3 evalPosition();
       fmatvec::SqrMat3 evalOrientation();
 
-      virtual void plot();
+      void plot() override;
 
-      virtual MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) { return findContactPairingFlexible(type0, type1); }
+      MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override { return findContactPairingFlexible(type0, type1); }
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         openMBVNurbsDisk = OpenMBV::ObjectFactory::create<OpenMBV::NurbsDisk>();

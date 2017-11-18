@@ -72,14 +72,14 @@ namespace MBSim {
     }
     else if (stage == plotting) {
       Observer::init(stage, config);
-      for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
-        for (std::vector<SingleContactObserver>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+      for (auto & iter : contactObserver) {
+        for (auto jter = iter.begin(); jter != iter.end(); ++jter)
           jter->init(stage, config);
       }
     }
     else if (stage == unknownStage) {
-      for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
-        for (std::vector<SingleContactObserver>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+      for (auto & iter : contactObserver) {
+        for (auto jter = iter.begin(); jter != iter.end(); ++jter)
           jter->init(stage, config);
       }
       Observer::init(stage, config);
@@ -90,8 +90,8 @@ namespace MBSim {
 
   void ContactObserver::plot() {
     Observer::plot();
-    for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
-      for (std::vector<SingleContactObserver>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+    for (auto & iter : contactObserver) {
+      for (auto jter = iter.begin(); jter != iter.end(); ++jter)
         jter->plot();
     }
   }
@@ -136,8 +136,8 @@ namespace MBSim {
   void ContactObserver::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Observer::setDynamicSystemSolver(sys);
 
-    for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
-      for (std::vector<SingleContactObserver>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+    for (auto & iter : contactObserver) {
+      for (auto jter = iter.begin(); jter != iter.end(); ++jter)
         jter->setDynamicSystemSolver(ds);
     }
   }

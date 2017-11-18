@@ -34,7 +34,7 @@ namespace MBSim {
   PlanarContour::~PlanarContour() {
      if (funcCrPC) 
        delete funcCrPC;
-     funcCrPC=NULL;
+     funcCrPC=nullptr;
   }
 
   Vec3 PlanarContour::evalKrPS(const Vec2 &zeta) {
@@ -67,8 +67,8 @@ namespace MBSim {
           for(int i=0; i<101; i++)
             ombvNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/100.;
         }
-        for (unsigned int i=0; i<ombvNodes.size(); i++) {
-          const Vec3 CrPC=(*funcCrPC)(ombvNodes[i]);
+        for (double ombvNode : ombvNodes) {
+          const Vec3 CrPC=(*funcCrPC)(ombvNode);
           vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), 0));
         }
         static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);

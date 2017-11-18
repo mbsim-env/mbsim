@@ -44,11 +44,11 @@ namespace MBSim {
    */
   class InfluenceFunction : public Function<double(std::pair<Contour*, ContourFrame*>, std::pair<Contour*, ContourFrame*>)> {
     public:
-      InfluenceFunction(){}
-      virtual ~InfluenceFunction() {}
+      InfluenceFunction()= default;
+      ~InfluenceFunction() override = default;
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const std::pair<Contour*, ContourFrame*>& firstContourInfo, const std::pair<Contour*, ContourFrame*>& secondContourInfo)=0;
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      double operator()(const std::pair<Contour*, ContourFrame*>& firstContourInfo, const std::pair<Contour*, ContourFrame*>& secondContourInfo) override =0;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
     protected:
       fmatvec::Vec2 evalZeta(const std::pair<Contour*, ContourFrame*>& contourInfo);

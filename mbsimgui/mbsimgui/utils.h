@@ -267,8 +267,8 @@ namespace MBSimGUI {
       xercesc::DOMDocument *doc=parent->getOwnerDocument();
       xercesc::DOMElement* ele = MBXMLUtils::D(doc)->createElement(name);
       MBXMLUtils::E(ele)->setAttribute(attribute, attributeName);
-      ele->insertBefore(doc->createTextNode(MBXMLUtils::X()%oss.str()), NULL);
-      parent->insertBefore(ele, NULL);
+      ele->insertBefore(doc->createTextNode(MBXMLUtils::X()%oss.str()), nullptr);
+      parent->insertBefore(ele, nullptr);
     }
 
   std::vector<std::vector<double> > Cardan2AIK(const std::vector<std::vector<double> > &x);

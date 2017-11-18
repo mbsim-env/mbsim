@@ -55,7 +55,7 @@ namespace MBSim {
        */      
       SingleContact(const std::string &name="");
 
-      void resetUpToDate();
+      void resetUpToDate() override;
 
       bool isSticking() const;
 
@@ -77,8 +77,8 @@ namespace MBSim {
       const fmatvec::Vec& evalgddT();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatewb();
-      virtual void updateV(int i=0);
+      void updatewb() override;
+      void updateV(int i=0) override;
       void updateGeneralizedNormalForce() { (this->*updateGeneralizedNormalForce_)(); updlaN = false; }
       void updateGeneralizedTangentialForce() { (this->*updateGeneralizedTangentialForce_)(); updlaT = false; }
       void updateGeneralizedNormalForceS();
@@ -89,54 +89,54 @@ namespace MBSim {
       void updateGeneralizedTangentialForce0() { }
       void (SingleContact::*updateGeneralizedNormalForce_)();
       void (SingleContact::*updateGeneralizedTangentialForce_)();
-      virtual void updateGeneralizedForces();
-      virtual void updateGeneralizedPositions();
-      virtual void updateGeneralizedVelocities();
-      virtual void updatePositions();
-      virtual void updatePositions(Frame *frame);
-      virtual void updateVelocities();
-      virtual void updateg();
-      virtual void updategd();
-      virtual void updateh(int i=0);
-      virtual void updateW(int i=0);
-      virtual void updateStopVector();
+      void updateGeneralizedForces() override;
+      void updateGeneralizedPositions() override;
+      void updateGeneralizedVelocities() override;
+      void updatePositions() override;
+      void updatePositions(Frame *frame) override;
+      void updateVelocities() override;
+      void updateg() override;
+      void updategd() override;
+      void updateh(int i=0) override;
+      void updateW(int i=0) override;
+      void updateStopVector() override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void updatelaRef(const fmatvec::Vec& ref);
-      virtual void updateLaRef(const fmatvec::Vec& ref);
-      virtual void updategdRef(const fmatvec::Vec& ref);
-      virtual void calcSize();
-      virtual void calcxSize();
-      virtual void calclaSize(int j);
-      virtual void calcgSize(int j);
-      virtual void calcgdSize(int j);
-      virtual void calcrFactorSize(int j);
-      virtual void calcsvSize();
-      virtual void calcLinkStatusSize();
-      virtual void calcLinkStatusRegSize();
-      virtual void init(InitStage stage, const InitConfigSet &config);
-      virtual bool isSetValued() const;
-      virtual bool isSingleValued() const;
-      virtual void updateLinkStatus();
-      virtual void updateLinkStatusReg();
-      virtual bool isActive() const;
-      virtual bool gActiveChanged();
-      virtual bool detectImpact();
-      virtual void solveImpactsFixpointSingle();
-      virtual void solveConstraintsFixpointSingle();
-      virtual void solveImpactsGaussSeidel();
-      virtual void solveConstraintsGaussSeidel();
-      virtual void solveImpactsRootFinding();
-      virtual void solveConstraintsRootFinding();
-      virtual void jacobianConstraints();
-      virtual void jacobianImpacts();
-      virtual void updaterFactors();
-      virtual void checkConstraintsForTermination();
-      virtual void checkImpactsForTermination();
-      virtual void checkActive(int j);
-      virtual void LinearImpactEstimation(double t, fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
-      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
+      void updatelaRef(const fmatvec::Vec& ref) override;
+      void updateLaRef(const fmatvec::Vec& ref) override;
+      void updategdRef(const fmatvec::Vec& ref) override;
+      void calcSize() override;
+      void calcxSize() override;
+      void calclaSize(int j) override;
+      void calcgSize(int j) override;
+      void calcgdSize(int j) override;
+      void calcrFactorSize(int j) override;
+      void calcsvSize() override;
+      void calcLinkStatusSize() override;
+      void calcLinkStatusRegSize() override;
+      void init(InitStage stage, const InitConfigSet &config) override;
+      bool isSetValued() const override;
+      bool isSingleValued() const override;
+      void updateLinkStatus() override;
+      void updateLinkStatusReg() override;
+      bool isActive() const override;
+      bool gActiveChanged() override;
+      bool detectImpact() override;
+      void solveImpactsFixpointSingle() override;
+      void solveConstraintsFixpointSingle() override;
+      void solveImpactsGaussSeidel() override;
+      void solveConstraintsGaussSeidel() override;
+      void solveImpactsRootFinding() override;
+      void solveConstraintsRootFinding() override;
+      void jacobianConstraints() override;
+      void jacobianImpacts() override;
+      void updaterFactors() override;
+      void checkConstraintsForTermination() override;
+      void checkImpactsForTermination() override;
+      void checkActive(int j) override;
+      void LinearImpactEstimation(double t, fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_) override;
+      void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) override;
  
       /***************************************************/
 
@@ -167,38 +167,38 @@ namespace MBSim {
        */
 //      void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0);
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void calccorrSize(int j);
-      void updatecorr(int j);
+      void calccorrSize(int j) override;
+      void updatecorr(int j) override;
 
-      void checkRoot();
+      void checkRoot() override;
 
     protected:
       /**
        * \brief used contact kinematics
        */
-      ContactKinematics *contactKinematics;
+      ContactKinematics *contactKinematics{nullptr};
 
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level
        */
-      GeneralizedForceLaw *fcl;
+      GeneralizedForceLaw *fcl{nullptr};
 
       /**
        * \brief force law defining relation between tangential velocities and tangential forces
        */
-      FrictionForceLaw *fdf;
+      FrictionForceLaw *fdf{nullptr};
       
       /**
        * \brief force law defining relation between penetration velocity and resulting normal impulses
       */
-      GeneralizedImpactLaw *fnil;
+      GeneralizedImpactLaw *fnil{nullptr};
       
       /** 
        * \brief force law defining relation between tangential velocities and forces impulses
       */
-      FrictionImpactLaw *ftil;
+      FrictionImpactLaw *ftil{nullptr};
 
       /*!
        * \brief force in normal direction
@@ -230,7 +230,7 @@ namespace MBSim {
       /** 
        * \brief boolean flag symbolising activity of contact on position level with possibility to save previous time step
        */
-      unsigned int gActive, gActive0;
+      unsigned int gActive{0}, gActive0{0};
 
       enum Direction {
         normal,
@@ -270,7 +270,7 @@ namespace MBSim {
       double lambdaN;
       fmatvec::VecV lambdaT;
 
-      bool updlaN, updlaT;
+      bool updlaN{true}, updlaT{true};
 
       /**
        * \brief type of detected root
@@ -279,7 +279,7 @@ namespace MBSim {
        * 2 = slip-stick transition
        * 3 = open-close transition, i.e., impact
        */
-      int rootID;
+      int rootID{0};
   };
 
 }

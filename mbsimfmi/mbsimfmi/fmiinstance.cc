@@ -124,8 +124,7 @@ namespace MBSimFMI {
   }
 
   // destroy a MBSim FMI instance. Called by fmiFreeModelInstance
-  FMIInstance::~FMIInstance() {
-  }
+  FMIInstance::~FMIInstance() = default;
 
   // FMI wrapper functions, except fmiInstantiateModel and fmiFreeModelInstance see above
 
@@ -274,9 +273,9 @@ namespace MBSimFMI {
                           +fmatvec::toString(var.size())+", "+fmatvec::toString(varSim.size())+". "+
                           "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
 
-    vector<shared_ptr<Variable> >::iterator varSimIt=varSim.begin();
+    auto varSimIt=varSim.begin();
     size_t vr=0;
-    for(vector<shared_ptr<Variable> >::iterator varIt=var.begin(); varIt!=var.end(); ++varIt, ++varSimIt, ++vr) {
+    for(auto varIt=var.begin(); varIt!=var.end(); ++varIt, ++varSimIt, ++vr) {
       try {
         // check for a change of the model topologie
         if((*varSimIt)->getName()!=(*varIt)->getName())

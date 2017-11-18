@@ -31,45 +31,45 @@ namespace MBSimFMI {
                                                               fmiCallbackFunctions functions, fmiBoolean loggingOn);
     public:
       //! dtor used in fmiFreeModelInstance
-      ~FMIInstance();
+      ~FMIInstance() override;
 
       //! print exception using FMI logger
-      void logException(const std::exception &ex);
+      void logException(const std::exception &ex) override;
 
       // Wrapper for all other FMI functions (except fmiInstantiateModel and fmiFreeModelInstance, see above)
 
-      void setDebugLogging           (fmiBoolean loggingOn);
-      void setTime                   (fmiReal time_);
-      void setContinuousStates       (const fmiReal x[], size_t nx);
-      void completedIntegratorStep   (fmiBoolean* callEventUpdate);
+      void setDebugLogging           (fmiBoolean loggingOn) override;
+      void setTime                   (fmiReal time_) override;
+      void setContinuousStates       (const fmiReal x[], size_t nx) override;
+      void completedIntegratorStep   (fmiBoolean* callEventUpdate) override;
 
       // wrap the virtual none template functions to the corresponding template function
-      void setDoubleValue(const fmiValueReference vr[], size_t nvr, const fmiReal value[])    { setValue<double>     (vr, nvr, value); }
-      void setIntValue   (const fmiValueReference vr[], size_t nvr, const fmiInteger value[]) { setValue<int>        (vr, nvr, value); }
-      void setBoolValue  (const fmiValueReference vr[], size_t nvr, const fmiBoolean value[]) { setValue<bool>       (vr, nvr, value); }
-      void setStringValue(const fmiValueReference vr[], size_t nvr, const fmiString value[])  { setValue<std::string>(vr, nvr, value); }
+      void setDoubleValue(const fmiValueReference vr[], size_t nvr, const fmiReal value[]) override    { setValue<double>     (vr, nvr, value); }
+      void setIntValue   (const fmiValueReference vr[], size_t nvr, const fmiInteger value[]) override { setValue<int>        (vr, nvr, value); }
+      void setBoolValue  (const fmiValueReference vr[], size_t nvr, const fmiBoolean value[]) override { setValue<bool>       (vr, nvr, value); }
+      void setStringValue(const fmiValueReference vr[], size_t nvr, const fmiString value[]) override  { setValue<std::string>(vr, nvr, value); }
       // used in fmiSetReal, fmiSetInteger, fmiSetBoolean and fmiSetString
       template<typename CppDatatype, typename FMIDatatype>
       void setValue      (const fmiValueReference vr[], size_t nvr, const FMIDatatype value[]);
 
-      void initialize                (fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo);
-      void getDerivatives            (fmiReal derivatives[], size_t nx);
-      void getEventIndicators        (fmiReal eventIndicators[], size_t ni);
+      void initialize                (fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo) override;
+      void getDerivatives            (fmiReal derivatives[], size_t nx) override;
+      void getEventIndicators        (fmiReal eventIndicators[], size_t ni) override;
 
       // wrap the virtual none template functions to the corresponding template function
-      void getDoubleValue(const fmiValueReference vr[], size_t nvr, fmiReal value[])    { getValue<double>     (vr, nvr, value); }
-      void getIntValue   (const fmiValueReference vr[], size_t nvr, fmiInteger value[]) { getValue<int>        (vr, nvr, value); }
-      void getBoolValue  (const fmiValueReference vr[], size_t nvr, fmiBoolean value[]) { getValue<bool>       (vr, nvr, value); }
-      void getStringValue(const fmiValueReference vr[], size_t nvr, fmiString value[])  { getValue<std::string>(vr, nvr, value); }
+      void getDoubleValue(const fmiValueReference vr[], size_t nvr, fmiReal value[]) override    { getValue<double>     (vr, nvr, value); }
+      void getIntValue   (const fmiValueReference vr[], size_t nvr, fmiInteger value[]) override { getValue<int>        (vr, nvr, value); }
+      void getBoolValue  (const fmiValueReference vr[], size_t nvr, fmiBoolean value[]) override { getValue<bool>       (vr, nvr, value); }
+      void getStringValue(const fmiValueReference vr[], size_t nvr, fmiString value[]) override  { getValue<std::string>(vr, nvr, value); }
       // used in fmiGetReal, fmiGetInteger, fmiGetBoolean and fmiGetString
       template<typename CppDatatype, typename FMIDatatype>
       void getValue      (const fmiValueReference vr[], size_t nvr, FMIDatatype value[]);
 
-      void eventUpdate               (fmiBoolean intermediateResults, fmiEventInfo* eventInfo);
-      void getContinuousStates       (fmiReal states[], size_t nx);
-      void getNominalContinuousStates(fmiReal x_nominal[], size_t nx);
-      void getStateValueReferences   (fmiValueReference vrx[], size_t nx);
-      void terminate                 ();
+      void eventUpdate               (fmiBoolean intermediateResults, fmiEventInfo* eventInfo) override;
+      void getContinuousStates       (fmiReal states[], size_t nx) override;
+      void getNominalContinuousStates(fmiReal x_nominal[], size_t nx) override;
+      void getStateValueReferences   (fmiValueReference vrx[], size_t nx) override;
+      void terminate                 () override;
 
     private:
       //! ctor used in fmiInstantiateModel

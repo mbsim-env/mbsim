@@ -39,8 +39,8 @@ namespace MBSim {
   class PiecewiseDefinedFunction<Ret(double)> : public Function<Ret(double)> {
     using B = fmatvec::Function<Ret(double)>; 
     public:
-      PiecewiseDefinedFunction() : shiftAbscissa(false), shiftOrdinate(false) { a.push_back(0); }
-      ~PiecewiseDefinedFunction() {
+      PiecewiseDefinedFunction()  { a.push_back(0); }
+      ~PiecewiseDefinedFunction() override {
         for(unsigned int i=0; i<function.size(); i++)
           delete function[i];
       }
@@ -50,34 +50,34 @@ namespace MBSim {
         a.push_back(limitedFunction.limit);
       }
       Ret zeros(const Ret &x) { return Ret(x.size()); }
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return function.size()?function[0]->getRetSize():std::make_pair(0,1); }
-      Ret operator()(const double &x) {
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return function.size()?function[0]->getRetSize():std::make_pair(0,1); }
+      Ret operator()(const double &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return y0[i] + (*function[i])(x-x0[i]);
         throw MBSimError("(PiecewiseDefinedFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
-      typename B::DRetDArg parDer(const double &x) {
+      typename B::DRetDArg parDer(const double &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return function[i]->parDer(x-x0[i]);
         throw MBSimError("(PiecewiseDefinedFunction::parDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
-      typename B::DRetDArg parDerDirDer(const double &xDir, const double &x) {
+      typename B::DRetDArg parDerDirDer(const double &xDir, const double &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return function[i]->parDerDirDer(xDir,x-x0[i]);
         throw MBSimError("(PiecewiseDefinedFunction::parDerDirDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
-      typename B::DDRetDDArg parDerParDer(const double &x) {
+      typename B::DDRetDDArg parDerParDer(const double &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return function[i]->parDerParDer(x-x0[i]);
         throw MBSimError("(PiecewiseDefinedFunction::parDerParDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
 
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");
         xercesc::DOMElement *ee=e->getFirstElementChild();
         while(ee && MBXMLUtils::E(ee)->getTagName()==MBSIM%"LimitedFunction") {
@@ -89,9 +89,9 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftOrdinate");
         if(e) shiftOrdinate=MBXMLUtils::E(e)->getText<bool>();
       }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(double)>::init(stage, config);
-        for(typename std::vector<Function<Ret(double)> *>::iterator it=function.begin(); it!=function.end(); it++)
+        for(auto it=function.begin(); it!=function.end(); it++)
           (*it)->init(stage, config);
         if(stage==Element::preInit) {
           if(shiftAbscissa) {
@@ -112,7 +112,7 @@ namespace MBSim {
       std::vector<Function<Ret(double)> *> function;
       std::vector<double> a, x0;
       std::vector<Ret> y0;
-      bool shiftAbscissa, shiftOrdinate;
+      bool shiftAbscissa{false}, shiftOrdinate{false};
   };
 
   template<>
@@ -122,8 +122,8 @@ namespace MBSim {
   class PiecewiseDefinedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     using B = fmatvec::Function<Ret(Arg)>; 
     public:
-      PiecewiseDefinedFunction() : shiftAbscissa(false), shiftOrdinate(false) { a.push_back(0); }
-      ~PiecewiseDefinedFunction() {
+      PiecewiseDefinedFunction()  { a.push_back(0); }
+      ~PiecewiseDefinedFunction() override {
         for(unsigned int i=0; i<function.size(); i++)
           delete function[i];
       }
@@ -132,29 +132,29 @@ namespace MBSim {
         limitedFunction.function->setParent(this);
         a.push_back(limitedFunction.limit);
       }
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return function.size()?function[0]->getRetSize():std::make_pair(0,1); }
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return function.size()?function[0]->getRetSize():std::make_pair(0,1); }
       Ret zeros(const Ret &x) { return Ret(x.size()); }
-      Ret operator()(const Arg &x) {
+      Ret operator()(const Arg &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(ToDouble<Arg>::cast(x)<=a[i+1])
             return y0[i] + (*function[i])(x-FromDouble<Arg>::cast(x0[i]));
         throw MBSimError("(PiecewiseDefinedFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
-      typename B::DRetDArg parDer(const Arg &x) {
+      typename B::DRetDArg parDer(const Arg &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(ToDouble<Arg>::cast(x)<=a[i+1])
             return function[i]->parDer(x-FromDouble<Arg>::cast(x0[i]));
         throw MBSimError("(PiecewiseDefinedFunction::parDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) {
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(ToDouble<Arg>::cast(x)<=a[i+1])
             return function[i]->parDerDirDer(xDir,x-FromDouble<Arg>::cast(x0[i]));
         throw MBSimError("(PiecewiseDefinedFunction::parDerDirDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
 
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");
         xercesc::DOMElement *ee=e->getFirstElementChild();
         while(ee && MBXMLUtils::E(ee)->getTagName()==MBSIM%"LimitedFunction") {
@@ -166,9 +166,9 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftOrdinate");
         if(e) shiftOrdinate=MBXMLUtils::E(e)->getText<bool>();
       }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg)>::init(stage, config);
-        for(typename std::vector<Function<Ret(Arg)> *>::iterator it=function.begin(); it!=function.end(); it++)
+        for(auto it=function.begin(); it!=function.end(); it++)
           (*it)->init(stage, config);
         if(stage==Element::preInit) {
           if(shiftAbscissa) {
@@ -189,7 +189,7 @@ namespace MBSim {
       std::vector<Function<Ret(Arg)> *> function;
       std::vector<double> a, x0;
       std::vector<Ret> y0;
-      bool shiftAbscissa, shiftOrdinate;
+      bool shiftAbscissa{false}, shiftOrdinate{false};
   };
 
   template <>

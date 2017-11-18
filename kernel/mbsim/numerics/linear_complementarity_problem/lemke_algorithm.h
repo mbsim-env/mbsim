@@ -27,17 +27,17 @@ namespace MBSim {
 
   class LemkeAlgorithm : virtual public fmatvec::Atom {
     public:
-      LemkeAlgorithm(const bool & DEBUGLEVEL_ = 0) :
-          M(), q(), steps(0), DEBUGLEVEL(DEBUGLEVEL_), info(-1) {
+      LemkeAlgorithm(const bool & DEBUGLEVEL_ = false) :
+          M(), q(),  DEBUGLEVEL(DEBUGLEVEL_) {
       }
 
-      LemkeAlgorithm(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_, const bool & DEBUGLEVEL_ = 0) :
+      LemkeAlgorithm(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_, const bool & DEBUGLEVEL_ = false) :
           M(M_), q(q_), steps(0), DEBUGLEVEL(DEBUGLEVEL_), info(-1) {
         assert(M_.rows() == q.size());
         assert(M_.cols() == q.size());
       }
 
-      LemkeAlgorithm(const fmatvec::SymMat & M_, const fmatvec::Vec & q_, const bool & DEBUGLEVEL_ = 0) :
+      LemkeAlgorithm(const fmatvec::SymMat & M_, const fmatvec::Vec & q_, const bool & DEBUGLEVEL_ = false) :
           DEBUGLEVEL(DEBUGLEVEL_) {
         setSystem(M_, q_);
       }
@@ -53,7 +53,7 @@ namespace MBSim {
       /**
        * \brief get the number of steps until the solution was found
        */
-      int getSteps(void) {
+      int getSteps() {
         return steps;
       }
 
@@ -84,8 +84,7 @@ namespace MBSim {
        */
       fmatvec::Vec solve(unsigned int maxloops = 0);
 
-      virtual ~LemkeAlgorithm() {
-      }
+      ~LemkeAlgorithm() override = default;
 
     protected:
       int findLexicographicMinimum(const fmatvec::Mat &A, const int & pivotColIndex);
@@ -100,7 +99,7 @@ namespace MBSim {
       /**
        * \brief number of steps until the Lemke algorithm found a solution
        */
-      unsigned int steps;
+      unsigned int steps{0};
 
       /**
        * \brief define level of debug output
@@ -113,7 +112,7 @@ namespace MBSim {
        * -1 : not successful
        *  0 : successful
        */
-      int info;
+      int info{-1};
   };
 
 } /* namespace MBSim */

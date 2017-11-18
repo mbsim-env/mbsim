@@ -41,11 +41,11 @@ namespace MBSimFlexibleBody {
       Contour1s(const std::string &name) : Contour(name) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      void init(InitStage stage_, const MBSim::InitConfigSet &config);
-      void plot();
+      void init(InitStage stage_, const MBSim::InitConfigSet &config) override;
+      void plot() override;
       /***************************************************/
 
-      virtual fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override;
 
       void setOpenMBVSpineExtrusion(const std::shared_ptr<OpenMBV::SpineExtrusion> &spineExtrusion) { openMBVSpineExtrusion = spineExtrusion; }
       std::shared_ptr<OpenMBV::SpineExtrusion>& getOpenMBVSpineExtrusion() { return openMBVSpineExtrusion; }

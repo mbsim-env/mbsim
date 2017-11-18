@@ -24,7 +24,7 @@ int main() {
   shared_ptr<DOMDocument> xmlFile=parser->createDocument();
 
   DOMElement *ele=convertCasADiToXML({{t}, {fexp}},xmlFile.get());
-  xmlFile->insertBefore(ele, NULL);
+  xmlFile->insertBefore(ele, nullptr);
 
   cout<<"Output XML representation to out.xml"<<endl<<endl;
   DOMParser::serialize(xmlFile.get(), "out.xml");

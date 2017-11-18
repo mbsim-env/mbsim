@@ -36,36 +36,37 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointExtrusion() : ContactKinematics(), ipoint(0), iextrusion(0), point(0), extrusion(0), searchAllCP(false) { }
+      ContactKinematicsPointExtrusion() : ContactKinematics() { }
       
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsPointExtrusion();
+      ~ContactKinematicsPointExtrusion() override;
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
-      virtual void assignContours(const std::vector<MBSim::Contour*>& contour);
-      virtual void updateg(double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame);
+      void assignContours(const std::vector<MBSim::Contour*>& contour) override;
+      void updateg(double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame) override;
       /***************************************************/
 
-      void setSearchAllContactPoints(bool searchAllCP_=true) { searchAllCP = searchAllCP_; }
+      void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
 
     protected:
       /** 
        * \brief contour index 
        */
-      int ipoint, iextrusion;
+      int ipoint{0};
+      int iextrusion{0};
 
       /** 
        * \brief contour classes 
        */
-      MBSim::Point *point;
-      Contour *extrusion;
+      MBSim::Point *point{0};
+      Contour *extrusion{0};
 
       MBSim::FuncPairPlanarContourPoint *func;
 
-      bool searchAllCP;
+      bool searchAllCP{false};
   };
 
 }

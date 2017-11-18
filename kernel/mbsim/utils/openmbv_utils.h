@@ -30,13 +30,15 @@
 #include <openmbvcppinterface/coilspring.h>
 #include <openmbvcppinterface/indexedfaceset.h>
 
+#include <utility>
+
 namespace MBSim {
 
   class OpenMBVBody {
     protected:
       std::string id;
     public:
-      OpenMBVBody() { }
+      OpenMBVBody() = default;
       void initializeUsingXML(xercesc::DOMElement *element);
     protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Body> &object);
@@ -82,7 +84,7 @@ namespace MBSim {
       double r;
       std::string xml;
     public:
-      OpenMBVSphere(double r_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, std::string xml_="radius") : OpenMBVDynamicColoredBody(dc,tp), r(r_), xml(xml_) { }
+      OpenMBVSphere(double r_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, std::string xml_="radius") : OpenMBVDynamicColoredBody(dc,tp), r(r_), xml(std::move(xml_)) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::Sphere> createOpenMBV();
     protected:

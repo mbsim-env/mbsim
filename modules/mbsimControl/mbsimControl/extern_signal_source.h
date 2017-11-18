@@ -29,9 +29,9 @@ namespace MBSimControl {
     public:
       ExternSignalSource(const std::string &name="") : Signal(name) {}
       void setSourceSize(int size) { s.resize(size); }
-      void updateSignal() { upds = false; }
+      void updateSignal() override { upds = false; }
       void setSignal(const fmatvec::VecV& input) { assert(s.size()==input.size()); s=input; }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         Signal::initializeUsingXML(element);
         setSourceSize(MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"sourceSize"))->getText<int>());
       }

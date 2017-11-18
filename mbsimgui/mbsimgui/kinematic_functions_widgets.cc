@@ -35,7 +35,7 @@ namespace MBSimGUI {
 
   TranslationAlongFixedAxisWidget::TranslationAlongFixedAxisWidget() {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     a = new ExtWidget("Axis of translation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"axisOfTranslation");
@@ -55,7 +55,7 @@ namespace MBSimGUI {
 
   LinearTranslationWidget::LinearTranslationWidget(int m, int n) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     A = new ExtWidget("Translation vectors",new ChoiceWidget2(new MatColsVarWidgetFactory(m,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationVectors");
@@ -92,7 +92,7 @@ namespace MBSimGUI {
 
   RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget() {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     a = new ExtWidget("Axis of rotation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"axisOfRotation");

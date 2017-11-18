@@ -34,7 +34,7 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleBody1s23BTA)
 
-  FlexibleBody1s23BTA::FlexibleBody1s23BTA(const string &name) : FlexibleBody1s(name,true), l0(0.), E(0), A(0), Iyy(0), Izz(0), rho(0), rc(0) { 
+  FlexibleBody1s23BTA::FlexibleBody1s23BTA(const string &name) : FlexibleBody1s(name,true) { 
 //    cylinderFlexible = new CylinderFlexible("CylinderFlexible");
 //    addContour(cylinderFlexible);
   }
@@ -138,8 +138,8 @@ namespace MBSimFlexibleBody {
       Vec g = R->getOrientation().T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       for(int i=0; i<Elements; i++) {
         discretization.push_back(new FiniteElement1s23BTA(l0, A*rho, E*Iyy, E*Izz, It*rho, G*It, g ));
-        qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
-        uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
+        qElement.emplace_back(discretization[0]->getqSize(),INIT,0.);
+        uElement.emplace_back(discretization[0]->getuSize(),INIT,0.);
         static_cast<FiniteElement1s23BTA*>(discretization[i])->setTorsionalDamping(dTorsional);
       }
     }
@@ -216,9 +216,9 @@ namespace MBSimFlexibleBody {
     setLength(MBXMLUtils::E(e)->getText<double>());
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"youngsModulus");
-    double E=MBXMLUtils::E(e)->getText<double>();
+    auto E=MBXMLUtils::E(e)->getText<double>();
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shearModulus");
-    double G=MBXMLUtils::E(e)->getText<double>();
+    auto G=MBXMLUtils::E(e)->getText<double>();
     setElastModuls(E, G);
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"density");

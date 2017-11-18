@@ -36,29 +36,29 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Group::Group() : constraints(NULL), observers(NULL) {
+  Group::Group() : constraints(nullptr), observers(nullptr) {
 
     InternalFrame *I = new InternalFrame("I",MBSIM%"enableOpenMBVFrameI","plotFeatureFrameI");
     addFrame(I);
   }
 
   Group::~Group() {
-    for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
-      delete *i;
-    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
-      delete *i;
-    for(vector<Group*>::iterator i = group.begin(); i != group.end(); ++i) 
-      delete *i;
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      delete *i;
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      delete *i;
-    for(vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
-      delete *i;
-    for(vector<Observer*>::iterator i = observer.begin(); i != observer.end(); ++i)
-      delete *i;
-    for(vector<Element*>::iterator i = removedElement.begin(); i != removedElement.end(); ++i) 
-      delete *i;
+    for(auto & i : frame)
+      delete i;
+    for(auto & i : contour)
+      delete i;
+    for(auto & i : group) 
+      delete i;
+    for(auto & i : object)
+      delete i;
+    for(auto & i : link)
+      delete i;
+    for(auto & i : constraint)
+      delete i;
+    for(auto & i : observer)
+      delete i;
+    for(auto & i : removedElement) 
+      delete i;
   }
 
   void Group::addFrame(Frame* frame_) {
@@ -98,49 +98,49 @@ namespace MBSimGUI {
 
   void Group::removeElement(Element* element) {
     if(dynamic_cast<Frame*>(element)) {
-      for (vector<Frame*>::iterator it = frame.begin() ; it != frame.end(); ++it)
+      for (auto it = frame.begin() ; it != frame.end(); ++it)
         if(*it==element) {
           frame.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Contour*>(element)) {
-      for (vector<Contour*>::iterator it = contour.begin() ; it != contour.end(); ++it)
+      for (auto it = contour.begin() ; it != contour.end(); ++it)
         if(*it==element) {
           contour.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Group*>(element)) {
-      for (vector<Group*>::iterator it = group.begin() ; it != group.end(); ++it)
+      for (auto it = group.begin() ; it != group.end(); ++it)
         if(*it==element) {
           group.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Object*>(element)) {
-      for (vector<Object*>::iterator it = object.begin() ; it != object.end(); ++it)
+      for (auto it = object.begin() ; it != object.end(); ++it)
         if(*it==element) {
           object.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Link*>(element)) {
-      for (vector<Link*>::iterator it = link.begin() ; it != link.end(); ++it)
+      for (auto it = link.begin() ; it != link.end(); ++it)
         if(*it==element) {
           link.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Constraint*>(element)) {
-      for (vector<Constraint*>::iterator it = constraint.begin() ; it != constraint.end(); ++it)
+      for (auto it = constraint.begin() ; it != constraint.end(); ++it)
         if(*it==element) {
           constraint.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Observer*>(element)) {
-      for (vector<Observer*>::iterator it = observer.begin() ; it != observer.end(); ++it)
+      for (auto it = observer.begin() ; it != observer.end(); ++it)
         if(*it==element) {
           observer.erase(it);
           break;
@@ -163,22 +163,22 @@ namespace MBSimGUI {
     DOMElement *ele0 = Element::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
     frames = D(doc)->createElement( MBSIM%"frames" );
-    ele0->insertBefore( frames, NULL );
+    ele0->insertBefore( frames, nullptr );
     contours = D(doc)->createElement( MBSIM%"contours" );
-    ele0->insertBefore( contours, NULL );
+    ele0->insertBefore( contours, nullptr );
     groups = D(doc)->createElement( MBSIM%"groups" );
-    ele0->insertBefore( groups, NULL );
+    ele0->insertBefore( groups, nullptr );
     objects = D(doc)->createElement( MBSIM%"objects" );
-    ele0->insertBefore( objects, NULL );
+    ele0->insertBefore( objects, nullptr );
     links = D(doc)->createElement( MBSIM%"links" );
-    ele0->insertBefore( links, NULL );
+    ele0->insertBefore( links, nullptr );
     constraints = D(doc)->createElement( MBSIM%"constraints" );
-    ele0->insertBefore( constraints, NULL );
+    ele0->insertBefore( constraints, nullptr );
     observers = D(doc)->createElement( MBSIM%"observers" );
-    ele0->insertBefore( observers, NULL );
+    ele0->insertBefore( observers, nullptr );
 
     DOMElement *ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameI" );
-    ele0->insertBefore( ele1, NULL );
+    ele0->insertBefore( ele1, nullptr );
 
     return ele0;
   }
@@ -193,34 +193,34 @@ namespace MBSimGUI {
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
-    for(size_t i=0; i<contour.size(); i++) {
-      contour[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+    for(auto & i : contour) {
+      i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"groups")->getFirstElementChild();
-    for(size_t i=0; i<group.size(); i++) {
-      group[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+    for(auto & i : group) {
+      i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
-    for(size_t i=0; i<object.size(); i++) {
-      object[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+    for(auto & i : object) {
+      i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
-    for(size_t i=0; i<link.size(); i++) {
-      link[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+    for(auto & i : link) {
+      i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"constraints");
     if(ELE) {
       ELE=ELE->getFirstElementChild();
-      for(size_t i=0; i<constraint.size(); i++) {
-        constraint[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+      for(auto & i : constraint) {
+        i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
         ELE=ELE->getNextElementSibling();
       }
     }
@@ -228,8 +228,8 @@ namespace MBSimGUI {
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"observers");
     if(ELE) {
       ELE=ELE->getFirstElementChild();
-      for(size_t i=0; i<observer.size(); i++) {
-        observer[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+      for(auto & i : observer) {
+        i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
         ELE=ELE->getNextElementSibling();
       }
     }
@@ -238,7 +238,7 @@ namespace MBSimGUI {
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID().toStdString());
-      ELE->insertBefore(id, NULL);
+      ELE->insertBefore(id, nullptr);
     }
 
     return element;
@@ -319,7 +319,7 @@ namespace MBSimGUI {
       if(frame[i]->getName() == name)
         return frame[i];
     }
-    return NULL;
+    return nullptr;
   }
 
   Contour* Group::getContour(const QString &name) const {
@@ -328,7 +328,7 @@ namespace MBSimGUI {
       if(contour[i]->getName() == name)
         return contour[i];
     }
-    return NULL;
+    return nullptr;
   }
 
   Group* Group::getGroup(const QString &name) const {
@@ -337,7 +337,7 @@ namespace MBSimGUI {
       if(group[i]->getName() == name)
         return group[i];
     }
-    return NULL;
+    return nullptr;
   }
 
   Object* Group::getObject(const QString &name) const {
@@ -346,7 +346,7 @@ namespace MBSimGUI {
       if(object[i]->getName() == name)
         return object[i];
     }
-    return NULL;
+    return nullptr;
   }
 
   Link* Group::getLink(const QString &name) const {
@@ -355,7 +355,7 @@ namespace MBSimGUI {
       if(link[i]->getName() == name)
         return link[i];
     }
-    return NULL;
+    return nullptr;
   }
 
   Constraint* Group::getConstraint(const QString &name) const {
@@ -364,7 +364,7 @@ namespace MBSimGUI {
       if(constraint[i]->getName() == name)
         return constraint[i];
     }
-    return NULL;
+    return nullptr;
   }
 
   Observer* Group::getObserver(const QString &name) const {
@@ -373,7 +373,7 @@ namespace MBSimGUI {
       if(observer[i]->getName() == name)
         return observer[i];
     }
-    return NULL;
+    return nullptr;
   }
 
   Element * Group::getChildByContainerAndName(const QString &container, const QString &name) const {
@@ -392,7 +392,7 @@ namespace MBSimGUI {
     else if (container == "Observer")
       return getObserver(name);
     else
-      return 0;
+      return nullptr;
   }
 
   int Group::getIndexOfFrame(Frame *frame_) {
