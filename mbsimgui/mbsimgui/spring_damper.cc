@@ -29,7 +29,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   DOMElement* SpringDamper::processFileID(DOMElement *element) {
-    FixedFrameLink::processFileID(element);
+    element = FixedFrameLink::processFileID(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ELE) {
@@ -42,7 +42,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* DirectionalSpringDamper::processFileID(DOMElement *element) {
-    FloatingFrameLink::processFileID(element);
+    element = FloatingFrameLink::processFileID(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ELE) {

@@ -88,7 +88,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* DynamicSystemSolver::processFileID(DOMElement *element) {
-    Group::processFileID(element);
+    element = Group::processFileID(element);
     E(element)->setAttribute("name","out"+QString::number(currentTask).toStdString());;
     if(currentTask==1) {
       DOMElement *ele1 = D(element->getOwnerDocument())->createElement( MBSIM%"plotFeatureRecursive" );

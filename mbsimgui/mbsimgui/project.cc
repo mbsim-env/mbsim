@@ -70,14 +70,13 @@ namespace MBSimGUI {
   }
 
   DOMElement* Project::processFileID(DOMElement *element) {
+    element = EmbedItemData::processFileID(element);
     DOMElement* ele0 = element->getFirstElementChild();
     if(E(ele0)->getTagName()==PV%"evaluator")
       ele0 = ele0->getNextElementSibling();
-    DOMElement* ele = (E(ele0)->getTagName()==PV%"Embed")?E(ele0)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver"):ele0;
-    dss->processFileID(ele);
+    dss->processFileID(ele0);
     ele0 = ele0->getNextElementSibling();
-    ele = (E(ele0)->getTagName()==PV%"Embed")?ele0->getLastElementChild():ele0;
-    solver->processFileID(ele);
+    solver->processFileID(ele0);
     return element;
   }
 

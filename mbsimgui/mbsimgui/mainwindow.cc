@@ -872,7 +872,7 @@ namespace MBSimGUI {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, NULL);
-    projectView->getProject()->processFileID((E(newDocElement)->getTagName()==PV%"Embed")?E(newDocElement)->getFirstElementChildNamed(MBSIMXML%"MBSimProject"):newDocElement);
+    projectView->getProject()->processFileID(newDocElement);
 
     //QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+QString::number(task)+".mbsimprj.flat.xml";
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());

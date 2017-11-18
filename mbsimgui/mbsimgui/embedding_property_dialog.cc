@@ -73,10 +73,10 @@ namespace MBSimGUI {
           counterName->setActive(true);
           static_cast<TextWidget*>(counterName->getWidget())->setText(QString::fromStdString(E(parent)->getAttribute("counterName")));
         }
-//        if(E(parent)->hasAttribute("parameterHref")) {
-//          parameterHref->setActive(true);
-//          static_cast<FileWidget*>(parameterHref->getWidget())->setFile(QString::fromStdString(E(parent)->getAttribute("parameterHref")));
-//        }
+        if(E(parent)->hasAttribute("parameterHref")) {
+          parameterHref->setActive(true);
+          static_cast<FileWidget*>(parameterHref->getWidget())->setFile(QString::fromStdString(E(parent)->getAttribute("parameterHref")));
+        }
       }
     }
     return NULL;

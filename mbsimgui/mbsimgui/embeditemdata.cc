@@ -104,14 +104,25 @@ namespace MBSimGUI {
     return embed->getFirstElementChild();
   }
 
+  bool EmbedItemData::hasParameterHref() const {
+    return dynamic_cast<DOMElement*>(element->getParentNode()) and static_cast<DOMElement*>(element->getParentNode())->hasAttribute(X()%"parameterHref");
+  }
+
   DOMElement* EmbedItemData::processFileID(DOMElement *element) {
-//    DOMElement *ele1 = static_cast<DOMElement*>(element->getParentNode());
-//    if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-//      DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(parameter[0]->getXMLElement()->getParentNode(),true));
-//      ele1->insertBefore(ele2,ele1->getFirstElementChild());
-//      MBXMLUtils::E(ele1)->removeAttribute("parameterHref");
+//    DOMElement *ele1 = dynamic_cast<DOMElement*>(element->getParentNode());
+//    if(ele1) {
+//      if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
+//        DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(element->getParentNode(),true));
+//        ele1->insertBefore(ele2,ele1->getFirstElementChild());
+//        MBXMLUtils::E(ele1)->removeAttribute("parameterHref");
+//      }
+      if(MBXMLUtils::E(element)->hasAttribute("parameterHref") and getNumberOfParameters()) {
+        DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getParameter(0)->getXMLElement()->getParentNode(),true));
+        element->insertBefore(ele2,element->getFirstElementChild());
+        MBXMLUtils::E(element)->removeAttribute("parameterHref");
+      }
 //    }
-    return element;
+    return E(element)->getTagName()==PV%"Embed"?element->getLastElementChild():element;
   }
 
 }
