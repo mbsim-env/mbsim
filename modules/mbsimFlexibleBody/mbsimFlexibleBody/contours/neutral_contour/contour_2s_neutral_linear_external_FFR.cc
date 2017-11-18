@@ -177,7 +177,7 @@ namespace MBSimFlexibleBody {
     return openStructure;
   }
 
-  void Contour2sNeutralLinearExternalFFR::readTransNodes(string file) {
+  void Contour2sNeutralLinearExternalFFR::readTransNodes(const string& file) {
     ifstream contourfile((file).c_str());
     if (!contourfile.is_open()) {
       THROW_MBSIMERROR("Can not open file " + file);

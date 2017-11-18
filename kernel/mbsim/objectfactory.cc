@@ -132,8 +132,8 @@ void deregisterClass_internal(const FQN &name, const AllocateBase *alloc) {
 }
 
 std::string fixXMLLocalName(std::string name) {
-  name=name.substr(0, name.find("<"));
-  size_t c=name.rfind(":");
+  name=name.substr(0, name.find('<'));
+  size_t c=name.rfind(':');
   if(c!=std::string::npos)
     return name.substr(c+1);
   return name;

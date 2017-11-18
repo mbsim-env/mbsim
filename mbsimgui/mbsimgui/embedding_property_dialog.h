@@ -30,7 +30,7 @@ namespace MBSimGUI {
   class EmbeddingPropertyDialog : public PropertyDialog {
 
     public:
-      EmbeddingPropertyDialog(EmbedItemData *item, bool embedding=true, bool name=true, QWidget * parent = nullptr, Qt::WindowFlags f = nullptr);
+      EmbeddingPropertyDialog(EmbedItemData *item, bool embedding=true, bool name=true, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       virtual void toWidget(EmbedItemData *item);

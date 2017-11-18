@@ -180,8 +180,8 @@ namespace MBSimGUI {
   inline std::vector<std::string> strToVec(const std::string &str) {
     if(str=="" || str=="[]" || str.substr(0,2) == "[;")
       return std::vector<std::string>();
-    int pos1 = str.find("["); 
-    int pos2 = str.find("]"); 
+    int pos1 = str.find('['); 
+    int pos2 = str.find(']'); 
     std::string str0 = str.substr(pos1+1,pos2-1);
     std::vector<std::string> str1 = extract(str0,';');
     std::vector<std::string> x(str1.size());
@@ -194,8 +194,8 @@ namespace MBSimGUI {
   inline std::vector<std::vector<std::string> > strToMat(const std::string &str) {
     if(str=="" || str=="[]" || str.substr(0,2) == "[;")
       return std::vector<std::vector<std::string> >();
-    int pos1 = str.find("["); 
-    int pos2 = str.find("]"); 
+    int pos1 = str.find('['); 
+    int pos2 = str.find(']'); 
     std::string str0 = str.substr(pos1+1,pos2-1);
     std::vector<std::string> str1 = extract(str0,';');
     std::vector<std::vector<std::string> > A(str1.size());
@@ -261,7 +261,7 @@ namespace MBSimGUI {
   }
 
   template <class T>
-    void addElementAttributeAndText(xercesc::DOMElement *parent, std::string name, std::string attribute, std::string attributeName, T value) {
+    void addElementAttributeAndText(xercesc::DOMElement *parent, const std::string& name, const std::string& attribute, const std::string& attributeName, T value) {
       std::ostringstream oss;
       oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
       xercesc::DOMDocument *doc=parent->getOwnerDocument();

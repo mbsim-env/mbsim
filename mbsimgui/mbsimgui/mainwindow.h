@@ -215,7 +215,7 @@ namespace MBSimGUI {
       void loadSolver();
 
     private slots:
-      void selectElement(std::string ID);
+      void selectElement(const std::string& ID);
       void changeWorkingDir();
       void openOptionsMenu();
       void selectionChanged(const QModelIndex &current);

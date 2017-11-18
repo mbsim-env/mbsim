@@ -31,7 +31,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief read the node numbers from a file
        */
-      void readTransNodes(std::string file);
+      void readTransNodes(const std::string& file);
 
       fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override;

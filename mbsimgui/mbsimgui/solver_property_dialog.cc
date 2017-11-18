@@ -46,7 +46,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SolverPropertyDialog::SolverPropertyDialog(Solver *solver_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), solver(solver_) {
+  SolverPropertyDialog::SolverPropertyDialog(Solver *solver_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), solver(solver_) {
   }
 
   DOMElement* SolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -66,7 +66,7 @@ namespace MBSimGUI {
     writeXMLFile(solver->getXMLElement());
   }
 
-  IntegratorPropertyDialog::IntegratorPropertyDialog(Integrator *integrator, QWidget *parent, Qt::WindowFlags f) : SolverPropertyDialog(integrator,parent,f) {
+  IntegratorPropertyDialog::IntegratorPropertyDialog(Integrator *integrator, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(integrator,parent,f) {
     addTab("General");
     addTab("Initial conditions");
 
@@ -101,7 +101,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
+  DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(integrator,parent,f) {
     addTab("Tolerances");
     addTab("Step size");
 
@@ -141,7 +141,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(RADAU5Integrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
+  RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(RADAU5Integrator *integrator, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(integrator,parent,f) {
     addTab("Tolerances");
     addTab("Step size");
 
@@ -181,7 +181,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(LSODEIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
+  LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(LSODEIntegrator *integrator, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(integrator,parent,f) {
     addTab("Tolerances");
     addTab("Step size");
     addTab("Extra");
@@ -232,7 +232,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  LSODARIntegratorPropertyDialog::LSODARIntegratorPropertyDialog(LSODARIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
+  LSODARIntegratorPropertyDialog::LSODARIntegratorPropertyDialog(LSODARIntegrator *integrator, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(integrator,parent,f) {
     addTab("Tolerances");
     addTab("Step size");
     addTab("Extra");
@@ -288,7 +288,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
+  TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(integrator,parent,f) {
     addTab("Step size");
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepSize");
@@ -307,7 +307,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  EulerExplicitIntegratorPropertyDialog::EulerExplicitIntegratorPropertyDialog(EulerExplicitIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
+  EulerExplicitIntegratorPropertyDialog::EulerExplicitIntegratorPropertyDialog(EulerExplicitIntegrator *integrator, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(integrator,parent,f) {
     addTab("Step size");
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepSize");
@@ -326,7 +326,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RKSuiteIntegratorPropertyDialog::RKSuiteIntegratorPropertyDialog(RKSuiteIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
+  RKSuiteIntegratorPropertyDialog::RKSuiteIntegratorPropertyDialog(RKSuiteIntegrator *integrator, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(integrator,parent,f) {
     addTab("Tolerances");
     addTab("Step size");
 
@@ -365,7 +365,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  EigenanalyserPropertyDialog::EigenanalyserPropertyDialog(Eigenanalyser *eigenanalyser, QWidget *parent, Qt::WindowFlags f) : SolverPropertyDialog(eigenanalyser,parent,f) {
+  EigenanalyserPropertyDialog::EigenanalyserPropertyDialog(Eigenanalyser *eigenanalyser, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(eigenanalyser,parent,f) {
     addTab("General");
     addTab("Initial conditions");
 
@@ -425,7 +425,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  HarmonicResponseAnalyserPropertyDialog::HarmonicResponseAnalyserPropertyDialog(HarmonicResponseAnalyser *eigenanalyser, QWidget *parent, Qt::WindowFlags f) : SolverPropertyDialog(eigenanalyser,parent,f) {
+  HarmonicResponseAnalyserPropertyDialog::HarmonicResponseAnalyserPropertyDialog(HarmonicResponseAnalyser *eigenanalyser, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(eigenanalyser,parent,f) {
     addTab("General");
     addTab("Initial conditions");
 

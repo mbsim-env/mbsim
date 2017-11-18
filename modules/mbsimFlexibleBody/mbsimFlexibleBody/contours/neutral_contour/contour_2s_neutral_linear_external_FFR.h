@@ -49,7 +49,7 @@ namespace MBSimFlexibleBody {
 
        * The node numbering starts with 1.
        */
-      void readTransNodes(std::string file);
+      void readTransNodes(const std::string& file);
 
       fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override;

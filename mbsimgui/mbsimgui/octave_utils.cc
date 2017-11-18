@@ -165,7 +165,7 @@ namespace MBSimGUI {
     for(int i=0; i<m; i++) {
       for(int j=0; j<n; j++) {
         is >> buf;
-        int pos = buf.find(",");
+        int pos = buf.find(',');
         A(i,j) = complex<double>(boost::lexical_cast<double>(boost::algorithm::trim_copy(buf.substr(1,pos-1))),boost::lexical_cast<double>(boost::algorithm::trim_copy(buf.substr(pos+1,buf.length()-pos-2))));
       }
     }

@@ -51,7 +51,7 @@ namespace MBSimHydraulics {
       virtual void setFrameOfReference(MBSim::Frame *frame);
       void setFromNode(HNode * nFrom_) {nFrom=nFrom_; }
       void setToNode(HNode * nTo_) {nTo=nTo_; }
-      void setDirection(fmatvec::Vec dir) {direction=((nrm2(dir)>0)?dir/nrm2(dir):fmatvec::Vec(3, fmatvec::INIT, 0)); }
+      void setDirection(const fmatvec::Vec& dir) {direction=((nrm2(dir)>0)?dir/nrm2(dir):fmatvec::Vec(3, fmatvec::INIT, 0)); }
       HNode * getFromNode() { return nFrom; }
       HNode * getToNode() {return nTo; }
       void setOutflowRelative(bool rel=true) { nToRelative=rel; }

@@ -40,7 +40,7 @@ namespace MBSimGUI {
   extern QDir mbsDir;
   extern DOMImplementation *impl;
 
-  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, bool name_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_), name(nullptr), count(nullptr), counterName(nullptr) {
+  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, bool name_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), item(item_), name(nullptr), count(nullptr), counterName(nullptr) {
     addTab("Embedding");
     if(embedding) {
       if(name_) {

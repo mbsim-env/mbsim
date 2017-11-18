@@ -30,7 +30,7 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,f) {
+  PropertyDialog::PropertyDialog(QWidget *parent, const Qt::WindowFlags& f) : QDialog(parent,f) {
 
     auto *layout = new QGridLayout;
     setLayout(layout);

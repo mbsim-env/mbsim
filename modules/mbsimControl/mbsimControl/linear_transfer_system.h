@@ -20,6 +20,8 @@
 #ifndef _LINEAR_TRANSFER_SYSTEM_
 #define _LINEAR_TRANSFER_SYSTEM_
 
+#include <utility>
+
 #include "mbsimControl/signal_.h"
 
 namespace MBSimControl {
@@ -42,10 +44,10 @@ namespace MBSimControl {
       void updateSignal() override;
       void updatexd() override;
       
-      void setSystemMatrix(fmatvec::SqrMatV A_) { A = A_; }
-      void setInputMatrix(fmatvec::MatV B_) { B = B_; }
-      void setOutputMatrix(fmatvec::MatV C_) { C = C_; }
-      void setFeedthroughMatrix(fmatvec::SqrMatV D_) { D = D_; }
+      void setSystemMatrix(fmatvec::SqrMatV A_) { A = std::move(A_); }
+      void setInputMatrix(const fmatvec::MatV& B_) { B = B_; }
+      void setOutputMatrix(const fmatvec::MatV& C_) { C = C_; }
+      void setFeedthroughMatrix(fmatvec::SqrMatV D_) { D = std::move(D_); }
 
       void setInputSignal(Signal * inputSignal_) { inputSignal = inputSignal_; }
       int getSignalSize() const override { return inputSignal->getSignalSize(); }

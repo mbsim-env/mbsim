@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ProjectPropertyDialog::ProjectPropertyDialog(Project *project_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), project(project_) {
+  ProjectPropertyDialog::ProjectPropertyDialog(Project *project_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), project(project_) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(project->getName()));
     name->setToolTip("Set the name of the project");

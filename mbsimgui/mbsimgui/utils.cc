@@ -137,10 +137,10 @@ namespace MBSimGUI {
   string removeWhiteSpace(const string &str) {
     string ret = str;
     size_t found;
-    found=ret.find_first_of(" ");
+    found=ret.find_first_of(' ');
     while (found!=string::npos) {
       ret.erase(found,1);
-      found=ret.find_first_of(" ",found);
+      found=ret.find_first_of(' ',found);
     }
     return ret;
   }

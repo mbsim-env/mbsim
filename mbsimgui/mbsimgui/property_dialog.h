@@ -42,7 +42,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      PropertyDialog(QWidget * parent = nullptr, Qt::WindowFlags f = nullptr);
+      PropertyDialog(QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       void setParentObject(QObject *obj);
       void addToTab(const QString &name, QWidget* widget_);
       void addTab(const QString &name, int i=-1);

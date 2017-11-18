@@ -545,6 +545,7 @@ namespace MBSim {
     for (int i = 0; i < gridSizeY; i++) {
       Vec3 startPoint = plate->getA() + dirZ * ((double) i / (double) (gridSizeZ - 1));
       std::vector<fmatvec::Vec3> linePoints;
+      linePoints.reserve(gridSizeZ);
       for (int j = 0; j < gridSizeZ; j++) {
         linePoints.push_back(startPoint + dirY * ((double) j / (double) (gridSizeY - 1)));
       }

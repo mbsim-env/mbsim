@@ -1000,7 +1000,7 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::selectElement(string ID) {
+  void MainWindow::selectElement(const string& ID) {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     auto it=model->idEleMap.find(QString::fromStdString(ID));
     if(it!=model->idEleMap.end())

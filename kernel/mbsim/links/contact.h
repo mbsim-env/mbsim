@@ -159,7 +159,7 @@ namespace MBSim {
         return contactKinematics[index];
       }
 
-      ContactKinematics* findContactKinematics(std::string cKName) const {
+      ContactKinematics* findContactKinematics(const std::string& cKName) const {
         int pos = find(ckNames.begin(), ckNames.end(), cKName) - ckNames.begin();
         if (pos < static_cast<int>(ckNames.size())) {
           return contactKinematics[pos];

@@ -241,7 +241,7 @@ namespace MBSimGUI {
     if(!text)
       return nullptr;
     string str = X()%text->getData();
-    if(str.find("\n")!=string::npos)
+    if(str.find('\n')!=string::npos)
       return nullptr;
     setValue(QString::fromStdString(str));
     return element;
