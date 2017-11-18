@@ -84,25 +84,23 @@ namespace MBSimGUI {
     }
   }
 
-  DOMElement* EmbedItemData::createEmbedXMLElement() {
+  DOMElement* EmbedItemData::getParameterXMLElement() {
     DOMDocument *doc=element->getOwnerDocument();
-    DOMElement* embed = static_cast<DOMElement*>(element->getParentNode());
-    if(X()%embed->getNodeName()!="Embed") {
+    if(not getEmbedXMLElement()) {
       DOMElement *ele=D(doc)->createElement(PV%"Embed");
-      embed->insertBefore(ele,element);
-      embed = ele;
-      ele=D(doc)->createElement(PV%"Parameter");
-      embed->insertBefore(ele,NULL);
-      embed->insertBefore(element,NULL);
+      element->getParentNode()->insertBefore(ele,element);
       setEmbedXMLElement(ele);
+      ele=D(doc)->createElement(PV%"Parameter");
+      getEmbedXMLElement()->insertBefore(ele,NULL);
+      getEmbedXMLElement()->insertBefore(element,NULL);
       return ele;
     }
-    else if(X()%embed->getFirstElementChild()->getNodeName()!="Parameter") {
+    else if(X()%getEmbedXMLElement()->getFirstElementChild()->getNodeName()!="Parameter") {
       DOMElement *ele=D(doc)->createElement(PV%"Parameter");
-      embed->insertBefore(ele,embed->getFirstElementChild());
+      getEmbedXMLElement()->insertBefore(ele,getEmbedXMLElement()->getFirstElementChild());
       return ele;
     }
-    return embed->getFirstElementChild();
+    return getEmbedXMLElement()->getFirstElementChild();
   }
 
   bool EmbedItemData::hasParameterHref() const {
@@ -112,7 +110,7 @@ namespace MBSimGUI {
   DOMElement* EmbedItemData::processFileID(DOMElement *element) {
     if(MBXMLUtils::E(element)->hasAttribute("href")) {
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getXMLElement(),true));
-      element->insertBefore(ele2,element->getFirstElementChild());
+      element->insertBefore(ele2,NULL);
       MBXMLUtils::E(element)->removeAttribute("href");
     }
     if(MBXMLUtils::E(element)->hasAttribute("parameterHref") and getNumberOfParameters()) {

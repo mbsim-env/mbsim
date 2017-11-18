@@ -1594,7 +1594,7 @@ namespace MBSimGUI {
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     parent->addParameter(parameter);
-    parameter->createXMLElement(parent->createEmbedXMLElement());
+    parameter->createXMLElement(parent->getParameterXMLElement());
 //    if(parameter->getName()!="import")
 //      parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
@@ -1641,7 +1641,7 @@ namespace MBSimGUI {
         QMessageBox::warning(0, "Load", "Cannot load file.");
         return;
       }
-      parent->createEmbedXMLElement()->insertBefore(elements[i],NULL);
+      parent->getParameterXMLElement()->insertBefore(elements[i],NULL);
       parameter->initializeUsingXML(elements[i]);
       parent->addParameter(parameter);
       newIndex = model->createParameterItem(parameter,index);

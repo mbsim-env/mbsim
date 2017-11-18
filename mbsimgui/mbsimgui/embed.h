@@ -64,9 +64,6 @@ namespace MBSimGUI {
               QFileInfo fileInfo(mbsDir.absoluteFilePath(fileName));
               xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
               ele2 = doc->getDocumentElement();
-//              ele2 = static_cast<xercesc::DOMElement*>(ele1->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-//              ele1->insertBefore(ele2,NULL);
-//              MBXMLUtils::E(ele1)->removeAttribute("href");
             }
             object=create(ele2);
             if(object) {
