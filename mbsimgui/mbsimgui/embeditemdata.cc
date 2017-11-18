@@ -84,7 +84,7 @@ namespace MBSimGUI {
     }
   }
 
-  DOMElement* EmbedItemData::getParameterXMLElement() {
+  DOMElement* EmbedItemData::createEmbedXMLElement() {
     DOMDocument *doc=element->getOwnerDocument();
     DOMElement* embed = static_cast<DOMElement*>(element->getParentNode());
     if(X()%embed->getNodeName()!="Embed") {
@@ -94,6 +94,7 @@ namespace MBSimGUI {
       ele=D(doc)->createElement(PV%"Parameter");
       embed->insertBefore(ele,NULL);
       embed->insertBefore(element,NULL);
+      setEmbedXMLElement(ele);
       return ele;
     }
     else if(X()%embed->getFirstElementChild()->getNodeName()!="Parameter") {
@@ -109,19 +110,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbedItemData::processFileID(DOMElement *element) {
-//    DOMElement *ele1 = dynamic_cast<DOMElement*>(element->getParentNode());
-//    if(ele1) {
-//      if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
-//        DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(element->getParentNode(),true));
-//        ele1->insertBefore(ele2,ele1->getFirstElementChild());
-//        MBXMLUtils::E(ele1)->removeAttribute("parameterHref");
-//      }
-      if(MBXMLUtils::E(element)->hasAttribute("parameterHref") and getNumberOfParameters()) {
-        DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getParameter(0)->getXMLElement()->getParentNode(),true));
-        element->insertBefore(ele2,element->getFirstElementChild());
-        MBXMLUtils::E(element)->removeAttribute("parameterHref");
-      }
-//    }
+    if(MBXMLUtils::E(element)->hasAttribute("href")) {
+      DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getXMLElement(),true));
+      element->insertBefore(ele2,element->getFirstElementChild());
+      MBXMLUtils::E(element)->removeAttribute("href");
+    }
+    if(MBXMLUtils::E(element)->hasAttribute("parameterHref") and getNumberOfParameters()) {
+      DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getParameter(0)->getXMLElement()->getParentNode(),true));
+      element->insertBefore(ele2,element->getFirstElementChild());
+      MBXMLUtils::E(element)->removeAttribute("parameterHref");
+    }
     return E(element)->getTagName()==PV%"Embed"?element->getLastElementChild():element;
   }
 

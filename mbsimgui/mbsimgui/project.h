@@ -45,13 +45,13 @@ namespace MBSimGUI {
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMXML; }
       virtual ProjectPropertyDialog* createPropertyDialog() { return new ProjectPropertyDialog(this); }
       virtual QMenu* createContextMenu() { return NULL; }
-      virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this,true,false); }
+      virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this,false); }
       virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       void setDynamicSystemSolver(DynamicSystemSolver *dss_);
       void setSolver(Solver *solver_);
       DynamicSystemSolver* getDynamicSystemSolver() const { return dss; }
       Solver* getSolver() const { return solver; }
-      virtual xercesc::DOMElement* getParameterXMLElement();
+      virtual xercesc::DOMElement* createEmbedXMLElement();
     private:
       DynamicSystemSolver *dss;
       Solver *solver;

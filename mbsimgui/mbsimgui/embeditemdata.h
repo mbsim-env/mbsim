@@ -38,10 +38,10 @@ namespace MBSimGUI {
     protected:
       std::vector<Parameter*> parameter;
       std::vector<Parameter*> removedParameter;
-      xercesc::DOMElement *element;
+      xercesc::DOMElement *element, *embed;
 
     public:
-      EmbedItemData() : element(NULL) { }
+      EmbedItemData() : element(NULL), embed(NULL) { }
       ~EmbedItemData();
       QString getName() const { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const { return ""; }
@@ -54,7 +54,9 @@ namespace MBSimGUI {
       int getIndexOfParameter(Parameter *param) const;
       xercesc::DOMElement* getXMLElement() { return element; }
       void removeXMLElement(bool removeEmbedding=true);
-      virtual xercesc::DOMElement* getParameterXMLElement();
+      virtual xercesc::DOMElement* createEmbedXMLElement();
+      xercesc::DOMElement* getEmbedXMLElement() { return embed; }
+      void setEmbedXMLElement(xercesc::DOMElement *embed_) { embed = embed_; }
       bool hasParameterHref() const;
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }
       QMenu* createEmbeddingContextMenu() { return new EmbeddingContextMenu(this); }

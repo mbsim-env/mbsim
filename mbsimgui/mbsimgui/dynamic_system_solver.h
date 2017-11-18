@@ -53,6 +53,7 @@ namespace MBSimGUI {
       QString getFileExtension() const { return ".mbsim.xml"; }
       virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
       ElementPropertyDialog* createPropertyDialog() { return new DynamicSystemSolverPropertyDialog(this); }
+      virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this,false); }
       QMenu* createContextMenu() { return new ElementContextMenu(this,NULL,false,true); }
       std::vector<EmbedItemData*> getParents();
   };

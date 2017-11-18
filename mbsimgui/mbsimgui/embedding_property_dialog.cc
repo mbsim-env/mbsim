@@ -40,31 +40,30 @@ namespace MBSimGUI {
   extern QDir mbsDir;
   extern DOMImplementation *impl;
 
-  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, bool name_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_), name(NULL), count(NULL), counterName(NULL) {
+  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool name_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), item(item_), name(NULL), count(NULL), counterName(NULL) {
     addTab("Embedding");
-    if(embedding) {
-      if(name_) {
-        name = new ExtWidget("Name",new TextWidget);
-        addToTab("Embedding",name);
-        count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")), true);
-        addToTab("Embedding",count);
-        counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
-        addToTab("Embedding",counterName);
-      }
-      href = new ExtWidget("File", new FileWidget(item->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false, true), true);
-      href->setDisabled(true);
-      addToTab("Embedding",href);
-      parameterHref = new ExtWidget("Parameter file", new FileWidget(item->getName()+".parameter.xml", "XML parameter files", "xml files (*.xml)", 1, false, true), true);
-      parameterHref->setDisabled(true);
-      addToTab("Embedding",parameterHref);
+    if(name_) {
+      name = new ExtWidget("Name",new TextWidget);
+      addToTab("Embedding",name);
+      count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")), true);
+      addToTab("Embedding",count);
+      counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
+      addToTab("Embedding",counterName);
     }
+    href = new ExtWidget("File", new FileWidget(item->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false, true), true);
+    href->setDisabled(true);
+    addToTab("Embedding",href);
+    parameterHref = new ExtWidget("Parameter file", new FileWidget(item->getName()+".parameter.xml", "XML parameter files", "xml files (*.xml)", 1, false, true), true);
+    parameterHref->setDisabled(true);
+    addToTab("Embedding",parameterHref);
   }
 
   DOMElement* EmbeddingPropertyDialog::initializeUsingXML(DOMElement *ele) {
     if(href) {
       if(name) static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
-      DOMElement *parent = static_cast<DOMElement*>(ele->getParentNode());
-      if(E(parent)->getTagName()==PV%"Embed") {
+//      DOMElement *parent = static_cast<DOMElement*>(ele->getParentNode());
+      DOMElement *parent = item->getEmbedXMLElement();
+      if(parent and E(parent)->getTagName()==PV%"Embed") {
         if(count and E(parent)->hasAttribute("count")) {
           count->setActive(true);
           static_cast<PhysicalVariableWidget*>(count->getWidget())->setValue(QString::fromStdString(E(parent)->getAttribute("count")));
@@ -72,6 +71,10 @@ namespace MBSimGUI {
         if(counterName and E(parent)->hasAttribute("counterName")) {
           counterName->setActive(true);
           static_cast<TextWidget*>(counterName->getWidget())->setText(QString::fromStdString(E(parent)->getAttribute("counterName")));
+        }
+        if(E(parent)->hasAttribute("href")) {
+          href->setActive(true);
+          static_cast<FileWidget*>(href->getWidget())->setFile(QString::fromStdString(E(parent)->getAttribute("href")));
         }
         if(E(parent)->hasAttribute("parameterHref")) {
           parameterHref->setActive(true);
@@ -87,10 +90,11 @@ namespace MBSimGUI {
       DOMNode* embedNode = node->getParentNode();
       if(X()%embedNode->getNodeName()!="Embed") {
         DOMDocument *doc=node->getOwnerDocument();
-        DOMNode *ele=D(doc)->createElement(PV%"Embed");
+        DOMElement *ele=D(doc)->createElement(PV%"Embed");
         embedNode->insertBefore(ele,node);
         embedNode = ele;
         embedNode->insertBefore(node,NULL);
+        item->setEmbedXMLElement(ele);
       }
       DOMElement *element = static_cast<DOMElement*>(embedNode);
       if(name)
