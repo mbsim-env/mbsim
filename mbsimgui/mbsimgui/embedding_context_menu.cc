@@ -21,18 +21,32 @@
 #include "embedding_context_menu.h"
 #include "mainwindow.h"
 #include "parameter.h"
+#include "embedding_view.h"
+#include "embeditemdata.h"
+
+using namespace xercesc;
+using namespace MBXMLUtils;
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
 
   EmbeddingContextMenu::EmbeddingContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
-    QAction *action = new QAction("Load", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    QAction *action = new QAction("Edit", this);
+    connect(action,SIGNAL(triggered()),mw->getEmbeddingView(),SLOT(openEditor()));
     addAction(action);
+    addSeparator();
+    action = new QAction("Save as", this);
+    action->setEnabled(X()%item->getXMLElement()->getParentNode()->getNodeName()=="Embed" and X()%static_cast<DOMElement*>(item->getXMLElement()->getParentNode())->getFirstElementChild()->getNodeName()=="Parameter");
+    connect(action,SIGNAL(triggered()),mw,SLOT(saveEmbeddingAs()));
+    addAction(action);
+    addSeparator();
     action = new QAction("Paste", this);
     action->setEnabled(mw->getParameterBuffer().first);
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
+    addAction(action);
+    action = new QAction("Load", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
     addSeparator();
     action = new QAction("Add scalar parameter", this);

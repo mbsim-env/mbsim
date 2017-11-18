@@ -41,7 +41,7 @@ namespace MBSimGUI {
       QString getType() const override { return "InternalFrame"; }
       ElementPropertyDialog* createPropertyDialog() override { return new InternalFramePropertyDialog(this); }
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() override { return new EmbeddingPropertyDialog(this); }
-      QMenu* createContextMenu() override { return new ElementContextMenu(this,nullptr,false); }
+      QMenu* createContextMenu() override { return new ElementContextMenu(this,nullptr,false,false); }
       void removeXMLElements() override;
       const MBXMLUtils::FQN& getXMLFrameName() const { return xmlFrameName; }
       QString getPlotFeatureType() const override { return plotFeatureType; }
