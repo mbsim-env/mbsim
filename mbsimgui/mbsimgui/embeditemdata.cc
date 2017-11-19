@@ -87,7 +87,7 @@ namespace MBSimGUI {
   DOMElement* EmbedItemData::createParameterXMLElement() {
     DOMElement *param = E(createEmbedXMLElement())->getFirstElementChildNamed(PV%"Parameter");
     if(not param) {
-      param = D(getXMLElement()->getOwnerDocument())->createElement(PV%"Parameter");
+      param = D(getEmbedXMLElement()->getOwnerDocument())->createElement(PV%"Parameter");
       getEmbedXMLElement()->insertBefore(param,getEmbedXMLElement()->getFirstElementChild());
     }
     return param;
