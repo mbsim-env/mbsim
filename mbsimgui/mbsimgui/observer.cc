@@ -29,7 +29,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   DOMElement* KinematicCoordinatesObserver::processFileID(DOMElement *element) {
-    Observer::processFileID(element);
+    element = Observer::processFileID(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(ELE) {

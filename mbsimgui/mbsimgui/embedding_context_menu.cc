@@ -24,9 +24,6 @@
 #include "embedding_view.h"
 #include "embeditemdata.h"
 
-using namespace xercesc;
-using namespace MBXMLUtils;
-
 namespace MBSimGUI {
 
   extern MainWindow *mw;
@@ -37,31 +34,37 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     action = new QAction("Save as", this);
-    action->setEnabled(X()%item->getXMLElement()->getParentNode()->getNodeName()=="Embed" and X()%static_cast<DOMElement*>(item->getXMLElement()->getParentNode())->getFirstElementChild()->getNodeName()=="Parameter");
+    action->setEnabled(item->getNumberOfParameters()>0 and not item->hasParameterHref());
     connect(action,SIGNAL(triggered()),mw,SLOT(saveEmbeddingAs()));
     addAction(action);
     addSeparator();
     action = new QAction("Paste", this);
-    action->setEnabled(mw->getParameterBuffer().first);
+    action->setEnabled(mw->getParameterBuffer().first and not item->hasParameterHref());
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
     addAction(action);
     action = new QAction("Load", this);
+    action->setEnabled(not item->hasParameterHref());
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
     addSeparator();
     action = new QAction("Add scalar parameter", this);
+    action->setEnabled(not item->hasParameterHref());
     connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
     addAction(action);
     action = new QAction("Add vector parameter", this);
+    action->setEnabled(not item->hasParameterHref());
     connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
     addAction(action);
     action = new QAction("Add matrix parameter", this);
+    action->setEnabled(not item->hasParameterHref());
     connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
     addAction(action);
     action = new QAction("Add string parameter", this);
+    action->setEnabled(not item->hasParameterHref());
     connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
     addAction(action);
     action = new QAction("Add import parameter", this);
+    action->setEnabled(not item->hasParameterHref());
     connect(action,SIGNAL(triggered()),this,SLOT(addImportParameter()));
     addAction(action);
   }

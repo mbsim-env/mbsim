@@ -38,7 +38,7 @@ namespace MBSimGUI {
     protected:
       std::vector<Parameter*> parameter;
       std::vector<Parameter*> removedParameter;
-      xercesc::DOMElement *element{nullptr};
+      xercesc::DOMElement *element{nullptr}, *embed{nullptr};
 
     public:
       EmbedItemData()  = default;
@@ -55,6 +55,9 @@ namespace MBSimGUI {
       xercesc::DOMElement* getXMLElement() { return element; }
       void removeXMLElement(bool removeEmbedding=true);
       virtual xercesc::DOMElement* getParameterXMLElement();
+      xercesc::DOMElement* getEmbedXMLElement() { return embed; }
+      void setEmbedXMLElement(xercesc::DOMElement *embed_) { embed = embed_; }
+      bool hasParameterHref() const;
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }
       QMenu* createEmbeddingContextMenu() { return new EmbeddingContextMenu(this); }
       virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);

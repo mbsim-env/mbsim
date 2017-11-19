@@ -40,78 +40,75 @@ namespace MBSimGUI {
   extern QDir mbsDir;
   extern DOMImplementation *impl;
 
-  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding, bool name_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), item(item_), name(nullptr), count(nullptr), counterName(nullptr) {
+  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool name_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), item(item_), name(nullptr), count(nullptr), counterName(nullptr) {
     addTab("Embedding");
-    if(embedding) {
-      if(name_) {
-        name = new ExtWidget("Name",new TextWidget);
-        addToTab("Embedding",name);
-        count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")), true);
-        addToTab("Embedding",count);
-        counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
-        addToTab("Embedding",counterName);
-      }
-      href = new ExtWidget("File", new FileWidget(item->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false, true), true);
-      href->setDisabled(true);
-      addToTab("Embedding",href);
-      parameterHref = new ExtWidget("Parameter file", new FileWidget(item->getName()+".parameter.xml", "XML parameter files", "xml files (*.xml)", 1, false, true), true);
-      parameterHref->setDisabled(true);
-      addToTab("Embedding",parameterHref);
+    if(name_) {
+      name = new ExtWidget("Name",new TextWidget);
+      addToTab("Embedding",name);
+      count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")), true);
+      addToTab("Embedding",count);
+      counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
+      addToTab("Embedding",counterName);
     }
+    href = new ExtWidget("File", new FileWidget(item->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false, true), true);
+    href->setDisabled(true);
+    addToTab("Embedding",href);
+    parameterHref = new ExtWidget("Parameter file", new FileWidget(item->getName()+".parameter.xml", "XML parameter files", "xml files (*.xml)", 1, false, true), true);
+    parameterHref->setDisabled(true);
+    addToTab("Embedding",parameterHref);
   }
 
   DOMElement* EmbeddingPropertyDialog::initializeUsingXML(DOMElement *ele) {
-    if(href) {
-      if(name) static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
-      auto *parent = static_cast<DOMElement*>(ele->getParentNode());
-      if(E(parent)->getTagName()==PV%"Embed") {
-        if(count and E(parent)->hasAttribute("count")) {
-          count->setActive(true);
-          static_cast<PhysicalVariableWidget*>(count->getWidget())->setValue(QString::fromStdString(E(parent)->getAttribute("count")));
-        }
-        if(counterName and E(parent)->hasAttribute("counterName")) {
-          counterName->setActive(true);
-          static_cast<TextWidget*>(counterName->getWidget())->setText(QString::fromStdString(E(parent)->getAttribute("counterName")));
-        }
-//        if(E(parent)->hasAttribute("parameterHref")) {
-//          parameterHref->setActive(true);
-//          static_cast<FileWidget*>(parameterHref->getWidget())->setFile(QString::fromStdString(E(parent)->getAttribute("parameterHref")));
-//        }
+    if(name) static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
+    DOMElement *parent = item->getEmbedXMLElement();
+    if(parent and E(parent)->getTagName()==PV%"Embed") {
+      if(count and E(parent)->hasAttribute("count")) {
+        count->setActive(true);
+        static_cast<PhysicalVariableWidget*>(count->getWidget())->setValue(QString::fromStdString(E(parent)->getAttribute("count")));
+      }
+      if(counterName and E(parent)->hasAttribute("counterName")) {
+        counterName->setActive(true);
+        static_cast<TextWidget*>(counterName->getWidget())->setText(QString::fromStdString(E(parent)->getAttribute("counterName")));
+      }
+      if(E(parent)->hasAttribute("href")) {
+        href->setActive(true);
+        static_cast<FileWidget*>(href->getWidget())->setFile(QString::fromStdString(E(parent)->getAttribute("href")));
+      }
+      if(E(parent)->hasAttribute("parameterHref")) {
+        parameterHref->setActive(true);
+        static_cast<FileWidget*>(parameterHref->getWidget())->setFile(QString::fromStdString(E(parent)->getAttribute("parameterHref")));
       }
     }
     return nullptr;
   }
 
   DOMElement* EmbeddingPropertyDialog::writeXMLFile(DOMNode *node, DOMNode *ref) {
-    if(href) {
-      DOMNode* embedNode = node->getParentNode();
-      if(X()%embedNode->getNodeName()!="Embed") {
-        DOMDocument *doc=node->getOwnerDocument();
-        DOMNode *ele=D(doc)->createElement(PV%"Embed");
-        embedNode->insertBefore(ele,node);
-        embedNode = ele;
-        embedNode->insertBefore(node,nullptr);
-      }
-      auto *element = static_cast<DOMElement*>(embedNode);
-      if(name)
-        E(element->getLastElementChild())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
-      if(count) {
-        if(count->isActive())
-          E(element)->setAttribute("count",static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue().toStdString());
-        else
-          E(element)->removeAttribute("count");
-      }
-      if(counterName) {
-        if(counterName->isActive())
-          E(element)->setAttribute("counterName",static_cast<TextWidget*>(counterName->getWidget())->getText().toStdString());
-        else
-          E(element)->removeAttribute("counterName");
-      }
+    DOMElement *embedNode = item->getEmbedXMLElement();
+    if(not embedNode) {
+      DOMDocument *doc=node->getOwnerDocument();
+      embedNode=D(doc)->createElement(PV%"Embed");
+      node->getParentNode()->insertBefore(embedNode,node);
+      embedNode->insertBefore(node,nullptr);
+      item->setEmbedXMLElement(embedNode);
+    }
+    if(name and not href->isActive())
+      E(embedNode->getLastElementChild())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    if(count) {
+      if(count->isActive())
+        E(embedNode)->setAttribute("count",static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue().toStdString());
+      else
+        E(embedNode)->removeAttribute("count");
+    }
+    if(counterName) {
+      if(counterName->isActive())
+        E(embedNode)->setAttribute("counterName",static_cast<TextWidget*>(counterName->getWidget())->getText().toStdString());
+      else
+        E(embedNode)->removeAttribute("counterName");
+    }
 
-      if((not href->isActive()) and (not count or not count->isActive()) and (not counterName or not counterName->isActive()) and (not parameterHref->isActive()) and (not item->getNumberOfParameters())) {
-        embedNode->getParentNode()->insertBefore(node,embedNode);
-        embedNode->getParentNode()->removeChild(embedNode);
-      }
+    if((not count or not count->isActive()) and (not counterName or not counterName->isActive()) and (not href->isActive()) and (not parameterHref->isActive()) and (not item->getNumberOfParameters())) {
+      embedNode->getParentNode()->insertBefore(node,embedNode);
+      embedNode->getParentNode()->removeChild(embedNode);
     }
     return nullptr;
   }

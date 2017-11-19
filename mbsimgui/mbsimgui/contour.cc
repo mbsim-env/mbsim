@@ -29,6 +29,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   DOMElement* Contour::processFileID(DOMElement *element) {
+    element = Element::processFileID(element);
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();

@@ -47,7 +47,7 @@ namespace MBSimGUI {
       delete i;
     for(auto & i : contour)
       delete i;
-    for(auto & i : group) 
+    for(auto & i : group)
       delete i;
     for(auto & i : object)
       delete i;
@@ -57,7 +57,7 @@ namespace MBSimGUI {
       delete i;
     for(auto & i : observer)
       delete i;
-    for(auto & i : removedElement) 
+    for(auto & i : removedElement)
       delete i;
   }
 
@@ -184,35 +184,35 @@ namespace MBSimGUI {
   }
 
   DOMElement* Group::processFileID(DOMElement *element) {
-    Element::processFileID(element);
+    element = Element::processFileID(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
     for(size_t i=1; i<frame.size(); i++) {
-      frame[i]->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+      frame[i]->processFileID(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
     for(auto & i : contour) {
-      i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+      i->processFileID(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"groups")->getFirstElementChild();
     for(auto & i : group) {
-      i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+      i->processFileID(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
     for(auto & i : object) {
-      i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+      i->processFileID(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
     for(auto & i : link) {
-      i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+      i->processFileID(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
@@ -220,7 +220,7 @@ namespace MBSimGUI {
     if(ELE) {
       ELE=ELE->getFirstElementChild();
       for(auto & i : constraint) {
-        i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+        i->processFileID(ELE);
         ELE=ELE->getNextElementSibling();
       }
     }
@@ -229,7 +229,7 @@ namespace MBSimGUI {
     if(ELE) {
       ELE=ELE->getFirstElementChild();
       for(auto & i : observer) {
-        i->processFileID(E(ELE)->getTagName()==PV%"Embed"?ELE->getLastElementChild():ELE);
+        i->processFileID(ELE);
         ELE=ELE->getNextElementSibling();
       }
     }

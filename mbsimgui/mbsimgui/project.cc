@@ -70,14 +70,13 @@ namespace MBSimGUI {
   }
 
   DOMElement* Project::processFileID(DOMElement *element) {
+    element = EmbedItemData::processFileID(element);
     DOMElement* ele0 = element->getFirstElementChild();
     if(E(ele0)->getTagName()==PV%"evaluator")
       ele0 = ele0->getNextElementSibling();
-    DOMElement* ele = (E(ele0)->getTagName()==PV%"Embed")?E(ele0)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver"):ele0;
-    dss->processFileID(ele);
+    dss->processFileID(ele0);
     ele0 = ele0->getNextElementSibling();
-    ele = (E(ele0)->getTagName()==PV%"Embed")?ele0->getLastElementChild():ele0;
-    solver->processFileID(ele);
+    solver->processFileID(ele0);
     return element;
   }
 
@@ -95,23 +94,22 @@ namespace MBSimGUI {
 
   DOMElement* Project::getParameterXMLElement() {
     DOMDocument *doc=element->getOwnerDocument();
-    DOMElement* embed = doc->getDocumentElement();
-    if(X()%embed->getNodeName()!="Embed") {
+    if(not getEmbedXMLElement()) {
       DOMElement *ele=D(doc)->createElement(PV%"Embed");
       doc->removeChild(element);
       doc->insertBefore(ele,nullptr);
-      embed = ele;
+      setEmbedXMLElement(ele);
       ele=D(doc)->createElement(PV%"Parameter");
-      embed->insertBefore(ele,nullptr);
-      embed->insertBefore(element,nullptr);
+      getEmbedXMLElement()->insertBefore(ele,nullptr);
+      getEmbedXMLElement()->insertBefore(element,nullptr);
       return ele;
     }
-    else if(X()%embed->getFirstElementChild()->getNodeName()!="Parameter") {
+    else if(X()%getEmbedXMLElement()->getFirstElementChild()->getNodeName()!="Parameter") {
       DOMElement *ele=D(doc)->createElement(PV%"Parameter");
-      embed->insertBefore(ele,embed->getFirstElementChild());
+      getEmbedXMLElement()->insertBefore(ele,getEmbedXMLElement()->getFirstElementChild());
       return ele;
     }
-    return embed->getFirstElementChild();
+    return getEmbedXMLElement()->getFirstElementChild();
   }
 
 }
