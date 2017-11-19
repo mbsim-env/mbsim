@@ -32,7 +32,7 @@ using namespace std;
 
 namespace MBSim {
   edgePolyFrustum::edgePolyFrustum(const PolynomialFrustum * frustum_) :
-      frustum(frustum_), A(), dir() {
+      frustum(frustum_) {
   }
 
   edgePolyFrustum::~edgePolyFrustum() = default;
@@ -86,23 +86,17 @@ namespace MBSim {
     Vec fValget(fVal);
     if(fVal.size() == 0)
       fValget.resize() = (*function)(x);
-    if (nrmInf(fValget) < criteriaResults.back())
-      return true;
-
-    return false;
+    return nrmInf(fValget) < criteriaResults.back();
   }
 
   bool edgePolyFrustumCriteria::inBounds(const double & t) {
     double x = ax + t * dx;
     double signh = sign(frustumHeight);
-    if (t < 0 or t > 1 or signh * x < 0 or signh * x > signh * frustumHeight)
-      return false;
-
-    return true;
+    return !(t < 0 or t > 1 or signh * x < 0 or signh * x > signh * frustumHeight);
   }
 
   ContactKinematicsPlatePolynomialFrustum::ContactKinematicsPlatePolynomialFrustum() :
-      ContactKinematics(),  newtonProjectAlongNormal(),  criteriaProjectAlongNormal(), dampingProjectAlongNormal(),  newtonEdge(), jacobianEdge(), criteriaEdge(), dampingEdge(),  xi(1, INIT, 0.5) {
+       criteriaEdge(),   xi(1, INIT, 0.5) {
   }
 
   ContactKinematicsPlatePolynomialFrustum::~ContactKinematicsPlatePolynomialFrustum() {

@@ -30,16 +30,16 @@ namespace MBSimGUI {
       Element * getChildByContainerAndName(const QString &container, const QString &name) const override;
       int getNumberOfFrames() override {return frame.size();}
       int getNumberOfContours() override {return contour.size();}
-      int getIndexOfFrame(Frame *frame) override;
-      int getIndexOfContour(Contour *contour) override;
+      int getIndexOfFrame(Frame *frame_) override;
+      int getIndexOfContour(Contour *contour_) override;
       Frame* getFrame(int i) const override {return frame[i];}
       Contour* getContour(int i) const override {return contour[i];}
       Frame* getFrame(const QString &name) const override;
       Contour* getContour(const QString &name) const;
       void setFrame(Frame *frame_, int i) override { frame[i] = frame_; }
       void setContour(Contour *contour_, int i) override { contour[i] = contour_; }
-      void addFrame(Frame *frame) override;
-      void addContour(Contour *contour) override;
+      void addFrame(Frame *frame_) override;
+      void addContour(Contour *contour_) override;
       void removeElement(Element* element) override;
     protected:
       std::vector<Frame*> frame;

@@ -110,7 +110,7 @@ namespace MBSim {
        * \attention: the circle is the intersection circle between the sphere and the plane, thus the center of the
        * circle is different from the center of the sphere.
        */
-      bool Intersect_Circle(const double & radius, const fmatvec::Vec3& CenCir);
+      bool Intersect_Circle(const double & radi, const fmatvec::Vec3& CenCir);
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 

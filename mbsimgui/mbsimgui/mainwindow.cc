@@ -497,7 +497,7 @@ namespace MBSimGUI {
       vector<EmbedItemData*> parents = element->getParents();
       QModelIndex index = emodel->index(0,0);
       emodel->removeRow(index.row(), index.parent());
-      if(parents.size()) {
+      if(!parents.empty()) {
         index = emodel->createEmbeddingItem(parents[0]);
         for(size_t i=0; i<parents.size()-1; i++)
           index = emodel->createEmbeddingItem(parents[i+1],index);
@@ -554,7 +554,7 @@ namespace MBSimGUI {
     vector<EmbedItemData*> parents = getProject()->getSolver()->getParents();
     QModelIndex index = emodel->index(0,0);
     emodel->removeRow(index.row(), index.parent());
-    if(parents.size()) {
+    if(!parents.empty()) {
       index = emodel->createEmbeddingItem(parents[0]);
       for(size_t i=0; i<parents.size()-1; i++)
         index = emodel->createEmbeddingItem(parents[i+1],index);
@@ -1086,7 +1086,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::undo() {
-    if(allowUndo and undos.size()) {
+    if(allowUndo and !undos.empty()) {
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
       setWindowModified(true);
@@ -1099,7 +1099,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::redo() {
-    if(redos.size()) {
+    if(!redos.empty()) {
       undos.push_back(doc);
       doc = redos.back();
       redos.pop_back();

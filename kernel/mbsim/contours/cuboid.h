@@ -38,7 +38,7 @@ namespace MBSim {
        */
       Cuboid(const std::string &name="", Frame *R=nullptr);
 
-      Cuboid(const std::string &name, double lx, double ly, double lz, Frame *R=nullptr);
+      Cuboid(const std::string &name, double lx_, double ly_, double lz_, Frame *R=nullptr);
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/

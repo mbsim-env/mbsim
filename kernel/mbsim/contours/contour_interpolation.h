@@ -46,7 +46,7 @@ namespace MBSim {
        * \param pointN Point to use
        * \param position in iPoints, Points-number
        */
-      void setPoint(Point *pointN, int n);
+      void setPoint(Point *point_, int n);
       /**
        * \brief get list of Point s
        */

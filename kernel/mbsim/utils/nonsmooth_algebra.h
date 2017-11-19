@@ -31,11 +31,11 @@ namespace MBSim {
    * \param the argument of the prox-function
    * \param the lower boundary (=0, for no value)
    */
-  double proxCN(const double arg, const double boundary=0);
+  double proxCN(double arg, double boundary=0);
 
-  double proxCT2D(const double arg, const double LaNmue);
+  double proxCT2D(double arg, double laNmue);
 
-  fmatvec::Vec proxCT3D(const fmatvec::Vec& arg, const double laNmue);
+  fmatvec::Vec proxCT3D(const fmatvec::Vec& arg, double laNmue);
 
 }
 

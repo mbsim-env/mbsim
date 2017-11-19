@@ -33,7 +33,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      OptionsDialog(QWidget *parent=nullptr);
+      OptionsDialog(QWidget *widget=nullptr);
       bool getSaveStateVector() const;
       void setSaveStateVector(bool flag);
       bool getAutoSave() const;
@@ -43,7 +43,7 @@ namespace MBSimGUI {
       bool getAutoExport() const;
       void setAutoExport(bool flag);
       QString getAutoExportDir() const;
-      void setAutoExportDir(const QString &flag);
+      void setAutoExportDir(const QString &dir);
       void setMaxUndo(int num);
       int getMaxUndo() const;
     private:

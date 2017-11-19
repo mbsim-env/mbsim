@@ -35,12 +35,12 @@ namespace MBSimGUI {
       CustomSpinBox* sizeCombo;
       int m;
     public:
-      OneDimVecArrayWidget(int size=0, int m=0, bool var=false);
+      OneDimVecArrayWidget(int size=0, int m_=0, bool var=false);
       const std::vector<ExtWidget*>& getArray() const { return ele; }
       void resize_(int size, int m, int n);
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     public slots:
       void currentIndexChanged(int);
   };
@@ -54,7 +54,7 @@ namespace MBSimGUI {
       void resize_(int size, int m, int n);
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class TwoDimMatArrayWidget: public Widget {
@@ -66,12 +66,12 @@ namespace MBSimGUI {
       void resize_(int rsize, int csize, int m, int n);
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class OneDimVecArrayWidgetFactory : public WidgetFactory {
     public:
-      OneDimVecArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size=0, int m=0, bool var=false);
+      OneDimVecArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, bool var_=false);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -85,7 +85,7 @@ namespace MBSimGUI {
 
   class OneDimMatArrayWidgetFactory : public WidgetFactory {
     public:
-      OneDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size=0, int m=0, int n=0);
+      OneDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, int n_=0);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -98,7 +98,7 @@ namespace MBSimGUI {
 
   class TwoDimMatArrayWidgetFactory : public WidgetFactory {
     public:
-      TwoDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size=0, int m=0, int n=0);
+      TwoDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, int n_=0);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }

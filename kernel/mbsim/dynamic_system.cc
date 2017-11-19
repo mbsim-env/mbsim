@@ -367,7 +367,7 @@ namespace MBSim {
 
   void DynamicSystem::init(InitStage stage, const InitConfigSet &config) {
     if (stage ==resolveStringRef) {
-      if (saved_frameOfReference != "")
+      if (!saved_frameOfReference.empty())
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
     }
     else if (stage == preInit) {

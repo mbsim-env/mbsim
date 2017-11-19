@@ -46,7 +46,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      Environment() : Atom() {};
+      Environment()  {};
 
       /**
        * \brief destructor
@@ -81,7 +81,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      MBSimEnvironment() : Environment() {}
+      MBSimEnvironment()  {}
 
       /**
        * \brief acceleration of gravity

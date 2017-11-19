@@ -37,9 +37,9 @@ namespace MBSim {
 
       ~projectPointAlongNormal() override;
 
-      void setUpSystemParamters(const fmatvec::Vec3 & referencePoint, const double & phi);
+      void setUpSystemParamters(const fmatvec::Vec3 & referencePoint_, const double & phi_);
 
-      fmatvec::Vec operator()(const fmatvec::Vec &x) override;
+      fmatvec::Vec operator()(const fmatvec::Vec &xin) override;
 
     protected:
       /*!
@@ -67,9 +67,9 @@ namespace MBSim {
 
       ~projectPointAlongNormalJacobian() override;
 
-      void setUpSystemParamters(const fmatvec::Vec3 & referencePoint, const double & phi);
+      void setUpSystemParamters(const fmatvec::Vec3 & referencePoint_, const double & phi_);
 
-      fmatvec::SqrMat operator()(const fmatvec::Vec &x) override;
+      fmatvec::SqrMat operator()(const fmatvec::Vec &xin) override;
 
     protected:
       /*!

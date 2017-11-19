@@ -55,7 +55,7 @@ namespace MBSim {
     PlanarContactSearch search(func);
     search.setNodes(extrusion->getEtaNodes()); // defining search areas for contacts
 
-    if (searchAllCP==false) { // select start value from last search
+    if (!searchAllCP) { // select start value from last search
       search.setInitialValue(cFrame[iextrusion]->getEta());
     }
     else { // define start search with regula falsi

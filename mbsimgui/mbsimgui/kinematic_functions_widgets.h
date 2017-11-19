@@ -89,7 +89,7 @@ namespace MBSimGUI {
       int getArg1Size() const override {return 1;}
       QString getType() const override { return "TranslationAlongFixedAxis"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *a;
   };
@@ -102,7 +102,7 @@ namespace MBSimGUI {
       void resize_(int m, int n) override;
       QString getType() const override { return "LinearTranslation"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *A, *b;
   };
@@ -186,7 +186,7 @@ namespace MBSimGUI {
       int getArg1Size() const override {return 1;}
       QString getType() const override { return "RotationAboutFixedAxis"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *a;
   };

@@ -35,13 +35,13 @@ namespace MBSim {
 
   void GeneralizedGearConstraint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(saved_DependentBody!="")
+      if(!saved_DependentBody.empty())
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
       for(const auto & i : saved_IndependentBody)
         bi.push_back(getByPath<RigidBody>(i));
       if(not bd)
         THROW_MBSIMERROR("No dependent rigid body given!");
-      if(bi.size()==0)
+      if(bi.empty())
         THROW_MBSIMERROR("No independent rigid bodies given!");
     }
     else if(stage==preInit) {

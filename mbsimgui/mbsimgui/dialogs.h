@@ -67,10 +67,10 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ObjectBrowser(Element* element, Object* selection, QWidget *obj);
+      ObjectBrowser(Element* element_, Object* object, QWidget *parentObject_);
       ~ObjectBrowser() override = default;
       QTreeWidget* getObjectList() const {return objectList;}
-      void updateWidget(Object *object);
+      void updateWidget(Object *sel);
     protected:
       QPushButton *okButton;
       QTreeWidget *objectList;
@@ -78,7 +78,7 @@ namespace MBSimGUI {
       ElementItem *savedItem;
       Element* element;
       QString oldID;
-      void mbs2ObjectTree(Element* item, QTreeWidgetItem* parentItem);
+      void mbs2ObjectTree(Element* ele, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       protected slots:
@@ -89,10 +89,10 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      LinkBrowser(Element* element, Link* selection, QWidget *lnk);
+      LinkBrowser(Element* element_, Link* link, QWidget *parentLink_);
       ~LinkBrowser() override = default;
       QTreeWidget* getLinkList() const {return linkList;}
-      void updateWidget(Link *link);
+      void updateWidget(Link *sel);
     protected:
       QPushButton *okButton;
       QTreeWidget *linkList;
@@ -100,7 +100,7 @@ namespace MBSimGUI {
       ElementItem *savedItem;
       Element* element;
       QString oldID;
-      void mbs2LinkTree(Element* item, QTreeWidgetItem* parentItem);
+      void mbs2LinkTree(Element* ele, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       protected slots:
@@ -111,10 +111,10 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ConstraintBrowser(Element* element, Constraint* selection, QWidget *lnk);
+      ConstraintBrowser(Element* element_, Constraint* constraint, QWidget *parentConstraint_);
       ~ConstraintBrowser() override = default;
       QTreeWidget* getConstraintList() const {return constraintList;}
-      void updateWidget(Constraint *constraint);
+      void updateWidget(Constraint *sel);
     protected:
       QPushButton *okButton;
       QTreeWidget *constraintList;
@@ -122,7 +122,7 @@ namespace MBSimGUI {
       ElementItem *savedItem;
       Element* element;
       QString oldID;
-      void mbs2ConstraintTree(Element* item, QTreeWidgetItem* parentItem);
+      void mbs2ConstraintTree(Element* ele, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       protected slots:
@@ -133,10 +133,10 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      RigidBodyBrowser(Element* element, RigidBody* selection, QWidget *obj);
+      RigidBodyBrowser(Element* element_, RigidBody* rigidBody, QWidget *parentObject_);
       ~RigidBodyBrowser() override = default;
       QTreeWidget* getRigidBodyList() const {return rigidBodyList;}
-      void updateWidget(RigidBody *rigidBody);
+      void updateWidget(RigidBody *sel);
     protected:
       QPushButton *okButton;
       QTreeWidget *rigidBodyList;
@@ -144,7 +144,7 @@ namespace MBSimGUI {
       ElementItem *savedItem;
       Element* element;
       QString oldID;
-      void mbs2RigidBodyTree(Element* item, QTreeWidgetItem* parentItem);
+      void mbs2RigidBodyTree(Element* ele, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       protected slots:
@@ -155,10 +155,10 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      FrameBrowser(Element* element, Frame* selection, QWidget *obj);
+      FrameBrowser(Element* element_, Frame* frame, QWidget *parentObject_);
       ~FrameBrowser() override = default;
       QTreeWidget* getFrameList() const {return frameList;}
-      void updateWidget(Frame *frame);
+      void updateWidget(Frame *sel);
     protected:
       QPushButton *okButton;
       QTreeWidget *frameList;
@@ -166,7 +166,7 @@ namespace MBSimGUI {
       ElementItem *savedItem;
       Element* element;
       QString oldID;
-      void mbs2FrameTree(Element* item, QTreeWidgetItem* parentItem);
+      void mbs2FrameTree(Element* ele, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       protected slots:
@@ -177,10 +177,10 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ContourBrowser(Element* element, Contour* selection, QWidget *obj);
+      ContourBrowser(Element* element_, Contour* contour, QWidget *parentObject_);
       ~ContourBrowser() override = default;
       QTreeWidget* getContourList() const {return contourList;}
-      void updateWidget(Contour *contour);
+      void updateWidget(Contour *sel);
     protected:
       QPushButton *okButton;
       QTreeWidget *contourList;
@@ -188,7 +188,7 @@ namespace MBSimGUI {
       ElementItem *savedItem;
       Element* element;
       QString oldID;
-      void mbs2ContourTree(Element* item, QTreeWidgetItem* parentItem);
+      void mbs2ContourTree(Element* ele, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       protected slots:
@@ -199,17 +199,17 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      SignalBrowser(Element* element, Signal* selection, QWidget *obj);
+      SignalBrowser(Element* element_, Signal* signal, QWidget *parentSignal_);
       ~SignalBrowser() override = default;
       QTreeWidget* getSignalList() const {return signalList;}
-      void updateWidget(Signal *signal);
+      void updateWidget(Signal *sel);
     protected:
       QPushButton *okButton;
       QTreeWidget *signalList;
       Signal *selection;
       ElementItem *savedItem;
       Element* element;
-      void mbs2SignalTree(Element* item, QTreeWidgetItem* parentItem);
+      void mbs2SignalTree(Element* ele, QTreeWidgetItem* parentItem);
       protected slots:
         void checkForSignal(QTreeWidgetItem* item_,int);
   };

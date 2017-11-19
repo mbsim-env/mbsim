@@ -65,7 +65,7 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setContourFunction(Function<fmatvec::Vec3(fmatvec::Vec2)> *f);
+      void setContourFunction(Function<fmatvec::Vec3(fmatvec::Vec2)> *func);
       Function<fmatvec::Vec3(fmatvec::Vec2)>* getContourFunction() { return funcCrPC; }
       /***************************************************/
 

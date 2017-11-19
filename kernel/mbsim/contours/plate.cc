@@ -75,18 +75,12 @@ namespace MBSim {
     Vec3 P_inA = this->getFrame()->getOrientation().T() * (Point - this->getFrame()->getPosition());
 
     // Here we suppose that the plate in our codes has axis x parallel to its normal
-    if ((P_inA(1) <= yLength / 2) && (P_inA(1) >= (-yLength / 2)) && (P_inA(2) <= zLength / 2) && (P_inA(2) >= (-zLength / 2))) {
-      return true;
-    }
-    return false;
+    return (P_inA(1) <= yLength / 2) && (P_inA(1) >= (-yLength / 2)) && (P_inA(2) <= zLength / 2) && (P_inA(2) >= (-zLength / 2));
   }
 
   bool Plate::PointInCircle(const fmatvec::Vec3& Point, const fmatvec::Vec3& CenCir, const double & radius) {
     double dis = nrm2(Point - CenCir);
-    if (dis > radius) {
-      return false;
-    }
-    return true;
+    return dis <= radius;
   }
 
   // this algorithm comes from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
@@ -157,11 +151,7 @@ namespace MBSim {
       return true;
     }
     Closest = Point_closest_toCircle_onLineseg(IrD, IrA, CenCir);
-    if (PointInCircle(Closest, CenCir, radi)) {
-      return true;
-    }
-
-    return false;
+    return PointInCircle(Closest, CenCir, radi);
   }
 
 }

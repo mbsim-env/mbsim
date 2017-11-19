@@ -34,7 +34,7 @@ namespace MBSimGUI {
   bool Utils::initialized=false;
 
   void Utils::initialize() {
-    if(initialized==true) return;
+    if(initialized) return;
     initialized=true;
 
   }

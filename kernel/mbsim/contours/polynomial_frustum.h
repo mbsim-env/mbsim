@@ -59,7 +59,7 @@ namespace MBSim {
        *    index 0: x,   height coordinate of frustum
        *    index 1: phi, angle of point
        */
-      fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPS) override;
+      fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint) override;
       /*********************************/
 
       /*!
@@ -89,12 +89,12 @@ namespace MBSim {
       /*!
        * \brief set color of body
        */
-      void setColor(const MBSim::RGBColor & color);
+      void setColor(const MBSim::RGBColor & color_);
 
       /*!
        * \brief set transparency of body
        */
-      void setTransparency(const double & transparency);
+      void setTransparency(const double & transparency_);
 
       /*!
        * \brief get value at position of 0 derivative
@@ -227,7 +227,7 @@ namespace MBSim {
        */
       void createInventorFile();
 
-      void enableOpenMBV_(const fmatvec::Vec3 &dc, double tp, int polynomialPoints, int circularPoints);
+      void enableOpenMBV_(const fmatvec::Vec3 &dc, double tp, int polynomialPoints_, int circularPoints_);
   };
 
   /*!

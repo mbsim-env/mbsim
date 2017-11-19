@@ -67,11 +67,7 @@ namespace MBSimGUI {
     if(xmlName!=FQN()) {
       DOMDocument *doc = parent->getOwnerDocument();
       DOMElement *newele = D(doc)->createElement(xmlName);
-      if(false) {
-        if(isActive()) dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
-        parent->insertBefore(newele,ref);
-      }
-      else if(isActive()) {
+      if(isActive()) {
         dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
         parent->insertBefore(newele,ref);
       }

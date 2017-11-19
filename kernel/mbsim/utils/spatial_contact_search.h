@@ -63,7 +63,7 @@ namespace MBSim {
        * \param increment length of the U direction search
        * \param increment length of the V direction search
        */
-      void setEqualSpacing(const int nU, const int nV, const double U0, const double V0, const double dU, const double dV);
+      void setEqualSpacing(int nU, int nV, double U0, double V0, double dU, double dV);
 
       /*!
        * \brief solve for the one potential contact point with minimal distance (might be negative)

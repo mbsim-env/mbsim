@@ -49,17 +49,17 @@ namespace MBSim {
       void addIndependentRigidBody(RigidBody* bi_) { bi.push_back(bi_); }
 
       void setUpInverseKinetics() override;
-      void setForceDirection(const fmatvec::Mat3xV& d_);
-      void setMomentDirection(const fmatvec::Mat3xV& d_);
+      void setForceDirection(const fmatvec::Mat3xV& fd);
+      void setMomentDirection(const fmatvec::Mat3xV& md);
 
       /** \brief The frame of reference ID for the force/moment direction vectors.
        * If ID=0 (default) the first frame, if ID=1 the second frame is used.
        */
       void setFrameOfReferenceID(int ID) { refFrameID=ID; }
 
-      void updatePositions(Frame *frame_) override;
+      void updatePositions(Frame *frame) override;
       void updateGeneralizedCoordinates() override;
-      void updateGeneralizedJacobians(int j=0) override;
+      void updateGeneralizedJacobians(int jj=0) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void setInitialGuess(const fmatvec::VecV &q0_) { q0 = q0_; }
@@ -72,7 +72,7 @@ namespace MBSim {
           Frame *frame1, *frame2, *refFrame;
           std::vector<Frame*> i1,i2;
         public:
-          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &forceDir_, const fmatvec::Mat3xV &momentDir_, Frame *frame1_, Frame *frame2_, Frame *refFrame, std::vector<Frame*> i1_, std::vector<Frame*> i2_);
+          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &forceDir_, const fmatvec::Mat3xV &momentDir_, Frame *frame1_, Frame *frame2_, Frame *refFrame_, std::vector<Frame*> i1_, std::vector<Frame*> i2_);
           fmatvec::Vec operator()(const fmatvec::Vec &x) override;
       };
       std::vector<RigidBody*> bd1, bd2, bi;

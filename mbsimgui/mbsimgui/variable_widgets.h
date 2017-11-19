@@ -66,7 +66,7 @@ namespace MBSimGUI {
       bool validate(const std::vector<std::vector<QString> > &A) const override;
       std::vector<std::vector<QString> > getEvalMat() const override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QCheckBox *value;
@@ -79,9 +79,9 @@ namespace MBSimGUI {
       void setValue(const QString &str) override { value->setPlainText(str); }
       QString getType() const override {return "Editor";}
       int rows() const override { return getEvalMat().size(); }
-      int cols() const override { return getEvalMat().size()?getEvalMat()[0].size():0; }
+      int cols() const override { return !getEvalMat().empty()?getEvalMat()[0].size():0; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     private:
       QPlainTextEdit *value;
@@ -99,7 +99,7 @@ namespace MBSimGUI {
       bool validate(const std::vector<std::vector<QString> > &A) const override;
       std::vector<std::vector<QString> > getEvalMat() const override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class BasicVecWidget : public VariableWidget {
@@ -107,8 +107,8 @@ namespace MBSimGUI {
       virtual std::vector<QString> getVec() const = 0;
       virtual void setVec(const std::vector<QString> &x) = 0;
       std::vector<std::vector<QString> > getEvalMat() const override;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class VecWidget : public BasicVecWidget {
@@ -116,8 +116,8 @@ namespace MBSimGUI {
       std::vector<QLineEdit*> box;
       bool transpose;
     public:
-      VecWidget(int size, bool transpose=false);
-      VecWidget(const std::vector<QString> &x, bool transpose=false);
+      VecWidget(int size, bool transpose_=false);
+      VecWidget(const std::vector<QString> &x, bool transpose_=false);
       void resize_(int size);
       void resize_(int rows, int cols) override { resize_(rows); }
       std::vector<QString> getVec() const override;
@@ -141,7 +141,7 @@ namespace MBSimGUI {
       CustomSpinBox* sizeCombo;
       int minSize, maxSize;
     public:
-      VecSizeVarWidget(int size, int minSize, int maxSize, int singleStep=1, bool transpose=false, bool table=false);
+      VecSizeVarWidget(int size, int minSize_, int maxSize_, int singleStep=1, bool transpose=false, bool table=false);
 //      VecSizeVarWidget(const std::vector<QString> &x, int minSize, int maxSize, bool transpose=false);
       std::vector<QString> getVec() const override {return widget->getVec();}
       void setVec(const std::vector<QString> &x) override;
@@ -186,8 +186,8 @@ namespace MBSimGUI {
       virtual std::vector<std::vector<QString> > getMat() const = 0;
       virtual void setMat(const std::vector<std::vector<QString> > &A) = 0;
       std::vector<std::vector<QString> > getEvalMat() const override;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class MatWidget : public BasicMatWidget {
@@ -219,7 +219,7 @@ namespace MBSimGUI {
       CustomSpinBox* colsCombo;
       int minCols, maxCols;
     public:
-      MatColsVarWidget(int rows, int cols, int minCols, int maxCols, int table=false);
+      MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_, int table=false);
       std::vector<std::vector<QString> > getMat() const override {return widget->getMat();}
       void setMat(const std::vector<std::vector<QString> > &A) override;
       void resize_(int rows, int cols) override;
@@ -247,7 +247,7 @@ namespace MBSimGUI {
       QLabel *colsLabel;
       int minRows, maxRows;
     public:
-      MatRowsVarWidget(int rows, int cols, int minRows, int maxRows, int table=false);
+      MatRowsVarWidget(int rows, int cols, int minRows_, int maxRows_, int table=false);
       std::vector<std::vector<QString> > getMat() const override {return widget->getMat();}
       void setMat(const std::vector<std::vector<QString> > &A) override;
       void resize_(int rows, int cols) override;
@@ -274,7 +274,7 @@ namespace MBSimGUI {
       CustomSpinBox *rowsCombo, *colsCombo;
       int minRows, maxRows, minCols, maxCols;
     public:
-      MatRowsColsVarWidget(int rows, int cols, int minRows, int maxRows, int minCols, int maxCols, int table=false);
+      MatRowsColsVarWidget(int rows, int cols, int minRows_, int maxRows_, int minCols_, int maxCols_, int table=false);
       std::vector<std::vector<QString> > getMat() const override {return widget->getMat();}
       void setMat(const std::vector<std::vector<QString> > &A) override;
       void resize_(int rows, int cols) override;
@@ -303,7 +303,7 @@ namespace MBSimGUI {
       CustomSpinBox *sizeCombo;
       int minSize, maxSize;
     public:
-      SqrMatSizeVarWidget(int size, int minSize, int maxSize);
+      SqrMatSizeVarWidget(int size, int minSize_, int maxSize_);
       std::vector<std::vector<QString> > getMat() const override {return widget->getMat();}
       void setMat(const std::vector<std::vector<QString> > &A) override;
       void resize_(int rows, int cols) override;
@@ -350,7 +350,7 @@ namespace MBSimGUI {
       CustomSpinBox *sizeCombo;
       int minSize, maxSize;
     public:
-      SymMatSizeVarWidget(int size, int minSize, int maxSize);
+      SymMatSizeVarWidget(int size, int minSize_, int maxSize_);
       std::vector<std::vector<QString> > getMat() const override {return widget->getMat();}
       void setMat(const std::vector<std::vector<QString> > &A) override;
       void resize_(int rows, int cols) override;
@@ -405,8 +405,8 @@ namespace MBSimGUI {
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       std::vector<std::vector<QString> > getEvalMat() const override;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class AboutXWidget : public VariableWidget {
@@ -423,8 +423,8 @@ namespace MBSimGUI {
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       std::vector<std::vector<QString> > getEvalMat() const override;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class AboutYWidget : public VariableWidget {
@@ -441,8 +441,8 @@ namespace MBSimGUI {
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       std::vector<std::vector<QString> > getEvalMat() const override;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class AboutZWidget : public VariableWidget {
@@ -459,8 +459,8 @@ namespace MBSimGUI {
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       std::vector<std::vector<QString> > getEvalMat() const override;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class PhysicalVariableWidget : public VariableWidget {
@@ -475,7 +475,7 @@ namespace MBSimGUI {
     protected slots:
       void openEvalDialog();
     public:
-      PhysicalVariableWidget(VariableWidget *widget, const QStringList &units=QStringList(), int defaultUnit=0, bool eval=true);
+      PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_=QStringList(), int defaultUnit_=0, bool eval=true);
       QString getValue() const override {return widget->getValue();}
       void setValue(const QString &str) override {widget->setValue(str);}
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
@@ -489,8 +489,8 @@ namespace MBSimGUI {
       void resize_(int rows, int cols) override { widget->resize_(rows,cols); }
       int rows() const override { return widget->rows(); }
       int cols() const override { return widget->cols(); }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class FromFileWidget : public VariableWidget {
@@ -506,8 +506,8 @@ namespace MBSimGUI {
       void setFile(const QString &str);
       QString getType() const override {return "File";}
       std::vector<std::vector<QString> > getEvalMat() const override;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QLineEdit *relativeFilePath;
@@ -518,7 +518,7 @@ namespace MBSimGUI {
 
   class BoolWidgetFactory : public WidgetFactory {
     public:
-      BoolWidgetFactory(const QString &value);
+      BoolWidgetFactory(const QString &value_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
@@ -531,7 +531,7 @@ namespace MBSimGUI {
 
   class ScalarWidgetFactory : public WidgetFactory {
     public:
-      ScalarWidgetFactory(const QString &value, std::vector<QStringList> unit=std::vector<QStringList>(2,noUnitUnits()), std::vector<int> defaultUnit=std::vector<int>(2,0));
+      ScalarWidgetFactory(const QString &value_, std::vector<QStringList> unit_=std::vector<QStringList>(2,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(2,0));
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
@@ -544,8 +544,8 @@ namespace MBSimGUI {
 
   class VecWidgetFactory : public WidgetFactory {
     public:
-      VecWidgetFactory(int m, std::vector<QStringList> unit=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit=std::vector<int>(3,0), bool transpose=false, bool table=false, bool eval=true);
-      VecWidgetFactory(std::vector<QString> x, std::vector<QStringList> unit=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit=std::vector<int>(3,0), bool transpose=false, bool eval=true);
+      VecWidgetFactory(int m, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0), bool transpose_=false, bool table_=false, bool eval_=true);
+      VecWidgetFactory(std::vector<QString> x_, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0), bool transpose_=false, bool eval_=true);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
@@ -559,7 +559,7 @@ namespace MBSimGUI {
 
   class VecSizeVarWidgetFactory : public WidgetFactory {
     public:
-      VecSizeVarWidgetFactory(int m, int singleStep=1, std::vector<QStringList> unit=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit=std::vector<int>(3,0), bool transpose=false, bool table=false, bool eval=true);
+      VecSizeVarWidgetFactory(int m_, int singleStep_=1, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0), bool transpose_=false, bool table_=false, bool eval_=true);
 //      VecSizeVarWidgetFactory(const std::vector<QString> &x, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
@@ -574,8 +574,8 @@ namespace MBSimGUI {
 
   class MatWidgetFactory : public WidgetFactory {
     public:
-      MatWidgetFactory(int m, int n, std::vector<QStringList> unit=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit=std::vector<int>(3,0), bool table=false);
-      MatWidgetFactory(std::vector<std::vector<QString> > A, std::vector<QStringList> unit=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit=std::vector<int>(3,0));
+      MatWidgetFactory(int m, int n, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0), bool table_=false);
+      MatWidgetFactory(std::vector<std::vector<QString> > A_, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0));
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
@@ -589,7 +589,7 @@ namespace MBSimGUI {
 
   class MatRowsVarWidgetFactory : public WidgetFactory {
     public:
-      MatRowsVarWidgetFactory(int m, int n, std::vector<QStringList> unit=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit=std::vector<int>(3,0), bool table=false);
+      MatRowsVarWidgetFactory(int m_, int n_, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0), bool table_=false);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
@@ -603,7 +603,7 @@ namespace MBSimGUI {
 
   class MatColsVarWidgetFactory : public WidgetFactory {
     public:
-      MatColsVarWidgetFactory(int m, int n, std::vector<QStringList> unit=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit=std::vector<int>(3,0), bool table=false);
+      MatColsVarWidgetFactory(int m_, int n_, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0), bool table_=false);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
@@ -617,7 +617,7 @@ namespace MBSimGUI {
 
   class MatRowsColsVarWidgetFactory : public WidgetFactory {
     public:
-      MatRowsColsVarWidgetFactory(int m=0, int n=0, bool table=false);
+      MatRowsColsVarWidgetFactory(int m=0, int n=0, bool table_=false);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
@@ -631,7 +631,7 @@ namespace MBSimGUI {
 
   class SqrMatSizeVarWidgetFactory : public WidgetFactory {
     public:
-      SqrMatSizeVarWidgetFactory(int m, std::vector<QStringList> unit=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit=std::vector<int>(3,0));
+      SqrMatSizeVarWidgetFactory(int m_, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0));
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
@@ -644,7 +644,7 @@ namespace MBSimGUI {
 
   class SymMatWidgetFactory : public WidgetFactory {
     public:
-      SymMatWidgetFactory(std::vector<std::vector<QString> > A, std::vector<QStringList> unit=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit=std::vector<int>(3,0));
+      SymMatWidgetFactory(std::vector<std::vector<QString> > A_, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0));
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
@@ -658,8 +658,8 @@ namespace MBSimGUI {
   class SymMatSizeVarWidgetFactory : public WidgetFactory {
     public:
       SymMatSizeVarWidgetFactory();
-      SymMatSizeVarWidgetFactory(std::vector<std::vector<QString> > A, std::vector<QStringList> unit, std::vector<int> defaultUnit);
-      SymMatSizeVarWidgetFactory(std::vector<std::vector<QString> > A, std::vector<QString> name, std::vector<QStringList> unit, std::vector<int> defaultUnit);
+      SymMatSizeVarWidgetFactory(std::vector<std::vector<QString> > A_, std::vector<QStringList> unit_, std::vector<int> defaultUnit_);
+      SymMatSizeVarWidgetFactory(std::vector<std::vector<QString> > A_, std::vector<QString> name_, std::vector<QStringList> unit_, std::vector<int> defaultUnit_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
@@ -673,7 +673,7 @@ namespace MBSimGUI {
   class RotMatWidgetFactory : public WidgetFactory {
     public:
       RotMatWidgetFactory();
-      RotMatWidgetFactory(std::vector<QString> name, std::vector<QStringList> unit, std::vector<int> defaultUnit);
+      RotMatWidgetFactory(std::vector<QString> name_, std::vector<QStringList> unit_, std::vector<int> defaultUnit_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }

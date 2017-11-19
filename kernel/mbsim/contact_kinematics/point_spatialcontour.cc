@@ -58,12 +58,12 @@ namespace MBSim {
 
     SpatialContactSearch search(func);
 
-    if ((spatialcontour->getEtaNodes().size() != 0) && (spatialcontour->getXiNodes().size() != 0))
+    if ((!spatialcontour->getEtaNodes().empty()) && (!spatialcontour->getXiNodes().empty()))
       search.setNodes(spatialcontour->getEtaNodes(), spatialcontour->getXiNodes());
     else
       search.setEqualSpacing(10, 10, 0, 0, 0.1, 0.1);
 
-    if (searchAllCP==false) {
+    if (!searchAllCP) {
       search.setInitialValue(zeta0);
     }
     else {

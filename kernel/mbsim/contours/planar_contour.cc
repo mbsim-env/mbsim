@@ -32,7 +32,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlanarContour)
 
   PlanarContour::~PlanarContour() {
-     if (funcCrPC) 
+     
        delete funcCrPC;
      funcCrPC=nullptr;
   }

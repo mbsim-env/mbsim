@@ -54,7 +54,7 @@ namespace MBSim {
     PlanarContactSearch search(func);
     search.setNodes(planarcontour->getEtaNodes());
 
-    if(searchAllCP==false)
+    if(!searchAllCP)
       search.setInitialValue(cFrame[iplanarcontour]->getEta());
     else {
       search.setSearchAll(true);

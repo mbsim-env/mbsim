@@ -43,7 +43,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      ~GeneralizedForceLaw() override { if(forceFunc) delete forceFunc; forceFunc = nullptr; };
+      ~GeneralizedForceLaw() override { delete forceFunc; forceFunc = nullptr; };
 
       void init(Element::InitStage stage, const InitConfigSet &config) override {
         Element::init(stage, config);

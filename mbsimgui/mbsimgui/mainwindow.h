@@ -128,7 +128,7 @@ namespace MBSimGUI {
       void addLink(Link *link, Element *parent);
       void addConstraint(Constraint *constraint, Element *parent);
       void addObserver(Observer *observer, Element *parent);
-      void loadParameter(EmbedItemData *parent, Parameter *parameter=nullptr);
+      void loadParameter(EmbedItemData *parent, Parameter *param=nullptr);
       void loadFrame(Element *parent, Element *element=nullptr);
       void loadContour(Element *parent, Element *element=nullptr);
       void loadGroup(Element *parent, Element *element=nullptr);
@@ -156,7 +156,7 @@ namespace MBSimGUI {
       void newProject(bool ask=true);
       void loadProject();
       bool saveProjectAs();
-      bool saveProject(const QString &filename="", bool processDocument=true, bool modifyStatus=true);
+      bool saveProject(const QString &fileName="", bool processDocument=true, bool modifyStatus=true);
       void saveDataAs();
       void saveMBSimH5DataAs();
       void saveMBSimH5Data(const QString &file);
