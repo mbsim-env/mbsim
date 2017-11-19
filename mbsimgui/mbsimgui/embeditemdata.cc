@@ -84,33 +84,20 @@ namespace MBSimGUI {
     }
   }
 
-  DOMElement* EmbedItemData::getParameterXMLElement() {
-    DOMDocument *doc=element->getOwnerDocument();
-    if(not getEmbedXMLElement()) {
-      DOMElement *ele=D(doc)->createElement(PV%"Embed");
-      element->getParentNode()->insertBefore(ele,element);
-      setEmbedXMLElement(ele);
-      ele=D(doc)->createElement(PV%"Parameter");
-      getEmbedXMLElement()->insertBefore(ele,nullptr);
-      getEmbedXMLElement()->insertBefore(element,nullptr);
-      return ele;
+  DOMElement* EmbedItemData::createParameterXMLElement() {
+    DOMElement *param = E(createEmbedXMLElement())->getFirstElementChildNamed(PV%"Parameter");
+    if(not param) {
+      param = D(getXMLElement()->getOwnerDocument())->createElement(PV%"Parameter");
+      getEmbedXMLElement()->insertBefore(param,getEmbedXMLElement()->getFirstElementChild());
     }
-    else if(X()%getEmbedXMLElement()->getFirstElementChild()->getNodeName()!="Parameter") {
-      DOMElement *ele=D(doc)->createElement(PV%"Parameter");
-      getEmbedXMLElement()->insertBefore(ele,getEmbedXMLElement()->getFirstElementChild());
-      return ele;
-    }
-    return getEmbedXMLElement()->getFirstElementChild();
+    return param;
   }
 
   DOMElement* EmbedItemData::createEmbedXMLElement() {
-    DOMDocument *doc=element->getOwnerDocument();
     if(not getEmbedXMLElement()) {
-      DOMElement *ele=D(doc)->createElement(PV%"Embed");
-      element->getParentNode()->insertBefore(ele,element);
-      setEmbedXMLElement(ele);
-      getEmbedXMLElement()->insertBefore(element,nullptr);
-      return ele;
+      setEmbedXMLElement(D(getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
+      getXMLElement()->getParentNode()->insertBefore(getEmbedXMLElement(),getXMLElement());
+      getEmbedXMLElement()->insertBefore(getXMLElement(),nullptr);
     }
     return getEmbedXMLElement();
   }

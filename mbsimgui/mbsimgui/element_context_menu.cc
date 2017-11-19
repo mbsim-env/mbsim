@@ -158,6 +158,10 @@ namespace MBSimGUI {
     action = new QAction("Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
+    action = new QAction("Embed", this);
+//    action->setDisabled(item->getNumberOfParameters() or item->hasParameterXMLElement());
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
   }
 
   void FramesContextMenu::paste() {
@@ -166,6 +170,10 @@ namespace MBSimGUI {
 
   void FramesContextMenu::load() {
     mw->loadFrame(element);
+  }
+
+  void FramesContextMenu::embed() {
+    mw->embedFrame(element);
   }
 
   FixedRelativeFramesContextMenu::FixedRelativeFramesContextMenu(Element *element, const QString &title, QWidget *parent) : FramesContextMenu(element,title,parent) {

@@ -85,6 +85,7 @@ namespace MBSimGUI {
     protected slots:
       void paste();
       void load();
+      void embed();
 
     protected:
       Element *element;
