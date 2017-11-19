@@ -83,7 +83,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbeddingPropertyDialog::writeXMLFile(DOMNode *node, DOMNode *ref) {
-//    DOMNode* embedNode = node->getParentNode();
     DOMElement *embedNode = item->getEmbedXMLElement();
     if(not embedNode) {
       DOMDocument *doc=node->getOwnerDocument();
