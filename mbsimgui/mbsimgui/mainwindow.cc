@@ -1649,6 +1649,27 @@ namespace MBSimGUI {
     embeddingView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
   }
 
+  void MainWindow::embedParameter(EmbedItemData *parent) {
+    setProjectChanged(true);
+    auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    std::vector<Parameter*> param;
+    QString file=QFileDialog::getOpenFileName(nullptr, "XML frame files", ".", "XML files (*.xml)");
+    if(not file.isEmpty()) {
+      xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+      param = Parameter::initializeParametersUsingXML(doc->getDocumentElement());
+    }
+    else
+      return;
+    QModelIndex newIndex;
+    for(auto & i : param) {
+      parent->addParameter(i);
+      newIndex = model->createParameterItem(i,index);
+    }
+    E(parent->createEmbedXMLElement())->setAttribute("parameterHref",file.toStdString());
+    embeddingView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
+  }
+
   void MainWindow::loadFrame(Element *parent, Element *element) {
     setProjectChanged(true);
     DOMElement *ele = nullptr;

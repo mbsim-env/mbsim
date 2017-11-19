@@ -103,8 +103,28 @@ namespace MBSimGUI {
     return getEmbedXMLElement()->getFirstElementChild();
   }
 
+  DOMElement* EmbedItemData::createEmbedXMLElement() {
+    DOMDocument *doc=element->getOwnerDocument();
+    if(not getEmbedXMLElement()) {
+      DOMElement *ele=D(doc)->createElement(PV%"Embed");
+      element->getParentNode()->insertBefore(ele,element);
+      setEmbedXMLElement(ele);
+      getEmbedXMLElement()->insertBefore(element,nullptr);
+      return ele;
+    }
+    return getEmbedXMLElement();
+  }
+
+  bool EmbedItemData::hasParameterXMLElement() const {
+    return embed and E(embed)->getFirstElementChildNamed(PV%"Parameter");
+  }
+
+  bool EmbedItemData::hasHref() const {
+    return embed and embed->hasAttribute(X()%"href");
+  }
+
   bool EmbedItemData::hasParameterHref() const {
-    return dynamic_cast<DOMElement*>(element->getParentNode()) and static_cast<DOMElement*>(element->getParentNode())->hasAttribute(X()%"parameterHref");
+    return embed and embed->hasAttribute(X()%"parameterHref");
   }
 
   DOMElement* EmbedItemData::processFileID(DOMElement *element) {

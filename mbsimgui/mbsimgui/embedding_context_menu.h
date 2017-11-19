@@ -34,6 +34,7 @@ namespace MBSimGUI {
 
     protected slots:
       void load();
+      void embed();
       void paste();
       void addScalarParameter();
       void addVectorParameter();
