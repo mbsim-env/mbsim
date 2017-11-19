@@ -105,25 +105,25 @@ class ansatz_function_harmonic : public ansatz_function {
 
   protected:
     /** Returns the value of "int(w[i]*w[j],x=0..L) */
-    virtual double Intwiwj(int i, int j);
+    double Intwiwj(int i, int j) override;
 
     /** Returns the value of "int(D(w[i])(x)*D(w[j])(x),x=0..L) */
-    virtual double Intwsiwsj(int i, int j);
+    double Intwsiwsj(int i, int j) override;
 
     /** Returns the value of "w[i](x=0)" */
-    virtual double wi0(int i);
+    double wi0(int i) override;
 
     /** Returns the value of "w[i](x=L)" */
-    virtual double wiL(int i);
+    double wiL(int i) override;
 
     /** Returns the value of "int(w[i](x), x=0..L)" */
-    virtual double Intwi(int i);
+    double Intwi(int i) override;
 
     /** Returns the value of "w[i](xi)", 0<=xi<=1 */
-    virtual double wi(int i, double xi);
+    double wi(int i, double xi) override;
 
     /** Returns the value of "D(w[i])(xi)", 0<=xi<=1 */
-    virtual double wis(int i, double xi);
+    double wis(int i, double xi) override;
 };
 
 
@@ -137,25 +137,25 @@ class ansatz_function_polynom : public ansatz_function {
 
   protected:
     /** Returns the value of "int(w[i]*w[j],x=0..L) */
-    virtual double Intwiwj(int i, int j);
+    double Intwiwj(int i, int j) override;
 
     /** Returns the value of "int(D(w[i])(x)*D(w[j])(x),x=0..L) */
-    virtual double Intwsiwsj(int i, int j);
+    double Intwsiwsj(int i, int j) override;
 
     /** Returns the value of "w[i](x=0)" */
-    virtual double wi0(int i);
+    double wi0(int i) override;
 
     /** Returns the value of "w[i](x=L)" */
-    virtual double wiL(int i);
+    double wiL(int i) override;
 
     /** Returns the value of "int(w[i](x), x=0..L)" */
-    virtual double Intwi(int i);
+    double Intwi(int i) override;
 
     /** Returns the value of "w[i](xi)", 0<=xi<=1 */
-    virtual double wi(int i, double xi);
+    double wi(int i, double xi) override;
 
     /** Returns the value of "D(w[i])(xi)", 0<=xi<=1 */
-    virtual double wis(int i, double xi);
+    double wis(int i, double xi) override;
 };
 
 
@@ -170,25 +170,25 @@ class ansatz_function_BSplineOrd3 : public ansatz_function {
 
   protected:
     /** Returns the value of "int(w[i]*w[j],x=0..L) */
-    virtual double Intwiwj(int i, int j);
+    double Intwiwj(int i, int j) override;
 
     /** Returns the value of "int(D(w[i])(x)*D(w[j])(x),x=0..L) */
-    virtual double Intwsiwsj(int i, int j);
+    double Intwsiwsj(int i, int j) override;
 
     /** Returns the value of "w[i](x=0)" */
-    virtual double wi0(int i);
+    double wi0(int i) override;
 
     /** Returns the value of "w[i](x=L)" */
-    virtual double wiL(int i);
+    double wiL(int i) override;
 
     /** Returns the value of "int(w[i](x), x=0..L)" */
-    virtual double Intwi(int i);
+    double Intwi(int i) override;
 
     /** Returns the value of "w[i](xi)", 0<=xi<=1 */
-    virtual double wi(int i, double xi);
+    double wi(int i, double xi) override;
 
     /** Returns the value of "D(w[i])(xi)", 0<=xi<=1 */
-    virtual double wis(int i, double xi);
+    double wis(int i, double xi) override;
 };
 
 
@@ -202,25 +202,25 @@ class ansatz_function_BSplineOrd4 : public ansatz_function {
 
   protected:
     /** Returns the value of "int(w[i]*w[j],x=0..L) */
-    virtual double Intwiwj(int i, int j);
+    double Intwiwj(int i, int j) override;
 
     /** Returns the value of "int(D(w[i])(x)*D(w[j])(x),x=0..L) */
-    virtual double Intwsiwsj(int i, int j);
+    double Intwsiwsj(int i, int j) override;
 
     /** Returns the value of "w[i](x=0)" */
-    virtual double wi0(int i);
+    double wi0(int i) override;
 
     /** Returns the value of "w[i](x=L)" */
-    virtual double wiL(int i);
+    double wiL(int i) override;
 
     /** Returns the value of "int(w[i](x), x=0..L)" */
-    virtual double Intwi(int i);
+    double Intwi(int i) override;
 
     /** Returns the value of "w[i](xi)", 0<=xi<=1 */
-    virtual double wi(int i, double xi);
+    double wi(int i, double xi) override;
 
     /** Returns the value of "D(w[i])(xi)", 0<=xi<=1 */
-    virtual double wis(int i, double xi);
+    double wis(int i, double xi) override;
 };
 
 #endif   /* ----- #ifndef _ANSATZ_FUNCTIONS_H_  ----- */

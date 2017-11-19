@@ -43,7 +43,7 @@ namespace MBSim {
        * \param Jacobian evaluation
        * \default only local search
        */
-      SpatialContactSearch(DistanceFunction<fmatvec::Vec(fmatvec::Vec)> *func_=0, Function<fmatvec::SqrMat(fmatvec::Vec)> *jac_=0) : func(func_), jac(jac_), s0(2), searchAll(false) { }
+      SpatialContactSearch(DistanceFunction<fmatvec::Vec(fmatvec::Vec)> *func_=nullptr, Function<fmatvec::SqrMat(fmatvec::Vec)> *jac_=nullptr) : func(func_), jac(jac_), s0(2) { }
 
       /* GETTER / SETTER */
       void setInitialValue(const fmatvec::Vec2 &s0_) { s0 = s0_; }
@@ -107,7 +107,7 @@ namespace MBSim {
       /**
        * \brief all area searching by Regular-Falsi or known initial value for Newton-Method?
        */
-      bool searchAll;
+      bool searchAll{false};
   };
 }
 

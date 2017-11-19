@@ -2,6 +2,7 @@
 #define _MBSIMFMI_FMI_VARIABLES_H_
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
@@ -90,8 +91,8 @@ class Variable {
     typedef std::shared_ptr<EnumListCont> EnumList;
 
     //! ctor
-    Variable(const std::string &name_, const std::string &desc_, Type type_, char datatypeChar_, const EnumList &enumList_=EnumList()) :
-      name(name_), desc(desc_), type(type_), datatypeChar(datatypeChar_), enumList(enumList_) {}
+    Variable(std::string name_, std::string desc_, Type type_, char datatypeChar_, EnumList enumList_=EnumList()) :
+      name(std::move(name_)), desc(std::move(desc_)), type(type_), datatypeChar(datatypeChar_), enumList(std::move(enumList_)) {}
 
     //! FMI name
     std::string getName() { return name; }
@@ -173,9 +174,9 @@ class PredefinedParameter : public Variable {
   public:
     PredefinedParameter(const std::string &name_, const std::string &desc_, Datatype &v, EnumList enumList=EnumList()) :
       Variable(name_, desc_, Parameter, MapDatatypeToFMIDatatypeChar<Datatype>::value, enumList), value(v) {}
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(value); }
-    void setValue(const Datatype &v) { value=v; }
-    const Datatype& getValue(const Datatype&) { return value; }
+    std::string getValueAsString() override { return boost::lexical_cast<std::string>(value); }
+    void setValue(const Datatype &v) override { value=v; }
+    const Datatype& getValue(const Datatype&) override { return value; }
   protected:
     Datatype &value;
 };
@@ -186,13 +187,13 @@ class ExternSignalSourceInput : public Variable {
     ExternSignalSourceInput(MBSimControl::ExternSignalSource *sig_, int idx_) :
       Variable(mbsimToFMIName(sig_->getPath(), idx_, sig_->getSignalSize()),
         "ExternSignalSource", Input, 'r'), sig(sig_), idx(idx_) {}
-    std::string getValueAsString() { return fmatvec::toString(getValue(double())); }
-    void setValue(const double &v) {
+    std::string getValueAsString() override { return fmatvec::toString(getValue(double())); }
+    void setValue(const double &v) override {
       fmatvec::VecV curv = sig->evalSignal();
       curv(idx) = v;
       sig->setSignal(curv);
     }
-    const double& getValue(const double &) {
+    const double& getValue(const double &) override {
       return sig->evalSignal()(idx);
     }
   protected:
@@ -206,8 +207,8 @@ class ExternSignalSinkOutput : public Variable {
     ExternSignalSinkOutput(MBSimControl::ExternSignalSink *sig_, int idx_) :
       Variable(mbsimToFMIName(sig_->getPath(), idx_, sig_->getSignalSize()),
         "ExternSignalSink", Output, 'r'), sig(sig_), idx(idx_) {}
-    std::string getValueAsString() { return fmatvec::toString(getValue(double())); }
-    const double& getValue(const double &) {
+    std::string getValueAsString() override { return fmatvec::toString(getValue(double())); }
+    const double& getValue(const double &) override {
       return sig->evalSignal()(idx);
     }
   protected:
@@ -222,11 +223,11 @@ class ExternSignalSinkOutput : public Variable {
 template<class Datatype>
 class VariableStore : public Variable {
   public:
-    VariableStore(const std::string &name_, Type type, const Datatype &defaultValue=Datatype()) :
-      Variable(name_, "", type, MapDatatypeToFMIDatatypeChar<Datatype>::value), value(defaultValue) {}
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(value); }
-    const Datatype& getValue(const Datatype&) { return value; }
-    void setValue(const Datatype &v) { value=v; }
+    VariableStore(const std::string &name_, Type type, Datatype defaultValue=Datatype()) :
+      Variable(name_, "", type, MapDatatypeToFMIDatatypeChar<Datatype>::value), value(std::move(defaultValue)) {}
+    std::string getValueAsString() override { return boost::lexical_cast<std::string>(value); }
+    const Datatype& getValue(const Datatype&) override { return value; }
+    void setValue(const Datatype &v) override { value=v; }
   protected:
     Datatype value;
 };

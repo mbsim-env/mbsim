@@ -156,7 +156,7 @@ namespace MBSim {
             plotColumns.push_back("generalized force ("+toString(i)+")");
         }
         if(plotFeature[energy])
-          plotColumns.push_back("potential energy");
+          plotColumns.emplace_back("potential energy");
       }
     }
     else if(stage==unknownStage)

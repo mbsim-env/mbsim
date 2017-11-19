@@ -34,7 +34,7 @@ namespace MBSimGUI {
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
-      ELE->insertBefore(id, NULL);
+      ELE->insertBefore(id, nullptr);
     }
     return element;
   }

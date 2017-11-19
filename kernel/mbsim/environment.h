@@ -51,7 +51,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Environment() {};
+      ~Environment() override = default;
   };
 
   /**
@@ -62,7 +62,7 @@ namespace MBSim {
   class MBSimEnvironment : public Environment {
     public:
       /* INHERITED INTERFACE */
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */

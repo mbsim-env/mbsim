@@ -29,14 +29,14 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ProjectPropertyDialog::ProjectPropertyDialog(Project *project_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), project(project_) {
+  ProjectPropertyDialog::ProjectPropertyDialog(Project *project_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), project(project_) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(project->getName()));
     name->setToolTip("Set the name of the project");
     addToTab("General", name);
     vector<QString> list;
-    list.push_back("octave");
-    list.push_back("python");
+    list.emplace_back("octave");
+    list.emplace_back("python");
     evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,0),true,false,PV%"evaluator");
     evalSelect->setDisabled(true);
     addToTab("General",evalSelect);
@@ -52,7 +52,7 @@ namespace MBSimGUI {
     project->removeXMLElements();
     E(project->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     evalSelect->writeXMLFile(project->getXMLElement(),project->getXMLElement()->getFirstElementChild());
-    return NULL;
+    return nullptr;
   }
 
   void ProjectPropertyDialog::toWidget(Project *project) {

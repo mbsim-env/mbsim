@@ -33,18 +33,18 @@ namespace MBSim {
       GeneralizedImpactLaw *il;
     public:
       GeneralizedKinematicExcitation(const std::string &name);
-      ~GeneralizedKinematicExcitation();
+      ~GeneralizedKinematicExcitation() override;
 
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
 
-      bool isActive() const { return true; }
-      bool gActiveChanged() { return false; }
-      void init(InitStage stage, const InitConfigSet &config);
-      void calclaSize(int j);
-      void calcgSize(int j);
-      void calcgdSize(int j);
-      bool isSetValued() const;
-      bool isSingleValued() const { return not(isSetValued()); }
+      bool isActive() const override { return true; }
+      bool gActiveChanged() override { return false; }
+      void init(InitStage stage, const InitConfigSet &config) override;
+      void calclaSize(int j) override;
+      void calcgSize(int j) override;
+      void calcgdSize(int j) override;
+      bool isSetValued() const override;
+      bool isSingleValued() const override { return not(isSetValued()); }
 
       void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
   };

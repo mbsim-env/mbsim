@@ -68,26 +68,26 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBodyFFR();
+      ~FlexibleBodyFFR() override;
 
-      void updateqd();
-      void updateT();
-      void updateh(int j=0);
-      void updateM() { (this->*updateM_)(); }
-      void updateGeneralizedPositions();
-      void updateGeneralizedVelocities();
-      void updateDerivativeOfGeneralizedPositions();
-      void updateGeneralizedAccelerations();
+      void updateqd() override;
+      void updateT() override;
+      void updateh(int j=0) override;
+      void updateM() override { (this->*updateM_)(); }
+      void updateGeneralizedPositions() override;
+      void updateGeneralizedVelocities() override;
+      void updateDerivativeOfGeneralizedPositions() override;
+      void updateGeneralizedAccelerations() override;
       void updatePositions();
       void updateVelocities();
       void updateAccelerations();
-      void updateJacobians();
+      void updateJacobians() override;
       void updateGyroscopicAccelerations();
-      void updatePositions(MBSim::Frame *frame);
-      void updateVelocities(MBSim::Frame *frame);
-      void updateAccelerations(MBSim::Frame *frame);
-      void updateJacobians(MBSim::Frame *frame, int j=0) { (this->*updateJacobians_[j])(frame); }
-      void updateGyroscopicAccelerations(MBSim::Frame *frame);
+      void updatePositions(MBSim::Frame *frame) override;
+      void updateVelocities(MBSim::Frame *frame) override;
+      void updateAccelerations(MBSim::Frame *frame) override;
+      void updateJacobians(MBSim::Frame *frame, int j=0) override { (this->*updateJacobians_[j])(frame); }
+      void updateGyroscopicAccelerations(MBSim::Frame *frame) override;
       void updateJacobians0(MBSim::Frame *frame);
       void updateJacobians1(MBSim::Frame *frame) { }
       void updateMb();
@@ -96,18 +96,18 @@ namespace MBSimFlexibleBody {
       void updateKJ0();
       void updateKJ1();
       void (FlexibleBodyFFR::*updateKJ_[2])();
-      virtual void calcSize();
-      virtual void calcqSize();
-      virtual void calcuSize(int j=0);
+      void calcSize() override;
+      void calcqSize() override;
+      void calcuSize(int j=0) override;
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
-      virtual void updateLLM() { (this->*updateLLM_)(); }
-      virtual void setUpInverseKinetics();
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void updateLLM() override { (this->*updateLLM_)(); }
+      void setUpInverseKinetics() override;
       /*****************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot();
+      void plot() override;
       /*****************************************************/
 
       /* GETTER / SETTER */
@@ -281,14 +281,14 @@ namespace MBSimFlexibleBody {
         ombvIndices = indices;
       }
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void setqRel(const fmatvec::VecV &q);
       void setuRel(const fmatvec::VecV &u);
 
-      bool transformCoordinates() const {return fTR!=NULL;}
+      bool transformCoordinates() const {return fTR!=nullptr;}
 
-      void resetUpToDate();
+      void resetUpToDate() override;
       const fmatvec::VecV& evalqTRel() { if(updq) updateGeneralizedPositions(); return qTRel; }
       const fmatvec::VecV& evalqRRel() { if(updq) updateGeneralizedPositions(); return qRRel; }
       const fmatvec::VecV& evaluTRel() { if(updu) updateGeneralizedVelocities(); return uTRel; }
@@ -316,11 +316,11 @@ namespace MBSimFlexibleBody {
       virtual void updatePositions(int i);
       virtual void updateVelocities(int i);
 
-      virtual void updatePositions(NodeFrame* frame);
-      virtual void updateVelocities(NodeFrame* frame);
-      virtual void updateAccelerations(NodeFrame* frame);
-      virtual void updateJacobians(NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
+      void updatePositions(NodeFrame* frame) override;
+      void updateVelocities(NodeFrame* frame) override;
+      void updateAccelerations(NodeFrame* frame) override;
+      void updateJacobians(NodeFrame* frame, int j=0) override;
+      void updateGyroscopicAccelerations(NodeFrame* frame) override;
 
       template <class T>
       static std::vector<T> getCellArray1D(xercesc::DOMElement *element) {
@@ -382,7 +382,7 @@ namespace MBSimFlexibleBody {
       }
 
     protected:
-      double m;
+      double m{0};
       fmatvec::Vec3 rdm;
       fmatvec::SymMat3 rrdm, mmi0;
       fmatvec::Mat3xV Pdm;
@@ -410,7 +410,7 @@ namespace MBSimFlexibleBody {
       std::vector<std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > sigmahen;
 
       // Number of mode shapes 
-      int ne;
+      int ne{0};
 
       MBSim::Frame *K;
 
@@ -422,7 +422,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief boolean to use body fixed Frame for rotation
        */
-      bool coordinateTransformation;
+      bool coordinateTransformation{true};
 
       fmatvec::Vec3 PjhT, PjhR, PjbT, PjbR;
 
@@ -441,17 +441,17 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec3 WvPKrel, WomPK;
 
-      MBSim::Function<fmatvec::MatV(fmatvec::VecV)> *fTR;
+      MBSim::Function<fmatvec::MatV(fmatvec::VecV)> *fTR{0};
 
       /**
        * \brief translation from parent Frame to kinematic Frame in parent system
        */
-      MBSim::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK;
+      MBSim::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK{0};
 
       /**
        * \brief rotation from kinematic Frame to parent Frame
        */
-      MBSim::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fAPK;
+      MBSim::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fAPK{0};
 
       /**
        * \brief function pointer to update mass matrix
@@ -490,13 +490,13 @@ namespace MBSimFlexibleBody {
       fmatvec::VecV qTRel, qRRel, uTRel, uRRel, qdTRel, qdRRel;
       fmatvec::Mat3xV WJTrel, WJRrel, PJTT, PJRR;
 
-      MBSim::Frame *frameForJacobianOfRotation;
+      MBSim::Frame *frameForJacobianOfRotation{0};
 
       fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iqE, iuT, iuR, iuE;
 
-      bool translationDependentRotation, constJT, constJR, constjT, constjR;
+      bool translationDependentRotation{false}, constJT{false}, constJR{false}, constjT{false}, constjR{false};
 
-      bool updPjb, updGC, updMb, updKJ[2];
+      bool updPjb{true}, updGC{true}, updMb{true}, updKJ[2];
       std::vector<bool> updNodalPos, updNodalVel, updNodalStress;
 
       fmatvec::SymMatV M_;
@@ -507,7 +507,7 @@ namespace MBSimFlexibleBody {
       void determineSID();
       void prefillMassMatrix();
 
-      bool bodyFixedRepresentationOfAngularVelocity;
+      bool bodyFixedRepresentationOfAngularVelocity{false};
 
     private:
       std::vector<MBSim::Index> ombvNodes, ombvIndices;

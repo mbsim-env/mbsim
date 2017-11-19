@@ -28,9 +28,9 @@ namespace MBSim {
     public:
       GeneralizedConnectionConstraint(const std::string &name="") : GeneralizedDualConstraint(name) { }
 
-      void updateGeneralizedCoordinates();
-      void updateGeneralizedJacobians(int j=0);
-      void setUpInverseKinetics();
+      void updateGeneralizedCoordinates() override;
+      void updateGeneralizedJacobians(int j=0) override;
+      void setUpInverseKinetics() override;
   };
 
 }

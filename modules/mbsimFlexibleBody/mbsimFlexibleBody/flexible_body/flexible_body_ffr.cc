@@ -55,7 +55,7 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleBodyFFR)
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : NodeBasedBody(name), m(0), Id(Eye()), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updMb(true), bodyFixedRepresentationOfAngularVelocity(false) {
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : NodeBasedBody(name),  Id(Eye()),  APK(EYE) {
 
     updKJ[0] = true;
     updKJ[1] = true;
@@ -70,9 +70,9 @@ namespace MBSimFlexibleBody {
   }
 
   FlexibleBodyFFR::~FlexibleBodyFFR() {
-    if(fPrPK) { delete fPrPK; fPrPK=0; }
-    if(fAPK) { delete fAPK; fAPK=0; }
-    if(fTR) { delete fTR; fTR=0; }
+    if(fPrPK) { delete fPrPK; fPrPK=nullptr; }
+    if(fAPK) { delete fAPK; fAPK=nullptr; }
+    if(fTR) { delete fTR; fTR=nullptr; }
   }
 
   void FlexibleBodyFFR::updateh(int index) {
@@ -206,16 +206,16 @@ namespace MBSimFlexibleBody {
       }
     }
     Ct0 = Pdm.T();
-    for(unsigned int i=0; i<K0t.size(); i++)
-      Ct1.push_back(K0t[i]);
+    for(const auto & i : K0t)
+      Ct1.push_back(i);
 
     vector<SqrMatV> Kr(3);
     Kr[0].resize() = -PPdm[1][2] + PPdm[1][2].T();
     Kr[1].resize() = -PPdm[2][0] + PPdm[2][0].T();
     Kr[2].resize() = -PPdm[0][1] + PPdm[0][1].T();
 
-    for(unsigned int i=0; i<Kr.size(); i++)
-      Cr1.push_back(Kr[i]);
+    for(const auto & i : Kr)
+      Cr1.push_back(i);
     for(unsigned int i=0; i<K0r.size(); i++)
       Cr1[i] += K0r[i];
 
@@ -262,8 +262,8 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      for(unsigned int k=0; k<contour.size(); k++) {
-        RigidContour *contour_ = dynamic_cast<RigidContour*>(contour[k]);
+      for(auto & k : contour) {
+        auto *contour_ = dynamic_cast<RigidContour*>(k);
         if(contour_ and not(contour_->getFrameOfReference()))
           contour_->setFrameOfReference(K);
       }
@@ -324,7 +324,7 @@ namespace MBSimFlexibleBody {
       K->getJacobianOfTranslation(1,false) = PJT[1];
       K->getJacobianOfRotation(1,false) = PJR[1];
 
-      StateDependentFunction<RotMat3> *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
+      auto *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
       if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesXYZ<VecV>*>(Atmp->getFunction())) {
         if(bodyFixedRepresentationOfAngularVelocity)
           fTR = new RotationAboutAxesXYZTransformedMapping<VecV>;
@@ -432,9 +432,9 @@ namespace MBSimFlexibleBody {
     if(plotFeature[ref(openMBV)] and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
       vector<double> data;
       data.push_back(getTime());
-      for(unsigned int i=0; i<ombvNodes.size(); i++) {
-        Vec3 WrOP = evalNodalPosition(ombvNodes[i]);
-        Vector<Fixed<6>, double> sigma = evalNodalStress(ombvNodes[i]);
+      for(int ombvNode : ombvNodes) {
+        Vec3 WrOP = evalNodalPosition(ombvNode);
+        Vector<Fixed<6>, double> sigma = evalNodalStress(ombvNode);
         for(int j=0; j<3; j++)
           data.push_back(WrOP(j));
         //data.push_back(nrm2(disp[ombvNodes[i]]));
@@ -714,7 +714,7 @@ namespace MBSimFlexibleBody {
     // contours
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"contours")->getFirstElementChild();
     while(e) {
-      Contour *c=ObjectFactory::createAndInit<Contour>(e);
+      auto *c=ObjectFactory::createAndInit<Contour>(e);
       addContour(c);
       e=e->getNextElementSibling();
     }
@@ -860,38 +860,38 @@ namespace MBSimFlexibleBody {
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalTranslation");
     if(e) {
-      MBSim::Function<Vec3(VecV,double)> *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV,double)> >(e->getFirstElementChild());
+      auto *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV,double)> >(e->getFirstElementChild());
       setGeneralTranslation(trans);
     }
     else {
       e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"timeDependentTranslation");
       if(e) {
-        MBSim::Function<Vec3(double)> *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(double)> >(e->getFirstElementChild());
+        auto *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(double)> >(e->getFirstElementChild());
         setTimeDependentTranslation(trans);
       }
       else {
         e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"stateDependentTranslation");
         if(e) {
-          MBSim::Function<Vec3(VecV)> *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV)> >(e->getFirstElementChild());
+          auto *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV)> >(e->getFirstElementChild());
           setStateDependentTranslation(trans);
         }
       }
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalRotation");
     if(e) {
-      MBSim::Function<RotMat3(VecV,double)> *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(VecV,double)> >(e->getFirstElementChild());
+      auto *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(VecV,double)> >(e->getFirstElementChild());
       setGeneralRotation(rot);
     }
     else {
       e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"timeDependentRotation");
       if(e) {
-        MBSim::Function<RotMat3(double)> *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(double)> >(e->getFirstElementChild());
+        auto *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(double)> >(e->getFirstElementChild());
         setTimeDependentRotation(rot);
       }
       else {
         e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"stateDependentRotation");
         if(e) {
-          MBSim::Function<RotMat3(VecV)> *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(VecV)> >(e->getFirstElementChild());
+          auto *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(VecV)> >(e->getFirstElementChild());
           setStateDependentRotation(rot);
         }
       }

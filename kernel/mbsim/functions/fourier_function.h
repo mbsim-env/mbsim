@@ -32,11 +32,11 @@ namespace MBSim {
     using B = fmatvec::Function<Ret(Arg)>; 
 
     public:
-      FourierFunction() { }
+      FourierFunction() = default;
       FourierFunction(double f_, const fmatvec::VecV &a_, const fmatvec::VecV &b_, double a0_=0, bool amplitudePhaseAngleForm_=false) : f(f_), a0(a0_), a(a_), b(b_), amplitudePhaseAngleForm(amplitudePhaseAngleForm_) { }
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
-      Ret operator()(const Arg& t_) {
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
+      Ret operator()(const Arg& t_) override {
         double t = ToDouble<Arg>::cast(t_);
         double y = a0/2;
         double Om = 2.*M_PI*f;
@@ -47,7 +47,7 @@ namespace MBSim {
         }
         return FromDouble<Ret>::cast(y);
       }
-      typename B::DRetDArg parDer(const Arg &t_) {  
+      typename B::DRetDArg parDer(const Arg &t_) override {  
         double t = ToDouble<Arg>::cast(t_);
         double yd = 0;
         double Om = 2.*M_PI*f;
@@ -58,18 +58,7 @@ namespace MBSim {
         }
         return FromDouble<Ret>::cast(yd);
       }
-      Ret parDerParDer(const double &t_) {  
-        double t = ToDouble<Arg>::cast(t_);
-        double ydd = 0;
-        double Om = 2.*M_PI*f;
-        for(int i=0; i<a.size(); i++) {
-          int k = i+1;
-          double phi = i*Om*t;
-          ydd -= pow(k*Om,2)*(a(i)*cos(phi)+b(i)*sin(phi));
-        }
-        return FromDouble<Ret>::cast(ydd);
-      }
-      void initializeUsingXML(xercesc::DOMElement * element) {
+      void initializeUsingXML(xercesc::DOMElement * element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"frequency");
         f=MBXMLUtils::E(e)->getText<double>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
@@ -90,7 +79,7 @@ namespace MBSim {
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"amplitudePhaseAngleForm");
         if(e) amplitudePhaseAngleForm = MBXMLUtils::E(e)->getText<bool>();
       }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg)>::init(stage, config);
         if(stage == Element::preInit) {
           if(amplitudePhaseAngleForm) {

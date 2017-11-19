@@ -30,22 +30,22 @@ namespace MBSim {
   class GeneralizedConnection : public DualRigidBodyLink {
     friend class GeneralizedConnectionConstraint;
     protected:
-      GeneralizedForceLaw *fl;
-      GeneralizedImpactLaw *il;
+      GeneralizedForceLaw *fl{nullptr};
+      GeneralizedImpactLaw *il{nullptr};
     public:
-      GeneralizedConnection(const std::string &name="") : DualRigidBodyLink(name), fl(NULL), il(NULL) { }
-      ~GeneralizedConnection();
+      GeneralizedConnection(const std::string &name="") : DualRigidBodyLink(name) { }
+      ~GeneralizedConnection() override;
 
-      void updateGeneralizedForces();
-      bool isActive() const { return true; }
-      bool gActiveChanged() { return false; }
-      void init(InitStage stage, const InitConfigSet &config);
-      bool isSetValued() const;
-      bool isSingleValued() const { return not(isSetValued()); }
+      void updateGeneralizedForces() override;
+      bool isActive() const override { return true; }
+      bool gActiveChanged() override { return false; }
+      void init(InitStage stage, const InitConfigSet &config) override;
+      bool isSetValued() const override;
+      bool isSingleValued() const override { return not(isSetValued()); }
 
       void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
   };
 
 }

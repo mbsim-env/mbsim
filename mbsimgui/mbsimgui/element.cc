@@ -58,7 +58,7 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(getNameSpace()%getType().toStdString());
     E(element)->setAttribute("name",getType().toStdString());
-    parent->insertBefore(element, NULL);
+    parent->insertBefore(element, nullptr);
     return element;
   }
 
@@ -84,7 +84,7 @@ namespace MBSimGUI {
         e1.push_back(element);
       }
       int imatch=0;
-      for(vector<Element*>::iterator i0 = e0.end()-1, i1 = e1.end()-1 ; (i0 != e0.begin()-1) && (i1 != e1.begin()-1) ; i0--, i1--) 
+      for(auto i0 = e0.end()-1, i1 = e1.end()-1 ; (i0 != e0.begin()-1) && (i1 != e1.begin()-1) ; i0--, i1--) 
         if(*i0 == *i1) imatch++;
       QString type;
       if(dynamic_cast<Frame*>(this))
@@ -104,7 +104,7 @@ namespace MBSimGUI {
       else 
         type = getType();
       QString str = type + "[" + getName() + "]";
-      for(vector<Element*>::iterator i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
+      for(auto i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
         if(dynamic_cast<Group*>(*i1))
           str = QString("Group[") + (*i1)->getName() + "]/" + str;
         else if(dynamic_cast<Object*>(*i1))

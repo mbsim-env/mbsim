@@ -29,12 +29,12 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   Body::~Body() {
-    for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i) 
-      delete *i;
-    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
-      delete *i;
-    for(vector<Element*>::iterator i = removedElement.begin(); i != removedElement.end(); ++i) 
-      delete *i;
+    for(auto & i : frame) 
+      delete i;
+    for(auto & i : contour) 
+      delete i;
+    for(auto & i : removedElement) 
+      delete i;
   }
 
   void Body::addFrame(Frame* frame_) {
@@ -49,14 +49,14 @@ namespace MBSimGUI {
 
   void Body::removeElement(Element* element) {
     if(dynamic_cast<Frame*>(element)) {
-      for (vector<Frame*>::iterator it = frame.begin() ; it != frame.end(); ++it)
+      for (auto it = frame.begin() ; it != frame.end(); ++it)
         if(*it==element) {
           frame.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Contour*>(element)) {
-      for (vector<Contour*>::iterator it = contour.begin() ; it != contour.end(); ++it)
+      for (auto it = contour.begin() ; it != contour.end(); ++it)
         if(*it==element) {
           contour.erase(it);
           break;
@@ -71,7 +71,7 @@ namespace MBSimGUI {
       if(frame[i]->getName() == name)
         return frame[i];
     }
-    return NULL;
+    return nullptr;
   }
 
   Contour* Body::getContour(const QString &name) const {
@@ -80,7 +80,7 @@ namespace MBSimGUI {
       if(contour[i]->getName() == name)
         return contour[i];
     }
-    return NULL;
+    return nullptr;
   }
 
   Element* Body::getChildByContainerAndName(const QString &container, const QString &name) const {
@@ -89,7 +89,7 @@ namespace MBSimGUI {
     else if (container=="Contour")
       return getContour(name);
     else
-      return 0;
+      return nullptr;
   }
 
   int Body::getIndexOfFrame(Frame *frame_) {

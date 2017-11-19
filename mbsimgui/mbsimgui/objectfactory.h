@@ -42,29 +42,29 @@ namespace MBSimGUI {
 
   class ObjectFactoryBase {
     protected:
-      ObjectFactoryBase() {}
-      virtual ~ObjectFactoryBase() {}
+      ObjectFactoryBase() = default;
+      virtual ~ObjectFactoryBase() = default;
       typedef std::pair<std::string, std::string> P_NSPRE;
       typedef std::map<std::string, std::string> M_NSPRE;
       typedef std::pair<double, P_NSPRE> P_PRINSPRE;
     public:
       typedef std::multimap<double, P_NSPRE> MM_PRINSPRE;
-      virtual Frame* createFrame(xercesc::DOMElement *element) { return NULL; }
-      virtual Contour* createContour(xercesc::DOMElement *element) { return NULL; }
-      virtual Group* createGroup(xercesc::DOMElement *element) { return NULL; }
-      virtual Object* createObject(xercesc::DOMElement *element) { return NULL; }
-      virtual Link* createLink(xercesc::DOMElement *element) { return NULL; }
-      virtual Constraint* createConstraint(xercesc::DOMElement *element) { return NULL; }
-      virtual Observer* createObserver(xercesc::DOMElement *element) { return NULL; }
-      virtual Solver* createSolver(xercesc::DOMElement *element) { return NULL; }
-      virtual Parameter* createParameter(xercesc::DOMElement *element) { return NULL; }
-      virtual Environment *getEnvironment(xercesc::DOMElement *element) { return NULL; }
+      virtual Frame* createFrame(xercesc::DOMElement *element) { return nullptr; }
+      virtual Contour* createContour(xercesc::DOMElement *element) { return nullptr; }
+      virtual Group* createGroup(xercesc::DOMElement *element) { return nullptr; }
+      virtual Object* createObject(xercesc::DOMElement *element) { return nullptr; }
+      virtual Link* createLink(xercesc::DOMElement *element) { return nullptr; }
+      virtual Constraint* createConstraint(xercesc::DOMElement *element) { return nullptr; }
+      virtual Observer* createObserver(xercesc::DOMElement *element) { return nullptr; }
+      virtual Solver* createSolver(xercesc::DOMElement *element) { return nullptr; }
+      virtual Parameter* createParameter(xercesc::DOMElement *element) { return nullptr; }
+      virtual Environment *getEnvironment(xercesc::DOMElement *element) { return nullptr; }
   };
 
   class ObjectFactory : public ObjectFactoryBase {
     protected:
-      ObjectFactory() {}
-      virtual ~ObjectFactory() {}
+      ObjectFactory() = default;
+      ~ObjectFactory() override = default;
     private:
       static ObjectFactory *instance;
       std::set<ObjectFactoryBase*> factories;
@@ -73,38 +73,38 @@ namespace MBSimGUI {
       void registerObjectFactory(ObjectFactoryBase *fac) { factories.insert(fac); }
       void unregisterObjectFactory(ObjectFactory *fac) { factories.erase(fac); }
 
-      Frame* createFrame(xercesc::DOMElement *element);
-      Contour* createContour(xercesc::DOMElement *element);
-      Group* createGroup(xercesc::DOMElement *element);
-      Object* createObject(xercesc::DOMElement *element);
-      Link* createLink(xercesc::DOMElement *element);
-      Constraint* createConstraint(xercesc::DOMElement *element);
-      Observer* createObserver(xercesc::DOMElement *element);
-      Solver* createSolver(xercesc::DOMElement *element);
-      Parameter* createParameter(xercesc::DOMElement *element);
-      Environment *getEnvironment(xercesc::DOMElement *element);
+      Frame* createFrame(xercesc::DOMElement *element) override;
+      Contour* createContour(xercesc::DOMElement *element) override;
+      Group* createGroup(xercesc::DOMElement *element) override;
+      Object* createObject(xercesc::DOMElement *element) override;
+      Link* createLink(xercesc::DOMElement *element) override;
+      Constraint* createConstraint(xercesc::DOMElement *element) override;
+      Observer* createObserver(xercesc::DOMElement *element) override;
+      Solver* createSolver(xercesc::DOMElement *element) override;
+      Parameter* createParameter(xercesc::DOMElement *element) override;
+      Environment *getEnvironment(xercesc::DOMElement *element) override;
   };
 
 
   class MBSimObjectFactory : protected ObjectFactoryBase  {
     private:
       static MBSimObjectFactory *instance;
-      MBSimObjectFactory() {}
+      MBSimObjectFactory() = default;
     public:
       // This static function must be called before the ObjectFactory is used to create
       // objects from MBSimObjectFactory
       static void initialize();
     protected:
-      Frame* createFrame(xercesc::DOMElement *element);
-      Contour* createContour(xercesc::DOMElement *element);
-      Group* createGroup(xercesc::DOMElement *element);
-      Object* createObject(xercesc::DOMElement *element);
-      Link* createLink(xercesc::DOMElement *element);
-      Constraint* createConstraint(xercesc::DOMElement *element);
-      Observer* createObserver(xercesc::DOMElement *element);
-      Solver* createSolver(xercesc::DOMElement *element);
-      Parameter* createParameter(xercesc::DOMElement *element);
-      Environment *getEnvironment(xercesc::DOMElement *element);
+      Frame* createFrame(xercesc::DOMElement *element) override;
+      Contour* createContour(xercesc::DOMElement *element) override;
+      Group* createGroup(xercesc::DOMElement *element) override;
+      Object* createObject(xercesc::DOMElement *element) override;
+      Link* createLink(xercesc::DOMElement *element) override;
+      Constraint* createConstraint(xercesc::DOMElement *element) override;
+      Observer* createObserver(xercesc::DOMElement *element) override;
+      Solver* createSolver(xercesc::DOMElement *element) override;
+      Parameter* createParameter(xercesc::DOMElement *element) override;
+      Environment *getEnvironment(xercesc::DOMElement *element) override;
   };
 
 }

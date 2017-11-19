@@ -34,7 +34,7 @@ namespace MBSim {
       /** 
        * \brief constructor
        */
-      LinearSpringDamperForce() {}
+      LinearSpringDamperForce() = default;
 
       /** 
        * \brief constructor
@@ -44,8 +44,8 @@ namespace MBSim {
       LinearSpringDamperForce(double c_, double d_) : c(c_), d(d_) {}
 
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const double& s, const double& sd) { return c*s + d*sd; }
-      void initializeUsingXML(xercesc::DOMElement *element);
+      double operator()(const double& s, const double& sd) override { return c*s + d*sd; }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */

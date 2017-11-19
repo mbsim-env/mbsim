@@ -32,15 +32,15 @@ namespace MBSim {
       fmatvec::Mat3xV A;
     public:
       TranslationAlongAxesYZ() : A(2) { A.e(1,0) = 1; A.e(2,1) = 1; }
-      int getArgSize() const { return 2; }
-      fmatvec::Vec3 operator()(const Arg &q) { 
+      int getArgSize() const override { return 2; }
+      fmatvec::Vec3 operator()(const Arg &q) override { 
         r.e(1) = q.e(0);
         r.e(2) = q.e(1);
         return r; 
       }
-      typename B::DRetDArg parDer(const Arg &arg) { return A; }
-      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename B::DRetDArg(2); }
-      bool constParDer() const { return true; }
+      typename B::DRetDArg parDer(const Arg &arg) override { return A; }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(2); }
+      bool constParDer() const override { return true; }
   };
 
 }

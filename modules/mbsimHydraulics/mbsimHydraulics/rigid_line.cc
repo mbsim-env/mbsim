@@ -56,7 +56,7 @@ namespace MBSimHydraulics {
     }
     else if (stage==plotting) {
       if(plotFeature[plotRecursive])
-        plotColumns.push_back("Reynolds number [-]");
+        plotColumns.emplace_back("Reynolds number [-]");
     }
     else if (stage==unknownStage) {
       double area=M_PI*diameter*diameter/4.;
@@ -79,7 +79,7 @@ namespace MBSimHydraulics {
     DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
     setDiameter(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"linePressureLoss");
-    LinePressureLoss *p=MBSim::ObjectFactory::createAndInit<LinePressureLoss>(e->getFirstElementChild());
+    auto *p=MBSim::ObjectFactory::createAndInit<LinePressureLoss>(e->getFirstElementChild());
     setLinePressureLoss(p);
   }
 
@@ -123,7 +123,7 @@ namespace MBSimHydraulics {
     RigidLine::initializeUsingXML(element);
     DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"closablePressureLoss");
     DOMElement * ee=e->getFirstElementChild();
-    ClosablePressureLoss *p=MBSim::ObjectFactory::createAndInit<ClosablePressureLoss>(ee);
+    auto *p=MBSim::ObjectFactory::createAndInit<ClosablePressureLoss>(ee);
     setClosablePressureLoss(p);
     ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"checksizeFunction");
     setFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(ee->getFirstElementChild())); 
@@ -141,7 +141,7 @@ namespace MBSimHydraulics {
       if (upL)
         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_RegularizedUnidirectionalPressureLoss", this, upL, false,false));
       else
-        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_UnilateralUnidirectionalPressureLoss", this, NULL, false, true));
+        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_UnilateralUnidirectionalPressureLoss", this, nullptr, false, true));
       RigidLine::init(stage, config);
     }
     else
@@ -153,7 +153,7 @@ namespace MBSimHydraulics {
     RigidLine::initializeUsingXML(element);
     DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"unidirectionalPressureLoss");
     DOMElement * ee=e->getFirstElementChild();
-    UnidirectionalPressureLoss *p=MBSim::ObjectFactory::createAndInit<UnidirectionalPressureLoss>(ee);
+    auto *p=MBSim::ObjectFactory::createAndInit<UnidirectionalPressureLoss>(ee);
     if (p) {
       setUnidirectionalPressureLoss(p);
     }

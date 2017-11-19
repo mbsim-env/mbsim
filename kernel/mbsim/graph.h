@@ -45,23 +45,23 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Graph();
+      ~Graph() override;
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updatedu();
-      virtual void updatezd();
-      virtual void sethSize(int h, int j=0) {(this->*sethSize_[j])(h);}
-      virtual void calcqSize();
-      virtual void calcuSize(int j=0) {(this->*calcuSize_[j])();}
-      virtual void setqInd(int qInd);
-      virtual void setuInd(int uInd, int j=0) {(this->*setuInd_[j])(uInd);}
-      virtual void sethInd(int hInd, int j=0) {(this->*sethInd_[j])(hInd);}
+      void updatedu() override;
+      void updatezd() override;
+      void sethSize(int h, int j=0) override {(this->*sethSize_[j])(h);}
+      void calcqSize() override;
+      void calcuSize(int j=0) override {(this->*calcuSize_[j])();}
+      void setqInd(int qInd) override;
+      void setuInd(int uInd, int j=0) override {(this->*setuInd_[j])(uInd);}
+      void sethInd(int hInd, int j=0) override {(this->*sethInd_[j])(hInd);}
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
       /* INHERITED INTERFACE OF SUBSYSTEM */
-      void updateLLM();
+      void updateLLM() override;
 
 #ifndef SWIG
       void (Graph::*calcuSize_[2])(); 

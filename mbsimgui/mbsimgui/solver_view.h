@@ -32,7 +32,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      SolverViewContextMenu(QWidget * parent = 0);
+      SolverViewContextMenu(QWidget * parent = nullptr);
     protected slots:
       void selectSolver(QAction *action);
   };
@@ -41,7 +41,7 @@ namespace MBSimGUI {
     Q_OBJECT
     public:
       SolverView();
-      ~SolverView() { }
+      ~SolverView() override = default;
       int getSolverNumber() const { return i; }
       void setSolver(int i_) { i = i_; updateText(); }
       void setSolver(Solver *solver);
@@ -50,7 +50,7 @@ namespace MBSimGUI {
       QMenu* createContextMenu() { return new SolverViewContextMenu; }
     protected:
       std::vector<QString> type;
-      int i;
+      int i{0};
     protected slots:
       void openContextMenu();
   };
@@ -62,7 +62,7 @@ namespace MBSimGUI {
     protected:
       SolverView *view;
       SolverPropertyDialog *editor;
-      bool eventFilter(QObject *obj, QEvent *event);
+      bool eventFilter(QObject *obj, QEvent *event) override;
     protected slots:
       void dialogFinished(int result);
       void apply();

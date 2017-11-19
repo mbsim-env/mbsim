@@ -42,23 +42,23 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      ~ContourLink();
+      ~ContourLink() override;
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void updateWRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updateVRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0);
+      void updateWRef(const fmatvec::Mat& ref, int i=0) override;
+      void updateVRef(const fmatvec::Mat& ref, int i=0) override;
+      void updatehRef(const fmatvec::Vec &hRef, int i=0) override;
       virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0);
       virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0);
       virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0);
-      virtual void updaterRef(const fmatvec::Vec &ref, int i=0);
+      void updaterRef(const fmatvec::Vec &ref, int i=0) override;
       /***************************************************/
 
       void connect(Contour *contour0, Contour* contour1);
@@ -66,13 +66,13 @@ namespace MBSim {
       Contour* getContour(int i) { return contour[i]; }
       ContourFrame* getContourFrame(int i) { return cFrame[i]; }
 
-      void resetUpToDate();
+      void resetUpToDate() override;
 
-      virtual void updatePositions() { }
-      virtual void updateVelocities() { }
-      void updateForce();
-      void updateMoment();
-      void updateForceDirections();
+      void updatePositions() override { }
+      void updateVelocities() override { }
+      void updateForce() override;
+      void updateMoment() override;
+      void updateForceDirections() override;
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomP0P1; }
@@ -80,7 +80,7 @@ namespace MBSim {
       const fmatvec::Mat3xV& evalGlobalMomentDirection(int i=0) { if(updDF) updateForceDirections(); return DM; }
 
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       /**

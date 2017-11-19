@@ -46,29 +46,29 @@ namespace MBSimFlexibleBody {
       void setNumberOfPossibleContactPerNode(int n) { possibleContactsPerNode = n; }
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
-      virtual void assignContours(const std::vector<MBSim::Contour*>& contour);
-      virtual void updateg(double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame);
+      void assignContours(const std::vector<MBSim::Contour*>& contour) override;
+      void updateg(double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame) override;
       /***************************************************/
 
-      virtual ContactKinematics* getContactKinematics(int i=0) const { return contactKinematics[i]; }
+      ContactKinematics* getContactKinematics(int i=0) const override { return contactKinematics[i]; }
 
     private:
       /** 
        * \brief contour index 
        */
-      int icircle, icontour;
+      int icircle{0}, icontour{0};
 
       /**
        * \brief possible contacts regarded per node
        */
-      int possibleContactsPerNode;
+      int possibleContactsPerNode{1};
 
       /** 
        * \brief contour classes 
        */
-      MBSim::Circle *circle;
-      MBSim::Contour *extrusion;
+      MBSim::Circle *circle{0};
+      MBSim::Contour *extrusion{0};
 
       fmatvec::Vec staticNodes;
 

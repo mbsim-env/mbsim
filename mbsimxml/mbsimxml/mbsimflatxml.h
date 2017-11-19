@@ -5,6 +5,7 @@
 #include <sstream>
 #include <set>
 #include <boost/filesystem/fstream.hpp>
+#include <utility>
 #include <mbxmlutilshelper/dom.h>
 
 namespace MBSim {
@@ -15,10 +16,10 @@ namespace MBSim {
   class PrefixedStringBuf : public std::stringbuf {
     public:
       //! Prefix each line with prefix_ and print to str_.
-      PrefixedStringBuf(const std::string &prefix_, std::ostream &outstr_) :
-        std::stringbuf(std::ios_base::out), prefix(prefix_), outstr(outstr_) {}
+      PrefixedStringBuf(std::string prefix_, std::ostream &outstr_) :
+        std::stringbuf(std::ios_base::out), prefix(std::move(prefix_)), outstr(outstr_) {}
     protected:
-      int sync();
+      int sync() override;
       std::string prefix;
       std::ostream &outstr;
   };

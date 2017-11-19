@@ -32,7 +32,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, MechanicalLinkObserver)
 
-  MechanicalLinkObserver::MechanicalLinkObserver(const std::string &name) : Observer(name), link(NULL) {
+  MechanicalLinkObserver::MechanicalLinkObserver(const std::string &name) : Observer(name), link(nullptr) {
   }
 
   void MechanicalLinkObserver::init(InitStage stage, const InitConfigSet &config) {

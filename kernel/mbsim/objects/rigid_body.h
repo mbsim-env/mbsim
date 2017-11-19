@@ -58,47 +58,47 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~RigidBody();
+      ~RigidBody() override;
 
       void addDependency(Constraint* constraint_);
 
-      void updateqd();
-      void updateT();
-      void updateh(int j=0);
-      void updateM() { (this->*updateM_)(); }
+      void updateqd() override;
+      void updateT() override;
+      void updateh(int j=0) override;
+      void updateM() override { (this->*updateM_)(); }
       void updateInertiaTensor();
-      void updateGeneralizedPositions();
-      void updateGeneralizedVelocities();
-      void updateDerivativeOfGeneralizedPositions();
-      void updateGeneralizedAccelerations();
+      void updateGeneralizedPositions() override;
+      void updateGeneralizedVelocities() override;
+      void updateDerivativeOfGeneralizedPositions() override;
+      void updateGeneralizedAccelerations() override;
       void updateGeneralizedJacobians(int j=0);
       void updatePositions();
       void updateVelocities();
-      void updateJacobians();
+      void updateJacobians() override;
       void updateGyroscopicAccelerations();
-      void updatePositions(Frame *frame);
-      void updateVelocities(Frame *frame);
-      void updateAccelerations(Frame *frame);
-      void updateJacobians(Frame *frame, int j=0) { (this->*updateJacobians_[j])(frame); }
-      void updateGyroscopicAccelerations(Frame *frame);
+      void updatePositions(Frame *frame) override;
+      void updateVelocities(Frame *frame) override;
+      void updateAccelerations(Frame *frame) override;
+      void updateJacobians(Frame *frame, int j=0) override { (this->*updateJacobians_[j])(frame); }
+      void updateGyroscopicAccelerations(Frame *frame) override;
       void updateJacobians0(Frame *frame);
       void updateJacobians1(Frame *frame) { }
       void updateJacobians2(Frame *frame);
 
-      virtual void calcSize();
-      virtual void calcqSize();
-      virtual void calcuSize(int j=0);
-      void sethSize(int hSize_, int i=0);
-      void sethInd(int hInd_, int i=0);
+      void calcSize() override;
+      void calcqSize() override;
+      void calcuSize(int j=0) override;
+      void sethSize(int hSize_, int i=0) override;
+      void sethInd(int hInd_, int i=0) override;
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage, const InitConfigSet &config);
-      virtual void updateLLM() { (this->*updateLLM_)(); }
-      virtual void setUpInverseKinetics();
+      void init(InitStage stage, const InitConfigSet &config) override;
+      void updateLLM() override { (this->*updateLLM_)(); }
+      void setUpInverseKinetics() override;
       /*****************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot();
+      void plot() override;
       /*****************************************************/
 
       /* GETTER / SETTER */
@@ -209,7 +209,7 @@ namespace MBSim {
       void setOpenMBVFrameOfReference(Frame * frame) {openMBVFrame=frame; }
       const Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
 
-       virtual void initializeUsingXML(xercesc::DOMElement *element);
+       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       fmatvec::MatV& getJRel(int i=0, bool check=true) { assert((not check) or (not updGJ)); return JRel[i]; }
       fmatvec::VecV& getjRel(bool check=true) { assert((not check) or (not updGJ)); return jRel; }
@@ -218,13 +218,13 @@ namespace MBSim {
       void setJRel(const fmatvec::MatV &J);
       void setjRel(const fmatvec::VecV &j);
 
-      bool transformCoordinates() const { return fTR!=NULL; }
+      bool transformCoordinates() const { return fTR!=nullptr; }
 
-      void resetUpToDate();
-      void resetPositionsUpToDate();
-      void resetVelocitiesUpToDate();
-      void resetJacobiansUpToDate();
-      void resetGyroscopicAccelerationsUpToDate();
+      void resetUpToDate() override;
+      void resetPositionsUpToDate() override;
+      void resetVelocitiesUpToDate() override;
+      void resetJacobiansUpToDate() override;
+      void resetGyroscopicAccelerationsUpToDate() override;
       const fmatvec::VecV& evalqTRel() { if(updq) updateGeneralizedPositions(); return qTRel; }
       const fmatvec::VecV& evalqRRel() { if(updq) updateGeneralizedPositions(); return qRRel; }
       const fmatvec::VecV& evaluTRel() { if(updu) updateGeneralizedVelocities(); return uTRel; }
@@ -242,7 +242,7 @@ namespace MBSim {
       /**
        * \brief mass
        */
-      double m;
+      double m{0};
 
       /**
        * \brief inertia tensor with respect to centre of gravity in centre of gravity and world Frame
@@ -259,7 +259,7 @@ namespace MBSim {
       /**
        * \brief boolean to use body fixed Frame for rotation
        */
-      bool coordinateTransformation;
+      bool coordinateTransformation{true};
 
       fmatvec::Vec3 PjhT, PjhR, PjbT, PjbR;
 
@@ -278,17 +278,17 @@ namespace MBSim {
        */
       fmatvec::Vec3 WvPKrel, WomPK;
 
-      Function<fmatvec::MatV(fmatvec::VecV)> *fTR;
+      Function<fmatvec::MatV(fmatvec::VecV)> *fTR{nullptr};
 
       /**
        * \brief translation from parent Frame to kinematic Frame in parent system
        */
-      Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK;
+      Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK{nullptr};
 
       /**
        * \brief rotation from kinematic Frame to parent Frame
        */
-      Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fAPK;
+      Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fAPK{nullptr};
 
       /**
        * \brief function pointer to update mass matrix
@@ -333,21 +333,28 @@ namespace MBSim {
       fmatvec::VecV qTRel, qRRel, uTRel, uRRel, qdTRel, qdRRel;
       fmatvec::Mat3xV PJTT, PJRR;
 
-      Constraint *constraint;
+      Constraint *constraint{nullptr};
 
-      Frame *frameForJacobianOfRotation;
+      Frame *frameForJacobianOfRotation{nullptr};
 
-      Frame *frameForInertiaTensor;
+      Frame *frameForInertiaTensor{nullptr};
 
       fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iuT, iuR;
 
-      bool translationDependentRotation, constJT, constJR, constjT, constjR;
+      bool translationDependentRotation{false};
+      bool constJT{false};
+      bool constJR{false};
+      bool constjT{false};
+      bool constjR{false};
 
-      bool updPjb, updGJ, updWTS, updateByReference;
+      bool updPjb{true};
+      bool updGJ{true};
+      bool updWTS{true};
+      bool updateByReference{true};
 
       Frame Z;
 
-      bool bodyFixedRepresentationOfAngularVelocity;
+      bool bodyFixedRepresentationOfAngularVelocity{false};
       
       InverseKineticsJoint *joint;
 

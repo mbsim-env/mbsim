@@ -25,7 +25,7 @@ namespace MBSimFlexibleBody {
 
   RevCardan::RevCardan() : Angles() {}
 
-  RevCardan::~RevCardan() {}
+  RevCardan::~RevCardan() = default;
 
   Vec3 RevCardan::computet(const Vec& q) const {
     double sq1 = sin(q(1));

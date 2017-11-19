@@ -24,7 +24,7 @@
 #include <mbsim/dynamic_system_solver.h>
 #include "fortran/fortran_wrapper.h"
 #include "odex_integrator.h"
-#include <time.h>
+#include <ctime>
 #include <fstream>
 
 #ifndef NO_ISO_14882
@@ -36,7 +36,7 @@ using namespace MBSim;
 
 namespace MBSimIntegrator {
 
-  ODEXIntegrator::ODEXIntegrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6), dt0(0), maxSteps(100000) {
+  ODEXIntegrator::ODEXIntegrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6) {
   }
 
   double ODEXIntegrator::tPlot = 0;

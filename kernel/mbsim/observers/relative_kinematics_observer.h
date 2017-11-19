@@ -42,9 +42,9 @@ namespace MBSim {
       void setFrame(Frame *frame_) { frame = frame_; }
       void setFrameOfReference(Frame *frame_) { refFrame = frame_; }
 
-      void init(InitStage stage, const InitConfigSet &config);
-      void plot();
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage, const InitConfigSet &config) override;
+      void plot() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVPosition, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);

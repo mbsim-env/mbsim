@@ -32,7 +32,7 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   SolverViewContextMenu::SolverViewContextMenu(QWidget *parent) : QMenu(parent) {
-    QAction *action = new QAction("Save as", this);
+    auto *action = new QAction("Save as", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(saveSolverAs()));
     addAction(action);
     addSeparator();
@@ -69,16 +69,16 @@ namespace MBSimGUI {
     mw->selectSolver(list.indexOf(action));
   }
 
-  SolverView::SolverView() : i(0) {
-    type.push_back("DOPRI5 integrator");
-    type.push_back("RADAU5 integrator");
-    type.push_back("LSODE integrator");
-    type.push_back("LSODAR integrator");
-    type.push_back("Time stepping integrator");
-    type.push_back("Euler explicit integrator");
-    type.push_back("RKSuite integrator");
-    type.push_back("Eigenanalyser");
-    type.push_back("HarmonicResponseAnalyser");
+  SolverView::SolverView()  {
+    type.emplace_back("DOPRI5 integrator");
+    type.emplace_back("RADAU5 integrator");
+    type.emplace_back("LSODE integrator");
+    type.emplace_back("LSODAR integrator");
+    type.emplace_back("Time stepping integrator");
+    type.emplace_back("Euler explicit integrator");
+    type.emplace_back("RKSuite integrator");
+    type.emplace_back("Eigenanalyser");
+    type.emplace_back("HarmonicResponseAnalyser");
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(openContextMenu()));
 
@@ -113,7 +113,7 @@ namespace MBSimGUI {
       return new Eigenanalyser;
     else if(i==8)
       return new HarmonicResponseAnalyser;
-    return NULL;
+    return nullptr;
   }
 
   void SolverView::setSolver(Solver *solver) {
@@ -163,7 +163,7 @@ namespace MBSimGUI {
       mw->setProjectChanged(true);
       editor->fromWidget();
     }
-    editor = 0;
+    editor = nullptr;
     mw->setAllowUndo(true);
   }
 

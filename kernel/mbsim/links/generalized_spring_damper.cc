@@ -51,7 +51,7 @@ namespace MBSim {
   void GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {
     DualRigidBodyLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
-    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+    auto *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
     e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedUnloadedLength");
     l0 = E(e)->getText<double>();

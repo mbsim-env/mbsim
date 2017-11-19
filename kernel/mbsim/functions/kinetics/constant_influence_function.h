@@ -29,21 +29,21 @@ namespace MBSim {
    */
   class ConstantInfluenceFunction : public InfluenceFunction {
     public:
-      ConstantInfluenceFunction() : couplingValue(0) {
+      ConstantInfluenceFunction()  {
       }
       ConstantInfluenceFunction(const double & couplingValue_) :
           couplingValue(couplingValue_) {
       }
-      virtual ~ConstantInfluenceFunction() {}
+      ~ConstantInfluenceFunction() override = default;
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const std::pair<Contour*, ContourFrame*>& firstContourInfo, const std::pair<Contour*, ContourFrame*>& secondContourInfo) {
+      double operator()(const std::pair<Contour*, ContourFrame*>& firstContourInfo, const std::pair<Contour*, ContourFrame*>& secondContourInfo) override {
         return couplingValue;
       }
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
     protected:
-      double couplingValue;
+      double couplingValue{0};
   };
 
 }

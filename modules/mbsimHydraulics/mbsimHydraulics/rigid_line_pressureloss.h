@@ -40,64 +40,64 @@ namespace MBSimHydraulics {
   class RigidLinePressureLoss : public MBSim::Link {
     public:
       RigidLinePressureLoss(const std::string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_=false, bool unilateral_=false);
-      ~RigidLinePressureLoss();
-      void calcSize() { nla = 1; updSize = false; }
-      void plot();
+      ~RigidLinePressureLoss() override;
+      void calcSize() override { nla = 1; updSize = false; }
+      void plot() override;
 
-      bool hasSmoothPart() const {return (bilateral || (unilateral && (fabs(dpMin)>1e-6))); }
+      bool hasSmoothPart() const override {return (bilateral || (unilateral && (fabs(dpMin)>1e-6))); }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       // ================================
       // Methods from init-Process
       // ================================
-      bool isSetValued() const {return (unilateral || bilateral); }
-      bool isSingleValued() const { return not isSetValued(); }
-      void calcgdSize(int j) {gdSize=active?1:0; }
-      void calcsvSize() {svSize=isSetValued()?1:0; }
-      void updatehRef(const fmatvec::Vec& hRef, int i=0);
-      void updaterRef(const fmatvec::Vec& rRef, int i=0);
+      bool isSetValued() const override {return (unilateral || bilateral); }
+      bool isSingleValued() const override { return not isSetValued(); }
+      void calcgdSize(int j) override {gdSize=active?1:0; }
+      void calcsvSize() override {svSize=isSetValued()?1:0; }
+      void updatehRef(const fmatvec::Vec& hRef, int i=0) override;
+      void updaterRef(const fmatvec::Vec& rRef, int i=0) override;
       void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0) {};
       void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
       void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
       void updaterRef(const fmatvec::Vec& rRef);
-      void updateWRef(const fmatvec::Mat& WRef, int i=0);
-      void updateVRef(const fmatvec::Mat& VRef, int i=0);
+      void updateWRef(const fmatvec::Mat& WRef, int i=0) override;
+      void updateVRef(const fmatvec::Mat& VRef, int i=0) override;
       // ==== END Methods for init-Process ===
 
       // ================================
       // Methods for update-Process
       // ================================
-      void checkActive(int j); /* update */
+      void checkActive(int j) override; /* update */
       //void checkActivegdn(); // event-driven
-      bool gActiveChanged(); /* update */
-      bool isActive() const {return active; }
+      bool gActiveChanged() override; /* update */
+      bool isActive() const override {return active; }
       //void calcgdSizeActive() {gdSize=1; }
-      void calclaSize(int j) {laSize=active?1:0; }
+      void calclaSize(int j) override {laSize=active?1:0; }
       //void calclaSizeForActiveg() {laSize=0; } // event-driven
-      void calcrFactorSize(int j) {rFactorSize=active?1:0; }
-      void updateGeneralizedForces();
-      void updategd(); /* zdotStandard */
-      void updateStopVector(); // event-driven
-      void updateh(int j); /* zdotStandard */
-      void updateW(int j); /* zdotStandard */
+      void calcrFactorSize(int j) override {rFactorSize=active?1:0; }
+      void updateGeneralizedForces() override;
+      void updategd() override; /* zdotStandard */
+      void updateStopVector() override; // event-driven
+      void updateh(int j) override; /* zdotStandard */
+      void updateW(int j) override; /* zdotStandard */
       void updatedhdz();
       // ==== END Methods for update-Process ===
 
       // ================================
       // Methods for solve-Process
       // ================================
-      void checkRoot();
-      void updaterFactors();
-      void solveImpactsFixpointSingle();
-      void solveConstraintsFixpointSingle();
-      void solveImpactsGaussSeidel();
-      void solveConstraintsGaussSeidel();
-      void solveImpactsRootFinding();
-      void solveConstraintsRootFinding();
-      void jacobianImpacts();
-      void jacobianConstraints();
-      void checkImpactsForTermination();
-      void checkConstraintsForTermination();
+      void checkRoot() override;
+      void updaterFactors() override;
+      void solveImpactsFixpointSingle() override;
+      void solveConstraintsFixpointSingle() override;
+      void solveImpactsGaussSeidel() override;
+      void solveConstraintsGaussSeidel() override;
+      void solveImpactsRootFinding() override;
+      void solveConstraintsRootFinding() override;
+      void jacobianImpacts() override;
+      void jacobianConstraints() override;
+      void checkImpactsForTermination() override;
+      void checkConstraintsForTermination() override;
       // ==== END Methods for solve-Process ===
 
 

@@ -33,7 +33,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, MechanicalConstraintObserver)
 
-  MechanicalConstraintObserver::MechanicalConstraintObserver(const std::string &name) : Observer(name), constraint(NULL) {
+  MechanicalConstraintObserver::MechanicalConstraintObserver(const std::string &name) : Observer(name), constraint(nullptr) {
   }
 
   void MechanicalConstraintObserver::init(InitStage stage, const InitConfigSet &config) {

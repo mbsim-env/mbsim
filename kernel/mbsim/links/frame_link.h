@@ -36,29 +36,29 @@ namespace MBSim {
        */
       FrameLink(const std::string &name);
 
-      virtual void init(InitStage stage, const InitConfigSet &config);
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage, const InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void connect(Frame *frame0, Frame* frame1);
 
       Frame* getFrame(int i) { return frame[i]; }
 
-      void resetUpToDate();
+      void resetUpToDate() override;
 
-      virtual void updatePositions() { }
-      virtual void updateVelocities() { }
+      void updatePositions() override { }
+      void updateVelocities() override { }
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomP0P1; }
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void updateWRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updateVRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0);
+      void updateWRef(const fmatvec::Mat& ref, int i=0) override;
+      void updateVRef(const fmatvec::Mat& ref, int i=0) override;
+      void updatehRef(const fmatvec::Vec &hRef, int i=0) override;
       virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0);
       virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0);
       virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0);
-      virtual void updaterRef(const fmatvec::Vec &ref, int i=0);
+      void updaterRef(const fmatvec::Vec &ref, int i=0) override;
       /***************************************************/
 
     protected:

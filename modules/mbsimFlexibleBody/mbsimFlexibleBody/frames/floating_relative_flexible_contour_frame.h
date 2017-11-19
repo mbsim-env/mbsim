@@ -36,15 +36,15 @@ namespace MBSimFlexibleBody {
   class FloatingRelativeFlexibleContourFrame : public MBSim::FloatingRelativeContourFrame {
 
     public:
-      FloatingRelativeFlexibleContourFrame(const std::string &name = "dummy", MBSim::Contour *contour = NULL);
+      FloatingRelativeFlexibleContourFrame(const std::string &name = "dummy", MBSim::Contour *contour = nullptr);
 
-      void updatePositions();
-      void updateVelocities();
-      void updateAccelerations();
-      void updateJacobians(int j=0);
-      void updateGyroscopicAccelerations();
+      void updatePositions() override;
+      void updateVelocities() override;
+      void updateAccelerations() override;
+      void updateJacobians(int j=0) override;
+      void updateGyroscopicAccelerations() override;
 
-      void resetUpToDate();
+      void resetUpToDate() override;
 
     protected:
       MBSim::FixedContourFrame P;

@@ -44,7 +44,7 @@ namespace MBSimGUI {
           T *object;
           std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
-            xercesc::DOMElement *ele2 = 0;
+            xercesc::DOMElement *ele2 = nullptr;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               QString fileName = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"));
               QFileInfo fileInfo(mbsDir.absoluteFilePath(fileName));
@@ -68,8 +68,8 @@ namespace MBSimGUI {
             object=create(ele2);
             if(object) {
               object->initializeUsingXML(ele2);
-              for(size_t i=0; i<param.size(); i++)
-                object->addParameter(param[i]);
+              for(auto & i : param)
+                object->addParameter(i);
             }
             object->setEmbedXMLElement(ele1);
           }

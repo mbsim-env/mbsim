@@ -28,7 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Plate::Plate(const string &name, Frame *R) : Plane(name,R), yLength(1), zLength(1), RrA(0), RrB(0), RrC(0), RrD(0) {
+  Plate::Plate(const string &name, Frame *R) : Plane(name,R),  RrA(0), RrB(0), RrC(0), RrD(0) {
   }
 
   Plate::Plate(const string &name, double yL, double zL, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), RrA(0), RrB(0), RrC(0), RrD(0) {

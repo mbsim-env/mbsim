@@ -34,18 +34,18 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      BilateralImpact() { }
+      BilateralImpact() = default;
 
       /**
        * \brief destructor
        */
-      virtual ~BilateralImpact() { }
+      ~BilateralImpact() override = default;
 
       /* INHERITED INTERFACE */
-      virtual double project(double la, double gdn, double gda, double r, double laMin=0);
-      virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0);
-      virtual double solve(double G, double gdn, double gda);
-      virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0);
+      double project(double la, double gdn, double gda, double r, double laMin=0) override;
+      fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0) override;
+      double solve(double G, double gdn, double gda) override;
+      bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0) override;
   };
 
 }

@@ -47,9 +47,9 @@ namespace MBSim {
     public:
       SingleContactObserver(const std::string &name="");
 
-      void init(InitStage stage, const InitConfigSet &config);
-      void plot();
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage, const InitConfigSet &config) override;
+      void plot() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       /** 
        * \brief Draw two OpenMBV::Frame's of size 'size' at the contact points if 'enable'==true, otherwise the object is available but disabled.

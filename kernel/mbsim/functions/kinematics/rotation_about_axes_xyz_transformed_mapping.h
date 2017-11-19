@@ -30,8 +30,8 @@ namespace MBSim {
       fmatvec::MatV T;
     public:
       RotationAboutAxesXYZTransformedMapping() : T(3,3,fmatvec::Eye()) { }
-      int getArgSize() const { return 3; }
-      fmatvec::MatV operator()(const Arg &q) {
+      int getArgSize() const override { return 3; }
+      fmatvec::MatV operator()(const Arg &q) override {
         double beta = q.e(1);
         double gamma = q.e(2);
         double cos_beta = cos(beta);

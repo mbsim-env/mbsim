@@ -24,7 +24,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "mbsim/frames/frame.h"
 
@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBodyLinearExternalFFR();
+      ~FlexibleBodyLinearExternalFFR() override;
 
       /* INHERITED INTERFACE OF FLEIBLE BODY CONTOUR */
       virtual int getNumberElements() const { return nNodes; }
@@ -69,21 +69,21 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateM();
+      void updateM() override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements();
-      virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
-      virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
-      virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateh(int k = 0);
+      void BuildElements() override;
+      void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) override;
+      void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) override;
+      void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) override;
+      void updateh(int k = 0) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
-      virtual void calcqSize();
-      virtual void calcuSize(int j);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void calcqSize() override;
+      void calcuSize(int j) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -111,23 +111,23 @@ namespace MBSimFlexibleBody {
 
       void enableFramePlot(double size = 1e-3, fmatvec::VecInt numbers = fmatvec::VecInt(0));
 
-      void resetUpToDate();
+      void resetUpToDate() override;
       const fmatvec::SqrMat3& evalA() { if(updAG) updateAGbarGbardot(); return A; }
       const fmatvec::SqrMat3& evalG_bar() { if(updAG) updateAGbarGbardot(); return G_bar; }
       const fmatvec::SqrMat3& evalG_bar_Dot() { if(updAG) updateAGbarGbardot(); return G_bar_Dot; }
       const fmatvec::Vec& evalQv() { if(updQv) updateQv(); return Qv; }
 
-      void updatePositions(MBSim::Frame *frame);
-      void updateVelocities(MBSim::Frame *frame);
-      void updateAccelerations(MBSim::Frame *frame);
-      void updateJacobians(MBSim::Frame *frame, int j=0);
-      void updateGyroscopicAccelerations(MBSim::Frame *frame);
+      void updatePositions(MBSim::Frame *frame) override;
+      void updateVelocities(MBSim::Frame *frame) override;
+      void updateAccelerations(MBSim::Frame *frame) override;
+      void updateJacobians(MBSim::Frame *frame, int j=0) override;
+      void updateGyroscopicAccelerations(MBSim::Frame *frame) override;
 
-      void updatePositions(NodeFrame *frame);
-      void updateVelocities(NodeFrame *frame);
-      void updateAccelerations(NodeFrame *frame);
-      void updateJacobians(NodeFrame *frame, int j=0);
-      void updateGyroscopicAccelerations(NodeFrame *frame);
+      void updatePositions(NodeFrame *frame) override;
+      void updateVelocities(NodeFrame *frame) override;
+      void updateAccelerations(NodeFrame *frame) override;
+      void updateJacobians(NodeFrame *frame, int j=0) override;
+      void updateGyroscopicAccelerations(NodeFrame *frame) override;
 
       fmatvec::Vec3 evalLocalPosition(int i);
 

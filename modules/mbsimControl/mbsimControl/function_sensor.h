@@ -31,14 +31,14 @@ namespace MBSimControl {
    */
   class FunctionSensor : public Sensor {
     public:
-      FunctionSensor(const std::string &name="") : Sensor(name), function(NULL) {}
+      FunctionSensor(const std::string &name="") : Sensor(name), function(nullptr) {}
       FunctionSensor(const std::string &name, MBSim::Function<fmatvec::VecV(double)>* function_);
-      ~FunctionSensor() { delete function; }
+      ~FunctionSensor() override { delete function; }
       void setFunction(MBSim::Function<fmatvec::VecV(double)>* function_);
-      void updateSignal();
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
-      int getSignalSize() const { return function->getRetSize().first; }
+      void updateSignal() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config) override;
+      int getSignalSize() const override { return function->getRetSize().first; }
     private:
       MBSim::Function<fmatvec::VecV(double)> * function;
   };

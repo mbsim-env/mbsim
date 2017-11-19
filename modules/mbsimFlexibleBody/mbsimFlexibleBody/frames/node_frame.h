@@ -37,13 +37,13 @@ namespace MBSimFlexibleBody {
       void setNodeNumber(MBSim::Index node_) { node = node_; }
       MBSim::Index getNodeNumber() const { return node; }
 
-      void updatePositions();
-      void updateVelocities();
-      void updateAccelerations();
-      void updateJacobians(int j=0);
-      void updateGyroscopicAccelerations();
+      void updatePositions() override;
+      void updateVelocities() override;
+      void updateAccelerations() override;
+      void updateJacobians(int j=0) override;
+      void updateGyroscopicAccelerations() override;
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       /*!

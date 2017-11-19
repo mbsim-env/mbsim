@@ -39,9 +39,9 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Edge(const std::string &name="", Frame *R=0) : RigidContour(name,R), length(1) { }
+      Edge(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
 
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
       /* GETTER / SETTER */
       void setLength(double length_) {length = length_;}
@@ -54,7 +54,7 @@ namespace MBSim {
       }
 
     private:
-      double length;
+      double length{1};
   };
 }
 

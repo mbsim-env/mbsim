@@ -50,22 +50,22 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FiniteElement1s23BTA() {}
+      ~FiniteElement1s23BTA() override = default;
 
       /* INHERITED INTERFACE OF DISCRETIZATIONINTERFACE */
-      virtual const fmatvec::SymMat& getM() const { return M; }
-      virtual const fmatvec::Vec& geth() const { return h; }
-      virtual const fmatvec::SqrMat& getdhdq() const { return Dhq; }
-      virtual const fmatvec::SqrMat& getdhdu() const { return Dhqp; }
-      virtual int getqSize() const { return 10; }
-      virtual int getuSize() const { return 10; }
+      const fmatvec::SymMat& getM() const override { return M; }
+      const fmatvec::Vec& geth() const override { return h; }
+      const fmatvec::SqrMat& getdhdq() const override { return Dhq; }
+      const fmatvec::SqrMat& getdhdu() const override { return Dhqp; }
+      int getqSize() const override { return 10; }
+      int getuSize() const override { return 10; }
 
-      virtual void computeM(const fmatvec::Vec& qG);
-      virtual void computeh(const fmatvec::Vec& qG,const fmatvec::Vec& qGt);
-      virtual void computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
-      virtual double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u);
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& q);    
-      virtual double computeElasticEnergy(const fmatvec::Vec& q);
+      void computeM(const fmatvec::Vec& qG) override;
+      void computeh(const fmatvec::Vec& qG,const fmatvec::Vec& qGt) override;
+      void computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) override;
+      double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) override;
+      double computeGravitationalEnergy(const fmatvec::Vec& q) override;    
+      double computeElasticEnergy(const fmatvec::Vec& q) override;
 
       virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, double s);
       virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, double s);

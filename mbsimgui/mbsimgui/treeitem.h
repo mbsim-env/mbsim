@@ -32,7 +32,7 @@ namespace MBSimGUI {
   class TreeItem {
     public:
 
-      TreeItem(TreeItemData *itemData = 0, TreeItem *parent = 0, int ID_ = 1,
+      TreeItem(TreeItemData *itemData = nullptr, TreeItem *parent = nullptr, int ID_ = 1,
           const QBrush &brush=QApplication::palette().brush(QPalette::Active, QPalette::Text)) :
           itemData(itemData), parentItem(parent), ID(ID_), foreground(brush) {
         getData_[0] = &TreeItem::getData0;

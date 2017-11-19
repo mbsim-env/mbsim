@@ -50,11 +50,11 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Joint();
+      ~Joint() override;
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      void updatelaF() { (this->*updatelaF_)(); updlaF = false; }
-      void updatelaM() { (this->*updatelaM_)(); updlaM = false; }
+      void updatelaF() override { (this->*updatelaF_)(); updlaF = false; }
+      void updatelaM() override { (this->*updatelaM_)(); updlaM = false; }
       void updatelaF0() { }
       void updatelaFS();
       void updatelaFM();
@@ -63,33 +63,33 @@ namespace MBSim {
       void updatelaMM();
       void (Joint::*updatelaF_)();
       void (Joint::*updatelaM_)();
-      void updateh(int i=0);
-      void updateW(int i=0);
-      void updatewb();
+      void updateh(int i=0) override;
+      void updateW(int i=0) override;
+      void updatewb() override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
-      virtual void updatexd();
-      virtual void calcxSize();
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void updatexd() override;
+      void calcxSize() override;
+      void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual bool isSetValued() const;
-      virtual bool isSingleValued() const;
-      virtual bool isActive() const { return true; }
-      virtual bool gActiveChanged() { return false; }
-      virtual void solveImpactsFixpointSingle();
-      virtual void solveConstraintsFixpointSingle();
-      virtual void solveImpactsGaussSeidel();
-      virtual void solveConstraintsGaussSeidel();
-      virtual void solveImpactsRootFinding();
-      virtual void solveConstraintsRootFinding();
-      virtual void jacobianConstraints();
-      virtual void jacobianImpacts();
-      virtual void updaterFactors();
-      virtual void checkImpactsForTermination();
-      virtual void checkConstraintsForTermination();
+      bool isSetValued() const override;
+      bool isSingleValued() const override;
+      bool isActive() const override { return true; }
+      bool gActiveChanged() override { return false; }
+      void solveImpactsFixpointSingle() override;
+      void solveConstraintsFixpointSingle() override;
+      void solveImpactsGaussSeidel() override;
+      void solveConstraintsGaussSeidel() override;
+      void solveImpactsRootFinding() override;
+      void solveConstraintsRootFinding() override;
+      void jacobianConstraints() override;
+      void jacobianImpacts() override;
+      void updaterFactors() override;
+      void checkImpactsForTermination() override;
+      void checkConstraintsForTermination() override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -107,7 +107,7 @@ namespace MBSim {
        */
       void setMomentDirection(const fmatvec::Mat3xV& md);
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       /**
@@ -118,22 +118,22 @@ namespace MBSim {
       /**
        * constitutive law on acceleration level for forces and torques (f?-force-law)
        */
-      GeneralizedForceLaw *ffl;
+      GeneralizedForceLaw *ffl{nullptr};
 
       /**
        * constitutive law on acceleration level for moments/torques (f?-moment-law)
        */
-      GeneralizedForceLaw * fml;
+      GeneralizedForceLaw * fml{nullptr};
 
       /**
        * constitutive law on velocity level for forces and torques (f?-impact-force-law)
        */
-      GeneralizedImpactLaw *fifl;
+      GeneralizedImpactLaw *fifl{nullptr};
 
       /**
        * constitutive law on velocity level for moments/torques (f?-impact-moment-law)
        */
-      GeneralizedImpactLaw * fiml;
+      GeneralizedImpactLaw * fiml{nullptr};
 
       /**
        * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
@@ -146,13 +146,13 @@ namespace MBSim {
     friend class JointConstraint;
     public:
       InverseKineticsJoint(const std::string &name);
-      virtual void updateb();
-      void calcbSize();
+      void updateb() override;
+      void calcbSize() override;
       void setBody(Body* body_) {
         body = body_;
       }
-      virtual void init(InitStage stage, const InitConfigSet &config);
-      virtual bool isSetValued() const { return true; }
+      void init(InitStage stage, const InitConfigSet &config) override;
+      bool isSetValued() const override { return true; }
 
     protected:
       Body* body;

@@ -41,9 +41,9 @@ namespace MBSim {
        */
       FuncPairPointContourInterpolation(Point* point_, ContourInterpolation *contour_) : contour(contour_), point(point_) { }
 
-      fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha);
+      fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha) override;
 
-      fmatvec::Vec3 evalWrD(const fmatvec::Vec2 &alpha);
+      fmatvec::Vec3 evalWrD(const fmatvec::Vec2 &alpha) override;
 
     private:
       /**

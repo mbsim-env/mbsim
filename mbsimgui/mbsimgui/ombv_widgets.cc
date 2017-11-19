@@ -25,6 +25,7 @@
 #include "frame.h"
 #include "mainwindow.h"
 #include <QtGui>
+#include <utility>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
@@ -35,15 +36,15 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  OMBVRigidBodyWidgetFactory::OMBVRigidBodyWidgetFactory() : count(1) {
-    name.push_back("Cube");
-    name.push_back("Cuboid");
-    name.push_back("Frustum");
-    name.push_back("Extrusion");
-    name.push_back("Sphere");
-    name.push_back("IvBody");
-    name.push_back("CompoundRigidBody");
-    name.push_back("InvisibleBody");
+  OMBVRigidBodyWidgetFactory::OMBVRigidBodyWidgetFactory()  {
+    name.emplace_back("Cube");
+    name.emplace_back("Cuboid");
+    name.emplace_back("Frustum");
+    name.emplace_back("Extrusion");
+    name.emplace_back("Sphere");
+    name.emplace_back("IvBody");
+    name.emplace_back("CompoundRigidBody");
+    name.emplace_back("InvisibleBody");
     xmlName.push_back(OPENMBV%"Cube");
     xmlName.push_back(OPENMBV%"Cuboid");
     xmlName.push_back(OPENMBV%"Frustum");
@@ -71,7 +72,7 @@ namespace MBSimGUI {
       return new CompoundRigidBodyWidget("CompoundRigidBody"+toQStr(count++),OPENMBV%"CompoundRigidBody");
     if(i==7)
       return new InvisibleBodyWidget("InvisibleBody"+toQStr(count++),OPENMBV%"InvisibleBody");
-    return NULL;
+    return nullptr;
   }
 
   DOMElement* OMBVObjectWidget::initializeUsingXML(DOMElement *element) {
@@ -91,8 +92,8 @@ namespace MBSimGUI {
     return newele;
   }
 
-  MBSOMBVWidget::MBSOMBVWidget(const QString &name, const FQN &xmlName_) : OMBVObjectWidget(name), xmlName(xmlName_) {
-    QVBoxLayout *layout = new QVBoxLayout;
+  MBSOMBVWidget::MBSOMBVWidget(const QString &name, FQN xmlName_) : OMBVObjectWidget(name), xmlName(std::move(xmlName_)) {
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -151,7 +152,7 @@ namespace MBSimGUI {
     DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
     size->writeXMLFile(e);
     writeProperties(e);
-    return NULL;
+    return nullptr;
   }
 
   LineMBSOMBVWidget::LineMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
@@ -169,7 +170,7 @@ namespace MBSimGUI {
     DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
     length->writeXMLFile(e);
     writeProperties(e);
-    return NULL;
+    return nullptr;
   }
 
   PlaneMBSOMBVWidget::PlaneMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
@@ -187,7 +188,7 @@ namespace MBSimGUI {
     DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
     length->writeXMLFile(e);
     writeProperties(e);
-    return NULL;
+    return nullptr;
   }
 
   PlanarContourMBSOMBVWidget::PlanarContourMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
@@ -205,7 +206,7 @@ namespace MBSimGUI {
     DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
     nodes->writeXMLFile(e);
     writeProperties(e);
-    return NULL;
+    return nullptr;
   }
 
   SpatialContourMBSOMBVWidget::SpatialContourMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
@@ -227,7 +228,7 @@ namespace MBSimGUI {
     etaNodes->writeXMLFile(e);
     xiNodes->writeXMLFile(e);
     writeProperties(e);
-    return NULL;
+    return nullptr;
   }
 
   ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const QString &name, bool fromPoint) : MBSOMBVWidget(name) {
@@ -238,9 +239,9 @@ namespace MBSimGUI {
     layout()->addWidget(scaleSize);
 
     vector<QString> list;
-    list.push_back("\"toPoint\"");
-    list.push_back("\"fromPoint\"");
-    list.push_back("\"midPoint\"");
+    list.emplace_back("\"toPoint\"");
+    list.emplace_back("\"fromPoint\"");
+    list.emplace_back("\"midPoint\"");
     referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,fromPoint?1:0,true),true,false,MBSIM%"referencePoint");
     if(fromPoint)
       referencePoint->setChecked(true);
@@ -277,9 +278,9 @@ namespace MBSimGUI {
     layout()->addWidget(nominalLength);
 
     vector<QString> list;
-    list.push_back("\"tube\"");
-    list.push_back("\"scaledTube\"");
-    list.push_back("\"polyline\"");
+    list.emplace_back("\"tube\"");
+    list.emplace_back("\"scaledTube\"");
+    list.emplace_back("\"polyline\"");
     type = new ExtWidget("Type",new TextChoiceWidget(list,0,true),true,false,MBSIM%"type");
     layout()->addWidget(type);
 
@@ -335,7 +336,7 @@ namespace MBSimGUI {
     size->writeXMLFile(parent);
     offset->writeXMLFile(parent);
     transparency->writeXMLFile(parent);
-    return NULL;
+    return nullptr;
   }
 
   OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &name, const FQN &xmlName) : OMBVObjectWidget(name,xmlName) {
@@ -501,11 +502,11 @@ namespace MBSimGUI {
 
   ExtrusionWidget::ExtrusionWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
     vector<QString> list;
-    list.push_back("\"odd\"");
-    list.push_back("\"nonzero\"");
-    list.push_back("\"positive\"");
-    list.push_back("\"negative\"");
-    list.push_back("\"absGEqTwo\"");
+    list.emplace_back("\"odd\"");
+    list.emplace_back("\"nonzero\"");
+    list.emplace_back("\"positive\"");
+    list.emplace_back("\"negative\"");
+    list.emplace_back("\"absGEqTwo\"");
     windingRule = new ExtWidget("Winding rule",new TextChoiceWidget(list,1,true));
     layout->addWidget(windingRule);
 
@@ -605,7 +606,7 @@ namespace MBSimGUI {
     minCol->writeXMLFile(e);
     maxCol->writeXMLFile(e);
     writeProperties(e);
-    return NULL;
+    return nullptr;
   }
 
 }

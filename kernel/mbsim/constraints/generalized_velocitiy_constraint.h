@@ -28,12 +28,12 @@ namespace MBSim {
   class GeneralizedVelocityConstraint : public GeneralizedDualConstraint {
 
     public:
-      GeneralizedVelocityConstraint(const std::string &name="") : GeneralizedDualConstraint(name), f(NULL) { }
-      ~GeneralizedVelocityConstraint() { delete f; }
+      GeneralizedVelocityConstraint(const std::string &name="") : GeneralizedDualConstraint(name), f(nullptr) { }
+      ~GeneralizedVelocityConstraint() override { delete f; }
 
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
-      void calcxSize();
+      void calcxSize() override;
 
       // NOTE: we can not use a overloaded setConstraintFunction here due to restrictions in XML but define them for convinience in c++
       void setGeneralConstraintFunction(Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) {
@@ -51,13 +51,13 @@ namespace MBSim {
       void setConstraintFunction(Function<fmatvec::VecV(double)>* f_) { setTimeDependentConstraintFunction(f_); }
       void setConstraintFunction(Function<fmatvec::VecV(fmatvec::VecV)>* f_) { setStateDependentConstraintFunction(f_); }
 
-      virtual void setUpInverseKinetics();
+      void setUpInverseKinetics() override;
 
-      void updatexd();
-      void updateGeneralizedCoordinates();
-      void updateGeneralizedJacobians(int j=0);
+      void updatexd() override;
+      void updateGeneralizedCoordinates() override;
+      void updateGeneralizedJacobians(int j=0) override;
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
 
     private:
       Function<fmatvec::VecV(fmatvec::VecV,double)> *f;

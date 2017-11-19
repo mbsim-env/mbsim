@@ -26,22 +26,22 @@ namespace MBSimGUI {
 
   class SpringDamper : public FixedFrameLink {
     public:
-      QString getType() const { return "SpringDamper"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
-      ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
+      QString getType() const override { return "SpringDamper"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      ElementPropertyDialog* createPropertyDialog() override {return new SpringDamperPropertyDialog(this);}
   };
 
   class DirectionalSpringDamper : public FloatingFrameLink {
     public:
-      QString getType() const { return "DirectionalSpringDamper"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
-      ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
+      QString getType() const override { return "DirectionalSpringDamper"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      ElementPropertyDialog* createPropertyDialog() override {return new DirectionalSpringDamperPropertyDialog(this);}
   };
 
   class GeneralizedSpringDamper : public DualRigidBodyLink {
     public:
-      QString getType() const { return "GeneralizedSpringDamper"; }
-      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
+      QString getType() const override { return "GeneralizedSpringDamper"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new GeneralizedSpringDamperPropertyDialog(this);}
   };
 
 }

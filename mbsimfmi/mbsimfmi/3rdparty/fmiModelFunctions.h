@@ -84,7 +84,7 @@
 */
 
 #include "fmiModelTypes.h"
-#include <stdlib.h>
+#include <cstdlib>
 
 /* Export fmi functions on Windows */
 #ifdef _MSC_VER

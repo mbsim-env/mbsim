@@ -32,8 +32,8 @@ namespace MBSim {
       fmatvec::Mat3xV J, Jd;
     public:
       RotationAboutAxesYZ() : J(2), Jd(2) { J.e(1,0) = 1; }
-      int getArgSize() const { return 2; }
-      fmatvec::RotMat3 operator()(const Arg &q) {
+      int getArgSize() const override { return 2; }
+      fmatvec::RotMat3 operator()(const Arg &q) override {
         double b=q.e(0);
         double g=q.e(1);
         double cosb = cos(b);
@@ -51,13 +51,13 @@ namespace MBSim {
         A.e(2,2) = cosb;
         return A;
       }
-      typename B::DRetDArg parDer(const Arg &q) {
+      typename B::DRetDArg parDer(const Arg &q) override {
         double beta = q.e(0);
         J.e(0,1) = sin(beta);
         J.e(2,1) = cos(beta);
         return J;
       }
-      typename B::DRetDArg parDerDirDer(const Arg &qd, const Arg &q) {
+      typename B::DRetDArg parDerDirDer(const Arg &qd, const Arg &q) override {
         double beta = q.e(0);
         double betad = qd.e(0);
         Jd.e(0,1) = cos(beta)*betad;

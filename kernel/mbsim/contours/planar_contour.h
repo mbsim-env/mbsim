@@ -42,23 +42,23 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      PlanarContour(const std::string &name="", Frame *R=NULL) : RigidContour(name,R), funcCrPC(NULL), open(false) { }
+      PlanarContour(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
 
       /**
        * \brief destructor
        */
-      virtual ~PlanarContour();
+      ~PlanarContour() override;
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       double getCurvature(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalParDer1Ks(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer1Ks(const fmatvec::Vec2 &zeta) override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -72,17 +72,17 @@ namespace MBSim {
         ombvNodes = nodes;
       }
       
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-      virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]); }
+      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]); }
 
       void setOpen(bool open_=true) { open = open_; }
 
     protected:
-      Function<fmatvec::Vec3(double)> * funcCrPC;
-      bool open;
+      Function<fmatvec::Vec3(double)> * funcCrPC{nullptr};
+      bool open{false};
 
       std::vector<double> ombvNodes;
   };

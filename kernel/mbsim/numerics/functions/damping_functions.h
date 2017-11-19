@@ -34,8 +34,7 @@ namespace MBSim {
     /*
      * \brief destructor
      */
-    virtual ~DampingFunction() {
-    }
+    ~DampingFunction() override = default;
 
     /* GETTER / SETTER*/
     void setFunction(Function<fmatvec::Vec(fmatvec::Vec)> * function_) {
@@ -46,18 +45,18 @@ namespace MBSim {
     }
     /******************/
 
-    virtual double operator ()(const fmatvec::Vec & x, const fmatvec::Vec & dx) = 0;
+    double operator ()(const fmatvec::Vec & x, const fmatvec::Vec & dx) override = 0;
 
     protected:
     /**
      * \brief function that computes the values
      */
-    Function<fmatvec::Vec(fmatvec::Vec)> *function;
+    Function<fmatvec::Vec(fmatvec::Vec)> *function{nullptr};
 
     /**
      * \brief criteria that defines if a solution gets better
      */
-    CriteriaFunction * criteria;
+    CriteriaFunction * criteria{nullptr};
 
   };
 
@@ -72,10 +71,9 @@ namespace MBSim {
       /*
        * \brief destructor
        */
-      virtual ~StandardDampingFunction() {
-      }
+      ~StandardDampingFunction() override = default;
 
-      virtual double operator ()(const fmatvec::Vec &x, const fmatvec::Vec &dx);
+      double operator ()(const fmatvec::Vec &x, const fmatvec::Vec &dx) override;
 
       void setMaximalDampingSteps(unsigned int k_) {
         kmax = k_;

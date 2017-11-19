@@ -35,11 +35,11 @@ namespace MBSim {
     public:
       projectPointAlongNormal(PolynomialFrustum * frustum);
 
-      virtual ~projectPointAlongNormal();
+      ~projectPointAlongNormal() override;
 
       void setUpSystemParamters(const fmatvec::Vec3 & referencePoint, const double & phi);
 
-      fmatvec::Vec operator()(const fmatvec::Vec &x);
+      fmatvec::Vec operator()(const fmatvec::Vec &x) override;
 
     protected:
       /*!
@@ -65,11 +65,11 @@ namespace MBSim {
     public:
       projectPointAlongNormalJacobian(PolynomialFrustum * frustum);
 
-      virtual ~projectPointAlongNormalJacobian();
+      ~projectPointAlongNormalJacobian() override;
 
       void setUpSystemParamters(const fmatvec::Vec3 & referencePoint, const double & phi);
 
-      fmatvec::SqrMat operator()(const fmatvec::Vec &x);
+      fmatvec::SqrMat operator()(const fmatvec::Vec &x) override;
 
     protected:
       /*!
@@ -98,12 +98,12 @@ namespace MBSim {
   class ContactKinematicsPointPolynomialFrustum : public MBSim::ContactKinematics {
     public:
       ContactKinematicsPointPolynomialFrustum();
-      virtual ~ContactKinematicsPointPolynomialFrustum();
+      ~ContactKinematicsPointPolynomialFrustum() override;
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
-      void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double& g, std::vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec& wb, double g, std::vector<ContourFrame*> &cFrame) {
+      void assignContours(const std::vector<Contour*> &contour) override;
+      void updateg(double& g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(fmatvec::Vec& wb, double g, std::vector<ContourFrame*> &cFrame) override {
         throw MBSimError("(ContactKinematicsPointPolynomialFrustum::updatewb): not implemented!");
       }
 
@@ -111,32 +111,32 @@ namespace MBSim {
       /**
        * \brief contour index of plate (in cpData)
        */
-      int ipoint;
+      int ipoint{-1};
 
       /**
        * \brief contour index of frustum (in cpData)
        */
-      int ifrustum;
+      int ifrustum{-1};
 
       /**
        * \brief pointer to the contour class for the plate
        */
-      Point *point;
+      Point *point{nullptr};
 
       /*!
        * \brief pointer to the contour class for the polynomial frustum
        */
-      PolynomialFrustum *frustum;
+      PolynomialFrustum *frustum{nullptr};
 
       /*!
        * \brief sign of h-direction of frustum
        */
-      double signh;
+      double signh{1};
 
       /*!
        * \brief function for intersection point
        */
-      MBSim::projectPointAlongNormal * funcProjectAlongNormal;
+      MBSim::projectPointAlongNormal * funcProjectAlongNormal{nullptr};
 
       /*!
        * \brief newton method for solving the edge contact
@@ -146,7 +146,7 @@ namespace MBSim {
       /*!
        * \brief Jacobian for newton method
        */
-      MBSim::projectPointAlongNormalJacobian * jacobianProjectAlongNormal;
+      MBSim::projectPointAlongNormalJacobian * jacobianProjectAlongNormal{nullptr};
 
       /*!
        * \brief criteria for newton method

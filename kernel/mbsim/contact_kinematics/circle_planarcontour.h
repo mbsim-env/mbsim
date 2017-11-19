@@ -37,26 +37,27 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsCirclePlanarContour() : icircle(0), iplanarcontour(0), circle(NULL), planarcontour(NULL), func(NULL), searchAllCP(false) { }
+      ContactKinematicsCirclePlanarContour() :  circle(nullptr), planarcontour(nullptr), func(nullptr) { }
 
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsCirclePlanarContour();
+      ~ContactKinematicsCirclePlanarContour() override;
 
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame);
+      void assignContours(const std::vector<Contour*> &contour) override;
+      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override;
       /***************************************************/
 
-      void setSearchAllContactPoints(bool searchAllCP_=true) { searchAllCP = searchAllCP_; }
+      void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
 
     private:
       /**
        * \brief contour index
        */
-      int icircle, iplanarcontour;
+      int icircle{0};
+      int iplanarcontour{0};
 
       /**
        * \brief contour classes
@@ -69,7 +70,7 @@ namespace MBSim {
        */
       FuncPairPlanarContourCircle *func;
 
-      bool searchAllCP;
+      bool searchAllCP{false};
   };
 
 }

@@ -34,9 +34,7 @@ namespace MBSim {
       frustum(frustum), referencePoint(), phi(0.) {
   }
 
-  projectPointAlongNormal::~projectPointAlongNormal() {
-
-  }
+  projectPointAlongNormal::~projectPointAlongNormal() = default;
 
   void projectPointAlongNormal::setUpSystemParamters(const Vec3 & referencePoint_, const double & phi_) {
     referencePoint = referencePoint_;
@@ -64,8 +62,7 @@ namespace MBSim {
       frustum(frustum), referencePoint(), phi(0.) {
   }
 
-  projectPointAlongNormalJacobian::~projectPointAlongNormalJacobian() {
-  }
+  projectPointAlongNormalJacobian::~projectPointAlongNormalJacobian() = default;
 
   void projectPointAlongNormalJacobian::setUpSystemParamters(const Vec3 & referencePoint_, const double & phi_) {
     referencePoint = referencePoint_;
@@ -92,7 +89,7 @@ namespace MBSim {
 
 
   ContactKinematicsPointPolynomialFrustum::ContactKinematicsPointPolynomialFrustum() :
-      ContactKinematics(), ipoint(-1), ifrustum(-1), point(0), frustum(0), signh(1), funcProjectAlongNormal(0), newtonProjectAlongNormal(), jacobianProjectAlongNormal(0), criteriaProjectAlongNormal(), dampingProjectAlongNormal() {
+      ContactKinematics(),  newtonProjectAlongNormal(),  criteriaProjectAlongNormal(), dampingProjectAlongNormal() {
   }
 
   ContactKinematicsPointPolynomialFrustum::~ContactKinematicsPointPolynomialFrustum() {

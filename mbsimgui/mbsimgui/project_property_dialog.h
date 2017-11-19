@@ -31,13 +31,13 @@ namespace MBSimGUI {
   class ProjectPropertyDialog : public PropertyDialog {
 
     public:
-      ProjectPropertyDialog(Project *project, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      ProjectPropertyDialog(Project *project, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       virtual void toWidget(Project *project);
       virtual void fromWidget(Project *project);
-      void toWidget() {toWidget(project);}
-      void fromWidget() {fromWidget(project);}
+      void toWidget() override {toWidget(project);}
+      void fromWidget() override {fromWidget(project);}
     protected:
       Project *project;
       ExtWidget *name, *evalSelect;

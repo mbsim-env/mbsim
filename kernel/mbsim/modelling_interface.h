@@ -38,7 +38,7 @@ namespace MBSim {
       /*!
        * \brief Destructor.
        */
-      virtual ~ModellingInterface() {};
+      virtual ~ModellingInterface() = default;;
 
       /**
        * \brief initialize object at start of simulation with respect to contours and frames

@@ -41,14 +41,14 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~GeneralizedImpactLaw() { }
+      ~GeneralizedImpactLaw() override = default;
 
       /* INTERFACE FOR DERIVED CLASSES */
       virtual double project(double la, double gdn, double gda, double r, double laMin=0) = 0;
       virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0) = 0;
       virtual double solve(double G, double gdn, double gda) = 0;
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0) = 0;
-      virtual void initializeUsingXML(xercesc::DOMElement *element) {}
+      void initializeUsingXML(xercesc::DOMElement *element) override {}
       /***************************************************/
   };
 

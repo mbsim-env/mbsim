@@ -48,21 +48,21 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FiniteElement2s13Disk() { }
+      ~FiniteElement2s13Disk() override = default;
 
       /* INTERFACE OF DISCRETIZATIONINTERFACE */
-      virtual const fmatvec::SymMat& getM() const { return M; }
-      virtual const fmatvec::Vec& geth() const;
-      virtual const fmatvec::SqrMat& getdhdq() const;
-      virtual const fmatvec::SqrMat& getdhdu() const;
-      virtual int getqSize() const { return RefDofs + 4*NodeDofs; }
-      virtual int getuSize() const { return RefDofs + 4*NodeDofs; }
-      virtual void computeM(const fmatvec::Vec& q);
-      virtual void computeh(const fmatvec::Vec& q,const fmatvec::Vec& u);
-      virtual void computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u);
-      virtual double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u);
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& q);
-      virtual double computeElasticEnergy(const fmatvec::Vec& q);
+      const fmatvec::SymMat& getM() const override { return M; }
+      const fmatvec::Vec& geth() const override;
+      const fmatvec::SqrMat& getdhdq() const override;
+      const fmatvec::SqrMat& getdhdu() const override;
+      int getqSize() const override { return RefDofs + 4*NodeDofs; }
+      int getuSize() const override { return RefDofs + 4*NodeDofs; }
+      void computeM(const fmatvec::Vec& q) override;
+      void computeh(const fmatvec::Vec& q,const fmatvec::Vec& u) override;
+      void computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u) override;
+      double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) override;
+      double computeGravitationalEnergy(const fmatvec::Vec& q) override;
+      double computeElasticEnergy(const fmatvec::Vec& q) override;
       virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, const fmatvec::Vec2 &s);
       virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, const fmatvec::Vec2 &s);
       virtual fmatvec::Vec3 getVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec2 &s);

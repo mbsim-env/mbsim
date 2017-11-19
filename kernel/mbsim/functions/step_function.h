@@ -31,14 +31,14 @@ namespace MBSim {
     private:
       double stepTime, stepSize, stepInit;
     public:
-      StepFunction() {}
+      StepFunction() = default;
       StepFunction(double stepTime_, double stepSize_, double stepInit_=0.) : stepTime(stepTime_), stepSize(stepSize_), stepInit(stepInit_) { }
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
-      Ret operator()(const Arg &x) {
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
+      Ret operator()(const Arg &x) override {
         return FromDouble<Ret>::cast((ToDouble<Arg>::cast(x)>=stepTime)?stepSize:stepInit);
       }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"time");
         stepTime=MBXMLUtils::E(e)->getText<double>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"size");

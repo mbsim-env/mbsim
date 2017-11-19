@@ -34,9 +34,9 @@ namespace MBSim {
       void connect(RigidBody *body);
       void connect(RigidBody *body1, RigidBody *body2);
 
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
 
     private:
       std::string saved_ref, saved_ref1, saved_ref2;

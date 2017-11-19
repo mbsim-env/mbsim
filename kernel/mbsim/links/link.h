@@ -81,7 +81,7 @@ namespace MBSim {
       virtual void updatexdRef(const fmatvec::Vec& ref);
       virtual void updatedxRef(const fmatvec::Vec& ref);
       virtual void updatebRef(const fmatvec::Mat &hRef);
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       virtual void initz();
       virtual void writez(H5::GroupBase *group);
       virtual void readz0(H5::GroupBase *group);
@@ -89,7 +89,7 @@ namespace MBSim {
       virtual void setbInd(int bInd_) { bInd = bInd_; };
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot();
+      void plot() override;
       /***************************************************/
 
       /* INTERFACE TO BE DEFINED IN DERIVED CLASS */
@@ -389,7 +389,7 @@ namespace MBSim {
       
       const fmatvec::VecInt& getrFactorUnsure() const { return rFactorUnsure; }
 
-      void resetUpToDate() { updrrel = true; updvrel = true; updla = true; }
+      void resetUpToDate() override { updrrel = true; updvrel = true; updla = true; }
 
       virtual void updateGeneralizedPositions() { }
       virtual void updateGeneralizedVelocities() { }

@@ -53,7 +53,7 @@ namespace MBSimHydraulics {
   class HNodeMec : public HNode {
     public:
       HNodeMec(const std::string &name);
-      ~HNodeMec();
+      ~HNodeMec() override;
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVArrows, tag, (optional (size,(double),1))) { 
         openMBVArrowSize=(size>.0)?size:.0;
@@ -64,18 +64,18 @@ namespace MBSimHydraulics {
       unsigned int addRotMecArea(MBSim::Frame * f, fmatvec::Vec fN, double area, MBSim::Frame * frameOfReference, bool considerVolumeChange=true);
       void setTransMecArea(unsigned int i, double area) {connectedTransFrames[i].area=area; }
 
-      void calcxSize() {xSize=1; }
+      void calcxSize() override {xSize=1; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      virtual void updateWRef(const fmatvec::Mat& Wref, int i=0);
-      virtual void updateVRef(const fmatvec::Mat& Vref, int i=0);
-      virtual void updatehRef(const fmatvec::Vec& href, int i=0);
+      void updateWRef(const fmatvec::Mat& Wref, int i=0) override;
+      void updateVRef(const fmatvec::Mat& Vref, int i=0) override;
+      void updatehRef(const fmatvec::Vec& href, int i=0) override;
       virtual void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
       virtual void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
       virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
-      virtual void updaterRef(const fmatvec::Vec& ref, int i=0);
+      void updaterRef(const fmatvec::Vec& ref, int i=0) override;
 
       double evalQMec() { if(updQMec) updateQMec(); return QMec; }
       double evalQMecTrans() { if(updQMec) updateQMec(); return QMecTrans; }
@@ -85,15 +85,15 @@ namespace MBSimHydraulics {
       double getQMecRot(bool check=true) const { assert((not check) or (not updQMec)); return QMecRot; }
       virtual void updateQMec();
 
-      void updateh(int j=0);
+      void updateh(int j=0) override;
       void updater(int j=0);
-      void updategd();
-      void updatexd();
+      void updategd() override;
+      void updatexd() override;
       void updatedhdz();
 
-      void plot();
+      void plot() override;
 
-      void resetUpToDate() { HNode::resetUpToDate(); updQMec = true; }
+      void resetUpToDate() override { HNode::resetUpToDate(); updQMec = true; }
 
     protected:
       std::vector<connectedTransFrameStruct> connectedTransFrames;
@@ -115,8 +115,8 @@ namespace MBSimHydraulics {
   /*! ConstrainedNodeMec */
   class ConstrainedNodeMec : public HNodeMec {
     public:
-      ConstrainedNodeMec(const std::string &name="") : HNodeMec(name), pFun(NULL) {}
-      ~ConstrainedNodeMec() { delete pFun; }
+      ConstrainedNodeMec(const std::string &name="") : HNodeMec(name) {}
+      ~ConstrainedNodeMec() override { delete pFun; }
 
       void setpFunction(MBSim::Function<double(double)> * pFun_) {
         pFun=pFun_;
@@ -124,15 +124,15 @@ namespace MBSimHydraulics {
         pFun->setName("p");
       }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
 
-      virtual bool isSingleValued() const {return true;}
+      bool isSingleValued() const override {return true;}
 
     private:
-      MBSim::Function<double(double)> * pFun;
+      MBSim::Function<double(double)> * pFun{nullptr};
   };
 
 
@@ -141,40 +141,40 @@ namespace MBSimHydraulics {
     public:
       EnvironmentNodeMec(const std::string &name="") : HNodeMec(name) {}
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      virtual bool isSingleValued() const {return true;}
+      bool isSingleValued() const override {return true;}
   };
 
 
   /*! ElasticNodeMec */
   class ElasticNodeMec : public HNodeMec {
     public:
-      ElasticNodeMec(const std::string &name="") : HNodeMec(name), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
-      ~ElasticNodeMec();
+      ElasticNodeMec(const std::string &name="") : HNodeMec(name)  {}
+      ~ElasticNodeMec() override;
 
       void setFracAir(double fracAir_) {fracAir=fracAir_; }
       void setp0(double p0_) {p0=p0_; }
 
-      void calcxSize() {xSize=2; }
+      void calcxSize() override {xSize=2; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
 
-      void updatexd();
+      void updatexd() override;
 
-      void plot();
+      void plot() override;
 
-      virtual bool isSingleValued() const {return true;}
+      bool isSingleValued() const override {return true;}
 
     private:
-      double E;
-      double fracAir;
-      double p0;
+      double E{0};
+      double fracAir{0};
+      double p0{0};
 
-      OilBulkModulus * bulkModulus;
+      OilBulkModulus * bulkModulus{nullptr};
   };
 
 
@@ -182,35 +182,35 @@ namespace MBSimHydraulics {
   class RigidNodeMec : public HNodeMec {
     public:
       RigidNodeMec(const std::string &name="");
-      ~RigidNodeMec();
+      ~RigidNodeMec() override;
 
-      bool isSetValued() const {return true; }
-      bool isActive() const {return true; }
+      bool isSetValued() const override {return true; }
+      bool isActive() const override {return true; }
 
-      void calclaSize(int j) {laSize=1; }
+      void calclaSize(int j) override {laSize=1; }
       //void calclaSizeForActiveg() {laSize=0; }
-      void calcrFactorSize(int j) {rFactorSize=1; }
+      void calcrFactorSize(int j) override {rFactorSize=1; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void updatewbRef(const fmatvec::Vec& wbParent);
+      void updatewbRef(const fmatvec::Vec& wbParent) override;
 
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
 
-      void updategd();
-      void updateW(int j=0);
+      void updategd() override;
+      void updateW(int j=0) override;
 
-      void updaterFactors();
-      void solveImpactsFixpointSingle();
-      void solveConstraintsFixpointSingle();
-      void solveImpactsGaussSeidel();
-      void solveConstraintsGaussSeidel();
-      void solveImpactsRootFinding();
-      void solveConstraintsRootFinding();
-      void jacobianImpacts();
-      void jacobianConstraints();
-      void checkImpactsForTermination();
-      void checkConstraintsForTermination();
+      void updaterFactors() override;
+      void solveImpactsFixpointSingle() override;
+      void solveConstraintsFixpointSingle() override;
+      void solveImpactsGaussSeidel() override;
+      void solveConstraintsGaussSeidel() override;
+      void solveImpactsRootFinding() override;
+      void solveConstraintsRootFinding() override;
+      void jacobianImpacts() override;
+      void jacobianConstraints() override;
+      void checkImpactsForTermination() override;
+      void checkConstraintsForTermination() override;
     private:
       double gdn, gdd;
       MBSim::GeneralizedForceLaw * gfl;

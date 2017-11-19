@@ -34,11 +34,11 @@ namespace MBSimControl {
    */
   class FrameSensor : public Sensor {
     public:
-      FrameSensor(const std::string &name) : Sensor(name), frame(NULL) { }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      FrameSensor(const std::string &name) : Sensor(name), frame(nullptr) { }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setFrame(MBSim::Frame * frame_) { frame = frame_; }
-      int getSignalSize() const { return 3; }
+      int getSignalSize() const override { return 3; }
     protected:
       MBSim::Frame *frame;
       std::string frameString;
@@ -51,7 +51,7 @@ namespace MBSimControl {
   class PositionSensor : public FrameSensor {
     public:
       PositionSensor(const std::string &name="") : FrameSensor(name) { }
-      void updateSignal();
+      void updateSignal() override;
   };
 
   /*!
@@ -61,8 +61,8 @@ namespace MBSimControl {
   class OrientationSensor : public FrameSensor {
     public:
       OrientationSensor(const std::string &name="") : FrameSensor(name) { }
-      void updateSignal();
-      int getSignalSize() const { return 9; }
+      void updateSignal() override;
+      int getSignalSize() const override { return 9; }
   };
 
   /*!
@@ -72,7 +72,7 @@ namespace MBSimControl {
   class VelocitySensor : public FrameSensor {
     public:
       VelocitySensor(const std::string &name="") : FrameSensor(name) { }
-      void updateSignal();
+      void updateSignal() override;
   };
 
   /*!
@@ -82,7 +82,7 @@ namespace MBSimControl {
   class AngularVelocitySensor : public FrameSensor {
     public:
       AngularVelocitySensor(const std::string &name="") : FrameSensor(name) { }
-      void updateSignal();
+      void updateSignal() override;
   };
   
 //  /*!

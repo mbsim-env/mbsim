@@ -32,14 +32,14 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ProjectViewContextMenu(QWidget * parent = 0);
+      ProjectViewContextMenu(QWidget * parent = nullptr);
   };
 
   class ProjectView : public QLineEdit {
     Q_OBJECT
     public:
       ProjectView();
-      ~ProjectView() { }
+      ~ProjectView() override = default;
       Project* getProject() { return project; }
       void setProject(Project *project_) { project = project_; }
       void updateName();
@@ -57,7 +57,7 @@ namespace MBSimGUI {
     protected:
       ProjectView *view;
       ProjectPropertyDialog *editor;
-      bool eventFilter(QObject *obj, QEvent *event);
+      bool eventFilter(QObject *obj, QEvent *event) override;
     protected slots:
       void dialogFinished(int result);
       void apply();

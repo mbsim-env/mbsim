@@ -39,37 +39,37 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Sphere(const std::string &name="", Frame *R=0) : RigidContour(name,R), r(0.) {}
+      Sphere(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) {}
 
       /**
        * \brief constructor
        * \param name of sphere
        * \param radius of sphere
        */
-      Sphere(const std::string &name, double r_, Frame *R=0) : RigidContour(name,R), r(r_) {}
+      Sphere(const std::string &name, double r_, Frame *R=nullptr) : RigidContour(name,R), r(r_) {}
       
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 
-      virtual fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta) override;
 
       /* INHERITED INTERFACE OF CONTOUR */
-      fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint);
+      fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint) override;
       /**********************************/
 
       /* GETTER / SETTER */
@@ -82,13 +82,13 @@ namespace MBSim {
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       /** 
        * \brief radius
        */
-      double r;
+      double r{0.};
   };
 
 }

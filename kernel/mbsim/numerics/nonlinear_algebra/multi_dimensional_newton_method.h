@@ -45,8 +45,7 @@ namespace MBSim {
        */
       MultiDimensionalNewtonMethod();
 
-      virtual ~MultiDimensionalNewtonMethod() {
-      }
+      virtual ~MultiDimensionalNewtonMethod() = default;
 
       /* GETTER / SETTER */
       int getNumberOfIterations() const {

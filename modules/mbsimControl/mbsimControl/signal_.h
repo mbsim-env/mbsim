@@ -41,30 +41,30 @@ namespace MBSimControl {
     public:
       Signal(const std::string &name) : Link(name), upds(true) { }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      virtual void updateg() { }
-      virtual void updategd() { }
+      void updateg() override { }
+      void updategd() override { }
       virtual void updateSignal() { }
 
-      virtual void updateWRef(const fmatvec::Mat& ref, int i=0) { }
-      virtual void updateVRef(const fmatvec::Mat& ref, int i=0) { }
-      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0) { }
+      void updateWRef(const fmatvec::Mat& ref, int i=0) override { }
+      void updateVRef(const fmatvec::Mat& ref, int i=0) override { }
+      void updatehRef(const fmatvec::Vec &hRef, int i=0) override { }
       virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) { }
       virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) { }
       virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) { }
-      virtual void updaterRef(const fmatvec::Vec &ref, int i=0) { }
-      virtual bool isActive() const { return false; }
-      virtual bool gActiveChanged() { return false; }
-      virtual bool isSingleValued() const { return true; }
+      void updaterRef(const fmatvec::Vec &ref, int i=0) override { }
+      bool isActive() const override { return false; }
+      bool gActiveChanged() override { return false; }
+      bool isSingleValued() const override { return true; }
 
-      virtual void plot();
+      void plot() override;
       
       const fmatvec::VecV& getSignal(bool check=true) { assert((not check) or (not upds)); return s; }
       const fmatvec::VecV& evalSignal() { if(upds) updateSignal(); return s; }
       virtual int getSignalSize() const { return s.size(); }
 
-      void resetUpToDate() { upds = true; }
+      void resetUpToDate() override { upds = true; }
 
     protected:
       fmatvec::VecV s;

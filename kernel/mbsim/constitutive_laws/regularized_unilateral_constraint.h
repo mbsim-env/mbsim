@@ -34,20 +34,20 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      RegularizedUnilateralConstraint(Function<double(double,double)> *forceFunc_=NULL) : GeneralizedForceLaw(forceFunc_) { }
+      RegularizedUnilateralConstraint(Function<double(double,double)> *forceFunc_=nullptr) : GeneralizedForceLaw(forceFunc_) { }
 
       /**
        * \brief destructor
        */
-      virtual ~RegularizedUnilateralConstraint() {};
+      ~RegularizedUnilateralConstraint() override = default;;
 
       /* INHERITED INTERFACE */
-      virtual bool isClosed(double g, double gTol) { return g<=gTol; }
-      virtual bool remainsClosed(double s, double sTol) { return s<=sTol; }
-      virtual bool isSetValued() const { return false; }
+      bool isClosed(double g, double gTol) override { return g<=gTol; }
+      bool remainsClosed(double s, double sTol) override { return s<=sTol; }
+      bool isSetValued() const override { return false; }
       /***************************************************/
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }

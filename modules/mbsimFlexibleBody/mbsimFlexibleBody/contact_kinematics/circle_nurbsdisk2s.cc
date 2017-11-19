@@ -29,10 +29,10 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  ContactKinematicsCircleNurbsDisk2s::ContactKinematicsCircleNurbsDisk2s() : icircle(0), inurbsdisk(0), nurbsdisk(0), circle(0), LOCALSEARCH(false) {
+  ContactKinematicsCircleNurbsDisk2s::ContactKinematicsCircleNurbsDisk2s()  {
   }
 
-  ContactKinematicsCircleNurbsDisk2s::~ContactKinematicsCircleNurbsDisk2s() {}
+  ContactKinematicsCircleNurbsDisk2s::~ContactKinematicsCircleNurbsDisk2s() = default;
 
   void ContactKinematicsCircleNurbsDisk2s::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Circle*>(contour[0])) {
@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
   }
 
   void ContactKinematicsCircleNurbsDisk2s::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
-    FuncPairCircleNurbsDisk2s *func= new FuncPairCircleNurbsDisk2s(circle, nurbsdisk); // root function for searching contact parameters
+    auto *func= new FuncPairCircleNurbsDisk2s(circle, nurbsdisk); // root function for searching contact parameters
     PlanarContactSearch search(func);
 
     if(LOCALSEARCH) { // select start value from last search (local search)

@@ -45,7 +45,7 @@ namespace MBSimGUI {
   DOMElement* Solver::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(getNameSpace()%getType().toStdString());
-    parent->insertBefore(element, NULL);
+    parent->insertBefore(element, nullptr);
     return element;
   }
 

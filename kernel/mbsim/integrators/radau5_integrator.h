@@ -48,16 +48,16 @@ namespace MBSimIntegrator {
       /** Relative Toleranz */
       fmatvec::Vec rTol;
       /** step size for the first step */
-      double dt0;
+      double dt0{0};
       /** maximum number of steps */
-      int maxSteps;
+      int maxSteps{0};
       /** maximal step size */
-      double dtMax;
+      double dtMax{0};
 
     public:
 
       RADAU5Integrator();
-      ~RADAU5Integrator() {}
+      ~RADAU5Integrator() override = default;
 
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
       void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
@@ -67,9 +67,9 @@ namespace MBSimIntegrator {
       void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
       void setMaxStepNumber(int maxSteps_) {maxSteps = maxSteps_;}
 
-      void integrate(MBSim::DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system) override;
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }

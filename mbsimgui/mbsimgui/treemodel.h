@@ -41,34 +41,34 @@ namespace MBSimGUI {
 
   class TreeModel : public QAbstractItemModel {
     public:
-      TreeModel(QObject *parent = 0);
-      ~TreeModel();
+      TreeModel(QObject *parent = nullptr);
+      ~TreeModel() override;
 
-      QVariant data(const QModelIndex &index, int role) const;
-      QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+      QVariant data(const QModelIndex &index, int role) const override;
+      QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-      QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-      QModelIndex parent(const QModelIndex &index) const;
+      QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+      QModelIndex parent(const QModelIndex &index) const override;
 
-      int rowCount(const QModelIndex &parent = QModelIndex()) const;
-      int columnCount(const QModelIndex &) const {return 3;}
+      int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+      int columnCount(const QModelIndex &) const override {return 3;}
 
-      Qt::ItemFlags flags(const QModelIndex &index) const;
-      bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-      bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
+      Qt::ItemFlags flags(const QModelIndex &index) const override;
+      bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+      bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole) override;
 
-      bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
+      bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
 
       TreeItem* getItem(const QModelIndex &index) const;
       QModelIndex findItem(const TreeItemData *item, const QModelIndex &parentIndex) const;
 
     protected:
-      TreeItem *rootItem;
+      TreeItem *rootItem{0};
   };
 
   class ElementTreeModel : public TreeModel {
     public:
-      ElementTreeModel(QObject *parent = 0);
+      ElementTreeModel(QObject *parent = nullptr);
 
       void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
       void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
@@ -83,7 +83,7 @@ namespace MBSimGUI {
 
   class EmbeddingTreeModel : public TreeModel {
     public:
-      EmbeddingTreeModel(QObject *parent = 0);
+      EmbeddingTreeModel(QObject *parent = nullptr);
 
       QModelIndex createEmbeddingItem(EmbedItemData *item, const QModelIndex &parent = QModelIndex());
       QModelIndex createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());

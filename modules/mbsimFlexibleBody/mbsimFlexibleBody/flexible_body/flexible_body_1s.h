@@ -38,8 +38,8 @@ namespace MBSimFlexibleBody {
        */
       FlexibleBody1s(const std::string &name, bool openStructure);
 
-      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
-      virtual void plot();
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void plot() override;
 
       void setLength(double L_) { L = L_; }
       double getLength() const { return L; }

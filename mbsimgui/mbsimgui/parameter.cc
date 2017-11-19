@@ -47,7 +47,7 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     element=D(doc)->createElement(PV%getType().toStdString());
     E(element)->setAttribute("name", getType().toStdString());
-    parent->insertBefore(element, NULL);
+    parent->insertBefore(element, nullptr);
     return element;
   }
 
@@ -105,7 +105,7 @@ namespace MBSimGUI {
         vector<vector<QString> > value;
         while(ei && E(ei)->getTagName()==PV%"row") {
           DOMElement *ej=ei->getFirstElementChild();
-          value.push_back(vector<QString>());
+          value.emplace_back();
           while(ej && E(ej)->getTagName()==PV%"ele") {
             value[value.size()-1].push_back(QString::fromStdString(X()%E(ej)->getFirstTextChild()->getData()));
             ej=ej->getNextElementSibling();

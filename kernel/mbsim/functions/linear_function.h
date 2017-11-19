@@ -30,17 +30,17 @@ namespace MBSim {
   class LinearFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     using B = fmatvec::Function<Ret(Arg)>; 
     private:
-      double a0, a1;
+      double a0{0}, a1;
     public:
-      LinearFunction(double a1_=0) : a0(0), a1(a1_) { }
+      LinearFunction(double a1_=0) :  a1(a1_) { }
       LinearFunction(double a0_, double a1_) : a0(a0_), a1(a1_) { }
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
-      Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(a1*ToDouble<Arg>::cast(x)+a0); }
-      typename B::DRetDArg parDer(const Arg &x) { return FromDouble<Ret>::cast(a1); }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }
-      Ret parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
+      Ret operator()(const Arg &x) override { return FromDouble<Ret>::cast(a1*ToDouble<Arg>::cast(x)+a0); }
+      typename B::DRetDArg parDer(const Arg &x) override { return FromDouble<Ret>::cast(a1); }
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { return FromDouble<Ret>::cast(0); }
+      typename B::DDRetDDArg parDerParDer(const Arg &x) override { return FromDouble<Ret>::cast(0); }
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
         if(e) a0=MBXMLUtils::E(e)->getText<double>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a1");

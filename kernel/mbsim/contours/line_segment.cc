@@ -37,7 +37,7 @@ namespace MBSim {
   LineSegment::LineSegment(const std::string& name, double l, Frame *R) : RigidContour(name,R), length(l) {
   }
 
-  LineSegment::LineSegment(const std::string& name, Frame *R) : RigidContour(name,R), length(1) {
+  LineSegment::LineSegment(const std::string& name, Frame *R) : RigidContour(name,R) {
   }
 
   void LineSegment::init(InitStage stage, const InitConfigSet &config) {

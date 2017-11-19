@@ -45,38 +45,38 @@ namespace MBSim {
 
   Group::Group(const string &name) : DynamicSystem(name) {}
 
-  Group::~Group() {}
+  Group::~Group() = default;
 
   void Group::updateLLM() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (*i)->updateLLM();
+    for(auto & i : dynamicsystem)
+      i->updateLLM();
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (*i)->updateLLM();
+    for(auto & i : object)
+      i->updateLLM();
   }
 
   void Group::updatedu() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatedu();
+    for(auto & i : dynamicsystem) 
+      i->updatedu();
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (*i)->updatedu();
+    for(auto & i : object)
+      i->updatedu();
   }
 
   void Group::updatezd() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatezd();
+    for(auto & i : dynamicsystem) 
+      i->updatezd();
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (*i)->updateqd();
-      (*i)->updateud();
+    for(auto & i : object) {
+      i->updateqd();
+      i->updateud();
     }
 
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (*i)->updatexd();
+    for(auto & i : link)
+      i->updatexd();
 
-    for(vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
-      (*i)->updatexd();
+    for(auto & i : constraint)
+      i->updatexd();
   }
 
   void Group::initializeUsingXML(DOMElement *element) {
@@ -101,7 +101,7 @@ namespace MBSim {
     e=e->getNextElementSibling();
     E=e->getFirstElementChild();
     while(E) {
-      RigidContour *c=ObjectFactory::createAndInit<RigidContour>(E);
+      auto *c=ObjectFactory::createAndInit<RigidContour>(E);
       addContour(c);
       E=E->getNextElementSibling();
     }

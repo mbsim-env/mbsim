@@ -21,14 +21,14 @@ namespace MBSimFlexibleBody {
     delete NLP;
     delete NV;
 
-    NP = NULL;
-    NLP = NULL;
-    NV = NULL;
+    NP = nullptr;
+    NLP = nullptr;
+    NV = nullptr;
   }
 
   void Contour2sNeutralLinearExternalFFR::createNeutralModeShape() {
     for (int k = 0; k < qSize - 6; k++) {
-      surfaceModeShape.push_back(NurbsSurface());
+      surfaceModeShape.emplace_back();
     }
 
     GeneralMatrix<Vec3> Nodelist(getNumberOfTransNodesU(), getNumberOfTransNodesV());
@@ -177,7 +177,7 @@ namespace MBSimFlexibleBody {
     return openStructure;
   }
 
-  void Contour2sNeutralLinearExternalFFR::readTransNodes(string file) {
+  void Contour2sNeutralLinearExternalFFR::readTransNodes(const string& file) {
     ifstream contourfile((file).c_str());
     if (!contourfile.is_open()) {
       THROW_MBSIMERROR("Can not open file " + file);

@@ -29,6 +29,8 @@
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/frame.h>
 
+#include <utility>
+
 using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
@@ -36,20 +38,20 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &forceDir_, const Mat3xV &momentDir_,Frame *frame1_, Frame *frame2_, Frame *refFrame_, vector<Frame*> i1_, vector<Frame*> i2_) : body1(body1_),body2(body2_),forceDir(forceDir_),momentDir(momentDir_),frame1(frame1_), frame2(frame2_), refFrame(refFrame_), i1(i1_), i2(i2_) {}
+  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &forceDir_, const Mat3xV &momentDir_,Frame *frame1_, Frame *frame2_, Frame *refFrame_, vector<Frame*> i1_, vector<Frame*> i2_) : body1(std::move(body1_)),body2(std::move(body2_)),forceDir(forceDir_),momentDir(momentDir_),frame1(frame1_), frame2(frame2_), refFrame(refFrame_), i1(std::move(i1_)), i2(std::move(i2_)) {}
   Vec JointConstraint::Residuum::operator()(const Vec &x) {
     Vec res(x.size(),NONINIT); 
     int nq = 0;
-    for(unsigned int i=0; i<body1.size(); i++) {
-      int dq = body1[i]->getGeneralizedPositionSize();
-      body1[i]->resetPositionsUpToDate();
-      body1[i]->setqRel(x(nq,nq+dq-1));
+    for(auto & i : body1) {
+      int dq = i->getGeneralizedPositionSize();
+      i->resetPositionsUpToDate();
+      i->setqRel(x(nq,nq+dq-1));
       nq += dq;
     }
-    for(unsigned int i=0; i<body2.size(); i++) {
-      int dq = body2[i]->getGeneralizedPositionSize();
-      body2[i]->resetPositionsUpToDate();
-      body2[i]->setqRel(x(nq,nq+dq-1));
+    for(auto & i : body2) {
+      int dq = i->getGeneralizedPositionSize();
+      i->resetPositionsUpToDate();
+      i->setqRel(x(nq,nq+dq-1));
       nq += dq;
     }
 
@@ -67,25 +69,25 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, JointConstraint)
 
-  JointConstraint::JointConstraint(const string &name) : MechanicalConstraint(name), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), C("F"), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
+  JointConstraint::JointConstraint(const string &name) : MechanicalConstraint(name),  refFrame(nullptr),  C("F"),  saved_ref1(""), saved_ref2("") {
     C.setParent(this);
   }
 
   void JointConstraint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      for (unsigned int i=0; i<saved_RigidBodyFirstSide.size(); i++)
-        bd1.push_back(getByPath<RigidBody>(saved_RigidBodyFirstSide[i]));
-      for (unsigned int i=0; i<saved_RigidBodySecondSide.size(); i++)
-        bd2.push_back(getByPath<RigidBody>(saved_RigidBodySecondSide[i]));
-      for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
-        bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
+      for (const auto & i : saved_RigidBodyFirstSide)
+        bd1.push_back(getByPath<RigidBody>(i));
+      for (const auto & i : saved_RigidBodySecondSide)
+        bd2.push_back(getByPath<RigidBody>(i));
+      for (const auto & i : saved_IndependentBody)
+        bi.push_back(getByPath<RigidBody>(i));
       if(not bi.size())
         THROW_MBSIMERROR("No independent rigid bodies given!");
       if((not bd1.size()) and (not bd2.size()))
         THROW_MBSIMERROR("No dependent rigid bodies given!");
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      if(frame1==NULL or frame2==NULL)
+      if(frame1==nullptr or frame2==nullptr)
         THROW_MBSIMERROR("Not all connections are given!");
       if(bd1.size()) {
         for(unsigned int i=0; i<bd1.size()-1; i++) 
@@ -99,12 +101,12 @@ namespace MBSim {
       }
     }
     else if(stage==preInit) {
-      for(unsigned int i=0; i<bd1.size(); i++) 
-        bd1[i]->addDependency(this);
-      for(unsigned int i=0; i<bd2.size(); i++)
-        bd2[i]->addDependency(this);
-      for(unsigned int i=0; i<bi.size(); i++)
-        addDependency(bi[i]);
+      for(auto & i : bd1) 
+        i->addDependency(this);
+      for(auto & i : bd2)
+        i->addDependency(this);
+      for(auto & i : bi)
+        addDependency(i);
       refFrame=refFrameID?frame2:frame1;
       C.setFrameOfReference(frame1);
     }
@@ -156,7 +158,7 @@ namespace MBSim {
         Js.set(0, computeTangential(forceDir.col(0)));
         Js.set(1, crossProduct(forceDir.col(0), Js.col(0)));
       }
-      if(q0() == NULL)
+      if(q0() == nullptr)
         q.init(0);
       else if(q0.size() == q.size())
         q = q0;
@@ -206,13 +208,13 @@ namespace MBSim {
         bd2[j]->resetJacobiansUpToDate();
       bd2[i]->setUpdateByReference(true);
     }
-    for(size_t i=0; i<bd1.size(); i++) {
-      bd1[i]->resetJacobiansUpToDate();
-      bd1[i]->setuRel(Vec(bd1[i]->getGeneralizedVelocitySize()));
+    for(auto & i : bd1) {
+      i->resetJacobiansUpToDate();
+      i->setuRel(Vec(i->getGeneralizedVelocitySize()));
     }
-    for(size_t i=0; i<bd2.size(); i++) {
-      bd2[i]->resetJacobiansUpToDate();
-      bd2[i]->setuRel(Vec(bd2[i]->getGeneralizedVelocitySize()));
+    for(auto & i : bd2) {
+      i->resetJacobiansUpToDate();
+      i->setuRel(Vec(i->getGeneralizedVelocitySize()));
     }
     SqrMat A(nu);
     A(RangeV(0,dT.cols()-1),RangeV(0,nu-1)) = dT.T()*JT;
@@ -237,13 +239,13 @@ namespace MBSim {
   void JointConstraint::updateGeneralizedJacobians(int jj) {
     if(jj == 0) {
 
-      for(unsigned int i=0; i<bd1.size(); i++) {
-        bd1[i]->setJRel(Mat(bd1[i]->getGeneralizedVelocitySize(),bd1[i]->gethSize()));
-        bd1[i]->setjRel(Vec(bd1[i]->getGeneralizedVelocitySize()));
+      for(auto & i : bd1) {
+        i->setJRel(Mat(i->getGeneralizedVelocitySize(),i->gethSize()));
+        i->setjRel(Vec(i->getGeneralizedVelocitySize()));
       }
-      for(unsigned int i=0; i<bd2.size(); i++) {
-        bd2[i]->setJRel(Mat(bd2[i]->getGeneralizedVelocitySize(),bd2[i]->gethSize()));
-        bd2[i]->setjRel(Vec(bd2[i]->getGeneralizedVelocitySize()));
+      for(auto & i : bd2) {
+        i->setJRel(Mat(i->getGeneralizedVelocitySize(),i->gethSize()));
+        i->setjRel(Vec(i->getGeneralizedVelocitySize()));
       }
       Vec3 WvP0P1 = frame2->evalVelocity() - C.evalVelocity();
       Vec3 WomP0P1 = frame2->evalAngularVelocity() - C.evalAngularVelocity();

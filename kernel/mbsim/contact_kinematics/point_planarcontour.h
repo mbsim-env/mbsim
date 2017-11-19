@@ -36,39 +36,40 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointPlanarContour() : ContactKinematics(), ipoint(0), iplanarcontour(0), point(0), planarcontour(0), searchAllCP(false) { }
+      ContactKinematicsPointPlanarContour() : ContactKinematics() { }
 
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsPointPlanarContour();
+      ~ContactKinematicsPointPlanarContour() override;
 
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame);
+      void assignContours(const std::vector<Contour*> &contour) override;
+      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
+      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override;
       /***************************************************/
 
-      void setSearchAllContactPoints(bool searchAllCP_=true) { searchAllCP = searchAllCP_; }
+      void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
 
    private:
       /**
        * \brief contour index
        */
-      int ipoint, iplanarcontour;
+      int ipoint{0};
+      int iplanarcontour{0};
       
       /**
        * \brief contour classes
        */
-      Point *point;
-      Contour *planarcontour;
+      Point *point{nullptr};
+      Contour *planarcontour{nullptr};
 
       /**
        * \brief root function
        */
       FuncPairPlanarContourPoint *func;
 
-      bool searchAllCP;
+      bool searchAllCP{false};
   };
 
 }

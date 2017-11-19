@@ -41,7 +41,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Plane(const std::string &name="", Frame *R=0) : RigidContour(name,R) { }
+      Plane(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
       
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
@@ -52,37 +52,37 @@ namespace MBSim {
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) override;
 
       /**
        * \return second tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) override;
 
       /**
        * \return second tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta) override;
 
      /**
        * \return first tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override;
 
       /**
        * \return second tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override;
 
-      virtual fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint);
+      fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint) override;
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (length,(fmatvec::Vec2),fmatvec::Vec2(fmatvec::INIT,1))(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {       
@@ -90,7 +90,7 @@ namespace MBSim {
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
   };
 }

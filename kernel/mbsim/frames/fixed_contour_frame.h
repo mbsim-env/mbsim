@@ -29,13 +29,13 @@ namespace MBSim {
   class FixedContourFrame : public ContourFrame {
 
     public:
-      FixedContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta = fmatvec::Vec2(), Contour *contour_=NULL) : ContourFrame(name,zeta), contour(contour_) { }
+      FixedContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta = fmatvec::Vec2(), Contour *contour_=nullptr) : ContourFrame(name,zeta), contour(contour_) { }
 
-      void updatePositions();
-      void updateVelocities();
-      void updateAccelerations();
-      void updateJacobians(int j=0);
-      void updateGyroscopicAccelerations();
+      void updatePositions() override;
+      void updateVelocities() override;
+      void updateAccelerations() override;
+      void updateJacobians(int j=0) override;
+      void updateGyroscopicAccelerations() override;
 
       void setContourOfReference(Contour *contour_) { contour = contour_; }
 

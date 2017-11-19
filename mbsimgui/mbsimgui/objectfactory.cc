@@ -47,56 +47,56 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ObjectFactory* ObjectFactory::instance=NULL;
+  ObjectFactory* ObjectFactory::instance=nullptr;
 
   Environment *ObjectFactory::getEnvironment(DOMElement *element) {
-    if(element==NULL) return NULL;
+    if(element==nullptr) return nullptr;
     Environment *obj;
-    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      if((obj=(*i)->getEnvironment(element))) return obj;
+    for(auto factorie : factories)
+      if((obj=factorie->getEnvironment(element))) return obj;
     cout << string("No Environment of type {")+E(element)->getTagName().first+"}"+E(element)->getTagName().second+" exists.";
-    return 0;
+    return nullptr;
   }
 
   Environment *MBSimObjectFactory::getEnvironment(DOMElement *element) {
-    if(element==0) return 0;
+    if(element==nullptr) return nullptr;
     if(E(element)->getTagName()==MBSIM%"MBSimEnvironment")
       return Environment::getInstance();
-    return 0;
+    return nullptr;
   }
 
-  MBSimObjectFactory *MBSimObjectFactory::instance=NULL;
+  MBSimObjectFactory *MBSimObjectFactory::instance=nullptr;
 
   void MBSimObjectFactory::initialize() {
-    if(instance==0) {
+    if(instance==nullptr) {
       instance=new MBSimObjectFactory;
       ObjectFactory::getInstance()->registerObjectFactory(instance);
     }
   }
 
   Frame* ObjectFactory::createFrame(DOMElement *element) {
-    if(element==NULL) return NULL;
-    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      return (*i)->createFrame(element);
-    return 0;
+    if(element==nullptr) return nullptr;
+    for(auto factorie : factories)
+      return factorie->createFrame(element);
+    return nullptr;
   }
   Frame* MBSimObjectFactory::createFrame(DOMElement *element) {
-    if(element==0) return 0;
+    if(element==nullptr) return nullptr;
     if(E(element)->getTagName()==MBSIM%"FixedRelativeFrame")
       return new FixedRelativeFrame;
     if(E(element)->getTagName()==MBSIMFLEX%"NodeFrame")
       return new NodeFrame;
-    return 0;
+    return nullptr;
   }
 
   Contour* ObjectFactory::createContour(DOMElement *element) {
-    if(element==NULL) return NULL;
-    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      return (*i)->createContour(element);
-    return 0;
+    if(element==nullptr) return nullptr;
+    for(auto factorie : factories)
+      return factorie->createContour(element);
+    return nullptr;
   }
   Contour* MBSimObjectFactory::createContour(DOMElement *element) {
-    if(element==0) return 0;
+    if(element==nullptr) return nullptr;
     if(E(element)->getTagName()==MBSIM%"Point")
       return new Point;
     else if(E(element)->getTagName()==MBSIM%"Line")
@@ -115,48 +115,48 @@ namespace MBSimGUI {
       return new PlanarContour;
     else if(E(element)->getTagName()==MBSIM%"SpatialContour")
       return new SpatialContour;
-    return 0;
+    return nullptr;
   }
 
   Group* ObjectFactory::createGroup(DOMElement *element) {
-    if(element==NULL) return NULL;
+    if(element==nullptr) return nullptr;
     //Group *obj;
-    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      return (((*i)->createGroup(element)));
-    return 0;
+    for(auto factorie : factories)
+      return ((factorie->createGroup(element)));
+    return nullptr;
   }
   Group* MBSimObjectFactory::createGroup(DOMElement *element) {
-    if(element==0) return 0;
+    if(element==nullptr) return nullptr;
     if(E(element)->getTagName()==MBSIM%"DynamicSystemSolver")
       return new DynamicSystemSolver;
     else if(E(element)->getTagName()==MBSIM%"Group")
       return new Group;
-    return 0;
+    return nullptr;
   }
 
   Object* ObjectFactory::createObject(DOMElement *element) {
-    if(element==NULL) return NULL;
-    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      return (*i)->createObject(element);
-    return 0;
+    if(element==nullptr) return nullptr;
+    for(auto factorie : factories)
+      return factorie->createObject(element);
+    return nullptr;
   }
   Object* MBSimObjectFactory::createObject(DOMElement *element) {
-    if(element==0) return 0;
+    if(element==nullptr) return nullptr;
     if(E(element)->getTagName()==MBSIM%"RigidBody")
       return new RigidBody;
     if(E(element)->getTagName()==MBSIMFLEX%"FlexibleBodyFFR")
       return new FlexibleBodyFFR;
-    return 0;
+    return nullptr;
   }
 
   Link* ObjectFactory::createLink(DOMElement *element) {
-    if(element==NULL) return NULL;
-    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      return (*i)->createLink(element);
-    return 0;
+    if(element==nullptr) return nullptr;
+    for(auto factorie : factories)
+      return factorie->createLink(element);
+    return nullptr;
   }
   Link* MBSimObjectFactory::createLink(DOMElement *element) {
-    if(element==0) return 0;
+    if(element==nullptr) return nullptr;
     if(E(element)->getTagName()==MBSIM%"KineticExcitation")
       return new KineticExcitation;
     if(E(element)->getTagName()==MBSIM%"SpringDamper")
@@ -203,17 +203,17 @@ namespace MBSimGUI {
       return new ExternSignalSource;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")
       return new ExternSignalSink;
-    return 0;
+    return nullptr;
   }  
 
   Constraint* ObjectFactory::createConstraint(DOMElement *element) {
-    if(element==NULL) return NULL;
-    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      return (*i)->createConstraint(element);
-    return 0;
+    if(element==nullptr) return nullptr;
+    for(auto factorie : factories)
+      return factorie->createConstraint(element);
+    return nullptr;
   }
   Constraint* MBSimObjectFactory::createConstraint(DOMElement *element) {
-    if(element==0) return 0;
+    if(element==nullptr) return nullptr;
     else if(E(element)->getTagName()==MBSIM%"GeneralizedGearConstraint")
       return new GeneralizedGearConstraint;
     else if(E(element)->getTagName()==MBSIM%"GeneralizedPositionConstraint")
@@ -226,17 +226,17 @@ namespace MBSimGUI {
       return new JointConstraint;
     else if(E(element)->getTagName()==MBSIM%"GeneralizedConnectionConstraint")
       return new GeneralizedConnectionConstraint;
-    return 0;
+    return nullptr;
   }
 
   Observer* ObjectFactory::createObserver(DOMElement *element) {
-    if(element==NULL) return NULL;
-    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      return (*i)->createObserver(element);
-    return 0;
+    if(element==nullptr) return nullptr;
+    for(auto factorie : factories)
+      return factorie->createObserver(element);
+    return nullptr;
   }
   Observer* MBSimObjectFactory::createObserver(DOMElement *element) {
-    if(element==0) return 0;
+    if(element==nullptr) return nullptr;
     if(E(element)->getTagName()==MBSIM%"KinematicCoordinatesObserver")
       return new KinematicCoordinatesObserver;
     if(E(element)->getTagName()==MBSIM%"RelativeKinematicsObserver")
@@ -253,18 +253,18 @@ namespace MBSimGUI {
       return new RigidBodyObserver;
     if(E(element)->getTagName()==MBSIM%"RigidBodySystemObserver")
       return new RigidBodySystemObserver;
-    return 0;
+    return nullptr;
   }  
 
   Solver* ObjectFactory::createSolver(DOMElement *element) {
-    if(element==NULL) return NULL;
-    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      return (*i)->createSolver(element);
-    return 0;
+    if(element==nullptr) return nullptr;
+    for(auto factorie : factories)
+      return factorie->createSolver(element);
+    return nullptr;
   }
 
   Solver* MBSimObjectFactory::createSolver(DOMElement *element) {
-    if(element==0) return 0;
+    if(element==nullptr) return nullptr;
     if(E(element)->getTagName()==MBSIMINT%"DOPRI5Integrator")
       return new DOPRI5Integrator;
     else if(E(element)->getTagName()==MBSIMINT%"RADAU5Integrator")
@@ -283,18 +283,18 @@ namespace MBSimGUI {
       return new Eigenanalyser;
     else if(E(element)->getTagName()==MBSIMANALYSER%"HarmonicResponseAnalyser")
       return new HarmonicResponseAnalyser;
-    return 0;
+    return nullptr;
   }
 
   Parameter* ObjectFactory::createParameter(DOMElement *element) {
-    if(element==NULL) return NULL;
-    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      return (*i)->createParameter(element);
-    return 0;
+    if(element==nullptr) return nullptr;
+    for(auto factorie : factories)
+      return factorie->createParameter(element);
+    return nullptr;
   }
 
   Parameter* MBSimObjectFactory::createParameter(DOMElement *element) {
-    if(element==0) return 0;
+    if(element==nullptr) return nullptr;
     if(E(element)->getTagName()==PV%"stringParameter")
       return new StringParameter;
     else if(E(element)->getTagName()==PV%"scalarParameter")
@@ -305,7 +305,7 @@ namespace MBSimGUI {
       return new MatrixParameter;
     else if(E(element)->getTagName()==PV%"import")
       return new ImportParameter;
-    return 0;
+    return nullptr;
   }
 
 }

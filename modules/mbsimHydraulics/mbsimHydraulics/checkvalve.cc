@@ -46,6 +46,8 @@
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/arrow.h>
 
+#include <utility>
+
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
@@ -57,21 +59,21 @@ namespace MBSimHydraulics {
 
   class colorLink : public Link {
     public:
-      colorLink(const std::string &name, const shared_ptr<OpenMBV::DynamicColoredBody> &body_, ClosableRigidLine * l_) : Link(name), body(body_), l(l_) {}
-      void updateWRef(const fmatvec::Mat&, int) { }
-      void updateVRef(const fmatvec::Mat&, int) { }
-      void updatehRef(const fmatvec::Vec&, int) { }
+      colorLink(const std::string &name, shared_ptr<OpenMBV::DynamicColoredBody> body_, ClosableRigidLine * l_) : Link(name), body(std::move(body_)), l(l_) {}
+      void updateWRef(const fmatvec::Mat&, int) override { }
+      void updateVRef(const fmatvec::Mat&, int) override { }
+      void updatehRef(const fmatvec::Vec&, int) override { }
       void updatedhdqRef(const fmatvec::Mat&, int) { }
       void updatedhduRef(const fmatvec::SqrMat&, int) { }
       void updatedhdtRef(const fmatvec::Vec&, int) { }
-      void updaterRef(const fmatvec::Vec&, int) { }
-      bool isActive() const { return false; }
-      bool gActiveChanged() { return false; }
-      virtual bool isSingleValued() const { return true; }
-      void init(InitStage stage, const InitConfigSet &config) { }
-      void updateg()  { }
-      void updategd() { }
-      void plot() { Link::plot(); body->setDynamicColor((l->isClosed())?.9:.1); }
+      void updaterRef(const fmatvec::Vec&, int) override { }
+      bool isActive() const override { return false; }
+      bool gActiveChanged() override { return false; }
+      bool isSingleValued() const override { return true; }
+      void init(InitStage stage, const InitConfigSet &config) override { }
+      void updateg() override  { }
+      void updategd() override { }
+      void plot() override { Link::plot(); body->setDynamicColor((l->isClosed())?.9:.1); }
     private:
       shared_ptr<OpenMBV::DynamicColoredBody> body;
       ClosableRigidLine * l;
@@ -79,8 +81,8 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, Checkvalve)
 
-  Checkvalve::Checkvalve(const string &name) : Group(name), line(new ClosableRigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new DirectionalSpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0), mBall(0), refFrameString("")
-                                               , openMBVBodies(false), openMBVArrows(false), openMBVFrames(false)
+  Checkvalve::Checkvalve(const string &name) : Group(name), line(new ClosableRigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new DirectionalSpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")),  refFrameString("")
+                                                
                                                {
                                                  addObject(line);
                                                  addObject(ballSeat);
@@ -229,7 +231,7 @@ namespace MBSimHydraulics {
     setLineDiameter(E(ee)->getText<double>());
     ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"checkvalvePressureLoss");
     DOMElement * eee = ee->getFirstElementChild();
-    CheckvalveClosablePressureLoss * ccpl_=MBSim::ObjectFactory::createAndInit<CheckvalveClosablePressureLoss>(eee);
+    auto * ccpl_=MBSim::ObjectFactory::createAndInit<CheckvalveClosablePressureLoss>(eee);
     setLinePressureLoss(ccpl_);
     eee = E(ee)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalXOpen");
     setLineMinimalXOpen(E(eee)->getText<double>());
@@ -244,26 +246,26 @@ namespace MBSimHydraulics {
       setBallInitialPosition(E(ee)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"Spring");
     ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"forceFunction");
-    MBSim::Function<double(double,double)> *f=MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double,double)> >(ee->getFirstElementChild());
+    auto *f=MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double,double)> >(ee->getFirstElementChild());
     setSpringForceFunction(f);
     ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"unloadedLength");
     if(ee) setSpringUnloadedLength(E(ee)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"SeatContact");
     ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"contactForceLaw");
-    GeneralizedForceLaw *gflS=MBSim::ObjectFactory::createAndInit<GeneralizedForceLaw>(ee->getFirstElementChild());
+    auto *gflS=MBSim::ObjectFactory::createAndInit<GeneralizedForceLaw>(ee->getFirstElementChild());
     setSeatContactForceLaw(gflS);
     ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"contactImpactLaw");
-    GeneralizedImpactLaw *gilS=MBSim::ObjectFactory::createAndInit<GeneralizedImpactLaw>(ee->getFirstElementChild());
+    auto *gilS=MBSim::ObjectFactory::createAndInit<GeneralizedImpactLaw>(ee->getFirstElementChild());
     if (gilS) {
       setSeatContactImpactLaw(gilS);
     }
     setMaximalOpening(E(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"maximalOpening"))->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"MaximalOpeningContact");
     ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"contactForceLaw");
-    GeneralizedForceLaw * gflM=MBSim::ObjectFactory::createAndInit<GeneralizedForceLaw>(ee->getFirstElementChild());
+    auto * gflM=MBSim::ObjectFactory::createAndInit<GeneralizedForceLaw>(ee->getFirstElementChild());
     setMaximalContactForceLaw(gflM);
     ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"contactImpactLaw");
-    GeneralizedImpactLaw * gilM=MBSim::ObjectFactory::createAndInit<GeneralizedImpactLaw>(ee->getFirstElementChild());
+    auto * gilM=MBSim::ObjectFactory::createAndInit<GeneralizedImpactLaw>(ee->getFirstElementChild());
     if (gilM) {
       setMaximalContactImpactLaw(gilM);
     }

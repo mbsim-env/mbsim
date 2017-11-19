@@ -30,12 +30,11 @@ namespace MBSim {
   class IdentityFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     using B = fmatvec::Function<Ret(Arg)>; 
     public:
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
-      Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(ToDouble<Arg>::cast(x)); }
-      typename B::DRetDArg parDer(const Arg &x) { return FromDouble<Ret>::cast(1); }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }
-      Ret parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
+      Ret operator()(const Arg &x) override { return FromDouble<Ret>::cast(ToDouble<Arg>::cast(x)); }
+      typename B::DRetDArg parDer(const Arg &x) override { return FromDouble<Ret>::cast(1); }
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { return FromDouble<Ret>::cast(0); }
   };
 
 }

@@ -31,7 +31,7 @@ namespace MBSimGUI {
 
   extern bool currentTask;
 
-  Environment *Environment::instance=NULL;
+  Environment *Environment::instance=nullptr;
 
   void DynamicSystemSolver::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
@@ -71,13 +71,13 @@ namespace MBSimGUI {
     for(int i=0; i<3; i++) {
       DOMElement *ele5 = D(doc)->createElement( PV%"ele" );
       DOMText *text = doc->createTextNode(X()%g[i]);
-      ele5->insertBefore(text, NULL);
-      ele4->insertBefore(ele5, NULL);
+      ele5->insertBefore(text, nullptr);
+      ele4->insertBefore(ele5, nullptr);
     }
-    ele3->insertBefore( ele4, NULL );
-    ele2->insertBefore( ele3, NULL );
-    environments->insertBefore( ele2, NULL );
-    ele0->insertBefore( environments, NULL );
+    ele3->insertBefore( ele4, nullptr );
+    ele2->insertBefore( ele3, nullptr );
+    environments->insertBefore( ele2, nullptr );
+    ele0->insertBefore( environments, nullptr );
     return ele0;
   }
 
@@ -93,7 +93,7 @@ namespace MBSimGUI {
     if(currentTask==1) {
       DOMElement *ele1 = D(element->getOwnerDocument())->createElement( MBSIM%"plotFeatureRecursive" );
       E(ele1)->setAttribute("value","plotRecursive");
-      ele1->insertBefore(element->getOwnerDocument()->createTextNode(X()%"false"), NULL);
+      ele1->insertBefore(element->getOwnerDocument()->createTextNode(X()%"false"), nullptr);
       element->insertBefore( ele1, element->getFirstElementChild() );
     }
     return element;

@@ -13,7 +13,7 @@ namespace MBSimFMI {
   /*! A pure virtual MBSim FMI instance base class */
   class FMIInstanceBase {
     public:
-      virtual ~FMIInstanceBase() {}
+      virtual ~FMIInstanceBase() = default;
       virtual void logException(const std::exception &ex)=0;
       virtual void setDebugLogging           (fmiBoolean loggingOn)=0;
       virtual void setTime                   (fmiReal time_)=0;

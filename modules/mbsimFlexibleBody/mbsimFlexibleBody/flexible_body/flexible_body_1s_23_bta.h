@@ -42,35 +42,35 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBody1s23BTA() {}
+      ~FlexibleBody1s23BTA() override = default;
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements();
-      virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
-      virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
-      virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
+      void BuildElements() override;
+      void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) override;
+      void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) override;
+      void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) override;
 
-      virtual void updatePositions(Frame1s* frame);
-      virtual void updateVelocities(Frame1s* frame);
-      virtual void updateAccelerations(Frame1s* frame);
-      virtual void updateJacobians(Frame1s* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(Frame1s* frame);
+      void updatePositions(Frame1s* frame) override;
+      void updateVelocities(Frame1s* frame) override;
+      void updateAccelerations(Frame1s* frame) override;
+      void updateJacobians(Frame1s* frame, int j=0) override;
+      void updateGyroscopicAccelerations(Frame1s* frame) override;
 
-      virtual void updatePositions(NodeFrame* frame);
-      virtual void updateVelocities(NodeFrame* frame);
-      virtual void updateAccelerations(NodeFrame* frame);
-      virtual void updateJacobians(NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
+      void updatePositions(NodeFrame* frame) override;
+      void updateVelocities(NodeFrame* frame) override;
+      void updateAccelerations(NodeFrame* frame) override;
+      void updateJacobians(NodeFrame* frame, int j=0) override;
+      void updateGyroscopicAccelerations(NodeFrame* frame) override;
 
-      virtual fmatvec::Vec3 getAngles(double s);
+      fmatvec::Vec3 getAngles(double s) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -98,7 +98,7 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vector<fmatvec::Fixed<6>, double> getVelocities(double x);
 
-      fmatvec::SqrMat3 getOrientation(double x);
+      fmatvec::SqrMat3 getOrientation(double x) override;
 
     protected:
       /**
@@ -117,32 +117,32 @@ namespace MBSimFlexibleBody {
       /**
        * \brief length of entire beam and finite elements
        */
-      double l0;
+      double l0{0.};
 
       /**
        * \brief elastic modules 
        */
-      double E, G;
+      double E{0}, G;
 
       /**
        * \brief area of cross-section
        */
-      double A;
+      double A{0};
 
       /**
        * \brief area moment of inertia 
        */
-      double Iyy, Izz, It;
+      double Iyy{0}, Izz{0}, It;
 
       /**
        * \brief density 
        */
-      double rho;
+      double rho{0};
 
       /**
        * \brief contour radius
        */
-      double rc;
+      double rc{0};
 
       /**
        * \brief damping 

@@ -33,24 +33,24 @@ namespace MBSim {
       double A, f, phi0, y0;
     public:
       SinusoidalFunction(double A_=0, double f_=0, double phi0_=0, double y0_=0) : A(A_), f(f_), phi0(phi0_), y0(y0_) { }
-      int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
-      Ret operator()(const Arg &x) {  
+      int getArgSize() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
+      Ret operator()(const Arg &x) override {  
         return FromDouble<Ret>::cast(y0+A*sin(2.*M_PI*f*ToDouble<Arg>::cast(x)+phi0));
       }
-      typename B::DRetDArg parDer(const Arg &x) {  
+      typename B::DRetDArg parDer(const Arg &x) override {  
         double om = 2.*M_PI*f;
         return FromDouble<Ret>::cast(A*om*cos(om*ToDouble<Arg>::cast(x)+phi0));
       }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { 
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { 
         double om = 2.*M_PI*f;
         return FromDouble<Ret>::cast(-A*om*om*sin(om*ToDouble<Arg>::cast(x)+phi0)*ToDouble<Arg>::cast(xDir));
       }
-      Ret parDerParDer(const double &x) {  
+      typename B::DDRetDDArg parDerParDer(const Arg &x) override {  
         double om = 2.*M_PI*f;
-        return FromDouble<Ret>::cast(-A*om*om*sin(om*x+phi0));
+        return FromDouble<Ret>::cast(-A*om*om*sin(x+phi0));
       }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"amplitude");
         A=MBXMLUtils::E(e)->getText<double>();
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"frequency");

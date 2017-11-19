@@ -35,23 +35,23 @@ namespace MBSimGUI {
     public:
       virtual void updateWidget() { }
       virtual void resize_(int m, int n) { }
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return NULL; }
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL) { return NULL; }
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return nullptr; }
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) { return nullptr; }
   };
 
   class Widget : public QWidget, public WidgetInterface {
     Q_OBJECT
     public:
-      Widget() { }
+      Widget() = default;
     signals:
       void widgetChanged();
     public slots:
-      void updateWidget() { }
+      void updateWidget() override { }
   };
 
   class WidgetFactory {
     public:
-      virtual ~WidgetFactory() { }
+      virtual ~WidgetFactory() = default;
       virtual QWidget* createWidget(int i=0) = 0;
       virtual QString getName(int i=0) const { return ""; }
       virtual int getSize() const { return 0; }

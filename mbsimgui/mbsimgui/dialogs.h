@@ -68,7 +68,7 @@ namespace MBSimGUI {
 
     public:
       ObjectBrowser(Element* element, Object* selection, QWidget *obj);
-      ~ObjectBrowser() {}
+      ~ObjectBrowser() override = default;
       QTreeWidget* getObjectList() const {return objectList;}
       void updateWidget(Object *object);
     protected:
@@ -79,8 +79,8 @@ namespace MBSimGUI {
       Element* element;
       QString oldID;
       void mbs2ObjectTree(Element* item, QTreeWidgetItem* parentItem);
-      void showEvent(QShowEvent *event);
-      void hideEvent(QHideEvent *event);
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       protected slots:
         void checkForObject(QTreeWidgetItem* item_,int);
   };
@@ -90,7 +90,7 @@ namespace MBSimGUI {
 
     public:
       LinkBrowser(Element* element, Link* selection, QWidget *lnk);
-      ~LinkBrowser() {}
+      ~LinkBrowser() override = default;
       QTreeWidget* getLinkList() const {return linkList;}
       void updateWidget(Link *link);
     protected:
@@ -101,8 +101,8 @@ namespace MBSimGUI {
       Element* element;
       QString oldID;
       void mbs2LinkTree(Element* item, QTreeWidgetItem* parentItem);
-      void showEvent(QShowEvent *event);
-      void hideEvent(QHideEvent *event);
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       protected slots:
         void checkForLink(QTreeWidgetItem* item_,int);
   };
@@ -112,7 +112,7 @@ namespace MBSimGUI {
 
     public:
       ConstraintBrowser(Element* element, Constraint* selection, QWidget *lnk);
-      ~ConstraintBrowser() {}
+      ~ConstraintBrowser() override = default;
       QTreeWidget* getConstraintList() const {return constraintList;}
       void updateWidget(Constraint *constraint);
     protected:
@@ -123,8 +123,8 @@ namespace MBSimGUI {
       Element* element;
       QString oldID;
       void mbs2ConstraintTree(Element* item, QTreeWidgetItem* parentItem);
-      void showEvent(QShowEvent *event);
-      void hideEvent(QHideEvent *event);
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       protected slots:
         void checkForConstraint(QTreeWidgetItem* item_,int);
   };
@@ -134,7 +134,7 @@ namespace MBSimGUI {
 
     public:
       RigidBodyBrowser(Element* element, RigidBody* selection, QWidget *obj);
-      ~RigidBodyBrowser() {}
+      ~RigidBodyBrowser() override = default;
       QTreeWidget* getRigidBodyList() const {return rigidBodyList;}
       void updateWidget(RigidBody *rigidBody);
     protected:
@@ -145,8 +145,8 @@ namespace MBSimGUI {
       Element* element;
       QString oldID;
       void mbs2RigidBodyTree(Element* item, QTreeWidgetItem* parentItem);
-      void showEvent(QShowEvent *event);
-      void hideEvent(QHideEvent *event);
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       protected slots:
         void checkForRigidBody(QTreeWidgetItem* item_,int);
   };
@@ -156,7 +156,7 @@ namespace MBSimGUI {
 
     public:
       FrameBrowser(Element* element, Frame* selection, QWidget *obj);
-      ~FrameBrowser() {}
+      ~FrameBrowser() override = default;
       QTreeWidget* getFrameList() const {return frameList;}
       void updateWidget(Frame *frame);
     protected:
@@ -167,8 +167,8 @@ namespace MBSimGUI {
       Element* element;
       QString oldID;
       void mbs2FrameTree(Element* item, QTreeWidgetItem* parentItem);
-      void showEvent(QShowEvent *event);
-      void hideEvent(QHideEvent *event);
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       protected slots:
         void checkForFrame(QTreeWidgetItem* item_,int);
   };
@@ -178,7 +178,7 @@ namespace MBSimGUI {
 
     public:
       ContourBrowser(Element* element, Contour* selection, QWidget *obj);
-      ~ContourBrowser() {}
+      ~ContourBrowser() override = default;
       QTreeWidget* getContourList() const {return contourList;}
       void updateWidget(Contour *contour);
     protected:
@@ -189,8 +189,8 @@ namespace MBSimGUI {
       Element* element;
       QString oldID;
       void mbs2ContourTree(Element* item, QTreeWidgetItem* parentItem);
-      void showEvent(QShowEvent *event);
-      void hideEvent(QHideEvent *event);
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       protected slots:
         void checkForContour(QTreeWidgetItem* item_,int);
   };
@@ -200,7 +200,7 @@ namespace MBSimGUI {
 
     public:
       SignalBrowser(Element* element, Signal* selection, QWidget *obj);
-      ~SignalBrowser() {}
+      ~SignalBrowser() override = default;
       QTreeWidget* getSignalList() const {return signalList;}
       void updateWidget(Signal *signal);
     protected:

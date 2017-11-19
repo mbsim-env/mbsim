@@ -29,22 +29,22 @@ namespace MBSimHydraulics {
   /*! RigidLine */
   class RigidLine : public RigidHLine {
     public:
-      RigidLine(const std::string &name="") : RigidHLine(name), diameter(0), pL(NULL), ReynoldsFactor(0) {}
-      ~RigidLine();
+      RigidLine(const std::string &name="") : RigidHLine(name)  {}
+      ~RigidLine() override;
 
       void setDiameter(double diameter_) {diameter=diameter_; }
       double getDiameter() const {return diameter; }
       void setLinePressureLoss(LinePressureLoss * pL_);
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void plot();
+      void plot() override;
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
     private:
-      double diameter;
-      LinePressureLoss * pL;
-      double ReynoldsFactor;
+      double diameter{0};
+      LinePressureLoss * pL{nullptr};
+      double ReynoldsFactor{0};
   };
 
 
@@ -53,8 +53,8 @@ namespace MBSimHydraulics {
   /*! ClosableRigidLine */
   class ClosableRigidLine : public RigidLine {
     public:
-      ClosableRigidLine(const std::string &name="") : RigidLine(name), cpL(NULL), cpLFunction(NULL), cpLMinValue(0), cpLBilateral(false) {}
-      ~ClosableRigidLine();
+      ClosableRigidLine(const std::string &name="") : RigidLine(name) {}
+      ~ClosableRigidLine() override;
 
       void setClosablePressureLoss(ClosablePressureLoss * cpL_);
       ClosablePressureLoss * getClosablePressureLoss() const {return cpL; }
@@ -70,14 +70,14 @@ namespace MBSimHydraulics {
       bool isClosed() const;
       double evalRegularizedValue() const;
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
     private:
-      ClosablePressureLoss * cpL;
-      MBSim::Function<double(double)> * cpLFunction;
-      double cpLMinValue;
-      bool cpLBilateral;
+      ClosablePressureLoss * cpL{nullptr};
+      MBSim::Function<double(double)> * cpLFunction{nullptr};
+      double cpLMinValue{0};
+      bool cpLBilateral{false};
   };
 
 
@@ -86,19 +86,19 @@ namespace MBSimHydraulics {
   /*! UnidirectionalRigidLine */
   class UnidirectionalRigidLine : public RigidLine {
     public:
-      UnidirectionalRigidLine(const std::string &name="") : RigidLine(name), upL(NULL), dpMin(0) {}
+      UnidirectionalRigidLine(const std::string &name="") : RigidLine(name) {}
 
       void setUnidirectionalPressureLoss(UnidirectionalPressureLoss * upL_) {upL=upL_; }
       UnidirectionalPressureLoss * getUnidirectionalPressureLoss() const {return upL; }
       void setMinimalPressureDrop(double v) {dpMin=v; }
       double getMinimalPressureDrop() const {return dpMin; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
     private:
-      UnidirectionalPressureLoss * upL;
-      double dpMin;
+      UnidirectionalPressureLoss * upL{nullptr};
+      double dpMin{0};
   };
 
 }

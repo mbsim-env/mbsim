@@ -38,9 +38,9 @@ namespace MBSim {
        */
       FuncPairPlanarContourCircle(Circle* circle_, Contour *contour_) : contour(contour_), circle(circle_) { }
 
-      double operator()(const double &alpha);
+      double operator()(const double &alpha) override;
 
-      fmatvec::Vec3 evalWrD(const double &alpha);
+      fmatvec::Vec3 evalWrD(const double &alpha) override;
 
     private:
       /**

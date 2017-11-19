@@ -35,7 +35,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      UnilateralNewtonImpact(double epsilon_=0) : epsilon(epsilon_), gd_limit(1e-2) { }
+      UnilateralNewtonImpact(double epsilon_=0) : epsilon(epsilon_) { }
 
       /**
        * \brief constructor
@@ -45,18 +45,18 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~UnilateralNewtonImpact() { }
+      ~UnilateralNewtonImpact() override = default;
 
       /* INHERITED INTERFACE */
-      virtual double project(double la, double gdn, double gda, double r, double laMin=0);
-      virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0);
-      virtual double solve(double G, double gdn, double gda);
-      virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0);
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      double project(double la, double gdn, double gda, double r, double laMin=0) override;
+      fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0) override;
+      double solve(double G, double gdn, double gda) override;
+      bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
     protected:
-      double epsilon, gd_limit;
+      double epsilon, gd_limit{1e-2};
   };
 
 }

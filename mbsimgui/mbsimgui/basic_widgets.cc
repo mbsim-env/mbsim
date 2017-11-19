@@ -31,6 +31,7 @@
 #include "mainwindow.h"
 #include <QtGui>
 #include <boost/lexical_cast.hpp>
+#include <utility>
 #include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
@@ -93,8 +94,8 @@ namespace MBSimGUI {
       mw->highlightObject(selection->getID());
   }
 
-  LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
-    QVBoxLayout *layout = new QVBoxLayout;
+  LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(nullptr), omitFrame(omitFrame_) {
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -142,11 +143,11 @@ namespace MBSimGUI {
 
   DOMElement* LocalFrameOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getFrame().toStdString());
-    return NULL;
+    return nullptr;
   }
 
-  ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
-    QVBoxLayout *layout = new QVBoxLayout;
+  ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(nullptr), omitFrame(omitFrame_) {
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -194,11 +195,11 @@ namespace MBSimGUI {
 
   DOMElement* ParentFrameOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getFrame().toStdString());
-    return NULL;
+    return nullptr;
   }
 
   FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -230,7 +231,7 @@ namespace MBSimGUI {
     if(frameBrowser->getFrameList()->currentItem())
       selectedFrame = (Frame*)static_cast<ElementItem*>(frameBrowser->getFrameList()->currentItem())->getElement();
     else
-      selectedFrame = 0;
+      selectedFrame = nullptr;
     frame->setText(selectedFrame?selectedFrame->getXMLPath(element,true):"");
   }
 
@@ -253,11 +254,11 @@ namespace MBSimGUI {
 
   DOMElement* FrameOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getFrame().toStdString());
-    return NULL;
+    return nullptr;
   }
 
   ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -284,7 +285,7 @@ namespace MBSimGUI {
     if(contourBrowser->getContourList()->currentItem())
       selectedContour = (Contour*)static_cast<ElementItem*>(contourBrowser->getContourList()->currentItem())->getElement();
     else
-      selectedContour = 0;
+      selectedContour = nullptr;
     contour->setText(selectedContour?selectedContour->getXMLPath(element,true):"");
   }
 
@@ -305,18 +306,18 @@ namespace MBSimGUI {
 
   DOMElement* ContourOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getContour().toStdString());
-    return NULL;
+    return nullptr;
   }
 
   RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     body = new QLineEdit;
     if(selectedBody)
       body->setText(selectedBody->getXMLPath(element,true));
-    bodyBrowser = new RigidBodyBrowser(element->getRoot(),0,this);
+    bodyBrowser = new RigidBodyBrowser(element->getRoot(),nullptr,this);
     connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
     layout->addWidget(body);
     QPushButton *button = new QPushButton(tr("Browse"));
@@ -336,7 +337,7 @@ namespace MBSimGUI {
     if(bodyBrowser->getRigidBodyList()->currentItem())
       selectedBody = static_cast<RigidBody*>(static_cast<ElementItem*>(bodyBrowser->getRigidBodyList()->currentItem())->getElement());
     else
-      selectedBody = 0;
+      selectedBody = nullptr;
     body->setText(selectedBody?selectedBody->getXMLPath(element,true):"");
     emit bodyChanged();
     emit Widget::updateWidget();
@@ -361,18 +362,18 @@ namespace MBSimGUI {
 
   DOMElement* RigidBodyOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getBody().toStdString());
-    return NULL;
+    return nullptr;
   }
 
   GearInputReferenceWidget::GearInputReferenceWidget(Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     body = new QLineEdit;
     if(selectedBody)
       body->setText(selectedBody->getXMLPath(element,true));
-    bodyBrowser = new RigidBodyBrowser(element->getRoot(),0,this);
+    bodyBrowser = new RigidBodyBrowser(element->getRoot(),nullptr,this);
     connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
     layout->addWidget(body);
     QPushButton *button = new QPushButton(tr("Browse"));
@@ -396,7 +397,7 @@ namespace MBSimGUI {
     if(bodyBrowser->getRigidBodyList()->currentItem())
       selectedBody = static_cast<RigidBody*>(static_cast<ElementItem*>(bodyBrowser->getRigidBodyList()->currentItem())->getElement());
     else
-      selectedBody = 0;
+      selectedBody = nullptr;
     body->setText(selectedBody?selectedBody->getXMLPath(element,true):"");
     emit bodyChanged();
   }
@@ -422,18 +423,18 @@ namespace MBSimGUI {
   DOMElement* GearInputReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getBody().toStdString());
     E(static_cast<DOMElement*>(parent))->setAttribute("ratio", getRatio().toStdString());
-    return NULL;
+    return nullptr;
   }
 
   ObjectOfReferenceWidget::ObjectOfReferenceWidget(Element *element_, Object* selectedObject_) : element(element_), selectedObject(selectedObject_) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     object = new QLineEdit;
     if(selectedObject)
       object->setText(selectedObject->getXMLPath(element,true));
-    objectBrowser = new ObjectBrowser(element->getRoot(),0,this);
+    objectBrowser = new ObjectBrowser(element->getRoot(),nullptr,this);
     connect(objectBrowser,SIGNAL(accepted()),this,SLOT(setObject()));
     layout->addWidget(object);
     QPushButton *button = new QPushButton(tr("Browse"));
@@ -453,7 +454,7 @@ namespace MBSimGUI {
     if(objectBrowser->getObjectList()->currentItem())
       selectedObject = static_cast<Object*>(static_cast<ElementItem*>(objectBrowser->getObjectList()->currentItem())->getElement());
     else
-      selectedObject = 0;
+      selectedObject = nullptr;
     object->setText(selectedObject?selectedObject->getXMLPath(element,true):"");
     emit objectChanged();
   }
@@ -476,18 +477,18 @@ namespace MBSimGUI {
 
   DOMElement* ObjectOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getObject().toStdString());
-    return NULL;
+    return nullptr;
   }
 
   LinkOfReferenceWidget::LinkOfReferenceWidget(Element *element_, Link* selectedLink_) : element(element_), selectedLink(selectedLink_) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     link = new QLineEdit;
     if(selectedLink)
       link->setText(selectedLink->getXMLPath(element,true));
-    linkBrowser = new LinkBrowser(element->getRoot(),0,this);
+    linkBrowser = new LinkBrowser(element->getRoot(),nullptr,this);
     connect(linkBrowser,SIGNAL(accepted()),this,SLOT(setLink()));
     layout->addWidget(link);
     QPushButton *button = new QPushButton(tr("Browse"));
@@ -507,7 +508,7 @@ namespace MBSimGUI {
     if(linkBrowser->getLinkList()->currentItem())
       selectedLink = static_cast<Link*>(static_cast<ElementItem*>(linkBrowser->getLinkList()->currentItem())->getElement());
     else
-      selectedLink = 0;
+      selectedLink = nullptr;
     link->setText(selectedLink?selectedLink->getXMLPath(element,true):"");
     emit linkChanged();
   }
@@ -530,18 +531,18 @@ namespace MBSimGUI {
 
   DOMElement* LinkOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getLink().toStdString());
-    return NULL;
+    return nullptr;
   }
 
   ConstraintOfReferenceWidget::ConstraintOfReferenceWidget(Element *element_, Constraint* selectedConstraint_) : element(element_), selectedConstraint(selectedConstraint_) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     constraint = new QLineEdit;
     if(selectedConstraint)
       constraint->setText(selectedConstraint->getXMLPath(element,true));
-    constraintBrowser = new ConstraintBrowser(element->getRoot(),0,this);
+    constraintBrowser = new ConstraintBrowser(element->getRoot(),nullptr,this);
     connect(constraintBrowser,SIGNAL(accepted()),this,SLOT(setConstraint()));
     layout->addWidget(constraint);
     QPushButton *button = new QPushButton(tr("Browse"));
@@ -561,7 +562,7 @@ namespace MBSimGUI {
     if(constraintBrowser->getConstraintList()->currentItem())
       selectedConstraint = static_cast<Constraint*>(static_cast<ElementItem*>(constraintBrowser->getConstraintList()->currentItem())->getElement());
     else
-      selectedConstraint = 0;
+      selectedConstraint = nullptr;
     constraint->setText(selectedConstraint?selectedConstraint->getXMLPath(element,true):"");
     emit constraintChanged();
   }
@@ -584,18 +585,18 @@ namespace MBSimGUI {
 
   DOMElement* ConstraintOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getConstraint().toStdString());
-    return NULL;
+    return nullptr;
   }
 
   SignalOfReferenceWidget::SignalOfReferenceWidget(Element *element_, Signal* selectedSignal_) : element(element_), selectedSignal(selectedSignal_) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     signal = new QLineEdit;
     if(selectedSignal)
       signal->setText(selectedSignal->getXMLPath(element,true));
-    signalBrowser = new SignalBrowser(element->getRoot(),0,this);
+    signalBrowser = new SignalBrowser(element->getRoot(),nullptr,this);
     connect(signalBrowser,SIGNAL(accepted()),this,SLOT(setSignal()));
     layout->addWidget(signal);
     QPushButton *button = new QPushButton(tr("Browse"));
@@ -615,7 +616,7 @@ namespace MBSimGUI {
     if(signalBrowser->getSignalList()->currentItem())
       selectedSignal = static_cast<Signal*>(static_cast<ElementItem*>(signalBrowser->getSignalList()->currentItem())->getElement());
     else
-      selectedSignal = 0;
+      selectedSignal = nullptr;
     signal->setText(selectedSignal?selectedSignal->getXMLPath(element,true):"");
     emit signalChanged();
   }
@@ -638,11 +639,11 @@ namespace MBSimGUI {
 
   DOMElement* SignalOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getSignal().toStdString());
-    return NULL;
+    return nullptr;
   }
 
   FileWidget::FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_, bool quote_, bool relativeFilePath_) : description(description_), extensions(extensions_), mode(mode_), quote(quote_), relativeFilePath(relativeFilePath_) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -658,11 +659,11 @@ namespace MBSimGUI {
     QString file = getFile();
     if(quote) file = file.mid(1,file.length()-2);
     if(mode==0) 
-      file = QFileDialog::getOpenFileName(0, description, file, extensions);
+      file = QFileDialog::getOpenFileName(nullptr, description, file, extensions);
     else if(mode==1)
-      file = QFileDialog::getSaveFileName(0, description, file, extensions);
+      file = QFileDialog::getSaveFileName(nullptr, description, file, extensions);
     else
-      file = QFileDialog::getExistingDirectory ( 0, description, file);
+      file = QFileDialog::getExistingDirectory ( nullptr, description, file);
     if(not file.isEmpty()) {
       if(relativeFilePath)
         setFile(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
@@ -679,20 +680,20 @@ namespace MBSimGUI {
       setFile(QString::fromStdString(X()%text->getData()));
       return parent;
     }
-    return NULL;
+    return nullptr;
   }
 
   DOMElement* FileWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0 = static_cast<DOMElement*>(parent);
+    auto *ele0 = static_cast<DOMElement*>(parent);
     //DOMText *text = doc->createTextNode(X()%(quote?("\""+getFile().toStdString()+"\""):getFile().toStdString()));
     DOMText *text = doc->createTextNode(X()%getFile().toStdString());
-    ele0->insertBefore(text, NULL);
-    return NULL;
+    ele0->insertBefore(text, nullptr);
+    return nullptr;
   }
 
   SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -712,18 +713,18 @@ namespace MBSimGUI {
       value->blockSignals(false);
       return element;
     }
-    return NULL;
+    return nullptr;
   }
 
   DOMElement* SpinBoxWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text= doc->createTextNode(X()%toStr(getValue()));
-    parent->insertBefore(text, NULL);
-    return NULL;
+    parent->insertBefore(text, nullptr);
+    return nullptr;
   }
 
   ComboBoxWidget::ComboBoxWidget(const QStringList &names, int currentIndex) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -740,18 +741,18 @@ namespace MBSimGUI {
       setText(QString::fromStdString(X()%text_->getData()));
       return element;
     }
-    return NULL;
+    return nullptr;
   }
 
   DOMElement* BasicTextWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text_ = doc->createTextNode(X()%getText().toStdString());
-    parent->insertBefore(text_, NULL);
-    return NULL;
+    parent->insertBefore(text_, nullptr);
+    return nullptr;
   }
 
   TextWidget::TextWidget(const QString &text_, bool readOnly) {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -764,10 +765,10 @@ namespace MBSimGUI {
   TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num, bool editable) {
     text = new CustomComboBox;
     text->setEditable(editable);
-    for(unsigned int i=0; i<list.size(); i++)
-      text->addItem(list[i]);
+    for(const auto & i : list)
+      text->addItem(i);
     text->setCurrentIndex(num);
-    QHBoxLayout* layout = new QHBoxLayout;
+    auto* layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     layout->addWidget(text);
@@ -775,7 +776,7 @@ namespace MBSimGUI {
 
   ConnectFramesWidget::ConnectFramesWidget(int n, Element *element_) : element(element_) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -785,15 +786,15 @@ namespace MBSimGUI {
         subname += QString::number(i+1);
         //layout->addWidget(new QLabel(QString("Frame") + QString::number(i+1) +":"));
       }
-      widget.push_back(new FrameOfReferenceWidget(element,0));
+      widget.push_back(new FrameOfReferenceWidget(element,nullptr));
       QWidget *subwidget = new ExtWidget(subname,widget[i]);
       layout->addWidget(subwidget);
     }
   }
 
   void ConnectFramesWidget::updateWidget() {
-    for(unsigned int i=0; i<widget.size(); i++)
-      widget[i]->updateWidget();
+    for(auto & i : widget)
+      i->updateWidget();
   }
 
   DOMElement* ConnectFramesWidget::initializeUsingXML(DOMElement *element) {
@@ -815,12 +816,12 @@ namespace MBSimGUI {
       if(i>0 or widget[i]->getFrame()!=def)
         E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getFrame().toStdString());
     }
-    return NULL;
+    return nullptr;
   }
 
   ConnectContoursWidget::ConnectContoursWidget(int n, Element *element_) : element(element_) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -830,15 +831,15 @@ namespace MBSimGUI {
         subname += QString::number(i+1);
         //layout->addWidget(new QLabel(QString("Contour") + QString::number(i+1) +":"));
       }
-      widget.push_back(new ContourOfReferenceWidget(element,0));
+      widget.push_back(new ContourOfReferenceWidget(element,nullptr));
       QWidget *subwidget = new ExtWidget(subname,widget[i]);
       layout->addWidget(subwidget);
     }
   }
 
   void ConnectContoursWidget::updateWidget() {
-    for(unsigned int i=0; i<widget.size(); i++)
-      widget[i]->updateWidget();
+    for(auto & i : widget)
+      i->updateWidget();
   }
 
   DOMElement* ConnectContoursWidget::initializeUsingXML(DOMElement *element) {
@@ -859,12 +860,12 @@ namespace MBSimGUI {
         xmlName += toStr(int(i+1));
       E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getContour().toStdString());
     }
-    return NULL;
+    return nullptr;
   }
 
   ConnectRigidBodiesWidget::ConnectRigidBodiesWidget(int n, Element *element_) : element(element_) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -874,15 +875,15 @@ namespace MBSimGUI {
         subname += QString::number(i+1);
         //layout->addWidget(new QLabel(QString("Frame") + QString::number(i+1) +":"));
       }
-      widget.push_back(new RigidBodyOfReferenceWidget(element,0));
+      widget.push_back(new RigidBodyOfReferenceWidget(element,nullptr));
       QWidget *subwidget = new ExtWidget(subname,widget[i]);
       layout->addWidget(subwidget);
     }
   }
 
   void ConnectRigidBodiesWidget::updateWidget() {
-    for(unsigned int i=0; i<widget.size(); i++)
-      widget[i]->updateWidget();
+    for(auto & i : widget)
+      i->updateWidget();
   }
 
   DOMElement* ConnectRigidBodiesWidget::initializeUsingXML(DOMElement *element) {
@@ -891,7 +892,7 @@ namespace MBSimGUI {
       if(widget.size()>1)
         xmlName += toStr(int(i+1));
       if(!E(element)->hasAttribute(xmlName))
-        return NULL;
+        return nullptr;
       if(E(element)->hasAttribute(xmlName))
         widget[i]->setBody(QString::fromStdString(E(element)->getAttribute(xmlName)));
     }
@@ -905,11 +906,11 @@ namespace MBSimGUI {
         xmlName += toStr(int(i+1));
       E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getBody().toStdString());
     }
-    return NULL;
+    return nullptr;
   }
 
   ColorWidget::ColorWidget() {
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -952,11 +953,11 @@ namespace MBSimGUI {
 
   DOMElement* ColorWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     color->writeXMLFile(parent);
-    return 0;
+    return nullptr;
   }
  
-  PlotFeatureWidget::PlotFeatureWidget(const QString &types, const NamespaceURI &uri_) : uri(uri_) {
-    QGridLayout *layout = new QGridLayout;
+  PlotFeatureWidget::PlotFeatureWidget(const QString &types, NamespaceURI uri_) : uri(std::move(uri_)) {
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -1009,8 +1010,8 @@ namespace MBSimGUI {
     value = new CustomComboBox;
     value->setEditable(true);
     layout->addWidget(value,4,1);
-    for(size_t i=0; i<feature.size(); i++)
-      value->addItem(QString::fromStdString(feature[i].second));
+    for(auto & i : feature)
+      value->addItem(QString::fromStdString(i.second));
     value->setCurrentIndex(4);
     connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateNamespace(int)));
 
@@ -1057,7 +1058,7 @@ namespace MBSimGUI {
   }
 
   void PlotFeatureWidget::addFeature() {
-    QTreeWidgetItem *item = new QTreeWidgetItem;
+    auto *item = new QTreeWidgetItem;
     item->setText(0, type->currentText());
     item->setText(1, value->currentText());
     item->setText(2, static_cast<BoolWidget*>(status->getWidget())->getValue());
@@ -1100,7 +1101,7 @@ namespace MBSimGUI {
     while(e && (E(e)->getTagName()==uri%"plotFeature" ||
                 E(e)->getTagName()==uri%"plotFeatureForChildren" ||
                 E(e)->getTagName()==uri%"plotFeatureRecursive")) {
-      QTreeWidgetItem *item = new QTreeWidgetItem;
+      auto *item = new QTreeWidgetItem;
       item->setText(0, QString::fromStdString(E(e)->getTagName().second));
       item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
       item->setText(2, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
@@ -1116,16 +1117,16 @@ namespace MBSimGUI {
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
       E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());
-      ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), NULL);
+      ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), nullptr);
       parent->insertBefore(ele, ref);
     }
-    return 0;
+    return nullptr;
   }
 
   DOMElement* PlotFeatureWidget::initializeUsingXML2(DOMElement *parent) {
     DOMElement *e=E(parent)->getFirstElementChildNamed(uri%type->itemText(0).toStdString());
     while(e && E(e)->getTagName()==uri%type->itemText(0).toStdString()) {
-      QTreeWidgetItem *item = new QTreeWidgetItem;
+      auto *item = new QTreeWidgetItem;
       item->setText(0, QString::fromStdString(E(e)->getTagName().second));
       item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
       item->setText(2, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
@@ -1141,10 +1142,10 @@ namespace MBSimGUI {
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
       E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());
-      ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), NULL);
+      ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), nullptr);
       parent->insertBefore(ele, ref);
     }
-    return 0;
+    return nullptr;
   }
 
 }

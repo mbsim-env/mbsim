@@ -41,7 +41,7 @@ namespace MBSim {
       }
 
       /* INHERITED INTERFACE OF FUNCTION */
-      double operator()(const double &phi);
+      double operator()(const double &phi) override;
       /*************************************************/
   };
 

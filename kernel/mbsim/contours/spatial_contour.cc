@@ -34,7 +34,7 @@ namespace MBSim {
   SpatialContour::~SpatialContour() {
      if (funcCrPC) 
        delete funcCrPC;
-     funcCrPC=NULL;
+     funcCrPC=nullptr;
   }
 
   Vec3 SpatialContour::evalKrPS(const Vec2 &zeta) {

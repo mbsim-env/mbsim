@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/utils/contact_utils.h"
-#include "stdio.h"
+#include <cstdio>
 
 // --- List of contact implementations - BEGIN ---
 #include <mbsim/contours/circle.h>
@@ -191,7 +191,7 @@ namespace MBSim {
       return new ContactKinematicsPlatePolynomialFrustum;
 
     else
-      return 0;
+      return nullptr;
   }
 }
 

@@ -31,10 +31,10 @@ namespace MBSim {
       fmatvec::RotMat3 A;
       fmatvec::Vec3 a;
     public:
-      RotationAboutFixedAxis() { }
+      RotationAboutFixedAxis() = default;
       RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
-      int getArgSize() const { return 1; }
-      fmatvec::RotMat3 operator()(const Arg &q) {
+      int getArgSize() const override { return 1; }
+      fmatvec::RotMat3 operator()(const Arg &q) override {
         double alpha = ToDouble<Arg>::cast(q);
         const double cosq=cos(alpha);
         const double sinq=sin(alpha);
@@ -53,13 +53,13 @@ namespace MBSim {
         A.e(2,2) = cosq+onemcosq*a.e(2)*a.e(2);
         return A;
       }
-      typename B::DRetDArg parDer(const Arg &q) { return a; }
-      typename B::DRetDArg parDerDirDer(const Arg &qd, const Arg &q) { return typename B::DRetDArg(1); }
-      typename B::DDRetDDArg parDerParDer(const Arg &arg) { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
-      bool constParDer() const { return true; }
+      typename B::DRetDArg parDer(const Arg &q) override { return a; }
+      typename B::DRetDArg parDerDirDer(const Arg &qd, const Arg &q) override { return typename B::DRetDArg(1); }
+      typename B::DDRetDDArg parDerParDer(const Arg &arg) override { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
+      bool constParDer() const override { return true; }
       const fmatvec::Vec3& getAxisOfRotation() const { return a; }
       void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"axisOfRotation");
         a=FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
       }

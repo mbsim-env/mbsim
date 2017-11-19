@@ -36,7 +36,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      LinearRegularizedStribeckFriction() : fmu(NULL), gdLim(0.01) {}
+      LinearRegularizedStribeckFriction() : fmu(nullptr) {}
 
       /**
        * \brief constructor
@@ -48,9 +48,9 @@ namespace MBSim {
       }
 
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual void init(Element::InitStage stage, const InitConfigSet &config) {
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<fmatvec::Vec(fmatvec::Vec,double)>::init(stage, config);
         fmu->init(stage, config);
       }
@@ -74,7 +74,7 @@ namespace MBSim {
       /**
        * \brief border with respect to the relative velocity for the linear regularized increase of the friction force
        */
-      double gdLim;
+      double gdLim{0.01};
   };
 
 }

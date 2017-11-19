@@ -39,18 +39,18 @@ namespace MBSim {
        * \brief constructor with contact from inside
        * \param name of contour
        */
-      Frustum(const std::string &name="", Frame *R=0) : RigidContour(name,R), h(0.), outCont(false) {}
+      Frustum(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) {}
 
-      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, Frame *R=0) : RigidContour(name,R), r(r_), h(h_), outCont(false) {}
+      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, Frame *R=nullptr) : RigidContour(name,R), r(r_), h(h_) {}
 
-      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, bool outCont_, Frame *R=0) : RigidContour(name,R), r(r_), h(h_), outCont(outCont_) {}
+      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, bool outCont_, Frame *R=nullptr) : RigidContour(name,R), r(r_), h(h_), outCont(outCont_) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint);
+      fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint) override;
       /***************************************************/
 
       /**
@@ -58,7 +58,7 @@ namespace MBSim {
        * \param name of the contour
        * \param contact from outside?
        */
-      Frustum(const std::string &name, bool outCont_) : RigidContour(name), h(0.), outCont(outCont_) {}
+      Frustum(const std::string &name, bool outCont_) : RigidContour(name),  outCont(outCont_) {}
 
       /* GETTER / SETTER */
       void setRadii(const fmatvec::Vec2 &r_);
@@ -74,7 +74,7 @@ namespace MBSim {
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
       
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       private:
       /** 
@@ -85,12 +85,12 @@ namespace MBSim {
       /** 
        * \brief height
        */
-      double h;
+      double h{0.};
 
       /** 
        * \brief contact on outer or inner surface?
        */
-      bool outCont;
+      bool outCont{false};
   };
 
   inline void Frustum::setRadii(const fmatvec::Vec2 &r_) { r = r_; }

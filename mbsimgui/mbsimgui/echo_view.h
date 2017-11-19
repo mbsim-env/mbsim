@@ -31,8 +31,8 @@ namespace MBSimGUI {
       EchoView(QWidget *parent);
       void clearOutputAndError();
       void updateOutputAndError();
-      QSize sizeHint() const;
-      QSize minimumSizeHint() const;
+      QSize sizeHint() const override;
+      QSize minimumSizeHint() const override;
       void setErrorText(const QString &errText_) { errText = errText_; }
       void setOutputText(const QString &outText_) { outText = outText_; }
       void addErrorText(const QString &errText_) { errText += errText_; }

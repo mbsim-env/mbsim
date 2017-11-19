@@ -72,7 +72,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~DynamicSystemSolver();
+      ~DynamicSystemSolver() override;
 
       /** \brief Initialize the system.
        *
@@ -124,27 +124,27 @@ namespace MBSim {
       void setTruncateSimulationFiles(bool trunc) { truncateSimulationFiles=trunc; }
 
       /* INHERITED INTERFACE OF GROUP */
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       using Group::plot;
       /***************************************************/
 
       /* INHERITED INTERFACE OF DYNAMICSYSTEM */
-      virtual int solveConstraintsFixpointSingle();
-      virtual int solveImpactsFixpointSingle();
-      virtual int solveConstraintsGaussSeidel();
-      virtual int solveImpactsGaussSeidel();
-      virtual int solveConstraintsRootFinding();
-      virtual int solveImpactsRootFinding();
-      virtual void checkConstraintsForTermination();
-      virtual void checkImpactsForTermination();
+      int solveConstraintsFixpointSingle() override;
+      int solveImpactsFixpointSingle() override;
+      int solveConstraintsGaussSeidel() override;
+      int solveImpactsGaussSeidel() override;
+      int solveConstraintsRootFinding() override;
+      int solveImpactsRootFinding() override;
+      void checkConstraintsForTermination() override;
+      void checkImpactsForTermination() override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateT();
-      virtual void updateh(int i=0);
-      virtual void updateM();
-      virtual void updateLLM();
-      virtual void updatezd();
+      void updateT() override;
+      void updateh(int i=0) override;
+      void updateM() override;
+      void updateLLM() override;
+      void updatezd() override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
@@ -161,11 +161,11 @@ namespace MBSim {
        */
       virtual void updater(int j=0);
       virtual void updaterdt();
-      virtual void updatewb();
-      virtual void updateg();
-      virtual void updategd();
-      virtual void updateW(int j=0);
-      virtual void updateV(int j=0);
+      void updatewb() override;
+      void updateg() override;
+      void updategd() override;
+      void updateW(int j=0) override;
+      void updateV(int j=0) override;
       virtual void updatebc();
       virtual void updatebi();
       virtual void updatela();
@@ -429,7 +429,7 @@ namespace MBSim {
        */
       void readz0(std::string fileName);
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       static DynamicSystemSolver* readXMLFile(const std::string &filename);
 
@@ -474,7 +474,7 @@ namespace MBSim {
       void setRootID(int ID) {rootID = ID;}
       int getRootID() const {return rootID;}
 
-      void resetUpToDate();
+      void resetUpToDate() override;
 
       bool getUpdateT() { return updT; }
       bool getUpdateM() { return updM; }
@@ -505,46 +505,46 @@ namespace MBSim {
        * \brief references to relative distances of dynamic system parent
        * \param vector to be referenced
        */
-      void updategRef(const fmatvec::Vec &ref) { Group::updategRef(ref); updg = true; }
+      void updategRef(const fmatvec::Vec &ref) override { Group::updategRef(ref); updg = true; }
 
       /**
        * \brief references to relative velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updategdRef(const fmatvec::Vec &ref) { Group::updategdRef(ref); updgd = true; }
+      void updategdRef(const fmatvec::Vec &ref) override { Group::updategdRef(ref); updgd = true; }
 
       /**
        * \brief references to TODO of dynamic system parent
        * \param vector to be referenced
        */      
-      void updatewbRef(const fmatvec::Vec &ref) { Group::updatewbRef(ref); updwb = true; }
+      void updatewbRef(const fmatvec::Vec &ref) override { Group::updatewbRef(ref); updwb = true; }
 
       /**
        * \brief references to contact force direction matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateWRef(const fmatvec::Mat &ref, int i=0) { Group::updateWRef(ref,i); updW[i] = true; }
+      void updateWRef(const fmatvec::Mat &ref, int i=0) override { Group::updateWRef(ref,i); updW[i] = true; }
 
       /**
        * \brief references to condensed contact force direction matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateVRef(const fmatvec::Mat &ref, int i=0) { Group::updateVRef(ref,i); updV[i] = true; }
+      void updateVRef(const fmatvec::Mat &ref, int i=0) override { Group::updateVRef(ref,i); updV[i] = true; }
 
       /**
        * \brief update inverse kinetics constraint forces
        */
       virtual void updatelaInverseKinetics();
 
-      virtual void updatedq();
-      virtual void updatedu();
-      virtual void updatedx();
+      void updatedq() override;
+      void updatedu() override;
+      void updatedx() override;
 
-      virtual void updateStopVector();
+      void updateStopVector() override;
 
-      void plot();
+      void plot() override;
 
     protected:
       /**
@@ -781,7 +781,7 @@ namespace MBSim {
        * \brief update relaxation factors for contact equations
        * \todo global not available because of unsymmetric mass action matrix TODO
        */
-      virtual void updaterFactors();
+      void updaterFactors() override;
 
       /**
        * \brief

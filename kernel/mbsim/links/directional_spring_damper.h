@@ -35,22 +35,22 @@ namespace MBSim {
     protected:
       double dist;
       Function<double(double,double)> *func;
-      double l0;
+      double l0{0};
       std::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
     public:
       DirectionalSpringDamper(const std::string &name="");
-      ~DirectionalSpringDamper();
+      ~DirectionalSpringDamper() override;
 
-      void updatePositions(Frame *frame);
-      void updateGeneralizedPositions();
-      void updateGeneralizedVelocities();
-      void updatelaF();
+      void updatePositions(Frame *frame) override;
+      void updateGeneralizedPositions() override;
+      void updateGeneralizedVelocities() override;
+      void updatelaF() override;
 
       /*INHERITED INTERFACE OF LINK*/
-      bool isActive() const { return true; }
-      bool gActiveChanged() { return false; }
-      bool isSingleValued() const { return true; }
-      void init(InitStage stage, const InitConfigSet &config);
+      bool isActive() const override { return true; }
+      bool gActiveChanged() override { return false; }
+      bool isSingleValued() const override { return true; }
+      void init(InitStage stage, const InitConfigSet &config) override;
       /*****************************/
 
       /** \brief Set function for the force calculation.
@@ -72,8 +72,8 @@ namespace MBSim {
        */
       void setForceDirection(const fmatvec::Vec3 &dir) { forceDir=dir/nrm2(dir); }
 
-      void plot();
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void plot() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(minimalColorValue,(double),0)(maximalColorValue,(double),1))) {
         OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,diffuseColor,transparency,minimalColorValue,maximalColorValue);

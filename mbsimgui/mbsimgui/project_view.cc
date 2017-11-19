@@ -84,7 +84,7 @@ namespace MBSimGUI {
       editor->fromWidget();
       view->updateName();
     }
-    editor = 0;
+    editor = nullptr;
     mw->setAllowUndo(true);
   }
 

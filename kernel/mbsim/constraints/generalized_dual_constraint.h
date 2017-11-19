@@ -31,14 +31,14 @@ namespace MBSim {
    */
   class GeneralizedDualConstraint : public GeneralizedConstraint {
     public:
-      GeneralizedDualConstraint(const std::string &name) : GeneralizedConstraint(name), bd(NULL), bi(NULL) { }
+      GeneralizedDualConstraint(const std::string &name) : GeneralizedConstraint(name), bd(nullptr), bi(nullptr) { }
 
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
       void setDependentRigidBody(RigidBody* body_) { bd=body_; }
       void setIndependentRigidBody(RigidBody* body_) { bi=body_; }
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
 
     protected:
       RigidBody *bd, *bi;

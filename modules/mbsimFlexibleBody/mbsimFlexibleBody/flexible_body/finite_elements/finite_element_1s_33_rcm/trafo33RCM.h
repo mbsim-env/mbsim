@@ -46,10 +46,10 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor 
        */
-      virtual ~PositionFunction();
+      ~PositionFunction() override;
       
       /* INHERITED INTERFACE */
-      fmatvec::Vec operator()(const fmatvec::Vec& pos);
+      fmatvec::Vec operator()(const fmatvec::Vec& pos) override;
       /***************************************************/
 
     private:
@@ -98,10 +98,10 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~PositionJacobian();
+      ~PositionJacobian() override;
       
       /* INHERITED INTERFACE */
-      fmatvec::SqrMat operator()(const fmatvec::Vec &pos);
+      fmatvec::SqrMat operator()(const fmatvec::Vec &pos) override;
       /***************************************************/
 
     private:

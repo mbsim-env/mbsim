@@ -34,12 +34,12 @@ namespace MBSim {
       /** 
        * \brief constructor
        */
-      NonlinearSpringDamperForce() {}
+      NonlinearSpringDamperForce() = default;
 
       /** 
        * \brief destructor
        */
-      ~NonlinearSpringDamperForce() {
+      ~NonlinearSpringDamperForce() override {
         delete sF;
         delete sdF;
       }
@@ -55,9 +55,9 @@ namespace MBSim {
       }
 
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const double& s, const double& sd) { return (*sF)(s) + (*sdF)(sd); }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      double operator()(const double& s, const double& sd) override { return (*sF)(s) + (*sdF)(sd); }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<double(double,double)>::init(stage, config);
         sF->init(stage, config);
         sdF->init(stage, config);

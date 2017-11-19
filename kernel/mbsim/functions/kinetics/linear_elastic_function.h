@@ -33,7 +33,7 @@ namespace MBSim {
       /** 
        * \brief standard constructor
        */
-      LinearElasticFunction() { }
+      LinearElasticFunction() = default;
 
       /** 
        * \brief constructor
@@ -42,14 +42,14 @@ namespace MBSim {
        */
       LinearElasticFunction(const fmatvec::SymMatV &K_, const fmatvec::SymMatV &D_) : K(K_), D(D_) { }
 
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
-      virtual fmatvec::VecV operator()(const fmatvec::VecV& q, const fmatvec::VecV& u) { return K*q + D*u; }
+      fmatvec::VecV operator()(const fmatvec::VecV& q, const fmatvec::VecV& u) override { return K*q + D*u; }
 
       void setStiffnessMatrix(const fmatvec::SymMatV &K_) { K = K_; }
       void setDampingMatrix(const fmatvec::SymMatV &D_) { D = D_; }
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       fmatvec::SymMatV K, D;

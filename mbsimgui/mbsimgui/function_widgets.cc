@@ -40,10 +40,10 @@ namespace MBSimGUI {
   class LimitedFunctionWidgetFactory : public WidgetFactory {
     public:
       LimitedFunctionWidgetFactory(Element *parent_) : parent(parent_) { }
-      QString getName(int i=0) const { return "Limited function"; }
-      MBXMLUtils::FQN getXMLName(int i=0) const { return MBSIM%"LimitedFunction"; }
-      QWidget* createWidget(int i=0);
-      int getSize() const { return 1; }
+      QString getName(int i=0) const override { return "Limited function"; }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIM%"LimitedFunction"; }
+      QWidget* createWidget(int i=0) override;
+      int getSize() const override { return 1; }
     protected:
       Element *parent;
   };
@@ -51,13 +51,13 @@ namespace MBSimGUI {
   QWidget* LimitedFunctionWidgetFactory::createWidget(int i) {
     if(i==0)
       return new LimitedFunctionWidget(parent);
-    return NULL;
+    return nullptr;
   }
 
   class CoefficientWidgetFactory : public WidgetFactory {
     public:
-      CoefficientWidgetFactory() { }
-      Widget* createWidget(int i=0);
+      CoefficientWidgetFactory() = default;
+      Widget* createWidget(int i=0) override;
   };
 
   Widget* CoefficientWidgetFactory::createWidget(int i) {
@@ -65,7 +65,7 @@ namespace MBSimGUI {
   }
 
   ConstantFunctionWidget::ConstantFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     a0 = new ExtWidget("a0",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a0");
@@ -84,7 +84,7 @@ namespace MBSimGUI {
   }
 
   LinearFunctionWidget::LinearFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -109,7 +109,7 @@ namespace MBSimGUI {
   }
 
   QuadraticFunctionWidget::QuadraticFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -139,7 +139,7 @@ namespace MBSimGUI {
   }
 
   PolynomFunctionWidget::PolynomFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -159,7 +159,7 @@ namespace MBSimGUI {
   }
 
   SinusoidalFunctionWidget::SinusoidalFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -194,7 +194,7 @@ namespace MBSimGUI {
   }
 
   ModuloFunctionWidget::ModuloFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -214,7 +214,7 @@ namespace MBSimGUI {
   }
 
   BoundedFunctionWidget::BoundedFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -240,11 +240,11 @@ namespace MBSimGUI {
 
   VectorValuedFunctionWidget::VectorValuedFunctionWidget(Element *parent, int m, bool fixedSize) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    Function *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+    auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
     dummy->setParent(parent);
     functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(dummy),1),"Function",0,0),false,false,MBSIM%"components");
     layout->addWidget(functions);
@@ -267,7 +267,7 @@ namespace MBSimGUI {
 
   CompositeFunctionWidget::CompositeFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -306,7 +306,7 @@ namespace MBSimGUI {
   }
 
   PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(Element *parent, int n) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -340,7 +340,7 @@ namespace MBSimGUI {
   }
 
   LimitedFunctionWidget::LimitedFunctionWidget(Element *parent) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -369,7 +369,7 @@ namespace MBSimGUI {
   }
 
   SymbolicFunctionWidget::SymbolicFunctionWidget(const QStringList &var, int m, int max, bool fixedSize) {
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
     for(int i=0; i<var.size(); i++) {
@@ -429,7 +429,7 @@ namespace MBSimGUI {
   }
 
   TabularFunctionWidget::TabularFunctionWidget(int n) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -450,19 +450,19 @@ namespace MBSimGUI {
 
   void TabularFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      ChoiceWidget2 *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      ChoiceWidget2 *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
+      auto *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->getWidget()->cols());
     }
   }
 
   void TabularFunctionWidget::resize_(int m, int n) {
     if(choice->getIndex()==0) {
-      ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m);
     }
     else {
-      ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
       choice->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m+1);
     }
   }
@@ -479,7 +479,7 @@ namespace MBSimGUI {
   }
 
   TwoDimensionalTabularFunctionWidget::TwoDimensionalTabularFunctionWidget(int n) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -499,8 +499,8 @@ namespace MBSimGUI {
 
   void TwoDimensionalTabularFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      ChoiceWidget2 *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      ChoiceWidget2 *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
+      auto *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(2))->resize_(static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->getWidget()->rows());
     }
   }
@@ -517,7 +517,7 @@ namespace MBSimGUI {
   }
 
   PiecewisePolynomFunctionWidget::PiecewisePolynomFunctionWidget(int n) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -525,9 +525,9 @@ namespace MBSimGUI {
     layout->addWidget(choice);
 
     vector<QString> list;
-    list.push_back("\"cSplinePeriodic\"");
-    list.push_back("\"cSplineNatural\"");
-    list.push_back("\"piecewiseLinear\"");
+    list.emplace_back("\"cSplinePeriodic\"");
+    list.emplace_back("\"cSplineNatural\"");
+    list.emplace_back("\"piecewiseLinear\"");
     method = new ExtWidget("Interpolation method",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolationMethod");
     layout->addWidget(method);
 
@@ -545,19 +545,19 @@ namespace MBSimGUI {
 
   void PiecewisePolynomFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      ChoiceWidget2 *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      ChoiceWidget2 *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
+      auto *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->getWidget()->cols());
     }
   }
 
   void PiecewisePolynomFunctionWidget::resize_(int m, int n) {
     if(choice->getIndex()==0) {
-      ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m);
     }
     else {
-      ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
       choice->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m+1);
     }
   }
@@ -576,7 +576,7 @@ namespace MBSimGUI {
   }
 
   TwoDimensionalPiecewisePolynomFunctionWidget::TwoDimensionalPiecewisePolynomFunctionWidget(int n) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -584,9 +584,9 @@ namespace MBSimGUI {
     layout->addWidget(choice);
 
     vector<QString> list;
-    list.push_back("\"cSplinePeriodic\"");
-    list.push_back("\"cSplineNatural\"");
-    list.push_back("\"piecewiseLinear\"");
+    list.emplace_back("\"cSplinePeriodic\"");
+    list.emplace_back("\"cSplineNatural\"");
+    list.emplace_back("\"piecewiseLinear\"");
     method = new ExtWidget("Interpolation method",new TextChoiceWidget(list,1,true),true);
     layout->addWidget(method);
 
@@ -603,8 +603,8 @@ namespace MBSimGUI {
 
   void TwoDimensionalPiecewisePolynomFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      ChoiceWidget2 *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      ChoiceWidget2 *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
+      auto *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(2))->resize_(static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->getWidget()->rows());
     }
   }
@@ -621,7 +621,7 @@ namespace MBSimGUI {
   }
 
   FourierFunctionWidget::FourierFunctionWidget(int n) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -640,12 +640,12 @@ namespace MBSimGUI {
 
   void FourierFunctionWidget::resize_(int m, int n) {
     if(choice->getIndex()==0) {
-      ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
       if(choice_->getIndex()==0)
         choice->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
     }
     else {
-      ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
       if(choice_->getIndex()==0)
         choice->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
     }
@@ -670,13 +670,13 @@ namespace MBSimGUI {
 
   BidirectionalFunctionWidget::BidirectionalFunctionWidget() {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    fn = new ExtWidget("Negative directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"negativeDirectionalFunction");
+    fn = new ExtWidget("Negative directional function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"negativeDirectionalFunction");
     layout->addWidget(fn);
-    fp = new ExtWidget("Positive directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"positiveDirectionalFunction");
+    fp = new ExtWidget("Positive directional function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"positiveDirectionalFunction");
     layout->addWidget(fp);
   }
 
@@ -700,7 +700,7 @@ namespace MBSimGUI {
 
   ContinuedFunctionWidget::ContinuedFunctionWidget(WidgetFactory *factoryf, WidgetFactory *factoryr) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -730,7 +730,7 @@ namespace MBSimGUI {
   }
 
   LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -755,7 +755,7 @@ namespace MBSimGUI {
   }
 
   NonlinearSpringDamperForceWidget::NonlinearSpringDamperForceWidget(Element *parent) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -780,7 +780,7 @@ namespace MBSimGUI {
   }
 
   LinearElasticFunctionWidget::LinearElasticFunctionWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -810,7 +810,7 @@ namespace MBSimGUI {
   }
 
   LinearRegularizedBilateralConstraintWidget::LinearRegularizedBilateralConstraintWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -835,7 +835,7 @@ namespace MBSimGUI {
   }
 
   LinearRegularizedUnilateralConstraintWidget::LinearRegularizedUnilateralConstraintWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -860,7 +860,7 @@ namespace MBSimGUI {
   }
 
   LinearRegularizedCoulombFrictionWidget::LinearRegularizedCoulombFrictionWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -885,7 +885,7 @@ namespace MBSimGUI {
   }
 
   LinearRegularizedStribeckFrictionWidget::LinearRegularizedStribeckFrictionWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -910,12 +910,12 @@ namespace MBSimGUI {
   }
 
   SignalFunctionWidget::SignalFunctionWidget(Element *element) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
     dummy->setParent(element);
-    sRef = new ExtWidget("Return signal",new SignalOfReferenceWidget(dummy,0),false,false,MBSIMCONTROL%"returnSignal");
+    sRef = new ExtWidget("Return signal",new SignalOfReferenceWidget(dummy,nullptr),false,false,MBSIMCONTROL%"returnSignal");
     layout->addWidget(sRef);
   }
   
@@ -939,11 +939,11 @@ namespace MBSimGUI {
   }
 
   PolarContourFunctionWidget::PolarContourFunctionWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL),QBoxLayout::TopToBottom,0),false,false,MBSIM%"radiusFunction");
+    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"radiusFunction");
     layout->addWidget(radiusFunction);
   }
 

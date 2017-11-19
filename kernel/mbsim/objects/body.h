@@ -57,7 +57,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Body();
+      ~Body() override;
 
       void setGeneralizedInitialPosition(const fmatvec::Vec &q0_) { q0 = q0_; }
       void setGeneralizedInitialVelocity(const fmatvec::Vec &u0_) { u0 = u0_; }
@@ -65,17 +65,17 @@ namespace MBSim {
       void setGeneralizedInitialVelocity(double u0_) { u0 = fmatvec::Vec(1,fmatvec::INIT,u0_); }
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      void sethSize(int hSize_, int i=0);
-      void sethInd(int hInd_, int i=0); 
+      void sethSize(int hSize_, int i=0) override;
+      void sethInd(int hInd_, int i=0) override; 
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot();
-      virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
+      void plot() override;
+      void setDynamicSystemSolver(DynamicSystemSolver *sys) override;
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       /*******************************************************/ 
 
       /* INTERFACE FOR DERIVED CLASSES */
@@ -113,7 +113,7 @@ namespace MBSim {
       /* GETTER / SETTER */
       const std::vector<Frame*>& getFrames() const { return frame; }
       const std::vector<Contour*>& getContours() const { return contour; }
-      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return openMBVGrp; }
       std::shared_ptr<OpenMBV::Body>& getOpenMBVBody() { return openMBVBody; }
       /*******************************************************/ 
 
@@ -129,9 +129,9 @@ namespace MBSim {
        */
       int contourIndex(const Contour *contour_) const;
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name) const;
+      Element * getChildByContainerAndName(const std::string &container, const std::string &name) const override;
 
       fmatvec::Mat3xV& getPJT(int i=0, bool check=true) { assert((not check) or (not updPJ)); return PJT[i]; }
       fmatvec::Mat3xV& getPJR(int i=0, bool check=true) { assert((not check) or (not updPJ)); return PJR[i]; }
@@ -139,7 +139,7 @@ namespace MBSim {
       const fmatvec::Mat3xV& evalPJT() { if(updPJ) updateJacobians(); return PJT[0]; }
       const fmatvec::Mat3xV& evalPJR() { if(updPJ) updateJacobians(); return PJR[0]; }
 
-      void resetUpToDate();
+      void resetUpToDate() override;
       virtual void resetPositionsUpToDate();
       virtual void resetVelocitiesUpToDate();
       virtual void resetJacobiansUpToDate();

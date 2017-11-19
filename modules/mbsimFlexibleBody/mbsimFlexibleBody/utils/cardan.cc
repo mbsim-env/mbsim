@@ -28,7 +28,7 @@ namespace MBSimFlexibleBody {
 
   Cardan::Cardan() : Angles() {}
 
-  Cardan::~Cardan() {}
+  Cardan::~Cardan() = default;
 
   Vec3 Cardan::computet(const Vec& q) const {
     double sq0 = sin(q(0));

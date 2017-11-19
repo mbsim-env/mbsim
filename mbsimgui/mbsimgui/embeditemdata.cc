@@ -29,10 +29,10 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   EmbedItemData::~EmbedItemData() {
-    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++)
-      delete (*it);
-    for(vector<Parameter*>::iterator i = removedParameter.begin(); i != removedParameter.end(); ++i)
-      delete *i;
+    for (auto & it : parameter)
+      delete it;
+    for(auto & i : removedParameter)
+      delete i;
   }
 
 //  QString EmbedItemData::getName() const {
@@ -46,7 +46,7 @@ namespace MBSimGUI {
   }
 
   void EmbedItemData::removeParameter(Parameter *param) {
-    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++) {
+    for (auto it = parameter.begin(); it != parameter.end(); it++) {
       if(*it == param) {
         parameter.erase(it);
         break;
@@ -91,8 +91,8 @@ namespace MBSimGUI {
       element->getParentNode()->insertBefore(ele,element);
       setEmbedXMLElement(ele);
       ele=D(doc)->createElement(PV%"Parameter");
-      getEmbedXMLElement()->insertBefore(ele,NULL);
-      getEmbedXMLElement()->insertBefore(element,NULL);
+      getEmbedXMLElement()->insertBefore(ele,nullptr);
+      getEmbedXMLElement()->insertBefore(element,nullptr);
       return ele;
     }
     else if(X()%getEmbedXMLElement()->getFirstElementChild()->getNodeName()!="Parameter") {

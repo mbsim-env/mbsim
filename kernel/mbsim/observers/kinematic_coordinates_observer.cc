@@ -34,7 +34,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, KinematicCoordinatesObserver)
 
-  KinematicCoordinatesObserver::KinematicCoordinatesObserver(const std::string &name) : Observer(name), frame(NULL), frameOfReference(NULL) {
+  KinematicCoordinatesObserver::KinematicCoordinatesObserver(const std::string &name) : Observer(name), frame(nullptr), frameOfReference(nullptr) {
   }
 
   void KinematicCoordinatesObserver::init(InitStage stage, const InitConfigSet &config) {

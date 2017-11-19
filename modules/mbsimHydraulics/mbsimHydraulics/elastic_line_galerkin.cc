@@ -36,7 +36,7 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ElasticLineGalerkin)
 
-  ElasticLineGalerkin::ElasticLineGalerkin(const string &name) : HLine(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(), wA(), wE(), lambda(0), MatIntWWT(), MatIntWSWST(), K(), D(), N(), Omega(), phi(), ansatz(NULL), plotVecW(), plotVecWS(), l(0), d(0), Area(0), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints() {
+  ElasticLineGalerkin::ElasticLineGalerkin(const string &name) : HLine(name),  WInt(), wA(), wE(), lambda(0), MatIntWWT(), MatIntWSWST(), K(), D(), N(), Omega(), phi(), ansatz(nullptr), plotVecW(), plotVecWS(),  relPlotPoints() {
   }
 
   void ElasticLineGalerkin::calcSize() {

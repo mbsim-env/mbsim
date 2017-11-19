@@ -97,9 +97,9 @@ namespace MBSimGUI {
       std::pair<Element*,bool> elementBuffer;
       std::pair<Parameter*,bool> parameterBuffer;
       void initInlineOpenMBV();
-      void dragEnterEvent(QDragEnterEvent *event);
-      void dropEvent(QDropEvent *event);
-      void closeEvent(QCloseEvent *event);
+      void dragEnterEvent(QDragEnterEvent *event) override;
+      void dropEvent(QDropEvent *event) override;
+      void closeEvent(QCloseEvent *event) override;
       bool maybeSave();
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
@@ -115,7 +115,7 @@ namespace MBSimGUI {
 
     public:
       MainWindow(QStringList &arg);
-      ~MainWindow();
+      ~MainWindow() override;
       std::shared_ptr<MBXMLUtils::DOMParser> parser;
       std::shared_ptr<MBXMLUtils::Eval> eval;
       void mbsimxml(int task);
@@ -128,14 +128,14 @@ namespace MBSimGUI {
       void addLink(Link *link, Element *parent);
       void addConstraint(Constraint *constraint, Element *parent);
       void addObserver(Observer *observer, Element *parent);
-      void loadParameter(EmbedItemData *parent, Parameter *parameter=NULL);
-      void loadFrame(Element *parent, Element *element=NULL);
-      void loadContour(Element *parent, Element *element=NULL);
-      void loadGroup(Element *parent, Element *element=NULL);
-      void loadObject(Element *parent, Element *element=NULL);
-      void loadLink(Element *parent, Element *element=NULL);
-      void loadConstraint(Element *parent, Element *element=NULL);
-      void loadObserver(Element *parent, Element *element=NULL);
+      void loadParameter(EmbedItemData *parent, Parameter *parameter=nullptr);
+      void loadFrame(Element *parent, Element *element=nullptr);
+      void loadContour(Element *parent, Element *element=nullptr);
+      void loadGroup(Element *parent, Element *element=nullptr);
+      void loadObject(Element *parent, Element *element=nullptr);
+      void loadLink(Element *parent, Element *element=nullptr);
+      void loadConstraint(Element *parent, Element *element=nullptr);
+      void loadObserver(Element *parent, Element *element=nullptr);
       void highlightObject(const QString &ID);
       const QString& getHighlightedObject() const {return currentID;}
       void loadProject(const QString &file);
@@ -215,7 +215,7 @@ namespace MBSimGUI {
       void loadSolver();
 
     private slots:
-      void selectElement(std::string ID);
+      void selectElement(const std::string& ID);
       void changeWorkingDir();
       void openOptionsMenu();
       void selectionChanged(const QModelIndex &current);

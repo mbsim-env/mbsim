@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
   ContactKinematicsSpherePolynomialFrustum::ContactKinematicsSpherePolynomialFrustum() :
-        ContactKinematics(), isphere(-1), ifrustum(-1), sphere(0), frustum(0), newton(), func(0), jacobian(0), criteria(new GlobalResidualCriteriaFunction), damping(new StandardDampingFunction), x(1, NONINIT) {
+        ContactKinematics(),  newton(),  criteria(new GlobalResidualCriteriaFunction), damping(new StandardDampingFunction), x(1, NONINIT) {
 
   }
 

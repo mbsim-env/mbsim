@@ -32,13 +32,13 @@ namespace MBSimGUI {
     Q_OBJECT
     private:
       QModelIndex index;
-      PropertyDialog *editor;
+      PropertyDialog *editor{nullptr};
       Parameter *parameter;
     public:
-      EmbeddingView(QWidget *parent=0) : QTreeView(parent), editor(0) {}
+      EmbeddingView(QWidget *parent=nullptr) : QTreeView(parent) {}
     protected:
-      void mouseDoubleClickEvent(QMouseEvent *event);
-      void mousePressEvent(QMouseEvent *event);
+      void mouseDoubleClickEvent(QMouseEvent *event) override;
+      void mousePressEvent(QMouseEvent *event) override;
     protected slots:
       void dialogFinished(int result);
       void apply();

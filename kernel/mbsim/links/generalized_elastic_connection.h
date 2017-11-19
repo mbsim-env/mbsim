@@ -31,15 +31,15 @@ namespace MBSim {
     protected:
       Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
     public:
-      GeneralizedElasticConnection(const std::string &name="") : DualRigidBodyLink(name), func(NULL) { }
-      ~GeneralizedElasticConnection();
+      GeneralizedElasticConnection(const std::string &name="") : DualRigidBodyLink(name), func(nullptr) { }
+      ~GeneralizedElasticConnection() override;
 
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
 
-      bool isActive() const { return true; }
-      bool gActiveChanged() { return false; }
-      virtual bool isSingleValued() const { return true; }
-      void init(InitStage stage, const InitConfigSet &config);
+      bool isActive() const override { return true; }
+      bool gActiveChanged() override { return false; }
+      bool isSingleValued() const override { return true; }
+      void init(InitStage stage, const InitConfigSet &config) override;
 
       void setGeneralizedForceFunction(Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func_) {
         func=func_;
@@ -47,7 +47,7 @@ namespace MBSim {
         func->setName("GeneralizedForce");
       }
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     private:
       std::string saved_body1, saved_body2;

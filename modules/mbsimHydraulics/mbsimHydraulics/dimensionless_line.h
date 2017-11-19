@@ -29,18 +29,18 @@ namespace MBSimHydraulics {
     public:
       DimensionlessLine(const std::string &name) : HLine(name), length(0) {}
       
-      void calcSize() { nu = 0; updSize = false; }
+      void calcSize() override { nu = 0; updSize = false; }
       void setLength(double length_) {length=length_; }
       double getLength() const {return length; }
 
-      virtual fmatvec::VecV getInflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, -1.); }
-      virtual fmatvec::VecV getOutflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, 1.); }
-      void calcqSize() {qSize=0; }
-      void calcuSize(int j) {uSize[j]=0; }
+      fmatvec::VecV getInflowFactor() override {return fmatvec::VecV(1, fmatvec::INIT, -1.); }
+      fmatvec::VecV getOutflowFactor() override {return fmatvec::VecV(1, fmatvec::INIT, 1.); }
+      void calcqSize() override {qSize=0; }
+      void calcuSize(int j) override {uSize[j]=0; }
       
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void plot();
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void plot() override;
     protected:
       double length;
   };
@@ -51,8 +51,8 @@ namespace MBSimHydraulics {
 
   class Leakage0DOF : public DimensionlessLine {
     public:
-      Leakage0DOF(const std::string &name) : DimensionlessLine(name), lpl(NULL), s1vFunction(NULL), s2vFunction(NULL), glFunction(NULL) {}
-      ~Leakage0DOF();
+      Leakage0DOF(const std::string &name) : DimensionlessLine(name), lpl(nullptr), s1vFunction(nullptr), s2vFunction(nullptr), glFunction(nullptr) {}
+      ~Leakage0DOF() override;
 
       void setGapLengthFunction(MBSim::Function<double(double)> * s) {
         glFunction=s;
@@ -70,11 +70,11 @@ namespace MBSimHydraulics {
       }
       double evalSurface2Velocity() const;
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void updateQ();
+      void updateQ() override;
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
     protected:
       LeakagePressureLoss * lpl;
     private:
@@ -83,7 +83,7 @@ namespace MBSimHydraulics {
 
   class PlaneLeakage0DOF : public Leakage0DOF {
     public:
-      PlaneLeakage0DOF(const std::string &name="") : Leakage0DOF(name), hGap(0), wGap(0) {}
+      PlaneLeakage0DOF(const std::string &name="") : Leakage0DOF(name) {}
 
       void setGapWidth(double wGap_) {wGap=wGap_; }
       double getGapWidth() const {return wGap; }
@@ -91,14 +91,14 @@ namespace MBSimHydraulics {
       double getGapHeight() const {return hGap; }
       void setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl);
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
     private:
-      double hGap, wGap;
+      double hGap{0}, wGap{0};
   };
 
   class CircularLeakage0DOF : public Leakage0DOF {
     public:
-      CircularLeakage0DOF(const std::string &name="") : Leakage0DOF(name), rI(0), rO(0), hGap(0) {}
+      CircularLeakage0DOF(const std::string &name="") : Leakage0DOF(name) {}
 
       void setInnerRadius(double rI_) {rI=rI_; }
       double getInnerRadius() const {return rI; }
@@ -107,11 +107,11 @@ namespace MBSimHydraulics {
       double getOuterRadius() const {return rO; }
       void setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl);
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
     private:
-      double rI, rO, hGap;
+      double rI{0}, rO{0}, hGap{0};
   };
 
 }

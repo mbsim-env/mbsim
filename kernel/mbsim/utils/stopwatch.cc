@@ -22,7 +22,7 @@
 #include <sys/time.h>
 #endif
 #include "mbsim/utils/stopwatch.h"
-#include <time.h>
+#include <ctime>
 #include <cmath>
 #include <iostream>
 
@@ -47,11 +47,11 @@ namespace MBSim {
   /* More precise Version (1e-6s), but gettimeofday(..) is not avialable on all platforms */
 #ifdef HAVE_SYS_TIME_H  
   void StopWatch::start() {
-    gettimeofday(begin_tv, 0);
+    gettimeofday(begin_tv, nullptr);
   }
 
   double StopWatch::stop(bool reset) {
-    gettimeofday(end_tv, 0);
+    gettimeofday(end_tv, nullptr);
     double IntTime;
     IntTime = (end_tv->tv_sec -begin_tv->tv_sec);
     IntTime += end_tv->tv_usec*1.0/1000000.0 -begin_tv->tv_usec*1.0/1000000.0;

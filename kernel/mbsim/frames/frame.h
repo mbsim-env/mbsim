@@ -47,11 +47,11 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Frame() {}
+      ~Frame() override = default;
 
       /* INHERITED INTERFACE ELEMENT */
-      void init(InitStage stage, const InitConfigSet &config);
-      virtual void plot();
+      void init(InitStage stage, const InitConfigSet &config) override;
+      void plot() override;
       /***************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */
@@ -113,7 +113,7 @@ namespace MBSim {
       void setGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR_) { WjR = WjR_; }
       const fmatvec::Vec3& evalGyroscopicAccelerationOfRotation() { if(updGA) updateGyroscopicAccelerations(); return WjR; }
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) {
         OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
@@ -122,7 +122,7 @@ namespace MBSim {
       void setOpenMBVFrame(const std::shared_ptr<OpenMBV::Frame> &frame) { openMBVFrame = frame; }
       std::shared_ptr<OpenMBV::Frame> &getOpenMBVFrame() {return openMBVFrame; }
 
-      void resetUpToDate();
+      void resetUpToDate() override;
       virtual void resetPositionsUpToDate();
       virtual void resetVelocitiesUpToDate();
       virtual void resetJacobiansUpToDate();
@@ -171,7 +171,11 @@ namespace MBSim {
 
       std::shared_ptr<OpenMBV::Frame> openMBVFrame;
 
-      bool updJac[3], updGA, updPos, updVel, updAcc;
+      bool updJac[3];
+      bool updGA{true};
+      bool updPos{true};
+      bool updVel{true};
+      bool updAcc{true};
   };
 
 }

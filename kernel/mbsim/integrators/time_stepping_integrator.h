@@ -39,15 +39,15 @@ namespace MBSimIntegrator {
       /**
        * \brief destructor
        */
-      virtual ~TimeSteppingIntegrator() {}
+      ~TimeSteppingIntegrator() override = default;
 
-      void preIntegrate(MBSim::DynamicSystemSolver& system);
-      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
-      void postIntegrate(MBSim::DynamicSystemSolver& system);
+      void preIntegrate(MBSim::DynamicSystemSolver& system) override;
+      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop) override;
+      void postIntegrate(MBSim::DynamicSystemSolver& system) override;
 
       /* INHERITED INTERFACE OF INTEGRATOR */
-      virtual void integrate(MBSim::DynamicSystemSolver& system);
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void integrate(MBSim::DynamicSystemSolver& system) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -59,27 +59,27 @@ namespace MBSimIntegrator {
       /**
        * \brief step size
        */
-      double dt;
+      double dt{1e-3};
 
       /**
        * \brief time and plot time
        */
-      double tPlot;
+      double tPlot{0.};
 
       /**
        * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
        */
-      int step, integrationSteps, maxIter, sumIter;
+      int step{0}, integrationSteps{0}, maxIter{0}, sumIter{0};
 
       /**
        * \brief computing time counter
        */
-      double s0, time;
+      double s0{0.}, time{0.};
 
       /**
        * \brief plot step difference
        */
-      int stepPlot;
+      int stepPlot{0};
 
       /**
        * \brief file stream for integration information
@@ -89,7 +89,7 @@ namespace MBSimIntegrator {
       /**
        * \brief flag for drift compensation
        */
-      bool driftCompensation;
+      bool driftCompensation{false};
   };
 
 }

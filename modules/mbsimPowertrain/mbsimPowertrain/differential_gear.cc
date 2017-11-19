@@ -1,4 +1,6 @@
 #include <config.h>
+
+#include <utility>
 #include "differential_gear.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematics/rotation_about_fixed_axis.h"
@@ -31,7 +33,7 @@ namespace MBSimPowertrain {
     lengthPlanet = radiusPlanet*2;
   }
 
-  DifferentialGear::DifferentialGear(const std::string &name, Data param, bool planetIndependent) : Group(name), data(param) {
+  DifferentialGear::DifferentialGear(const std::string &name, Data param, bool planetIndependent) : Group(name), data(std::move(param)) {
     double density = 785;
 
     if(data.massInputShaft == -1) 

@@ -27,12 +27,12 @@ using namespace std;
 namespace MBSim {
 
   MultiDimensionalFixpointSolver::MultiDimensionalFixpointSolver() :
-    function(0), criteria(0), iter(0), itermax(1e3), norms(0), info(1){
+     norms(0) {
 
   }
 
   MultiDimensionalFixpointSolver::MultiDimensionalFixpointSolver(Function<Vec(Vec)> *function_) :
-      function(function_), criteria(0), iter(0), itermax(1e3), norms(0), info(1) {
+      function(function_), criteria(nullptr), iter(0), itermax(1e3), norms(0), info(1) {
   }
 
   /*

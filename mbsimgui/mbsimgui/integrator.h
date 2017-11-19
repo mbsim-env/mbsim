@@ -32,51 +32,51 @@ namespace MBSimGUI {
 
   class Integrator : public Solver {
     public:
-      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog(this);}
-      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMINT; }
+      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
+      IntegratorPropertyDialog* createPropertyDialog() override {return new IntegratorPropertyDialog(this);}
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMINT; }
   };
 
   class DOPRI5Integrator : public Integrator {
     public:
-      virtual QString getType() const { return "DOPRI5Integrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() {return new DOPRI5IntegratorPropertyDialog(this);}
+      QString getType() const override { return "DOPRI5Integrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override {return new DOPRI5IntegratorPropertyDialog(this);}
   };
 
   class RADAU5Integrator : public Integrator {
     public:
-      virtual QString getType() const { return "RADAU5Integrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() {return new RADAU5IntegratorPropertyDialog(this);}
+      QString getType() const override { return "RADAU5Integrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override {return new RADAU5IntegratorPropertyDialog(this);}
   };
 
   class LSODEIntegrator : public Integrator {
     public:
-      virtual QString getType() const { return "LSODEIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() {return new LSODEIntegratorPropertyDialog(this);}
+      QString getType() const override { return "LSODEIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override {return new LSODEIntegratorPropertyDialog(this);}
   };
 
   class LSODARIntegrator : public Integrator {
     public:
-      virtual QString getType() const { return "LSODARIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() {return new LSODARIntegratorPropertyDialog(this);}
+      QString getType() const override { return "LSODARIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override {return new LSODARIntegratorPropertyDialog(this);}
   };
 
   class TimeSteppingIntegrator : public Integrator {
     public:
-      virtual QString getType() const { return "TimeSteppingIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() {return new TimeSteppingIntegratorPropertyDialog(this);}
+      QString getType() const override { return "TimeSteppingIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override {return new TimeSteppingIntegratorPropertyDialog(this);}
   };
 
   class EulerExplicitIntegrator : public Integrator {
     public:
-      virtual QString getType() const { return "EulerExplicitIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() {return new EulerExplicitIntegratorPropertyDialog(this);}
+      QString getType() const override { return "EulerExplicitIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override {return new EulerExplicitIntegratorPropertyDialog(this);}
   };
 
   class RKSuiteIntegrator : public Integrator {
     public:
-      virtual QString getType() const { return "RKSuiteIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() {return new RKSuiteIntegratorPropertyDialog(this);}
+      QString getType() const override { return "RKSuiteIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override {return new RKSuiteIntegratorPropertyDialog(this);}
   };
 
 }

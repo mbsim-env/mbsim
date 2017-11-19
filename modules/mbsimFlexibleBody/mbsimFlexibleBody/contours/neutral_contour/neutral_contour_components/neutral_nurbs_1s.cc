@@ -20,9 +20,7 @@ namespace MBSimFlexibleBody {
 
   }
 
-  NeutralNurbs1s:: ~NeutralNurbs1s(){
-
-  }
+  NeutralNurbs1s:: ~NeutralNurbs1s()= default;
 
   void NeutralNurbs1s::resetUpToDate() {
     updCurve = true;

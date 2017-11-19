@@ -26,7 +26,7 @@ namespace MBSimGUI {
 
   class Constraint : public Element {
     public:
-      QMenu* createContextMenu() { return new ConstraintContextMenu(this); }
+      QMenu* createContextMenu() override { return new ConstraintContextMenu(this); }
   };
 
   class MechanicalConstraint : public Constraint {
@@ -37,44 +37,44 @@ namespace MBSimGUI {
 
   class GeneralizedGearConstraint : public GeneralizedConstraint {
     public:
-      QString getType() const { return "GeneralizedGearConstraint"; }
-      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedGearConstraintPropertyDialog(this);}
+      QString getType() const override { return "GeneralizedGearConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new GeneralizedGearConstraintPropertyDialog(this);}
   };
 
   class GeneralizedDualConstraint : public GeneralizedConstraint {
     public:
-      QString getType() const { return "GeneralizedDualConstraint"; }
-      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedDualConstraintPropertyDialog(this);}
+      QString getType() const override { return "GeneralizedDualConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new GeneralizedDualConstraintPropertyDialog(this);}
   };
 
   class GeneralizedPositionConstraint : public GeneralizedDualConstraint {
     public:
-      QString getType() const { return "GeneralizedPositionConstraint"; }
-      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionConstraintPropertyDialog(this);}
+      QString getType() const override { return "GeneralizedPositionConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new GeneralizedPositionConstraintPropertyDialog(this);}
   };
 
   class GeneralizedVelocityConstraint : public GeneralizedDualConstraint {
     public:
-      QString getType() const { return "GeneralizedVelocityConstraint"; }
-      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocityConstraintPropertyDialog(this);}
+      QString getType() const override { return "GeneralizedVelocityConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new GeneralizedVelocityConstraintPropertyDialog(this);}
   };
 
   class GeneralizedAccelerationConstraint : public GeneralizedDualConstraint {
     public:
-      QString getType() const { return "GeneralizedAccelerationConstraint"; }
-      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedAccelerationConstraintPropertyDialog(this);}
+      QString getType() const override { return "GeneralizedAccelerationConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new GeneralizedAccelerationConstraintPropertyDialog(this);}
   };
 
   class JointConstraint : public MechanicalConstraint {
     public:
-      QString getType() const { return "JointConstraint"; }
-      ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
+      QString getType() const override { return "JointConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new JointConstraintPropertyDialog(this);}
   };
 
   class GeneralizedConnectionConstraint : public GeneralizedDualConstraint {
     public:
-      QString getType() const { return "GeneralizedConnectionConstraint"; }
-      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedConnectionConstraintPropertyDialog(this);}
+      QString getType() const override { return "GeneralizedConnectionConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new GeneralizedConnectionConstraintPropertyDialog(this);}
   };
 
 }

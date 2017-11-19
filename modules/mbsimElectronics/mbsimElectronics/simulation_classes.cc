@@ -17,9 +17,9 @@ namespace MBSimElectronics {
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[charge])
-          plotColumns.push_back("Charge");
+          plotColumns.emplace_back("Charge");
         if(plotFeature[current])
-          plotColumns.push_back("Current");
+          plotColumns.emplace_back("Current");
       }
     }
     Object::init(stage, config);
@@ -63,11 +63,11 @@ namespace MBSimElectronics {
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[charge])
-          plotColumns.push_back("Charge");
+          plotColumns.emplace_back("Charge");
         if(plotFeature[current])
-          plotColumns.push_back("Current");
+          plotColumns.emplace_back("Current");
         if(plotFeature[voltage])
-          plotColumns.push_back("Voltage");
+          plotColumns.emplace_back("Voltage");
       }
     }
     Link::init(stage, config);
@@ -135,15 +135,15 @@ namespace MBSimElectronics {
 
   void Branch::updateCharge() {
     Q(0) = 0;
-    for(size_t i=0; i<mesh.size(); i++)
-      Q(0) += J[0](0,mesh[i]->gethSize()-1)*mesh[i]->getq()(0);
+    for(auto & i : mesh)
+      Q(0) += J[0](0,i->gethSize()-1)*i->getq()(0);
     updQ = false;
   }
 
   void Branch::updateCurrent() {
     I(0) = 0;
-    for(size_t i=0; i<mesh.size(); i++)
-      I(0) += J[0](0,mesh[i]->gethSize()-1)*mesh[i]->getu()(0);
+    for(auto & i : mesh)
+      I(0) += J[0](0,i->gethSize()-1)*i->getu()(0);
     updI = false;
   }
 
@@ -179,19 +179,19 @@ namespace MBSimElectronics {
       getStartTerminal()->setFlag(-1);
       getEndTerminal()->setFlag(-1);
     }
-    for(unsigned int i=0; i<connectedBranch.size(); i++)
-      if(connectedBranch[i] != callingBranch) {
-	if(connectedBranch[i]->getFlag()==0) {
-	  connectedBranch[i]->setFlag(1);
+    for(auto & i : connectedBranch)
+      if(i != callingBranch) {
+	if(i->getFlag()==0) {
+	  i->setFlag(1);
 
 	  if(treeBranch.size() < nmax)
-	    connectedBranch[i]->buildTreeBranches(this,treeBranch,nmax);
+	    i->buildTreeBranches(this,treeBranch,nmax);
 	}
       }
   }
 
   void Branch::buildMeshes(Terminal *callingTerminal, Branch* callingBranch, Mesh* currentMesh, bool &foundMesh) {
-    if(callingBranch == 0) {
+    if(callingBranch == nullptr) {
       callingBranch = this;
     } 
     if(getFlag() == 3)

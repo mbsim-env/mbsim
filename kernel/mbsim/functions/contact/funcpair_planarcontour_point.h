@@ -38,9 +38,9 @@ namespace MBSim {
        */
       FuncPairPlanarContourPoint(Point* point_, Contour *contour_) : contour(contour_), point(point_) {}
 
-      double operator()(const double &alpha);
+      double operator()(const double &alpha) override;
 
-      fmatvec::Vec3 evalWrD(const double &alpha);
+      fmatvec::Vec3 evalWrD(const double &alpha) override;
 
     private:
       /**

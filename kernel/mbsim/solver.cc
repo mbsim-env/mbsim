@@ -24,6 +24,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DynamicSystemSolver * Solver::system = 0;
+  DynamicSystemSolver * Solver::system = nullptr;
 
 }

@@ -2,6 +2,7 @@
 #include "config.h"
 #include <string>
 #include <stdexcept>
+#include <utility>
 #include <mbxmlutilshelper/shared_library.h>
 
 // include the fmi header
@@ -31,7 +32,7 @@ namespace {
 
   // FMI instance struct of mbsim.so: hold the real SharedLibrary and the real instance
   struct Instance {
-    Instance(const std::shared_ptr<FMIInstanceBase> &instance_) : instance(instance_) {}
+    Instance(std::shared_ptr<FMIInstanceBase> instance_) : instance(std::move(instance_)) {}
     std::shared_ptr<FMIInstanceBase> instance;
   };
 }
@@ -68,20 +69,20 @@ extern "C" {
       for(int i=0; i<3; ++i)
         s=fmuDir.find_last_of("/\\", s)-1;
       // load main mbsim FMU library
-      fmiInstanceCreatePtr fmiInstanceCreate=SharedLibrary::getSymbol<fmiInstanceCreatePtr>(
+      auto fmiInstanceCreate=SharedLibrary::getSymbol<fmiInstanceCreatePtr>(
         fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/libmbsimXXX_fmi"+SHEXT, "fmiInstanceCreate");
       return new Instance(fmiInstanceCreate(instanceName_, GUID, functions, loggingOn));
     }
     // note: we can not use the instance here since the creation has failed
     catch(const exception &ex) {
       string instanceName=instanceName_; // passing instanceName_ to logger is not allowed acording the FMI standard
-      functions.logger(NULL, instanceName.c_str(), fmiError, "error", ex.what());
-      return NULL;
+      functions.logger(nullptr, instanceName.c_str(), fmiError, "error", ex.what());
+      return nullptr;
     }
     catch(...) {
       string instanceName=instanceName_; // passing instanceName_ to logger is not allowed acording the FMI standard
-      functions.logger(NULL, instanceName.c_str(), fmiError, "error", "Unknown error");
-      return NULL;
+      functions.logger(nullptr, instanceName.c_str(), fmiError, "error", "Unknown error");
+      return nullptr;
     }
   }
 

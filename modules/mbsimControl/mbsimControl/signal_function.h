@@ -35,21 +35,21 @@ namespace MBSimControl {
   template<typename Ret, typename Arg>
   class SignalFunction<Ret(Arg)> : public MBSim::Function<Ret(Arg)> {
     public:
-      SignalFunction(Signal *ret_=NULL) : ret(ret_) {}
+      SignalFunction(Signal *ret_=nullptr) : ret(ret_) {}
 
       void setReturnSignal(Signal *ret_);
 
-      std::pair<int, int> getRetSize() const { return std::make_pair(ret->getSignalSize(),1); }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(ret->getSignalSize(),1); }
 
-      virtual Ret operator()(const Arg& a) {
+      Ret operator()(const Arg& a) override {
         return MBSim::FromVecV<Ret>::cast(ret->evalSignal());
       }
 
-      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
+      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      MBSim::Element* getDependency() const { return ret; }
+      MBSim::Element* getDependency() const override { return ret; }
 
     protected:
       std::string retString;
@@ -84,21 +84,21 @@ namespace MBSimControl {
   template<typename Ret, typename Arg1, typename Arg2>
   class SignalFunction<Ret(Arg1,Arg2)> : public MBSim::Function<Ret(Arg1,Arg2)> {
     public:
-      SignalFunction(Signal *ret_=NULL) : ret(ret_) {}
+      SignalFunction(Signal *ret_=nullptr) : ret(ret_) {}
 
       void setReturnSignal(Signal *ret_);
 
-      std::pair<int, int> getRetSize() const { return std::make_pair(ret->getSignalSize(),1); }
+      std::pair<int, int> getRetSize() const override { return std::make_pair(ret->getSignalSize(),1); }
 
-      virtual Ret operator()(const Arg1& a1, const Arg2& a2) {
+      Ret operator()(const Arg1& a1, const Arg2& a2) override {
         return MBSim::FromVecV<Ret>::cast(ret->evalSignal());
       }
 
-      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
+      void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      MBSim::Element* getDependency() const { return ret; }
+      MBSim::Element* getDependency() const override { return ret; }
 
     protected:
       std::string retString;

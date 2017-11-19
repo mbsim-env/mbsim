@@ -50,10 +50,10 @@ namespace MBSimGUI {
         var[i][j] = var_[i][j].toDouble();
     }
 
-    QVBoxLayout *mainlayout = new QVBoxLayout;
+    auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
 
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     mainlayout->addLayout(layout);
 
     layout->addWidget(new QLabel("Format:"),0,0);
@@ -79,7 +79,7 @@ namespace MBSimGUI {
 
     layout->addWidget(tab,1,0,1,5);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    auto *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Close);
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
@@ -100,8 +100,8 @@ namespace MBSimGUI {
     }
   }
 
-  RigidBodyBrowser::RigidBodyBrowser(Element* element_, RigidBody* rigidBody, QWidget *parentObject_) : QDialog(parentObject_), selection(rigidBody), savedItem(0), element(element_) {
-    QGridLayout* mainLayout=new QGridLayout;
+  RigidBodyBrowser::RigidBodyBrowser(Element* element_, RigidBody* rigidBody, QWidget *parentObject_) : QDialog(parentObject_), selection(rigidBody), savedItem(nullptr), element(element_) {
+    auto* mainLayout=new QGridLayout;
     setLayout(mainLayout);
     rigidBodyList = new QTreeWidget;
     rigidBodyList->setColumnCount(1);
@@ -136,7 +136,7 @@ namespace MBSimGUI {
   void RigidBodyBrowser::updateWidget(RigidBody *sel) {
     selection = sel;
     rigidBodyList->clear();
-    savedItem = 0;
+    savedItem = nullptr;
     mbs2RigidBodyTree(element,rigidBodyList->invisibleRootItem());
     rigidBodyList->setCurrentItem(savedItem);
   }
@@ -144,7 +144,7 @@ namespace MBSimGUI {
   void RigidBodyBrowser::mbs2RigidBodyTree(Element* ele, QTreeWidgetItem* parentItem) {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele)) {
 
-      ElementItem *item = new ElementItem(ele);
+      auto *item = new ElementItem(ele);
       item->setText(0,ele->getName());
 
       if(ele == selection)
@@ -160,7 +160,7 @@ namespace MBSimGUI {
   }
 
   void RigidBodyBrowser::checkForRigidBody(QTreeWidgetItem* item_,int) {
-    ElementItem* item = static_cast<ElementItem*>(item_);
+    auto* item = static_cast<ElementItem*>(item_);
     if(dynamic_cast<RigidBody*>(item->getElement())) {
       mw->highlightObject(static_cast<RigidBody*>(item->getElement())->getID());
       okButton->setDisabled(false);
@@ -169,8 +169,8 @@ namespace MBSimGUI {
       okButton->setDisabled(true);
   }
 
-  ObjectBrowser::ObjectBrowser(Element* element_, Object* object, QWidget *parentObject_) : QDialog(parentObject_), selection(object), savedItem(0), element(element_) {
-    QGridLayout* mainLayout=new QGridLayout;
+  ObjectBrowser::ObjectBrowser(Element* element_, Object* object, QWidget *parentObject_) : QDialog(parentObject_), selection(object), savedItem(nullptr), element(element_) {
+    auto* mainLayout=new QGridLayout;
     setLayout(mainLayout);
     objectList = new QTreeWidget;
     objectList->setColumnCount(1);
@@ -205,7 +205,7 @@ namespace MBSimGUI {
   void ObjectBrowser::updateWidget(Object *sel) {
     selection = sel;
     objectList->clear();
-    savedItem = 0;
+    savedItem = nullptr;
     mbs2ObjectTree(element,objectList->invisibleRootItem());
     objectList->setCurrentItem(savedItem);
   }
@@ -213,7 +213,7 @@ namespace MBSimGUI {
   void ObjectBrowser::mbs2ObjectTree(Element* ele, QTreeWidgetItem* parentItem) {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Object*>(ele)) {
 
-      ElementItem *item = new ElementItem(ele);
+      auto *item = new ElementItem(ele);
       item->setText(0,ele->getName());
 
       if(ele == selection)
@@ -229,7 +229,7 @@ namespace MBSimGUI {
   }
 
   void ObjectBrowser::checkForObject(QTreeWidgetItem* item_,int) {
-    ElementItem* item = static_cast<ElementItem*>(item_);
+    auto* item = static_cast<ElementItem*>(item_);
     if(dynamic_cast<Object*>(item->getElement())) {
       mw->highlightObject(static_cast<Object*>(item->getElement())->getID());
       okButton->setDisabled(false);
@@ -238,8 +238,8 @@ namespace MBSimGUI {
       okButton->setDisabled(true);
   }
 
-  LinkBrowser::LinkBrowser(Element* element_, Link* link, QWidget *parentLink_) : QDialog(parentLink_), selection(link), savedItem(0), element(element_) {
-    QGridLayout* mainLayout=new QGridLayout;
+  LinkBrowser::LinkBrowser(Element* element_, Link* link, QWidget *parentLink_) : QDialog(parentLink_), selection(link), savedItem(nullptr), element(element_) {
+    auto* mainLayout=new QGridLayout;
     setLayout(mainLayout);
     linkList = new QTreeWidget;
     linkList->setColumnCount(1);
@@ -274,7 +274,7 @@ namespace MBSimGUI {
   void LinkBrowser::updateWidget(Link *sel) {
     selection = sel;
     linkList->clear();
-    savedItem = 0;
+    savedItem = nullptr;
     mbs2LinkTree(element,linkList->invisibleRootItem());
     linkList->setCurrentItem(savedItem);
   }
@@ -282,7 +282,7 @@ namespace MBSimGUI {
   void LinkBrowser::mbs2LinkTree(Element* ele, QTreeWidgetItem* parentItem) {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Link*>(ele)) {
 
-      ElementItem *item = new ElementItem(ele);
+      auto *item = new ElementItem(ele);
       item->setText(0,ele->getName());
 
       if(ele == selection)
@@ -298,7 +298,7 @@ namespace MBSimGUI {
   }
 
   void LinkBrowser::checkForLink(QTreeWidgetItem* item_,int) {
-    ElementItem* item = static_cast<ElementItem*>(item_);
+    auto* item = static_cast<ElementItem*>(item_);
     if(dynamic_cast<Link*>(item->getElement())) {
       mw->highlightObject(static_cast<Link*>(item->getElement())->getID());
       okButton->setDisabled(false);
@@ -307,8 +307,8 @@ namespace MBSimGUI {
       okButton->setDisabled(true);
   }
 
-  ConstraintBrowser::ConstraintBrowser(Element* element_, Constraint* constraint, QWidget *parentConstraint_) : QDialog(parentConstraint_), selection(constraint), savedItem(0), element(element_) {
-    QGridLayout* mainLayout=new QGridLayout;
+  ConstraintBrowser::ConstraintBrowser(Element* element_, Constraint* constraint, QWidget *parentConstraint_) : QDialog(parentConstraint_), selection(constraint), savedItem(nullptr), element(element_) {
+    auto* mainLayout=new QGridLayout;
     setLayout(mainLayout);
     constraintList = new QTreeWidget;
     constraintList->setColumnCount(1);
@@ -343,7 +343,7 @@ namespace MBSimGUI {
   void ConstraintBrowser::updateWidget(Constraint *sel) {
     selection = sel;
     constraintList->clear();
-    savedItem = 0;
+    savedItem = nullptr;
     mbs2ConstraintTree(element,constraintList->invisibleRootItem());
     constraintList->setCurrentItem(savedItem);
   }
@@ -351,7 +351,7 @@ namespace MBSimGUI {
   void ConstraintBrowser::mbs2ConstraintTree(Element* ele, QTreeWidgetItem* parentItem) {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Constraint*>(ele)) {
 
-      ElementItem *item = new ElementItem(ele);
+      auto *item = new ElementItem(ele);
       item->setText(0,ele->getName());
 
       if(ele == selection)
@@ -367,7 +367,7 @@ namespace MBSimGUI {
   }
 
   void ConstraintBrowser::checkForConstraint(QTreeWidgetItem* item_,int) {
-    ElementItem* item = static_cast<ElementItem*>(item_);
+    auto* item = static_cast<ElementItem*>(item_);
     if(dynamic_cast<Constraint*>(item->getElement())) {
       mw->highlightObject(static_cast<Constraint*>(item->getElement())->getID());
       okButton->setDisabled(false);
@@ -376,8 +376,8 @@ namespace MBSimGUI {
       okButton->setDisabled(true);
   }
 
-  FrameBrowser::FrameBrowser(Element* element_, Frame* frame, QWidget *parentObject_) : QDialog(parentObject_), selection(frame), savedItem(0), element(element_) {
-    QGridLayout* mainLayout=new QGridLayout;
+  FrameBrowser::FrameBrowser(Element* element_, Frame* frame, QWidget *parentObject_) : QDialog(parentObject_), selection(frame), savedItem(nullptr), element(element_) {
+    auto* mainLayout=new QGridLayout;
     setLayout(mainLayout);
     frameList = new QTreeWidget;
     frameList->setColumnCount(1);
@@ -412,7 +412,7 @@ namespace MBSimGUI {
   void FrameBrowser::updateWidget(Frame *sel) {
     selection = sel;
     frameList->clear();
-    savedItem = 0;
+    savedItem = nullptr;
     mbs2FrameTree(element,frameList->invisibleRootItem());
     frameList->setCurrentItem(savedItem);
   }
@@ -420,7 +420,7 @@ namespace MBSimGUI {
   void FrameBrowser::mbs2FrameTree(Element* ele, QTreeWidgetItem* parentItem) {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Object*>(ele) || dynamic_cast<Frame*>(ele)) {
 
-      ElementItem *item = new ElementItem(ele);
+      auto *item = new ElementItem(ele);
       item->setText(0,ele->getName());
 
       if(ele == selection)
@@ -438,7 +438,7 @@ namespace MBSimGUI {
   }
 
   void FrameBrowser::checkForFrame(QTreeWidgetItem* item_,int) {
-    ElementItem* item = static_cast<ElementItem*>(item_);
+    auto* item = static_cast<ElementItem*>(item_);
     if(dynamic_cast<Frame*>(item->getElement())) {
       mw->highlightObject(static_cast<Frame*>(item->getElement())->getID());
       okButton->setDisabled(false);
@@ -446,8 +446,8 @@ namespace MBSimGUI {
       okButton->setDisabled(true);
   }
 
-  ContourBrowser::ContourBrowser(Element* element_, Contour* contour, QWidget *parentObject_) : QDialog(parentObject_), selection(contour), savedItem(0), element(element_) {
-    QGridLayout* mainLayout=new QGridLayout;
+  ContourBrowser::ContourBrowser(Element* element_, Contour* contour, QWidget *parentObject_) : QDialog(parentObject_), selection(contour), savedItem(nullptr), element(element_) {
+    auto* mainLayout=new QGridLayout;
     setLayout(mainLayout);
     contourList = new QTreeWidget;
     contourList->setColumnCount(1);
@@ -482,7 +482,7 @@ namespace MBSimGUI {
   void ContourBrowser::updateWidget(Contour *sel) {
     selection = sel;
     contourList->clear();
-    savedItem = 0;
+    savedItem = nullptr;
     mbs2ContourTree(element,contourList->invisibleRootItem());
     contourList->setCurrentItem(savedItem);
   }
@@ -490,7 +490,7 @@ namespace MBSimGUI {
   void ContourBrowser::mbs2ContourTree(Element* ele, QTreeWidgetItem* parentItem) {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Object*>(ele)  || dynamic_cast<Contour*>(ele)) {
 
-      ElementItem *item = new ElementItem(ele);
+      auto *item = new ElementItem(ele);
       item->setText(0,ele->getName());
 
       if(ele == selection)
@@ -508,7 +508,7 @@ namespace MBSimGUI {
   }
 
   void ContourBrowser::checkForContour(QTreeWidgetItem* item_,int) {
-    ElementItem* item = static_cast<ElementItem*>(item_);
+    auto* item = static_cast<ElementItem*>(item_);
     if(dynamic_cast<Contour*>(item->getElement())) {
       mw->highlightObject(static_cast<Contour*>(item->getElement())->getID());
       okButton->setDisabled(false);
@@ -517,8 +517,8 @@ namespace MBSimGUI {
       okButton->setDisabled(true);
   }
 
-  SignalBrowser::SignalBrowser(Element* element_, Signal* signal, QWidget *parentSignal_) : QDialog(parentSignal_), selection(signal), savedItem(0), element(element_) {
-    QGridLayout* mainLayout=new QGridLayout;
+  SignalBrowser::SignalBrowser(Element* element_, Signal* signal, QWidget *parentSignal_) : QDialog(parentSignal_), selection(signal), savedItem(nullptr), element(element_) {
+    auto* mainLayout=new QGridLayout;
     setLayout(mainLayout);
     signalList = new QTreeWidget;
     signalList->setColumnCount(1);
@@ -541,7 +541,7 @@ namespace MBSimGUI {
   void SignalBrowser::updateWidget(Signal *sel) {
     selection = sel;
     signalList->clear();
-    savedItem = 0;
+    savedItem = nullptr;
     mbs2SignalTree(element,signalList->invisibleRootItem());
     signalList->setCurrentItem(savedItem);
   }
@@ -549,7 +549,7 @@ namespace MBSimGUI {
   void SignalBrowser::mbs2SignalTree(Element* ele, QTreeWidgetItem* parentItem) {
     if(dynamic_cast<Group*>(ele) || dynamic_cast<Signal*>(ele)) {
 
-      ElementItem *item = new ElementItem(ele);
+      auto *item = new ElementItem(ele);
       item->setText(0,ele->getName());
 
       if(ele == selection)
@@ -565,7 +565,7 @@ namespace MBSimGUI {
   }
 
   void SignalBrowser::checkForSignal(QTreeWidgetItem* item_,int) {
-    ElementItem* item = static_cast<ElementItem*>(item_);
+    auto* item = static_cast<ElementItem*>(item_);
     if(dynamic_cast<Signal*>(item->getElement()))
       okButton->setDisabled(false);
     else

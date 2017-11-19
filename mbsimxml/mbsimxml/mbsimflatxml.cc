@@ -2,7 +2,7 @@
 #if MBSIMXML_COND_PYTHON
   #include <mbxmlutils/py2py3cppwrapper.h>
 #endif
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <fmatvec/atom.h>
 #include <mbxmlutilshelper/getinstallpath.h>
@@ -93,7 +93,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
         std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
             getFirstElementChild();
-            e!=NULL; e=e->getNextElementSibling()) {
+            e!=nullptr; e=e->getNextElementSibling()) {
           if(stage==Loading && E(e)->getTagName()==MBSIMMODULE%"CppLibrary") {
             string location=E(e)->getAttribute("location");
             bool global=false;
@@ -134,8 +134,8 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
       }
 
   // load MBSim modules which are not already loaded
-  for(auto it=moduleLibFile.begin(); it!=moduleLibFile.end(); it++)
-    SharedLibrary::load(it->string(), moduleLibFlag[*it]);
+  for(const auto & it : moduleLibFile)
+    SharedLibrary::load(it.string(), moduleLibFlag[it]);
 
   return moduleLibFile;
 }
@@ -148,7 +148,7 @@ int PrefixedStringBuf::sync() {
   // clear the current buffer
   str("");
   // print each line prefixed with prefix to outstr
-  for(vector<string>::iterator it=line.begin(); it!=line.end(); ++it)
+  for(auto it=line.begin(); it!=line.end(); ++it)
     if(it!=--line.end())
       outstr<<prefix<<*it<<"\n";
     else

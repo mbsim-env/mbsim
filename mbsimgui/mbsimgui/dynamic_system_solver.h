@@ -32,30 +32,30 @@ namespace MBSimGUI {
       static Environment *getInstance() { return instance?instance:(instance=new Environment); }
 
     protected:
-      Environment() { }
-      virtual ~Environment() { }
+      Environment() = default;
+      ~Environment() override = default;
       static Environment *instance;
   };
 
   class DynamicSystemSolver : public Group {
     protected:
       xercesc::DOMElement *environments;
-      Project *project;
+      Project *project{nullptr};
     public:
-      DynamicSystemSolver() : project(NULL) { config = true; }
-      QString getType() const { return "DynamicSystemSolver"; }
+      DynamicSystemSolver()  { config = true; }
+      QString getType() const override { return "DynamicSystemSolver"; }
       void setProject(Project* project_) { project = project_; }
       Project* getProject() { return project; }
       xercesc::DOMElement* getXMLEnvironments() { return environments; }
-      void removeXMLElements();
-      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      QString getFileExtension() const { return ".mbsim.xml"; }
-      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
-      ElementPropertyDialog* createPropertyDialog() { return new DynamicSystemSolverPropertyDialog(this); }
-      virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this,false); }
-      QMenu* createContextMenu() { return new ElementContextMenu(this,NULL,false,true); }
-      std::vector<EmbedItemData*> getParents();
+      void removeXMLElements() override;
+      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      QString getFileExtension() const override { return ".mbsim.xml"; }
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      ElementPropertyDialog* createPropertyDialog() override { return new DynamicSystemSolverPropertyDialog(this); }
+      EmbeddingPropertyDialog* createEmbeddingPropertyDialog() override { return new EmbeddingPropertyDialog(this,false); }
+      QMenu* createContextMenu() override { return new ElementContextMenu(this,nullptr,false,true); }
+      std::vector<EmbedItemData*> getParents() override;
   };
 
 }

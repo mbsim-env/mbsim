@@ -32,8 +32,8 @@ namespace MBSimHydraulics {
   /*! LeakageLine */
   class LeakageLine : public RigidHLine {
     public:
-      LeakageLine(const std::string &name) : RigidHLine(name), lpl(NULL), s1vFunction(NULL), s2vFunction(NULL), glFunction(NULL) {}
-      ~LeakageLine();
+      LeakageLine(const std::string &name) : RigidHLine(name), lpl(nullptr), s1vFunction(nullptr), s2vFunction(nullptr), glFunction(nullptr) {}
+      ~LeakageLine() override;
 
       void setGapLengthFunction(MBSim::Function<double(double)> * s) {
         glFunction=s;
@@ -54,9 +54,9 @@ namespace MBSimHydraulics {
       }
       double evalSurface2Velocity() const;
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
     protected:
       LeakagePressureLoss * lpl;
     private:
@@ -66,7 +66,7 @@ namespace MBSimHydraulics {
   /*! PlaneLeakageLine */
   class PlaneLeakageLine : public LeakageLine {
     public:
-      PlaneLeakageLine(const std::string &name="") : LeakageLine(name), hGap(0), wGap(0) {};
+      PlaneLeakageLine(const std::string &name="") : LeakageLine(name) {};
 
       void setGapWidth(double wGap_) {wGap=wGap_; }
       double getGapWidth() const {return wGap; }
@@ -74,17 +74,17 @@ namespace MBSimHydraulics {
       double getGapHeight() const {return hGap; }
       void setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl);
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
     private:
-      double hGap, wGap;
+      double hGap{0}, wGap{0};
   };
 
   /*! CircularLeakageLine */
   class CircularLeakageLine : public LeakageLine {
     public:
-      CircularLeakageLine(const std::string &name="") : LeakageLine(name), rI(0), rO(0), hGap(0) {}
+      CircularLeakageLine(const std::string &name="") : LeakageLine(name) {}
 
       void setInnerRadius(double rI_) {rI=rI_; }
       double getInnerRadius() const {return rI; }
@@ -93,11 +93,11 @@ namespace MBSimHydraulics {
       double getOuterRadius() const {return rO; }
       void setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl);
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
     private:
-      double rI, rO, hGap;
+      double rI{0}, rO{0}, hGap{0};
   };
 
 }

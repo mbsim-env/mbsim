@@ -39,14 +39,14 @@ namespace MBSim {
       FuncPairPlanarContourLine(Line* line_, Contour *contour_) : contour(contour_), line(line_) { }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      virtual double operator()(const double &s) {
+      double operator()(const double &s) override {
         THROW_MBSIMERROR("(FuncPairPlanarContourLine::operator): Not implemented!");
         //fmatvec::Vec WtC = (contour->computeWt(s)).col(0);
         //fmatvec::Vec WnL = line->computeWn();
         //return trans(WtC)*WnL;
       }
 
-      virtual fmatvec::Vec3 evalWrD(const double &s) {
+      fmatvec::Vec3 evalWrD(const double &s) override {
         THROW_MBSIMERROR("(FuncPairPlanarContourLine::evalWrD): Not implemented!");
         //fmatvec::Vec WrOCContour =  contour->getWrOC(s);
         //fmatvec::Vec Wn = contour->computeWn(s);
@@ -54,7 +54,7 @@ namespace MBSim {
         //return Wn*g;
       }
 
-      virtual double operator[](const double &s) { return nrm2(evalWrD(s)); }
+      double operator[](const double &s) override { return nrm2(evalWrD(s)); }
 
     private:
       Contour *contour;

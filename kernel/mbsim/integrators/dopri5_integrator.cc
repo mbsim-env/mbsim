@@ -26,7 +26,7 @@
 #include "fortran/fortran_wrapper.h"
 #include "dopri5_integrator.h"
 #include <fstream>
-#include <time.h>
+#include <ctime>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -41,7 +41,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, DOPRI5Integrator)
 
-  DOPRI5Integrator::DOPRI5Integrator() : dt0(0), maxSteps(2000000000), dtMax(0) {
+  DOPRI5Integrator::DOPRI5Integrator()  {
   }
 
   double DOPRI5Integrator::tPlot = 0;

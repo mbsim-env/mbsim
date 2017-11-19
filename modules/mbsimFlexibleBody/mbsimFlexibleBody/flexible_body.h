@@ -58,23 +58,23 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBody();
+      ~FlexibleBody() override;
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateqd() { qd = u; }
-      virtual void updateh(int k=0);
-      virtual void updateM();
-      virtual void updatedhdz();
+      void updateqd() override { qd = u; }
+      void updateh(int k=0) override;
+      void updateM() override;
+      void updatedhdz() override;
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       virtual double computeKineticEnergy();
       virtual double computePotentialEnergy();
-      virtual void setFrameOfReference(MBSim::Frame *frame);
+      void setFrameOfReference(MBSim::Frame *frame) override;
       virtual void setq0(fmatvec::Vec q0_) { if(q0_.size()) MBSim::Body::setGeneralizedInitialPosition(q0_); q<<q0; }
       virtual void setu0(fmatvec::Vec u0_) { if(u0_.size()) MBSim::Body::setGeneralizedInitialVelocity(u0_); u<<u0; }
       /***************************************************/
@@ -157,7 +157,7 @@ namespace MBSimFlexibleBody {
        */
       void addFrame(MBSim::FixedRelativeFrame *frame);
 
-      void addContour(MBSim::Contour *contour);
+      void addContour(MBSim::Contour *contour) override;
 
       /**
        * \brief interpolates the position and optional the velocity coordinates of the flexible body with Nurbs-package and exports the nurbs curve in the specified file
@@ -177,7 +177,7 @@ namespace MBSimFlexibleBody {
        */
       virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string()){throw  MBSim::MBSimError("importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel) is not implemented for " + boost::core::demangle(typeid(*this).name())) ;}
 
-      void resetUpToDate();
+      void resetUpToDate() override;
 
     protected:
       /**

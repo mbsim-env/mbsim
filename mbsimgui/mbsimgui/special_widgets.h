@@ -38,9 +38,9 @@ namespace MBSimGUI {
       OneDimVecArrayWidget(int size=0, int m=0, bool var=false);
       const std::vector<ExtWidget*>& getArray() const { return ele; }
       void resize_(int size, int m, int n);
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     public slots:
       void currentIndexChanged(int);
   };
@@ -52,9 +52,9 @@ namespace MBSimGUI {
       OneDimMatArrayWidget(int size=0, int m=0, int n=0);
       const std::vector<ExtWidget*>& getArray() const { return ele; }
       void resize_(int size, int m, int n);
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class TwoDimMatArrayWidget: public Widget {
@@ -64,18 +64,18 @@ namespace MBSimGUI {
       TwoDimMatArrayWidget(int size=0, int m=0, int n=0);
       const std::vector<std::vector<ExtWidget*> >& getArray() const { return ele; }
       void resize_(int rsize, int csize, int m, int n);
-      void resize_(int m, int n);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      void resize_(int m, int n) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class OneDimVecArrayWidgetFactory : public WidgetFactory {
     public:
       OneDimVecArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size=0, int m=0, bool var=false);
-      QWidget* createWidget(int i=0);
-      QString getName(int i=0) const { return name[i]; }
-      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
-      int getSize() const { return name.size(); }
+      QWidget* createWidget(int i=0) override;
+      QString getName(int i=0) const override { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
+      int getSize() const override { return name.size(); }
     protected:
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
@@ -86,10 +86,10 @@ namespace MBSimGUI {
   class OneDimMatArrayWidgetFactory : public WidgetFactory {
     public:
       OneDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size=0, int m=0, int n=0);
-      QWidget* createWidget(int i=0);
-      QString getName(int i=0) const { return name[i]; }
-      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
-      int getSize() const { return name.size(); }
+      QWidget* createWidget(int i=0) override;
+      QString getName(int i=0) const override { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
+      int getSize() const override { return name.size(); }
     protected:
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
@@ -99,10 +99,10 @@ namespace MBSimGUI {
   class TwoDimMatArrayWidgetFactory : public WidgetFactory {
     public:
       TwoDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size=0, int m=0, int n=0);
-      QWidget* createWidget(int i=0);
-      QString getName(int i=0) const { return name[i]; }
-      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
-      int getSize() const { return name.size(); }
+      QWidget* createWidget(int i=0) override;
+      QString getName(int i=0) const override { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
+      int getSize() const override { return name.size(); }
     protected:
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;

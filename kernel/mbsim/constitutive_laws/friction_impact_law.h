@@ -41,7 +41,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~FrictionImpactLaw() { }
+      ~FrictionImpactLaw() override = default;
 
       /* INTERFACE FOR DERIVED CLASSES */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r) = 0;
@@ -50,7 +50,7 @@ namespace MBSim {
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd) = 0;
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol) = 0;
       virtual int getFrictionDirections() = 0;
-      virtual void initializeUsingXML(xercesc::DOMElement *element) {}
+      void initializeUsingXML(xercesc::DOMElement *element) override {}
       /***************************************************/
   };
 

@@ -52,9 +52,9 @@ namespace MBSim {
       }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      virtual double operator()(const double &phi) = 0;
-      double operator[](const double &phi);
-      virtual fmatvec::Vec3 evalWrD(const double &phi) = 0;
+      double operator()(const double &phi) override = 0;
+      double operator[](const double &phi) override;
+      fmatvec::Vec3 evalWrD(const double &phi) override = 0;
       /*************************************************/
 
       /* GETTER / SETTER */

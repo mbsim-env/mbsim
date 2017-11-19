@@ -34,7 +34,7 @@ namespace MBSim {
     GeneralizedForceLaw::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
-    Function<double(double,double)> *f = ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+    auto *f = ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
   }
 

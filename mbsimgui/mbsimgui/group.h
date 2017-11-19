@@ -44,70 +44,70 @@ namespace MBSimGUI {
 
     public:
       Group();
-      ~Group();
-      QString getType() const { return "Group"; }
+      ~Group() override;
+      QString getType() const override { return "Group"; }
       void createXMLConstraints();
       void createXMLObservers();
-      xercesc::DOMElement* getXMLFrames() { return frames; }
-      xercesc::DOMElement* getXMLContours() { return contours; }
-      xercesc::DOMElement* getXMLGroups() { return groups; }
-      xercesc::DOMElement* getXMLObjects() { return objects; }
-      xercesc::DOMElement* getXMLLinks() { return links; }
-      xercesc::DOMElement* getXMLConstraints() { return constraints; }
-      xercesc::DOMElement* getXMLObservers() { return observers; }
-      xercesc::DOMElement* getXMLFrame() { return getXMLObservers()->getNextElementSibling(); }
-      void removeXMLElements();
-      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual Element *getChildByContainerAndName(const QString &container, const QString &name) const;
+      xercesc::DOMElement* getXMLFrames() override { return frames; }
+      xercesc::DOMElement* getXMLContours() override { return contours; }
+      xercesc::DOMElement* getXMLGroups() override { return groups; }
+      xercesc::DOMElement* getXMLObjects() override { return objects; }
+      xercesc::DOMElement* getXMLLinks() override { return links; }
+      xercesc::DOMElement* getXMLConstraints() override { return constraints; }
+      xercesc::DOMElement* getXMLObservers() override { return observers; }
+      xercesc::DOMElement* getXMLFrame() override { return getXMLObservers()->getNextElementSibling(); }
+      void removeXMLElements() override;
+      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
+      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      Element *getChildByContainerAndName(const QString &container, const QString &name) const override;
       void setActionPasteDisabled(bool flag);
-      int getNumberOfFrames() {return frame.size();}
-      int getNumberOfContours() {return contour.size();}
-      int getNumberOfGroups() {return group.size();}
-      int getNumberOfObjects() {return object.size();}
-      int getNumberOfLinks() {return link.size();}
-      int getNumberOfConstraints() {return constraint.size();}
-      int getNumberOfObservers() {return observer.size();}
-      int getIndexOfFrame(Frame *frame);
-      int getIndexOfContour(Contour *contour);
-      int getIndexOfGroup(Group *group);
-      int getIndexOfObject(Object *object);
-      int getIndexOfLink(Link *link);
-      int getIndexOfConstraint(Constraint *constraint);
-      int getIndexOfObserver(Observer *observer);
-      Frame* getFrame(int i) const {return frame[i];}
-      Contour* getContour(int i) const {return contour[i];}
-      Object* getObject(int i) const {return object[i];}
-      Group* getGroup(int i) const {return group[i];}
-      Link* getLink(int i) const {return link[i];}
-      Constraint* getConstraint(int i) const {return constraint[i];}
-      Observer* getObserver(int i) const {return observer[i];}
-      Frame* getFrame(const QString &name) const;
+      int getNumberOfFrames() override {return frame.size();}
+      int getNumberOfContours() override {return contour.size();}
+      int getNumberOfGroups() override {return group.size();}
+      int getNumberOfObjects() override {return object.size();}
+      int getNumberOfLinks() override {return link.size();}
+      int getNumberOfConstraints() override {return constraint.size();}
+      int getNumberOfObservers() override {return observer.size();}
+      int getIndexOfFrame(Frame *frame) override;
+      int getIndexOfContour(Contour *contour) override;
+      int getIndexOfGroup(Group *group) override;
+      int getIndexOfObject(Object *object) override;
+      int getIndexOfLink(Link *link) override;
+      int getIndexOfConstraint(Constraint *constraint) override;
+      int getIndexOfObserver(Observer *observer) override;
+      Frame* getFrame(int i) const override {return frame[i];}
+      Contour* getContour(int i) const override {return contour[i];}
+      Object* getObject(int i) const override {return object[i];}
+      Group* getGroup(int i) const override {return group[i];}
+      Link* getLink(int i) const override {return link[i];}
+      Constraint* getConstraint(int i) const override {return constraint[i];}
+      Observer* getObserver(int i) const override {return observer[i];}
+      Frame* getFrame(const QString &name) const override;
       Contour* getContour(const QString &name) const;
       Object* getObject(const QString &name) const;
       Group* getGroup(const QString &name) const;
       Link* getLink(const QString &name) const;
       Constraint* getConstraint(const QString &name) const;
       Observer* getObserver(const QString &name) const;
-      void setFrame(Frame *frame_, int i) { frame[i] = frame_; }
-      void setContour(Contour *contour_, int i) { contour[i] = contour_; }
-      void setGroup(Group *group_, int i) { group[i] = group_; }
-      void setObject(Object *object_, int i) { object[i] = object_; }
-      void setLink(Link *link_, int i) { link[i] = link_; }
-      void setConstraint(Constraint *constraint_, int i) { constraint[i] = constraint_; }
-      void setObserver(Observer *observer_, int i) { observer[i] = observer_; }
-      void addFrame(Frame *frame);
-      void addContour(Contour *contour);
-      void addGroup(Group *group);
-      void addObject(Object *object);
-      void addLink(Link *link);
-      void addConstraint(Constraint *constraint);
-      void addObserver(Observer *observer);
-      void removeElement(Element *element);
-      ElementPropertyDialog* createPropertyDialog() {return new GroupPropertyDialog(this);}
-      QMenu* createFrameContextMenu() {return new FixedRelativeFramesContextMenu(this);}
-      QMenu* createContextMenu() { return new GroupContextMenu(this); }
+      void setFrame(Frame *frame_, int i) override { frame[i] = frame_; }
+      void setContour(Contour *contour_, int i) override { contour[i] = contour_; }
+      void setGroup(Group *group_, int i) override { group[i] = group_; }
+      void setObject(Object *object_, int i) override { object[i] = object_; }
+      void setLink(Link *link_, int i) override { link[i] = link_; }
+      void setConstraint(Constraint *constraint_, int i) override { constraint[i] = constraint_; }
+      void setObserver(Observer *observer_, int i) override { observer[i] = observer_; }
+      void addFrame(Frame *frame) override;
+      void addContour(Contour *contour) override;
+      void addGroup(Group *group) override;
+      void addObject(Object *object) override;
+      void addLink(Link *link) override;
+      void addConstraint(Constraint *constraint) override;
+      void addObserver(Observer *observer) override;
+      void removeElement(Element *element) override;
+      ElementPropertyDialog* createPropertyDialog() override {return new GroupPropertyDialog(this);}
+      QMenu* createFrameContextMenu() override {return new FixedRelativeFramesContextMenu(this);}
+      QMenu* createContextMenu() override { return new GroupContextMenu(this); }
   };
 
 }

@@ -30,14 +30,14 @@ namespace MBSim {
   class ContinuedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     using B = fmatvec::Function<Ret(Arg)>; 
     public:
-      ContinuedFunction() : f(NULL), rule(NULL) { }
-      ~ContinuedFunction() { delete f; delete rule; }
-      int getArgSize() const { return f->getArgSize(); }
-      std::pair<int, int> getRetSize() const { return f->getRetSize(); }
-      Ret operator()(const Arg &x) { return (*f)((*rule)(x)); }
-      typename B::DRetDArg parDer(const Arg &x) { return f->parDer((*rule)(x)); }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return f->parDerDirDer(xDir,(*rule)(x)); }
-      typename B::DDRetDDArg parDerParDer(const Arg &x) { return f->parDerParDer((*rule)(x)); }
+      ContinuedFunction() : f(nullptr), rule(nullptr) { }
+      ~ContinuedFunction() override { delete f; delete rule; }
+      int getArgSize() const override { return f->getArgSize(); }
+      std::pair<int, int> getRetSize() const override { return f->getRetSize(); }
+      Ret operator()(const Arg &x) override { return (*f)((*rule)(x)); }
+      typename B::DRetDArg parDer(const Arg &x) override { return f->parDer((*rule)(x)); }
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { return f->parDerDirDer(xDir,(*rule)(x)); }
+      typename B::DDRetDDArg parDerParDer(const Arg &x) override { return f->parDerParDer((*rule)(x)); }
       void setFunction(Function<Ret(Arg)> *f_) {
         f = f_;
         f->setParent(this);
@@ -48,13 +48,13 @@ namespace MBSim {
         rule->setParent(this);
         rule->setName("ContinuationRule");
       }
-      void initializeUsingXML(xercesc::DOMElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"function");
         setFunction(ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild()));
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"continuationRule");
         setContinuationRule(ObjectFactory::createAndInit<Function<Arg(Arg)> >(e->getFirstElementChild()));
       }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg)>::init(stage, config);
         f->init(stage, config);
         InitConfigSet configRule(config);

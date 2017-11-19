@@ -38,13 +38,13 @@ namespace MBSimGUI {
     protected:
       std::vector<Parameter*> parameter;
       std::vector<Parameter*> removedParameter;
-      xercesc::DOMElement *element, *embed;
+      xercesc::DOMElement *element{nullptr}, *embed{nullptr};
 
     public:
-      EmbedItemData() : element(NULL), embed(NULL) { }
-      ~EmbedItemData();
-      QString getName() const { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
-      QString getValue() const { return ""; }
+      EmbedItemData()  = default;
+      ~EmbedItemData() override;
+      QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
+      QString getValue() const override { return ""; }
       virtual std::vector<EmbedItemData*> getParents() { return std::vector<EmbedItemData*>(); }
       int getNumberOfParameters() const { return parameter.size(); }
       Parameter* getParameter(int i) { return parameter[i]; }

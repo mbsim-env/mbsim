@@ -23,6 +23,7 @@
 #include "dialogs.h"
 #include "custom_widgets.h"
 #include <QtGui>
+#include <utility>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -30,9 +31,9 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active, const FQN &xmlName_) : QGroupBox(name), widget(widget_), xmlName(xmlName_) {
+  ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active, FQN xmlName_) : QGroupBox(name), widget(widget_), xmlName(std::move(xmlName_)) {
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
 
     if(deactivatable) {
       setCheckable(true);
@@ -59,7 +60,7 @@ namespace MBSimGUI {
     setActive(active);
     widget->setVisible(active);
     blockSignals(false);
-    return active?element:0;
+    return active?element:nullptr;
   }
 
   DOMElement* ExtWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
@@ -79,7 +80,7 @@ namespace MBSimGUI {
       if(isActive())
         dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
     }
-    return NULL;
+    return nullptr;
   }
 
   void ChoiceWidget2::setWidgetFactory(WidgetFactory *factory_) {
@@ -92,7 +93,7 @@ namespace MBSimGUI {
     //defineWidget(0);
   }
 
-  ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir, int mode_) : widget(0), factory(factory_), mode(mode_) {
+  ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir, int mode_) : widget(nullptr), factory(factory_), mode(mode_) {
     layout = new QBoxLayout(dir);
     layout->setMargin(0);
     setLayout(layout);
@@ -130,7 +131,7 @@ namespace MBSimGUI {
           return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
         }
       }
-      return 0;
+      return nullptr;
     }
     else if (mode<=3) {
       for(int i=0; i<factory->getSize(); i++) {
@@ -145,7 +146,7 @@ namespace MBSimGUI {
           return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
         }
       }
-      return 0;
+      return nullptr;
     }
     else {
       for(int i=0; i<factory->getSize(); i++) {
@@ -158,9 +159,9 @@ namespace MBSimGUI {
         if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(element))
           return element;
       }
-      return NULL;
+      return nullptr;
     }
-    return NULL;
+    return nullptr;
   }
 
   DOMElement* ChoiceWidget2::writeXMLFile(DOMNode *parent, DOMNode *ref) {
@@ -172,7 +173,7 @@ namespace MBSimGUI {
     }
     else
       dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
-    return NULL;
+    return nullptr;
   }
 
   ContainerWidget::ContainerWidget() {
@@ -182,8 +183,8 @@ namespace MBSimGUI {
   }
 
   void ContainerWidget::resize_(int m, int n) {
-    for(unsigned int i=0; i<widget.size(); i++)
-      dynamic_cast<WidgetInterface*>(widget[i])->resize_(m,n);
+    for(auto & i : widget)
+      dynamic_cast<WidgetInterface*>(i)->resize_(m,n);
   }
 
   void ContainerWidget::addWidget(QWidget *widget_) {
@@ -202,17 +203,17 @@ namespace MBSimGUI {
     for(unsigned int i=0; i<widget.size(); i++)
       if(dynamic_cast<WidgetInterface*>(getWidget(i))->initializeUsingXML(element))
         flag = true;
-    return flag?element:0;
+    return flag?element:nullptr;
   }
 
   DOMElement* ContainerWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     for(unsigned int i=0; i<widget.size(); i++)
       dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent,ref);
-    return NULL;
+    return nullptr;
   }
 
   ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, int m, int mode_, bool fixedSize, int minSize, int maxSize) : factory(factory_), name(name_), mode(mode_) {
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
 
@@ -262,7 +263,7 @@ namespace MBSimGUI {
 
   void ListWidget::changeCurrent(int idx) {
     if(idx>=0) {
-      if (stackedWidget->currentWidget() !=0)
+      if (stackedWidget->currentWidget() !=nullptr)
         stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
       stackedWidget->setCurrentIndex(idx);
       stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -351,7 +352,7 @@ namespace MBSimGUI {
         parent->insertBefore(ele0,ref);
       }
     }
-    return 0;
+    return nullptr;
   }
 
   Widget* ChoiceWidgetFactory::createWidget(int i) {

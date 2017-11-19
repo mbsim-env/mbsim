@@ -44,13 +44,13 @@ namespace MBSimInterface {
     public:
 
       InterfaceIntegrator();
-      ~InterfaceIntegrator() {}
+      ~InterfaceIntegrator() override = default;
 
       void setMBSimServer(MBSimServer* m_) {mbsimServer=m_; }
 
-      void integrate(MBSim::DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system) override;
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void integratorCommunication(const char* requestIdentifier, const char* interface2mbsim, unsigned int interface2mbsimLength, std::ostringstream* mbsim2interface);
       bool getExitRequest() {return exitRequest; }
@@ -66,15 +66,15 @@ namespace MBSimInterface {
       void setz(const fmatvec::Vec& z_);
 
       // internal routines
-      int zSize, svSize;
+      int zSize{0}, svSize{0};
 
-      bool printCommunication;
+      bool printCommunication{true};
 
       void dumpMemory(std::ostringstream *out, void *p, unsigned int N);
       void double2str(std::ostringstream *out, double *p, unsigned int N);
       void int2str(std::ostringstream *out, int *p, unsigned int N);
 
-      bool exitRequest;
+      bool exitRequest{false};
 
       MBSimServer* mbsimServer;
       std::vector<std::string> outputSignalRef, inputSignalRef, outputSignalName, inputSignalName;

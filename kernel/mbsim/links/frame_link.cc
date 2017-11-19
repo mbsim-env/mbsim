@@ -46,7 +46,7 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      if(frame[0]==NULL or frame[1]==NULL)
+      if(frame[0]==nullptr or frame[1]==nullptr)
         THROW_MBSIMERROR("Not all connections are given!");
     }
     MechanicalLink::init(stage, config);

@@ -38,12 +38,12 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief constructor
        */
-      DiscretizationInterface() {}    
+      DiscretizationInterface() = default;    
 
       /*! 
        * \brief destructor
        */
-      virtual ~DiscretizationInterface() {}    
+      virtual ~DiscretizationInterface() = default;    
 
       /*!
        * \return mass matrix of discretization

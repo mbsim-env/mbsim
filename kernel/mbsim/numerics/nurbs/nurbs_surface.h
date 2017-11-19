@@ -251,8 +251,8 @@ namespace MBSim {
       fmatvec::Vec U; //!< the U knot vector
       fmatvec::Vec V; //!< the V knot vector
       GeneralMatrix<fmatvec::Vec4> P; //!< The matrix of control points
-      int degU; //!< the degree of the surface in U
-      int degV; //!< the degree of the surface in V
+      int degU{0}; //!< the degree of the surface in U
+      int degV{0}; //!< the degree of the surface in V
 
       //changed
       Mat InverseU; //!< The matrix for the computation of the control points in U-direction

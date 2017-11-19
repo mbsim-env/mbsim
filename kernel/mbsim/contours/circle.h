@@ -36,23 +36,23 @@ namespace MBSim {
   class Circle : public RigidContour {
     public:
 
-      Circle(const std::string& name="", double r_=1., bool solid_=true, Frame *R=0) : RigidContour(name,R), r(r_), solid(solid_) { }
+      Circle(const std::string& name="", double r_=1., bool solid_=true, Frame *R=nullptr) : RigidContour(name,R), r(r_), solid(solid_) { }
 
       /*!
        * \brief destructor
        */
-      virtual ~Circle() { }
+      ~Circle() override = default;
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) { return Kt; }
-      virtual fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec2 evalZeta(const fmatvec::Vec3& WrPoint);
+      fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override { return Kt; }
+      fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec2 evalZeta(const fmatvec::Vec3& WrPoint) override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -70,7 +70,7 @@ namespace MBSim {
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
       
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       /** 

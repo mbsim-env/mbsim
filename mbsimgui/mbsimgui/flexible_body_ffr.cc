@@ -51,17 +51,17 @@ namespace MBSimGUI {
     DOMElement *ele0 = Element::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
     frames = D(doc)->createElement( MBSIMFLEX%"frames" );
-    ele0->insertBefore( frames, NULL );
+    ele0->insertBefore( frames, nullptr );
     contours = D(doc)->createElement( MBSIMFLEX%"contours" );
-    ele0->insertBefore( contours, NULL );
+    ele0->insertBefore( contours, nullptr );
 
     DOMElement *ele1 = D(doc)->createElement( MBSIMFLEX%"enableOpenMBVFrameK" );
-    ele0->insertBefore( ele1, NULL );
+    ele0->insertBefore( ele1, nullptr );
 
     for(size_t i=1; i<frame.size(); i++)
       frame[i]->createXMLElement(frames);
-    for(size_t i=0; i<contour.size(); i++)
-      contour[i]->createXMLElement(contours);
+    for(auto & i : contour)
+      i->createXMLElement(contours);
     return ele0;
   }
 
@@ -77,8 +77,8 @@ namespace MBSimGUI {
 
     // contours
     ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"contours")->getFirstElementChild();
-    for(size_t i=0; i<contour.size(); i++) {
-      contour[i]->processFileID(ELE);
+    for(auto & i : contour) {
+      i->processFileID(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
@@ -86,14 +86,14 @@ namespace MBSimGUI {
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
-      ELE->insertBefore(id, NULL);
+      ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID().toStdString());
-      ELE->insertBefore(id, NULL);
+      ELE->insertBefore(id, nullptr);
     }
 
     return element;

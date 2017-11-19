@@ -73,7 +73,7 @@ namespace MBSim {
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot();
+      void plot() override;
       /*******************************************************/ 
 
       /**
@@ -187,7 +187,7 @@ namespace MBSim {
       /**
        * \brief initialize object at start of simulation with respect to contours and frames
        */
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
       /**
        * initialize state of object at start of simulation
@@ -254,7 +254,7 @@ namespace MBSim {
       const fmatvec::Vec& evalud();
       const fmatvec::Vec& evaludall();
 
-      void resetUpToDate() { updq = true; updu = true; updqd = true; updud = true; }
+      void resetUpToDate() override { updq = true; updu = true; updqd = true; updud = true; }
 
       virtual void updateGeneralizedPositions();
       virtual void updateGeneralizedVelocities();
@@ -273,7 +273,7 @@ namespace MBSim {
 
       /*******************************************************/ 
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       int nq, nu;

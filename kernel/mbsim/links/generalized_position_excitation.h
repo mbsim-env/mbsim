@@ -32,13 +32,13 @@ namespace MBSim {
     public:
       GeneralizedPositionExcitation(const std::string &name) : GeneralizedKinematicExcitation(name) { }
 
-      void calcxSize();
-      void init(InitStage stage, const InitConfigSet &config);
+      void calcxSize() override;
+      void init(InitStage stage, const InitConfigSet &config) override;
 
-      void updateGeneralizedPositions();
-      void updateGeneralizedVelocities();
-      void updatexd() { }
-      void updatewb();
+      void updateGeneralizedPositions() override;
+      void updateGeneralizedVelocities() override;
+      void updatexd() override { }
+      void updatewb() override;
 
       void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) {
         f = f_;

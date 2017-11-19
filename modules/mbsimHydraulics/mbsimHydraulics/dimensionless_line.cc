@@ -45,8 +45,8 @@ namespace MBSimHydraulics {
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        plotColumns.push_back("Volume flow [l/min]");
-        plotColumns.push_back("Mass flow [kg/min]");
+        plotColumns.emplace_back("Volume flow [l/min]");
+        plotColumns.emplace_back("Mass flow [kg/min]");
       }
     }
     HLine::init(stage, config);
@@ -125,7 +125,7 @@ namespace MBSimHydraulics {
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"height");
     setGapHeight(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"planeLeakagePressureLoss");
-    PlaneLeakagePressureLoss *p=MBSim::ObjectFactory::createAndInit<PlaneLeakagePressureLoss>(e->getFirstElementChild());
+    auto *p=MBSim::ObjectFactory::createAndInit<PlaneLeakagePressureLoss>(e->getFirstElementChild());
     setPlaneLeakagePressureLoss(p);
   }
 
@@ -153,7 +153,7 @@ namespace MBSimHydraulics {
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"height");
     setGapHeight(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"circularLeakagePressureLoss");
-    CircularLeakagePressureLoss *p=MBSim::ObjectFactory::createAndInit<CircularLeakagePressureLoss>(e->getFirstElementChild());
+    auto *p=MBSim::ObjectFactory::createAndInit<CircularLeakagePressureLoss>(e->getFirstElementChild());
     setCircularLeakagePressureLoss(p);
   }
 

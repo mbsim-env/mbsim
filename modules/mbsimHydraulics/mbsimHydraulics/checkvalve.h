@@ -73,9 +73,9 @@ namespace MBSimHydraulics {
       MBSim::DirectionalSpringDamper * getSpring() {return spring; }
       MBSimControl::ObjectSensor * getXOpen() {return xOpen; }
       
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
 
     private:
       ClosableRigidLine * line;
@@ -85,10 +85,10 @@ namespace MBSimHydraulics {
       MBSim::Contact * maxContact;
       MBSim::DirectionalSpringDamper * spring;
       MBSimControl::ObjectSensor * xOpen;
-      unsigned int fromNodeAreaIndex, toNodeAreaIndex;
-      double hMax, mBall;
+      unsigned int fromNodeAreaIndex{0}, toNodeAreaIndex{0};
+      double hMax{0}, mBall{0};
       std::string refFrameString;
-      bool openMBVBodies, openMBVArrows, openMBVFrames;
+      bool openMBVBodies{false}, openMBVArrows{false}, openMBVFrames{false};
   };
 
 }

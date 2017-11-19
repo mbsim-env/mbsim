@@ -49,7 +49,7 @@ namespace MBSimGUI {
         return;
       }
       else {
-        EmbedItemData *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
+        auto *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
         if(item and item->getXMLElement()) {
           mw->updateParameters(item);
           editor = item->createEmbeddingPropertyDialog();
@@ -81,8 +81,8 @@ namespace MBSimGUI {
       if(parameter)
         parameter->setConfig(true);
     }
-    parameter = 0;
-    editor = 0;
+    parameter = nullptr;
+    editor = nullptr;
     mw->setAllowUndo(true);
   }
 

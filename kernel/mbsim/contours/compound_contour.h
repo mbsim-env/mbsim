@@ -37,19 +37,19 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      CompoundContour(const std::string &name="", Frame *R=0);
+      CompoundContour(const std::string &name="", Frame *R=nullptr);
 
       /**
        * \brief destructor
        */
-      ~CompoundContour();
+      ~CompoundContour() override;
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot();
-      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGroup; }
+      void plot() override;
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return openMBVGroup; }
       /***************************************************/
 
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
       Contour* getContourElement(int i) {
         return element[i];
       }
@@ -58,7 +58,7 @@ namespace MBSim {
       void addFrame(FixedRelativeFrame* f);
       unsigned int getNumberOfElements() { return element.size(); }
 
-      void resetUpToDate();
+      void resetUpToDate() override;
 
     protected:
       /*!

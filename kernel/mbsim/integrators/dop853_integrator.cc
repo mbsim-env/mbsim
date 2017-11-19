@@ -24,7 +24,7 @@
 #include <mbsim/dynamic_system_solver.h>
 #include "fortran/fortran_wrapper.h"
 #include "dop853_integrator.h"
-#include <time.h>
+#include <ctime>
 #include <fstream>
 
 using namespace std;
@@ -33,7 +33,7 @@ using namespace MBSim;
 
 namespace MBSimIntegrator {
 
-  DOP853Integrator::DOP853Integrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6), dt0(0) {
+  DOP853Integrator::DOP853Integrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6) {
   }
 
   double DOP853Integrator::tPlot = 0;

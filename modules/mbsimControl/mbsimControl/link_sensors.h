@@ -34,9 +34,9 @@ namespace MBSimControl {
    */
   class LinkSensor : public Sensor {
     public:
-      LinkSensor(const std::string &name) : Sensor(name), link(NULL) { }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      LinkSensor(const std::string &name) : Sensor(name), link(nullptr) { }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setLink(MBSim::Link * link_) { link=link_; }
     protected:
       MBSim::Link * link;
@@ -50,8 +50,8 @@ namespace MBSimControl {
   class GeneralizedRelativePositionSensor : public LinkSensor {
     public:
       GeneralizedRelativePositionSensor(const std::string &name="") : LinkSensor(name) {}
-      int getSignalSize() const;
-      void updateSignal();
+      int getSignalSize() const override;
+      void updateSignal() override;
   };
 
   /*!
@@ -61,8 +61,8 @@ namespace MBSimControl {
   class GeneralizedRelativeVelocitySensor : public LinkSensor {
     public:
       GeneralizedRelativeVelocitySensor(const std::string &name="") : LinkSensor(name) {}
-      int getSignalSize() const;
-      void updateSignal();
+      int getSignalSize() const override;
+      void updateSignal() override;
   };
 
 }

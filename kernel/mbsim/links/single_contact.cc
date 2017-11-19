@@ -43,7 +43,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SingleContact)
 
-  SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), updlaN(true), updlaT(true), rootID(0) {
+  SingleContact::SingleContact(const string &name) : ContourLink(name) {
   }
 
   void SingleContact::updatewb() {
@@ -544,15 +544,15 @@ namespace MBSim {
         gdActive[tangential] = false;
     }
     else if(stage==unknownStage) {
-      if (contactKinematics == 0) {
+      if (contactKinematics == nullptr) {
         contactKinematics = contour[0]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
-        if (contactKinematics == 0) {
+        if (contactKinematics == nullptr) {
           contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[1]), typeid(*contour[0]));
-          if (contactKinematics == 0) {
+          if (contactKinematics == nullptr) {
             contactKinematics = contour[0]->findContactPairingWith(typeid(*contour[1]), typeid(*contour[0]));
-            if (contactKinematics == 0) {
+            if (contactKinematics == nullptr) {
               contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
-              if (contactKinematics == 0)
+              if (contactKinematics == nullptr)
                 THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour[0]).name()) + "\" and Contour\"" + boost::core::demangle(typeid(*contour[1]).name()) + "\"!");
             }
           }
@@ -1201,27 +1201,27 @@ namespace MBSim {
 
     //Set contact law
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");
-    GeneralizedForceLaw *gfl = ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
+    auto *gfl = ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
     setNormalForceLaw(gfl);
 
     //Set impact law (if given)
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalImpactLaw");
     if (e) {
-      GeneralizedImpactLaw *gifl = ObjectFactory::createAndInit<GeneralizedImpactLaw>(e->getFirstElementChild());
+      auto *gifl = ObjectFactory::createAndInit<GeneralizedImpactLaw>(e->getFirstElementChild());
       setNormalImpactLaw(gifl);
     }
 
     //Set friction law (if given)
     e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialForceLaw");
     if (e) {
-      FrictionForceLaw *ffl = ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild());
+      auto *ffl = ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild());
       setTangentialForceLaw(ffl);
     }
 
     //Set friction impact law (if given)
     e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialImpactLaw");
     if (e) {
-      FrictionImpactLaw *fil = ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
+      auto *fil = ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
       setTangentialImpactLaw(fil);
     }
   }

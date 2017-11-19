@@ -47,7 +47,7 @@ namespace MBSim {
     for (unsigned int i = 0; i < compound->getNumberOfElements(); i++) {
       c[icompound] = compound->getContourElement(i);
       ContactKinematics *tmp = findContactPairingRigidRigid(typeid(*c[0]), typeid(*c[1]));
-      if (tmp == 0)
+      if (tmp == nullptr)
         tmp = findContactPairingRigidRigid(typeid(*c[1]), typeid(*c[0]));
       if (tmp) {
         contactKinematics.push_back(tmp);

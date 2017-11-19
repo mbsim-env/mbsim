@@ -29,8 +29,7 @@ using namespace std;
 
 namespace MBSim {
 
-  ContactKinematicsPointPlaneWithFrustum::ContactKinematicsPointPlaneWithFrustum() {
-  }
+  ContactKinematicsPointPlaneWithFrustum::ContactKinematicsPointPlaneWithFrustum() = default;
 
   void ContactKinematicsPointPlaneWithFrustum::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Point*>(contour[0])) {

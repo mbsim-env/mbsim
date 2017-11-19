@@ -29,25 +29,25 @@ namespace MBSim {
     using B = fmatvec::Function<Ret(fmatvec::VecV,double)>; 
     private:
       Function<Ret(double)> *f;
-      int n;
+      int n{0};
     public:
-      TimeDependentFunction(Function<Ret(double)> *f_=NULL) : f(f_), n(0) {
+      TimeDependentFunction(Function<Ret(double)> *f_=NULL) : f(f_) {
         if(f)
           f->setParent(this);
       }
-      ~TimeDependentFunction() { delete f; }
-      int getArg1Size() const { return 0;}
-      int getArg2Size() const { return 1; }
-      Ret operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg2); }
-      typename B::DRetDArg1 parDer1(const fmatvec::VecV &arg1, const double &arg2) { return typename B::DRetDArg1(n,getArg1Size()); }
-      typename B::DRetDArg2 parDer2(const fmatvec::VecV &arg1, const double &arg2) {return f->parDer(arg2); }
-      typename B::DDRetDDArg2 parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return f->parDerParDer(arg2); }
-      typename B::DRetDArg2 parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return typename B::DRetDArg2(n); }
-      typename B::DDRetDArg1DArg2 parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return typename B::DDRetDArg1DArg2(n,getArg1Size()); }
-      typename B::DRetDArg1 parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return typename B::DRetDArg1(n,getArg1Size()); }
-      bool constParDer1() const { return true; }
-      bool constParDer2() const { return f->constParDer(); }
-      void init(Element::InitStage stage, const InitConfigSet &config) {
+      ~TimeDependentFunction() override { delete f; }
+      int getArg1Size() const override { return 0;}
+      int getArg2Size() const override { return 1; }
+      Ret operator()(const fmatvec::VecV &arg1, const double &arg2) override {return (*f)(arg2); }
+      typename B::DRetDArg1 parDer1(const fmatvec::VecV &arg1, const double &arg2) override { return typename B::DRetDArg1(n,getArg1Size()); }
+      typename B::DRetDArg2 parDer2(const fmatvec::VecV &arg1, const double &arg2) override {return f->parDer(arg2); }
+      typename B::DDRetDDArg2 parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) override { return f->parDerParDer(arg2); }
+      typename B::DRetDArg2 parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) override { return typename B::DRetDArg2(n); }
+      typename B::DDRetDArg1DArg2 parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) override { return typename B::DDRetDArg1DArg2(n,getArg1Size()); }
+      typename B::DRetDArg1 parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) override { return typename B::DRetDArg1(n,getArg1Size()); }
+      bool constParDer1() const override { return true; }
+      bool constParDer2() const override { return f->constParDer(); }
+      void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(fmatvec::VecV,double)>::init(stage, config);
         f->init(stage, config);
         if(stage == Element::preInit)

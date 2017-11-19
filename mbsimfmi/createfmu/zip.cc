@@ -5,6 +5,7 @@
 #include <archive.h>
 #include <archive_entry.h>
 #include <boost/filesystem/fstream.hpp>
+#include <utility>
 
 using namespace std;
 using namespace boost::filesystem;
@@ -16,7 +17,7 @@ namespace {
 
 namespace MBSimFMI {
 
-CreateZip::CreateZip(const path &zipFile_, bool compress) : closed(false), zipFile(zipFile_) {
+CreateZip::CreateZip(path zipFile_, bool compress) : closed(false), zipFile(std::move(zipFile_)) {
   a=archive_write_new();
   if(!a)
     throw runtime_error("Unable to create archive struct.");

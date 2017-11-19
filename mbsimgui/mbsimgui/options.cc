@@ -31,15 +31,15 @@
 namespace MBSimGUI {
 
   OptionsDialog::OptionsDialog(QWidget *widget) : QDialog(widget) {
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    auto *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
     buttonBox->addButton(QDialogButtonBox::Cancel);
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 
-    QHBoxLayout *sublayout = new QHBoxLayout;
+    auto *sublayout = new QHBoxLayout;
     layout->addLayout(sublayout);
     autoSave = new QCheckBox("Auto save project every");
     sublayout->addWidget(autoSave);
@@ -78,7 +78,7 @@ namespace MBSimGUI {
   }
 
   void OptionsDialog::openFileBrowser() {
-    QString dir = QFileDialog::getExistingDirectory (0, "Select directory", ".");
+    QString dir = QFileDialog::getExistingDirectory (nullptr, "Select directory", ".");
     if(dir != "")
       setAutoExportDir(dir);
   }

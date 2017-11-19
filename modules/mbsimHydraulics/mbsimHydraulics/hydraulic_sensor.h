@@ -29,11 +29,11 @@ namespace MBSimHydraulics {
 
   class FlowSensor : public MBSimControl::Sensor {
     public:
-      FlowSensor(const std::string &name="") : MBSimControl::Sensor(name), line(NULL), lineString("") {}
-      int getSignalSize() const { return 1; }
-      void updateSignal();
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      FlowSensor(const std::string &name="") : MBSimControl::Sensor(name), line(nullptr), lineString("") {}
+      int getSignalSize() const override { return 1; }
+      void updateSignal() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setHLine(HLine * line_) {line=line_; }
     protected:
       HLine * line;
@@ -42,11 +42,11 @@ namespace MBSimHydraulics {
 
   class PressureSensor : public MBSimControl::Sensor {
     public:
-      PressureSensor(const std::string &name="") : MBSimControl::Sensor(name), node(NULL), nodeString("") {}
-      int getSignalSize() const { return 1; }
-      void updateSignal();
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      PressureSensor(const std::string &name="") : MBSimControl::Sensor(name), node(nullptr), nodeString("") {}
+      int getSignalSize() const override { return 1; }
+      void updateSignal() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setHNode(HNode * node_) {node=node_; }
     protected:
       HNode * node;
@@ -56,15 +56,15 @@ namespace MBSimHydraulics {
   class TemperatureSensor : public MBSimControl::Sensor {
     public:
       TemperatureSensor(const std::string &name="") : MBSimControl::Sensor(name) {}
-      int getSignalSize() const { return 1; }
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      int getSignalSize() const override { return 1; }
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
   };
 
   class KinematicViscositySensor : public MBSimControl::Sensor {
     public:
       KinematicViscositySensor(const std::string &name="") : MBSimControl::Sensor(name) {}
-      int getSignalSize() const { return 1; }
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      int getSignalSize() const override { return 1; }
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
   };
 
 }

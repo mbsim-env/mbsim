@@ -32,13 +32,13 @@ namespace MBSim {
       Frame *support;
 
     public:
-      GeneralizedConstraint(const std::string &name) : MechanicalConstraint(name), support(NULL) { }
+      GeneralizedConstraint(const std::string &name) : MechanicalConstraint(name), support(nullptr) { }
 
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
       virtual void setSupportFrame(Frame *frame) { support = frame; }
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
 
     private:
       std::string saved_DependentBody, saved_supportFrame;

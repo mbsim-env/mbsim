@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, QWidget *parent, Qt::WindowFlags f, bool readOnly) : PropertyDialog(parent,f), parameter(parameter_) {
+  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, QWidget *parent, const Qt::WindowFlags& f, bool readOnly) : PropertyDialog(parent,f), parameter(parameter_) {
     addTab("General");
     name=new ExtWidget("Name",new TextWidget(parameter->getName()),readOnly);
     addToTab("General",name);
@@ -44,7 +44,7 @@ namespace MBSimGUI {
   DOMElement* ParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     parameter->removeXMLElements();
     E(parameter->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
-    return NULL;
+    return nullptr;
   }
 
   void ParameterPropertyDialog::toWidget(Parameter *parameter) {
@@ -55,7 +55,7 @@ namespace MBSimGUI {
     writeXMLFile(parameter->getXMLElement());
   }
 
-  StringParameterPropertyDialog::StringParameterPropertyDialog(StringParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
+  StringParameterPropertyDialog::StringParameterPropertyDialog(StringParameter *parameter, QWidget *parent, const Qt::WindowFlags& f) : ParameterPropertyDialog(parameter,parent,f) {
     value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -70,10 +70,10 @@ namespace MBSimGUI {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
 //    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
-    return NULL;
+    return nullptr;
   }
 
-  ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
+  ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, const Qt::WindowFlags& f) : ParameterPropertyDialog(parameter,parent,f) {
     value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -88,10 +88,10 @@ namespace MBSimGUI {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
 //    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
-    return NULL;
+    return nullptr;
   }
 
-  VectorParameterPropertyDialog::VectorParameterPropertyDialog(VectorParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
+  VectorParameterPropertyDialog::VectorParameterPropertyDialog(VectorParameter *parameter, QWidget *parent, const Qt::WindowFlags& f) : ParameterPropertyDialog(parameter,parent,f) {
     value = new ExtWidget("Value",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -106,10 +106,10 @@ namespace MBSimGUI {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
 //    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
-    return NULL;
+    return nullptr;
   }
 
-  MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(MatrixParameter *parameter,QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
+  MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(MatrixParameter *parameter,QWidget *parent, const Qt::WindowFlags& f) : ParameterPropertyDialog(parameter,parent,f) {
     value = new ExtWidget("Value",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -124,10 +124,10 @@ namespace MBSimGUI {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
 //    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
-    return NULL;
+    return nullptr;
   }
 
-  ImportParameterPropertyDialog::ImportParameterPropertyDialog(ImportParameter *parameter,QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f,true) {
+  ImportParameterPropertyDialog::ImportParameterPropertyDialog(ImportParameter *parameter,QWidget *parent, const Qt::WindowFlags& f) : ParameterPropertyDialog(parameter,parent,f,true) {
     value = new ExtWidget("Value",new ExpressionWidget("0"));
     addToTab("General", value);
   }
@@ -142,7 +142,7 @@ namespace MBSimGUI {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
 //    parameter->setValue(static_cast<ExpressionWidget*>(value->getWidget())->getValue());
-    return NULL;
+    return nullptr;
   }
 
 }

@@ -57,7 +57,7 @@ namespace MBSimHydraulics {
     public:
       HNode(const std::string &name);
 
-      void calcSize();
+      void calcSize() override;
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVSphere, tag, (optional (size,(double),1)(minimalPressure,(double),0e5)(maximalPressure,(double),10e5)(position,(const fmatvec::Vec3&),fmatvec::Vec3()))) { 
         enableOpenMBV(size,minimalPressure,maximalPressure,position);
@@ -67,14 +67,14 @@ namespace MBSimHydraulics {
       void addInFlow(HLine * in);
       void addOutFlow(HLine * out);
 
-      void calcgdSize(int j) {gdSize=1; }
+      void calcgdSize(int j) override {gdSize=1; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void updateWRef(const fmatvec::Mat& WRef, int i=0);
-      void updateVRef(const fmatvec::Mat& VRef, int i=0);
-      void updatehRef(const fmatvec::Vec& hRef, int i=0);
-      void updaterRef(const fmatvec::Vec& rRef, int i=0);
+      void updateWRef(const fmatvec::Mat& WRef, int i=0) override;
+      void updateVRef(const fmatvec::Mat& VRef, int i=0) override;
+      void updatehRef(const fmatvec::Vec& hRef, int i=0) override;
+      void updaterRef(const fmatvec::Vec& rRef, int i=0) override;
       void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
       void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
       void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
@@ -83,17 +83,17 @@ namespace MBSimHydraulics {
       double getQHyd(bool check=true) const { assert((not check) or (not updQHyd)); return QHyd; }
       virtual void updateQHyd();
 
-      void updateh(int j=0);
+      void updateh(int j=0) override;
       void updatedhdz();
-      void updategd();
-      bool isActive() const {return false; }
-      bool gActiveChanged() {return false; }
+      void updategd() override;
+      bool isActive() const override {return false; }
+      bool gActiveChanged() override {return false; }
 
-      void plot();
+      void plot() override;
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void resetUpToDate() { MBSim::Link::resetUpToDate(); updQHyd = true; }
+      void resetUpToDate() override { MBSim::Link::resetUpToDate(); updQHyd = true; }
 
     protected:
       std::vector<connectedLinesStruct> connectedLines;
@@ -112,8 +112,8 @@ namespace MBSimHydraulics {
   /*! ConstrainedNode */
   class ConstrainedNode : public HNode {
     public:
-      ConstrainedNode(const std::string &name="") : HNode(name), pFun(NULL) {}
-      ~ConstrainedNode() { delete pFun; }
+      ConstrainedNode(const std::string &name="") : HNode(name) {}
+      ~ConstrainedNode() override { delete pFun; }
 
       void setpFunction(MBSim::Function<double(double)> * pFun_) {
         pFun=pFun_;
@@ -121,13 +121,13 @@ namespace MBSimHydraulics {
         pFun->setName("p");
       }
 
-      void updateGeneralizedForces();
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void initializeUsingXML(xercesc::DOMElement *element);
-      virtual bool isSingleValued() const {return true;}
+      void updateGeneralizedForces() override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      bool isSingleValued() const override {return true;}
 
     private:
-      MBSim::Function<double(double)> * pFun;
+      MBSim::Function<double(double)> * pFun{nullptr};
   };
 
 
@@ -136,40 +136,40 @@ namespace MBSimHydraulics {
     public:
       EnvironmentNode(const std::string &name="") : HNode(name) {}
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      virtual bool isSingleValued() const {return true;}
+      bool isSingleValued() const override {return true;}
   };
 
 
   /*! ElasticNode */
   class ElasticNode : public HNode {
     public:
-      ElasticNode(const std::string &name="") : HNode(name), V(0), fracAir(0), p0(0), bulkModulus(NULL) {}
-      ~ElasticNode();
+      ElasticNode(const std::string &name="") : HNode(name)  {}
+      ~ElasticNode() override;
 
       void setVolume(double V_) {V=V_; }
       void setFracAir(double fracAir_) {fracAir=fracAir_; }
       void setp0(double p0_) {p0=p0_; }
 
-      void calcxSize() {xSize=1; }
+      void calcxSize() override {xSize=1; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
 
-      void updatexd();
+      void updatexd() override;
 
-      void plot();
+      void plot() override;
 
-      virtual bool isSingleValued() const {return true;}
+      bool isSingleValued() const override {return true;}
 
     private:
-      double V;
-      double fracAir;
-      double p0;
-      OilBulkModulus * bulkModulus;
+      double V{0};
+      double fracAir{0};
+      double p0{0};
+      OilBulkModulus * bulkModulus{nullptr};
   };
 
 
@@ -177,33 +177,33 @@ namespace MBSimHydraulics {
   class RigidNode : public HNode {
     public:
       RigidNode(const std::string &name="");
-      ~RigidNode();
+      ~RigidNode() override;
 
-      bool isSetValued() const {return true; }
-      virtual bool isActive() const {return true; }
+      bool isSetValued() const override {return true; }
+      bool isActive() const override {return true; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void calclaSize(int j) {laSize=1; }
+      void calclaSize(int j) override {laSize=1; }
       //void calclaSizeForActiveg() {laSize=0; }
-      void calcrFactorSize(int j) {rFactorSize=1; }
+      void calcrFactorSize(int j) override {rFactorSize=1; }
 
-      void updateGeneralizedForces();
+      void updateGeneralizedForces() override;
 
-      void updategd();
-      void updateW(int j=0);
+      void updategd() override;
+      void updateW(int j=0) override;
 
-      void updaterFactors();
-      void solveImpactsFixpointSingle();
-      void solveConstraintsFixpointSingle();
-      void solveImpactsGaussSeidel();
-      void solveConstraintsGaussSeidel();
-      void solveImpactsRootFinding();
-      void solveConstraintsRootFinding();
-      void jacobianImpacts();
-      void jacobianConstraints();
-      void checkImpactsForTermination();
-      void checkConstraintsForTermination();
+      void updaterFactors() override;
+      void solveImpactsFixpointSingle() override;
+      void solveConstraintsFixpointSingle() override;
+      void solveImpactsGaussSeidel() override;
+      void solveConstraintsGaussSeidel() override;
+      void solveImpactsRootFinding() override;
+      void solveConstraintsRootFinding() override;
+      void jacobianImpacts() override;
+      void jacobianConstraints() override;
+      void checkImpactsForTermination() override;
+      void checkConstraintsForTermination() override;
       const double& evalgdn();
       const double& evalgdd();
     private:
@@ -217,48 +217,48 @@ namespace MBSimHydraulics {
   class RigidCavitationNode : public HNode {
     public:
       RigidCavitationNode(const std::string &name="");
-      ~RigidCavitationNode();
+      ~RigidCavitationNode() override;
 
       void setCavitationPressure(double pCav_) {pCav=pCav_; }
 
-      bool isSetValued() const {return true; }
-      bool hasSmoothPart() const {return true; }
-      virtual bool isActive() const {return active; }
+      bool isSetValued() const override {return true; }
+      bool hasSmoothPart() const override {return true; }
+      bool isActive() const override {return active; }
 
-      void calcxSize() {xSize=1; }
-      void calcgSize(int j) {gSize=1; }
+      void calcxSize() override {xSize=1; }
+      void calcgSize(int j) override {gSize=1; }
       //void calcgSizeActive() {gSize=0; }
-      void calclaSize(int j) {laSize=1; }
+      void calclaSize(int j) override {laSize=1; }
       //void calclaSizeForActiveg() {laSize=0; }
-      void calcrFactorSize(int j) {rFactorSize=1; }
-      void calcsvSize() {svSize=1; }
+      void calcrFactorSize(int j) override {rFactorSize=1; }
+      void calcsvSize() override {svSize=1; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void plot();
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void plot() override;
 
-      void checkActive(int j);
+      void checkActive(int j) override;
       //void checkActivegdn();
-      bool gActiveChanged();
+      bool gActiveChanged() override;
 
-      void updateGeneralizedForces();
-      void updateg();
-      void updateW(int j=0);
-      void updatexd();
-      void updateStopVector();
-      void checkRoot();
+      void updateGeneralizedForces() override;
+      void updateg() override;
+      void updateW(int j=0) override;
+      void updatexd() override;
+      void updateStopVector() override;
+      void checkRoot() override;
 
-      void updaterFactors();
-      void solveImpactsFixpointSingle();
-      void solveConstraintsFixpointSingle();
-      void solveImpactsGaussSeidel();
-      void solveConstraintsGaussSeidel();
-      void solveImpactsRootFinding();
-      void solveConstraintsRootFinding();
-      void jacobianImpacts();
-      void jacobianConstraints();
-      void checkImpactsForTermination();
-      void checkConstraintsForTermination();
+      void updaterFactors() override;
+      void solveImpactsFixpointSingle() override;
+      void solveConstraintsFixpointSingle() override;
+      void solveImpactsGaussSeidel() override;
+      void solveConstraintsGaussSeidel() override;
+      void solveImpactsRootFinding() override;
+      void solveConstraintsRootFinding() override;
+      void jacobianImpacts() override;
+      void jacobianConstraints() override;
+      void checkImpactsForTermination() override;
+      void checkConstraintsForTermination() override;
       const double& evalgdn();
       const double& evalgdd();
 
@@ -275,17 +275,17 @@ namespace MBSimHydraulics {
   /*! PressurePump */
   class PressurePump : public HNode {
     public:
-      PressurePump(const std::string &name="") : HNode(name), pFunction(NULL) { }
+      PressurePump(const std::string &name="") : HNode(name) { }
 
       void setpFunction(MBSim::Function<double(double)> *pFunction_) { pFunction=pFunction_; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void updateGeneralizedForces();
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void updateGeneralizedForces() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     private:
-      MBSim::Function<double(double)> *pFunction;
+      MBSim::Function<double(double)> *pFunction{nullptr};
   };
 
 }

@@ -56,92 +56,92 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Contact();
+      ~Contact() override;
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatewb();
-      virtual void updateW(int i = 0);
-      virtual void updateV(int i = 0);
-      virtual void updateh(int i = 0);
-      virtual void updateg();
-      virtual void updategd();
-      virtual void updateStopVector();
-      virtual void updateJacobians(int j = 0);
+      void updatewb() override;
+      void updateW(int i = 0) override;
+      void updateV(int i = 0) override;
+      void updateh(int i = 0) override;
+      void updateg() override;
+      void updategd() override;
+      void updateStopVector() override;
+      void updateJacobians(int j = 0) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void updateWRef(const fmatvec::Mat &ref, int j = 0);
-      virtual void updateVRef(const fmatvec::Mat &ref, int j = 0);
-      virtual void updatehRef(const fmatvec::Vec &hRef, int j = 0);
-      virtual void updaterRef(const fmatvec::Vec &hRef, int j = 0);
-      virtual void updatewbRef(const fmatvec::Vec &ref);
-      virtual void updatelaRef(const fmatvec::Vec& ref);
-      virtual void updateLaRef(const fmatvec::Vec& ref);
-      virtual void updategRef(const fmatvec::Vec& ref);
-      virtual void updategdRef(const fmatvec::Vec& ref);
-      virtual void updateresRef(const fmatvec::Vec& ref);
-      virtual void updaterFactorRef(const fmatvec::Vec &ref);
-      virtual void updatesvRef(const fmatvec::Vec &ref);
-      virtual void updatejsvRef(const fmatvec::VecInt &ref);
-      virtual void updateLinkStatusRef(const fmatvec::VecInt &LinkStatusParent);
-      virtual void updateLinkStatusRegRef(const fmatvec::VecInt &LinkStatusRegParent);
-      virtual void calcxSize();
-      virtual void calclaSize(int j);
-      virtual void calcgSize(int j);
-      virtual void calcgdSize(int j);
-      virtual void calcrFactorSize(int j);
-      virtual void calcsvSize();
-      virtual void calcLinkStatusSize();
-      virtual void calcLinkStatusRegSize();
-      virtual void init(InitStage stage, const InitConfigSet &config);
-      virtual bool isSetValued() const;
-      virtual bool isSingleValued() const;
-      virtual void updateLinkStatus();
-      virtual void updateLinkStatusReg();
-      virtual bool isActive() const;
-      virtual bool gActiveChanged();
-      virtual bool detectImpact();
-      virtual void solveImpactsFixpointSingle();
-      virtual void solveConstraintsFixpointSingle();
-      virtual void solveImpactsGaussSeidel();
-      virtual void solveConstraintsGaussSeidel();
-      virtual void solveImpactsRootFinding();
-      virtual void solveConstraintsRootFinding();
-      virtual void jacobianConstraints();
-      virtual void jacobianImpacts();
-      virtual void updaterFactors();
-      virtual void checkConstraintsForTermination();
-      virtual void checkImpactsForTermination();
-      virtual void checkActive(int j);
-      virtual void setGeneralizedForceTolerance(double tol);
-      virtual void setGeneralizedImpulseTolerance(double tol);
-      virtual void setGeneralizedRelativePositionTolerance(double tol);
-      virtual void setGeneralizedRelativeVelocityTolerance(double tol);
-      virtual void setGeneralizedRelativeAccelerationTolerance(double tol);
-      virtual void setrMax(double rMax_);
-      virtual void setLinkStatusInd(int LinkStatusInd_);
-      virtual void setLinkStatusRegInd(int LinkStatusRegInd_);
-      virtual void setsvInd(int svInd_);
-      virtual void setlaInd(int laInd_);
-      virtual void setgInd(int gInd_);
-      virtual void setgdInd(int gdInd_);
-      virtual void setrFactorInd(int rFactorInd_);
-      virtual void LinearImpactEstimation(double t, fmatvec::Vec &gInActive_, fmatvec::Vec &gdInActive_, int *IndInActive_, fmatvec::Vec &gAct_, int *IndActive_);
-      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
-      virtual void updatecorrRef(const fmatvec::Vec& ref);
-      virtual void updatecorr(int j);
-      virtual void calccorrSize(int j);
-      virtual void setcorrInd(int corrInd_);
-      virtual void checkRoot();
+      void updateWRef(const fmatvec::Mat &ref, int j = 0) override;
+      void updateVRef(const fmatvec::Mat &ref, int j = 0) override;
+      void updatehRef(const fmatvec::Vec &hRef, int j = 0) override;
+      void updaterRef(const fmatvec::Vec &hRef, int j = 0) override;
+      void updatewbRef(const fmatvec::Vec &ref) override;
+      void updatelaRef(const fmatvec::Vec& ref) override;
+      void updateLaRef(const fmatvec::Vec& ref) override;
+      void updategRef(const fmatvec::Vec& ref) override;
+      void updategdRef(const fmatvec::Vec& ref) override;
+      void updateresRef(const fmatvec::Vec& ref) override;
+      void updaterFactorRef(const fmatvec::Vec &ref) override;
+      void updatesvRef(const fmatvec::Vec &ref) override;
+      void updatejsvRef(const fmatvec::VecInt &ref) override;
+      void updateLinkStatusRef(const fmatvec::VecInt &LinkStatusParent) override;
+      void updateLinkStatusRegRef(const fmatvec::VecInt &LinkStatusRegParent) override;
+      void calcxSize() override;
+      void calclaSize(int j) override;
+      void calcgSize(int j) override;
+      void calcgdSize(int j) override;
+      void calcrFactorSize(int j) override;
+      void calcsvSize() override;
+      void calcLinkStatusSize() override;
+      void calcLinkStatusRegSize() override;
+      void init(InitStage stage, const InitConfigSet &config) override;
+      bool isSetValued() const override;
+      bool isSingleValued() const override;
+      void updateLinkStatus() override;
+      void updateLinkStatusReg() override;
+      bool isActive() const override;
+      bool gActiveChanged() override;
+      bool detectImpact() override;
+      void solveImpactsFixpointSingle() override;
+      void solveConstraintsFixpointSingle() override;
+      void solveImpactsGaussSeidel() override;
+      void solveConstraintsGaussSeidel() override;
+      void solveImpactsRootFinding() override;
+      void solveConstraintsRootFinding() override;
+      void jacobianConstraints() override;
+      void jacobianImpacts() override;
+      void updaterFactors() override;
+      void checkConstraintsForTermination() override;
+      void checkImpactsForTermination() override;
+      void checkActive(int j) override;
+      void setGeneralizedForceTolerance(double tol) override;
+      void setGeneralizedImpulseTolerance(double tol) override;
+      void setGeneralizedRelativePositionTolerance(double tol) override;
+      void setGeneralizedRelativeVelocityTolerance(double tol) override;
+      void setGeneralizedRelativeAccelerationTolerance(double tol) override;
+      void setrMax(double rMax_) override;
+      void setLinkStatusInd(int LinkStatusInd_) override;
+      void setLinkStatusRegInd(int LinkStatusRegInd_) override;
+      void setsvInd(int svInd_) override;
+      void setlaInd(int laInd_) override;
+      void setgInd(int gInd_) override;
+      void setgdInd(int gdInd_) override;
+      void setrFactorInd(int rFactorInd_) override;
+      void LinearImpactEstimation(double t, fmatvec::Vec &gInActive_, fmatvec::Vec &gdInActive_, int *IndInActive_, fmatvec::Vec &gAct_, int *IndActive_) override;
+      void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) override;
+      void updatecorrRef(const fmatvec::Vec& ref) override;
+      void updatecorr(int j) override;
+      void calccorrSize(int j) override;
+      void setcorrInd(int corrInd_) override;
+      void checkRoot() override;
       virtual void updateGeneralizedNormalForce();
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot();
-      virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
+      void plot() override;
+      void setDynamicSystemSolver(DynamicSystemSolver *sys) override;
       /***************************************************/
 
-      void resetUpToDate();
+      void resetUpToDate() override;
 
       /* GETTER / SETTER */
 
@@ -159,13 +159,13 @@ namespace MBSim {
         return contactKinematics[index];
       }
 
-      ContactKinematics* findContactKinematics(std::string cKName) const {
+      ContactKinematics* findContactKinematics(const std::string& cKName) const {
         int pos = find(ckNames.begin(), ckNames.end(), cKName) - ckNames.begin();
         if (pos < static_cast<int>(ckNames.size())) {
           return contactKinematics[pos];
         }
         throw MBSimError("Name of contact Kinematics is not valid");
-        return NULL;
+        return nullptr;
       }
 
       const std::vector<std::vector<SingleContact> > & getSubcontacts() const {
@@ -187,13 +187,13 @@ namespace MBSim {
        * \param name              Name of the contact in the output
        *
        */
-      void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0, const std::string & name = "");
+      void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = nullptr, const std::string & name = "");
 
       Contour* getContour(int i, int j=0) { return contour[i][j]; }
 
       SingleContact& getSingleContact(int i, int j=0) { return contacts[i][j]; }
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void setSearchAllContactPoints(bool searchAllCP_) { searchAllCP = searchAllCP_; }
       void setInitialGuess(const fmatvec::VecV &zeta0_) { zeta0 = zeta0_; }

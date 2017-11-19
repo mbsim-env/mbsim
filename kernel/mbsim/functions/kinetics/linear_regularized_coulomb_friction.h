@@ -36,7 +36,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      LinearRegularizedCoulombFriction() : mu(0), gdLim(0.01) {}
+      LinearRegularizedCoulombFriction()  {}
 
       /**
        * \brief constructor
@@ -46,8 +46,8 @@ namespace MBSim {
       LinearRegularizedCoulombFriction(double mu_, double gdLim_=0.01) : mu(mu_), gdLim(gdLim_) {}
 
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -59,7 +59,7 @@ namespace MBSim {
       /**
        * \brief friction coefficient, border with respect to the relative velocity for the linear regularized increase of the friction force
        */
-      double mu, gdLim;
+      double mu{0}, gdLim{0.01};
   };
 
 }

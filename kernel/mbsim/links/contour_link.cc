@@ -116,7 +116,7 @@ namespace MBSim {
       if(saved_ref1 != "" && saved_ref2 != "")
         connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
 
-      if(contour[0]==NULL or contour[1]==NULL)
+      if(contour[0]==nullptr or contour[1]==nullptr)
         THROW_MBSIMERROR("Not all connections are given!");
     }
     else if(stage==preInit) {

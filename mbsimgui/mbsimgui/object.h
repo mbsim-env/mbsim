@@ -26,8 +26,8 @@ namespace MBSimGUI {
 
   class Object : public Element {
     public:
-      ElementPropertyDialog* createPropertyDialog() { return new ObjectPropertyDialog(this); }
-      QMenu* createContextMenu() { return new ObjectContextMenu(this); }
+      ElementPropertyDialog* createPropertyDialog() override { return new ObjectPropertyDialog(this); }
+      QMenu* createContextMenu() override { return new ObjectContextMenu(this); }
   };
 
 }

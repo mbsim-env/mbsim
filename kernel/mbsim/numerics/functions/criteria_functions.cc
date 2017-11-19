@@ -21,14 +21,15 @@
 #include "criteria_functions.h"
 
 #include <iostream>
+#include <utility>
 
 using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
 
-  CriteriaFunction::CriteriaFunction() :
-      function(0) {
+  CriteriaFunction::CriteriaFunction() 
+      {
   }
 
   GlobalCriteriaFunction::GlobalCriteriaFunction(const double & tolerance_) :
@@ -63,17 +64,17 @@ namespace MBSim {
     criteriaResults.clear();
   }
 
-  LocalCriteriaFunction::LocalCriteriaFunction(const map<RangeV, double> & tolerances_) :
-      CriteriaFunction(), tolerances(tolerances_), criteriaResults(0) {
+  LocalCriteriaFunction::LocalCriteriaFunction(map<RangeV, double>  tolerances_) :
+      CriteriaFunction(), tolerances(std::move(tolerances_)), criteriaResults(0) {
   }
 
   int LocalCriteriaFunction::operator ()(const Vec &x) {
     criteriaResults.push_back(computeResults(x));
 
     int i = 0;
-    for (map<RangeV, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+    for (auto & tolerance : tolerances) {
       //TODO: somehow add the -1 case ...
-      if (criteriaResults.back()[i] > iter->second)
+      if (criteriaResults.back()[i] > tolerance.second)
         return 1;
       else if (std::isnan(criteriaResults.back()[i])) {
         return -1;
@@ -89,8 +90,8 @@ namespace MBSim {
     vector<double> currentResults = computeResults(x, fVal);
 
     int i = 0;
-    for (map<RangeV, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
-      if ((currentResults[i] > lastResults[i]) and currentResults[i] > iter->second )
+    for (auto & tolerance : tolerances) {
+      if ((currentResults[i] > lastResults[i]) and currentResults[i] > tolerance.second )
         return false;
       i++;
     }
@@ -122,8 +123,8 @@ namespace MBSim {
     if(fVal.size() == 0)
       functionValues.resize() = (*function)(x);
     vector<double> results;
-    for (map<RangeV, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
-      results.push_back(nrmInf(functionValues(iter->first)));
+    for (auto & tolerance : tolerances) {
+      results.push_back(nrmInf(functionValues(tolerance.first)));
     }
 
     return results;
@@ -156,13 +157,13 @@ namespace MBSim {
     vector<double> results;
     if(lastPoint.size() == 0) {
       lastPoint << x;
-      for (map<RangeV, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+      for (auto iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
         results.push_back(1e30); //TODO: Guarantee that this returned value is larger than the tolerance and larger then the first result!
       }
     }
     else {
-      for (map<RangeV, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
-        results.push_back(nrmInf((*function)(x)(iter->first) - (*function)(lastPoint)(iter->first)));
+      for (auto & tolerance : tolerances) {
+        results.push_back(nrmInf((*function)(x)(tolerance.first) - (*function)(lastPoint)(tolerance.first)));
       }
       lastPoint = x.copy();
     }

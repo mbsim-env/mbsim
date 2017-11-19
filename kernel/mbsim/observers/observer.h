@@ -30,9 +30,9 @@ namespace MBSim {
     public:
       Observer(const std::string &name);
 
-      void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
-      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return openMBVGrp; }
   };
 
 }  

@@ -48,20 +48,20 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FiniteElement2s13MFRMindlin();    
+      ~FiniteElement2s13MFRMindlin() override;    
 
       /* INTERFACE OF DISCRETIZATIONINTERFACE */
-      virtual const fmatvec::Vec& geth() const;
-      virtual const fmatvec::SqrMat& getdhdq() const;
-      virtual const fmatvec::SqrMat& getdhdu() const;
-      inline int getqSize() const { return RefDofs + 4*NodeDofs; }
-      inline int getuSize() const { return RefDofs + 4*NodeDofs; }
-      virtual void computeM(const fmatvec::Vec& q);
-      virtual void computeh(const fmatvec::Vec& q,const fmatvec::Vec& u);
-      virtual void computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u);
-      virtual double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u);
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& q);
-      virtual double computeElasticEnergy(const fmatvec::Vec& q);
+      const fmatvec::Vec& geth() const override;
+      const fmatvec::SqrMat& getdhdq() const override;
+      const fmatvec::SqrMat& getdhdu() const override;
+      inline int getqSize() const override { return RefDofs + 4*NodeDofs; }
+      inline int getuSize() const override { return RefDofs + 4*NodeDofs; }
+      void computeM(const fmatvec::Vec& q) override;
+      void computeh(const fmatvec::Vec& q,const fmatvec::Vec& u) override;
+      void computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u) override;
+      double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) override;
+      double computeGravitationalEnergy(const fmatvec::Vec& q) override;
+      double computeElasticEnergy(const fmatvec::Vec& q) override;
       virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, const fmatvec::Vec2 &s);
       virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, const fmatvec::Vec2 &s);
       virtual fmatvec::Vec3 getVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec2 &s);
@@ -70,7 +70,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* GETTER / SETTER */
-      const fmatvec::SymMat& getM() const; 
+      const fmatvec::SymMat& getM() const override; 
       const fmatvec::SymMat& getK() const { return *K; }
       const fmatvec::SymMat& getM_RR() const { return *M_RR; }
       const fmatvec::Mat& getN_compl() const { return *N_compl; }
@@ -85,13 +85,13 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* Freeer */
-      void freeK() { delete K; K=0; }
-      void freeM_RR() { delete M_RR; M_RR=0; }
-      void freeN_ij(int i, int j) { delete N_ij[i][j]; N_ij[i][j]=0; }
-      void freeN_compl() { delete N_compl; N_compl=0; }
-      void freeNR_ij(int i, int j) { delete NR_ij[i][j]; NR_ij[i][j]=0; }
-      void freeR_compl() { delete R_compl; R_compl=0; }
-      void freeR_ij() { delete R_ij; R_ij=0; }
+      void freeK() { delete K; K=nullptr; }
+      void freeM_RR() { delete M_RR; M_RR=nullptr; }
+      void freeN_ij(int i, int j) { delete N_ij[i][j]; N_ij[i][j]=nullptr; }
+      void freeN_compl() { delete N_compl; N_compl=nullptr; }
+      void freeNR_ij(int i, int j) { delete NR_ij[i][j]; NR_ij[i][j]=nullptr; }
+      void freeR_compl() { delete R_compl; R_compl=nullptr; }
+      void freeR_ij() { delete R_ij; R_ij=nullptr; }
       /***************************************************/
 
       /*!

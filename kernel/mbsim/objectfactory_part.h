@@ -35,7 +35,7 @@ namespace MBSim {
 //! But for other more complex allocator functions (e.g. Python objects using swig directors)
 //! this is not flexible enought since we need to proved a custom operator==.
 struct AllocateBase {
-  virtual ~AllocateBase() {}
+  virtual ~AllocateBase() = default;
   //! Implement this function to allocate a new object
   virtual fmatvec::Atom* operator()() const = 0;
   //! Implement this function to compare whether this class and the instance other allocate
@@ -46,7 +46,7 @@ struct AllocateBase {
 //! Base wrapper class to deallocate an object derived from fmatvec::Atom.
 //! See also AllocateBase.
 struct DeallocateBase {
-  virtual ~DeallocateBase() {}
+  virtual ~DeallocateBase() = default;
   //! Implement this function to deallocate the object obj
   virtual void operator()(fmatvec::Atom *obj) const = 0;
 };
