@@ -33,7 +33,7 @@ namespace MBSim {
       void init(InitStage stage, const InitConfigSet &config) override;
 
       void setDependentRigidBody(RigidBody* body_) { bd=body_; }
-      void addIndependentRigidBody(RigidBody *body, double ratio);
+      void addIndependentRigidBody(RigidBody *body, double ratio_);
 
       void updateGeneralizedCoordinates() override;
       void updateGeneralizedJacobians(int j=0) override;

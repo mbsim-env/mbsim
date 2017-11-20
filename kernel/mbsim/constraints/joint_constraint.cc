@@ -81,20 +81,20 @@ namespace MBSim {
         bd2.push_back(getByPath<RigidBody>(i));
       for (const auto & i : saved_IndependentBody)
         bi.push_back(getByPath<RigidBody>(i));
-      if(not bi.size())
+      if(bi.empty())
         THROW_MBSIMERROR("No independent rigid bodies given!");
-      if((not bd1.size()) and (not bd2.size()))
+      if((bd1.empty()) and (bd2.empty()))
         THROW_MBSIMERROR("No dependent rigid bodies given!");
-      if(saved_ref1!="" && saved_ref2!="")
+      if(!saved_ref1.empty() && !saved_ref2.empty())
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(frame1==nullptr or frame2==nullptr)
         THROW_MBSIMERROR("Not all connections are given!");
-      if(bd1.size()) {
+      if(!bd1.empty()) {
         for(unsigned int i=0; i<bd1.size()-1; i++) 
           if1.push_back(bd1[i+1]->getFrameOfReference());
         if1.push_back(frame1);
       }
-      if(bd2.size()) {
+      if(!bd2.empty()) {
         for(unsigned int i=0; i<bd2.size()-1; i++) 
           if2.push_back(bd2[i+1]->getFrameOfReference());
         if2.push_back(frame2);

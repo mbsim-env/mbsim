@@ -11,8 +11,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  NurbsCurve::NurbsCurve() :
-      P(), inverse(), u(), U() {
+  NurbsCurve::NurbsCurve()  {
   }
   NurbsCurve::~NurbsCurve() = default;
 

@@ -40,7 +40,7 @@ namespace MBSim {
       /**
        * \brief constructor 
        */
-      Solver() : fmatvec::Atom() { }
+      Solver()  { }
       
       /**
        * \brief destructor

@@ -35,7 +35,7 @@ namespace MBSimGUI {
 
   class ElementContextMenu : public QMenu {
     public:
-      ElementContextMenu(Element *element, QWidget * parent = nullptr, bool removable=true, bool saveable=true);
+      ElementContextMenu(Element *element_, QWidget * parent = nullptr, bool removable=true, bool saveable=true);
 
     protected:
       Element *element;
@@ -80,7 +80,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      FramesContextMenu(Element *frame, const QString &title="", QWidget * parent = nullptr);
+      FramesContextMenu(Element *element_, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void paste();
@@ -95,7 +95,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      FixedRelativeFramesContextMenu(Element *contour, const QString &title="", QWidget * parent = nullptr);
+      FixedRelativeFramesContextMenu(Element *element, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addFixedRelativeFrame();
@@ -105,7 +105,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      NodeFramesContextMenu(Element *contour, const QString &title="", QWidget * parent = nullptr);
+      NodeFramesContextMenu(Element *element, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addNodeFrame();
@@ -115,7 +115,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ContoursContextMenu(Element *contour, const QString &title="", QWidget * parent = nullptr);
+      ContoursContextMenu(Element *element_, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addPoint();
@@ -139,7 +139,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      GroupsContextMenu(Element *contour, const QString &title="", QWidget * parent = nullptr);
+      GroupsContextMenu(Element *element_, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void add();
@@ -155,7 +155,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ObjectsContextMenu(Element *object, const QString &title="", QWidget * parent = nullptr);
+      ObjectsContextMenu(Element *element_, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void paste();
@@ -170,7 +170,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      BodiesContextMenu(Element *object, const QString &title="", QWidget * parent = nullptr);
+      BodiesContextMenu(Element *element_, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addRigidBody();
@@ -184,7 +184,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      LinksContextMenu(Element *link, const QString &title="", QWidget * parent = nullptr);
+      LinksContextMenu(Element *element_, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addSpringDamper();
@@ -210,7 +210,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ConstraintsContextMenu(Element *object, const QString &title="", QWidget * parent = nullptr);
+      ConstraintsContextMenu(Element *element_, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addGeneralizedGearConstraint();
@@ -232,7 +232,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ObserversContextMenu(Element *observer, const QString &title="", QWidget * parent = nullptr);
+      ObserversContextMenu(Element *element_, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addMechanicalLinkObserver();
@@ -255,7 +255,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      SignalsContextMenu(Element *signal, const QString &title="", QWidget * parent = nullptr);
+      SignalsContextMenu(Element *element_, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addSensor();
@@ -274,7 +274,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      SensorsContextMenu(Element *sensor, const QString &title="", QWidget * parent = nullptr);
+      SensorsContextMenu(Element *element_, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void addGeneralizedPositionSensor();

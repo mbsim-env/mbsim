@@ -29,7 +29,7 @@ namespace MBSim {
 
   void GeneralizedConstraint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(saved_supportFrame!="")
+      if(!saved_supportFrame.empty())
         setSupportFrame(getByPath<Frame>(saved_supportFrame));
     }
     MechanicalConstraint::init(stage, config);

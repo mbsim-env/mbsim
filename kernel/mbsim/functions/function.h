@@ -25,7 +25,7 @@
 #include "mbsim/utils/initconfigenum.h"
 
 namespace {
-  std::string uniqueDummyName(void *p) {
+  inline std::string uniqueDummyName(void *p) {
     std::stringstream str;
     str<<"Function_"<<p;
     return str.str();

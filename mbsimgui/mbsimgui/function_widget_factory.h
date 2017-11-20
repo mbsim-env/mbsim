@@ -95,7 +95,7 @@ namespace MBSimGUI {
 
   class SymbolicFunctionWidgetFactory1 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory1(Element *parent, const QStringList &var_, int m=3, bool fixedSize=true);
+      SymbolicFunctionWidgetFactory1(Element *parent_, const QStringList &var_, int m_=3, bool fixedSize_=true);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -111,7 +111,7 @@ namespace MBSimGUI {
 
   class SymbolicFunctionWidgetFactory2 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory2(Element *parent, const QStringList &var_, int m=3, bool fixedSize=true);
+      SymbolicFunctionWidgetFactory2(Element *parent_, const QStringList &var_, int m_=3, bool fixedSize_=true);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -127,7 +127,7 @@ namespace MBSimGUI {
 
   class SymbolicFunctionWidgetFactory3 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory3(Element *parent, const QStringList &var_, int m=3, bool fixedSize=true);
+      SymbolicFunctionWidgetFactory3(Element *parent_, const QStringList &var_, int m_=3, bool fixedSize_=true);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -218,7 +218,7 @@ namespace MBSimGUI {
 
   class ConnectRigidBodiesWidgetFactory : public WidgetFactory {
     public:
-      ConnectRigidBodiesWidgetFactory(Element *parent);
+      ConnectRigidBodiesWidgetFactory(Element *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }

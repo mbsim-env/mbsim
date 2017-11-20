@@ -47,7 +47,7 @@ namespace MBSim {
       double project(double la, double gdn, double r, double laMin=0) override;
       fmatvec::Vec diff(double la, double gdn, double r, double laMin=0) override;
       double solve(double G, double gdn) override;
-      bool isFulfilled(double la,  double gdn, double tolla, double tolgd, double laMin=0) override;
+      bool isFulfilled(double la,  double gdn, double laTol, double gdTol, double laMin=0) override;
       bool isSetValued() const override { return true; }
       /***************************************************/
   };

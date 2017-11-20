@@ -31,7 +31,7 @@ using namespace MBSim;
 
 
 namespace MBSimFlexibleBody {
-  FiniteElementLinearExternalLumpedNode::FiniteElementLinearExternalLumpedNode(double& mij_, Vec3& u0_, const Mat3xV& phi_) : DiscretizationInterface(), mij(mij_),u0(u0_), phi(phi_) {
+  FiniteElementLinearExternalLumpedNode::FiniteElementLinearExternalLumpedNode(double& mij_, Vec3& u0_, const Mat3xV& phi_) :  mij(mij_),u0(u0_), phi(phi_) {
 //    cout << "From lumpedNode mij =" << mij<< endl;
 //    cout << "From lumpedNode u0 =" << u0<< endl;
 //    cout << "From lumpedNode phi =" << phi<< endl;

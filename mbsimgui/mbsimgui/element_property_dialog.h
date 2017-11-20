@@ -104,8 +104,8 @@ namespace MBSimGUI {
   class ElementPropertyDialog : public PropertyDialog {
 
     public:
-      ElementPropertyDialog(Element *element, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      ElementPropertyDialog(Element *element_, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       virtual void toWidget(Element *element);
       virtual void fromWidget(Element *element);
@@ -124,7 +124,7 @@ namespace MBSimGUI {
 
     public:
       FramePropertyDialog(Frame *frame, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *visu;
@@ -134,7 +134,7 @@ namespace MBSimGUI {
 
     public:
       InternalFramePropertyDialog(InternalFrame *frame, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *visu;
@@ -144,7 +144,7 @@ namespace MBSimGUI {
 
     public:
       FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *refFrame, *position, *orientation;
@@ -154,7 +154,7 @@ namespace MBSimGUI {
 
     public:
       NodeFramePropertyDialog(NodeFrame *frame, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *nodeNumber;
@@ -164,7 +164,7 @@ namespace MBSimGUI {
 
     public:
       ContourPropertyDialog(Contour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr); 
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *thickness;
@@ -174,7 +174,7 @@ namespace MBSimGUI {
 
     public:
       RigidContourPropertyDialog(RigidContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr); 
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *refFrame;
@@ -184,7 +184,7 @@ namespace MBSimGUI {
 
     public:
       PointPropertyDialog(Point *point, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *visu;
@@ -194,7 +194,7 @@ namespace MBSimGUI {
 
     public:
       LinePropertyDialog(Line *line, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *visu;
@@ -204,7 +204,7 @@ namespace MBSimGUI {
 
     public:
       PlanePropertyDialog(Plane *plane, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *radius, *visu;
@@ -214,7 +214,7 @@ namespace MBSimGUI {
 
     public:
       SpherePropertyDialog(Sphere *sphere, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *radius, *visu;
@@ -224,7 +224,7 @@ namespace MBSimGUI {
 
     public:
       CirclePropertyDialog(Circle *circle, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *radius, *solid, *visu;
@@ -234,7 +234,7 @@ namespace MBSimGUI {
 
     public:
       CuboidPropertyDialog(Cuboid *circle, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *length, *visu;
@@ -244,7 +244,7 @@ namespace MBSimGUI {
 
     public:
       LineSegmentPropertyDialog(LineSegment *line, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *length, *visu;
@@ -253,8 +253,8 @@ namespace MBSimGUI {
   class PlanarContourPropertyDialog : public RigidContourPropertyDialog {
 
     public:
-      PlanarContourPropertyDialog(PlanarContour *line, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      PlanarContourPropertyDialog(PlanarContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *nodes, *contourFunction, *open, *visu;
@@ -263,8 +263,8 @@ namespace MBSimGUI {
   class SpatialContourPropertyDialog : public RigidContourPropertyDialog {
 
     public:
-      SpatialContourPropertyDialog(SpatialContour *line, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      SpatialContourPropertyDialog(SpatialContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *etaNodes, *xiNodes, *contourFunction, *open, *visu;
@@ -274,8 +274,8 @@ namespace MBSimGUI {
 
     public:
       GroupPropertyDialog(Group *group, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr, bool kinematics=true);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *frameOfReference;
   };
@@ -286,15 +286,15 @@ namespace MBSimGUI {
 
     public:
       DynamicSystemSolverPropertyDialog(DynamicSystemSolver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class ObjectPropertyDialog : public ElementPropertyDialog {
 
     public:
       ObjectPropertyDialog(Object *object, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       virtual void resizeGeneralizedPosition() {}
       virtual void resizeGeneralizedVelocity() {}
@@ -307,15 +307,15 @@ namespace MBSimGUI {
 
     public:
       BodyPropertyDialog(Body *body, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class RigidBodyPropertyDialog : public BodyPropertyDialog {
 
     public:
-      RigidBodyPropertyDialog(RigidBody *body, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      RigidBodyPropertyDialog(RigidBody *body_, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       void resizeGeneralizedPosition() override;
       void resizeGeneralizedVelocity() override;
@@ -329,8 +329,8 @@ namespace MBSimGUI {
   class FlexibleBodyFFRPropertyDialog : public BodyPropertyDialog {
 
     public:
-      FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body_, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       void resizeGeneralizedPosition() override;
       void resizeGeneralizedVelocity() override;
@@ -358,7 +358,7 @@ namespace MBSimGUI {
 
     public:
       GeneralizedConstraintPropertyDialog(GeneralizedConstraint *constraint, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *support;
@@ -368,7 +368,7 @@ namespace MBSimGUI {
 
     public:
       GeneralizedGearConstraintPropertyDialog(GeneralizedGearConstraint *constraint, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *dependentBody, *independentBodies;
@@ -378,7 +378,7 @@ namespace MBSimGUI {
 
     public:
       GeneralizedDualConstraintPropertyDialog(GeneralizedDualConstraint *constraint, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *dependentBody, *independentBody;
@@ -388,7 +388,7 @@ namespace MBSimGUI {
 
     public:
       GeneralizedPositionConstraintPropertyDialog(GeneralizedPositionConstraint *constraint, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *constraintFunction;
@@ -399,7 +399,7 @@ namespace MBSimGUI {
 
     public:
       GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *constraintFunction, *x0;
@@ -410,7 +410,7 @@ namespace MBSimGUI {
 
     public:
       GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *constraintFunction, *x0;
@@ -421,7 +421,7 @@ namespace MBSimGUI {
 
     public:
       JointConstraintPropertyDialog(JointConstraint *constraint, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *refFrameID, *force, *moment, *connections, *q0;
@@ -451,7 +451,7 @@ namespace MBSimGUI {
 
     public:
       FrameLinkPropertyDialog(FrameLink *link, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *connections;
@@ -467,7 +467,7 @@ namespace MBSimGUI {
 
     public:
       FloatingFrameLinkPropertyDialog(FloatingFrameLink *link, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *refFrameID;
@@ -477,7 +477,7 @@ namespace MBSimGUI {
 
     public:
       RigidBodyLinkPropertyDialog(RigidBodyLink *link, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *support;
@@ -487,7 +487,7 @@ namespace MBSimGUI {
 
     public:
       DualRigidBodyLinkPropertyDialog(DualRigidBodyLink *link, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *connections;
@@ -496,8 +496,8 @@ namespace MBSimGUI {
   class KineticExcitationPropertyDialog : public FloatingFrameLinkPropertyDialog {
 
     public:
-      KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget * parent = nullptr, const Qt::WindowFlags& wf = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *forceDirection, *forceFunction, *momentDirection, *momentFunction, *arrow;
@@ -508,7 +508,7 @@ namespace MBSimGUI {
 
     public:
       SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *forceFunction, *unloadedLength, *coilSpring;
@@ -518,7 +518,7 @@ namespace MBSimGUI {
 
     public:
       DirectionalSpringDamperPropertyDialog(DirectionalSpringDamper *springDamper, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *forceDirection, *unloadedLength, *forceFunction, *coilSpring;
@@ -528,7 +528,7 @@ namespace MBSimGUI {
 
     public:
       JointPropertyDialog(Joint *joint, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *forceDirection, *forceLaw, *momentDirection, *momentLaw;
@@ -538,7 +538,7 @@ namespace MBSimGUI {
 
     public:
       ElasticJointPropertyDialog(ElasticJoint *joint, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *forceDirection, *momentDirection, *function;
@@ -548,7 +548,7 @@ namespace MBSimGUI {
 
     public:
       GeneralizedSpringDamperPropertyDialog(DualRigidBodyLink *springDamper, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *function, *unloadedLength;
@@ -557,8 +557,8 @@ namespace MBSimGUI {
   class GeneralizedFrictionPropertyDialog : public DualRigidBodyLinkPropertyDialog {
 
     public:
-      GeneralizedFrictionPropertyDialog(DualRigidBodyLink *springDamper, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      GeneralizedFrictionPropertyDialog(DualRigidBodyLink *friction, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *function, *normalForce;
@@ -567,8 +567,8 @@ namespace MBSimGUI {
   class GeneralizedGearPropertyDialog : public RigidBodyLinkPropertyDialog {
 
     public:
-      GeneralizedGearPropertyDialog(RigidBodyLink *constraint, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      GeneralizedGearPropertyDialog(RigidBodyLink *link, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *function, *gearOutput, *gearInput;
@@ -578,7 +578,7 @@ namespace MBSimGUI {
 
     public:
       GeneralizedElasticConnectionPropertyDialog(DualRigidBodyLink *connection, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *function;
@@ -589,7 +589,7 @@ namespace MBSimGUI {
 
     public:
       ContactPropertyDialog(Contact *contact, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *searchAllContactPoints, *initialGuess;
@@ -605,7 +605,7 @@ namespace MBSimGUI {
 
     public:
       KinematicCoordinatesObserverPropertyDialog(KinematicCoordinatesObserver *observer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *frame, *frameOfReference, *position, *velocity, *acceleration;
@@ -615,7 +615,7 @@ namespace MBSimGUI {
 
     public:
       RelativeKinematicsObserverPropertyDialog(RelativeKinematicsObserver *observer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *frame, *refFrame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
@@ -625,7 +625,7 @@ namespace MBSimGUI {
 
     public:
       MechanicalLinkObserverPropertyDialog(MechanicalLinkObserver *observer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *link, *forceArrow, *momentArrow;
@@ -635,7 +635,7 @@ namespace MBSimGUI {
 
     public:
       MechanicalConstraintObserverPropertyDialog(MechanicalConstraintObserver *observer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *constraint, *forceArrow, *momentArrow;
@@ -645,7 +645,7 @@ namespace MBSimGUI {
 
     public:
       ContactObserverPropertyDialog(ContactObserver *observer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *link, *forceArrow, *momentArrow, *contactPoints, *normalForceArrow, *frictionArrow;
@@ -655,7 +655,7 @@ namespace MBSimGUI {
 
     public:
       FrameObserverPropertyDialog(FrameObserver *observer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *frame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
@@ -665,7 +665,7 @@ namespace MBSimGUI {
 
     public:
       RigidBodyObserverPropertyDialog(RigidBodyObserver *observer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *body, *frameOfReference, *weight, *jointForce, *jointMoment, *axisOfRotation, *momentum, *angularMomentum, *derivativeOfMomentum, *derivativeOfAngularMomentum;
@@ -675,7 +675,7 @@ namespace MBSimGUI {
 
     public:
       RigidBodySystemObserverPropertyDialog(RigidBodySystemObserver *observer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *bodies, *frameOfReference, *position, *velocity, *acceleration, *weight, *momentum, *angularMomentum, *derivativeOfMomentum, *derivativeOfAngularMomentum;
@@ -697,7 +697,7 @@ namespace MBSimGUI {
 
     public:
       ObjectSensorPropertyDialog(ObjectSensor *sensor, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *object;
@@ -719,7 +719,7 @@ namespace MBSimGUI {
 
     public:
       FrameSensorPropertyDialog(FrameSensor *sensor, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *frame;
@@ -753,7 +753,7 @@ namespace MBSimGUI {
 
     public:
       FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *function;
@@ -763,7 +763,7 @@ namespace MBSimGUI {
 
     public:
       MultiplexerPropertyDialog(Multiplexer *signal, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *inputSignal;
@@ -773,7 +773,7 @@ namespace MBSimGUI {
 
     public:
       DemultiplexerPropertyDialog(Demultiplexer *signal, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *inputSignal, *indices;
@@ -783,7 +783,7 @@ namespace MBSimGUI {
 
     public:
       LinearTransferSystemPropertyDialog(LinearTransferSystem *signal, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *inputSignal, *A, *B, *C, *D;
@@ -795,7 +795,7 @@ namespace MBSimGUI {
 
     public:
       SignalOperationPropertyDialog(SignalOperation *signal, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *inputSignal, *function;
@@ -807,8 +807,8 @@ namespace MBSimGUI {
   class ExternSignalSourcePropertyDialog : public SignalPropertyDialog {
 
     public:
-      ExternSignalSourcePropertyDialog(ExternSignalSource *sensor, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      ExternSignalSourcePropertyDialog(ExternSignalSource *signal, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *sourceSize;
@@ -817,8 +817,8 @@ namespace MBSimGUI {
   class ExternSignalSinkPropertyDialog : public SignalPropertyDialog {
 
     public:
-      ExternSignalSinkPropertyDialog(ExternSignalSink *sensor, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      ExternSignalSinkPropertyDialog(ExternSignalSink *signal, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *inputSignal;

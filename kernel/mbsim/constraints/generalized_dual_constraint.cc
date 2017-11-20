@@ -29,9 +29,9 @@ namespace MBSim {
 
   void GeneralizedDualConstraint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(saved_DependentBody!="")
+      if(!saved_DependentBody.empty())
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
-      if(saved_IndependentBody!="")
+      if(!saved_IndependentBody.empty())
         setIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody));
       if(not bd)
         THROW_MBSIMERROR("No dependent rigid body given!");

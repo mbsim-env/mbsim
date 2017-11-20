@@ -37,7 +37,7 @@ namespace MBSim {
       /*!
        * \brief constructor
        */
-      edgePolyFrustum(const PolynomialFrustum * frustum);
+      edgePolyFrustum(const PolynomialFrustum * frustum_);
 
       /*!
        * \brief standard destructor
@@ -47,9 +47,9 @@ namespace MBSim {
       /*!
        * \brief set the one corner point A and the direction of the edge with (A + dir) is the other corner point
        */
-      void setAdir(const fmatvec::Vec3 & A, const fmatvec::Vec3 & dir);
+      void setAdir(const fmatvec::Vec3 & A_, const fmatvec::Vec3 & dir_);
 
-      fmatvec::Vec operator()(const fmatvec::Vec &x) override;
+      fmatvec::Vec operator()(const fmatvec::Vec &xin) override;
 
     protected:
       /*!
@@ -102,7 +102,7 @@ namespace MBSim {
       }
 
       /* INHERITED INTERFACE */
-      int operator ()(const fmatvec::Vec &x) override;
+      int operator ()(const fmatvec::Vec &xin) override;
       bool isBetter(const fmatvec::Vec &x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT)) override;
       void clear() override{criteriaResults.clear();}
       /*END - INHERITED INTERFACE*/

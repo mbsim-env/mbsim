@@ -69,13 +69,13 @@ namespace MBSimGUI {
       int getNumberOfLinks() override {return link.size();}
       int getNumberOfConstraints() override {return constraint.size();}
       int getNumberOfObservers() override {return observer.size();}
-      int getIndexOfFrame(Frame *frame) override;
-      int getIndexOfContour(Contour *contour) override;
-      int getIndexOfGroup(Group *group) override;
-      int getIndexOfObject(Object *object) override;
-      int getIndexOfLink(Link *link) override;
-      int getIndexOfConstraint(Constraint *constraint) override;
-      int getIndexOfObserver(Observer *observer) override;
+      int getIndexOfFrame(Frame *frame_) override;
+      int getIndexOfContour(Contour *contour_) override;
+      int getIndexOfGroup(Group *group_) override;
+      int getIndexOfObject(Object *object_) override;
+      int getIndexOfLink(Link *link_) override;
+      int getIndexOfConstraint(Constraint *constraint_) override;
+      int getIndexOfObserver(Observer *observer_) override;
       Frame* getFrame(int i) const override {return frame[i];}
       Contour* getContour(int i) const override {return contour[i];}
       Object* getObject(int i) const override {return object[i];}
@@ -97,13 +97,13 @@ namespace MBSimGUI {
       void setLink(Link *link_, int i) override { link[i] = link_; }
       void setConstraint(Constraint *constraint_, int i) override { constraint[i] = constraint_; }
       void setObserver(Observer *observer_, int i) override { observer[i] = observer_; }
-      void addFrame(Frame *frame) override;
-      void addContour(Contour *contour) override;
-      void addGroup(Group *group) override;
-      void addObject(Object *object) override;
-      void addLink(Link *link) override;
-      void addConstraint(Constraint *constraint) override;
-      void addObserver(Observer *observer) override;
+      void addFrame(Frame *frame_) override;
+      void addContour(Contour *contour_) override;
+      void addGroup(Group *group_) override;
+      void addObject(Object *object_) override;
+      void addLink(Link *link_) override;
+      void addConstraint(Constraint *constraint_) override;
+      void addObserver(Observer *observer_) override;
       void removeElement(Element *element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new GroupPropertyDialog(this);}
       QMenu* createFrameContextMenu() override {return new FixedRelativeFramesContextMenu(this);}

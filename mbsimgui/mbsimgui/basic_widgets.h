@@ -55,39 +55,39 @@ namespace MBSimGUI {
   class LocalFrameComboBox : public CustomComboBox {
     Q_OBJECT
     public:
-      LocalFrameComboBox(Element *element, QWidget *parent = nullptr);
+      LocalFrameComboBox(Element *element_, QWidget *parent = nullptr);
     protected:
       Element *element;
       QString oldID;
       void showPopup() override;
       void hidePopup() override;
     protected slots:
-      void highlightObject(const QString &str);
+      void highlightObject(const QString &frame);
   };
 
   class ParentFrameComboBox : public CustomComboBox {
     Q_OBJECT
     public:
-      ParentFrameComboBox(Element *element, QWidget *parent = nullptr);
+      ParentFrameComboBox(Element *element_, QWidget *parent = nullptr);
     protected:
       Element *element;
       QString oldID;
       void showPopup() override;
       void hidePopup() override;
     protected slots:
-      void highlightObject(const QString &str);
+      void highlightObject(const QString &frame);
   };
 
   class LocalFrameOfReferenceWidget : public Widget {
     Q_OBJECT
 
     public:
-      LocalFrameOfReferenceWidget(Element* element, Frame* omitFrame=nullptr);
+      LocalFrameOfReferenceWidget(Element* element_, Frame* omitFrame_=nullptr);
 
       void updateWidget() override;
       QString getFrame() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QComboBox *frame;
@@ -102,12 +102,12 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ParentFrameOfReferenceWidget(Element* element, Frame* omitFrame=nullptr);
+      ParentFrameOfReferenceWidget(Element* element_, Frame* omitFrame_=nullptr);
 
       void updateWidget() override;
       QString getFrame() const; 
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QComboBox *frame;
@@ -122,14 +122,14 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
+      FrameOfReferenceWidget(Element* element_, Frame* selectedFrame_);
 
       void updateWidget() override;
       void setFrame(const QString &str);
-      void setDefaultFrame(const QString &def);
+      void setDefaultFrame(const QString &def_);
       QString getFrame() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QLineEdit *frame;
@@ -146,13 +146,13 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ContourOfReferenceWidget(Element* element, Contour* selectedContour);
+      ContourOfReferenceWidget(Element* element_, Contour* selectedContour_);
 
       void updateWidget() override;
       void setContour(const QString &str);
       QString getContour() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QLineEdit *contour;
@@ -168,13 +168,13 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      RigidBodyOfReferenceWidget(Element* element, RigidBody* selectedBody);
+      RigidBodyOfReferenceWidget(Element* element_, RigidBody* selectedBody_);
 
       void updateWidget() override;
       void setBody(const QString &str);
       QString getBody() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QLineEdit* body;
@@ -193,7 +193,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      GearInputReferenceWidget(Element* element, RigidBody* selectedBody);
+      GearInputReferenceWidget(Element* element_, RigidBody* selectedBody_);
 
       void updateWidget() override;
       void setBody(const QString &str);
@@ -201,7 +201,7 @@ namespace MBSimGUI {
       QString getRatio() const {return ratio->text().isEmpty()?"0":ratio->text();}
       void setRatio(const QString &str) {ratio->setText(str=="0"?"":str);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QLineEdit* body, *ratio;
@@ -220,13 +220,13 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ObjectOfReferenceWidget(Element* element, Object* selectedObject);
+      ObjectOfReferenceWidget(Element* element_, Object* selectedObject_);
 
       void updateWidget() override;
       void setObject(const QString &str);
       QString getObject() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QLineEdit* object;
@@ -245,13 +245,13 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      LinkOfReferenceWidget(Element* element, Link* selectedLink);
+      LinkOfReferenceWidget(Element* element_, Link* selectedLink_);
 
       void updateWidget() override;
       void setLink(const QString &str);
       QString getLink() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QLineEdit* link;
@@ -270,13 +270,13 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ConstraintOfReferenceWidget(Element* element, Constraint* selectedConstraint);
+      ConstraintOfReferenceWidget(Element* element_, Constraint* selectedConstraint_);
 
       void updateWidget() override;
       void setConstraint(const QString &str);
       QString getConstraint() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QLineEdit* constraint;
@@ -295,13 +295,13 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      SignalOfReferenceWidget(Element* element, Signal* selectedSignal);
+      SignalOfReferenceWidget(Element* element_, Signal* selectedSignal_);
 
       void updateWidget() override;
       void setSignal(const QString &str);
       QString getSignal() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QLineEdit* signal;
@@ -320,11 +320,11 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      FileWidget(const QString &file, const QString &description, const QString &extensions, int mode=0, bool quote=false, bool relativeFilePath=false);
+      FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_=0, bool quote_=false, bool relativeFilePath_=false);
       QString getFile() const { return filePath->text(); }
       void setFile(const QString &str) { filePath->setText(str); }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QLineEdit *filePath;
@@ -351,7 +351,7 @@ namespace MBSimGUI {
       int getValue() override {return value->value();}
       void setValue(int val) override {value->setValue(val);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QSpinBox *value;
@@ -382,13 +382,13 @@ namespace MBSimGUI {
       virtual QString getText() const = 0;
       virtual void setText(const QString &text) = 0;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class TextWidget : public BasicTextWidget {
 
     public:
-      TextWidget(const QString &text="", bool readOnly=false);
+      TextWidget(const QString &text_="", bool readOnly=false);
 
       QString getText() const override {return text->text();}
       void setText(const QString &text_) override {text->setText(text_);}
@@ -417,12 +417,12 @@ namespace MBSimGUI {
   class ConnectFramesWidget : public Widget {
 
     public:
-      ConnectFramesWidget(int n, Element* element);
+      ConnectFramesWidget(int n, Element* element_);
 
       void setDefaultFrame(const QString &def_) { def = def_; widget[0]->setDefaultFrame(def); }
       void updateWidget() override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       std::vector<FrameOfReferenceWidget*> widget;
@@ -433,11 +433,11 @@ namespace MBSimGUI {
   class ConnectContoursWidget : public Widget {
 
     public:
-      ConnectContoursWidget(int n, Element* element);
+      ConnectContoursWidget(int n, Element* element_);
 
       void updateWidget() override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       std::vector<ContourOfReferenceWidget*> widget;
@@ -447,12 +447,12 @@ namespace MBSimGUI {
   class ConnectRigidBodiesWidget : public Widget {
 
     public:
-      ConnectRigidBodiesWidget(int n, Element* element);
+      ConnectRigidBodiesWidget(int n, Element* element_);
 
       void updateWidget() override;
       RigidBodyOfReferenceWidget* getWidget(int i) { return widget[i]; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       std::vector<RigidBodyOfReferenceWidget*> widget;
@@ -476,8 +476,8 @@ namespace MBSimGUI {
     public:
       ColorWidget();
       void updateWidget() override;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       ExtWidget *color;
@@ -498,12 +498,12 @@ namespace MBSimGUI {
       MBXMLUtils::NamespaceURI uri;
 
     public:
-      PlotFeatureWidget(const QString &types="", MBXMLUtils::NamespaceURI uri=MBSIM);
-      void addFeature(const MBXMLUtils::FQN &feature);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-      xercesc::DOMElement* initializeUsingXML2(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr);
+      PlotFeatureWidget(const QString &types="", MBXMLUtils::NamespaceURI uri_=MBSIM);
+      void addFeature(const MBXMLUtils::FQN &feature_);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* initializeUsingXML2(xercesc::DOMElement *parent);
+      xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr);
 
     protected slots:
       void updateNamespace(int i);

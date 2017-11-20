@@ -171,7 +171,7 @@
 #endif
 
 /* Creation and destruction of model instances and setting debug status */
-   DllExport fmiComponent fmiInstantiateModel (fmiString            instanceName,
+   DllExport fmiComponent fmiInstantiateModel (fmiString            instanceName_,
                                                fmiString            GUID,
                                                fmiCallbackFunctions functions,
                                                fmiBoolean           loggingOn);

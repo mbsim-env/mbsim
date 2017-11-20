@@ -36,7 +36,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointSpatialContour() : ContactKinematics() { }
+      ContactKinematicsPointSpatialContour()  { }
 
       /**
        * \brief destructor

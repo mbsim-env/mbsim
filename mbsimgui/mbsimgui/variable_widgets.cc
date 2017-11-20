@@ -352,7 +352,7 @@ namespace MBSimGUI {
   bool VecWidget::validate(const vector<vector<QString> > &A) const {
     if(size()!=static_cast<int>(A.size()))
       return false;
-    if(A.size() && A[0].size()!=1)
+    if(!A.empty() && A[0].size()!=1)
       return false;
     return true;
   }
@@ -398,7 +398,7 @@ namespace MBSimGUI {
   bool VecSizeVarWidget::validate(const vector<vector<QString> > &A) const {
     if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
       return false;
-    if(A.size() && A[0].size()!=1)
+    if(!A.empty() && A[0].size()!=1)
       return false;
     return true;
   }
@@ -456,7 +456,7 @@ namespace MBSimGUI {
   }
 
   void VecTableWidget::setVec(const vector<QString> &x) {
-    if(x.size()==0)
+    if(x.empty())
       return resize_(0,1);
     if(x.size() != size())
       resize_(x.size());
@@ -467,7 +467,7 @@ namespace MBSimGUI {
   bool VecTableWidget::validate(const vector<vector<QString> > &A) const {
     if(size()!=static_cast<int>(A.size()))
       return false;
-    if(A.size() && A[0].size()!=1)
+    if(!A.empty() && A[0].size()!=1)
       return false;
     return true;
   }
@@ -533,7 +533,7 @@ namespace MBSimGUI {
   }
 
   void MatWidget::resize_(int rows, int cols) {
-    if(static_cast<int>(box.size())!=rows or (box.size() and static_cast<int>(box[0].size())!=cols)) {
+    if(static_cast<int>(box.size())!=rows or (!box.empty() and static_cast<int>(box[0].size())!=cols)) {
       vector<vector<QString> > buf(box.size());
       for(unsigned int i=0; i<box.size(); i++) {
         buf[i].resize(box[i].size());
@@ -572,7 +572,7 @@ namespace MBSimGUI {
   }
 
   void MatWidget::setMat(const vector<vector<QString> > &A) {
-    if(A.size()==0)
+    if(A.empty())
       return resize_(0,0);
     if(A.size() != box.size() || A[0].size()!=box[0].size())
       resize_(A.size(),A[0].size());
@@ -590,9 +590,7 @@ namespace MBSimGUI {
   }
 
   bool MatWidget::validate(const vector<vector<QString> > &A) const {
-    if(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()))
-      return false;
-    return true;
+    return !(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()));
   }
 
 
@@ -871,7 +869,7 @@ namespace MBSimGUI {
   }
 
   void SymMatWidget::setMat(const vector<vector<QString> > &A) {
-    if(A.size() == 0 || A.size() != A[0].size())
+    if(A.empty() || A.size() != A[0].size())
       return resize_(0);
     if(A.size() != box.size())
       resize_(A.size());
@@ -1017,7 +1015,7 @@ namespace MBSimGUI {
   }
 
   void MatTableWidget::setMat(const vector<vector<QString> > &A) {
-    if(A.size()==0)
+    if(A.empty())
       return resize_(0,0);
     if(A.size() != rows() || A[0].size()!=cols())
       resize_(A.size(),A[0].size());
@@ -1028,9 +1026,7 @@ namespace MBSimGUI {
   }
 
   bool MatTableWidget::validate(const vector<vector<QString> > &A) const {
-    if(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()))
-      return false;
-    return true;
+    return !(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()));
   }
 
   CardanWidget::CardanWidget() {
@@ -1076,7 +1072,7 @@ namespace MBSimGUI {
   bool CardanWidget::validate(const vector<vector<QString> > &A) const {
     if(size()!=static_cast<int>(A.size()))
       return false;
-    if(A.size() && A[0].size()!=1)
+    if(!A.empty() && A[0].size()!=1)
       return false;
     return true;
   }
@@ -1292,7 +1288,7 @@ namespace MBSimGUI {
     unit->addItems(units);
     unit->setCurrentIndex(defaultUnit);
     layout->addWidget(widget);
-    if(units.size())
+    if(!units.empty())
       layout->addWidget(unit);
 
     if(eval) {

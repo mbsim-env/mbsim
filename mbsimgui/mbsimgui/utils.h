@@ -125,7 +125,7 @@ namespace MBSimGUI {
 
   template <class AT>
     inline QString toQStr(const std::vector<AT> &x) {
-      if(x.size()==0)
+      if(x.empty())
         return "[]";
       QString s;
       s += "[";
@@ -140,7 +140,7 @@ namespace MBSimGUI {
 
   template <class AT>
     inline QString toQStr(const std::vector<std::vector<AT> > &A) {
-      if(A.size()==0 || A[0].size()==0)
+      if(A.empty() || A[0].empty())
         return "[]";
       QString s;
       s += "[";
@@ -178,7 +178,7 @@ namespace MBSimGUI {
   }
 
   inline std::vector<std::string> strToVec(const std::string &str) {
-    if(str=="" || str=="[]" || str.substr(0,2) == "[;")
+    if(str.empty() || str=="[]" || str.substr(0,2) == "[;")
       return std::vector<std::string>();
     int pos1 = str.find('['); 
     int pos2 = str.find(']'); 
@@ -192,7 +192,7 @@ namespace MBSimGUI {
   }
 
   inline std::vector<std::vector<std::string> > strToMat(const std::string &str) {
-    if(str=="" || str=="[]" || str.substr(0,2) == "[;")
+    if(str.empty() || str=="[]" || str.substr(0,2) == "[;")
       return std::vector<std::vector<std::string> >();
     int pos1 = str.find('['); 
     int pos2 = str.find(']'); 
@@ -272,7 +272,7 @@ namespace MBSimGUI {
     }
 
   std::vector<std::vector<double> > Cardan2AIK(const std::vector<std::vector<double> > &x);
-  std::vector<std::vector<double> > AIK2Cardan(const std::vector<std::vector<double> > &x);
+  std::vector<std::vector<double> > AIK2Cardan(const std::vector<std::vector<double> > &AIK);
 
   template <class T>
     inline T fromMatStr(const std::string &str) {

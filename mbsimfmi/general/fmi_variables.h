@@ -20,7 +20,7 @@ namespace MBSim {
 // local helper functions
 namespace {
   //! convert a MBSim path to a FMI structured variable name
-  std::string mbsimToFMIName(std::string path, int idx, int size) {
+  inline std::string mbsimToFMIName(std::string path, int idx, int size) {
     boost::replace_all(path, "\\", "\\\\"); // escape "\" by "\\"
     boost::replace_all(path, "'", "\'"); // escape "'" by "\'"
     boost::replace_all(path, "/", "."); // replace the MBSim separator / by the FMI seperator .

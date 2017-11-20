@@ -54,7 +54,7 @@ namespace MBSim {
         return element[i];
       }
       Contour* getContour(int i) { return element[i]; }
-      void addContour(RigidContour* ce);
+      void addContour(RigidContour* c);
       void addFrame(FixedRelativeFrame* f);
       unsigned int getNumberOfElements() { return element.size(); }
 

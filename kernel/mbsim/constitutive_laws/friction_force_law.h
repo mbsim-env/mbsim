@@ -43,7 +43,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      ~FrictionForceLaw() override { if(frictionForceFunc) delete frictionForceFunc; frictionForceFunc = nullptr; };
+      ~FrictionForceLaw() override { delete frictionForceFunc; frictionForceFunc = nullptr; };
 
       void init(Element::InitStage stage, const InitConfigSet &config) override {
         Element::init(stage, config);

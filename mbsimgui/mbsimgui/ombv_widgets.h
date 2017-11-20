@@ -53,7 +53,7 @@ namespace MBSimGUI {
       OMBVObjectWidget(const QString &name_="NOTSET", MBXMLUtils::FQN xmlName_="") : name(name_), xmlName(std::move(xmlName_)) {}
       void setName(const QString &name_) {name = name_;}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       QString name;
       MBXMLUtils::FQN xmlName;
@@ -62,10 +62,10 @@ namespace MBSimGUI {
   class MBSOMBVWidget : public OMBVObjectWidget {
 
     public:
-      MBSOMBVWidget(const QString &name, MBXMLUtils::FQN xmlName="");
+      MBSOMBVWidget(const QString &name, MBXMLUtils::FQN xmlName_="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-      virtual xercesc::DOMElement* initXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      virtual xercesc::DOMElement* initXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr);
       virtual xercesc::DOMElement* writeProperties(xercesc::DOMElement *e);
     protected:
       ExtWidget *diffuseColor, *transparency;
@@ -77,7 +77,7 @@ namespace MBSimGUI {
     public:
       PointMBSOMBVWidget(const QString &name="NOTSET");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *size;
   };
@@ -87,7 +87,7 @@ namespace MBSimGUI {
     public:
       LineMBSOMBVWidget(const QString &name="NOTSET");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *length;
   };
@@ -97,7 +97,7 @@ namespace MBSimGUI {
     public:
       PlaneMBSOMBVWidget(const QString &name="NOTSET");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *length;
   };
@@ -107,7 +107,7 @@ namespace MBSimGUI {
     public:
       PlanarContourMBSOMBVWidget(const QString &name="NOTSET");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *nodes;
   };
@@ -117,7 +117,7 @@ namespace MBSimGUI {
     public:
       SpatialContourMBSOMBVWidget(const QString &name="NOTSET");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *etaNodes, *xiNodes;
   };
@@ -127,7 +127,7 @@ namespace MBSimGUI {
     public:
       ArrowMBSOMBVWidget(const QString &name="NOTSET", bool fromPoint=false);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *scaleLength, *scaleSize, *referencePoint;
   };
@@ -137,7 +137,7 @@ namespace MBSimGUI {
     public:
       CoilSpringMBSOMBVWidget(const QString &name="NOTSET");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *minCol, *maxCol;
   };
@@ -147,7 +147,7 @@ namespace MBSimGUI {
     public:
       FrameMBSOMBVWidget(const QString &name="NOTSET");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *size, *offset;
   };
@@ -157,7 +157,7 @@ namespace MBSimGUI {
     public:
       OMBVDynamicColoredObjectWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       QVBoxLayout *layout;
       ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency;
@@ -168,7 +168,7 @@ namespace MBSimGUI {
     public:
       OMBVRigidBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *trans, *rot, *scale;
   };
@@ -184,7 +184,7 @@ namespace MBSimGUI {
     public:
       CubeWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *length;
   };
@@ -194,7 +194,7 @@ namespace MBSimGUI {
     public:
       CuboidWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *length;
   };
@@ -202,9 +202,9 @@ namespace MBSimGUI {
   class SphereWidget : public OMBVRigidBodyWidget {
 
     public:
-      SphereWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
+      SphereWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *radius;
   };
@@ -212,9 +212,9 @@ namespace MBSimGUI {
   class FrustumWidget : public OMBVRigidBodyWidget {
 
     public:
-      FrustumWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
+      FrustumWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *top, *base, *height, *innerBase, *innerTop;
   };
@@ -222,9 +222,9 @@ namespace MBSimGUI {
   class ExtrusionWidget : public OMBVRigidBodyWidget {
 
     public:
-      ExtrusionWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
+      ExtrusionWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *windingRule, *height, *contour;
   };
@@ -232,9 +232,9 @@ namespace MBSimGUI {
   class IvBodyWidget : public OMBVRigidBodyWidget {
 
     public:
-      IvBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
+      IvBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *ivFileName, *creaseEdges, *boundaryEdges;
   };
@@ -242,9 +242,9 @@ namespace MBSimGUI {
   class CompoundRigidBodyWidget : public OMBVRigidBodyWidget {
 
     public:
-      CompoundRigidBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
+      CompoundRigidBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *bodies;
   };
@@ -254,7 +254,7 @@ namespace MBSimGUI {
     public:
       FlexibleBodyFFRMBSOMBVWidget(const QString &name="NOTSET");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *minCol, *maxCol, *nodes, *indices;
   };

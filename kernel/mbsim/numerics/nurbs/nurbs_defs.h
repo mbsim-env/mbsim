@@ -109,13 +109,12 @@ namespace fmatvec {
 
       GeneralMatrix<T>& operator=(const GeneralMatrix<T>& m);
 
-      T& operator()(int i, int j);
-      T const& operator()(int i, int j) const;
+      T& operator()(int row, int col);
+      T const& operator()(int row, int col) const;
       int rows() const;
       int cols() const;
       void resize(int nrows_, int ncols_);
-      template <typename J>
-      friend std::ostream& operator<<(std::ostream &os, const GeneralMatrix<J> &A);
+      
     private:
       int nrows{0}, ncols{0};
       T* data;

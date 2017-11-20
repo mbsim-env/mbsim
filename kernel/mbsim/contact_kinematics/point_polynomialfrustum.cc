@@ -31,7 +31,7 @@ using namespace std;
 
 namespace MBSim {
   projectPointAlongNormal::projectPointAlongNormal(PolynomialFrustum * frustum) :
-      frustum(frustum), referencePoint(), phi(0.) {
+      frustum(frustum),  phi(0.) {
   }
 
   projectPointAlongNormal::~projectPointAlongNormal() = default;
@@ -59,7 +59,7 @@ namespace MBSim {
   }
 
   projectPointAlongNormalJacobian::projectPointAlongNormalJacobian(PolynomialFrustum * frustum) :
-      frustum(frustum), referencePoint(), phi(0.) {
+      frustum(frustum),  phi(0.) {
   }
 
   projectPointAlongNormalJacobian::~projectPointAlongNormalJacobian() = default;
@@ -88,8 +88,7 @@ namespace MBSim {
   }
 
 
-  ContactKinematicsPointPolynomialFrustum::ContactKinematicsPointPolynomialFrustum() :
-      ContactKinematics(),  newtonProjectAlongNormal(),  criteriaProjectAlongNormal(), dampingProjectAlongNormal() {
+  ContactKinematicsPointPolynomialFrustum::ContactKinematicsPointPolynomialFrustum()  {
   }
 
   ContactKinematicsPointPolynomialFrustum::~ContactKinematicsPointPolynomialFrustum() {

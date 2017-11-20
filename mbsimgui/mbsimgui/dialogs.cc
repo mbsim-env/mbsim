@@ -71,7 +71,7 @@ namespace MBSimGUI {
 
     tab = new QTableWidget;
     tab->setRowCount(var.size());
-    tab->setColumnCount(var.size()?var[0].size():0);
+    tab->setColumnCount(!var.empty()?var[0].size():0);
     for(int i=0; i<tab->rowCount(); i++) {
       for(int j=0; j<tab->columnCount(); j++)
         tab->setItem(i,j,new QTableWidgetItem(QString::number(var[i][j],'g',6)));

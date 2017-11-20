@@ -75,7 +75,7 @@ namespace MBSimGUI {
       void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex(), bool recursive=true);
       void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex(), bool recursive=true);
       void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
-      void createConstraintItem(Constraint *observer, const QModelIndex &parent = QModelIndex());
+      void createConstraintItem(Constraint *constraint, const QModelIndex &parent = QModelIndex());
       void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
 
       std::map<QString, QModelIndex> idEleMap;
@@ -85,7 +85,7 @@ namespace MBSimGUI {
     public:
       EmbeddingTreeModel(QObject *parent = nullptr);
 
-      QModelIndex createEmbeddingItem(EmbedItemData *item, const QModelIndex &parent = QModelIndex());
+      QModelIndex createEmbeddingItem(EmbedItemData *itemData, const QModelIndex &parent = QModelIndex());
       QModelIndex createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
 
       std::map<Element*, QModelIndex> idEleMap;

@@ -38,7 +38,7 @@ cs *cs_multiply (const cs *A, const cs *B) ;
 int cs_qrsol (const cs *A, double *b, int order) ;
 cs *cs_transpose (const cs *A, int values) ;
 cs *cs_triplet (const cs *T) ;
-cs *cs_compress_LLM(const double *ele, const int lda, const int m, const int n, const int nz, const int I1, const int TwoD);
+cs *cs_compress_LLM(const double *ele, int lda, int m, int n, int nz, int I1, int TwoD);
 double cs_norm (const cs *A) ;
 int cs_print (const cs *A, int brief) ;
 cs *cs_load (FILE *f) ;
@@ -92,7 +92,7 @@ int cs_ipvec (int n, const int *P, const double *b, double *x) ;
 int cs_lsolve (const cs *L, double *x) ;
 int cs_ltsolve (const cs *L, double *x) ;
 csn *cs_lu (const cs *A, const css *S, double tol) ;
-cs *cs_permute (const cs *A, const int *P, const int *Q, int values) ;
+cs *cs_permute (const cs *A, const int *Pinv, const int *Q, int values) ;
 int *cs_pinv (const int *P, int n) ;
 int cs_pvec (int n, const int *P, const double *b, double *x) ;
 csn *cs_qr (const cs *A, const css *S) ;
@@ -135,9 +135,9 @@ csd *cs_ddone (csd *D, cs *C, void *w, int ok) ;
 #define CS_MIN(a,b) (((a) < (b)) ? (a) : (b))
 #define CS_FLIP(i) (-(i)-2)
 #define CS_UNFLIP(i) (((i) < 0) ? CS_FLIP(i) : (i))
-#define CS_MARKED(Ap,j) (Ap [j] < 0)
-#define CS_MARK(Ap,j) { Ap [j] = CS_FLIP (Ap [j]) ; }
-#define CS_OVERFLOW(n,size) (n > INT_MAX / (int) size)
+#define CS_MARKED(Ap,j) ((Ap) [j] < 0)
+#define CS_MARK(Ap,j) { (Ap) [j] = CS_FLIP ((Ap) [j]) ; }
+#define CS_OVERFLOW(n,size) ((n) > INT_MAX / (int) (size))
 
 #ifdef __cplusplus
 }

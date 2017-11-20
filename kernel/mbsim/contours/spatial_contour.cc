@@ -32,7 +32,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpatialContour)
 
   SpatialContour::~SpatialContour() {
-     if (funcCrPC) 
+     
        delete funcCrPC;
      funcCrPC=nullptr;
   }

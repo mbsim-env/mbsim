@@ -30,7 +30,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      EmbeddingContextMenu(EmbedItemData *item, const QString &title="", QWidget * parent = nullptr);
+      EmbeddingContextMenu(EmbedItemData *item_, const QString &title="", QWidget * parent = nullptr);
 
     protected slots:
       void load();

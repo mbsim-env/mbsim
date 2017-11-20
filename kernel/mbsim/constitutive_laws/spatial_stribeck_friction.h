@@ -42,7 +42,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      ~SpatialStribeckFriction() override { if(fmu) delete fmu; fmu=nullptr; }
+      ~SpatialStribeckFriction() override { delete fmu; fmu=nullptr; }
 
       void init(Element::InitStage stage, const InitConfigSet &config) override {
         FrictionForceLaw::init(stage, config);
@@ -53,7 +53,7 @@ namespace MBSim {
       fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) override;
       fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) override;
       fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) override;
-      bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd) override;
+      bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double laTol, double gdTol) override;
       fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd) override;
       int getFrictionDirections() override { return 2; }
       bool isSticking(const fmatvec::Vec& s, double sTol) override { return nrm2(s(0,1)) <= sTol; }

@@ -77,7 +77,7 @@ namespace MBSimGUI {
   DOMElement* OneDimVecArrayWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=element;
     e=e->getFirstElementChild();
-    if(not ele.size()) {
+    if(ele.empty()) {
       int i=0;
       while(e) {
         QString name = QString("ele")+QString::number(i+1);
@@ -140,7 +140,7 @@ namespace MBSimGUI {
   DOMElement* OneDimMatArrayWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=element;
     e=e->getFirstElementChild();
-    if(not ele.size()) {
+    if(ele.empty()) {
       int i=0;
       while(e) {
         QString name = QString("ele")+QString::number(i+1);
@@ -207,7 +207,7 @@ namespace MBSimGUI {
   DOMElement* TwoDimMatArrayWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=element;
     e=e->getFirstElementChild();
-    if(not ele.size()) {
+    if(ele.empty()) {
       int i=0;
       while(e) {
         DOMElement *ee=e->getFirstElementChild();

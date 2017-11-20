@@ -180,7 +180,7 @@ namespace MBSim {
 
 //        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, int d);
 //        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, const std::vector<double>& U, int d);
-      void globalInterpH(const MatVx4& Q, const Vec& ub, const Vec& Uc, int d, bool updateLater = false);
+      void globalInterpH(const MatVx4& Qw, const Vec& ub, const Vec& Uc, int d, bool updateLater = false);
 //        void globalInterpClosed(const Vector<fmatvec::Point<3>  >& Qw, int d);
       /*!
        * \brief closed interpolation of the given (not yet wrapped) points at the given knot vector "ub" in a degree of "d"
@@ -191,7 +191,7 @@ namespace MBSim {
        * \brief update the control points with the same matrix as before
        */
       void update(const fmatvec::MatVx3& Q);
-      void update(const fmatvec::MatVx4& Q);
+      void update(const fmatvec::MatVx4& Qw);
 
 //        void globalInterpClosedH(const Vector<fmatvec::HPoint<3>  >& Qw, int d);
 //        void globalInterpClosedH(const Vector<fmatvec::HPoint<3>  >& Qw, const std::vector<double>& U, int d);

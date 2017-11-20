@@ -1019,6 +1019,14 @@ def getOutFilesAndAdaptRet(example, ret):
   return []
 
 
+def removeCoverageFiles():
+  if args.coverage==None:
+    return
+  # remove all "*.gcno", "*.gcda" files
+  for d,_,files in os.walk('.'):
+    for f in files:
+      if os.path.splitext(f)[1]==".gcno": os.remove(pj(d, f))
+      if os.path.splitext(f)[1]==".gcda": os.remove(pj(d, f))
 
 # execute the source code example in the current directory (write everything to fd executeFD)
 def executeSrcExample(executeFD, example):
@@ -1028,12 +1036,7 @@ def executeSrcExample(executeFD, example):
   executeFD.flush()
   if not args.disableMakeClean:
     if subprocessCall(["make", "clean"], executeFD)!=0: return 1, 0, []
-    if args.coverage!=None:
-      # remove all "*.gcno", "*.gcda" files
-      for d,_,files in os.walk('.'):
-        for f in files:
-          if os.path.splitext(f)[1]==".gcno": os.remove(pj(d, f))
-          if os.path.splitext(f)[1]==".gcda": os.remove(pj(d, f))
+    removeCoverageFiles()
   if subprocessCall(["make"], executeFD)!=0: return 1, 0, []
   # append $prefix/lib to LD_LIBRARY_PATH/PATH to find lib by main of the example
   if os.name=="posix":
@@ -1211,6 +1214,7 @@ def executeFMISrcExample(executeFD, example):
   executeFD.flush()
   if not args.disableMakeClean:
     if subprocessCall(["make", "-f", "Makefile_FMI", "clean"], executeFD)!=0: return 1, 0, []
+    removeCoverageFiles()
   if subprocessCall(["make", "-f", "Makefile_FMI"], executeFD)!=0: return 1, 0, []
   # create and run FMU
   if args.exeExt==".exe":
