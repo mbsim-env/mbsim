@@ -720,8 +720,7 @@ namespace MBSimGUI {
     doc->insertBefore(ele0,nullptr);
 
     if(item->getXMLElement()) {
-      auto *parent = static_cast<DOMElement*>(item->getXMLElement()->getParentNode());
-      QString counterName = (E(parent)->getTagName()==PV%"Embed")?QString::fromStdString(E(parent)->getAttribute("counterName")):"";
+      QString counterName = item->getEmbedXMLElement()?QString::fromStdString(E(item->getEmbedXMLElement())->getAttribute("counterName")):"";
       if(not(counterName.isEmpty())) {
         DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
         E(ele1)->setAttribute("name", counterName.toStdString());
@@ -1454,7 +1453,7 @@ namespace MBSimGUI {
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
     bool includeParameter = false;
-    if(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed") {
+    if(element->getEmbedXMLElement()) {
       SaveDialog saveDialog;
       saveDialog.exec();
       includeParameter = saveDialog.includeParameter();
@@ -1471,7 +1470,7 @@ namespace MBSimGUI {
   void MainWindow::saveSolverAs() {
     Solver *solver = project->getSolver();
     bool includeParameter = false;
-    if(X()%solver->getXMLElement()->getParentNode()->getNodeName()=="Embed") {
+    if(solver->getEmbedXMLElement()) {
       SaveDialog saveDialog;
       saveDialog.exec();
       includeParameter = saveDialog.includeParameter();
