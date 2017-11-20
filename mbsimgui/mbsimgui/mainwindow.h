@@ -128,10 +128,8 @@ namespace MBSimGUI {
       void addLink(Link *link, Element *parent);
       void addConstraint(Constraint *constraint, Element *parent);
       void addObserver(Observer *observer, Element *parent);
-      void loadParameter(EmbedItemData *parent, Parameter *parameter=nullptr);
-      void embedParameter(EmbedItemData *parent);
-      void loadFrame(Element *parent, Element *element=nullptr);
-      void embedFrame(Element *parent);
+      void loadParameter(EmbedItemData *parent, Parameter *parameter=nullptr, bool embed=false);
+      void loadFrame(Element *parent, Element *element=nullptr, bool embed=false);
       void loadContour(Element *parent, Element *element=nullptr);
       void loadGroup(Element *parent, Element *element=nullptr);
       void loadObject(Element *parent, Element *element=nullptr);

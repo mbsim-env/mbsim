@@ -79,7 +79,7 @@ namespace MBSimGUI {
   }
 
   void EmbeddingContextMenu::embed() {
-    mw->embedParameter(item);
+    mw->loadParameter(item,nullptr,true);
   }
 
   void EmbeddingContextMenu::paste() {

@@ -1602,11 +1602,12 @@ namespace MBSimGUI {
     embeddingView->openEditor();
   }
 
-  void MainWindow::loadParameter(EmbedItemData *parent, Parameter *param) {
+  void MainWindow::loadParameter(EmbedItemData *parent, Parameter *param, bool embed) {
     setProjectChanged(true);
+    vector<DOMElement*> elements;
+    QString file;
     auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
-    vector<DOMElement*> elements;
     if(param) {
       elements.push_back(static_cast<DOMElement*>(doc->importNode(param->getXMLElement(),true)));
       if(parameterBuffer.second) {
@@ -1622,10 +1623,10 @@ namespace MBSimGUI {
       }
     }
     else {
-      QString file=QFileDialog::getOpenFileName(nullptr, "XML frame files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(nullptr, "XML frame files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
-        DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true))->getFirstElementChild();
+        DOMElement *ele = embed?doc->getDocumentElement()->getFirstElementChild():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true))->getFirstElementChild();
         while(ele) {
           elements.push_back(ele);
           ele = ele->getNextElementSibling();
@@ -1641,7 +1642,10 @@ namespace MBSimGUI {
         QMessageBox::warning(nullptr, "Load", "Cannot load file.");
         return;
       }
-      parent->createParameterXMLElement()->insertBefore(element,nullptr);
+      if(embed)
+        E(parent->createEmbedXMLElement())->setAttribute("parameterHref",mbsDir.relativeFilePath(file).toStdString());
+      else
+        parent->createParameterXMLElement()->insertBefore(element,nullptr);
       parameter->initializeUsingXML(element);
       parent->addParameter(parameter);
       newIndex = model->createParameterItem(parameter,index);
@@ -1649,30 +1653,10 @@ namespace MBSimGUI {
     embeddingView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
   }
 
-  void MainWindow::embedParameter(EmbedItemData *parent) {
-    setProjectChanged(true);
-    auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    QModelIndex index = embeddingView->selectionModel()->currentIndex();
-    std::vector<Parameter*> param;
-    QString file=QFileDialog::getOpenFileName(nullptr, "XML frame files", ".", "XML files (*.xml)");
-    if(not file.isEmpty()) {
-      xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
-      param = Parameter::initializeParametersUsingXML(doc->getDocumentElement());
-    }
-    else
-      return;
-    QModelIndex newIndex;
-    for(auto & i : param) {
-      parent->addParameter(i);
-      newIndex = model->createParameterItem(i,index);
-    }
-    E(parent->createEmbedXMLElement())->setAttribute("parameterHref",file.toStdString());
-    embeddingView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
-  }
-
-  void MainWindow::loadFrame(Element *parent, Element *element) {
+  void MainWindow::loadFrame(Element *parent, Element *element, bool embed) {
     setProjectChanged(true);
     DOMElement *ele = nullptr;
+    QString file;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
       ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
@@ -1686,10 +1670,10 @@ namespace MBSimGUI {
       }
     }
     else {
-      QString file=QFileDialog::getOpenFileName(nullptr, "XML frame files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(nullptr, "XML frame files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
-        ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+        ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
         return;
@@ -1699,35 +1683,14 @@ namespace MBSimGUI {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
     }
-    parent->getXMLFrames()->insertBefore(ele, nullptr);
-    parent->addFrame(frame);
-    QModelIndex index = elementView->selectionModel()->currentIndex();
-    model->createFrameItem(frame,index);
-    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    mbsimxml(1);
-  }
-
-  void MainWindow::embedFrame(Element *parent) {
-    setProjectChanged(true);
-    DOMElement *ele = nullptr;
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    QString file=QFileDialog::getOpenFileName(nullptr, "XML frame files", ".", "XML files (*.xml)");
-    if(not file.isEmpty()) {
-      xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
-      ele = doc->getDocumentElement();
+    if(embed) {
+      frame->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
+      parent->getXMLFrames()->insertBefore(frame->getEmbedXMLElement(), nullptr);
+      E(frame->getEmbedXMLElement())->setAttribute("href",mbsDir.relativeFilePath(file).toStdString());
     }
     else
-      return;
-    Frame *frame = Embed<Frame>::createAndInit(ele);
-    if(not frame) {
-      QMessageBox::warning(nullptr, "Load", "Cannot load file.");
-      return;
-    }
+      parent->getXMLFrames()->insertBefore(ele, nullptr);
     parent->addFrame(frame);
-    frame->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
-    parent->getXMLFrames()->insertBefore(frame->getEmbedXMLElement(), nullptr);
-    E(frame->getEmbedXMLElement())->setAttribute("href",file.toStdString());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createFrameItem(frame,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);

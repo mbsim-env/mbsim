@@ -42,25 +42,30 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable, bool saveable) : QMenu(parent), element(element_) {
+    bool hasHref = element->hasHref();
     QAction *action=new QAction("Edit", this);
     connect(action,SIGNAL(triggered()),mw->getElementView(),SLOT(openEditor()));
     addAction(action);
     if(saveable) {
       addSeparator();
       action=new QAction("Save as", this);
+      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(saveElementAs()));
       addAction(action);
     }
     if(removable) {
       addSeparator();
       action=new QAction("Copy", this);
+      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(copyElement()));
       addAction(action);
       action=new QAction("Cut", this);
+      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(cutElement()));
       addAction(action);
       addSeparator();
       action=new QAction("Remove", this);
+      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(removeElement()));
       addAction(action);
     }
@@ -159,7 +164,6 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
     action = new QAction("Embed", this);
-//    action->setDisabled(item->getNumberOfParameters() or item->hasParameterXMLElement());
     connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
   }
@@ -173,7 +177,7 @@ namespace MBSimGUI {
   }
 
   void FramesContextMenu::embed() {
-    mw->embedFrame(element);
+    mw->loadFrame(element,nullptr,true);
   }
 
   FixedRelativeFramesContextMenu::FixedRelativeFramesContextMenu(Element *element, const QString &title, QWidget *parent) : FramesContextMenu(element,title,parent) {
