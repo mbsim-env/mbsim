@@ -1461,7 +1461,7 @@ namespace MBSimGUI {
     QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+element->getName()+".mbsimele.xml", "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
-      DOMNode *node = edoc->importNode(includeParameter?element->getXMLElement()->getParentNode():element->getXMLElement(),true);
+      DOMNode *node = edoc->importNode(includeParameter?element->getEmbedXMLElement():element->getXMLElement(),true);
       edoc->insertBefore(node,nullptr);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }
@@ -1478,7 +1478,7 @@ namespace MBSimGUI {
     QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+solver->getName()+".mbsimslv.xml", "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
-      DOMNode *node = edoc->importNode(includeParameter?solver->getXMLElement()->getParentNode():solver->getXMLElement(),true);
+      DOMNode *node = edoc->importNode(includeParameter?solver->getEmbedXMLElement():solver->getXMLElement(),true);
       edoc->insertBefore(node,nullptr);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }
@@ -1492,7 +1492,7 @@ namespace MBSimGUI {
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node;
-      node = edoc->importNode(static_cast<DOMElement*>(item->getXMLElement()->getParentNode())->getFirstElementChild(),true);
+      node = edoc->importNode(item->getEmbedXMLElement()->getFirstElementChild(),true);
       edoc->insertBefore(node,nullptr);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }
@@ -1651,6 +1651,18 @@ namespace MBSimGUI {
       newIndex = model->createParameterItem(parameter,index);
     }
     embeddingView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
+  }
+
+  void MainWindow::removeParameter(EmbedItemData *parent) {
+    setProjectChanged(true);
+    auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    model->removeRows(0,parent->getNumberOfParameters(),index);
+    int n = parent->getNumberOfParameters();
+    for(int i=0; i<n; i++)
+      parent->removeParameter(parent->getParameter(i));
+    parent->getEmbedXMLElement()->removeAttribute(X()%"parameterHref");
+    parent->maybeRemoveEmbedXMLElement();
   }
 
   void MainWindow::loadFrame(Element *parent, Element *element, bool embed) {

@@ -50,6 +50,13 @@ namespace MBSimGUI {
       action->setDisabled(item->getNumberOfParameters() or item->hasParameterXMLElement());
       connect(action,SIGNAL(triggered()),this,SLOT(embed()));
       addAction(action);
+    }
+    addSeparator();
+    action = new QAction("Remove", this);
+    action->setEnabled(item->getNumberOfParameters());
+    connect(action,SIGNAL(triggered()),this,SLOT(remove()));
+    addAction(action);
+    if(not item->hasParameterHref()) {
       addSeparator();
       action = new QAction("Add scalar parameter", this);
       connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
@@ -69,6 +76,10 @@ namespace MBSimGUI {
     }
   }
 
+  void EmbeddingContextMenu::paste() {
+    mw->loadParameter(item, mw->getParameterBuffer().first);
+  }
+
   void EmbeddingContextMenu::load() {
     mw->loadParameter(item);
   }
@@ -77,8 +88,8 @@ namespace MBSimGUI {
     mw->loadParameter(item,nullptr,true);
   }
 
-  void EmbeddingContextMenu::paste() {
-    mw->loadParameter(item, mw->getParameterBuffer().first);
+  void EmbeddingContextMenu::remove() {
+    mw->removeParameter(item);
   }
 
   void EmbeddingContextMenu::addScalarParameter() {

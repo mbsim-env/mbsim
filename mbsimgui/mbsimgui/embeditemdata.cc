@@ -120,7 +120,7 @@ namespace MBSimGUI {
           embed->removeChild(ps);
         embed->removeChild(param);
       }
-      if(not embed->getAttributes()->getLength()) {
+      if(not E(embed)->hasAttribute("count") and not E(embed)->hasAttribute("counterName") and not E(embed)->hasAttribute("href") and not E(embed)->hasAttribute("parameterHref")) {
         embed->getParentNode()->insertBefore(element,embed);
         embed->getParentNode()->removeChild(embed);
         embed = nullptr;

@@ -60,11 +60,13 @@ namespace MBSimGUI {
         action=new QAction("Cut", this);
         connect(action,SIGNAL(triggered()),mw,SLOT(cutElement()));
         addAction(action);
-        addSeparator();
-        action=new QAction("Remove", this);
-        connect(action,SIGNAL(triggered()),mw,SLOT(removeElement()));
-        addAction(action);
       }
+    }
+    if(removable) {
+      addSeparator();
+      action=new QAction("Remove", this);
+      connect(action,SIGNAL(triggered()),mw,SLOT(removeElement()));
+      addAction(action);
     }
   }
 
