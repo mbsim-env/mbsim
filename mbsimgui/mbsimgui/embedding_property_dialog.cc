@@ -109,6 +109,7 @@ namespace MBSimGUI {
     if((not count or not count->isActive()) and (not counterName or not counterName->isActive()) and (not href->isActive()) and (not parameterHref->isActive()) and (not item->getNumberOfParameters())) {
       embedNode->getParentNode()->insertBefore(node,embedNode);
       embedNode->getParentNode()->removeChild(embedNode);
+      item->setEmbedXMLElement(nullptr);
     }
     return nullptr;
   }

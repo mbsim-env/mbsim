@@ -42,25 +42,30 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable, bool saveable) : QMenu(parent), element(element_) {
+    bool hasHref = element->hasHref();
     QAction *action=new QAction("Edit", this);
     connect(action,SIGNAL(triggered()),mw->getElementView(),SLOT(openEditor()));
     addAction(action);
     if(saveable) {
       addSeparator();
       action=new QAction("Save as", this);
+      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(saveElementAs()));
       addAction(action);
     }
     if(removable) {
       addSeparator();
       action=new QAction("Copy", this);
+      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(copyElement()));
       addAction(action);
       action=new QAction("Cut", this);
+      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(cutElement()));
       addAction(action);
       addSeparator();
       action=new QAction("Remove", this);
+      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(removeElement()));
       addAction(action);
     }
@@ -158,6 +163,9 @@ namespace MBSimGUI {
     action = new QAction("Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
   }
 
   void FramesContextMenu::paste() {
@@ -166,6 +174,10 @@ namespace MBSimGUI {
 
   void FramesContextMenu::load() {
     mw->loadFrame(element);
+  }
+
+  void FramesContextMenu::embed() {
+    mw->loadFrame(element,nullptr,true);
   }
 
   FixedRelativeFramesContextMenu::FixedRelativeFramesContextMenu(Element *element, const QString &title, QWidget *parent) : FramesContextMenu(element,title,parent) {
@@ -197,6 +209,9 @@ namespace MBSimGUI {
     addAction(action);
     action = new QAction("Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
     addSeparator();
     action = new QAction("Add point", this);
@@ -234,6 +249,10 @@ namespace MBSimGUI {
 
   void ContoursContextMenu::load() {
     mw->loadContour(element);
+  }
+
+  void ContoursContextMenu::embed() {
+    mw->loadContour(element,nullptr,true);
   }
 
   void ContoursContextMenu::addPoint() {
@@ -280,6 +299,9 @@ namespace MBSimGUI {
     action = new QAction("Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
     addSeparator();
     action = new QAction("Add", this);
     connect(action,SIGNAL(triggered()),this,SLOT(add()));
@@ -294,6 +316,10 @@ namespace MBSimGUI {
     mw->loadGroup(element);
   }
 
+  void GroupsContextMenu::embed() {
+    mw->loadGroup(element,nullptr,true);
+  }
+
   void GroupsContextMenu::add() {
     mw->addGroup(new Group, element);
   }
@@ -306,6 +332,9 @@ namespace MBSimGUI {
     action = new QAction("Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
     addSeparator();
     QMenu *menu = new BodiesContextMenu(element, "Add body");
     addMenu(menu);
@@ -317,6 +346,10 @@ namespace MBSimGUI {
 
   void ObjectsContextMenu::load() {
     mw->loadObject(element);
+  }
+
+  void ObjectsContextMenu::embed() {
+    mw->loadObject(element,nullptr,true);
   }
 
   BodiesContextMenu::BodiesContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -343,6 +376,9 @@ namespace MBSimGUI {
     addAction(action);
     action = new QAction("Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
     addSeparator();
     action = new QAction("Add kinetic excitation", this);
@@ -385,6 +421,10 @@ namespace MBSimGUI {
 
   void LinksContextMenu::load() {
     mw->loadLink(element);
+  }
+
+  void LinksContextMenu::embed() {
+    mw->loadLink(element,nullptr,true);
   }
 
   void LinksContextMenu::addKineticExcitation() {
@@ -440,6 +480,9 @@ namespace MBSimGUI {
     action = new QAction("Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
     addSeparator();
     action = new QAction("Add generalized position constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionConstraint()));
@@ -467,6 +510,10 @@ namespace MBSimGUI {
 
   void ConstraintsContextMenu::load() {
     mw->loadConstraint(element);
+  }
+
+  void ConstraintsContextMenu::embed() {
+    mw->loadConstraint(element,nullptr,true);
   }
 
   void ConstraintsContextMenu::addGeneralizedGearConstraint() {
@@ -501,6 +548,9 @@ namespace MBSimGUI {
     action = new QAction("Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
     addSeparator();
     action = new QAction("Add mechanical link observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkObserver()));
@@ -534,6 +584,10 @@ namespace MBSimGUI {
 
   void ObserversContextMenu::load() {
     mw->loadObserver(element);
+  }
+
+  void ObserversContextMenu::embed() {
+    mw->loadObserver(element,nullptr,true);
   }
 
   void ObserversContextMenu::addMechanicalLinkObserver() {

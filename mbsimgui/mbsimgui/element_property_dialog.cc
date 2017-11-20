@@ -47,6 +47,7 @@
 #include "gear.h"
 #include "connection.h"
 #include <QPushButton>
+#include <QDialogButtonBox>
 #include <utility>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include "mainwindow.h"
@@ -109,6 +110,10 @@ namespace MBSimGUI {
   }
 
   ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), element(element_) {
+    if(element->hasHref()) {
+      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
+      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
+    }
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(element->getName()));
     name->setToolTip("Set the name of the element");

@@ -24,6 +24,8 @@
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
+#include <QDialogButtonBox>
+#include <QPushButton>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -47,6 +49,10 @@ namespace MBSimGUI {
   }
 
   SolverPropertyDialog::SolverPropertyDialog(Solver *solver_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), solver(solver_) {
+    if(solver->hasHref()) {
+      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
+      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
+    }
   }
 
   DOMElement* SolverPropertyDialog::initializeUsingXML(DOMElement *parent) {

@@ -22,6 +22,8 @@
 #include "project.h"
 #include "basic_widgets.h"
 #include "extended_widgets.h"
+#include <QDialogButtonBox>
+#include <QPushButton>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -30,6 +32,10 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   ProjectPropertyDialog::ProjectPropertyDialog(Project *project_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), project(project_) {
+    if(project->hasHref()) {
+      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
+      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
+    }
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(project->getName()));
     name->setToolTip("Set the name of the project");

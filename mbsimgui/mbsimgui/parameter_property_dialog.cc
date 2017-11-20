@@ -23,6 +23,9 @@
 #include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "parameter.h"
+#include "embeditemdata.h"
+#include <QDialogButtonBox>
+#include <QPushButton>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -31,6 +34,10 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, QWidget *parent, const Qt::WindowFlags& f, bool readOnly) : PropertyDialog(parent,f), parameter(parameter_) {
+    if(parameter->getParent()->hasParameterHref()) {
+      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
+      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
+    }
     addTab("General");
     name=new ExtWidget("Name",new TextWidget(parameter->getName()),readOnly);
     addToTab("General",name);

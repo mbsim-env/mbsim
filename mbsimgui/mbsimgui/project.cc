@@ -92,24 +92,15 @@ namespace MBSimGUI {
     solver->setProject(this);
   }
 
-  DOMElement* Project::getParameterXMLElement() {
-    DOMDocument *doc=element->getOwnerDocument();
+  DOMElement* Project::createEmbedXMLElement() {
     if(not getEmbedXMLElement()) {
-      DOMElement *ele=D(doc)->createElement(PV%"Embed");
-      doc->removeChild(element);
-      doc->insertBefore(ele,nullptr);
-      setEmbedXMLElement(ele);
-      ele=D(doc)->createElement(PV%"Parameter");
-      getEmbedXMLElement()->insertBefore(ele,nullptr);
-      getEmbedXMLElement()->insertBefore(element,nullptr);
-      return ele;
+      DOMDocument *doc=element->getOwnerDocument();
+      setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
+      doc->removeChild(getXMLElement());
+      doc->insertBefore(getEmbedXMLElement(),nullptr);
+      getEmbedXMLElement()->insertBefore(getXMLElement(),nullptr);
     }
-    else if(X()%getEmbedXMLElement()->getFirstElementChild()->getNodeName()!="Parameter") {
-      DOMElement *ele=D(doc)->createElement(PV%"Parameter");
-      getEmbedXMLElement()->insertBefore(ele,getEmbedXMLElement()->getFirstElementChild());
-      return ele;
-    }
-    return getEmbedXMLElement()->getFirstElementChild();
+    return getEmbedXMLElement();
   }
 
 }

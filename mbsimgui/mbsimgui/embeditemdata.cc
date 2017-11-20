@@ -84,27 +84,34 @@ namespace MBSimGUI {
     }
   }
 
-  DOMElement* EmbedItemData::getParameterXMLElement() {
-    DOMDocument *doc=element->getOwnerDocument();
+  DOMElement* EmbedItemData::createParameterXMLElement() {
+    DOMElement *param = E(createEmbedXMLElement())->getFirstElementChildNamed(PV%"Parameter");
+    if(not param) {
+      param = D(getEmbedXMLElement()->getOwnerDocument())->createElement(PV%"Parameter");
+      getEmbedXMLElement()->insertBefore(param,getEmbedXMLElement()->getFirstElementChild());
+    }
+    return param;
+  }
+
+  DOMElement* EmbedItemData::createEmbedXMLElement() {
     if(not getEmbedXMLElement()) {
-      DOMElement *ele=D(doc)->createElement(PV%"Embed");
-      element->getParentNode()->insertBefore(ele,element);
-      setEmbedXMLElement(ele);
-      ele=D(doc)->createElement(PV%"Parameter");
-      getEmbedXMLElement()->insertBefore(ele,nullptr);
-      getEmbedXMLElement()->insertBefore(element,nullptr);
-      return ele;
+      setEmbedXMLElement(D(getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
+      getXMLElement()->getParentNode()->insertBefore(getEmbedXMLElement(),getXMLElement());
+      getEmbedXMLElement()->insertBefore(getXMLElement(),nullptr);
     }
-    else if(X()%getEmbedXMLElement()->getFirstElementChild()->getNodeName()!="Parameter") {
-      DOMElement *ele=D(doc)->createElement(PV%"Parameter");
-      getEmbedXMLElement()->insertBefore(ele,getEmbedXMLElement()->getFirstElementChild());
-      return ele;
-    }
-    return getEmbedXMLElement()->getFirstElementChild();
+    return getEmbedXMLElement();
+  }
+
+  bool EmbedItemData::hasParameterXMLElement() const {
+    return embed and E(embed)->getFirstElementChildNamed(PV%"Parameter");
+  }
+
+  bool EmbedItemData::hasHref() const {
+    return embed and embed->hasAttribute(X()%"href");
   }
 
   bool EmbedItemData::hasParameterHref() const {
-    return dynamic_cast<DOMElement*>(element->getParentNode()) and static_cast<DOMElement*>(element->getParentNode())->hasAttribute(X()%"parameterHref");
+    return embed and embed->hasAttribute(X()%"parameterHref");
   }
 
   DOMElement* EmbedItemData::processFileID(DOMElement *element) {
