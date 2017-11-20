@@ -130,12 +130,12 @@ namespace MBSimGUI {
       void addObserver(Observer *observer, Element *parent);
       void loadParameter(EmbedItemData *parent, Parameter *parameter=nullptr, bool embed=false);
       void loadFrame(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadContour(Element *parent, Element *element=nullptr);
-      void loadGroup(Element *parent, Element *element=nullptr);
-      void loadObject(Element *parent, Element *element=nullptr);
-      void loadLink(Element *parent, Element *element=nullptr);
-      void loadConstraint(Element *parent, Element *element=nullptr);
-      void loadObserver(Element *parent, Element *element=nullptr);
+      void loadContour(Element *parent, Element *element=nullptr, bool embed=false);
+      void loadGroup(Element *parent, Element *element=nullptr, bool embed=false);
+      void loadObject(Element *parent, Element *element=nullptr, bool embed=false);
+      void loadLink(Element *parent, Element *element=nullptr, bool embed=false);
+      void loadConstraint(Element *parent, Element *element=nullptr, bool embed=false);
+      void loadObserver(Element *parent, Element *element=nullptr, bool embed=false);
       void highlightObject(const QString &ID);
       const QString& getHighlightedObject() const {return currentID;}
       void loadProject(const QString &file);

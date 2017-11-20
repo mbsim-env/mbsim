@@ -129,6 +129,7 @@ namespace MBSimGUI {
       void addSpatialContour();
       void paste();
       void load();
+      void embed();
 
     protected:
       Element *element;
@@ -144,6 +145,7 @@ namespace MBSimGUI {
       void add();
       void paste();
       void load();
+      void embed();
 
     protected:
       Element *element;
@@ -158,6 +160,7 @@ namespace MBSimGUI {
     protected slots:
       void paste();
       void load();
+      void embed();
 
     protected:
       Element *element;
@@ -197,6 +200,7 @@ namespace MBSimGUI {
       void addGeneralizedElasticConnection();
       void paste();
       void load();
+      void embed();
 
     protected:
       Element *element;
@@ -217,6 +221,7 @@ namespace MBSimGUI {
       void addGeneralizedConnectionConstraint();
       void paste();
       void load();
+      void embed();
 
     protected:
       Element *element;
@@ -240,6 +245,7 @@ namespace MBSimGUI {
       void addRigidBodySystemObserver();
       void paste();
       void load();
+      void embed();
 
     protected:
       Element *element;
