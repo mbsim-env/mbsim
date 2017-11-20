@@ -1295,7 +1295,7 @@ namespace MBSimGUI {
     auto *frame = static_cast<Frame*>(model->getItem(index)->getItemData());
     int i = frame->getParent()->getIndexOfFrame(frame);
     int j = up?i-1:i+1;
-    DOMElement *ele = static_cast<DOMElement*>(X()%frame->getXMLElement()->getParentNode()->getNodeName()=="Embed"?frame->getXMLElement()->getParentNode():frame->getXMLElement());
+    DOMElement *ele = static_cast<DOMElement*>(frame->getEmbedXMLElement()?frame->getEmbedXMLElement():frame->getXMLElement());
     DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
     DOMNode *parent = ele->getParentNode();
     DOMNode *ps = ele->getPreviousSibling();
@@ -1318,7 +1318,7 @@ namespace MBSimGUI {
     auto *contour = static_cast<Contour*>(model->getItem(index)->getItemData());
     int i = contour->getParent()->getIndexOfContour(contour);
     int j = up?i-1:i+1;
-    DOMElement *ele = static_cast<DOMElement*>(X()%contour->getXMLElement()->getParentNode()->getNodeName()=="Embed"?contour->getXMLElement()->getParentNode():contour->getXMLElement());
+    DOMElement *ele = static_cast<DOMElement*>(contour->getEmbedXMLElement()?contour->getEmbedXMLElement():contour->getXMLElement());
     DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
     DOMNode *parent = ele->getParentNode();
     DOMNode *ps = ele->getPreviousSibling();
@@ -1341,7 +1341,7 @@ namespace MBSimGUI {
     auto *group = static_cast<Group*>(model->getItem(index)->getItemData());
     int i = group->getParent()->getIndexOfGroup(group);
     int j = up?i-1:i+1;
-    DOMElement *ele = static_cast<DOMElement*>(X()%group->getXMLElement()->getParentNode()->getNodeName()=="Embed"?group->getXMLElement()->getParentNode():group->getXMLElement());
+    DOMElement *ele = static_cast<DOMElement*>(group->getEmbedXMLElement()?group->getEmbedXMLElement():group->getXMLElement());
     DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
     DOMNode *parent = ele->getParentNode();
     DOMNode *ps = ele->getPreviousSibling();
@@ -1364,7 +1364,7 @@ namespace MBSimGUI {
     auto *object = static_cast<Object*>(model->getItem(index)->getItemData());
     int i = object->getParent()->getIndexOfObject(object);
     int j = up?i-1:i+1;
-    DOMElement *ele = static_cast<DOMElement*>(X()%object->getXMLElement()->getParentNode()->getNodeName()=="Embed"?object->getXMLElement()->getParentNode():object->getXMLElement());
+    DOMElement *ele = static_cast<DOMElement*>(object->getEmbedXMLElement()?object->getEmbedXMLElement():object->getXMLElement());
     DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
     DOMNode *parent = ele->getParentNode();
     DOMNode *ps = ele->getPreviousSibling();
@@ -1387,7 +1387,7 @@ namespace MBSimGUI {
     auto *link = static_cast<Link*>(model->getItem(index)->getItemData());
     int i = link->getParent()->getIndexOfLink(link);
     int j = up?i-1:i+1;
-    DOMElement *ele = static_cast<DOMElement*>(X()%link->getXMLElement()->getParentNode()->getNodeName()=="Embed"?link->getXMLElement()->getParentNode():link->getXMLElement());
+    DOMElement *ele = static_cast<DOMElement*>(link->getEmbedXMLElement()?link->getEmbedXMLElement():link->getXMLElement());
     DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
     DOMNode *parent = ele->getParentNode();
     DOMNode *ps = ele->getPreviousSibling();
@@ -1410,7 +1410,7 @@ namespace MBSimGUI {
     auto *constraint = static_cast<Constraint*>(model->getItem(index)->getItemData());
     int i = constraint->getParent()->getIndexOfConstraint(constraint);
     int j = up?i-1:i+1;
-    DOMElement *ele = static_cast<DOMElement*>(X()%constraint->getXMLElement()->getParentNode()->getNodeName()=="Embed"?constraint->getXMLElement()->getParentNode():constraint->getXMLElement());
+    DOMElement *ele = static_cast<DOMElement*>(constraint->getEmbedXMLElement()?constraint->getEmbedXMLElement():constraint->getXMLElement());
     DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
     DOMNode *parent = ele->getParentNode();
     DOMNode *ps = ele->getPreviousSibling();
@@ -1433,7 +1433,7 @@ namespace MBSimGUI {
     auto *observer = static_cast<Observer*>(model->getItem(index)->getItemData());
     int i = observer->getParent()->getIndexOfObserver(observer);
     int j = up?i-1:i+1;
-    DOMElement *ele = static_cast<DOMElement*>(X()%observer->getXMLElement()->getParentNode()->getNodeName()=="Embed"?observer->getXMLElement()->getParentNode():observer->getXMLElement());
+    DOMElement *ele = static_cast<DOMElement*>(observer->getEmbedXMLElement()?observer->getEmbedXMLElement():observer->getXMLElement());
     DOMElement *tmp = up?ele->getPreviousElementSibling():ele->getNextElementSibling()->getNextElementSibling();
     DOMNode *parent = ele->getParentNode();
     DOMNode *ps = ele->getPreviousSibling();
@@ -1660,7 +1660,7 @@ namespace MBSimGUI {
     QString file;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
+      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
       if(elementBuffer.second) {
         elementBuffer.first = NULL;
         element->removeXMLElement();
@@ -1705,7 +1705,7 @@ namespace MBSimGUI {
     QString file;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
+      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
       if(elementBuffer.second) {
         elementBuffer.first = NULL;
         element->removeXMLElement();
@@ -1750,7 +1750,7 @@ namespace MBSimGUI {
     QString file;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
+      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
       if(elementBuffer.second) {
         elementBuffer.first = NULL;
         element->removeXMLElement();
@@ -1795,7 +1795,7 @@ namespace MBSimGUI {
     QString file;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
+      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
       if(elementBuffer.second) {
         elementBuffer.first = NULL;
         element->removeXMLElement();
@@ -1840,7 +1840,7 @@ namespace MBSimGUI {
     QString file;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
+      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
       if(elementBuffer.second) {
         elementBuffer.first = NULL;
         element->removeXMLElement();
@@ -1885,7 +1885,7 @@ namespace MBSimGUI {
     QString file;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
+      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
       if(elementBuffer.second) {
         elementBuffer.first = NULL;
         element->removeXMLElement();
@@ -1930,7 +1930,7 @@ namespace MBSimGUI {
     QString file;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(X()%element->getXMLElement()->getParentNode()->getNodeName()=="Embed"?element->getXMLElement()->getParentNode():element->getXMLElement(),true));
+      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
       if(elementBuffer.second) {
         elementBuffer.first = NULL;
         element->removeXMLElement();
