@@ -421,9 +421,9 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   Ret PiecewisePolynomFunction<Ret(Arg)>::ZerothDerivative::operator()(const Arg& x_) {
     double x = ToDouble<Arg>::cast(x_);
-    if(x>(parent->breaks)(parent->nPoly)) 
+    if(x-1e-13>(parent->breaks)(parent->nPoly)) 
       throw MBSimError("(PiecewisePolynomFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
-    if(x<(parent->breaks)(0)) 
+    if(x+1e-13<(parent->breaks)(0)) 
       throw MBSimError("(PiecewisePolynomFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", lower bound= "+fmatvec::toString((parent->breaks)(0)));
 
     if ((fabs(x-xSave)<macheps) && !firstCall)
@@ -452,8 +452,8 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   Ret PiecewisePolynomFunction<Ret(Arg)>::FirstDerivative::operator()(const Arg& x_) {
     double x = ToDouble<Arg>::cast(x_);
-    if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("(PiecewisePolynomFunction::diff1): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
-    if(x<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff1): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
+    if(x-1e-13>(parent->breaks)(parent->nPoly)) throw MBSimError("(PiecewisePolynomFunction::diff1): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
+    if(x+1e-13<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff1): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
 
     if ((fabs(x-xSave)<macheps) && !firstCall)
       return FromVecV<Ret>::cast(ySave);
@@ -481,8 +481,8 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   Ret PiecewisePolynomFunction<Ret(Arg)>::SecondDerivative::operator()(const Arg& x_) {
     double x = ToDouble<Arg>::cast(x_);
-    if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
-    if(x<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
+    if(x-1e-13>(parent->breaks)(parent->nPoly)) throw MBSimError("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
+    if(x+1e-13<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
 
     if ((fabs(x-xSave)<macheps) && !firstCall)
       return FromVecV<Ret>::cast(ySave);

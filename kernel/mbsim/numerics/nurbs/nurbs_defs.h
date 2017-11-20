@@ -114,7 +114,8 @@ namespace fmatvec {
       int rows() const;
       int cols() const;
       void resize(int nrows_, int ncols_);
-      
+      template <typename J>
+      friend std::ostream& operator<<(std::ostream &os, const GeneralMatrix<J> &A);
     private:
       int nrows{0}, ncols{0};
       T* data;
