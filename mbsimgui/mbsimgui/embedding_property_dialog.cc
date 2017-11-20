@@ -61,7 +61,7 @@ namespace MBSimGUI {
   DOMElement* EmbeddingPropertyDialog::initializeUsingXML(DOMElement *ele) {
     if(name) static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
     DOMElement *parent = item->getEmbedXMLElement();
-    if(parent and E(parent)->getTagName()==PV%"Embed") {
+    if(parent) {
       if(count and E(parent)->hasAttribute("count")) {
         count->setActive(true);
         static_cast<PhysicalVariableWidget*>(count->getWidget())->setValue(QString::fromStdString(E(parent)->getAttribute("count")));
@@ -84,7 +84,7 @@ namespace MBSimGUI {
 
   DOMElement* EmbeddingPropertyDialog::writeXMLFile(DOMNode *node, DOMNode *ref) {
     DOMElement *embedNode = item->createEmbedXMLElement();
-    if(name and not href->isActive())
+    if(name)
       E(embedNode->getLastElementChild())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     if(count) {
       if(count->isActive())

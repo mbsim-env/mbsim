@@ -73,24 +73,23 @@ namespace MBSimGUI {
   }
 
   void EmbedItemData::removeXMLElement(bool removeEmbedding) {
-    DOMNode *parent = element->getParentNode();
-    if(removeEmbedding and X()%parent->getNodeName()=="Embed") {
-      DOMNode *e = parent->getFirstChild();
+    if(removeEmbedding and embed) {
+      DOMNode *e = embed->getFirstChild();
       while(e) {
         DOMNode *en=e->getNextSibling();
-        parent->removeChild(e);
+        embed->removeChild(e);
         e = en;
       }
-      DOMNode *ps = parent->getPreviousSibling();
+      DOMNode *ps = embed->getPreviousSibling();
       if(ps and X()%ps->getNodeName()=="#text")
-        parent->getParentNode()->removeChild(ps);
-      parent->getParentNode()->removeChild(parent);
+        embed->getParentNode()->removeChild(ps);
+      embed->getParentNode()->removeChild(embed);
     }
     else {
       DOMNode *ps = element->getPreviousSibling();
       if(ps and X()%ps->getNodeName()=="#text")
-        parent->removeChild(ps);
-      parent->removeChild(element);
+        element->getParentNode()->removeChild(ps);
+      element->getParentNode()->removeChild(element);
     }
   }
 
