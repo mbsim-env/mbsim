@@ -83,14 +83,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbeddingPropertyDialog::writeXMLFile(DOMNode *node, DOMNode *ref) {
-    DOMElement *embedNode = item->getEmbedXMLElement();
-    if(not embedNode) {
-      DOMDocument *doc=node->getOwnerDocument();
-      embedNode=D(doc)->createElement(PV%"Embed");
-      node->getParentNode()->insertBefore(embedNode,node);
-      embedNode->insertBefore(node,nullptr);
-      item->setEmbedXMLElement(embedNode);
-    }
+    DOMElement *embedNode = item->createEmbedXMLElement();
     if(name and not href->isActive())
       E(embedNode->getLastElementChild())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     if(count) {
@@ -105,12 +98,7 @@ namespace MBSimGUI {
       else
         E(embedNode)->removeAttribute("counterName");
     }
-
-    if((not count or not count->isActive()) and (not counterName or not counterName->isActive()) and (not href->isActive()) and (not parameterHref->isActive()) and (not item->getNumberOfParameters())) {
-      embedNode->getParentNode()->insertBefore(node,embedNode);
-      embedNode->getParentNode()->removeChild(embedNode);
-      item->setEmbedXMLElement(nullptr);
-    }
+    item->maybeRemoveEmbedXMLElement();
     return nullptr;
   }
 

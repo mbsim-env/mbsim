@@ -1135,6 +1135,7 @@ namespace MBSimGUI {
       parameter->getXMLElement()->getParentNode()->removeChild(ps);
     parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
     parameter->getParent()->removeParameter(parameter);
+    parameter->getParent()->maybeRemoveEmbedXMLElement();
     model->removeRow(index.row(), index.parent());
   }
 

@@ -21,6 +21,7 @@
 #include "embeditemdata.h"
 #include "parameter.h"
 #include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMNamedNodeMap.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -109,6 +110,23 @@ namespace MBSimGUI {
       getEmbedXMLElement()->insertBefore(getXMLElement(),nullptr);
     }
     return getEmbedXMLElement();
+  }
+
+  void EmbedItemData::maybeRemoveEmbedXMLElement() {
+    if(embed and not getNumberOfParameters()) {
+      DOMElement *param = E(embed)->getFirstElementChildNamed(PV%"Parameter");
+      if(param) {
+        DOMNode *ps = param->getPreviousSibling();
+        if(ps and X()%ps->getNodeName()=="#text")
+          embed->removeChild(ps);
+        embed->removeChild(param);
+      }
+      if(not embed->getAttributes()->getLength()) {
+        embed->getParentNode()->insertBefore(element,embed);
+        embed->getParentNode()->removeChild(embed);
+        embed = nullptr;
+      }
+    }
   }
 
   bool EmbedItemData::hasParameterXMLElement() const {
