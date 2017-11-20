@@ -27,18 +27,13 @@ namespace MBSimGUI {
   class EmbedItemData;
   class ExtWidget;
 
-  class EmbeddingPropertyDialog : public PropertyDialog {
+  class EmbeddingPropertyDialog : public EmbedItemPropertyDialog {
 
     public:
       EmbeddingPropertyDialog(EmbedItemData *item_, bool embedding=true, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *ele) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *node, xercesc::DOMNode *ref=nullptr) override;
-      virtual void toWidget(EmbedItemData *item);
-      virtual void fromWidget(EmbedItemData *item);
-      void toWidget() override {toWidget(item);}
-      void fromWidget() override {fromWidget(item);}
     protected:
-      EmbedItemData *item;
       ExtWidget *name, *href, *count, *counterName, *parameterHref;
   };
 

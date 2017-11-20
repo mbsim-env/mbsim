@@ -29,49 +29,44 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   EmbeddingContextMenu::EmbeddingContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
-    bool hasParameterHref = item->hasParameterHref();
     QAction *action = new QAction("Edit", this);
     connect(action,SIGNAL(triggered()),mw->getEmbeddingView(),SLOT(openEditor()));
     addAction(action);
-    addSeparator();
-    action = new QAction("Save as", this);
-    action->setDisabled(not item->getNumberOfParameters() or hasParameterHref);
-    connect(action,SIGNAL(triggered()),mw,SLOT(saveEmbeddingAs()));
-    addAction(action);
-    addSeparator();
-    action = new QAction("Paste", this);
-    action->setEnabled(mw->getParameterBuffer().first and not hasParameterHref);
-    connect(action,SIGNAL(triggered()),this,SLOT(paste()));
-    addAction(action);
-    action = new QAction("Load", this);
-    action->setDisabled(hasParameterHref);
-    connect(action,SIGNAL(triggered()),this,SLOT(load()));
-    addAction(action);
-    action = new QAction("Embed", this);
-    action->setDisabled(item->getNumberOfParameters() or item->hasParameterXMLElement());
-    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
-    addAction(action);
-    addSeparator();
-    action = new QAction("Add scalar parameter", this);
-    action->setDisabled(hasParameterHref);
-    connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
-    addAction(action);
-    action = new QAction("Add vector parameter", this);
-    action->setDisabled(hasParameterHref);
-    connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
-    addAction(action);
-    action = new QAction("Add matrix parameter", this);
-    action->setDisabled(hasParameterHref);
-    connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
-    addAction(action);
-    action = new QAction("Add string parameter", this);
-    action->setDisabled(hasParameterHref);
-    connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
-    addAction(action);
-    action = new QAction("Add import parameter", this);
-    action->setDisabled(hasParameterHref);
-    connect(action,SIGNAL(triggered()),this,SLOT(addImportParameter()));
-    addAction(action);
+    if(not item->hasParameterHref()) {
+      addSeparator();
+      action = new QAction("Save as", this);
+      action->setDisabled(not item->getNumberOfParameters());
+      connect(action,SIGNAL(triggered()),mw,SLOT(saveEmbeddingAs()));
+      addAction(action);
+      addSeparator();
+      action = new QAction("Paste", this);
+      action->setEnabled(mw->getParameterBuffer().first);
+      connect(action,SIGNAL(triggered()),this,SLOT(paste()));
+      addAction(action);
+      action = new QAction("Load", this);
+      connect(action,SIGNAL(triggered()),this,SLOT(load()));
+      addAction(action);
+      action = new QAction("Embed", this);
+      action->setDisabled(item->getNumberOfParameters() or item->hasParameterXMLElement());
+      connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+      addAction(action);
+      addSeparator();
+      action = new QAction("Add scalar parameter", this);
+      connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
+      addAction(action);
+      action = new QAction("Add vector parameter", this);
+      connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
+      addAction(action);
+      action = new QAction("Add matrix parameter", this);
+      connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
+      addAction(action);
+      action = new QAction("Add string parameter", this);
+      connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
+      addAction(action);
+      action = new QAction("Add import parameter", this);
+      connect(action,SIGNAL(triggered()),this,SLOT(addImportParameter()));
+      addAction(action);
+    }
   }
 
   void EmbeddingContextMenu::load() {

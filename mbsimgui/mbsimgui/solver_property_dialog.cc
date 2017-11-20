@@ -48,11 +48,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SolverPropertyDialog::SolverPropertyDialog(Solver *solver_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), solver(solver_) {
-    if(solver->hasHref()) {
-      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
-      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
-    }
+  SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : EmbedItemPropertyDialog(solver,parent,f) {
   }
 
   DOMElement* SolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -60,16 +56,8 @@ namespace MBSimGUI {
   }
 
   DOMElement* SolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    solver->removeXMLElements();
+    item->removeXMLElements();
     return nullptr;
-  }
-
-  void SolverPropertyDialog::toWidget(Solver *solver) {
-    initializeUsingXML(solver->getXMLElement());
-  }
-
-  void SolverPropertyDialog::fromWidget(Solver *solver) {
-    writeXMLFile(solver->getXMLElement());
   }
 
   IntegratorPropertyDialog::IntegratorPropertyDialog(Integrator *integrator, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(integrator,parent,f) {
@@ -90,20 +78,20 @@ namespace MBSimGUI {
   }
 
   DOMElement* IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SolverPropertyDialog::initializeUsingXML(solver->getXMLElement());
-    startTime->initializeUsingXML(solver->getXMLElement());
-    endTime->initializeUsingXML(solver->getXMLElement());
-    plotStepSize->initializeUsingXML(solver->getXMLElement());
-    initialState->initializeUsingXML(solver->getXMLElement());
+    SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    startTime->initializeUsingXML(item->getXMLElement());
+    endTime->initializeUsingXML(item->getXMLElement());
+    plotStepSize->initializeUsingXML(item->getXMLElement());
+    initialState->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SolverPropertyDialog::writeXMLFile(solver->getXMLElement());
-    startTime->writeXMLFile(solver->getXMLElement());
-    endTime->writeXMLFile(solver->getXMLElement());
-    plotStepSize->writeXMLFile(solver->getXMLElement());
-    initialState->writeXMLFile(solver->getXMLElement());
+    SolverPropertyDialog::writeXMLFile(item->getXMLElement());
+    startTime->writeXMLFile(item->getXMLElement());
+    endTime->writeXMLFile(item->getXMLElement());
+    plotStepSize->writeXMLFile(item->getXMLElement());
+    initialState->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -128,22 +116,22 @@ namespace MBSimGUI {
   }
 
   DOMElement* DOPRI5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
-    absTol->initializeUsingXML(solver->getXMLElement());
-    relTol->initializeUsingXML(solver->getXMLElement());
-    initialStepSize->initializeUsingXML(solver->getXMLElement());
-    maximalStepSize->initializeUsingXML(solver->getXMLElement());
-    maxSteps->initializeUsingXML(solver->getXMLElement());
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximalStepSize->initializeUsingXML(item->getXMLElement());
+    maxSteps->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* DOPRI5IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
-    absTol->writeXMLFile(solver->getXMLElement());
-    relTol->writeXMLFile(solver->getXMLElement());
-    initialStepSize->writeXMLFile(solver->getXMLElement());
-    maximalStepSize->writeXMLFile(solver->getXMLElement());
-    maxSteps->writeXMLFile(solver->getXMLElement());
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximalStepSize->writeXMLFile(item->getXMLElement());
+    maxSteps->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -168,22 +156,22 @@ namespace MBSimGUI {
   }
 
   DOMElement* RADAU5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
-    absTol->initializeUsingXML(solver->getXMLElement());
-    relTol->initializeUsingXML(solver->getXMLElement());
-    initialStepSize->initializeUsingXML(solver->getXMLElement());
-    maximalStepSize->initializeUsingXML(solver->getXMLElement());
-    maxSteps->initializeUsingXML(solver->getXMLElement());
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximalStepSize->initializeUsingXML(item->getXMLElement());
+    maxSteps->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RADAU5IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
-    absTol->writeXMLFile(solver->getXMLElement());
-    relTol->writeXMLFile(solver->getXMLElement());
-    initialStepSize->writeXMLFile(solver->getXMLElement());
-    maximalStepSize->writeXMLFile(solver->getXMLElement());
-    maxSteps->writeXMLFile(solver->getXMLElement());
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximalStepSize->writeXMLFile(item->getXMLElement());
+    maxSteps->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -215,26 +203,26 @@ namespace MBSimGUI {
   }
 
   DOMElement* LSODEIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
-    absTol->initializeUsingXML(solver->getXMLElement());
-    relTol->initializeUsingXML(solver->getXMLElement());
-    initialStepSize->initializeUsingXML(solver->getXMLElement());
-    maximalStepSize->initializeUsingXML(solver->getXMLElement());
-    minimalStepSize->initializeUsingXML(solver->getXMLElement());
-    maxSteps->initializeUsingXML(solver->getXMLElement());
-    stiff->initializeUsingXML(solver->getXMLElement());
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximalStepSize->initializeUsingXML(item->getXMLElement());
+    minimalStepSize->initializeUsingXML(item->getXMLElement());
+    maxSteps->initializeUsingXML(item->getXMLElement());
+    stiff->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* LSODEIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
-    absTol->writeXMLFile(solver->getXMLElement());
-    relTol->writeXMLFile(solver->getXMLElement());
-    initialStepSize->writeXMLFile(solver->getXMLElement());
-    maximalStepSize->writeXMLFile(solver->getXMLElement());
-    minimalStepSize->writeXMLFile(solver->getXMLElement());
-    maxSteps->writeXMLFile(solver->getXMLElement());
-    stiff->writeXMLFile(solver->getXMLElement());
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximalStepSize->writeXMLFile(item->getXMLElement());
+    minimalStepSize->writeXMLFile(item->getXMLElement());
+    maxSteps->writeXMLFile(item->getXMLElement());
+    stiff->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -269,28 +257,28 @@ namespace MBSimGUI {
   }
 
   DOMElement* LSODARIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
-    absTol->initializeUsingXML(solver->getXMLElement());
-    relTol->initializeUsingXML(solver->getXMLElement());
-    initialStepSize->initializeUsingXML(solver->getXMLElement());
-    minimalStepSize->initializeUsingXML(solver->getXMLElement());
-    maximalStepSize->initializeUsingXML(solver->getXMLElement());
-    plotOnRoot->initializeUsingXML(solver->getXMLElement());
-    gMax->initializeUsingXML(solver->getXMLElement());
-    gdMax->initializeUsingXML(solver->getXMLElement());
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    minimalStepSize->initializeUsingXML(item->getXMLElement());
+    maximalStepSize->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* LSODARIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
-    absTol->writeXMLFile(solver->getXMLElement());
-    relTol->writeXMLFile(solver->getXMLElement());
-    initialStepSize->writeXMLFile(solver->getXMLElement());
-    minimalStepSize->writeXMLFile(solver->getXMLElement());
-    maximalStepSize->writeXMLFile(solver->getXMLElement());
-    plotOnRoot->writeXMLFile(solver->getXMLElement());
-    gMax->writeXMLFile(solver->getXMLElement());
-    gdMax->writeXMLFile(solver->getXMLElement());
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    minimalStepSize->writeXMLFile(item->getXMLElement());
+    maximalStepSize->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -302,14 +290,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* TimeSteppingIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
-    stepSize->initializeUsingXML(solver->getXMLElement());
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    stepSize->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* TimeSteppingIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
-    stepSize->writeXMLFile(solver->getXMLElement());
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    stepSize->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -321,14 +309,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* EulerExplicitIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
-    stepSize->initializeUsingXML(solver->getXMLElement());
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    stepSize->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* EulerExplicitIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
-    stepSize->writeXMLFile(solver->getXMLElement());
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    stepSize->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -354,20 +342,20 @@ namespace MBSimGUI {
   }
 
   DOMElement* RKSuiteIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(solver->getXMLElement());
-    method->initializeUsingXML(solver->getXMLElement());
-    relTol->initializeUsingXML(solver->getXMLElement());
-    threshold->initializeUsingXML(solver->getXMLElement());
-    initialStepSize->initializeUsingXML(solver->getXMLElement());
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    method->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    threshold->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RKSuiteIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(solver->getXMLElement());
-    method->writeXMLFile(solver->getXMLElement());
-    relTol->writeXMLFile(solver->getXMLElement());
-    threshold->writeXMLFile(solver->getXMLElement());
-    initialStepSize->writeXMLFile(solver->getXMLElement());
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    method->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    threshold->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -406,28 +394,28 @@ namespace MBSimGUI {
   }
 
   DOMElement* EigenanalyserPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SolverPropertyDialog::initializeUsingXML(solver->getXMLElement());
-    startTime->initializeUsingXML(solver->getXMLElement());
-    endTime->initializeUsingXML(solver->getXMLElement());
-    plotStepSize->initializeUsingXML(solver->getXMLElement());
-    initialState->initializeUsingXML(solver->getXMLElement());
-    task->initializeUsingXML(solver->getXMLElement());
-    amplitude->initializeUsingXML(solver->getXMLElement());
-    mode->initializeUsingXML(solver->getXMLElement());
-    determineEquilibriumState->initializeUsingXML(solver->getXMLElement());
+    SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    startTime->initializeUsingXML(item->getXMLElement());
+    endTime->initializeUsingXML(item->getXMLElement());
+    plotStepSize->initializeUsingXML(item->getXMLElement());
+    initialState->initializeUsingXML(item->getXMLElement());
+    task->initializeUsingXML(item->getXMLElement());
+    amplitude->initializeUsingXML(item->getXMLElement());
+    mode->initializeUsingXML(item->getXMLElement());
+    determineEquilibriumState->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* EigenanalyserPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SolverPropertyDialog::writeXMLFile(solver->getXMLElement());
-    startTime->writeXMLFile(solver->getXMLElement());
-    endTime->writeXMLFile(solver->getXMLElement());
-    plotStepSize->writeXMLFile(solver->getXMLElement());
-    initialState->writeXMLFile(solver->getXMLElement());
-    task->writeXMLFile(solver->getXMLElement());
-    amplitude->writeXMLFile(solver->getXMLElement());
-    mode->writeXMLFile(solver->getXMLElement());
-    determineEquilibriumState->writeXMLFile(solver->getXMLElement());
+    SolverPropertyDialog::writeXMLFile(item->getXMLElement());
+    startTime->writeXMLFile(item->getXMLElement());
+    endTime->writeXMLFile(item->getXMLElement());
+    plotStepSize->writeXMLFile(item->getXMLElement());
+    initialState->writeXMLFile(item->getXMLElement());
+    task->writeXMLFile(item->getXMLElement());
+    amplitude->writeXMLFile(item->getXMLElement());
+    mode->writeXMLFile(item->getXMLElement());
+    determineEquilibriumState->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -460,26 +448,26 @@ namespace MBSimGUI {
   }
 
   DOMElement* HarmonicResponseAnalyserPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SolverPropertyDialog::initializeUsingXML(solver->getXMLElement());
-    startTime->initializeUsingXML(solver->getXMLElement());
-    excitationFrequencies->initializeUsingXML(solver->getXMLElement());
-    systemFrequencies->initializeUsingXML(solver->getXMLElement());
-    plotStepSize->initializeUsingXML(solver->getXMLElement());
-    initialState->initializeUsingXML(solver->getXMLElement());
-    task->initializeUsingXML(solver->getXMLElement());
-    determineEquilibriumState->initializeUsingXML(solver->getXMLElement());
+    SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    startTime->initializeUsingXML(item->getXMLElement());
+    excitationFrequencies->initializeUsingXML(item->getXMLElement());
+    systemFrequencies->initializeUsingXML(item->getXMLElement());
+    plotStepSize->initializeUsingXML(item->getXMLElement());
+    initialState->initializeUsingXML(item->getXMLElement());
+    task->initializeUsingXML(item->getXMLElement());
+    determineEquilibriumState->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* HarmonicResponseAnalyserPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SolverPropertyDialog::writeXMLFile(solver->getXMLElement());
-    startTime->writeXMLFile(solver->getXMLElement());
-    excitationFrequencies->writeXMLFile(solver->getXMLElement());
-    systemFrequencies->writeXMLFile(solver->getXMLElement());
-    plotStepSize->writeXMLFile(solver->getXMLElement());
-    initialState->writeXMLFile(solver->getXMLElement());
-    task->writeXMLFile(solver->getXMLElement());
-    determineEquilibriumState->writeXMLFile(solver->getXMLElement());
+    SolverPropertyDialog::writeXMLFile(item->getXMLElement());
+    startTime->writeXMLFile(item->getXMLElement());
+    excitationFrequencies->writeXMLFile(item->getXMLElement());
+    systemFrequencies->writeXMLFile(item->getXMLElement());
+    plotStepSize->writeXMLFile(item->getXMLElement());
+    initialState->writeXMLFile(item->getXMLElement());
+    task->writeXMLFile(item->getXMLElement());
+    determineEquilibriumState->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 

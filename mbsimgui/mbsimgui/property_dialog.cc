@@ -19,12 +19,12 @@
 
 #include <config.h>
 #include "property_dialog.h"
+#include "embeditemdata.h"
 #include "widget.h"
 #include <QGridLayout>
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QStyle>
-#include <iostream>
 
 using namespace std;
 
@@ -39,7 +39,6 @@ namespace MBSimGUI {
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel | QDialogButtonBox::Help);
     connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
     layout->addWidget(buttonBox,1,1);
-    //buttonResize = new QPushButton(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/resize.svg"), "Resize");
     buttonResize = new QPushButton(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DialogResetButton)), "Resize");
     layout->addWidget(buttonResize,1,0);
     setWindowTitle(QString("Properties"));
@@ -68,12 +67,6 @@ namespace MBSimGUI {
       it.second->addStretch(s);
   }
 
-//  void PropertyDialog::updateWidget() {
-//    cout << "original update Widget" << endl;
-////    for(unsigned int i=0; i<widget.size(); i++)
-////      dynamic_cast<WidgetInterface*>(widget[i])->updateWidget();
-//  }
-
   void PropertyDialog::addTab(const QString &name, int i) {  
     auto *tab = new QScrollArea;
     tab->setWidgetResizable(true);
@@ -98,6 +91,21 @@ namespace MBSimGUI {
 
   bool PropertyDialog::getCancel() const {
     return buttonBox->button(QDialogButtonBox::Cancel)->isEnabled();
+  }
+
+  EmbedItemPropertyDialog::EmbedItemPropertyDialog(EmbedItemData *item_, QWidget * parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), item(item_) {
+    if(item->hasHref()) {
+      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
+      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
+    }
+  }
+
+  void EmbedItemPropertyDialog::toWidget() {
+    initializeUsingXML(item->getXMLElement());
+  }
+
+  void EmbedItemPropertyDialog::fromWidget() {
+    writeXMLFile(item->getXMLElement());
   }
 
 }

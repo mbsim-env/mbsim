@@ -40,7 +40,7 @@ namespace MBSimGUI {
   extern QDir mbsDir;
   extern DOMImplementation *impl;
 
-  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item_, bool name_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), item(item_), name(nullptr), count(nullptr), counterName(nullptr) {
+  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item, bool name_, QWidget *parent, const Qt::WindowFlags& f) : EmbedItemPropertyDialog(item,parent,f), name(nullptr), count(nullptr), counterName(nullptr) {
     addTab("Embedding");
     if(name_) {
       name = new ExtWidget("Name",new TextWidget);
@@ -112,14 +112,6 @@ namespace MBSimGUI {
       item->setEmbedXMLElement(nullptr);
     }
     return nullptr;
-  }
-
-  void EmbeddingPropertyDialog::toWidget(EmbedItemData *item) {
-    initializeUsingXML(item->getXMLElement());
-  }
-
-  void EmbeddingPropertyDialog::fromWidget(EmbedItemData *item) {
-    writeXMLFile(item->getXMLElement());
   }
 
 }
