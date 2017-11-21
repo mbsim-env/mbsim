@@ -31,29 +31,32 @@ namespace MBSimGUI {
   ParameterContextMenu::ParameterContextMenu(Parameter *parameter_, QWidget *parent) : QMenu(parent), parameter(parameter_) {
     QAction *action=new QAction("Edit", this);
     connect(action,SIGNAL(triggered()),mw->getEmbeddingView(),SLOT(openEditor()));
+    QMenu::addAction(action);
+    addSeparator();
+    action=new QAction("Copy", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(copyParameter()));
     addAction(action);
-    if(not parameter->getParent()->hasParameterHref()) {
-      addSeparator();
-      action=new QAction("Copy", this);
-      connect(action,SIGNAL(triggered()),mw,SLOT(copyParameter()));
-      addAction(action);
-      action=new QAction("Cut", this);
-      connect(action,SIGNAL(triggered()),mw,SLOT(cutParameter()));
-      addAction(action);
-      addSeparator();
-      action=new QAction("Move up", this);
-      action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)>0);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveUpParameter()));
-      addAction(action);
-      action=new QAction("Move down", this);
-      action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)<parameter->getParent()->getNumberOfParameters()-1);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveDownParameter()));
-      addAction(action);
-      addSeparator();
-      action=new QAction("Remove", this);
-      connect(action,SIGNAL(triggered()),mw,SLOT(removeParameter()));
-      addAction(action);
-    }
+    action=new QAction("Cut", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(cutParameter()));
+    addAction(action);
+    addSeparator();
+    action=new QAction("Move up", this);
+    action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpParameter()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)<parameter->getParent()->getNumberOfParameters()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownParameter()));
+    addAction(action);
+    addSeparator();
+    action=new QAction("Remove", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(removeParameter()));
+    addAction(action);
+  }
+
+  void ParameterContextMenu::addAction(QAction *action) {
+    action->setDisabled(parameter->getParent()->hasParameterHref());
+    QMenu::addAction(action);
   }
 
 }

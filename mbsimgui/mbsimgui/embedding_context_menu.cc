@@ -31,49 +31,50 @@ namespace MBSimGUI {
   EmbeddingContextMenu::EmbeddingContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
     QAction *action = new QAction("Edit", this);
     connect(action,SIGNAL(triggered()),mw->getEmbeddingView(),SLOT(openEditor()));
+    QMenu::addAction(action);
+    addSeparator();
+    action = new QAction("Save as", this);
+    action->setDisabled(not item->getNumberOfParameters());
+    connect(action,SIGNAL(triggered()),mw,SLOT(saveEmbeddingAs()));
     addAction(action);
-    if(not item->hasParameterHref()) {
-      addSeparator();
-      action = new QAction("Save as", this);
-      action->setDisabled(not item->getNumberOfParameters());
-      connect(action,SIGNAL(triggered()),mw,SLOT(saveEmbeddingAs()));
-      addAction(action);
-      addSeparator();
-      action = new QAction("Paste", this);
-      action->setEnabled(mw->getParameterBuffer().first);
-      connect(action,SIGNAL(triggered()),this,SLOT(paste()));
-      addAction(action);
-      action = new QAction("Load", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(load()));
-      addAction(action);
-      action = new QAction("Embed", this);
-      action->setDisabled(item->getNumberOfParameters() or item->hasParameterXMLElement());
-      connect(action,SIGNAL(triggered()),this,SLOT(embed()));
-      addAction(action);
-    }
+    addSeparator();
+    action = new QAction("Paste", this);
+    action->setEnabled(mw->getParameterBuffer().first);
+    connect(action,SIGNAL(triggered()),this,SLOT(paste()));
+    addAction(action);
+    action = new QAction("Load", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    addAction(action);
+    action = new QAction("Embed", this);
+    action->setDisabled(item->getNumberOfParameters() or item->hasParameterXMLElement());
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
     addSeparator();
     action = new QAction("Remove", this);
     action->setEnabled(item->getNumberOfParameters());
     connect(action,SIGNAL(triggered()),this,SLOT(remove()));
+    QMenu::addAction(action);
+    addSeparator();
+    action = new QAction("Add scalar parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
     addAction(action);
-    if(not item->hasParameterHref()) {
-      addSeparator();
-      action = new QAction("Add scalar parameter", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
+    action = new QAction("Add vector parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
+    addAction(action);
+    action = new QAction("Add matrix parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
+    addAction(action);
+    action = new QAction("Add string parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
+    addAction(action);
+    action = new QAction("Add import parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addImportParameter()));
       addAction(action);
-      action = new QAction("Add vector parameter", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
-      addAction(action);
-      action = new QAction("Add matrix parameter", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
-      addAction(action);
-      action = new QAction("Add string parameter", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
-      addAction(action);
-      action = new QAction("Add import parameter", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addImportParameter()));
-      addAction(action);
-    }
+  }
+
+  void EmbeddingContextMenu::addAction(QAction *action) {
+    action->setDisabled(item->hasParameterHref());
+    QMenu::addAction(action);
   }
 
   void EmbeddingContextMenu::paste() {

@@ -41,146 +41,134 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable, bool saveable) : QMenu(parent), element(element_) {
+  BasicElementMenu::BasicElementMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  }
+
+  void BasicElementMenu::addAction(QAction *action) {
+    action->setDisabled(element->hasHref());
+    QMenu::addAction(action);
+  }
+
+  ElementContextMenu::ElementContextMenu(Element *element, QWidget *parent, bool removable, bool saveable) : BasicElementMenu(element,"",parent) {
     QAction *action=new QAction("Edit", this);
     connect(action,SIGNAL(triggered()),mw->getElementView(),SLOT(openEditor()));
-    addAction(action);
-    if(not element->hasHref()) {
-      if(saveable) {
-        addSeparator();
-        action=new QAction("Save as", this);
-        connect(action,SIGNAL(triggered()),mw,SLOT(saveElementAs()));
-        addAction(action);
-      }
-      if(removable) {
-        addSeparator();
-        action=new QAction("Copy", this);
-        connect(action,SIGNAL(triggered()),mw,SLOT(copyElement()));
-        addAction(action);
-        action=new QAction("Cut", this);
-        connect(action,SIGNAL(triggered()),mw,SLOT(cutElement()));
-        addAction(action);
-      }
+    QMenu::addAction(action);
+    if(saveable) {
+      addSeparator();
+      action=new QAction("Save as", this);
+      connect(action,SIGNAL(triggered()),mw,SLOT(saveElementAs()));
+      addAction(action);
     }
     if(removable) {
       addSeparator();
+      action=new QAction("Copy", this);
+      connect(action,SIGNAL(triggered()),mw,SLOT(copyElement()));
+      addAction(action);
+      action=new QAction("Cut", this);
+      connect(action,SIGNAL(triggered()),mw,SLOT(cutElement()));
+      addAction(action);
+      addSeparator();
       action=new QAction("Remove", this);
       connect(action,SIGNAL(triggered()),mw,SLOT(removeElement()));
-      addAction(action);
+      QMenu::addAction(action);
     }
   }
 
   FrameContextMenu::FrameContextMenu(Frame *frame, QWidget *parent, bool removable) : ElementContextMenu(frame,parent,removable) {
-    if(not element->hasHref()) {
-      addSeparator();
-      QAction *action=new QAction("Move up", this);
-      action->setEnabled(frame->getParent()->getIndexOfFrame(frame)>1);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveUpFrame()));
-      addAction(action);
-      action=new QAction("Move down", this);
-      action->setEnabled(frame->getParent()->getIndexOfFrame(frame)<frame->getParent()->getNumberOfFrames()-1);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveDownFrame()));
-      addAction(action);
-    }
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(frame->getParent()->getIndexOfFrame(frame)>1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpFrame()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(frame->getParent()->getIndexOfFrame(frame)<frame->getParent()->getNumberOfFrames()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownFrame()));
+    addAction(action);
   }
 
   ContourContextMenu::ContourContextMenu(Contour *contour, QWidget *parent, bool removable) : ElementContextMenu(contour,parent,removable) {
-    if(not element->hasHref()) {
-      addSeparator();
-      QAction *action=new QAction("Move up", this);
-      action->setEnabled(contour->getParent()->getIndexOfContour(contour)>0);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveUpContour()));
-      addAction(action);
-      action=new QAction("Move down", this);
-      action->setEnabled(contour->getParent()->getIndexOfContour(contour)<contour->getParent()->getNumberOfContours()-1);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveDownContour()));
-      addAction(action);
-    }
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(contour->getParent()->getIndexOfContour(contour)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpContour()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(contour->getParent()->getIndexOfContour(contour)<contour->getParent()->getNumberOfContours()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownContour()));
+    addAction(action);
   }
 
   GroupContextMenu::GroupContextMenu(Group *group, QWidget *parent, bool removable) : ElementContextMenu(group,parent,removable) {
-    if(not element->hasHref()) {
-      addSeparator();
-      QAction *action=new QAction("Move up", this);
-      action->setEnabled(group->getParent()->getIndexOfGroup(group)>0);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveUpGroup()));
-      addAction(action);
-      action=new QAction("Move down", this);
-      action->setEnabled(group->getParent()->getIndexOfGroup(group)<group->getParent()->getNumberOfGroups()-1);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveDownGroup()));
-      addAction(action);
-    }
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(group->getParent()->getIndexOfGroup(group)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpGroup()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(group->getParent()->getIndexOfGroup(group)<group->getParent()->getNumberOfGroups()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownGroup()));
+    addAction(action);
   }
 
   ObjectContextMenu::ObjectContextMenu(Object *object, QWidget *parent, bool removable) : ElementContextMenu(object,parent,removable) {
-    if(not element->hasHref()) {
-      addSeparator();
-      QAction *action=new QAction("Move up", this);
-      action->setEnabled(object->getParent()->getIndexOfObject(object)>0);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveUpObject()));
-      addAction(action);
-      action=new QAction("Move down", this);
-      action->setEnabled(object->getParent()->getIndexOfObject(object)<object->getParent()->getNumberOfObjects()-1);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveDownObject()));
-      addAction(action);
-    }
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(object->getParent()->getIndexOfObject(object)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpObject()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(object->getParent()->getIndexOfObject(object)<object->getParent()->getNumberOfObjects()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownObject()));
+    addAction(action);
   }
 
   LinkContextMenu::LinkContextMenu(Link *link, QWidget *parent, bool removable) : ElementContextMenu(link,parent,removable) {
-    if(not element->hasHref()) {
-      addSeparator();
-      QAction *action=new QAction("Move up", this);
-      action->setEnabled(link->getParent()->getIndexOfLink(link)>0);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveUpLink()));
-      addAction(action);
-      action=new QAction("Move down", this);
-      action->setEnabled(link->getParent()->getIndexOfLink(link)<link->getParent()->getNumberOfLinks()-1);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveDownLink()));
-      addAction(action);
-    }
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(link->getParent()->getIndexOfLink(link)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpLink()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(link->getParent()->getIndexOfLink(link)<link->getParent()->getNumberOfLinks()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownLink()));
+    addAction(action);
   }
 
   ConstraintContextMenu::ConstraintContextMenu(Constraint *constraint, QWidget *parent, bool removable) : ElementContextMenu(constraint,parent,removable) {
-    if(not element->hasHref()) {
-      addSeparator();
-      QAction *action=new QAction("Move up", this);
-      action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)>0);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveUpConstraint()));
-      addAction(action);
-      action=new QAction("Move down", this);
-      action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)<constraint->getParent()->getNumberOfConstraints()-1);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveDownConstraint()));
-      addAction(action);
-    }
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpConstraint()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)<constraint->getParent()->getNumberOfConstraints()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownConstraint()));
+    addAction(action);
   }
 
   ObserverContextMenu::ObserverContextMenu(Observer *observer, QWidget *parent, bool removable) : ElementContextMenu(observer,parent,removable) {
-    if(not element->hasHref()) {
-      addSeparator();
-      QAction *action=new QAction("Move up", this);
-      action->setEnabled(observer->getParent()->getIndexOfObserver(observer)>0);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveUpObserver()));
-      addAction(action);
-      action=new QAction("Move down", this);
-      action->setEnabled(observer->getParent()->getIndexOfObserver(observer)<observer->getParent()->getNumberOfObservers()-1);
-      connect(action,SIGNAL(triggered()),mw,SLOT(moveDownObserver()));
-      addAction(action);
-    }
+    addSeparator();
+    QAction *action=new QAction("Move up", this);
+    action->setEnabled(observer->getParent()->getIndexOfObserver(observer)>0);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpObserver()));
+    addAction(action);
+    action=new QAction("Move down", this);
+    action->setEnabled(observer->getParent()->getIndexOfObserver(observer)<observer->getParent()->getNumberOfObservers()-1);
+    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownObserver()));
+    addAction(action);
   }
 
-  FramesContextMenu::FramesContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    if(not element->hasHref()) {
-      QAction *action = new QAction("Paste", this);
-      action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));
-      connect(action,SIGNAL(triggered()),this,SLOT(paste()));
-      addAction(action);
-      action = new QAction("Load", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(load()));
-      addAction(action);
-      action = new QAction("Embed", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(embed()));
-      addAction(action);
-    }
+  FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+    QAction *action = new QAction("Paste", this);
+    action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(paste()));
+    addAction(action);
+    action = new QAction("Load", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
   }
 
   void FramesContextMenu::paste() {
@@ -196,12 +184,10 @@ namespace MBSimGUI {
   }
 
   FixedRelativeFramesContextMenu::FixedRelativeFramesContextMenu(Element *element, const QString &title, QWidget *parent) : FramesContextMenu(element,title,parent) {
-    if(not element->hasHref()) {
-      addSeparator();
-      QAction *action = new QAction("Add fixed relative frame", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
-      addAction(action);
-    }
+    addSeparator();
+    QAction *action = new QAction("Add fixed relative frame", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
+    addAction(action);
   }
 
   void FixedRelativeFramesContextMenu::addFixedRelativeFrame() {
@@ -209,59 +195,55 @@ namespace MBSimGUI {
   }
 
   NodeFramesContextMenu::NodeFramesContextMenu(Element *element, const QString &title, QWidget *parent) : FramesContextMenu(element,title,parent) {
-    if(not element->hasHref()) {
-      addSeparator();
-      QAction *action = new QAction("Add node frame", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addNodeFrame()));
-      addAction(action);
-    }
+    addSeparator();
+    QAction *action = new QAction("Add node frame", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addNodeFrame()));
+    addAction(action);
   }
 
   void NodeFramesContextMenu::addNodeFrame() {
     mw->addFrame(new NodeFrame, element);
   }
 
-  ContoursContextMenu::ContoursContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    if(not element->hasHref()) {
-      QAction *action = new QAction("Paste", this);
-      action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
-      connect(action,SIGNAL(triggered()),this,SLOT(paste()));
-      addAction(action);
-      action = new QAction("Load", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(load()));
-      addAction(action);
-      action = new QAction("Embed", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(embed()));
-      addAction(action);
-      addSeparator();
-      action = new QAction("Add point", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
-      addAction(action);
-      action = new QAction("Add line", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
-      addAction(action);
-      action = new QAction("Add plane", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
-      addAction(action);
-      action = new QAction("Add sphere", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
-      addAction(action);
-      action = new QAction("Add circle", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addCircle()));
-      addAction(action);
-      action = new QAction("Add cuboid", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addCuboid()));
-      addAction(action);
-      action = new QAction("Add line segment", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addLineSegment()));
-      addAction(action);
-      action = new QAction("Add planar contour", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addPlanarContour()));
-      addAction(action);
-      action = new QAction("Add spatial contour", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addSpatialContour()));
-      addAction(action);
-    }
+  ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+    QAction *action = new QAction("Paste", this);
+    action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(paste()));
+    addAction(action);
+    action = new QAction("Load", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
+    addSeparator();
+    action = new QAction("Add point", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
+    addAction(action);
+    action = new QAction("Add line", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
+    addAction(action);
+    action = new QAction("Add plane", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
+    addAction(action);
+    action = new QAction("Add sphere", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
+    addAction(action);
+    action = new QAction("Add circle", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addCircle()));
+    addAction(action);
+    action = new QAction("Add cuboid", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addCuboid()));
+    addAction(action);
+    action = new QAction("Add line segment", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addLineSegment()));
+    addAction(action);
+    action = new QAction("Add planar contour", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addPlanarContour()));
+    addAction(action);
+    action = new QAction("Add spatial contour", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSpatialContour()));
+    addAction(action);
   }
 
   void ContoursContextMenu::paste() {
@@ -312,23 +294,21 @@ namespace MBSimGUI {
     mw->addContour(new SpatialContour, element);
   }
 
-  GroupsContextMenu::GroupsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    if(not element->hasHref()) {
-      QAction *action = new QAction("Paste", this);
-      action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
-      connect(action,SIGNAL(triggered()),this,SLOT(paste()));
-      addAction(action);
-      action = new QAction("Load", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(load()));
-      addAction(action);
-      action = new QAction("Embed", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(embed()));
-      addAction(action);
-      addSeparator();
-      action = new QAction("Add", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(add()));
-      addAction(action);
-    }
+  GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+    QAction *action = new QAction("Paste", this);
+    action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(paste()));
+    addAction(action);
+    action = new QAction("Load", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
+    addSeparator();
+    action = new QAction("Add", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(add()));
+    addAction(action);
   }
 
   void GroupsContextMenu::paste() {
@@ -347,22 +327,20 @@ namespace MBSimGUI {
     mw->addGroup(new Group, element);
   }
 
-  ObjectsContextMenu::ObjectsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    if(not element->hasHref()) {
-      QAction *action = new QAction("Paste", this);
-      action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
-      connect(action,SIGNAL(triggered()),this,SLOT(paste()));
-      addAction(action);
-      action = new QAction("Load", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(load()));
-      addAction(action);
-      action = new QAction("Embed", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(embed()));
-      addAction(action);
-      addSeparator();
-      QMenu *menu = new BodiesContextMenu(element, "Add body");
-      addMenu(menu);
-    }
+  ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+    QAction *action = new QAction("Paste", this);
+    action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(paste()));
+    addAction(action);
+    action = new QAction("Load", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
+    addSeparator();
+    QMenu *menu = new BodiesContextMenu(element, "Add body");
+    addMenu(menu);
   }
 
   void ObjectsContextMenu::paste() {
@@ -377,7 +355,7 @@ namespace MBSimGUI {
     mw->loadObject(element,nullptr,true);
   }
 
-  BodiesContextMenu::BodiesContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  BodiesContextMenu::BodiesContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction("Add rigid body", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
     addAction(action);
@@ -394,52 +372,50 @@ namespace MBSimGUI {
     mw->addObject(new FlexibleBodyFFR, element);
   }
 
-  LinksContextMenu::LinksContextMenu(Element *element_, const QString &title,  QWidget *parent) : QMenu(title,parent), element(element_) {
-    if(not element->hasHref()) {
-      QAction *action = new QAction("Paste", this);
-      action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
-      connect(action,SIGNAL(triggered()),this,SLOT(paste()));
-      addAction(action);
-      action = new QAction("Load", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(load()));
-      addAction(action);
-      action = new QAction("Embed", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(embed()));
-      addAction(action);
-      addSeparator();
-      action = new QAction("Add kinetic excitation", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
-      addAction(action);
-      action = new QAction("Add spring damper", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
-      addAction(action);
-      action = new QAction("Add directional spring damper", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addDirectionalSpringDamper()));
-      addAction(action);
-      action = new QAction("Add joint", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
-      addAction(action);
-      action = new QAction("Add elastic joint", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addElasticJoint()));
-      addAction(action);
-      action = new QAction("Add contact", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
-      addAction(action);
-      QMenu *menu = new SignalsContextMenu(element, "Add signal");
-      addMenu(menu);
-      action = new QAction("Add generalized spring damper", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedSpringDamper()));
-      addAction(action);
-      action = new QAction("Add generalized friction", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedFriction()));
-      addAction(action);
-      action = new QAction("Add gear", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGear()));
-      addAction(action);
-      action = new QAction("Add generalized elastic connection", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedElasticConnection()));
-      addAction(action);
-    }
+  LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : BasicElementMenu(element,title,parent) {
+    QAction *action = new QAction("Paste", this);
+    action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(paste()));
+    addAction(action);
+    action = new QAction("Load", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
+    addSeparator();
+    action = new QAction("Add kinetic excitation", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
+    addAction(action);
+    action = new QAction("Add spring damper", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
+    addAction(action);
+    action = new QAction("Add directional spring damper", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addDirectionalSpringDamper()));
+    addAction(action);
+    action = new QAction("Add joint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
+    addAction(action);
+    action = new QAction("Add elastic joint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addElasticJoint()));
+    addAction(action);
+    action = new QAction("Add contact", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
+    addAction(action);
+    QMenu *menu = new SignalsContextMenu(element, "Add signal");
+    addMenu(menu);
+    action = new QAction("Add generalized spring damper", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedSpringDamper()));
+    addAction(action);
+    action = new QAction("Add generalized friction", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedFriction()));
+    addAction(action);
+    action = new QAction("Add gear", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGear()));
+    addAction(action);
+    action = new QAction("Add generalized elastic connection", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedElasticConnection()));
+    addAction(action);
   }
 
   void LinksContextMenu::paste() {
@@ -499,38 +475,36 @@ namespace MBSimGUI {
     mw->addLink(new GeneralizedElasticConnection, element);
   }
 
-  ConstraintsContextMenu::ConstraintsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    if(not element->hasHref()) {
-      QAction *action = new QAction("Paste", this);
-      action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
-      connect(action,SIGNAL(triggered()),this,SLOT(paste()));
-      addAction(action);
-      action = new QAction("Load", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(load()));
-      addAction(action);
-      action = new QAction("Embed", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(embed()));
-      addAction(action);
-      addSeparator();
-      action = new QAction("Add generalized position constraint", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionConstraint()));
-      addAction(action);
-      action = new QAction("Add generalized velocity constraint", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocityConstraint()));
-      addAction(action);
-      action = new QAction("Add generalized acceleration constraint", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedAccelerationConstraint()));
-      addAction(action);
-      action = new QAction("Add gear constraint", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGearConstraint()));
-      addAction(action);
-      action = new QAction("Add joint constraint", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
-      addAction(action);
-      action = new QAction("Add generalized connection constraint", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedConnectionConstraint()));
-      addAction(action);
-    }
+  ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+    QAction *action = new QAction("Paste", this);
+    action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(paste()));
+    addAction(action);
+    action = new QAction("Load", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
+    addSeparator();
+    action = new QAction("Add generalized position constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionConstraint()));
+    addAction(action);
+    action = new QAction("Add generalized velocity constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocityConstraint()));
+    addAction(action);
+    action = new QAction("Add generalized acceleration constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedAccelerationConstraint()));
+    addAction(action);
+    action = new QAction("Add gear constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGearConstraint()));
+    addAction(action);
+    action = new QAction("Add joint constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
+    addAction(action);
+    action = new QAction("Add generalized connection constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedConnectionConstraint()));
+    addAction(action);
   }
 
   void ConstraintsContextMenu::paste() {
@@ -569,44 +543,42 @@ namespace MBSimGUI {
     mw->addConstraint(new GeneralizedConnectionConstraint, element);
   }
 
-  ObserversContextMenu::ObserversContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    if(not element->hasHref()) {
-      QAction *action = new QAction("Paste", this);
-      action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
-      connect(action,SIGNAL(triggered()),this,SLOT(paste()));
-      addAction(action);
-      action = new QAction("Load", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(load()));
-      addAction(action);
-      action = new QAction("Embed", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(embed()));
-      addAction(action);
-      addSeparator();
-      action = new QAction("Add mechanical link observer", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkObserver()));
-      addAction(action);
-      action = new QAction("Add mechanical constraint observer", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalConstraintObserver()));
-      addAction(action);
-      action = new QAction("Add contact observer", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addContactObserver()));
-      addAction(action);
-      action = new QAction("Add frame observer", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addFrameObserver()));
-      addAction(action);
-      action = new QAction("Add rigid body observer", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodyObserver()));
-      addAction(action);
-      action = new QAction("Add kinematic coordinates observer", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addKinematicCoordinatesObserver()));
-      addAction(action);
-      action = new QAction("Add relative kinematics observer", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addRelativeKinematicsObserver()));
-      addAction(action);
-      action = new QAction("Add rigid body system observer", this);
-      connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodySystemObserver()));
-      addAction(action);
-    }
+  ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+    QAction *action = new QAction("Paste", this);
+    action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
+    connect(action,SIGNAL(triggered()),this,SLOT(paste()));
+    addAction(action);
+    action = new QAction("Load", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(load()));
+    addAction(action);
+    action = new QAction("Embed", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(embed()));
+    addAction(action);
+    addSeparator();
+    action = new QAction("Add mechanical link observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkObserver()));
+    addAction(action);
+    action = new QAction("Add mechanical constraint observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalConstraintObserver()));
+    addAction(action);
+    action = new QAction("Add contact observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addContactObserver()));
+    addAction(action);
+    action = new QAction("Add frame observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFrameObserver()));
+    addAction(action);
+    action = new QAction("Add rigid body observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodyObserver()));
+    addAction(action);
+    action = new QAction("Add kinematic coordinates observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addKinematicCoordinatesObserver()));
+    addAction(action);
+    action = new QAction("Add relative kinematics observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRelativeKinematicsObserver()));
+    addAction(action);
+    action = new QAction("Add rigid body system observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodySystemObserver()));
+    addAction(action);
   }
 
   void ObserversContextMenu::paste() {
@@ -653,7 +625,7 @@ namespace MBSimGUI {
     mw->addObserver(new RigidBodySystemObserver, element);
   }
 
-  SignalsContextMenu::SignalsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  SignalsContextMenu::SignalsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QMenu *menu = new SensorsContextMenu(element,"Add sensor");
     addMenu(menu);
     QAction *action = new QAction("Add multiplexer", this);
@@ -705,7 +677,7 @@ namespace MBSimGUI {
     mw->addLink(new ExternSignalSink, element);
   }
 
-  SensorsContextMenu::SensorsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  SensorsContextMenu::SensorsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction("Add generalized position sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionSensor()));
     addAction(action);

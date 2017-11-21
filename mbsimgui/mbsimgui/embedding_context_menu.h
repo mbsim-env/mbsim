@@ -30,7 +30,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      EmbeddingContextMenu(EmbedItemData *item_, const QString &title="", QWidget * parent = nullptr);
+      EmbeddingContextMenu(EmbedItemData *item_, const QString &title="", QWidget *parent=nullptr);
 
     protected slots:
       void paste();
@@ -43,8 +43,9 @@ namespace MBSimGUI {
       void addStringParameter();
       void addImportParameter();
 
-    protected:
+    private:
       EmbedItemData *item;
+      void addAction(QAction *action);
   };
 
 }
