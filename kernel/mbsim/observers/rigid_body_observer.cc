@@ -24,6 +24,7 @@
 #include "mbsim/links/joint.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/dynamic_system_solver.h"
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/group.h>
 
@@ -83,6 +84,11 @@ namespace MBSim {
           getOpenMBVGrp()->addObject(openMBVDerivativeOfAngularMomentum);
         }
       }
+    }
+    else if(stage==unknownStage) {
+      Observer::init(stage, config);
+      if((FArrow or MArrow) and not getDynamicSystemSolver()->getInverseKinetics())
+        THROW_MBSIMERROR("(RigidBodyObserver::init()): inverse kinetics not enabled");
     }
     else
       Observer::init(stage, config);
