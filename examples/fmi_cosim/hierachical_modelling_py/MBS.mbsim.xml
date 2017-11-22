@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
+    xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+  <frames>
+    <pv:Embed count="2" counterName="numHG">
+    <FixedRelativeFrame name="Q{numHG}" xmlns="http://www.mbsim-env.de/MBSim">
+      <relativePosition unit="mm">
+        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <ele>rHG[numHG]*1000</ele><ele>0</ele><ele>0</ele>
+        </xmlVector>
+      </relativePosition>
+      <relativeOrientation><pv:aboutZ unit="degree">-alphaHG[numHG]*180/pi</pv:aboutZ></relativeOrientation>
+    </FixedRelativeFrame>
+    </pv:Embed>
+  </frames>
+  <contours/>
+  <groups>
+    <pv:Embed href="Hauptgruppe.xml" count="2" counterName="numHG"/>
+  </groups>
+  <objects/>
+  <links/>
+  <constraints/>
+  <observers/>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity><pv:fromFile href="{grav}"/></accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+</DynamicSystemSolver>

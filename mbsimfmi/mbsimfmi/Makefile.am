@@ -1,12 +1,19 @@
 noinst_LTLIBRARIES = libmbsim_fmi.la
-lib_LTLIBRARIES = mbsim.la libmbsimxml_fmi.la libmbsimppxml_fmi.la libmbsimsrc_fmi.la
+lib_LTLIBRARIES = mbsim_me.la mbsim_cosim.la libmbsimxml_fmi.la libmbsimppxml_fmi.la libmbsimsrc_fmi.la
 
 # build FMU library; just a wrapper which loads at runtime libmbsimXXX_fmi.la); this library
 # should NOT depend on any library except system libraries!
-mbsim_la_SOURCES = fmiModelFunctions.cc
-mbsim_la_CPPFLAGS = $(MBXMLUTILSHELPERDEPS_CFLAGS) -fvisibility=hidden
-mbsim_la_LDFLAGS = -module -avoid-version -Wl,-rpath,\$$ORIGIN -Wl,--version-script=$(srcdir)/mbsim.map
-mbsim_la_LIBADD = $(LIBDL)
+mbsim_me_la_SOURCES = fmiModelFunctions.cc
+mbsim_me_la_CPPFLAGS = $(MBXMLUTILSHELPERDEPS_CFLAGS) -fvisibility=hidden
+mbsim_me_la_LDFLAGS = -module -avoid-version -Wl,-rpath,\$$ORIGIN -Wl,--version-script=$(srcdir)/mbsim_me.map
+mbsim_me_la_LIBADD = $(LIBDL)
+
+# build FMU library; just a wrapper which loads at runtime libmbsimXXX_fmi.la); this library
+# should NOT depend on any library except system libraries!
+mbsim_cosim_la_SOURCES = fmiFunctions.cc
+mbsim_cosim_la_CPPFLAGS = $(MBXMLUTILSHELPERDEPS_CFLAGS) -fvisibility=hidden
+mbsim_cosim_la_LDFLAGS = -module -avoid-version -Wl,-rpath,\$$ORIGIN -Wl,--version-script=$(srcdir)/mbsim_cosim.map
+mbsim_cosim_la_LIBADD = $(LIBDL)
 
 
 

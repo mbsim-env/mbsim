@@ -1,6 +1,7 @@
 #include "../config.h"
 #include <fmiinstance.h>
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsim/integrators/integrator.h>
 
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbsimxml/mbsimxml.h>
@@ -22,7 +23,7 @@ namespace {
 
 namespace MBSimFMI {
 
-  void FMIInstance::addModelParametersAndCreateDSS(vector<std::shared_ptr<Variable> > &varSim) {
+  void FMIInstance::addModelParametersAndCreateSystem(vector<std::shared_ptr<Variable> > &varSim) {
     // get the model file
     path resourcesDir=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path();
     // path to XML project file relative to resources/model
@@ -91,6 +92,12 @@ namespace MBSimFMI {
     msg(Debug)<<"Create DynamicSystemSolver."<<endl;
     doc->normalizeDocument();
     dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver")));
+
+    if(cosim) {
+      msg(Debug)<<"Create Integrator."<<endl;
+      auto eleDSS=E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+      integrator.reset(ObjectFactory::createAndInit<MBSimIntegrator::Integrator>(eleDSS->getNextElementSibling()));
+    }
   }
 
 }

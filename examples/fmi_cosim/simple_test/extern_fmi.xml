@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SpringDamper name="EXTERN" xmlns="http://www.mbsim-env.de/MBSim"
+  xmlns:control="http://www.mbsim-env.de/MBSimControl">
+  <connect ref1="../Frame[SpringMount]" ref2="../Object[Ball]/Frame[C]"/>
+  <forceFunction>
+    <control:SignalFunction>
+      <control:returnSignal ref="../../Link[ExternForce]"/>
+    </control:SignalFunction>
+  </forceFunction>
+  <unloadedLength>0</unloadedLength>
+  <enableOpenMBV>
+    <numberOfCoils>20</numberOfCoils>
+    <springRadius>0.03</springRadius>
+    <type>'polyline'</type>
+  </enableOpenMBV>
+</SpringDamper>

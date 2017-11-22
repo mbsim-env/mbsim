@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   try {
     // help
     if(argc<2) {
-      cout<<"Usage: "<<argv[0]<<" [--nocompress] [--param <name> [--param <name> ...]]"<<endl;
+      cout<<"Usage: "<<argv[0]<<" [--nocompress] [--cosim] [--param <name> [--param <name> ...]]"<<endl;
       cout<<"  <MBSim Project XML File>|<MBSim FMI shared library>"<<endl;
       cout<<endl;
       cout<<"Creates mbsim.fmu in the current directory."<<endl;
@@ -49,6 +49,8 @@ int main(int argc, char *argv[]) {
       cout<<"provided as an FMU parameter. Note that only parameters which do not depend"<<endl;
       cout<<"on any other parameters are allowed. If no --param option is given all are exported."<<endl;
       cout<<"Use --noparam to ignore all parameters defined the DynamicSystemSolver Embed element."<<endl;
+      cout<<"Use --cosim to generate a FMI for Cosimulation FMU instead of a"<<endl;
+      cout<<"FMI for Model-Exchange FMU."<<endl;
       return 0;
     }
 
@@ -57,6 +59,7 @@ int main(int argc, char *argv[]) {
     set<string> useParam;
     bool compress=true;
     bool noParam=false;
+    bool cosim=false;
     for(int i=1; i<argc-1; ++i) {
       if(string(argv[i])=="--param")
         useParam.insert(argv[i+1]);
@@ -66,6 +69,10 @@ int main(int argc, char *argv[]) {
       }
       if(string(argv[i])=="--noparam") {
         noParam=true;
+        optcount++;
+      }
+      if(string(argv[i])=="--cosim") {
+        cosim=true;
         optcount++;
       }
     }
@@ -101,7 +108,7 @@ int main(int argc, char *argv[]) {
     PredefinedParameterStruct predefinedParameterStruct;
     cout<<"Create predefined parameters."<<endl;
     vector<std::shared_ptr<Variable> > var;
-    addPredefinedParameters(var, predefinedParameterStruct, true);
+    addPredefinedParameters(cosim, var, predefinedParameterStruct, true);
 
     vector<std::shared_ptr<Variable> > xmlParam;
 
@@ -224,11 +231,18 @@ int main(int argc, char *argv[]) {
       // load the shared library and call mbsimSrcFMI function to get the dss
       cout<<"Build up the model (by just getting it from the shared library)."<<endl;
       DynamicSystemSolver *dssPtr;
-      SharedLibrary::getSymbol<mbsimSrcFMIPtr>(canonical(inputFilename).string(), "mbsimSrcFMI")(dssPtr);
+      MBSimIntegrator::Integrator *integratorPtr;
+      SharedLibrary::getSymbol<mbsimSrcFMIPtr>(canonical(inputFilename).string(), "mbsimSrcFMI")(dssPtr, integratorPtr);
       dss.reset(dssPtr);
 
-      // we do not have a integrator for src models (but this is only used for convinence settings)
-      integrator.reset();
+      if(!cosim)
+        // we do not have a integrator for src models (but this is only used for convinence settings)
+        integrator.reset();
+      else {
+        if(!integratorPtr)
+          throw runtime_error("A cosim FMU is generated but not Integrator is provided.");
+        integrator.reset(integratorPtr);
+      }
     }
 
     // disable all plotting (we wont any output here)
@@ -237,6 +251,18 @@ int main(int argc, char *argv[]) {
     // initialize dss
     cout<<"Initialize the model."<<endl;
     dss->initialize();
+
+    if(cosim) {
+      try {
+        integrator->preIntegrate(*dss.get());
+      }
+      catch(MBSimError &ex) {
+        throw runtime_error("The used integrator "+boost::core::demangle(typeid(*integrator.get()).name())+
+          " failed to initialize the co-simulation interface. Error message was:\n"+
+          ex.what()+"\n"+
+          "The model may be wrong or this integrator cannot be used for cosim FMUs.");
+      }
+    }
 
     // build list of value references
     cout<<"Create model input/output variables."<<endl;
@@ -262,8 +288,8 @@ int main(int argc, char *argv[]) {
     desc.replace_extension();
     desc.replace_extension();
     E(modelDesc)->setAttribute("modelName", desc.string());
-    E(modelDesc)->setAttribute("numberOfContinuousStates", fmatvec::toString(dss->getzSize()));
-    E(modelDesc)->setAttribute("numberOfEventIndicators", fmatvec::toString(dss->getsvSize()));
+    E(modelDesc)->setAttribute("numberOfContinuousStates", cosim?0:dss->getzSize());
+    E(modelDesc)->setAttribute("numberOfEventIndicators", cosim?0:dss->getsvSize());
     E(modelDesc)->setAttribute("variableNamingConvention", "structured");
 
       // Type definition
@@ -282,7 +308,7 @@ int main(int argc, char *argv[]) {
             DOMElement *enumEle=D(modelDescDoc)->createElement("EnumerationType");
             type->appendChild(enumEle);
             E(enumEle)->setAttribute("min", "1");
-            E(enumEle)->setAttribute("max", fmatvec::toString(it->size()));
+            E(enumEle)->setAttribute("max", it->size());
             for(size_t id=0; id<it->size(); ++id) {
               DOMElement *item=D(modelDescDoc)->createElement("Item");
               enumEle->appendChild(item);
@@ -295,9 +321,9 @@ int main(int argc, char *argv[]) {
       if(integrator) {
         DOMElement *defaultExp=D(modelDescDoc)->createElement("DefaultExperiment");
         modelDesc->appendChild(defaultExp);
-        E(defaultExp)->setAttribute("startTime", fmatvec::toString(integrator->getStartTime()));
-        E(defaultExp)->setAttribute("stopTime", fmatvec::toString(integrator->getEndTime()));
-        E(defaultExp)->setAttribute("tolerance", fmatvec::toString(1e-5));
+        E(defaultExp)->setAttribute("startTime", integrator->getStartTime());
+        E(defaultExp)->setAttribute("stopTime", integrator->getEndTime());
+        E(defaultExp)->setAttribute("tolerance", 1e-5);
       }
 
       // ModelVariables element
@@ -325,13 +351,13 @@ int main(int argc, char *argv[]) {
             if(var[vr]->getEnumerationList()) {
               E(varType)->setAttribute("declaredType", "EnumType_"+boost::lexical_cast<string>(var[vr]->getEnumerationList()));
               E(varType)->setAttribute("min", "1");
-              E(varType)->setAttribute("max", fmatvec::toString(var[vr]->getEnumerationList()->size()));
+              E(varType)->setAttribute("max", var[vr]->getEnumerationList()->size());
             }
 
           // attributes on ScalarVariable element
           E(scalarVar)->setAttribute("name", var[vr]->getName());
           E(scalarVar)->setAttribute("description", var[vr]->getDescription());
-          E(scalarVar)->setAttribute("valueReference", fmatvec::toString(vr));
+          E(scalarVar)->setAttribute("valueReference", vr);
           switch(var[vr]->getType()) {
             case Parameter:
               E(scalarVar)->setAttribute("causality", "internal");
@@ -351,6 +377,19 @@ int main(int argc, char *argv[]) {
               break;
           }
         }
+
+      if(cosim) {
+        // Implementation element
+        DOMElement *implementation=D(modelDescDoc)->createElement("Implementation");
+        modelDesc->appendChild(implementation);
+          DOMElement *cosimStandalone=D(modelDescDoc)->createElement("CoSimulation_StandAlone");
+          implementation->appendChild(cosimStandalone);
+            DOMElement *capabilities=D(modelDescDoc)->createElement("Capabilities");
+            cosimStandalone->appendChild(capabilities);
+            E(capabilities)->setAttribute("canHandleVariableCommunicationStepSize", true);
+            E(capabilities)->setAttribute("canInterpolateInputs", false);
+            E(capabilities)->setAttribute("canNotUseMemoryManagementFunctions", true);
+      }
 
     // add modelDescription.xml file to FMU
     cout<<"Copy the modelDescription.xml file to FMU."<<endl;
@@ -436,8 +475,9 @@ int main(int argc, char *argv[]) {
     }
 
     cout<<"Copy MBSim FMI wrapper library and dependencies to FMU."<<endl;
+    string fmuLibName(cosim?"mbsim_cosim":"mbsim_me");
     copyShLibToFMU(parserNoneVali, fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT), path("binaries")/FMIOS,
-                   getInstallPath()/"lib"/("mbsim"+SHEXT));
+                   getInstallPath()/"lib"/(fmuLibName+SHEXT));
     cout<<endl;
 
     fmuFile.close();

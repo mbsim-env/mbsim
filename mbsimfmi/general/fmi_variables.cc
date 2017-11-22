@@ -10,7 +10,7 @@ namespace {
 namespace MBSimFMI {
 
 // create predefined parameters
-void addPredefinedParameters(std::vector<std::shared_ptr<Variable> > &var,
+void addPredefinedParameters(bool cosim, std::vector<std::shared_ptr<Variable> > &var,
                              PredefinedParameterStruct &predefinedParameterStruct,
                              bool setToDefaultValue) {
   // output directory
@@ -20,52 +20,54 @@ void addPredefinedParameters(std::vector<std::shared_ptr<Variable> > &var,
   if(setToDefaultValue)
     (*--var.end())->setValue(std::string("."));
 
-  // plot mode
-  // generate enumeration list
-  Variable::EnumList plotModeList=std::make_shared<Variable::EnumListCont>();
-  // PlotMode::EverynthCompletedStep
-  plotModeList->push_back(std::make_pair<std::string, std::string>("Every n-th completed step",
-    "Plot each n-th completed integrator step, with n = 'Plot.each n-th step'."));
-  // PlotMode::NextCompletedStepAfterSampleTime
-  plotModeList->push_back(std::make_pair<std::string, std::string>("Next completed step after sample time",
-    "Plot at the first completed step after sample time, with sample time = 'Plot.sample time'."));
-  // PlotMode::SampleTime
-  plotModeList->push_back(std::make_pair<std::string, std::string>("Constant sample time",
-    "Plot in equidistant sample times, with sample time = 'Plot.sample time'."));
-  // add variable
-  var.push_back(std::make_shared<PredefinedParameter<int> >("Plot.mode",
-    "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", std::ref(predefinedParameterStruct.plotMode), plotModeList));
-  // default value
-  if(setToDefaultValue)
-    (*--var.end())->setValue(int(NextCompletedStepAfterSampleTime));
+  if(!cosim) { // the following parameters are part of the Integrator config. For ME we need to defined these there explicitly
+    // plot mode
+    // generate enumeration list
+    Variable::EnumList plotModeList=std::make_shared<Variable::EnumListCont>();
+    // PlotMode::EverynthCompletedStep
+    plotModeList->push_back(std::make_pair<std::string, std::string>("Every n-th completed step",
+      "Plot each n-th completed integrator step, with n = 'Plot.each n-th step'."));
+    // PlotMode::NextCompletedStepAfterSampleTime
+    plotModeList->push_back(std::make_pair<std::string, std::string>("Next completed step after sample time",
+      "Plot at the first completed step after sample time, with sample time = 'Plot.sample time'."));
+    // PlotMode::SampleTime
+    plotModeList->push_back(std::make_pair<std::string, std::string>("Constant sample time",
+      "Plot in equidistant sample times, with sample time = 'Plot.sample time'."));
+    // add variable
+    var.push_back(std::make_shared<PredefinedParameter<int> >("Plot.mode",
+      "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", std::ref(predefinedParameterStruct.plotMode), plotModeList));
+    // default value
+    if(setToDefaultValue)
+      (*--var.end())->setValue(int(NextCompletedStepAfterSampleTime));
 
-  // plot at each n-th integrator step
-  var.push_back(std::make_shared<PredefinedParameter<int> >("Plot.'each n-th step'",
-    "... n-th completed integrator step", std::ref(predefinedParameterStruct.plotEachNStep)));
-  // default value: every 5-th step
-  if(setToDefaultValue)
-    (*--var.end())->setValue(int(5));
+    // plot at each n-th integrator step
+    var.push_back(std::make_shared<PredefinedParameter<int> >("Plot.'each n-th step'",
+      "... n-th completed integrator step", std::ref(predefinedParameterStruct.plotEachNStep)));
+    // default value: every 5-th step
+    if(setToDefaultValue)
+      (*--var.end())->setValue(int(5));
 
-  // plot every dt
-  var.push_back(std::make_shared<PredefinedParameter<double> >("Plot.'sample time'",
-    "... sample point with this sample time", std::ref(predefinedParameterStruct.plotStepSize)));
-  // default value: every 1ms
-  if(setToDefaultValue)
-    (*--var.end())->setValue(double(0.001));
+    // plot every dt
+    var.push_back(std::make_shared<PredefinedParameter<double> >("Plot.'sample time'",
+      "... sample point with this sample time", std::ref(predefinedParameterStruct.plotStepSize)));
+    // default value: every 1ms
+    if(setToDefaultValue)
+      (*--var.end())->setValue(double(0.001));
 
-  // gMax
-  var.push_back(std::make_shared<PredefinedParameter<double> >("'Constraint tolerance'.position",
-    "Tolerance for position constraints", std::ref(predefinedParameterStruct.gMax)));
-  // default value: 1e-5
-  if(setToDefaultValue)
-    (*--var.end())->setValue(double(1e-5));
+    // gMax
+    var.push_back(std::make_shared<PredefinedParameter<double> >("'Constraint tolerance'.position",
+      "Tolerance for position constraints", std::ref(predefinedParameterStruct.gMax)));
+    // default value: 1e-5
+    if(setToDefaultValue)
+      (*--var.end())->setValue(double(1e-5));
 
-  // gdMax
-  var.push_back(std::make_shared<PredefinedParameter<double> >("'Constraint tolerance'.velocity",
-    "Tolerance for velocity constraints", std::ref(predefinedParameterStruct.gdMax)));
-  // default value: 1e-5
-  if(setToDefaultValue)
-    (*--var.end())->setValue(double(1e-5));
+    // gdMax
+    var.push_back(std::make_shared<PredefinedParameter<double> >("'Constraint tolerance'.velocity",
+      "Tolerance for velocity constraints", std::ref(predefinedParameterStruct.gdMax)));
+    // default value: 1e-5
+    if(setToDefaultValue)
+      (*--var.end())->setValue(double(1e-5));
+  }
 
   // ADD HERE MORE PREDEFINED PARAMETERS
 }

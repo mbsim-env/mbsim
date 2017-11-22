@@ -6,6 +6,7 @@
 #include <utility>
 
 extern "C" {
+  #include <3rdparty/fmiFunctions.h>
   #include <3rdparty/fmiModelFunctions.h>
 }
 

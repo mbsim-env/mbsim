@@ -9,6 +9,7 @@
 
 // fmi function declarations must be included as extern C
 extern "C" {
+  #include <3rdparty/fmiFunctions.h>
   #include <3rdparty/fmiModelFunctions.h>
 }
 
@@ -16,6 +17,10 @@ extern "C" {
 
 namespace MBSim {
   class DynamicSystemSolver;
+}
+
+namespace MBSimIntegrator {
+  class Integrator;
 }
 
 namespace MBSimControl {
@@ -27,8 +32,8 @@ namespace MBSimFMI {
 
   /*! A MBSim FMI instance */
   class FMIInstance : public FMIInstanceBase, virtual public fmatvec::Atom {
-    friend std::shared_ptr<FMIInstanceBase> fmiInstanceCreate(fmiString instanceName_, fmiString GUID,
-                                                              fmiCallbackFunctions functions, fmiBoolean loggingOn);
+    friend std::shared_ptr<FMIInstanceBase> fmiInstanceCreate(bool cosim, fmiString instanceName_, fmiString GUID,
+                                                              fmiCallbackLogger logger, fmiBoolean loggingOn);
     public:
       //! dtor used in fmiFreeModelInstance
       ~FMIInstance() override;
@@ -39,9 +44,6 @@ namespace MBSimFMI {
       // Wrapper for all other FMI functions (except fmiInstantiateModel and fmiFreeModelInstance, see above)
 
       void setDebugLogging           (fmiBoolean loggingOn) override;
-      void setTime                   (fmiReal time_) override;
-      void setContinuousStates       (const fmiReal x[], size_t nx) override;
-      void completedIntegratorStep   (fmiBoolean* callEventUpdate) override;
 
       // wrap the virtual none template functions to the corresponding template function
       void setDoubleValue(const fmiValueReference vr[], size_t nvr, const fmiReal value[]) override    { setValue<double>     (vr, nvr, value); }
@@ -52,10 +54,6 @@ namespace MBSimFMI {
       template<typename CppDatatype, typename FMIDatatype>
       void setValue      (const fmiValueReference vr[], size_t nvr, const FMIDatatype value[]);
 
-      void initialize                (fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo) override;
-      void getDerivatives            (fmiReal derivatives[], size_t nx) override;
-      void getEventIndicators        (fmiReal eventIndicators[], size_t ni) override;
-
       // wrap the virtual none template functions to the corresponding template function
       void getDoubleValue(const fmiValueReference vr[], size_t nvr, fmiReal value[]) override    { getValue<double>     (vr, nvr, value); }
       void getIntValue   (const fmiValueReference vr[], size_t nvr, fmiInteger value[]) override { getValue<int>        (vr, nvr, value); }
@@ -65,17 +63,40 @@ namespace MBSimFMI {
       template<typename CppDatatype, typename FMIDatatype>
       void getValue      (const fmiValueReference vr[], size_t nvr, FMIDatatype value[]);
 
+      void terminate                 () override;
+
+      /* me special functions */
+      void setTime                   (fmiReal time_) override;
+      void setContinuousStates       (const fmiReal x[], size_t nx) override;
+      void completedIntegratorStep   (fmiBoolean* callEventUpdate) override;
+      void initialize_me             (fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo) override;
+      void getDerivatives            (fmiReal derivatives[], size_t nx) override;
+      void getEventIndicators        (fmiReal eventIndicators[], size_t ni) override;
       void eventUpdate               (fmiBoolean intermediateResults, fmiEventInfo* eventInfo) override;
       void getContinuousStates       (fmiReal states[], size_t nx) override;
       void getNominalContinuousStates(fmiReal x_nominal[], size_t nx) override;
       void getStateValueReferences   (fmiValueReference vrx[], size_t nx) override;
-      void terminate                 () override;
+
+      /* cosim special functions */
+      void initialize_cosim(fmiReal tStart, fmiBoolean StopTimeDefined, fmiReal tStop) override;
+      void resetSlave() override;
+      void setRealInputDerivatives(const fmiValueReference vr[], size_t nvr, const fmiInteger order[], const fmiReal value[]) override;
+      void getRealOutputDerivatives(const fmiValueReference vr[], size_t nvr, const fmiInteger order[], fmiReal value[]) override;
+      void cancelStep() override;
+      void doStep(fmiReal currentCommunicationPoint, fmiReal communicationStepSize, fmiBoolean newStep) override;
+      void getStatus(const fmiStatusKind s, fmiStatus* value) override;
+      void getDoubleStatus(const fmiStatusKind s, fmiReal* value) override;
+      void getIntStatus(const fmiStatusKind s, fmiInteger* value) override;
+      void getBoolStatus(const fmiStatusKind s, fmiBoolean* value) override;
+      void getStringStatus(const fmiStatusKind s, fmiString* value) override;
 
     private:
       //! ctor used in fmiInstantiateModel
-      FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn);
+      FMIInstance(bool cosim, fmiString instanceName_, fmiString GUID, fmiCallbackLogger logger_, fmiBoolean loggingOn);
 
       void rethrowVR(size_t vr, const std::exception &ex=std::runtime_error("Unknown exception."));
+
+      bool cosim;
 
       // store FMI instanceName and logger
       std::string instanceName;
@@ -91,6 +112,8 @@ namespace MBSimFMI {
 
       // the system
       std::shared_ptr<MBSim::DynamicSystemSolver> dss;
+      // the integrator
+      std::shared_ptr<MBSimIntegrator::Integrator> integrator;
 
       // system time
       double timeStore; // do not use this variable, use time
@@ -117,7 +140,9 @@ namespace MBSimFMI {
       int completedStepCounter;
       double nextPlotTime;
 
-      void addModelParametersAndCreateDSS(std::vector<std::shared_ptr<Variable> > &varSim);
+      void addModelParametersAndCreateSystem(std::vector<std::shared_ptr<Variable> > &varSim);
+
+      void initialize();
   };
 
 }
