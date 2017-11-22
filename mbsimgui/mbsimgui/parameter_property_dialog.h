@@ -37,12 +37,10 @@ namespace MBSimGUI {
 
     public:
       ParameterPropertyDialog(Parameter *parameter_, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr, bool readOnly=false);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-      virtual void toWidget(Parameter *parameter);
-      virtual void fromWidget(Parameter *parameter);
-      void toWidget() override {toWidget(parameter);}
-      void fromWidget() override {fromWidget(parameter);}
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr);
+      void toWidget() override;
+      void fromWidget() override;
     protected:
       Parameter *parameter;
       ExtWidget *name;

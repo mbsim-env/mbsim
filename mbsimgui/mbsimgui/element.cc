@@ -45,15 +45,6 @@ namespace MBSimGUI {
 
   int Element::IDcounter=0;
 
-  void Element::removeXMLElements() {
-    DOMNode *e = element->getFirstChild();
-    while(e) {
-      DOMNode *en=e->getNextSibling();
-      element->removeChild(e);
-      e = en;
-    }
-  }
-
   DOMElement* Element::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(getNameSpace()%getType().toStdString());

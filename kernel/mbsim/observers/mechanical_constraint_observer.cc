@@ -22,6 +22,7 @@
 #include "mbsim/constraints/mechanical_constraint.h"
 #include "mbsim/links/mechanical_link.h"
 #include "mbsim/frames/frame.h"
+#include "mbsim/dynamic_system_solver.h"
 #include <openmbvcppinterface/group.h>
 
 using namespace std;
@@ -56,6 +57,11 @@ namespace MBSim {
           getOpenMBVGrp()->addObject(openMBVMoment);
         }
       }
+    }
+    else if(stage==unknownStage) {
+      Observer::init(stage, config);
+      if((openMBVForce or openMBVMoment) and not getDynamicSystemSolver()->getInverseKinetics())
+        THROW_MBSIMERROR("(MechanicalConstraintObserver::init()): inverse kinetics not enabled");
     }
     else
       Observer::init(stage, config);

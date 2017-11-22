@@ -109,49 +109,41 @@ namespace MBSimGUI {
     return widget;
   }
 
-  ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), element(element_) {
-    if(element->hasHref()) {
-      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
-      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
-    }
+  ElementPropertyDialog::ElementPropertyDialog(Element *element, QWidget *parent, const Qt::WindowFlags& f) : EmbedItemPropertyDialog(element,parent,f) {
     addTab("General");
-    name = new ExtWidget("Name",new TextWidget(element->getName()));
+    name = new ExtWidget("Name",new TextWidget(item->getName()));
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
     addTab("Plot");
-    plotFeature = new ExtWidget("Plot features",new PlotFeatureWidget(element->getPlotFeatureType()));
+    plotFeature = new ExtWidget("Plot features",new PlotFeatureWidget(getElement()->getPlotFeatureType()));
     addToTab("Plot", plotFeature);
   }
 
+  Element* ElementPropertyDialog::getElement() const {
+    return static_cast<Element*>(item);
+  }
+
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    static_cast<TextWidget*>(name->getWidget())->setText(element->getName());
-    plotFeature->initializeUsingXML(element->getXMLElement());
+    static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
+    plotFeature->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ElementPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    element->removeXMLElements();
-    E(element->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
-    plotFeature->writeXMLFile(element->getXMLElement(),ref);
+    item->removeXMLElements();
+    E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    plotFeature->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
-  }
-
-  void ElementPropertyDialog::toWidget(Element *element) {
-    initializeUsingXML(element->getXMLElement());
-  }
-
-  void ElementPropertyDialog::fromWidget(Element *element) {
-    writeXMLFile(element->getXMLElement());
   }
 
   void ElementPropertyDialog::showXMLHelp() {
     // generate url for current element
     string url=(MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string();
-    string ns=element->getNameSpace().getNamespaceURI();
+    string ns=getElement()->getNameSpace().getNamespaceURI();
     replace(ns.begin(), ns.end(), ':', '_');
     replace(ns.begin(), ns.end(), '.', '_');
     replace(ns.begin(), ns.end(), '/', '_');
-    url+="/"+ns+"/index.html#"+element->getType().toStdString();
+    url+="/"+ns+"/index.html#"+getElement()->getType().toStdString();
     // open in XML help dialog
     mw->xmlHelp(QString::fromStdString(url));
   }
@@ -172,18 +164,22 @@ namespace MBSimGUI {
   }
 
   DOMElement* FramePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
-    visu->initializeUsingXML(element->getXMLElement());
+    ElementPropertyDialog::initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ElementPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    visu->writeXMLFile(element->getXMLElement(),ref);
+    ElementPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    visu->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
   InternalFramePropertyDialog::InternalFramePropertyDialog(InternalFrame *frame, QWidget *parent, const Qt::WindowFlags& f) : ElementPropertyDialog(frame,parent,f) {
+    if(frame->getParent()->hasHref()) {
+      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
+      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
+    }
     addTab("Visualisation",1);
     visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget("NOTSET"),true,true,frame->getXMLFrameName());
     visu->setToolTip("Set the visualisation parameters for the frame");
@@ -193,16 +189,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* InternalFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    visu->initializeUsingXML(element->getParent()->getXMLElement());
-    static_cast<PlotFeatureWidget*>(plotFeature->getWidget())->initializeUsingXML2(element->getParent()->getXMLElement());
+    visu->initializeUsingXML(getElement()->getParent()->getXMLElement());
+    static_cast<PlotFeatureWidget*>(plotFeature->getWidget())->initializeUsingXML2(getElement()->getParent()->getXMLElement());
     return parent;
   }
 
   DOMElement* InternalFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    element->removeXMLElements();
-    DOMElement *ele = element->getParent()->getXMLFrame();
-    visu->writeXMLFile(element->getParent()->getXMLElement(),ele);
-    static_cast<PlotFeatureWidget*>(plotFeature->getWidget())->writeXMLFile2(element->getParent()->getXMLElement(),ele);
+    item->removeXMLElements();
+    DOMElement *ele = getElement()->getParent()->getXMLFrame();
+    visu->writeXMLFile(getElement()->getParent()->getXMLElement(),ele);
+    static_cast<PlotFeatureWidget*>(plotFeature->getWidget())->writeXMLFile2(getElement()->getParent()->getXMLElement(),ele);
     return nullptr;
   }
 
@@ -220,18 +216,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* FixedRelativeFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    FramePropertyDialog::initializeUsingXML(element->getXMLElement());
-    refFrame->initializeUsingXML(element->getXMLElement());
-    position->initializeUsingXML(element->getXMLElement());
-    orientation->initializeUsingXML(element->getXMLElement());
+    FramePropertyDialog::initializeUsingXML(item->getXMLElement());
+    refFrame->initializeUsingXML(item->getXMLElement());
+    position->initializeUsingXML(item->getXMLElement());
+    orientation->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FixedRelativeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    FramePropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    refFrame->writeXMLFile(element->getXMLElement(),nullptr);
-    position->writeXMLFile(element->getXMLElement(),nullptr);
-    orientation->writeXMLFile(element->getXMLElement(),nullptr);
+    FramePropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    refFrame->writeXMLFile(item->getXMLElement(),nullptr);
+    position->writeXMLFile(item->getXMLElement(),nullptr);
+    orientation->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -242,14 +238,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* NodeFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    FramePropertyDialog::initializeUsingXML(element->getXMLElement());
-    nodeNumber->initializeUsingXML(element->getXMLElement());
+    FramePropertyDialog::initializeUsingXML(item->getXMLElement());
+    nodeNumber->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* NodeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    FramePropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    nodeNumber->writeXMLFile(element->getXMLElement(),nullptr);
+    FramePropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    nodeNumber->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -259,14 +255,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* ContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
-    thickness->initializeUsingXML(element->getXMLElement());
+    ElementPropertyDialog::initializeUsingXML(item->getXMLElement());
+    thickness->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ElementPropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    thickness->writeXMLFile(element->getXMLElement(),nullptr);
+    ElementPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    thickness->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -276,14 +272,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* RigidContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ContourPropertyDialog::initializeUsingXML(element->getXMLElement());
-    refFrame->initializeUsingXML(element->getXMLElement());
+    ContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    refFrame->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RigidContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ContourPropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    refFrame->writeXMLFile(element->getXMLElement(),nullptr);
+    ContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    refFrame->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -295,14 +291,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* PointPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
-    visu->initializeUsingXML(element->getXMLElement());
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* PointPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    visu->writeXMLFile(element->getXMLElement(),nullptr);
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -314,14 +310,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* LinePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
-    visu->initializeUsingXML(element->getXMLElement());
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* LinePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    visu->writeXMLFile(element->getXMLElement(),nullptr);
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -333,14 +329,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlanePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
-    visu->initializeUsingXML(element->getXMLElement());
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* PlanePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    visu->writeXMLFile(element->getXMLElement(),nullptr);
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -355,16 +351,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* SpherePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
-    radius->initializeUsingXML(element->getXMLElement());
-    visu->initializeUsingXML(element->getXMLElement());
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    radius->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* SpherePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    radius->writeXMLFile(element->getXMLElement(),nullptr);
-    visu->writeXMLFile(element->getXMLElement(),nullptr);
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    radius->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -380,18 +376,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* CirclePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
-    radius->initializeUsingXML(element->getXMLElement());
-    solid->initializeUsingXML(element->getXMLElement());
-    visu->initializeUsingXML(element->getXMLElement());
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    radius->initializeUsingXML(item->getXMLElement());
+    solid->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* CirclePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    radius->writeXMLFile(element->getXMLElement(),nullptr);
-    solid->writeXMLFile(element->getXMLElement(),nullptr);
-    visu->writeXMLFile(element->getXMLElement(),nullptr);
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    radius->writeXMLFile(item->getXMLElement(),nullptr);
+    solid->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -406,16 +402,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* CuboidPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
-    length->initializeUsingXML(element->getXMLElement());
-    visu->initializeUsingXML(element->getXMLElement());
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    length->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* CuboidPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    length->writeXMLFile(element->getXMLElement(),nullptr);
-    visu->writeXMLFile(element->getXMLElement(),nullptr);
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    length->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -430,16 +426,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* LineSegmentPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
-    length->initializeUsingXML(element->getXMLElement());
-    visu->initializeUsingXML(element->getXMLElement());
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    length->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* LineSegmentPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    length->writeXMLFile(element->getXMLElement(),nullptr);
-    visu->writeXMLFile(element->getXMLElement(),nullptr);
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    length->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -460,20 +456,20 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlanarContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
-    nodes->initializeUsingXML(element->getXMLElement());
-    contourFunction->initializeUsingXML(element->getXMLElement());
-    open->initializeUsingXML(element->getXMLElement());
-    visu->initializeUsingXML(element->getXMLElement());
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    nodes->initializeUsingXML(item->getXMLElement());
+    contourFunction->initializeUsingXML(item->getXMLElement());
+    open->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* PlanarContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    nodes->writeXMLFile(element->getXMLElement(),nullptr);
-    contourFunction->writeXMLFile(element->getXMLElement(),nullptr);
-    open->writeXMLFile(element->getXMLElement(),nullptr);
-    visu->writeXMLFile(element->getXMLElement(),nullptr);
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    nodes->writeXMLFile(item->getXMLElement(),nullptr);
+    contourFunction->writeXMLFile(item->getXMLElement(),nullptr);
+    open->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -497,22 +493,22 @@ namespace MBSimGUI {
   }
 
   DOMElement* SpatialContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(element->getXMLElement());
-    etaNodes->initializeUsingXML(element->getXMLElement());
-    xiNodes->initializeUsingXML(element->getXMLElement());
-    contourFunction->initializeUsingXML(element->getXMLElement());
-    open->initializeUsingXML(element->getXMLElement());
-    visu->initializeUsingXML(element->getXMLElement());
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    etaNodes->initializeUsingXML(item->getXMLElement());
+    xiNodes->initializeUsingXML(item->getXMLElement());
+    contourFunction->initializeUsingXML(item->getXMLElement());
+    open->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* SpatialContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(element->getXMLElement(),nullptr);
-    etaNodes->writeXMLFile(element->getXMLElement(),nullptr);
-    xiNodes->writeXMLFile(element->getXMLElement(),nullptr);
-    contourFunction->writeXMLFile(element->getXMLElement(),nullptr);
-    open->writeXMLFile(element->getXMLElement(),nullptr);
-    visu->writeXMLFile(element->getXMLElement(),nullptr);
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    etaNodes->writeXMLFile(item->getXMLElement(),nullptr);
+    xiNodes->writeXMLFile(item->getXMLElement(),nullptr);
+    contourFunction->writeXMLFile(item->getXMLElement(),nullptr);
+    open->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
@@ -526,16 +522,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* GroupPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
+    ElementPropertyDialog::initializeUsingXML(item->getXMLElement());
     if(frameOfReference)
-      frameOfReference->initializeUsingXML(element->getXMLElement());
+      frameOfReference->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GroupPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ElementPropertyDialog::writeXMLFile(parent,ref?ref:element->getXMLFrames());
+    ElementPropertyDialog::writeXMLFile(parent,ref?ref:getElement()->getXMLFrames());
     if(frameOfReference)
-      frameOfReference->writeXMLFile(element->getXMLElement(),ref?ref:element->getXMLFrames());
+      frameOfReference->writeXMLFile(item->getXMLElement(),ref?ref:getElement()->getXMLFrames());
     return nullptr;
   }
 
@@ -590,38 +586,38 @@ namespace MBSimGUI {
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    GroupPropertyDialog::initializeUsingXML(element->getXMLElement());
-    environment->initializeUsingXML(static_cast<DynamicSystemSolver*>(element)->getXMLEnvironments()->getFirstElementChild());
-    constraintSolver->initializeUsingXML(element->getXMLElement());
-    impactSolver->initializeUsingXML(element->getXMLElement());
-    numberOfMaximalIterations->initializeUsingXML(element->getXMLElement());
-    projection->initializeUsingXML(element->getXMLElement());
-    g->initializeUsingXML(element->getXMLElement());
-    gd->initializeUsingXML(element->getXMLElement());
-    gdd->initializeUsingXML(element->getXMLElement());
-    la->initializeUsingXML(element->getXMLElement());
-    La->initializeUsingXML(element->getXMLElement());
-    inverseKinetics->initializeUsingXML(element->getXMLElement());
-    initialProjection->initializeUsingXML(element->getXMLElement());
-    useConstraintSolverForPlot->initializeUsingXML(element->getXMLElement());
+    GroupPropertyDialog::initializeUsingXML(item->getXMLElement());
+    environment->initializeUsingXML(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+    constraintSolver->initializeUsingXML(item->getXMLElement());
+    impactSolver->initializeUsingXML(item->getXMLElement());
+    numberOfMaximalIterations->initializeUsingXML(item->getXMLElement());
+    projection->initializeUsingXML(item->getXMLElement());
+    g->initializeUsingXML(item->getXMLElement());
+    gd->initializeUsingXML(item->getXMLElement());
+    gdd->initializeUsingXML(item->getXMLElement());
+    la->initializeUsingXML(item->getXMLElement());
+    La->initializeUsingXML(item->getXMLElement());
+    inverseKinetics->initializeUsingXML(item->getXMLElement());
+    initialProjection->initializeUsingXML(item->getXMLElement());
+    useConstraintSolverForPlot->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GroupPropertyDialog::writeXMLFile(parent,element->getXMLFrames());
-    environment->writeXMLFile(static_cast<DynamicSystemSolver*>(element)->getXMLEnvironments()->getFirstElementChild());
-    constraintSolver->writeXMLFile(element->getXMLElement());
-    impactSolver->writeXMLFile(element->getXMLElement());
-    numberOfMaximalIterations->writeXMLFile(element->getXMLElement());
-    projection->writeXMLFile(element->getXMLElement());
-    g->writeXMLFile(element->getXMLElement());
-    gd->writeXMLFile(element->getXMLElement());
-    gdd->writeXMLFile(element->getXMLElement());
-    la->writeXMLFile(element->getXMLElement());
-    La->writeXMLFile(element->getXMLElement());
-    inverseKinetics->writeXMLFile(element->getXMLElement());
-    initialProjection->writeXMLFile(element->getXMLElement());
-    useConstraintSolverForPlot->writeXMLFile(element->getXMLElement());
+    GroupPropertyDialog::writeXMLFile(parent,getElement()->getXMLFrames());
+    environment->writeXMLFile(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+    constraintSolver->writeXMLFile(item->getXMLElement());
+    impactSolver->writeXMLFile(item->getXMLElement());
+    numberOfMaximalIterations->writeXMLFile(item->getXMLElement());
+    projection->writeXMLFile(item->getXMLElement());
+    g->writeXMLFile(item->getXMLElement());
+    gd->writeXMLFile(item->getXMLElement());
+    gdd->writeXMLFile(item->getXMLElement());
+    la->writeXMLFile(item->getXMLElement());
+    La->writeXMLFile(item->getXMLElement());
+    inverseKinetics->writeXMLFile(item->getXMLElement());
+    initialProjection->writeXMLFile(item->getXMLElement());
+    useConstraintSolverForPlot->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -639,16 +635,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* ObjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
-    q0->initializeUsingXML(element->getXMLElement());
-    u0->initializeUsingXML(element->getXMLElement());
+    ElementPropertyDialog::initializeUsingXML(item->getXMLElement());
+    q0->initializeUsingXML(item->getXMLElement());
+    u0->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ObjectPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ElementPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    q0->writeXMLFile(element->getXMLElement(),ref);
-    u0->writeXMLFile(element->getXMLElement(),ref);
+    ElementPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    q0->writeXMLFile(item->getXMLElement(),ref);
+    u0->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -660,14 +656,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* BodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ObjectPropertyDialog::initializeUsingXML(element->getXMLElement());
-    R->initializeUsingXML(element->getXMLElement());
+    ObjectPropertyDialog::initializeUsingXML(item->getXMLElement());
+    R->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* BodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ObjectPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    R->writeXMLFile(element->getXMLElement(),ref);
+    ObjectPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    R->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -711,35 +707,35 @@ namespace MBSimGUI {
   }
 
   DOMElement* RigidBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    BodyPropertyDialog::initializeUsingXML(element->getXMLElement());
-    K->initializeUsingXML(element->getXMLElement());
-    mass->initializeUsingXML(element->getXMLElement());
-    inertia->initializeUsingXML(element->getXMLElement());
-    frameForInertiaTensor->initializeUsingXML(element->getXMLElement());
-    translation->initializeUsingXML(element->getXMLElement());
-    rotation->initializeUsingXML(element->getXMLElement());
-    translationDependentRotation->initializeUsingXML(element->getXMLElement());
-    coordinateTransformationForRotation->initializeUsingXML(element->getXMLElement());
-    bodyFixedRepresentationOfAngularVelocity->initializeUsingXML(element->getXMLElement());
-    ombv->initializeUsingXML(element->getXMLElement());
-    ombvFrameRef->initializeUsingXML(element->getXMLElement());
+    BodyPropertyDialog::initializeUsingXML(item->getXMLElement());
+    K->initializeUsingXML(item->getXMLElement());
+    mass->initializeUsingXML(item->getXMLElement());
+    inertia->initializeUsingXML(item->getXMLElement());
+    frameForInertiaTensor->initializeUsingXML(item->getXMLElement());
+    translation->initializeUsingXML(item->getXMLElement());
+    rotation->initializeUsingXML(item->getXMLElement());
+    translationDependentRotation->initializeUsingXML(item->getXMLElement());
+    coordinateTransformationForRotation->initializeUsingXML(item->getXMLElement());
+    bodyFixedRepresentationOfAngularVelocity->initializeUsingXML(item->getXMLElement());
+    ombv->initializeUsingXML(item->getXMLElement());
+    ombvFrameRef->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RigidBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    BodyPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    K->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    mass->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    inertia->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    frameForInertiaTensor->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    translation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    rotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    translationDependentRotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    coordinateTransformationForRotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    bodyFixedRepresentationOfAngularVelocity->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    DOMElement *ele =element->getXMLContours()->getNextElementSibling();
-    ombv->writeXMLFile(element->getXMLElement(),ele);
-    ombvFrameRef->writeXMLFile(element->getXMLElement(),ele);
+    BodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    K->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    mass->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    inertia->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    frameForInertiaTensor->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    coordinateTransformationForRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    bodyFixedRepresentationOfAngularVelocity->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
+    ombv->writeXMLFile(item->getXMLElement(),ele);
+    ombvFrameRef->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
   }
 
@@ -1029,73 +1025,73 @@ namespace MBSimGUI {
   }
 
   DOMElement* FlexibleBodyFFRPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    BodyPropertyDialog::initializeUsingXML(element->getXMLElement());
-    mass->initializeUsingXML(element->getXMLElement());
-    pdm->initializeUsingXML(element->getXMLElement());
-    ppdm->initializeUsingXML(element->getXMLElement());
-    Pdm->initializeUsingXML(element->getXMLElement());
-    rPdm->initializeUsingXML(element->getXMLElement());
-    PPdm->initializeUsingXML(element->getXMLElement());
-    Ke->initializeUsingXML(element->getXMLElement());
-    De->initializeUsingXML(element->getXMLElement());
-    beta->initializeUsingXML(element->getXMLElement());
-    Knl1->initializeUsingXML(element->getXMLElement());
-    Knl2->initializeUsingXML(element->getXMLElement());
-    ksigma0->initializeUsingXML(element->getXMLElement());
-    ksigma1->initializeUsingXML(element->getXMLElement());
-    K0t->initializeUsingXML(element->getXMLElement());
-    K0r->initializeUsingXML(element->getXMLElement());
-    K0om->initializeUsingXML(element->getXMLElement());
-    r->initializeUsingXML(element->getXMLElement());
-    A->initializeUsingXML(element->getXMLElement());
-    Phi->initializeUsingXML(element->getXMLElement());
-    Psi->initializeUsingXML(element->getXMLElement());
-    sigmahel->initializeUsingXML(element->getXMLElement());
-    sigmahen->initializeUsingXML(element->getXMLElement());
-    sigma0->initializeUsingXML(element->getXMLElement());
-    K0F->initializeUsingXML(element->getXMLElement());
-    K0M->initializeUsingXML(element->getXMLElement());
-    translation->initializeUsingXML(element->getXMLElement());
-    rotation->initializeUsingXML(element->getXMLElement());
-    translationDependentRotation->initializeUsingXML(element->getXMLElement());
-    coordinateTransformationForRotation->initializeUsingXML(element->getXMLElement());
-    ombvEditor->initializeUsingXML(element->getXMLElement());
+    BodyPropertyDialog::initializeUsingXML(item->getXMLElement());
+    mass->initializeUsingXML(item->getXMLElement());
+    pdm->initializeUsingXML(item->getXMLElement());
+    ppdm->initializeUsingXML(item->getXMLElement());
+    Pdm->initializeUsingXML(item->getXMLElement());
+    rPdm->initializeUsingXML(item->getXMLElement());
+    PPdm->initializeUsingXML(item->getXMLElement());
+    Ke->initializeUsingXML(item->getXMLElement());
+    De->initializeUsingXML(item->getXMLElement());
+    beta->initializeUsingXML(item->getXMLElement());
+    Knl1->initializeUsingXML(item->getXMLElement());
+    Knl2->initializeUsingXML(item->getXMLElement());
+    ksigma0->initializeUsingXML(item->getXMLElement());
+    ksigma1->initializeUsingXML(item->getXMLElement());
+    K0t->initializeUsingXML(item->getXMLElement());
+    K0r->initializeUsingXML(item->getXMLElement());
+    K0om->initializeUsingXML(item->getXMLElement());
+    r->initializeUsingXML(item->getXMLElement());
+    A->initializeUsingXML(item->getXMLElement());
+    Phi->initializeUsingXML(item->getXMLElement());
+    Psi->initializeUsingXML(item->getXMLElement());
+    sigmahel->initializeUsingXML(item->getXMLElement());
+    sigmahen->initializeUsingXML(item->getXMLElement());
+    sigma0->initializeUsingXML(item->getXMLElement());
+    K0F->initializeUsingXML(item->getXMLElement());
+    K0M->initializeUsingXML(item->getXMLElement());
+    translation->initializeUsingXML(item->getXMLElement());
+    rotation->initializeUsingXML(item->getXMLElement());
+    translationDependentRotation->initializeUsingXML(item->getXMLElement());
+    coordinateTransformationForRotation->initializeUsingXML(item->getXMLElement());
+    ombvEditor->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FlexibleBodyFFRPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    BodyPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    mass->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    pdm->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    ppdm->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    Pdm->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    rPdm->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    PPdm->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    Ke->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    De->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    beta->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    Knl1->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    Knl2->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    ksigma0->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    ksigma1->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    K0t->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    K0r->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    K0om->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    r->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    A->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    Phi->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    Psi->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    sigmahel->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    sigmahen->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    sigma0->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    K0F->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    K0M->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    translation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    rotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    translationDependentRotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    coordinateTransformationForRotation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    DOMElement *ele =element->getXMLContours()->getNextElementSibling();
-    ombvEditor->writeXMLFile(element->getXMLElement(),ele);
+    BodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    mass->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    pdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    ppdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    Pdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    rPdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    PPdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    Ke->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    De->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    Knl1->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    Knl2->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    ksigma0->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    ksigma1->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    K0t->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    K0r->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    K0om->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    r->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    A->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    Phi->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    Psi->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    sigmahel->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    sigmahen->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    sigma0->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    K0F->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    K0M->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    coordinateTransformationForRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
+    ombvEditor->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
   }
 
@@ -1114,14 +1110,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    MechanicalConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
-    support->initializeUsingXML(element->getXMLElement());
+    MechanicalConstraintPropertyDialog::initializeUsingXML(item->getXMLElement());
+    support->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    MechanicalConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    support->writeXMLFile(element->getXMLElement(),ref);
+    MechanicalConstraintPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    support->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1135,36 +1131,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedGearConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    GeneralizedConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
-    dependentBody->initializeUsingXML(element->getXMLElement());
-    independentBodies->initializeUsingXML(element->getXMLElement());
+    GeneralizedConstraintPropertyDialog::initializeUsingXML(item->getXMLElement());
+    dependentBody->initializeUsingXML(item->getXMLElement());
+    independentBodies->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedGearConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GeneralizedConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    dependentBody->writeXMLFile(element->getXMLElement(),ref);
-    independentBodies->writeXMLFile(element->getXMLElement(),ref);
+    GeneralizedConstraintPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    dependentBody->writeXMLFile(item->getXMLElement(),ref);
+    independentBodies->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
-
-//  void GeneralizedGearConstraintPropertyDialog::toWidget(Element *element) {
-//    GeneralizedConstraintPropertyDialog::toWidget(element);
-//    static_cast<GeneralizedGearConstraint*>(element)->dependentBody.toWidget(dependentBody);
-//    static_cast<GeneralizedGearConstraint*>(element)->independentBodies.toWidget(independentBodies);
-//  }
-//
-//  void GeneralizedGearConstraintPropertyDialog::fromWidget(Element *element) {
-//    GeneralizedConstraintPropertyDialog::fromWidget(element);
-//    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<GeneralizedGearConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
-//    if(body)
-//      body->setConstrained(false);
-//    static_cast<GeneralizedGearConstraint*>(element)->dependentBody.fromWidget(dependentBody);
-//    static_cast<GeneralizedGearConstraint*>(element)->independentBodies.fromWidget(independentBodies);
-//    body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<GeneralizedGearConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
-//    if(body)
-//      body->setConstrained(true);
-//  }
 
   GeneralizedDualConstraintPropertyDialog::GeneralizedDualConstraintPropertyDialog(GeneralizedDualConstraint *constraint, QWidget *parent, const Qt::WindowFlags& f) : GeneralizedConstraintPropertyDialog(constraint,parent,f) {
 
@@ -1176,38 +1154,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedDualConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    GeneralizedConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
-    dependentBody->initializeUsingXML(element->getXMLElement());
-    independentBody->initializeUsingXML(element->getXMLElement());
+    GeneralizedConstraintPropertyDialog::initializeUsingXML(item->getXMLElement());
+    dependentBody->initializeUsingXML(item->getXMLElement());
+    independentBody->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedDualConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GeneralizedConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    dependentBody->writeXMLFile(element->getXMLElement(),ref);
-    independentBody->writeXMLFile(element->getXMLElement(),ref);
+    GeneralizedConstraintPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    dependentBody->writeXMLFile(item->getXMLElement(),ref);
+    independentBody->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
-
-//  void GeneralizedDualConstraintPropertyDialog::toWidget(Element *element) {
-//    GeneralizedConstraintPropertyDialog::toWidget(element);
-//    dependentBody->getWidget()->blockSignals(true);
-//    static_cast<GeneralizedDualConstraint*>(element)->dependentBody.toWidget(dependentBody);
-//    dependentBody->getWidget()->blockSignals(false);
-//    static_cast<GeneralizedDualConstraint*>(element)->independentBody.toWidget(independentBody);
-//  }
-//
-//  void GeneralizedDualConstraintPropertyDialog::fromWidget(Element *element) {
-//    GeneralizedConstraintPropertyDialog::fromWidget(element);
-//    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<GeneralizedDualConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
-//    if(body)
-//      body->setConstrained(false);
-//    static_cast<GeneralizedDualConstraint*>(element)->dependentBody.fromWidget(dependentBody);
-//    static_cast<GeneralizedDualConstraint*>(element)->independentBody.fromWidget(independentBody);
-//    body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<GeneralizedDualConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
-//    if(body)
-//      body->setConstrained(true);
-//  }
 
   GeneralizedPositionConstraintPropertyDialog::GeneralizedPositionConstraintPropertyDialog(GeneralizedPositionConstraint *constraint, QWidget *parent, const Qt::WindowFlags& f) : GeneralizedDualConstraintPropertyDialog(constraint,parent,f) {
 
@@ -1223,14 +1181,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedPositionConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    GeneralizedDualConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
-    constraintFunction->initializeUsingXML(element->getXMLElement());
+    GeneralizedDualConstraintPropertyDialog::initializeUsingXML(item->getXMLElement());
+    constraintFunction->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedPositionConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    constraintFunction->writeXMLFile(element->getXMLElement(),ref);
+    GeneralizedDualConstraintPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    constraintFunction->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1252,16 +1210,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedVelocityConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    GeneralizedDualConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
-    x0->initializeUsingXML(element->getXMLElement());
-    constraintFunction->initializeUsingXML(element->getXMLElement());
+    GeneralizedDualConstraintPropertyDialog::initializeUsingXML(item->getXMLElement());
+    x0->initializeUsingXML(item->getXMLElement());
+    constraintFunction->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedVelocityConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    x0->writeXMLFile(element->getXMLElement(),ref);
-    constraintFunction->writeXMLFile(element->getXMLElement(),ref);
+    GeneralizedDualConstraintPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    x0->writeXMLFile(item->getXMLElement(),ref);
+    constraintFunction->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1288,16 +1246,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedAccelerationConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    GeneralizedDualConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
-    x0->initializeUsingXML(element->getXMLElement());
-    constraintFunction->initializeUsingXML(element->getXMLElement());
+    GeneralizedDualConstraintPropertyDialog::initializeUsingXML(item->getXMLElement());
+    x0->initializeUsingXML(item->getXMLElement());
+    constraintFunction->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedAccelerationConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GeneralizedDualConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    x0->writeXMLFile(element->getXMLElement(),ref);
-    constraintFunction->writeXMLFile(element->getXMLElement(),ref);
+    GeneralizedDualConstraintPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    x0->writeXMLFile(item->getXMLElement(),ref);
+    constraintFunction->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1352,80 +1310,29 @@ namespace MBSimGUI {
 //      q0_->resize_(size);
   }
 
-//  void JointConstraintPropertyDialog::toWidget(Element *element) {
-//    MechanicalConstraintPropertyDialog::toWidget(element);
-//    static_cast<JointConstraint*>(element)->independentBody.toWidget(independentBody);
-//    dependentBodiesFirstSide->getWidget()->blockSignals(true);
-//    static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.toWidget(dependentBodiesFirstSide);
-//    dependentBodiesFirstSide->getWidget()->blockSignals(false);
-//    dependentBodiesSecondSide->getWidget()->blockSignals(true);
-//    static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.toWidget(dependentBodiesSecondSide);
-//    dependentBodiesSecondSide->getWidget()->blockSignals(false);
-//    static_cast<JointConstraint*>(element)->refFrameID.toWidget(refFrameID);
-//    static_cast<JointConstraint*>(element)->force.toWidget(force);
-//    static_cast<JointConstraint*>(element)->moment.toWidget(moment);
-//    static_cast<JointConstraint*>(element)->connections.toWidget(connections);
-//    static_cast<JointConstraint*>(element)->q0.toWidget(q0);
-//    updateWidget();
-//  }
-//
-//  void JointConstraintPropertyDialog::fromWidget(Element *element) {
-//    MechanicalConstraintPropertyDialog::fromWidget(element);
-//    ListProperty *list1 = static_cast<ListProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty());
-//    for(int i=0; i<list1->getSize(); i++) {
-//      RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list1->getProperty(i))->getBodyPtr();
-//      if(body)
-//        body->setConstrained(false);
-//    }
-//    ListProperty *list2 = static_cast<ListProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty());
-//    for(int i=0; i<list2->getSize(); i++) {
-//      RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list2->getProperty(i))->getBodyPtr();
-//      if(body)
-//        body->setConstrained(false);
-//    }
-//    static_cast<JointConstraint*>(element)->independentBody.fromWidget(independentBody);
-//    static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.fromWidget(dependentBodiesFirstSide);
-//    static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.fromWidget(dependentBodiesSecondSide);
-//    static_cast<JointConstraint*>(element)->refFrameID.fromWidget(refFrameID);
-//    static_cast<JointConstraint*>(element)->force.fromWidget(force);
-//    static_cast<JointConstraint*>(element)->moment.fromWidget(moment);
-//    static_cast<JointConstraint*>(element)->connections.fromWidget(connections);
-//    for(int i=0; i<list1->getSize(); i++) {
-//      RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list1->getProperty(i))->getBodyPtr();
-//      if(body)
-//        body->setConstrained(true);
-//    }
-//    for(int i=0; i<list2->getSize(); i++) {
-//      RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list2->getProperty(i))->getBodyPtr();
-//      if(body)
-//        body->setConstrained(true);
-//    }
-//    static_cast<JointConstraint*>(element)->q0.fromWidget(q0);
-//  }
-
   DOMElement* JointConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    MechanicalConstraintPropertyDialog::initializeUsingXML(element->getXMLElement());
-    dependentBodiesFirstSide->initializeUsingXML(element->getXMLElement());
-    dependentBodiesSecondSide->initializeUsingXML(element->getXMLElement());
-    independentBody->initializeUsingXML(element->getXMLElement());
-    connections->initializeUsingXML(element->getXMLElement());
-    refFrameID->initializeUsingXML(element->getXMLElement());
-    force->initializeUsingXML(element->getXMLElement());
-    moment->initializeUsingXML(element->getXMLElement());
-    q0->initializeUsingXML(element->getXMLElement());
+    MechanicalConstraintPropertyDialog::initializeUsingXML(item->getXMLElement());
+    dependentBodiesFirstSide->initializeUsingXML(item->getXMLElement());
+    dependentBodiesSecondSide->initializeUsingXML(item->getXMLElement());
+    independentBody->initializeUsingXML(item->getXMLElement());
+    connections->initializeUsingXML(item->getXMLElement());
+    refFrameID->initializeUsingXML(item->getXMLElement());
+    force->initializeUsingXML(item->getXMLElement());
+    moment->initializeUsingXML(item->getXMLElement());
+    q0->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* JointConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    MechanicalConstraintPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    dependentBodiesFirstSide->writeXMLFile(element->getXMLElement(),ref);
-    dependentBodiesSecondSide->writeXMLFile(element->getXMLElement(),ref);
-    independentBody->writeXMLFile(element->getXMLElement(),ref);
-    connections->writeXMLFile(element->getXMLElement(),ref);
-    refFrameID->writeXMLFile(element->getXMLElement(),ref);
-    force->writeXMLFile(element->getXMLElement(),ref);
-    moment->writeXMLFile(element->getXMLElement(),ref);
-    q0->writeXMLFile(element->getXMLElement(),ref);
+    MechanicalConstraintPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    dependentBodiesFirstSide->writeXMLFile(item->getXMLElement(),ref);
+    dependentBodiesSecondSide->writeXMLFile(item->getXMLElement(),ref);
+    independentBody->writeXMLFile(item->getXMLElement(),ref);
+    connections->writeXMLFile(item->getXMLElement(),ref);
+    refFrameID->writeXMLFile(item->getXMLElement(),ref);
+    force->writeXMLFile(item->getXMLElement(),ref);
+    moment->writeXMLFile(item->getXMLElement(),ref);
+    q0->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1447,14 +1354,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrameLinkPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
-    connections->initializeUsingXML(element->getXMLElement());
+    ElementPropertyDialog::initializeUsingXML(item->getXMLElement());
+    connections->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FrameLinkPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ElementPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    connections->writeXMLFile(element->getXMLElement(),ref);
+    ElementPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    connections->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1467,14 +1374,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* FloatingFrameLinkPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    FrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    refFrameID->initializeUsingXML(element->getXMLElement());
+    FrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    refFrameID->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FloatingFrameLinkPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    FrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    refFrameID->writeXMLFile(element->getXMLElement(),ref);
+    FrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    refFrameID->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1486,14 +1393,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* RigidBodyLinkPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    MechanicalLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    support->initializeUsingXML(element->getXMLElement());
+    MechanicalLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    support->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RigidBodyLinkPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    MechanicalLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    support->writeXMLFile(element->getXMLElement(),ref);
+    MechanicalLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    support->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1505,14 +1412,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* DualRigidBodyLinkPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidBodyLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    connections->initializeUsingXML(element->getXMLElement());
+    RigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    connections->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* DualRigidBodyLinkPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidBodyLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    connections->writeXMLFile(element->getXMLElement(),ref);
+    RigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    connections->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1553,22 +1460,22 @@ namespace MBSimGUI {
   }
 
   DOMElement* KineticExcitationPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    FloatingFrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    forceDirection->initializeUsingXML(element->getXMLElement());
-    forceFunction->initializeUsingXML(element->getXMLElement());
-    momentDirection->initializeUsingXML(element->getXMLElement());
-    momentFunction->initializeUsingXML(element->getXMLElement());
-    arrow->initializeUsingXML(element->getXMLElement());
+    FloatingFrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    forceDirection->initializeUsingXML(item->getXMLElement());
+    forceFunction->initializeUsingXML(item->getXMLElement());
+    momentDirection->initializeUsingXML(item->getXMLElement());
+    momentFunction->initializeUsingXML(item->getXMLElement());
+    arrow->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* KineticExcitationPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    FloatingFrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    forceDirection->writeXMLFile(element->getXMLElement(),ref);
-    forceFunction->writeXMLFile(element->getXMLElement(),ref);
-    momentDirection->writeXMLFile(element->getXMLElement(),ref);
-    momentFunction->writeXMLFile(element->getXMLElement(),ref);
-    arrow->writeXMLFile(element->getXMLElement(),ref);
+    FloatingFrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    forceDirection->writeXMLFile(item->getXMLElement(),ref);
+    forceFunction->writeXMLFile(item->getXMLElement(),ref);
+    momentDirection->writeXMLFile(item->getXMLElement(),ref);
+    momentFunction->writeXMLFile(item->getXMLElement(),ref);
+    arrow->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1585,18 +1492,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* SpringDamperPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    FixedFrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    forceFunction->initializeUsingXML(element->getXMLElement());
-    unloadedLength->initializeUsingXML(element->getXMLElement());
-    coilSpring->initializeUsingXML(element->getXMLElement());
+    FixedFrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    forceFunction->initializeUsingXML(item->getXMLElement());
+    unloadedLength->initializeUsingXML(item->getXMLElement());
+    coilSpring->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* SpringDamperPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    FixedFrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    forceFunction->writeXMLFile(element->getXMLElement(),ref);
-    unloadedLength->writeXMLFile(element->getXMLElement(),ref);
-    coilSpring->writeXMLFile(element->getXMLElement(),ref);
+    FixedFrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    forceFunction->writeXMLFile(item->getXMLElement(),ref);
+    unloadedLength->writeXMLFile(item->getXMLElement(),ref);
+    coilSpring->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1616,20 +1523,20 @@ namespace MBSimGUI {
   }
 
   DOMElement* DirectionalSpringDamperPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    FloatingFrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    forceDirection->initializeUsingXML(element->getXMLElement());
-    forceFunction->initializeUsingXML(element->getXMLElement());
-    unloadedLength->initializeUsingXML(element->getXMLElement());
-    coilSpring->initializeUsingXML(element->getXMLElement());
+    FloatingFrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    forceDirection->initializeUsingXML(item->getXMLElement());
+    forceFunction->initializeUsingXML(item->getXMLElement());
+    unloadedLength->initializeUsingXML(item->getXMLElement());
+    coilSpring->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* DirectionalSpringDamperPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    FloatingFrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    forceDirection->writeXMLFile(element->getXMLElement(),ref);
-    forceFunction->writeXMLFile(element->getXMLElement(),ref);
-    unloadedLength->writeXMLFile(element->getXMLElement(),ref);
-    coilSpring->writeXMLFile(element->getXMLElement(),ref);
+    FloatingFrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    forceDirection->writeXMLFile(item->getXMLElement(),ref);
+    forceFunction->writeXMLFile(item->getXMLElement(),ref);
+    unloadedLength->writeXMLFile(item->getXMLElement(),ref);
+    coilSpring->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1649,20 +1556,20 @@ namespace MBSimGUI {
   }
 
   DOMElement* JointPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    FloatingFrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    forceDirection->initializeUsingXML(element->getXMLElement());
-    forceLaw->initializeUsingXML(element->getXMLElement());
-    momentDirection->initializeUsingXML(element->getXMLElement());
-    momentLaw->initializeUsingXML(element->getXMLElement());
+    FloatingFrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    forceDirection->initializeUsingXML(item->getXMLElement());
+    forceLaw->initializeUsingXML(item->getXMLElement());
+    momentDirection->initializeUsingXML(item->getXMLElement());
+    momentLaw->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* JointPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    FloatingFrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    forceDirection->writeXMLFile(element->getXMLElement(),ref);
-    forceLaw->writeXMLFile(element->getXMLElement(),ref);
-    momentDirection->writeXMLFile(element->getXMLElement(),ref);
-    momentLaw->writeXMLFile(element->getXMLElement(),ref);
+    FloatingFrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    forceDirection->writeXMLFile(item->getXMLElement(),ref);
+    forceLaw->writeXMLFile(item->getXMLElement(),ref);
+    momentDirection->writeXMLFile(item->getXMLElement(),ref);
+    momentLaw->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1679,18 +1586,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* ElasticJointPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    FloatingFrameLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    forceDirection->initializeUsingXML(element->getXMLElement());
-    momentDirection->initializeUsingXML(element->getXMLElement());
-    function->initializeUsingXML(element->getXMLElement());
+    FloatingFrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    forceDirection->initializeUsingXML(item->getXMLElement());
+    momentDirection->initializeUsingXML(item->getXMLElement());
+    function->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ElasticJointPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    FloatingFrameLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    forceDirection->writeXMLFile(element->getXMLElement(),ref);
-    momentDirection->writeXMLFile(element->getXMLElement(),ref);
-    function->writeXMLFile(element->getXMLElement(),ref);
+    FloatingFrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    forceDirection->writeXMLFile(item->getXMLElement(),ref);
+    momentDirection->writeXMLFile(item->getXMLElement(),ref);
+    function->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1704,16 +1611,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedSpringDamperPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    DualRigidBodyLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    function->initializeUsingXML(element->getXMLElement());
-    unloadedLength->initializeUsingXML(element->getXMLElement());
+    DualRigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    function->initializeUsingXML(item->getXMLElement());
+    unloadedLength->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedSpringDamperPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DualRigidBodyLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    function->writeXMLFile(element->getXMLElement(),ref);
-    unloadedLength->writeXMLFile(element->getXMLElement(),ref);
+    DualRigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    function->writeXMLFile(item->getXMLElement(),ref);
+    unloadedLength->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1727,16 +1634,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedFrictionPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    DualRigidBodyLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    function->initializeUsingXML(element->getXMLElement());
-    normalForce->initializeUsingXML(element->getXMLElement());
+    DualRigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    function->initializeUsingXML(item->getXMLElement());
+    normalForce->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedFrictionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DualRigidBodyLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    function->writeXMLFile(element->getXMLElement(),ref);
-    normalForce->writeXMLFile(element->getXMLElement(),ref);
+    DualRigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    function->writeXMLFile(item->getXMLElement(),ref);
+    normalForce->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1756,18 +1663,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedGearPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidBodyLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    gearOutput->initializeUsingXML(element->getXMLElement());
-    gearInput->initializeUsingXML(element->getXMLElement());
-    function->initializeUsingXML(element->getXMLElement());
+    RigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    gearOutput->initializeUsingXML(item->getXMLElement());
+    gearInput->initializeUsingXML(item->getXMLElement());
+    function->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedGearPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidBodyLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    gearOutput->writeXMLFile(element->getXMLElement(),ref);
-    gearInput->writeXMLFile(element->getXMLElement(),ref);
-    function->writeXMLFile(element->getXMLElement(),ref);
+    RigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    gearOutput->writeXMLFile(item->getXMLElement(),ref);
+    gearInput->writeXMLFile(item->getXMLElement(),ref);
+    function->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1783,20 +1690,20 @@ namespace MBSimGUI {
   void GeneralizedElasticConnectionPropertyDialog::updateWidget() {
 //    RigidBodyOfReferenceWidget* widget = static_cast<ConnectRigidBodiesWidget*>(static_cast<ChoiceWidget2*>(connections->getWidget())->getWidget())->getWidget(0);
 //    if(not widget->getBody().isEmpty()) {
-//      int size = element->getByPath<RigidBody>(widget->getBody().toStdString())->getuRelSize();
+//      int size = item->getByPath<RigidBody>(widget->getBody().toStdString())->getuRelSize();
 //      function->resize_(size,size);
 //    }
   }
 
   DOMElement* GeneralizedElasticConnectionPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    DualRigidBodyLinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    function->initializeUsingXML(element->getXMLElement());
+    DualRigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    function->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedElasticConnectionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DualRigidBodyLinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    function->writeXMLFile(element->getXMLElement(),ref);
+    DualRigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    function->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1828,26 +1735,26 @@ namespace MBSimGUI {
   }
 
   DOMElement* ContactPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    LinkPropertyDialog::initializeUsingXML(element->getXMLElement());
-    connections->initializeUsingXML(element->getXMLElement());
-    contactForceLaw->initializeUsingXML(element->getXMLElement());
-    contactImpactLaw->initializeUsingXML(element->getXMLElement());
-    frictionForceLaw->initializeUsingXML(element->getXMLElement());
-    frictionImpactLaw->initializeUsingXML(element->getXMLElement());
-    searchAllContactPoints->initializeUsingXML(element->getXMLElement());
-    initialGuess->initializeUsingXML(element->getXMLElement());
+    LinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    connections->initializeUsingXML(item->getXMLElement());
+    contactForceLaw->initializeUsingXML(item->getXMLElement());
+    contactImpactLaw->initializeUsingXML(item->getXMLElement());
+    frictionForceLaw->initializeUsingXML(item->getXMLElement());
+    frictionImpactLaw->initializeUsingXML(item->getXMLElement());
+    searchAllContactPoints->initializeUsingXML(item->getXMLElement());
+    initialGuess->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ContactPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    LinkPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    connections->writeXMLFile(element->getXMLElement(),ref);
-    contactForceLaw->writeXMLFile(element->getXMLElement(),ref);
-    contactImpactLaw->writeXMLFile(element->getXMLElement(),ref);
-    frictionForceLaw->writeXMLFile(element->getXMLElement(),ref);
-    frictionImpactLaw->writeXMLFile(element->getXMLElement(),ref);
-    searchAllContactPoints->writeXMLFile(element->getXMLElement(),ref);
-    initialGuess->writeXMLFile(element->getXMLElement(),ref);
+    LinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    connections->writeXMLFile(item->getXMLElement(),ref);
+    contactForceLaw->writeXMLFile(item->getXMLElement(),ref);
+    contactImpactLaw->writeXMLFile(item->getXMLElement(),ref);
+    frictionForceLaw->writeXMLFile(item->getXMLElement(),ref);
+    frictionImpactLaw->writeXMLFile(item->getXMLElement(),ref);
+    searchAllContactPoints->writeXMLFile(item->getXMLElement(),ref);
+    initialGuess->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1875,22 +1782,22 @@ namespace MBSimGUI {
   }
 
   DOMElement* KinematicCoordinatesObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
-    frame->initializeUsingXML(element->getXMLElement());
-    frameOfReference->initializeUsingXML(element->getXMLElement());
-    position->initializeUsingXML(element->getXMLElement());
-    velocity->initializeUsingXML(element->getXMLElement());
-    acceleration->initializeUsingXML(element->getXMLElement());
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    frame->initializeUsingXML(item->getXMLElement());
+    frameOfReference->initializeUsingXML(item->getXMLElement());
+    position->initializeUsingXML(item->getXMLElement());
+    velocity->initializeUsingXML(item->getXMLElement());
+    acceleration->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* KinematicCoordinatesObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    frame->writeXMLFile(element->getXMLElement(),ref);
-    frameOfReference->writeXMLFile(element->getXMLElement(),ref);
-    position->writeXMLFile(element->getXMLElement(),ref);
-    velocity->writeXMLFile(element->getXMLElement(),ref);
-    acceleration->writeXMLFile(element->getXMLElement(),ref);
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    frame->writeXMLFile(item->getXMLElement(),ref);
+    frameOfReference->writeXMLFile(item->getXMLElement(),ref);
+    position->writeXMLFile(item->getXMLElement(),ref);
+    velocity->writeXMLFile(item->getXMLElement(),ref);
+    acceleration->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1921,26 +1828,26 @@ namespace MBSimGUI {
   }
 
   DOMElement* RelativeKinematicsObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
-    frame->initializeUsingXML(element->getXMLElement());
-    refFrame->initializeUsingXML(element->getXMLElement());
-    position->initializeUsingXML(element->getXMLElement());
-    velocity->initializeUsingXML(element->getXMLElement());
-    angularVelocity->initializeUsingXML(element->getXMLElement());
-    acceleration->initializeUsingXML(element->getXMLElement());
-    angularAcceleration->initializeUsingXML(element->getXMLElement());
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    frame->initializeUsingXML(item->getXMLElement());
+    refFrame->initializeUsingXML(item->getXMLElement());
+    position->initializeUsingXML(item->getXMLElement());
+    velocity->initializeUsingXML(item->getXMLElement());
+    angularVelocity->initializeUsingXML(item->getXMLElement());
+    acceleration->initializeUsingXML(item->getXMLElement());
+    angularAcceleration->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RelativeKinematicsObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    frame->writeXMLFile(element->getXMLElement(),ref);
-    refFrame->writeXMLFile(element->getXMLElement(),ref);
-    position->writeXMLFile(element->getXMLElement(),ref);
-    velocity->writeXMLFile(element->getXMLElement(),ref);
-    angularVelocity->writeXMLFile(element->getXMLElement(),ref);
-    acceleration->writeXMLFile(element->getXMLElement(),ref);
-    angularAcceleration->writeXMLFile(element->getXMLElement(),ref);
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    frame->writeXMLFile(item->getXMLElement(),ref);
+    refFrame->writeXMLFile(item->getXMLElement(),ref);
+    position->writeXMLFile(item->getXMLElement(),ref);
+    velocity->writeXMLFile(item->getXMLElement(),ref);
+    angularVelocity->writeXMLFile(item->getXMLElement(),ref);
+    acceleration->writeXMLFile(item->getXMLElement(),ref);
+    angularAcceleration->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1959,18 +1866,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* MechanicalLinkObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
-    link->initializeUsingXML(element->getXMLElement());
-    forceArrow->initializeUsingXML(element->getXMLElement());
-    momentArrow->initializeUsingXML(element->getXMLElement());
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    link->initializeUsingXML(item->getXMLElement());
+    forceArrow->initializeUsingXML(item->getXMLElement());
+    momentArrow->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* MechanicalLinkObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    link->writeXMLFile(element->getXMLElement(),ref);
-    forceArrow->writeXMLFile(element->getXMLElement(),ref);
-    momentArrow->writeXMLFile(element->getXMLElement(),ref);
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    link->writeXMLFile(item->getXMLElement(),ref);
+    forceArrow->writeXMLFile(item->getXMLElement(),ref);
+    momentArrow->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1989,18 +1896,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* MechanicalConstraintObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
-    constraint->initializeUsingXML(element->getXMLElement());
-    forceArrow->initializeUsingXML(element->getXMLElement());
-    momentArrow->initializeUsingXML(element->getXMLElement());
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    constraint->initializeUsingXML(item->getXMLElement());
+    forceArrow->initializeUsingXML(item->getXMLElement());
+    momentArrow->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* MechanicalConstraintObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    constraint->writeXMLFile(element->getXMLElement(),ref);
-    forceArrow->writeXMLFile(element->getXMLElement(),ref);
-    momentArrow->writeXMLFile(element->getXMLElement(),ref);
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    constraint->writeXMLFile(item->getXMLElement(),ref);
+    forceArrow->writeXMLFile(item->getXMLElement(),ref);
+    momentArrow->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2028,24 +1935,24 @@ namespace MBSimGUI {
   }
 
   DOMElement* ContactObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
-    link->initializeUsingXML(element->getXMLElement());
-    forceArrow->initializeUsingXML(element->getXMLElement());
-    momentArrow->initializeUsingXML(element->getXMLElement());
-    contactPoints->initializeUsingXML(element->getXMLElement());
-    normalForceArrow->initializeUsingXML(element->getXMLElement());
-    frictionArrow->initializeUsingXML(element->getXMLElement());
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    link->initializeUsingXML(item->getXMLElement());
+    forceArrow->initializeUsingXML(item->getXMLElement());
+    momentArrow->initializeUsingXML(item->getXMLElement());
+    contactPoints->initializeUsingXML(item->getXMLElement());
+    normalForceArrow->initializeUsingXML(item->getXMLElement());
+    frictionArrow->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ContactObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    link->writeXMLFile(element->getXMLElement(),ref);
-    forceArrow->writeXMLFile(element->getXMLElement(),ref);
-    momentArrow->writeXMLFile(element->getXMLElement(),ref);
-    contactPoints->writeXMLFile(element->getXMLElement(),ref);
-    normalForceArrow->writeXMLFile(element->getXMLElement(),ref);
-    frictionArrow->writeXMLFile(element->getXMLElement(),ref);
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    link->writeXMLFile(item->getXMLElement(),ref);
+    forceArrow->writeXMLFile(item->getXMLElement(),ref);
+    momentArrow->writeXMLFile(item->getXMLElement(),ref);
+    contactPoints->writeXMLFile(item->getXMLElement(),ref);
+    normalForceArrow->writeXMLFile(item->getXMLElement(),ref);
+    frictionArrow->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2073,24 +1980,24 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrameObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
-    frame->initializeUsingXML(element->getXMLElement());
-    position->initializeUsingXML(element->getXMLElement());
-    velocity->initializeUsingXML(element->getXMLElement());
-    angularVelocity->initializeUsingXML(element->getXMLElement());
-    acceleration->initializeUsingXML(element->getXMLElement());
-    angularAcceleration->initializeUsingXML(element->getXMLElement());
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    frame->initializeUsingXML(item->getXMLElement());
+    position->initializeUsingXML(item->getXMLElement());
+    velocity->initializeUsingXML(item->getXMLElement());
+    angularVelocity->initializeUsingXML(item->getXMLElement());
+    acceleration->initializeUsingXML(item->getXMLElement());
+    angularAcceleration->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FrameObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    frame->writeXMLFile(element->getXMLElement(),ref);
-    position->writeXMLFile(element->getXMLElement(),ref);
-    velocity->writeXMLFile(element->getXMLElement(),ref);
-    angularVelocity->writeXMLFile(element->getXMLElement(),ref);
-    acceleration->writeXMLFile(element->getXMLElement(),ref);
-    angularAcceleration->writeXMLFile(element->getXMLElement(),ref);
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    frame->writeXMLFile(item->getXMLElement(),ref);
+    position->writeXMLFile(item->getXMLElement(),ref);
+    velocity->writeXMLFile(item->getXMLElement(),ref);
+    angularVelocity->writeXMLFile(item->getXMLElement(),ref);
+    acceleration->writeXMLFile(item->getXMLElement(),ref);
+    angularAcceleration->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2130,32 +2037,32 @@ namespace MBSimGUI {
   }
 
   DOMElement* RigidBodyObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
-    body->initializeUsingXML(element->getXMLElement());
-    frameOfReference->initializeUsingXML(element->getXMLElement());
-    weight->initializeUsingXML(element->getXMLElement());
-    jointForce->initializeUsingXML(element->getXMLElement());
-    jointMoment->initializeUsingXML(element->getXMLElement());
-    axisOfRotation->initializeUsingXML(element->getXMLElement());
-    momentum->initializeUsingXML(element->getXMLElement());
-    angularMomentum->initializeUsingXML(element->getXMLElement());
-    derivativeOfMomentum->initializeUsingXML(element->getXMLElement());
-    derivativeOfAngularMomentum->initializeUsingXML(element->getXMLElement());
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    body->initializeUsingXML(item->getXMLElement());
+    frameOfReference->initializeUsingXML(item->getXMLElement());
+    weight->initializeUsingXML(item->getXMLElement());
+    jointForce->initializeUsingXML(item->getXMLElement());
+    jointMoment->initializeUsingXML(item->getXMLElement());
+    axisOfRotation->initializeUsingXML(item->getXMLElement());
+    momentum->initializeUsingXML(item->getXMLElement());
+    angularMomentum->initializeUsingXML(item->getXMLElement());
+    derivativeOfMomentum->initializeUsingXML(item->getXMLElement());
+    derivativeOfAngularMomentum->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RigidBodyObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    body->writeXMLFile(element->getXMLElement(),ref);
-    frameOfReference->writeXMLFile(element->getXMLElement(),ref);
-    weight->writeXMLFile(element->getXMLElement(),ref);
-    jointForce->writeXMLFile(element->getXMLElement(),ref);
-    jointMoment->writeXMLFile(element->getXMLElement(),ref);
-    axisOfRotation->writeXMLFile(element->getXMLElement(),ref);
-    momentum->writeXMLFile(element->getXMLElement(),ref);
-    angularMomentum->writeXMLFile(element->getXMLElement(),ref);
-    derivativeOfMomentum->writeXMLFile(element->getXMLElement(),ref);
-    derivativeOfAngularMomentum->writeXMLFile(element->getXMLElement(),ref);
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    body->writeXMLFile(item->getXMLElement(),ref);
+    frameOfReference->writeXMLFile(item->getXMLElement(),ref);
+    weight->writeXMLFile(item->getXMLElement(),ref);
+    jointForce->writeXMLFile(item->getXMLElement(),ref);
+    jointMoment->writeXMLFile(item->getXMLElement(),ref);
+    axisOfRotation->writeXMLFile(item->getXMLElement(),ref);
+    momentum->writeXMLFile(item->getXMLElement(),ref);
+    angularMomentum->writeXMLFile(item->getXMLElement(),ref);
+    derivativeOfMomentum->writeXMLFile(item->getXMLElement(),ref);
+    derivativeOfAngularMomentum->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2196,32 +2103,32 @@ namespace MBSimGUI {
   }
 
   DOMElement* RigidBodySystemObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ObserverPropertyDialog::initializeUsingXML(element->getXMLElement());
-    bodies->initializeUsingXML(element->getXMLElement());
-    frameOfReference->initializeUsingXML(element->getXMLElement());
-    position->initializeUsingXML(element->getXMLElement());
-    velocity->initializeUsingXML(element->getXMLElement());
-    acceleration->initializeUsingXML(element->getXMLElement());
-    weight->initializeUsingXML(element->getXMLElement());
-    momentum->initializeUsingXML(element->getXMLElement());
-    angularMomentum->initializeUsingXML(element->getXMLElement());
-    derivativeOfMomentum->initializeUsingXML(element->getXMLElement());
-    derivativeOfAngularMomentum->initializeUsingXML(element->getXMLElement());
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    bodies->initializeUsingXML(item->getXMLElement());
+    frameOfReference->initializeUsingXML(item->getXMLElement());
+    position->initializeUsingXML(item->getXMLElement());
+    velocity->initializeUsingXML(item->getXMLElement());
+    acceleration->initializeUsingXML(item->getXMLElement());
+    weight->initializeUsingXML(item->getXMLElement());
+    momentum->initializeUsingXML(item->getXMLElement());
+    angularMomentum->initializeUsingXML(item->getXMLElement());
+    derivativeOfMomentum->initializeUsingXML(item->getXMLElement());
+    derivativeOfAngularMomentum->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RigidBodySystemObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    ObserverPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    bodies->writeXMLFile(element->getXMLElement(),ref);
-    frameOfReference->writeXMLFile(element->getXMLElement(),ref);
-    position->writeXMLFile(element->getXMLElement(),ref);
-    velocity->writeXMLFile(element->getXMLElement(),ref);
-    acceleration->writeXMLFile(element->getXMLElement(),ref);
-    weight->writeXMLFile(element->getXMLElement(),ref);
-    momentum->writeXMLFile(element->getXMLElement(),ref);
-    angularMomentum->writeXMLFile(element->getXMLElement(),ref);
-    derivativeOfMomentum->writeXMLFile(element->getXMLElement(),ref);
-    derivativeOfAngularMomentum->writeXMLFile(element->getXMLElement(),ref);
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    bodies->writeXMLFile(item->getXMLElement(),ref);
+    frameOfReference->writeXMLFile(item->getXMLElement(),ref);
+    position->writeXMLFile(item->getXMLElement(),ref);
+    velocity->writeXMLFile(item->getXMLElement(),ref);
+    acceleration->writeXMLFile(item->getXMLElement(),ref);
+    weight->writeXMLFile(item->getXMLElement(),ref);
+    momentum->writeXMLFile(item->getXMLElement(),ref);
+    angularMomentum->writeXMLFile(item->getXMLElement(),ref);
+    derivativeOfMomentum->writeXMLFile(item->getXMLElement(),ref);
+    derivativeOfAngularMomentum->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2237,14 +2144,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* ObjectSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
-    object->initializeUsingXML(element->getXMLElement());
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    object->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ObjectSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    object->writeXMLFile(element->getXMLElement(),ref);
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    object->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2260,14 +2167,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrameSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SensorPropertyDialog::initializeUsingXML(element->getXMLElement());
-    frame->initializeUsingXML(element->getXMLElement());
+    SensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    frame->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FrameSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SensorPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    frame->writeXMLFile(element->getXMLElement(),ref);
+    SensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    frame->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2289,14 +2196,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* FunctionSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SensorPropertyDialog::initializeUsingXML(element->getXMLElement());
-    function->initializeUsingXML(element->getXMLElement());
+    SensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    function->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FunctionSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SensorPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    function->writeXMLFile(element->getXMLElement(),ref);
+    SensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    function->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2306,14 +2213,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* MultiplexerPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
-    inputSignal->initializeUsingXML(element->getXMLElement());
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    inputSignal->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* MultiplexerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    inputSignal->writeXMLFile(element->getXMLElement(),ref);
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    inputSignal->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2325,16 +2232,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* DemultiplexerPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
-    inputSignal->initializeUsingXML(element->getXMLElement());
-    indices->initializeUsingXML(element->getXMLElement());
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    inputSignal->initializeUsingXML(item->getXMLElement());
+    indices->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* DemultiplexerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    inputSignal->writeXMLFile(element->getXMLElement(),ref);
-    indices->writeXMLFile(element->getXMLElement(),ref);
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    inputSignal->writeXMLFile(item->getXMLElement(),ref);
+    indices->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2363,22 +2270,22 @@ namespace MBSimGUI {
   }
 
   DOMElement* LinearTransferSystemPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
-    inputSignal->initializeUsingXML(element->getXMLElement());
-    A->initializeUsingXML(element->getXMLElement());
-    B->initializeUsingXML(element->getXMLElement());
-    C->initializeUsingXML(element->getXMLElement());
-    D->initializeUsingXML(element->getXMLElement());
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    inputSignal->initializeUsingXML(item->getXMLElement());
+    A->initializeUsingXML(item->getXMLElement());
+    B->initializeUsingXML(item->getXMLElement());
+    C->initializeUsingXML(item->getXMLElement());
+    D->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* LinearTransferSystemPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    inputSignal->writeXMLFile(element->getXMLElement(),ref);
-    A->writeXMLFile(element->getXMLElement(),ref);
-    B->writeXMLFile(element->getXMLElement(),ref);
-    C->writeXMLFile(element->getXMLElement(),ref);
-    D->writeXMLFile(element->getXMLElement(),ref);
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    inputSignal->writeXMLFile(item->getXMLElement(),ref);
+    A->writeXMLFile(item->getXMLElement(),ref);
+    B->writeXMLFile(item->getXMLElement(),ref);
+    C->writeXMLFile(item->getXMLElement(),ref);
+    D->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2398,25 +2305,25 @@ namespace MBSimGUI {
 
   void SignalOperationPropertyDialog::updateFunctionFactory(bool defineWidget) {
     if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory3(element,QStringList("x"),1,false));
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory3(getElement(),QStringList("x"),1,false));
     else
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory2(element,QStringList("x")<<"y",1,false));
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory2(getElement(),QStringList("x")<<"y",1,false));
     if(defineWidget)
       static_cast<ChoiceWidget2*>(function->getWidget())->defineWidget(0);
   }
 
   DOMElement* SignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
-    inputSignal->initializeUsingXML(element->getXMLElement());
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    inputSignal->initializeUsingXML(item->getXMLElement());
     updateFunctionFactory(false);
-    function->initializeUsingXML(element->getXMLElement());
+    function->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* SignalOperationPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    inputSignal->writeXMLFile(element->getXMLElement(),ref);
-    function->writeXMLFile(element->getXMLElement(),ref);
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    inputSignal->writeXMLFile(item->getXMLElement(),ref);
+    function->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2426,14 +2333,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* ExternSignalSourcePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
-    sourceSize->initializeUsingXML(element->getXMLElement());
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    sourceSize->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ExternSignalSourcePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    sourceSize->writeXMLFile(element->getXMLElement(),ref);
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    sourceSize->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -2443,14 +2350,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* ExternSignalSinkPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SignalPropertyDialog::initializeUsingXML(element->getXMLElement());
-    inputSignal->initializeUsingXML(element->getXMLElement());
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    inputSignal->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ExternSignalSinkPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SignalPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
-    inputSignal->writeXMLFile(element->getXMLElement(),ref);
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    inputSignal->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 

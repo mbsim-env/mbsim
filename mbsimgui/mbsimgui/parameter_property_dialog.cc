@@ -54,11 +54,11 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  void ParameterPropertyDialog::toWidget(Parameter *parameter) {
+  void ParameterPropertyDialog::toWidget() {
     initializeUsingXML(parameter->getXMLElement());
   }
 
-  void ParameterPropertyDialog::fromWidget(Parameter *parameter) {
+  void ParameterPropertyDialog::fromWidget() {
     writeXMLFile(parameter->getXMLElement());
   }
 

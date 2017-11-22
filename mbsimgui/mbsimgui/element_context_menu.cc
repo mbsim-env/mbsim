@@ -41,33 +41,36 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable, bool saveable) : QMenu(parent), element(element_) {
-    bool hasHref = element->hasHref();
+  BasicElementMenu::BasicElementMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  }
+
+  void BasicElementMenu::addAction(QAction *action) {
+    action->setDisabled(element->hasHref());
+    QMenu::addAction(action);
+  }
+
+  ElementContextMenu::ElementContextMenu(Element *element, QWidget *parent, bool removable, bool saveable) : BasicElementMenu(element,"",parent) {
     QAction *action=new QAction("Edit", this);
     connect(action,SIGNAL(triggered()),mw->getElementView(),SLOT(openEditor()));
-    addAction(action);
+    QMenu::addAction(action);
     if(saveable) {
       addSeparator();
       action=new QAction("Save as", this);
-      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(saveElementAs()));
       addAction(action);
     }
     if(removable) {
       addSeparator();
       action=new QAction("Copy", this);
-      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(copyElement()));
       addAction(action);
       action=new QAction("Cut", this);
-      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(cutElement()));
       addAction(action);
       addSeparator();
       action=new QAction("Remove", this);
-      action->setDisabled(hasHref);
       connect(action,SIGNAL(triggered()),mw,SLOT(removeElement()));
-      addAction(action);
+      QMenu::addAction(action);
     }
   }
 
@@ -155,7 +158,7 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  FramesContextMenu::FramesContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction("Paste", this);
     action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
@@ -202,7 +205,7 @@ namespace MBSimGUI {
     mw->addFrame(new NodeFrame, element);
   }
 
-  ContoursContextMenu::ContoursContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction("Paste", this);
     action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
@@ -291,7 +294,7 @@ namespace MBSimGUI {
     mw->addContour(new SpatialContour, element);
   }
 
-  GroupsContextMenu::GroupsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction("Paste", this);
     action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
@@ -324,7 +327,7 @@ namespace MBSimGUI {
     mw->addGroup(new Group, element);
   }
 
-  ObjectsContextMenu::ObjectsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction("Paste", this);
     action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
@@ -352,7 +355,7 @@ namespace MBSimGUI {
     mw->loadObject(element,nullptr,true);
   }
 
-  BodiesContextMenu::BodiesContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  BodiesContextMenu::BodiesContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction("Add rigid body", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
     addAction(action);
@@ -369,7 +372,7 @@ namespace MBSimGUI {
     mw->addObject(new FlexibleBodyFFR, element);
   }
 
-  LinksContextMenu::LinksContextMenu(Element *element_, const QString &title,  QWidget *parent) : QMenu(title,parent), element(element_) {
+  LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction("Paste", this);
     action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
@@ -472,7 +475,7 @@ namespace MBSimGUI {
     mw->addLink(new GeneralizedElasticConnection, element);
   }
 
-  ConstraintsContextMenu::ConstraintsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction("Paste", this);
     action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
@@ -540,7 +543,7 @@ namespace MBSimGUI {
     mw->addConstraint(new GeneralizedConnectionConstraint, element);
   }
 
-  ObserversContextMenu::ObserversContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction("Paste", this);
     action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
@@ -622,7 +625,7 @@ namespace MBSimGUI {
     mw->addObserver(new RigidBodySystemObserver, element);
   }
 
-  SignalsContextMenu::SignalsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  SignalsContextMenu::SignalsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QMenu *menu = new SensorsContextMenu(element,"Add sensor");
     addMenu(menu);
     QAction *action = new QAction("Add multiplexer", this);
@@ -674,7 +677,7 @@ namespace MBSimGUI {
     mw->addLink(new ExternSignalSink, element);
   }
 
-  SensorsContextMenu::SensorsContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  SensorsContextMenu::SensorsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction("Add generalized position sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionSensor()));
     addAction(action);

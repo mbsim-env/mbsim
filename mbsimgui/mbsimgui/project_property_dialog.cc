@@ -31,11 +31,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ProjectPropertyDialog::ProjectPropertyDialog(Project *project_, QWidget *parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), project(project_) {
-    if(project->hasHref()) {
-      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
-      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
-    }
+  ProjectPropertyDialog::ProjectPropertyDialog(Project *project, QWidget *parent, const Qt::WindowFlags& f) : EmbedItemPropertyDialog(project,parent,f) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(project->getName()));
     name->setToolTip("Set the name of the project");
@@ -49,24 +45,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* ProjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    static_cast<TextWidget*>(name->getWidget())->setText(project->getName());
-    evalSelect->initializeUsingXML(project->getXMLElement());
+    static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
+    evalSelect->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ProjectPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    project->removeXMLElements();
-    E(project->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
-    evalSelect->writeXMLFile(project->getXMLElement(),project->getXMLElement()->getFirstElementChild());
+    item->removeXMLElements();
+    E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    evalSelect->writeXMLFile(item->getXMLElement(),item->getXMLElement()->getFirstElementChild());
     return nullptr;
-  }
-
-  void ProjectPropertyDialog::toWidget(Project *project) {
-    initializeUsingXML(project->getXMLElement());
-  }
-
-  void ProjectPropertyDialog::fromWidget(Project *project) {
-    writeXMLFile(project->getXMLElement());
   }
 
 }

@@ -21,6 +21,7 @@
 #define _ELEMENT_PROPERTY_DIALOG_H_
 
 #include "property_dialog.h"
+#include "embeditemdata.h"
 
 namespace MBSimGUI {
 
@@ -101,22 +102,17 @@ namespace MBSimGUI {
   class ExternSignalSink;
   class ExtWidget;
 
-  class ElementPropertyDialog : public PropertyDialog {
+  class ElementPropertyDialog : public EmbedItemPropertyDialog {
 
     public:
-      ElementPropertyDialog(Element *element_, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      ElementPropertyDialog(Element *element, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-      virtual void toWidget(Element *element);
-      virtual void fromWidget(Element *element);
-      void toWidget() override {toWidget(element);}
-      void fromWidget() override {fromWidget(element);}
-      Element* getElement() {return element;}
+      Element* getElement() const;
       void setName(const QString &str);
       void setReadOnly(bool readOnly);
     protected:
       void showXMLHelp() override;
-      Element *element;
       ExtWidget *name, *plotFeature;
   };
 

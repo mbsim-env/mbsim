@@ -38,6 +38,8 @@ class QAbstractButton;
 
 namespace MBSimGUI {
 
+  class EmbedItemData;
+
   class PropertyDialog : public QDialog {
     Q_OBJECT
 
@@ -47,24 +49,34 @@ namespace MBSimGUI {
       void addToTab(const QString &name, QWidget* widget_);
       void addTab(const QString &name, int i=-1);
       void addStretch(int s=1);
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return nullptr; }
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) { return nullptr; }
       void setCancel(bool on);
       bool getCancel() const;
+      virtual void toWidget() { }
+      virtual void fromWidget() { }
     protected:
       std::map<QString,QVBoxLayout*> layout;
-//      std::vector<QWidget*> widget;
       QTabWidget *tabWidget;
       QDialogButtonBox *buttonBox;
       QPushButton *buttonResize;
       virtual void showXMLHelp() { }
     public slots:
       void clicked(QAbstractButton *button);
-      virtual void toWidget() { }
-      virtual void fromWidget() { }
       virtual void updateWidget() { }
     signals:
       void apply();
+  };
+
+  class EmbedItemPropertyDialog : public PropertyDialog {
+
+    public:
+      EmbedItemPropertyDialog(EmbedItemData *item_, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return nullptr; }
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) { return nullptr; }
+      EmbedItemData* getItem() const { return item; }
+      void toWidget() override;
+      void fromWidget() override;
+    protected:
+      EmbedItemData *item;
   };
 
 }

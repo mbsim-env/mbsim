@@ -52,20 +52,12 @@ namespace MBSimGUI {
       QString type;
   };
 
-  class SolverPropertyDialog : public PropertyDialog {
+  class SolverPropertyDialog : public EmbedItemPropertyDialog {
 
     public:
       SolverPropertyDialog(Solver *solver_, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-      virtual void toWidget(Solver *solver);
-      virtual void fromWidget(Solver *solver);
-      void toWidget() override {toWidget(solver);}
-      void fromWidget() override {fromWidget(solver);}
-      Solver* getSolver() {return solver;}
-    protected:
-      Solver *solver;
-      ExtWidget *embed;
   };
 
   class IntegratorPropertyDialog : public SolverPropertyDialog {

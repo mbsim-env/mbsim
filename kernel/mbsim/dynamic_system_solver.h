@@ -455,15 +455,16 @@ namespace MBSim {
        * \brief set the number of plot-routine-calls after which all hdf5-files will be flushed
        * \param flag
        */
-      void setFlushEvery(unsigned int every) {flushEvery = every;}
+      void setFlushEvery(unsigned int every) { flushEvery = every; }
 
-      void setAlwaysConsiderContact(bool alwaysConsiderContact_) {alwaysConsiderContact = alwaysConsiderContact_;}
+      void setAlwaysConsiderContact(bool alwaysConsiderContact_) { alwaysConsiderContact = alwaysConsiderContact_; }
 
-      void setInverseKinetics(bool inverseKinetics_) {inverseKinetics = inverseKinetics_;}
+      void setInverseKinetics(bool inverseKinetics_) { inverseKinetics = inverseKinetics_; }
+      bool getInverseKinetics() const { return inverseKinetics; }
 
-      void setInitialProjection(bool initialProjection_) {initialProjection = initialProjection_;}
+      void setInitialProjection(bool initialProjection_) { initialProjection = initialProjection_; }
 
-      void setUseConstraintSolverForPlot(bool useConstraintSolverForPlot_) {useConstraintSolverForPlot = useConstraintSolverForPlot_;}
+      void setUseConstraintSolverForPlot(bool useConstraintSolverForPlot_) { useConstraintSolverForPlot = useConstraintSolverForPlot_; }
       bool getUseConstraintSolverForPlot() const { return useConstraintSolverForPlot; }
 
       fmatvec::Mat dhdq(int lb=0, int ub=0);

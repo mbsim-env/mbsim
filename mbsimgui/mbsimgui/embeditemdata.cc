@@ -21,6 +21,7 @@
 #include "embeditemdata.h"
 #include "parameter.h"
 #include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMNamedNodeMap.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -34,11 +35,6 @@ namespace MBSimGUI {
     for(auto & i : removedParameter)
       delete i;
   }
-
-//  QString EmbedItemData::getName() const {
-//      //return element?QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")):"Name";
-//    return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name"));
-//  }
 
   void EmbedItemData::addParameter(Parameter *param) {
     parameter.push_back(param);
@@ -62,25 +58,33 @@ namespace MBSimGUI {
     return -1;
   }
 
+  void EmbedItemData::removeXMLElements() {
+    DOMNode *e = element->getFirstChild();
+    while(e) {
+      DOMNode *en=e->getNextSibling();
+      element->removeChild(e);
+      e = en;
+    }
+  }
+
   void EmbedItemData::removeXMLElement(bool removeEmbedding) {
-    DOMNode *parent = element->getParentNode();
-    if(removeEmbedding and X()%parent->getNodeName()=="Embed") {
-      DOMNode *e = parent->getFirstChild();
+    if(removeEmbedding and embed) {
+      DOMNode *e = embed->getFirstChild();
       while(e) {
         DOMNode *en=e->getNextSibling();
-        parent->removeChild(e);
+        embed->removeChild(e);
         e = en;
       }
-      DOMNode *ps = parent->getPreviousSibling();
+      DOMNode *ps = embed->getPreviousSibling();
       if(ps and X()%ps->getNodeName()=="#text")
-        parent->getParentNode()->removeChild(ps);
-      parent->getParentNode()->removeChild(parent);
+        embed->getParentNode()->removeChild(ps);
+      embed->getParentNode()->removeChild(embed);
     }
     else {
       DOMNode *ps = element->getPreviousSibling();
       if(ps and X()%ps->getNodeName()=="#text")
-        parent->removeChild(ps);
-      parent->removeChild(element);
+        element->getParentNode()->removeChild(ps);
+      element->getParentNode()->removeChild(element);
     }
   }
 
@@ -100,6 +104,23 @@ namespace MBSimGUI {
       getEmbedXMLElement()->insertBefore(getXMLElement(),nullptr);
     }
     return getEmbedXMLElement();
+  }
+
+  void EmbedItemData::maybeRemoveEmbedXMLElement() {
+    if(embed and not getNumberOfParameters()) {
+      DOMElement *param = E(embed)->getFirstElementChildNamed(PV%"Parameter");
+      if(param) {
+        DOMNode *ps = param->getPreviousSibling();
+        if(ps and X()%ps->getNodeName()=="#text")
+          embed->removeChild(ps);
+        embed->removeChild(param);
+      }
+      if(not E(embed)->hasAttribute("count") and not E(embed)->hasAttribute("counterName") and not E(embed)->hasAttribute("href") and not E(embed)->hasAttribute("parameterHref")) {
+        embed->getParentNode()->insertBefore(element,embed);
+        embed->getParentNode()->removeChild(embed);
+        embed = nullptr;
+      }
+    }
   }
 
   bool EmbedItemData::hasParameterXMLElement() const {
