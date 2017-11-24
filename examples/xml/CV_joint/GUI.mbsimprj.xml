@@ -41,9 +41,6 @@
           <groups/>
           <objects>
             <RigidBody name="RigidBody1">
-              <generalizedInitialVelocity>
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils"/>
-          </generalizedInitialVelocity>
               <mass unit="kg">1</mass>
               <inertiaTensor unit="kg*m^2">
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -262,9 +259,6 @@ ret = A</SymbolicFunction>
           <groups/>
           <objects>
             <RigidBody name="RigidBody1">
-              <generalizedInitialVelocity>
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils"/>
-          </generalizedInitialVelocity>
               <mass unit="kg">1</mass>
               <inertiaTensor unit="kg*m^2">
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
