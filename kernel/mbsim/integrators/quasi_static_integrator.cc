@@ -48,6 +48,7 @@ namespace MBSimIntegrator {
   }
 
   void QuasiStaticIntegrator::preIntegrate(DynamicSystemSolver& system) {
+    debugInit();
     // initialisation
     assert(dtPlot >= dt);
 
@@ -205,7 +206,6 @@ namespace MBSimIntegrator {
   }
 
   void QuasiStaticIntegrator::integrate(DynamicSystemSolver& system) {
-    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);

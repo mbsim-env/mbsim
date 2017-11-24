@@ -45,6 +45,7 @@ namespace MBSimIntegrator {
   TimeSteppingIntegrator::TimeSteppingIntegrator()  {}
 
   void TimeSteppingIntegrator::preIntegrate(DynamicSystemSolver& system) {
+    debugInit();
     // initialisation
     assert(dtPlot >= dt);
 
@@ -137,7 +138,6 @@ namespace MBSimIntegrator {
   }
 
   void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
-    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);

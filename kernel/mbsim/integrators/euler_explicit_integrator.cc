@@ -39,6 +39,7 @@ namespace MBSimIntegrator {
   }
 
   void EulerExplicitIntegrator::preIntegrate(DynamicSystemSolver& system_) {
+    debugInit();
     assert(dtPlot >= dt);
 
     system = &system_;
@@ -98,7 +99,6 @@ namespace MBSimIntegrator {
   }
 
   void EulerExplicitIntegrator::integrate(DynamicSystemSolver& system) {
-    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);

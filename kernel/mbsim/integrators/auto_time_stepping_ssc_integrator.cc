@@ -678,7 +678,6 @@ namespace MBSimIntegrator {
   }
 
   void AutoTimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& system_) {
-    debugInit();
     if (theta>epsroot) expInt=false;
     else expInt=true;
     parInt=false;
@@ -721,6 +720,7 @@ namespace MBSimIntegrator {
   }
 
   void AutoTimeSteppingSSCIntegrator::preIntegrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, DynamicSystemSolver& systemTP_) {
+    debugInit();
 
     sysT1 = &systemT1_;
     sysT2 = &systemT2_;
