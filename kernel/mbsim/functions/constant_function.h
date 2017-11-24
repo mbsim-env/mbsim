@@ -38,6 +38,7 @@ namespace MBSim {
       Ret operator()(const Arg &x) override { return FromDouble<Ret>::cast(a0); }
       typename B::DRetDArg parDer(const Arg &x) override { return FromDouble<Ret>::cast(0); }
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { return FromDouble<Ret>::cast(0); }
+      typename B::DDRetDDArg parDerParDer(const Arg &x) override { return FromDouble<Ret>::cast(0); }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
         a0=MBXMLUtils::E(e)->getText<double>();
