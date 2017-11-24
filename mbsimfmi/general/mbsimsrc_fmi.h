@@ -5,6 +5,10 @@ namespace MBSim {
   class DynamicSystemSolver;
 }
 
+namespace MBSimIntegrator {
+  class Integrator;
+}
+
 /*! Include this header file for source models which should be exported as FMI
  * and implement this function.
  * \param dss must return the pointer to the DynamicSystemSolver of your system.
@@ -13,11 +17,11 @@ namespace MBSim {
  * (The DynamicSystemSolver::initialize() function is the first function which
  * is called by FMI during execution of the model.)
  */
-extern "C" void mbsimSrcFMI(MBSim::DynamicSystemSolver *&dss);
+extern "C" void mbsimSrcFMI(MBSim::DynamicSystemSolver *&dss, MBSimIntegrator::Integrator *&integrator);
 
 namespace MBSimFMI {
   // just a function pointer typedef for the above function
-  typedef void (*mbsimSrcFMIPtr)(MBSim::DynamicSystemSolver *&);
+  typedef void (*mbsimSrcFMIPtr)(MBSim::DynamicSystemSolver *&, MBSimIntegrator::Integrator *&);
 }
 
 #endif

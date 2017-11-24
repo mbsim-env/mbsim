@@ -41,7 +41,7 @@ namespace {
 extern "C" {
 
   // global FMI function.
-  DLLEXPORT const char* fmiGetModelTypesPlatform() {
+  DLLEXPORT const char* fmiGetTypesPlatform() {
     return "standard32";
   }
 
@@ -52,7 +52,9 @@ extern "C" {
 
   // FMI instantiate function: just calls the FMIInstanceBase ctor
   // Convert exceptions to FMI logger calls and return no instance.
-  DLLEXPORT fmiComponent fmiInstantiateModel(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions_me functions, fmiBoolean loggingOn) {
+  DLLEXPORT fmiComponent fmiInstantiateSlave(fmiString instanceName_, fmiString GUID, fmiString fmuLocation,
+                                             fmiString mimeType, fmiReal timeout, fmiBoolean visible,
+                                             fmiBoolean interactive, fmiCallbackFunctions_cosim functions, fmiBoolean loggingOn) {
     try {
       string fmuDir=MBXMLUtils::getFMUWrapperSharedLibPath();
       size_t s=string::npos;
@@ -71,7 +73,7 @@ extern "C" {
       // load main mbsim FMU library
       auto fmiInstanceCreate=SharedLibrary::getSymbol<fmiInstanceCreatePtr>(
         fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/libmbsimXXX_fmi"+SHEXT, "fmiInstanceCreate");
-      return new Instance(fmiInstanceCreate(false, instanceName_, GUID, functions.logger, loggingOn));
+      return new Instance(fmiInstanceCreate(true, instanceName_, GUID, functions.logger, loggingOn));
     }
     // note: we can not use the instance here since the creation has failed
     catch(const exception &ex) {
@@ -88,7 +90,7 @@ extern "C" {
 
   // FMI free instance function: just calls the FMIInstanceBase dtor.
   // No exception handling needed since the dtor must not throw.
-  DLLEXPORT void fmiFreeModelInstance(fmiComponent c) {
+  DLLEXPORT void fmiFreeSlaveInstance(fmiComponent c) {
     // must not throw
     delete static_cast<Instance*>(c);
   }
@@ -117,17 +119,21 @@ extern "C" {
     (fmiComponent c, fmiBoolean loggingOn),
     (loggingOn))
 
-  FMIFUNC(fmiSetTime, setTime,
-    (fmiComponent c, fmiReal time),
-    (time))
+  FMIFUNC(fmiGetReal, getDoubleValue,
+    (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiReal value[]),
+    (vr, nvr, value))
 
-  FMIFUNC(fmiSetContinuousStates, setContinuousStates,
-    (fmiComponent c, const fmiReal x[], size_t nx),
-    (x, nx))
+  FMIFUNC(fmiGetInteger, getIntValue,
+    (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiInteger value[]),
+    (vr, nvr, value))
 
-  FMIFUNC(fmiCompletedIntegratorStep, completedIntegratorStep,
-    (fmiComponent c, fmiBoolean* callEventUpdate),
-    (callEventUpdate))
+  FMIFUNC(fmiGetBoolean, getBoolValue,
+    (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiBoolean value[]),
+    (vr, nvr, value))
+
+  FMIFUNC(fmiGetString, getStringValue,
+    (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiString value[]),
+    (vr, nvr, value))
 
   FMIFUNC(fmiSetReal, setDoubleValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiReal value[]),
@@ -145,52 +151,52 @@ extern "C" {
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiString value[]),
     (vr, nvr, value))
 
-  FMIFUNC(fmiInitialize, initialize_me,
-    (fmiComponent c, fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo),
-    (toleranceControlled, relativeTolerance, eventInfo))
+  FMIFUNC(fmiInitializeSlave, initialize_cosim,
+    (fmiComponent c, fmiReal tStart, fmiBoolean StopTimeDefined, fmiReal tStop),
+    (tStart, StopTimeDefined, tStop))
 
-  FMIFUNC(fmiGetDerivatives, getDerivatives,
-    (fmiComponent c, fmiReal derivatives[], size_t nx),
-    (derivatives, nx))
-
-  FMIFUNC(fmiGetEventIndicators, getEventIndicators,
-    (fmiComponent c, fmiReal eventIndicators[], size_t ni),
-    (eventIndicators, ni))
-
-  FMIFUNC(fmiGetReal, getDoubleValue,
-    (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiReal value[]),
-    (vr, nvr, value))
-
-  FMIFUNC(fmiGetInteger, getIntValue,
-    (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiInteger value[]),
-    (vr, nvr, value))
-
-  FMIFUNC(fmiGetBoolean, getBoolValue,
-    (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiBoolean value[]),
-    (vr, nvr, value))
-
-  FMIFUNC(fmiGetString, getStringValue,
-    (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiString value[]),
-    (vr, nvr, value))
-
-  FMIFUNC(fmiEventUpdate, eventUpdate,
-    (fmiComponent c, fmiBoolean intermediateResults, fmiEventInfo* eventInfo),
-    (intermediateResults, eventInfo))
-
-  FMIFUNC(fmiGetContinuousStates, getContinuousStates,
-    (fmiComponent c, fmiReal states[], size_t nx),
-    (states, nx))
-
-  FMIFUNC(fmiGetNominalContinuousStates, getNominalContinuousStates,
-    (fmiComponent c, fmiReal x_nominal[], size_t nx),
-    (x_nominal, nx))
-
-  FMIFUNC(fmiGetStateValueReferences, getStateValueReferences,
-    (fmiComponent c, fmiValueReference vrx[], size_t nx),
-    (vrx, nx))
-
-  FMIFUNC(fmiTerminate, terminate,
+  FMIFUNC(fmiTerminateSlave, terminate,
     (fmiComponent c),
     ())
+
+  FMIFUNC(fmiResetSlave, resetSlave,
+    (fmiComponent c),
+    ())
+
+  FMIFUNC(fmiSetRealInputDerivatives, setRealInputDerivatives,
+    (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiInteger order[], const fmiReal value[]),
+    (vr, nvr, order, value))
+
+  FMIFUNC(fmiGetRealOutputDerivatives, getRealOutputDerivatives,
+    (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiInteger order[], fmiReal value[]),
+    (vr, nvr, order, value))
+
+  FMIFUNC(fmiCancelStep, cancelStep,
+    (fmiComponent c),
+    ())
+
+  FMIFUNC(fmiDoStep, doStep,
+    (fmiComponent c, fmiReal currentCommunicationPoint, fmiReal communicationStepSize, fmiBoolean newStep),
+    (currentCommunicationPoint, communicationStepSize, newStep))
+
+  FMIFUNC(fmiGetStatus, getStatus,
+    (fmiComponent c, const fmiStatusKind s, fmiStatus* value),
+    (s, value))
+
+  FMIFUNC(fmiGetRealStatus, getDoubleStatus,
+    (fmiComponent c, const fmiStatusKind s, fmiReal* value),
+    (s, value))
+
+  FMIFUNC(fmiGetIntegerStatus, getIntStatus,
+    (fmiComponent c, const fmiStatusKind s, fmiInteger* value),
+    (s, value))
+
+  FMIFUNC(fmiGetBooleanStatus, getBoolStatus,
+    (fmiComponent c, const fmiStatusKind s, fmiBoolean* value),
+    (s, value))
+
+  FMIFUNC(fmiGetStringStatus, getStringStatus,
+    (fmiComponent c, const fmiStatusKind s, fmiString* value),
+    (s, value))
 
 }

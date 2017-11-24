@@ -139,7 +139,7 @@
 #endif
 
 /* Type definitions */
-   typedef enum  {fmiOK,
+/*   typedef enum  {fmiOK,
                   fmiWarning,
                   fmiDiscard,
                   fmiError,
@@ -148,22 +148,22 @@
    typedef void  (*fmiCallbackLogger)        (fmiComponent c, fmiString instanceName, fmiStatus status,
                                               fmiString category, fmiString message, ...);
    typedef void* (*fmiCallbackAllocateMemory)(size_t nobj, size_t size);
-   typedef void  (*fmiCallbackFreeMemory)    (void* obj);
+   typedef void  (*fmiCallbackFreeMemory)    (void* obj);*/
 
    typedef struct {
      fmiCallbackLogger         logger;
      fmiCallbackAllocateMemory allocateMemory;
      fmiCallbackFreeMemory     freeMemory;
-   } fmiCallbackFunctions;
+   } fmiCallbackFunctions_me;
 
-   typedef struct {
+/*   typedef struct {
       fmiBoolean iterationConverged;
       fmiBoolean stateValueReferencesChanged;
       fmiBoolean stateValuesChanged;
       fmiBoolean terminateSimulation;
       fmiBoolean upcomingTimeEvent;
       fmiReal    nextEventTime;
-   } fmiEventInfo;
+   } fmiEventInfo;*/
 
 /* reset alignment policy to the one set before reading this file */
 #ifdef WIN32
@@ -171,10 +171,10 @@
 #endif
 
 /* Creation and destruction of model instances and setting debug status */
-   DllExport fmiComponent fmiInstantiateModel (fmiString            instanceName_,
-                                               fmiString            GUID,
-                                               fmiCallbackFunctions functions,
-                                               fmiBoolean           loggingOn);
+   DllExport fmiComponent fmiInstantiateModel (fmiString               instanceName_,
+                                               fmiString               GUID,
+                                               fmiCallbackFunctions_me functions,
+                                               fmiBoolean              loggingOn);
    DllExport void      fmiFreeModelInstance(fmiComponent c);
    DllExport fmiStatus fmiSetDebugLogging  (fmiComponent c, fmiBoolean loggingOn);
 

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Group name="Untergruppe" xmlns="http://www.mbsim-env.de/MBSim"
+    xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
+    xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+  <frameOfReference ref="../Frame[Q]"/>
+  <frames/>
+  <contours/>
+  <groups/>
+  <objects>
+    <RigidBody name="Box1">
+      <generalizedInitialPosition>[l01 + h1/2 + 0.2]</generalizedInitialPosition>
+      <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>
+        <![CDATA[
+        % If more than one octave statement is given, the value for the
+        % element is taken from the octave variable named 'ret'.
+        % Note that the characters '<', '>' and '&' are not allowed in XML text
+        % elements. You must quote them with '&lt;', '&gt;' and '&amp;' or use
+        % a CDATA section as used here.
+        % This code for the element 'mass' is just the same as '<mass>m1</mass>'.
+        function r=myfunc(a)
+          r=2*a;
+        end
+        if 1 & 2, x=9; else x=8; end
+        ret=myfunc(m1/2);
+
+        % check registerPath
+        registerPath('dummy.dat')
+        load('dummy.dat')
+
+        % just a dummy statement to check for octave m-files
+        interp1([1,2,3,4],[4,6,1,2],[1.2,2.3]);
+        % just a dummy statement to check for octave oct-files including PKG_ADD files
+        chol2inv(1);
+        ]]>
+      </mass>
+      <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
+      <stateDependentTranslation>
+        <LinearTranslation>
+          <translationVectors>
+            [0; myMFunction(1); 0]
+          </translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <frames>
+        <FixedRelativeFrame name="P1">
+          <enableOpenMBV>
+            <size>h1</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <relativePosition>[0;-h1/2;0]</relativePosition>
+          <relativeOrientation>rotateAboutX(0)</relativeOrientation>
+        </FixedRelativeFrame>
+        <pv:Embed>
+          <include href="../frame.xml" xmlns="http://www.w3.org/2001/XInclude"/>
+        </pv:Embed>
+      </frames>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:Cuboid name="dummy" outLine="m1==m2">
+          <ombv:diffuseColor>[0;1;1]</ombv:diffuseColor>
+          <ombv:transparency>0.2</ombv:transparency>
+          <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+          <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+          <ombv:scaleFactor>1</ombv:scaleFactor>
+          <ombv:length>[h1;h1;h1]</ombv:length>
+        </ombv:Cuboid>
+      </openMBVRigidBody>
+    </RigidBody>
+    <RigidBody name="Box2">
+      <generalizedInitialPosition>[l01 + l02 + h1 + h2/2]</generalizedInitialPosition>
+      <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>m2</mass>
+      <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
+      <stateDependentTranslation>
+        <TranslationAlongYAxis/>
+      </stateDependentTranslation>
+      <frames>
+        <FixedRelativeFrame name="P1">
+          <enableOpenMBV>
+            <size>h2</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <relativePosition>[0;-h2/2;0]</relativePosition>
+          <relativeOrientation>
+            <pv:cardan>
+              <pv:alpha>0</pv:alpha>
+              <pv:beta>a=9;ret=0</pv:beta>
+              <pv:gamma>0</pv:gamma>
+            </pv:cardan>
+          </relativeOrientation>
+        </FixedRelativeFrame>
+      </frames>
+      <contours/>
+      <openMBVRigidBody>
+        <IvBody name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
+          <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
+          <initialTranslation>[0;0;0]</initialTranslation>
+          <initialRotation>[0;0;0]</initialRotation>
+          <scaleFactor>1.5</scaleFactor>
+          <ivFileName>['../' ivdir '/hat.iv']</ivFileName>
+          <creaseEdges unit="degree">30</creaseEdges>
+        </IvBody>
+      </openMBVRigidBody>
+    </RigidBody>
+  </objects>
+  <links>
+    <SpringDamper name="Feder1">
+      <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
+      <forceFunction>
+        <LinearSpringDamperForce>
+          <stiffnessCoefficient>c1</stiffnessCoefficient>
+          <dampingCoefficient>d1</dampingCoefficient>
+        </LinearSpringDamperForce>
+      </forceFunction>
+      <unloadedLength>l01</unloadedLength>
+    </SpringDamper>
+    <SpringDamper name="Feder2">
+      <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
+      <forceFunction>
+        <LinearSpringDamperForce>
+          <stiffnessCoefficient>c2</stiffnessCoefficient>
+          <dampingCoefficient>d2</dampingCoefficient>
+        </LinearSpringDamperForce>
+      </forceFunction>
+      <unloadedLength>l02</unloadedLength>
+      <enableOpenMBV>
+          <numberOfCoils>5</numberOfCoils>
+          <springRadius>0.1</springRadius>
+          <crossSectionRadius>0.01</crossSectionRadius>
+      </enableOpenMBV>
+    </SpringDamper>
+  </links>
+  <constraints/>
+  <observers>
+    <MechanicalLinkObserver name="Observer">
+      <mechanicalLink ref="../Link[Feder1]"/>
+      <enableOpenMBVForce>
+        <scaleLength>0.005</scaleLength>
+      </enableOpenMBVForce>
+    </MechanicalLinkObserver>
+  </observers>
+</Group>

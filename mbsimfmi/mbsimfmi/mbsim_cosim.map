@@ -1,0 +1,30 @@
+{
+  global:
+    mbsim_fmiGetTypesPlatform;
+    mbsim_fmiGetVersion;
+    mbsim_fmiSetDebugLogging;
+    mbsim_fmiGetReal;
+    mbsim_fmiGetInteger;
+    mbsim_fmiGetBoolean;
+    mbsim_fmiGetString;
+    mbsim_fmiSetReal;
+    mbsim_fmiSetInteger;
+    mbsim_fmiSetBoolean;
+    mbsim_fmiSetString;
+    mbsim_fmiInstantiateSlave;
+    mbsim_fmiInitializeSlave;
+    mbsim_fmiTerminateSlave;
+    mbsim_fmiResetSlave;
+    mbsim_fmiFreeSlaveInstance;
+    mbsim_fmiSetRealInputDerivatives;
+    mbsim_fmiGetRealOutputDerivatives;
+    mbsim_fmiCancelStep;
+    mbsim_fmiDoStep;
+    mbsim_fmiGetStatus;
+    mbsim_fmiGetRealStatus;
+    mbsim_fmiGetIntegerStatus;
+    mbsim_fmiGetBooleanStatus;
+    mbsim_fmiGetStringStatus;
+  local:
+    *;
+};

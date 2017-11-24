@@ -69,7 +69,7 @@ struct PredefinedParameterStruct {
 
 //! add all FMI predefined parameters to var.
 //! The values of all predefined parameters are stored in the struct PredefinedParameterStruct.
-void addPredefinedParameters(std::vector<std::shared_ptr<Variable> > &var,
+void addPredefinedParameters(bool cosim, std::vector<std::shared_ptr<Variable> > &var,
                              PredefinedParameterStruct &predefinedParameterStruct,
                              bool setToDefaultValue);
 
