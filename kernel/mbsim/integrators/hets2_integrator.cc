@@ -44,6 +44,7 @@ namespace MBSimIntegrator {
   integPlot() {}
 
   void HETS2Integrator::preIntegrate(DynamicSystemSolver& system) {
+    debugInit();
 
     // set the time
     assert(dtPlot >= dt);
@@ -234,7 +235,6 @@ namespace MBSimIntegrator {
 
   void HETS2Integrator::integrate(DynamicSystemSolver& system) {
     system.setUseConstraintSolverForPlot(true);
-    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);

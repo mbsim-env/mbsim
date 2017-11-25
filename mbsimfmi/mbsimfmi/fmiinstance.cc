@@ -588,7 +588,8 @@ namespace MBSimFMI {
 
     // some checks
     if(abs(time-currentCommunicationPoint)>1e-13)
-      throw std::runtime_error("Internal time and the time got by fmiDoStep differs.");
+      throw std::runtime_error("Internal time "+fmatvec::toString(time)+" and the time got by fmiDoStep "+
+                               fmatvec::toString(currentCommunicationPoint)+" differs.");
     if(communicationStepSize<1e-13) {
       msg(Debug)<<"The cosim master is performing a event iteration. This FMU does nothing for this step."<<endl;
       return;

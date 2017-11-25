@@ -82,13 +82,13 @@ namespace MBSimIntegrator {
   }
 
   void LSODARIntegrator::integrate(DynamicSystemSolver& system) {
-    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);
   }
 
   void LSODARIntegrator::preIntegrate(DynamicSystemSolver& system_) {
+    debugInit();
     system = &system_;
     zSize=system->getzSize();
     if(z0.size())
@@ -121,7 +121,10 @@ namespace MBSimIntegrator {
     time = 0;
     integrationSteps = 0;
     integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
+
+    // plot initial state
+    system->resetUpToDate();
+    system->plot();
   }
 
   void LSODARIntegrator::subIntegrate(DynamicSystemSolver& system_, double tStop) {
@@ -130,12 +133,10 @@ namespace MBSimIntegrator {
     rWork(4) = dt0;
     system->setTime(t);
 //    system->setState(z); Not needed as the integrator uses the state of the system
-    system->resetUpToDate();
-    system->plot();
-    cout << "System shiftet and plotted" << endl;
     while(t < tStop) {  
       integrationSteps++;
-      DLSODAR(fzdot, &zSize, system->getState()(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
+      double tOut = min(tPlot, tStop);
+      DLSODAR(fzdot, &zSize, system->getState()(), &t, &tOut, &iTol, &rTol, aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(),
           &liWork, NULL, &two, fsv, &nsv, system->getjsv()());
       if(istate==2 || fabs(t-tPlot)<epsroot) {
@@ -144,7 +145,7 @@ namespace MBSimIntegrator {
         system->resetUpToDate();
         system->plot();
         if(output)
-          cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
+          msg(Info) << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
@@ -203,9 +204,7 @@ namespace MBSimIntegrator {
     integSum << "Integration time: " << time << endl;
     integSum << "Integration steps: " << integrationSteps << endl;
     integSum.close();
-    
-    cout.unsetf (ios::scientific);
-    cout << endl;
+    msg(Info) << endl;
   }
 
 }

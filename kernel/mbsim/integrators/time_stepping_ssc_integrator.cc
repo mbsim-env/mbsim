@@ -103,7 +103,6 @@ namespace MBSimIntegrator {
   }
 
   void TimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& system) {
-    debugInit();
     integrate(system, system, system,1); 
   }
 
@@ -119,6 +118,7 @@ namespace MBSimIntegrator {
   }
 
   void TimeSteppingSSCIntegrator::preIntegrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_) {
+    debugInit();
 
     sysT1 = &systemT1_;
     sysT2 = &systemT2_;

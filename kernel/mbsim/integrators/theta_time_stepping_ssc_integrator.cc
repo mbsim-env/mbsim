@@ -66,6 +66,7 @@ namespace MBSimIntegrator {
   }
   
   void ThetaTimeSteppingSSCIntegrator::preIntegrate(DynamicSystemSolver& system) {
+    debugInit();
     // initialisation
     assert(dtPlot >= dt);
 
@@ -158,7 +159,6 @@ namespace MBSimIntegrator {
   }
 
   void ThetaTimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& system) {
-    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);
