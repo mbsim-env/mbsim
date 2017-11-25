@@ -37,17 +37,20 @@ namespace MBSim {
       QuadraticFunction(double a0_, double a1_, double a2_) : a0(a0_), a1(a1_), a2(a2_) { }
       int getArgSize() const override { return 1; }
       std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
-      Ret operator()(const Arg &x_) override {  
+      Ret operator()(const Arg &x_) override {
         double x = ToDouble<Arg>::cast(x_);
         return FromDouble<Ret>::cast(a0+(a1+a2*x)*x);
       }
-      typename B::DRetDArg parDer(const Arg &x_) override {  
+      typename B::DRetDArg parDer(const Arg &x_) override {
         double x = ToDouble<Arg>::cast(x_);
-        return FromDouble<Ret>::cast(a1+2.*a2*x);
+        return FromDouble<typename B::DRetDArg>::cast(a1+2.*a2*x);
       }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir_, const Arg &x) override { 
+      typename B::DRetDArg parDerDirDer(const Arg &xDir_, const Arg &x) override {
         double xDir = ToDouble<Arg>::cast(xDir_);
-        return FromDouble<Ret>::cast(2.*a2*xDir);
+        return FromDouble<typename B::DRetDArg>::cast(2.*a2*xDir);
+      }
+      typename B::DDRetDDArg parDerParDer(const Arg &x) override {
+        return FromDouble<typename B::DDRetDDArg>::cast(2.*a2);
       }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");

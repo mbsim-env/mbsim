@@ -56,7 +56,7 @@ namespace MBSim {
           double phi = k*Om*t;
           yd += k*Om*(b(i)*cos(phi)-a(i)*sin(phi));
         }
-        return FromDouble<Ret>::cast(yd);
+        return FromDouble<typename B::DRetDArg>::cast(yd);
       }
       void initializeUsingXML(xercesc::DOMElement * element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"frequency");

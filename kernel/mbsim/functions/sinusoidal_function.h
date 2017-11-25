@@ -40,15 +40,15 @@ namespace MBSim {
       }
       typename B::DRetDArg parDer(const Arg &x) override {  
         double om = 2.*M_PI*f;
-        return FromDouble<Ret>::cast(A*om*cos(om*ToDouble<Arg>::cast(x)+phi0));
+        return FromDouble<typename B::DRetDArg>::cast(A*om*cos(om*ToDouble<Arg>::cast(x)+phi0));
       }
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { 
         double om = 2.*M_PI*f;
-        return FromDouble<Ret>::cast(-A*om*om*sin(om*ToDouble<Arg>::cast(x)+phi0)*ToDouble<Arg>::cast(xDir));
+        return FromDouble<typename B::DRetDArg>::cast(-A*om*om*sin(om*ToDouble<Arg>::cast(x)+phi0)*ToDouble<Arg>::cast(xDir));
       }
       typename B::DDRetDDArg parDerParDer(const Arg &x) override {  
         double om = 2.*M_PI*f;
-        return FromDouble<Ret>::cast(-A*om*om*sin(x+phi0));
+        return FromDouble<typename B::DDRetDDArg>::cast(-A*om*om*sin(x+phi0));
       }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"amplitude");

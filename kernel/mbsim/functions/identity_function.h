@@ -33,8 +33,9 @@ namespace MBSim {
       int getArgSize() const override { return 1; }
       std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
       Ret operator()(const Arg &x) override { return FromDouble<Ret>::cast(ToDouble<Arg>::cast(x)); }
-      typename B::DRetDArg parDer(const Arg &x) override { return FromDouble<Ret>::cast(1); }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { return FromDouble<Ret>::cast(0); }
+      typename B::DRetDArg parDer(const Arg &x) override { return FromDouble<typename B::DRetDArg>::cast(1); }
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { return FromDouble<typename B::DRetDArg>::cast(0); }
+      typename B::DDRetDDArg parDerParDer(const Arg &x) override { return FromDouble<typename B::DDRetDDArg>::cast(0); }
   };
 
 }

@@ -52,20 +52,27 @@ namespace MBSim {
           value=value*x+a.e(i);
         return FromDouble<Ret>::cast(value);
       }
-      typename B::DRetDArg parDer(const Arg &x_) override {  
+      typename B::DRetDArg parDer(const Arg &x_) override {
         double x = ToDouble<Arg>::cast(x_);
         double value=ad(ad.size()-1);
         for (int i=int(ad.size())-2; i>-1; i--)
           value=value*x+ad.e(i);
-        return FromDouble<Ret>::cast(value);
+        return FromDouble<typename B::DRetDArg>::cast(value);
       }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir_, const Arg &x_) override { 
+      typename B::DRetDArg parDerDirDer(const Arg &xDir_, const Arg &x_) override {
         double x = ToDouble<Arg>::cast(x_);
         double xDir = ToDouble<Arg>::cast(xDir_);
         double value=add(add.size()-1);
         for (int i=int(add.size())-2; i>-1; i--)
           value=value*x+add.e(i);
-        return FromDouble<Ret>::cast(value*xDir);
+        return FromDouble<typename B::DRetDArg>::cast(value*xDir);
+      }
+      typename B::DDRetDDArg parDerParDer(const Arg &x_) override {
+        double x = ToDouble<Arg>::cast(x_);
+        double value=add(add.size()-1);
+        for (int i=int(add.size())-2; i>-1; i--)
+          value=value*x+add.e(i);
+        return FromDouble<typename B::DDRetDDArg>::cast(value);
       }
 
       void initializeUsingXML(xercesc::DOMElement *element) override {

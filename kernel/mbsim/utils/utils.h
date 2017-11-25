@@ -22,6 +22,7 @@
 
 #include <string>
 #include "fmatvec/fmatvec.h"
+#include "mbsim/mbsim_event.h"
 #include <mbsim/numerics/csparse.h>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -103,7 +104,31 @@ namespace MBSim {
   class FromDouble {
     public:
       static Ret cast(double x) {
-        return Ret(1,fmatvec::INIT,x);
+        throw MBSimError("FromDouble::cast not implemented for current type.");
+      }
+  };
+
+  template <class Col>
+  class FromDouble<fmatvec::Vector<Col,double> > {
+    public:
+      static fmatvec::Vector<Col,double> cast(double x) {
+        return fmatvec::Vector<Col,double>(1,fmatvec::INIT,x);
+      }
+  };
+
+  template <class Col>
+  class FromDouble<fmatvec::RowVector<Col,double> > {
+    public:
+      static fmatvec::RowVector<Col,double> cast(double x) {
+        return fmatvec::RowVector<Col,double>(1,fmatvec::INIT,x);
+      }
+  };
+
+  template <class Row, class Col>
+  class FromDouble<fmatvec::Matrix<fmatvec::General,Row,Col,double> > {
+    public:
+      static fmatvec::Matrix<fmatvec::General,Row,Col,double> cast(double x) {
+        return fmatvec::Matrix<fmatvec::General,Row,Col,double>(1,1,fmatvec::INIT,x);
       }
   };
 
