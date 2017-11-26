@@ -507,13 +507,13 @@ namespace MBSimGUI {
     list.emplace_back("\"positive\"");
     list.emplace_back("\"negative\"");
     list.emplace_back("\"absGEqTwo\"");
-    windingRule = new ExtWidget("Winding rule",new TextChoiceWidget(list,1,true));
+    windingRule = new ExtWidget("Winding rule",new TextChoiceWidget(list,1,true),false,false,OPENMBV%"windingRule");
     layout->addWidget(windingRule);
 
-    height = new ExtWidget("Height",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft));
+    height = new ExtWidget("Height",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"height");
     layout->addWidget(height);
 
-    contour = new ExtWidget("Contour",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,3,vector<QStringList>(3,lengthUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
+    contour = new ExtWidget("Contour",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"contour");
     layout->addWidget(contour);
   }
 
