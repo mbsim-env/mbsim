@@ -433,15 +433,22 @@ namespace MBSimGUI {
   ConstraintWidgetFactory::ConstraintWidgetFactory(Element *parent_) : parent(parent_) {
     name.emplace_back("Time dependent constraint function");
     name.emplace_back("State dependent constraint function");
+    name.emplace_back("General constraint function");
     xmlName.push_back(MBSIM%"timeDependentConstraintFunction");
     xmlName.push_back(MBSIM%"stateDependentConstraintFunction");
+    xmlName.push_back(MBSIM%"generalConstraintFunction");
   }
 
   QWidget* ConstraintWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
+      return new ChoiceWidget2(new FunctionWidgetFactory2(parent),QBoxLayout::TopToBottom,0);
     if(i==1)
-      return new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(parent,QStringList("q")),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
+      return new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(parent,QStringList("q")),QBoxLayout::TopToBottom,0);
+    if(i==2) {
+      QStringList var;
+      var << "q" << "t";
+      return new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(parent,var),QBoxLayout::TopToBottom,0);
+    }
     return nullptr;
   }
 
