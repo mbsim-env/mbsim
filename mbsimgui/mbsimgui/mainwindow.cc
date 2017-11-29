@@ -1003,9 +1003,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::help() {
-    QMessageBox::information(this, tr("MBSimGUI - Help"), tr("<p><ul><li><a href=\"https://www.mbsim-env.de/mbsim/html/doc/index.html\">Manuals</a></li>"
-          "<li><a href=\"https://www.mbsim-env.de/mbsim/linux64-dailydebug/doc/index.html\">XML and C++ documentation</a></li>"
-          "<li><a href=\"https://www.mbsim-env.de/mbsim/papers/\">Papers</a></li></ul></p>"));
+    QMessageBox::information(this, tr("MBSimGUI - Help"), tr("<p>Please visit <a href=\"https://www.mbsim-env.de\">MBSim-Environment</a> for documentation.</p>"));
   }
 
   void MainWindow::xmlHelp(const QString &url) {
