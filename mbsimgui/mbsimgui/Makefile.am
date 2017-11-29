@@ -69,7 +69,6 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   widget.moc.cc \
 		   basic_widgets.moc.cc \
 		   variable_widgets.moc.cc \
-		   function_widget.moc.cc \
 		   function_widgets.moc.cc \
 		   extended_widgets.moc.cc \
 		   special_widgets.moc.cc \
@@ -97,8 +96,7 @@ dist_mbsimguishare_DATA = inlineopenmbv.ombv.wst \
 			  empty.ombv.h5
 
 mbsimguiicondir = @datadir@/mbsimgui/icons
-dist_mbsimguiicon_DATA = icons/exit.svg \
-			 icons/simulate.svg \
+dist_mbsimguiicon_DATA = icons/simulate.svg \
 			 icons/preview.svg \
 			 icons/openmbv.svg \
 			 icons/h5plotserie.svg \
