@@ -156,13 +156,13 @@ namespace MBSimGUI {
       connect(recentProjectFileAct, SIGNAL(triggered()), this, SLOT(openRecentProjectFile()));
     }
     QMenu *menu = new QMenu("Project", menuBar());
-    action = menu->addAction("New", this, SLOT(newProject()));
+    action = menu->addAction(QIcon::fromTheme("document-new"), "New", this, SLOT(newProject()));
     action->setShortcut(QKeySequence::New);
-    action = menu->addAction("Load", this, SLOT(loadProject()));
+    action = menu->addAction(QIcon::fromTheme("document-open"), "Load", this, SLOT(loadProject()));
     action->setShortcut(QKeySequence::Open);
-    action = menu->addAction("Save as", this, SLOT(saveProjectAs()));
+    action = menu->addAction(QIcon::fromTheme("document-save-as"), "Save as", this, SLOT(saveProjectAs()));
     action->setShortcut(QKeySequence::SaveAs);
-    actionSaveProject = menu->addAction("Save", this, SLOT(saveProject()));
+    actionSaveProject = menu->addAction(QIcon::fromTheme("document-save"), "Save", this, SLOT(saveProject()));
     actionSaveProject->setShortcut(QKeySequence::Save);
     menu->addSeparator();
     for (auto & recentProjectFileAct : recentProjectFileActs)
@@ -174,19 +174,19 @@ namespace MBSimGUI {
     action = menu->addAction("Edit", elementView, SLOT(openEditor()));
     action->setShortcut(QKeySequence("Ctrl+E"));
     menu->addSeparator();
-    action = menu->addAction("Undo", this, SLOT(undo()));
+    action = menu->addAction(QIcon::fromTheme("edit-undo"), "Undo", this, SLOT(undo()));
     action->setShortcut(QKeySequence::Undo);
-    action = menu->addAction("Redo", this, SLOT(redo()));
+    action = menu->addAction(QIcon::fromTheme("edit-redo"), "Redo", this, SLOT(redo()));
     action->setShortcut(QKeySequence::Redo);
     menu->addSeparator();
-    action = menu->addAction("Copy", this, SLOT(copy()));
+    action = menu->addAction(QIcon::fromTheme("edit-copy"), "Copy", this, SLOT(copy()));
     action->setShortcut(QKeySequence::Copy);
-    action = menu->addAction("Cut", this, SLOT(cut()));
+    action = menu->addAction(QIcon::fromTheme("edit-cut"), "Cut", this, SLOT(cut()));
     action->setShortcut(QKeySequence::Cut);
-    action = menu->addAction("Paste", this, SLOT(paste()));
+    action = menu->addAction(QIcon::fromTheme("edit-paste"), "Paste", this, SLOT(paste()));
     action->setShortcut(QKeySequence::Paste);
     menu->addSeparator();
-    action = menu->addAction("Remove", this, SLOT(remove()));
+    action = menu->addAction(QIcon::fromTheme("edit-delete"), "Remove", this, SLOT(remove()));
     action->setShortcut(QKeySequence::Delete);
     menu->addSeparator();
     action = menu->addAction("Move up", this, SLOT(moveUp()));
