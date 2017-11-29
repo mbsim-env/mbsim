@@ -146,7 +146,7 @@ namespace MBSimGUI {
 
     GUIMenu->addSeparator();
 
-    action = GUIMenu->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"exit.svg").string())), "E&xit", this, SLOT(close()));
+    action = GUIMenu->addAction(QIcon::fromTheme("application-exit"), "E&xit", this, SLOT(close()));
     action->setShortcut(QKeySequence::Quit);
     action->setStatusTip(tr("Exit the application"));
 
