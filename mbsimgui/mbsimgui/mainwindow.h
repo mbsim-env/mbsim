@@ -89,8 +89,6 @@ namespace MBSimGUI {
       bool autoSave, autoExport, saveFinalStateVector;
       int autoSaveInterval, maxUndo;
       QString autoExportDir;
-      static QDialog *helpDialog;
-      static QWebView *helpViewer;
       bool allowUndo;
       xercesc::DOMDocument *doc;
       std::deque<xercesc::DOMDocument*> undos, redos;

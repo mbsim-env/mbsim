@@ -78,9 +78,6 @@ namespace MBSimGUI {
 
   vector<boost::filesystem::path> dependencies;
 
-  QDialog *MainWindow::helpDialog = nullptr;
-  QWebView *MainWindow::helpViewer = nullptr;
-
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), autoSave(false), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_HTMLOUTPUT=1";
@@ -208,9 +205,8 @@ namespace MBSimGUI {
 
     menuBar()->addSeparator();
     QMenu *helpMenu = new QMenu("Help", menuBar());
-    helpMenu->addAction("GUI Help...", this, SLOT(help()));
-    helpMenu->addAction("XML Help...", this, SLOT(xmlHelp()));
-    helpMenu->addAction("About MBSim GUI", this, SLOT(about()));
+    helpMenu->addAction(QIcon::fromTheme("help-contents"), "Contents", this, SLOT(help()));
+    helpMenu->addAction(QIcon::fromTheme("help-about"), "About", this, SLOT(about()));
     menuBar()->addMenu(helpMenu);
 
     QToolBar *toolBar = addToolBar("Tasks");
@@ -1007,60 +1003,20 @@ namespace MBSimGUI {
   }
 
   void MainWindow::help() {
-    QMessageBox::information(this, "MBSim GUI - GUI Help", 
-        "<h1>GUI Help</h1>"
-        "tbd"
-        );
+    QMessageBox::information(this, tr("MBSimGUI - Help"), tr("<p><ul><li><a href=\"https://www.mbsim-env.de/mbsim/html/doc/index.html\">Manuals</a></li>"
+          "<li><a href=\"https://www.mbsim-env.de/mbsim/linux64-dailydebug/doc/index.html\">XML and C++ documentation</a></li>"
+          "<li><a href=\"https://www.mbsim-env.de/mbsim/papers/\">Papers</a></li></ul></p>"));
   }
 
   void MainWindow::xmlHelp(const QString &url) {
-    if(!helpDialog) {
-      helpDialog = new QDialog();
-      auto *layout = new QGridLayout(helpDialog);
-      helpDialog->setLayout(layout);
-      QPushButton *home = new QPushButton("Home",helpDialog);
-      connect(home, SIGNAL(clicked()), this, SLOT(xmlHelp()));
-      layout->addWidget(home,0,0);
-      QPushButton *helpBackward = new QPushButton("Backward",helpDialog);
-      layout->addWidget(helpBackward,0,1);
-      QPushButton *helpForward = new QPushButton("Forward",helpDialog);
-      layout->addWidget(helpForward,0,2);
-      helpViewer = new QWebView(helpDialog);
-      layout->addWidget(helpViewer,1,0,1,3);
-      connect(helpForward, SIGNAL(clicked()), helpViewer, SLOT(forward()));
-      connect(helpBackward, SIGNAL(clicked()), helpViewer, SLOT(back()));
-      helpDialog->setWindowTitle("MBSimXML - Main MBSim XML Documentation");
-      helpDialog->resize(700,500);
-    }
-    if(url.isEmpty())
-      helpViewer->load(QUrl(((MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string()+"/http___www_mbsim-env_de_MBSim/index.html").c_str()));
-    else
-      helpViewer->load(QUrl(url));
-    helpDialog->show();
-    helpDialog->raise();
-    helpDialog->activateWindow();
   }
 
   void MainWindow::about() {
-    QMessageBox::about(this, "About MBSim GUI",
-        "<h1>MBSim GUI - A frontend for MBSim</h1>"
-        "<p>Copyright &copy; Martin Foerg <tt>&lt;martin.o.foerg@googlemail.com&gt;</tt><p/>"
-        "<p>Licensed under the General Public License (see file COPYING).</p>"
-        "<p>This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>"
-        "<h2>Authors:</h2>"
-        "<ul>"
-        "  <li>Martin Foerg <tt>&lt;martin.o.foerg@googlemail.com&gt;</tt> (Maintainer) </li>"
-        "</ul>"
-        "<h2>This program uses:</h2>"
-        "<ul>"
-        "tbd"
-        //"  <li>'Qt - A cross-platform application and UI framework' by Nokia from <tt>http://www.qtsoftware.com</tt> (License: GPL/LGPL)</li>"
-        //"  <li>'mbsimflatxml - tbd <tt>https://www.mbsim-env.de/</tt> (Licence: Qwt/LGPL)</li>"
-        //"  <li>'OpenMBV - tbd <tt>https://www.mbsim-env.de/</tt> (License: LGPL)</li>"
-        //"  <li>'h5plotserie - tbd <tt>https://www.mbsim-env.de/</tt> (License: NCSA-HDF)</li>"
-        //"  <li>...</li>"
-        "</ul>"
-        );
+     QMessageBox::about(this, tr("About MBSimGUI"), (tr("<p><b>MBSimGUI %1</b></p><p>MBSimGUI is a graphical user interface for the multibody simulation software MBSim.</p>").arg(VERSION)
+           + tr("<p>See <a href=\"https://www.mbsim-env.de\">MBSim-Environment</a> for more information.</p>"
+             "<p>Copyright &copy; Martin Foerg <tt>&lt;martin.o.foerg@googlemail.com&gt;</tt><p/>"
+             "<p>Licensed under the General Public License (see file COPYING).</p>"
+             "<p>This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>")));
   }
 
   void MainWindow::rebuildTree() {
