@@ -171,13 +171,15 @@ namespace MBSimGUI {
     menuBar()->addMenu(menu);
 
     menu = new QMenu("Edit", menuBar());
-    action = menu->addAction("Edit", elementView, SLOT(openEditor()));
+    action = menu->addAction(QIcon::fromTheme("document-properties"), "Edit", elementView, SLOT(openEditor()));
     action->setShortcut(QKeySequence("Ctrl+E"));
     menu->addSeparator();
-    action = menu->addAction(QIcon::fromTheme("edit-undo"), "Undo", this, SLOT(undo()));
-    action->setShortcut(QKeySequence::Undo);
-    action = menu->addAction(QIcon::fromTheme("edit-redo"), "Redo", this, SLOT(redo()));
-    action->setShortcut(QKeySequence::Redo);
+    actionUndo = menu->addAction(QIcon::fromTheme("edit-undo"), "Undo", this, SLOT(undo()));
+    actionUndo->setShortcut(QKeySequence::Undo);
+    actionUndo->setDisabled(true);
+    actionRedo = menu->addAction(QIcon::fromTheme("edit-redo"), "Redo", this, SLOT(redo()));
+    actionRedo->setShortcut(QKeySequence::Redo);
+    actionRedo->setDisabled(true);
     menu->addSeparator();
     action = menu->addAction(QIcon::fromTheme("edit-copy"), "Copy", this, SLOT(copy()));
     action->setShortcut(QKeySequence::Copy);
@@ -189,9 +191,9 @@ namespace MBSimGUI {
     action = menu->addAction(QIcon::fromTheme("edit-delete"), "Remove", this, SLOT(remove()));
     action->setShortcut(QKeySequence::Delete);
     menu->addSeparator();
-    action = menu->addAction("Move up", this, SLOT(moveUp()));
+    action = menu->addAction(QIcon::fromTheme("go-up"), "Move up", this, SLOT(moveUp()));
     action->setShortcut(QKeySequence("Ctrl+Up"));
-    action = menu->addAction("Move down", this, SLOT(moveDown()));
+    action = menu->addAction(QIcon::fromTheme("go-down"), "Move down", this, SLOT(moveDown()));
     action->setShortcut(QKeySequence("Ctrl+Down"));
     menuBar()->addMenu(menu);
 
@@ -423,6 +425,8 @@ namespace MBSimGUI {
       if(undos.size() > maxUndo)
         undos.pop_front();
       redos.clear();
+      actionUndo->setEnabled(true);
+      actionRedo->setDisabled(true);
     }
   }
   
@@ -1048,6 +1052,8 @@ namespace MBSimGUI {
       undos.pop_back();
       rebuildTree();
       mbsimxml(1);
+      actionUndo->setDisabled(undos.empty());
+      actionRedo->setEnabled(true);
     }
   }
 
@@ -1058,6 +1064,8 @@ namespace MBSimGUI {
       redos.pop_back();
       rebuildTree();
       mbsimxml(1);
+      actionRedo->setDisabled(redos.empty());
+      actionUndo->setEnabled(true);
     }
   }
 
