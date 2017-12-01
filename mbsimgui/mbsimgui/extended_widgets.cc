@@ -213,7 +213,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    spinBox = new QSpinBox;
+    spinBox = new CustomSpinBox;
     spinBox->setDisabled(fixedSize);
     spinBox->setRange(minSize,maxSize);
     spinBox->setValue(m);
