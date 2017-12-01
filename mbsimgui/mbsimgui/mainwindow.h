@@ -142,7 +142,7 @@ namespace MBSimGUI {
       EmbeddingView* getEmbeddingView() { return embeddingView; }
       void setProjectChanged(bool changed=true);
       void selectSolver(int i);
-      void setAllowUndo(bool allowUndo_) { allowUndo = allowUndo_; }
+      void setAllowUndo(bool allowUndo);
       const std::pair<Element*,bool>& getElementBuffer() const { return elementBuffer; }
       const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
       Project* getProject() { return project; }

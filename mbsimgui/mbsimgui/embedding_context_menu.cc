@@ -29,20 +29,20 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   EmbeddingContextMenu::EmbeddingContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
-    QAction *action = new QAction("Edit", this);
+    QAction *action = new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,SIGNAL(triggered()),mw->getEmbeddingView(),SLOT(openEditor()));
     QMenu::addAction(action);
     addSeparator();
-    action = new QAction("Save as", this);
+    action = new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
     action->setDisabled(not item->getNumberOfParameters());
     connect(action,SIGNAL(triggered()),mw,SLOT(saveEmbeddingAs()));
     addAction(action);
     addSeparator();
-    action = new QAction("Paste", this);
+    action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(mw->getParameterBuffer().first);
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
     addAction(action);
-    action = new QAction("Load", this);
+    action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
     action = new QAction("Embed", this);
@@ -50,7 +50,7 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
     addSeparator();
-    action = new QAction("Remove", this);
+    action = new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
     action->setEnabled(item->getNumberOfParameters());
     connect(action,SIGNAL(triggered()),this,SLOT(remove()));
     QMenu::addAction(action);

@@ -28,9 +28,13 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   ProjectViewContextMenu::ProjectViewContextMenu(QWidget *parent) : QMenu(parent) {
-  //  QAction *action=new QAction("Edit", this);
-  //  connect(action,SIGNAL(triggered()),mw->getElementList(),SLOT(openEditor()));
-  //  addAction(action);
+    auto *action = new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(saveProjectAs()));
+    addAction(action);
+    addSeparator();
+    action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(loadProject()));
+    addAction(action);
   }
 
 //  void ProjectViewContextMenu::selectProject(QAction *action) {
@@ -61,7 +65,7 @@ namespace MBSimGUI {
   bool ProjectMouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if(event->type() == QEvent::MouseButtonDblClick) {
       mw->setAllowUndo(false);
-//      mw->updateParameters(view->getProject());
+      mw->updateParameters(mw->getProject());
       editor = view->getProject()->createPropertyDialog();
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();

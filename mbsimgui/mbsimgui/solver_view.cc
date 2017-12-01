@@ -32,11 +32,11 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   SolverViewContextMenu::SolverViewContextMenu(QWidget *parent) : QMenu(parent) {
-    auto *action = new QAction("Save as", this);
+    auto *action = new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(saveSolverAs()));
     addAction(action);
     addSeparator();
-    action = new QAction("Load", this);
+    action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(loadSolver()));
     addAction(action);
     addSeparator();
