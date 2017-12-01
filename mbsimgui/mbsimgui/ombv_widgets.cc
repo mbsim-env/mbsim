@@ -261,6 +261,7 @@ namespace MBSimGUI {
     scaleLength->writeXMLFile(e);
     scaleSize->writeXMLFile(e);
     referencePoint->writeXMLFile(e);
+    writeProperties(e);
     return e;
   }
 
