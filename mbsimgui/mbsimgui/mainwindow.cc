@@ -127,7 +127,7 @@ namespace MBSimGUI {
     QAction *action = GUIMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirHomeIcon)),"Workdir", this, SLOT(changeWorkingDir()));
     action->setStatusTip(tr("Change working directory"));
 
-    action = GUIMenu->addAction("Options", this, SLOT(openOptionsMenu()));
+    action = GUIMenu->addAction(QIcon::fromTheme("document-properties"), "Options", this, SLOT(openOptionsMenu()));
     action->setStatusTip(tr("Open options menu"));
 
     GUIMenu->addSeparator();
@@ -171,7 +171,7 @@ namespace MBSimGUI {
     menuBar()->addMenu(menu);
 
     menu = new QMenu("Edit", menuBar());
-    action = menu->addAction(QIcon::fromTheme("document-properties"), "Edit", elementView, SLOT(openEditor()));
+    action = menu->addAction(QIcon::fromTheme("document-properties"), "Edit", this, SLOT(edit()));
     action->setShortcut(QKeySequence("Ctrl+E"));
     menu->addSeparator();
     actionUndo = menu->addAction(QIcon::fromTheme("edit-undo"), "Undo", this, SLOT(undo()));
@@ -425,7 +425,7 @@ namespace MBSimGUI {
       if(undos.size() > maxUndo)
         undos.pop_front();
       redos.clear();
-      actionUndo->setEnabled(true);
+      if(allowUndo) actionUndo->setEnabled(true);
       actionRedo->setDisabled(true);
     }
   }
@@ -1042,31 +1042,38 @@ namespace MBSimGUI {
     solverView->setSolver(getProject()->getSolver());
   }
 
+  void MainWindow::edit() {
+    if(elementView->hasFocus())
+      elementView->openEditor();
+    else if(embeddingView->hasFocus())
+      embeddingView->openEditor();
+    else if(solverView->hasFocus())
+      solverView->openEditor();
+    else if(projectView->hasFocus())
+      projectView->openEditor();
+  }
+
   void MainWindow::undo() {
-    if(allowUndo and !undos.empty()) {
-      elementBuffer.first = NULL;
-      parameterBuffer.first = NULL;
-      setWindowModified(true);
-      redos.push_back(doc);
-      doc = undos.back();
-      undos.pop_back();
-      rebuildTree();
-      mbsimxml(1);
-      actionUndo->setDisabled(undos.empty());
-      actionRedo->setEnabled(true);
-    }
+    elementBuffer.first = NULL;
+    parameterBuffer.first = NULL;
+    setWindowModified(true);
+    redos.push_back(doc);
+    doc = undos.back();
+    undos.pop_back();
+    rebuildTree();
+    mbsimxml(1);
+    actionUndo->setDisabled(undos.empty());
+    actionRedo->setEnabled(true);
   }
 
   void MainWindow::redo() {
-    if(!redos.empty()) {
-      undos.push_back(doc);
-      doc = redos.back();
-      redos.pop_back();
-      rebuildTree();
-      mbsimxml(1);
-      actionRedo->setDisabled(redos.empty());
-      actionUndo->setEnabled(true);
-    }
+    undos.push_back(doc);
+    doc = redos.back();
+    redos.pop_back();
+    rebuildTree();
+    mbsimxml(1);
+    actionRedo->setDisabled(redos.empty());
+    actionUndo->setEnabled(true);
   }
 
   void MainWindow::removeElement() {
@@ -2058,6 +2065,11 @@ namespace MBSimGUI {
     echoView->addOutputText(process.readAllStandardOutput().data());
     echoView->addErrorText(process.readAllStandardError().data());
     echoView->updateOutputAndError();
+  }
+
+  void MainWindow::setAllowUndo(bool allowUndo_) {
+    allowUndo = allowUndo_;
+    actionUndo->setEnabled(allowUndo);
   }
 
 }

@@ -29,27 +29,27 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   ParameterContextMenu::ParameterContextMenu(Parameter *parameter_, QWidget *parent) : QMenu(parent), parameter(parameter_) {
-    QAction *action=new QAction("Edit", this);
+    QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,SIGNAL(triggered()),mw->getEmbeddingView(),SLOT(openEditor()));
     QMenu::addAction(action);
     addSeparator();
-    action=new QAction("Copy", this);
+    action=new QAction(QIcon::fromTheme("edit-copy"), "Copy", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(copyParameter()));
     addAction(action);
-    action=new QAction("Cut", this);
+    action=new QAction(QIcon::fromTheme("edit-cut"), "Cut", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(cutParameter()));
     addAction(action);
     addSeparator();
-    action=new QAction("Move up", this);
-    action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)>0);
+    action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveUpParameter()));
     addAction(action);
-    action=new QAction("Move down", this);
-    action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)<parameter->getParent()->getNumberOfParameters()-1);
+    if(action->isEnabled()) action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)>0);
+    action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveDownParameter()));
     addAction(action);
+    if(action->isEnabled()) action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)<parameter->getParent()->getNumberOfParameters()-1);
     addSeparator();
-    action=new QAction("Remove", this);
+    action=new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(removeParameter()));
     addAction(action);
   }

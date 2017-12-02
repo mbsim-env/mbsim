@@ -28,9 +28,13 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   ProjectViewContextMenu::ProjectViewContextMenu(QWidget *parent) : QMenu(parent) {
-  //  QAction *action=new QAction("Edit", this);
-  //  connect(action,SIGNAL(triggered()),mw->getElementList(),SLOT(openEditor()));
-  //  addAction(action);
+    auto *action = new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(saveProjectAs()));
+    addAction(action);
+    addSeparator();
+    action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(loadProject()));
+    addAction(action);
   }
 
 //  void ProjectViewContextMenu::selectProject(QAction *action) {
@@ -58,16 +62,38 @@ namespace MBSimGUI {
     delete menu;
   }
 
-  bool ProjectMouseEvent::eventFilter(QObject *obj, QEvent *event) {
-    if(event->type() == QEvent::MouseButtonDblClick) {
+  void ProjectView::openEditor() {
+    if(!editor) {
       mw->setAllowUndo(false);
-//      mw->updateParameters(view->getProject());
-      editor = view->getProject()->createPropertyDialog();
+      mw->updateParameters(mw->getProject());
+      editor = mw->getProject()->createPropertyDialog();
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();
       connect(editor,SIGNAL(apply()),this,SLOT(apply()));
       connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+    }
+  }
+
+  void ProjectView::dialogFinished(int result) {
+    if(result != 0) {
+      mw->setProjectChanged(true);
+      editor->fromWidget();
+      updateName();
+    }
+    editor = nullptr;
+    mw->setAllowUndo(true);
+  }
+
+  void ProjectView::apply() {
+    mw->setProjectChanged(true);
+    editor->fromWidget();
+    updateName();
+  }
+
+  bool ProjectMouseEvent::eventFilter(QObject *obj, QEvent *event) {
+    if(event->type() == QEvent::MouseButtonDblClick) {
+      view->openEditor();
       return true;
     }
     else if(event->type() == QEvent::MouseButtonPress) {
@@ -76,22 +102,6 @@ namespace MBSimGUI {
     }
     else
       return QObject::eventFilter(obj, event);
-  }
-
-  void ProjectMouseEvent::dialogFinished(int result) {
-    if(result != 0) {
-      mw->setProjectChanged(true);
-      editor->fromWidget();
-      view->updateName();
-    }
-    editor = nullptr;
-    mw->setAllowUndo(true);
-  }
-
-  void ProjectMouseEvent::apply() {
-    mw->setProjectChanged(true);
-    editor->fromWidget();
-    view->updateName();
   }
 
 }

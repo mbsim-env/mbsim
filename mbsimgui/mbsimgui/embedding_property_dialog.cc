@@ -50,10 +50,10 @@ namespace MBSimGUI {
       counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
       addToTab("Embedding",counterName);
     }
-    href = new ExtWidget("File", new FileWidget(item->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false, true), true);
+    href = new ExtWidget("File", new FileWidget(item->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false), true);
     href->setDisabled(true);
     addToTab("Embedding",href);
-    parameterHref = new ExtWidget("Parameter file", new FileWidget(item->getName()+".parameter.xml", "XML parameter files", "xml files (*.xml)", 1, false, true), true);
+    parameterHref = new ExtWidget("Parameter file", new FileWidget(item->getName()+".parameter.xml", "XML parameter files", "xml files (*.xml)", 1, false), true);
     parameterHref->setDisabled(true);
     addToTab("Embedding",parameterHref);
   }
