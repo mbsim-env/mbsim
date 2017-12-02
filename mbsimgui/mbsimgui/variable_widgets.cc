@@ -1342,17 +1342,27 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
     connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
+    path = new CustomComboBox;
+    path->addItem("Relative");
+    path->addItem("Absolute");
+    layout->addWidget(path);
+    connect(path,SIGNAL(currentIndexChanged(int)),this,SLOT(changePath(int)));
   }
 
   void FromFileWidget::setFile(const QString &str) {
     relativeFilePath->setText(str);
+    path->setCurrentIndex(str[0]=='/'?1:0);
   }
 
   void FromFileWidget::selectFile() {
     QString file = getFile();
     file=QFileDialog::getOpenFileName(nullptr, "ASCII files", file, "all files (*.*)");
-    if(file!="")
-      setFile(mbsDir.relativeFilePath(file));
+    if(not file.isEmpty()) {
+      if(path->currentIndex()==0)
+        setFile(mbsDir.relativeFilePath(file));
+      else
+        setFile(mbsDir.absoluteFilePath(file));
+    }
   }
 
   QString FromFileWidget::getValue() const {
@@ -1382,6 +1392,10 @@ namespace MBSimGUI {
     E(ele)->setAttribute("href",getFile().toStdString());
     parent->insertBefore(ele, nullptr);
     return nullptr;
+  }
+
+  void FromFileWidget::changePath(int i) {
+    setFile(i==0?mbsDir.relativeFilePath(getFile()):mbsDir.absoluteFilePath(getFile()));
   }
 
   BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,0) {

@@ -511,9 +511,11 @@ namespace MBSimGUI {
 
     protected:
       QLineEdit *relativeFilePath;
+      QComboBox *path;
 
     protected slots:
       void selectFile();
+      void changePath(int i);
   };
 
   class BoolWidgetFactory : public WidgetFactory {

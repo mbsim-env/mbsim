@@ -642,17 +642,28 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FileWidget::FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_, bool quote_, bool relativeFilePath_) : description(description_), extensions(extensions_), mode(mode_), quote(quote_), relativeFilePath(relativeFilePath_) {
+  FileWidget::FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_, bool quote_) : description(description_), extensions(extensions_), mode(mode_), quote(quote_) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     filePath = new QLineEdit;
     layout->addWidget(filePath);
-    setFile(file);
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
     connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
+    path = new CustomComboBox;
+    path->addItem("Relative");
+    path->addItem("Absolute");
+    layout->addWidget(path);
+    setFile(file);
+    connect(path,SIGNAL(currentIndexChanged(int)),this,SLOT(changePath(int)));
+  }
+
+  void FileWidget::setFile(const QString &str) {
+    filePath->setText(str);
+    QString file = quote?str.mid(1,str.length()-2):str;
+    path->setCurrentIndex(file[0]=='/'?1:0);
   }
 
   void FileWidget::selectFile() {
@@ -665,18 +676,16 @@ namespace MBSimGUI {
     else
       file = QFileDialog::getExistingDirectory ( nullptr, description, file);
     if(not file.isEmpty()) {
-      if(relativeFilePath)
-        setFile(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
+      if(path->currentIndex()==0)
+        filePath->setText(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
       else
-        setFile(quote?("\""+mbsDir.absoluteFilePath(file)+"\""):mbsDir.absoluteFilePath(file));
+        filePath->setText(quote?("\""+mbsDir.absoluteFilePath(file)+"\""):mbsDir.absoluteFilePath(file));
     }
   }
 
   DOMElement* FileWidget::initializeUsingXML(DOMElement *parent) {
     DOMText *text = E(parent)->getFirstTextChild();
     if(text) {
-      //QString str = QString::fromStdString(X()%text->getData());
-      //setFile(quote?str.mid(1,str.length()-2):str);
       setFile(QString::fromStdString(X()%text->getData()));
       return parent;
     }
@@ -690,6 +699,14 @@ namespace MBSimGUI {
     DOMText *text = doc->createTextNode(X()%getFile().toStdString());
     ele0->insertBefore(text, nullptr);
     return nullptr;
+  }
+
+  void FileWidget::changePath(int i) {
+    QString file = quote?getFile().mid(1,getFile().length()-2):getFile();
+    if(i==0)
+      setFile(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
+    else
+      setFile(quote?("\""+mbsDir.absoluteFilePath(file)+"\""):mbsDir.absoluteFilePath(file));
   }
 
   SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
