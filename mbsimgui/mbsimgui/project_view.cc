@@ -62,16 +62,38 @@ namespace MBSimGUI {
     delete menu;
   }
 
-  bool ProjectMouseEvent::eventFilter(QObject *obj, QEvent *event) {
-    if(event->type() == QEvent::MouseButtonDblClick) {
+  void ProjectView::openEditor() {
+    if(!editor) {
       mw->setAllowUndo(false);
       mw->updateParameters(mw->getProject());
-      editor = view->getProject()->createPropertyDialog();
+      editor = mw->getProject()->createPropertyDialog();
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();
       connect(editor,SIGNAL(apply()),this,SLOT(apply()));
       connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+    }
+  }
+
+  void ProjectView::dialogFinished(int result) {
+    if(result != 0) {
+      mw->setProjectChanged(true);
+      editor->fromWidget();
+      updateName();
+    }
+    editor = nullptr;
+    mw->setAllowUndo(true);
+  }
+
+  void ProjectView::apply() {
+    mw->setProjectChanged(true);
+    editor->fromWidget();
+    updateName();
+  }
+
+  bool ProjectMouseEvent::eventFilter(QObject *obj, QEvent *event) {
+    if(event->type() == QEvent::MouseButtonDblClick) {
+      view->openEditor();
       return true;
     }
     else if(event->type() == QEvent::MouseButtonPress) {
@@ -80,22 +102,6 @@ namespace MBSimGUI {
     }
     else
       return QObject::eventFilter(obj, event);
-  }
-
-  void ProjectMouseEvent::dialogFinished(int result) {
-    if(result != 0) {
-      mw->setProjectChanged(true);
-      editor->fromWidget();
-      view->updateName();
-    }
-    editor = nullptr;
-    mw->setAllowUndo(true);
-  }
-
-  void ProjectMouseEvent::apply() {
-    mw->setProjectChanged(true);
-    editor->fromWidget();
-    view->updateName();
   }
 
 }

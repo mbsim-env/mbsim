@@ -171,7 +171,6 @@ namespace MBSimGUI {
     menuBar()->addMenu(menu);
 
     menu = new QMenu("Edit", menuBar());
-    //action = menu->addAction(QIcon::fromTheme("document-properties"), "Edit", elementView, SLOT(openEditor()));
     action = menu->addAction(QIcon::fromTheme("document-properties"), "Edit", this, SLOT(edit()));
     action->setShortcut(QKeySequence("Ctrl+E"));
     menu->addSeparator();
@@ -1041,6 +1040,17 @@ namespace MBSimGUI {
     elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
     solverView->setSolver(getProject()->getSolver());
+  }
+
+  void MainWindow::edit() {
+    if(elementView->hasFocus())
+      elementView->openEditor();
+    else if(embeddingView->hasFocus())
+      embeddingView->openEditor();
+    else if(solverView->hasFocus())
+      solverView->openEditor();
+    else if(projectView->hasFocus())
+      projectView->openEditor();
   }
 
   void MainWindow::undo() {

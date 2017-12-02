@@ -46,21 +46,22 @@ namespace MBSimGUI {
       QMenu* createContextMenu() { return new ProjectViewContextMenu; }
     protected:
       Project *project;
+      ProjectPropertyDialog *editor{nullptr};
     protected slots:
       void openContextMenu();
+      void dialogFinished(int result);
+      void apply();
+    public slots:
+      void openEditor();
   };
 
   class ProjectMouseEvent : public QObject {
-    Q_OBJECT
     public:
       ProjectMouseEvent(ProjectView* view_) : view(view_) { }
     protected:
       ProjectView *view;
       ProjectPropertyDialog *editor;
       bool eventFilter(QObject *obj, QEvent *event) override;
-    protected slots:
-      void dialogFinished(int result);
-      void apply();
   };
 
 }

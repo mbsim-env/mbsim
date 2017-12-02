@@ -178,6 +178,7 @@ namespace MBSimGUI {
       void about();
       void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
+      void edit();
       void undo();
       void redo();
       void removeElement();

@@ -92,6 +92,33 @@ namespace MBSimGUI {
     delete menu;
   }
 
+  void SolverView::openEditor() {
+    if(!editor) {
+      mw->setAllowUndo(false);
+      mw->updateParameters(mw->getProject()->getSolver());
+      editor = mw->getProject()->getSolver()->createPropertyDialog();
+      editor->setAttribute(Qt::WA_DeleteOnClose);
+      editor->toWidget();
+      editor->show();
+      connect(editor,SIGNAL(apply()),this,SLOT(apply()));
+      connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+    }
+  }
+
+  void SolverView::dialogFinished(int result) {
+    if(result != 0) {
+      mw->setProjectChanged(true);
+      editor->fromWidget();
+    }
+    editor = nullptr;
+    mw->setAllowUndo(true);
+  }
+
+  void SolverView::apply() {
+    mw->setProjectChanged(true);
+    editor->fromWidget();
+  }
+
   Solver* SolverView::createSolver(int i_) {
     i = i_;
     updateText();
@@ -140,14 +167,7 @@ namespace MBSimGUI {
 
   bool SolverMouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if(event->type() == QEvent::MouseButtonDblClick) {
-      mw->setAllowUndo(false);
-      mw->updateParameters(mw->getProject()->getSolver());
-      editor = mw->getProject()->getSolver()->createPropertyDialog();
-      editor->setAttribute(Qt::WA_DeleteOnClose);
-      editor->toWidget();
-      editor->show();
-      connect(editor,SIGNAL(apply()),this,SLOT(apply()));
-      connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+      view->openEditor();
       return true;
     }
     else if(event->type() == QEvent::MouseButtonPress) {
@@ -156,20 +176,6 @@ namespace MBSimGUI {
     }
     else
       return QObject::eventFilter(obj, event);
-  }
-
-  void SolverMouseEvent::dialogFinished(int result) {
-    if(result != 0) {
-      mw->setProjectChanged(true);
-      editor->fromWidget();
-    }
-    editor = nullptr;
-    mw->setAllowUndo(true);
-  }
-
-  void SolverMouseEvent::apply() {
-    mw->setProjectChanged(true);
-    editor->fromWidget();
   }
 
 }
