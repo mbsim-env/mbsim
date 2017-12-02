@@ -39,27 +39,32 @@ namespace MBSimIntegrator {
   LSODERIntegrator::LSODERIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), plotOnRoot(true) {
   }
 
-  void LSODERIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
-    Vec zd(*zSize, zd_);
-    system->setTime(*t);
-//    system->setState(z); Not needed as the integrator uses the state of the system
-    system->resetUpToDate();
-    zd = system->evalzd();
+  void LSODERIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
+    auto self=*reinterpret_cast<LSODERIntegrator**>(&neq[1]);
+    Vec zd(neq[0], zd_);
+    self->getSystem()->setTime(*t);
+//    self->getSystem()->setState(z); Not needed as the integrator uses the state of the system
+    self->getSystem()->resetUpToDate();
+    zd = self->getSystem()->evalzd();
   }
 
-  void LSODERIntegrator::fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_) {
+  void LSODERIntegrator::fsv(int* neq, double* t, double* z_, int* nsv, double* sv_) {
+    auto self=*reinterpret_cast<LSODERIntegrator**>(&neq[1]);
     Vec sv(*nsv, sv_);
-    system->setTime(*t);
-//    system->setState(z); Not needed as the integrator uses the state of the system
-    system->resetUpToDate();
-    sv = system->evalsv();
+    self->getSystem()->setTime(*t);
+//    self->getSystem()->setState(z); Not needed as the integrator uses the state of the system
+    self->getSystem()->resetUpToDate();
+    sv = self->getSystem()->evalsv();
   }
 
-  void LSODERIntegrator::integrate(DynamicSystemSolver& system_) {
+  void LSODERIntegrator::integrate() {
     debugInit();
-    system = &system_;
 
     int zSize=system->getzSize();
+    int neq[1+sizeof(void*)/sizeof(int)+1];
+    neq[0]=zSize;
+    *reinterpret_cast<LSODERIntegrator**>(&neq[1])=this;
+
     if(z0.size())
       system->setState(z0);
     else
@@ -106,7 +111,7 @@ namespace MBSimIntegrator {
 
       integrationSteps++;
 
-      DLSODER(fzdot, &zSize, system->getState()(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
+      DLSODER(fzdot, neq, system->getState()(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(),
           &liWork, NULL, &two, fsv, &nsv, system->getjsv()());
       if(istate==2 || fabs(t-tPlot)<epsroot) {

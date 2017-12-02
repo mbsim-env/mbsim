@@ -41,7 +41,8 @@ namespace MBSimIntegrator {
       virtual ~ThetaTimeSteppingSSCIntegrator() {}
 
       /* INHERITED INTERFACE OF INTEGRATOR */
-      void integrate(DynamicSystemSolver& system);
+      using Integrator::integrate;
+      void integrate();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
@@ -57,13 +58,13 @@ namespace MBSimIntegrator {
        * \param state vector
        * \param time
        */
-      void update(DynamicSystemSolver& system, const fmatvec::Vec& z, double t);
+      void update(const fmatvec::Vec& z, double t);
 
       /**
        * \brief preintegration steps
        * \param dynamic system
        */
-      void preIntegrate(DynamicSystemSolver& system);
+      void preIntegrate();
       
       /**
        * \brief integration steps
@@ -71,12 +72,12 @@ namespace MBSimIntegrator {
        * \param end time of integration
        */
       
-      void subIntegrate(DynamicSystemSolver& system, double tStop);
+      void subIntegrate(double tStop);
       /**
        * \brief postintegration steps
        * \param dynamic system
        */
-      void postIntegrate(DynamicSystemSolver& system);
+      void postIntegrate();
 
     private:
       /**

@@ -37,12 +37,11 @@ namespace MBSimIntegrator {
       static void fzdot(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t,double* z, int* n, double* con, int *ncon, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn);
 
-      static double tPlot;
-      static double dtOut;
-      static std::ofstream integPlot;
-      static double s0; 
-      static double time; 
-      static bool output_; 
+      double tPlot;
+      double dtOut;
+      std::ofstream integPlot;
+      double s0; 
+      double time; 
 
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
@@ -65,7 +64,8 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
 
 
-      void integrate(MBSim::DynamicSystemSolver& system) override;
+      using Integrator::integrate;
+      void integrate() override;
 
   };
 

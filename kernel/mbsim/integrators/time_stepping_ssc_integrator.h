@@ -214,7 +214,8 @@ namespace MBSimIntegrator {
       void setFlagErrorTest(int Flag, bool alwaysValid=true);
 
       /*! Start the integration */
-      void integrate(MBSim::DynamicSystemSolver& system_);
+      using Integrator::integrate;
+      void integrate();
       /*! Threads: Number of Threads (0,1,2 or 3) 0: auto (number of threads depends on order and SSC)*/ 
       void integrate(MBSim::DynamicSystemSolver& systemT1_, MBSim::DynamicSystemSolver& systemT2_, MBSim::DynamicSystemSolver& systemT3_, int Threads=0);
 
@@ -226,9 +227,9 @@ namespace MBSimIntegrator {
 
       /** subroutines for integrate function */
 
-      void preIntegrate(MBSim::DynamicSystemSolver& system);
-      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
-      void postIntegrate(MBSim::DynamicSystemSolver& system);
+      void preIntegrate();
+      void subIntegrate(double tStop);
+      void postIntegrate();
       void preIntegrate(MBSim::DynamicSystemSolver& systemT1_, MBSim::DynamicSystemSolver& systemT2_, MBSim::DynamicSystemSolver& systemT3_);
        
       /** internal subroutines */

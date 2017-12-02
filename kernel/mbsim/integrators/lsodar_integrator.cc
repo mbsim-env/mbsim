@@ -42,20 +42,22 @@ namespace MBSimIntegrator {
   LSODARIntegrator::LSODARIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), plotOnRoot(true), gMax(1e-5), gdMax(1e-5) {
   }
 
-  void LSODARIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
-    Vec zd(*zSize, zd_);
-    system->setTime(*t);
-//    system->setState(z); Not needed as the integrator uses the state of the system
-    system->resetUpToDate();
-    zd = system->evalzd();
+  void LSODARIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
+    auto self=*reinterpret_cast<LSODARIntegrator**>(&neq[1]);
+    Vec zd(neq[0], zd_);
+    self->getSystem()->setTime(*t);
+//    self->getSystem()->setState(z); Not needed as the integrator uses the state of the system
+    self->getSystem()->resetUpToDate();
+    zd = self->getSystem()->evalzd();
   }
 
-  void LSODARIntegrator::fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_) {
+  void LSODARIntegrator::fsv(int* neq, double* t, double* z_, int* nsv, double* sv_) {
+    auto self=*reinterpret_cast<LSODARIntegrator**>(&neq[1]);
     Vec sv(*nsv, sv_);
-    system->setTime(*t);
-//    system->setState(z); Not needed as the integrator uses the state of the system
-    system->resetUpToDate();
-    sv = system->evalsv();
+    self->getSystem()->setTime(*t);
+//    self->getSystem()->setState(z); Not needed as the integrator uses the state of the system
+    self->getSystem()->resetUpToDate();
+    sv = self->getSystem()->evalsv();
   }
 
   void LSODARIntegrator::initializeUsingXML(DOMElement *element) {
@@ -81,16 +83,18 @@ namespace MBSimIntegrator {
     if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
-  void LSODARIntegrator::integrate(DynamicSystemSolver& system) {
-    preIntegrate(system);
-    subIntegrate(system, tEnd);
-    postIntegrate(system);
+  void LSODARIntegrator::integrate() {
+    preIntegrate();
+    subIntegrate(tEnd);
+    postIntegrate();
   }
 
-  void LSODARIntegrator::preIntegrate(DynamicSystemSolver& system_) {
+  void LSODARIntegrator::preIntegrate() {
     debugInit();
-    system = &system_;
-    zSize=system->getzSize();
+    int zSize=system->getzSize();
+    neq[0]=zSize;
+    *reinterpret_cast<LSODARIntegrator**>(&neq[1])=this;
+
     if(z0.size())
       system->setState(z0);
     else
@@ -127,7 +131,7 @@ namespace MBSimIntegrator {
     system->plot();
   }
 
-  void LSODARIntegrator::subIntegrate(DynamicSystemSolver& system_, double tStop) {
+  void LSODARIntegrator::subIntegrate(double tStop) {
     int one = 1;
     int two = 2;
     rWork(4) = dt0;
@@ -136,7 +140,7 @@ namespace MBSimIntegrator {
     while(t < tStop) {  
       integrationSteps++;
       double tOut = min(tPlot, tStop);
-      DLSODAR(fzdot, &zSize, system->getState()(), &t, &tOut, &iTol, &rTol, aTol(), &one,
+      DLSODAR(fzdot, neq, system->getState()(), &t, &tOut, &iTol, &rTol, aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(),
           &liWork, NULL, &two, fsv, &nsv, system->getjsv()());
       if(istate==2 || fabs(t-tPlot)<epsroot) {
@@ -192,7 +196,7 @@ namespace MBSimIntegrator {
     }
   }
 
-  void LSODARIntegrator::postIntegrate(DynamicSystemSolver& system_) {
+  void LSODARIntegrator::postIntegrate() {
     system->setTime(t);
 //    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();

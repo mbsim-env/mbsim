@@ -36,45 +36,39 @@ namespace MBSimIntegrator {
   DOP853Integrator::DOP853Integrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6) {
   }
 
-  double DOP853Integrator::tPlot = 0;
-  double DOP853Integrator::dtOut = 0;
-  ofstream DOP853Integrator::integPlot;
-  double DOP853Integrator::s0;
-  double DOP853Integrator::time = 0;
-  bool DOP853Integrator::output_;
-
   void DOP853Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<DOP853Integrator**>(&ipar[0]);
     Vec zd(*zSize, zd_);
-    system->setTime(*t);
-    system->setState(Vec(*zSize, z_));
-    system->resetUpToDate();
-    zd = system->evalzd();
+    self->getSystem()->setTime(*t);
+    self->getSystem()->setState(Vec(*zSize, z_));
+    self->getSystem()->resetUpToDate();
+    zd = self->getSystem()->evalzd();
   }
 
   void DOP853Integrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
+    auto self=*reinterpret_cast<DOP853Integrator**>(&ipar[0]);
 
-    while(*t >= tPlot) {
-      system->setTime(tPlot);
+    while(*t >= self->tPlot) {
+      self->getSystem()->setTime(self->tPlot);
       for(int i=1; i<=*n; i++)
-	system->getState()(i-1) = CONTD8(&i,&tPlot,con,icomp,nd);
-      system->resetUpToDate();
-      system->plot();
-      if(output_)
-	cout << "   t = " <<  tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
+	self->getSystem()->getState()(i-1) = CONTD8(&i,&self->tPlot,con,icomp,nd);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->plot();
+      if(self->output)
+	cout << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
 
       double s1 = clock();
-      time += (s1-s0)/CLOCKS_PER_SEC;
-      s0 = s1; 
+      self->time += (s1-self->s0)/CLOCKS_PER_SEC;
+      self->s0 = s1; 
 
-      integPlot<< tPlot << " " << *t-*told << " " << time << endl;
-      tPlot += dtOut;
+      self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
+      self->tPlot += self->dtOut;
     }
   }
 
-  void DOP853Integrator::integrate(DynamicSystemSolver& system_) {
+  void DOP853Integrator::integrate() {
     debugInit();
 
-    system = &system_;
     int zSize=system->getzSize();
     int nrDens = zSize;
 
@@ -99,7 +93,8 @@ namespace MBSimIntegrator {
     int out = 2; // TODO
 
     double rPar;
-    int iPar;
+    int iPar[sizeof(void*)/sizeof(int)+1]; // store this at iPar[0..]
+    *reinterpret_cast<DOP853Integrator**>(&iPar[0])=this;
 
     int lWork = 2*(11*zSize+8*nrDens+21);
     int liWork = 2*(nrDens+21);
@@ -127,12 +122,10 @@ namespace MBSimIntegrator {
 
     cout.setf(ios::scientific, ios::floatfield);
 
-    output_ = output;
-
     s0 = clock();
 
     DOP853(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
-	work(),&lWork,iWork(),&liWork,&rPar,&iPar,&idid);
+	work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
     integPlot.close();
 

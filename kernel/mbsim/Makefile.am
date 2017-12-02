@@ -8,8 +8,7 @@ libmbsim_la_SOURCES = element.cc\
 		      dynamic_system_solver.cc\
 		      mbsim_event.cc\
 		      objectfactory.cc\
-		      graph.cc\
-		      solver.cc
+		      graph.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la
 libmbsim_la_LIBADD += analysers/libanalysers.la 

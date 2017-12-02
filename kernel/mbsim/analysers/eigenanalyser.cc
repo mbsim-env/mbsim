@@ -54,16 +54,14 @@ namespace MBSimAnalyser {
 
   Vec Eigenanalyser::Residuum::operator()(const Vec &z) {
     Vec res;
-    system->setTime(t);
-    system->setState(z);
-    system->resetUpToDate();
-    res = system->evalzd();
+    sys->setTime(t);
+    sys->setState(z);
+    sys->resetUpToDate();
+    res = sys->evalzd();
     return res;
   } 
 
-  void Eigenanalyser::analyse(DynamicSystemSolver& system_) {
-    system = &system_;
-
+  void Eigenanalyser::analyse() {
     if(task == eigenfrequencies) computeEigenvalues();
     else if(task == eigenmode) computeEigenmode();
     else if(task == eigenmodes) computeEigenmodes();

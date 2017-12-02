@@ -45,9 +45,9 @@ namespace MBSimIntegrator {
        */
       virtual ~RKSuiteIntegrator() { if(dworkarray) { delete[] dworkarray; dworkarray=0; } }
 
-      void preIntegrate(MBSim::DynamicSystemSolver& system);
-      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
-      void postIntegrate(MBSim::DynamicSystemSolver& system);
+      void preIntegrate();
+      void subIntegrate(double tStop);
+      void postIntegrate();
 
       /* GETTER / SETTER */
       void setMethod(Method method_) {method = method_;}
@@ -59,7 +59,7 @@ namespace MBSimIntegrator {
 
 
       /* INHERITED INTERFACE OF INTEGRATOR */
-      virtual void integrate(MBSim::DynamicSystemSolver& system);
+      virtual void integrate();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
@@ -67,7 +67,8 @@ namespace MBSimIntegrator {
 
       static void fzdot(double* t, double* z_, double* zd_);
 
-      static int zSize;
+      int zSize;
+      static RKSuiteIntegrator *selfStatic;
 
       Method method;
       /** Absolute Toleranz */

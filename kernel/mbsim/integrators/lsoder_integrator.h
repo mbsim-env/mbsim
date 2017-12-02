@@ -34,8 +34,8 @@ namespace MBSimIntegrator {
 
     private:
 
-      static void fzdot(int* zSize, double* t, double* z_, double* zd_);
-      static void fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_);
+      static void fzdot(int* neq, double* t, double* z_, double* zd_);
+      static void fsv(int* neq, double* t, double* z_, int* nsv, double* sv_);
 
       /** maximal step size */
       double dtMax;
@@ -64,7 +64,8 @@ namespace MBSimIntegrator {
 
       void setPlotOnRoot(bool b) {plotOnRoot = b;}
 
-      void integrate(MBSim::DynamicSystemSolver& system);
+      using Integrator::integrate;
+      void integrate();
 
   };
 

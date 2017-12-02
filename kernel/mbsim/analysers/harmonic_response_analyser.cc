@@ -38,16 +38,14 @@ namespace MBSimAnalyser {
 
   Vec HarmonicResponseAnalyser::Residuum::operator()(const Vec &z) {
     Vec res;
-    system->setTime(t);
-    system->setState(z);
-    system->resetUpToDate();
-    res = system->evalzd();
+    sys->setTime(t);
+    sys->setState(z);
+    sys->resetUpToDate();
+    res = sys->evalzd();
     return res;
   } 
 
-  void HarmonicResponseAnalyser::analyse(DynamicSystemSolver& system_) {
-    system = &system_;
-
+  void HarmonicResponseAnalyser::analyse() {
     if(task == frequencyResponse) computeFrequencyResponse();
   }
 

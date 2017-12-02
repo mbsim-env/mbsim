@@ -44,19 +44,19 @@ namespace MBSimIntegrator {
 
   TimeSteppingIntegrator::TimeSteppingIntegrator()  {}
 
-  void TimeSteppingIntegrator::preIntegrate(DynamicSystemSolver& system) {
+  void TimeSteppingIntegrator::preIntegrate() {
     debugInit();
     // initialisation
     assert(dtPlot >= dt);
 
-    system.setTime(tStart);
+    system->setTime(tStart);
 
-    system.setStepSize(dt);
+    system->setStepSize(dt);
 
     if(z0.size())
-      system.setState(z0);
+      system->setState(z0);
     else
-      system.evalz0();
+      system->evalz0();
 
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
@@ -69,51 +69,51 @@ namespace MBSimIntegrator {
     s0 = clock();
   }
 
-  void TimeSteppingIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
-    while(system.getTime()<tStop) { // time loop
+  void TimeSteppingIntegrator::subIntegrate(double tStop) {
+    while(system->getTime()<tStop) { // time loop
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
-        if(driftCompensation) system.projectGeneralizedPositions(0);
-        system.setUpdatela(false);
-        system.setUpdateLa(false);
-        system.setUpdatezd(false);
-        system.plot();
+        if(driftCompensation) system->projectGeneralizedPositions(0);
+        system->setUpdatela(false);
+        system->setUpdateLa(false);
+        system->setUpdatezd(false);
+        system->plot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        integPlot<< system.getTime() << " " << dt << " " <<  system.getIterI() << " " << time << " "<<system.getlaSize() <<endl;
-        if(output) cout << "   t = " << system.getTime() << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << system.getIterI() <<  "\r"<<flush;
+        integPlot<< system->getTime() << " " << dt << " " <<  system->getIterI() << " " << time << " "<<system->getlaSize() <<endl;
+        if(output) cout << "   t = " << system->getTime() << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << system->getIterI() <<  "\r"<<flush;
         tPlot += dtPlot;
       }
 
-      system.getq() += system.evaldq();
-      system.getTime() += dt;
-      system.resetUpToDate();
+      system->getq() += system->evaldq();
+      system->getTime() += dt;
+      system->resetUpToDate();
 
-      system.checkActive(1);
-      if (system.gActiveChanged()) system.resize_();
+      system->checkActive(1);
+      if (system->gActiveChanged()) system->resize_();
 
-      system.getbi(false) << system.evalgd() + system.evalW().T()*slvLLFac(system.evalLLM(),system.evalh())*dt;
-      system.setUpdatebi(false);
+      system->getbi(false) << system->evalgd() + system->evalW().T()*slvLLFac(system->evalLLM(),system->evalh())*dt;
+      system->setUpdatebi(false);
 
-      system.getu() += system.evaldu();
-      system.getx() += system.evaldx();
+      system->getu() += system->evaldu();
+      system->getx() += system->evaldx();
 
-      system.setla(system.getLa()/dt);
-      system.setqd(system.getdq(false)/dt);
-      system.setud(system.getdu(false)/dt);
-      system.setxd(system.getdx(false)/dt);
+      system->setla(system->getLa()/dt);
+      system->setqd(system->getdq(false)/dt);
+      system->setud(system->getdu(false)/dt);
+      system->setxd(system->getdx(false)/dt);
 
-      system.resetUpToDate();
+      system->resetUpToDate();
 
-      if(system.getIterI()>maxIter) maxIter = system.getIterI();
-      sumIter += system.getIterI();
+      if(system->getIterI()>maxIter) maxIter = system->getIterI();
+      sumIter += system->getIterI();
 
     }
   }
 
-  void TimeSteppingIntegrator::postIntegrate(DynamicSystemSolver& system) {
+  void TimeSteppingIntegrator::postIntegrate() {
     integPlot.close();
 
     typedef tee_device<ostream, ofstream> TeeDevice;
@@ -137,10 +137,10 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-  void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
-    preIntegrate(system);
-    subIntegrate(system, tEnd);
-    postIntegrate(system);
+  void TimeSteppingIntegrator::integrate() {
+    preIntegrate();
+    subIntegrate(tEnd);
+    postIntegrate();
   }
 
   void TimeSteppingIntegrator::initializeUsingXML(DOMElement *element) {

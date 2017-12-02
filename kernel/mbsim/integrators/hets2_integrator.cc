@@ -43,21 +43,21 @@ namespace MBSimIntegrator {
   HETS2Integrator::HETS2Integrator() :  
   integPlot() {}
 
-  void HETS2Integrator::preIntegrate(DynamicSystemSolver& system) {
+  void HETS2Integrator::preIntegrate() {
     debugInit();
 
     // set the time
     assert(dtPlot >= dt);
-    system.setTime(tStart);
+    system->setTime(tStart);
 
     // define initial state
     if(z0.size())
-      system.setState(z0);
+      system->setState(z0);
     else
-      system.evalz0();
-    system.setUseOldla(false);
-    system.setGeneralizedForceTolerance(1e-10/dt); // adaptation from impulse
-    system.setGeneralizedRelativeAccelerationTolerance(1e-10/dt); // as we use local velocities to express accelerations within solveConstraints
+      system->evalz0();
+    system->setUseOldla(false);
+    system->setGeneralizedForceTolerance(1e-10/dt); // adaptation from impulse
+    system->setGeneralizedRelativeAccelerationTolerance(1e-10/dt); // as we use local velocities to express accelerations within solveConstraints
 
     // prepare plotting
     integPlot.open((name + ".plt").c_str());
@@ -70,49 +70,49 @@ namespace MBSimIntegrator {
     s0 = clock();
   }
 
-  void HETS2Integrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
+  void HETS2Integrator::subIntegrate(double tStop) {
 
-    while(system.getTime()<tStop) { // time loop
-      system.resetUpToDate();
+    while(system->getTime()<tStop) { // time loop
+      system->resetUpToDate();
 
       // increase integration step counter
       integrationSteps++;
 
       /* LEFT INTERVAL END EVALUATIONS = ZERO STAGE EVALUATIONS */
       // update until the Jacobian matrices, especially also the active set
-      evaluateStage(system);
+      evaluateStage();
 
       // save values
-      Vec qStage0 = system.getq().copy();
-      Vec uStage0 = system.getu().copy();
-      Mat TStage0 = system.evalT().copy();
-      SymMat LLMStage0 = system.evalLLM().copy();
-      Vec hStage0 = system.evalh().copy();
-      Mat VStage0 = system.evalV().copy();
+      Vec qStage0 = system->getq().copy();
+      Vec uStage0 = system->getu().copy();
+      Mat TStage0 = system->evalT().copy();
+      SymMat LLMStage0 = system->evalLLM().copy();
+      Vec hStage0 = system->evalh().copy();
+      Mat VStage0 = system->evalV().copy();
 
       // plot
-      if(system.getTime() >= tPlot) {
-        system.setUpdatela(false);
-        system.setUpdateLa(false);
-        system.plot();
+      if(system->getTime() >= tPlot) {
+        system->setUpdatela(false);
+        system->setUpdateLa(false);
+        system->plot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        integPlot << system.getTime() << " " << dtInfo << " " <<  system.getIterC() << " " << time << " "<< system.getlaSize() << endl;
-        if(output) cout << "   t = " << system.getTime() << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << system.getIterC() << "\r" << flush;
+        integPlot << system->getTime() << " " << dtInfo << " " <<  system->getIterC() << " " << time << " "<< system->getlaSize() << endl;
+        if(output) cout << "   t = " << system->getTime() << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << system->getIterC() << "\r" << flush;
         tPlot += dtPlot;
       }
       /*****************************************/
 
       /* CHECK IMPACTS */
       // first stage position and time update (velocity is unknown and has to be calculated with constraints/impacts)
-      system.getq() += system.evalT()*system.getu()*dt;
-      system.getTime() += dt;
+      system->getq() += system->evalT()*system->getu()*dt;
+      system->getTime() += dt;
 
-      system.resetUpToDate();
+      system->resetUpToDate();
 
       // update until the Jacobian matrices, especially also the active set
-      bool impact = evaluateStage(system); // TODO: this also updates the active set!
+      bool impact = evaluateStage(); // TODO: this also updates the active set!
 
       /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL AND FIRST STAGE */
       if (not impact) {
@@ -123,46 +123,46 @@ namespace MBSimIntegrator {
         // adapt last time step-size
         dtInfo = dt;
 
-        system.getbc(false) << system.evalgd()/dt + system.evalW().T()*slvLLFac(LLMStage0,hStage0);
-        system.setUpdatebc(false);
+        system->getbc(false) << system->evalgd()/dt + system->evalW().T()*slvLLFac(LLMStage0,hStage0);
+        system->setUpdatebc(false);
 
         // save values
-        Vec laStage0 = system.evalla().copy();
+        Vec laStage0 = system->evalla().copy();
 
-        if(system.getIterC()>maxIter) maxIter = system.getIterC();
-        sumIter += system.getIterC();
+        if(system->getIterC()>maxIter) maxIter = system->getIterC();
+        sumIter += system->getIterC();
 
         // first stage velocity update
-        system.getu() += slvLLFac(LLMStage0,hStage0+VStage0*laStage0)*dt;
+        system->getu() += slvLLFac(LLMStage0,hStage0+VStage0*laStage0)*dt;
         /*****************************************/
 
         /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL AND OUTPUT STAGE */
         // output stage position update
-        system.getq() = qStage0 + (system.evalT()*system.getu()+TStage0*uStage0)*dt*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with constraint forces
+        system->getq() = qStage0 + (system->evalT()*system->getu()+TStage0*uStage0)*dt*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with constraint forces
 
-        system.resetUpToDate();
+        system->resetUpToDate();
 
         // update until the Jacobian matrices, especially also the active set
-        evaluateStage(system);
+        evaluateStage();
 
         // output stage velocity update without constraint force
-        system.getu() = uStage0 + (slvLLFac(LLMStage0,hStage0+VStage0*laStage0) + slvLLFac(system.evalLLM(),system.evalh()))*dt*0.5;
+        system->getu() = uStage0 + (slvLLFac(LLMStage0,hStage0+VStage0*laStage0) + slvLLFac(system->evalLLM(),system->evalh()))*dt*0.5;
 
-        system.resetUpToDate();
+        system->resetUpToDate();
 
         // update until the Jacobian matrices, especially also the active set
-        evaluateStage(system);
+        evaluateStage();
 
-        system.getbc(false) << 2.*system.evalgd()/dt;
-        system.setUpdatebc(false);
+        system->getbc(false) << 2.*system->evalgd()/dt;
+        system->setUpdatebc(false);
 
         // output stage velocity update
-        system.getu() += slvLLFac(system.evalLLM(),system.evalV()*system.evalla())*dt*0.5;
+        system->getu() += slvLLFac(system->evalLLM(),system->evalV()*system->evalla())*dt*0.5;
 
-        if(system.getIterC()>maxIter) maxIter = system.getIterC();
-        sumIter += system.getIterC();
+        if(system->getIterC()>maxIter) maxIter = system->getIterC();
+        sumIter += system->getIterC();
 
-        system.resetUpToDate();
+        system->resetUpToDate();
       }
       /*****************************************/
 
@@ -176,39 +176,39 @@ namespace MBSimIntegrator {
         dtInfo = dtImpulsive;
 
         // first stage position and time update (velocity is unknown and has to be calculated with constraints/impacts)
-        system.getq() = qStage0 + system.evalT()*system.getu()*dtImpulsive;
-        system.getTime() += dtImpulsive-dt;
+        system->getq() = qStage0 + system->evalT()*system->getu()*dtImpulsive;
+        system->getTime() += dtImpulsive-dt;
 
         // first stage velocity update
-        system.getu() += slvLLFac(LLMStage0,hStage0)*dtImpulsive;
+        system->getu() += slvLLFac(LLMStage0,hStage0)*dtImpulsive;
 
         // output stage position update
-        system.getq() = qStage0 + (system.getT()*system.getu()+TStage0*uStage0)*dtImpulsive*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with impacts
+        system->getq() = qStage0 + (system->getT()*system->getu()+TStage0*uStage0)*dtImpulsive*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with impacts
 
-        system.resetUpToDate();
+        system->resetUpToDate();
 
         // update until the Jacobian matrices, especially also the active set
-        evaluateStage(system);
+        evaluateStage();
 
         // output stage velocity update without impact
-        system.getu() = uStage0 + (slvLLFac(LLMStage0,hStage0) + slvLLFac(system.evalLLM(),system.evalh()))*dtImpulsive*0.5;
+        system->getu() = uStage0 + (slvLLFac(LLMStage0,hStage0) + slvLLFac(system->evalLLM(),system->evalh()))*dtImpulsive*0.5;
 
-        system.resetUpToDate();
+        system->resetUpToDate();
 
         // update until the Jacobian matrices, especially also the active set
-        evaluateStage(system);
+        evaluateStage();
 
         // output stage velocity update
-        system.getu() += slvLLFac(system.evalLLM(),system.evalV()*system.evalLa());
+        system->getu() += slvLLFac(system->evalLLM(),system->evalV()*system->evalLa());
 
-        if(system.getIterI()>maxIter)
-          maxIter = system.getIterI(); sumIter += system.getIterI();
+        if(system->getIterI()>maxIter)
+          maxIter = system->getIterI(); sumIter += system->getIterI();
       }
       /*****************************************/
     }
   }
 
-  void HETS2Integrator::postIntegrate(DynamicSystemSolver& system) {
+  void HETS2Integrator::postIntegrate() {
     integPlot.close();
 
     typedef tee_device<ostream, ofstream> TeeDevice;
@@ -233,11 +233,11 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-  void HETS2Integrator::integrate(DynamicSystemSolver& system) {
-    system.setUseConstraintSolverForPlot(true);
-    preIntegrate(system);
-    subIntegrate(system, tEnd);
-    postIntegrate(system);
+  void HETS2Integrator::integrate() {
+    system->setUseConstraintSolverForPlot(true);
+    preIntegrate();
+    subIntegrate(tEnd);
+    postIntegrate();
   }
 
   void HETS2Integrator::initializeUsingXML(DOMElement *element) {
@@ -247,23 +247,23 @@ namespace MBSimIntegrator {
     setStepSize(E(e)->getText<double>());
   }
 
-  bool HETS2Integrator::evaluateStage(DynamicSystemSolver& system) {
-    system.checkActive(1);
+  bool HETS2Integrator::evaluateStage() {
+    system->checkActive(1);
 
-    bool impact = system.detectImpact();
+    bool impact = system->detectImpact();
 
     // adapt size of constraint system on velocity level
-    if (system.gActiveChanged()) {
-      system.calcgdSize(2); // contacts which stay closed
-      system.calclaSize(2); // contacts which stay closed
-      system.calcrFactorSize(2); // contacts which stay closed
+    if (system->gActiveChanged()) {
+      system->calcgdSize(2); // contacts which stay closed
+      system->calclaSize(2); // contacts which stay closed
+      system->calcrFactorSize(2); // contacts which stay closed
 
-      system.updateWRef(system.getWParent(0)(RangeV(0, system.getuSize() - 1), RangeV(0, system.getlaSize() - 1)));
-      system.updateVRef(system.getVParent(0)(RangeV(0, system.getuSize() - 1), RangeV(0, system.getlaSize() - 1)));
-      system.updatelaRef(system.getlaParent()(0, system.getlaSize() - 1));
-      system.updateLaRef(system.getLaParent()(0, system.getlaSize() - 1));
-      system.updategdRef(system.getgdParent()(0, system.getgdSize() - 1));
-      system.updaterFactorRef(system.getrFactorParent()(0, system.getrFactorSize() - 1));
+      system->updateWRef(system->getWParent(0)(RangeV(0, system->getuSize() - 1), RangeV(0, system->getlaSize() - 1)));
+      system->updateVRef(system->getVParent(0)(RangeV(0, system->getuSize() - 1), RangeV(0, system->getlaSize() - 1)));
+      system->updatelaRef(system->getlaParent()(0, system->getlaSize() - 1));
+      system->updateLaRef(system->getLaParent()(0, system->getlaSize() - 1));
+      system->updategdRef(system->getgdParent()(0, system->getgdSize() - 1));
+      system->updaterFactorRef(system->getrFactorParent()(0, system->getrFactorSize() - 1));
     }
 
     return impact; 

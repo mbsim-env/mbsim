@@ -80,9 +80,7 @@ namespace MBSimInterface {
     mbsimServer->initializeUsingXML(ee);
   }
 
-  void InterfaceIntegrator::integrate(MBSim::DynamicSystemSolver& system_) {
-    system = &system_;
-
+  void InterfaceIntegrator::integrate() {
     zSize=system->getzSize();
     if(getInitialState().size())
       system->setState(getInitialState());

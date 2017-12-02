@@ -38,11 +38,9 @@ namespace MBSimIntegrator {
   EulerExplicitIntegrator::EulerExplicitIntegrator()  {
   }
 
-  void EulerExplicitIntegrator::preIntegrate(DynamicSystemSolver& system_) {
+  void EulerExplicitIntegrator::preIntegrate() {
     debugInit();
     assert(dtPlot >= dt);
-
-    system = &system_;
 
     system->setTime(tStart);
 
@@ -65,28 +63,28 @@ namespace MBSimIntegrator {
     time = 0;
   }
 
-  void EulerExplicitIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) { 
-    while(system.getTime()<tStop) { // time loop
+  void EulerExplicitIntegrator::subIntegrate(double tStop) { 
+    while(system->getTime()<tStop) { // time loop
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
-        system.resetUpToDate();
-        system.plot();
+        system->resetUpToDate();
+        system->plot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;
-        integPlot<< system.getTime() << " " << dt << " " << time << endl;
-        if(output) cout << "   t = " << system.getTime() << ",\tdt = "<< dt << "\r"<<flush;
+        integPlot<< system->getTime() << " " << dt << " " << time << endl;
+        if(output) cout << "   t = " << system->getTime() << ",\tdt = "<< dt << "\r"<<flush;
         tPlot += dtPlot;
       }
 
-      system.resetUpToDate();
-      system.getState() += system.evalzd()*dt;
-      system.getTime() += dt;
+      system->resetUpToDate();
+      system->getState() += system->evalzd()*dt;
+      system->getTime() += dt;
     }
   }
 
-  void EulerExplicitIntegrator::postIntegrate(DynamicSystemSolver& system) {
+  void EulerExplicitIntegrator::postIntegrate() {
     integPlot.close();
 
     ofstream integSum((name + ".sum").c_str());
@@ -98,10 +96,10 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-  void EulerExplicitIntegrator::integrate(DynamicSystemSolver& system) {
-    preIntegrate(system);
-    subIntegrate(system, tEnd);
-    postIntegrate(system);
+  void EulerExplicitIntegrator::integrate() {
+    preIntegrate();
+    subIntegrate(tEnd);
+    postIntegrate();
   }
 
   void EulerExplicitIntegrator::initializeUsingXML(DOMElement *element) {

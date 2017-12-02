@@ -57,13 +57,12 @@ namespace MBSimAnalyser {
        */
       ~HarmonicResponseAnalyser() { }
 
-      void execute(MBSim::DynamicSystemSolver& system) { analyse(system); }
+      void execute() { analyse(); }
 
       /**
-       * \brief Perform the eigenanalysis
-       * \param system The dynamic system to be analysed
+       * \brief Perform the eigenanalysis of the system set by setSystem.
        */
-      void analyse(MBSim::DynamicSystemSolver& system);
+      void analyse();
 
       /**
        * \brief Set the start time for the analysis

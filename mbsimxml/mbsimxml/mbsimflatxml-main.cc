@@ -38,7 +38,8 @@ int main(int argc, char *argv[]) {
       else {
         boost::timer::cpu_timer t;
         t.start();
-        solver->execute(*dss);
+        solver->setSystem(dss);
+        solver->execute();
         t.stop();
         cout<<"Integration CPU times: "<<t.format()<<endl;
       }

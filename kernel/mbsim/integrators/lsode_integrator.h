@@ -34,7 +34,7 @@ namespace MBSimIntegrator {
 
     private:
 
-      static void fzdot(int* zSize, double* t, double* z_, double* zd_);
+      static void fzdot(int* neq, double* t, double* z_, double* zd_);
 
       /** maximal step size */
       double dtMax;
@@ -65,7 +65,8 @@ namespace MBSimIntegrator {
       void setmaxSteps(int maxSteps_) {maxSteps = maxSteps_;}
       void setStiff(bool flag) {stiff = flag;}
 
-      void integrate(MBSim::DynamicSystemSolver& system);
+      using Integrator::integrate;
+      void integrate();
       
       virtual void initializeUsingXML(xercesc::DOMElement *element);
   };

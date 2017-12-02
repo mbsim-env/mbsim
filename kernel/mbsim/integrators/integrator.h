@@ -64,15 +64,17 @@ namespace MBSimIntegrator {
       bool getOutput() const { return output; }
       /***************************************************/
       
-      void execute(MBSim::DynamicSystemSolver& system) override { integrate(system); }
+      void execute() override { integrate(); }
 
       /* INTERFACE FOR DERIVED CLASSES */
       /*! 
-       * \brief start the integration
-       * \param dynamic system to be integrated
+       * \brief start the integration of the system set by setSystem.
        * Each class implemeting this function should call debugInit first.
        */
-      virtual void integrate(MBSim::DynamicSystemSolver& system) = 0;
+      virtual void integrate() = 0;
+
+      //! Convinent function: call setSystem(&sys) and integrate()
+      void integrate(MBSim::DynamicSystemSolver& sys) { setSystem(&sys); integrate(); }
 
       /*! Each class implemeting the Integrator::integrate function should call this function first.
        * This function does currently only some minor modification of the integrator data (like
@@ -81,9 +83,9 @@ namespace MBSimIntegrator {
        */
       void debugInit();
 
-      virtual void preIntegrate(MBSim::DynamicSystemSolver& system) { throw MBSim::MBSimError("preIntegrate is not defined"); }
-      virtual void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop) { throw MBSim::MBSimError("subIntegrate is not defined"); }
-      virtual void postIntegrate(MBSim::DynamicSystemSolver& system) { throw MBSim::MBSimError("postIntegrate is not defined"); }
+      virtual void preIntegrate() { throw MBSim::MBSimError("preIntegrate is not defined"); }
+      virtual void subIntegrate(double tStop) { throw MBSim::MBSimError("subIntegrate is not defined"); }
+      virtual void postIntegrate() { throw MBSim::MBSimError("postIntegrate is not defined"); }
 
       /*! 
        * \brief initialize integrator

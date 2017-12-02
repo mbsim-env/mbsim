@@ -185,9 +185,11 @@ namespace MBSimFMI {
 
   void FMIInstance::terminate() {
     if(dss) {
-      if(cosim)
+      if(cosim) {
         // finish cosim integration
-        integrator->postIntegrate(*dss.get());
+        integrator->setSystem(dss.get());
+        integrator->postIntegrate();
+      }
       else
         // plot end state
         dss->plot();
@@ -551,13 +553,15 @@ namespace MBSimFMI {
 
     integrator->setStartTime(time);
     integrator->setEndTime(StopTimeDefined ? tStop : 1.0e30);
-    integrator->preIntegrate(*dss.get());
+    integrator->setSystem(dss.get());
+    integrator->preIntegrate();
   }
 
   void FMIInstance::resetSlave() {
     assert(cosim);
     // finish cosim integration
-    integrator->postIntegrate(*dss.get());
+    integrator->setSystem(dss.get());
+    integrator->postIntegrate();
     integrator.reset();
 
     // delete DynamicSystemSolver (requried here since after terminate a call to initialize is allowed without
@@ -596,7 +600,7 @@ namespace MBSimFMI {
     }
 
     // carry out a macro step in MBSim, this will also increate time
-    integrator->subIntegrate(*dss.get(), currentCommunicationPoint+communicationStepSize);
+    integrator->subIntegrate(currentCommunicationPoint+communicationStepSize);
   }
 
   void FMIInstance::getStatus(const fmiStatusKind s, fmiStatus* value) {

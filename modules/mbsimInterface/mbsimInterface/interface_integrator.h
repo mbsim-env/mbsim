@@ -48,7 +48,7 @@ namespace MBSimInterface {
 
       void setMBSimServer(MBSimServer* m_) {mbsimServer=m_; }
 
-      void integrate(MBSim::DynamicSystemSolver& system) override;
+      void integrate() override;
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
