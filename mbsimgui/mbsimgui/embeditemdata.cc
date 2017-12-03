@@ -127,14 +127,6 @@ namespace MBSimGUI {
     return embed and E(embed)->getFirstElementChildNamed(PV%"Parameter");
   }
 
-  bool EmbedItemData::hasHref() const {
-    return embed and embed->hasAttribute(X()%"href");
-  }
-
-  bool EmbedItemData::hasParameterHref() const {
-    return embed and embed->hasAttribute(X()%"parameterHref");
-  }
-
   DOMElement* EmbedItemData::processFileID(DOMElement *element) {
     if(MBXMLUtils::E(element)->hasAttribute("href")) {
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getXMLElement(),true));

@@ -176,7 +176,7 @@ namespace MBSimGUI {
   }
 
   InternalFramePropertyDialog::InternalFramePropertyDialog(InternalFrame *frame, QWidget *parent, const Qt::WindowFlags& f) : ElementPropertyDialog(frame,parent,f) {
-    if(frame->getParent()->hasHref()) {
+    if(frame->getParent()->getEmbeded()) {
       buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
       buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
     }

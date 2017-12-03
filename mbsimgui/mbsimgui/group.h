@@ -105,6 +105,7 @@ namespace MBSimGUI {
       void addConstraint(Constraint *constraint_) override;
       void addObserver(Observer *observer_) override;
       void removeElement(Element *element) override;
+      void setEmbeded(bool embeded_) override;
       ElementPropertyDialog* createPropertyDialog() override {return new GroupPropertyDialog(this);}
       QMenu* createFrameContextMenu() override {return new FixedRelativeFramesContextMenu(this);}
       QMenu* createContextMenu() override { return new GroupContextMenu(this); }

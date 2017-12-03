@@ -106,4 +106,12 @@ namespace MBSimGUI {
     return -1;
   }
 
+  void Body::setEmbeded(bool embeded) {
+    Object::setEmbeded(embeded);
+    for(auto & i : frame)
+      i->setEmbeded(embeded);
+    for(auto & i : contour)
+      i->setEmbeded(embeded);
+  }
+
 }

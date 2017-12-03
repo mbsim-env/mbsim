@@ -34,7 +34,7 @@ namespace MBSimGUI {
     QMenu::addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
-    action->setDisabled(not item->getNumberOfParameters());
+    action->setEnabled(item->getNumberOfParameters());
     connect(action,SIGNAL(triggered()),mw,SLOT(saveEmbeddingAs()));
     addAction(action);
     addSeparator();
@@ -69,12 +69,11 @@ namespace MBSimGUI {
     addAction(action);
     action = new QAction("Add import parameter", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addImportParameter()));
-      addAction(action);
+    addAction(action);
   }
 
   void EmbeddingContextMenu::addAction(QAction *action) {
-    action->setDisabled(item->hasParameterHref());
-    QMenu::addAction(action);
+    if(action->isEnabled()) action->setDisabled((item->getEmbedItemParent() and item->getEmbedItemParent()->getEmbeded()) or item->getEmbededParameters()); QMenu::addAction(action);
   }
 
   void EmbeddingContextMenu::paste() {

@@ -44,12 +44,14 @@ namespace MBSimGUI {
           T *object;
           std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
+            bool embededParam = false;
             xercesc::DOMElement *ele2 = nullptr;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               QString fileName = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"));
               QFileInfo fileInfo(mbsDir.absoluteFilePath(fileName));
               xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
               param = Parameter::initializeParametersUsingXML(doc->getDocumentElement());
+              embededParam = true;
             }
             else
               ele2 = MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
@@ -59,11 +61,13 @@ namespace MBSimGUI {
             }
             else
               ele2 = ele1->getFirstElementChild();
+            bool embeded = false;
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               QString fileName = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"));
               QFileInfo fileInfo(mbsDir.absoluteFilePath(fileName));
               xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
               ele2 = doc->getDocumentElement();
+              embeded = true;
             }
             object=create(ele2);
             if(object) {
@@ -72,6 +76,8 @@ namespace MBSimGUI {
                 object->addParameter(i);
             }
             object->setEmbedXMLElement(ele1);
+            if(embededParam) object->setEmbededParameters(embededParam);
+            if(embeded) object->setEmbeded(embeded);
           }
           else {
             object=create(ele1);

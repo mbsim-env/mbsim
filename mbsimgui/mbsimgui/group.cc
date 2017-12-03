@@ -444,4 +444,22 @@ namespace MBSimGUI {
     return -1;
   }
 
+  void Group::setEmbeded(bool embeded) {
+    Element::setEmbeded(embeded);
+    for(auto & i : frame)
+      i->setEmbeded(embeded);
+    for(auto & i : contour)
+      i->setEmbeded(embeded);
+    for(auto & i : group)
+      i->setEmbeded(embeded);
+    for(auto & i : object)
+      i->setEmbeded(embeded);
+    for(auto & i : link)
+      i->setEmbeded(embeded);
+    for(auto & i : constraint)
+      i->setEmbeded(embeded);
+    for(auto & i : observer)
+      i->setEmbeded(embeded);
+  }
+
 }

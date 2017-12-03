@@ -49,6 +49,7 @@ namespace MBSimGUI {
       virtual SolverPropertyDialog* createPropertyDialog() { return new SolverPropertyDialog(this); }
       QMenu* createContextMenu() override { return nullptr; }
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() override { return new EmbeddingPropertyDialog(this,false); }
+      EmbedItemData* getEmbedItemParent() override;
       std::vector<EmbedItemData*> getParents() override;
   };
 

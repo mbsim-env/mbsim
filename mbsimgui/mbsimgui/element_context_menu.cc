@@ -45,7 +45,7 @@ namespace MBSimGUI {
   }
 
   void BasicElementMenu::addAction(QAction *action) {
-    action->setDisabled(element->hasHref());
+    if(action->isEnabled()) action->setDisabled(element->getEmbeded());
     QMenu::addAction(action);
   }
 
@@ -70,6 +70,7 @@ namespace MBSimGUI {
       addSeparator();
       action=new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
       connect(action,SIGNAL(triggered()),mw,SLOT(removeElement()));
+      action->setDisabled(element->getParent() and element->getParent()->getEmbeded());
       QMenu::addAction(action);
     }
   }
@@ -77,86 +78,85 @@ namespace MBSimGUI {
   FrameContextMenu::FrameContextMenu(Frame *frame, QWidget *parent, bool removable) : ElementContextMenu(frame,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
+    action->setEnabled(frame->getParent()->getIndexOfFrame(frame)>1);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveUpFrame()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(frame->getParent()->getIndexOfFrame(frame)>1);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setEnabled(frame->getParent()->getIndexOfFrame(frame)<frame->getParent()->getNumberOfFrames()-1);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveDownFrame()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(frame->getParent()->getIndexOfFrame(frame)<frame->getParent()->getNumberOfFrames()-1);
   }
 
   ContourContextMenu::ContourContextMenu(Contour *contour, QWidget *parent, bool removable) : ElementContextMenu(contour,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
+    action->setEnabled(contour->getParent()->getIndexOfContour(contour)>0);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveUpContour()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(contour->getParent()->getIndexOfContour(contour)>0);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setEnabled(contour->getParent()->getIndexOfContour(contour)<contour->getParent()->getNumberOfContours()-1);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveDownContour()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(contour->getParent()->getIndexOfContour(contour)<contour->getParent()->getNumberOfContours()-1);
   }
 
   GroupContextMenu::GroupContextMenu(Group *group, QWidget *parent, bool removable) : ElementContextMenu(group,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
-    if(action->isEnabled()) action->setEnabled(group->getParent()->getIndexOfGroup(group)>0);
+    action->setEnabled(group->getParent()->getIndexOfGroup(group)>0);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveUpGroup()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(group->getParent()->getIndexOfGroup(group)>0);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setEnabled(group->getParent()->getIndexOfGroup(group)<group->getParent()->getNumberOfGroups()-1);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveDownGroup()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(group->getParent()->getIndexOfGroup(group)<group->getParent()->getNumberOfGroups()-1);
   }
 
   ObjectContextMenu::ObjectContextMenu(Object *object, QWidget *parent, bool removable) : ElementContextMenu(object,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
+    action->setEnabled(object->getParent()->getIndexOfObject(object)>0);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveUpObject()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(object->getParent()->getIndexOfObject(object)>0);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setEnabled(object->getParent()->getIndexOfObject(object)<object->getParent()->getNumberOfObjects()-1);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveDownObject()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(object->getParent()->getIndexOfObject(object)<object->getParent()->getNumberOfObjects()-1);
   }
 
   LinkContextMenu::LinkContextMenu(Link *link, QWidget *parent, bool removable) : ElementContextMenu(link,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
+    action->setEnabled(link->getParent()->getIndexOfLink(link)>0);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveUpLink()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(link->getParent()->getIndexOfLink(link)>0);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setEnabled(link->getParent()->getIndexOfLink(link)<link->getParent()->getNumberOfLinks()-1);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveDownLink()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(link->getParent()->getIndexOfLink(link)<link->getParent()->getNumberOfLinks()-1);
   }
 
   ConstraintContextMenu::ConstraintContextMenu(Constraint *constraint, QWidget *parent, bool removable) : ElementContextMenu(constraint,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
+    action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)>0);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveUpConstraint()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)>0);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)<constraint->getParent()->getNumberOfConstraints()-1);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveDownConstraint()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)<constraint->getParent()->getNumberOfConstraints()-1);
   }
 
   ObserverContextMenu::ObserverContextMenu(Observer *observer, QWidget *parent, bool removable) : ElementContextMenu(observer,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
+    action->setEnabled(observer->getParent()->getIndexOfObserver(observer)>0);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveUpObserver()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(observer->getParent()->getIndexOfObserver(observer)>0);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setEnabled(observer->getParent()->getIndexOfObserver(observer)<observer->getParent()->getNumberOfObservers()-1);
     connect(action,SIGNAL(triggered()),mw,SLOT(moveDownObserver()));
     addAction(action);
-    if(action->isEnabled()) action->setEnabled(observer->getParent()->getIndexOfObserver(observer)<observer->getParent()->getNumberOfObservers()-1);
   }
 
   FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
@@ -208,9 +208,9 @@ namespace MBSimGUI {
 
   ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
-    action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
     addAction(action);
+    action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
     action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
@@ -297,9 +297,9 @@ namespace MBSimGUI {
 
   GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
-    action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
     addAction(action);
+    action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
     action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
@@ -330,9 +330,9 @@ namespace MBSimGUI {
 
   ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
-    action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
     addAction(action);
+    action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
     action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
@@ -375,9 +375,9 @@ namespace MBSimGUI {
 
   LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
-    action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
     addAction(action);
+    action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
     action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
@@ -478,9 +478,9 @@ namespace MBSimGUI {
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
-    action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
     addAction(action);
+    action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
     action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
@@ -546,9 +546,9 @@ namespace MBSimGUI {
 
   ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
-    action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
     addAction(action);
+    action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
     action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,SIGNAL(triggered()),this,SLOT(load()));
     addAction(action);
