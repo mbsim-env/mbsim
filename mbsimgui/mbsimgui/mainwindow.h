@@ -65,6 +65,7 @@ namespace MBSimGUI {
   class Parameter;
   class EmbedItemData;
   class Project;
+  class WebDialog;
 
   class MainWindow : public QMainWindow {
 
@@ -89,6 +90,7 @@ namespace MBSimGUI {
       bool autoSave, autoExport, saveFinalStateVector;
       int autoSaveInterval, maxUndo;
       QString autoExportDir;
+      static WebDialog *xmlHelpDialog;
       bool allowUndo;
       xercesc::DOMDocument *doc;
       std::deque<xercesc::DOMDocument*> undos, redos;
