@@ -585,7 +585,6 @@ namespace MBSimGUI {
   }
 
   WebDialog::WebDialog(QWidget *parent) : QDialog(parent) {
-    cout << "new WebDialog" << endl;
     QGridLayout *layout = new QGridLayout;
     setLayout(layout);
     webView = new QWebView(this);
@@ -605,9 +604,9 @@ namespace MBSimGUI {
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
   }
 
-  void WebDialog::setUrl(const QUrl &url_) {
+  void WebDialog::load(const QUrl &url_) {
     url = url_;
-    webView->setUrl(url);
+    webView->load(url);
   }
 
 }

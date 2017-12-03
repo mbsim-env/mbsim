@@ -227,7 +227,7 @@ namespace MBSimGUI {
   class WebDialog : public QDialog {
     public:
       WebDialog(QWidget *parent=0);
-      void setUrl(const QUrl &url_);
+      void load(const QUrl &url_);
     private:
       QWebView *webView;
       QUrl url;
