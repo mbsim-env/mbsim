@@ -23,7 +23,8 @@ int main (int argc, char* argv[]) {
     freq(i) = 0.1 + i*0.1;
   analyser.setExcitationFrequencies(freq);
   analyser.setSystemFrequencies(VecV(1,INIT,f));
-  analyser.analyse(*sys);
+  analyser.setSystem(sys);
+  analyser.analyse();
 
   delete sys;
 

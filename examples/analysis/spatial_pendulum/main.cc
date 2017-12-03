@@ -34,7 +34,8 @@ int main (int argc, char* argv[]) {
   Vec zEq(sys->getzSize());
   analyser.setInitialState(zEq);
   analyser.setTask(Eigenanalyser::eigenfrequencies);
-  analyser.analyse(*sys);
+  analyser.setSystem(sys);
+  analyser.analyse();
 
   cout << "Eigenfrequency is " << analyser.getEigenvalues()(0).imag();
   cout << " (should be " << sqrt(g/a) << ")" << endl;
@@ -47,7 +48,8 @@ int main (int argc, char* argv[]) {
   zEq(2) = psid;
   analyser.setInitialDeviation(z0);
   analyser.setInitialState(zEq);
-  analyser.analyse(*sys);
+  analyser.setSystem(sys);
+  analyser.analyse();
 
   cout << "Eigenfrequency is " << analyser.getEigenvalues()(0).imag();
   cout << " (should be " << sqrt(g/a*(1./cos(theta0/180*M_PI)+3*cos(theta0/180*M_PI))) << ")" << endl;

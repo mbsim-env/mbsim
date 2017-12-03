@@ -59,6 +59,7 @@ namespace MBSimIntegrator {
 
 
       /* INHERITED INTERFACE OF INTEGRATOR */
+      using Integrator::integrate;
       virtual void integrate();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
