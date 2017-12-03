@@ -43,45 +43,39 @@ namespace MBSimIntegrator {
   RADAU5Integrator::RADAU5Integrator()  {
   }
 
-  double RADAU5Integrator::tPlot = 0;
-  double RADAU5Integrator::dtOut = 0;
-  ofstream RADAU5Integrator::integPlot;
-  double RADAU5Integrator::s0;
-  double RADAU5Integrator::time = 0;
-  bool RADAU5Integrator::output_;
-
   void RADAU5Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
     Vec zd(*zSize, zd_);
-    system->setTime(*t);
-    system->setState(Vec(*zSize, z_));
-    system->resetUpToDate();
-    zd = system->evalzd();
+    self->getSystem()->setTime(*t);
+    self->getSystem()->setState(Vec(*zSize, z_));
+    self->getSystem()->resetUpToDate();
+    zd = self->getSystem()->evalzd();
   }
 
   void  RADAU5Integrator::plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
+    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
 
-    while(*t >= tPlot) {
-      system->setTime(tPlot);
+    while(*t >= self->tPlot) {
+      self->getSystem()->setTime(self->tPlot);
       for(int i=1; i<=*n; i++)
-	system->getState()(i-1) = CONTR5(&i,&tPlot,cont,lrc);
-      system->resetUpToDate();
-      system->plot();
-      if(output_)
-	cout << "   t = " <<  tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
+	self->getSystem()->getState()(i-1) = CONTR5(&i,&self->tPlot,cont,lrc);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->plot();
+      if(self->output)
+	cout << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
 
       double s1 = clock();
-      time += (s1-s0)/CLOCKS_PER_SEC;
-      s0 = s1; 
+      self->time += (s1-self->s0)/CLOCKS_PER_SEC;
+      self->s0 = s1; 
 
-      integPlot<< tPlot << " " << *t-*told << " " << time << endl;
-      tPlot += dtOut;
+      self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
+      self->tPlot += self->dtOut;
     }
   }
 
-  void RADAU5Integrator::integrate(DynamicSystemSolver& system_) {
+  void RADAU5Integrator::integrate() {
     debugInit();
 
-    system = &system_;
     int zSize=system->getzSize();
 //    int nrDens = zSize;
 
@@ -111,7 +105,8 @@ namespace MBSimIntegrator {
     int out = 2; // TODO
 
     double rPar;
-    int iPar;
+    int iPar[sizeof(void*)/sizeof(int)+1];
+    *reinterpret_cast<RADAU5Integrator**>(&iPar[0])=this;
 
     int iJac = 0; // TODO
     int mlJac = zSize; // TODO
@@ -158,8 +153,6 @@ namespace MBSimIntegrator {
 
     cout.setf(ios::scientific, ios::floatfield);
 
-    output_ = output;
-
     s0 = clock();
 
     RADAU5(&zSize,fzdot,&t,z(),&tEnd,&dt0,
@@ -167,7 +160,7 @@ namespace MBSimIntegrator {
 	nullptr,&iJac,&mlJac,&muJac,
 	nullptr,&iMas,&mlMas,&muMas,
 	plot,&out,
-	work(),&lWork,iWork(),&liWork,&rPar,&iPar,&idid);
+	work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
     integPlot.close();
 

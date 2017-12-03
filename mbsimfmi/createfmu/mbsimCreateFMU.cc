@@ -254,7 +254,8 @@ int main(int argc, char *argv[]) {
 
     if(cosim) {
       try {
-        integrator->preIntegrate(*dss.get());
+        integrator->setSystem(dss.get());
+        integrator->preIntegrate();
       }
       catch(MBSimError &ex) {
         throw runtime_error("The used integrator "+boost::core::demangle(typeid(*integrator.get()).name())+

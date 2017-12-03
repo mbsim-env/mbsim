@@ -57,9 +57,8 @@
 //     system->getsv(z, sv, *t);
 //   }
 // 
-//   void DASPKIntegrator::integrate(DynamicSystemSolver& system_) {
+//   void DASPKIntegrator::integrate() {
 //     debugInit();
-//     system = &system_;
 // 
 //     zSize=system->getzSize();
 //     Vec z(zSize);

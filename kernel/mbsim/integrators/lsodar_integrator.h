@@ -33,8 +33,8 @@ namespace MBSimIntegrator {
   class LSODARIntegrator : public Integrator {
     private:
 
-      static void fzdot(int* zSize, double* t, double* z_, double* zd_);
-      static void fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_);
+      static void fzdot(int* neq, double* t, double* z_, double* zd_);
+      static void fsv(int* neq, double* t, double* z_, int* nsv, double* sv_);
 
       /** maximal step size */
       double dtMax;
@@ -54,7 +54,8 @@ namespace MBSimIntegrator {
       /** tolerance for velocity constraints */
       double gdMax;
 
-      int zSize, iTol, istate, nsv, lrWork, liWork, integrationSteps;
+      int neq[1+sizeof(void*)/sizeof(int)+1]; // store zSize at neq[0]; store this at neq[1..]
+      int iTol, istate, nsv, lrWork, liWork, integrationSteps;
       double t, tPlot, s0, time;
       fmatvec::Vec rWork;
       fmatvec::VecInt iWork;
@@ -76,10 +77,11 @@ namespace MBSimIntegrator {
       void setToleranceForPositionConstraints(double gMax_) {gMax = gMax_;}
       void setToleranceForVelocityConstraints(double gdMax_) {gdMax = gdMax_;}
 
-      void integrate(MBSim::DynamicSystemSolver& system);
-      void preIntegrate(MBSim::DynamicSystemSolver& system);
-      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
-      void postIntegrate(MBSim::DynamicSystemSolver& system);
+      using Integrator::integrate;
+      void integrate();
+      void preIntegrate();
+      void subIntegrate(double tStop);
+      void postIntegrate();
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
   };

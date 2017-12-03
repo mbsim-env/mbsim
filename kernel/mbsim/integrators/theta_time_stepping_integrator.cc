@@ -40,39 +40,39 @@ namespace MBSimIntegrator {
 
   ThetaTimeSteppingIntegrator::ThetaTimeSteppingIntegrator() : dt(1e-3), theta(0.5), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 
-  void ThetaTimeSteppingIntegrator::update(DynamicSystemSolver& system, const Vec& z, double t) {
-    if (system.getq()() != z())
-      system.updatezRef(z);
+  void ThetaTimeSteppingIntegrator::update(const Vec& z, double t) {
+    if (system->getq()() != z())
+      system->updatezRef(z);
 
-    system.checkActive(1);
-    system.setUpActiveLinks();
-    if (system.gActiveChanged()) {
-      // system.checkAllgd(); // TODO necessary?
-      system.calcgdSize(3); // IH
-      system.calclaSize(3); // IH
-      system.calcrFactorSize(3); // IH
+    system->checkActive(1);
+    system->setUpActiveLinks();
+    if (system->gActiveChanged()) {
+      // system->checkAllgd(); // TODO necessary?
+      system->calcgdSize(3); // IH
+      system->calclaSize(3); // IH
+      system->calcrFactorSize(3); // IH
 
-      system.updateWRef(system.getWParent()(RangeV(0, system.getuSize() - 1), RangeV(0, system.getlaSize() - 1)));
-      system.updateVRef(system.getVParent()(RangeV(0, system.getuSize() - 1), RangeV(0, system.getlaSize() - 1)));
-      system.updatelaRef(system.getlaParent()(0, system.getlaSize() - 1));
-      system.updategdRef(system.getgdParent()(0, system.getgdSize() - 1));
-      if (system.getImpactSolver() == DynamicSystemSolver::RootFinding)
-        system.updateresRef(system.getresParent()(0, system.getlaSize() - 1));
-      system.updaterFactorRef(system.getrFactorParent()(0, system.getrFactorSize() - 1));
+      system->updateWRef(system->getWParent()(RangeV(0, system->getuSize() - 1), RangeV(0, system->getlaSize() - 1)));
+      system->updateVRef(system->getVParent()(RangeV(0, system->getuSize() - 1), RangeV(0, system->getlaSize() - 1)));
+      system->updatelaRef(system->getlaParent()(0, system->getlaSize() - 1));
+      system->updategdRef(system->getgdParent()(0, system->getgdSize() - 1));
+      if (system->getImpactSolver() == DynamicSystemSolver::RootFinding)
+        system->updateresRef(system->getresParent()(0, system->getlaSize() - 1));
+      system->updaterFactorRef(system->getrFactorParent()(0, system->getrFactorSize() - 1));
     }
     throw;
   }
   
-  void ThetaTimeSteppingIntegrator::preIntegrate(DynamicSystemSolver& system) {
+  void ThetaTimeSteppingIntegrator::preIntegrate() {
     debugInit();
     // initialisation
     assert(dtPlot >= dt);
 
     t = tStart;
 
-    int nq = system.getqSize();
-    int nu = system.getuSize();
-    int nx = system.getxSize();
+    int nq = system->getqSize();
+    int nu = system->getuSize();
+    int nx = system->getxSize();
     int n = nq + nu + nx;
 
     RangeV Iq(0, nq - 1);
@@ -86,9 +86,9 @@ namespace MBSimIntegrator {
     if(z0.size())
       z = z0;
     else
-      z = system.evalz0();
+      z = system->evalz0();
 
-    system.setStepSize(dt);
+    system->setStepSize(dt);
 
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
@@ -99,19 +99,19 @@ namespace MBSimIntegrator {
     s0 = clock();
   }
 
-  void ThetaTimeSteppingIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
-    system.setStepSize(dt);
+  void ThetaTimeSteppingIntegrator::subIntegrate(double tStop) {
+    system->setStepSize(dt);
     while (t <= tStop) { // time loop
       integrationSteps++;
       if ((step * stepPlot - integrationSteps) < 0) {
         step++;
         if (driftCompensation)
-          system.projectGeneralizedPositions(t, 0);
-        system.plot();
+          system->projectGeneralizedPositions(t, 0);
+        system->plot();
         double s1 = clock();
         time += (s1 - s0) / CLOCKS_PER_SEC;
         s0 = s1;
-        integPlot << t << " " << dt << " " << iter << " " << time << " " << system.getlaSize() << endl;
+        integPlot << t << " " << dt << " " << iter << " " << time << " " << system->getlaSize() << endl;
         if (output)
           cout << "   t = " << t << ",\tdt = " << dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
         tPlot += dtPlot;
@@ -119,42 +119,42 @@ namespace MBSimIntegrator {
 
       double te = t + dt;
       t += theta * dt;
-      system.resetUpToDate();
-      system.setTime(t);
+      system->resetUpToDate();
+      system->setTime(t);
       update(system, z, t);
 
-      Mat T = system.evalT().copy();
-      SymMat M = system.evalM().copy();
-      Vec h = system.evalh().copy();
-      Mat W = system.evalW().copy();
-      Mat V = system.evalV().copy();
-      Mat dhdq = system.dhdq(t);
-      Mat dhdu = system.dhdu(t);
+      Mat T = system->evalT().copy();
+      SymMat M = system->evalM().copy();
+      Vec h = system->evalh().copy();
+      Mat W = system->evalW().copy();
+      Mat V = system->evalV().copy();
+      Mat dhdq = system->dhdq(t);
+      Mat dhdu = system->dhdu(t);
 
       VecInt ipiv(M.size());
       SqrMat luMeff = SqrMat(facLU(M - theta * dt * dhdu - theta * theta * dt * dt * dhdq * T, ipiv));
       Vec heff = h + theta * dhdq * T * u * dt;
-      system.getG(false) << SqrMat(W.T() * slvLUFac(luMeff, V, ipiv));
-      system.getGs(false) << system.evalG();
-      system.getbi(false) << system.evalgd() + W.T() * slvLUFac(luMeff, heff, ipiv) * dt; // TODO system.getgd() necessary?
+      system->getG(false) << SqrMat(W.T() * slvLUFac(luMeff, V, ipiv));
+      system->getGs(false) << system->evalG();
+      system->getbi(false) << system->evalgd() + W.T() * slvLUFac(luMeff, heff, ipiv) * dt; // TODO system->getgd() necessary?
 
       throw;
       if (iter > maxIter)
         maxIter = iter;
       sumIter += iter;
       
-      Vec du = slvLUFac(luMeff, heff * dt + V * system.getla(), ipiv);
+      Vec du = slvLUFac(luMeff, heff * dt + V * system->getla(), ipiv);
 
       q += T * (u + theta * du) * dt;
       u += du;
-      x += system.evaldx();
+      x += system->evaldx();
       t = te;
-      system.resetUpToDate();
-      system.setTime(t);
+      system->resetUpToDate();
+      system->setTime(t);
     }
   }
 
-  void ThetaTimeSteppingIntegrator::postIntegrate(DynamicSystemSolver& system) {
+  void ThetaTimeSteppingIntegrator::postIntegrate() {
     integPlot.close();
 
     ofstream integSum((name + ".sum").c_str());
@@ -168,10 +168,10 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-  void ThetaTimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
-    preIntegrate(system);
-    subIntegrate(system, tEnd);
-    postIntegrate(system);
+  void ThetaTimeSteppingIntegrator::integrate() {
+    preIntegrate();
+    subIntegrate(tEnd);
+    postIntegrate();
   }
 
   void ThetaTimeSteppingIntegrator::initializeUsingXML(DOMElement *element) {

@@ -47,16 +47,16 @@ namespace MBSimIntegrator {
   QuasiStaticIntegrator::QuasiStaticIntegrator()  {
   }
 
-  void QuasiStaticIntegrator::preIntegrate(DynamicSystemSolver& system) {
+  void QuasiStaticIntegrator::preIntegrate() {
     debugInit();
     // initialisation
     assert(dtPlot >= dt);
 
     t = tStart;
 
-    int nq = system.getqSize(); // size of positions, velocities, state
-    int nu = system.getuSize();
-    int nx = system.getxSize();
+    int nq = system->getqSize(); // size of positions, velocities, state
+    int nu = system->getuSize();
+    int nx = system->getxSize();
     int n = nq + nu + nx;
 
     RangeV Iq(0, nq - 1);
@@ -70,7 +70,7 @@ namespace MBSimIntegrator {
     if(z0.size())
       z = z0;
     else
-      z = system.evalz0();
+      z = system->evalz0();
 
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
@@ -83,14 +83,14 @@ namespace MBSimIntegrator {
     s0 = clock();
   }
 
-  void QuasiStaticIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
+  void QuasiStaticIntegrator::subIntegrate(double tStop) {
 //    static_cast<DynamicSystem&>(system).plot();
 
     /* FIND EQUILIBRIUM*/
-    hgFun fun_hg(&system);
+    hgFun fun_hg(system);
 
-    VecV qla(q.size() + system.getla(false).size());
-    VecV la(system.getla(false).size());
+    VecV qla(q.size() + system->getla(false).size());
+    VecV la(system->getla(false).size());
     RangeV qInd = RangeV(0, q.size() - 1);
     RangeV laInd = RangeV(q.size(), qla.size() - 1);
 
@@ -99,7 +99,7 @@ namespace MBSimIntegrator {
     VecV qlaOldOld(qla.size());
 
     qla.set(qInd, q);
-    qla.set(laInd, system.getla(false));
+    qla.set(laInd, system->getla(false));
 
     /* use MultiDimNewtonMethod*/
 //    MultiDimNewtonMethod newton(&fun_hg);
@@ -121,7 +121,7 @@ namespace MBSimIntegrator {
     newton.setLinearAlgebra(1); // as system is possible underdetermined
     newton.setJacobianUpdateFreq(updateJacobianEvery);
 
-//    system.setUpdatela(false);
+//    system->setUpdatela(false);
 //    static_cast<DynamicSystem&>(system).plot();
 
     while (t < tStop) { // time loop
@@ -156,18 +156,18 @@ namespace MBSimIntegrator {
       for (int i = 0; i < la.size(); i++)
         la(i) = qla(q.size() + i);
 
-      system.setla(la);
+      system->setla(la);
 
       // todo: check whether the plot make the openMBV unstable.
       if ((step * stepPlot - integrationSteps) < 0) {
         /* WRITE OUTPUT */
         step++;
-        system.setUpdatela(false);
-        static_cast<DynamicSystem&>(system).plot();
+        system->setUpdatela(false);
+        system->plot();
         double s1 = clock();
         time += (s1 - s0) / CLOCKS_PER_SEC;
         s0 = s1;
-        integPlot << t << " " << dt << " " << iter << " " << time << " " << system.getlaSize() << endl;
+        integPlot << t << " " << dt << " " << iter << " " << time << " " << system->getlaSize() << endl;
         if (output)
           cout << "   t = " << t << ",\tdt = " << dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
         tPlot += dtPlot;
@@ -176,12 +176,12 @@ namespace MBSimIntegrator {
       /* UPDATE SYSTEM FOR NEXT STEP*/
       t += dt;   // step 0: update time, go into new time step.
 
-//      x += system.deltax(z, t, dt);  // todo: framework is not ready for x.
+//      x += system->deltax(z, t, dt);  // todo: framework is not ready for x.
     }
     delete jac;
   }
 
-  void QuasiStaticIntegrator::postIntegrate(DynamicSystemSolver& system) {
+  void QuasiStaticIntegrator::postIntegrate() {
     integPlot.close();
 
     typedef tee_device<ostream, ofstream> TeeDevice;
@@ -205,10 +205,10 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-  void QuasiStaticIntegrator::integrate(DynamicSystemSolver& system) {
-    preIntegrate(system);
-    subIntegrate(system, tEnd);
-    postIntegrate(system);
+  void QuasiStaticIntegrator::integrate() {
+    preIntegrate();
+    subIntegrate(tEnd);
+    postIntegrate();
   }
 
   void QuasiStaticIntegrator::initializeUsingXML(DOMElement *element) {

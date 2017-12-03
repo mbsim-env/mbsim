@@ -102,19 +102,19 @@ namespace MBSimIntegrator {
     order = maxOrder;
   }
 
-  void TimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& system) {
-    integrate(system, system, system,1); 
+  void TimeSteppingSSCIntegrator::integrate() {
+    integrate(*system, *system, *system,1); 
   }
 
   void TimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, int Threads) { 
     numThreads = Threads;
     preIntegrate(systemT1_, systemT2_, systemT3_);
-    subIntegrate(systemT1_, tEnd);
-    postIntegrate(systemT1_);
+    subIntegrate(tEnd);
+    postIntegrate();
   }
 
-  void TimeSteppingSSCIntegrator::preIntegrate(DynamicSystemSolver& system_) {
-    preIntegrate(system_, system_, system_);
+  void TimeSteppingSSCIntegrator::preIntegrate() {
+    preIntegrate(*system, *system, *system);
   }
 
   void TimeSteppingSSCIntegrator::preIntegrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_) {
@@ -220,10 +220,10 @@ namespace MBSimIntegrator {
     tPlot = t;
   }
 
-  void TimeSteppingSSCIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) { // system: only dummy!
+  void TimeSteppingSSCIntegrator::subIntegrate(double tStop) { // system: only dummy!
     Timer.start();
 
-    lae << system.getla(false);
+    lae << system->getla(false);
 
     qUncertaintyByExtrapolation=0;
 
@@ -305,7 +305,7 @@ namespace MBSimIntegrator {
     LS = LStmp_T1;
     while(! ExitIntegration) 
     {
-      system.resetUpToDate();
+      system->resetUpToDate();
 
       while(StepFinished==0) 
       {
@@ -928,7 +928,7 @@ namespace MBSimIntegrator {
         cout << "   t = " << t << ",\tdt = " << dtOld << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << ",\torder = " << order << "\r" << flush;
   }
 
-  void TimeSteppingSSCIntegrator::postIntegrate(DynamicSystemSolver& system) {           // system: only dummy!
+  void TimeSteppingSSCIntegrator::postIntegrate() {           // system: only dummy!
     time += Timer.stop();
     cout.unsetf(ios::scientific);
     if (FlagPlotIntegrator) integPlot.close();

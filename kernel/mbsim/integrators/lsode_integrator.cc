@@ -45,19 +45,23 @@ namespace MBSimIntegrator {
   LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), maxSteps(10000), stiff(false) {
   }
 
-  void LSODEIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
-    Vec zd(*zSize, zd_);
-    system->setTime(*t);
-//    system->setState(Vec(*zSize, z_)); Not needed as the integrator uses the state of the system
-    system->resetUpToDate();
-    zd = system->evalzd();
+  void LSODEIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
+    auto self=*reinterpret_cast<LSODEIntegrator**>(&neq[1]);
+    Vec zd(neq[0], zd_);
+    self->getSystem()->setTime(*t);
+//    self->getSystem()->setState(Vec(neq[0], z_)); Not needed as the integrator uses the state of the system
+    self->getSystem()->resetUpToDate();
+    zd = self->getSystem()->evalzd();
   }
 
-  void LSODEIntegrator::integrate(DynamicSystemSolver& system_) {
+  void LSODEIntegrator::integrate() {
     debugInit();
-    system = &system_;
 
     int zSize=system->getzSize();
+    int neq[1+sizeof(void*)/sizeof(int)+1];
+    neq[0]=zSize;
+    *reinterpret_cast<LSODEIntegrator**>(&neq[1])=this;
+
     if(z0.size())
       system->setState(z0);
     else
@@ -113,7 +117,7 @@ namespace MBSimIntegrator {
 
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
-      DLSODE (fzdot, &zSize, system->getState()(), &t, &tPlot, &iTol, &rTol, aTol(),
+      DLSODE (fzdot, neq, system->getState()(), &t, &tPlot, &iTol, &rTol, aTol(),
         &one, &istate, &one, rWork(), &lrWork, iWork(), 
         &liWork, 0, &MF);
       if(istate==2 || fabs(t-tPlot)<epsroot) {

@@ -22,7 +22,8 @@ int main (int argc, char* argv[]) {
   analyser.setAmplitude(0.5);
   analyser.setMode(2);
   analyser.setTask(Eigenanalyser::eigenmode);
-  analyser.analyse(*sys);
+  analyser.setSystem(sys);
+  analyser.analyse();
 //  analyser.eigenmodes(*sys);
 //  analyser.eigenmotion(*sys);
 

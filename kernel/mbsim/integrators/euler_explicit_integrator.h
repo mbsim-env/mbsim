@@ -37,12 +37,13 @@ namespace MBSimIntegrator {
        */
       ~EulerExplicitIntegrator() override = default;
 
-      void preIntegrate(MBSim::DynamicSystemSolver& system) override;
-      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop) override;
-      void postIntegrate(MBSim::DynamicSystemSolver& system) override;
+      void preIntegrate() override;
+      void subIntegrate(double tStop) override;
+      void postIntegrate() override;
 
       /* INHERITED INTERFACE OF INTEGRATOR */
-      void integrate(MBSim::DynamicSystemSolver& system) override;
+      using Integrator::integrate;
+      void integrate() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 

@@ -39,45 +39,39 @@ namespace MBSimIntegrator {
   ODEXIntegrator::ODEXIntegrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6) {
   }
 
-  double ODEXIntegrator::tPlot = 0;
-  double ODEXIntegrator::dtOut = 0;
-  ofstream ODEXIntegrator::integPlot;
-  double ODEXIntegrator::s0;
-  double ODEXIntegrator::time = 0;
-  bool ODEXIntegrator::output_;
-
   void ODEXIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<ODEXIntegrator**>(&ipar[0]);
     Vec zd(*zSize, zd_);
-    system->setTime(*t);
-    system->setState(Vec(*zSize, z_));
-    system->resetUpToDate();
-    zd = system->evalzd();
+    self->getSystem()->setTime(*t);
+    self->getSystem()->setState(Vec(*zSize, z_));
+    self->getSystem()->resetUpToDate();
+    zd = self->getSystem()->evalzd();
   }
 
   void ODEXIntegrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int *ncon, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
+    auto self=*reinterpret_cast<ODEXIntegrator**>(&ipar[0]);
 
-    while(*t >= tPlot) {
-      system->setTime(tPlot);
+    while(*t >= self->tPlot) {
+      self->getSystem()->setTime(self->tPlot);
       for(int i=1; i<=*n; i++)
-	system->getState()(i-1) = CONTEX(&i,&tPlot,con,ncon,icomp,nd);
-      system->resetUpToDate();
-      system->plot();
-      if(output_)
-	cout << "   t = " <<  tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
+	self->getSystem()->getState()(i-1) = CONTEX(&i,&self->tPlot,con,ncon,icomp,nd);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->plot();
+      if(self->output)
+	cout << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
 
       double s1 = clock();
-      time += (s1-s0)/CLOCKS_PER_SEC;
-      s0 = s1; 
+      self->time += (s1-self->s0)/CLOCKS_PER_SEC;
+      self->s0 = s1; 
 
-      integPlot<< tPlot << " " << *t-*told << " " << time << endl;
-      tPlot += dtOut;
+      self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
+      self->tPlot += self->dtOut;
     }
   }
 
-  void ODEXIntegrator::integrate(DynamicSystemSolver& system_) {
+  void ODEXIntegrator::integrate() {
     debugInit();
 
-    system = &system_;
     int zSize=system->getzSize();
     int nrDens = zSize;
 
@@ -102,7 +96,8 @@ namespace MBSimIntegrator {
     int out = 2; // TODO
 
     double rPar;
-    int iPar;
+    int iPar[sizeof(void*)/sizeof(int)+1];
+    *reinterpret_cast<ODEXIntegrator**>(&iPar[0])=this;
 
     int lWork = 2*(zSize*(9+5)+5*9+20+(2*9*(9+2)+5)*nrDens);
     int liWork = 2*(2*9+21+nrDens);
@@ -131,12 +126,10 @@ namespace MBSimIntegrator {
 
     cout.setf(ios::scientific, ios::floatfield);
 
-    output_ = output;
-
     s0 = clock();
 
     ODEX(&zSize,fzdot,&t,z(),&tEnd, &dt0,rTol(),aTol(),&iTol,plot,&out,
-	work(),&lWork,iWork(),&liWork,&rPar,&iPar,&idid);
+	work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
     integPlot.close();
 

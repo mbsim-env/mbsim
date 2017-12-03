@@ -56,22 +56,23 @@ namespace MBSimIntegrator {
        * \brief initializes the integration
        * \param dynamical system to be integrated
        */
-      void preIntegrate(MBSim::DynamicSystemSolver& system) override;
+      void preIntegrate() override;
 
       /**
        * \brief does the integration
        * \param dynamical system to be integrated
        */
-      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop) override;
+      void subIntegrate(double tStop) override;
 
       /**
        * \brief closes the integration
        * \param dynamical system to be integrated
        */
-      void postIntegrate(MBSim::DynamicSystemSolver& system) override;
+      void postIntegrate() override;
 
       /* INHERITED INTERFACE OF INTEGRATOR */
-      void integrate(MBSim::DynamicSystemSolver& system) override;
+      using Integrator::integrate;
+      void integrate() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
@@ -88,7 +89,7 @@ namespace MBSimIntegrator {
        *  \param dynamical system to be integrated
        *  return flag for occuring impact
        */
-      bool evaluateStage(MBSim::DynamicSystemSolver& system);
+      bool evaluateStage();
 
       /**
        * \brief step size for non-impulsive periods, and impulsive periods, and last used

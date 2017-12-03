@@ -49,20 +49,22 @@ namespace MBSim {
       
       /* INTERFACE FOR DERIVED CLASSES */
       /*! 
-       * \brief start solving the dynamic system
-       * \param dynamic system to be solved
+       * \brief start solving the dynamic system set by setSystem.
        */
-      virtual void execute(DynamicSystemSolver& system) = 0;
+      virtual void execute() = 0;
 
       virtual void initializeUsingXML(xercesc::DOMElement *element) = 0;
 
       virtual const fmatvec::Vec& getInitialState() const = 0;
 
+      void setSystem(DynamicSystemSolver *s) { system=s; }
+      MBSim::DynamicSystemSolver* getSystem() { return system; }
+
     protected:
       /**
        * \brief dynamic system
        */
-      static DynamicSystemSolver* system;
+      MBSim::DynamicSystemSolver* system;
   };
 
 }

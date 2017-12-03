@@ -36,12 +36,11 @@ namespace MBSimIntegrator {
       static void fzdot(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
 
-      static double tPlot;
-      static double dtOut;
-      static std::ofstream integPlot;
-      static double s0; 
-      static double time; 
-      static bool output_; 
+      double tPlot;
+      double dtOut;
+      std::ofstream integPlot;
+      double s0; 
+      double time; 
 
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
@@ -67,7 +66,8 @@ namespace MBSimIntegrator {
       void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
       void setMaxStepNumber(int maxSteps_) {maxSteps = maxSteps_;}
 
-      void integrate(MBSim::DynamicSystemSolver& system) override;
+      using Integrator::integrate;
+      void integrate() override;
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
   };

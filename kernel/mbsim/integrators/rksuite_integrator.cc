@@ -40,11 +40,12 @@ namespace MBSimIntegrator {
   RKSuiteIntegrator::RKSuiteIntegrator() : method(RK45), thres(1,INIT,1e-10), rTol(1e-6), dt0(0), ndworkarray(100000), messages(0), integrationSteps(0), t(0), tPlot(0), s0(0), time(0), z(0), zdGot(0), zMax(0) {
   }
 
-  void RKSuiteIntegrator::preIntegrate(DynamicSystemSolver& system_) {
+  void RKSuiteIntegrator::preIntegrate() {
     debugInit();
 
-    system=&system_;
-
+    if(selfStatic)
+      throw MBSimError("RKSuiteIntegrator can only integrate one system.");
+    selfStatic = this;
     zSize=system->getzSize();
 
     z.resize(zSize);
@@ -82,65 +83,67 @@ namespace MBSimIntegrator {
     time = 0;
   }
 
-  void RKSuiteIntegrator::subIntegrate(DynamicSystemSolver& system_, double tStop) {
+    void RKSuiteIntegrator::subIntegrate(double tStop) {
 
-    int result=0, errass=0;
-    double tEND=tEnd+dtPlot; // tEND must be greater than tEnd
-    char task='U';
-    int method_ = method;
+      int result=0, errass=0;
+      double tEND=tEnd+dtPlot; // tEND must be greater than tEnd
+      char task='U';
+      int method_ = method;
 
-    SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
-        &errass, &dt0, dworkarray, &ndworkarray, &messages);
+      SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
+          &errass, &dt0, dworkarray, &ndworkarray, &messages);
 
-    while((tStop-t)>epsroot) {
+      while((tStop-t)>epsroot) {
 
-      integrationSteps++;
+        integrationSteps++;
 
-      double dtLast = 0;
-      UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, &result, &dtLast);
+        double dtLast = 0;
+        UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, &result, &dtLast);
 
-      if(result==1 || result==2 || fabs(t-tPlot)<epsroot) {
-        system->setTime(t);
-        system->setState(z);
-        system->resetUpToDate();
-        system->plot();
+        if(result==1 || result==2 || fabs(t-tPlot)<epsroot) {
+          system->setTime(t);
+          system->setState(z);
+          system->resetUpToDate();
+          system->plot();
 
-        if(output) cout << "   t = " <<  t << ",\tdt = "<< dtLast << "\r"<<flush;
+          if(output) cout << "   t = " <<  t << ",\tdt = "<< dtLast << "\r"<<flush;
 
-        const double s1 = clock();
-        time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1; 
-        integPlot<< t << " " << dtLast << " " << time << endl;
+          const double s1 = clock();
+          time += (s1-s0)/CLOCKS_PER_SEC;
+          s0 = s1; 
+          integPlot<< t << " " << dtLast << " " << time << endl;
 
-        tPlot += dtPlot;
+          tPlot += dtPlot;
+        }
+
+        if(result==3 || result==4)
+          continue;
+        if(result>=5) 
+          throw MBSimError("Integrator RKSUITE failed with result = "+toString(result));
+
+        if (tPlot>tStop)
+          tPlot=tStop;
       }
-
-      if(result==3 || result==4)
-        continue;
-      if(result>=5) 
-        throw MBSimError("Integrator RKSUITE failed with result = "+toString(result));
-
-      if (tPlot>tStop)
-        tPlot=tStop;
     }
-  }
 
-  void RKSuiteIntegrator::postIntegrate(DynamicSystemSolver& system_) {
-    integPlot.close();
+    void RKSuiteIntegrator::postIntegrate() {
+      integPlot.close();
 
-    ofstream integSum((name + ".sum").c_str());
-    integSum << "Integration time: " << time << endl;
-    integSum << "Integration steps: " << integrationSteps << endl;
-    integSum.close();
+      ofstream integSum((name + ".sum").c_str());
+      integSum << "Integration time: " << time << endl;
+      integSum << "Integration steps: " << integrationSteps << endl;
+      integSum.close();
 
-    cout.unsetf (ios::scientific);
-    cout << endl;
-  }
+      cout.unsetf (ios::scientific);
+      cout << endl;
 
-  void RKSuiteIntegrator::integrate(DynamicSystemSolver& system) {
-    preIntegrate(system);
-    subIntegrate(system, tEnd);
-    postIntegrate(system);
+      selfStatic = nullptr;
+    }
+
+  void RKSuiteIntegrator::integrate() {
+    preIntegrate();
+    subIntegrate(tEnd);
+    postIntegrate();
   }
 
   void RKSuiteIntegrator::initializeUsingXML(DOMElement *element) {
@@ -162,13 +165,13 @@ namespace MBSimIntegrator {
   }
 
   void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {
-    Vec zd(zSize, zd_);
-    system->setTime(*t);
-    system->setState(Vec(zSize, z_));
-    system->resetUpToDate();
-    zd = system->evalzd();
+    Vec zd(selfStatic->zSize, zd_);
+    selfStatic->getSystem()->setTime(*t);
+    selfStatic->getSystem()->setState(Vec(selfStatic->zSize, z_));
+    selfStatic->getSystem()->resetUpToDate();
+    zd = selfStatic->getSystem()->evalzd();
   }
 
-  int RKSuiteIntegrator::zSize = 0;
+  RKSuiteIntegrator *RKSuiteIntegrator::selfStatic = nullptr;
 
 }

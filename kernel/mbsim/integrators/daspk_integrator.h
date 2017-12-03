@@ -68,7 +68,8 @@
 //        void setmaxSteps(int maxSteps_) {maxSteps = maxSteps_;}
 //        void setStiff(bool flag) {stiff = flag;}
 //  
-//        void integrate(DynamicSystemSolver& system);
+      using Integrator::integrate;
+//        void integrate();
 //        
 //        virtual void initializeUsingXML(xercesc::DOMElement *element);
 //    };
