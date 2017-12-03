@@ -34,6 +34,7 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QSpinBox>
+#include <QWebView>
 
 using namespace std;
 
@@ -581,6 +582,31 @@ namespace MBSimGUI {
     buttonBox->addButton(QDialogButtonBox::Ok);
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     layout->addWidget(buttonBox);
+  }
+
+  WebDialog::WebDialog(QWidget *parent) : QDialog(parent) {
+    QGridLayout *layout = new QGridLayout;
+    setLayout(layout);
+    webView = new QWebView(this);
+    QPushButton *home = new QPushButton("Home",webView);
+    QPushButton *helpBackward = new QPushButton("Backward",webView);
+    QPushButton *helpForward = new QPushButton("Forward",webView);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    layout->addWidget(home,0,0);
+    layout->addWidget(helpForward,0,2);
+    layout->addWidget(helpBackward,0,1);
+    layout->addWidget(webView,1,0,1,3);
+    layout->addWidget(buttonBox,2,0,1,3);
+    connect(home, SIGNAL(clicked()), mw, SLOT(xmlHelp()));
+    connect(helpForward, SIGNAL(clicked()), webView, SLOT(forward()));
+    connect(helpBackward, SIGNAL(clicked()), webView, SLOT(back()));
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+  }
+
+  void WebDialog::load(const QUrl &url_) {
+    url = url_;
+    webView->load(url);
   }
 
 }

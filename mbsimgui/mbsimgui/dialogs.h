@@ -24,10 +24,12 @@
 #include <QPushButton>
 #include <QTreeWidgetItem>
 #include <QCheckBox>
+#include <QUrl>
 
 class QTableWidget;
 class QSpinBox;
 class QComboBox;
+class QWebView;
 
 namespace MBSimGUI {
 
@@ -220,6 +222,15 @@ namespace MBSimGUI {
       bool includeParameter() const { return parameter->checkState()==Qt::Checked; }
     private:
       QCheckBox *parameter;
+  };
+
+  class WebDialog : public QDialog {
+    public:
+      WebDialog(QWidget *parent=0);
+      void load(const QUrl &url_);
+    private:
+      QWebView *webView;
+      QUrl url;
   };
 
 }

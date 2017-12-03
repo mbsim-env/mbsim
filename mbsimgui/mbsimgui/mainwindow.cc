@@ -78,6 +78,8 @@ namespace MBSimGUI {
 
   vector<boost::filesystem::path> dependencies;
 
+  WebDialog* MainWindow::xmlHelpDialog = nullptr;
+
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), autoSave(false), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_HTMLOUTPUT=1";
@@ -208,6 +210,7 @@ namespace MBSimGUI {
     menuBar()->addSeparator();
     QMenu *helpMenu = new QMenu("Help", menuBar());
     helpMenu->addAction(QIcon::fromTheme("help-contents"), "Contents", this, SLOT(help()));
+    helpMenu->addAction(QIcon::fromTheme("help-xml"), "XML Help", this, SLOT(xmlHelp()));
     helpMenu->addAction(QIcon::fromTheme("help-about"), "About", this, SLOT(about()));
     menuBar()->addMenu(helpMenu);
 
@@ -1011,6 +1014,15 @@ namespace MBSimGUI {
   }
 
   void MainWindow::xmlHelp(const QString &url) {
+    if(not xmlHelpDialog) {
+      xmlHelpDialog = new WebDialog(this);
+      xmlHelpDialog->setWindowTitle("MBSimGUI - MBSim XML Documentation");
+    }
+    if(url.isEmpty())
+      xmlHelpDialog->load(QUrl(((MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string()+"/http___www_mbsim-env_de_MBSim/index.html").c_str()));
+    else
+      xmlHelpDialog->load(QUrl(url));
+    xmlHelpDialog->show();
   }
 
   void MainWindow::about() {
