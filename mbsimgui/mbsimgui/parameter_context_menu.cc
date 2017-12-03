@@ -55,7 +55,7 @@ namespace MBSimGUI {
   }
 
   void ParameterContextMenu::addAction(QAction *action) {
-    action->setDisabled(parameter->getParent()->hasParameterHref());
+    if(action->isEnabled()) action->setDisabled((parameter->getParent()->getEmbedItemParent() and parameter->getParent()->getEmbedItemParent()->getEmbeded()) or parameter->getParent()->getEmbededParameters());
     QMenu::addAction(action);
   }
 

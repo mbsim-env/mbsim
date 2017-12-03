@@ -103,4 +103,10 @@ namespace MBSimGUI {
     return getEmbedXMLElement();
   }
 
+  void Project::setEmbeded(bool embeded) {
+    EmbedItemData::setEmbeded(embeded);
+    dss->setEmbeded(embeded);
+    solver->setEmbeded(embeded);
+  }
+
 }

@@ -99,6 +99,10 @@ namespace MBSimGUI {
     return element;
   }
 
+  EmbedItemData* DynamicSystemSolver::getEmbedItemParent() {
+    return project;
+  }
+
   std::vector<EmbedItemData*> DynamicSystemSolver::getParents() {
     return vector<EmbedItemData*>(1,project);
   }

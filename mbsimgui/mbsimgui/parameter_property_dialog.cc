@@ -34,7 +34,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, QWidget *parent, const Qt::WindowFlags& f, bool readOnly) : PropertyDialog(parent,f), parameter(parameter_) {
-    if(parameter->getParent()->hasParameterHref()) {
+    if((parameter->getParent()->getEmbedItemParent() and parameter->getParent()->getEmbedItemParent()->getEmbeded()) or parameter->getParent()->getEmbededParameters()) {
       buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
       buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
     }

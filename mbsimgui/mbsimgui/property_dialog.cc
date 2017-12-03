@@ -94,7 +94,7 @@ namespace MBSimGUI {
   }
 
   EmbedItemPropertyDialog::EmbedItemPropertyDialog(EmbedItemData *item_, QWidget * parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), item(item_) {
-    if(item->hasHref()) {
+    if(item->getEmbeded()) {
       buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
       buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
     }

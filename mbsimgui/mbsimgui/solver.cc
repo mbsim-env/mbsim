@@ -53,6 +53,10 @@ namespace MBSimGUI {
     this->element = element;
   }
 
+  EmbedItemData* Solver::getEmbedItemParent() {
+    return project;
+  }
+
   std::vector<EmbedItemData*> Solver::getParents() {
     return vector<EmbedItemData*>(1,project);
   }
