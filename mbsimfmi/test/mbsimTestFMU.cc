@@ -18,6 +18,7 @@ typedef fmiComponent (*t_fmiInstantiateSlave)(fmiString instanceName, fmiString 
                                               fmiBoolean interactive, fmiCallbackFunctions_cosim functions, fmiBoolean loggingOn);
 typedef fmiStatus (*t_fmiInitialize)(fmiComponent, fmiBoolean, fmiReal, fmiEventInfo*);
 typedef fmiStatus (*t_fmiInitializeSlave)(fmiComponent c, fmiReal tStart, fmiBoolean StopTimeDefined, fmiReal tStop);
+typedef fmiStatus (*t_fmiDoStep)(fmiComponent c, fmiReal currentCommunicationPoint, fmiReal communicationStepSize, fmiBoolean newStep);
 typedef fmiStatus (*t_fmiTerminate)(fmiComponent);
 typedef fmiStatus (*t_fmiTerminateSlave)(fmiComponent);
 typedef void (*t_fmiFreeModelInstance)(fmiComponent);
@@ -97,6 +98,11 @@ void singleLoad(const path &fmuFile, fmiCallbackFunctions_me cbFuncs_me, fmiCall
       throw runtime_error("fmiInitializeSlave failed");
   }
 
+  if(cosim) {
+    if(SharedLibrary::getSymbol<t_fmiDoStep>(fmuFile.string(), modelIdentifier+"_fmiDoStep")(comp, 0.0, 0.1, fmiTrue)!=fmiOK)
+      throw runtime_error("fmiInitializeSlave failed");
+  }
+
   if(!cosim) {
     if(SharedLibrary::getSymbol<t_fmiTerminate>(fmuFile.string(), modelIdentifier+"_fmiTerminate")(comp)!=fmiOK)
       throw runtime_error("fmiTerminate failed");
@@ -167,6 +173,15 @@ void doubleLoad(const path &fmuFile, fmiCallbackFunctions_me cbFuncs_me, fmiCall
       throw runtime_error("fmiInitializeSlave failed");
 
     if(SharedLibrary::getSymbol<t_fmiInitializeSlave>(fmuFile.string(), modelIdentifier+"_fmiInitializeSlave")(comp2, 0.0, fmiFalse, 0.0)!=fmiOK)
+      throw runtime_error("fmiInitializeSlave failed");
+  }
+
+
+
+  if(cosim) {
+    if(SharedLibrary::getSymbol<t_fmiDoStep>(fmuFile.string(), modelIdentifier+"_fmiDoStep")(comp1, 0.0, 0.1, fmiTrue)!=fmiOK)
+      throw runtime_error("fmiInitializeSlave failed");
+    if(SharedLibrary::getSymbol<t_fmiDoStep>(fmuFile.string(), modelIdentifier+"_fmiDoStep")(comp2, 0.0, 0.1, fmiTrue)!=fmiOK)
       throw runtime_error("fmiInitializeSlave failed");
   }
 
