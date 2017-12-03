@@ -29,6 +29,7 @@
 
 class QPushButton;
 class QComboBox;
+class QCheckBox;
 class QTreeWidget;
 class QTreeWidgetItem;
  
@@ -328,7 +329,7 @@ namespace MBSimGUI {
 
     protected:
       QLineEdit *filePath;
-      QComboBox *path;
+      QCheckBox *path;
       QString description, extensions;
       int mode;
       bool quote;

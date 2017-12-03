@@ -511,7 +511,7 @@ namespace MBSimGUI {
 
     protected:
       QLineEdit *relativeFilePath;
-      QComboBox *path;
+      QCheckBox *path;
 
     protected slots:
       void selectFile();

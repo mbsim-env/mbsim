@@ -652,18 +652,17 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
     connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
-    path = new CustomComboBox;
-    path->addItem("Relative");
-    path->addItem("Absolute");
+    path = new QCheckBox;
+    layout->addWidget(new QLabel("Absolute"));
     layout->addWidget(path);
     setFile(file);
-    connect(path,SIGNAL(currentIndexChanged(int)),this,SLOT(changePath(int)));
+    connect(path,SIGNAL(stateChanged(int)),this,SLOT(changePath(int)));
   }
 
   void FileWidget::setFile(const QString &str) {
     filePath->setText(str);
     QString file = quote?str.mid(1,str.length()-2):str;
-    path->setCurrentIndex(file[0]=='/'?1:0);
+    path->setChecked(file[0]=='/'?1:0);
   }
 
   void FileWidget::selectFile() {
@@ -676,10 +675,10 @@ namespace MBSimGUI {
     else
       file = QFileDialog::getExistingDirectory ( nullptr, description, file);
     if(not file.isEmpty()) {
-      if(path->currentIndex()==0)
-        filePath->setText(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
-      else
+      if(path->isChecked())
         filePath->setText(quote?("\""+mbsDir.absoluteFilePath(file)+"\""):mbsDir.absoluteFilePath(file));
+      else
+        filePath->setText(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
     }
   }
 
@@ -703,10 +702,10 @@ namespace MBSimGUI {
 
   void FileWidget::changePath(int i) {
     QString file = quote?getFile().mid(1,getFile().length()-2):getFile();
-    if(i==0)
-      setFile(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
-    else
+    if(i)
       setFile(quote?("\""+mbsDir.absoluteFilePath(file)+"\""):mbsDir.absoluteFilePath(file));
+    else
+      setFile(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
   }
 
   SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
