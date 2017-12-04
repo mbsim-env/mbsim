@@ -60,7 +60,8 @@ namespace MBSimIntegrator {
     int zSize=system->getzSize();
     int neq[1+sizeof(void*)/sizeof(int)+1];
     neq[0]=zSize;
-    *reinterpret_cast<LSODEIntegrator**>(&neq[1])=this;
+    LSODEIntegrator *self=this;
+    memcpy(&neq[1], &self, sizeof(void*));
 
     if(z0.size())
       system->setState(z0);

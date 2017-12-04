@@ -97,7 +97,8 @@ namespace MBSimIntegrator {
 
     double rPar;
     int iPar[sizeof(void*)/sizeof(int)+1];
-    *reinterpret_cast<ODEXIntegrator**>(&iPar[0])=this;
+    ODEXIntegrator *self=this;
+    memcpy(&iPar[0], &self, sizeof(void*));
 
     int lWork = 2*(zSize*(9+5)+5*9+20+(2*9*(9+2)+5)*nrDens);
     int liWork = 2*(2*9+21+nrDens);
