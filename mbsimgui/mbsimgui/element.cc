@@ -152,13 +152,4 @@ namespace MBSimGUI {
     }
   }
 
-  vector<EmbedItemData*> Element::getParents() {
-    vector<EmbedItemData*> parents;
-    if(getParent()) {
-      parents = getParent()->getParents();
-      parents.push_back(getParent());
-    }
-    return parents;
-  }
-
 }

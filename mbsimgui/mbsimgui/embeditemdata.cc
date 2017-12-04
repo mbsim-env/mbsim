@@ -36,6 +36,15 @@ namespace MBSimGUI {
       delete i;
   }
 
+  vector<EmbedItemData*> EmbedItemData::getEmbedItemParents() {
+    vector<EmbedItemData*> parents;
+    if(getEmbedItemParent()) {
+      parents = getEmbedItemParent()->getEmbedItemParents();
+      parents.push_back(getEmbedItemParent());
+    }
+    return parents;
+  }
+
   void EmbedItemData::addParameter(Parameter *param) {
     parameter.push_back(param);
     param->setParent(this);

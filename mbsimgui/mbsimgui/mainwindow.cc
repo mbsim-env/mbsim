@@ -497,7 +497,7 @@ namespace MBSimGUI {
     auto *element=dynamic_cast<Element*>(model->getItem(current)->getItemData());
     if(element) {
       auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-      vector<EmbedItemData*> parents = element->getParents();
+      vector<EmbedItemData*> parents = element->getEmbedItemParents();
       QModelIndex index = emodel->index(0,0);
       emodel->removeRow(index.row(), index.parent());
       if(!parents.empty()) {
@@ -554,7 +554,7 @@ namespace MBSimGUI {
 
   void MainWindow::solverViewClicked() {
     auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    vector<EmbedItemData*> parents = getProject()->getSolver()->getParents();
+    vector<EmbedItemData*> parents = getProject()->getSolver()->getEmbedItemParents();
     QModelIndex index = emodel->index(0,0);
     emodel->removeRow(index.row(), index.parent());
     if(!parents.empty()) {
@@ -733,7 +733,7 @@ namespace MBSimGUI {
       }
     }
 
-    vector<EmbedItemData*> parents = item->getParents();
+    vector<EmbedItemData*> parents = item->getEmbedItemParents();
     for(auto & parent : parents) {
       for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
         DOMNode *node = doc->importNode(parent->getParameter(j)->getXMLElement(),true);

@@ -57,8 +57,4 @@ namespace MBSimGUI {
     return project;
   }
 
-  std::vector<EmbedItemData*> Solver::getParents() {
-    return vector<EmbedItemData*>(1,project);
-  }
-
 }
