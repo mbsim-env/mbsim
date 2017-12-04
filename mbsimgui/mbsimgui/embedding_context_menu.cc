@@ -51,7 +51,7 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
-    action->setEnabled(item->getNumberOfParameters());
+    action->setEnabled(item->getNumberOfParameters() and not(item->getEmbedItemParent() and item->getEmbedItemParent()->getEmbeded()));
     connect(action,SIGNAL(triggered()),this,SLOT(remove()));
     QMenu::addAction(action);
     addSeparator();
