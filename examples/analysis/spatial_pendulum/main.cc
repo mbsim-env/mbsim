@@ -33,9 +33,9 @@ int main (int argc, char* argv[]) {
   analyser.setInitialDeviation(z0);
   Vec zEq(sys->getzSize());
   analyser.setInitialState(zEq);
-  analyser.setTask(Eigenanalyser::eigenfrequencies);
+  analyser.setAmplitude(0);
   analyser.setSystem(sys);
-  analyser.analyse();
+  analyser.execute();
 
   cout << "Eigenfrequency is " << analyser.getEigenvalues()(0).imag();
   cout << " (should be " << sqrt(g/a) << ")" << endl;
@@ -49,7 +49,7 @@ int main (int argc, char* argv[]) {
   analyser.setInitialDeviation(z0);
   analyser.setInitialState(zEq);
   analyser.setSystem(sys);
-  analyser.analyse();
+  analyser.execute();
 
   cout << "Eigenfrequency is " << analyser.getEigenvalues()(0).imag();
   cout << " (should be " << sqrt(g/a*(1./cos(theta0/180*M_PI)+3*cos(theta0/180*M_PI))) << ")" << endl;
