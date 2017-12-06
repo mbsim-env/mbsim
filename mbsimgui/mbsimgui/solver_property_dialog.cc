@@ -376,9 +376,7 @@ namespace MBSimGUI {
     addToTab("Initial conditions", initialState);
 
     vector<QString> list;
-    list.emplace_back("\"eigenfrequencies\"");
     list.emplace_back("\"eigenmodes\"");
-    list.emplace_back("\"eigenmode\"");
     list.emplace_back("\"eigenmotion\"");
     task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIMANALYSER%"task");
     addToTab("General",task);
@@ -386,8 +384,11 @@ namespace MBSimGUI {
     amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"amplitude");
     addToTab("General",amplitude);
 
-    mode = new ExtWidget("Mode",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"mode");
-    addToTab("General",mode);
+    modeAmplitudeTable = new ExtWidget("Mode amplitude table",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,2),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"modeAmplitudeTable");
+    addToTab("General",modeAmplitudeTable);
+
+    loops = new ExtWidget("Loops",new SpinBoxWidget(5),true,false,MBSIMANALYSER%"loops");
+    addToTab("General",loops);
 
     determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"determineEquilibriumState");
     addToTab("General",determineEquilibriumState);
@@ -401,7 +402,8 @@ namespace MBSimGUI {
     initialState->initializeUsingXML(item->getXMLElement());
     task->initializeUsingXML(item->getXMLElement());
     amplitude->initializeUsingXML(item->getXMLElement());
-    mode->initializeUsingXML(item->getXMLElement());
+    modeAmplitudeTable->initializeUsingXML(item->getXMLElement());
+    loops->initializeUsingXML(item->getXMLElement());
     determineEquilibriumState->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -414,7 +416,8 @@ namespace MBSimGUI {
     initialState->writeXMLFile(item->getXMLElement());
     task->writeXMLFile(item->getXMLElement());
     amplitude->writeXMLFile(item->getXMLElement());
-    mode->writeXMLFile(item->getXMLElement());
+    modeAmplitudeTable->writeXMLFile(item->getXMLElement());
+    loops->writeXMLFile(item->getXMLElement());
     determineEquilibriumState->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
