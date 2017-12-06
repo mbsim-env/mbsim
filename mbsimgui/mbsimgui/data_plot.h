@@ -20,17 +20,17 @@
 #ifndef _DATA_PLOT__H_
 #define _DATA_PLOT__H_
 
-#include <QDialog>
+#include <QWidget>
 
 class QwtPlot;
 class QwtPlotCurve;
 
 namespace MBSimGUI {
 
-  class DataPlot : public QDialog {
+  class DataPlot : public QWidget {
     Q_OBJECT
     public:
-      DataPlot(const QVector<double> &f_, const QVector<QVector<double> > &A_, const QString &title="", const QString &xLabel="", const QString &yLabel="",  QWidget *parent=nullptr);
+      DataPlot(const QVector<double> &f_, const QVector<QVector<double> > &A_, const QString &spinBoxLabel="", const QString &title="", const QString &xLabel="", const QString &yLabel="",  QWidget *parent=nullptr);
     private:
       QVector<double> f;
       QVector<QVector<double> > A;

@@ -27,11 +27,11 @@
 
 namespace MBSimGUI {
 
-  DataPlot::DataPlot(const QVector<double> &f_, const QVector<QVector<double> > &A_, const QString &title, const QString &xLabel, const QString &yLabel, QWidget *parent) : QDialog(parent), f(f_), A(A_) {
+  DataPlot::DataPlot(const QVector<double> &f_, const QVector<QVector<double> > &A_, const QString &spinBoxLabel, const QString &title, const QString &xLabel, const QString &yLabel, QWidget *parent) : QWidget(parent), f(f_), A(A_) {
       auto *layout = new QGridLayout;
       setLayout(layout);
 
-      QLabel *label = new QLabel("DOF");
+      QLabel *label = new QLabel(spinBoxLabel);
       layout->addWidget(label,0,0);
       auto *num = new QSpinBox;
       num->setValue(1);

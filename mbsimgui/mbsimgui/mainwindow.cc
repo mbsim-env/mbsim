@@ -55,8 +55,6 @@
 #include <xercesc/dom/DOMException.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
-#include "octave_utils.h"
-#include "data_plot.h"
 #include "dialogs.h"
 
 using namespace std;
@@ -965,9 +963,18 @@ namespace MBSimGUI {
 
   void MainWindow::eigenanalysis() {
     QString name = QString::fromStdString(uniqueTempDir.generic_string()+"/out0.eigenanalysis.mat");
-    FileEditor *edit = new FileEditor("Eigenanalysis",name,1,"Eigenanalysis not yet performed!",this);
-    edit->setModal(true);
-    edit->show();
+    if(QFile::exists(name)) {
+      EigenanalysisDialog *dialog = new EigenanalysisDialog(name,this);
+      dialog->show();
+    }
+  }
+
+  void MainWindow::frequencyResponse() {
+    QString name = QString::fromStdString(uniqueTempDir.generic_string()+"/out0.harmonic_response_analysis.mat");
+    if(QFile::exists(name)) {
+      HarmonicResponseDialog *dialog = new HarmonicResponseDialog(name,this);
+      dialog->show();
+    }
   }
 
   void MainWindow::debug() {
@@ -980,26 +987,6 @@ namespace MBSimGUI {
     echoView->clearOutputAndError();
     process.setWorkingDirectory(uniqueTempDir_);
     process.start((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
-  }
-
-  void MainWindow::frequencyResponse() {
-    QString name = QString::fromStdString(uniqueTempDir.generic_string()+"/out0.harmonic_response_analysis.mat");
-    if(QFile::exists(name)) {
-      OctaveParser parser(name.toStdString());
-      parser.parse();
-      fmatvec::MatV t_ = static_cast<const OctaveMatrix*>(parser.get(1))->get<fmatvec::MatV>();
-      fmatvec::MatV A_ = static_cast<const OctaveMatrix*>(parser.get(2))->get<fmatvec::MatV>();
-      QVector<double> t(t_.rows());
-      QVector<QVector<double> > A(A_.cols(),QVector<double>(A_.rows()));
-      for(int i=0; i<t_.rows(); i++) {
-        t[i] = t_(i,0);
-        for(int j=0; j<A_.cols(); j++)
-          A[j][i] = A_(i,j);
-      }
-
-      DataPlot *plotDialog = new DataPlot(t,A,"Frequency response", "f in Hz", "A", this);
-      plotDialog->exec();
-    }
   }
 
   void MainWindow::selectElement(const string& ID) {
