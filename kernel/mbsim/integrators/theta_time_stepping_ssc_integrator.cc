@@ -85,8 +85,13 @@ namespace MBSimIntegrator {
     u>>z(Iu);
     x>>z(Ix);
 
-    if(z0.size()) z = z0;
-    else system->initz(z);
+    if(z0.size()) {
+      if(z0.size() != zSize)
+        throw MBSimError("(ThetaTimeSteppingSSCIntegrator::integrate): size of z0 does not match");
+      z = z0;
+    }
+    else
+      z = system->evalz0();
 
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);

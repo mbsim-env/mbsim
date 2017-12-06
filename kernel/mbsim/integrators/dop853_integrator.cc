@@ -75,8 +75,11 @@ namespace MBSimIntegrator {
     double t = tStart;
 
     Vec z(zSize);
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != zSize)
+        throw MBSimError("(DOP853Integrator::integrate): size of z0 does not match");
       z = z0;
+    }
     else
       z = system->evalz0();
 

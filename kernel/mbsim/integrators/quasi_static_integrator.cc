@@ -67,8 +67,11 @@ namespace MBSimIntegrator {
     u >> z(Iu);
     x >> z(Ix);
 
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != system->getzSize())
+        throw MBSimError("(QuasiStaticIntegrator::integrate): size of z0 does not match");
       z = z0;
+    }
     else
       z = system->evalz0();
 
