@@ -45,7 +45,7 @@ namespace MBSimAnalyser {
     return res;
   } 
 
-  void HarmonicResponseAnalyser::analyse() {
+  void HarmonicResponseAnalyser::execute() {
     if(task == frequencyResponse) computeFrequencyResponse();
   }
 
