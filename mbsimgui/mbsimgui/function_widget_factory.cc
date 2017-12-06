@@ -382,12 +382,12 @@ namespace MBSimGUI {
   QWidget* TabularFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *widgetContainer = new ContainerWidget;
-      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"x"));
-      widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,1,"0","0")),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
+      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"x"));
+      widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,1,"0","0"),vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
       return widgetContainer;
     }
     if(i==1)
-      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xy");
+      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xy");
     return nullptr;
   }
 

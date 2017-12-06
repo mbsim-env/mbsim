@@ -577,7 +577,7 @@ namespace MBSimGUI {
   class MatWidgetFactory : public WidgetFactory {
     public:
       MatWidgetFactory(int m, int n, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0), bool table_=false);
-      MatWidgetFactory(std::vector<std::vector<QString> > A_, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0));
+      MatWidgetFactory(std::vector<std::vector<QString> > A_, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0), bool table_=false);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
