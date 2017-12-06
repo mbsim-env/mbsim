@@ -51,7 +51,12 @@
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="mode" type="pv:integerFullEval" minOccurs="0">  
+          <xs:element name="modeAmplitudeTable" type="pv:unknownMatrix" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="loops" type="pv:integerFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>

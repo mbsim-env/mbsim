@@ -61,30 +61,23 @@ namespace MBSimAnalyser {
     return res;
   } 
 
-  void Eigenanalyser::analyse() {
-    if(task == eigenfrequencies) computeEigenvalues();
-    else if(task == eigenmode) computeEigenmode();
-    else if(task == eigenmodes) computeEigenmodes();
+  void Eigenanalyser::execute() {
+    if(task == eigenmodes) computeEigenmodes();
     else if(task == eigenmotion) computeEigenmotion();
   }
 
-  void Eigenanalyser::computeEigenfrequencies() {
-    f.clear();
-    for (int i=0; i<w.size(); i++) {
-      if((abs(imag(w(i))) > macheps) and (i < w.size()-1) and (w(i+1)==conj(w(i)))) {
-        f.push_back(pair<double,int>(imag(w(i))/2/M_PI,i));
-        i++;
-      }
-    }
-    std::sort(f.begin(), f.end());
-    freq.resize(f.size(),NONINIT);
+  Vec Eigenanalyser::getEigenfrequencies() const {
+    fmatvec::Vec freq(f.size(),NONINIT);
     for(int i=0; i<freq.size(); i++)
       freq.e(i) = f[i].first;
+    return freq;
   }
 
   void Eigenanalyser::computeEigenvalues() {
     if(not(zEq.size()))
       zEq = system->evalz0();
+    else if(zEq.size()!=system->getzSize())
+      throw MBSimError("(Eigenanalyser::computeEigenvalues): size of z0 does not match");
 
     if(compEq) {
       Residuum f(system,tStart);
@@ -92,7 +85,7 @@ namespace MBSimAnalyser {
       newton.setLinearAlgebra(1);
       zEq = newton.solve(zEq);
       if(newton.getInfo() != 0)
-        throw MBSimError("In Eigenanalysis: computation of equilibrium state failed!");
+        throw MBSimError("(Eigenanalyser::computeEigenvalues): computation of equilibrium state failed!");
     }
 
     SqrMat A(system->getzSize());
@@ -110,7 +103,14 @@ namespace MBSimAnalyser {
       system->getState()(i) = ztmp;
     }
     eigvec(A,V,w);
-    computeEigenfrequencies();
+    f.clear();
+    for (int i=0; i<w.size(); i++) {
+      if((abs(imag(w(i))) > macheps) and (i < w.size()-1) and (w(i+1)==conj(w(i)))) {
+        f.push_back(pair<double,int>(imag(w(i))/2/M_PI,i));
+        i++;
+      }
+    }
+    std::sort(f.begin(), f.end());
     saveEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName);
   }
 
@@ -121,13 +121,21 @@ namespace MBSimAnalyser {
     Vector<Ref, complex<double> > wbuf;
     wbuf = w;
 
+    VecV Av(system->getzSize()/2,INIT,A);
+    for(int i=0; i<MA.rows(); i++) {
+      if(int(MA(i,0))<0 or int(MA(i,0))>=Av.size())
+        throw MBSimError("(Eigenanalyser::computeEigenmodes): size of mode amplitude matrix does not match");
+      Av(int(MA(i,0))) = MA(i,1);
+    }
+
     double t0 = tStart;
     for(int j=0; j<static_cast<int>(f.size()); j++) {
-      c(f[j].second) = complex<double>(0,A);
-      c(f[j].second+1) = complex<double>(0,-A);
+      if(Av(j) > 0) {
+      c(f[j].second) = complex<double>(0,Av(j));
+      c(f[j].second+1) = complex<double>(0,-Av(j));
       wbuf(f[j].second).real(0);
       wbuf(f[j].second+1).real(0);
-      double T=10*1./f[j].first;
+      double T = double(loops)/f[j].first;
       for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
         deltaz.init(0);
         for(int i=0; i<wbuf.size(); i++)
@@ -140,31 +148,7 @@ namespace MBSimAnalyser {
       t0 += T+dtPlot;
       c(f[j].second) = complex<double>(0,0);
       c(f[j].second+1) = complex<double>(0,0);
-    }
-  }
-
-  void Eigenanalyser::computeEigenmode() {
-    computeEigenvalues();
-    if(n<1 or n>static_cast<int>(f.size()))
-      throw MBSimError("In Eigenanalysis: frequency number out of range!");
-    Vector<Ref, complex<double> > c(w.size());
-    Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
-    Vector<Ref, complex<double> > wbuf;
-    wbuf = w;
-
-    c(f[n-1].second) = complex<double>(0,A);
-    c(f[n-1].second+1) = complex<double>(0,-A);
-    wbuf(f[n-1].second).real(0);
-    wbuf(f[n-1].second+1).real(0);
-    double T=1./f[n-1].first;
-    for(double t=tStart; t<tStart+T+dtPlot; t+=dtPlot) {
-      deltaz.init(0);
-      for(int i=0; i<wbuf.size(); i++)
-        deltaz += c(i)*V.col(i)*exp(wbuf(i)*t); 
-      system->setTime(t);
-      system->setState(zEq + fromComplex(deltaz));
-      system->resetUpToDate();
-      system->plot();
+      }
     }
   }
 
@@ -214,13 +198,6 @@ namespace MBSimAnalyser {
       for(int i=0; i<zEq.size(); i++)
         os << setw(28) << zEq.e(i) << endl;
       os << endl;
-      os << "# name: " << "f" << endl;
-      os << "# type: " << "matrix" << endl;
-      os << "# rows: " << freq.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(int i=0; i<freq.size(); i++)
-        os << setw(28) << freq.e(i) << endl;
-      os << endl;
       os.close();
       return true;
     }
@@ -241,15 +218,19 @@ namespace MBSimAnalyser {
     if(e) {
       string str=X()%E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
-      if(str=="eigenfrequencies") task=eigenfrequencies;
-      else if(str=="eigenmodes") task=eigenmodes;
-      else if(str=="eigenmode") task=eigenmode;
+      if(str=="eigenmodes") task=eigenmodes;
       else if(str=="eigenmotion") task=eigenmotion;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"amplitude");
     if(e) setAmplitude(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"mode");
-    if(e) setMode(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"modeAmplitudeTable");
+    if(e) {
+      setModeAmplitudeTable(E(e)->getText<Matrix<General,Var,Fixed<2>,double> >());
+      for(int i=0; i<MA.rows(); i++)
+        MA(i,0)--;
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"loops");
+    if(e) setLoops(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"determineEquilibriumState");
     if(e) setDetermineEquilibriumState(E(e)->getText<bool>());
   }
