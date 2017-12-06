@@ -93,7 +93,8 @@ namespace MBSimIntegrator {
     debugInit();
     int zSize=system->getzSize();
     neq[0]=zSize;
-    *reinterpret_cast<LSODARIntegrator**>(&neq[1])=this;
+    LSODARIntegrator *self=this;
+    memcpy(&neq[1], &self, sizeof(void*));
 
     if(z0.size())
       system->setState(z0);

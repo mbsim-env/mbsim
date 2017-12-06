@@ -94,7 +94,8 @@ namespace MBSimIntegrator {
 
     double rPar;
     int iPar[sizeof(void*)/sizeof(int)+1]; // store this at iPar[0..]
-    *reinterpret_cast<DOP853Integrator**>(&iPar[0])=this;
+    DOP853Integrator *self=this;
+    memcpy(&iPar[0], &self, sizeof(void*));
 
     int lWork = 2*(11*zSize+8*nrDens+21);
     int liWork = 2*(nrDens+21);

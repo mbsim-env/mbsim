@@ -106,7 +106,8 @@ namespace MBSimIntegrator {
 
     double rPar;
     int iPar[sizeof(void*)/sizeof(int)+1];
-    *reinterpret_cast<RADAU5Integrator**>(&iPar[0])=this;
+    RADAU5Integrator *self=this;
+    memcpy(&iPar[0], &self, sizeof(void*));
 
     int iJac = 0; // TODO
     int mlJac = zSize; // TODO

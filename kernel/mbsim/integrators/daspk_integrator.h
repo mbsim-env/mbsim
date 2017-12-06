@@ -68,7 +68,7 @@
 //        void setmaxSteps(int maxSteps_) {maxSteps = maxSteps_;}
 //        void setStiff(bool flag) {stiff = flag;}
 //  
-      using Integrator::integrate;
+//      using Integrator::integrate;
 //        void integrate();
 //        
 //        virtual void initializeUsingXML(xercesc::DOMElement *element);

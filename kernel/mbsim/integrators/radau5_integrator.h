@@ -36,11 +36,11 @@ namespace MBSimIntegrator {
       static void fzdot(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
 
-      double tPlot;
-      double dtOut;
+      double tPlot{0};
+      double dtOut{0};
       std::ofstream integPlot;
       double s0; 
-      double time; 
+      double time{0}; 
 
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
