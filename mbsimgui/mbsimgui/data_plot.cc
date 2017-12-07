@@ -21,6 +21,7 @@
 #include "data_plot.h"
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
+#include <qwt_symbol.h>
 #include <QGridLayout>
 #include <QLabel>
 #include <QSpinBox>
@@ -33,7 +34,7 @@ namespace MBSimGUI {
 
       QLabel *label = new QLabel(spinBoxLabel);
       layout->addWidget(label,0,0);
-      auto *num = new QSpinBox;
+      num = new QSpinBox;
       num->setValue(1);
       num->setMinimum(1);
       num->setMaximum(A.size());
@@ -43,21 +44,37 @@ namespace MBSimGUI {
       plot = new QwtPlot(title, this);
       plot->setAxisTitle(QwtPlot::xBottom,xLabel);
       plot->setAxisTitle(QwtPlot::yLeft,yLabel);
+      plot->setMinimumSize(300,200);
       layout->addWidget(plot,1,0,1,3);
 
       curve = new QwtPlotCurve("Curve 1");
-
       curve->setSamples(f,A[0]);
       curve->attach(plot);
-
-      plot->replot();
-
-      connect(num,SIGNAL(valueChanged(int)),this,SLOT(numChanged(int)));
+      connect(num,SIGNAL(valueChanged(int)),this,SLOT(changePlot(int)));
+      connect(num,SIGNAL(valueChanged(int)),this,SIGNAL(numChanged(int)));
   }
 
-  void DataPlot::numChanged(int i) { 
+  void DataPlot::setSymbol(const QwtSymbol::Style &style, int size) {
+    QwtSymbol *symbol = new QwtSymbol(style);
+    symbol->setSize(size);
+    curve->setSymbol(symbol);
+  }
+
+  void DataPlot::setAxisScale(int axisId, double min, double max, double stepSize) {
+    plot->setAxisScale(axisId,min,max,stepSize);
+  }
+
+  void DataPlot::replot() {
+    plot->replot();
+  }
+
+  void DataPlot::changePlot(int i) {
     curve->setSamples(f,A[i-1]);
     plot->replot();
+  }
+
+  void DataPlot::changeNum(int i) {
+    num->setValue(i);
   }
 
 }

@@ -37,6 +37,7 @@
 #include <QComboBox>
 #include <QSpinBox>
 #include <QWebView>
+#include <qwt_plot.h>
 
 using namespace std;
 
@@ -628,7 +629,7 @@ namespace MBSimGUI {
 
     QGridLayout *layout = new QGridLayout;
     setLayout(layout);
-    QTableWidget *table = new QTableWidget(f.size(),5);
+    table = new QTableWidget(f.size(),5);
     QStringList labels;
     labels << "Mode" << "Frequency" << "Exponential decay" << "Angular frequency" << "Damping ratio";
     table->setHorizontalHeaderLabels(labels);
@@ -656,12 +657,29 @@ namespace MBSimGUI {
       for(int k=0; k<n; k++)
         A[i][k] = V(k+n,j).real()/V(ind+n,j).real();
     }
-    DataPlot *plot = new DataPlot(m,A,"Mode", "Eigenmode", "DOF", "-", this);
+    table->selectRow(0);
+    plot = new DataPlot(m,A,"Mode", "Eigenmode", "DOF", "-", this);
+    plot->setSymbol(QwtSymbol::Diamond,10);
+    plot->setAxisScale(QwtPlot::xBottom,1-0.1,A.size()+0.1,1);
+    plot->setAxisScale(QwtPlot::yLeft,-1.1,1.1);
+    plot->replot();
     layout->addWidget(plot,0,1);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox,1,0,1,2);
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(plot, SIGNAL(currentChanged(int)), this, SLOT(selectRow(int)));
+    connect(table, SIGNAL(cellClicked(int,int)), this, SLOT(selectMode(int,int)));
+  }
+
+  void EigenanalysisDialog::selectRow(int i) {
+    table->blockSignals(true);
+    table->selectRow(i-1);
+    table->blockSignals(false);
+  }
+
+  void EigenanalysisDialog::selectMode(int row, int col) {
+    plot->changeNum(row+1);
   }
 
   HarmonicResponseDialog::HarmonicResponseDialog(const QString &name, QWidget *parent) : QDialog(parent) {
@@ -680,6 +698,7 @@ namespace MBSimGUI {
     QGridLayout *layout = new QGridLayout;
     setLayout(layout);
     DataPlot *plot = new DataPlot(t,A,"DOF", "Frequency response", "f in Hz", "A", this);
+    plot->replot();
     layout->addWidget(plot,0,0);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
