@@ -38,6 +38,7 @@
 #include <QSpinBox>
 #include <QWebView>
 #include <qwt_plot.h>
+#include <cmath>
 
 using namespace std;
 
