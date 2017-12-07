@@ -669,7 +669,7 @@ namespace MBSimGUI {
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox,1,0,1,2);
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(plot, SIGNAL(currentChanged(int)), this, SLOT(selectRow(int)));
+    connect(plot, SIGNAL(numChanged(int)), this, SLOT(selectRow(int)));
     connect(table, SIGNAL(cellClicked(int,int)), this, SLOT(selectMode(int,int)));
   }
 
@@ -680,7 +680,9 @@ namespace MBSimGUI {
   }
 
   void EigenanalysisDialog::selectMode(int row, int col) {
+    plot->blockSignals(true);
     plot->changeNum(row+1);
+    plot->blockSignals(false);
   }
 
   HarmonicResponseDialog::HarmonicResponseDialog(const QString &name, QWidget *parent) : QDialog(parent) {
