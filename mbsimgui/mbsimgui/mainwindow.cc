@@ -943,7 +943,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::openmbv() {
-    QString name = QString::fromStdString(uniqueTempDir.generic_string()+"/out0.ombv.xml");
+    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombv.xml";
     if(QFile::exists(name)) {
       QStringList arg;
       arg.append("--autoreload");
@@ -953,7 +953,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::h5plotserie() {
-    QString name = QString::fromStdString(uniqueTempDir.generic_string()+"/out0.mbsim.h5");
+    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsim.h5";
     if(QFile::exists(name)) {
       QStringList arg;
       arg.append(name);
@@ -962,7 +962,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::eigenanalysis() {
-    QString name = QString::fromStdString(uniqueTempDir.generic_string()+"/out0.eigenanalysis.mat");
+    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".eigenanalysis.mat";
     if(QFile::exists(name)) {
       EigenanalysisDialog *dialog = new EigenanalysisDialog(name,this);
       dialog->show();
@@ -970,7 +970,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::frequencyResponse() {
-    QString name = QString::fromStdString(uniqueTempDir.generic_string()+"/out0.harmonic_response_analysis.mat");
+    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".harmonic_response_analysis.mat";
     if(QFile::exists(name)) {
       HarmonicResponseDialog *dialog = new HarmonicResponseDialog(name,this);
       dialog->show();
