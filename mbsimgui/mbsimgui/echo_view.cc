@@ -28,8 +28,6 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  extern bool currentTask;
-
   EchoView::EchoView(QWidget *parent) : QTabWidget(parent) {
     out=new QTextBrowser(this);
     err=new QTextBrowser(this);
