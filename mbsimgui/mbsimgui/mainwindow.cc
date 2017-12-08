@@ -422,6 +422,10 @@ namespace MBSimGUI {
   void MainWindow::setProjectChanged(bool changed) { 
     setWindowModified(changed);
     if(changed) {
+      actionOpenMBV->setDisabled(true);
+      actionH5plotserie->setDisabled(true);
+      actionEigenanalysis->setDisabled(true);
+      actionFrequencyResponse->setDisabled(true);
       undos.push_back(static_cast<xercesc::DOMDocument*>(doc->cloneNode(true)));
       if(undos.size() > maxUndo)
         undos.pop_front();
@@ -601,15 +605,17 @@ namespace MBSimGUI {
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
       index = model->index(0,0);
       model->removeRow(index.row(), index.parent());
+
       delete project;
 
       doc = impl->createDocument();
+
       project = new Project;
       project->createXMLElement(doc);
       projectView->setProject(project);
+      projectView->updateName();
 
       model->createGroupItem(project->getDynamicSystemSolver(),QModelIndex());
-
       elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
       solverView->setSolver(0);
@@ -666,9 +672,7 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProjectAs() {
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", QString("./")+model->getItem(index)->getItemData()->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
+    QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", project->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
     if(not(file.isEmpty())) {
       file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
       mbsDir = QFileInfo(file).absolutePath();
@@ -877,13 +881,12 @@ namespace MBSimGUI {
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     QString projectFile;
 
+    projectFile=uniqueTempDir_+"/Project.mbsimprj.flat.xml";
+
     if(task==1) {
-      projectFile=uniqueTempDir_+"/"+project->getDynamicSystemSolver()->getName()+"_tmp.mbsimprj.flat.xml";
       if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
         static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
     }
-    else
-      projectFile=uniqueTempDir_+"/"+project->getDynamicSystemSolver()->getName()+".mbsimprj.flat.xml";
 
     absolutePath = false;
 
@@ -892,7 +895,7 @@ namespace MBSimGUI {
     // GUI-XML-Baum mit OriginalFilename ergaenzen
     if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
       DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
-          X()%(project->getDynamicSystemSolver()->getName().toStdString()+".mbsimprj.xml"));
+          X()%("Project.mbsimprj.xml"));
       root->insertBefore(filenamePI, root->getFirstChild());
     }
 
@@ -1031,13 +1034,14 @@ namespace MBSimGUI {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     index = model->index(0,0);
     model->removeRow(index.row(), index.parent());
+
     delete project;
 
     project=Embed<Project>::createAndInit(doc->getDocumentElement());
     projectView->setProject(project);
+    projectView->updateName();
 
     model->createGroupItem(project->getDynamicSystemSolver());
-
     elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
     solverView->setSolver(getProject()->getSolver());
