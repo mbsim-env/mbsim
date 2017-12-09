@@ -1,3 +1,4 @@
+#include "fortran_sym_renames.pp"
 *DECK D1MACH
       DOUBLE PRECISION FUNCTION D1MACH (IDUMMY)
 C***BEGIN PROLOGUE  D1MACH

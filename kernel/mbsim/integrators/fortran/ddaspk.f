@@ -1,3 +1,4 @@
+#include "fortran_sym_renames.pp"
       SUBROUTINE DDASPK (RES, NEQ, T, Y, YPRIME, TOUT, INFO, RTOL, ATOL,
      *   IDID, RWORK, LRW, IWORK, LIW, RPAR, IPAR, JAC, PSOL)
 C
