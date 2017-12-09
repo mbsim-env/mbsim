@@ -27,6 +27,8 @@
 
 namespace MBSimIntegrator {
 
+  extern bool odePackInUse;
+
   /** \brief ODE-Integrator LSODAR
     Integrator with root finding for ODEs.
     This integrator uses LSODAR from http://www.netlib.org . */

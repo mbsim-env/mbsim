@@ -64,7 +64,7 @@ void fmiCallbackLoggerImpl(fmiComponent c, fmiString instanceName, fmiStatus sta
 void setOutput(const path &fmuFile, void *comp, const string &modelIdentifier, fmiValueReference vr, const string &output) {
   const char* str=output.c_str();
   if(SharedLibrary::getSymbol<t_fmiSetString>(fmuFile.string(), modelIdentifier+"_fmiSetString")(comp, &vr, 1, &str)!=fmiOK)
-    throw runtime_error("fmisetString failed");
+    throw runtime_error("fmiSetString failed");
 }
 
 // load, init and deinit one FMU
@@ -99,8 +99,10 @@ void singleLoad(const path &fmuFile, fmiCallbackFunctions_me cbFuncs_me, fmiCall
   }
 
   if(cosim) {
-    if(SharedLibrary::getSymbol<t_fmiDoStep>(fmuFile.string(), modelIdentifier+"_fmiDoStep")(comp, 0.0, 0.1, fmiTrue)!=fmiOK)
-      throw runtime_error("fmiInitializeSlave failed");
+    for(int i=0; i<3; ++i) {
+      if(SharedLibrary::getSymbol<t_fmiDoStep>(fmuFile.string(), modelIdentifier+"_fmiDoStep")(comp, 0.1*i, 0.1, fmiTrue)!=fmiOK)
+        throw runtime_error("fmiDoStep failed");
+    }
   }
 
   if(!cosim) {
@@ -131,7 +133,7 @@ void doubleLoad(const path &fmuFile, fmiCallbackFunctions_me cbFuncs_me, fmiCall
       modelIdentifier+"_fmiInstantiateSlave")("fmu1", guid.c_str(), "dummy_location", "dummy_mimetype", 0,
       fmiFalse, fmiFalse, cbFuncs_cosim, fmiFalse);
     if(!comp1)
-      throw runtime_error("fmiInstantiateSlave failed");
+      throw runtime_error(modelIdentifier+"_fmiInstantiateSlave failed");
   }
 
   setOutput(fmuFile, comp1, modelIdentifier, outputVR, "fmuOutput1");
@@ -148,7 +150,7 @@ void doubleLoad(const path &fmuFile, fmiCallbackFunctions_me cbFuncs_me, fmiCall
       modelIdentifier+"_fmiInstantiateSlave")("fmu1", guid.c_str(), "dummy_location", "dummy_mimetype", 0,
       fmiFalse, fmiFalse, cbFuncs_cosim, fmiFalse);
     if(!comp2)
-      throw runtime_error("fmiInstantiateSlave failed");
+      throw runtime_error(modelIdentifier+"_fmiInstantiateSlave failed");
   }
 
   setOutput(fmuFile, comp2, modelIdentifier, outputVR, "fmuOutput2");
@@ -179,10 +181,12 @@ void doubleLoad(const path &fmuFile, fmiCallbackFunctions_me cbFuncs_me, fmiCall
 
 
   if(cosim) {
-    if(SharedLibrary::getSymbol<t_fmiDoStep>(fmuFile.string(), modelIdentifier+"_fmiDoStep")(comp1, 0.0, 0.1, fmiTrue)!=fmiOK)
-      throw runtime_error("fmiInitializeSlave failed");
-    if(SharedLibrary::getSymbol<t_fmiDoStep>(fmuFile.string(), modelIdentifier+"_fmiDoStep")(comp2, 0.0, 0.1, fmiTrue)!=fmiOK)
-      throw runtime_error("fmiInitializeSlave failed");
+    for(int i=0; i<3; ++i) {
+      if(SharedLibrary::getSymbol<t_fmiDoStep>(fmuFile.string(), modelIdentifier+"_fmiDoStep")(comp1, 0.1*i, 0.1, fmiTrue)!=fmiOK)
+        throw runtime_error("fmiDoStep failed");
+      if(SharedLibrary::getSymbol<t_fmiDoStep>(fmuFile.string(), modelIdentifier+"_fmiDoStep")(comp2, 0.1*i, 0.1, fmiTrue)!=fmiOK)
+        throw runtime_error("fmiDoStep failed");
+    }
   }
 
 

@@ -60,6 +60,10 @@ namespace MBSimIntegrator {
   void LSODERIntegrator::integrate() {
     debugInit();
 
+    if(odePackInUse)
+      throw MBSimError("Only one integration with LSODARIntegrator, LSODERIntegrator and LSODEIntegrator at a time is possible.");
+    odePackInUse = true;
+
     int zSize=system->getzSize();
     int neq[1+sizeof(void*)/sizeof(int)+1];
     neq[0]=zSize;
@@ -162,6 +166,8 @@ namespace MBSimIntegrator {
 
     cout.unsetf (ios::scientific);
     cout << endl;
+
+    odePackInUse = false;
   }
 }
 

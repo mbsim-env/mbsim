@@ -91,6 +91,11 @@ namespace MBSimIntegrator {
 
   void LSODARIntegrator::preIntegrate() {
     debugInit();
+
+    if(odePackInUse)
+      throw MBSimError("Only one integration with LSODARIntegrator, LSODERIntegrator and LSODEIntegrator at a time is possible.");
+    odePackInUse = true;
+
     int zSize=system->getzSize();
     neq[0]=zSize;
     LSODARIntegrator *self=this;
@@ -141,7 +146,7 @@ namespace MBSimIntegrator {
     rWork(4) = dt0;
     system->setTime(t);
 //    system->setState(z); Not needed as the integrator uses the state of the system
-    while(t < tStop) {  
+    while(t < tStop-epsroot) {  
       integrationSteps++;
       double tOut = min(tPlot, tStop);
       DLSODAR(fzdot, neq, system->getState()(), &t, &tOut, &iTol, &rTol, aTol(), &one,
@@ -159,8 +164,8 @@ namespace MBSimIntegrator {
         s0 = s1; 
         integPlot<< t << " " << rWork(10) << " " << time << endl;
         tPlot += dtPlot;
-        if (tPlot > tStop)
-          tPlot = tStop;
+//        if (tPlot > tStop)
+//          tPlot = tStop;
 
         // check drift
         if(system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
@@ -213,6 +218,8 @@ namespace MBSimIntegrator {
     integSum << "Integration steps: " << integrationSteps << endl;
     integSum.close();
     msg(Info) << endl;
+
+    odePackInUse = false;
   }
 
 }
