@@ -27,6 +27,8 @@
 #include "constraint.h"
 #include "variable_widgets.h"
 #include "mainwindow.h"
+#include "octave_utils.h"
+#include "data_plot.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QTreeWidget>
@@ -35,6 +37,8 @@
 #include <QComboBox>
 #include <QSpinBox>
 #include <QWebView>
+#include <qwt_plot.h>
+#include <cmath>
 
 using namespace std;
 
@@ -607,6 +611,102 @@ namespace MBSimGUI {
   void WebDialog::load(const QUrl &url_) {
     url = url_;
     webView->load(url);
+  }
+
+  EigenanalysisDialog::EigenanalysisDialog(const QString &name, QWidget *parent) : QDialog(parent) {
+    OctaveParser parser(name.toStdString());
+    parser.parse();
+    fmatvec::Vector<fmatvec::Var,complex<double> > w = static_cast<const OctaveComplexMatrix*>(parser.get(0))->get<fmatvec::Vector<fmatvec::Var,complex<double> > >();
+    fmatvec::SquareMatrix<fmatvec::Var,complex<double> > V = static_cast<const OctaveComplexMatrix*>(parser.get(1))->get<fmatvec::SquareMatrix<fmatvec::Var,complex<double> > >();
+
+    std::vector<std::pair<double,int> > f;
+    for (int i=0; i<w.size(); i++) {
+      if((abs(imag(w(i))) > 1e-13) and (i < w.size()-1) and (w(i+1)==conj(w(i)))) {
+        f.push_back(pair<double,int>(imag(w(i))/2/M_PI,i));
+        i++;
+      }
+    }
+    std::sort(f.begin(), f.end());
+
+    QGridLayout *layout = new QGridLayout;
+    setLayout(layout);
+    table = new QTableWidget(f.size(),5);
+    QStringList labels;
+    labels << "Mode" << "Frequency" << "Exponential decay" << "Angular frequency" << "Damping ratio";
+    table->setHorizontalHeaderLabels(labels);
+    layout->addWidget(table,0,0);
+    int n = V.rows()/2;
+    QVector<double> m(n);
+    QVector<QVector<double> > A(f.size(),QVector<double>(n));
+    for(int k=0; k<n; k++)
+      m[k] = k+1;
+    for(int i=0; i<f.size(); i++) {
+      int j = f[i].second;
+      table->setItem(i, 0, new QTableWidgetItem(QString::number(i+1)));
+      table->setItem(i, 1, new QTableWidgetItem(QString::number(f[i].first)));
+      table->setItem(i, 2, new QTableWidgetItem(QString::number(-w(j).real())));
+      table->setItem(i, 3, new QTableWidgetItem(QString::number(w(j).imag())));
+      table->setItem(i, 4, new QTableWidgetItem(QString::number(-w(j).real()/w(j).imag())));
+      double max = fabs(V(n,j).real());
+      int ind = 0;
+      for(int k=1; k<n; k++) {
+        if(fabs(V(n+k,j).real())>max) {
+          max = fabs(V(n+k,j).real());
+          ind= k;
+        }
+      }
+      for(int k=0; k<n; k++)
+        A[i][k] = V(k+n,j).real()/V(ind+n,j).real();
+    }
+    table->selectRow(0);
+    plot = new DataPlot(m,A,"Mode", "Eigenmode", "DOF", "-", this);
+    plot->setSymbol(QwtSymbol::Diamond,10);
+    plot->setAxisScale(QwtPlot::xBottom,1-0.1,A.size()+0.1,1);
+    plot->setAxisScale(QwtPlot::yLeft,-1.1,1.1);
+    plot->replot();
+    layout->addWidget(plot,0,1);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    layout->addWidget(buttonBox,1,0,1,2);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(plot, SIGNAL(numChanged(int)), this, SLOT(selectRow(int)));
+    connect(table, SIGNAL(cellClicked(int,int)), this, SLOT(selectMode(int,int)));
+  }
+
+  void EigenanalysisDialog::selectRow(int i) {
+    table->blockSignals(true);
+    table->selectRow(i-1);
+    table->blockSignals(false);
+  }
+
+  void EigenanalysisDialog::selectMode(int row, int col) {
+    plot->blockSignals(true);
+    plot->changeNum(row+1);
+    plot->blockSignals(false);
+  }
+
+  HarmonicResponseDialog::HarmonicResponseDialog(const QString &name, QWidget *parent) : QDialog(parent) {
+    OctaveParser parser(name.toStdString());
+    parser.parse();
+    fmatvec::MatV t_ = static_cast<const OctaveMatrix*>(parser.get(1))->get<fmatvec::MatV>();
+    fmatvec::MatV A_ = static_cast<const OctaveMatrix*>(parser.get(2))->get<fmatvec::MatV>();
+    QVector<double> t(t_.rows());
+    QVector<QVector<double> > A(A_.cols(),QVector<double>(A_.rows()));
+    for(int i=0; i<t_.rows(); i++) {
+      t[i] = t_(i,0);
+      for(int j=0; j<A_.cols(); j++)
+        A[j][i] = A_(i,j);
+    }
+
+    QGridLayout *layout = new QGridLayout;
+    setLayout(layout);
+    DataPlot *plot = new DataPlot(t,A,"DOF", "Frequency response", "f in Hz", "A", this);
+    plot->replot();
+    layout->addWidget(plot,0,0);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    layout->addWidget(buttonBox,1,0,1,1);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
   }
 
 }

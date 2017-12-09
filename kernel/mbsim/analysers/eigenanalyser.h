@@ -45,24 +45,17 @@ namespace MBSimAnalyser {
 
     public:
 
-      enum Task { eigenfrequencies, eigenmodes, eigenmode, eigenmotion };
+      enum Task { eigenmodes, eigenmotion };
 
       /**
        * \brief Standard constructor 
        */
-      Eigenanalyser() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), n(1), compEq(false), task(eigenmode) { }
+      Eigenanalyser() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), loops(5), plotsPerLoop(100), compEq(false), task(eigenmodes) { }
       
       /**
-       * \brief Destructor
+       * \brief Perform an eigenanalysis of the system
        */
-      ~Eigenanalyser() { }
-
-      void execute() { analyse(); }
-
-      /**
-       * \brief Perform the eigenanalysis of the system set by setSystem.
-       */
-      void analyse();
+      void execute();
 
       /**
        * \brief Set the initial deviation of the equilibrium
@@ -71,16 +64,22 @@ namespace MBSimAnalyser {
       void setInitialDeviation(const fmatvec::Vec &deltaz0_) { deltaz0 = deltaz0_; }
 
       /**
-       * \brief Set the amplitude for the eigemode analysis
+       * \brief Set the amplitude of all modes for animation
        * \param A_ The amplitude
        */
       void setAmplitude(double A_) { A = A_; }
 
       /**
-       * \brief Set the mode for the eigemode analysis
-       * \param n_ The mode number
+       * \brief Set the amplitude per mode for animation
+       * \param A_ A table with mode number and amplitude
        */
-      void setMode(int n_) { n = n_; }
+      void setModeAmplitudeTable(const fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<2>,double> &MA_) { MA = MA_; }
+
+      /**
+       * \brief Set the number of loops for animation of each mode
+       * \param loops_ The number of loops
+       */
+      void setLoops(double loops_) { loops = loops_; }
 
       /**
        * \brief Set the start time for the analysis
@@ -105,7 +104,6 @@ namespace MBSimAnalyser {
        * \param z0 The initital state
        */
       void setInitialState(const fmatvec::Vec &z0) { zEq = z0; }
-//      void setEquilibriumState(const fmatvec::Vec &zEq_) { zEq = zEq_; }
 
       /**
        * \brief Determine the equilibrium state for the analysis
@@ -133,7 +131,7 @@ namespace MBSimAnalyser {
        * \brief Get the eigenfrequencies
        * \return A vector containing the eigenfrequencies of the system
        */
-      const fmatvec::Vec& getEigenfrequencies() const { return freq; }
+      fmatvec::Vec getEigenfrequencies() const;
 
       /**
        * \brief Set the name of the output file
@@ -147,22 +145,21 @@ namespace MBSimAnalyser {
 
       fmatvec::Vec zEq, deltaz0;
       double tStart, tEnd, dtPlot, A;
-      int n;
+      int loops, plotsPerLoop;
       bool compEq;
       Task task;
 
       fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> > V;
       fmatvec::Vector<fmatvec::Ref, std::complex<double> > w;
-      fmatvec::Vec freq;
       std::vector<std::pair<double,int> > f;
+      fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<2>,double> MA;
 
       std::string fileName;
 
       bool saveEigenanalyis(const std::string &fileName);
-      void computeEigenfrequencies();
+
       void computeEigenvalues();
       void computeEigenmodes();
-      void computeEigenmode();
       void computeEigenmotion();
   };
 

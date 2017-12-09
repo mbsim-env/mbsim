@@ -89,8 +89,8 @@ namespace MBSimGUI {
 
   DOMElement* DynamicSystemSolver::processFileID(DOMElement *element) {
     element = Group::processFileID(element);
-    E(element)->setAttribute("name","out"+QString::number(currentTask).toStdString());;
     if(currentTask==1) {
+      E(element)->setAttribute("name","MBS_tmp");
       DOMElement *ele1 = D(element->getOwnerDocument())->createElement( MBSIM%"plotFeatureRecursive" );
       E(ele1)->setAttribute("value","plotRecursive");
       ele1->insertBefore(element->getOwnerDocument()->createTextNode(X()%"false"), nullptr);
@@ -101,10 +101,6 @@ namespace MBSimGUI {
 
   EmbedItemData* DynamicSystemSolver::getEmbedItemParent() {
     return project;
-  }
-
-  std::vector<EmbedItemData*> DynamicSystemSolver::getParents() {
-    return vector<EmbedItemData*>(1,project);
   }
 
 }

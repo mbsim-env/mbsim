@@ -20,23 +20,32 @@
 #ifndef _DATA_PLOT__H_
 #define _DATA_PLOT__H_
 
-#include <QDialog>
+#include <QWidget>
+#include <qwt_symbol.h>
 
 class QwtPlot;
 class QwtPlotCurve;
+class QSpinBox;
 
 namespace MBSimGUI {
 
-  class DataPlot : public QDialog {
+  class DataPlot : public QWidget {
     Q_OBJECT
     public:
-      DataPlot(const QVector<double> &f_, const QVector<QVector<double> > &A_, const QString &title="", const QString &xLabel="", const QString &yLabel="",  QWidget *parent=nullptr);
+      DataPlot(const QVector<double> &f_, const QVector<QVector<double> > &A_, const QString &spinBoxLabel="", const QString &title="", const QString &xLabel="", const QString &yLabel="",  QWidget *parent=nullptr);
+      void setSymbol(const QwtSymbol::Style &style, int size=1);
+      void setAxisScale(int axisId, double min, double max, double stepSize = 0);
+      void replot();
     private:
       QVector<double> f;
       QVector<QVector<double> > A;
+      QSpinBox *num;
       QwtPlot *plot;
       QwtPlotCurve *curve;
-    private slots:
+    public slots:
+      void changePlot(int i);
+      void changeNum(int i);
+    signals:
       void numChanged(int i);
   };
 

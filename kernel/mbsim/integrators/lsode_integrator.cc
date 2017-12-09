@@ -63,8 +63,11 @@ namespace MBSimIntegrator {
     LSODEIntegrator *self=this;
     memcpy(&neq[1], &self, sizeof(void*));
 
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != zSize)
+        throw MBSimError("(LSODEIntegrator::integrate): size of z0 does not match");
       system->setState(z0);
+    }
     else
       system->evalz0();
 

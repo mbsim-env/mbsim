@@ -53,16 +53,9 @@ namespace MBSimAnalyser {
       HarmonicResponseAnalyser() : tStart(0), dtPlot(1e-2), compEq(false), task(frequencyResponse) { }
       
       /**
-       * \brief Destructor
+       * \brief Perform a harmonic response analysis of the system
        */
-      ~HarmonicResponseAnalyser() { }
-
-      void execute() { analyse(); }
-
-      /**
-       * \brief Perform the eigenanalysis of the system set by setSystem.
-       */
-      void analyse();
+      void execute();
 
       /**
        * \brief Set the start time for the analysis

@@ -49,8 +49,11 @@ namespace MBSimIntegrator {
     zSize=system->getzSize();
 
     z.resize(zSize);
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != zSize)
+        throw MBSimError("(RKSuiteIntegrator::integrate): size of z0 does not match");
       z = z0;
+    }
     else
       z = system->evalz0();
 

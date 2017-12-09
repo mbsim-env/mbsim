@@ -106,7 +106,6 @@ namespace MBSimGUI {
       void setID(const QString &ID_) { ID = ID_; }
       Element* getParent() { return parent; }
       EmbedItemData* getEmbedItemParent() override { return getParent(); }
-      std::vector<EmbedItemData*> getParents() override;
       void setParent(Element* parent_) { parent = parent_; }
       virtual ElementPropertyDialog* createPropertyDialog() { return new ElementPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ElementContextMenu(this); }

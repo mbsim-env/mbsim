@@ -41,6 +41,7 @@ namespace MBSimGUI {
   class Frame;
   class Contour;
   class Signal;
+  class DataPlot;
 
   class ElementItem : public QTreeWidgetItem {
     private:
@@ -231,6 +232,25 @@ namespace MBSimGUI {
     private:
       QWebView *webView;
       QUrl url;
+  };
+
+  class EigenanalysisDialog : public QDialog {
+    Q_OBJECT
+    public:
+      EigenanalysisDialog(const QString &name, QWidget *parent=0);
+    private:
+      QTableWidget *table;
+      DataPlot *plot;
+    private slots:
+      void selectRow(int);
+      void selectMode(int row, int col);
+  };
+
+  class HarmonicResponseDialog : public QDialog {
+    public:
+      HarmonicResponseDialog(const QString &name, QWidget *parent=0);
+    private:
+      DataPlot *plot;
   };
 
 }

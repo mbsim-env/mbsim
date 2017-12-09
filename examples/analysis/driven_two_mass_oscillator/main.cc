@@ -24,7 +24,7 @@ int main (int argc, char* argv[]) {
   analyser.setExcitationFrequencies(freq);
   analyser.setSystemFrequencies(VecV(1,INIT,f));
   analyser.setSystem(sys);
-  analyser.analyse();
+  analyser.execute();
 
   delete sys;
 

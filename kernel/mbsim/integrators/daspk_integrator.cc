@@ -63,7 +63,11 @@
 //     zSize=system->getzSize();
 //     Vec z(zSize);
 //     Vec zdot(zSize);
-//     if(z0.size())
+//    if(z0.size()) {
+//      if(z0.size() != zSize)
+//        throw MBSimError("(DASPKIntegrator::integrate): size of z0 does not match");
+//      z = z0;
+//    }
 //       z = z0;
 //     else
 //       system->initz(z);

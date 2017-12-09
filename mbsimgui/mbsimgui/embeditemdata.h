@@ -47,7 +47,7 @@ namespace MBSimGUI {
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return ""; }
       virtual EmbedItemData* getEmbedItemParent() { return nullptr; }
-      virtual std::vector<EmbedItemData*> getParents() { return std::vector<EmbedItemData*>(); }
+      std::vector<EmbedItemData*> getEmbedItemParents();
       int getNumberOfParameters() const { return parameter.size(); }
       Parameter* getParameter(int i) { return parameter[i]; }
       void setParameter(Parameter *param, int i) { parameter[i] = param; }
