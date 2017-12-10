@@ -30,7 +30,7 @@ void DLSODER(void (*)(int*,double*,double*,double*), int*, double*, double*,
 	    int*, void(*)(int*, double*, double*,
             int*, double*), int*, int*);
 
-#define DLSODE FC_FUNC(dlsode,DLSODE)
+#define DLSODE FC_FUNC(mbsim_dlsode,MBSIM_DLSODE)
 void DLSODE(void (*)(int*,double*,double*,double*), int*, double*, double*,
             double*, int*, double*, double*, int*, int*, int*, double*, int*,
             int*, int*, void(*)(int*,double*,double*,int*,int*,double*,int*), int*);

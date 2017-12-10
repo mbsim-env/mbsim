@@ -33,12 +33,12 @@ if test "_$debug" = "_yes" ; then
   CFLAGS="$CFLAGS -ggdb"
   CXXFLAGS="$CXXFLAGS -ggdb"
   FCFLAGS="$FCFLAGS -ggdb"
-  FFLAGS="$FFLAGS -ggdb"
+  FFLAGS="$FFLAGS -ggdb -cpp -ffixed-line-length-none"
 else
   CFLAGS="$CFLAGS -g -O2"
   CXXFLAGS="$CXXFLAGS -g -O2 -DNDEBUG"
   FCFLAGS="$FCFLAGS -g -O2"
-  FFLAGS="$FFLAGS -g -O2"
+  FFLAGS="$FFLAGS -g -O2 -cpp -ffixed-line-length-none"
 fi
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-unknown-pragmas"
 AC_SUBST([HOST_OS],[$host_os])

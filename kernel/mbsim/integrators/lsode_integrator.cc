@@ -42,6 +42,8 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, LSODEIntegrator)
 
+  bool odePackInUse = false;
+
   LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), maxSteps(10000), stiff(false) {
   }
 
@@ -56,6 +58,10 @@ namespace MBSimIntegrator {
 
   void LSODEIntegrator::integrate() {
     debugInit();
+
+    if(odePackInUse)
+      throw MBSimError("Only one integration with LSODARIntegrator, LSODERIntegrator and LSODEIntegrator at a time is possible.");
+    odePackInUse = true;
 
     int zSize=system->getzSize();
     int neq[1+sizeof(void*)/sizeof(int)+1];
@@ -150,6 +156,8 @@ namespace MBSimIntegrator {
 
     cout.unsetf (ios::scientific);
     cout << endl;
+
+    odePackInUse = false;
   }
 
   void LSODEIntegrator::initializeUsingXML(DOMElement *element) {
