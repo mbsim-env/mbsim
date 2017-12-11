@@ -53,6 +53,9 @@ namespace MBSim {
   }
 
   void ElasticJoint::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==unknownStage) {
+      if(func->getRetSize().first!=forceDir.cols()+momentDir.cols()) THROW_MBSIMERROR("Size of generalized forces does not match!");
+    }
     FloatingFrameLink::init(stage, config);
     func->init(stage, config);
   }

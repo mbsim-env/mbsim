@@ -42,6 +42,8 @@ namespace MBSim {
        */
       LinearElasticFunction(const fmatvec::SymMatV &K_, const fmatvec::SymMatV &D_) : K(K_), D(D_) { }
 
+      std::pair<int, int> getRetSize() const override { return std::make_pair(K.size(),1); }
+
       void init(InitStage stage, const InitConfigSet &config) override;
 
       fmatvec::VecV operator()(const fmatvec::VecV& q, const fmatvec::VecV& u) override { return K*q + D*u; }
