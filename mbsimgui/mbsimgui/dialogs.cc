@@ -38,8 +38,10 @@
 #include <QSpinBox>
 #include <QWebView>
 #include <qwt_plot.h>
+#include <boost/math/constants/constants.hpp>
 
 using namespace std;
+using namespace boost::math::constants;
 
 namespace MBSimGUI {
 
@@ -621,7 +623,7 @@ namespace MBSimGUI {
     std::vector<std::pair<double,int> > f;
     for (int i=0; i<w.size(); i++) {
       if((abs(imag(w(i))) > 1e-13) and (i < w.size()-1) and (w(i+1)==conj(w(i)))) {
-        f.push_back(pair<double,int>(imag(w(i))/2/3.14159265358979323846,i));
+        f.push_back(pair<double,int>(imag(w(i))/2/pi<double>(),i));
         i++;
       }
     }
