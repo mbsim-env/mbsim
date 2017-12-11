@@ -1084,8 +1084,8 @@ namespace MBSimGUI {
   void MainWindow::removeElement() {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
-    auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    if((not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element))) {
+    auto *element = dynamic_cast<Element*>(model->getItem(index)->getItemData());
+    if(element and (not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element))) {
       setProjectChanged(true);
       if(element == elementBuffer.first)
         elementBuffer.first = NULL;
@@ -1097,19 +1097,22 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeParameter() {
-    setProjectChanged(true);
     auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
-    auto *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
-    if(parameter == parameterBuffer.first)
-      parameterBuffer.first = NULL;
-    DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
-    if(ps and X()%ps->getNodeName()=="#text")
-      parameter->getXMLElement()->getParentNode()->removeChild(ps);
-    parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
-    parameter->getParent()->removeParameter(parameter);
-    parameter->getParent()->maybeRemoveEmbedXMLElement();
-    model->removeRow(index.row(), index.parent());
+    auto *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
+    if(parameter) {
+      setProjectChanged(true);
+      if(parameter == parameterBuffer.first)
+        parameterBuffer.first = NULL;
+      DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
+      if(ps and X()%ps->getNodeName()=="#text")
+        parameter->getXMLElement()->getParentNode()->removeChild(ps);
+      parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
+      parameter->getParent()->removeParameter(parameter);
+      parameter->getParent()->maybeRemoveEmbedXMLElement();
+      model->removeRow(index.row(), index.parent());
+      mbsimxml(1);
+    }
   }
 
   void MainWindow::remove() {
