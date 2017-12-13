@@ -721,6 +721,7 @@ namespace MBSimGUI {
   // update model parameters including additional paramters from paramList
   void MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
+    doc->setDocumentURI(X()%"file://");
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,nullptr);
 
@@ -747,22 +748,9 @@ namespace MBSimGUI {
       ele0->insertBefore(node,nullptr);
     }
 
-    DOMElement *root = doc->getDocumentElement();
-    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
-      DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
-          X()%"MBS.mbsimparam.xml");
-      root->insertBefore(filenamePI, root->getFirstChild());
-    }
-
     string message;
     try {
       D(doc)->validate();
-      // create a new empty evaluator
-      // Note: do not use "eval.reset(); eval=..." or something like this here since this will possibly deinit
-      // static part of the evaluator and then reinit these and will be time consuming.
-      eval=Eval::createEvaluator("octave", &dependencies);
-
-      // add parameter
       eval->addParamSet(doc->getDocumentElement());
     }
     catch(const std::exception &error) {
@@ -872,8 +860,8 @@ namespace MBSimGUI {
 
     currentTask = task;
 
-//    shared_ptr<DOMDocument> doc(static_cast<DOMDocument*>(this->doc->cloneNode(true)));
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
+    doc->setDocumentURI(X()%"file://");
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
     projectView->getProject()->processFileID(newDocElement);
@@ -890,17 +878,8 @@ namespace MBSimGUI {
 
     absolutePath = false;
 
-    DOMElement *root = doc->getDocumentElement();
-
-    // GUI-XML-Baum mit OriginalFilename ergaenzen
-    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
-      DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
-          X()%("Project.mbsimprj.xml"));
-      root->insertBefore(filenamePI, root->getFirstChild());
-    }
-
+    DOMElement *root;
     QString errorText;
-
     try {
       D(doc)->validate();
       root = doc->getDocumentElement();
