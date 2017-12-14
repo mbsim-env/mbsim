@@ -58,7 +58,8 @@ namespace MBSimGUI {
       xercesc::DOMElement* getXMLFrame() override { return getXMLObservers()->getNextElementSibling(); }
       void removeXMLElements() override;
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processHref(xercesc::DOMElement* element) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       Element *getChildByContainerAndName(const QString &container, const QString &name) const override;
       void setActionPasteDisabled(bool flag);

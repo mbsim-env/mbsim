@@ -69,7 +69,8 @@ namespace MBSimGUI {
       void setEmbededParameters(bool embededParam_) { embededParam = embededParam_; }
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }
       QMenu* createEmbeddingContextMenu() { return new EmbeddingContextMenu(this); }
-      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement* element);
+      virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);
+      virtual xercesc::DOMElement* processHref(xercesc::DOMElement* element);
   };
 
 }

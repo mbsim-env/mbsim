@@ -32,56 +32,56 @@ namespace MBSimGUI {
   class KinematicCoordinatesObserver : public Observer {
     public:
       QString getType() const override { return "KinematicCoordinatesObserver"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new KinematicCoordinatesObserverPropertyDialog(this);}
   };
 
   class RelativeKinematicsObserver : public Observer {
     public:
       QString getType() const override { return "RelativeKinematicsObserver"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new RelativeKinematicsObserverPropertyDialog(this);}
   };
 
   class MechanicalLinkObserver : public Observer {
     public:
       QString getType() const override { return "MechanicalLinkObserver"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new MechanicalLinkObserverPropertyDialog(this);}
   };
 
   class MechanicalConstraintObserver : public Observer {
     public:
       QString getType() const override { return "MechanicalConstraintObserver"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new MechanicalConstraintObserverPropertyDialog(this);}
   };
 
   class ContactObserver : public Observer {
     public:
       QString getType() const override { return "ContactObserver"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new ContactObserverPropertyDialog(this);}
   };
 
   class FrameObserver : public Observer {
     public:
       QString getType() const override { return "FrameObserver"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new FrameObserverPropertyDialog(this);}
   };
 
   class RigidBodyObserver : public Observer {
     public:
       QString getType() const override { return "RigidBodyObserver"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new RigidBodyObserverPropertyDialog(this);}
   };
 
   class RigidBodySystemObserver : public Observer {
     public:
       QString getType() const override { return "RigidBodySystemObserver"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new RigidBodySystemObserverPropertyDialog(this);}
   };
 }

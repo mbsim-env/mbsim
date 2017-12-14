@@ -40,7 +40,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern bool absolutePath;
   extern QDir mbsDir;
   extern MainWindow *mw;
 

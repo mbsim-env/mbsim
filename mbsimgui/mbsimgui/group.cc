@@ -183,36 +183,36 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  DOMElement* Group::processFileID(DOMElement *element) {
-    element = Element::processFileID(element);
+  DOMElement* Group::processIDAndHref(DOMElement *element) {
+    element = Element::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
     for(size_t i=1; i<frame.size(); i++) {
-      frame[i]->processFileID(ELE);
+      frame[i]->processIDAndHref(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
     for(auto & i : contour) {
-      i->processFileID(ELE);
+      i->processIDAndHref(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"groups")->getFirstElementChild();
     for(auto & i : group) {
-      i->processFileID(ELE);
+      i->processIDAndHref(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
     for(auto & i : object) {
-      i->processFileID(ELE);
+      i->processIDAndHref(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
     for(auto & i : link) {
-      i->processFileID(ELE);
+      i->processIDAndHref(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
@@ -220,7 +220,7 @@ namespace MBSimGUI {
     if(ELE) {
       ELE=ELE->getFirstElementChild();
       for(auto & i : constraint) {
-        i->processFileID(ELE);
+        i->processIDAndHref(ELE);
         ELE=ELE->getNextElementSibling();
       }
     }
@@ -229,7 +229,7 @@ namespace MBSimGUI {
     if(ELE) {
       ELE=ELE->getFirstElementChild();
       for(auto & i : observer) {
-        i->processFileID(ELE);
+        i->processIDAndHref(ELE);
         ELE=ELE->getNextElementSibling();
       }
     }
@@ -239,6 +239,60 @@ namespace MBSimGUI {
       DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID().toStdString());
       ELE->insertBefore(id, nullptr);
+    }
+
+    return element;
+  }
+
+  DOMElement* Group::processHref(DOMElement *element) {
+    element = Element::processHref(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
+    for(size_t i=1; i<frame.size(); i++) {
+      frame[i]->processHref(ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
+    for(auto & i : contour) {
+      i->processHref(ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"groups")->getFirstElementChild();
+    for(auto & i : group) {
+      i->processHref(ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
+    for(auto & i : object) {
+      i->processHref(ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
+    for(auto & i : link) {
+      i->processHref(ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"constraints");
+    if(ELE) {
+      ELE=ELE->getFirstElementChild();
+      for(auto & i : constraint) {
+        i->processHref(ELE);
+        ELE=ELE->getNextElementSibling();
+      }
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"observers");
+    if(ELE) {
+      ELE=ELE->getFirstElementChild();
+      for(auto & i : observer) {
+        i->processHref(ELE);
+        ELE=ELE->getNextElementSibling();
+      }
     }
 
     return element;

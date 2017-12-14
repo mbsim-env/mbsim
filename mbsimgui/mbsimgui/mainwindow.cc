@@ -69,7 +69,6 @@ namespace MBSimGUI {
   DOMLSSerializer *serializer=impl->createLSSerializer();
 
   bool currentTask;
-  bool absolutePath = false;
   QDir mbsDir;
 
   MainWindow *mw;
@@ -853,10 +852,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::mbsimxml(int task) {
-    absolutePath = true;
-    QModelIndex index = elementView->model()->index(0,0);
-    if(not projectView->getProject())
-      return;
 
     currentTask = task;
 
@@ -864,7 +859,7 @@ namespace MBSimGUI {
     doc->setDocumentURI(X()%"file://");
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
-    projectView->getProject()->processFileID(newDocElement);
+    projectView->getProject()->processIDAndHref(newDocElement);
 
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     QString projectFile;
@@ -875,8 +870,6 @@ namespace MBSimGUI {
       if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
         static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
     }
-
-    absolutePath = false;
 
     DOMElement *root;
     QString errorText;
@@ -962,9 +955,12 @@ namespace MBSimGUI {
   }
 
   void MainWindow::debug() {
+    currentTask = 0;
+    auto *newdoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
+    projectView->getProject()->processHref(newdoc->getDocumentElement());
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-    QString projectFile = uniqueTempDir_+"/"+project->getDynamicSystemSolver()->getName()+"_debug.mbsimprj.xml";
-    saveProject(projectFile,false,false);
+    QString projectFile = uniqueTempDir_+"/Project.mbsimprj.xml";
+    serializer->writeToURI(newdoc, X()%projectFile.toStdString());
     QStringList arg;
     arg.append("--stopafterfirststep");
     arg.append(projectFile);

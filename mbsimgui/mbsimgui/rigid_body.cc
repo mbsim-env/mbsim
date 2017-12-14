@@ -65,18 +65,18 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  DOMElement* RigidBody::processFileID(DOMElement *element) {
-    element = Body::processFileID(element);
+  DOMElement* RigidBody::processIDAndHref(DOMElement *element) {
+    element = Body::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
     for(size_t i=1; i<frame.size(); i++) {
-      frame[i]->processFileID(ELE);
+      frame[i]->processIDAndHref(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
     for(auto & i : contour) {
-      i->processFileID(ELE);
+      i->processIDAndHref(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
@@ -95,6 +95,24 @@ namespace MBSimGUI {
       DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID().toStdString());
       ELE->insertBefore(id, nullptr);
+    }
+
+    return element;
+  }
+
+  DOMElement* RigidBody::processHref(DOMElement *element) {
+    element = Body::processHref(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
+    for(size_t i=1; i<frame.size(); i++) {
+      frame[i]->processHref(ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
+    for(auto & i : contour) {
+      i->processHref(ELE);
+      ELE=ELE->getNextElementSibling();
     }
 
     return element;

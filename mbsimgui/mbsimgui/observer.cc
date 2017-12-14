@@ -28,8 +28,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  DOMElement* KinematicCoordinatesObserver::processFileID(DOMElement *element) {
-    element = Observer::processFileID(element);
+  DOMElement* KinematicCoordinatesObserver::processIDAndHref(DOMElement *element) {
+    element = Observer::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(ELE) {
@@ -55,8 +55,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* RelativeKinematicsObserver::processFileID(DOMElement *element) {
-    Observer::processFileID(element);
+  DOMElement* RelativeKinematicsObserver::processIDAndHref(DOMElement *element) {
+    Observer::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(ELE) {
@@ -96,8 +96,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* MechanicalLinkObserver::processFileID(DOMElement *element) {
-    Observer::processFileID(element);
+  DOMElement* MechanicalLinkObserver::processIDAndHref(DOMElement *element) {
+    Observer::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(ELE) {
@@ -116,8 +116,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* MechanicalConstraintObserver::processFileID(DOMElement *element) {
-    Observer::processFileID(element);
+  DOMElement* MechanicalConstraintObserver::processIDAndHref(DOMElement *element) {
+    Observer::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(ELE) {
@@ -136,8 +136,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* ContactObserver::processFileID(DOMElement *element) {
-    Observer::processFileID(element);
+  DOMElement* ContactObserver::processIDAndHref(DOMElement *element) {
+    Observer::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(ELE) {
@@ -177,8 +177,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* FrameObserver::processFileID(DOMElement *element) {
-    Observer::processFileID(element);
+  DOMElement* FrameObserver::processIDAndHref(DOMElement *element) {
+    Observer::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(ELE) {
@@ -218,8 +218,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* RigidBodyObserver::processFileID(DOMElement *element) {
-    Observer::processFileID(element);
+  DOMElement* RigidBodyObserver::processIDAndHref(DOMElement *element) {
+    Observer::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(ELE) {
@@ -252,8 +252,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* RigidBodySystemObserver::processFileID(DOMElement *element) {
-    Observer::processFileID(element);
+  DOMElement* RigidBodySystemObserver::processIDAndHref(DOMElement *element) {
+    Observer::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(ELE) {

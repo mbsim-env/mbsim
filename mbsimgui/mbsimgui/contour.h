@@ -26,7 +26,7 @@ namespace MBSimGUI {
 
   class Contour : public Element {
     public:
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new ContourPropertyDialog(this);}
       QMenu* createContextMenu() override { return new ContourContextMenu(this); }
   };
