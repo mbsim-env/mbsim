@@ -720,7 +720,7 @@ namespace MBSimGUI {
   // update model parameters including additional paramters from paramList
   void MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-    doc->setDocumentURI(X()%"file://");
+    doc->setDocumentURI(X()%"file://Project.mbsimprj.xml");
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,nullptr);
 
@@ -856,7 +856,7 @@ namespace MBSimGUI {
     currentTask = task;
 
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-    doc->setDocumentURI(X()%"file://");
+    doc->setDocumentURI(X()%"file://Project.mbsimprj.xml");
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
     projectView->getProject()->processIDAndHref(newDocElement);
