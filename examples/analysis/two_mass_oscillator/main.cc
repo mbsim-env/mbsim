@@ -1,10 +1,10 @@
 #include "system.h"
-#include <mbsim/analysers/eigenanalyser.h>
+#include <mbsim/analyzers/eigenanalyzer.h>
 #include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace MBSim;
-using namespace MBSimAnalyser;
+using namespace MBSimAnalyzer;
 using namespace fmatvec;
 
 int main (int argc, char* argv[]) {
@@ -13,18 +13,18 @@ int main (int argc, char* argv[]) {
 
   sys->initialize();
 
-  Eigenanalyser analyser;
-  analyser.setOutputFileName("Eigenanalysis.mat");
+  Eigenanalyzer analyzer;
+  analyzer.setOutputFileName("Eigenanalysis.mat");
   Vec z0(sys->getzSize());
   z0(0) = 0.02;
-  analyser.setInitialDeviation(z0);
-  analyser.setDetermineEquilibriumState(true);
-  analyser.setAmplitude(0);
-  analyser.setModeAmplitudeTable("[1,0.5]");
-  analyser.setLoops(1);
-  analyser.setTask(Eigenanalyser::eigenmodes);
-  analyser.setSystem(sys);
-  analyser.execute();
+  analyzer.setInitialDeviation(z0);
+  analyzer.setDetermineEquilibriumState(true);
+  analyzer.setAmplitude(0);
+  analyzer.setModeAmplitudeTable("[1,0.5]");
+  analyzer.setLoops(1);
+  analyzer.setTask(Eigenanalyzer::eigenmodes);
+  analyzer.setSystem(sys);
+  analyzer.execute();
 
   delete sys;
 

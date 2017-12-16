@@ -20,7 +20,7 @@
 #include <config.h>
 #include "solver_property_dialog.h"
 #include "integrator.h"
-#include "analyser.h"
+#include "analyzer.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
@@ -359,7 +359,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  EigenanalyserPropertyDialog::EigenanalyserPropertyDialog(Eigenanalyser *eigenanalyser, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(eigenanalyser,parent,f) {
+  EigenanalyzerPropertyDialog::EigenanalyzerPropertyDialog(Eigenanalyzer *eigenanalyzer, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(eigenanalyzer,parent,f) {
     addTab("General");
     addTab("Initial conditions");
 
@@ -394,7 +394,7 @@ namespace MBSimGUI {
     addToTab("General",determineEquilibriumState);
   }
 
-  DOMElement* EigenanalyserPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* EigenanalyzerPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
     startTime->initializeUsingXML(item->getXMLElement());
     endTime->initializeUsingXML(item->getXMLElement());
@@ -408,7 +408,7 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* EigenanalyserPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* EigenanalyzerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SolverPropertyDialog::writeXMLFile(item->getXMLElement());
     startTime->writeXMLFile(item->getXMLElement());
     endTime->writeXMLFile(item->getXMLElement());
@@ -422,7 +422,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  HarmonicResponseAnalyserPropertyDialog::HarmonicResponseAnalyserPropertyDialog(HarmonicResponseAnalyser *eigenanalyser, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(eigenanalyser,parent,f) {
+  HarmonicResponseAnalyzerPropertyDialog::HarmonicResponseAnalyzerPropertyDialog(HarmonicResponseAnalyzer *eigenanalyzer, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(eigenanalyzer,parent,f) {
     addTab("General");
     addTab("Initial conditions");
 
@@ -450,7 +450,7 @@ namespace MBSimGUI {
     addToTab("General",determineEquilibriumState);
   }
 
-  DOMElement* HarmonicResponseAnalyserPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* HarmonicResponseAnalyzerPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
     startTime->initializeUsingXML(item->getXMLElement());
     excitationFrequencies->initializeUsingXML(item->getXMLElement());
@@ -462,7 +462,7 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* HarmonicResponseAnalyserPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* HarmonicResponseAnalyzerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SolverPropertyDialog::writeXMLFile(item->getXMLElement());
     startTime->writeXMLFile(item->getXMLElement());
     excitationFrequencies->writeXMLFile(item->getXMLElement());

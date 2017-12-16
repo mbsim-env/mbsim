@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "eigenanalyser.h"
+#include "eigenanalyzer.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "fmatvec/linear_algebra_complex.h"
 #include "mbsim/utils/nonlinear_algebra.h"
@@ -46,13 +46,13 @@ const Vector<Ref, double> fromComplex(const Vector<Ref, complex<double> > &x) {
   return y;
 }
 
-namespace MBSimAnalyser {
+namespace MBSimAnalyzer {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYSER, Eigenanalyser)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYSER, Eigenanalyzer)
 
-  Eigenanalyser::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) { }
+  Eigenanalyzer::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) { }
 
-  Vec Eigenanalyser::Residuum::operator()(const Vec &z) {
+  Vec Eigenanalyzer::Residuum::operator()(const Vec &z) {
     Vec res;
     sys->setTime(t);
     sys->setState(z);
@@ -61,23 +61,23 @@ namespace MBSimAnalyser {
     return res;
   } 
 
-  void Eigenanalyser::execute() {
+  void Eigenanalyzer::execute() {
     if(task == eigenmodes) computeEigenmodes();
     else if(task == eigenmotion) computeEigenmotion();
   }
 
-  Vec Eigenanalyser::getEigenfrequencies() const {
+  Vec Eigenanalyzer::getEigenfrequencies() const {
     fmatvec::Vec freq(f.size(),NONINIT);
     for(int i=0; i<freq.size(); i++)
       freq.e(i) = f[i].first;
     return freq;
   }
 
-  void Eigenanalyser::computeEigenvalues() {
+  void Eigenanalyzer::computeEigenvalues() {
     if(not(zEq.size()))
       zEq = system->evalz0();
     else if(zEq.size()!=system->getzSize())
-      throw MBSimError("(Eigenanalyser::computeEigenvalues): size of z0 does not match");
+      throw MBSimError("(Eigenanalyzer::computeEigenvalues): size of z0 does not match");
 
     if(compEq) {
       Residuum f(system,tStart);
@@ -85,7 +85,7 @@ namespace MBSimAnalyser {
       newton.setLinearAlgebra(1);
       zEq = newton.solve(zEq);
       if(newton.getInfo() != 0)
-        throw MBSimError("(Eigenanalyser::computeEigenvalues): computation of equilibrium state failed!");
+        throw MBSimError("(Eigenanalyzer::computeEigenvalues): computation of equilibrium state failed!");
     }
 
     SqrMat A(system->getzSize());
@@ -114,7 +114,7 @@ namespace MBSimAnalyser {
     saveEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName);
   }
 
-  void Eigenanalyser::computeEigenmodes() {
+  void Eigenanalyzer::computeEigenmodes() {
     computeEigenvalues();
     Vector<Ref, complex<double> > c(w.size());
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
@@ -124,7 +124,7 @@ namespace MBSimAnalyser {
     VecV Av(system->getzSize()/2,INIT,A);
     for(int i=0; i<MA.rows(); i++) {
       if(int(MA(i,0))<0 or int(MA(i,0))>=Av.size())
-        throw MBSimError("(Eigenanalyser::computeEigenmodes): size of mode amplitude matrix does not match");
+        throw MBSimError("(Eigenanalyzer::computeEigenmodes): size of mode amplitude matrix does not match");
       Av(int(MA(i,0))) = MA(i,1);
     }
 
@@ -152,7 +152,7 @@ namespace MBSimAnalyser {
     }
   }
 
-  void Eigenanalyser::computeEigenmotion() {
+  void Eigenanalyzer::computeEigenmotion() {
     computeEigenvalues();
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
 
@@ -171,7 +171,7 @@ namespace MBSimAnalyser {
     }
   }
 
-  bool Eigenanalyser::saveEigenanalyis(const string& fileName) {
+  bool Eigenanalyzer::saveEigenanalyis(const string& fileName) {
     ofstream os(fileName.c_str());
     if(os.is_open()) {
       os << "# name: " << "lambda" << endl;
@@ -204,7 +204,7 @@ namespace MBSimAnalyser {
     return false;
   }
 
-  void Eigenanalyser::initializeUsingXML(DOMElement *element) {
+  void Eigenanalyzer::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"startTime");
     if(e) setStartTime(E(e)->getText<double>());

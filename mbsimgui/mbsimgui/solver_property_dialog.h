@@ -34,8 +34,8 @@ namespace MBSimGUI {
   class TimeSteppingIntegrator;
   class EulerExplicitIntegrator;
   class RKSuiteIntegrator;
-  class Eigenanalyser;
-  class HarmonicResponseAnalyser;
+  class Eigenanalyzer;
+  class HarmonicResponseAnalyzer;
   class VecWidget;
   class ExtWidget;
 
@@ -141,20 +141,20 @@ namespace MBSimGUI {
       ExtWidget *method, *relTol, *threshold, *initialStepSize;
   };
 
-  class EigenanalyserPropertyDialog : public SolverPropertyDialog {
+  class EigenanalyzerPropertyDialog : public SolverPropertyDialog {
 
     public:
-      EigenanalyserPropertyDialog(Eigenanalyser *eigenanalyser, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      EigenanalyzerPropertyDialog(Eigenanalyzer *eigenanalyzer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *task, *amplitude, *modeAmplitudeTable, *loops, *determineEquilibriumState;
   };
 
-  class HarmonicResponseAnalyserPropertyDialog : public SolverPropertyDialog {
+  class HarmonicResponseAnalyzerPropertyDialog : public SolverPropertyDialog {
 
     public:
-      HarmonicResponseAnalyserPropertyDialog(HarmonicResponseAnalyser *eigenanalyser, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      HarmonicResponseAnalyzerPropertyDialog(HarmonicResponseAnalyzer *eigenanalyzer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:

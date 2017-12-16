@@ -431,7 +431,7 @@
       </DynamicSystemSolver>
     </Embed>
 
-    <HarmonicResponseAnalyser xmlns="http://www.mbsim-env.de/MBSimAnalyser">
+    <HarmonicResponseAnalyzer xmlns="http://www.mbsim-env.de/MBSimAnalyzer">
       <excitationFrequencies>[0.1:0.5:30]'</excitationFrequencies>
       <systemFrequencies>
         <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -439,7 +439,7 @@
       </xmlVector>
     </systemFrequencies>
       <determineEquilibriumState>1</determineEquilibriumState>
-  </HarmonicResponseAnalyser>
+  </HarmonicResponseAnalyzer>
 
   </MBSimProject>
   

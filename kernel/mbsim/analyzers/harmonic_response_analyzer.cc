@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "harmonic_response_analyser.h"
+#include "harmonic_response_analyzer.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
@@ -30,13 +30,13 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimAnalyser {
+namespace MBSimAnalyzer {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYSER, HarmonicResponseAnalyser)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYSER, HarmonicResponseAnalyzer)
 
-  HarmonicResponseAnalyser::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) { }
+  HarmonicResponseAnalyzer::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) { }
 
-  Vec HarmonicResponseAnalyser::Residuum::operator()(const Vec &z) {
+  Vec HarmonicResponseAnalyzer::Residuum::operator()(const Vec &z) {
     Vec res;
     sys->setTime(t);
     sys->setState(z);
@@ -45,18 +45,18 @@ namespace MBSimAnalyser {
     return res;
   } 
 
-  void HarmonicResponseAnalyser::execute() {
+  void HarmonicResponseAnalyzer::execute() {
     if(task == frequencyResponse) computeFrequencyResponse();
   }
 
-  void HarmonicResponseAnalyser::computeFrequencyResponse() {
+  void HarmonicResponseAnalyzer::computeFrequencyResponse() {
     if(not(fE.size()))
       fE.resize(1,INIT,1);
 
     if(not(zEq.size()))
       zEq = system->evalz0();
     else if(zEq.size()!=system->getzSize())
-      throw MBSimError("(HarmonicResponseAnalyser::computeFrequencyResponse): size of z0 does not match");
+      throw MBSimError("(HarmonicResponseAnalyzer::computeFrequencyResponse): size of z0 does not match");
 
     if(compEq) {
       Residuum f(system,tStart);
@@ -163,7 +163,7 @@ namespace MBSimAnalyser {
 //    t0 += T+dtPlot;
   }
 
-  void HarmonicResponseAnalyser::initializeUsingXML(DOMElement *element) {
+  void HarmonicResponseAnalyzer::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"startTime");
     if(e) setStartTime(E(e)->getText<double>());

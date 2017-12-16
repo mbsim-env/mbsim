@@ -30,17 +30,17 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
-  class Eigenanalyser : public Solver {
+  class Eigenanalyzer : public Solver {
     public:
-      QString getType() const override { return "Eigenanalyser"; }
-      EigenanalyserPropertyDialog* createPropertyDialog() override {return new EigenanalyserPropertyDialog(this);}
+      QString getType() const override { return "Eigenanalyzer"; }
+      EigenanalyzerPropertyDialog* createPropertyDialog() override {return new EigenanalyzerPropertyDialog(this);}
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMANALYSER; }
   };
 
-  class HarmonicResponseAnalyser : public Solver {
+  class HarmonicResponseAnalyzer : public Solver {
     public:
-      QString getType() const override { return "HarmonicResponseAnalyser"; }
-      HarmonicResponseAnalyserPropertyDialog* createPropertyDialog() override {return new HarmonicResponseAnalyserPropertyDialog(this);}
+      QString getType() const override { return "HarmonicResponseAnalyzer"; }
+      HarmonicResponseAnalyzerPropertyDialog* createPropertyDialog() override {return new HarmonicResponseAnalyzerPropertyDialog(this);}
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMANALYSER; }
   };
 
