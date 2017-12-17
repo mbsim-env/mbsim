@@ -148,7 +148,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *task, *amplitude, *modeAmplitudeTable, *loops, *determineEquilibriumState;
+      ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *task, *initialDeviation, *amplitude, *modeAmplitudeTable, *loops, *determineEquilibriumState;
   };
 
   class HarmonicResponseAnalyzerPropertyDialog : public SolverPropertyDialog {

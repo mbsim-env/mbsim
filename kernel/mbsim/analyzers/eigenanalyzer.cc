@@ -48,7 +48,7 @@ const Vector<Ref, double> fromComplex(const Vector<Ref, complex<double> > &x) {
 
 namespace MBSimAnalyzer {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYSER, Eigenanalyzer)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYZER, Eigenanalyzer)
 
   Eigenanalyzer::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) { }
 
@@ -206,32 +206,34 @@ namespace MBSimAnalyzer {
 
   void Eigenanalyzer::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"startTime");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"startTime");
     if(e) setStartTime(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"endTime");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"endTime");
     if(e) setEndTime(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"plotStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"plotStepSize");
     if(e) setPlotStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"initialState");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"initialState");
     if(e) setInitialState(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"task");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"task");
     if(e) {
       string str=X()%E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
       if(str=="eigenmodes") task=eigenmodes;
       else if(str=="eigenmotion") task=eigenmotion;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"amplitude");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"initialDeviation");
+    if(e) setInitialDeviation(E(e)->getText<Vec>());
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"amplitude");
     if(e) setAmplitude(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"modeAmplitudeTable");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"modeAmplitudeTable");
     if(e) {
       setModeAmplitudeTable(E(e)->getText<Matrix<General,Var,Fixed<2>,double> >());
       for(int i=0; i<MA.rows(); i++)
         MA(i,0)--;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"loops");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"loops");
     if(e) setLoops(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"determineEquilibriumState");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"determineEquilibriumState");
     if(e) setDetermineEquilibriumState(E(e)->getText<bool>());
   }
 

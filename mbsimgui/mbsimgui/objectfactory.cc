@@ -279,9 +279,9 @@ namespace MBSimGUI {
       return new EulerExplicitIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"RKSuiteIntegrator")
       return new RKSuiteIntegrator;
-    else if(E(element)->getTagName()==MBSIMANALYSER%"Eigenanalyzer")
+    else if(E(element)->getTagName()==MBSIMANALYZER%"Eigenanalyzer")
       return new Eigenanalyzer;
-    else if(E(element)->getTagName()==MBSIMANALYSER%"HarmonicResponseAnalyzer")
+    else if(E(element)->getTagName()==MBSIMANALYZER%"HarmonicResponseAnalyzer")
       return new HarmonicResponseAnalyzer;
     return nullptr;
   }

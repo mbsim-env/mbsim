@@ -46,6 +46,11 @@
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="initialDeviation" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Anfangsauslenkung aus der Referenzlage.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="amplitude" type="pv:unknownScalar" minOccurs="0">  
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd

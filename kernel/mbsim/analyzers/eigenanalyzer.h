@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _EIGENANALYSER_H_
-#define _EIGENANALYSER_H_
+#ifndef _EIGENANALYZER_H_
+#define _EIGENANALYZER_H_
 
 #include "fmatvec/fmatvec.h"
 #include "mbsim/functions/function.h"
@@ -26,7 +26,7 @@
 
 namespace MBSimAnalyzer {
 
-  const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://www.mbsim-env.de/MBSimAnalyzer");
+  const MBXMLUtils::NamespaceURI MBSIMANALYZER("http://www.mbsim-env.de/MBSimAnalyzer");
 
   /**
    * \brief Eigenanalyzer for dynamic systems
