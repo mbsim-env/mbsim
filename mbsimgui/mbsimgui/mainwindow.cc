@@ -645,7 +645,6 @@ namespace MBSimGUI {
       QDir::setCurrent(QFileInfo(file).absolutePath());
       projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
-      MBSimObjectFactory::initialize();
       std::string message;
       try { 
         doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
