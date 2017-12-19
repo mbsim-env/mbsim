@@ -1583,6 +1583,19 @@ namespace MBSimGUI {
 
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(joint),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
+
+    connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(momentDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(function->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+  }
+
+  void ElasticJointPropertyDialog::updateWidget() {
+    int size = 0;
+    if(forceDirection->isActive())
+      size += static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(forceDirection->getWidget())->getWidget())->cols();
+    if(momentDirection->isActive())
+      size += static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(momentDirection->getWidget())->getWidget())->cols();
+    function->resize_(size,1);
   }
 
   DOMElement* ElasticJointPropertyDialog::initializeUsingXML(DOMElement *parent) {

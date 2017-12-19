@@ -538,6 +538,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *forceDirection, *momentDirection, *function;
+      void updateWidget() override;
   };
 
   class GeneralizedSpringDamperPropertyDialog : public DualRigidBodyLinkPropertyDialog {

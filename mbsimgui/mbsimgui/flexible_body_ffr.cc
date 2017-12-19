@@ -65,20 +65,20 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  DOMElement* FlexibleBodyFFR::processFileID(DOMElement *element) {
-    element = Body::processFileID(element);
+  DOMElement* FlexibleBodyFFR::processIDAndHref(DOMElement *element) {
+    element = Body::processIDAndHref(element);
 
     // frames
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
     for(size_t i=1; i<frame.size(); i++) {
-      frame[i]->processFileID(ELE);
+      frame[i]->processIDAndHref(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
     // contours
     ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"contours")->getFirstElementChild();
     for(auto & i : contour) {
-      i->processFileID(ELE);
+      i->processIDAndHref(ELE);
       ELE=ELE->getNextElementSibling();
     }
 

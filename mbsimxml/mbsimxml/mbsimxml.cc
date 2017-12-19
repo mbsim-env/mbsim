@@ -50,7 +50,7 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_OpenMBV"/"openmbv.xsd",
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSim"/"mbsim.xsd",
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimIntegrator"/"mbsimintegrator.xsd",
-    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimAnalyser"/"mbsimanalyser.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimAnalyzer"/"mbsimanalyzer.xsd",
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBXMLUtils"/"physicalvariable.xsd",
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBXMLUtils_CasADi"/"casadi.xsd"
   };

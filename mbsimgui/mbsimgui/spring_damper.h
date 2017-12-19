@@ -27,14 +27,14 @@ namespace MBSimGUI {
   class SpringDamper : public FixedFrameLink {
     public:
       QString getType() const override { return "SpringDamper"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new SpringDamperPropertyDialog(this);}
   };
 
   class DirectionalSpringDamper : public FloatingFrameLink {
     public:
       QString getType() const override { return "DirectionalSpringDamper"; }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new DirectionalSpringDamperPropertyDialog(this);}
   };
 

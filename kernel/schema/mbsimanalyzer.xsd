@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://www.mbsim-env.de/MBSimAnalyser"
+<xs:schema targetNamespace="http://www.mbsim-env.de/MBSimAnalyzer"
   elementFormDefault="qualified"
   attributeFormDefault="unqualified"
-  xmlns="http://www.mbsim-env.de/MBSimAnalyser"
+  xmlns="http://www.mbsim-env.de/MBSimAnalyzer"
   xmlns:mbsim="http://www.mbsim-env.de/MBSim"
   xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
@@ -11,12 +11,12 @@
   <xs:import namespace="http://www.mbsim-env.de/MBSim"/>
   <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"/>
 
-  <xs:element name="Eigenanalyser" substitutionGroup="mbsim:Solver" type="EigenanalyserType">
+  <xs:element name="Eigenanalyzer" substitutionGroup="mbsim:Solver" type="EigenanalyzerType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="EigenanalyserType">
+  <xs:complexType name="EigenanalyzerType">
     <xs:complexContent>
       <xs:extension base="mbsim:SolverType">
         <xs:sequence>
@@ -46,6 +46,11 @@
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="initialDeviation" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Anfangsauslenkung aus der Referenzlage.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="amplitude" type="pv:unknownScalar" minOccurs="0">  
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
@@ -71,12 +76,12 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HarmonicResponseAnalyser" substitutionGroup="mbsim:Solver" type="HarmonicResponseAnalyserType">
+  <xs:element name="HarmonicResponseAnalyzer" substitutionGroup="mbsim:Solver" type="HarmonicResponseAnalyzerType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="HarmonicResponseAnalyserType">
+  <xs:complexType name="HarmonicResponseAnalyzerType">
     <xs:complexContent>
       <xs:extension base="mbsim:SolverType">
         <xs:sequence>

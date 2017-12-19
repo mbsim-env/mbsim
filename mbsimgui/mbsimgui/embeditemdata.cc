@@ -136,7 +136,21 @@ namespace MBSimGUI {
     return embed and E(embed)->getFirstElementChildNamed(PV%"Parameter");
   }
 
-  DOMElement* EmbedItemData::processFileID(DOMElement *element) {
+  DOMElement* EmbedItemData::processIDAndHref(DOMElement *element) {
+    if(MBXMLUtils::E(element)->hasAttribute("href")) {
+      DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getXMLElement(),true));
+      element->insertBefore(ele2,NULL);
+      MBXMLUtils::E(element)->removeAttribute("href");
+    }
+    if(MBXMLUtils::E(element)->hasAttribute("parameterHref") and getNumberOfParameters()) {
+      DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getParameter(0)->getXMLElement()->getParentNode(),true));
+      element->insertBefore(ele2,element->getFirstElementChild());
+      MBXMLUtils::E(element)->removeAttribute("parameterHref");
+    }
+    return E(element)->getTagName()==PV%"Embed"?element->getLastElementChild():element;
+  }
+
+  DOMElement* EmbedItemData::processHref(DOMElement *element) {
     if(MBXMLUtils::E(element)->hasAttribute("href")) {
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getXMLElement(),true));
       element->insertBefore(ele2,NULL);

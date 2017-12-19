@@ -69,14 +69,25 @@ namespace MBSimGUI {
     setSolver(Embed<Solver>::createAndInit(ele));
   }
 
-  DOMElement* Project::processFileID(DOMElement *element) {
-    element = EmbedItemData::processFileID(element);
+  DOMElement* Project::processIDAndHref(DOMElement *element) {
+    element = EmbedItemData::processIDAndHref(element);
     DOMElement* ele0 = element->getFirstElementChild();
     if(E(ele0)->getTagName()==PV%"evaluator")
       ele0 = ele0->getNextElementSibling();
-    dss->processFileID(ele0);
+    dss->processIDAndHref(ele0);
     ele0 = ele0->getNextElementSibling();
-    solver->processFileID(ele0);
+    solver->processIDAndHref(ele0);
+    return element;
+  }
+
+  DOMElement* Project::processHref(DOMElement *element) {
+    element = EmbedItemData::processHref(element);
+    DOMElement* ele0 = element->getFirstElementChild();
+    if(E(ele0)->getTagName()==PV%"evaluator")
+      ele0 = ele0->getNextElementSibling();
+    dss->processHref(ele0);
+    ele0 = ele0->getNextElementSibling();
+    solver->processHref(ele0);
     return element;
   }
 

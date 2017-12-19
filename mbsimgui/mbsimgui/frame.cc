@@ -29,8 +29,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  DOMElement* Frame::processFileID(DOMElement *element) {
-    element = Element::processFileID(element);
+  DOMElement* Frame::processIDAndHref(DOMElement *element) {
+    element = Element::processIDAndHref(element);
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();

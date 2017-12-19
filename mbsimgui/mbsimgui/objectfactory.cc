@@ -38,7 +38,7 @@
 //#include "linear_transfer_system.h"
 #include "parameter.h"
 #include "integrator.h"
-#include "analyser.h"
+#include "analyzer.h"
 #include <string>
 
 using namespace std;
@@ -279,10 +279,10 @@ namespace MBSimGUI {
       return new EulerExplicitIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"RKSuiteIntegrator")
       return new RKSuiteIntegrator;
-    else if(E(element)->getTagName()==MBSIMANALYSER%"Eigenanalyser")
-      return new Eigenanalyser;
-    else if(E(element)->getTagName()==MBSIMANALYSER%"HarmonicResponseAnalyser")
-      return new HarmonicResponseAnalyser;
+    else if(E(element)->getTagName()==MBSIMANALYZER%"Eigenanalyzer")
+      return new Eigenanalyzer;
+    else if(E(element)->getTagName()==MBSIMANALYZER%"HarmonicResponseAnalyzer")
+      return new HarmonicResponseAnalyzer;
     return nullptr;
   }
 

@@ -69,7 +69,6 @@ namespace MBSimGUI {
   DOMLSSerializer *serializer=impl->createLSSerializer();
 
   bool currentTask;
-  bool absolutePath = false;
   QDir mbsDir;
 
   MainWindow *mw;
@@ -422,6 +421,10 @@ namespace MBSimGUI {
   void MainWindow::setProjectChanged(bool changed) { 
     setWindowModified(changed);
     if(changed) {
+      actionOpenMBV->setDisabled(true);
+      actionH5plotserie->setDisabled(true);
+      actionEigenanalysis->setDisabled(true);
+      actionFrequencyResponse->setDisabled(true);
       undos.push_back(static_cast<xercesc::DOMDocument*>(doc->cloneNode(true)));
       if(undos.size() > maxUndo)
         undos.pop_front();
@@ -601,15 +604,17 @@ namespace MBSimGUI {
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
       index = model->index(0,0);
       model->removeRow(index.row(), index.parent());
+
       delete project;
 
       doc = impl->createDocument();
+
       project = new Project;
       project->createXMLElement(doc);
       projectView->setProject(project);
+      projectView->updateName();
 
       model->createGroupItem(project->getDynamicSystemSolver(),QModelIndex());
-
       elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
       solverView->setSolver(0);
@@ -666,9 +671,7 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProjectAs() {
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", QString("./")+model->getItem(index)->getItemData()->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
+    QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", project->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
     if(not(file.isEmpty())) {
       file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
       mbsDir = QFileInfo(file).absolutePath();
@@ -717,6 +720,7 @@ namespace MBSimGUI {
   // update model parameters including additional paramters from paramList
   void MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
+    doc->setDocumentURI(X()%"file://Project.mbsimprj.xml");
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,nullptr);
 
@@ -743,22 +747,9 @@ namespace MBSimGUI {
       ele0->insertBefore(node,nullptr);
     }
 
-    DOMElement *root = doc->getDocumentElement();
-    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
-      DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
-          X()%"MBS.mbsimparam.xml");
-      root->insertBefore(filenamePI, root->getFirstChild());
-    }
-
     string message;
     try {
       D(doc)->validate();
-      // create a new empty evaluator
-      // Note: do not use "eval.reset(); eval=..." or something like this here since this will possibly deinit
-      // static part of the evaluator and then reinit these and will be time consuming.
-      eval=Eval::createEvaluator("octave", &dependencies);
-
-      // add parameter
       eval->addParamSet(doc->getDocumentElement());
     }
     catch(const std::exception &error) {
@@ -861,43 +852,27 @@ namespace MBSimGUI {
   }
 
   void MainWindow::mbsimxml(int task) {
-    absolutePath = true;
-    QModelIndex index = elementView->model()->index(0,0);
-    if(not projectView->getProject())
-      return;
 
     currentTask = task;
 
-//    shared_ptr<DOMDocument> doc(static_cast<DOMDocument*>(this->doc->cloneNode(true)));
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
+    doc->setDocumentURI(X()%"file://Project.mbsimprj.xml");
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
-    projectView->getProject()->processFileID(newDocElement);
+    projectView->getProject()->processIDAndHref(newDocElement);
 
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     QString projectFile;
 
+    projectFile=uniqueTempDir_+"/Project.mbsimprj.flat.xml";
+
     if(task==1) {
-      projectFile=uniqueTempDir_+"/"+project->getDynamicSystemSolver()->getName()+"_tmp.mbsimprj.flat.xml";
       if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
         static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
     }
-    else
-      projectFile=uniqueTempDir_+"/"+project->getDynamicSystemSolver()->getName()+".mbsimprj.flat.xml";
 
-    absolutePath = false;
-
-    DOMElement *root = doc->getDocumentElement();
-
-    // GUI-XML-Baum mit OriginalFilename ergaenzen
-    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
-      DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
-          X()%(project->getDynamicSystemSolver()->getName().toStdString()+".mbsimprj.xml"));
-      root->insertBefore(filenamePI, root->getFirstChild());
-    }
-
+    DOMElement *root;
     QString errorText;
-
     try {
       D(doc)->validate();
       root = doc->getDocumentElement();
@@ -980,9 +955,12 @@ namespace MBSimGUI {
   }
 
   void MainWindow::debug() {
+    currentTask = 0;
+    auto *newdoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
+    projectView->getProject()->processHref(newdoc->getDocumentElement());
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-    QString projectFile = uniqueTempDir_+"/"+project->getDynamicSystemSolver()->getName()+"_debug.mbsimprj.xml";
-    saveProject(projectFile,false,false);
+    QString projectFile = uniqueTempDir_+"/Project.mbsimprj.xml";
+    serializer->writeToURI(newdoc, X()%projectFile.toStdString());
     QStringList arg;
     arg.append("--stopafterfirststep");
     arg.append(projectFile);
@@ -1031,13 +1009,14 @@ namespace MBSimGUI {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     index = model->index(0,0);
     model->removeRow(index.row(), index.parent());
+
     delete project;
 
     project=Embed<Project>::createAndInit(doc->getDocumentElement());
     projectView->setProject(project);
+    projectView->updateName();
 
     model->createGroupItem(project->getDynamicSystemSolver());
-
     elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
     solverView->setSolver(getProject()->getSolver());
@@ -1080,8 +1059,8 @@ namespace MBSimGUI {
   void MainWindow::removeElement() {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
-    auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    if((not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element))) {
+    auto *element = dynamic_cast<Element*>(model->getItem(index)->getItemData());
+    if(element and (not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element))) {
       setProjectChanged(true);
       if(element == elementBuffer.first)
         elementBuffer.first = NULL;
@@ -1093,19 +1072,22 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeParameter() {
-    setProjectChanged(true);
     auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
-    auto *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
-    if(parameter == parameterBuffer.first)
-      parameterBuffer.first = NULL;
-    DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
-    if(ps and X()%ps->getNodeName()=="#text")
-      parameter->getXMLElement()->getParentNode()->removeChild(ps);
-    parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
-    parameter->getParent()->removeParameter(parameter);
-    parameter->getParent()->maybeRemoveEmbedXMLElement();
-    model->removeRow(index.row(), index.parent());
+    auto *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
+    if(parameter) {
+      setProjectChanged(true);
+      if(parameter == parameterBuffer.first)
+        parameterBuffer.first = NULL;
+      DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
+      if(ps and X()%ps->getNodeName()=="#text")
+        parameter->getXMLElement()->getParentNode()->removeChild(ps);
+      parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
+      parameter->getParent()->removeParameter(parameter);
+      parameter->getParent()->maybeRemoveEmbedXMLElement();
+      model->removeRow(index.row(), index.parent());
+      mbsimxml(1);
+    }
   }
 
   void MainWindow::remove() {
@@ -1322,7 +1304,7 @@ namespace MBSimGUI {
     group->getParent()->setGroup(group,j);
     model->removeRows(0,group->getParent()->getNumberOfGroups(),index.parent());
     for(int i=0; i<group->getParent()->getNumberOfGroups(); i++)
-      model->createGroupItem(group->getParent()->getGroup(i),index.parent(),false);
+      model->createGroupItem(group->getParent()->getGroup(i),index.parent());
     elementView->setCurrentIndex(index.sibling(j,0));
   }
 
@@ -1345,7 +1327,7 @@ namespace MBSimGUI {
     object->getParent()->setObject(object,j);
     model->removeRows(0,object->getParent()->getNumberOfObjects(),index.parent());
     for(int i=0; i<object->getParent()->getNumberOfObjects(); i++)
-      model->createObjectItem(object->getParent()->getObject(i),index.parent(),false);
+      model->createObjectItem(object->getParent()->getObject(i),index.parent());
     elementView->setCurrentIndex(index.sibling(j,0));
   }
 

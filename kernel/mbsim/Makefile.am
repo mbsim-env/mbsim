@@ -1,4 +1,4 @@
-SUBDIRS = numerics utils integrators analysers contact_kinematics constitutive_laws frames contours objects links constraints functions observers .
+SUBDIRS = numerics utils integrators analyzers contact_kinematics constitutive_laws frames contours objects links constraints functions observers .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_SOURCES = element.cc\
@@ -11,18 +11,18 @@ libmbsim_la_SOURCES = element.cc\
 		      graph.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la
-libmbsim_la_LIBADD += analysers/libanalysers.la 
-libmbsim_la_LIBADD += utils/libutils.la 
+libmbsim_la_LIBADD += analyzers/libanalyzers.la
+libmbsim_la_LIBADD += utils/libutils.la
 libmbsim_la_LIBADD += constitutive_laws/libconstitutivelaws.la
-libmbsim_la_LIBADD += contact_kinematics/libcontactkinematics.la 
+libmbsim_la_LIBADD += contact_kinematics/libcontactkinematics.la
 libmbsim_la_LIBADD += frames/libframe.la
 libmbsim_la_LIBADD += contours/libcontour.la
 libmbsim_la_LIBADD += objects/libobject.la
 libmbsim_la_LIBADD += links/liblink.la
 libmbsim_la_LIBADD += constraints/libconstraint.la
-libmbsim_la_LIBADD += numerics/libnumerics.la 
-libmbsim_la_LIBADD += functions/libfunction.la 
-libmbsim_la_LIBADD += observers/libobserver.la 
+libmbsim_la_LIBADD += numerics/libnumerics.la
+libmbsim_la_LIBADD += functions/libfunction.la
+libmbsim_la_LIBADD += observers/libobserver.la
 libmbsim_la_LIBADD += -lgfortran $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 libmbsim_la_LIBADD += -l@BOOST_SYSTEM_LIB@
 

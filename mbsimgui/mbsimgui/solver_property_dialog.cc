@@ -20,7 +20,7 @@
 #include <config.h>
 #include "solver_property_dialog.h"
 #include "integrator.h"
-#include "analyser.h"
+#include "analyzer.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
@@ -359,48 +359,52 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  EigenanalyserPropertyDialog::EigenanalyserPropertyDialog(Eigenanalyser *eigenanalyser, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(eigenanalyser,parent,f) {
+  EigenanalyzerPropertyDialog::EigenanalyzerPropertyDialog(Eigenanalyzer *eigenanalyzer, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(eigenanalyzer,parent,f) {
     addTab("General");
     addTab("Initial conditions");
 
-    startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"startTime");
+    startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"startTime");
     addToTab("General", startTime);
 
-    endTime = new ExtWidget("End time",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"endTime");
+    endTime = new ExtWidget("End time",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"endTime");
     addToTab("General", endTime);
 
-    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"plotStepSize");
+    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"plotStepSize");
     addToTab("General", plotStepSize);
 
-    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"initialState");
+    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"initialState");
     addToTab("Initial conditions", initialState);
 
     vector<QString> list;
     list.emplace_back("\"eigenmodes\"");
     list.emplace_back("\"eigenmotion\"");
-    task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIMANALYSER%"task");
+    task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIMANALYZER%"task");
     addToTab("General",task);
 
-    amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"amplitude");
+    initialDeviation = new ExtWidget("Initial deviation",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"initialDeviation");
+    addToTab("General",initialDeviation);
+
+    amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"amplitude");
     addToTab("General",amplitude);
 
-    modeAmplitudeTable = new ExtWidget("Mode amplitude table",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,2),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"modeAmplitudeTable");
+    modeAmplitudeTable = new ExtWidget("Mode amplitude table",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,2),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"modeAmplitudeTable");
     addToTab("General",modeAmplitudeTable);
 
-    loops = new ExtWidget("Loops",new SpinBoxWidget(5),true,false,MBSIMANALYSER%"loops");
+    loops = new ExtWidget("Loops",new SpinBoxWidget(5),true,false,MBSIMANALYZER%"loops");
     addToTab("General",loops);
 
-    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"determineEquilibriumState");
+    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"determineEquilibriumState");
     addToTab("General",determineEquilibriumState);
   }
 
-  DOMElement* EigenanalyserPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* EigenanalyzerPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
     startTime->initializeUsingXML(item->getXMLElement());
     endTime->initializeUsingXML(item->getXMLElement());
     plotStepSize->initializeUsingXML(item->getXMLElement());
     initialState->initializeUsingXML(item->getXMLElement());
     task->initializeUsingXML(item->getXMLElement());
+    initialDeviation->initializeUsingXML(item->getXMLElement());
     amplitude->initializeUsingXML(item->getXMLElement());
     modeAmplitudeTable->initializeUsingXML(item->getXMLElement());
     loops->initializeUsingXML(item->getXMLElement());
@@ -408,13 +412,14 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* EigenanalyserPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* EigenanalyzerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SolverPropertyDialog::writeXMLFile(item->getXMLElement());
     startTime->writeXMLFile(item->getXMLElement());
     endTime->writeXMLFile(item->getXMLElement());
     plotStepSize->writeXMLFile(item->getXMLElement());
     initialState->writeXMLFile(item->getXMLElement());
     task->writeXMLFile(item->getXMLElement());
+    initialDeviation->writeXMLFile(item->getXMLElement());
     amplitude->writeXMLFile(item->getXMLElement());
     modeAmplitudeTable->writeXMLFile(item->getXMLElement());
     loops->writeXMLFile(item->getXMLElement());
@@ -422,35 +427,35 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  HarmonicResponseAnalyserPropertyDialog::HarmonicResponseAnalyserPropertyDialog(HarmonicResponseAnalyser *eigenanalyser, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(eigenanalyser,parent,f) {
+  HarmonicResponseAnalyzerPropertyDialog::HarmonicResponseAnalyzerPropertyDialog(HarmonicResponseAnalyzer *eigenanalyzer, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(eigenanalyzer,parent,f) {
     addTab("General");
     addTab("Initial conditions");
 
-    startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"startTime");
+    startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"startTime");
     addToTab("General", startTime);
 
-    excitationFrequencies = new ExtWidget("Excitation frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"excitationFrequencies");
+    excitationFrequencies = new ExtWidget("Excitation frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"excitationFrequencies");
     addToTab("General", excitationFrequencies);
 
-    systemFrequencies = new ExtWidget("System frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"systemFrequencies");
+    systemFrequencies = new ExtWidget("System frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"systemFrequencies");
     addToTab("General", systemFrequencies);
 
-    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"plotStepSize");
+    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"plotStepSize");
     addToTab("General", plotStepSize);
 
-    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"initialState");
+    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"initialState");
     addToTab("Initial conditions", initialState);
 
     vector<QString> list;
     list.emplace_back("\"frequencyResponse\"");
-    task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIMANALYSER%"task");
+    task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIMANALYZER%"task");
     addToTab("General",task);
 
-    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYSER%"determineEquilibriumState");
+    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMANALYZER%"determineEquilibriumState");
     addToTab("General",determineEquilibriumState);
   }
 
-  DOMElement* HarmonicResponseAnalyserPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* HarmonicResponseAnalyzerPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
     startTime->initializeUsingXML(item->getXMLElement());
     excitationFrequencies->initializeUsingXML(item->getXMLElement());
@@ -462,7 +467,7 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* HarmonicResponseAnalyserPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* HarmonicResponseAnalyzerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SolverPropertyDialog::writeXMLFile(item->getXMLElement());
     startTime->writeXMLFile(item->getXMLElement());
     excitationFrequencies->writeXMLFile(item->getXMLElement());

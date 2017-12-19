@@ -1394,7 +1394,7 @@ namespace MBSimGUI {
   }
 
   void FromFileWidget::changePath(int i) {
-    setFile(i?mbsDir.absoluteFilePath(getFile()):mbsDir.relativeFilePath(getFile()));
+    relativeFilePath->setText(i?mbsDir.absoluteFilePath(getFile()):mbsDir.relativeFilePath(getFile()));
   }
 
   BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,0) {

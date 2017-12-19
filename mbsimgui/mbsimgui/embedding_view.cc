@@ -49,7 +49,7 @@ namespace MBSimGUI {
         return;
       }
       else {
-        auto *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
+        auto *item = dynamic_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
         if(item and item->getXMLElement()) {
           mw->updateParameters(item);
           editor = item->createEmbeddingPropertyDialog();

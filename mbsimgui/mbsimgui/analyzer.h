@@ -17,8 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _ANALYSER__H_
-#define _ANALYSER__H_
+#ifndef _ANALYZER__H_
+#define _ANALYZER__H_
 
 #include "solver.h"
 #include "solver_property_dialog.h"
@@ -30,18 +30,18 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
-  class Eigenanalyser : public Solver {
+  class Eigenanalyzer : public Solver {
     public:
-      QString getType() const override { return "Eigenanalyser"; }
-      EigenanalyserPropertyDialog* createPropertyDialog() override {return new EigenanalyserPropertyDialog(this);}
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMANALYSER; }
+      QString getType() const override { return "Eigenanalyzer"; }
+      EigenanalyzerPropertyDialog* createPropertyDialog() override {return new EigenanalyzerPropertyDialog(this);}
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMANALYZER; }
   };
 
-  class HarmonicResponseAnalyser : public Solver {
+  class HarmonicResponseAnalyzer : public Solver {
     public:
-      QString getType() const override { return "HarmonicResponseAnalyser"; }
-      HarmonicResponseAnalyserPropertyDialog* createPropertyDialog() override {return new HarmonicResponseAnalyserPropertyDialog(this);}
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMANALYSER; }
+      QString getType() const override { return "HarmonicResponseAnalyzer"; }
+      HarmonicResponseAnalyzerPropertyDialog* createPropertyDialog() override {return new HarmonicResponseAnalyzerPropertyDialog(this);}
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMANALYZER; }
   };
 
 }

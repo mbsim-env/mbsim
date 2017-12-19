@@ -24,15 +24,15 @@
 #include "mbsim/functions/function.h"
 #include "mbsim/solver.h"
 
-namespace MBSimAnalyser {
+namespace MBSimAnalyzer {
 
-  const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://www.mbsim-env.de/MBSimAnalyser");
+  const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://www.mbsim-env.de/MBSimAnalyzer");
 
   /**
-   * \brief HarmonicResponseAnalyser for dynamic systems
+   * \brief HarmonicResponseAnalyzer for dynamic systems
    * \author Martin Foerg
    */
-  class HarmonicResponseAnalyser : public MBSim::Solver {
+  class HarmonicResponseAnalyzer : public MBSim::Solver {
 
     class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
       public:
@@ -50,7 +50,7 @@ namespace MBSimAnalyser {
       /**
        * \brief Standard constructor 
        */
-      HarmonicResponseAnalyser() : tStart(0), dtPlot(1e-2), compEq(false), task(frequencyResponse) { }
+      HarmonicResponseAnalyzer() : tStart(0), dtPlot(1e-2), compEq(false), task(frequencyResponse) { }
       
       /**
        * \brief Perform a harmonic response analysis of the system

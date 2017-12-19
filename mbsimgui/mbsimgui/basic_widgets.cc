@@ -40,7 +40,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern bool absolutePath;
   extern QDir mbsDir;
   extern MainWindow *mw;
 
@@ -703,9 +702,9 @@ namespace MBSimGUI {
   void FileWidget::changePath(int i) {
     QString file = quote?getFile().mid(1,getFile().length()-2):getFile();
     if(i)
-      setFile(quote?("\""+mbsDir.absoluteFilePath(file)+"\""):mbsDir.absoluteFilePath(file));
+      filePath->setText(quote?("\""+mbsDir.absoluteFilePath(file)+"\""):mbsDir.absoluteFilePath(file));
     else
-      setFile(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
+      filePath->setText(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
   }
 
   SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {

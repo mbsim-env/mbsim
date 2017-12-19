@@ -46,7 +46,8 @@ namespace MBSimGUI {
       virtual ProjectPropertyDialog* createPropertyDialog() { return new ProjectPropertyDialog(this); }
       QMenu* createContextMenu() override { return nullptr; }
       EmbeddingPropertyDialog* createEmbeddingPropertyDialog() override { return new EmbeddingPropertyDialog(this,false); }
-      xercesc::DOMElement* processFileID(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      xercesc::DOMElement* processHref(xercesc::DOMElement* element) override;
       void setDynamicSystemSolver(DynamicSystemSolver *dss_);
       void setSolver(Solver *solver_);
       DynamicSystemSolver* getDynamicSystemSolver() const { return dss; }

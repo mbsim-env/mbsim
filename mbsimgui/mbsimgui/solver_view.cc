@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "integrator.h"
-#include "analyser.h"
+#include "analyzer.h"
 #include "solver_view.h"
 #include "solver_property_dialog.h"
 #include "project.h"
@@ -55,9 +55,9 @@ namespace MBSimGUI {
     actionGroup->addAction(action);
     action = new QAction("RKSuite integrator", this);
     actionGroup->addAction(action);
-    action = new QAction("Eigenanalyser", this);
+    action = new QAction("Eigenanalyzer", this);
     actionGroup->addAction(action);
-    action = new QAction("HarmonicResponseAnalyser", this);
+    action = new QAction("Harmonic response analyzer", this);
     actionGroup->addAction(action);
     addActions(actionGroup->actions());
     connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(selectSolver(QAction*)));
@@ -77,8 +77,8 @@ namespace MBSimGUI {
     type.emplace_back("Time stepping integrator");
     type.emplace_back("Euler explicit integrator");
     type.emplace_back("RKSuite integrator");
-    type.emplace_back("Eigenanalyser");
-    type.emplace_back("HarmonicResponseAnalyser");
+    type.emplace_back("Eigenanalyzer");
+    type.emplace_back("HarmonicResponseAnalyzer");
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(openContextMenu()));
 
@@ -137,9 +137,9 @@ namespace MBSimGUI {
     else if(i==6)
       return new RKSuiteIntegrator;
     else if(i==7)
-      return new Eigenanalyser;
+      return new Eigenanalyzer;
     else if(i==8)
-      return new HarmonicResponseAnalyser;
+      return new HarmonicResponseAnalyzer;
     return nullptr;
   }
 
@@ -158,9 +158,9 @@ namespace MBSimGUI {
       i=5;
     else if(dynamic_cast<RKSuiteIntegrator*>(solver))
       i=6;
-    else if(dynamic_cast<Eigenanalyser*>(solver))
+    else if(dynamic_cast<Eigenanalyzer*>(solver))
       i=7;
-    else if(dynamic_cast<HarmonicResponseAnalyser*>(solver))
+    else if(dynamic_cast<HarmonicResponseAnalyzer*>(solver))
       i=8;
     updateText();
   }

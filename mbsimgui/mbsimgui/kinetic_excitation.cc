@@ -28,8 +28,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  DOMElement* KineticExcitation::processFileID(DOMElement *element) {
-    element = Link::processFileID(element);
+  DOMElement* KineticExcitation::processIDAndHref(DOMElement *element) {
+    element = Link::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ELE) {

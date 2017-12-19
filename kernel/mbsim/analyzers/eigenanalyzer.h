@@ -17,22 +17,22 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _EIGENANALYSER_H_
-#define _EIGENANALYSER_H_
+#ifndef _EIGENANALYZER_H_
+#define _EIGENANALYZER_H_
 
 #include "fmatvec/fmatvec.h"
 #include "mbsim/functions/function.h"
 #include "mbsim/solver.h"
 
-namespace MBSimAnalyser {
+namespace MBSimAnalyzer {
 
-  const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://www.mbsim-env.de/MBSimAnalyser");
+  const MBXMLUtils::NamespaceURI MBSIMANALYZER("http://www.mbsim-env.de/MBSimAnalyzer");
 
   /**
-   * \brief Eigenanalyser for dynamic systems
+   * \brief Eigenanalyzer for dynamic systems
    * \author Martin Foerg
    */
-  class Eigenanalyser : public MBSim::Solver {
+  class Eigenanalyzer : public MBSim::Solver {
 
     class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
       public:
@@ -50,7 +50,7 @@ namespace MBSimAnalyser {
       /**
        * \brief Standard constructor 
        */
-      Eigenanalyser() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), loops(5), plotsPerLoop(100), compEq(false), task(eigenmodes) { }
+      Eigenanalyzer() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), loops(5), plotsPerLoop(100), compEq(false), task(eigenmodes) { }
       
       /**
        * \brief Perform an eigenanalysis of the system

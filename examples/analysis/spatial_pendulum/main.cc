@@ -1,12 +1,12 @@
 #include "system.h"
-#include <mbsim/analysers/eigenanalyser.h>
+#include <mbsim/analyzers/eigenanalyzer.h>
 #include "mbsim/utils/eps.h"
 #include "mbsim/integrators/integrators.h"
 
 using namespace std;
 using namespace MBSim;
 using namespace MBSimIntegrator;
-using namespace MBSimAnalyser;
+using namespace MBSimAnalyzer;
 using namespace fmatvec;
 
 int main (int argc, char* argv[]) {
@@ -25,33 +25,33 @@ int main (int argc, char* argv[]) {
   integrator.integrate(*sys);
 
   cout << "Analyse planar motion" << endl;
-  Eigenanalyser analyser;
-  analyser.setOutputFileName("Eigenanalysis1.mat");
-  analyser.setEndTime(4.5);
+  Eigenanalyzer analyzer;
+  analyzer.setOutputFileName("Eigenanalysis1.mat");
+  analyzer.setEndTime(4.5);
   Vec z0(sys->getzSize());
   z0(1) = 1.0/180*M_PI;
-  analyser.setInitialDeviation(z0);
+  analyzer.setInitialDeviation(z0);
   Vec zEq(sys->getzSize());
-  analyser.setInitialState(zEq);
-  analyser.setAmplitude(0);
-  analyser.setSystem(sys);
-  analyser.execute();
+  analyzer.setInitialState(zEq);
+  analyzer.setAmplitude(0);
+  analyzer.setSystem(sys);
+  analyzer.execute();
 
-  cout << "Eigenfrequency is " << analyser.getEigenvalues()(0).imag();
+  cout << "Eigenfrequency is " << analyzer.getEigenvalues()(0).imag();
   cout << " (should be " << sqrt(g/a) << ")" << endl;
 
   cout << "Analyse cone-pendel" << endl;
-  analyser.setOutputFileName("Eigenanalysis2.mat");
+  analyzer.setOutputFileName("Eigenanalysis2.mat");
   z0.init(0);
   zEq.init(0);
   zEq(1) = theta0/180*M_PI;
   zEq(2) = psid;
-  analyser.setInitialDeviation(z0);
-  analyser.setInitialState(zEq);
-  analyser.setSystem(sys);
-  analyser.execute();
+  analyzer.setInitialDeviation(z0);
+  analyzer.setInitialState(zEq);
+  analyzer.setSystem(sys);
+  analyzer.execute();
 
-  cout << "Eigenfrequency is " << analyser.getEigenvalues()(0).imag();
+  cout << "Eigenfrequency is " << analyzer.getEigenvalues()(0).imag();
   cout << " (should be " << sqrt(g/a*(1./cos(theta0/180*M_PI)+3*cos(theta0/180*M_PI))) << ")" << endl;
 
   delete sys;
