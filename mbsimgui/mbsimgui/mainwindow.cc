@@ -1304,7 +1304,7 @@ namespace MBSimGUI {
     group->getParent()->setGroup(group,j);
     model->removeRows(0,group->getParent()->getNumberOfGroups(),index.parent());
     for(int i=0; i<group->getParent()->getNumberOfGroups(); i++)
-      model->createGroupItem(group->getParent()->getGroup(i),index.parent(),false);
+      model->createGroupItem(group->getParent()->getGroup(i),index.parent());
     elementView->setCurrentIndex(index.sibling(j,0));
   }
 
@@ -1327,7 +1327,7 @@ namespace MBSimGUI {
     object->getParent()->setObject(object,j);
     model->removeRows(0,object->getParent()->getNumberOfObjects(),index.parent());
     for(int i=0; i<object->getParent()->getNumberOfObjects(); i++)
-      model->createObjectItem(object->getParent()->getObject(i),index.parent(),false);
+      model->createObjectItem(object->getParent()->getObject(i),index.parent());
     elementView->setCurrentIndex(index.sibling(j,0));
   }
 
