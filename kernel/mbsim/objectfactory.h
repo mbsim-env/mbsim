@@ -53,8 +53,6 @@
   #endif
 #endif
 
-#define COMMA ,
-
 namespace MBSim {
 
 /* A tree of DOMEvalException's which store the tree of failed objects
@@ -335,6 +333,13 @@ std::string fixXMLLocalName(std::string name);
   template class Class; \
   static MBSim::ObjectFactoryRegisterClassHelper<Class> \
     MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)((NS)%MBSim::fixXMLLocalName(#Class));
+
+/** Same as MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE but use a unique XML name for each template instance.
+ * The XML name is the class name (without template and without namespace) + _ + TemplateName. */
+#define MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(NS, Class, TemplateName) \
+  template class Class; \
+  static MBSim::ObjectFactoryRegisterClassHelper<Class> \
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)((NS)%(MBSim::fixXMLLocalName(#Class)+"_"+#TemplateName));
 
 /** Same as MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON but also explicitly instantiates the template class Class.
  * Please note that template member functions of Class must be explicitly instantated by hand. */

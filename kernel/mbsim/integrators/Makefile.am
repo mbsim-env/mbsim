@@ -4,6 +4,7 @@ libintegrators_la_SOURCES = integrator.cc\
 			    lsoder_integrator.cc \
 			    lsode_integrator.cc \
 			    rksuite_integrator.cc \
+			    boost_odeint_integrator.cc \
 			    dopri5_integrator.cc \
 			    dop853_integrator.cc \
 			    odex_integrator.cc \
@@ -47,6 +48,7 @@ integratorsinclude_HEADERS = integrator.h \
 			     lsoder_integrator.h \
 			     lsode_integrator.h \
 			     rksuite_integrator.h \
+			     boost_odeint_integrator.h \
 			     dopri5_integrator.h \
 			     dop853_integrator.h \
 			     odex_integrator.h \
