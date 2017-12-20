@@ -10,7 +10,7 @@ AC_PROG_CXXCPP
 AC_LANG([C++])
 
 # enable C++11
-CXXFLAGS="$CXXFLAGS -std=c++11"
+# CXXFLAGS="$CXXFLAGS -std=c++11"
 
 if test "_$host_os" = "_mingw32" ; then
   # -fno-keep-inline-dllexport: requires gcc >= 4.6; and is reauired by Qt to avoid the generatoin of
@@ -43,7 +43,7 @@ AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inl
   AC_DEFINE([INLINE_OPENMBV],[1],[Use inline openmbv])
 fi
 
-CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare -Wno-attributes -std=c++11 -I/usr/include/qt5/QtWidgets"
+CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare -Wno-attributes -std=c++11"
 if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
 fi
