@@ -100,7 +100,7 @@ template<typename Vec>
 void _typemapOutVec_P_R(Vec *_1, PyObject *&_result) {
   npy_intp dims[1];
   dims[0]=_1->size();
-  _result=PyArray_SimpleNewFromData(1, dims, _numPyType<typename Vec::AtomicType>(), &(*_1)(0));
+  _result=PyArray_SimpleNewFromData(1, dims, _numPyType<typename Vec::value_type>(), &(*_1)(0));
   if(!_result)
     throw std::runtime_error("Cannot create ndarray");
 }
@@ -110,11 +110,11 @@ void _typemapOutVec_V_CR(Vec &_1, PyObject *&_result) {
   typedef typename std::remove_pointer<Vec>::type VecBT;
   npy_intp dims[1];
   dims[0]=_derefIfPointer(_1).size();
-  _result=PyArray_SimpleNew(1, dims, _numPyType<typename VecBT::AtomicType>());
+  _result=PyArray_SimpleNew(1, dims, _numPyType<typename VecBT::value_type>());
   if(!_result)
     throw std::runtime_error("Cannot create ndarray");
   std::copy(&_derefIfPointer(_1)(0), &_derefIfPointer(_1)(0)+_derefIfPointer(_1).size(),
-            static_cast<typename VecBT::AtomicType*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>(_result), 0)));
+            static_cast<typename VecBT::value_type*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>(_result), 0)));
 }
 
 template<typename Vec>
@@ -129,12 +129,12 @@ void _typemapInVec_P_R_V(Vec &_1, PyObject *_input, typename std::remove_pointer
     if(PyArray_NDIM(input)!=1)
       throw std::runtime_error("Must have 1 dimension.");
     int type=PyArray_TYPE(input);
-    _checkNumPyType<typename VecBT::AtomicType>(type);
+    _checkNumPyType<typename VecBT::value_type>(type);
     _assignIfPointer(_1, localVar);
     npy_intp *dims=PyArray_SHAPE(input);
     _derefIfPointer(_1).resize(dims[0]);
     for(int i=0; i<dims[0]; ++i)
-      _derefIfPointer(_1)(i)=_arrayGet<typename VecBT::AtomicType>(input, type, i);
+      _derefIfPointer(_1)(i)=_arrayGet<typename VecBT::value_type>(input, type, i);
   }
   else
     throw std::runtime_error("Wrong type.");
@@ -145,10 +145,10 @@ void _typemapArgoutVec_R(PyObject *_input, typename std::remove_reference<Vec>::
   typedef typename std::remove_reference<Vec>::type VecBT;
   PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
   int type=PyArray_TYPE(input);
-  if(type!=_numPyType<typename VecBT::AtomicType>())
-    throw std::runtime_error(std::string("Must have atomic type ")+boost::core::demangle(typeid(typename VecBT::AtomicType).name()));
+  if(type!=_numPyType<typename VecBT::value_type>())
+    throw std::runtime_error(std::string("Must have atomic type ")+boost::core::demangle(typeid(typename VecBT::value_type).name()));
   std::copy(&localVar(0), &localVar(0)+localVar.size(),
-            static_cast<typename VecBT::AtomicType*>(PyArray_GETPTR1(input, 0)));
+            static_cast<typename VecBT::value_type*>(PyArray_GETPTR1(input, 0)));
 }
 
 template<typename Mat>
@@ -156,12 +156,12 @@ void _typemapOutMat_P_R(Mat *_1, PyObject *&_result) {
   npy_intp dims[2];
   dims[0]=_1->rows();
   dims[1]=_1->cols();
-  _result=PyArray_SimpleNewFromData(2, dims, _numPyType<typename Mat::AtomicType>(), &(*_1)(0, 0));
+  _result=PyArray_SimpleNewFromData(2, dims, _numPyType<typename Mat::value_type>(), &(*_1)(0, 0));
   if(!_result)
     throw std::runtime_error("Cannot create ndarray");
   npy_intp *strides=PyArray_STRIDES(reinterpret_cast<PyArrayObject*>(_result));
-  strides[_1->transposed() ? 1 : 0]=sizeof(typename Mat::AtomicType)*1;
-  strides[_1->transposed() ? 0 : 1]=sizeof(typename Mat::AtomicType)*_1->ldim();
+  strides[_1->transposed() ? 1 : 0]=sizeof(typename Mat::value_type)*1;
+  strides[_1->transposed() ? 0 : 1]=sizeof(typename Mat::value_type)*_1->ldim();
 }
 
 template<typename Mat>
@@ -170,13 +170,13 @@ void _typemapOutMat_V_CR(Mat &_1, PyObject *&_result) {
   npy_intp dims[2];
   dims[0]=_derefIfPointer(_1).rows();
   dims[1]=_derefIfPointer(_1).cols();
-  _result=PyArray_SimpleNew(2, dims, _numPyType<typename MatBT::AtomicType>());
+  _result=PyArray_SimpleNew(2, dims, _numPyType<typename MatBT::value_type>());
   if(!_result)
     throw std::runtime_error("Cannot create ndarray");
   PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_result);
   for(int r=0; r<dims[0]; r++)
     for(int c=0; c<dims[1]; c++)
-      *static_cast<typename MatBT::AtomicType*>(PyArray_GETPTR2(input, r, c))=
+      *static_cast<typename MatBT::value_type*>(PyArray_GETPTR2(input, r, c))=
         _derefIfPointer(_1)(r, c);
 }
 
@@ -192,13 +192,13 @@ void _typemapInMat_P_R_V(Mat &_1, PyObject *_input, typename std::remove_pointer
     if(PyArray_NDIM(input)!=2)
       throw std::runtime_error("Must have 2 dimension.");
     int type=PyArray_TYPE(input);
-    _checkNumPyType<typename MatBT::AtomicType>(type);
+    _checkNumPyType<typename MatBT::value_type>(type);
     _assignIfPointer(_1, localVar);
     npy_intp *dims=PyArray_SHAPE(input);
     _derefIfPointer(_1).resize(dims[0], dims[1]);
     for(int r=0; r<dims[0]; ++r)
       for(int c=0; c<dims[1]; ++c)
-        _derefIfPointer(_1)(r, c)=_arrayGet<typename MatBT::AtomicType>(input, type, r, c);
+        _derefIfPointer(_1)(r, c)=_arrayGet<typename MatBT::value_type>(input, type, r, c);
   }
   else
     throw std::runtime_error("Wrong type.");
@@ -209,11 +209,11 @@ void _typemapArgoutMat_R(PyObject *_input, typename std::remove_reference<Mat>::
   typedef typename std::remove_reference<Mat>::type MatBT;
   PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
   int type=PyArray_TYPE(input);
-  if(type!=_numPyType<typename MatBT::AtomicType>())
-    throw std::runtime_error(std::string("Must have atomic type ")+boost::core::demangle(typeid(typename MatBT::AtomicType).name()));
+  if(type!=_numPyType<typename MatBT::value_type>())
+    throw std::runtime_error(std::string("Must have atomic type ")+boost::core::demangle(typeid(typename MatBT::value_type).name()));
   for(int r=0; r<localVar.rows(); ++r)
     for(int c=0; c<localVar.cols(); ++c)
-      *static_cast<typename MatBT::AtomicType*>(PyArray_GETPTR2(input, r, c))=
+      *static_cast<typename MatBT::value_type*>(PyArray_GETPTR2(input, r, c))=
         localVar(r, c);
 }
 

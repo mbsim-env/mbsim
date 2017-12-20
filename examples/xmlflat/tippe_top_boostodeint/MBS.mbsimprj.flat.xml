@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML">
+  <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
+  <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
+      xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+    <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+    <frames>
+      <FixedRelativeFrame name="Os">
+        <relativePosition>[0;0;0]</relativePosition>
+        <relativeOrientation>[0,-1,0;1,0,0;0,0,1]</relativeOrientation>
+      </FixedRelativeFrame>
+    </frames>
+    <contours>
+      <Plane name="Plane">
+        <frameOfReference ref="../Frame[Os]"/>
+        <enableOpenMBV>
+          <length>[0.2;0.2]</length>
+          <transparency>0.5</transparency>
+        </enableOpenMBV>
+     </Plane>
+    </contours>
+    <groups/>
+    <objects>
+      <RigidBody name="Body">
+        <generalizedInitialPosition>[0;1.2015e-2;0;0.1;0;0]</generalizedInitialPosition>
+        <generalizedInitialVelocity>[0;0;0;0;180;0]</generalizedInitialVelocity>
+        <frameOfReference ref="../Frame[I]"/>
+        <frameForKinematics ref="Frame[C]"/>
+        <mass>6e-3</mass>
+        <inertiaTensor>[8e-7,0,0 ; 0,7e-7,0 ; 0,0,8e-7]</inertiaTensor>
+        <stateDependentTranslation>
+          <LinearTranslation>
+            <translationVectors>[1,0,0;0,1,0;0,0,1]</translationVectors>
+          </LinearTranslation>
+        </stateDependentTranslation>
+        <stateDependentRotation>
+          <RotationAboutAxesXYZ/>
+        </stateDependentRotation>
+        <frames>
+          <FixedRelativeFrame name="S1">
+            <relativePosition>[0;0.3e-2;0]</relativePosition>
+            <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          </FixedRelativeFrame>
+          <FixedRelativeFrame name="S2">
+            <relativePosition>[0;1.6e-2;0]</relativePosition>
+            <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          </FixedRelativeFrame>
+        </frames>
+        <contours>
+          <Sphere name="Sphere1">
+            <frameOfReference ref="../Frame[S1]"/>
+            <radius>1.5e-2</radius>
+            <enableOpenMBV>
+              <transparency>0</transparency>
+            </enableOpenMBV>
+          </Sphere>
+          <Sphere name="Sphere2">
+            <frameOfReference ref="../Frame[S2]"/>
+            <radius>0.5e-2</radius>
+            <enableOpenMBV/>
+          </Sphere>
+        </contours>
+        <enableOpenMBVFrameC>
+          <size>0.036</size>
+          <offset>0</offset>
+        </enableOpenMBVFrameC>
+      </RigidBody>
+    </objects>
+    <links>
+      <Contact name="Contact1">
+        <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere1]"/>
+        <normalForceLaw>
+          <UnilateralConstraint/>
+        </normalForceLaw>
+        <normalImpactLaw>
+          <UnilateralNewtonImpact>
+            <restitutionCoefficient>0.0</restitutionCoefficient>
+          </UnilateralNewtonImpact>
+        </normalImpactLaw>
+        <tangentialForceLaw>
+          <SpatialCoulombFriction>
+            <frictionCoefficient>0.2</frictionCoefficient>
+          </SpatialCoulombFriction>
+        </tangentialForceLaw>
+        <tangentialImpactLaw>
+          <SpatialCoulombImpact>
+            <frictionCoefficient>0.2</frictionCoefficient>
+          </SpatialCoulombImpact>
+        </tangentialImpactLaw>
+      </Contact>
+      <Contact name="Contact2">
+        <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere2]"/>
+        <normalForceLaw>
+          <UnilateralConstraint/>
+        </normalForceLaw>
+        <normalImpactLaw>
+          <UnilateralNewtonImpact>
+            <restitutionCoefficient>0.0</restitutionCoefficient>
+          </UnilateralNewtonImpact>
+        </normalImpactLaw>
+        <tangentialForceLaw>
+          <SpatialCoulombFriction>
+            <frictionCoefficient>0.2</frictionCoefficient>
+          </SpatialCoulombFriction>
+        </tangentialForceLaw>
+        <tangentialImpactLaw>
+          <SpatialCoulombImpact>
+            <frictionCoefficient>0.2</frictionCoefficient>
+          </SpatialCoulombImpact>
+        </tangentialImpactLaw>
+      </Contact>
+    </links>
+    <constraints/>
+    <observers>
+      <ContactObserver name="ContactObserver1">
+        <contact ref="../Link[Contact1]"/>
+        <enableOpenMBVContactPoints>
+          <size>0.0025</size>
+        </enableOpenMBVContactPoints>
+        <enableOpenMBVNormalForce>
+          <scaleLength>0.4</scaleLength>
+        </enableOpenMBVNormalForce>
+        <enableOpenMBVTangentialForce>
+          <scaleLength>0.4</scaleLength>
+        </enableOpenMBVTangentialForce>
+      </ContactObserver>
+      <ContactObserver name="ContactObserver2">
+        <contact ref="../Link[Contact2]"/>
+        <enableOpenMBVContactPoints>
+          <size>0.0025</size>
+        </enableOpenMBVContactPoints>
+        <enableOpenMBVNormalForce>
+          <scaleLength>0.4</scaleLength>
+        </enableOpenMBVNormalForce>
+        <enableOpenMBVTangentialForce>
+          <scaleLength>0.4</scaleLength>
+        </enableOpenMBVTangentialForce>
+      </ContactObserver>
+    </observers>
+    <environments>
+      <MBSimEnvironment>
+        <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+    <projectionTolerance unit="-">1e-15</projectionTolerance>
+    <generalizedRelativePositionTolerance unit="-">1e-6</generalizedRelativePositionTolerance>
+    <generalizedRelativeVelocityTolerance unit="-">1e-6</generalizedRelativeVelocityTolerance>
+    <generalizedRelativeAccelerationTolerance unit="-">1e-8</generalizedRelativeAccelerationTolerance>
+    <generalizedForceTolerance unit="-">1e-8</generalizedForceTolerance>
+    <generalizedImpulseTolerance unit="-">1e-6</generalizedImpulseTolerance>
+  </DynamicSystemSolver>
+  <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+    <startTime>0</startTime>
+    <endTime>5</endTime>
+    <plotStepSize>1e-3</plotStepSize>
+    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
+    <relativeToleranceScalar>1e-6</relativeToleranceScalar>
+    <initialStepSize>1e-8</initialStepSize>
+    <plotOnRoot>false</plotOnRoot>
+  </BoostOdeintDOS_RKDOPRI5>
+</MBSimProject>

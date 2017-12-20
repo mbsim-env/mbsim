@@ -579,4 +579,80 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="BoostOdeintDOS" abstract="true" substitutionGroup="Integrator" type="BoostOdeintDOSType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+       Integrators from Boost OdeInt.
+       This class can use all Boost OdeInt dense output steppers.
+       Root finding, drift corection and equidistant output (plotting) is also added.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="BoostOdeintDOSType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Schrittweitenvorschlag zu Beginn der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximalStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Maximal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="plotOnRoot" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Gibt an, ob eine Plot-Ausgabe geschrieben werden soll, wenn eine Indikatorfunktion einen Nulldurchgang hat.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximalPositionDrift" type="pv:lengthScalar" minOccurs="0"/>
+          <xs:element name="maximalVelocityDrift" type="pv:velocityScalar" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="BoostOdeintDOS_RKDOPRI5" substitutionGroup="BoostOdeintDOS" type="BoostOdeintDOS_RKDOPRI5Type">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+       Explicit Runge-Kutta Dormand-Prince 5 integrator from Boost Odeint.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="BoostOdeintDOS_RKDOPRI5Type">
+    <xs:complexContent>
+      <xs:extension base="BoostOdeintDOSType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="BoostOdeintDOS_BulirschStoer" substitutionGroup="BoostOdeintDOS" type="BoostOdeintDOS_BulirschStoerType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+       Explicit Runge-Kutta Dormand-Prince 5 integrator from Boost Odeint.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="BoostOdeintDOS_BulirschStoerType">
+    <xs:complexContent>
+      <xs:extension base="BoostOdeintDOSType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="BoostOdeintDOS_Rosenbrock4" substitutionGroup="BoostOdeintDOS" type="BoostOdeintDOS_Rosenbrock4Type">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+       Implicit Rosenbrock 4 integrator from Boost Odeint.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="BoostOdeintDOS_Rosenbrock4Type">
+    <xs:complexContent>
+      <xs:extension base="BoostOdeintDOSType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
 </xs:schema>
