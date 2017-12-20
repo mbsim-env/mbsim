@@ -44,7 +44,7 @@
 #include "file_editor.h"
 #include "utils.h"
 #include "basicitemdata.h"
-//#include <openmbv/mainwindow.h>
+#include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QMenu>
 #include <QMenuBar>
@@ -301,7 +301,7 @@ namespace MBSimGUI {
     setCentralWidget(centralWidget);
     auto *mainlayout = new QHBoxLayout;
     centralWidget->setLayout(mainlayout);
-//    mainlayout->addWidget(inlineOpenMBVMW);
+    mainlayout->addWidget(inlineOpenMBVMW);
 
     QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
@@ -361,7 +361,7 @@ namespace MBSimGUI {
     else
       echoView->setCurrentIndex(1);
     if(currentTask==1) {
-//      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
+      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
       auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
@@ -415,10 +415,10 @@ namespace MBSimGUI {
     arg.emplace_back("--wst");
     arg.push_back((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
     arg.emplace_back("/home/foerg/tmp/openmbv");
-//    inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
+    inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
 
-//    connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
-//    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementView, SLOT(openEditor()));
+    connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
+    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementView, SLOT(openEditor()));
   }
 
   MainWindow::~MainWindow() {
@@ -501,7 +501,7 @@ namespace MBSimGUI {
 
   void MainWindow::highlightObject(const QString &ID) {
     currentID = ID;
-//    inlineOpenMBVMW->highlightObject(ID.toStdString());
+    inlineOpenMBVMW->highlightObject(ID.toStdString());
   }
 
   void MainWindow::selectionChanged(const QModelIndex &current) {
@@ -877,8 +877,8 @@ namespace MBSimGUI {
     projectFile=uniqueTempDir_+"/Project.mbsimprj.flat.xml";
 
     if(task==1) {
-//      if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
- //       static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
+      if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
+        static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
     }
 
     DOMElement *root;

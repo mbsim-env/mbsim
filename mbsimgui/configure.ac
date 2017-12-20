@@ -20,7 +20,7 @@ if test "_$host_os" = "_mingw32" ; then
 fi
 
 dnl Qt
-PKG_CHECK_MODULES(QT, [Qt5Core >= 5.7 Qt5Gui >= 5.7 Qt5Widgets >= 5.7])
+PKG_CHECK_MODULES(QT, [Qt5Core >= 5.7 Qt5Gui >= 5.7 Qt5Widgets >= 5.7 Qt5WebKitWidgets >= 5.7])
 dnl get moc, uic and rcc
 test -z $MOC && { MOC=$(pkg-config --variable moc_location QtCore) || MOC=moc; }
 test -z $UIC && { UIC=$(pkg-config --variable uic_location QtCore) || UIC=uic; }
@@ -35,7 +35,7 @@ QT_PLUGINS=$($QMAKE -query QT_INSTALL_PLUGINS)
 AC_SUBST([QT_PLUGINS])
 
 dnl OpenMBV
-dnl PKG_CHECK_MODULES(OPENMBV, [openmbv])
+PKG_CHECK_MODULES(OPENMBV, [openmbv])
 
 PKG_CHECK_MODULES(MBXMLUTILS, [mbxmlutils])
 
