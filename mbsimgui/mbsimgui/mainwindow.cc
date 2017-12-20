@@ -67,6 +67,7 @@ namespace MBSimGUI {
   DOMImplementation *impl=DOMImplementation::getImplementation();
   DOMLSParser *parser=impl->createLSParser(DOMImplementation::MODE_SYNCHRONOUS, nullptr);
   DOMLSSerializer *serializer=impl->createLSSerializer();
+  DOMLSSerializer *basicSerializer=impl->createLSSerializer();
 
   bool currentTask;
   QDir mbsDir;
@@ -895,7 +896,7 @@ namespace MBSimGUI {
     DOMElement *evaluator=D(doc)->createElement(PV%"evaluator");
     evaluator->appendChild(doc->createTextNode(X()%"xmlflat"));
     root->insertBefore(evaluator, root->getFirstChild());
-    DOMParser::serialize(doc.get(), projectFile.toStdString(), false);
+    basicSerializer->writeToURI(doc.get(), X()%projectFile.toStdString());
     QStringList arg;
     if(currentTask==1)
       arg.append("--stopafterfirststep");
