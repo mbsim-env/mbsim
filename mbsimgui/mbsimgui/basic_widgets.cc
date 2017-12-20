@@ -29,7 +29,6 @@
 #include "utils.h"
 #include "variable_widgets.h"
 #include "mainwindow.h"
-#include <QtGui>
 #include <QLabel>
 #include <QFileDialog>
 #include <QColorDialog>

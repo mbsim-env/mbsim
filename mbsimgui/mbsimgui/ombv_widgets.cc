@@ -24,7 +24,6 @@
 #include "body.h"
 #include "frame.h"
 #include "mainwindow.h"
-#include <QtGui>
 #include <utility>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 

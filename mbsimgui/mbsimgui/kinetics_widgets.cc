@@ -24,7 +24,6 @@
 #include "extended_widgets.h"
 #include "custom_widgets.h"
 #include "function_widget_factory.h"
-#include <QtGui>
 
 using namespace std;
 using namespace MBXMLUtils;

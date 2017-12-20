@@ -23,7 +23,6 @@
 #include "extended_widgets.h"
 #include "mainwindow.h"
 #include <mbxmlutils/eval.h>
-#include <QtGui>
 
 using namespace std;
 using namespace MBXMLUtils;
