@@ -44,9 +44,19 @@
 #include "file_editor.h"
 #include "utils.h"
 #include "basicitemdata.h"
-#include <openmbv/mainwindow.h>
+//#include <openmbv/mainwindow.h>
 #include <utime.h>
-#include <QtGui>
+#include <QMenu>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QStatusBar>
+#include <QDockWidget>
+#include <QGridLayout>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QDragEnterEvent>
+#include <QMimeData>
+#include <QSettings>
 #include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include <mbxmlutilshelper/getinstallpath.h>
@@ -132,17 +142,17 @@ namespace MBSimGUI {
 
     GUIMenu->addSeparator();
 
-    OpenMBVGUI::AbstractViewFilter *elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
-    elementViewFilter->hide();
+//    OpenMBVGUI::AbstractViewFilter *elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
+//    elementViewFilter->hide();
+//
+//    OpenMBVGUI::AbstractViewFilter *embeddingViewFilter = new OpenMBVGUI::AbstractViewFilter(embeddingView, 0, -2);
+//    embeddingViewFilter->hide();
 
-    OpenMBVGUI::AbstractViewFilter *embeddingViewFilter = new OpenMBVGUI::AbstractViewFilter(embeddingView, 0, -2);
-    embeddingViewFilter->hide();
-
-    action = GUIMenu->addAction("Show filter");
-    action->setCheckable(true);
-    connect(action,SIGNAL(toggled(bool)), elementViewFilter, SLOT(setVisible(bool)));
-    connect(action,SIGNAL(toggled(bool)), embeddingViewFilter, SLOT(setVisible(bool)));
-    action->setStatusTip(tr("Show filter"));
+//    action = GUIMenu->addAction("Show filter");
+//    action->setCheckable(true);
+//    connect(action,SIGNAL(toggled(bool)), elementViewFilter, SLOT(setVisible(bool)));
+//    connect(action,SIGNAL(toggled(bool)), embeddingViewFilter, SLOT(setVisible(bool)));
+//    action->setStatusTip(tr("Show filter"));
 
     GUIMenu->addSeparator();
 
@@ -265,7 +275,7 @@ namespace MBSimGUI {
     auto *widgetLayout1 = new QGridLayout(widget1);
     widgetLayout1->setContentsMargins(0,0,0,0);
     widget1->setLayout(widgetLayout1);
-    widgetLayout1->addWidget(elementViewFilter, 0, 0);
+    //widgetLayout1->addWidget(elementViewFilter, 0, 0);
     widgetLayout1->addWidget(elementView, 1, 0);
 
     QDockWidget *dockWidget3 = new QDockWidget("Embeddings");
@@ -275,7 +285,7 @@ namespace MBSimGUI {
     auto *widgetLayout3 = new QGridLayout(widget3);
     widgetLayout3->setContentsMargins(0,0,0,0);
     widget3->setLayout(widgetLayout3);
-    widgetLayout3->addWidget(embeddingViewFilter, 0, 0);
+    //widgetLayout3->addWidget(embeddingViewFilter, 0, 0);
     widgetLayout3->addWidget(embeddingView, 1, 0);
 
     QDockWidget *dockWidget2 = new QDockWidget("Solver");
@@ -291,7 +301,7 @@ namespace MBSimGUI {
     setCentralWidget(centralWidget);
     auto *mainlayout = new QHBoxLayout;
     centralWidget->setLayout(mainlayout);
-    mainlayout->addWidget(inlineOpenMBVMW);
+//    mainlayout->addWidget(inlineOpenMBVMW);
 
     QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
@@ -351,7 +361,7 @@ namespace MBSimGUI {
     else
       echoView->setCurrentIndex(1);
     if(currentTask==1) {
-      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
+//      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
       auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
@@ -405,10 +415,10 @@ namespace MBSimGUI {
     arg.emplace_back("--wst");
     arg.push_back((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
     arg.emplace_back("/home/foerg/tmp/openmbv");
-    inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
+//    inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
 
-    connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
-    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementView, SLOT(openEditor()));
+//    connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
+//    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementView, SLOT(openEditor()));
   }
 
   MainWindow::~MainWindow() {
@@ -491,7 +501,7 @@ namespace MBSimGUI {
 
   void MainWindow::highlightObject(const QString &ID) {
     currentID = ID;
-    inlineOpenMBVMW->highlightObject(ID.toStdString());
+//    inlineOpenMBVMW->highlightObject(ID.toStdString());
   }
 
   void MainWindow::selectionChanged(const QModelIndex &current) {
@@ -824,8 +834,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveStateVectorAs() {
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    QModelIndex index = model->index(0,0);
     QString file=QFileDialog::getSaveFileName(nullptr, "Export state vector file", "./statevector.asc", "ASCII files (*.asc)");
     if(file!="") {
       saveStateVector(file);
@@ -869,8 +877,8 @@ namespace MBSimGUI {
     projectFile=uniqueTempDir_+"/Project.mbsimprj.flat.xml";
 
     if(task==1) {
-      if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
-        static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
+//      if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
+ //       static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
     }
 
     DOMElement *root;

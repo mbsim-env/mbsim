@@ -23,6 +23,9 @@
 #include "dialogs.h"
 #include "custom_widgets.h"
 #include <QtGui>
+#include <QLabel>
+#include <QListWidget>
+#include <QStackedWidget>
 #include <utility>
 
 using namespace std;

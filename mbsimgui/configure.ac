@@ -20,7 +20,7 @@ if test "_$host_os" = "_mingw32" ; then
 fi
 
 dnl Qt
-PKG_CHECK_MODULES(QT, [QtCore >= 4.4 QtGui >= 4.4 QtXml >= 4.4])
+PKG_CHECK_MODULES(QT, [Qt5Core >= 5.7 Qt5Gui >= 5.7 Qt5Xml >= 5.7])
 dnl get moc, uic and rcc
 test -z $MOC && { MOC=$(pkg-config --variable moc_location QtCore) || MOC=moc; }
 test -z $UIC && { UIC=$(pkg-config --variable uic_location QtCore) || UIC=uic; }
@@ -35,7 +35,7 @@ QT_PLUGINS=$($QMAKE -query QT_INSTALL_PLUGINS)
 AC_SUBST([QT_PLUGINS])
 
 dnl OpenMBV
-PKG_CHECK_MODULES(OPENMBV, [openmbv])
+dnl PKG_CHECK_MODULES(OPENMBV, [openmbv])
 
 PKG_CHECK_MODULES(MBXMLUTILS, [mbxmlutils])
 
@@ -43,7 +43,7 @@ AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inl
   AC_DEFINE([INLINE_OPENMBV],[1],[Use inline openmbv])
 fi
 
-CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare -Wno-attributes"
+CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare -Wno-attributes -std=c++11 -I/usr/include/qt5/QtWidgets"
 if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
 fi

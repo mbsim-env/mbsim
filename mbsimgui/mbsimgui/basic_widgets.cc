@@ -30,6 +30,9 @@
 #include "variable_widgets.h"
 #include "mainwindow.h"
 #include <QtGui>
+#include <QLabel>
+#include <QFileDialog>
+#include <QColorDialog>
 #include <boost/lexical_cast.hpp>
 #include <utility>
 #include <xercesc/dom/DOMDocument.hpp>

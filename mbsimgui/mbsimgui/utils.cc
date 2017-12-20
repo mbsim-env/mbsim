@@ -23,7 +23,6 @@
 #include <unordered_map>
 #include <iostream>
 #include <cmath>
-#include <QtGui/QTreeWidgetItem>
 #include <stdexcept>
 #include <mbxmlutilshelper/getinstallpath.h>
 
