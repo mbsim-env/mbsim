@@ -23,6 +23,7 @@
 #include <iostream>
 #include <QTextStream>
 #include <QProcessEnvironment>
+#include <QUrlQuery>
 
 using namespace std;
 
@@ -101,13 +102,13 @@ namespace MBSimGUI {
       cout<<"Opening file using command '"<<editorCommand.toStdString()<<"'. "<<
         "Where %1 is replaced by the filename and %2 by the line number. "<<
         "Use the environment variable MBSIMGUI_EDITOR to overwrite this command."<<endl;
-//      QString comm=editorCommand.arg(link.path()).arg(link.queryItemValue("line").toInt());
-//      QProcess::startDetached(comm);
+      QString comm=editorCommand.arg(link.path()).arg(QUrlQuery(link).queryItemValue("line").toInt());
+      QProcess::startDetached(comm);
     }
     else {
-//      FileEditor *edit = new FileEditor("Model file",link.path(),link.queryItemValue("line").toInt(),QString("Could not open file ")+link.path(),this);
-//      edit->setModal(true);
-//      edit->show();
+      FileEditor *edit = new FileEditor("Model file",link.path(),QUrlQuery(link).queryItemValue("line").toInt(),QString("Could not open file ")+link.path(),this);
+      edit->setModal(true);
+      edit->show();
     }
   }
 
