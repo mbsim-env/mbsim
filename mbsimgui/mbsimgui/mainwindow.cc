@@ -651,9 +651,11 @@ namespace MBSimGUI {
       }
       catch(const std::exception &ex) {
         message = ex.what();
+        return;
       }
       catch(...) {
         message = "Unknown exception.";
+        return;
       }
       setWindowTitle(projectFile+"[*]");
       rebuildTree();
