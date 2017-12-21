@@ -16,7 +16,7 @@ kernel/swig/Makefile.in
 kernel/swig/.swig_prepare/Makefile.in
 kernel/swig/check/Makefile.in
 kernel/mbsim/Makefile.in
-kernel/mbsim/analysers/Makefile.in
+kernel/mbsim/analyzers/Makefile.in
 kernel/mbsim/contact_kinematics/Makefile.in
 kernel/mbsim/contours/Makefile.in
 kernel/mbsim/functions/Makefile.in
