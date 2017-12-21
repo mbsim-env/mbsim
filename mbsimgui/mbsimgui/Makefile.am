@@ -4,9 +4,9 @@ bin_PROGRAMS = mbsimgui
 
 mbsimguidir = $(includedir)/mbsimgui
 
-mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS) $(OPENMBV_CFLAGS)
+mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS) $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
 
-mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS)
+mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS)
 
 mbsimgui_SOURCES = mainwindow.cc \
 		   options.cc \
