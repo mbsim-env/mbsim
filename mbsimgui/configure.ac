@@ -10,7 +10,7 @@ AC_PROG_CXXCPP
 AC_LANG([C++])
 
 # enable C++11
-# CXXFLAGS="$CXXFLAGS -std=c++11"
+CXXFLAGS="$CXXFLAGS -std=c++11"
 
 if test "_$host_os" = "_mingw32" ; then
   # -fno-keep-inline-dllexport: requires gcc >= 4.6; and is reauired by Qt to avoid the generatoin of
@@ -20,11 +20,11 @@ if test "_$host_os" = "_mingw32" ; then
 fi
 
 dnl Qt
-PKG_CHECK_MODULES(QT, [Qt5Core >= 5.7 Qt5Gui >= 5.7 Qt5Widgets >= 5.7 Qt5WebKitWidgets >= 5.7])
+PKG_CHECK_MODULES(QT, [Qt5Core >= 5.7 Qt5Gui >= 5.7 Qt5Widgets >= 5.7])
 dnl get moc, uic and rcc
-test -z $MOC && { MOC=$(pkg-config --variable moc_location QtCore) || MOC=moc; }
-test -z $UIC && { UIC=$(pkg-config --variable uic_location QtCore) || UIC=uic; }
-test -z $RCC && { RCC=$(dirname $(which $MOC))/rcc || RCC=rcc; }
+test -z $MOC && { MOC=$(pkg-config --variable=host_bins Qt5Core)/moc || MOC=moc; }
+test -z $UIC && { UIC=$(pkg-config --variable=host_bins Qt5Core)/uic || UIC=uic; }
+test -z $RCC && { RCC=$(pkg-config --variable=host_bins Qt5Core)/rcc || RCC=rcc; }
 AC_SUBST([MOC])
 AC_SUBST([UIC])
 AC_SUBST([RCC])
@@ -43,7 +43,7 @@ AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inl
   AC_DEFINE([INLINE_OPENMBV],[1],[Use inline openmbv])
 fi
 
-CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare -Wno-attributes -std=c++11"
+CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare -Wno-attributes"
 if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
 fi
@@ -61,14 +61,18 @@ AC_ARG_WITH(qwt_lib_prefix,
   [  --with-qwt-lib-prefix=PFX  Prefix where qwt6 library is installed],
   [QWT_LIBS="-L$withval -l$QWT_LIBNAME"],
   [QWT_LIBS="-L$prefix/lib -l$QWT_LIBNAME"])
-CPPFLAGS="$CPPFLAGS $QWT_CFLAGS $QT_CFLAGS"
-LIBS="$LIBS $QWT_LIBS $QT_LIBS"
+OLDCPPFLAGS=$CPPFLAGS; CPPFLAGS="$CPPFLAGS $QWT_CFLAGS $QT_CFLAGS -std=c++11"
+OLDLIBS=$LIBS; LIBS="$LIBS $QWT_LIBS $QT_LIBS"
 AC_CHECK_HEADERS([qwt_wheel.h], [], [AC_MSG_ERROR([Can not find qwt_wheel.h!])])
 AC_TRY_LINK(
   [#include <qwt_system_clock.h>],
   [new QwtSystemClock;],
   [],
   [AC_MSG_ERROR([Can not link with qwt >= 6!])])
+CPPFLAGS="$OLDCPPFLAGS $QWT_CFLAGS"
+LIBS="$OLDLIBS $QWT_LIBS"
+AC_SUBST([QWT_CFLAGS])
+AC_SUBST([QWT_LIBS])
 
 LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
