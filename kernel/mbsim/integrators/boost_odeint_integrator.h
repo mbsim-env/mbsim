@@ -245,7 +245,13 @@ namespace MBSimIntegrator {
     svLast=system->evalsv();
 
     // initialize odeint
+#if BOOST_VERSION >= 106000
     dos.reset(new DOSType(make_dense_output(aTol, rTol, dtMax, Stepper())));
+#else // boost < 1.60 has no dtMax in make_dense_output
+    dos.reset(new DOSType(make_dense_output(aTol, rTol, Stepper())));
+    msg(Warn)<<"This build was done with boost < 1.60 which does not support a maximal step size."<<endl
+             <<"Integrator will not limit the maximal step size."<<endl;
+#endif
     dos->initialize(zTemp, tStart, dt0);
   }
 
