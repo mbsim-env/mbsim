@@ -21,9 +21,28 @@
 #include "integrator.h"
 #include <mbsim/dynamic_system_solver.h>
 #include <boost/numeric/odeint/stepper/generation/make_dense_output.hpp>
+#include <boost/numeric/odeint/util/is_resizeable.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 #include <boost/fusion/container/set.hpp>
+
+namespace boost {
+  namespace numeric {
+    namespace odeint {
+      // Enable fmatvec::Vec, the state type of MBSim, as a boost odeint state type.
+      template<>
+      struct is_resizeable<fmatvec::Vec> {
+        typedef boost::true_type type;
+        static const bool value=true;
+      };
+    }
+  }
+
+  // Enable fmatvec::Vec, the state type of MBSim, as a boost odeint state type.
+  int size(const fmatvec::Vec& v) {
+    return v.size();
+  }
+}
 
 namespace MBSimIntegrator {
 
@@ -88,7 +107,7 @@ namespace MBSimIntegrator {
     public:
       void integrate() override;
       void preIntegrate() override;
-      void subIntegrate(double tStepEnd) override;
+      void subIntegrate(double tSamplePoint) override;
       void postIntegrate() override;
 
       //! Set initial step size.
@@ -256,9 +275,9 @@ namespace MBSimIntegrator {
   }
 
   template<typename Stepper, typename SystemType>
-  void BoostOdeintDOS<Stepper, SystemType>::subIntegrate(double tStepEnd) {
-    // loop until at least tStepEnd is reached
-    while(dos->current_time()<tStepEnd) {
+  void BoostOdeintDOS<Stepper, SystemType>::subIntegrate(double tSamplePoint) {
+    // loop until at least tSamplePoint is reached
+    while(dos->current_time()<tSamplePoint) {
       // make one step with odeint
       nrSteps++;
       auto step=dos->do_step(boostOdeintSystem());
@@ -301,7 +320,7 @@ namespace MBSimIntegrator {
       }
 
       // plot every dtPlot up to the end of the current step (the current step end may already be shorted by roots)
-      while(tPlot<=step.second && tPlot<tStepEnd) {
+      while(tPlot<=step.second && tPlot<tSamplePoint) {
         dos->calc_state(tPlot, zTemp);
         if(curTimeAndState!=tPlot) {
           curTimeAndState=tPlot;
@@ -316,49 +335,63 @@ namespace MBSimIntegrator {
         tPlot+=dtPlot;
       }
 
-      if(shift) {
-        // shift the system
-        dos->calc_state(step.second, zTemp);
-        if(curTimeAndState!=step.second) {
-          curTimeAndState=step.second;
-          system->setTime(step.second);
-          assign(system->getState(), zTemp);
+      if(step.second<tSamplePoint) {
+        if(shift) {
+          // shift the system
+          dos->calc_state(step.second, zTemp);
+          if(curTimeAndState!=step.second) {
+            curTimeAndState=step.second;
+            system->setTime(step.second);
+            assign(system->getState(), zTemp);
+            system->resetUpToDate();
+          }
+          if(plotOnRoot) {
+            nrPlots++;
+            system->plot();
+          }
+          nrRoots++;
           system->resetUpToDate();
-        }
-        if(plotOnRoot) {
-          nrPlots++;
-          system->plot();
-        }
-        nrRoots++;
-        system->resetUpToDate();
-        system->shift();
-        if(plotOnRoot) {
-          nrPlots++;
-          system->plot();
-        }
-        nrSVs++;
-        svLast=system->evalsv();
-        // reinit odeint with new state
-        assign(zTemp, system->getState());
-        dos->initialize(zTemp, step.second, dos->current_time_step());
-      }
-      else {
-        // check if projection is needed (if a root was found projection is done anyway by shift())
-        bool reinitNeeded=false;
-        if(system->positionDriftCompensationNeeded(gMax)) {
-          system->projectGeneralizedPositions(3);
-          system->projectGeneralizedVelocities(3);
-          reinitNeeded=true;
-        }
-        else if(system->velocityDriftCompensationNeeded(gdMax)) {
-          system->projectGeneralizedVelocities(3);
-          reinitNeeded=true;
-        }
-        if(reinitNeeded) {
-          nrDriftCorr++;
+          system->shift();
+          if(plotOnRoot) {
+            nrPlots++;
+            system->plot();
+          }
+          nrSVs++;
+          svLast=system->evalsv();
+          // reinit odeint with new state
           assign(zTemp, system->getState());
           dos->initialize(zTemp, step.second, dos->current_time_step());
         }
+        else {
+          // check if projection is needed (if a root was found projection is done anyway by shift())
+          bool reinitNeeded=false;
+          if(system->positionDriftCompensationNeeded(gMax)) {
+            system->projectGeneralizedPositions(3);
+            system->projectGeneralizedVelocities(3);
+            reinitNeeded=true;
+          }
+          else if(system->velocityDriftCompensationNeeded(gdMax)) {
+            system->projectGeneralizedVelocities(3);
+            reinitNeeded=true;
+          }
+          if(reinitNeeded) {
+            nrDriftCorr++;
+            assign(zTemp, system->getState());
+            dos->initialize(zTemp, step.second, dos->current_time_step());
+          }
+        }
+      }
+      else {
+        // TODO: this code block (espezially the dos->initialize) should be avoided since initializting the integrator
+        // is expensive and not needed at macro sample points or updates of discrete states.
+        // For this the do_step call at the top must be restricted to reach at most tSamplePoint.
+        // However, this seem currently not possible with the boost odeint integrators.
+        // That's why we use this workaround here which has not the optimal performance.
+        dos->calc_state(tSamplePoint, zTemp);
+        curTimeAndState=tSamplePoint;
+        system->setTime(tSamplePoint);
+        assign(system->getState(), zTemp);
+        dos->initialize(zTemp, tSamplePoint, dos->current_time_step());
       }
     }
   }
