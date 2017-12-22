@@ -111,10 +111,14 @@ namespace MBSim {
         fifl = new BilateralImpact;
         fifl->setParent(this);
       }
+      else if(forceDir.cols()>0)
+        THROW_MBSIMERROR("No force law is given!");
       if (fml) {
         fiml = new BilateralImpact;
         fiml->setParent(this);
       }
+      else if(momentDir.cols()>0)
+        THROW_MBSIMERROR("No moment law is given!");
 
       JT.resize(3 - forceDir.cols());
       if (forceDir.cols() == 2)

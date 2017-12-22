@@ -355,7 +355,7 @@ namespace MBSimGUI {
       void setMat(const std::vector<std::vector<QString> > &A) override;
       void resize_(int rows, int cols) override;
       int rows() const override {return sizeCombo->value();}
-      int cols() const override {return cols();}
+      int cols() const override {return rows();}
       QString getValue() const override {return toQStr(getMat());}
       void setValue(const QString &str) override {setMat(strToMat(str));}
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
@@ -659,9 +659,7 @@ namespace MBSimGUI {
 
   class SymMatSizeVarWidgetFactory : public WidgetFactory {
     public:
-      SymMatSizeVarWidgetFactory();
-      SymMatSizeVarWidgetFactory(std::vector<std::vector<QString> > A_, std::vector<QStringList> unit_, std::vector<int> defaultUnit_);
-      SymMatSizeVarWidgetFactory(std::vector<std::vector<QString> > A_, std::vector<QString> name_, std::vector<QStringList> unit_, std::vector<int> defaultUnit_);
+      SymMatSizeVarWidgetFactory(std::vector<std::vector<QString> > A_, std::vector<QStringList> unit_=std::vector<QStringList>(3,noUnitUnits()), std::vector<int> defaultUnit_=std::vector<int>(3,0));
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }

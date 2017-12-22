@@ -748,11 +748,13 @@ namespace MBSimGUI {
   void MatRowsColsVarWidget::currentRowIndexChanged(int rows) {
     widget->resize_(rows,widget->cols());
     emit rowSizeChanged(rows);
+    emit Widget::widgetChanged();
   }
 
   void MatRowsColsVarWidget::currentColIndexChanged(int cols) {
     widget->resize_(widget->rows(),cols);
     emit colSizeChanged(cols);
+    emit Widget::widgetChanged();
   }
 
   bool MatRowsColsVarWidget::validate(const vector<vector<QString> > &A) const {
@@ -800,6 +802,7 @@ namespace MBSimGUI {
   void SqrMatSizeVarWidget::currentIndexChanged(int rows) {
     widget->resize_(rows,rows);
     emit sizeChanged(rows);
+    emit Widget::widgetChanged();
   }
 
   bool SqrMatSizeVarWidget::validate(const vector<vector<QString> > &A) const {
@@ -934,15 +937,16 @@ namespace MBSimGUI {
   }
 
   void SymMatSizeVarWidget::resize_(int rows, int cols) {
-    widget->resize_(rows);
+    widget->resize_(rows,cols);
     sizeCombo->blockSignals(true);
     sizeCombo->setValue(rows);
     sizeCombo->blockSignals(false);
   }
 
   void SymMatSizeVarWidget::currentIndexChanged(int rows) {
-    widget->resize_(rows);
+    widget->resize_(rows,rows);
     emit sizeChanged(rows);
+    emit Widget::widgetChanged();
   }
 
   bool SymMatSizeVarWidget::validate(const vector<vector<QString> > &A) const {
@@ -1567,19 +1571,10 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
-    name[0] = "Matrix";
-    name[1] = "File";
-    name[2] = "Editor";
-  }
-
   SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory(vector<vector<QString> > A_, vector<QStringList> unit_, vector<int> defaultUnit_) : A(std::move(A_)), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
-  }
-
-  SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory(vector<vector<QString> > A_, vector<QString> name_, vector<QStringList> unit_, vector<int> defaultUnit_) : A(std::move(A_)), name(std::move(name_)), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
   }
 
   QWidget* SymMatSizeVarWidgetFactory::createWidget(int i) {

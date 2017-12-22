@@ -461,7 +461,7 @@ namespace MBSimGUI {
     return new ConnectRigidBodiesWidget(i+1,parent);
   }
 
-  SpringDamperWidgetFactory::SpringDamperWidgetFactory(Element *parent_) : parent(parent_){
+  SpringDamperWidgetFactory::SpringDamperWidgetFactory(Element *parent_, bool varSize_) : parent(parent_), varSize(varSize_) {
     name.emplace_back("Linear spring damper force");
     name.emplace_back("Nonlinear spring damper force");
     name.emplace_back("Symbolic function");
@@ -480,10 +480,10 @@ namespace MBSimGUI {
     if(i==2) {
       QStringList var;
       var << "g" << "gd";
-      return new SymbolicFunctionWidget(var,1,3);
+      return new SymbolicFunctionWidget(var,1,3,not varSize);
     }
     if(i==3)
-      return new LinearElasticFunctionWidget;
+      return new LinearElasticFunctionWidget(varSize);
     return nullptr;
   }
 

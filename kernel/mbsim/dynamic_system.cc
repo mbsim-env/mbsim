@@ -1024,19 +1024,12 @@ namespace MBSim {
     linkSetValuedActive.clear();
     linkSingleValued.clear();
     for (auto & i : link) {
-      bool hasForceLaw = false;
       if (i->isSetValued()) {
-        hasForceLaw = true;
         linkSetValued.push_back(i);
         linkSetValuedActive.push_back(i);
       }
-      if (i->isSingleValued()) {
-        hasForceLaw = true;
+      if (i->isSingleValued())
         linkSingleValued.push_back(i);
-      }
-      if (not hasForceLaw) {
-        throw MBSimError("The Link \"" + i->getPath() + "\" comprises now force law!");
-      }
     }
   }
 

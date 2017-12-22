@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include "mbsim/links/generalized_elastic_connection.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/objectfactory.h"
 
 using namespace std;
@@ -39,6 +40,9 @@ namespace MBSim {
   }
 
   void GeneralizedElasticConnection::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==unknownStage) {
+      if(func->getRetSize().first!=body[0]->getGeneralizedVelocitySize()) THROW_MBSIMERROR("Size of generalized forces does not match!");
+    }
     DualRigidBodyLink::init(stage, config);
     func->init(stage, config);
   }

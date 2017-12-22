@@ -329,15 +329,18 @@ namespace MBSimGUI {
   };
 
   class LinearElasticFunctionWidget : public FunctionWidget {
+    Q_OBJECT
 
     public:
-      LinearElasticFunctionWidget();
+      LinearElasticFunctionWidget(bool varSize=false);
       QString getType() const override { return "LinearElasticFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-    protected:
+    private:
       ExtWidget *K, *D;
+    private slots:
+      void updateWidget();
   };
 
   class LinearRegularizedBilateralConstraintWidget: public FunctionWidget {
