@@ -26,7 +26,7 @@
 
 namespace MBSimAnalyzer {
 
-  const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://www.mbsim-env.de/MBSimAnalyzer");
+  const MBXMLUtils::NamespaceURI MBSIMANALYZER("http://www.mbsim-env.de/MBSimAnalyzer");
 
   /**
    * \brief HarmonicResponseAnalyzer for dynamic systems

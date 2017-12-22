@@ -16,19 +16,10 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _EPS_H_
-#define _EPS_H_
-
-#include <limits>
-#include <cmath>
+#include "eps.h"
 
 namespace MBSim {
 
-  constexpr double macheps = std::numeric_limits<double>::epsilon();
-
-  extern const double epsroot;
+  const double epsroot = std::sqrt(macheps); // std::sqrt is not constexpr
 
 }
-
-#endif /* _EPS_H_ */
-

@@ -10,7 +10,7 @@
 
   <xs:import namespace="http://www.mbsim-env.de/MBSim"/>
   <xs:import namespace="http://www.mbsim-env.de/MBSimIntegrator"/>
-  <xs:import namespace="http://www.mbsim-env.de/MBSimAnalyser"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSimAnalyzer"/>
   <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"/>
 
   <xs:element name="MBSimProject" type="MBSimProjectType">

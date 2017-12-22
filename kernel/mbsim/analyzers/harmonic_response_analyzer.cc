@@ -32,7 +32,7 @@ using namespace xercesc;
 
 namespace MBSimAnalyzer {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYSER, HarmonicResponseAnalyzer)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYZER, HarmonicResponseAnalyzer)
 
   HarmonicResponseAnalyzer::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) { }
 
@@ -165,23 +165,23 @@ namespace MBSimAnalyzer {
 
   void HarmonicResponseAnalyzer::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"startTime");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"startTime");
     if(e) setStartTime(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"excitationFrequencies");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"excitationFrequencies");
     if(e) setExcitationFrequencies(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"systemFrequencies");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"systemFrequencies");
     if(e) setSystemFrequencies(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"plotStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"plotStepSize");
     if(e) setPlotStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"initialState");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"initialState");
     if(e) setInitialState(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"task");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"task");
     if(e) {
       string str=X()%E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
       if(str=="frequencyResponse") task=frequencyResponse;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"determineEquilibriumState");
+    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"determineEquilibriumState");
     if(e) setDetermineEquilibriumState(E(e)->getText<bool>());
   }
 

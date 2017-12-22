@@ -29,13 +29,6 @@ namespace boost {
   namespace numeric {
     namespace odeint {
 
-      // Enable fmatvec::Vec, the state type of MBSim, as a boost odeint state type.
-      template<>
-      struct is_resizeable<fmatvec::Vec> {
-        typedef boost::true_type type;
-        static const bool value=true;
-      };
-
       // Enable bulirsch_stoer as make_dense_output generator.
       template<class State>
       struct get_dense_output<bulirsch_stoer<State>>
@@ -53,11 +46,6 @@ namespace boost {
       };
 
     }
-  }
-
-  // Enable fmatvec::Vec, the state type of MBSim, as a boost odeint state type.
-  int size(const fmatvec::Vec& v) {
-    return v.size();
   }
 }
 

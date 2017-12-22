@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+<BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSimIntegrator">
   <startTime>0</startTime>
   <endTime>4</endTime>
   <plotStepSize>1e-3</plotStepSize>
-  <absoluteTolerance>1e-6</absoluteTolerance>
+  <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
   <relativeToleranceScalar>1e-6</relativeToleranceScalar>
   <initialStepSize>1e-6</initialStepSize>
-  <minimalStepSize>1e-6</minimalStepSize>
   <maximalStepSize>1e-2</maximalStepSize>
   <plotOnRoot>false</plotOnRoot>
-</LSODARIntegrator>
+</BoostOdeintDOS_RKDOPRI5>
