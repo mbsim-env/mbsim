@@ -39,7 +39,7 @@ namespace MBSim {
   }
 
   void ElasticJoint::updateGeneralizedForces() {
-    lambda = -(*func)(evalGeneralizedRelativePosition(),evalGeneralizedRelativeVelocity());
+    if(func) lambda = -(*func)(evalGeneralizedRelativePosition(),evalGeneralizedRelativeVelocity());
     updla = false;
   }
 
@@ -54,10 +54,10 @@ namespace MBSim {
 
   void ElasticJoint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
-      if(func->getRetSize().first!=forceDir.cols()+momentDir.cols()) THROW_MBSIMERROR("Size of generalized forces does not match!");
+      if(func and (func->getRetSize().first!=forceDir.cols()+momentDir.cols())) THROW_MBSIMERROR("Size of generalized forces does not match!");
     }
     FloatingFrameLink::init(stage, config);
-    func->init(stage, config);
+    if(func) func->init(stage, config);
   }
 
   void ElasticJoint::setForceDirection(const Mat3xV &fd) {
@@ -83,8 +83,10 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
     if(e) setMomentDirection(E(e)->getText<Mat>(3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
-    auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
-    setGeneralizedForceFunction(f);
+    if(e) {
+      auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
+      setGeneralizedForceFunction(f);
+    }
   }
 
 }

@@ -779,21 +779,30 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  LinearElasticFunctionWidget::LinearElasticFunctionWidget() {
+  LinearElasticFunctionWidget::LinearElasticFunctionWidget(bool varSize) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    K = new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix");
+    K = varSize?new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatSizeVarWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix"): new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix");
     layout->addWidget(K);
-
-    D = new ExtWidget("Generalized damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingMatrix");
+    D = new ExtWidget("Generalized damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"dampingMatrix");
     layout->addWidget(D);
+
+    connect(K->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(D,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+  }
+
+  void LinearElasticFunctionWidget::updateWidget() {
+    if(D->isActive()) {
+      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(K->getWidget())->getWidget())->rows();
+      D->resize_(size,size);
+    }
   }
 
   void LinearElasticFunctionWidget::resize_(int m, int n) {
     K->resize_(m,n);
-    D->resize_(m,n);
+    if(D->isActive()) D->resize_(m,n);
   }
 
   DOMElement* LinearElasticFunctionWidget::initializeUsingXML(DOMElement *element) {

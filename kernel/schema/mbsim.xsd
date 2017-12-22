@@ -1915,7 +1915,7 @@
                 Richtungen <object class="inlineeqn">\mathbf{D}_R=\left(\mathbf{d}_{R,1},\ldots\right)</object> der Zwangsmomente des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="generalizedForceFunction">
+          <xs:element name="generalizedForceFunction" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
