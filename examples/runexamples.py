@@ -185,12 +185,18 @@ def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
   if maxExecutionTime>0:
     guard=threading.Timer(maxExecutionTime*60, killSubprocessCall, args=(proc, f, killed))
     guard.start()
-  # read all output in 100 byte blocks
+  # make stdout none blocking
+  fd=proc.stdout.fileno()
+  fcntl.fcntl(fd, fcntl.F_SETFL, fcntl.fcntl(fd, fcntl.F_GETFL) | os.O_NONBLOCK)
+  # read all output
   lineNP=b'' # not already processed bytes (required since we read 100 bytes which may break a unicode multi byte character)
-  while True:
-    line=lineNP+proc.stdout.read(100)
+  while proc.poll()==None:
+    time.sleep(0.5)
+    try:
+      line=lineNP+proc.stdout.read()
+    except:
+      continue
     lineNP=b''
-    if line==b'': break
     try:
       print(line.decode("utf-8"), end="", file=f)
     except UnicodeDecodeError as ex: # catch broken multibyte unicode characters and append it to next line
