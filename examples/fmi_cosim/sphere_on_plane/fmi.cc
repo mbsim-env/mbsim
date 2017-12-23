@@ -10,6 +10,12 @@ using namespace boost::numeric::odeint;
 
 void mbsimSrcFMI(DynamicSystemSolver *&dss, MBSimIntegrator::Integrator *&integrator) {
   dss = new System("TS");
+  dss->setProjectionTolerance(1e-15);
+  dss->setGeneralizedRelativePositionTolerance(1e-6);
+  dss->setGeneralizedRelativeVelocityTolerance(1e-6);
+  dss->setGeneralizedImpulseTolerance(1e-6);
+  dss->setGeneralizedForceTolerance(1e-8);
+  dss->setGeneralizedRelativeAccelerationTolerance(1e-8);
 
   integrator = new BoostOdeintDOS<runge_kutta_dopri5<fmatvec::Vec>, BoostOdeintHelper::SystemTag>;
   integrator->setPlotStepSize(0.001);
