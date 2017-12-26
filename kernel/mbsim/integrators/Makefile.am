@@ -49,6 +49,7 @@ integratorsinclude_HEADERS = integrator.h \
 			     lsode_integrator.h \
 			     rksuite_integrator.h \
 			     boost_odeint_integrator.h \
+			     boost_odeint_integrator_predef.h \
 			     dopri5_integrator.h \
 			     dop853_integrator.h \
 			     odex_integrator.h \

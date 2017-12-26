@@ -17,10 +17,10 @@ namespace MBSim {
 //  template <class T, int N> class NurbsSurfaceArray ;
 //
 //  template <class T, int N> void gordonSurface(NurbsCurveArray<T,N>& , NurbsCurveArray<T,N>& , const Matrix< Point_nD<T,N> >& , NurbsSurface<T,N>& );
-  int surfMeshParams(const GeneralMatrix<fmatvec::Vec3>& Q, Vec& uk, Vec& vl);
+  int surfMeshParams(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, fmatvec::Vec& uk, fmatvec::Vec& vl);
 //  template <class T, int N> int surfMeshParamsH(const Matrix< HPoint_nD<T,N> >& , Vector<T>& , Vector<T>& );
 //  template <class T, int N> int surfMeshParamsClosedU(const Matrix< Point_nD<T,N> >& Qw, Vector<T>& uk, Vector<T>& vl, int degU );
-  int surfMeshParamsClosedU(const GeneralMatrix<fmatvec::Vec3>& Q, Vec& uk, Vec& vl, int degU);
+  int surfMeshParamsClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, fmatvec::Vec& uk, fmatvec::Vec& vl, int degU);
 //  template <class T, int N> int surfMeshParamsClosedUH(const Matrix< HPoint_nD<T,N> >& Qw, Vector<T>& uk, Vector<T>& vl, int degU );
 //
 //  template <class T, int N> void globalSurfInterpXY(const Matrix< Point_nD<T,N> >& , int , int , NurbsSurface<T,N>& );
@@ -51,12 +51,12 @@ namespace MBSim {
     public:
       // Reference to internal data
       //! A reference to the U knot vector
-      const Vec& knotU() const
+      const fmatvec::Vec& knotU() const
       {
         return U;
       }
       //! A reference to the V knot vector
-      const Vec& knotV() const
+      const fmatvec::Vec& knotV() const
       {
         return V;
       }
@@ -71,7 +71,7 @@ namespace MBSim {
         return V(i);
       }
       //! A reference to the control points
-      const GeneralMatrix<Vec4>& ctrlPnts() const
+      const fmatvec::GeneralMatrix<fmatvec::Vec4>& ctrlPnts() const
       {
         return P;
       }
@@ -107,16 +107,16 @@ namespace MBSim {
 //  void dersBasisFuns(T u, T v, int dU, int dV,int uspan, int vspan,Matrix<T> & Niku, Matrix<T>& Njkv ) const ;
 
       // Derivative functions
-      void deriveAt(double u, double v, int d, GeneralMatrix<Vec3> &skl) const;
-      void deriveAtH(double u, double v, int d, GeneralMatrix<Vec4> &skl) const;
-      Vec3 normal(double u, double v) const;
+      void deriveAt(double u, double v, int d, fmatvec::GeneralMatrix<fmatvec::Vec3> &skl) const;
+      void deriveAtH(double u, double v, int d, fmatvec::GeneralMatrix<fmatvec::Vec4> &skl) const;
+      fmatvec::Vec3 normal(double u, double v) const;
 
       // Surface fitting functions
 
-      void globalInterp(const GeneralMatrix<fmatvec::Vec3>& Q, int DegU, int DegV);
-      void globalInterp(const GeneralMatrix<fmatvec::Vec3>& Q, const Vec& uk, const Vec& vk, int DegU, int DegV);
-      void globalInterpClosedU(const GeneralMatrix<fmatvec::Vec3>& Q, int DegU, int DegV);
-      void globalInterpClosedU(const GeneralMatrix<fmatvec::Vec3>& Q, const Vec& uk, const Vec& vk, int DegU, int DegV);
+      void globalInterp(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, int DegU, int DegV);
+      void globalInterp(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, const fmatvec::Vec& uk, const fmatvec::Vec& vk, int DegU, int DegV);
+      void globalInterpClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, int DegU, int DegV);
+      void globalInterpClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, const fmatvec::Vec& uk, const fmatvec::Vec& vk, int DegU, int DegV);
 //  void globalInterpClosedU(const Matrix< Point_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
 //  void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q, int pU, int pV);
 //  void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
@@ -250,13 +250,13 @@ namespace MBSim {
     protected:
       fmatvec::Vec U; //!< the U knot vector
       fmatvec::Vec V; //!< the V knot vector
-      GeneralMatrix<fmatvec::Vec4> P; //!< The matrix of control points
+      fmatvec::GeneralMatrix<fmatvec::Vec4> P; //!< The matrix of control points
       int degU{0}; //!< the degree of the surface in U
       int degV{0}; //!< the degree of the surface in V
 
       //changed
-      Mat InverseU; //!< The matrix for the computation of the control points in U-direction
-      Mat InverseV; //!< The matrix for the computation of the control points in V-direction
+      fmatvec::Mat InverseU; //!< The matrix for the computation of the control points in U-direction
+      fmatvec::Mat InverseV; //!< The matrix for the computation of the control points in V-direction
 
       // Knot functions
       void findSpan(double u, double v, int spanU, int spanV) const;

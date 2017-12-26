@@ -1,7 +1,6 @@
 #include "system.h"
 #include <mbsimfmi/mbsimsrc_fmi.h>
-#include <mbsim/integrators/boost_odeint_integrator.h>
-#include <boost/numeric/odeint.hpp>
+#include <mbsim/integrators/boost_odeint_integrator_predef.h>
 
 using namespace std;
 using namespace MBSim;
@@ -17,6 +16,6 @@ void mbsimSrcFMI(DynamicSystemSolver *&dss, MBSimIntegrator::Integrator *&integr
   dss->setGeneralizedForceTolerance(1e-8);
   dss->setGeneralizedRelativeAccelerationTolerance(1e-8);
 
-  integrator = new BoostOdeintDOS<runge_kutta_dopri5<fmatvec::Vec>, BoostOdeintHelper::SystemTag>;
+  integrator = new BoostOdeintDOS_RKDOPRI5;
   integrator->setPlotStepSize(0.001);
 }
