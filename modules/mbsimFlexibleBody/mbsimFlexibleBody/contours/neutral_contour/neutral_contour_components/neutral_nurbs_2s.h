@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
       double nodeOffset;
       int numOfNodesU;
       int numOfNodesV;
-      GeneralMatrix<Vec3> Nodelist;
+      fmatvec::GeneralMatrix<fmatvec::Vec3> Nodelist;
       fmatvec::Vec uk, vl;
       int degU;
       int degV;

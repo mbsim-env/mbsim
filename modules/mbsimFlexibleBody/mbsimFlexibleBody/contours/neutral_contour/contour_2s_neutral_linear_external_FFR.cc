@@ -13,6 +13,7 @@
 
 using namespace fmatvec;
 using namespace MBSim;
+using namespace std;
 
 namespace MBSimFlexibleBody {
 

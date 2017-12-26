@@ -10,6 +10,7 @@
 #include "neutral_nurbs_2s.h"
 
 using namespace MBSim;
+using namespace fmatvec;
 
 namespace MBSimFlexibleBody {
 

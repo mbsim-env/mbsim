@@ -109,8 +109,8 @@ namespace MBSimFlexibleBody {
        */
       double nodeOffset;
 
-      Vec uk;
-      Vec vl;
+      fmatvec::Vec uk;
+      fmatvec::Vec vl;
       int degU;
       int degV;
       bool openStructure;
