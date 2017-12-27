@@ -34,42 +34,40 @@ namespace MBSim {
   }
 
   void RigidBodyLink::updatehRef(const Vec &hParent, int j) {
+    RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
       h[j][i]>>hParent(I);
-      I = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
-      h[j][body.size()+i]>>hParent(I);
+      h[j][body.size()+i]>>hParent(K);
     }
   } 
 
   void RigidBodyLink::updaterRef(const Vec &rParent, int j) {
+    RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
       r[j][i]>>rParent(I);
-      I = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
-      r[j][body.size()+i]>>rParent(I);
+      r[j][body.size()+i]>>rParent(K);
     }
   } 
 
   void RigidBodyLink::updateWRef(const Mat &WParent, int j) {
+    RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
+    RangeV J = RangeV(laInd,laInd+laSize-1);
     for(unsigned i=0; i<body.size(); i++) {
-      RangeV J = RangeV(laInd,laInd+laSize-1);
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-
       W[j][i]>>WParent(I,J);
-      I = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
-      W[j][body.size()+i]>>WParent(I,J);
+      W[j][body.size()+i]>>WParent(K,J);
     }
   } 
 
   void RigidBodyLink::updateVRef(const Mat &VParent, int j) {
+    RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
+    RangeV J = RangeV(laInd,laInd+laSize-1);
     for(unsigned i=0; i<body.size(); i++) {
-      RangeV J = RangeV(laInd,laInd+laSize-1);
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-
       V[j][i]>>VParent(I,J);
-      I = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
-      V[j][body.size()+i]>>VParent(I,J);
+      V[j][body.size()+i]>>VParent(K,J);
     }
   } 
 
