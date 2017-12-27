@@ -12,7 +12,7 @@
 #include "mbsimFlexibleBody/utils/cardan.h"
 
 using namespace MBSim;
-
+using namespace fmatvec;
 
 namespace MBSimFlexibleBody {
 

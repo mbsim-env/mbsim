@@ -18,8 +18,8 @@ namespace MBSimFlexibleBody {
       ~NeutralNurbsLocalPosition2s() override;
       fmatvec::Vec3 evalLocalPosition(const fmatvec::Vec2 &zeta);
       void update(MBSim::ContourFrame *frame) override;
-      void surfMeshParamsClosedU(Vec& uk, Vec& vl);
-      void surfMeshParams(Vec& uk, Vec& vl);
+      void surfMeshParamsClosedU(fmatvec::Vec& uk, fmatvec::Vec& vl);
+      void surfMeshParams(fmatvec::Vec& uk, fmatvec::Vec& vl);
     protected:
       void buildNodelist() override;  // make this method public for calculating the lagrange parameters for nurbs interpolation
   };

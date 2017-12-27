@@ -9,7 +9,7 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_linear_external_ffr.h"
 
 using namespace MBSim;
-
+using namespace fmatvec;
 
 namespace MBSimFlexibleBody {
 

@@ -11,7 +11,8 @@
 #include "mbsimFlexibleBody/frames/node_frame.h"
 
 using namespace MBSim;
-
+using namespace fmatvec;
+using namespace std;
 
 namespace MBSimFlexibleBody {
 
