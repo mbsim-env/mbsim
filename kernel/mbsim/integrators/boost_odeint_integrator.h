@@ -114,9 +114,9 @@ namespace MBSimIntegrator {
       //! Define wether to trigger a plot before and after each found root.
       void setPlotOnRoot(double plotOnRoot_) { plotOnRoot=plotOnRoot_; }
       //! Set the maximal allowed position drift.
-      void setMaximalPositionDrift(double gMax_) { gMax=gMax_; }
+      void setToleranceForPositionConstraints(double gMax_) {gMax = gMax_;}
       //! Set the maximal allowed velocity drift.
-      void setMaximalVelocityDrift(double gdMax_) { gdMax=gdMax_; }
+      void setToleranceForVelocityConstraints(double gdMax_) {gdMax = gdMax_;}
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
     protected:
@@ -416,10 +416,10 @@ namespace MBSimIntegrator {
     if(e) setMaximalStepSize(MBXMLUtils::E(e)->getText<double>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
     if(e) setPlotOnRoot(MBXMLUtils::E(e)->getText<bool>());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximalPositionDrift");
-    if(e) setMaximalPositionDrift(MBXMLUtils::E(e)->getText<double>());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximalVelocityDrift");
-    if(e) setMaximalVelocityDrift(MBXMLUtils::E(e)->getText<double>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(MBXMLUtils::E(e)->getText<double>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    if(e) setToleranceForVelocityConstraints(MBXMLUtils::E(e)->getText<double>());
   }
 
 }
