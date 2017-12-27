@@ -10,6 +10,7 @@
 #include "mbsimFlexibleBody/frames/node_frame.h"
 
 using namespace MBSim;
+using namespace fmatvec;
 
 namespace MBSimFlexibleBody {
 //  class FlexibleBodyContinuum<double>;

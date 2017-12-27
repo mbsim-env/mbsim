@@ -17,7 +17,7 @@ namespace MBSimFlexibleBody {
     public:
       NeutralNurbsAngle1s(MBSim::Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       ~NeutralNurbsAngle1s() override;
-      Vec3 calculateStaggeredAngle(double oringnalPosition);
+      fmatvec::Vec3 calculateStaggeredAngle(double oringnalPosition);
       void update(MBSim::ContourFrame *frame) override ;
       virtual void updateAngleNormal(MBSim::ContourFrame *frame) ;
       virtual void updateAngleFirstTangent(MBSim::ContourFrame *frame) ;

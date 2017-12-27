@@ -20,11 +20,11 @@
 
 #include "integrator.h"
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsim/utils/eps.h>
 #include <boost/numeric/odeint/stepper/generation/make_dense_output.hpp>
 #include <boost/numeric/odeint/util/is_resizeable.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
-#include <boost/fusion/container/set.hpp>
 
 namespace boost {
   namespace numeric {
@@ -46,29 +46,22 @@ namespace boost {
 
 namespace MBSimIntegrator {
 
-  using namespace std;
-  using namespace std::placeholders;
-  using namespace MBSim;
-  using namespace fmatvec;
-  using namespace xercesc;
-  using namespace MBXMLUtils;
-  using namespace boost::numeric;
-
-  // Convert a MBSim state (fmatvec::Vec) to the boost odeint state type.
-  // Most boost odeint integrators can handle arbitariy state type (see above how fmatvec::Vec is enabled for boost odeint).
-  // In this case the following function are defined as noop.
-  // If boost odeint requires a special state type then the state is copied.
-  inline void assign(Vec &d, const Vec &s) {
-    d=s;
-  }
-  template<typename Dst, typename Src>
-  inline void assign(Dst &d, const Src &s) {
-    if(static_cast<size_t>(d.size())!=static_cast<size_t>(s.size()))
-      d.resize(s.size());
-    copy(s.begin(), s.end(), d.begin());
-  }
-
   namespace BoostOdeintHelper {
+
+    // Convert a MBSim state (fmatvec::Vec) to the boost odeint state type.
+    // Most boost odeint integrators can handle arbitariy state type (see above how fmatvec::Vec is enabled for boost odeint).
+    // In this case the following function are defined as noop.
+    // If boost odeint requires a special state type then the state is copied.
+    inline void assign(fmatvec::Vec &d, const fmatvec::Vec &s) {
+      d=s;
+    }
+    template<typename Dst, typename Src>
+    inline void assign(Dst &d, const Src &s) {
+      if(static_cast<size_t>(d.size())!=static_cast<size_t>(s.size()))
+        d.resize(s.size());
+      copy(s.begin(), s.end(), d.begin());
+    }
+
     // type to define a boost odeint system concept of type "system"
     struct SystemTag {};
     // type to define a boost odeint system concept of type "implicit system"
@@ -81,7 +74,7 @@ namespace MBSimIntegrator {
     class BoostOdeintSystem;
     // Explicit spezialization for boost odeint system concept of type "system"
     template<class ZdFunc, class JacFunc>
-    class BoostOdeintSystem<BoostOdeintHelper::SystemTag, ZdFunc, JacFunc> {
+    class BoostOdeintSystem<SystemTag, ZdFunc, JacFunc> {
       public:
         BoostOdeintSystem(const ZdFunc& zdFunc__, const JacFunc&) : zdFunc_(zdFunc__) {}
         const ZdFunc& operator()() const { return zdFunc_; }
@@ -90,12 +83,12 @@ namespace MBSimIntegrator {
     };
     // Explicit spezialization for boost odeint system concept of type "implicit system"
     template<class ZdFunc, class JacFunc>
-    class BoostOdeintSystem<BoostOdeintHelper::ImplicitSystemTag, ZdFunc, JacFunc> {
+    class BoostOdeintSystem<ImplicitSystemTag, ZdFunc, JacFunc> {
       public:
         BoostOdeintSystem(const ZdFunc& zdFunc__, const JacFunc& jacFunc__) : implFunc_(make_pair(zdFunc__, jacFunc__)) {}
-        const pair<ZdFunc, JacFunc>& operator()() const { return implFunc_; }
+        const std::pair<ZdFunc, JacFunc>& operator()() const { return implFunc_; }
       private:
-        const pair<ZdFunc, JacFunc> implFunc_;
+        const std::pair<ZdFunc, JacFunc> implFunc_;
     };
   }
 
@@ -125,29 +118,29 @@ namespace MBSimIntegrator {
       //! Set the maximal allowed velocity drift.
       void setMaximalVelocityDrift(double gdMax_) { gdMax=gdMax_; }
 
-      void initializeUsingXML(DOMElement *element) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
     protected:
       // Helper function to check if svLast and svStepEnd has a sign change in any element.
-      inline bool signChangedWRTsvLast(const Vec &svStepEnd) const;
+      inline bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
 
       // boost odeint style member function calculating zd
       void zd(const typename Stepper::state_type &z, typename Stepper::state_type &zd, const double t);
       // boost odeint style member function calculating the jacobian
-      void jac(const typename Stepper::state_type &z, ublas::matrix<double> &jac, const double t, typename Stepper::state_type &ft);
+      void jac(const typename Stepper::state_type &z, boost::numeric::ublas::matrix<double> &jac, const double t, typename Stepper::state_type &ft);
       // boost odeint style std::function's calculating zd
-      const function<void(const typename Stepper::state_type&, typename Stepper::state_type&, const double)> zdFunc
-        {bind(&BoostOdeintDOS<Stepper, SystemType>::zd, this, _1, _2, _3)};
+      const std::function<void(const typename Stepper::state_type&, typename Stepper::state_type&, const double)> zdFunc
+        {bind(&BoostOdeintDOS<Stepper, SystemType>::zd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)};
       // boost odeint style std::function's calculating the jacobian
-      const function<void(const typename Stepper::state_type&, ublas::matrix<double>&c, const double, typename Stepper::state_type&)> jacFunc
-        {bind(&BoostOdeintDOS<Stepper, SystemType>::jac, this, _1, _2, _3, _4)};
+      const std::function<void(const typename Stepper::state_type&, boost::numeric::ublas::matrix<double>&c, const double, typename Stepper::state_type&)> jacFunc
+        {bind(&BoostOdeintDOS<Stepper, SystemType>::jac, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)};
       // Helper member which returns a object of the boost odeint system concept of type SystemType
       // giving functions for zd and jacobian.
       const BoostOdeintHelper::BoostOdeintSystem<SystemType, decltype(zdFunc), decltype(jacFunc)> boostOdeintSystem{zdFunc, jacFunc};
 
       // typedef of a boost odeint dense output stepper of type Stepper.
-      typedef typename odeint::result_of::make_dense_output<Stepper>::type DOSType;
+      typedef typename boost::numeric::odeint::result_of::make_dense_output<Stepper>::type DOSType;
       // the boost odeint dense output stepper.
-      unique_ptr<DOSType> dos;
+      std::unique_ptr<DOSType> dos;
 
       // variables with corresponding setter functions
       double dt0{1e-10};
@@ -160,14 +153,12 @@ namespace MBSimIntegrator {
 
       // internal variables
       double tPlot;
-      Vec svLast;
+      fmatvec::Vec svLast;
       typename Stepper::state_type zTemp;
 
       // internal variables required for the numerical jacobian calculation
-      Vec zDisturbed;
-      Vec zd0;
-      static const double delta;
-      static const double deltaInv;
+      fmatvec::Vec zDisturbed;
+      fmatvec::Vec zd0;
 
       // internal variables used for integrator statistics
       size_t nrSteps;
@@ -179,12 +170,6 @@ namespace MBSimIntegrator {
       size_t nrDriftCorr;
   };
 
-  // initialize static members
-  template<typename Stepper, typename SystemType>
-  const double BoostOdeintDOS<Stepper, SystemType>::delta=numeric_limits<double>::epsilon();
-  template<typename Stepper, typename SystemType>
-  const double BoostOdeintDOS<Stepper, SystemType>::deltaInv=1.0/delta;
-
   // implementation
 
   template<typename Stepper, typename SystemType>
@@ -192,38 +177,38 @@ namespace MBSimIntegrator {
     nrRHS++;
     // RHS
     system->setTime(t);
-    assign(system->getState(), z);
+    BoostOdeintHelper::assign(system->getState(), z);
     system->resetUpToDate();
-    assign(zd, system->evalzd());
+    BoostOdeintHelper::assign(zd, system->evalzd());
   }
 
   template<typename Stepper, typename SystemType>
-  void BoostOdeintDOS<Stepper, SystemType>::jac(const typename Stepper::state_type &z, ublas::matrix<double> &jac, const double t, typename Stepper::state_type &ft) {
+  void BoostOdeintDOS<Stepper, SystemType>::jac(const typename Stepper::state_type &z, boost::numeric::ublas::matrix<double> &jac, const double t, typename Stepper::state_type &ft) {
     nrJacs++;
     // RHS jacobian
     if(static_cast<size_t>(z.size())!=static_cast<size_t>(jac.size1()) ||
        static_cast<size_t>(z.size())!=static_cast<size_t>(jac.size2()))
       jac.resize(z.size(), z.size());
     system->setTime(t);
-    assign(system->getState(), z);
+    BoostOdeintHelper::assign(system->getState(), z);
     system->resetUpToDate();
-    assign(zDisturbed, z);
+    BoostOdeintHelper::assign(zDisturbed, z);
     zd0=system->evalzd();
 
     for(size_t i=0; i<static_cast<size_t>(z.size()); ++i) {
-      zDisturbed(i)+=delta;
+      zDisturbed(i)+=MBSim::epsroot;
       system->setState(zDisturbed);
       system->resetUpToDate();
-      auto col=ublas::column(jac, i);
-      auto zd=(system->evalzd()-zd0)*deltaInv;
+      auto col=boost::numeric::ublas::column(jac, i);
+      auto zd=(system->evalzd()-zd0)*MBSim::epsrootInv;
       copy(zd.begin(), zd.end(), col.begin());
-      zDisturbed(i)-=delta;
+      zDisturbed(i)-=MBSim::epsroot;
     }
 
-    system->setTime(t+delta);
+    system->setTime(t+MBSim::epsroot);
     system->setState(zDisturbed);
     system->resetUpToDate();
-    assign(ft, (system->evalzd()-zd0)*deltaInv);
+    BoostOdeintHelper::assign(ft, (system->evalzd()-zd0)*MBSim::epsrootInv);
   }
 
   template<typename Stepper, typename SystemType>
@@ -250,11 +235,11 @@ namespace MBSimIntegrator {
     // get initial state
     if(z0.size()) {
       if(z0.size()!=system->getzSize())
-        throw MBSimError("BoostOdeintDOS: size of z0 does not match");
-      assign(zTemp, z0);
+        throw MBSim::MBSimError("BoostOdeintDOS: size of z0 does not match");
+      BoostOdeintHelper::assign(zTemp, z0);
     }
     else
-      assign(zTemp, system->evalz0());
+      BoostOdeintHelper::assign(zTemp, system->evalz0());
 
     system->computeInitialCondition();
     nrPlots++;
@@ -268,8 +253,8 @@ namespace MBSimIntegrator {
     dos.reset(new DOSType(make_dense_output(aTol, rTol, dtMax, Stepper())));
 #else // boost < 1.60 has no dtMax in make_dense_output
     dos.reset(new DOSType(make_dense_output(aTol, rTol, Stepper())));
-    msg(Warn)<<"This build was done with boost < 1.60 which does not support a maximal step size."<<endl
-             <<"Integrator will not limit the maximal step size."<<endl;
+    msg(Warn)<<"This build was done with boost < 1.60 which does not support a maximal step size."<<std::endl
+             <<"Integrator will not limit the maximal step size."<<std::endl;
 #endif
     dos->initialize(zTemp, tStart, dt0);
   }
@@ -285,7 +270,7 @@ namespace MBSimIntegrator {
       // check if a root exists in the current step
       double curTimeAndState=dos->current_time(); // save current time/state as double: just used to avoid unnessesary system updates
       system->setTime(dos->current_time());
-      assign(system->getState(), dos->current_state());
+      BoostOdeintHelper::assign(system->getState(), dos->current_state());
       system->resetUpToDate();
       nrSVs++;
       auto shift=signChangedWRTsvLast(system->evalsv());
@@ -299,7 +284,7 @@ namespace MBSimIntegrator {
           dos->calc_state(tRoot, zTemp);
           curTimeAndState=tRoot;
           system->setTime(tRoot);
-          assign(system->getState(), zTemp);
+          BoostOdeintHelper::assign(system->getState(), zTemp);
           system->resetUpToDate();
           nrSVs++;
           if(signChangedWRTsvLast(system->evalsv()))
@@ -310,7 +295,7 @@ namespace MBSimIntegrator {
         dos->calc_state(step.second, zTemp);
         curTimeAndState=step.second;
         system->setTime(step.second);
-        assign(system->getState(), zTemp);
+        BoostOdeintHelper::assign(system->getState(), zTemp);
         system->resetUpToDate();
         nrSVs++;
         auto &sv=system->evalsv();
@@ -325,13 +310,13 @@ namespace MBSimIntegrator {
         if(curTimeAndState!=tPlot) {
           curTimeAndState=tPlot;
           system->setTime(tPlot);
-          assign(system->getState(), zTemp);
+          BoostOdeintHelper::assign(system->getState(), zTemp);
           system->resetUpToDate();
         }
         nrPlots++;
         system->plot();
         if(output)
-          msg(Info)<<"t = "<<tPlot<<", dt="<<dos->current_time_step()<<"\r"<<flush;
+          msg(Info)<<"t = "<<tPlot<<", dt="<<dos->current_time_step()<<"\r"<<std::flush;
         tPlot+=dtPlot;
       }
 
@@ -342,7 +327,7 @@ namespace MBSimIntegrator {
           if(curTimeAndState!=step.second) {
             curTimeAndState=step.second;
             system->setTime(step.second);
-            assign(system->getState(), zTemp);
+            BoostOdeintHelper::assign(system->getState(), zTemp);
             system->resetUpToDate();
           }
           if(plotOnRoot) {
@@ -359,7 +344,7 @@ namespace MBSimIntegrator {
           nrSVs++;
           svLast=system->evalsv();
           // reinit odeint with new state
-          assign(zTemp, system->getState());
+          BoostOdeintHelper::assign(zTemp, system->getState());
           dos->initialize(zTemp, step.second, dos->current_time_step());
         }
         else {
@@ -376,7 +361,7 @@ namespace MBSimIntegrator {
           }
           if(reinitNeeded) {
             nrDriftCorr++;
-            assign(zTemp, system->getState());
+            BoostOdeintHelper::assign(zTemp, system->getState());
             dos->initialize(zTemp, step.second, dos->current_time_step());
           }
         }
@@ -390,7 +375,7 @@ namespace MBSimIntegrator {
         dos->calc_state(tSamplePoint, zTemp);
         curTimeAndState=tSamplePoint;
         system->setTime(tSamplePoint);
-        assign(system->getState(), zTemp);
+        BoostOdeintHelper::assign(system->getState(), zTemp);
         dos->initialize(zTemp, tSamplePoint, dos->current_time_step());
       }
     }
@@ -398,19 +383,19 @@ namespace MBSimIntegrator {
 
   template<typename Stepper, typename SystemType>
   void BoostOdeintDOS<Stepper, SystemType>::postIntegrate() {
-    msg(Info)<<endl;
-    msg(Info)<<"Integration statistics:"<<endl;
-    msg(Info)<<"nrSteps     = "<<nrSteps<<endl;
-    msg(Info)<<"nrRHS       = "<<nrRHS<<endl;
-    msg(Info)<<"nrJacs      = "<<nrJacs<<endl;
-    msg(Info)<<"nrPlots     = "<<nrPlots<<endl;
-    msg(Info)<<"nrSVs       = "<<nrSVs<<endl;
-    msg(Info)<<"nrRoots     = "<<nrRoots<<endl;
-    msg(Info)<<"nrDriftCorr = "<<nrDriftCorr<<endl;
+    msg(Info)<<std::endl;
+    msg(Info)<<"Integration statistics:"<<std::endl;
+    msg(Info)<<"nrSteps     = "<<nrSteps<<std::endl;
+    msg(Info)<<"nrRHS       = "<<nrRHS<<std::endl;
+    msg(Info)<<"nrJacs      = "<<nrJacs<<std::endl;
+    msg(Info)<<"nrPlots     = "<<nrPlots<<std::endl;
+    msg(Info)<<"nrSVs       = "<<nrSVs<<std::endl;
+    msg(Info)<<"nrRoots     = "<<nrRoots<<std::endl;
+    msg(Info)<<"nrDriftCorr = "<<nrDriftCorr<<std::endl;
   }
 
   template<typename Stepper, typename SystemType>
-  bool BoostOdeintDOS<Stepper, SystemType>::signChangedWRTsvLast(const Vec &svStepEnd) const {
+  bool BoostOdeintDOS<Stepper, SystemType>::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
     for(int i=0; i<svStepEnd.size(); i++)
       if(svLast(i)*svStepEnd(i)<0)
         return true;
@@ -418,23 +403,23 @@ namespace MBSimIntegrator {
   }
 
   template<typename Stepper, typename SystemType>
-  void BoostOdeintDOS<Stepper, SystemType>::initializeUsingXML(DOMElement *element) {
+  void BoostOdeintDOS<Stepper, SystemType>::initializeUsingXML(xercesc::DOMElement *element) {
     Integrator::initializeUsingXML(element);
-    DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
-    if(e) setAbsoluteTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-    if(e) setRelativeTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
-    if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if(e) setMaximalStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
-    if(e) setPlotOnRoot(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalPositionDrift");
-    if(e) setMaximalPositionDrift(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalVelocityDrift");
-    if(e) setMaximalVelocityDrift(E(e)->getText<double>());
+    xercesc::DOMElement *e;
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+    if(e) setAbsoluteTolerance(MBXMLUtils::E(e)->getText<double>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+    if(e) setRelativeTolerance(MBXMLUtils::E(e)->getText<double>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
+    if(e) setInitialStepSize(MBXMLUtils::E(e)->getText<double>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
+    if(e) setMaximalStepSize(MBXMLUtils::E(e)->getText<double>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
+    if(e) setPlotOnRoot(MBXMLUtils::E(e)->getText<bool>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximalPositionDrift");
+    if(e) setMaximalPositionDrift(MBXMLUtils::E(e)->getText<double>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximalVelocityDrift");
+    if(e) setMaximalVelocityDrift(MBXMLUtils::E(e)->getText<double>());
   }
 
 }

@@ -677,8 +677,9 @@ namespace MBSimGUI {
   void MainWindow::loadProject() {
     if(maybeSave()) {
       QString file=QFileDialog::getOpenFileName(nullptr, "XML project files", ".", "XML files (*.mbsimprj.xml)");
-      if(file!="")
-        loadProject(file);
+      if(file.startsWith("//"))
+        file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
+      loadProject(file);
     }
   }
 
@@ -1587,6 +1588,8 @@ namespace MBSimGUI {
     else {
       file=QFileDialog::getOpenFileName(nullptr, "XML frame files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
+        if(file.startsWith("//"))
+          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         DOMElement *ele = embed?doc->getDocumentElement()->getFirstElementChild():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true))->getFirstElementChild();
         while(ele) {
@@ -1646,6 +1649,8 @@ namespace MBSimGUI {
     else {
       file=QFileDialog::getOpenFileName(nullptr, "XML frame files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
+        if(file.startsWith("//"))
+          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1691,6 +1696,8 @@ namespace MBSimGUI {
     else {
       file=QFileDialog::getOpenFileName(nullptr, "XML contour files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
+        if(file.startsWith("//"))
+          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1736,6 +1743,8 @@ namespace MBSimGUI {
     else {
       file=QFileDialog::getOpenFileName(nullptr, "XML group files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
+        if(file.startsWith("//"))
+          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1781,6 +1790,8 @@ namespace MBSimGUI {
     else {
       file=QFileDialog::getOpenFileName(nullptr, "XML object files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
+        if(file.startsWith("//"))
+          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1826,6 +1837,8 @@ namespace MBSimGUI {
     else {
       file=QFileDialog::getOpenFileName(nullptr, "XML link files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
+        if(file.startsWith("//"))
+          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1871,6 +1884,8 @@ namespace MBSimGUI {
     else {
       file=QFileDialog::getOpenFileName(nullptr, "XML constraint files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
+        if(file.startsWith("//"))
+          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1916,6 +1931,8 @@ namespace MBSimGUI {
     else {
       file=QFileDialog::getOpenFileName(nullptr, "XML observer files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
+        if(file.startsWith("//"))
+          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1948,6 +1965,8 @@ namespace MBSimGUI {
     DOMElement *ele = NULL;
     QString file=QFileDialog::getOpenFileName(0, "XML frame files", ".", "XML files (*.xml)");
     if(not file.isEmpty()) {
+      if(file.startsWith("//"))
+        file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
       ele = static_cast<DOMElement*>(project->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
     }

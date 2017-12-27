@@ -11,6 +11,7 @@
 #include "mbsim/frames/contour_frame.h"
 
 using namespace MBSim;
+using namespace fmatvec;
 
 namespace MBSimFlexibleBody {
 

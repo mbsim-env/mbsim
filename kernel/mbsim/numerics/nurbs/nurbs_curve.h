@@ -28,9 +28,6 @@ namespace fmatvec {
   typedef Matrix<General, Var, Fixed<4>, double> MatVx4;
 }
 
-using namespace std;
-using namespace fmatvec;
-
 namespace MBSim {
 
   /*!
@@ -180,7 +177,7 @@ namespace MBSim {
 
 //        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, int d);
 //        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, const std::vector<double>& U, int d);
-      void globalInterpH(const MatVx4& Qw, const Vec& ub, const Vec& Uc, int d, bool updateLater = false);
+      void globalInterpH(const fmatvec::MatVx4& Qw, const fmatvec::Vec& ub, const fmatvec::Vec& Uc, int d, bool updateLater = false);
 //        void globalInterpClosed(const Vector<fmatvec::Point<3>  >& Qw, int d);
       /*!
        * \brief closed interpolation of the given (not yet wrapped) points at the given knot vector "ub" in a degree of "d"
@@ -195,7 +192,7 @@ namespace MBSim {
 
 //        void globalInterpClosedH(const Vector<fmatvec::HPoint<3>  >& Qw, int d);
 //        void globalInterpClosedH(const Vector<fmatvec::HPoint<3>  >& Qw, const std::vector<double>& U, int d);
-      void globalInterpClosedH(const MatVx4& Qw, const Vec& ub, const Vec& Uc, int d, bool updateLater = false);
+      void globalInterpClosedH(const fmatvec::MatVx4& Qw, const fmatvec::Vec& ub, const fmatvec::Vec& Uc, int d, bool updateLater = false);
 //        void globalInterpClosed(const Vector<fmatvec::Point<3>  >& Qw, const std::vector<double>& ub, const std::vector<double>& Uc, int d);
 //
 //        void globalInterpD(const Vector<fmatvec::Point<3>  >& Q, const Vector<fmatvec::Point<3>  >& D, int d, int unitD, T a = 1.0);
@@ -299,7 +296,7 @@ namespace MBSim {
       void resize(int n, int Deg);
 
       void knotAveraging(const std::vector<double>& uk, int deg);
-      double chordLengthParam(const MatVx3& Q, Vec& ub);
+      double chordLengthParam(const fmatvec::MatVx3& Q, fmatvec::Vec& ub);
       void updateUVecs(double uMin, double uMax);
 
       void knotAveragingClosed(const std::vector<double>& uk, int deg);
@@ -310,11 +307,11 @@ namespace MBSim {
   };
 
   //TODO: put those functions into mother nurbs class (maybe) to make them "func(...) const"
-  void knotAveraging(const Vec& uk, int deg, Vec& U);
-  void knotAveragingClosed(const Vec& uk, int deg, Vec& U);
+  void knotAveraging(const fmatvec::Vec& uk, int deg, fmatvec::Vec& U);
+  void knotAveragingClosed(const fmatvec::Vec& uk, int deg, fmatvec::Vec& U);
   void basisFuns(double u, int span, int deg, const fmatvec::Vec & U, fmatvec::Vec& funs);
   void dersBasisFuns(int n, double u, int span, int deg, const fmatvec::Vec & U, fmatvec::Mat& ders);
-  void binomialCoef(Mat& Bin);
+  void binomialCoef(fmatvec::Mat& Bin);
 
 }
 #endif

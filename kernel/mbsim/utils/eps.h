@@ -28,6 +28,8 @@ namespace MBSim {
 
   extern const double epsroot;
 
+  extern const double epsrootInv;
+
 }
 
 #endif /* _EPS_H_ */

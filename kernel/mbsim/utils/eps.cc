@@ -22,4 +22,6 @@ namespace MBSim {
 
   const double epsroot = std::sqrt(macheps); // std::sqrt is not constexpr
 
+  const double epsrootInv = 1.0/epsroot; // epsroot is not constexpr
+
 }

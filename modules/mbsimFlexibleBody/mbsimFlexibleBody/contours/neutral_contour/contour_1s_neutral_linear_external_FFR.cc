@@ -12,6 +12,8 @@
 #include "mbsim/utils/rotarymatrices.h"
 
 using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
 
 namespace MBSimFlexibleBody {
   

@@ -22,7 +22,6 @@
 #include "mbsim/objects/rigid_body.h"
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/constitutive_laws/bilateral_impact.h>
-#include <openmbvcppinterface/group.h>
 
 using namespace std;
 using namespace fmatvec;

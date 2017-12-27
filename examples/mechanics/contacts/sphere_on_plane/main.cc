@@ -1,7 +1,6 @@
 #include "system.h"
 #include <mbsim/integrators/integrators.h>
-#include <mbsim/integrators/boost_odeint_integrator.h>
-#include <boost/numeric/odeint.hpp>
+#include <mbsim/integrators/boost_odeint_integrator_predef.h>
 
 using namespace std;
 using namespace MBSim;
@@ -39,7 +38,7 @@ int main (int argc, char* argv[]) {
     integrator.integrate(*sys);
   }
   else { // EVent driven using boost odeint runge-kutta dopri5
-    BoostOdeintDOS<runge_kutta_dopri5<fmatvec::Vec>, BoostOdeintHelper::SystemTag> integrator;
+    BoostOdeintDOS_RKDOPRI5 integrator;
     sys->setProjectionTolerance(1e-15);
     sys->setGeneralizedRelativePositionTolerance(1e-6);
     sys->setGeneralizedRelativeVelocityTolerance(1e-6);

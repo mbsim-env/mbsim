@@ -13,7 +13,7 @@
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 
 using namespace MBSim;
-
+using namespace fmatvec;
 
 namespace MBSimFlexibleBody {
 
