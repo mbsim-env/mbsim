@@ -38,12 +38,8 @@ namespace MBSimIntegrator {
     // runge_kutta_dopri5<Vec>
   
     // type definitions
-    typedef typename boost::numeric::odeint::algebra_dispatcher<fmatvec::Vec>::algebra_type Algebra;
-    typedef typename boost::numeric::odeint::operations_dispatcher<fmatvec::Vec>::operations_type Operations;
-    typedef boost::numeric::odeint::default_error_checker<double, Algebra, Operations> ErrorChecker;
-    typedef boost::numeric::odeint::default_step_adjuster<double, double> RKStepAdjuster;
     typedef boost::numeric::odeint::runge_kutta_dopri5<fmatvec::Vec> RKDOPRI5Stepper;
-    typedef boost::numeric::odeint::controlled_runge_kutta<RKDOPRI5Stepper, ErrorChecker, RKStepAdjuster> ControlledRK;
+    typedef boost::numeric::odeint::controlled_runge_kutta<RKDOPRI5Stepper> ControlledRK;
     typedef boost::numeric::odeint::dense_output_runge_kutta<ControlledRK> DOSRK;
 
     // DOS concept for the boost odeint runge_kutta_dopri5<Vec> stepper
@@ -52,10 +48,10 @@ namespace MBSimIntegrator {
         typedef ExplicitSystemTag SystemCategory;
 #if BOOST_VERSION >= 106000
         RKDOPRI5(double aTol, double rTol, double dtMax) :
-          DOSRK(ControlledRK(ErrorChecker(aTol, rTol), RKStepAdjuster(dtMax), RKDOPRI5Stepper())) {}
+          DOSRK(ControlledRK(ControlledRK::error_checker_type(aTol, rTol), ControlledRK::step_adjuster_type(dtMax), RKDOPRI5Stepper())) {}
 #else // boost odeint < 1.60 does not support dtMax
         RKDOPRI5(double aTol, double rTol) :
-          DOSRK(ControlledRK(ErrorChecker(aTol, rTol), RKDOPRI5Stepper())) {}
+          DOSRK(ControlledRK(ControlledRK::error_checker_type(aTol, rTol), RKDOPRI5Stepper())) {}
 #endif
     };
 
@@ -70,7 +66,9 @@ namespace MBSimIntegrator {
     class BulirschStoer : public DOSBS {
       public:
         typedef ExplicitSystemTag SystemCategory;
+#if BOOST_VERSION >= 106000
         BulirschStoer(double aTol, double rTol, double dtMax) : DOSBS(aTol, rTol, 1.0, 1.0, dtMax) {}
+#endif
         BulirschStoer(double aTol, double rTol) : DOSBS(aTol, rTol) {}
     };
 
@@ -87,7 +85,9 @@ namespace MBSimIntegrator {
     class Rosenbrock4 : public DOSRB4 {
       public:
         typedef ImplicitSystemTag SystemCategory;
+#if BOOST_VERSION >= 106000
         Rosenbrock4(double aTol, double rTol, double dtMax) : DOSRB4(ControlledRB4(aTol, rTol, dtMax)) {}
+#endif
         Rosenbrock4(double aTol, double rTol) : DOSRB4(ControlledRB4(aTol, rTol)) {}
     };
 
