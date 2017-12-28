@@ -21,7 +21,6 @@
 #include "integrator.h"
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
-#include <boost/numeric/odeint/stepper/generation/make_dense_output.hpp>
 #include <boost/numeric/odeint/util/is_resizeable.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
@@ -63,18 +62,18 @@ namespace MBSimIntegrator {
     }
 
     // type to define a boost odeint system concept of type "system"
-    struct SystemTag {};
+    struct ExplicitSystemTag {};
     // type to define a boost odeint system concept of type "implicit system"
     struct ImplicitSystemTag {};
 
-    // Helper class to return a object of the boost odeint system concept of type SystemType
+    // Helper class to return a object of the boost odeint system concept of type SystemCategory
     // giving functions for zd and jacobian.
     // Declaration.
-    template<class SystemType, class ZdFunc, class JacFunc>
+    template<class SystemCategory, class ZdFunc, class JacFunc>
     class BoostOdeintSystem;
     // Explicit spezialization for boost odeint system concept of type "system"
     template<class ZdFunc, class JacFunc>
-    class BoostOdeintSystem<SystemTag, ZdFunc, JacFunc> {
+    class BoostOdeintSystem<ExplicitSystemTag, ZdFunc, JacFunc> {
       public:
         BoostOdeintSystem(const ZdFunc& zdFunc__, const JacFunc&) : zdFunc_(zdFunc__) {}
         const ZdFunc& operator()() const { return zdFunc_; }
@@ -92,10 +91,13 @@ namespace MBSimIntegrator {
     };
   }
 
-  //! Boost odeint integrator with dense output of type Stepper.
-  //! SystemType must define the type of the system concept of Stepper,
-  //! which may currently be SystemTag or ImplicitSystemTag.
-  template<typename Stepper, typename SystemType>
+  //! Integrator based on any Boost odeint dense output stepper.
+  //! DOS must conform to the following concept:
+  //! - must be a valid boost odeint dense output stepper
+  //! - SystemCategory must be a typedef of either ExplicitSystemTag or ImplicitSystemTag
+  //! - DOS(double aTol, double rTol, double dtMax) must be a valid constructor
+  //! - DOS(double aTol, double rTol) must be a valid constructor (just required to support boost version < 1.60, may be removed later)
+  template<typename DOS>
   class BoostOdeintDOS : public Integrator {
     public:
       void integrate() override;
@@ -124,23 +126,25 @@ namespace MBSimIntegrator {
       inline bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
 
       // boost odeint style member function calculating zd
-      void zd(const typename Stepper::state_type &z, typename Stepper::state_type &zd, const double t);
+      void zd(const typename DOS::state_type &z, typename DOS::state_type &zd, const double t);
       // boost odeint style member function calculating the jacobian
-      void jac(const typename Stepper::state_type &z, boost::numeric::ublas::matrix<double> &jac, const double t, typename Stepper::state_type &ft);
+      void jac(const typename DOS::state_type &z, boost::numeric::ublas::matrix<double> &jac, const double t,
+               typename DOS::state_type &ft);
       // boost odeint style std::function's calculating zd
-      const std::function<void(const typename Stepper::state_type&, typename Stepper::state_type&, const double)> zdFunc
-        {bind(&BoostOdeintDOS<Stepper, SystemType>::zd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)};
+      const std::function<void(const typename DOS::state_type&, typename DOS::state_type&, const double)> zdFunc
+        {bind(&BoostOdeintDOS<DOS>::zd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)};
       // boost odeint style std::function's calculating the jacobian
-      const std::function<void(const typename Stepper::state_type&, boost::numeric::ublas::matrix<double>&c, const double, typename Stepper::state_type&)> jacFunc
-        {bind(&BoostOdeintDOS<Stepper, SystemType>::jac, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)};
-      // Helper member which returns a object of the boost odeint system concept of type SystemType
+      const std::function<void(const typename DOS::state_type&, boost::numeric::ublas::matrix<double>&c, const double,
+                               typename DOS::state_type&)> jacFunc
+        {bind(&BoostOdeintDOS<DOS>::jac, this, std::placeholders::_1, std::placeholders::_2,
+              std::placeholders::_3, std::placeholders::_4)};
+      // Helper member which returns a object of the boost odeint system concept of type SystemCategory
       // giving functions for zd and jacobian.
-      const BoostOdeintHelper::BoostOdeintSystem<SystemType, decltype(zdFunc), decltype(jacFunc)> boostOdeintSystem{zdFunc, jacFunc};
+      const BoostOdeintHelper::BoostOdeintSystem<typename DOS::SystemCategory, decltype(zdFunc), decltype(jacFunc)>
+        boostOdeintSystem{zdFunc, jacFunc};
 
-      // typedef of a boost odeint dense output stepper of type Stepper.
-      typedef typename boost::numeric::odeint::result_of::make_dense_output<Stepper>::type DOSType;
       // the boost odeint dense output stepper.
-      std::unique_ptr<DOSType> dos;
+      std::unique_ptr<DOS> dos;
 
       // variables with corresponding setter functions
       double dt0{1e-10};
@@ -154,7 +158,7 @@ namespace MBSimIntegrator {
       // internal variables
       double tPlot;
       fmatvec::Vec svLast;
-      typename Stepper::state_type zTemp;
+      typename DOS::state_type zTemp;
 
       // internal variables required for the numerical jacobian calculation
       fmatvec::Vec zDisturbed;
@@ -172,8 +176,8 @@ namespace MBSimIntegrator {
 
   // implementation
 
-  template<typename Stepper, typename SystemType>
-  void BoostOdeintDOS<Stepper, SystemType>::zd(const typename Stepper::state_type &z, typename Stepper::state_type &zd, const double t) {
+  template<typename DOS>
+  void BoostOdeintDOS<DOS>::zd(const typename DOS::state_type &z, typename DOS::state_type &zd, const double t) {
     nrRHS++;
     // RHS
     system->setTime(t);
@@ -182,8 +186,9 @@ namespace MBSimIntegrator {
     BoostOdeintHelper::assign(zd, system->evalzd());
   }
 
-  template<typename Stepper, typename SystemType>
-  void BoostOdeintDOS<Stepper, SystemType>::jac(const typename Stepper::state_type &z, boost::numeric::ublas::matrix<double> &jac, const double t, typename Stepper::state_type &ft) {
+  template<typename DOS>
+  void BoostOdeintDOS<DOS>::jac(const typename DOS::state_type &z, boost::numeric::ublas::matrix<double> &jac, const double t,
+                                typename DOS::state_type &ft) {
     nrJacs++;
     // RHS jacobian
     if(static_cast<size_t>(z.size())!=static_cast<size_t>(jac.size1()) ||
@@ -211,15 +216,15 @@ namespace MBSimIntegrator {
     BoostOdeintHelper::assign(ft, (system->evalzd()-zd0)*MBSim::epsrootInv);
   }
 
-  template<typename Stepper, typename SystemType>
-  void BoostOdeintDOS<Stepper, SystemType>::integrate() {
+  template<typename DOS>
+  void BoostOdeintDOS<DOS>::integrate() {
     preIntegrate();
     subIntegrate(tEnd);
     postIntegrate();
   }
 
-  template<typename Stepper, typename SystemType>
-  void BoostOdeintDOS<Stepper, SystemType>::preIntegrate() {
+  template<typename DOS>
+  void BoostOdeintDOS<DOS>::preIntegrate() {
     debugInit();
 
     nrSteps=0;
@@ -250,17 +255,17 @@ namespace MBSimIntegrator {
 
     // initialize odeint
 #if BOOST_VERSION >= 106000
-    dos.reset(new DOSType(make_dense_output(aTol, rTol, dtMax, Stepper())));
-#else // boost < 1.60 has no dtMax in make_dense_output
-    dos.reset(new DOSType(make_dense_output(aTol, rTol, Stepper())));
+    dos.reset(new DOS(aTol, rTol, dtMax));
+#else // boost odeint < 1.60 does not support dtMax
+    dos.reset(new DOS(aTol, rTol));
     msg(Warn)<<"This build was done with boost < 1.60 which does not support a maximal step size."<<std::endl
              <<"Integrator will not limit the maximal step size."<<std::endl;
 #endif
     dos->initialize(zTemp, tStart, dt0);
   }
 
-  template<typename Stepper, typename SystemType>
-  void BoostOdeintDOS<Stepper, SystemType>::subIntegrate(double tSamplePoint) {
+  template<typename DOS>
+  void BoostOdeintDOS<DOS>::subIntegrate(double tSamplePoint) {
     // loop until at least tSamplePoint is reached
     while(dos->current_time()<tSamplePoint) {
       // make one step with odeint
@@ -381,8 +386,8 @@ namespace MBSimIntegrator {
     }
   }
 
-  template<typename Stepper, typename SystemType>
-  void BoostOdeintDOS<Stepper, SystemType>::postIntegrate() {
+  template<typename DOS>
+  void BoostOdeintDOS<DOS>::postIntegrate() {
     msg(Info)<<std::endl;
     msg(Info)<<"Integration statistics:"<<std::endl;
     msg(Info)<<"nrSteps     = "<<nrSteps<<std::endl;
@@ -394,16 +399,16 @@ namespace MBSimIntegrator {
     msg(Info)<<"nrDriftCorr = "<<nrDriftCorr<<std::endl;
   }
 
-  template<typename Stepper, typename SystemType>
-  bool BoostOdeintDOS<Stepper, SystemType>::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
+  template<typename DOS>
+  bool BoostOdeintDOS<DOS>::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
     for(int i=0; i<svStepEnd.size(); i++)
       if(svLast(i)*svStepEnd(i)<0)
         return true;
     return false;
   }
 
-  template<typename Stepper, typename SystemType>
-  void BoostOdeintDOS<Stepper, SystemType>::initializeUsingXML(xercesc::DOMElement *element) {
+  template<typename DOS>
+  void BoostOdeintDOS<DOS>::initializeUsingXML(xercesc::DOMElement *element) {
     Integrator::initializeUsingXML(element);
     xercesc::DOMElement *e;
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
