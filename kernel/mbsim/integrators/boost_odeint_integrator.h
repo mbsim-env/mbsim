@@ -22,6 +22,7 @@
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
 #include <boost/numeric/odeint/util/is_resizeable.hpp>
+#include <boost/numeric/odeint/stepper/stepper_categories.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
@@ -95,10 +96,20 @@ namespace MBSimIntegrator {
   //! DOS must conform to the following concept:
   //! - must be a valid boost odeint dense output stepper
   //! - SystemCategory must be a typedef of either ExplicitSystemTag or ImplicitSystemTag
+  //! - UnderlayingStepperCategory must be a typedef of the underlaying stepper category
   //! - DOS(double aTol, double rTol, double dtMax) must be a valid constructor
   //! - DOS(double aTol, double rTol) must be a valid constructor (just required to support boost version < 1.60, may be removed later)
   template<typename DOS>
   class BoostOdeintDOS : public Integrator {
+    protected:
+      // flag if the underlaying stepper is controlled
+      static constexpr bool isControlled{std::is_base_of<boost::numeric::odeint::controlled_stepper_tag,
+                                                         typename DOS::UnderlayingStepperCategory>::value};
+      // helper typedef to enable member functions if the underlaying stepper is controlled
+      template<typename H>
+      using EnableIfControlled=typename std::enable_if<std::is_base_of<boost::numeric::odeint::controlled_stepper_tag,
+                                                                       typename H::UnderlayingStepperCategory>::value>::type;
+
     public:
       void integrate() override;
       void preIntegrate() override;
@@ -107,16 +118,25 @@ namespace MBSimIntegrator {
 
       //! Set initial step size.
       void setInitialStepSize(double dt0_) { dt0=dt0_; }
+
       //! Set absolute tolerance.
+      template<typename H=DOS, typename=EnableIfControlled<H>>
       void setAbsoluteTolerance(double aTol_) { aTol=aTol_; }
+
       //! Set relative tolerance.
+      template<typename H=DOS, typename=EnableIfControlled<H>>
       void setRelativeTolerance(double rTol_) { rTol=rTol_; }
+
       //! Set maximal step size.
+      template<typename H=DOS, typename=EnableIfControlled<H>>
       void setMaximalStepSize(double dtMax_) { dtMax=dtMax_; }
+
       //! Define wether to trigger a plot before and after each found root.
       void setPlotOnRoot(double plotOnRoot_) { plotOnRoot=plotOnRoot_; }
+
       //! Set the maximal allowed position drift.
       void setToleranceForPositionConstraints(double gMax_) {gMax = gMax_;}
+
       //! Set the maximal allowed velocity drift.
       void setToleranceForVelocityConstraints(double gdMax_) {gdMax = gdMax_;}
 
@@ -407,22 +427,64 @@ namespace MBSimIntegrator {
     return false;
   }
 
+  namespace {
+    // declaration
+    template<bool, typename Self>
+    struct InitializeUsingXMLControlled;
+
+    // initializeUsingXML only used if isControlled == true
+    template<typename Self>
+    struct InitializeUsingXMLControlled<true, Self> {
+      static void call(Self self, xercesc::DOMElement* element) {
+        xercesc::DOMElement *e;
+
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+        if(e) self->setAbsoluteTolerance(MBXMLUtils::E(e)->getText<double>());
+
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+        if(e) self->setRelativeTolerance(MBXMLUtils::E(e)->getText<double>());
+
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
+        if(e) self->setMaximalStepSize(MBXMLUtils::E(e)->getText<double>());
+      }
+    };
+
+    // initializeUsingXML only used if isControlled == false
+    template<typename Self>
+    struct InitializeUsingXMLControlled<false, Self> {
+      static void call(Self self, xercesc::DOMElement* element) {
+        xercesc::DOMElement *e;
+
+        // we are not checking in the XML schema for isControlled -> do it here at runtime
+
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+        if(e) throw MBSim::MBSimError("absoluteToleranceScalar element used for an fixed step-size stepper.");
+
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+        if(e) throw MBSim::MBSimError("relativeToleranceScalar element used for an fixed step-size stepper.");
+
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
+        if(e) throw MBSim::MBSimError("maximalStepSize element used for an fixed step-size stepper.");
+      }
+    };
+  }
+
   template<typename DOS>
   void BoostOdeintDOS<DOS>::initializeUsingXML(xercesc::DOMElement *element) {
     Integrator::initializeUsingXML(element);
     xercesc::DOMElement *e;
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
-    if(e) setAbsoluteTolerance(MBXMLUtils::E(e)->getText<double>());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-    if(e) setRelativeTolerance(MBXMLUtils::E(e)->getText<double>());
+
+    InitializeUsingXMLControlled<isControlled, decltype(this)>::call(this, element);
+
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if(e) setInitialStepSize(MBXMLUtils::E(e)->getText<double>());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if(e) setMaximalStepSize(MBXMLUtils::E(e)->getText<double>());
+
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
     if(e) setPlotOnRoot(MBXMLUtils::E(e)->getText<bool>());
+
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(MBXMLUtils::E(e)->getText<double>());
+
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
     if(e) setToleranceForVelocityConstraints(MBXMLUtils::E(e)->getText<double>());
   }

@@ -27,6 +27,8 @@ namespace MBSimIntegrator {
 // explicit integrators
 MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIMINT, BoostOdeintDOS<RKDOPRI5     >, RKDOPRI5     )
 MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIMINT, BoostOdeintDOS<BulirschStoer>, BulirschStoer)
+// not working due to but in boost odeint, see https://github.com/boostorg/odeint/pull/27
+// MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIMINT, BoostOdeintDOS<Euler        >, Euler        )
 // implicit integrators
 MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIMINT, BoostOdeintDOS<Rosenbrock4  >, Rosenbrock4  )
 

@@ -24,6 +24,9 @@
 // bulirsch_stoer<Vec>
 #include <boost/numeric/odeint/stepper/bulirsch_stoer_dense_out.hpp>
 
+// euler<Vec>
+#include <boost/numeric/odeint/stepper/euler.hpp>
+
 // rosenbrock4<double>
 #include <boost/numeric/odeint/stepper/rosenbrock4_dense_output.hpp>
 
@@ -46,6 +49,7 @@ namespace MBSimIntegrator {
     class RKDOPRI5 : public DOSRK {
       public:
         typedef ExplicitSystemTag SystemCategory;
+        typedef typename ControlledRK::stepper_category UnderlayingStepperCategory;
 #if BOOST_VERSION >= 106000
         RKDOPRI5(double aTol, double rTol, double dtMax) :
           DOSRK(ControlledRK(ControlledRK::error_checker_type(aTol, rTol), ControlledRK::step_adjuster_type(dtMax), RKDOPRI5Stepper())) {}
@@ -66,10 +70,31 @@ namespace MBSimIntegrator {
     class BulirschStoer : public DOSBS {
       public:
         typedef ExplicitSystemTag SystemCategory;
+        typedef boost::numeric::odeint::controlled_stepper_tag UnderlayingStepperCategory;
 #if BOOST_VERSION >= 106000
         BulirschStoer(double aTol, double rTol, double dtMax) : DOSBS(aTol, rTol, 1.0, 1.0, dtMax) {}
 #endif
         BulirschStoer(double aTol, double rTol) : DOSBS(aTol, rTol) {}
+    };
+
+
+
+    // euler<Vec>
+
+    // type definitions
+    typedef boost::numeric::odeint::euler<fmatvec::Vec> EulerStepper;
+    typedef boost::numeric::odeint::dense_output_runge_kutta<EulerStepper> DOSEuler;
+
+    // DOS concept for the boost odeint euler<Vec> stepper
+    class Euler : public DOSEuler {
+      public:
+        typedef ExplicitSystemTag SystemCategory;
+        typedef typename EulerStepper::stepper_category UnderlayingStepperCategory;
+#if BOOST_VERSION >= 106000
+        Euler(double aTol, double rTol, double dtMax) : DOSEuler() {}
+#else // boost odeint < 1.60 does not support dtMax
+        Euler(double aTol, double rTol) : DOSEuler() {}
+#endif
     };
 
 
@@ -85,6 +110,7 @@ namespace MBSimIntegrator {
     class Rosenbrock4 : public DOSRB4 {
       public:
         typedef ImplicitSystemTag SystemCategory;
+        typedef typename ControlledRB4::stepper_category UnderlayingStepperCategory;
 #if BOOST_VERSION >= 106000
         Rosenbrock4(double aTol, double rTol, double dtMax) : DOSRB4(ControlledRB4(aTol, rTol, dtMax)) {}
 #endif
@@ -93,8 +119,12 @@ namespace MBSimIntegrator {
 
   }
 
+  // explicit integrators
   typedef BoostOdeintDOS<BoostOdeintHelper::RKDOPRI5     > BoostOdeintDOS_RKDOPRI5;
   typedef BoostOdeintDOS<BoostOdeintHelper::BulirschStoer> BoostOdeintDOS_BulirschStoer;
+  // not working due to but in boost odeint, see https://github.com/boostorg/odeint/pull/27
+  // typedef BoostOdeintDOS<BoostOdeintHelper::Euler        > BoostOdeintDOS_Euler;
+  // implicit integrators
   typedef BoostOdeintDOS<BoostOdeintHelper::Rosenbrock4  > BoostOdeintDOS_Rosenbrock4;
 
 }
