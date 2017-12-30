@@ -115,8 +115,8 @@ namespace MBSim {
 
   void RigidBodyLink::updateR() {
     for(unsigned i=0; i<body.size(); i++) {
-      RF[i].set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection(i)*ratio[i]);
-      RM[i].set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection(i)*ratio[i]);
+      RF[i].set(RangeV(0,2), iF, evalGlobalForceDirection(i)*ratio[i]);
+      RM[i].set(RangeV(0,2), iM, evalGlobalMomentDirection(i)*ratio[i]);
     }
     updRMV = false;
   }
