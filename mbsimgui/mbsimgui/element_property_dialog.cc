@@ -1715,6 +1715,30 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  GeneralizedElasticStructurePropertyDialog::GeneralizedElasticStructurePropertyDialog(RigidBodyLink *link, QWidget *parent, const Qt::WindowFlags& f) : RigidBodyLinkPropertyDialog(link,parent,f) {
+    addTab("Kinetics",1);
+
+    rigidBody = new ExtWidget("Rigid bodies",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"rigidBody",link,nullptr),"Rigid body",0,2),false,false,"");
+    addToTab("General",rigidBody);
+
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(link,true),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
+    addToTab("Kinetics", function);
+  }
+
+  DOMElement* GeneralizedElasticStructurePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    rigidBody->initializeUsingXML(item->getXMLElement());
+    function->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedElasticStructurePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    rigidBody->writeXMLFile(item->getXMLElement(),ref);
+    function->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, const Qt::WindowFlags& f) : LinkPropertyDialog(contact,parent,f) {
 
     addTab("Kinetics",1);
