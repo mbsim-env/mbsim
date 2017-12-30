@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012-2016 Martin Förg
+    Copyright (C) 2012-2017 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,17 +17,17 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _CONNECTION__H_
-#define _CONNECTION__H_
+#ifndef _STRUCTURE__H_
+#define _STRUCTURE__H_
 
 #include "link.h"
 
 namespace MBSimGUI {
 
-  class GeneralizedElasticConnection : public DualRigidBodyLink {
+  class GeneralizedElasticStructure : public RigidBodyLink {
     public:
-      QString getType() const override { return "GeneralizedElasticConnection"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new GeneralizedElasticConnectionPropertyDialog(this); }
+      QString getType() const override { return "GeneralizedElasticStructure"; }
+      ElementPropertyDialog* createPropertyDialog() override { return new GeneralizedElasticStructurePropertyDialog(this); }
   };
 
 }

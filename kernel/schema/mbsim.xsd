@@ -1844,6 +1844,40 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="GeneralizedElasticStructure" substitutionGroup="RigidBodyLink" type="GeneralizedElasticStructureType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        TODO <br/>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedElasticStructureType">
+    <xs:complexContent>
+      <xs:extension base="RigidBodyLinkType">
+        <xs:sequence>
+          <xs:element name="rigidBody" minOccurs="1" maxOccurs="unbounded">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Starrkörper
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="generalizedForceFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Joint" substitutionGroup="FloatingFrameLink" type="JointType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert ein Gelenk als Verbindung zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>
