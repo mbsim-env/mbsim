@@ -70,7 +70,9 @@ namespace MBSim {
       /**
        * \brief difference vector of position, velocity and angular velocity
        */
-      fmatvec::Vec3 WrP0P1, WvP0P1, WomP0P1;
+      fmatvec::Vec3 WrP0P1, WphiP0P1, WvP0P1, WomP0P1;
+
+      fmatvec::SqrMat3 AP0P1;
 
       bool updPos, updVel;
 

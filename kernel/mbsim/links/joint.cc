@@ -97,11 +97,6 @@ namespace MBSim {
     W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * RF + frame[1]->evalJacobianOfRotation(j).T() * RM;
   }
 
-  void Joint::calcxSize() {
-    FloatingFrameLink::calcxSize();
-    xSize = momentDir.cols();
-  }
-
   void Joint::init(InitStage stage, const InitConfigSet &config) {
     if (stage == unknownStage) {
       gdd.resize(gdSize);

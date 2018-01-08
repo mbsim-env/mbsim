@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/links/floating_frame_link.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -27,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  FloatingFrameLink::FloatingFrameLink(const std::string &name) : FrameLink(name), refFrame(nullptr), refFrameID(0), C("F"), updDF(true) {
+  FloatingFrameLink::FloatingFrameLink(const std::string &name) : FrameLink(name), refFrame(nullptr), refFrameID(0), C("F"), updDF(true), integratevrel(false) {
     C.setParent(this);
   }
 
@@ -81,6 +82,7 @@ namespace MBSim {
 
   void FloatingFrameLink::updatePositions() {
     WrP0P1 = frame[1]->evalPosition() - frame[0]->evalPosition();
+    AP0P1 = frame[0]->getOrientation().T()*frame[1]->getOrientation();
     updPos = false;
   }
 
@@ -97,7 +99,8 @@ namespace MBSim {
 
   void FloatingFrameLink::updateGeneralizedPositions() {
     rrel.set(iF, evalGlobalForceDirection().T() * evalGlobalRelativePosition());
-    rrel.set(iM, x);
+    rrel.set(iM, (this->*evalGeneralizedRelativePositonOfRotation)());
+    //rrel.set(iM, x);
     updrrel = false;
   }
 
@@ -143,8 +146,31 @@ namespace MBSim {
     gd(iM) = vrel(iM);
   }
 
+  void FloatingFrameLink::calcxSize() {
+    FrameLink::calcxSize();
+    if(integratevrel) xSize = momentDir.cols();
+  }
+
   void FloatingFrameLink::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
+      if(integratevrel)
+        evalGeneralizedRelativePositonOfRotation = &FloatingFrameLink::evalGeneralizedRelativePositonOfRotationByIntegration;
+      else {
+        evalGeneralizedRelativePositonOfRotation = &FloatingFrameLink::evalGeneralizedRelativePositonOfRotationFromState;
+        evalGlobalRelativeAngle = &FloatingFrameLink::evalRelativePhi;
+        if(momentDir.cols()==3)
+          evalGlobalRelativeAngle = &FloatingFrameLink::evalRelativePhixyz;
+        else if(momentDir.cols()==2) {
+          if(nrm2(momentDir.row(2))<=macheps)
+            evalGlobalRelativeAngle = &FloatingFrameLink::evalRelativePhixy;
+          else if(nrm2(momentDir.row(1))<=macheps)
+            evalGlobalRelativeAngle = &FloatingFrameLink::evalRelativePhixz;
+          else
+            evalGlobalRelativeAngle = &FloatingFrameLink::evalRelativePhiyz;
+        }
+        else if(momentDir.cols()==1)
+          msg(Warn) << "(FloatingFrameLink::evalRelativePhi): Evaluation of relative angle not yet implemented for this moment direction. Use integration of relative angular velocity instead." << endl;
+      }
       iF = RangeV(0, forceDir.cols() - 1);
       iM = RangeV(forceDir.cols(), getGeneralizedRelativePositionSize() - 1);
       if(isSetValued()) {
@@ -178,6 +204,35 @@ namespace MBSim {
     FrameLink::initializeUsingXML(element);
     DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
     if (e) refFrameID = E(e)->getText<int>()-1;
+  }
+
+  VecV FloatingFrameLink::evalGeneralizedRelativePositonOfRotationFromState() {
+    return evalGlobalMomentDirection().T() * frame[0]->getOrientation()*(this->*evalGlobalRelativeAngle)();
+  }
+
+  Vec3 FloatingFrameLink::evalRelativePhixyz() {
+    WphiP0P1(0) = -AP0P1(1,2);
+    WphiP0P1(1) = AP0P1(0,2);
+    WphiP0P1(2) = -AP0P1(0,1);
+    return WphiP0P1;
+  }
+
+  Vec3 FloatingFrameLink::evalRelativePhixy() {
+    WphiP0P1(0) = -AP0P1(1,2);
+    WphiP0P1(1) = AP0P1(0,2);
+    return WphiP0P1;
+  }
+
+  Vec3 FloatingFrameLink::evalRelativePhixz() {
+    WphiP0P1(0) = AP0P1(2,1);
+    WphiP0P1(2) = -AP0P1(0,1);
+    return WphiP0P1;
+  }
+
+  Vec3 FloatingFrameLink::evalRelativePhiyz() {
+    WphiP0P1(1) = -AP0P1(2,0);
+    WphiP0P1(2) = AP0P1(1,0);
+    return WphiP0P1;
   }
 
 }

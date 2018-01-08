@@ -70,7 +70,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       void updatexd() override;
-      void calcxSize() override;
       void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 

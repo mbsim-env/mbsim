@@ -37,6 +37,7 @@ namespace MBSim {
        */
       FloatingFrameLink(const std::string &name);
 
+      void calcxSize() override;
       void init(InitStage stage, const InitConfigSet &config) override;
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -63,6 +64,8 @@ namespace MBSim {
        * If ID=0 (default) the first frame, if ID=1 the second frame is used.
        */
       void setFrameOfReferenceID(Index ID) { refFrameID = ID; }
+
+      void setCalculateGeneralizedRelativePostionOfRotationByIntegration(bool b) { integratevrel = b; }
 
       void resetUpToDate() override;
       void updatePositions(Frame *frame) override;
@@ -92,7 +95,21 @@ namespace MBSim {
        */
       FloatingRelativeFrame C;
 
-      bool updDF;
+      bool updDF, integratevrel;
+
+#ifndef SWIG
+      fmatvec::VecV (FloatingFrameLink::*evalGeneralizedRelativePositonOfRotation)();
+      fmatvec::Vec3 (FloatingFrameLink::*evalGlobalRelativeAngle)();
+#endif
+
+      fmatvec::VecV evalGeneralizedRelativePositonOfRotationByIntegration() { return x; }
+      fmatvec::VecV evalGeneralizedRelativePositonOfRotationFromState();
+
+      fmatvec::Vec3 evalRelativePhixyz();
+      fmatvec::Vec3 evalRelativePhixy();
+      fmatvec::Vec3 evalRelativePhixz();
+      fmatvec::Vec3 evalRelativePhiyz();
+      fmatvec::Vec3 evalRelativePhi() { return WphiP0P1; }
   };
 }
 

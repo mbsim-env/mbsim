@@ -47,11 +47,6 @@ namespace MBSim {
     xd = evalGeneralizedRelativeVelocity()(iM);
   }
 
-  void ElasticJoint::calcxSize() {
-    FloatingFrameLink::calcxSize();
-    xSize = momentDir.cols();
-  }
-
   void ElasticJoint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
       if(func and (func->getRetSize().first!=forceDir.cols()+momentDir.cols())) THROW_MBSIMERROR("Size of generalized forces does not match!");

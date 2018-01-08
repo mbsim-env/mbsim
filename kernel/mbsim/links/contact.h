@@ -85,7 +85,6 @@ namespace MBSim {
       void updatejsvRef(const fmatvec::VecInt &ref) override;
       void updateLinkStatusRef(const fmatvec::VecInt &LinkStatusParent) override;
       void updateLinkStatusRegRef(const fmatvec::VecInt &LinkStatusRegParent) override;
-      void calcxSize() override;
       void calclaSize(int j) override;
       void calcgSize(int j) override;
       void calcgdSize(int j) override;
