@@ -82,7 +82,7 @@ namespace MBSim {
 
   void FloatingFrameLink::updatePositions() {
     WrP0P1 = frame[1]->evalPosition() - frame[0]->evalPosition();
-    AP0P1 = frame[0]->getOrientation().T()*frame[1]->getOrientation();
+    AK0K1 = frame[0]->getOrientation().T()*frame[1]->getOrientation();
     updPos = false;
   }
 
@@ -93,7 +93,7 @@ namespace MBSim {
 
   void FloatingFrameLink::updateVelocities() {
     WvP0P1 = frame[1]->evalVelocity() - C.evalVelocity();
-    WomP0P1 = frame[1]->evalAngularVelocity() - C.evalAngularVelocity();
+    WomK0K1 = frame[1]->evalAngularVelocity() - C.evalAngularVelocity();
     updVel = false;
   }
 
@@ -211,28 +211,28 @@ namespace MBSim {
   }
 
   Vec3 FloatingFrameLink::evalRelativePhixyz() {
-    WphiP0P1(0) = -AP0P1(1,2);
-    WphiP0P1(1) = AP0P1(0,2);
-    WphiP0P1(2) = -AP0P1(0,1);
-    return WphiP0P1;
+    WphiK0K1(0) = -AK0K1(1,2);
+    WphiK0K1(1) = AK0K1(0,2);
+    WphiK0K1(2) = -AK0K1(0,1);
+    return WphiK0K1;
   }
 
   Vec3 FloatingFrameLink::evalRelativePhixy() {
-    WphiP0P1(0) = -AP0P1(1,2);
-    WphiP0P1(1) = AP0P1(0,2);
-    return WphiP0P1;
+    WphiK0K1(0) = -AK0K1(1,2);
+    WphiK0K1(1) = AK0K1(0,2);
+    return WphiK0K1;
   }
 
   Vec3 FloatingFrameLink::evalRelativePhixz() {
-    WphiP0P1(0) = AP0P1(2,1);
-    WphiP0P1(2) = -AP0P1(0,1);
-    return WphiP0P1;
+    WphiK0K1(0) = AK0K1(2,1);
+    WphiK0K1(2) = -AK0K1(0,1);
+    return WphiK0K1;
   }
 
   Vec3 FloatingFrameLink::evalRelativePhiyz() {
-    WphiP0P1(1) = -AP0P1(2,0);
-    WphiP0P1(2) = AP0P1(1,0);
-    return WphiP0P1;
+    WphiK0K1(1) = -AK0K1(2,0);
+    WphiK0K1(2) = AK0K1(1,0);
+    return WphiK0K1;
   }
 
 }

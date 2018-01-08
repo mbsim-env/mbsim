@@ -84,6 +84,8 @@ namespace MBSim {
        */
       fmatvec::Mat3xV forceDir, momentDir, DF, DM;
 
+      fmatvec::Vec3 WphiK0K1;
+
       /**
        * \brief frame of reference the force is defined in
        */
@@ -109,7 +111,7 @@ namespace MBSim {
       fmatvec::Vec3 evalRelativePhixy();
       fmatvec::Vec3 evalRelativePhixz();
       fmatvec::Vec3 evalRelativePhiyz();
-      fmatvec::Vec3 evalRelativePhi() { return WphiP0P1; }
+      fmatvec::Vec3 evalRelativePhi() { return WphiK0K1; }
   };
 }
 
