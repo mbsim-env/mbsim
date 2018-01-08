@@ -25,6 +25,7 @@
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objects/rigid_body.h>
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -73,10 +74,6 @@ namespace MBSim {
       lambdaM(j) = (*fml)(evalGeneralizedRelativePosition()(i), evalGeneralizedRelativeVelocity()(i));
   }
 
-  void Joint::updatexd() {
-    xd = evalGeneralizedRelativeVelocity()(iM);
-  }
-
   void Joint::updateh(int j) {
     Vec3 F = (ffl and not ffl->isSetValued())?evalGlobalForceDirection()*evallaF():Vec3();
     Vec3 M = (fml and not fml->isSetValued())?evalGlobalMomentDirection()*evallaM():Vec3();
@@ -98,7 +95,30 @@ namespace MBSim {
   }
 
   void Joint::init(InitStage stage, const InitConfigSet &config) {
-    if (stage == unknownStage) {
+    if(stage==preInit) {
+      if(momentDir.cols()==3) {
+        evalGeneralizedRelativePositonOfRotation_ = &Joint::evalGeneralizedRelativePositonOfRotationFromState;
+        evalGlobalRelativeAngle = &Joint::evalRelativePhixyz;
+      }
+      else if(momentDir.cols()==2) {
+        evalGeneralizedRelativePositonOfRotation_ = &Joint::evalGeneralizedRelativePositonOfRotationFromState;
+        if(nrm2(momentDir.row(2))<=macheps)
+          evalGlobalRelativeAngle = &Joint::evalRelativePhixy;
+        else if(nrm2(momentDir.row(1))<=macheps)
+          evalGlobalRelativeAngle = &Joint::evalRelativePhixz;
+        else
+          evalGlobalRelativeAngle = &Joint::evalRelativePhiyz;
+      }
+      else if(momentDir.cols()==1) {
+        msg(Info) << ("(FloatingFrameLink::evalRelativePhi): Evaluation of relative angle not yet implemented for this moment direction. Use integration of relative angular velocity instead.") << endl;
+        evalGeneralizedRelativePositonOfRotation_ = &Joint::evalGeneralizedRelativePositonOfRotationByIntegration;
+      }
+      else {
+        evalGeneralizedRelativePositonOfRotation_ = &Joint::evalGeneralizedRelativePositonOfRotationFromState;
+        evalGlobalRelativeAngle = &Joint::evalRelativePhi;
+      }
+    }
+    else if (stage == unknownStage) {
       gdd.resize(gdSize);
       gdn.resize(gdSize);
 
@@ -488,6 +508,35 @@ namespace MBSim {
     if(e) setMomentDirection(E(e)->getText<Mat>(3,0));
     e = E(element)->getFirstElementChildNamed(MBSIM%"momentLaw");
     if(e) setMomentLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
+  }
+
+  VecV Joint::evalGeneralizedRelativePositonOfRotationFromState() {
+    return evalGlobalMomentDirection().T() * frame[0]->getOrientation()*(this->*evalGlobalRelativeAngle)();
+  }
+
+  Vec3 Joint::evalRelativePhixyz() {
+    WphiK0K1(0) = -AK0K1(1,2);
+    WphiK0K1(1) = AK0K1(0,2);
+    WphiK0K1(2) = -AK0K1(0,1);
+    return WphiK0K1;
+  }
+
+  Vec3 Joint::evalRelativePhixy() {
+    WphiK0K1(0) = -AK0K1(1,2);
+    WphiK0K1(1) = AK0K1(0,2);
+    return WphiK0K1;
+  }
+
+  Vec3 Joint::evalRelativePhixz() {
+    WphiK0K1(0) = AK0K1(2,1);
+    WphiK0K1(2) = -AK0K1(0,1);
+    return WphiK0K1;
+  }
+
+  Vec3 Joint::evalRelativePhiyz() {
+    WphiK0K1(1) = -AK0K1(2,0);
+    WphiK0K1(2) = AK0K1(1,0);
+    return WphiK0K1;
   }
 
   InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), body(nullptr) {

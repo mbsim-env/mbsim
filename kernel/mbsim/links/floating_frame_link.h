@@ -37,11 +37,9 @@ namespace MBSim {
        */
       FloatingFrameLink(const std::string &name);
 
+      void updatexd() override;
       void calcxSize() override;
       void init(InitStage stage, const InitConfigSet &config) override;
-
-      /* INHERITED INTERFACE OF ELEMENT */
-      /***************************************************/
 
       void calcSize() override;
       void calclaSize(int j) override;
@@ -65,8 +63,6 @@ namespace MBSim {
        */
       void setFrameOfReferenceID(Index ID) { refFrameID = ID; }
 
-      void setCalculateGeneralizedRelativePostionOfRotationByIntegration(bool b) { integratevrel = b; }
-
       void resetUpToDate() override;
       void updatePositions(Frame *frame) override;
       void updatePositions() override;
@@ -78,13 +74,13 @@ namespace MBSim {
       void updateForceDirections() override;
       void updateR() override;
 
+      virtual fmatvec::VecV evalGeneralizedRelativePositonOfRotation() { return x; }
+
     protected:
       /**
        * \brief directions of force and moment in frame of reference
        */
       fmatvec::Mat3xV forceDir, momentDir, DF, DM;
-
-      fmatvec::Vec3 WphiK0K1;
 
       /**
        * \brief frame of reference the force is defined in
@@ -97,21 +93,7 @@ namespace MBSim {
        */
       FloatingRelativeFrame C;
 
-      bool updDF, integratevrel;
-
-#ifndef SWIG
-      fmatvec::VecV (FloatingFrameLink::*evalGeneralizedRelativePositonOfRotation)();
-      fmatvec::Vec3 (FloatingFrameLink::*evalGlobalRelativeAngle)();
-#endif
-
-      fmatvec::VecV evalGeneralizedRelativePositonOfRotationByIntegration() { return x; }
-      fmatvec::VecV evalGeneralizedRelativePositonOfRotationFromState();
-
-      fmatvec::Vec3 evalRelativePhixyz();
-      fmatvec::Vec3 evalRelativePhixy();
-      fmatvec::Vec3 evalRelativePhixz();
-      fmatvec::Vec3 evalRelativePhiyz();
-      fmatvec::Vec3 evalRelativePhi() { return WphiK0K1; }
+      bool updDF;
   };
 }
 

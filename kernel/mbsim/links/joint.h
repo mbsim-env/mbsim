@@ -52,7 +52,6 @@ namespace MBSim {
        */
       ~Joint() override;
 
-      /* INHERITED INTERFACE OF LINKINTERFACE */
       void updatelaF() override { (this->*updatelaF_)(); updlaF = false; }
       void updatelaM() override { (this->*updatelaM_)(); updlaM = false; }
       void updatelaF0() { }
@@ -66,14 +65,10 @@ namespace MBSim {
       void updateh(int i=0) override;
       void updateW(int i=0) override;
       void updatewb() override;
-      /***************************************************/
 
-      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
-      void updatexd() override;
+      void calcxSize() override { if(momentDir.cols()==1) xSize = 1; }
       void init(InitStage stage, const InitConfigSet &config) override;
-      /***************************************************/
 
-      /* INHERITED INTERFACE OF LINK */
       bool isSetValued() const override;
       bool isSingleValued() const override;
       bool isActive() const override { return true; }
@@ -89,12 +84,9 @@ namespace MBSim {
       void updaterFactors() override;
       void checkImpactsForTermination() override;
       void checkConstraintsForTermination() override;
-      /***************************************************/
 
-      /* GETTER / SETTER */
       void setForceLaw(GeneralizedForceLaw * rc);
       void setMomentLaw(GeneralizedForceLaw * rc);
-      /***************************************************/
 
       /**
        * \param local force direction represented in first frame
@@ -105,6 +97,8 @@ namespace MBSim {
        * \param local moment direction represented in first frame
        */
       void setMomentDirection(const fmatvec::Mat3xV& md);
+
+      fmatvec::VecV evalGeneralizedRelativePositonOfRotation() override { return (this->*evalGeneralizedRelativePositonOfRotation_)(); }
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
@@ -138,6 +132,22 @@ namespace MBSim {
        * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
        */
       fmatvec::Vec gdn, gdd;
+
+      fmatvec::Vec3 WphiK0K1;
+
+#ifndef SWIG
+      fmatvec::VecV (Joint::*evalGeneralizedRelativePositonOfRotation_)();
+      fmatvec::Vec3 (Joint::*evalGlobalRelativeAngle)();
+#endif
+
+      fmatvec::VecV evalGeneralizedRelativePositonOfRotationByIntegration() { return x; }
+      fmatvec::VecV evalGeneralizedRelativePositonOfRotationFromState();
+
+      fmatvec::Vec3 evalRelativePhixyz();
+      fmatvec::Vec3 evalRelativePhixy();
+      fmatvec::Vec3 evalRelativePhixz();
+      fmatvec::Vec3 evalRelativePhiyz();
+      fmatvec::Vec3 evalRelativePhi() { return WphiK0K1; }
   };
 
   class InverseKineticsJoint : public Joint {

@@ -21,6 +21,7 @@
 #include "mbsim/links/elastic_joint.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/contact_kinematics/contact_kinematics.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -43,12 +44,31 @@ namespace MBSim {
     updla = false;
   }
 
-  void ElasticJoint::updatexd() {
-    xd = evalGeneralizedRelativeVelocity()(iM);
-  }
-
   void ElasticJoint::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==unknownStage) {
+    if(stage==preInit) {
+      if(momentDir.cols()==3) {
+        evalGeneralizedRelativePositonOfRotation_ = &ElasticJoint::evalGeneralizedRelativePositonOfRotationFromState;
+        evalGlobalRelativeAngle = &ElasticJoint::evalRelativePhixyz;
+      }
+      else if(momentDir.cols()==2) {
+        evalGeneralizedRelativePositonOfRotation_ = &ElasticJoint::evalGeneralizedRelativePositonOfRotationFromState;
+        if(nrm2(momentDir.row(2))<=macheps)
+          evalGlobalRelativeAngle = &ElasticJoint::evalRelativePhixy;
+        else if(nrm2(momentDir.row(1))<=macheps)
+          evalGlobalRelativeAngle = &ElasticJoint::evalRelativePhixz;
+        else
+          evalGlobalRelativeAngle = &ElasticJoint::evalRelativePhiyz;
+      }
+      else if(momentDir.cols()==1) {
+        msg(Info) << ("(FloatingFrameLink::evalRelativePhi): Evaluation of relative angle not yet implemented for this moment direction. Use integration of relative angular velocity instead.") << endl;
+        evalGeneralizedRelativePositonOfRotation_ = &ElasticJoint::evalGeneralizedRelativePositonOfRotationByIntegration;
+      }
+      else {
+        evalGeneralizedRelativePositonOfRotation_ = &ElasticJoint::evalGeneralizedRelativePositonOfRotationFromState;
+        evalGlobalRelativeAngle = &ElasticJoint::evalRelativePhi;
+      }
+    }
+    else if(stage==unknownStage) {
       if(func and (func->getRetSize().first!=forceDir.cols()+momentDir.cols())) THROW_MBSIMERROR("Size of generalized forces does not match!");
     }
     FloatingFrameLink::init(stage, config);
@@ -83,5 +103,35 @@ namespace MBSim {
       setGeneralizedForceFunction(f);
     }
   }
+
+  VecV ElasticJoint::evalGeneralizedRelativePositonOfRotationFromState() {
+    return evalGlobalMomentDirection().T() * frame[0]->getOrientation()*(this->*evalGlobalRelativeAngle)();
+  }
+
+  Vec3 ElasticJoint::evalRelativePhixyz() {
+    WphiK0K1(0) = -AK0K1(1,2);
+    WphiK0K1(1) = AK0K1(0,2);
+    WphiK0K1(2) = -AK0K1(0,1);
+    return WphiK0K1;
+  }
+
+  Vec3 ElasticJoint::evalRelativePhixy() {
+    WphiK0K1(0) = -AK0K1(1,2);
+    WphiK0K1(1) = AK0K1(0,2);
+    return WphiK0K1;
+  }
+
+  Vec3 ElasticJoint::evalRelativePhixz() {
+    WphiK0K1(0) = AK0K1(2,1);
+    WphiK0K1(2) = -AK0K1(0,1);
+    return WphiK0K1;
+  }
+
+  Vec3 ElasticJoint::evalRelativePhiyz() {
+    WphiK0K1(1) = -AK0K1(2,0);
+    WphiK0K1(2) = AK0K1(1,0);
+    return WphiK0K1;
+  }
+
 
 }
