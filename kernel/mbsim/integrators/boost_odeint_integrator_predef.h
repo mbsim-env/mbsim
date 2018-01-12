@@ -17,44 +17,114 @@
 
 #include "boost_odeint_integrator.h"
 
+// runge_kutta_dopri5<Vec>
 #include <boost/numeric/odeint/stepper/runge_kutta_dopri5.hpp>
-#include <boost/numeric/odeint/stepper/generation/generation_controlled_runge_kutta.hpp>
-#include <boost/numeric/odeint/stepper/generation/generation_dense_output_runge_kutta.hpp>
-#include <boost/numeric/odeint/stepper/generation/generation_runge_kutta_dopri5.hpp>
+#include <boost/numeric/odeint/stepper/dense_output_runge_kutta.hpp>
 
-#include <boost/numeric/odeint/stepper/bulirsch_stoer.hpp>
+// bulirsch_stoer<Vec>
 #include <boost/numeric/odeint/stepper/bulirsch_stoer_dense_out.hpp>
 
-#include <boost/numeric/odeint/stepper/generation/generation_rosenbrock4.hpp>
+// euler<Vec>
+#include <boost/numeric/odeint/stepper/euler.hpp>
 
-namespace boost {
-  namespace numeric {
-    namespace odeint {
-
-      // Enable bulirsch_stoer as make_dense_output generator.
-      template<class State>
-      struct get_dense_output<bulirsch_stoer<State>>
-      {
-        typedef bulirsch_stoer_dense_out<State> type;
-      };
-      template<class State>
-      struct dense_output_factory<bulirsch_stoer<State>, bulirsch_stoer_dense_out<State>> {
-        bulirsch_stoer_dense_out<State> operator()(double aTol, double rTol, const bulirsch_stoer<State>&) const {
-          return bulirsch_stoer_dense_out<State>(aTol, rTol);
-        }
-        bulirsch_stoer_dense_out<State> operator()(double aTol, double rTol, double dtMax, const bulirsch_stoer<State>&) const {
-          return bulirsch_stoer_dense_out<State>(aTol, rTol, 1.0, 1.0, dtMax);
-        }
-      };
-
-    }
-  }
-}
+// rosenbrock4<double>
+#include <boost/numeric/odeint/stepper/rosenbrock4_dense_output.hpp>
 
 namespace MBSimIntegrator {
 
-typedef BoostOdeintDOS<boost::numeric::odeint::runge_kutta_dopri5<fmatvec::Vec>, BoostOdeintHelper::SystemTag> BoostOdeintDOS_RKDOPRI5;
-typedef BoostOdeintDOS<boost::numeric::odeint::bulirsch_stoer<fmatvec::Vec>, BoostOdeintHelper::SystemTag> BoostOdeintDOS_BulirschStoer;
-typedef BoostOdeintDOS<boost::numeric::odeint::rosenbrock4<double>, BoostOdeintHelper::ImplicitSystemTag> BoostOdeintDOS_Rosenbrock4;
+  namespace BoostOdeintHelper {
+
+    // Definition of concepts of DOS. (see header file BoostOdeintDOS)
+
+
+
+    // runge_kutta_dopri5<Vec>
+  
+    // type definitions
+    typedef boost::numeric::odeint::runge_kutta_dopri5<fmatvec::Vec> RKDOPRI5Stepper;
+    typedef boost::numeric::odeint::controlled_runge_kutta<RKDOPRI5Stepper> ControlledRK;
+    typedef boost::numeric::odeint::dense_output_runge_kutta<ControlledRK> DOSRK;
+
+    // DOS concept for the boost odeint runge_kutta_dopri5<Vec> stepper
+    class RKDOPRI5 : public DOSRK {
+      public:
+        typedef ExplicitSystemTag SystemCategory;
+        typedef typename ControlledRK::stepper_category UnderlayingStepperCategory;
+#if BOOST_VERSION >= 106000
+        RKDOPRI5(double aTol, double rTol, double dtMax) :
+          DOSRK(ControlledRK(ControlledRK::error_checker_type(aTol, rTol), ControlledRK::step_adjuster_type(dtMax), RKDOPRI5Stepper())) {}
+#else // boost odeint < 1.60 does not support dtMax
+        RKDOPRI5(double aTol, double rTol) :
+          DOSRK(ControlledRK(ControlledRK::error_checker_type(aTol, rTol), RKDOPRI5Stepper())) {}
+#endif
+    };
+
+
+
+    // bulirsch_stoer<Vec>
+
+    // type definitions
+    typedef boost::numeric::odeint::bulirsch_stoer_dense_out<fmatvec::Vec> DOSBS;
+
+    // DOS concept for the boost odeint bulirsch_stoer_dense_out<Vec> stepper.
+    class BulirschStoer : public DOSBS {
+      public:
+        typedef ExplicitSystemTag SystemCategory;
+        typedef boost::numeric::odeint::controlled_stepper_tag UnderlayingStepperCategory;
+#if BOOST_VERSION >= 106000
+        BulirschStoer(double aTol, double rTol, double dtMax) : DOSBS(aTol, rTol, 1.0, 1.0, dtMax) {}
+#endif
+        BulirschStoer(double aTol, double rTol) : DOSBS(aTol, rTol) {}
+    };
+
+
+
+    // euler<Vec>
+
+    // type definitions
+    typedef boost::numeric::odeint::euler<fmatvec::Vec> EulerStepper;
+    typedef boost::numeric::odeint::dense_output_runge_kutta<EulerStepper> DOSEuler;
+
+    // DOS concept for the boost odeint euler<Vec> stepper
+    class Euler : public DOSEuler {
+      public:
+        typedef ExplicitSystemTag SystemCategory;
+        typedef typename EulerStepper::stepper_category UnderlayingStepperCategory;
+#if BOOST_VERSION >= 106000
+        Euler(double aTol, double rTol, double dtMax) : DOSEuler() {}
+#else // boost odeint < 1.60 does not support dtMax
+        Euler(double aTol, double rTol) : DOSEuler() {}
+#endif
+    };
+
+
+
+    // rosenbrock4<double>
+
+    // type definitions
+    typedef boost::numeric::odeint::rosenbrock4<double> RB4;
+    typedef boost::numeric::odeint::rosenbrock4_controller<RB4> ControlledRB4;
+    typedef boost::numeric::odeint::rosenbrock4_dense_output<ControlledRB4> DOSRB4;
+  
+    // DOS concept for the boost odeint rosenbrock4<double> stepper
+    class Rosenbrock4 : public DOSRB4 {
+      public:
+        typedef ImplicitSystemTag SystemCategory;
+        typedef typename ControlledRB4::stepper_category UnderlayingStepperCategory;
+#if BOOST_VERSION >= 106000
+        Rosenbrock4(double aTol, double rTol, double dtMax) : DOSRB4(ControlledRB4(aTol, rTol, dtMax)) {}
+#endif
+        Rosenbrock4(double aTol, double rTol) : DOSRB4(ControlledRB4(aTol, rTol)) {}
+    };
+
+  }
+
+  // explicit integrators
+  typedef BoostOdeintDOS<BoostOdeintHelper::RKDOPRI5     > BoostOdeintDOS_RKDOPRI5;
+  typedef BoostOdeintDOS<BoostOdeintHelper::BulirschStoer> BoostOdeintDOS_BulirschStoer;
+  // not working due to but in boost odeint, see https://github.com/boostorg/odeint/pull/27
+  // typedef BoostOdeintDOS<BoostOdeintHelper::Euler        > BoostOdeintDOS_Euler;
+  // implicit integrators
+  typedef BoostOdeintDOS<BoostOdeintHelper::Rosenbrock4  > BoostOdeintDOS_Rosenbrock4;
 
 }
