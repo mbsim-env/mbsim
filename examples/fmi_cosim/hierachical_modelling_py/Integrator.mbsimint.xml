@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+<BoostOdeintDOS_Rosenbrock4 xmlns="http://www.mbsim-env.de/MBSimIntegrator">
   <startTime>0</startTime>
   <endTime>Tend</endTime>
   <plotStepSize>1e-3</plotStepSize>
   <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
   <relativeToleranceScalar>1e-6</relativeToleranceScalar>
   <maximalStepSize>1e-1</maximalStepSize>
-</BoostOdeintDOS_RKDOPRI5>
+</BoostOdeintDOS_Rosenbrock4>

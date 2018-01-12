@@ -7,3 +7,10 @@
   <relativeToleranceScalar>1e-6</relativeToleranceScalar>
   <maximalStepSize>1e-1</maximalStepSize>
 </BoostOdeintDOS_RKDOPRI5>
+<!-- not working due to but in boost odeint, see https://github.com/boostorg/odeint/pull/27
+<BoostOdeintDOS_Euler xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <startTime>0</startTime>
+  <endTime>Tend</endTime>
+  <plotStepSize>1e-3</plotStepSize>
+  <initialStepSize>1e-3</initialStepSize>
+</BoostOdeintDOS_Euler>-->
