@@ -44,7 +44,7 @@ namespace MBSim {
 
       void updateGeneralizedForces() override;
 
-      void calcxSize() override { if(momentDir.cols()==1) xSize = 1; }
+//      void calcxSize() override { if(momentDir.cols()==1) xSize = 1; }
       void init(InitStage stage, const InitConfigSet &config) override;
 
       bool isSingleValued() const override { return true; }
@@ -93,6 +93,9 @@ namespace MBSim {
       fmatvec::Vec3 evalRelativePhixy();
       fmatvec::Vec3 evalRelativePhixz();
       fmatvec::Vec3 evalRelativePhiyz();
+      fmatvec::Vec3 evalRelativePhix();
+      fmatvec::Vec3 evalRelativePhiy();
+      fmatvec::Vec3 evalRelativePhiz();
       fmatvec::Vec3 evalRelativePhi() { return WphiK0K1; }
   };
 

@@ -60,8 +60,15 @@ namespace MBSim {
           evalGlobalRelativeAngle = &ElasticJoint::evalRelativePhiyz;
       }
       else if(momentDir.cols()==1) {
+        evalGeneralizedRelativePositonOfRotation_ = &ElasticJoint::evalGeneralizedRelativePositonOfRotationFromState;
         msg(Info) << ("(FloatingFrameLink::evalRelativePhi): Evaluation of relative angle not yet implemented for this moment direction. Use integration of relative angular velocity instead.") << endl;
-        evalGeneralizedRelativePositonOfRotation_ = &ElasticJoint::evalGeneralizedRelativePositonOfRotationByIntegration;
+        if(nrm2(momentDir.col(0)(Range<Fixed<0>,Fixed<1> >()))<=macheps)
+          evalGlobalRelativeAngle = &ElasticJoint::evalRelativePhiz;
+        else if(nrm2(momentDir.col(0)(Range<Fixed<1>,Fixed<2> >()))<=macheps)
+          evalGlobalRelativeAngle = &ElasticJoint::evalRelativePhix;
+        else
+          evalGlobalRelativeAngle = &ElasticJoint::evalRelativePhiy;
+//        evalGeneralizedRelativePositonOfRotation_ = &ElasticJoint::evalGeneralizedRelativePositonOfRotationByIntegration;
       }
       else {
         evalGeneralizedRelativePositonOfRotation_ = &ElasticJoint::evalGeneralizedRelativePositonOfRotationFromState;
@@ -133,5 +140,19 @@ namespace MBSim {
     return WphiK0K1;
   }
 
+  Vec3 ElasticJoint::evalRelativePhix() {
+    WphiK0K1(0) = AK0K1(2,1);
+    return WphiK0K1;
+  }
+
+  Vec3 ElasticJoint::evalRelativePhiy() {
+    WphiK0K1(1) = AK0K1(0,2);
+    return WphiK0K1;
+  }
+
+  Vec3 ElasticJoint::evalRelativePhiz() {
+    WphiK0K1(2) = AK0K1(1,0);
+    return WphiK0K1;
+  }
 
 }

@@ -52,7 +52,6 @@ namespace MBSim {
       void updatelaF() override;
       void updatelaM() override;
 
-      void calcxSize() override { xSize = 0; }
       void init(InitStage stage, const InitConfigSet &config) override;
 
       bool isActive() const override { return true; }

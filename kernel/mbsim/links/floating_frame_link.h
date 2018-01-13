@@ -38,7 +38,6 @@ namespace MBSim {
       FloatingFrameLink(const std::string &name);
 
       void updatexd() override;
-      void calcxSize() override;
       void init(InitStage stage, const InitConfigSet &config) override;
 
       void calcSize() override;
