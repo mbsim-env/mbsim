@@ -67,7 +67,10 @@ namespace MBSim {
        */
       void setMomentDirection(const fmatvec::Mat3xV& md);
 
-      fmatvec::VecV evalGeneralizedRelativePositonOfRotation() override { return (this->*evalGeneralizedRelativePositonOfRotation_)(); }
+      void setIntegrateGeneralizedRelativeVelocityOfRotation(bool integrateGeneralizedRelativeVelocityOfRotation_) { integrateGeneralizedRelativeVelocityOfRotation = integrateGeneralizedRelativeVelocityOfRotation_; }
+
+      fmatvec::VecV evalGeneralizedRelativePositonOfRotation() override;
+      fmatvec::Vec3 evalGlobalRelativeAngle();
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
@@ -83,22 +86,7 @@ namespace MBSim {
 
       size_t iR;
 
-#ifndef SWIG
-      fmatvec::VecV (ElasticJoint::*evalGeneralizedRelativePositonOfRotation_)();
-#endif
-      fmatvec::Vec3 evalGlobalRelativeAngle();
-
-      fmatvec::VecV evalGeneralizedRelativePositonOfRotationByIntegration() { return x; }
-      fmatvec::VecV evalGeneralizedRelativePositonOfRotationFromState();
-
-//      fmatvec::Vec3 evalRelativePhixyz();
-//      fmatvec::Vec3 evalRelativePhixy();
-//      fmatvec::Vec3 evalRelativePhixz();
-//      fmatvec::Vec3 evalRelativePhiyz();
-//      fmatvec::Vec3 evalRelativePhix();
-//      fmatvec::Vec3 evalRelativePhiy();
-//      fmatvec::Vec3 evalRelativePhiz();
-//      fmatvec::Vec3 evalRelativePhi() { return WphiK0K1; }
+      bool integrateGeneralizedRelativeVelocityOfRotation;
   };
 
 }
