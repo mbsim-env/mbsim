@@ -66,7 +66,7 @@ namespace MBSim {
       void updateW(int i=0) override;
       void updatewb() override;
 
-      void calcxSize() override { if(momentDir.cols()==1) xSize = 1; }
+      void calcxSize() override { if(integrateGeneralizedRelativeVelocityOfRotation) xSize = momentDir.cols(); }
       void init(InitStage stage, const InitConfigSet &config) override;
 
       bool isSetValued() const override;
@@ -98,7 +98,10 @@ namespace MBSim {
        */
       void setMomentDirection(const fmatvec::Mat3xV& md);
 
-      fmatvec::VecV evalGeneralizedRelativePositonOfRotation() override { return (this->*evalGeneralizedRelativePositonOfRotation_)(); }
+      void setIntegrateGeneralizedRelativeVelocityOfRotation(bool integrateGeneralizedRelativeVelocityOfRotation_) { integrateGeneralizedRelativeVelocityOfRotation = integrateGeneralizedRelativeVelocityOfRotation_; }
+
+      fmatvec::VecV evalGeneralizedRelativePositonOfRotation() override;
+      fmatvec::Vec3 evalGlobalRelativeAngle();
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
@@ -133,21 +136,11 @@ namespace MBSim {
        */
       fmatvec::Vec gdn, gdd;
 
-      fmatvec::Vec3 WphiK0K1;
+      fmatvec::Vec3 WphiK0K1, eR;
 
-#ifndef SWIG
-      fmatvec::VecV (Joint::*evalGeneralizedRelativePositonOfRotation_)();
-      fmatvec::Vec3 (Joint::*evalGlobalRelativeAngle)();
-#endif
+      size_t iR{2};
 
-      fmatvec::VecV evalGeneralizedRelativePositonOfRotationByIntegration() { return x; }
-      fmatvec::VecV evalGeneralizedRelativePositonOfRotationFromState();
-
-      fmatvec::Vec3 evalRelativePhixyz();
-      fmatvec::Vec3 evalRelativePhixy();
-      fmatvec::Vec3 evalRelativePhixz();
-      fmatvec::Vec3 evalRelativePhiyz();
-      fmatvec::Vec3 evalRelativePhi() { return WphiK0K1; }
+      bool integrateGeneralizedRelativeVelocityOfRotation{false};
   };
 
   class InverseKineticsJoint : public Joint {

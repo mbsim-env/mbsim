@@ -32,7 +32,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, ElasticJoint)
 
-  ElasticJoint::ElasticJoint(const string &name) : FloatingFrameLink(name), func(nullptr), iR(2), integrateGeneralizedRelativeVelocityOfRotation(false) {
+  ElasticJoint::ElasticJoint(const string &name) : FloatingFrameLink(name) {
   }
 
   ElasticJoint::~ElasticJoint() {

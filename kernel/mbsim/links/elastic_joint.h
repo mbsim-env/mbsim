@@ -75,7 +75,7 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
-      Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
+      Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func{nullptr};
 
       /**
        * \brief translational JACOBIAN (not empty for e.g. prismatic joints)
@@ -84,9 +84,9 @@ namespace MBSim {
 
       fmatvec::Vec3 WphiK0K1, eR;
 
-      size_t iR;
+      size_t iR{2};
 
-      bool integrateGeneralizedRelativeVelocityOfRotation;
+      bool integrateGeneralizedRelativeVelocityOfRotation{false};
   };
 
 }
