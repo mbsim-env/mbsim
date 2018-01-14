@@ -79,24 +79,26 @@ namespace MBSim {
        */
       fmatvec::Mat3xV JT;
 
-      fmatvec::Vec3 WphiK0K1;
+      fmatvec::Vec3 WphiK0K1, eR;
+
+      size_t iR;
 
 #ifndef SWIG
       fmatvec::VecV (ElasticJoint::*evalGeneralizedRelativePositonOfRotation_)();
-      fmatvec::Vec3 (ElasticJoint::*evalGlobalRelativeAngle)();
 #endif
+      fmatvec::Vec3 evalGlobalRelativeAngle();
 
       fmatvec::VecV evalGeneralizedRelativePositonOfRotationByIntegration() { return x; }
       fmatvec::VecV evalGeneralizedRelativePositonOfRotationFromState();
 
-      fmatvec::Vec3 evalRelativePhixyz();
-      fmatvec::Vec3 evalRelativePhixy();
-      fmatvec::Vec3 evalRelativePhixz();
-      fmatvec::Vec3 evalRelativePhiyz();
-      fmatvec::Vec3 evalRelativePhix();
-      fmatvec::Vec3 evalRelativePhiy();
-      fmatvec::Vec3 evalRelativePhiz();
-      fmatvec::Vec3 evalRelativePhi() { return WphiK0K1; }
+//      fmatvec::Vec3 evalRelativePhixyz();
+//      fmatvec::Vec3 evalRelativePhixy();
+//      fmatvec::Vec3 evalRelativePhixz();
+//      fmatvec::Vec3 evalRelativePhiyz();
+//      fmatvec::Vec3 evalRelativePhix();
+//      fmatvec::Vec3 evalRelativePhiy();
+//      fmatvec::Vec3 evalRelativePhiz();
+//      fmatvec::Vec3 evalRelativePhi() { return WphiK0K1; }
   };
 
 }
