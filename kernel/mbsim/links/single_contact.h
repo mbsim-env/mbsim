@@ -107,7 +107,6 @@ namespace MBSim {
       void updateLaRef(const fmatvec::Vec& ref) override;
       void updategdRef(const fmatvec::Vec& ref) override;
       void calcSize() override;
-      void calcxSize() override;
       void calclaSize(int j) override;
       void calcgSize(int j) override;
       void calcgdSize(int j) override;

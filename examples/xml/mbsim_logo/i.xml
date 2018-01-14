@@ -109,6 +109,7 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </momentLaw>
+      <integrateGeneralizedRelativeVelocityOfRotation>true</integrateGeneralizedRelativeVelocityOfRotation>
     </Joint>
     <Contact name="Contact" xmlns="http://www.mbsim-env.de/MBSim">
       <connect ref1="../Object[S1]/Contour[CTop]" ref2="../Object[S2]/Contour[CCircle]"/>

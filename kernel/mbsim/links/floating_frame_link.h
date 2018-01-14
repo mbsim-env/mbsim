@@ -37,10 +37,8 @@ namespace MBSim {
        */
       FloatingFrameLink(const std::string &name);
 
+      void updatexd() override;
       void init(InitStage stage, const InitConfigSet &config) override;
-
-      /* INHERITED INTERFACE OF ELEMENT */
-      /***************************************************/
 
       void calcSize() override;
       void calclaSize(int j) override;
@@ -74,6 +72,8 @@ namespace MBSim {
       void updateMoment() override;
       void updateForceDirections() override;
       void updateR() override;
+
+      virtual fmatvec::VecV evalGeneralizedRelativePositonOfRotation() { return x; }
 
     protected:
       /**

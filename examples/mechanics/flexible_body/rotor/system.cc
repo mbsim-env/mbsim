@@ -182,6 +182,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   alager->setMomentDirection(Mat(3,3,EYE));
   alager->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(StiffnessLagerA,DampingLagerA)));
   alager->setMomentLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(StiffnessLagerA,DampingLagerA)));
+  alager->setIntegrateGeneralizedRelativeVelocityOfRotation(true);
   alager->connect(this->getFrame("Lager_A_Frame"),Gleitlager->getFrame("C"));
   this->addLink(alager);
 
@@ -215,6 +216,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   VerbScheibeS->setMomentDirection(Mat(3,3,EYE));
   VerbScheibeS->setForceLaw(new BilateralConstraint());
   VerbScheibeS->setMomentLaw(new BilateralConstraint());
+  VerbScheibeS->setIntegrateGeneralizedRelativeVelocityOfRotation(true);
   VerbScheibeS->connect(ScheibeS->getFrame("C"),welle->getFrame("PosScheibeS"));
   this->addLink(VerbScheibeS);
 
@@ -224,6 +226,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   VerbScheibeGLS->setMomentDirection(Mat(3,3,EYE));
   VerbScheibeGLS->setForceLaw(new BilateralConstraint());
   VerbScheibeGLS->setMomentLaw(new BilateralConstraint());
+  VerbScheibeGLS->setIntegrateGeneralizedRelativeVelocityOfRotation(true);
   VerbScheibeGLS->connect(ScheibeGLS->getFrame("C"),welle->getFrame("Anfang"));
   this->addLink(VerbScheibeGLS);
 

@@ -136,6 +136,7 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </momentLaw>
+      <integrateGeneralizedRelativeVelocityOfRotation>true</integrateGeneralizedRelativeVelocityOfRotation>
     </Joint>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <Contact name="ContactBS{nr}" xmlns="http://www.mbsim-env.de/MBSim">

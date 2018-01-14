@@ -297,11 +297,6 @@ namespace MBSim {
     updSize = false;
   }
 
-  void SingleContact::calcxSize() {
-    ContourLink::calcxSize();
-    xSize = 0;
-  }
-
   void SingleContact::calclaSize(int j) {
     ContourLink::calclaSize(j);
     if (j == 0) { // IA
