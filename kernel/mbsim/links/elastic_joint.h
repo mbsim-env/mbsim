@@ -44,7 +44,7 @@ namespace MBSim {
 
       void updateGeneralizedForces() override;
 
-//      void calcxSize() override { if(momentDir.cols()==1) xSize = 1; }
+      void calcxSize() override { if(integrateGeneralizedRelativeVelocityOfRotation) xSize = momentDir.cols(); }
       void init(InitStage stage, const InitConfigSet &config) override;
 
       bool isSingleValued() const override { return true; }

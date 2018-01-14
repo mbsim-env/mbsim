@@ -116,6 +116,8 @@ namespace MBSim {
       auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
       setGeneralizedForceFunction(f);
     }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
+    if(e) setIntegrateGeneralizedRelativeVelocityOfRotation(E(e)->getText<bool>());
   }
 
 }

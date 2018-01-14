@@ -1959,6 +1959,12 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="integrateGeneralizedRelativeVelocityOfRotation" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die generalisierte relative Position der Rotation durch Integration der generalisierten relativen Geschwindigkeit der Rotation berechnet werden soll.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
