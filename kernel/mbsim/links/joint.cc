@@ -54,6 +54,10 @@ namespace MBSim {
     wb(forceDir.cols(), momentDir.cols() + forceDir.cols() - 1) += evalGlobalMomentDirection().T() * (frame[1]->evalGyroscopicAccelerationOfRotation() - C.evalGyroscopicAccelerationOfRotation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeAngularVelocity()));
   }
 
+  void Joint::updatexd() {
+    xd = evalGeneralizedRelativeVelocity()(iM);
+  }
+
   void Joint::updatelaFM() {
     for (int i = 0; i < forceDir.cols(); i++)
       lambdaF(i) = evalla()(i);

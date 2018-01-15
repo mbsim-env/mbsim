@@ -65,6 +65,7 @@ namespace MBSim {
       void updateh(int i=0) override;
       void updateW(int i=0) override;
       void updatewb() override;
+      void updatexd() override;
 
       void calcxSize() override { if(integrateGeneralizedRelativeVelocityOfRotation) xSize = momentDir.cols(); }
       void init(InitStage stage, const InitConfigSet &config) override;

@@ -43,6 +43,7 @@ namespace MBSim {
       ~ElasticJoint() override;
 
       void updateGeneralizedForces() override;
+      void updatexd() override;
 
       void calcxSize() override { if(integrateGeneralizedRelativeVelocityOfRotation) xSize = momentDir.cols(); }
       void init(InitStage stage, const InitConfigSet &config) override;

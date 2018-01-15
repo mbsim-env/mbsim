@@ -44,6 +44,10 @@ namespace MBSim {
     updla = false;
   }
 
+  void ElasticJoint::updatexd() {
+    xd = evalGeneralizedRelativeVelocity()(iM);
+  }
+
   void ElasticJoint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       if(momentDir.cols()==2) {
