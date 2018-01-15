@@ -144,10 +144,6 @@ namespace MBSim {
     gd(iM) = vrel(iM);
   }
 
-  void FloatingFrameLink::updatexd() {
-    xd = evalGeneralizedRelativeVelocity()(iM);
-  }
-
   void FloatingFrameLink::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       iF = RangeV(0, forceDir.cols() - 1);
