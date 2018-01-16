@@ -39,28 +39,9 @@ namespace MBSim {
 
       virtual void init(InitStage stage, const InitConfigSet &config);
 
-      /* INHERITED INTERFACE OF ELEMENT */
-      /***************************************************/
-
       void updateh(int i=0);
 
-      const fmatvec::Mat3xV& evalGlobalForceDirection(int i=0) { if(updDF) updateForceDirections(); return DF; }
-      const fmatvec::Mat3xV& evalGlobalMomentDirection(int i=0) { if(updDF) updateForceDirections(); return DM; }
-
-      void resetUpToDate();
-      void updatePositions();
       void updateVelocities();
-      void updateGeneralizedPositions();
-      void updateGeneralizedVelocities();
-      void updateForceDirections();
-      void updateForce();
-      void updateMoment();
-      void updateR();
-
-    protected:
-      fmatvec::Mat3xV DF, DM;
-
-      bool updDF;
   };
 }
 

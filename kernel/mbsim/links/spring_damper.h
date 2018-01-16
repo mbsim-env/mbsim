@@ -41,14 +41,16 @@ namespace MBSim {
     public:
       SpringDamper(const std::string &name="");
       ~SpringDamper();
+
+      void updateGeneralizedPositions();
+      void updateGeneralizedVelocities();
+      void updateForceDirections();
       void updatelaF();
 
-      /*INHERITED INTERFACE OF LINK*/
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       bool isSingleValued() const { return true; }
       void init(InitStage stage, const InitConfigSet &config);
-      /*****************************/
 
       /** \brief Set function for the force calculation.
        * The first input parameter to that function is the distance relative to the unloaded length.

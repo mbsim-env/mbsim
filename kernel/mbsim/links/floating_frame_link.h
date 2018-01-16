@@ -53,9 +53,6 @@ namespace MBSim {
       void updateg() override;
       void updategd() override;
 
-      const fmatvec::Mat3xV& evalGlobalForceDirection(int i=0) { if(updDF) updateForceDirections(); return DF; }
-      const fmatvec::Mat3xV& evalGlobalMomentDirection(int i=0) { if(updDF) updateForceDirections(); return DM; }
-
       /** \brief The frame of reference ID for the force/moment direction vectors.
        * If ID=0 (default) the first frame, if ID=1 the second frame is used.
        */
@@ -63,14 +60,10 @@ namespace MBSim {
 
       void resetUpToDate() override;
       void updatePositions(Frame *frame) override;
-      void updatePositions() override;
       void updateVelocities() override;
       void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
-      void updateForce() override;
-      void updateMoment() override;
       void updateForceDirections() override;
-      void updateR() override;
 
       virtual fmatvec::VecV evalGeneralizedRelativePositonOfRotation() { return x; }
 
@@ -78,7 +71,7 @@ namespace MBSim {
       /**
        * \brief directions of force and moment in frame of reference
        */
-      fmatvec::Mat3xV forceDir, momentDir, DF, DM;
+      fmatvec::Mat3xV forceDir, momentDir;
 
       /**
        * \brief frame of reference the force is defined in
@@ -90,8 +83,6 @@ namespace MBSim {
        * \brief own frame located in second partner with same orientation as first partner 
        */
       FloatingRelativeFrame C;
-
-      bool updDF;
   };
 }
 

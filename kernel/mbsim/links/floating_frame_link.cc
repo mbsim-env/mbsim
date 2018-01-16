@@ -27,13 +27,12 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  FloatingFrameLink::FloatingFrameLink(const std::string &name) : FrameLink(name), refFrame(nullptr), refFrameID(0), C("F"), updDF(true) {
+  FloatingFrameLink::FloatingFrameLink(const std::string &name) : FrameLink(name), refFrame(nullptr), refFrameID(0), C("F") {
     C.setParent(this);
   }
 
   void FloatingFrameLink::resetUpToDate() {
     FrameLink::resetUpToDate();
-    updDF = true;
     C.resetUpToDate();  
   }
 
@@ -79,12 +78,6 @@ namespace MBSim {
     h[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * evalForce(1) + frame[1]->evalJacobianOfRotation(j).T() * evalMoment(1);
   }
 
-  void FloatingFrameLink::updatePositions() {
-    WrP0P1 = frame[1]->evalPosition() - frame[0]->evalPosition();
-    AK0K1 = frame[0]->getOrientation().T()*frame[1]->getOrientation();
-    updPos = false;
-  }
-
   void FloatingFrameLink::updatePositions(Frame *frame_) {
     frame_->setPosition(frame[1]->evalPosition());
     frame_->setOrientation(frame[0]->evalOrientation());
@@ -108,26 +101,6 @@ namespace MBSim {
     updvrel = false;
   }
 
-  void FloatingFrameLink::updateForce() {
-    F[1] = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
-    F[0] = -F[1];
-    updF = false;
-  }
-
-  void FloatingFrameLink::updateMoment() {
-    M[1] = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
-    M[0] = -M[1];
-    updM = false;
-  }
-
-  void FloatingFrameLink::updateR() {
-    RF[1].set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection());
-    RM[1].set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection());
-    RF[0] = -RF[1];
-    RM[0] = -RM[1];
-    updRMV = false;
-  }
-
   void FloatingFrameLink::updateForceDirections() {
     DF = refFrame->evalOrientation() * forceDir;
     DM = refFrame->evalOrientation() * momentDir;
@@ -148,23 +121,8 @@ namespace MBSim {
     if(stage==preInit) {
       iF = RangeV(0, forceDir.cols() - 1);
       iM = RangeV(forceDir.cols(), getGeneralizedRelativePositionSize() - 1);
-      if(isSetValued()) {
-        g.resize(ng);
-        gd.resize(ng);
-        RF[0].resize(ng);
-        RM[0].resize(ng);
-        RF[1].resize(ng);
-        RM[1].resize(ng);
-        la.resize(ng);
-      }
       lambdaF.resize(forceDir.cols());
       lambdaM.resize(momentDir.cols());
-      for(unsigned int i=0; i<2; i++) {
-        W[i].resize(2);
-        V[i].resize(2);
-        h[i].resize(2);
-        r[i].resize(2);
-      }
     }
     else if(stage==unknownStage) {
       refFrame = refFrameID ? frame[1] : frame[0];

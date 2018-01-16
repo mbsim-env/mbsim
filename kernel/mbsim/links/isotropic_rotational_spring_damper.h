@@ -19,7 +19,8 @@
 #ifndef _ISOTROPICROTATIONALSPRINGDAMPER_H_
 #define _ISOTROPICROTATIONALSPRINGDAMPER_H_
 
-#include "mbsim/links/floating_frame_link.h"
+#include "mbsim/links/fixed_frame_link.h"
+#include "mbsim/functions/function.h"
 
 namespace MBSim {
 
@@ -33,7 +34,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2012-03-21 initial commit (Thorsten Schindler)
    */
-  class IsotropicRotationalSpringDamper : public FloatingFrameLink {
+  class IsotropicRotationalSpringDamper : public FixedFrameLink {
     public:
       /**
        * \brief constructor
@@ -46,31 +47,25 @@ namespace MBSim {
        */
       virtual ~IsotropicRotationalSpringDamper();
 
-      virtual void updateGeneralizedForces();
-      virtual void updateGeneralizedPositions();
-      virtual void updateGeneralizedVelocities();
-      /***************************************************/
+      void updateGeneralizedPositions();
+      void updateGeneralizedVelocities();
+      void updateForceDirections();
+      void updatelaM();
 
-      /* INHERITED INTERFACE OF LINK */
-      virtual bool isActive() const { return true; }
-      virtual bool gActiveChanged() { return false; }
-      virtual bool isSingleValued() const { return true; }
-      /***************************************************/
+      bool isActive() const { return true; }
+      bool gActiveChanged() { return false; }
+      bool isSingleValued() const { return true; }
+      void init(InitStage stage, const InitConfigSet &config);
 
-      /* SETTER */
-      void setParameters(double c_, double d_, double alpha0_) {
-        c = c_;
-        d = d_;
-        alpha0 = alpha0_;
+      void setForceFunction(Function<double(double,double)> *func_) {
+        func=func_;
+        func->setParent(this);
+        func->setName("Force");
       }
 
-      void setMomentDirection(const fmatvec::Mat3xV& md);
-
     private:
-      /**
-       * \brief stiffness, damping, relaxed angle
-       */
-      double c, d, alpha0;
+      Function<double(double,double)> *func;
+      fmatvec::Vec3 n;
   };
 
 }
