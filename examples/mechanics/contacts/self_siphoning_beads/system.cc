@@ -165,7 +165,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
 
       if (ele > 1) {
         IsotropicRotationalSpringDamper * iso = new IsotropicRotationalSpringDamper("Iso" + toString(ele));
-        iso->setParameters(0, isoDamping, 0);
+        iso->setMomentFunction(new LinearSpringDamperForce(0, isoDamping));
         iso->connect(balls[ele - 1]->getFrameC(), balls[ele]->getFrameC());
         addLink(iso);
       }
