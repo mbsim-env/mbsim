@@ -36,12 +36,12 @@ namespace MBSim {
        * \brief constructor
        * \param name of isotropic roational spring damper
        */
-      IsotropicRotationalSpringDamper(const std::string &name);
+      IsotropicRotationalSpringDamper(const std::string &name="");
 
       /**
        * \brief destructor
        */
-      virtual ~IsotropicRotationalSpringDamper();
+      ~IsotropicRotationalSpringDamper();
 
       void updateGeneralizedPositions();
       void updateGeneralizedVelocities();
@@ -53,11 +53,13 @@ namespace MBSim {
       bool isSingleValued() const { return true; }
       void init(InitStage stage, const InitConfigSet &config);
 
-      void setForceFunction(Function<double(double,double)> *func_) {
+      void setMomentFunction(Function<double(double,double)> *func_) {
         func=func_;
         func->setParent(this);
         func->setName("Force");
       }
+
+      void initializeUsingXML(xercesc::DOMElement *element);
 
     private:
       Function<double(double,double)> *func;

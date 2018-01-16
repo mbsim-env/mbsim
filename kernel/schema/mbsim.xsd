@@ -1610,7 +1610,7 @@
               <xs:sequence>
                 <xs:element ref="Function"/>
               </xs:sequence>
-            </xs:complexType> 
+            </xs:complexType>
           </xs:element>
           <xs:element name="unloadedLength" type="pv:lengthScalar">
             <xs:annotation>
@@ -1665,7 +1665,7 @@
               <xs:sequence>
                 <xs:element ref="Function"/>
               </xs:sequence>
-            </xs:complexType> 
+            </xs:complexType>
           </xs:element>
           <xs:element name="unloadedLength" type="pv:lengthScalar">
             <xs:annotation>
@@ -1681,6 +1681,31 @@
             <xs:complexType>
               <xs:group ref="OpenMBVCoilSpringParameters"/>
             </xs:complexType> 
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="IsotropicRotationalSpringDamper" substitutionGroup="FrameLink" type="IsotropicRotationalSpringDamperType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Definiert ein rotatorisches Feder-Dämpfer Element als Verbindung zwischen zwei Körpern.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="IsotropicRotationalSpringDamperType">
+    <xs:complexContent>
+      <xs:extension base="FrameLinkType">
+        <xs:sequence>
+          <xs:element name="momentFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert die Momentfunktion in Abhängigkeit der relativen Verdrehung der Kraftangriffspunkte
+                und der relativen Winkelgeschwindigkeit zwischen den Kraftangriffspunkten.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence>
       </xs:extension>

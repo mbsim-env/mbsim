@@ -18,14 +18,18 @@
 
 #include <config.h>
 #include "isotropic_rotational_spring_damper.h"
-#include "mbsim/objects/rigid_body.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/eps.h"
-#include "mbsim/utils/utils.h"
+#include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
+
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, IsotropicRotationalSpringDamper)
 
   IsotropicRotationalSpringDamper::IsotropicRotationalSpringDamper(const string &name) : FixedFrameLink(name), func(NULL) {
   }
@@ -71,6 +75,13 @@ namespace MBSim {
   void IsotropicRotationalSpringDamper::updatelaM() {
     lambdaM(0) = -(*func)(evalGeneralizedRelativePosition()(0),evalGeneralizedRelativeVelocity()(0));
     updlaM = false;
+  }
+
+  void IsotropicRotationalSpringDamper::initializeUsingXML(DOMElement *element) {
+    FixedFrameLink::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"momentFunction");
+    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+    setMomentFunction(f);
   }
 
 }
