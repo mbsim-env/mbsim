@@ -31,6 +31,7 @@ namespace MBSim {
   }
 
   IsotropicRotationalSpringDamper::~IsotropicRotationalSpringDamper() {
+    delete func;
   }
 
   void IsotropicRotationalSpringDamper::init(InitStage stage, const InitConfigSet &config) {
@@ -44,7 +45,8 @@ namespace MBSim {
   }
 
   void IsotropicRotationalSpringDamper::updateGeneralizedPositions() {
-    rrel(0) = acos(std::max(-1.,std::min(1.,evalGlobalRelativeOrientation()(0,0))));
+    SqrMat3 A = evalGlobalRelativeOrientation();
+    rrel(0) = acos(std::max(-1.,std::min(1.,(A(0,0)+A(1,1)+A(2,2)-1)/2.)));
     updrrel = false;
   }
 
@@ -54,13 +56,14 @@ namespace MBSim {
   }
 
   void IsotropicRotationalSpringDamper::updateForceDirections() {
-    n(1) = -evalGlobalRelativeOrientation()(2,0);
-    n(2) = AK0K1(1,0);
-    double nrm = nrm2(n);
-    if (nrm >= epsroot)
-//      n.init(0);
-//    else
-      n /= nrm;
+    double al = evalGeneralizedRelativePosition()(0);
+    if(fabs(al)<=epsroot)
+      n.init(0);
+    else {
+      n(0) = (AK0K1(2,1)-AK0K1(1,2))/2./sin(al);
+      n(1) = (AK0K1(0,2)-AK0K1(2,0))/2./sin(al);
+      n(2) = (AK0K1(1,0)-AK0K1(0,1))/2./sin(al);
+    }
     DM = frame[0]->getOrientation() * n;
     updDF = false;
   }
@@ -69,6 +72,5 @@ namespace MBSim {
     lambdaM(0) = -(*func)(evalGeneralizedRelativePosition()(0),evalGeneralizedRelativeVelocity()(0));
     updlaM = false;
   }
-
 
 }

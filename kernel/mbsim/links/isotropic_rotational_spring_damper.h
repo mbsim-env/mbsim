@@ -16,8 +16,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _ISOTROPICROTATIONALSPRINGDAMPER_H_
-#define _ISOTROPICROTATIONALSPRINGDAMPER_H_
+#ifndef _ISOTROPIC_ROTATIONAL_SPRING_DAMPER_H_
+#define _ISOTROPIC_ROTATIONAL_SPRING_DAMPER_H_
 
 #include "mbsim/links/fixed_frame_link.h"
 #include "mbsim/functions/function.h"
@@ -25,14 +25,10 @@
 namespace MBSim {
 
   /** 
-   * \brief Isotropic rotational spring damper force law.
+   * \brief Isotropic rotational spring damper.
    * This class connects two frames and applies a torque which depends on the
    * relative rotation and velocity between the two frames.
-   * Not considered: torsion around the first axis / rotation more than 180°
    * 
-   * \author Gerald Horst
-   * \author Thorsten Schindler
-   * \date 2012-03-21 initial commit (Thorsten Schindler)
    */
   class IsotropicRotationalSpringDamper : public FixedFrameLink {
     public:
@@ -70,4 +66,4 @@ namespace MBSim {
 
 }
 
-#endif /* _ISOTROPICROTATIONALSPRINGDAMPER_H_ */
+#endif
