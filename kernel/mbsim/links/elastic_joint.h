@@ -70,7 +70,7 @@ namespace MBSim {
 
       void setIntegrateGeneralizedRelativeVelocityOfRotation(bool integrateGeneralizedRelativeVelocityOfRotation_) { integrateGeneralizedRelativeVelocityOfRotation = integrateGeneralizedRelativeVelocityOfRotation_; }
 
-      fmatvec::VecV evalGeneralizedRelativePositonOfRotation() override;
+      fmatvec::VecV evalGeneralizedRelativePositionOfRotation() override;
       fmatvec::Vec3 evalGlobalRelativeAngle();
 
       void initializeUsingXML(xercesc::DOMElement *element) override;

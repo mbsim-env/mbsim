@@ -98,7 +98,7 @@ namespace MBSim {
 
   void FloatingFrameLink::updateGeneralizedPositions() {
     rrel.set(iF, evalGlobalForceDirection().T() * evalGlobalRelativePosition());
-    rrel.set(iM, evalGeneralizedRelativePositonOfRotation());
+    rrel.set(iM, evalGeneralizedRelativePositionOfRotation());
     updrrel = false;
   }
 

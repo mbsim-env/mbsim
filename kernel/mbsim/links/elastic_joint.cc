@@ -45,7 +45,8 @@ namespace MBSim {
   }
 
   void ElasticJoint::updatexd() {
-    xd = evalGeneralizedRelativeVelocity()(iM);
+    if(integrateGeneralizedRelativeVelocityOfRotation)
+      xd = evalGeneralizedRelativeVelocity()(iM);
   }
 
   void ElasticJoint::init(InitStage stage, const InitConfigSet &config) {
@@ -96,7 +97,7 @@ namespace MBSim {
       momentDir.set(i, momentDir.col(i) / nrm2(md.col(i)));
   }
 
-  VecV ElasticJoint::evalGeneralizedRelativePositonOfRotation() {
+  VecV ElasticJoint::evalGeneralizedRelativePositionOfRotation() {
     if(integrateGeneralizedRelativeVelocityOfRotation)
       return x;
     else
