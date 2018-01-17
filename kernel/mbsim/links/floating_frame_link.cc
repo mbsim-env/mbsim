@@ -81,6 +81,7 @@ namespace MBSim {
 
   void FloatingFrameLink::updatePositions() {
     WrP0P1 = frame[1]->evalPosition() - frame[0]->evalPosition();
+    AK0K1 = frame[0]->getOrientation().T()*frame[1]->getOrientation();
     updPos = false;
   }
 
@@ -91,13 +92,13 @@ namespace MBSim {
 
   void FloatingFrameLink::updateVelocities() {
     WvP0P1 = frame[1]->evalVelocity() - C.evalVelocity();
-    WomP0P1 = frame[1]->evalAngularVelocity() - C.evalAngularVelocity();
+    WomK0K1 = frame[1]->evalAngularVelocity() - C.evalAngularVelocity();
     updVel = false;
   }
 
   void FloatingFrameLink::updateGeneralizedPositions() {
     rrel.set(iF, evalGlobalForceDirection().T() * evalGlobalRelativePosition());
-    rrel.set(iM, x);
+    rrel.set(iM, evalGeneralizedRelativePositionOfRotation());
     updrrel = false;
   }
 

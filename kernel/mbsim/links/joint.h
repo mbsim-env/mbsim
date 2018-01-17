@@ -52,7 +52,6 @@ namespace MBSim {
        */
       ~Joint() override;
 
-      /* INHERITED INTERFACE OF LINKINTERFACE */
       void updatelaF() override { (this->*updatelaF_)(); updlaF = false; }
       void updatelaM() override { (this->*updatelaM_)(); updlaM = false; }
       void updatelaF0() { }
@@ -66,15 +65,11 @@ namespace MBSim {
       void updateh(int i=0) override;
       void updateW(int i=0) override;
       void updatewb() override;
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       void updatexd() override;
-      void calcxSize() override;
-      void init(InitStage stage, const InitConfigSet &config) override;
-      /***************************************************/
 
-      /* INHERITED INTERFACE OF LINK */
+      void calcxSize() override { if(integrateGeneralizedRelativeVelocityOfRotation) xSize = momentDir.cols(); }
+      void init(InitStage stage, const InitConfigSet &config) override;
+
       bool isSetValued() const override;
       bool isSingleValued() const override;
       bool isActive() const override { return true; }
@@ -90,12 +85,9 @@ namespace MBSim {
       void updaterFactors() override;
       void checkImpactsForTermination() override;
       void checkConstraintsForTermination() override;
-      /***************************************************/
 
-      /* GETTER / SETTER */
       void setForceLaw(GeneralizedForceLaw * rc);
       void setMomentLaw(GeneralizedForceLaw * rc);
-      /***************************************************/
 
       /**
        * \param local force direction represented in first frame
@@ -106,6 +98,11 @@ namespace MBSim {
        * \param local moment direction represented in first frame
        */
       void setMomentDirection(const fmatvec::Mat3xV& md);
+
+      void setIntegrateGeneralizedRelativeVelocityOfRotation(bool integrateGeneralizedRelativeVelocityOfRotation_) { integrateGeneralizedRelativeVelocityOfRotation = integrateGeneralizedRelativeVelocityOfRotation_; }
+
+      fmatvec::VecV evalGeneralizedRelativePositionOfRotation() override;
+      fmatvec::Vec3 evalGlobalRelativeAngle();
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
@@ -139,6 +136,12 @@ namespace MBSim {
        * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
        */
       fmatvec::Vec gdn, gdd;
+
+      fmatvec::Vec3 WphiK0K1, eR;
+
+      size_t iR{2};
+
+      bool integrateGeneralizedRelativeVelocityOfRotation{false};
   };
 
   class InverseKineticsJoint : public Joint {

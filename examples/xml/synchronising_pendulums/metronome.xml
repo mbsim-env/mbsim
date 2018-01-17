@@ -155,6 +155,7 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </momentLaw>
+      <integrateGeneralizedRelativeVelocityOfRotation>true</integrateGeneralizedRelativeVelocityOfRotation>
     </Joint>
     <Contact name="contactSwing" xmlns="http://www.mbsim-env.de/MBSim">
       <connect ref1="../Object[Base]/Contour[cBottom]" ref2="../../Group[Swing]/Object[Swing]/Contour[cTop]"/>

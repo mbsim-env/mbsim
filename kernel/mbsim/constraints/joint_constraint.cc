@@ -248,7 +248,7 @@ namespace MBSim {
         i->setjRel(Vec(i->getGeneralizedVelocitySize()));
       }
       Vec3 WvP0P1 = frame2->evalVelocity() - C.evalVelocity();
-      Vec3 WomP0P1 = frame2->evalAngularVelocity() - C.evalAngularVelocity();
+      Vec3 WomK0K1 = frame2->evalAngularVelocity() - C.evalAngularVelocity();
       Mat3xV WJs = refFrame->evalOrientation() * Js;
       VecV sdT = WJs.T() * WvP0P1;
 
@@ -270,7 +270,7 @@ namespace MBSim {
       B(RangeV(dT.cols(),dT.cols()+dR.cols()-1),RangeV(0,nh-1)) = -(dR.T()*JR0);
       Vec b(nu);
       b(0,dT.cols()-1) = dT.T()*(frame2->evalGyroscopicAccelerationOfTranslation()-C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), WvP0P1 + WJs * sdT));
-      b(dT.cols(),dT.cols()+dR.cols()-1) = dR.T()*(frame2->evalGyroscopicAccelerationOfRotation()-C.evalGyroscopicAccelerationOfRotation()-crossProduct(C.evalAngularVelocity(), WomP0P1));
+      b(dT.cols(),dT.cols()+dR.cols()-1) = dR.T()*(frame2->evalGyroscopicAccelerationOfRotation()-C.evalGyroscopicAccelerationOfRotation()-crossProduct(C.evalAngularVelocity(), WomK0K1));
 
       Mat J = slvLU(A,B);
       Vec j = slvLU(A,b);

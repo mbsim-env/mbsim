@@ -124,7 +124,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   Vec3 rodCircleCenterDistance;
   rodCircleCenterDistance(0) = thicknessRod / 2.;
   rodCircleCenterDistance(1) = centerPointDistance;
-  FixedRelativeFrame * rodRefSmallEnd = new FixedRelativeFrame("RodRefSmallEnd", rodCircleCenterDistance);
+  FixedRelativeFrame * rodRefSmallEnd = new FixedRelativeFrame("RodRefSmallEnd", rodCircleCenterDistance, Cardan2AIK(-M_PI/2,-M_PI/2,0));
   rodRefSmallEnd->setFrameOfReference(rod->getFloatingFrameOfReference());
   rod->addFrame(rodRefSmallEnd);
   rodRefSmallEnd->enableOpenMBV(1e-2);

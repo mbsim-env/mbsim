@@ -188,6 +188,7 @@ namespace MBSimGUI {
       void addGeneralizedFriction();
       void addGeneralizedGear();
       void addGeneralizedElasticConnection();
+      void addGeneralizedElasticStructure();
       void paste();
       void load();
       void embed();

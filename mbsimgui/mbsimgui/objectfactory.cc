@@ -33,6 +33,7 @@
 #include "contact.h"
 #include "gear.h"
 #include "connection.h"
+#include "structure.h"
 #include "observer.h"
 #include "sensor.h"
 //#include "linear_transfer_system.h"
@@ -177,6 +178,8 @@ namespace MBSimGUI {
       return new GeneralizedFriction;
     if(E(element)->getTagName()==MBSIM%"GeneralizedGear")
       return new GeneralizedGear;
+    if(E(element)->getTagName()==MBSIM%"GeneralizedElasticStructure")
+      return new GeneralizedElasticStructure;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedPositionSensor")
       return new GeneralizedPositionSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")

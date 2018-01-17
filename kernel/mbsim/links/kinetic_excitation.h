@@ -52,15 +52,11 @@ namespace MBSim {
       void updatelaF() override;
       void updatelaM() override;
 
-      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       void init(InitStage stage, const InitConfigSet &config) override;
-      /***************************************************/
 
-      /* INHERITED INTERFACE OF LINK */
       bool isActive() const override { return true; }
       bool isSingleValued() const override { return true; }
       bool gActiveChanged() override { return false; }
-      /***************************************************/
       
       /**
        * \param local force direction represented in first frame

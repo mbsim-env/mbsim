@@ -68,7 +68,6 @@ namespace MBSimGUI {
   class SpringDamper;
   class DirectionalSpringDamper;
   class GeneralizedSpringDamper;
-  class GeneralizedLinearElasticConnection;
   class Joint;
   class ElasticJoint;
   class Contact;
@@ -527,7 +526,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *forceDirection, *forceLaw, *momentDirection, *momentLaw;
+      ExtWidget *forceDirection, *forceLaw, *momentDirection, *momentLaw, *integrate;
   };
 
   class ElasticJointPropertyDialog : public FloatingFrameLinkPropertyDialog {
@@ -537,7 +536,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *forceDirection, *momentDirection, *function;
+      ExtWidget *forceDirection, *momentDirection, *function, *integrate;
       void updateWidget() override;
   };
 
@@ -580,6 +579,16 @@ namespace MBSimGUI {
     protected:
       ExtWidget *function;
       void updateWidget() override;
+  };
+
+  class GeneralizedElasticStructurePropertyDialog : public RigidBodyLinkPropertyDialog {
+
+    public:
+      GeneralizedElasticStructurePropertyDialog(RigidBodyLink *connection, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *function, *rigidBody;
   };
 
   class ContactPropertyDialog : public LinkPropertyDialog {

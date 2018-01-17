@@ -43,18 +43,14 @@ namespace MBSim {
       ~ElasticJoint() override;
 
       void updateGeneralizedForces() override;
-
-      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       void updatexd() override;
-      void calcxSize() override;
-      void init(InitStage stage, const InitConfigSet &config) override;
-      /***************************************************/
 
-      /* INHERITED INTERFACE OF LINK */
+      void calcxSize() override { if(integrateGeneralizedRelativeVelocityOfRotation) xSize = momentDir.cols(); }
+      void init(InitStage stage, const InitConfigSet &config) override;
+
       bool isSingleValued() const override { return true; }
       bool isActive() const override { return true; }
       bool gActiveChanged() override { return false; }
-      /***************************************************/
 
       void setGeneralizedForceFunction(Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func_) {
         func=func_;
@@ -72,15 +68,26 @@ namespace MBSim {
        */
       void setMomentDirection(const fmatvec::Mat3xV& md);
 
+      void setIntegrateGeneralizedRelativeVelocityOfRotation(bool integrateGeneralizedRelativeVelocityOfRotation_) { integrateGeneralizedRelativeVelocityOfRotation = integrateGeneralizedRelativeVelocityOfRotation_; }
+
+      fmatvec::VecV evalGeneralizedRelativePositionOfRotation() override;
+      fmatvec::Vec3 evalGlobalRelativeAngle();
+
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
-      Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
+      Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func{nullptr};
 
       /**
        * \brief translational JACOBIAN (not empty for e.g. prismatic joints)
        */
       fmatvec::Mat3xV JT;
+
+      fmatvec::Vec3 WphiK0K1, eR;
+
+      size_t iR{2};
+
+      bool integrateGeneralizedRelativeVelocityOfRotation{false};
   };
 
 }

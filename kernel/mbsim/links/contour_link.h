@@ -75,7 +75,7 @@ namespace MBSim {
       void updateForceDirections() override;
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvP0P1; }
-      const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomP0P1; }
+      const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomK0K1; }
       const fmatvec::Mat3xV& evalGlobalForceDirection(int i=0) { if(updDF) updateForceDirections(); return DF; }
       const fmatvec::Mat3xV& evalGlobalMomentDirection(int i=0) { if(updDF) updateForceDirections(); return DM; }
 
@@ -86,7 +86,7 @@ namespace MBSim {
       /**
        * \brief difference vector of position, velocity and angular velocity
        */
-      fmatvec::Vec3 WrP0P1, WvP0P1, WomP0P1;
+      fmatvec::Vec3 WrP0P1, WvP0P1, WomK0K1;
 
       fmatvec::Mat3xV DF, DM;
 

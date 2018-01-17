@@ -255,6 +255,7 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   addLink(constraint);
   constraint->setForceDirection("[1,0;0,1;0,0]");
   constraint->setForceLaw(new BilateralConstraint);
+  constraint->setIntegrateGeneralizedRelativeVelocityOfRotation(true);
 
   //  KineticExcitation *load = new KineticExcitation("Motor");
   //  addLink(load);

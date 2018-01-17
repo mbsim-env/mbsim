@@ -25,6 +25,7 @@
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objects/rigid_body.h>
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -53,6 +54,11 @@ namespace MBSim {
     wb(forceDir.cols(), momentDir.cols() + forceDir.cols() - 1) += evalGlobalMomentDirection().T() * (frame[1]->evalGyroscopicAccelerationOfRotation() - C.evalGyroscopicAccelerationOfRotation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeAngularVelocity()));
   }
 
+  void Joint::updatexd() {
+    if(integrateGeneralizedRelativeVelocityOfRotation)
+      xd = evalGeneralizedRelativeVelocity()(iM);
+  }
+
   void Joint::updatelaFM() {
     for (int i = 0; i < forceDir.cols(); i++)
       lambdaF(i) = evalla()(i);
@@ -71,10 +77,6 @@ namespace MBSim {
   void Joint::updatelaMS() {
     for (int i = forceDir.cols(), j=0; i < forceDir.cols() + momentDir.cols(); i++, j++)
       lambdaM(j) = (*fml)(evalGeneralizedRelativePosition()(i), evalGeneralizedRelativeVelocity()(i));
-  }
-
-  void Joint::updatexd() {
-    xd = evalGeneralizedRelativeVelocity()(iM);
   }
 
   void Joint::updateh(int j) {
@@ -97,13 +99,32 @@ namespace MBSim {
     W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * RF + frame[1]->evalJacobianOfRotation(j).T() * RM;
   }
 
-  void Joint::calcxSize() {
-    FloatingFrameLink::calcxSize();
-    xSize = momentDir.cols();
-  }
-
   void Joint::init(InitStage stage, const InitConfigSet &config) {
-    if (stage == unknownStage) {
+    if(stage==preInit) {
+      if(momentDir.cols()==2) {
+        if(fabs(momentDir(2,0))<=macheps and fabs(momentDir(2,1))<=macheps)
+          iR = 2;
+        else if(fabs(momentDir(1,0))<=macheps and fabs(momentDir(1,1))<=macheps)
+          iR = 1;
+        else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(0,1))<=macheps)
+          iR = 0;
+        else
+          THROW_MBSIMERROR("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
+      }
+      else if(momentDir.cols()==1) {
+        msg(Warn) << "Evaluation of generalized relative velocity of rotation may be wrong for spatial rotation. In this case turn on integration of generalized relative velocity of rotation." << endl;
+        if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(2,0))<=macheps)
+          iR = 2;
+        else if(fabs(momentDir(1,0))<=macheps and fabs(momentDir(2,0))<=macheps)
+          iR = 1;
+        else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(1,0))<=macheps)
+          iR = 0;
+        else
+          THROW_MBSIMERROR("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
+      }
+      eR(iR) = 1;
+    }
+    else if (stage == unknownStage) {
       gdd.resize(gdSize);
       gdn.resize(gdSize);
 
@@ -483,6 +504,19 @@ namespace MBSim {
       momentDir.set(i, momentDir.col(i) / nrm2(md.col(i)));
   }
 
+  VecV Joint::evalGeneralizedRelativePositionOfRotation() {
+    if(integrateGeneralizedRelativeVelocityOfRotation)
+      return x;
+    else
+      return evalGlobalMomentDirection().T()*frame[0]->getOrientation()*evalGlobalRelativeAngle();
+  }
+
+  Vec3 Joint::evalGlobalRelativeAngle() {
+    WphiK0K1 = crossProduct(eR,AK0K1.col(iR));
+    WphiK0K1(iR) = -AK0K1(fmod(iR+1,3),fmod(iR+2,3));
+    return WphiK0K1;
+  }
+
   void Joint::initializeUsingXML(DOMElement *element) {
     FloatingFrameLink::initializeUsingXML(element);
     DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
@@ -493,6 +527,8 @@ namespace MBSim {
     if(e) setMomentDirection(E(e)->getText<Mat>(3,0));
     e = E(element)->getFirstElementChildNamed(MBSIM%"momentLaw");
     if(e) setMomentLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
+    if(e) setIntegrateGeneralizedRelativeVelocityOfRotation(E(e)->getText<bool>());
   }
 
   InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), body(nullptr) {

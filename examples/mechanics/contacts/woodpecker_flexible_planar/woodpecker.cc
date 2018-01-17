@@ -15,8 +15,10 @@
 #include "mbsim/links/generalized_spring_damper.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 #include "openmbvcppinterface/ivbody.h"
+
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
@@ -61,10 +63,12 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
 
   addObject(balken);
 
+  addFrame(new FixedRelativeFrame("Q",Vec3(),BasicRotAIKz(M_PI/2)));
+
   // inertiale Einspannung -----------------------------
   balken->addFrame(new Frame1s("RJ"));
   Joint *joint = new Joint("Clamping");
-  joint->connect(this->getFrame("I"),balken->getFrame("RJ")); 
+  joint->connect(this->getFrame("Q"),balken->getFrame("RJ"));
   joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   joint->setForceLaw(new BilateralConstraint);
   joint->setMomentDirection("[0; 0; 1]");
@@ -215,6 +219,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setGeneralizedInitialPosition(Vec(1,INIT, 0.0));
   specht->setGeneralizedInitialVelocity(Vec(1,INIT,-5.0));
 
+  getFrame("Q")->enableOpenMBV(0.1);
   balken->getFrame("RJ")->enableOpenMBV(0.1);
 
   std::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();

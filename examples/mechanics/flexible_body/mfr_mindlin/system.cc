@@ -82,6 +82,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint->connect(this->getFrame("I"),disk->getFrame("COG"));
   joint->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1.e6,0.)));
   joint->setMomentLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1.e6,0.)));
+  joint->setIntegrateGeneralizedRelativeVelocityOfRotation(true);
 //  joint->setForceLaw(new BilateralConstraint);
 //  joint->setMomentLaw(new BilateralConstraint);
   this->addLink(joint);

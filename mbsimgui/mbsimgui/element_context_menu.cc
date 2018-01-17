@@ -34,6 +34,7 @@
 #include "group.h"
 #include "gear.h"
 #include "connection.h"
+#include "structure.h"
 #include "sensor.h"
 #include "element_view.h"
 
@@ -417,6 +418,9 @@ namespace MBSimGUI {
     action = new QAction("Add generalized elastic connection", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedElasticConnection()));
     addAction(action);
+    action = new QAction("Add generalized elastic structure", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedElasticStructure()));
+    addAction(action);
   }
 
   void LinksContextMenu::paste() {
@@ -474,6 +478,10 @@ namespace MBSimGUI {
 
   void LinksContextMenu::addGeneralizedElasticConnection() {
     mw->addLink(new GeneralizedElasticConnection, element);
+  }
+
+  void LinksContextMenu::addGeneralizedElasticStructure() {
+    mw->addLink(new GeneralizedElasticStructure, element);
   }
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {

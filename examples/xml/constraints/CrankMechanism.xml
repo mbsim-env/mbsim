@@ -271,6 +271,7 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </momentLaw>
+      <integrateGeneralizedRelativeVelocityOfRotation>true</integrateGeneralizedRelativeVelocityOfRotation>
     </Joint>
     <Joint xmlns="http://www.mbsim-env.de/MBSim" name="Friction_Rocker_Piston">
       <connect ref1="../Object[Piston]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fPiston]"/>
@@ -285,6 +286,7 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </momentLaw>
+      <integrateGeneralizedRelativeVelocityOfRotation>true</integrateGeneralizedRelativeVelocityOfRotation>
     </Joint>
   </links>
   <constraints>

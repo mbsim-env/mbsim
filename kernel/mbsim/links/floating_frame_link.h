@@ -39,9 +39,6 @@ namespace MBSim {
 
       void init(InitStage stage, const InitConfigSet &config) override;
 
-      /* INHERITED INTERFACE OF ELEMENT */
-      /***************************************************/
-
       void calcSize() override;
       void calclaSize(int j) override;
       void calcgSize(int j) override;
@@ -74,6 +71,8 @@ namespace MBSim {
       void updateMoment() override;
       void updateForceDirections() override;
       void updateR() override;
+
+      virtual fmatvec::VecV evalGeneralizedRelativePositionOfRotation() { return x; }
 
     protected:
       /**

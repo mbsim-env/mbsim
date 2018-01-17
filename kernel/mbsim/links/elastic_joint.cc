@@ -21,6 +21,7 @@
 #include "mbsim/links/elastic_joint.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/contact_kinematics/contact_kinematics.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -31,7 +32,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, ElasticJoint)
 
-  ElasticJoint::ElasticJoint(const string &name) : FloatingFrameLink(name), func(nullptr) {
+  ElasticJoint::ElasticJoint(const string &name) : FloatingFrameLink(name) {
   }
 
   ElasticJoint::~ElasticJoint() {
@@ -44,16 +45,36 @@ namespace MBSim {
   }
 
   void ElasticJoint::updatexd() {
-    xd = evalGeneralizedRelativeVelocity()(iM);
-  }
-
-  void ElasticJoint::calcxSize() {
-    FloatingFrameLink::calcxSize();
-    xSize = momentDir.cols();
+    if(integrateGeneralizedRelativeVelocityOfRotation)
+      xd = evalGeneralizedRelativeVelocity()(iM);
   }
 
   void ElasticJoint::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==unknownStage) {
+    if(stage==preInit) {
+      if(momentDir.cols()==2) {
+        if(fabs(momentDir(2,0))<=macheps and fabs(momentDir(2,1))<=macheps)
+          iR = 2;
+        else if(fabs(momentDir(1,0))<=macheps and fabs(momentDir(1,1))<=macheps)
+          iR = 1;
+        else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(0,1))<=macheps)
+          iR = 0;
+        else
+          THROW_MBSIMERROR("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
+      }
+      else if(momentDir.cols()==1) {
+        msg(Warn) << "Evaluation of generalized relative velocity of rotation may be wrong for spatial rotation. In this case turn on integration of generalized relative velocity of rotation." << endl;
+        if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(2,0))<=macheps)
+          iR = 2;
+        else if(fabs(momentDir(1,0))<=macheps and fabs(momentDir(2,0))<=macheps)
+          iR = 1;
+        else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(1,0))<=macheps)
+          iR = 0;
+        else
+          THROW_MBSIMERROR("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
+      }
+      eR(iR) = 1;
+    }
+    else if(stage==unknownStage) {
       if(func and (func->getRetSize().first!=forceDir.cols()+momentDir.cols())) THROW_MBSIMERROR("Size of generalized forces does not match!");
     }
     FloatingFrameLink::init(stage, config);
@@ -76,6 +97,19 @@ namespace MBSim {
       momentDir.set(i, momentDir.col(i) / nrm2(md.col(i)));
   }
 
+  VecV ElasticJoint::evalGeneralizedRelativePositionOfRotation() {
+    if(integrateGeneralizedRelativeVelocityOfRotation)
+      return x;
+    else
+      return evalGlobalMomentDirection().T()*frame[0]->getOrientation()*evalGlobalRelativeAngle();
+  }
+
+  Vec3 ElasticJoint::evalGlobalRelativeAngle() {
+    WphiK0K1 = crossProduct(eR,AK0K1.col(iR));
+    WphiK0K1(iR) = -AK0K1(fmod(iR+1,3),fmod(iR+2,3));
+    return WphiK0K1;
+  }
+
   void ElasticJoint::initializeUsingXML(DOMElement *element) {
     FloatingFrameLink::initializeUsingXML(element);
     DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
@@ -87,6 +121,8 @@ namespace MBSim {
       auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
       setGeneralizedForceFunction(f);
     }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
+    if(e) setIntegrateGeneralizedRelativeVelocityOfRotation(E(e)->getText<bool>());
   }
 
 }

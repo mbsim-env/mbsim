@@ -1542,6 +1542,8 @@ namespace MBSimGUI {
 
   JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, const Qt::WindowFlags& f) : FloatingFrameLinkPropertyDialog(joint,parent,f) {
 
+    addTab("Extra");
+
     forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
 
@@ -1553,6 +1555,9 @@ namespace MBSimGUI {
 
     momentLaw = new ExtWidget("Moment law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentLaw");
     addToTab("Kinetics",momentLaw);
+
+    integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
+    addToTab("Extra",integrate);
   }
 
   DOMElement* JointPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1561,6 +1566,7 @@ namespace MBSimGUI {
     forceLaw->initializeUsingXML(item->getXMLElement());
     momentDirection->initializeUsingXML(item->getXMLElement());
     momentLaw->initializeUsingXML(item->getXMLElement());
+    integrate->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1570,10 +1576,13 @@ namespace MBSimGUI {
     forceLaw->writeXMLFile(item->getXMLElement(),ref);
     momentDirection->writeXMLFile(item->getXMLElement(),ref);
     momentLaw->writeXMLFile(item->getXMLElement(),ref);
+    integrate->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
   ElasticJointPropertyDialog::ElasticJointPropertyDialog(ElasticJoint *joint, QWidget *parent, const Qt::WindowFlags& f) : FloatingFrameLinkPropertyDialog(joint,parent,f) {
+
+    addTab("Extra");
 
     forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics", forceDirection);
@@ -1583,6 +1592,9 @@ namespace MBSimGUI {
 
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(joint),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
+
+    integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
+    addToTab("Extra", integrate);
 
     connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
     connect(momentDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
@@ -1603,6 +1615,7 @@ namespace MBSimGUI {
     forceDirection->initializeUsingXML(item->getXMLElement());
     momentDirection->initializeUsingXML(item->getXMLElement());
     function->initializeUsingXML(item->getXMLElement());
+    integrate->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1611,6 +1624,7 @@ namespace MBSimGUI {
     forceDirection->writeXMLFile(item->getXMLElement(),ref);
     momentDirection->writeXMLFile(item->getXMLElement(),ref);
     function->writeXMLFile(item->getXMLElement(),ref);
+    integrate->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1711,6 +1725,30 @@ namespace MBSimGUI {
 
   DOMElement* GeneralizedElasticConnectionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DualRigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    function->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  GeneralizedElasticStructurePropertyDialog::GeneralizedElasticStructurePropertyDialog(RigidBodyLink *link, QWidget *parent, const Qt::WindowFlags& f) : RigidBodyLinkPropertyDialog(link,parent,f) {
+    addTab("Kinetics",1);
+
+    rigidBody = new ExtWidget("Rigid bodies",new ListWidget(new RigidBodyOfReferenceWidgetFactory(MBSIM%"rigidBody",link,nullptr),"Rigid body",0,2),false,false,"");
+    addToTab("General",rigidBody);
+
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(link,true),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
+    addToTab("Kinetics", function);
+  }
+
+  DOMElement* GeneralizedElasticStructurePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    rigidBody->initializeUsingXML(item->getXMLElement());
+    function->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedElasticStructurePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    rigidBody->writeXMLFile(item->getXMLElement(),ref);
     function->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }

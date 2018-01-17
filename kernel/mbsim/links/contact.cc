@@ -237,11 +237,6 @@ namespace MBSim {
     }
   }
 
-  void Contact::calcxSize() {
-    Link::calcxSize();
-    xSize = 0;
-  }
-
   void Contact::calclaSize(int j) {
     Link::calclaSize(j);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
