@@ -55,27 +55,27 @@ _fmatvec_la_LIBADD = $(PYTHON_LIBS) $(FMATVEC_LIBS)
 _mbsim_la_SOURCES = mbsim_swig_python.cc
 _mbsim_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
 _mbsim_la_CPPFLAGS = -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include $(DEPS_CFLAGS) -I$(top_srcdir) -Wno-unused-label -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
-_mbsim_la_LIBADD = $(PYTHON_LIBS) ../mbsim/libmbsim.la
+_mbsim_la_LIBADD = $(PYTHON_LIBS) $(DEPS_LIBS) ../mbsim/libmbsim.la
 
 __mbsim_part100_la_SOURCES = _mbsim_part100_swig_python.cc
 __mbsim_part100_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
 __mbsim_part100_la_CPPFLAGS = -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include $(DEPS_CFLAGS) -I$(top_srcdir) -Wno-unused-label -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
-__mbsim_part100_la_LIBADD = $(PYTHON_LIBS) ../mbsim/libmbsim.la
+__mbsim_part100_la_LIBADD = $(PYTHON_LIBS) $(DEPS_LIBS) ../mbsim/libmbsim.la
 
 __mbsim_part200_la_SOURCES = _mbsim_part200_swig_python.cc
 __mbsim_part200_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
 __mbsim_part200_la_CPPFLAGS = -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include $(DEPS_CFLAGS) -I$(top_srcdir) -Wno-unused-label -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
-__mbsim_part200_la_LIBADD = $(PYTHON_LIBS) ../mbsim/libmbsim.la
+__mbsim_part200_la_LIBADD = $(PYTHON_LIBS) $(DEPS_LIBS) ../mbsim/libmbsim.la
 
 __mbsim_part250_la_SOURCES = _mbsim_part250_swig_python.cc
 __mbsim_part250_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
 __mbsim_part250_la_CPPFLAGS = -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include $(DEPS_CFLAGS) -I$(top_srcdir) -Wno-unused-label -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
-__mbsim_part250_la_LIBADD = $(PYTHON_LIBS) ../mbsim/libmbsim.la
+__mbsim_part250_la_LIBADD = $(PYTHON_LIBS) $(DEPS_LIBS) ../mbsim/libmbsim.la
 
 __mbsim_part300_la_SOURCES = _mbsim_part300_swig_python.cc
 __mbsim_part300_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
 __mbsim_part300_la_CPPFLAGS = -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include $(DEPS_CFLAGS) -I$(top_srcdir) -Wno-unused-label -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
-__mbsim_part300_la_LIBADD = $(PYTHON_LIBS) ../mbsim/libmbsim.la
+__mbsim_part300_la_LIBADD = $(PYTHON_LIBS) $(DEPS_LIBS) ../mbsim/libmbsim.la
 
 swigdatadir = $(datadir)/mbsim
 swigdata_DATA = fmatvec.i fmatvec_include.i mbsim.i _mbsim_part100.i _mbsim_part200.i _mbsim_part250.i _mbsim_part300.i mbsim_include.i showUnwrappedClasses.i

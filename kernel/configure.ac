@@ -136,6 +136,8 @@ if test "x$enable_python" == "xyes"; then
     PYTHON_LIBDIR=$PYTHON_LIBDIR/python$pythonversion
   elif test -d $PYTHON_LIBDIR/site-packages/numpy/core/include; then
     PYTHON_LIBDIR=$PYTHON_LIBDIR
+  elif test -d $PYTHON_LIBDIR/dist-packages/numpy/core/include; then # debian special handling
+    PYTHON_LIBDIR=$PYTHON_LIBDIR
   else
     AC_MSG_ERROR([Numpy header not found in directory $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include or $PYTHON_LIBDIR/site-packages/numpy/core/include])
   fi
