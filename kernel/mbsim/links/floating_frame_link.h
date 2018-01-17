@@ -65,7 +65,7 @@ namespace MBSim {
       void updateGeneralizedVelocities() override;
       void updateForceDirections() override;
 
-      virtual fmatvec::VecV evalGeneralizedRelativePositonOfRotation() { return x; }
+      virtual fmatvec::VecV evalGeneralizedRelativePositionOfRotation() { return x; }
 
     protected:
       /**

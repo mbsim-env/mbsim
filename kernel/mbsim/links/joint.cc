@@ -55,7 +55,8 @@ namespace MBSim {
   }
 
   void Joint::updatexd() {
-    xd = evalGeneralizedRelativeVelocity()(iM);
+    if(integrateGeneralizedRelativeVelocityOfRotation)
+      xd = evalGeneralizedRelativeVelocity()(iM);
   }
 
   void Joint::updatelaFM() {
@@ -503,7 +504,7 @@ namespace MBSim {
       momentDir.set(i, momentDir.col(i) / nrm2(md.col(i)));
   }
 
-  VecV Joint::evalGeneralizedRelativePositonOfRotation() {
+  VecV Joint::evalGeneralizedRelativePositionOfRotation() {
     if(integrateGeneralizedRelativeVelocityOfRotation)
       return x;
     else
