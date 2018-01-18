@@ -43,6 +43,8 @@ namespace MBSim {
        */
       ~IsotropicRotationalSpringDamper();
 
+      void calcSize();
+
       void updateGeneralizedPositions();
       void updateGeneralizedVelocities();
       void updateForceDirections();
@@ -53,16 +55,23 @@ namespace MBSim {
       bool isSingleValued() const { return true; }
       void init(InitStage stage, const InitConfigSet &config);
 
-      void setMomentFunction(Function<double(double,double)> *func_) {
-        func=func_;
-        func->setParent(this);
-        func->setName("Force");
+      void setElasticMomentFunction(Function<double(double)> *func_) {
+        funcE=func_;
+        funcE->setParent(this);
+        funcE->setName("ElasticMoment");
+      }
+
+      void setDisspativeMomentFunction(Function<double(double)> *func_) {
+        funcD=func_;
+        funcD->setParent(this);
+        funcD->setName("DissipativeMoment");
       }
 
       void initializeUsingXML(xercesc::DOMElement *element);
 
     private:
-      Function<double(double,double)> *func;
+      Function<double(double)> *funcE;
+      Function<double(double)> *funcD;
       fmatvec::Vec3 n;
   };
 

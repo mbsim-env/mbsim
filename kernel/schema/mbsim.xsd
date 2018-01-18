@@ -1696,10 +1696,19 @@
     <xs:complexContent>
       <xs:extension base="FrameLinkType">
         <xs:sequence>
-          <xs:element name="momentFunction">
+          <xs:element name="elasticMomentFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert die Momentfunktion in Abhängigkeit der relativen Verdrehung der Kraftangriffspunkte
-                und der relativen Winkelgeschwindigkeit zwischen den Kraftangriffspunkten.
+                Definiert die Momentfunktion in Abhängigkeit der relativen Verdrehung der Kraftangriffspunkte.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="dissipativeMomentFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert die Momentfunktion in Abhängigkeit der relativen Winkelgeschwindigkeit der Kraftangriffspunkte.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>

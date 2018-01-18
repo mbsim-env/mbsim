@@ -31,19 +31,28 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, IsotropicRotationalSpringDamper)
 
-  IsotropicRotationalSpringDamper::IsotropicRotationalSpringDamper(const string &name) : FixedFrameLink(name), func(NULL) {
+  IsotropicRotationalSpringDamper::IsotropicRotationalSpringDamper(const string &name) : FixedFrameLink(name), funcE(NULL), funcD(NULL) {
   }
 
   IsotropicRotationalSpringDamper::~IsotropicRotationalSpringDamper() {
-    delete func;
+    delete funcE;
+    delete funcD;
+  }
+
+  void IsotropicRotationalSpringDamper::calcSize() {
+    ng = 1;
+    ngd = 1;
+    nla = 2;
+    updSize = false;
   }
 
   void IsotropicRotationalSpringDamper::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       iF = RangeV(0, -1);
-      iM = RangeV(0, 0);
+      iM = RangeV(0, 1);
       DF.resize(0);
-      lambdaM.resize(1);
+      DM.resize(2);
+      lambdaM.resize(2);
     }
     FixedFrameLink::init(stage, config);
   }
@@ -55,33 +64,44 @@ namespace MBSim {
   }
 
   void IsotropicRotationalSpringDamper::updateGeneralizedVelocities() {
-    vrel = evalGlobalMomentDirection().T() * evalGlobalRelativeAngularVelocity();
+    vrel(0) = evalGlobalMomentDirection().col(1).T() * evalGlobalRelativeAngularVelocity();
     updvrel = false;
   }
 
   void IsotropicRotationalSpringDamper::updateForceDirections() {
     double al = evalGeneralizedRelativePosition()(0);
-    if(fabs(al)<=epsroot)
+    if(fabs(al)<=1e-13)
       n.init(0);
     else {
       n(0) = (AK0K1(2,1)-AK0K1(1,2))/2./sin(al);
       n(1) = (AK0K1(0,2)-AK0K1(2,0))/2./sin(al);
       n(2) = (AK0K1(1,0)-AK0K1(0,1))/2./sin(al);
     }
-    DM = frame[0]->getOrientation() * n;
+    DM.set(0, frame[0]->getOrientation() * n);
+    n = evalGlobalRelativeAngularVelocity();
+    double nrmn = nrm2(n);
+    if(nrmn<=1e-13)
+      n.init(0);
+    else
+      n /= nrmn;
+    DM.set(1, n);
     updDF = false;
   }
 
   void IsotropicRotationalSpringDamper::updatelaM() {
-    lambdaM(0) = -(*func)(evalGeneralizedRelativePosition()(0),evalGeneralizedRelativeVelocity()(0));
+    lambdaM(0) = -(*funcE)(evalGeneralizedRelativePosition()(0));
+    lambdaM(1) = -(*funcD)(evalGeneralizedRelativeVelocity()(0));
     updlaM = false;
   }
 
   void IsotropicRotationalSpringDamper::initializeUsingXML(DOMElement *element) {
     FixedFrameLink::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"momentFunction");
-    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
-    setMomentFunction(f);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"elasticMomentFunction");
+    Function<double(double)> *f=ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild());
+    setElasticMomentFunction(f);
+    e=E(element)->getFirstElementChildNamed(MBSIM%"dissipativeMomentFunction");
+    f=ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild());
+    setDisspativeMomentFunction(f);
   }
 
 }
