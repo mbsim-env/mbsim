@@ -35,14 +35,16 @@ namespace MBSim {
        */
       FixedFrameLink(const std::string &name);
 
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      void init(InitStage stage, const InitConfigSet &config) override;
 
-      void updateh(int i=0);
+      void calcSize() override { nla = nF + nM; updSize = false; }
 
-      void updateVelocities();
-      void updateGeneralizedPositions();
-      void updateGeneralizedVelocities();
-      void updateForceDirections();
+      void updateh(int i=0) override;
+
+      void updateVelocities() override;
+      void updateGeneralizedPositions() override;
+      void updateGeneralizedVelocities() override;
+      void updateForceDirections() override;
 
     protected:
       int nF, nM;

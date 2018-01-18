@@ -39,7 +39,6 @@ namespace MBSim {
 
   SpringDamper::SpringDamper(const string &name) : FixedFrameLink(name), func(NULL), l0(0) {
     nF = 1;
-    nla = 1;
   }
 
   SpringDamper::~SpringDamper() {
