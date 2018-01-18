@@ -17,6 +17,8 @@ NS="{http://mypytest}"
 class PySpringDamperXMLInit(mbsim.FixedFrameLink):
   def __init__(self):
     super(PySpringDamperXMLInit, self).__init__("")
+    self.nF=1
+    self.nla=1
     self.warnCount=0
 
   def updatelaF(self):
@@ -49,6 +51,8 @@ class PySpringDamperXMLInit(mbsim.FixedFrameLink):
 class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
   def __init__(self):
     super(PySpringDamperPyScriptInit, self).__init__("")
+    self.nF=1
+    self.nla=1
     self.warnCount=0
     self.coilspringOpenMBV=OpenMBV.ObjectFactory.create_CoilSpring()
 
@@ -107,6 +111,8 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
 class PySpringDamperEmpty(mbsim.FixedFrameLink):
   def __init__(self):
     super(PySpringDamperEmpty, self).__init__("")
+    self.nF=1
+    self.nla=1
     self.c=100
     self.warnCount=0
 

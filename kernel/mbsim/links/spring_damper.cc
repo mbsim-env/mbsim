@@ -38,28 +38,12 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, deflection)
 
   SpringDamper::SpringDamper(const string &name) : FixedFrameLink(name), func(NULL), l0(0) {
+    nF = 1;
+    nla = 1;
   }
 
   SpringDamper::~SpringDamper() {
     delete func;
-  }
-
-  void SpringDamper::updateGeneralizedPositions() {
-    rrel(0) = nrm2(evalGlobalRelativePosition());
-    updrrel = false;
-  }
-
-  void SpringDamper::updateGeneralizedVelocities() {
-    vrel = evalGlobalForceDirection().T() * evalGlobalRelativeVelocity();
-    updvrel = false;
-  }
-
-  void SpringDamper::updateForceDirections() {
-    if(evalGeneralizedRelativePosition()(0)>epsroot)
-      DF = evalGlobalRelativePosition()/rrel(0);
-    else
-      DF.init(0);
-    updDF = false;
   }
 
   void SpringDamper::updatelaF() {
@@ -70,12 +54,7 @@ namespace MBSim {
   }
 
   void SpringDamper::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==preInit) {
-      iF = RangeV(0, 0);
-      iM = RangeV(0, -1);
-      lambdaF.resize(1);
-    }
-    else if(stage==plotting) {
+    if(stage==plotting) {
       if(plotFeature[plotRecursive] and plotFeature[deflection])
           plotColumns.push_back("deflection");
       if(plotFeature[openMBV] and coilspringOpenMBV) {
