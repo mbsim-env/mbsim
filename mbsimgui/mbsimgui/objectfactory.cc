@@ -164,6 +164,8 @@ namespace MBSimGUI {
       return new SpringDamper;
     if(E(element)->getTagName()==MBSIM%"DirectionalSpringDamper")
       return new DirectionalSpringDamper;
+    if(E(element)->getTagName()==MBSIM%"IsotropicRotationalSpringDamper")
+      return new IsotropicRotationalSpringDamper;
     if(E(element)->getTagName()==MBSIM%"Joint")
       return new Joint;
     if(E(element)->getTagName()==MBSIM%"ElasticJoint")

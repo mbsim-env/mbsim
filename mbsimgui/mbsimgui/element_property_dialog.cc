@@ -1540,6 +1540,24 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  IsotropicRotationalSpringDamperPropertyDialog::IsotropicRotationalSpringDamperPropertyDialog(IsotropicRotationalSpringDamper *springDamper, QWidget *parent, const Qt::WindowFlags& f) : FixedFrameLinkPropertyDialog(springDamper,parent,f) {
+
+    momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper),QBoxLayout::TopToBottom,0),false,false,MBSIM%"momentFunction");
+    addToTab("Kinetics", momentFunction);
+  }
+
+  DOMElement* IsotropicRotationalSpringDamperPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FixedFrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    momentFunction->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* IsotropicRotationalSpringDamperPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FixedFrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    momentFunction->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, const Qt::WindowFlags& f) : FloatingFrameLinkPropertyDialog(joint,parent,f) {
 
     addTab("Extra");

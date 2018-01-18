@@ -38,6 +38,12 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new DirectionalSpringDamperPropertyDialog(this);}
   };
 
+  class IsotropicRotationalSpringDamper : public FixedFrameLink {
+    public:
+      QString getType() const override { return "IsotropicRotationalSpringDamper"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new IsotropicRotationalSpringDamperPropertyDialog(this);}
+  };
+
   class GeneralizedSpringDamper : public DualRigidBodyLink {
     public:
       QString getType() const override { return "GeneralizedSpringDamper"; }
