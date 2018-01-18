@@ -43,8 +43,6 @@ namespace MBSim {
        */
       ~IsotropicRotationalSpringDamper();
 
-      void calcSize();
-
       void updateGeneralizedPositions();
       void updateGeneralizedVelocities();
       void updateForceDirections();

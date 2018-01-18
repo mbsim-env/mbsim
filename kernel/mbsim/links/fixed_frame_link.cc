@@ -29,14 +29,14 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  FixedFrameLink::FixedFrameLink(const std::string &name) : FrameLink(name) {
-  }
-
-  void FixedFrameLink::calcSize() {
+  FixedFrameLink::FixedFrameLink(const std::string &name) : FrameLink(name), nF(0), nM(0) {
     ng = 1;
     ngd = 1;
-    nla = 1;
-    updSize = false;
+  }
+
+  void FixedFrameLink::updateh(int j) {
+    for(unsigned int i=0; i<h[j].size(); i++)
+      h[j][i] += frame[i]->evalJacobianOfTranslation(j).T() * evalForce(i) + frame[i]->evalJacobianOfRotation(j).T() * evalMoment(i);
   }
 
   void FixedFrameLink::updateVelocities() {
@@ -45,13 +45,34 @@ namespace MBSim {
     updVel = false;
   }
 
-  void FixedFrameLink::updateh(int j) {
-    for(unsigned int i=0; i<h[j].size(); i++)
-      h[j][i] += frame[i]->evalJacobianOfTranslation(j).T() * evalForce(i) + frame[i]->evalJacobianOfRotation(j).T() * evalMoment(i);
+  void FixedFrameLink::updateGeneralizedPositions() {
+    rrel(0) = nrm2(evalGlobalRelativePosition());
+    updrrel = false;
+  }
+
+  void FixedFrameLink::updateGeneralizedVelocities() {
+    vrel = evalGlobalForceDirection().T() * evalGlobalRelativeVelocity();
+    updvrel = false;
+  }
+
+  void FixedFrameLink::updateForceDirections() {
+    if(evalGeneralizedRelativePosition()(0)>1e-13)
+      DF = evalGlobalRelativePosition()/rrel(0);
+    else
+      DF.init(0);
+    updDF = false;
   }
 
   void FixedFrameLink::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==unknownStage) {
+    if(stage==preInit) {
+      iF = RangeV(0, nF-1);
+      iM = RangeV(nF, nF+nM-1);
+      DF.resize(nF);
+      DM.resize(nM);
+      lambdaF.resize(nF);
+      lambdaM.resize(nM);
+    }
+    else if(stage==unknownStage) {
       P[0] = frame[0];
       P[1] = frame[1];
     }

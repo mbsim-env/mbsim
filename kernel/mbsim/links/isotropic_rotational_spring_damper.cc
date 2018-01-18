@@ -32,29 +32,13 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, IsotropicRotationalSpringDamper)
 
   IsotropicRotationalSpringDamper::IsotropicRotationalSpringDamper(const string &name) : FixedFrameLink(name), funcE(NULL), funcD(NULL) {
+    nM = 2;
+    nla = 2;
   }
 
   IsotropicRotationalSpringDamper::~IsotropicRotationalSpringDamper() {
     delete funcE;
     delete funcD;
-  }
-
-  void IsotropicRotationalSpringDamper::calcSize() {
-    ng = 1;
-    ngd = 1;
-    nla = 2;
-    updSize = false;
-  }
-
-  void IsotropicRotationalSpringDamper::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==preInit) {
-      iF = RangeV(0, -1);
-      iM = RangeV(0, 1);
-      DF.resize(0);
-      DM.resize(2);
-      lambdaM.resize(2);
-    }
-    FixedFrameLink::init(stage, config);
   }
 
   void IsotropicRotationalSpringDamper::updateGeneralizedPositions() {
@@ -92,6 +76,12 @@ namespace MBSim {
     lambdaM(0) = -(*funcE)(evalGeneralizedRelativePosition()(0));
     lambdaM(1) = -(*funcD)(evalGeneralizedRelativeVelocity()(0));
     updlaM = false;
+  }
+
+  void IsotropicRotationalSpringDamper::init(InitStage stage, const InitConfigSet &config) {
+    FixedFrameLink::init(stage, config);
+    funcE->init(stage, config);
+    funcD->init(stage, config);
   }
 
   void IsotropicRotationalSpringDamper::initializeUsingXML(DOMElement *element) {

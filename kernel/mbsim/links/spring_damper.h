@@ -42,9 +42,6 @@ namespace MBSim {
       SpringDamper(const std::string &name="");
       ~SpringDamper();
 
-      void updateGeneralizedPositions();
-      void updateGeneralizedVelocities();
-      void updateForceDirections();
       void updatelaF();
 
       bool isActive() const { return true; }
