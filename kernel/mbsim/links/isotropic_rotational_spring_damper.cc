@@ -33,7 +33,6 @@ namespace MBSim {
 
   IsotropicRotationalSpringDamper::IsotropicRotationalSpringDamper(const string &name) : FixedFrameLink(name), funcE(NULL), funcD(NULL) {
     nM = 2;
-    nla = 2;
   }
 
   IsotropicRotationalSpringDamper::~IsotropicRotationalSpringDamper() {
