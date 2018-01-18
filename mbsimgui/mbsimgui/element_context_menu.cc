@@ -395,6 +395,9 @@ namespace MBSimGUI {
     action = new QAction("Add directional spring damper", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addDirectionalSpringDamper()));
     addAction(action);
+    action = new QAction("Add isotropic rotational spring damper", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addIsotropicRotationalSpringDamper()));
+    addAction(action);
     action = new QAction("Add joint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
     addAction(action);
@@ -445,6 +448,10 @@ namespace MBSimGUI {
 
   void LinksContextMenu::addDirectionalSpringDamper() {
     mw->addLink(new DirectionalSpringDamper, element);
+  }
+
+  void LinksContextMenu::addIsotropicRotationalSpringDamper() {
+    mw->addLink(new IsotropicRotationalSpringDamper, element);
   }
 
   void LinksContextMenu::addJoint() {

@@ -179,6 +179,7 @@ namespace MBSimGUI {
     protected slots:
       void addSpringDamper();
       void addDirectionalSpringDamper();
+      void addIsotropicRotationalSpringDamper();
       void addGeneralizedSpringDamper();
       void addKineticExcitation();
       void addJoint();
