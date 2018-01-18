@@ -202,7 +202,8 @@ namespace MBSimIntegrator {
         system->getu() += slvLLFac(system->evalLLM(),system->evalV()*system->evalLa());
 
         if(system->getIterI()>maxIter)
-          maxIter = system->getIterI(); sumIter += system->getIterI();
+          maxIter = system->getIterI();
+        sumIter += system->getIterI();
       }
       /*****************************************/
     }

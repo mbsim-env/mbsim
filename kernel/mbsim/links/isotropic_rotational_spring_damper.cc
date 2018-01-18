@@ -18,70 +18,70 @@
 
 #include <config.h>
 #include "isotropic_rotational_spring_damper.h"
-#include "mbsim/objects/rigid_body.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/eps.h"
-#include "mbsim/utils/utils.h"
+#include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  IsotropicRotationalSpringDamper::IsotropicRotationalSpringDamper(const string &name) :
-      FloatingFrameLink(name), c(0.), d(0.), alpha0(0.) {
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, IsotropicRotationalSpringDamper)
+
+  IsotropicRotationalSpringDamper::IsotropicRotationalSpringDamper(const string &name) : FixedFrameLink(name), func(NULL) {
   }
 
   IsotropicRotationalSpringDamper::~IsotropicRotationalSpringDamper() {
+    delete func;
   }
 
-  void IsotropicRotationalSpringDamper::updateGeneralizedForces() {
-    la = -evalGeneralizedRelativeVelocity() * d - evalGeneralizedRelativePosition() * c;
+  void IsotropicRotationalSpringDamper::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==preInit) {
+      iF = RangeV(0, -1);
+      iM = RangeV(0, 0);
+      DF.resize(0);
+      lambdaM.resize(1);
+    }
+    FixedFrameLink::init(stage, config);
   }
 
   void IsotropicRotationalSpringDamper::updateGeneralizedPositions() {
-    Vec3 r1 = frame[0]->evalOrientation().col(0); // first column (tangent) of first frame
-    Vec3 r2 = frame[1]->evalOrientation().col(0); // first column (tangent) of second frame
-
-    double alpha;
-
-    if (r1.T() * r2 < -1 + epsroot) {
-      alpha = M_PI;
-
-    }
-    else if (r1.T() * r2 > 1 - epsroot) {
-      alpha = 0;
-
-    }
-    else
-      alpha = acos(r1.T() * r2);
-
-    Vec3 normal = crossProduct(r1, r2); // normal for rotation from r1 to r2
-
-    if (nrm2(normal) < epsroot) { // r1 and r2 parallel -> rotation less than 180°
-      normal(0) = 0;
-      normal(1) = 0;
-      normal(2) = 0;
-    }
-    else
-      // r1 and r2 not parallel
-      normal /= nrm2(normal);
-
-    //g(IR) = Wm.T() * normal * (alpha - alpha0); // TODO (T.S. : Perhaps you can use alpha for the force law and the normal for the direction independently.)
-    rrel = evalGlobalMomentDirection().T() * normal * alpha;
-
+    SqrMat3 A = evalGlobalRelativeOrientation();
+    rrel(0) = acos(std::max(-1.,std::min(1.,(A(0,0)+A(1,1)+A(2,2)-1)/2.)));
     updrrel = false;
   }
 
   void IsotropicRotationalSpringDamper::updateGeneralizedVelocities() {
-    vrel = evalGlobalMomentDirection().T() * evalGlobalRelativeVelocity();
+    vrel = evalGlobalMomentDirection().T() * evalGlobalRelativeAngularVelocity();
     updvrel = false;
   }
 
-  void IsotropicRotationalSpringDamper::setMomentDirection(const Mat3xV &md) {
-    momentDir = md;
+  void IsotropicRotationalSpringDamper::updateForceDirections() {
+    double al = evalGeneralizedRelativePosition()(0);
+    if(fabs(al)<=epsroot)
+      n.init(0);
+    else {
+      n(0) = (AK0K1(2,1)-AK0K1(1,2))/2./sin(al);
+      n(1) = (AK0K1(0,2)-AK0K1(2,0))/2./sin(al);
+      n(2) = (AK0K1(1,0)-AK0K1(0,1))/2./sin(al);
+    }
+    DM = frame[0]->getOrientation() * n;
+    updDF = false;
+  }
 
-    for (int i = 0; i < md.cols(); i++)
-      momentDir.set(i, momentDir.col(i) / nrm2(md.col(i)));
+  void IsotropicRotationalSpringDamper::updatelaM() {
+    lambdaM(0) = -(*func)(evalGeneralizedRelativePosition()(0),evalGeneralizedRelativeVelocity()(0));
+    updlaM = false;
+  }
+
+  void IsotropicRotationalSpringDamper::initializeUsingXML(DOMElement *element) {
+    FixedFrameLink::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"momentFunction");
+    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+    setMomentFunction(f);
   }
 
 }

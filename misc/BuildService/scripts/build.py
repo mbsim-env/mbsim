@@ -823,12 +823,14 @@ def configure(tool, mainFD):
       copyConfigLog=True
       print("\n\nRUNNING configure\n", file=configureFD); configureFD.flush()
       if args.prefix==None:
+        print(" ".join(["./config.status", "--recheck"]), file=configureFD); configureFD.flush()
         if simplesandbox.call(["./config.status", "--recheck"], envvar=simplesandboxEnvvars, shareddir=["."],
                               stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
           raise RuntimeError("configure failed")
       else:
         command=[pj(args.sourceDir, tool, "configure"), "--prefix", args.prefix]
         command.extend(args.passToConfigure)
+        print(" ".join(command), file=configureFD); configureFD.flush()
         if simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=["."],
                               stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
           raise RuntimeError("configure failed")

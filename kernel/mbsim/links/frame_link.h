@@ -45,9 +45,18 @@ namespace MBSim {
 
       void resetUpToDate() override;
 
-      void updatePositions() override { }
-      void updateVelocities() override { }
+//      int getForceDirectionSize() { if(updSize) calcSize(); return nF; }
+//      int getMomentDirectionSize() { if(updSize) calcSize(); return nM; }
+
+      const fmatvec::Mat3xV& evalGlobalForceDirection(int i=0) { if(updDF) updateForceDirections(); return DF; }
+      const fmatvec::Mat3xV& evalGlobalMomentDirection(int i=0) { if(updDF) updateForceDirections(); return DM; }
+
+      void updatePositions() override;
+      void updateForce() override;
+      void updateMoment() override;
+      void updateR() override;
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrP0P1; }
+      const fmatvec::SqrMat3& evalGlobalRelativeOrientation() { if(updPos) updatePositions(); return AK0K1; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomK0K1; }
 
@@ -74,7 +83,11 @@ namespace MBSim {
 
       fmatvec::SqrMat3 AK0K1;
 
-      bool updPos, updVel;
+//      int nF, nM;
+
+      fmatvec::Mat3xV DF, DM;
+
+      bool updPos, updVel, updDF;
 
     private:
       std::string saved_ref1, saved_ref2;

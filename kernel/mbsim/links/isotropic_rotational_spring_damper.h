@@ -16,63 +16,56 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _ISOTROPICROTATIONALSPRINGDAMPER_H_
-#define _ISOTROPICROTATIONALSPRINGDAMPER_H_
+#ifndef _ISOTROPIC_ROTATIONAL_SPRING_DAMPER_H_
+#define _ISOTROPIC_ROTATIONAL_SPRING_DAMPER_H_
 
-#include "mbsim/links/floating_frame_link.h"
+#include "mbsim/links/fixed_frame_link.h"
+#include "mbsim/functions/function.h"
 
 namespace MBSim {
 
   /** 
-   * \brief Isotropic rotational spring damper force law.
+   * \brief Isotropic rotational spring damper.
    * This class connects two frames and applies a torque which depends on the
    * relative rotation and velocity between the two frames.
-   * Not considered: torsion around the first axis / rotation more than 180°
    * 
-   * \author Gerald Horst
-   * \author Thorsten Schindler
-   * \date 2012-03-21 initial commit (Thorsten Schindler)
    */
-  class IsotropicRotationalSpringDamper : public FloatingFrameLink {
+  class IsotropicRotationalSpringDamper : public FixedFrameLink {
     public:
       /**
        * \brief constructor
        * \param name of isotropic roational spring damper
        */
-      IsotropicRotationalSpringDamper(const std::string &name);
+      IsotropicRotationalSpringDamper(const std::string &name="");
 
       /**
        * \brief destructor
        */
-      virtual ~IsotropicRotationalSpringDamper();
+      ~IsotropicRotationalSpringDamper();
 
-      virtual void updateGeneralizedForces();
-      virtual void updateGeneralizedPositions();
-      virtual void updateGeneralizedVelocities();
-      /***************************************************/
+      void updateGeneralizedPositions();
+      void updateGeneralizedVelocities();
+      void updateForceDirections();
+      void updatelaM();
 
-      /* INHERITED INTERFACE OF LINK */
-      virtual bool isActive() const { return true; }
-      virtual bool gActiveChanged() { return false; }
-      virtual bool isSingleValued() const { return true; }
-      /***************************************************/
+      bool isActive() const { return true; }
+      bool gActiveChanged() { return false; }
+      bool isSingleValued() const { return true; }
+      void init(InitStage stage, const InitConfigSet &config);
 
-      /* SETTER */
-      void setParameters(double c_, double d_, double alpha0_) {
-        c = c_;
-        d = d_;
-        alpha0 = alpha0_;
+      void setMomentFunction(Function<double(double,double)> *func_) {
+        func=func_;
+        func->setParent(this);
+        func->setName("Force");
       }
 
-      void setMomentDirection(const fmatvec::Mat3xV& md);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
     private:
-      /**
-       * \brief stiffness, damping, relaxed angle
-       */
-      double c, d, alpha0;
+      Function<double(double,double)> *func;
+      fmatvec::Vec3 n;
   };
 
 }
 
-#endif /* _ISOTROPICROTATIONALSPRINGDAMPER_H_ */
+#endif

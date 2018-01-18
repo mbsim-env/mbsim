@@ -55,7 +55,8 @@ namespace MBSim {
   }
 
   void Joint::updatexd() {
-    xd = evalGeneralizedRelativeVelocity()(iM);
+    if(integrateGeneralizedRelativeVelocityOfRotation)
+      xd = evalGeneralizedRelativeVelocity()(iM);
   }
 
   void Joint::updatelaFM() {
@@ -503,7 +504,7 @@ namespace MBSim {
       momentDir.set(i, momentDir.col(i) / nrm2(md.col(i)));
   }
 
-  VecV Joint::evalGeneralizedRelativePositonOfRotation() {
+  VecV Joint::evalGeneralizedRelativePositionOfRotation() {
     if(integrateGeneralizedRelativeVelocityOfRotation)
       return x;
     else
@@ -512,7 +513,7 @@ namespace MBSim {
 
   Vec3 Joint::evalGlobalRelativeAngle() {
     WphiK0K1 = crossProduct(eR,AK0K1.col(iR));
-    WphiK0K1(iR) = -AK0K1(remainder(iR+1,3),remainder(iR+2,3));
+    WphiK0K1(iR) = -AK0K1(fmod(iR+1,3),fmod(iR+2,3));
     return WphiK0K1;
   }
 

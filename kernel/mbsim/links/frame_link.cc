@@ -28,18 +28,25 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  FrameLink::FrameLink(const std::string &name) : MechanicalLink(name), frame(2), updPos(true), updVel(true) {
+  FrameLink::FrameLink(const std::string &name) : MechanicalLink(name), frame(2), updPos(true), updVel(true), updDF(true) {
     P.resize(2);
     F.resize(2);
     M.resize(2);
     RF.resize(2);
     RM.resize(2);
+    for(unsigned int i=0; i<2; i++) {
+      W[i].resize(2);
+      V[i].resize(2);
+      h[i].resize(2);
+      r[i].resize(2);
+    }
   }
 
   void FrameLink::resetUpToDate() {
     MechanicalLink::resetUpToDate();
     updPos = true;
     updVel = true;
+    updDF = true;
   }
 
   void FrameLink::init(InitStage stage, const InitConfigSet &config) {
@@ -48,6 +55,17 @@ namespace MBSim {
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(frame[0]==nullptr or frame[1]==nullptr)
         THROW_MBSIMERROR("Not all connections are given!");
+    }
+    else if(stage==preInit) {
+      if(isSetValued()) {
+        g.resize(getGeneralizedRelativePositionSize());
+        gd.resize(ng);
+        RF[0].resize(ng);
+        RM[0].resize(ng);
+        RF[1].resize(ng);
+        RM[1].resize(ng);
+        la.resize(ng);
+      }
     }
     MechanicalLink::init(stage, config);
   }
@@ -109,5 +127,33 @@ namespace MBSim {
     frame[0] = frame0;
     frame[1] = frame1;
   }
+
+  void FrameLink::updatePositions() {
+    WrP0P1 = frame[1]->evalPosition() - frame[0]->evalPosition();
+    AK0K1 = frame[0]->getOrientation().T()*frame[1]->getOrientation();
+    updPos = false;
+  }
+
+  void FrameLink::updateForce() {
+    F[1] = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
+    F[0] = -F[1];
+    updF = false;
+  }
+
+  void FrameLink::updateMoment() {
+    M[1] = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
+    M[0] = -M[1];
+    updM = false;
+  }
+
+  void FrameLink::updateR() {
+    RF[1].set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection());
+    RM[1].set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection());
+    RF[0] = -RF[1];
+    RM[0] = -RM[1];
+    updRMV = false;
+  }
+
+
 
 }
