@@ -527,7 +527,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *momentFunction;
+      ExtWidget *elasticMomentFunction, *dissipativeMomentFunction;
   };
 
   class JointPropertyDialog : public FloatingFrameLinkPropertyDialog {
