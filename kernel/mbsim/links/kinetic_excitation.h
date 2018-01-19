@@ -47,8 +47,8 @@ namespace MBSim {
        */
       ~KineticExcitation() override;
 
-      void updateGeneralizedPositions() override { }
-      void updateGeneralizedVelocities() override { }
+      void updateGeneralizedPositions() override { updrrel = false; }
+      void updateGeneralizedVelocities() override { updvrel = false; }
       void updatelaF() override;
       void updatelaM() override;
 

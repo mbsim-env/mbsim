@@ -58,8 +58,13 @@ namespace MBSim {
       void updateForceDirections() override;
       void updateR() override;
       void updatewb() override;
+
       const fmatvec::Mat3xV& evalGlobalForceDirection(int i) { if(updFD) updateForceDirections(); return DF[i]; }
       const fmatvec::Mat3xV& evalGlobalMomentDirection(int i) { if(updFD) updateForceDirections(); return DM[i]; }
+
+      fmatvec::Mat3xV& getGlobalForceDirection(int i, bool check=true) { assert((not check) or (not updFD)); return DF[i]; }
+      fmatvec::Mat3xV& getGlobalMomentDirection(int i, bool check=true) { assert((not check) or (not updFD)); return DM[i]; }
+
       void updatehRef(const fmatvec::Vec &hParent, int j=0) override;
       void updaterRef(const fmatvec::Vec &hParent, int j=0) override;
       void updateWRef(const fmatvec::Mat &WParent, int j=0) override;

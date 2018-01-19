@@ -74,7 +74,7 @@ namespace MBSim {
   void RigidBodyLink::updatePositions() {
     for(unsigned i=0; i<body.size(); i++) {
       C[i].setPosition(body[i]->getFrameForKinematics()->evalPosition());
-      C[i].setOrientation(support->getOrientation());
+      C[i].setOrientation(support->evalOrientation());
     }
     updPos = false;
   }
@@ -96,7 +96,7 @@ namespace MBSim {
   void RigidBodyLink::updateForceDirections() {
     for(unsigned i=0; i<body.size(); i++) {
       DF[i] = support->evalOrientation()*body[i]->evalPJT();
-      DM[i] = support->evalOrientation()*body[i]->evalPJR();
+      DM[i] = support->getOrientation()*body[i]->getPJR();
     }
     updFD = false;
   }
@@ -116,7 +116,7 @@ namespace MBSim {
   void RigidBodyLink::updateR() {
     for(unsigned i=0; i<body.size(); i++) {
       RF[i].set(RangeV(0,2), iF, evalGlobalForceDirection(i)*ratio[i]);
-      RM[i].set(RangeV(0,2), iM, evalGlobalMomentDirection(i)*ratio[i]);
+      RM[i].set(RangeV(0,2), iM, getGlobalMomentDirection(i)*ratio[i]);
     }
     updRMV = false;
   }

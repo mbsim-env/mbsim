@@ -150,12 +150,12 @@ namespace MBSim {
   }
 
   void SingleContact::updatePositions() {
-    contactKinematics->updateg(rrel(0), cFrame);
+    contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
     updPos = false;
   }
 
   void SingleContact::updatePositions(Frame *frame) {
-    if(updPos) contactKinematics->updateg(rrel(0), cFrame);
+    if(updPos) contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
   }
 
   void SingleContact::updateVelocities() {

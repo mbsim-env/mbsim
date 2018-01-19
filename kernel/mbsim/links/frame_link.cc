@@ -154,6 +154,4 @@ namespace MBSim {
     updRMV = false;
   }
 
-
-
 }

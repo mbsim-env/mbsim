@@ -101,12 +101,12 @@ namespace MBSim {
     if(integrateGeneralizedRelativeVelocityOfRotation)
       return x;
     else
-      return evalGlobalMomentDirection().T()*frame[0]->getOrientation()*evalGlobalRelativeAngle();
+      return evalGlobalMomentDirection().T()*frame[0]->evalOrientation()*evalGlobalRelativeAngle();
   }
 
   Vec3 ElasticJoint::evalGlobalRelativeAngle() {
-    WphiK0K1 = crossProduct(eR,AK0K1.col(iR));
-    WphiK0K1(iR) = -AK0K1(fmod(iR+1,3),fmod(iR+2,3));
+    WphiK0K1 = crossProduct(eR,evalGlobalRelativeOrientation().col(iR));
+    WphiK0K1(iR) = -getGlobalRelativeOrientation()(fmod(iR+1,3),fmod(iR+2,3));
     return WphiK0K1;
   }
 

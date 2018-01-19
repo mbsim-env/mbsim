@@ -47,15 +47,15 @@ namespace MBSim {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[generalizedRelativePosition]) {
         for(int i=0; i<evalGeneralizedRelativePosition().size(); ++i)
-          plotVector.push_back(rrel(i));
+          plotVector.push_back(getGeneralizedRelativePosition()(i));
       }
       if(plotFeature[generalizedRelativeVelocity]) {
         for(int i=0; i<evalGeneralizedRelativeVelocity().size(); ++i)
-          plotVector.push_back(vrel(i));
+          plotVector.push_back(getGeneralizedRelativeVelocity()(i));
       }
       if(plotFeature[generalizedForce]) {
         for(int i=0; i<evalGeneralizedForce().size(); ++i)
-          plotVector.push_back(evalGeneralizedForce()(i));
+          plotVector.push_back(getGeneralizedForce()(i));
       }
       if(plotFeature[energy]) {
         plotVector.push_back(evalPotentialEnergy());

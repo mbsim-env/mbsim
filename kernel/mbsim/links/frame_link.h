@@ -45,20 +45,26 @@ namespace MBSim {
 
       void resetUpToDate() override;
 
-//      int getForceDirectionSize() { if(updSize) calcSize(); return nF; }
-//      int getMomentDirectionSize() { if(updSize) calcSize(); return nM; }
+      const fmatvec::Mat3xV& evalGlobalForceDirection() { if(updDF) updateForceDirections(); return DF; }
+      const fmatvec::Mat3xV& evalGlobalMomentDirection() { if(updDF) updateForceDirections(); return DM; }
 
-      const fmatvec::Mat3xV& evalGlobalForceDirection(int i=0) { if(updDF) updateForceDirections(); return DF; }
-      const fmatvec::Mat3xV& evalGlobalMomentDirection(int i=0) { if(updDF) updateForceDirections(); return DM; }
+      fmatvec::Mat3xV& getGlobalForceDirection(bool check=true) { assert((not check) or (not updDF)); return DF; }
+      fmatvec::Mat3xV& getGlobalMomentDirection(bool check=true) { assert((not check) or (not updDF)); return DM; }
 
       void updatePositions() override;
       void updateForce() override;
       void updateMoment() override;
       void updateR() override;
+
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrP0P1; }
       const fmatvec::SqrMat3& evalGlobalRelativeOrientation() { if(updPos) updatePositions(); return AK0K1; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomK0K1; }
+
+      fmatvec::Vec3& getGlobalRelativePosition(bool check=true) { assert((not check) or (not updPos)); return WrP0P1; }
+      fmatvec::SqrMat3& getGlobalRelativeOrientation(bool check=true) { assert((not check) or (not updPos)); return AK0K1; }
+      fmatvec::Vec3& getGlobalRelativeVelocity(bool check=true) {  assert((not check) or (not updVel)); return WvP0P1; }
+      fmatvec::Vec3& getGlobalRelativeAngularVelocity(bool check=true) { assert((not check) or (not updVel)); return WomK0K1; }
 
       /* INHERITED INTERFACE OF LINK */
       void updateWRef(const fmatvec::Mat& ref, int i=0) override;

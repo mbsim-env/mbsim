@@ -41,7 +41,7 @@ namespace MBSim {
 
   void FixedFrameLink::updateVelocities() {
     WvP0P1 = frame[1]->evalVelocity() - frame[0]->evalVelocity();
-    WomK0K1 = frame[1]->evalAngularVelocity() - frame[0]->evalAngularVelocity();
+    WomK0K1 = frame[1]->getAngularVelocity() - frame[0]->getAngularVelocity();
     updVel = false;
   }
 
@@ -57,7 +57,7 @@ namespace MBSim {
 
   void FixedFrameLink::updateForceDirections() {
     if(evalGeneralizedRelativePosition()(0)>1e-13)
-      DF = evalGlobalRelativePosition()/rrel(0);
+      DF = evalGlobalRelativePosition()/getGeneralizedRelativePosition()(0);
     else
       DF.init(0);
     updDF = false;
