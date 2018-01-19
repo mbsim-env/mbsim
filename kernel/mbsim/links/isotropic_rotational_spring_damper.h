@@ -59,7 +59,7 @@ namespace MBSim {
         funcE->setName("ElasticMoment");
       }
 
-      void setDisspativeMomentFunction(Function<double(double)> *func_) {
+      void setDissipativeMomentFunction(Function<double(double)> *func_) {
         funcD=func_;
         funcD->setParent(this);
         funcD->setName("DissipativeMoment");
