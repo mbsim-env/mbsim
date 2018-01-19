@@ -90,7 +90,7 @@ namespace MBSim {
     setElasticMomentFunction(f);
     e=E(element)->getFirstElementChildNamed(MBSIM%"dissipativeMomentFunction");
     f=ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild());
-    setDisspativeMomentFunction(f);
+    setDissipativeMomentFunction(f);
   }
 
 }
