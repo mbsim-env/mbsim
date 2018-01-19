@@ -38,7 +38,9 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &forceDir_, const Mat3xV &momentDir_,Frame *frame1_, Frame *frame2_, Frame *refFrame_, vector<Frame*> i1_, vector<Frame*> i2_) : body1(std::move(body1_)),body2(std::move(body2_)),forceDir(forceDir_),momentDir(momentDir_),frame1(frame1_), frame2(frame2_), refFrame(refFrame_), i1(std::move(i1_)), i2(std::move(i2_)) {}
+  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &forceDir_, const Mat3xV &momentDir_,Frame *frame1_, Frame *frame2_, Frame *refFrame_, vector<Frame*> i1_, vector<Frame*> i2_) : body1 (std::move(body1_)),body2(std::move(body2_)),forceDir(forceDir_),momentDir(momentDir_),frame1(frame1_), frame2(frame2_), refFrame(refFrame_), i1(std::move(i1_)), i2(std::move(i2_)) {
+  }
+
   Vec JointConstraint::Residuum::operator()(const Vec &x) {
     Vec res(x.size(),NONINIT); 
     int nq = 0;
@@ -56,7 +58,7 @@ namespace MBSim {
     }
 
     Mat3xV dT = refFrame->evalOrientation()*forceDir;
-    Mat3xV dR = refFrame->evalOrientation()*momentDir;
+    Mat3xV dR = refFrame->getOrientation()*momentDir;
 
     if(dT.cols())
       res(Range<Var,Var>(0,dT.cols()-1)) = dT.T()*(frame1->evalPosition()-frame2->evalPosition());
@@ -171,11 +173,18 @@ namespace MBSim {
   void JointConstraint::resetUpToDate() {
     MechanicalConstraint::resetUpToDate();
     C.resetUpToDate();
+    updDF = true;
   }
 
   void JointConstraint::updatePositions(Frame *frame) {
     frame->setPosition(frame2->getPosition());
     frame->setOrientation(frame1->evalOrientation());
+  }
+
+  void JointConstraint::updateForceDirections() {
+    DF = refFrame->evalOrientation() * forceDir;
+    DM = refFrame->getOrientation() * momentDir;
+    updDF = false;
   }
 
   void JointConstraint::updateGeneralizedCoordinates() {
@@ -188,13 +197,13 @@ namespace MBSim {
       bd1[i]->setqRel(q(Iq1[i]));
     for(unsigned int i=0; i<bd2.size(); i++)
       bd2[i]->setqRel(q(Iq2[i]));
-    dT = refFrame->evalOrientation()*forceDir;
-    dR = refFrame->evalOrientation()*momentDir;
+    Mat3xV dT = evalGlobalForceDirection();
+    Mat3xV dR = getGlobalMomentDirection();
 
     for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->setUpdateByReference(false);
       JT(RangeV(0,2),Iu1[i]) = C.evalJacobianOfTranslation(2);
-      JR(RangeV(0,2),Iu1[i]) = C.evalJacobianOfRotation(2);
+      JR(RangeV(0,2),Iu1[i]) = C.getJacobianOfRotation(2);
       for(size_t j=i+1; j<bd1.size(); j++)
         bd1[j]->resetJacobiansUpToDate();
       C.resetJacobiansUpToDate();
@@ -203,7 +212,7 @@ namespace MBSim {
     for(size_t i=0; i<bd2.size(); i++) {
       bd2[i]->setUpdateByReference(false);
       JT(RangeV(0,2),Iu2[i]) = -frame2->evalJacobianOfTranslation(2);
-      JR(RangeV(0,2),Iu2[i]) = -frame2->evalJacobianOfRotation(2);
+      JR(RangeV(0,2),Iu2[i]) = -frame2->getJacobianOfRotation(2);
       for(size_t j=i+1; j<bd2.size(); j++)
         bd2[j]->resetJacobiansUpToDate();
       bd2[i]->setUpdateByReference(true);
@@ -222,7 +231,7 @@ namespace MBSim {
     Vec b(nu);
 
     b(0,dT.cols()-1) = -(dT.T()*(C.evalVelocity()-frame2->evalVelocity()));
-    b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(C.evalAngularVelocity()-frame2->evalAngularVelocity()));
+    b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(C.getAngularVelocity()-frame2->getAngularVelocity()));
     Vec u = slvLU(A,b);
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->resetVelocitiesUpToDate();
@@ -238,6 +247,8 @@ namespace MBSim {
 
   void JointConstraint::updateGeneralizedJacobians(int jj) {
     if(jj == 0) {
+      Mat3xV dT = evalGlobalForceDirection();
+      Mat3xV dR = getGlobalMomentDirection();
 
       for(auto & i : bd1) {
         i->setJRel(Mat(i->getGeneralizedVelocitySize(),i->gethSize()));
@@ -248,7 +259,7 @@ namespace MBSim {
         i->setjRel(Vec(i->getGeneralizedVelocitySize()));
       }
       Vec3 WvP0P1 = frame2->evalVelocity() - C.evalVelocity();
-      Vec3 WomK0K1 = frame2->evalAngularVelocity() - C.evalAngularVelocity();
+      Vec3 WomK0K1 = frame2->getAngularVelocity() - C.getAngularVelocity();
       Mat3xV WJs = refFrame->evalOrientation() * Js;
       VecV sdT = WJs.T() * WvP0P1;
 
@@ -260,17 +271,17 @@ namespace MBSim {
       Mat JR0(3,nh);
       if(frame1->getJacobianOfTranslation(0,false).cols()) {
         JT0(RangeV(0,2),RangeV(0,frame1->getJacobianOfTranslation(0,false).cols()-1))+=C.evalJacobianOfTranslation();
-        JR0(RangeV(0,2),RangeV(0,frame1->getJacobianOfRotation(0,false).cols()-1))+=C.evalJacobianOfRotation();
+        JR0(RangeV(0,2),RangeV(0,frame1->getJacobianOfRotation(0,false).cols()-1))+=C.getJacobianOfRotation();
       }
       if(frame2->getJacobianOfTranslation(0,false).cols()) {
         JT0(RangeV(0,2),RangeV(0,frame2->getJacobianOfTranslation(0,false).cols()-1))-=frame2->evalJacobianOfTranslation();
-        JR0(RangeV(0,2),RangeV(0,frame2->getJacobianOfRotation(0,false).cols()-1))-=frame2->evalJacobianOfRotation();
+        JR0(RangeV(0,2),RangeV(0,frame2->getJacobianOfRotation(0,false).cols()-1))-=frame2->getJacobianOfRotation();
       }
       B(RangeV(0,dT.cols()-1),RangeV(0,nh-1)) = -(dT.T()*JT0);
       B(RangeV(dT.cols(),dT.cols()+dR.cols()-1),RangeV(0,nh-1)) = -(dR.T()*JR0);
       Vec b(nu);
       b(0,dT.cols()-1) = dT.T()*(frame2->evalGyroscopicAccelerationOfTranslation()-C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), WvP0P1 + WJs * sdT));
-      b(dT.cols(),dT.cols()+dR.cols()-1) = dR.T()*(frame2->evalGyroscopicAccelerationOfRotation()-C.evalGyroscopicAccelerationOfRotation()-crossProduct(C.evalAngularVelocity(), WomK0K1));
+      b(dT.cols(),dT.cols()+dR.cols()-1) = dR.T()*(frame2->getGyroscopicAccelerationOfRotation()-C.getGyroscopicAccelerationOfRotation()-crossProduct(C.getAngularVelocity(), WomK0K1));
 
       Mat J = slvLU(A,B);
       Vec j = slvLU(A,b);
@@ -353,6 +364,5 @@ namespace MBSim {
     for(int i=0; i<md.cols(); i++)
       momentDir.set(i, momentDir.col(i)/nrm2(md.col(i)));
   }
-
 
 }
