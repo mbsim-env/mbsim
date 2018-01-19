@@ -18,6 +18,7 @@
 #include "mbsim/functions/symbolic_function.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/functions/linear_function.h"
 
 #include <openmbvcppinterface/invisiblebody.h>
 #include "openmbvcppinterface/frustum.h"
@@ -165,7 +166,8 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
 
       if (ele > 1) {
         IsotropicRotationalSpringDamper * iso = new IsotropicRotationalSpringDamper("Iso" + toString(ele));
-        iso->setMomentFunction(new LinearSpringDamperForce(0, isoDamping));
+        iso->setElasticMomentFunction(new LinearFunction<double(double)>(0));
+        iso->setDissipativeMomentFunction(new LinearFunction<double(double)>(isoDamping));
         iso->connect(balls[ele - 1]->getFrameC(), balls[ele]->getFrameC());
         addLink(iso);
       }
