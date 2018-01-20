@@ -61,16 +61,19 @@ namespace MBSim {
       void updateGeneralizedCoordinates() override;
       void updateGeneralizedJacobians(int jj=0) override;
       void updateForceDirections();
+      void updateA();
 
       const fmatvec::Mat3xV& evalGlobalForceDirection() { if(updDF) updateForceDirections(); return DF; }
       const fmatvec::Mat3xV& evalGlobalMomentDirection() { if(updDF) updateForceDirections(); return DM; }
+      const fmatvec::SqrMat& evalA() { if(updA) updateA(); return A; }
 
       fmatvec::Mat3xV& getGlobalForceDirection(bool check=true) { assert((not check) or (not updDF)); return DF; }
       fmatvec::Mat3xV& getGlobalMomentDirection(bool check=true) { assert((not check) or (not updDF)); return DM; }
+      fmatvec::SqrMat& getA(bool check=true) { assert((not check) or (not updA)); return A; }
 
       void setInitialGuess(const fmatvec::VecV &q0_) { q0 = q0_; }
 
-     void initializeUsingXML(xercesc::DOMElement *element) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     private:
       class Residuum : public Function<fmatvec::Vec(fmatvec::Vec)> {
@@ -100,6 +103,7 @@ namespace MBSim {
 
       fmatvec::Mat3xV DF, DM, forceDir, momentDir;
 
+      fmatvec::RangeV iF, iM;
       std::vector<fmatvec::RangeV> Iq1, Iq2, Iu1, Iu2, Ih1, Ih2;
       int nq{0};
       int nu{0};
@@ -107,8 +111,9 @@ namespace MBSim {
       fmatvec::Vec q, q0;
       fmatvec::Mat JT, JR;
       fmatvec::Mat3xV Js;
+      fmatvec::SqrMat A;
 
-      bool updDF;
+      bool updDF{true}, updA{true};
 
       std::string saved_ref1, saved_ref2;
       std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide, saved_IndependentBody;

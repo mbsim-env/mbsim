@@ -41,7 +41,7 @@ namespace MBSim {
   }
 
   void IsotropicRotationalSpringDamper::updateGeneralizedPositions() {
-    SqrMat3 A = evalGlobalRelativeOrientation();
+    const SqrMat3 &A = evalGlobalRelativeOrientation();
     rrel(0) = acos(std::max(-1.,std::min(1.,(A(0,0)+A(1,1)+A(2,2)-1)/2.)));
     updrrel = false;
   }
@@ -53,7 +53,7 @@ namespace MBSim {
 
   void IsotropicRotationalSpringDamper::updateForceDirections() {
     double al = evalGeneralizedRelativePosition()(0);
-    SqrMat3 A = getGlobalRelativeOrientation();
+    const SqrMat3 &A = getGlobalRelativeOrientation();
     if(fabs(al)<=1e-13)
       n.init(0);
     else {

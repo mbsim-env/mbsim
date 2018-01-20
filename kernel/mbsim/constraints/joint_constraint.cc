@@ -103,6 +103,8 @@ namespace MBSim {
       }
     }
     else if(stage==preInit) {
+      iF = RangeV(0, forceDir.cols() - 1);
+      iM = RangeV(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
       for(auto & i : bd1) 
         i->addDependency(this);
       for(auto & i : bd2)
@@ -166,6 +168,8 @@ namespace MBSim {
         q = q0;
       else
         THROW_MBSIMERROR("(JointConstraint::initz): size of q0 does not match");
+
+      A.resize(nu);
     }
     MechanicalConstraint::init(stage, config);
   }
@@ -174,6 +178,7 @@ namespace MBSim {
     MechanicalConstraint::resetUpToDate();
     C.resetUpToDate();
     updDF = true;
+    updA = true;
   }
 
   void JointConstraint::updatePositions(Frame *frame) {
@@ -187,6 +192,12 @@ namespace MBSim {
     updDF = false;
   }
 
+  void JointConstraint::updateA() {
+    A(iF,RangeV(0,nu-1)) = evalGlobalForceDirection().T()*JT;
+    A(iM,RangeV(0,nu-1)) = getGlobalMomentDirection().T()*JR;
+    updA = false;
+  }
+
   void JointConstraint::updateGeneralizedCoordinates() {
     Residuum f(bd1,bd2,forceDir,momentDir,frame1,frame2,refFrame,if1,if2);
     MultiDimNewtonMethod newton(&f);
@@ -197,8 +208,6 @@ namespace MBSim {
       bd1[i]->setqRel(q(Iq1[i]));
     for(unsigned int i=0; i<bd2.size(); i++)
       bd2[i]->setqRel(q(Iq2[i]));
-    Mat3xV dT = evalGlobalForceDirection();
-    Mat3xV dR = getGlobalMomentDirection();
 
     for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->setUpdateByReference(false);
@@ -225,14 +234,10 @@ namespace MBSim {
       i->resetJacobiansUpToDate();
       i->setuRel(Vec(i->getGeneralizedVelocitySize()));
     }
-    SqrMat A(nu);
-    A(RangeV(0,dT.cols()-1),RangeV(0,nu-1)) = dT.T()*JT;
-    A(RangeV(dT.cols(),dT.cols()+dR.cols()-1),RangeV(0,nu-1)) = dR.T()*JR;
     Vec b(nu);
-
-    b(0,dT.cols()-1) = -(dT.T()*(C.evalVelocity()-frame2->evalVelocity()));
-    b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(C.getAngularVelocity()-frame2->getAngularVelocity()));
-    Vec u = slvLU(A,b);
+    b(iF) = -(evalGlobalForceDirection().T()*(C.evalVelocity()-frame2->evalVelocity()));
+    b(iM) = -(getGlobalMomentDirection().T()*(C.getAngularVelocity()-frame2->getAngularVelocity()));
+    Vec u = slvLU(evalA(),b);
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->resetVelocitiesUpToDate();
       bd1[i]->setuRel(u(Iu1[i]));
@@ -247,9 +252,6 @@ namespace MBSim {
 
   void JointConstraint::updateGeneralizedJacobians(int jj) {
     if(jj == 0) {
-      Mat3xV dT = evalGlobalForceDirection();
-      Mat3xV dR = getGlobalMomentDirection();
-
       for(auto & i : bd1) {
         i->setJRel(Mat(i->getGeneralizedVelocitySize(),i->gethSize()));
         i->setjRel(Vec(i->getGeneralizedVelocitySize()));
@@ -263,9 +265,6 @@ namespace MBSim {
       Mat3xV WJs = refFrame->evalOrientation() * Js;
       VecV sdT = WJs.T() * WvP0P1;
 
-      SqrMat A(nu);
-      A(RangeV(0,dT.cols()-1),RangeV(0,nu-1)) = dT.T()*JT;
-      A(RangeV(dT.cols(),dT.cols()+dR.cols()-1),RangeV(0,nu-1)) = dR.T()*JR;
       Mat B(nu,nh);
       Mat JT0(3,nh);
       Mat JR0(3,nh);
@@ -277,14 +276,14 @@ namespace MBSim {
         JT0(RangeV(0,2),RangeV(0,frame2->getJacobianOfTranslation(0,false).cols()-1))-=frame2->evalJacobianOfTranslation();
         JR0(RangeV(0,2),RangeV(0,frame2->getJacobianOfRotation(0,false).cols()-1))-=frame2->getJacobianOfRotation();
       }
-      B(RangeV(0,dT.cols()-1),RangeV(0,nh-1)) = -(dT.T()*JT0);
-      B(RangeV(dT.cols(),dT.cols()+dR.cols()-1),RangeV(0,nh-1)) = -(dR.T()*JR0);
+      B(iF,RangeV(0,nh-1)) = -(evalGlobalForceDirection().T()*JT0);
+      B(iM,RangeV(0,nh-1)) = -(getGlobalMomentDirection().T()*JR0);
       Vec b(nu);
-      b(0,dT.cols()-1) = dT.T()*(frame2->evalGyroscopicAccelerationOfTranslation()-C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), WvP0P1 + WJs * sdT));
-      b(dT.cols(),dT.cols()+dR.cols()-1) = dR.T()*(frame2->getGyroscopicAccelerationOfRotation()-C.getGyroscopicAccelerationOfRotation()-crossProduct(C.getAngularVelocity(), WomK0K1));
+      b(iF) = evalGlobalForceDirection().T()*(frame2->evalGyroscopicAccelerationOfTranslation()-C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), WvP0P1 + WJs * sdT));
+      b(iM) = getGlobalMomentDirection().T()*(frame2->getGyroscopicAccelerationOfRotation()-C.getGyroscopicAccelerationOfRotation()-crossProduct(C.getAngularVelocity(), WomK0K1));
 
-      Mat J = slvLU(A,B);
-      Vec j = slvLU(A,b);
+      Mat J = slvLU(evalA(),B);
+      Vec j = slvLU(getA(),b);
       for(unsigned int i=0; i<bd1.size(); i++) {
         bd1[i]->resetJacobiansUpToDate();
         bd1[i]->resetGyroscopicAccelerationsUpToDate();
