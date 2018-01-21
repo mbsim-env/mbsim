@@ -441,7 +441,7 @@ namespace MBSim {
 
   void RigidBody::updatePositions(Frame *frame) {
     frame->setPosition(R->evalPosition() + evalGlobalRelativePosition());
-    frame->setOrientation(R->getOrientation()*getAPK());
+    frame->setOrientation(R->getOrientation()*getRelativeOrientation());
   }
 
   void RigidBody::updateVelocities(Frame *frame) {

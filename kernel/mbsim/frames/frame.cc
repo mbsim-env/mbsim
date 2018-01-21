@@ -61,45 +61,38 @@ namespace MBSim {
   void Frame::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[position]) {
-        if(updPos) updatePositions();
-        for(int i=0; i<3; i++)
-          plotVector.push_back(WrOP(i));
+        for(int i=0; i<evalPosition().size(); i++)
+          plotVector.push_back(getPosition()(i));
       }
       if(plotFeature[angle]) {
-        if(updPos) updatePositions();
-        Vec3 cardan=AIK2Cardan(AWP);
-        for(int i=0; i<3; i++)
+        Vec3 cardan=AIK2Cardan(evalOrientation());
+        for(int i=0; i<cardan.size(); i++)
           plotVector.push_back(cardan(i));
       }
       if(plotFeature[velocity]) {
-        if(updVel) updateVelocities();
-        for(int i=0; i<3; i++)
-          plotVector.push_back(WvP(i));
+        for(int i=0; i<evalVelocity().size(); i++)
+          plotVector.push_back(getVelocity()(i));
       }
       if(plotFeature[angularVelocity]) {
-        if(updVel) updateVelocities();
-        for(int i=0; i<3; i++)
-          plotVector.push_back(WomegaP(i));
+        for(int i=0; i<evalAngularVelocity().size(); i++)
+          plotVector.push_back(getAngularVelocity()(i));
       }
       if(plotFeature[acceleration]) {
-        if(updAcc) updateAccelerations();
-        for(int i=0; i<3; i++)
-          plotVector.push_back(WaP(i));
+        for(int i=0; i<evalAcceleration().size(); i++)
+          plotVector.push_back(getAcceleration()(i));
       }
       if(plotFeature[angularAcceleration]) {
-        if(updAcc) updateAccelerations();
-        for(int i=0; i<3; i++)
-          plotVector.push_back(WpsiP(i));
+        for(int i=0; i<evalAngularAcceleration().size(); i++)
+          plotVector.push_back(getAngularAcceleration()(i));
       }
     }
     if(plotFeature[openMBV] and openMBVFrame && !openMBVFrame->isHDF5Link()) {
-      if(updPos) updatePositions();
       vector<double> data;
       data.push_back(getTime());
-      data.push_back(WrOP(0));
-      data.push_back(WrOP(1));
-      data.push_back(WrOP(2));
-      Vec3 cardan=AIK2Cardan(AWP);
+      data.push_back(evalPosition()(0));
+      data.push_back(getPosition()(1));
+      data.push_back(getPosition()(2));
+      Vec3 cardan=AIK2Cardan(getOrientation());
       data.push_back(cardan(0));
       data.push_back(cardan(1));
       data.push_back(cardan(2));

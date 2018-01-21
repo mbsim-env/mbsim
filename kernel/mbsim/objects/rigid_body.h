@@ -188,7 +188,7 @@ namespace MBSim {
 
       fmatvec::SymMat3& getGlobalInertiaTensor(bool check=true) {  assert((not check) or (not updWTS)); return WThetaS; }
       fmatvec::Vec3& getGlobalRelativeVelocity(bool check=true) { assert((not check) or (not updVel)); return WvPKrel; }
-      fmatvec::SqrMat3& getAPK(bool check=true) { assert((not check) or (not updPos)); return APK; }
+      fmatvec::SqrMat3& getRelativeOrientation(bool check=true) { assert((not check) or (not updPos)); return APK; }
       fmatvec::Vec3& getPjbT(bool check=true) { assert((not check) or (not updPjb)); return PjbT; }
       fmatvec::Vec3& getPjbR(bool check=true) { assert((not check) or (not updPjb)); return PjbR; }
 
