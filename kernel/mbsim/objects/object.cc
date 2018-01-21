@@ -310,6 +310,16 @@ namespace MBSim {
     return udall;
   }
 
+  Vec& Object::getud(bool check) {
+    assert((not check) or (not ds->getUpdatezd()));
+    return ud;
+  }
+
+  Vec& Object::getudall(bool check) {
+    assert((not check) or (not ds->getUpdatezd()));
+    return udall;
+  }
+
   void Object::updateGeneralizedPositions() {
     qRel = q;
     updq = false;

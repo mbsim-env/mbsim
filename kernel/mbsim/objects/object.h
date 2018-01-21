@@ -254,6 +254,9 @@ namespace MBSim {
       const fmatvec::Vec& evalud();
       const fmatvec::Vec& evaludall();
 
+      fmatvec::Vec& getud(bool check=true);
+      fmatvec::Vec& getudall(bool check=true);
+
       void resetUpToDate() override { updq = true; updu = true; updqd = true; updud = true; }
 
       virtual void updateGeneralizedPositions();
