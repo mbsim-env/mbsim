@@ -54,7 +54,7 @@ namespace MBSimControl {
   void Multiplexer::updateSignal() {
     int k=0;
     for (unsigned int i=0; i<signal.size(); i++) {
-      VecV si = signal[i]->evalSignal();
+      const VecV &si = signal[i]->evalSignal();
       s.set(RangeV(k,k+si.size()-1),si);
       k+=si.size();;
     }
@@ -91,7 +91,7 @@ namespace MBSimControl {
   }
 
   void Demultiplexer::updateSignal() {
-    VecV sIn = signal->evalSignal();
+    const VecV &sIn = signal->evalSignal();
     for (unsigned int i=0; i<index.size(); i++) {
       s(i) = sIn(index[i]);
     }
