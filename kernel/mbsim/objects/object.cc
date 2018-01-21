@@ -102,19 +102,19 @@ namespace MBSim {
     if (plotFeature[plotRecursive]) {
       if (plotFeature[generalizedPosition]) {
         for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
-          plotVector.push_back(qRel(i));
+          plotVector.push_back(getGeneralizedPosition()(i));
       }
       if (plotFeature[generalizedVelocity]) {
         for (int i = 0; i < evalGeneralizedVelocity().size(); ++i)
-          plotVector.push_back(uRel(i));
+          plotVector.push_back(getGeneralizedVelocity()(i));
       }
       if (plotFeature[derivativeOfGeneralizedPosition]) {
         for (int i = 0; i < evalDerivativeOfGeneralizedPosition().size(); ++i)
-          plotVector.push_back(qdRel(i));
+          plotVector.push_back(getDerivativeOfGeneralizedPosition()(i));
       }
       if (plotFeature[generalizedAcceleration]) {
         for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
-          plotVector.push_back(udRel(i));
+          plotVector.push_back(getGeneralizedAcceleration()(i));
       }
       if (plotFeature[energy]) {
         double Ttemp = evalKineticEnergy();
