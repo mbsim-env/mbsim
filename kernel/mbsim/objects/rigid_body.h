@@ -240,12 +240,12 @@ namespace MBSim {
       const fmatvec::MatV& evalJRel(int j=0) { if(updGJ) updateGeneralizedJacobians(); return JRel[j]; }
       const fmatvec::VecV& evaljRel() { if(updGJ) updateGeneralizedJacobians(); return jRel; }
 
-      fmatvec::VecV& getqTRel(bool check=true) {  assert((not check) or (not updq)); return qTRel; }
-      fmatvec::VecV& getqRRel(bool check=true) {  assert((not check) or (not updq)); return qRRel; }
-      fmatvec::VecV& getuTRel(bool check=true) {  assert((not check) or (not updu)); return uTRel; }
-      fmatvec::VecV& getuRRel(bool check=true) {  assert((not check) or (not updu)); return uRRel; }
-      fmatvec::VecV& getqdTRel(bool check=true) {  assert((not check) or (not updqd)); return qdTRel; }
-      fmatvec::VecV& getqdRRel(bool check=true) {  assert((not check) or (not updqd)); return qdRRel; }
+      fmatvec::VecV& getqTRel(bool check=true) { assert((not check) or (not updq)); return qTRel; }
+      fmatvec::VecV& getqRRel(bool check=true) { assert((not check) or (not updq)); return qRRel; }
+      fmatvec::VecV& getuTRel(bool check=true) { assert((not check) or (not updu)); return uTRel; }
+      fmatvec::VecV& getuRRel(bool check=true) { assert((not check) or (not updu)); return uRRel; }
+      fmatvec::VecV& getqdTRel(bool check=true) { assert((not check) or (not updqd)); return qdTRel; }
+      fmatvec::VecV& getqdRRel(bool check=true) { assert((not check) or (not updqd)); return qdRRel; }
 
       void setUpdateByReference(bool updateByReference_) { updateByReference = updateByReference_; }
 
