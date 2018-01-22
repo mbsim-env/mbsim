@@ -113,7 +113,8 @@ namespace MBSim {
       fmatvec::Mat3xV Js;
       fmatvec::SqrMat A;
 
-      bool updDF{true}, updA{true};
+      bool updDF{true};
+      bool updA{true};
 
       std::string saved_ref1, saved_ref2;
       std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide, saved_IndependentBody;
