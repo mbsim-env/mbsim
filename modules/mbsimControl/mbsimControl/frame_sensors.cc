@@ -55,7 +55,7 @@ namespace MBSimControl {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, OrientationSensor)
 
   void OrientationSensor::updateSignal() {
-    SqrMat3 A = frame->evalOrientation();
+    const SqrMat3 &A = frame->evalOrientation();
     int k=0;
     for(int i=0; i<A.rows(); i++) {
       for(int j=0; j<A.cols(); j++)

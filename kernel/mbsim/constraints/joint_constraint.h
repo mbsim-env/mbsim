@@ -60,9 +60,20 @@ namespace MBSim {
       void updatePositions(Frame *frame) override;
       void updateGeneralizedCoordinates() override;
       void updateGeneralizedJacobians(int jj=0) override;
-      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void updateForceDirections();
+      void updateA();
+
+      const fmatvec::Mat3xV& evalGlobalForceDirection() { if(updDF) updateForceDirections(); return DF; }
+      const fmatvec::Mat3xV& evalGlobalMomentDirection() { if(updDF) updateForceDirections(); return DM; }
+      const fmatvec::SqrMat& evalA() { if(updA) updateA(); return A; }
+
+      fmatvec::Mat3xV& getGlobalForceDirection(bool check=true) { assert((not check) or (not updDF)); return DF; }
+      fmatvec::Mat3xV& getGlobalMomentDirection(bool check=true) { assert((not check) or (not updDF)); return DM; }
+      fmatvec::SqrMat& getA(bool check=true) { assert((not check) or (not updA)); return A; }
 
       void setInitialGuess(const fmatvec::VecV &q0_) { q0 = q0_; }
+
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     private:
       class Residuum : public Function<fmatvec::Vec(fmatvec::Vec)> {
@@ -73,6 +84,7 @@ namespace MBSim {
           std::vector<Frame*> i1,i2;
         public:
           Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &forceDir_, const fmatvec::Mat3xV &momentDir_, Frame *frame1_, Frame *frame2_, Frame *refFrame_, std::vector<Frame*> i1_, std::vector<Frame*> i2_);
+
           fmatvec::Vec operator()(const fmatvec::Vec &x) override;
       };
       std::vector<RigidBody*> bd1, bd2, bi;
@@ -89,8 +101,9 @@ namespace MBSim {
 
       FloatingRelativeFrame C;
 
-      fmatvec::Mat3xV dT, dR, forceDir, momentDir;
+      fmatvec::Mat3xV DF, DM, forceDir, momentDir;
 
+      fmatvec::RangeV iF, iM;
       std::vector<fmatvec::RangeV> Iq1, Iq2, Iu1, Iu2, Ih1, Ih2;
       int nq{0};
       int nu{0};
@@ -98,6 +111,10 @@ namespace MBSim {
       fmatvec::Vec q, q0;
       fmatvec::Mat JT, JR;
       fmatvec::Mat3xV Js;
+      fmatvec::SqrMat A;
+
+      bool updDF{true};
+      bool updA{true};
 
       std::string saved_ref1, saved_ref2;
       std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide, saved_IndependentBody;

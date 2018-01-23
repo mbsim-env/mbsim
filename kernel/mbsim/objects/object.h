@@ -254,6 +254,9 @@ namespace MBSim {
       const fmatvec::Vec& evalud();
       const fmatvec::Vec& evaludall();
 
+      fmatvec::Vec& getud(bool check=true);
+      fmatvec::Vec& getudall(bool check=true);
+
       void resetUpToDate() override { updq = true; updu = true; updqd = true; updud = true; }
 
       virtual void updateGeneralizedPositions();
@@ -267,6 +270,8 @@ namespace MBSim {
       const fmatvec::VecV& evalGeneralizedAcceleration() { if(updud) updateGeneralizedAccelerations(); return udRel; }
       fmatvec::VecV& getGeneralizedPosition(bool check=true) {  assert((not check) or (not updq)); return qRel; }
       fmatvec::VecV& getGeneralizedVelocity(bool check=true) {  assert((not check) or (not updu)); return uRel; }
+      fmatvec::VecV& getDerivativeOfGeneralizedPosition(bool check=true) {  assert((not check) or (not updqd)); return qdRel; }
+      fmatvec::VecV& getGeneralizedAcceleration(bool check=true) {  assert((not check) or (not updud)); return udRel; }
 
       void setq(const fmatvec::Vec &q_) { q = q_; }
       void setu(const fmatvec::Vec &u_) { u = u_; }

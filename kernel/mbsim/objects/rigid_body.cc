@@ -88,12 +88,12 @@ namespace MBSim {
     if(j==0) {
       Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       Vec3 WM = crossProduct(evalGlobalInertiaTensor()*C->evalAngularVelocity(),C->evalAngularVelocity()) ;
-      h[j] += C->evalJacobianOfTranslation(j).T()*(WF - m*C->evalGyroscopicAccelerationOfTranslation()) + C->evalJacobianOfRotation(j).T()*(WM - WThetaS*C->evalGyroscopicAccelerationOfRotation());
+      h[j] += C->evalJacobianOfTranslation(j).T()*(WF - m*C->evalGyroscopicAccelerationOfTranslation()) + C->evalJacobianOfRotation(j).T()*(WM - getGlobalInertiaTensor()*C->evalGyroscopicAccelerationOfRotation());
     } else {
-      Vec3 aP = Z.evalAcceleration();
-      Vec3 Psi = Z.evalAngularAcceleration();
-      Vec3 rPS = C->evalGlobalRelativePosition();
-      Vec3 Om = Z.evalAngularVelocity();
+      const Vec3 &aP = Z.evalAcceleration();
+      const Vec3 &Psi = Z.evalAngularAcceleration();
+      const Vec3 &rPS = C->evalGlobalRelativePosition();
+      const Vec3 &Om = Z.evalAngularVelocity();
       SymMat3 Theta = evalGlobalInertiaTensor() + m*JTJ(tilde(rPS));
       Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       Vec3 WM = crossProduct(rPS,WF);
@@ -311,7 +311,7 @@ namespace MBSim {
       vector<double> data;
       data.push_back(getTime());
       Vec3 WrOS=openMBVFrame->evalPosition();
-      Vec3 cardan=AIK2Cardan(openMBVFrame->evalOrientation());
+      Vec3 cardan=AIK2Cardan(openMBVFrame->getOrientation());
       data.push_back(WrOS(0));
       data.push_back(WrOS(1));
       data.push_back(WrOS(2));
@@ -327,7 +327,7 @@ namespace MBSim {
   void RigidBody::updateqd() {
     if(not constraint) {
       qd(iqT) = evaluTRel();
-      qd(iqR) = fTR ? (*fTR)(evalqRRel())*uRRel : uRRel;
+      qd(iqR) = fTR ? (*fTR)(evalqRRel())*getuRRel() : getuRRel();
     }
   }
 
@@ -366,7 +366,7 @@ namespace MBSim {
 
   void RigidBody::updateDerivativeOfGeneralizedPositions() {
     qdTRel = evaluTRel();
-    qdRRel = fTR ? (*fTR)(evalqRRel())*uRRel : uRRel;
+    qdRRel = fTR ? (*fTR)(evalqRRel())*getuRRel() : getuRRel();
     qdRel.set(iqT,qdTRel);
     qdRel.set(iqR,qdRRel);
     updqd = false;
@@ -422,18 +422,18 @@ namespace MBSim {
   void RigidBody::updateGyroscopicAccelerations() {
     if(fPrPK) {
       if(not(constJT and constjT)) {
-        PjbT = (fPrPK->parDer1DirDer1(evalqdTRel(),evalqTRel(),getTime())+fPrPK->parDer1ParDer2(evalqTRel(),getTime()))*uTRel + fPrPK->parDer2DirDer1(evalqdTRel(),evalqTRel(),getTime()) + fPrPK->parDer2ParDer2(evalqTRel(),getTime());
+        PjbT = (fPrPK->parDer1DirDer1(evalqdTRel(),evalqTRel(),getTime())+fPrPK->parDer1ParDer2(evalqTRel(),getTime()))*getuTRel() + fPrPK->parDer2DirDer1(evalqdTRel(),evalqTRel(),getTime()) + fPrPK->parDer2ParDer2(evalqTRel(),getTime());
       }
     }
     if(fAPK) {
       if(not(constJR and constjR)) {
         if(fTR) {
           Mat3xV JRd = fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime());
-          MatV TRd = fTR->dirDer(qdRRel,qRRel);
-          PjbR = JRd*qdRRel + fAPK->parDer1(qRRel,getTime())*TRd*uRRel + fAPK->parDer2DirDer1(qdRRel,qRRel,getTime()) + fAPK->parDer2ParDer2(qRRel,getTime());
+          MatV TRd = fTR->dirDer(getqdRRel(),getqRRel());
+          PjbR = JRd*getqdRRel() + fAPK->parDer1(getqRRel(),getTime())*TRd*getuRRel() + fAPK->parDer2DirDer1(getqdRRel(),getqRRel(),getTime()) + fAPK->parDer2ParDer2(getqRRel(),getTime());
         }
         else
-          PjbR = (fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime()))*uRRel + fAPK->parDer2DirDer1(evalqdRRel(),evalqRRel(),getTime()) + fAPK->parDer2ParDer2(evalqRRel(),getTime());
+          PjbR = (fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime()))*getuRRel() + fAPK->parDer2DirDer1(evalqdRRel(),evalqRRel(),getTime()) + fAPK->parDer2ParDer2(evalqRRel(),getTime());
       }
     }
     updPjb = false;
@@ -441,17 +441,17 @@ namespace MBSim {
 
   void RigidBody::updatePositions(Frame *frame) {
     frame->setPosition(R->evalPosition() + evalGlobalRelativePosition());
-    frame->setOrientation(R->getOrientation()*APK); // APK already update to date
+    frame->setOrientation(R->getOrientation()*getRelativeOrientation());
   }
 
   void RigidBody::updateVelocities(Frame *frame) {
     frame->setAngularVelocity(R->evalAngularVelocity() + evalGlobalRelativeAngularVelocity());
-    frame->setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),evalGlobalRelativePosition())); // WvPKrel already update to date
+    frame->setVelocity(R->getVelocity() + getGlobalRelativeVelocity() + crossProduct(R->getAngularVelocity(),evalGlobalRelativePosition()));
   }
 
   void RigidBody::updateAccelerations(Frame *frame) {
     frame->setAcceleration(Z.evalJacobianOfTranslation()*evaludall() + Z.evalGyroscopicAccelerationOfTranslation());
-    frame->setAngularAcceleration(Z.getJacobianOfRotation()*udall + Z.getGyroscopicAccelerationOfRotation());
+    frame->setAngularAcceleration(Z.getJacobianOfRotation()*getudall() + Z.getGyroscopicAccelerationOfRotation());
   }
 
   void RigidBody::updateJacobians0(Frame *frame) {
@@ -460,12 +460,12 @@ namespace MBSim {
     frame->getJacobianOfTranslation(0,false).set(i02,RangeV(0,R->gethSize()-1), R->evalJacobianOfTranslation() - tilde(evalGlobalRelativePosition())*R->evalJacobianOfRotation());
     frame->getJacobianOfRotation(0,false).set(i02,RangeV(0,R->gethSize()-1), R->evalJacobianOfRotation());
     frame->getJacobianOfTranslation(0,false).add(i02,RangeV(0,gethSize(0)-1), R->evalOrientation()*evalPJT()*evalJRel());
-    frame->getJacobianOfRotation(0,false).add(i02,RangeV(0,gethSize(0)-1), frameForJacobianOfRotation->evalOrientation()*PJR[0]*JRel[0]);
+    frame->getJacobianOfRotation(0,false).add(i02,RangeV(0,gethSize(0)-1), frameForJacobianOfRotation->evalOrientation()*getPJR()*getJRel());
   }
 
   void RigidBody::updateGyroscopicAccelerations(Frame *frame) {
     frame->setGyroscopicAccelerationOfTranslation(R->evalGyroscopicAccelerationOfTranslation() + crossProduct(R->evalGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition()) + R->evalOrientation()*(evalPjbT() + evalPJT()*evaljRel()) + crossProduct(R->evalAngularVelocity(), 2.*evalGlobalRelativeVelocity()+crossProduct(R->evalAngularVelocity(),evalGlobalRelativePosition())));
-    frame->setGyroscopicAccelerationOfRotation(R->evalGyroscopicAccelerationOfRotation() + frameForJacobianOfRotation->evalOrientation()*(PjbR + PJR[0]*jRel) + crossProduct(R->evalAngularVelocity(), evalGlobalRelativeAngularVelocity())); // PjbR already up to date
+    frame->setGyroscopicAccelerationOfRotation(R->evalGyroscopicAccelerationOfRotation() + frameForJacobianOfRotation->evalOrientation()*(getPjbR() + getPJR()*getjRel()) + crossProduct(R->evalAngularVelocity(), evalGlobalRelativeAngularVelocity()));
   }
 
   void RigidBody::updateJacobians2(Frame *frame_) {
@@ -478,7 +478,7 @@ namespace MBSim {
       frame_->getJacobianOfRotation(2,false).resize() = R->evalJacobianOfRotation(2);
     } else {
       frame_->getJacobianOfTranslation(2,false).resize() = R->evalOrientation()*evalPJT();
-      frame_->getJacobianOfRotation(2,false).resize() = frameForJacobianOfRotation->evalOrientation()*PJR[0];
+      frame_->getJacobianOfRotation(2,false).resize() = frameForJacobianOfRotation->evalOrientation()*getPJR();
     }
   }
 

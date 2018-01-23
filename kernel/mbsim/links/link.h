@@ -391,9 +391,9 @@ namespace MBSim {
 
       void resetUpToDate() override { updrrel = true; updvrel = true; updla = true; }
 
-      virtual void updateGeneralizedPositions() { }
-      virtual void updateGeneralizedVelocities() { }
-      virtual void updateGeneralizedForces() { }
+      virtual void updateGeneralizedPositions() { updrrel = false; }
+      virtual void updateGeneralizedVelocities() { updvrel = false; }
+      virtual void updateGeneralizedForces() { updla = false; }
 
       const fmatvec::VecV& evalGeneralizedRelativePosition() { if(updrrel) updateGeneralizedPositions(); return rrel; }
       const fmatvec::VecV& evalGeneralizedRelativeVelocity() { if(updvrel) updateGeneralizedVelocities(); return vrel; }

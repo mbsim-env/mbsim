@@ -85,7 +85,7 @@ namespace MBSim {
 
   void FloatingFrameLink::updateVelocities() {
     WvP0P1 = frame[1]->evalVelocity() - C.evalVelocity();
-    WomK0K1 = frame[1]->evalAngularVelocity() - C.evalAngularVelocity();
+    WomK0K1 = frame[1]->getAngularVelocity() - C.getAngularVelocity();
     updVel = false;
   }
 
@@ -103,18 +103,18 @@ namespace MBSim {
 
   void FloatingFrameLink::updateForceDirections() {
     DF = refFrame->evalOrientation() * forceDir;
-    DM = refFrame->evalOrientation() * momentDir;
+    DM = refFrame->getOrientation() * momentDir;
     updDF = false;
   }
 
   void FloatingFrameLink::updateg() {
     g(iF) = evalGeneralizedRelativePosition()(iF);
-    g(iM) = rrel(iM);;
+    g(iM) = getGeneralizedRelativePosition()(iM);;
   }
 
   void FloatingFrameLink::updategd() {
     gd(iF) = evalGeneralizedRelativeVelocity()(iF);
-    gd(iM) = vrel(iM);
+    gd(iM) = getGeneralizedRelativeVelocity()(iM);
   }
 
   void FloatingFrameLink::init(InitStage stage, const InitConfigSet &config) {

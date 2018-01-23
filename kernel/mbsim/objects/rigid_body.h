@@ -186,6 +186,12 @@ namespace MBSim {
       const fmatvec::Vec3& evalPjbT() { if(updPjb) updateGyroscopicAccelerations(); return PjbT; }
       const fmatvec::Vec3& evalPjbR() { if(updPjb) updateGyroscopicAccelerations(); return PjbR; }
 
+      fmatvec::SymMat3& getGlobalInertiaTensor(bool check=true) {  assert((not check) or (not updWTS)); return WThetaS; }
+      fmatvec::Vec3& getGlobalRelativeVelocity(bool check=true) { assert((not check) or (not updVel)); return WvPKrel; }
+      fmatvec::SqrMat3& getRelativeOrientation(bool check=true) { assert((not check) or (not updPos)); return APK; }
+      fmatvec::Vec3& getPjbT(bool check=true) { assert((not check) or (not updPjb)); return PjbT; }
+      fmatvec::Vec3& getPjbR(bool check=true) { assert((not check) or (not updPjb)); return PjbR; }
+
       /**
        * \param RThetaR  inertia tensor
        * \param frame optional reference Frame of inertia tensor, otherwise cog-Frame will be used as reference
@@ -233,6 +239,13 @@ namespace MBSim {
       const fmatvec::VecV& evalqdRRel() { if(updqd) updateDerivativeOfGeneralizedPositions(); return qdRRel; }
       const fmatvec::MatV& evalJRel(int j=0) { if(updGJ) updateGeneralizedJacobians(); return JRel[j]; }
       const fmatvec::VecV& evaljRel() { if(updGJ) updateGeneralizedJacobians(); return jRel; }
+
+      fmatvec::VecV& getqTRel(bool check=true) { assert((not check) or (not updq)); return qTRel; }
+      fmatvec::VecV& getqRRel(bool check=true) { assert((not check) or (not updq)); return qRRel; }
+      fmatvec::VecV& getuTRel(bool check=true) { assert((not check) or (not updu)); return uTRel; }
+      fmatvec::VecV& getuRRel(bool check=true) { assert((not check) or (not updu)); return uRRel; }
+      fmatvec::VecV& getqdTRel(bool check=true) { assert((not check) or (not updqd)); return qdTRel; }
+      fmatvec::VecV& getqdRRel(bool check=true) { assert((not check) or (not updqd)); return qdRRel; }
 
       void setUpdateByReference(bool updateByReference_) { updateByReference = updateByReference_; }
 

@@ -291,17 +291,23 @@ namespace MBSimFlexibleBody {
       void resetUpToDate() override;
       const fmatvec::VecV& evalqTRel() { if(updq) updateGeneralizedPositions(); return qTRel; }
       const fmatvec::VecV& evalqRRel() { if(updq) updateGeneralizedPositions(); return qRRel; }
+      const fmatvec::VecV& evalqERel() { if(updq) updateGeneralizedPositions(); return qERel; }
       const fmatvec::VecV& evaluTRel() { if(updu) updateGeneralizedVelocities(); return uTRel; }
       const fmatvec::VecV& evaluRRel() { if(updu) updateGeneralizedVelocities(); return uRRel; }
+      const fmatvec::VecV& evaluERel() { if(updu) updateGeneralizedVelocities(); return uERel; }
       const fmatvec::VecV& evalqdTRel() { if(updqd) updateDerivativeOfGeneralizedPositions(); return qdTRel; }
       const fmatvec::VecV& evalqdRRel() { if(updqd) updateDerivativeOfGeneralizedPositions(); return qdRRel; }
+      const fmatvec::VecV& evalqdERel() { if(updqd) updateDerivativeOfGeneralizedPositions(); return qdERel; }
+      const fmatvec::VecV& evaludERel() { if(updud) updateGeneralizedAccelerations(); return udERel; }
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrPK; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvPKrel; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomPK; }
-      const fmatvec::Vec3& evalPjbT() { if(updPjb) updateGyroscopicAccelerations(); return PjbT; }
-      const fmatvec::Vec3& evalPjbR() { if(updPjb) updateGyroscopicAccelerations(); return PjbR; }
       const fmatvec::Mat3xV& evalPJTT() { if(updPJ) updateJacobians(); return PJTT; }
       const fmatvec::Mat3xV& evalPJRR() { if(updPJ) updateJacobians(); return PJRR; }
+      const fmatvec::Vec3& evalPjhT() { if(updPJ) updateJacobians(); return PjhT; }
+      const fmatvec::Vec3& evalPjhR() { if(updPJ) updateJacobians(); return PjhR; }
+      const fmatvec::Vec3& evalPjbT() { if(updPjb) updateGyroscopicAccelerations(); return PjbT; }
+      const fmatvec::Vec3& evalPjbR() { if(updPjb) updateGyroscopicAccelerations(); return PjbR; }
       const fmatvec::SymMatV& evalMb() { if(updMb) updateMb(); return M_; }
       const fmatvec::VecV& evalhb() { if(updMb) updateMb(); return h_; }
       const fmatvec::MatV& evalKJ(int j=0) { if(updKJ[j]) updateKJ(j); return KJ[j]; }
@@ -311,6 +317,25 @@ namespace MBSimFlexibleBody {
       const fmatvec::Vector<fmatvec::Fixed<6>, double>& evalNodalStress(int i) { if(updNodalStress[i]) updateStresses(i); return sigma[i]; }
       const fmatvec::Vec3& evalNodalDisp(int i) { if(updNodalPos[i]) updatePositions(i); return disp[i]; }
       const fmatvec::Vec3& evalNodalPosition(int i) { if(updNodalPos[i]) updatePositions(i); return WrOP[i]; }
+
+      fmatvec::Vec3& getGlobalRelativeVelocity(bool check=true) { assert((not check) or (not updVel)); return WvPKrel; }
+      fmatvec::SqrMat3& getRelativeOrientation(bool check=true) { assert((not check) or (not updPos)); return APK; }
+      fmatvec::Vec3& getPjbT(bool check=true) { assert((not check) or (not updPjb)); return PjbT; }
+      fmatvec::Vec3& getPjbR(bool check=true) { assert((not check) or (not updPjb)); return PjbR; }
+
+      fmatvec::VecV& getqTRel(bool check=true) { assert((not check) or (not updq)); return qTRel; }
+      fmatvec::VecV& getqRRel(bool check=true) { assert((not check) or (not updq)); return qRRel; }
+      fmatvec::VecV& getqERel(bool check=true) { assert((not check) or (not updq)); return qERel; }
+      fmatvec::VecV& getuTRel(bool check=true) { assert((not check) or (not updu)); return uTRel; }
+      fmatvec::VecV& getuRRel(bool check=true) { assert((not check) or (not updu)); return uRRel; }
+      fmatvec::VecV& getuERel(bool check=true) { assert((not check) or (not updu)); return uERel; }
+      fmatvec::VecV& getqdTRel(bool check=true) { assert((not check) or (not updqd)); return qdTRel; }
+      fmatvec::VecV& getqdRRel(bool check=true) { assert((not check) or (not updqd)); return qdRRel; }
+      fmatvec::VecV& getqdERel(bool check=true) { assert((not check) or (not updqd)); return qdERel; }
+      fmatvec::VecV& getudERel(bool check=true) { assert((not check) or (not updud)); return udERel; }
+
+      fmatvec::SqrMat3& getNodalOrientation(int i, bool check=true) { assert((not check) or (not updNodalPos[i])); return AWK[i]; }
+      fmatvec::Vec3& getNodalRelativeVelocity(int i, bool check=true) { assert((not check) or (not updNodalVel[i])); return Wvrel[i]; }
 
       virtual void updateStresses(int i);
       virtual void updatePositions(int i);
@@ -487,7 +512,7 @@ namespace MBSimFlexibleBody {
 
       fmatvec::Vec aT, aR;
 
-      fmatvec::VecV qTRel, qRRel, uTRel, uRRel, qdTRel, qdRRel;
+      fmatvec::VecV qTRel, qRRel, qERel, uTRel, uRRel, uERel, qdTRel, qdRRel, qdERel, udERel;
       fmatvec::Mat3xV WJTrel, WJRrel, PJTT, PJRR;
 
       MBSim::Frame *frameForJacobianOfRotation{0};
