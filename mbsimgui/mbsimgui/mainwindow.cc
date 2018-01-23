@@ -142,17 +142,17 @@ namespace MBSimGUI {
 
     GUIMenu->addSeparator();
 
-//    OpenMBVGUI::AbstractViewFilter *elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
-//    elementViewFilter->hide();
-//
-//    OpenMBVGUI::AbstractViewFilter *embeddingViewFilter = new OpenMBVGUI::AbstractViewFilter(embeddingView, 0, -2);
-//    embeddingViewFilter->hide();
+    OpenMBVGUI::AbstractViewFilter *elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
+    elementViewFilter->hide();
 
-//    action = GUIMenu->addAction("Show filter");
-//    action->setCheckable(true);
-//    connect(action,SIGNAL(toggled(bool)), elementViewFilter, SLOT(setVisible(bool)));
-//    connect(action,SIGNAL(toggled(bool)), embeddingViewFilter, SLOT(setVisible(bool)));
-//    action->setStatusTip(tr("Show filter"));
+    OpenMBVGUI::AbstractViewFilter *embeddingViewFilter = new OpenMBVGUI::AbstractViewFilter(embeddingView, 0, -2);
+    embeddingViewFilter->hide();
+
+    action = GUIMenu->addAction("Show filter");
+    action->setCheckable(true);
+    connect(action,SIGNAL(toggled(bool)), elementViewFilter, SLOT(setVisible(bool)));
+    connect(action,SIGNAL(toggled(bool)), embeddingViewFilter, SLOT(setVisible(bool)));
+    action->setStatusTip(tr("Show filter"));
 
     GUIMenu->addSeparator();
 
@@ -275,7 +275,7 @@ namespace MBSimGUI {
     auto *widgetLayout1 = new QGridLayout(widget1);
     widgetLayout1->setContentsMargins(0,0,0,0);
     widget1->setLayout(widgetLayout1);
-    //widgetLayout1->addWidget(elementViewFilter, 0, 0);
+    widgetLayout1->addWidget(elementViewFilter, 0, 0);
     widgetLayout1->addWidget(elementView, 1, 0);
 
     QDockWidget *dockWidget3 = new QDockWidget("Embeddings");
@@ -285,7 +285,7 @@ namespace MBSimGUI {
     auto *widgetLayout3 = new QGridLayout(widget3);
     widgetLayout3->setContentsMargins(0,0,0,0);
     widget3->setLayout(widgetLayout3);
-    //widgetLayout3->addWidget(embeddingViewFilter, 0, 0);
+    widgetLayout3->addWidget(embeddingViewFilter, 0, 0);
     widgetLayout3->addWidget(embeddingView, 1, 0);
 
     QDockWidget *dockWidget2 = new QDockWidget("Solver");
