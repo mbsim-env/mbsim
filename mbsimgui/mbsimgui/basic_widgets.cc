@@ -712,7 +712,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    value = new QSpinBox;
+    value = new CustomSpinBox;
     value->setValue(val);
     value->setMinimum(min);
     value->setMaximum(max);
