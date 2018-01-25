@@ -939,13 +939,6 @@ namespace MBSimGUI {
     button = new QPushButton(tr("Select"));
     connect(button,SIGNAL(clicked(bool)),this,SLOT(setColor()));
     layout->addWidget(button);
-    updateWidget();
-  }
-
-  void ColorWidget::updateWidget() { 
-    QString val = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(color->getWidget())->getWidget())->getValue();
-    vector<QString> vec = strToVec(val);
-    button->setPalette(QPalette(QColor::fromHsvF(vec[0].toDouble(),vec[1].toDouble(),vec[2].toDouble())));
   }
 
   void ColorWidget::setColor() { 
@@ -959,7 +952,6 @@ namespace MBSimGUI {
     if(col.isValid()) {
       QString str = "[" + QString::number(col.hueF()) + ";" + QString::number(col.saturationF()) + ";" + QString::number(col.valueF()) + "]";
       static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(color->getWidget())->getWidget())->setValue(str);
-      updateWidget();
     }
   }
 

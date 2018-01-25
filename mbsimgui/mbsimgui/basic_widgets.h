@@ -478,7 +478,6 @@ namespace MBSimGUI {
 
     public:
       ColorWidget();
-      void updateWidget() override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
