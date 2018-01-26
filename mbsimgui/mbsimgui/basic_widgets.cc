@@ -986,6 +986,7 @@ namespace MBSimGUI {
     feature.push_back(MBSIM%"generalizedRelativeVelocity");
     feature.push_back(MBSIM%"generalizedForce");
     feature.push_back(MBSIM%"energy");
+    feature.push_back(MBSIM%"deflection");
     feature.push_back(MBSIMCONTROL%"signal");
 
     QStringList type_;
