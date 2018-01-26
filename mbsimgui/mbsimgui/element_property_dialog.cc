@@ -643,8 +643,8 @@ namespace MBSimGUI {
 
   DOMElement* ObjectPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ElementPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
-    q0->writeXMLFile(item->getXMLElement(),ref);
-    u0->writeXMLFile(item->getXMLElement(),ref);
+    if(q0->isActive() and static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(q0->getWidget())->getWidget())->rows()) q0->writeXMLFile(item->getXMLElement(),ref);
+    if(u0->isActive() and static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(u0->getWidget())->getWidget())->rows()) u0->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
