@@ -119,7 +119,6 @@ namespace MBSimGUI {
     initInlineOpenMBV();
 
     MBSimObjectFactory::initialize();
-    eval=Eval::createEvaluator("octave", &dependencies);
 
     QMenu *GUIMenu = new QMenu("GUI", menuBar());
     menuBar()->addMenu(GUIMenu);
@@ -753,6 +752,7 @@ namespace MBSimGUI {
     string message;
     try {
       D(doc)->validate();
+      eval=Eval::createEvaluator("octave", &dependencies);
       eval->addParamSet(doc->getDocumentElement());
     }
     catch(const std::exception &error) {
@@ -879,6 +879,7 @@ namespace MBSimGUI {
     try {
       D(doc)->validate();
       root = doc->getDocumentElement();
+      shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
       Preprocess::preprocess(parser, eval, dependencies, root);
     }
     catch(exception &ex) {
