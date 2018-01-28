@@ -120,4 +120,22 @@ namespace MBSimGUI {
     solver->setEmbeded(embeded);
   }
 
+  void Project::maybeRemoveEmbedXMLElement() {
+    if(embed and not getNumberOfParameters()) {
+      DOMElement *param = E(embed)->getFirstElementChildNamed(PV%"Parameter");
+      if(param) {
+        DOMNode *ps = param->getPreviousSibling();
+        if(ps and X()%ps->getNodeName()=="#text")
+          embed->removeChild(ps);
+        embed->removeChild(param);
+      }
+      if(not E(embed)->hasAttribute("count") and not E(embed)->hasAttribute("counterName") and not E(embed)->hasAttribute("href") and not E(embed)->hasAttribute("parameterHref")) {
+        DOMDocument *doc=element->getOwnerDocument();
+        doc->removeChild(embed);
+        doc->insertBefore(element,nullptr);
+        embed = nullptr;
+      }
+    }
+  }
+
 }
