@@ -54,6 +54,7 @@ namespace MBSimGUI {
       Solver* getSolver() const { return solver; }
       xercesc::DOMElement* createEmbedXMLElement() override;
       void setEmbeded(bool embeded_) override;
+      void maybeRemoveEmbedXMLElement() override;
     private:
       DynamicSystemSolver *dss{nullptr};
       Solver *solver{nullptr};
