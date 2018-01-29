@@ -1289,7 +1289,7 @@ namespace MBSim {
 
   void DynamicSystem::addFrame(Frame *frame_) {
     if (getFrame(frame_->getName(), false)) {
-      THROW_MBSIMERROR("DynamicSystem can only comprises one Frame by the name \"" + name + "\"!");
+      THROW_MBSIMERROR("DynamicSystem can only comprise one Frame by the name \"" + frame_->getName() + "\"!");
       assert(getFrame(frame_->getName(),false)==nullptr);
     }
     frame.push_back(frame_);
@@ -1298,7 +1298,7 @@ namespace MBSim {
 
   void DynamicSystem::addContour(Contour* contour_) {
     if (getContour(contour_->getName(), false)) {
-      THROW_MBSIMERROR("DynamicSystem can only comprise one Contour by the name \"" + name + "\"!");
+      THROW_MBSIMERROR("DynamicSystem can only comprise one Contour by the name \"" + contour_->getName() + "\"!");
       assert(getContour(contour_->getName(),false)==nullptr);
     }
     contour.push_back(contour_);
