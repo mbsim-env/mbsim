@@ -116,10 +116,6 @@ namespace MBSimIntegrator {
       double safetyFactorSSC; 
       /** filestream for integrator info at each step */
       std::ofstream integPlot;
-      /** Flag: write integrator info at each step to a file (default true)*/
-      bool FlagPlotIntegrator;
-      /** Flag: write integration summary to a file (default true)*/
-      bool FlagPlotIntegrationSum;
       /** Flag: write integration info (integ. summary) to cout  (default true)*/
       bool FlagCoutInfo;
       /** Flag: write output info to cout only for plot-time-instances (default false)*/
@@ -184,8 +180,6 @@ namespace MBSimIntegrator {
       void setSafetyFactorGapControl(double s){safetyFactorGapControl=s;}
       /*! Set Flag for output interpolation */
       void setOutputInterpolation(bool flag=true) {outputInterpolation = flag;}
-      /*! set Flag for  writing integrator info at each step to a file (default true)*/
-      void setFlagPlotIntegrator(bool flag=true) {FlagPlotIntegrator = flag;}
       /*! set Flag for writing output only at tPlot-Time instances or not (default false)*/
       void setFlagOutputOnlyAtTPlot(bool flag=true) {FlagOutputOnlyAtTPlot = flag;}
 /*! Set Flag to optimise dt for minmal penetration of unilateral links;

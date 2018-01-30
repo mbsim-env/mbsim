@@ -68,7 +68,7 @@ namespace MBSimIntegrator {
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
       self->s0 = s1; 
 
-      self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
+      if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
     }
   }
@@ -149,11 +149,13 @@ namespace MBSimIntegrator {
     system->resetUpToDate();
     system->plot();
 
-    integPlot.open((name + ".plt").c_str());
+    if(plotIntegrationData) {
+      integPlot.open((name + ".plt").c_str());
 
-    integPlot << "#1 t [s]:" << endl; 
-    integPlot << "#1 dt [s]:" << endl; 
-    integPlot << "#1 calculation time [s]:" << endl; 
+      integPlot << "#1 t [s]:" << endl;
+      integPlot << "#1 dt [s]:" << endl;
+      integPlot << "#1 calculation time [s]:" << endl;
+    }
 
     cout.setf(ios::scientific, ios::floatfield);
 
@@ -166,12 +168,14 @@ namespace MBSimIntegrator {
 	plot,&out,
 	work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
-    integPlot.close();
+    if(plotIntegrationData) integPlot.close();
 
-    ofstream integSum((name + ".sum").c_str());
-    integSum << "Integration time: " << time << endl;
-    //integSum << "Integration steps: " << integrationSteps << endl;
-    integSum.close();
+    if(writeIntegrationSummary) {
+      ofstream integSum((name + ".sum").c_str());
+      integSum << "Integration time: " << time << endl;
+      //integSum << "Integration steps: " << integrationSteps << endl;
+      integSum.close();
+    }
 
     cout.unsetf (ios::scientific);
     cout << endl;

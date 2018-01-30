@@ -68,7 +68,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       VecWidget *z0;
-      ExtWidget *startTime, *endTime, *plotStepSize, *initialState;
+      ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *plotIntegrationData, *writeIntegrationSummary;
   };
 
   class DOPRI5IntegratorPropertyDialog : public IntegratorPropertyDialog {

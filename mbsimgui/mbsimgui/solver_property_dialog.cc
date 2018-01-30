@@ -63,6 +63,7 @@ namespace MBSimGUI {
   IntegratorPropertyDialog::IntegratorPropertyDialog(Integrator *integrator, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(integrator,parent,f) {
     addTab("General");
     addTab("Initial conditions");
+    addTab("Output");
 
     startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"startTime");
     addToTab("General", startTime);
@@ -75,6 +76,12 @@ namespace MBSimGUI {
 
     initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialState");
     addToTab("Initial conditions", initialState);
+
+    plotIntegrationData = new ExtWidget("Plot integration data",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotIntegrationData");
+    addToTab("Output", plotIntegrationData);
+
+    writeIntegrationSummary = new ExtWidget("Write integration summary",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"writeIntegrationSummary");
+    addToTab("Output", writeIntegrationSummary);
   }
 
   DOMElement* IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -83,6 +90,8 @@ namespace MBSimGUI {
     endTime->initializeUsingXML(item->getXMLElement());
     plotStepSize->initializeUsingXML(item->getXMLElement());
     initialState->initializeUsingXML(item->getXMLElement());
+    plotIntegrationData->initializeUsingXML(item->getXMLElement());
+    writeIntegrationSummary->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -92,6 +101,8 @@ namespace MBSimGUI {
     endTime->writeXMLFile(item->getXMLElement());
     plotStepSize->writeXMLFile(item->getXMLElement());
     initialState->writeXMLFile(item->getXMLElement());
+    plotIntegrationData->writeXMLFile(item->getXMLElement());
+    writeIntegrationSummary->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 

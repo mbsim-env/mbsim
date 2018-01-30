@@ -111,10 +111,13 @@ namespace MBSimIntegrator {
     double time = 0;
     int integrationSteps = 0;
 
-    ofstream integPlot((name + ".plt").c_str());
-    integPlot << "#1 t [s]:" << endl; 
-    integPlot << "#1 dt [s]:" << endl; 
-    integPlot << "#1 calculation time [s]:" << endl;
+    ofstream integPlot;
+    if(plotIntegrationData) {
+      integPlot.open((name + ".plt").c_str());
+      integPlot << "#1 t [s]:" << endl;
+      integPlot << "#1 dt [s]:" << endl;
+      integPlot << "#1 calculation time [s]:" << endl;
+    }
 
     int MF;
     if(stiff) 
@@ -140,19 +143,21 @@ namespace MBSimIntegrator {
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        integPlot<< t << " " << rWork(10) << " " << time << endl;
+        if(plotIntegrationData) integPlot<< t << " " << rWork(10) << " " << time << endl;
         tPlot = min(tEnd,tPlot + dtPlot);
       }
       if(istate<0) throw MBSimError("Integrator LSODE failed with istate = "+toString(istate));
     }
 
-    integPlot.close();
+    if(plotIntegrationData) integPlot.close();
 
-    ofstream integSum((name + ".sum").c_str());
-    integSum << "Integration time: " << time << endl;
-    integSum << "Simulation time: " << t << endl;
-    integSum << "Integration steps: " << integrationSteps << endl;
-    integSum.close();
+    if(writeIntegrationSummary) {
+      ofstream integSum((name + ".sum").c_str());
+      integSum << "Integration time: " << time << endl;
+      integSum << "Simulation time: " << t << endl;
+      integSum << "Integration steps: " << integrationSteps << endl;
+      integSum.close();
+    }
 
     cout.unsetf (ios::scientific);
     cout << endl;

@@ -58,7 +58,7 @@ namespace MBSimIntegrator {
     else
       system->evalz0();
 
-    integPlot.open((name + ".plt").c_str());
+    if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
 
     stepPlot =(int) (dtPlot/dt + 0.5);
@@ -82,7 +82,7 @@ namespace MBSimIntegrator {
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        integPlot<< system->getTime() << " " << dt << " " <<  system->getIterI() << " " << time << " "<<system->getlaSize() <<endl;
+        if(plotIntegrationData) integPlot<< system->getTime() << " " << dt << " " <<  system->getIterI() << " " << time << " "<<system->getlaSize() <<endl;
         if(output) cout << "   t = " << system->getTime() << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << system->getIterI() <<  "\r"<<flush;
         tPlot += dtPlot;
       }
@@ -114,24 +114,26 @@ namespace MBSimIntegrator {
   }
 
   void TimeSteppingIntegrator::postIntegrate() {
-    integPlot.close();
+    if(plotIntegrationData) integPlot.close();
 
-    typedef tee_device<ostream, ofstream> TeeDevice;
-    typedef stream<TeeDevice> TeeStream;
-    ofstream integSum((name + ".sum").c_str());
-    TeeDevice ts_tee(cout, integSum); 
-    TeeStream ts_split(ts_tee);
-    
-    ts_split << endl << endl << "******************************" << endl;
-    ts_split << "INTEGRATION SUMMARY: " << endl;
-    ts_split << "End time [s]: " << tEnd << endl;
-    ts_split << "Integration time [s]: " << time << endl;
-    ts_split << "Integration steps: " << integrationSteps << endl;
-    ts_split << "Maximum number of iterations: " << maxIter << endl;
-    ts_split << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
-    ts_split << "******************************" << endl;
-    ts_split.flush();
-    ts_split.close();
+    if(writeIntegrationSummary) {
+      typedef tee_device<ostream, ofstream> TeeDevice;
+      typedef stream<TeeDevice> TeeStream;
+      ofstream integSum((name + ".sum").c_str());
+      TeeDevice ts_tee(cout, integSum);
+      TeeStream ts_split(ts_tee);
+
+      ts_split << endl << endl << "******************************" << endl;
+      ts_split << "INTEGRATION SUMMARY: " << endl;
+      ts_split << "End time [s]: " << tEnd << endl;
+      ts_split << "Integration time [s]: " << time << endl;
+      ts_split << "Integration steps: " << integrationSteps << endl;
+      ts_split << "Maximum number of iterations: " << maxIter << endl;
+      ts_split << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
+      ts_split << "******************************" << endl;
+      ts_split.flush();
+      ts_split.close();
+    }
 
     cout.unsetf(ios::scientific);
     cout << endl;
