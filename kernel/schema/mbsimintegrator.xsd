@@ -41,6 +41,16 @@
                 Anfangszustand der Differentialinklusion.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="plotIntegrationData" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob Daten der Integration, wie z.B. die Zeitschrittweite, geplottet werden soll.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="writeIntegrationSummary" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob eine Übersicht der Integration, wie z.B. die Simulationszeit, ausgegeben werden soll.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

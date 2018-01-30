@@ -133,7 +133,7 @@ namespace MBSimIntegrator {
     s0 = clock();
     time = 0;
     integrationSteps = 0;
-    integPlot.open((name + ".plt").c_str());
+    if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
     // plot initial state
     system->resetUpToDate();
@@ -162,7 +162,7 @@ namespace MBSimIntegrator {
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        integPlot<< t << " " << rWork(10) << " " << time << endl;
+        if(plotIntegrationData) integPlot<< t << " " << rWork(10) << " " << time << endl;
         tPlot += dtPlot;
 //        if (tPlot > tStop)
 //          tPlot = tStop;
@@ -211,12 +211,15 @@ namespace MBSimIntegrator {
     system->resetUpToDate();
     system->plot();
     system->plotAtSpecialEvent();
-    integPlot.close();
+    if(plotIntegrationData) integPlot.close();
 
-    ofstream integSum((name + ".sum").c_str());
-    integSum << "Integration time: " << time << endl;
-    integSum << "Integration steps: " << integrationSteps << endl;
-    integSum.close();
+    if(writeIntegrationSummary) {
+      ofstream integSum((name + ".sum").c_str());
+      integSum << "Integration time: " << time << endl;
+      integSum << "Integration steps: " << integrationSteps << endl;
+      integSum.close();
+    }
+
     msg(Info) << endl;
 
     odePackInUse = false;

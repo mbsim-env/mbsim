@@ -40,8 +40,8 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  HETS2Integrator::HETS2Integrator() :  
-  integPlot() {}
+  HETS2Integrator::HETS2Integrator() : integPlot() {
+  }
 
   void HETS2Integrator::preIntegrate() {
     debugInit();
@@ -60,8 +60,10 @@ namespace MBSimIntegrator {
     system->setGeneralizedRelativeAccelerationTolerance(1e-10/dt); // as we use local velocities to express accelerations within solveConstraints
 
     // prepare plotting
-    integPlot.open((name + ".plt").c_str());
-    integPlot << "time" << " " << "time step-size" << " " <<  "constraint iterations" << " " << "calculation time" << " " << "size of constraint system" << endl;
+    if(plotIntegrationData) {
+      integPlot.open((name + ".plt").c_str());
+      integPlot << "time" << " " << "time step-size" << " " <<  "constraint iterations" << " " << "calculation time" << " " << "size of constraint system" << endl;
+    }
     cout.setf(ios::scientific, ios::floatfield);
 
     assert(fabs(((int) (dtPlot/dt + 0.5))*dt - dtPlot) < dt*dt);
@@ -98,7 +100,7 @@ namespace MBSimIntegrator {
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        integPlot << system->getTime() << " " << dtInfo << " " <<  system->getIterC() << " " << time << " "<< system->getlaSize() << endl;
+        if(plotIntegrationData) integPlot << system->getTime() << " " << dtInfo << " " <<  system->getIterC() << " " << time << " "<< system->getlaSize() << endl;
         if(output) cout << "   t = " << system->getTime() << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << system->getIterC() << "\r" << flush;
         tPlot += dtPlot;
       }
@@ -210,25 +212,27 @@ namespace MBSimIntegrator {
   }
 
   void HETS2Integrator::postIntegrate() {
-    integPlot.close();
+    if(plotIntegrationData) integPlot.close();
 
-    typedef tee_device<ostream, ofstream> TeeDevice;
-    typedef stream<TeeDevice> TeeStream;
-    ofstream integSum((name + ".sum").c_str());
-    TeeDevice hets2_tee(cout, integSum); 
-    TeeStream hets2_split(hets2_tee);
+    if(writeIntegrationSummary) {
+      typedef tee_device<ostream, ofstream> TeeDevice;
+      typedef stream<TeeDevice> TeeStream;
+      ofstream integSum((name + ".sum").c_str());
+      TeeDevice hets2_tee(cout, integSum);
+      TeeStream hets2_split(hets2_tee);
 
-    hets2_split << endl << endl << "******************************" << endl;
-    hets2_split << "INTEGRATION SUMMARY: " << endl;
-    hets2_split << "End time [s]: " << tEnd << endl;
-    hets2_split << "Integration time [s]: " << time << endl;
-    hets2_split << "Integration steps: " << integrationSteps << endl;
-    hets2_split << "Fraction of impulsive integration steps: " << double(integrationStepsImpact)/integrationSteps << endl;
-    hets2_split << "Maximum number of iterations: " << maxIter << endl;
-    hets2_split << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
-    hets2_split << "******************************" << endl;
-    hets2_split.flush();
-    hets2_split.close();
+      hets2_split << endl << endl << "******************************" << endl;
+      hets2_split << "INTEGRATION SUMMARY: " << endl;
+      hets2_split << "End time [s]: " << tEnd << endl;
+      hets2_split << "Integration time [s]: " << time << endl;
+      hets2_split << "Integration steps: " << integrationSteps << endl;
+      hets2_split << "Fraction of impulsive integration steps: " << double(integrationStepsImpact)/integrationSteps << endl;
+      hets2_split << "Maximum number of iterations: " << maxIter << endl;
+      hets2_split << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
+      hets2_split << "******************************" << endl;
+      hets2_split.flush();
+      hets2_split.close();
+    }
 
     cout.unsetf(ios::scientific);
     cout << endl;

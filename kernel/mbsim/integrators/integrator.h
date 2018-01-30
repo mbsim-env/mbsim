@@ -95,9 +95,9 @@ namespace MBSimIntegrator {
 
       static Integrator* readXMLFile(const std::string &filename);
 
-      /***************************************************/
+      void setPlotIntegrationData(bool plotIntegrationData_) { plotIntegrationData = plotIntegrationData_; }
 
-//      static void plot(const fmatvec::Vec& z, double t);
+      void setWriteIntegrationSummary(bool writeIntegrationSummary_) { writeIntegrationSummary = writeIntegrationSummary_; }
 
     protected:
       /**
@@ -125,9 +125,17 @@ namespace MBSimIntegrator {
        */
       std::string name;
 
+      /**
+       * \brief plot integration data
+       */
+      bool plotIntegrationData{false};
+
+      /**
+       * \brief write integration summary
+       */
+      bool writeIntegrationSummary{false};
   };
 
 }
 
 #endif /* _INTEGRATOR_H_ */
-

@@ -50,7 +50,7 @@ namespace MBSimIntegrator {
       system->evalz0();
 
     tPlot = 0.;
-    integPlot.open((name + ".plt").c_str());
+    if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
     
     stepPlot =(int) (dtPlot/dt + 0.5);
@@ -73,7 +73,7 @@ namespace MBSimIntegrator {
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;
-        integPlot<< system->getTime() << " " << dt << " " << time << endl;
+        if(plotIntegrationData) integPlot<< system->getTime() << " " << dt << " " << time << endl;
         if(output) cout << "   t = " << system->getTime() << ",\tdt = "<< dt << "\r"<<flush;
         tPlot += dtPlot;
       }
@@ -85,12 +85,14 @@ namespace MBSimIntegrator {
   }
 
   void EulerExplicitIntegrator::postIntegrate() {
-    integPlot.close();
+    if(plotIntegrationData) integPlot.close();
 
-    ofstream integSum((name + ".sum").c_str());
-    integSum << "Integration time: " << time << endl;
-    integSum << "Integration steps: " << integrationSteps << endl;
-    integSum.close();
+    if(writeIntegrationSummary) {
+      ofstream integSum((name + ".sum").c_str());
+      integSum << "Integration time: " << time << endl;
+      integSum << "Integration steps: " << integrationSteps << endl;
+      integSum.close();
+    }
 
     cout.unsetf(ios::scientific);
     cout << endl;
