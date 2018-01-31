@@ -284,6 +284,12 @@ namespace MBSimGUI {
       return new EulerExplicitIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"RKSuiteIntegrator")
       return new RKSuiteIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"BoostOdeintDOS_RKDOPRI5")
+      return new BoostOdeintDOS_RKDOPRI5;
+    else if(E(element)->getTagName()==MBSIMINT%"BoostOdeintDOS_BulirschStoer")
+      return new BoostOdeintDOS_BulirschStoer;
+    else if(E(element)->getTagName()==MBSIMINT%"BoostOdeintDOS_Rosenbrock4")
+      return new BoostOdeintDOS_Rosenbrock4;
     else if(E(element)->getTagName()==MBSIMANALYZER%"Eigenanalyzer")
       return new Eigenanalyzer;
     else if(E(element)->getTagName()==MBSIMANALYZER%"HarmonicResponseAnalyzer")

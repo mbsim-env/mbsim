@@ -141,6 +141,34 @@ namespace MBSimGUI {
       ExtWidget *method, *relTol, *threshold, *initialStepSize;
   };
 
+  class BoostOdeintDOSPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      BoostOdeintDOSPropertyDialog(Integrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *plotOnRoot, *gMax, *gdMax;
+  };
+
+  class BoostOdeintDOS_RKDOPRI5PropertyDialog : public BoostOdeintDOSPropertyDialog {
+
+    public:
+      BoostOdeintDOS_RKDOPRI5PropertyDialog(Integrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(integrator,parent,f) { }
+  };
+
+  class BoostOdeintDOS_BulirschStoerPropertyDialog : public BoostOdeintDOSPropertyDialog {
+
+    public:
+      BoostOdeintDOS_BulirschStoerPropertyDialog(Integrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(integrator,parent,f) { }
+  };
+
+  class BoostOdeintDOS_Rosenbrock4PropertyDialog : public BoostOdeintDOSPropertyDialog {
+
+    public:
+      BoostOdeintDOS_Rosenbrock4PropertyDialog(Integrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(integrator,parent,f) { }
+  };
+
   class EigenanalyzerPropertyDialog : public SolverPropertyDialog {
 
     public:

@@ -659,19 +659,21 @@ namespace MBSimGUI {
       for(int k=0; k<n; k++)
         A[i][k] = V(k+n,j).real()/V(ind+n,j).real();
     }
-    table->selectRow(0);
-    plot = new DataPlot(m,A,"Mode", "Eigenmode", "DOF", "-", this);
-    plot->setSymbol(QwtSymbol::Diamond,10);
-    plot->setAxisScale(QwtPlot::xBottom,1-0.1,A.size()+0.1,1);
-    plot->setAxisScale(QwtPlot::yLeft,-1.1,1.1);
-    plot->replot();
-    layout->addWidget(plot,0,1);
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
-    buttonBox->addButton(QDialogButtonBox::Ok);
-    layout->addWidget(buttonBox,1,0,1,2);
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(plot, SIGNAL(numChanged(int)), this, SLOT(selectRow(int)));
-    connect(table, SIGNAL(cellClicked(int,int)), this, SLOT(selectMode(int,int)));
+    if(f.size()) {
+      table->selectRow(0);
+      plot = new DataPlot(m,A,"Mode", "Eigenmode", "DOF", "-", this);
+      plot->setSymbol(QwtSymbol::Diamond,10);
+      plot->setAxisScale(QwtPlot::xBottom,1-0.1,A.size()+0.1,1);
+      plot->setAxisScale(QwtPlot::yLeft,-1.1,1.1);
+      plot->replot();
+      layout->addWidget(plot,0,1);
+      QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+      buttonBox->addButton(QDialogButtonBox::Ok);
+      layout->addWidget(buttonBox,1,0,1,2);
+      connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+      connect(plot, SIGNAL(numChanged(int)), this, SLOT(selectRow(int)));
+      connect(table, SIGNAL(cellClicked(int,int)), this, SLOT(selectMode(int,int)));
+    }
   }
 
   void EigenanalysisDialog::selectRow(int i) {

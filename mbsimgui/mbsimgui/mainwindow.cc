@@ -28,6 +28,7 @@
 #include "constraint.h"
 #include "observer.h"
 #include "integrator.h"
+#include "analyzer.h"
 #include "objectfactory.h"
 #include "parameter.h"
 #include "widget.h"
@@ -381,11 +382,11 @@ namespace MBSimGUI {
         actionSaveOpenMBVDataAs->setDisabled(false);
         if(saveFinalStateVector)
           actionSaveStateVectorAs->setDisabled(false);
-        if(solverView->getSolverNumber()==7) {
+        if(dynamic_cast<Eigenanalyzer*>(getProject()->getSolver())) {
           actionSaveEigenanalysisAs->setDisabled(false);
           actionEigenanalysis->setDisabled(false);
         }
-        if(solverView->getSolverNumber()==8) {
+        if(dynamic_cast<HarmonicResponseAnalyzer*>(getProject()->getSolver())) {
           actionFrequencyResponse->setDisabled(false);
         }
         actionOpenMBV->setDisabled(false);
