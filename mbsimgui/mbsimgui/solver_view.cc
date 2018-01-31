@@ -31,7 +31,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  SolverViewContextMenu::SolverViewContextMenu(QWidget *parent) : QMenu(parent) {
+  SolverViewContextMenu::SolverViewContextMenu(const std::vector<QString> &type, QWidget *parent) : QMenu(parent) {
     auto *action = new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(saveSolverAs()));
     addAction(action);
@@ -41,24 +41,8 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     QActionGroup *actionGroup = new QActionGroup(this);
-    action = new QAction("DOPRI5 integrator", this);
-    actionGroup->addAction(action);
-    action = new QAction("RADAU5 integrator", this);
-    actionGroup->addAction(action);
-    action = new QAction("LSODE integrator", this);
-    actionGroup->addAction(action);
-    action = new QAction("LSODAR integrator", this);
-    actionGroup->addAction(action);
-    action = new QAction("Time stepping integrator", this);
-    actionGroup->addAction(action);
-    action = new QAction("Euler explicit integrator", this);
-    actionGroup->addAction(action);
-    action = new QAction("RKSuite integrator", this);
-    actionGroup->addAction(action);
-    action = new QAction("Eigenanalyzer", this);
-    actionGroup->addAction(action);
-    action = new QAction("Harmonic response analyzer", this);
-    actionGroup->addAction(action);
+    for(size_t i = 0; i<type.size(); i++)
+      actionGroup->addAction(new QAction(type[i], this));
     addActions(actionGroup->actions());
     connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(selectSolver(QAction*)));
   }
@@ -77,8 +61,11 @@ namespace MBSimGUI {
     type.emplace_back("Time stepping integrator");
     type.emplace_back("Euler explicit integrator");
     type.emplace_back("RKSuite integrator");
+    type.emplace_back("Boost odeint DOS RKDOPRI5");
+    type.emplace_back("Boost odeint DOS Burlisch Stoer");
+    type.emplace_back("Boost odeint DOS Rosenbrock4");
     type.emplace_back("Eigenanalyzer");
-    type.emplace_back("HarmonicResponseAnalyzer");
+    type.emplace_back("Harmonic response analyzer");
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(openContextMenu()));
 
@@ -137,8 +124,14 @@ namespace MBSimGUI {
     else if(i==6)
       return new RKSuiteIntegrator;
     else if(i==7)
-      return new Eigenanalyzer;
+      return new BoostOdeintDOS_RKDOPRI5;
     else if(i==8)
+      return new BoostOdeintDOS_BulirschStoer;
+    else if(i==9)
+      return new BoostOdeintDOS_Rosenbrock4;
+    else if(i==10)
+      return new Eigenanalyzer;
+    else if(i==11)
       return new HarmonicResponseAnalyzer;
     return nullptr;
   }
@@ -158,10 +151,16 @@ namespace MBSimGUI {
       i=5;
     else if(dynamic_cast<RKSuiteIntegrator*>(solver))
       i=6;
-    else if(dynamic_cast<Eigenanalyzer*>(solver))
+    else if(dynamic_cast<BoostOdeintDOS_RKDOPRI5*>(solver))
       i=7;
-    else if(dynamic_cast<HarmonicResponseAnalyzer*>(solver))
+    else if(dynamic_cast<BoostOdeintDOS_BulirschStoer*>(solver))
       i=8;
+    else if(dynamic_cast<BoostOdeintDOS_Rosenbrock4*>(solver))
+      i=9;
+    else if(dynamic_cast<Eigenanalyzer*>(solver))
+      i=10;
+    else if(dynamic_cast<HarmonicResponseAnalyzer*>(solver))
+      i=11;
     updateText();
   }
 

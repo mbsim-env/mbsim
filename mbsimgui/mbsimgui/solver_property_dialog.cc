@@ -370,6 +370,57 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  BoostOdeintDOSPropertyDialog::BoostOdeintDOSPropertyDialog(Integrator *integrator, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(integrator,parent,f) {
+    addTab("Tolerances");
+    addTab("Step size");
+    addTab("Extra");
+
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6",vector<QStringList>(2),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"absoluteToleranceScalar");
+    addToTab("Tolerances", absTol);
+
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6",vector<QStringList>(2),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"relativeToleranceScalar");
+    addToTab("Tolerances", relTol);
+
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
+    addToTab("Step size", initialStepSize);
+
+    maximalStepSize = new ExtWidget("Maximal step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximalStepSize");
+    addToTab("Step size", maximalStepSize);
+
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
+    addToTab("Extra", plotOnRoot);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Extra", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Extra", gdMax);
+  }
+
+  DOMElement* BoostOdeintDOSPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximalStepSize->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* BoostOdeintDOSPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximalStepSize->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
   EigenanalyzerPropertyDialog::EigenanalyzerPropertyDialog(Eigenanalyzer *eigenanalyzer, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(eigenanalyzer,parent,f) {
     addTab("General");
     addTab("Initial conditions");
