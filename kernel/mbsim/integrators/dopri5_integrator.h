@@ -42,7 +42,7 @@ namespace MBSimIntegrator {
       std::ofstream integPlot;
       double s0; 
       double time{0};
-   
+
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
       /** Relative Toleranz */
@@ -56,7 +56,6 @@ namespace MBSimIntegrator {
 
     public:
 
-      DOPRI5Integrator();
       ~DOPRI5Integrator() override = default;
 
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
