@@ -50,7 +50,7 @@ namespace MBSimIntegrator {
       /** step size for the first step */
       double dt0{0};
       /** maximum number of steps */
-      int maxSteps{2000000000};  
+      int maxSteps{2000000000};
       /** maximale step size */
       double dtMax{0};
 
