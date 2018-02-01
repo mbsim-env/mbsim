@@ -44,9 +44,6 @@ namespace MBSimIntegrator {
 
   bool odePackInUse = false;
 
-  LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), maxSteps(10000), stiff(false) {
-  }
-
   void LSODEIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
     auto self=*reinterpret_cast<LSODEIntegrator**>(&neq[1]);
     Vec zd(neq[0], zd_);

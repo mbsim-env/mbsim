@@ -39,24 +39,21 @@ namespace MBSimIntegrator {
       static void fzdot(int* neq, double* t, double* z_, double* zd_);
 
       /** maximal step size */
-      double dtMax;
+      double dtMax{0};
       /** minimal step size */
-      double dtMin;
+      double dtMin{0};
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
       /** Relative Toleranz */
-      double rTol;
+      double rTol{1e-6};
       /** step size for the first step */
-      double dt0;
+      double dt0{0};
       /**  maximum number of steps allowed during one call to the solver. (default 10000) */
-      int maxSteps;
+      int maxSteps{10000};
       /** use stiff (BDF) method */
-      bool stiff;
+      bool stiff{false};
 
     public:
-
-      LSODEIntegrator();
-      ~LSODEIntegrator() {}
 
       void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
       void setMinimalStepSize(double dtMin_) {dtMin = dtMin_;}

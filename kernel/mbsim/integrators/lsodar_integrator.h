@@ -39,22 +39,22 @@ namespace MBSimIntegrator {
       static void fsv(int* neq, double* t, double* z_, int* nsv, double* sv_);
 
       /** maximal step size */
-      double dtMax;
+      double dtMax{0};
       /** minimal step size */
-      double dtMin;
+      double dtMin{0};
       /** absolute tolerance */
       fmatvec::Vec aTol;
       /** relative tolerance */
-      double rTol;
+      double rTol{1e-6};
       /** step size for the first step */
-      double dt0;
+      double dt0{0};
 
-      bool plotOnRoot;
+      bool plotOnRoot{true};
 
       /** tolerance for position constraints */
-      double gMax;
+      double gMax{1e-5};
       /** tolerance for velocity constraints */
-      double gdMax;
+      double gdMax{1e-5};
 
       int neq[1+sizeof(void*)/sizeof(int)+1]; // store zSize at neq[0]; store this at neq[1..]
       int iTol, istate, nsv, lrWork, liWork, integrationSteps;
@@ -63,9 +63,6 @@ namespace MBSimIntegrator {
       fmatvec::VecInt iWork;
       std::ofstream integPlot;
     public:
-
-      LSODARIntegrator();
-      ~LSODARIntegrator() {}
 
       void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
       void setMinimalStepSize(double dtMin_) {dtMin = dtMin_;}
