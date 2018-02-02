@@ -63,13 +63,13 @@ namespace MBSimIntegrator {
       void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol = rTol_; }
       void setRelativeTolerance(double rTol_) { rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
-      void setMaxStepNumber(int maxSteps_) { maxSteps = maxSteps_; }
-      void setMaximalStepSize(double dtMax_) { dtMax = dtMax_; }
+      void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
+      void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       const fmatvec::Vec& getAbsoluteTolerance() const { return aTol; }
       const fmatvec::Vec& getRelativeTolerance() const { return rTol; }
       double getInitialStepSize() const { return dt0; }
-      int getMaxStepNumber() const { return maxSteps; }
-      double getMaximalStepSize() const { return dtMax; }
+      int getStepLimit() const { return maxSteps; }
+      double getMaximumStepSize() const { return dtMax; }
 
       using Integrator::integrate;
       void integrate() override;

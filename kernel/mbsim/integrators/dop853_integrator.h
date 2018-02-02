@@ -48,23 +48,33 @@ namespace MBSimIntegrator {
       /** Relative Toleranz */
       fmatvec::Vec rTol;
       /** step size for the first step */
-      double dt0{0};
+      double dt0{1e-3};
+      /** maximum number of steps */
+      int maxSteps{2000000000};
+      /** maximale step size */
+      double dtMax{0};
 
     public:
 
-      DOP853Integrator();
       ~DOP853Integrator() override = default;
 
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
-      void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol = rTol_;}
-      void setRelativeTolerance(double rTol_) {rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
-      void setInitialStepSize(double dt0_) {dt0 = dt0_;}
-
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
+      void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol = rTol_; }
+      void setRelativeTolerance(double rTol_) { rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_); }
+      void setInitialStepSize(double dt0_) { dt0 = dt0_; }
+      void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
+      void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
+      const fmatvec::Vec& getAbsoluteTolerance() const { return aTol; }
+      const fmatvec::Vec& getRelativeTolerance() const { return rTol; }
+      double getInitialStepSize() const { return dt0; }
+      int getStepLimit() const { return maxSteps; }
+      double getMaximumStepSize() const { return dtMax; }
 
       using Integrator::integrate;
       void integrate() override;
 
+      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }

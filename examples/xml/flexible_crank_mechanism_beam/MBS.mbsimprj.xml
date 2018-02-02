@@ -767,9 +767,9 @@
     <absoluteToleranceScalar>1e-10</absoluteToleranceScalar>
     <relativeToleranceScalar unit="-">1e-10</relativeToleranceScalar>
     <initialStepSize unit="s">0</initialStepSize>
-    <maximalStepSize unit="s">0</maximalStepSize>
-    <minimalStepSize unit="s">0</minimalStepSize>
-    <numberOfMaximalSteps>0</numberOfMaximalSteps>
+    <maximumStepSize unit="s">0</maximumStepSize>
+    <minimumStepSize unit="s">0</minimumStepSize>
+    <stepLimit>0</stepLimit>
   </LSODEIntegrator>
 
 </MBSimProject>

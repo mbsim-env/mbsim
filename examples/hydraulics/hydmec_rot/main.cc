@@ -59,7 +59,7 @@ int main (int argc, char* argv[]) {
       integrator.setEndTime(tEnd);
       integrator.setPlotStepSize(dtPlot);
       integrator.setOutput(true);
-      integrator.setMaximalStepSize(dtPlot);
+      integrator.setMaximumStepSize(dtPlot);
       start=clock();
       integrator.integrate(*dss);
       end=clock();

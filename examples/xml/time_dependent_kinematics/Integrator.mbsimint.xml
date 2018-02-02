@@ -6,7 +6,7 @@
   <absoluteTolerance>1e-6</absoluteTolerance>
   <relativeToleranceScalar>1e-6</relativeToleranceScalar>
   <initialStepSize>1e-13</initialStepSize>
-  <maximalStepSize>0</maximalStepSize>
-  <minimalStepSize>0</minimalStepSize>
-  <numberOfMaximalSteps>0</numberOfMaximalSteps>
+  <maximumStepSize>0</maximumStepSize>
+  <minimumStepSize>0</minimumStepSize>
+  <stepLimit>0</stepLimit>
 </LSODEIntegrator>

@@ -43,11 +43,6 @@ namespace MBSimIntegrator {
   class HETS2Integrator : public Integrator { 
     public:
       /**
-       * \brief constructor
-       */
-      HETS2Integrator();
-
-      /**
        * \brief destructor
        */
       ~HETS2Integrator() override = default;
@@ -122,4 +117,3 @@ namespace MBSimIntegrator {
 }
 
 #endif /* _HETS2_INTEGRATOR_H_ */
-

@@ -32,11 +32,6 @@ namespace MBSimIntegrator {
   class TimeSteppingIntegrator : public Integrator { 
     public:
       /**
-       * \brief constructor
-       */
-      TimeSteppingIntegrator();
-      
-      /**
        * \brief destructor
        */
       ~TimeSteppingIntegrator() override = default;

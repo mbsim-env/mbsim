@@ -135,7 +135,7 @@ int main (int argc, char* argv[]) {
             in.setStartTime(0);
             in.setEndTime(tEnd);
             in.setPlotStepSize(dtPlot);
-            in.setMaximalStepSize(dtPlot/2.);
+            in.setMaximumStepSize(dtPlot/2.);
             in.setOutput(true);
             startTime=clock();
             in.integrate(*dss);
@@ -146,7 +146,7 @@ int main (int argc, char* argv[]) {
             in.setStartTime(0);
             in.setEndTime(tEnd);
             in.setPlotStepSize(dtPlot);
-            in.setMaximalStepSize(dtPlot/4.);
+            in.setMaximumStepSize(dtPlot/4.);
             in.setOutput(true);
             startTime=clock();
             in.integrate(*dss);
@@ -157,7 +157,7 @@ int main (int argc, char* argv[]) {
             in.setStartTime(0);
             in.setEndTime(tEnd);
             in.setPlotStepSize(dtPlot);
-            in.setMaximalStepSize(dtPlot/4.);
+            in.setMaximumStepSize(dtPlot/4.);
             in.setOutput(true);
             startTime=clock();
             in.integrate(*dss);

@@ -117,7 +117,7 @@ namespace MBSimIntegrator {
       work(5)=dtMax;
     work(6)=dt0;
 
-    //Maximum Step Numbers
+    //Maximum number of steps
     iWork(0)=maxSteps; 
     // if(warnLevel)
     //   iWork(2) = warnLevel;
@@ -173,10 +173,10 @@ namespace MBSimIntegrator {
     if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if(e) setMaximalStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalNumberOfSteps");
-    if(e) setMaxStepNumber(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    if(e) setMaximumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    if(e) setStepLimit(E(e)->getText<int>());
   }
 
 }

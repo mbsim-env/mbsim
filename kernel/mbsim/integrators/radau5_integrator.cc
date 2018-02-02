@@ -40,9 +40,6 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RADAU5Integrator)
 
-  RADAU5Integrator::RADAU5Integrator()  {
-  }
-
   void RADAU5Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
     Vec zd(*zSize, zd_);
@@ -194,10 +191,10 @@ namespace MBSimIntegrator {
     if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if(e) setMaximalStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalNumberOfSteps");
-    if(e) setMaxStepNumber(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    if(e) setMaximumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    if(e) setStepLimit(E(e)->getText<int>());
   }
 
 }

@@ -42,8 +42,6 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, TimeSteppingIntegrator)
 
-  TimeSteppingIntegrator::TimeSteppingIntegrator()  {}
-
   void TimeSteppingIntegrator::preIntegrate() {
     debugInit();
     // initialisation

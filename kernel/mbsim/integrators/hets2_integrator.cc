@@ -40,8 +40,7 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  HETS2Integrator::HETS2Integrator() : integPlot() {
-  }
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, HETS2Integrator)
 
   void HETS2Integrator::preIntegrate() {
     debugInit();
@@ -249,7 +248,7 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
-    setStepSize(E(e)->getText<double>());
+    if(e) setStepSize(E(e)->getText<double>());
   }
 
   bool HETS2Integrator::evaluateStage() {

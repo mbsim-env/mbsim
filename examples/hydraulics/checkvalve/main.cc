@@ -137,7 +137,7 @@ int main (int argc, char* argv[]) {
             in.setStartTime(0);
             in.setEndTime(tEnd);
             in.setPlotStepSize(dtPlot);
-            in.setMaximalStepSize(dtPlot);
+            in.setMaximumStepSize(dtPlot);
             in.setOutput(true);
 //            in.setAbsoluteTolerance(1e-4);
 //            in.setRelativeTolerance(1e-4);
@@ -150,7 +150,7 @@ int main (int argc, char* argv[]) {
             in.setStartTime(0);
             in.setEndTime(tEnd);
             in.setPlotStepSize(dtPlot);
-            in.setMaximalStepSize(dtPlot);
+            in.setMaximumStepSize(dtPlot);
             in.setOutput(true);
             startTime=clock();
             in.integrate(*dss);
@@ -161,7 +161,7 @@ int main (int argc, char* argv[]) {
             in.setStartTime(0);
             in.setEndTime(tEnd);
             in.setPlotStepSize(dtPlot);
-            in.setMaximalStepSize(dtPlot);
+            in.setMaximumStepSize(dtPlot);
             in.setOutput(true);
             startTime=clock();
             in.integrate(*dss);

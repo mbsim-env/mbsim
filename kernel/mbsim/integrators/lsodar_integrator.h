@@ -64,17 +64,17 @@ namespace MBSimIntegrator {
       std::ofstream integPlot;
     public:
 
-      void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
-      void setMinimalStepSize(double dtMin_) {dtMin = dtMin_;}
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
-      void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setRelativeTolerance(double rTol_) {rTol = rTol_;}
-      void setInitialStepSize(double dt0_) {dt0 = dt0_;}
+      void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
+      void setMinimumStepSize(double dtMin_) { dtMin = dtMin_; }
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
+      void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
+      void setRelativeTolerance(double rTol_) { rTol = rTol_; }
+      void setInitialStepSize(double dt0_) { dt0 = dt0_; }
 
-      void setPlotOnRoot(bool b) {plotOnRoot = b;}
+      void setPlotOnRoot(bool b) { plotOnRoot = b; }
 
-      void setToleranceForPositionConstraints(double gMax_) {gMax = gMax_;}
-      void setToleranceForVelocityConstraints(double gdMax_) {gdMax = gdMax_;}
+      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
+      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
       void integrate();

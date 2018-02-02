@@ -179,8 +179,8 @@ ret = [eta;xi]</SymbolicFunction>
     <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
     <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
     <initialStepSize unit="s">1e-8</initialStepSize>
-    <minimalStepSize unit="s">0</minimalStepSize>
-    <maximalStepSize unit="s">0</maximalStepSize>
+    <minimumStepSize unit="s">0</minimumStepSize>
+    <maximumStepSize unit="s">0</maximumStepSize>
     <plotOnRoot>0</plotOnRoot>
   </LSODARIntegrator>
 

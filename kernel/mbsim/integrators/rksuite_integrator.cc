@@ -37,9 +37,6 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RKSuiteIntegrator)
 
-  RKSuiteIntegrator::RKSuiteIntegrator() : method(RK45), thres(1,INIT,1e-10), rTol(1e-6), dt0(0), ndworkarray(100000), messages(0), integrationSteps(0), t(0), tPlot(0), s0(0), time(0), z(0), zdGot(0), zMax(0) {
-  }
-
   void RKSuiteIntegrator::preIntegrate() {
     debugInit();
 
@@ -56,6 +53,9 @@ namespace MBSimIntegrator {
     }
     else
       z = system->evalz0();
+
+    if(thres.size() == 0)
+      thres.resize(1,INIT,1e-10);
 
     if(thres.size() == 1) {
       double buf = thres(0);
@@ -154,15 +154,17 @@ namespace MBSimIntegrator {
   void RKSuiteIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
-    e = E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
     if(e) {
       string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(methodStr=="RK23") method=RK23;
-      if(methodStr=="RK45") method=RK45;
-      if(methodStr=="RK78") method=RK78;
+      else if(methodStr=="RK45") method=RK45;
+      else if(methodStr=="RK78") method=RK78;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-    if(e) setrTol(E(e)->getText<double>());
+    if(e) setRelativeTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"threshold");
+    if(e) setThreshold(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"thresholdScalar");
     if(e) setThreshold(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepsize");
