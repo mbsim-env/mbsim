@@ -478,43 +478,6 @@
     <xs:complexContent>
       <xs:extension base="IntegratorType">
         <xs:sequence>
-          <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Anfangsschrittweite (default: 1e-6)
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="maximumStepSize" type="pv:timeScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                maximale Zeitschrittweite (default: 1e-4)
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="minimumStepSize" type="pv:timeScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                minimale Zeitschrittweite (default: sqrt(eps))
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="outputInterpolation" type="pv:booleanFullEval" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                flag zur Steuerung, ob für die Plotausgabe die vom Integrator angefahrenen Zeitpunkte verwendet werden oder ob auf die vorgegebenen Plotzeitpunkte interpoliert werden soll (default: false)
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="gapControl" type="pv:stringFullEval" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Definiert die gap control Strategie.
-              <ul>
-                <li>noGapControl: GapContol wird vollständig deaktiviert</li>
-                <li>biggestRoot: Größte Nullstelle/Ereignis wird verwendet (maximaler Integrationsforschritt)</li>
-                <li>scoring: Scoring Verfahren zur Auswahl der Nullstelle (Gewichtetes Mittel aus Eindringgeschwindigkeit und -zeit</li>
-                <li>smallestRoot: Kleinste Nullstelle/Ereignis wird verwendet (am genauesten aber geringster Integrationsforschritt)</li>
-                <li>gapTolerance: Zeitschrittweite werden so gewählt, dass Eindringtiefe gapTol nicht überschreitet</li>
-              </ul>
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="maximumOrder" type="pv:integerFullEval" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Auswahl der maximalen Integrationsordnung: default: 1; 1,2,3 bei Fehlerschätzung mittels Extrapolation; 1 bis 4 bei embedded Verfahren.
-            </xs:documentation></xs:annotation>
-          </xs:element>
           <xs:element name="method" type="pv:stringFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Auswahl der Integrationsmethode.
@@ -525,14 +488,9 @@
               </ul>
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="errorTest" type="pv:stringFullEval" minOccurs="0">
+          <xs:element name="stepSizeControl" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wie werden Geschwindigkeiten bei der Fehlertestung behandelt.
-              <ul>
-                <li>all: Geschwindigkeiten und Lagen werden gleich behandelt</li>
-                <li>scale: Geschwindigkeiten werden mit Zeitschrittweite skaliert</li>
-                <li>exclude: Fehlertest wird nur mit Lagen durchgeführt</li>
-              </ul>
+                Schrittweitenkontrolle verwenden (default true)
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:choice>
@@ -559,14 +517,56 @@
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:element name="stepSizeControl" type="pv:booleanFullEval" minOccurs="0">
+          <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Schrittweitenkontrolle verwenden (default true)
+                Anfangsschrittweite (default: 1e-6)
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximumStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                maximale Zeitschrittweite (default: 1e-4)
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="minimumStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                minimale Zeitschrittweite (default: sqrt(eps))
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximumOrder" type="pv:integerFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl der maximalen Integrationsordnung: default: 1; 1,2,3 bei Fehlerschätzung mittels Extrapolation; 1 bis 4 bei embedded Verfahren.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="outputInterpolation" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Flag zur Steuerung, ob für die Plotausgabe die vom Integrator angefahrenen Zeitpunkte verwendet werden oder ob auf die vorgegebenen Plotzeitpunkte interpoliert werden soll (default: false)
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="gapControl" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert die gap control Strategie.
+              <ul>
+                <li>noGapControl: GapContol wird vollständig deaktiviert</li>
+                <li>biggestRoot: Größte Nullstelle/Ereignis wird verwendet (maximaler Integrationsforschritt)</li>
+                <li>scoring: Scoring Verfahren zur Auswahl der Nullstelle (Gewichtetes Mittel aus Eindringgeschwindigkeit und -zeit</li>
+                <li>smallestRoot: Kleinste Nullstelle/Ereignis wird verwendet (am genauesten aber geringster Integrationsforschritt)</li>
+                <li>gapTolerance: Zeitschrittweite werden so gewählt, dass Eindringtiefe gapTol nicht überschreitet</li>
+              </ul>
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="gapTolerance" type="pv:nounitScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Toleranz für Eindringtiefe; nur in Verbindung mit richtiger GapControl Methode
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="errorTest" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wie werden Geschwindigkeiten bei der Fehlertestung behandelt.
+              <ul>
+                <li>all: Geschwindigkeiten und Lagen werden gleich behandelt</li>
+                <li>scale: Geschwindigkeiten werden mit Zeitschrittweite skaliert</li>
+                <li>exclude: Fehlertest wird nur mit Lagen durchgeführt</li>
+              </ul>
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="maximumGain" type="pv:nounitScalar" minOccurs="0">

@@ -143,7 +143,7 @@ namespace MBSimIntegrator {
       bool FlagOutputOnlyAtTPlot{false};
       /** every successful integration step is ploted (set dtPlot=0 to activate FlagPlotEveryStep) (default false)*/
       bool FlagPlotEveryStep{false};
-      /** Flag interpolate z and la for plotting (default true)*/
+      /** Flag interpolate z and la for plotting (default false)*/
       bool outputInterpolation{false};
       /** Safety factor for GapControl (dtNew = dt_gapcontrol*safetyFactor; default min(1+RTol,1.001) */
       double safetyFactorGapControl{-1};

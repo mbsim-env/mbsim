@@ -10,12 +10,8 @@
   <startTime>0</startTime>
   <endTime>120</endTime>
   <plotStepSize>1e-2</plotStepSize>
-  <initialStepSize>2e-3</initialStepSize>
-  <maximumStepSize>1e-2</maximumStepSize>
-  <minimumStepSize>2e-3</minimumStepSize>
-  <maximumOrder>2</maximumOrder>
   <method>'extrapolation'</method>
-  <absoluteTolerance>1e-6</absoluteTolerance>
-  <relativeTolerance>1e-6</relativeTolerance>
   <stepSizeControl>false</stepSizeControl>
+  <initialStepSize>2e-3</initialStepSize>
+  <maximumOrder>2</maximumOrder>
 </TimeSteppingSSCIntegrator>

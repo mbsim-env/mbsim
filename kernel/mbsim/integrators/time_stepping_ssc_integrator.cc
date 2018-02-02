@@ -1451,6 +1451,29 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
 
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    if (e) {
+      string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if (methodStr=="extrapolation") setMethod(extrapolation);
+      else if (methodStr=="embedded") setMethod(embedded);
+      else if (methodStr=="embeddedHigherOrder") setMethod(embeddedHigherOrder);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSizeControl");
+    if (e) setStepSizeControl(E(e)->getText<bool>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
+    if (e) setAbsoluteTolerance(E(e)->getText<Vec>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+    if (e) setAbsoluteTolerance(E(e)->getText<double>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    if (e) setRelativeTolerance(E(e)->getText<Vec>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+    if (e) setRelativeTolerance(E(e)->getText<double>());
+
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if (e) setInitialStepSize(E(e)->getText<double>());
 
@@ -1459,6 +1482,9 @@ namespace MBSimIntegrator {
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimumStepSize");
     if (e) setMinimumStepSize(E(e)->getText<double>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumOrder");
+    if (e) setMaximumOrder(E(e)->getText<int>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"outputInterpolation");
     if (e) setOutputInterpolation(E(e)->getText<bool>());
@@ -1473,15 +1499,8 @@ namespace MBSimIntegrator {
       else if (gapControlStr=="smallestRoot") setGapControl(smallestRoot);
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumOrder");
-    if (e) setMaximumOrder(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
-    if (e) {
-      string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
-      if (methodStr=="extrapolation") setMethod(extrapolation);
-      else if (methodStr=="embedded") setMethod(embedded);
-      else if (methodStr=="embeddedHigherOrder") setMethod(embeddedHigherOrder);
-    }
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"gapTolerance");
+    if (e) setgapTolerance(E(e)->getText<double>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"errorTest");
     if (e) {
@@ -1491,20 +1510,9 @@ namespace MBSimIntegrator {
       else if (errorTestStr=="exclude") setErrorTest(exclude);
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
-    if (e) setAbsoluteTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
-    if (e) setAbsoluteTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
-    if (e) setRelativeTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-    if (e) setRelativeTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSizeControl");
-    if (e) setStepSizeControl(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"gapTolerance");
-    if (e) setgapTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumGain");
     if (e) setMaximumGain(E(e)->getText<double>());
+
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"safetyFactor");
     if (e) setSafetyFactor(E(e)->getText<double>());
   }
