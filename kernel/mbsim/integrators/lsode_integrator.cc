@@ -116,11 +116,7 @@ namespace MBSimIntegrator {
       integPlot << "#1 calculation time [s]:" << endl;
     }
 
-    int MF;
-    if(stiff) 
-      MF = 22; // Stiff (BDF) method, internally generated full Jacobian.
-    else
-      MF = 10; // Nonstiff (Adams) method, no Jacobian used.
+    int MF = method;
 
     VecInt jsv(nsv);  
 //    bool donedrift;
@@ -165,6 +161,12 @@ namespace MBSimIntegrator {
   void LSODEIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    if(e) {
+      string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(methodStr=="nonstiff" or methodStr=="Adams") method=nonstiff;
+      else if(methodStr=="stiff" or methodStr=="BDF") method=stiff;
+    }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
@@ -179,8 +181,6 @@ namespace MBSimIntegrator {
     if(e) setMinimumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stiffModus");
-    if(e) setStiff(E(e)->getText<bool>());
   }
 
 }

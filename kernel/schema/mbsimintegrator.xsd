@@ -281,6 +281,17 @@
     <xs:complexContent>
       <xs:extension base="IntegratorType">
         <xs:sequence>
+          <xs:element name="method" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl der Integrationsmethode.
+              <ul>
+                <li>nonstiff: Nichtsteifes Verfahren (Adams Verfahren)</li>
+                <li>Adams: siehe nonstiff</li>
+                <li>stiff: Steifes Verfahren (bachward differentiation formula)</li>
+                <li>BDF: siehe stiff</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:choice>
             <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -316,11 +327,6 @@
           <xs:element name="stepLimit" type="pv:integerFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximale Anzahl von Integrationsschritten.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="stiffModus" type="pv:booleanFullEval" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert, ob steifes oder nicht-steifes Problem vorliegt.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
@@ -660,7 +666,16 @@
     <xs:complexContent>
       <xs:extension base="IntegratorType">
         <xs:sequence>
-          <xs:element name="method" type="pv:stringFullEval" minOccurs="0"/>
+          <xs:element name="method" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl der Integrationsmethode.
+              <ul>
+                <li>RK23: explizites Runge-Kutta-Verfahren der Ordnung 3</li>
+                <li>RK45: explizites Runge-Kutta-Verfahren der Ordnung 5</li>
+                <li>RK78: explizites Runge-Kutta-Verfahren der Ordnung 8</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.

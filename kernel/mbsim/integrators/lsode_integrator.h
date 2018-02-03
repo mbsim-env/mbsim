@@ -29,10 +29,21 @@ namespace MBSimIntegrator {
 
   extern bool odePackInUse;
 
-  /** \brief ODE-Integrator LSODE
-    Integrator with root finding for ODEs.
-    This integrator uses LSODE from http://www.netlib.org . */
+  /** \brief Hindmarsh’s ODE solver LSODE
+   *
+   * Livermore Solver for Ordinary Differential Equations.
+   * LSODE solves the initial-value problem for stiff or
+   * nonstiff systems of first-order ODE's.
+   * It uses LSODE from http://www.netlib.org.
+   */
   class LSODEIntegrator : public Integrator {
+
+    public:
+
+      enum Method {
+        nonstiff=10,
+        stiff=22
+      };
 
     private:
 
@@ -50,8 +61,8 @@ namespace MBSimIntegrator {
       double dt0{0};
       /**  maximum number of steps allowed during one call to the solver. (default 10000) */
       int maxSteps{10000};
-      /** use stiff (BDF) method */
-      bool stiff{false};
+      /** use stiff (BDF) or nonstiff (Adams) method */
+      Method method{nonstiff};
 
     public:
 
@@ -62,7 +73,7 @@ namespace MBSimIntegrator {
       void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
-      void setStiff(bool flag) { stiff = flag; }
+      void setMethod(Method method_) { method = method_; }
 
       using Integrator::integrate;
       void integrate();

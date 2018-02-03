@@ -270,6 +270,14 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Extra");
 
+    vector<QString> list;
+    list.emplace_back("\"nonstiff\"");
+    list.emplace_back("\"Adams\"");
+    list.emplace_back("\"stiff\"");
+    list.emplace_back("\"BDF\"");
+    method = new ExtWidget("Method",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"method");
+    addToTab("General", method);
+
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
@@ -287,32 +295,29 @@ namespace MBSimGUI {
 
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
-
-    stiff = new ExtWidget("Stiff modus",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stiffModus");
-    addToTab("Extra", stiff);
   }
 
   DOMElement* LSODEIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    method->initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     minimumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
-    stiff->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* LSODEIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    method->writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     minimumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
-    stiff->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
