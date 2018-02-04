@@ -39,22 +39,22 @@ namespace MBSimIntegrator {
       static void fsv(int* neq, double* t, double* z_, int* nsv, double* sv_);
 
       /** maximal step size */
-      double dtMax;
+      double dtMax{0};
       /** minimal step size */
-      double dtMin;
+      double dtMin{0};
       /** absolute tolerance */
       fmatvec::Vec aTol;
       /** relative tolerance */
-      double rTol;
+      double rTol{1e-6};
       /** step size for the first step */
-      double dt0;
+      double dt0{0};
 
-      bool plotOnRoot;
+      bool plotOnRoot{true};
 
       /** tolerance for position constraints */
-      double gMax;
+      double gMax{1e-5};
       /** tolerance for velocity constraints */
-      double gdMax;
+      double gdMax{1e-5};
 
       int neq[1+sizeof(void*)/sizeof(int)+1]; // store zSize at neq[0]; store this at neq[1..]
       int iTol, istate, nsv, lrWork, liWork, integrationSteps;
@@ -64,20 +64,17 @@ namespace MBSimIntegrator {
       std::ofstream integPlot;
     public:
 
-      LSODARIntegrator();
-      ~LSODARIntegrator() {}
+      void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
+      void setMinimumStepSize(double dtMin_) { dtMin = dtMin_; }
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
+      void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
+      void setRelativeTolerance(double rTol_) { rTol = rTol_; }
+      void setInitialStepSize(double dt0_) { dt0 = dt0_; }
 
-      void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
-      void setMinimalStepSize(double dtMin_) {dtMin = dtMin_;}
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
-      void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setRelativeTolerance(double rTol_) {rTol = rTol_;}
-      void setInitialStepSize(double dt0_) {dt0 = dt0_;}
+      void setPlotOnRoot(bool b) { plotOnRoot = b; }
 
-      void setPlotOnRoot(bool b) {plotOnRoot = b;}
-
-      void setToleranceForPositionConstraints(double gMax_) {gMax = gMax_;}
-      void setToleranceForVelocityConstraints(double gdMax_) {gdMax = gdMax_;}
+      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
+      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
       void integrate();

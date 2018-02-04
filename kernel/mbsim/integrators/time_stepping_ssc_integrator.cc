@@ -43,61 +43,10 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, TimeSteppingSSCIntegrator)
 
-  TimeSteppingSSCIntegrator::TimeSteppingSSCIntegrator() : sysT1(NULL), sysT2(NULL), sysT3(NULL), dt(1e-6), dtOld(1e-6), dte(1e-6), dtMin(0), dtMax(1e-3), dt_SSC_vorGapControl(0), driftCompensation(false), t(0), tPlot(0), qSize(0), xSize(0), uSize(0),zSize(0), StepsWithUnchangedConstraints(-1), FlagErrorTest(2), FlagErrorTestAlwaysValid(true), aTol(1,INIT,1e-6), rTol(1,INIT,1e-4),FlagSSC(1), maxOrder(1), method(0), FlagGapControl(false), gapTol(1e-6), maxGainSSC(2.2), safetyFactorSSC(0.7), FlagCoutInfo(true), FlagOutputOnlyAtTPlot(false), FlagPlotEveryStep(false), outputInterpolation(false), safetyFactorGapControl(-1), GapControlStrategy(1), numThreads(0), time(0.0), iter(0), iterA(0), iterB1(0), iterB2(0), iterC1(0), iterC2(0), iterC3(0), iterC4(0), iterB2RE(0), maxIterUsed(0), maxIter(0), sumIter(0), integrationSteps(0), integrationStepswithChange(0), refusedSteps(0), refusedStepsWithImpact(0), wrongAlertGapControl(0), stepsOkAfterGapControl(0), stepsRefusedAfterGapControl(0), statusGapControl(0), singleStepsT1(0), singleStepsT2(0), singleStepsT3(0), dtRelGapControl(1), qUncertaintyByExtrapolation(0), indexLSException(-1), Penetration(0), PenetrationCounter(0), PenetrationLog(0), PenetrationMin(0), PenetrationMax(0), maxdtUsed(0), mindtUsed(0), ChangeByGapControl(false), calcBlock2(0), IterConvergence(0), ConstraintsChanged(0), ConstraintsChangedBlock1(0), ConstraintsChangedBlock2(0), integrationStepsOrder1(0), integrationStepsOrder2(0), order(1), StepTrials(0), AnzahlAktiverKontakte(0), gNDurchschnittprostep(0) {
-
-    // Flags for Output 
-    FlagCoutInfo           = true; 
-    outputInterpolation    = false; 
-
-
-    // SSC and GapControl
-    FlagSSC = true;
-    FlagErrorTest = 2;
-    FlagErrorTestAlwaysValid = true;
-    maxOrder = 1;
-    method = 0;
-    maxGainSSC = 2.2;
-    safetyFactorSSC = 0.7;
-    aTol(0) = 1e-6;
-    rTol(0) = 1e-4;
-
-    FlagGapControl = false;
-    GapControlStrategy = 1;
-    gapTol  = 1e-6;
-    safetyFactorGapControl = -1;
-    // integration
-    numThreads = 1;
-    driftCompensation = false;
-    dtMin = 0;
-    dtMax = 1e-3;
-
-    // end options =================
-
-    order = maxOrder;
-  }
-
   TimeSteppingSSCIntegrator::~TimeSteppingSSCIntegrator() {
     SetValuedLinkListT1.clear();
     SetValuedLinkListT2.clear();
     SetValuedLinkListT3.clear();
-  }
-
-  void TimeSteppingSSCIntegrator::setFlagErrorTest(int Flag, bool alwaysValid) {
-    FlagErrorTest = Flag;
-    FlagErrorTestAlwaysValid = alwaysValid;
-    assert(FlagErrorTest>=0);		// =0	control errors locally on all variables
-    assert(FlagErrorTest<4);		// =2   u is scaled with stepsize
-    assert(FlagErrorTest!=1);           // =3   exclude u from error test
-  }
-
-  void TimeSteppingSSCIntegrator::setMaxOrder(int order_, int method_) {
-    maxOrder = order_;
-    method   = method_;
-    assert(method>=0);
-    assert(method<3);
-    assert(maxOrder>0);
-    assert(maxOrder<5);
-    order = maxOrder;
   }
 
   void TimeSteppingSSCIntegrator::integrate() {
@@ -118,6 +67,19 @@ namespace MBSimIntegrator {
   void TimeSteppingSSCIntegrator::preIntegrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_) {
     debugInit();
 
+    assert(method>=0);
+    assert(method<3);
+    assert(maxOrder>0);
+    assert(maxOrder<5);
+
+    assert(FlagErrorTest>=0);		// =0	control errors locally on all variables
+    assert(FlagErrorTest<4);		// =2   u is scaled with stepsize
+    assert(FlagErrorTest!=1);           // =3   exclude u from error test
+
+    order = maxOrder;
+
+    // FlagGapControl = GapControlStrategy >= 0; temporary deactivated
+
     sysT1 = &systemT1_;
     sysT2 = &systemT2_;
     sysT3 = &systemT3_;
@@ -126,11 +88,11 @@ namespace MBSimIntegrator {
 
     if (dtMin<=0) {
       dtMin = epsroot;
-      if (!(method==0 && maxOrder==1 && !FlagSSC)) dtMin =2.0*epsroot;
+      if (!(method==extrapolation && maxOrder==1 && !FlagSSC)) dtMin =2.0*epsroot;
       if (maxOrder>=2) dtMin = 4.0*epsroot;
       if (maxOrder>=3) dtMin = 6.0*epsroot;
-      if (method==0 && maxOrder==3 && !FlagSSC) dtMin = 3.0*epsroot;
-      if (method==0 && maxOrder==2 && !FlagSSC) dtMin = 2.0*epsroot;
+      if (method==extrapolation && maxOrder==3 && !FlagSSC) dtMin = 3.0*epsroot;
+      if (method==extrapolation && maxOrder==2 && !FlagSSC) dtMin = 2.0*epsroot;
     }
 
     if ( safetyFactorGapControl <0) {
@@ -138,7 +100,7 @@ namespace MBSimIntegrator {
       if (safetyFactorGapControl>1.001) safetyFactorGapControl=1.001;
     }
     if (FlagSSC && method) safetyFactorSSC = pow(0.3,1.0/(maxOrder+1));
-    if (!FlagSSC) method=0;
+    if (!FlagSSC) method=extrapolation;
     if ((!method) && (maxOrder>=3) && (FlagSSC)) maxOrder=3;
     if (!method && maxOrder<1) maxOrder=1;
 
@@ -176,6 +138,11 @@ namespace MBSimIntegrator {
     singleStepsT3 = 0;
     maxdtUsed = dtMin;
     mindtUsed = dtMax;
+
+    if(aTol.size() == 0)
+      aTol.resize(1,INIT,1e-6);
+    if(rTol.size() == 0)
+      rTol.resize(1,INIT,1e-4);
 
     if (aTol.size() < zSize) {
       double aTol0=aTol(0);
@@ -296,7 +263,7 @@ namespace MBSimIntegrator {
     if (numThreads ==0) {
       numThreads=2;
       if (calcJobD) numThreads++;
-      if (method==0 && !FlagSSC && maxOrder==1) numThreads=1;
+      if (method==extrapolation && !FlagSSC && maxOrder==1) numThreads=1;
     }
 
     sysT1->getLinkStatus(LStmp_T1);
@@ -561,8 +528,8 @@ namespace MBSimIntegrator {
           ConstraintsChangedD = false;
           ConstraintsChangedBlock2 = false;        
 
-          if (FlagSSC && method==0 && maxOrder==3) zStern << 0.5*z2b - 4.0*z4b + 4.5*z6b;
-          if (FlagSSC && method==0 && maxOrder==2) zStern << 2.0*z4b - z2b;
+          if (FlagSSC && method==extrapolation && maxOrder==3) zStern << 0.5*z2b - 4.0*z4b + 4.5*z6b;
+          if (FlagSSC && method==extrapolation && maxOrder==2) zStern << 2.0*z4b - z2b;
         }
         // Block 2
 #pragma omp parallel num_threads(numThreads)
@@ -1017,7 +984,7 @@ namespace MBSimIntegrator {
 
     Vec EstErrorLocal;
 
-    if (method==0) {
+    if (method==extrapolation) {
       if (!FlagSSC) {
         dte =dt;
         if (maxOrder==1) {LSe << LSA;     ze << z1d;          }
@@ -1132,7 +1099,7 @@ namespace MBSimIntegrator {
           }     
         } //endif maxOrder>=2
       }   //endelse !FlagSSC
-    } // endif method==0
+    } // endif method==extrapolation
 
     if (method) {
       order = maxOrder;
@@ -1147,8 +1114,8 @@ namespace MBSimIntegrator {
         dte = dt;
         LSe = LSB2;
         if (ConstraintsChanged) ze << z2d;
-        if (!ConstraintsChanged && method==1) ze<<z1d;
-        if (!ConstraintsChanged && method==2) ze<<2.0*z2d - z1d;
+        if (!ConstraintsChanged && method==embedded) ze<<z1d;
+        if (!ConstraintsChanged && method==embeddedHigherOrder) ze<<2.0*z2d - z1d;
       }
 
       if (maxOrder>1) {
@@ -1199,8 +1166,8 @@ namespace MBSimIntegrator {
 
           LSe << LSC4;
           dte=dt;
-          if (method==1) ze << zOp;
-          if (method==2) ze << zOp1;
+          if (method==embedded) ze << zOp;
+          if (method==embeddedHigherOrder) ze << zOp1;
 
           EstErrorLocal = zOp -zOp1;
           dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
@@ -1352,7 +1319,7 @@ namespace MBSimIntegrator {
     // Strategie  0: GapControl wieder deaktiviert (z.B. um Penetration auszugeben)
     double dtOrg=dt;    
 
-    if (GapControlStrategy==0) {dtRelGapControl = 1; return false;}
+    if (GapControlStrategy==noGapControl) {dtRelGapControl = 1; return false;}
     if (statusGapControl>2) {statusGapControl=0; indexLSException=-1; }
     if (statusGapControl && !SSCTestOK) statusGapControl=0;
     if (statusGapControl==2) { 
@@ -1381,11 +1348,11 @@ namespace MBSimIntegrator {
         if (NS>dtMin && NS<=dt && NS<NSiMin) {NSiMin=NS; IndexNSMin=i;}
         if (NS>dt && NS<=1.5*dt && NS>NSa) NSa=NS;  
 
-        if (GapControlStrategy==2 && NS<=dt) {
+        if (GapControlStrategy==scoring && NS<=dt) {
           double Score = fabs(gdInActive(i))*(dt-NS)*NS;
           if (Score>ScoreMax) {ScoreMax=Score; NS_= NS;}
         }
-        if(GapControlStrategy==3 && NS<=dt) {
+        if(GapControlStrategy==gapTolerance && NS<=dt) {
           double tTol = NS + fabs(gapTol/gdInActive(i));
           if (tTol<tTolMin) {tTolMin= tTol;  NS_=NS;}
         }
@@ -1407,10 +1374,10 @@ namespace MBSimIntegrator {
 
     if (NSi>0){ 
       if (GapControlStrategy<=4 && GapControlStrategy) dt= safetyFactorGapControl*NSi+1e-15;
-      if (GapControlStrategy==1 && dt/Hold<0.3) dt =0.3*Hold;
-      if (GapControlStrategy==2 && NS_>0) dt= safetyFactorGapControl*NS_ +1e-15;
-      if (GapControlStrategy==3 && NS_>0) dt= safetyFactorGapControl*NS_ +1e-15; 
-      if (GapControlStrategy==4 && NSiMin<NSi) dt=safetyFactorGapControl*NSiMin+1e-15;
+      if (GapControlStrategy==biggestRoot && dt/Hold<0.3) dt =0.3*Hold;
+      if (GapControlStrategy==scoring && NS_>0) dt= safetyFactorGapControl*NS_ +1e-15;
+      if (GapControlStrategy==gapTolerance && NS_>0) dt= safetyFactorGapControl*NS_ +1e-15;
+      if (GapControlStrategy==smallestRoot && NSiMin<NSi) dt=safetyFactorGapControl*NSiMin+1e-15;
       if (GapControlStrategy==5) {
         if(NSi<NSiMin) {NSiMin=NSi; IndexNSMin=IndexNS;}
         double dtUnsafe = fabs(qUnsafe/gdInActive(IndexNSMin));
@@ -1484,80 +1451,70 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
 
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    if (e) {
+      string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if (methodStr=="extrapolation") setMethod(extrapolation);
+      else if (methodStr=="embedded") setMethod(embedded);
+      else if (methodStr=="embeddedHigherOrder") setMethod(embeddedHigherOrder);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSizeControl");
+    if (e) setStepSizeControl(E(e)->getText<bool>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
+    if (e) setAbsoluteTolerance(E(e)->getText<Vec>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+    if (e) setAbsoluteTolerance(E(e)->getText<double>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    if (e) setRelativeTolerance(E(e)->getText<Vec>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+    if (e) setRelativeTolerance(E(e)->getText<double>());
+
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if (e) setInitialStepSize(E(e)->getText<double>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if (e) setStepSizeMax(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    if (e) setMaximumStepSize(E(e)->getText<double>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimalStepSize");
-    if (e) setStepSizeMin(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimumStepSize");
+    if (e) setMinimumStepSize(E(e)->getText<double>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumOrder");
+    if (e) setMaximumOrder(E(e)->getText<int>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"outputInterpolation");
     if (e) setOutputInterpolation(E(e)->getText<bool>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"gapControl");
     if (e) {
-      DOMElement *ee=e->getFirstElementChild();
-      if (E(ee)->getTagName()==MBSIMINT%"withoutGapControl") setGapControl(-1);
-      if (E(ee)->getTagName()==MBSIMINT%"biggestRoot") setGapControl(1);
-      if (E(ee)->getTagName()==MBSIMINT%"gapTollerance") setGapControl(3);
-      if (E(ee)->getTagName()==MBSIMINT%"smallestRoot") setGapControl(4);
+      string gapControlStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if (gapControlStr=="noGapControl") setGapControl(noGapControl);
+      else if (gapControlStr=="biggestRoot") setGapControl(biggestRoot);
+      else if (gapControlStr=="scoring") setGapControl(scoring);
+      else if (gapControlStr=="gapTolerance") setGapControl(gapTolerance);
+      else if (gapControlStr=="smallestRoot") setGapControl(smallestRoot);
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalOrder");
-    if (e) {
-      DOMElement *ee;
-      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"order");
-      int orderXML=E(ee)->getText<int>();
-      int methodXML=0; 
-      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"method");
-      if(ee) {
-        DOMElement *eee=ee->getFirstElementChild();
-        if (E(eee)->getTagName()==MBSIMINT%"extrapolation") methodXML=0;
-        if (E(eee)->getTagName()==MBSIMINT%"embedded") methodXML=1;
-        if (E(eee)->getTagName()==MBSIMINT%"embeddedHigherOrder") methodXML=2;
-      }
-      setMaxOrder(orderXML,methodXML); 
-    }
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"gapTolerance");
+    if (e) setgapTolerance(E(e)->getText<double>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"errorTest");
     if (e) {
-      DOMElement *ee=e->getFirstElementChild();
-      int FlagErrorTestXML=2;
-      if(ee) {
-        if (E(ee)->getTagName()==MBSIMINT%"scale") FlagErrorTestXML=2;
-        if (E(ee)->getTagName()==MBSIMINT%"all") FlagErrorTestXML=0;
-        if (E(ee)->getTagName()==MBSIMINT%"exclude") FlagErrorTestXML=3;
-      }
-      setFlagErrorTest(FlagErrorTestXML); 
+      string errorTestStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if (errorTestStr=="all") setErrorTest(all);
+      else if (errorTestStr=="scale") setErrorTest(scale);
+      else if (errorTestStr=="exclude") setErrorTest(exclude);
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
-    if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
-    if(e) setAbsoluteTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
-    if(e) setRelativeTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-    if(e) setRelativeTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumGain");
+    if (e) setMaximumGain(E(e)->getText<double>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"advancedOptions");
-    if (e) {
-      DOMElement *ee;
-      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"deactivateSSC");
-      if (ee) deactivateSSC(!(E(ee)->getText<bool>()));
-
-      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"gapTolerance");
-      if (ee) setgapTolerance(E(ee)->getText<double>());
-
-      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"maximalSSCGain");
-      if (ee) setmaxGainSSC(E(ee)->getText<double>());
-
-      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"safetyFactorSSC");
-      if (ee) setSafetyFactorSSC(E(ee)->getText<double>());
-    }
-
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"safetyFactor");
+    if (e) setSafetyFactor(E(e)->getText<double>());
   }
 
 }

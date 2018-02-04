@@ -127,17 +127,17 @@ namespace MBSimIntegrator {
       template<typename H=DOS, typename=EnableIfControlled<H>>
       void setRelativeTolerance(double rTol_) { rTol=rTol_; }
 
-      //! Set maximal step size.
+      //! Set maximum step size.
       template<typename H=DOS, typename=EnableIfControlled<H>>
-      void setMaximalStepSize(double dtMax_) { dtMax=dtMax_; }
+      void setMaximumStepSize(double dtMax_) { dtMax=dtMax_; }
 
       //! Define wether to trigger a plot before and after each found root.
       void setPlotOnRoot(double plotOnRoot_) { plotOnRoot=plotOnRoot_; }
 
-      //! Set the maximal allowed position drift.
+      //! Set the maximum allowed position drift.
       void setToleranceForPositionConstraints(double gMax_) {gMax = gMax_;}
 
-      //! Set the maximal allowed velocity drift.
+      //! Set the maximum allowed velocity drift.
       void setToleranceForVelocityConstraints(double gdMax_) {gdMax = gdMax_;}
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
@@ -278,8 +278,8 @@ namespace MBSimIntegrator {
     dos.reset(new DOS(aTol, rTol, dtMax));
 #else // boost odeint < 1.60 does not support dtMax
     dos.reset(new DOS(aTol, rTol));
-    msg(Warn)<<"This build was done with boost < 1.60 which does not support a maximal step size."<<std::endl
-             <<"Integrator will not limit the maximal step size."<<std::endl;
+    msg(Warn)<<"This build was done with boost < 1.60 which does not support a maximum step size."<<std::endl
+             <<"Integrator will not limit the maximum step size."<<std::endl;
 #endif
     dos->initialize(zTemp, tStart, dt0);
   }
@@ -444,8 +444,8 @@ namespace MBSimIntegrator {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
         if(e) self->setRelativeTolerance(MBXMLUtils::E(e)->getText<double>());
 
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-        if(e) self->setMaximalStepSize(MBXMLUtils::E(e)->getText<double>());
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+        if(e) self->setMaximumStepSize(MBXMLUtils::E(e)->getText<double>());
       }
     };
 
@@ -463,8 +463,8 @@ namespace MBSimIntegrator {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
         if(e) throw MBSim::MBSimError("relativeToleranceScalar element used for an fixed step-size stepper.");
 
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-        if(e) throw MBSim::MBSimError("maximalStepSize element used for an fixed step-size stepper.");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+        if(e) throw MBSim::MBSimError("maximumStepSize element used for an fixed step-size stepper.");
       }
     };
   }

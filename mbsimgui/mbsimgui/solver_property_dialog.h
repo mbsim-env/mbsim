@@ -26,16 +26,6 @@
 namespace MBSimGUI {
 
   class Solver;
-  class Integrator;
-  class DOPRI5Integrator;
-  class RADAU5Integrator;
-  class LSODEIntegrator;
-  class LSODARIntegrator;
-  class TimeSteppingIntegrator;
-  class EulerExplicitIntegrator;
-  class RKSuiteIntegrator;
-  class Eigenanalyzer;
-  class HarmonicResponseAnalyzer;
   class VecWidget;
   class ExtWidget;
 
@@ -63,7 +53,7 @@ namespace MBSimGUI {
   class IntegratorPropertyDialog : public SolverPropertyDialog {
 
     public:
-      IntegratorPropertyDialog(Integrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -74,47 +64,97 @@ namespace MBSimGUI {
   class DOPRI5IntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      DOPRI5IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps;
   };
 
   class RADAU5IntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      RADAU5IntegratorPropertyDialog(RADAU5Integrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      RADAU5IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps;
+  };
+
+  class DOP853IntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      DOP853IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps;
+  };
+
+  class ODEXIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      ODEXIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps;
   };
 
   class LSODEIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      LSODEIntegratorPropertyDialog(LSODEIntegrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      LSODEIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
+      ExtWidget *method, *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps;
   };
 
   class LSODARIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      LSODARIntegratorPropertyDialog(LSODARIntegrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      LSODARIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *plotOnRoot, *gMax, *gdMax;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *plotOnRoot, *gMax, *gdMax;
+  };
+
+  class LSODERIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      LSODERIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *plotOnRoot, *gMax, *gdMax;
   };
 
   class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      TimeSteppingIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *stepSize;
+  };
+
+  class TimeSteppingSSCIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      TimeSteppingSSCIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *initialStepSize, *maximumStepSize, *minimumStepSize, *outputInterpolation, *gapControl, *maximumOrder, *method, *errorTest, *absTol, *relTol, *stepSizeControl, *gapTolerance, *maximumGain, *safetyFactor;
+  };
+
+  class HETS2IntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      HETS2IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -124,7 +164,7 @@ namespace MBSimGUI {
   class EulerExplicitIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      EulerExplicitIntegratorPropertyDialog(EulerExplicitIntegrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      EulerExplicitIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -134,7 +174,7 @@ namespace MBSimGUI {
   class RKSuiteIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      RKSuiteIntegratorPropertyDialog(RKSuiteIntegrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      RKSuiteIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -144,35 +184,45 @@ namespace MBSimGUI {
   class BoostOdeintDOSPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      BoostOdeintDOSPropertyDialog(Integrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      BoostOdeintDOSPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *plotOnRoot, *gMax, *gdMax;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *plotOnRoot, *gMax, *gdMax;
   };
 
   class BoostOdeintDOS_RKDOPRI5PropertyDialog : public BoostOdeintDOSPropertyDialog {
 
     public:
-      BoostOdeintDOS_RKDOPRI5PropertyDialog(Integrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(integrator,parent,f) { }
+      BoostOdeintDOS_RKDOPRI5PropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(solver,parent,f) { }
   };
 
   class BoostOdeintDOS_BulirschStoerPropertyDialog : public BoostOdeintDOSPropertyDialog {
 
     public:
-      BoostOdeintDOS_BulirschStoerPropertyDialog(Integrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(integrator,parent,f) { }
+      BoostOdeintDOS_BulirschStoerPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(solver,parent,f) { }
   };
 
   class BoostOdeintDOS_Rosenbrock4PropertyDialog : public BoostOdeintDOSPropertyDialog {
 
     public:
-      BoostOdeintDOS_Rosenbrock4PropertyDialog(Integrator *integrator, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(integrator,parent,f) { }
+      BoostOdeintDOS_Rosenbrock4PropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(solver,parent,f) { }
+  };
+
+  class QuasiStaticIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      QuasiStaticIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *stepSize;
   };
 
   class EigenanalyzerPropertyDialog : public SolverPropertyDialog {
 
     public:
-      EigenanalyzerPropertyDialog(Eigenanalyzer *eigenanalyzer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      EigenanalyzerPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -182,7 +232,7 @@ namespace MBSimGUI {
   class HarmonicResponseAnalyzerPropertyDialog : public SolverPropertyDialog {
 
     public:
-      HarmonicResponseAnalyzerPropertyDialog(HarmonicResponseAnalyzer *eigenanalyzer, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      HarmonicResponseAnalyzerPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:

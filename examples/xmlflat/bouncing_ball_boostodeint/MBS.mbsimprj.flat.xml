@@ -111,7 +111,7 @@
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">0.01</plotStepSize>
-    <maximalStepSize unit="s">0.01</maximalStepSize>
+    <maximumStepSize unit="s">0.01</maximumStepSize>
     <plotOnRoot>true</plotOnRoot>
   </BoostOdeintDOS_Rosenbrock4>
 

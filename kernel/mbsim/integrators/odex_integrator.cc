@@ -24,8 +24,8 @@
 #include <mbsim/dynamic_system_solver.h>
 #include "fortran/fortran_wrapper.h"
 #include "odex_integrator.h"
-#include <ctime>
 #include <fstream>
+#include <ctime>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -33,11 +33,12 @@ using namespace std;
 
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  ODEXIntegrator::ODEXIntegrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6) {
-  }
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, ODEXIntegrator)
 
   void ODEXIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<ODEXIntegrator**>(&ipar[0]);
@@ -86,6 +87,11 @@ namespace MBSimIntegrator {
     else
       z = system->evalz0();
 
+    if(aTol.size() == 0)
+      aTol.resize(1,INIT,1e-6);
+    if(rTol.size() == 0)
+      rTol.resize(1,INIT,1e-6);
+
     assert(aTol.size() == rTol.size());
 
     int iTol;
@@ -107,13 +113,16 @@ namespace MBSimIntegrator {
     int liWork = 2*(2*9+21+nrDens);
     VecInt iWork(liWork);
     Vec work(lWork);
+    if(dtMax>0)
+      work(1)=dtMax;
 
+    //Maximum Step Numbers
+    iWork(0)=maxSteps;
     // if(warnLevel)
     //   iWork(2) = warnLevel;
     // else
     //   iWork(2) = -1;
 
-    iWork(0) = maxSteps;
     iWork(7) = nrDens;
 
     int idid;
@@ -139,14 +148,35 @@ namespace MBSimIntegrator {
 
     if(writeIntegrationSummary) {
       ofstream integSum((name + ".sum").c_str());
+      integSum.precision(8);
       integSum << "Integration time: " << time << endl;
+      integSum << "Simulation time: " << t << endl;
       //integSum << "Integration steps: " << integrationSteps << endl;
+      integSum << "Number of function evaluations" << iWork(16) <<endl;
       integSum.close();
     }
 
     cout.unsetf (ios::scientific);
     cout << endl;
-    cout << iWork(16) <<endl;
+  }
+
+  void ODEXIntegrator::initializeUsingXML(DOMElement *element) {
+    Integrator::initializeUsingXML(element);
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
+    if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+    if(e) setAbsoluteTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    if(e) setRelativeTolerance(E(e)->getText<Vec>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+    if(e) setRelativeTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
+    if(e) setInitialStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    if(e) setMaximumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    if(e) setStepLimit(E(e)->getText<int>());
   }
 
 }

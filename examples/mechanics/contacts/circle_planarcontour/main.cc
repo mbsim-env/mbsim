@@ -30,7 +30,7 @@ int main (int argc, char* argv[]) {
     sys->setGeneralizedForceTolerance(1e-8);
     integrator = new LSODARIntegrator;
     static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
-    static_cast<LSODARIntegrator*>(integrator)->setMaximalStepSize(1e-3);
+    static_cast<LSODARIntegrator*>(integrator)->setMaximumStepSize(1e-3);
     static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-10);
   } 
   else { // time stepping integration

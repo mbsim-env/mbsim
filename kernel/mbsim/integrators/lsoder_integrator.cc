@@ -20,10 +20,9 @@
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
+#include <mbsim/utils/utils.h>
 #include "fortran/fortran_wrapper.h"
 #include "lsoder_integrator.h"
-
-// TODO wieder entfernen
 #include <fstream>
 #include <time.h>
 
@@ -33,11 +32,12 @@ using namespace std;
 
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  LSODERIntegrator::LSODERIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), plotOnRoot(true) {
-  }
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, LSODERIntegrator)
 
   void LSODERIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
     auto self=*reinterpret_cast<LSODERIntegrator**>(&neq[1]);
@@ -57,7 +57,36 @@ namespace MBSimIntegrator {
     sv = self->getSystem()->evalsv();
   }
 
+  void LSODERIntegrator::initializeUsingXML(DOMElement *element) {
+    Integrator::initializeUsingXML(element);
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
+    if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+    if(e) setAbsoluteTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+    if(e) setRelativeTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
+    if(e) setInitialStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimumStepSize");
+    if(e) setMinimumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    if(e) setMaximumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
+    if(e) setPlotOnRoot(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
+  }
+
   void LSODERIntegrator::integrate() {
+    preIntegrate();
+    subIntegrate(tEnd);
+    postIntegrate();
+  }
+
+  void LSODERIntegrator::preIntegrate() {
     debugInit();
 
     if(odePackInUse)
@@ -65,59 +94,59 @@ namespace MBSimIntegrator {
     odePackInUse = true;
 
     int zSize=system->getzSize();
-    int neq[1+sizeof(void*)/sizeof(int)+1];
     neq[0]=zSize;
     LSODERIntegrator *self=this;
     memcpy(&neq[1], &self, sizeof(void*));
 
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != zSize)
+        throw MBSimError("(LSODEIntegrator::integrate): size of z0 does not match");
       system->setState(z0);
+    }
     else
       system->evalz0();
 //    system->setState(z); Not needed as the integrator uses the state of the system
     system->computeInitialCondition();
-    double t=tStart;
-    double tPlot=t+dtPlot;
-
-    int iTol; 
+    t=tStart;
+    tPlot=t+dtPlot;
+    if(aTol.size() == 0)
+      aTol.resize(1,INIT,1e-6);
     if(aTol.size() == 1) {
       iTol = 1; // Skalar
     } else {
       iTol = 2; // Vektor
       assert (aTol.size() >= zSize);
     }
-
-    int one=1, two=2, istate=1;
-
-    int nsv=system->getsvSize();
-    int lrWork = (22+zSize*max(16,zSize+9)+3*nsv)*2;
-    Vec rWork(lrWork);
+    istate=1;
+    nsv=system->getsvSize();
+    lrWork = (22 + zSize * max(16, zSize + 9) + 3 * nsv) * 2;
+    rWork.resize(lrWork);
     rWork(4) = dt0; 
-    rWork(5) = 1e-2;
-    rWork(6) = 1e-14;
-    int liWork=(20+zSize)*10;
-    VecInt iWork(liWork);
+    rWork(5) = dtMax;
+    rWork(6) = dtMin;
+    liWork = (20+zSize)*10;
+    iWork.resize(liWork);
     iWork(5) = 10000;
-
-    system->setTime(t);
-//    system->setState(z); Not needed as the integrator uses the state of the system
-    system->resetUpToDate();
-    system->plot();
-
-    double s0 = clock();
-    double time = 0;
-    int integrationSteps = 0;
-
-    ofstream integPlot;
+    s0 = clock();
+    time = 0;
+    integrationSteps = 0;
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
-    cout.setf(ios::scientific, ios::floatfield);
+    // plot initial state
+    system->resetUpToDate();
+    system->plot();
+  }
 
-    while(t<tEnd) {
-
+  void LSODERIntegrator::subIntegrate(double tStop) {
+    int one = 1;
+    int two = 2;
+    rWork(4) = dt0;
+    system->setTime(t);
+//    system->setState(z); Not needed as the integrator uses the state of the system
+    while(t < tStop-epsroot) {
       integrationSteps++;
-
-      DLSODER(fzdot, neq, system->getState()(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
+      double tOut = min(tPlot, tStop);
+      DLSODER(fzdot, neq, system->getState()(), &t, &tOut, &iTol, &rTol, aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(),
           &liWork, NULL, &two, fsv, &nsv, system->getjsv()());
       if(istate==2 || fabs(t-tPlot)<epsroot) {
@@ -126,12 +155,25 @@ namespace MBSimIntegrator {
         system->resetUpToDate();
         system->plot();
         if(output)
-          cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
+          msg(Info) << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
         if(plotIntegrationData) integPlot<< t << " " << rWork(10) << " " << time << endl;
         tPlot += dtPlot;
+//        if (tPlot > tStop)
+//          tPlot = tStop;
+
+        // check drift
+        if(system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+          system->projectGeneralizedPositions(3);
+          system->projectGeneralizedVelocities(3);
+          istate=1;
+        }
+        else if(system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+          system->projectGeneralizedVelocities(3);
+          istate=1;
+        }
       }
       if(istate==3) {
         if(plotOnRoot) { // plot before shifting
@@ -158,6 +200,14 @@ namespace MBSimIntegrator {
       }
       if(istate<0) throw MBSimError("Integrator LSODER failed with istate = "+toString(istate));
     }
+  }
+
+  void LSODERIntegrator::postIntegrate() {
+    system->setTime(t);
+//    system->setState(z); Not needed as the integrator uses the state of the system
+    system->resetUpToDate();
+    system->plot();
+    system->plotAtSpecialEvent();
     if(plotIntegrationData) integPlot.close();
 
     if(writeIntegrationSummary) {
@@ -167,10 +217,9 @@ namespace MBSimIntegrator {
       integSum.close();
     }
 
-    cout.unsetf (ios::scientific);
-    cout << endl;
+    msg(Info) << endl;
 
     odePackInUse = false;
   }
-}
 
+}

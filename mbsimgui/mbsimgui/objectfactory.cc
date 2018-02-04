@@ -274,12 +274,22 @@ namespace MBSimGUI {
       return new DOPRI5Integrator;
     else if(E(element)->getTagName()==MBSIMINT%"RADAU5Integrator")
       return new RADAU5Integrator;
+    else if(E(element)->getTagName()==MBSIMINT%"DOP853Integrator")
+      return new DOP853Integrator;
+    else if(E(element)->getTagName()==MBSIMINT%"ODEXIntegrator")
+      return new ODEXIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"LSODEIntegrator")
       return new LSODEIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"LSODARIntegrator")
       return new LSODARIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"LSODERIntegrator")
+      return new LSODERIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"TimeSteppingIntegrator")
       return new TimeSteppingIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"TimeSteppingSSCIntegrator")
+      return new TimeSteppingSSCIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"HETS2Integrator")
+      return new HETS2Integrator;
     else if(E(element)->getTagName()==MBSIMINT%"EulerExplicitIntegrator")
       return new EulerExplicitIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"RKSuiteIntegrator")

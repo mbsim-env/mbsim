@@ -44,9 +44,6 @@ namespace MBSimIntegrator {
 
   bool odePackInUse = false;
 
-  LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), maxSteps(10000), stiff(false) {
-  }
-
   void LSODEIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
     auto self=*reinterpret_cast<LSODEIntegrator**>(&neq[1]);
     Vec zd(neq[0], zd_);
@@ -119,11 +116,7 @@ namespace MBSimIntegrator {
       integPlot << "#1 calculation time [s]:" << endl;
     }
 
-    int MF;
-    if(stiff) 
-      MF = 22; // Stiff (BDF) method, internally generated full Jacobian.
-    else
-      MF = 10; // Nonstiff (Adams) method, no Jacobian used.
+    int MF = method;
 
     VecInt jsv(nsv);  
 //    bool donedrift;
@@ -168,6 +161,12 @@ namespace MBSimIntegrator {
   void LSODEIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    if(e) {
+      string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(methodStr=="nonstiff" or methodStr=="Adams") method=nonstiff;
+      else if(methodStr=="stiff" or methodStr=="BDF") method=stiff;
+    }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
@@ -176,14 +175,12 @@ namespace MBSimIntegrator {
     if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if(e) setMaximalStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimalStepSize");
-    if(e) setMinimalStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"numberOfMaximalSteps");
-    if(e) setmaxSteps(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stiffModus");
-    if(e) setStiff(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    if(e) setMaximumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimumStepSize");
+    if(e) setMinimumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    if(e) setStepLimit(E(e)->getText<int>());
   }
 
 }

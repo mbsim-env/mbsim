@@ -22,7 +22,6 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
-#include <mbsim/utils/utils.h>
 #include "fortran/fortran_wrapper.h"
 #include "dopri5_integrator.h"
 #include <fstream>
@@ -40,9 +39,6 @@ using namespace xercesc;
 namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, DOPRI5Integrator)
-
-  DOPRI5Integrator::DOPRI5Integrator()  {
-  }
 
   void DOPRI5Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<DOPRI5Integrator**>(&ipar[0]);
@@ -121,7 +117,7 @@ namespace MBSimIntegrator {
       work(5)=dtMax;
     work(6)=dt0;
 
-    //Maximum Step Numbers
+    //Maximum number of steps
     iWork(0)=maxSteps; 
     // if(warnLevel)
     //   iWork(2) = warnLevel;
@@ -129,7 +125,7 @@ namespace MBSimIntegrator {
     //   iWork(2) = -1;
 
     iWork(4) = nrDens;
-    
+
     int idid;
 
     tPlot = t + dtPlot;
@@ -177,10 +173,10 @@ namespace MBSimIntegrator {
     if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if(e) setMaximalStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalNumberOfSteps");
-    if(e) setMaxStepNumber(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    if(e) setMaximumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    if(e) setStepLimit(E(e)->getText<int>());
   }
 
 }
