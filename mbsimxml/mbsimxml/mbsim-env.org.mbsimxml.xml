@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+  <mime-type type="application/vnd.mbsim-env.mbsimflatxml">
+    <comment>MBSim-Env MBSimXML flat files</comment>
+    <glob pattern="*.mbsimprj.flat.xml" weight="90"/>
+    <icon name="mbsim-env.mbsimgui"/>
+  </mime-type>
+  <mime-type type="application/vnd.mbsim-env.mbsimxml">
+    <comment>MBSim-Env MBSimXML preprocessed files</comment>
+    <glob pattern="*.mbsimprj.xml" weight="90"/>
+    <icon name="mbsim-env.mbsimgui"/>
+  </mime-type>
+</mime-info>
