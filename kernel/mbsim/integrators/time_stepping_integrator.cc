@@ -75,8 +75,6 @@ namespace MBSimIntegrator {
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
-        if(system->positionDriftCompensationNeeded(gMax))
-          system->projectGeneralizedPositions(3);
         system->setUpdatela(false);
         system->setUpdateLa(false);
         system->setUpdatezd(false);
@@ -95,6 +93,9 @@ namespace MBSimIntegrator {
 
       system->checkActive(1);
       if (system->gActiveChanged()) system->resize_();
+
+      if(gMax>0 and system->positionDriftCompensationNeeded(gMax))
+        system->projectGeneralizedPositions(3);
 
       system->getbi(false) << system->evalgd() + system->evalW().T()*slvLLFac(system->evalLLM(),system->evalh())*dt;
       system->setUpdatebi(false);

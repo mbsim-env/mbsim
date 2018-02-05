@@ -88,7 +88,7 @@ namespace MBSimIntegrator {
       int stepPlot{0};
 
       /** tolerance for position constraints */
-      double gMax{1};
+      double gMax{0};
       /**
        * \brief file stream for integration information
        */

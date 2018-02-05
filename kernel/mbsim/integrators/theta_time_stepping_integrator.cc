@@ -70,8 +70,6 @@ namespace MBSimIntegrator {
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
-        if(system->positionDriftCompensationNeeded(gMax))
-          system->projectGeneralizedPositions(3);
         system->setUpdatela(false);
         system->setUpdateLa(false);
         system->setUpdatezd(false);
@@ -108,6 +106,9 @@ namespace MBSimIntegrator {
 
       system->checkActive(1);
       if (system->gActiveChanged()) system->resize_();
+
+      if(gMax>0 and system->positionDriftCompensationNeeded(gMax))
+        system->projectGeneralizedPositions(3);
 
       const Mat &T = system->evalT();
       const SymMat &M = system->evalM();
