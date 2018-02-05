@@ -36,11 +36,10 @@ namespace MBSimAnalyzer {
 
     class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
       public:
-        Residuum(MBSim::DynamicSystemSolver *sys_, double t_);
+        Residuum(MBSim::DynamicSystemSolver *sys_) : sys(sys_) { }
         fmatvec::Vec operator()(const fmatvec::Vec &z);
       private:
         MBSim::DynamicSystemSolver *sys;
-        double t;
     };
 
     public:
