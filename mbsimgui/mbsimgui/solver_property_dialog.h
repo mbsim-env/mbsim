@@ -138,7 +138,17 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *stepSize;
+      ExtWidget *stepSize, *gMax;
+  };
+
+  class ThetaTimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      ThetaTimeSteppingIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *stepSize, *theta, *gMax;
   };
 
   class TimeSteppingSSCIntegratorPropertyDialog : public IntegratorPropertyDialog {

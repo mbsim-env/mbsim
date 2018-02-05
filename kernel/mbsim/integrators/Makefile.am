@@ -11,6 +11,7 @@ libintegrators_la_SOURCES = integrator.cc\
 			    quasi_static_integrator.cc \
 			    radau5_integrator.cc \
 			    time_stepping_integrator.cc \
+			    theta_time_stepping_integrator.cc \
 			    time_stepping_ssc_integrator.cc \
 			    hets2_integrator.cc \
 			    euler_explicit_integrator.cc \
@@ -25,11 +26,9 @@ libintegrators_la_SOURCES = integrator.cc\
 			    fortran/rksuite.f
 			     
 #auto_time_stepping_ssc_integrator.cc
-#theta_time_stepping_integrator.cc
 #daspk_integrator.cc
 #fortran/ddaspk.f
 #fortran/daux.f
-
 #fortran/mexax.f
 #mexax_integrator.cc 
 
@@ -41,6 +40,7 @@ integratorsincludedir = $(includedir)/mbsim/integrators
 integratorsinclude_HEADERS = integrator.h \
 			     integrators.h \
 			     time_stepping_integrator.h \
+			     theta_time_stepping_integrator.h \
 			     time_stepping_ssc_integrator.h \
 			     hets2_integrator.h \
 			     euler_explicit_integrator.h \
@@ -57,8 +57,6 @@ integratorsinclude_HEADERS = integrator.h \
 			     radau5_integrator.h \
 			     fortran/fortran_wrapper.h
 #auto_time_stepping_ssc_integrator.h
-#theta_time_stepping_integrator.h
 #daspk_integrator.h
-
 # mexax_integrator.h 
 

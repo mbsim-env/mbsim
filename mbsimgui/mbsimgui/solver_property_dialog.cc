@@ -345,10 +345,10 @@ namespace MBSimGUI {
     addToTab("Extra", plotOnRoot);
 
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Extra", gMax);
+    addToTab("Tolerances", gMax);
 
     gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Extra", gdMax);
+    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* LSODARIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -401,10 +401,10 @@ namespace MBSimGUI {
     addToTab("Extra", plotOnRoot);
 
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Extra", gMax);
+    addToTab("Tolerances", gMax);
 
     gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Extra", gdMax);
+    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* LSODERIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -435,20 +435,56 @@ namespace MBSimGUI {
 
   TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
+    addTab("Tolerances");
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepSize");
     addToTab("Step size", stepSize);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
   }
 
   DOMElement* TimeSteppingIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     stepSize->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* TimeSteppingIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     stepSize->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
+  ThetaTimeSteppingIntegratorPropertyDialog::ThetaTimeSteppingIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+    addTab("Step size");
+    addTab("Tolerances");
+
+    stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepSize");
+    addToTab("Step size", stepSize);
+
+    theta = new ExtWidget("Theta",new ChoiceWidget2(new ScalarWidgetFactory("0.5",vector<QStringList>(2,noUnitUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"theta");
+    addToTab("General", theta);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+  }
+
+  DOMElement* ThetaTimeSteppingIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    stepSize->initializeUsingXML(item->getXMLElement());
+    theta->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ThetaTimeSteppingIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    stepSize->writeXMLFile(item->getXMLElement());
+    theta->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -650,10 +686,10 @@ namespace MBSimGUI {
     addToTab("Extra", plotOnRoot);
 
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Extra", gMax);
+    addToTab("Tolerances", gMax);
 
     gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Extra", gdMax);
+    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* BoostOdeintDOSPropertyDialog::initializeUsingXML(DOMElement *parent) {

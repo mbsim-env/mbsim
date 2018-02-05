@@ -51,15 +51,18 @@ namespace MBSimIntegrator {
 
     system->setStepSize(dt);
 
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != system->getzSize())
+        throw MBSimError("(TimeSteppingIntegrator::integrate): size of z0 does not match");
       system->setState(z0);
+    }
     else
       system->evalz0();
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
 
-    stepPlot =(int) (dtPlot/dt + 0.5);
+    stepPlot = (int) (dtPlot/dt + 0.5);
     if(fabs(stepPlot*dt - dtPlot) > dt*dt) {
       cout << "WARNING: Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
     }
@@ -72,7 +75,8 @@ namespace MBSimIntegrator {
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
-        if(driftCompensation) system->projectGeneralizedPositions(0);
+        if(system->positionDriftCompensationNeeded(gMax))
+          system->projectGeneralizedPositions(3);
         system->setUpdatela(false);
         system->setUpdateLa(false);
         system->setUpdatezd(false);
@@ -107,7 +111,6 @@ namespace MBSimIntegrator {
 
       if(system->getIterI()>maxIter) maxIter = system->getIterI();
       sumIter += system->getIterI();
-
     }
   }
 
@@ -148,6 +151,8 @@ namespace MBSimIntegrator {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
     if(e) setStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
   }
 
 }

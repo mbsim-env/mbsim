@@ -496,6 +496,7 @@ namespace MBSim {
       bool getUpdatedx() { return upddx; }
       void setUpdatela(bool updla_) { updla = updla_; }
       void setUpdateLa(bool updLa_) { updLa = updLa_; }
+      void setUpdateG(bool updG_) { updG = updG_; }
       void setUpdatebi(bool updbi_) { updbi = updbi_; }
       void setUpdatebc(bool updbc_) { updbc = updbc_; }
       void setUpdatezd(bool updzd_) { updzd = updzd_; }

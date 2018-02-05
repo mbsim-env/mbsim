@@ -48,7 +48,7 @@ namespace MBSimIntegrator {
 
       /* GETTER / SETTER */
       void setStepSize(double dt_) { dt = dt_; }
-      void setDriftCompensation(bool dc) { driftCompensation = dc; }
+      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
       /***************************************************/
     
     private:
@@ -77,15 +77,13 @@ namespace MBSimIntegrator {
        */
       int stepPlot{0};
 
+      /** tolerance for position constraints */
+      double gMax{1};
+
       /**
        * \brief file stream for integration information
        */
       std::ofstream integPlot;
-
-      /**
-       * \brief flag for drift compensation
-       */
-      bool driftCompensation{false};
   };
 
 }
