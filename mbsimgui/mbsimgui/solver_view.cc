@@ -66,6 +66,7 @@ namespace MBSimGUI {
     type.emplace_back("Time stepping SSC integrator");
     type.emplace_back("HETS2 integrator");
     type.emplace_back("Euler explicit integrator");
+    type.emplace_back("Euler implicit integrator");
     type.emplace_back("RKSuite integrator");
     type.emplace_back("Boost odeint DOS RKDOPRI5");
     type.emplace_back("Boost odeint DOS Burlisch Stoer");
@@ -140,16 +141,18 @@ namespace MBSimGUI {
     else if(i==11)
       return new EulerExplicitIntegrator;
     else if(i==12)
-      return new RKSuiteIntegrator;
+      return new EulerImplicitIntegrator;
     else if(i==13)
-      return new BoostOdeintDOS_RKDOPRI5;
+      return new RKSuiteIntegrator;
     else if(i==14)
-      return new BoostOdeintDOS_BulirschStoer;
+      return new BoostOdeintDOS_RKDOPRI5;
     else if(i==15)
-      return new BoostOdeintDOS_Rosenbrock4;
+      return new BoostOdeintDOS_BulirschStoer;
     else if(i==16)
-      return new Eigenanalyzer;
+      return new BoostOdeintDOS_Rosenbrock4;
     else if(i==17)
+      return new Eigenanalyzer;
+    else if(i==18)
       return new HarmonicResponseAnalyzer;
     return nullptr;
   }
@@ -179,18 +182,20 @@ namespace MBSimGUI {
       i=10;
     else if(dynamic_cast<EulerExplicitIntegrator*>(solver))
       i=11;
-    else if(dynamic_cast<RKSuiteIntegrator*>(solver))
+    else if(dynamic_cast<EulerImplicitIntegrator*>(solver))
       i=12;
-    else if(dynamic_cast<BoostOdeintDOS_RKDOPRI5*>(solver))
+    else if(dynamic_cast<RKSuiteIntegrator*>(solver))
       i=13;
-    else if(dynamic_cast<BoostOdeintDOS_BulirschStoer*>(solver))
+    else if(dynamic_cast<BoostOdeintDOS_RKDOPRI5*>(solver))
       i=14;
-    else if(dynamic_cast<BoostOdeintDOS_Rosenbrock4*>(solver))
+    else if(dynamic_cast<BoostOdeintDOS_BulirschStoer*>(solver))
       i=15;
-    else if(dynamic_cast<Eigenanalyzer*>(solver))
+    else if(dynamic_cast<BoostOdeintDOS_Rosenbrock4*>(solver))
       i=16;
-    else if(dynamic_cast<HarmonicResponseAnalyzer*>(solver))
+    else if(dynamic_cast<Eigenanalyzer*>(solver))
       i=17;
+    else if(dynamic_cast<HarmonicResponseAnalyzer*>(solver))
+      i=18;
     updateText();
   }
 

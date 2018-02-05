@@ -691,6 +691,25 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="EulerImplicitIntegrator" substitutionGroup="Integrator" type="EulerImplicitIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Implizites Einschritt-Integrationsverfahren mit fester Schrittweite.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="EulerImplicitIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:element name="stepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Integrationsschrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="RKSuiteIntegrator" substitutionGroup="Integrator" type="RKSuiteIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Runge-Kutta Integrationsverfahren

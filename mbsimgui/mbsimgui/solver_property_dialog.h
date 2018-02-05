@@ -181,6 +181,16 @@ namespace MBSimGUI {
       ExtWidget *stepSize;
   };
 
+  class EulerImplicitIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      EulerImplicitIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *stepSize;
+  };
+
   class RKSuiteIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:

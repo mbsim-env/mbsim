@@ -109,6 +109,12 @@ namespace MBSimGUI {
       IntegratorPropertyDialog* createPropertyDialog() override { return new EulerExplicitIntegratorPropertyDialog(this); }
   };
 
+  class EulerImplicitIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "EulerImplicitIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new EulerImplicitIntegratorPropertyDialog(this); }
+  };
+
   class RKSuiteIntegrator : public Integrator {
     public:
       QString getType() const override { return "RKSuiteIntegrator"; }

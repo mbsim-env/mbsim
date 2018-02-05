@@ -294,6 +294,8 @@ namespace MBSimGUI {
       return new HETS2Integrator;
     else if(E(element)->getTagName()==MBSIMINT%"EulerExplicitIntegrator")
       return new EulerExplicitIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"EulerImplicitIntegrator")
+      return new EulerImplicitIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"RKSuiteIntegrator")
       return new RKSuiteIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"BoostOdeintDOS_RKDOPRI5")

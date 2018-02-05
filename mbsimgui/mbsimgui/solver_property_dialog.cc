@@ -626,6 +626,25 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  EulerImplicitIntegratorPropertyDialog::EulerImplicitIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+    addTab("Step size");
+
+    stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepSize");
+    addToTab("Step size", stepSize);
+  }
+
+  DOMElement* EulerImplicitIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    stepSize->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* EulerImplicitIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    stepSize->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
   RKSuiteIntegratorPropertyDialog::RKSuiteIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
     addTab("Tolerances");
     addTab("Step size");
