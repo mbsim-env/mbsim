@@ -375,12 +375,12 @@ namespace MBSimIntegrator {
         else {
           // check if projection is needed (if a root was found projection is done anyway by shift())
           bool reinitNeeded=false;
-          if(system->positionDriftCompensationNeeded(gMax)) {
+          if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) {
             system->projectGeneralizedPositions(3);
             system->projectGeneralizedVelocities(3);
             reinitNeeded=true;
           }
-          else if(system->velocityDriftCompensationNeeded(gdMax)) {
+          else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) {
             system->projectGeneralizedVelocities(3);
             reinitNeeded=true;
           }

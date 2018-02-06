@@ -19,7 +19,8 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
-#include "euler_explicit_integrator.h"
+#include "euler_implicit_integrator.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 #include <ctime>
 
 #ifndef NO_ISO_14882
@@ -33,9 +34,21 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, EulerExplicitIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, EulerImplicitIntegrator)
 
-  void EulerExplicitIntegrator::preIntegrate() {
+    EulerImplicitIntegrator::Residuum::Residuum(DynamicSystemSolver *sys_, double dt_) : sys(sys_), dt(dt_) {
+      zk = sys->getState();
+    }
+
+  Vec EulerImplicitIntegrator::Residuum::operator()(const Vec &z) {
+    Vec res;
+    sys->setState(z);
+    sys->resetUpToDate();
+    res =  z - zk - sys->evalzd()*dt;
+    return res;
+  } 
+
+  void EulerImplicitIntegrator::preIntegrate() {
     debugInit();
     assert(dtPlot >= dt);
 
@@ -60,7 +73,7 @@ namespace MBSimIntegrator {
     time = 0;
   }
 
-  void EulerExplicitIntegrator::subIntegrate(double tStop) { 
+  void EulerImplicitIntegrator::subIntegrate(double tStop) { 
     while(system->getTime()<tStop) { // time loop
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
@@ -75,13 +88,17 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
       }
 
-      system->resetUpToDate();
-      system->getState() += system->evalzd()*dt;
+      Residuum f(system,dt);
+      MultiDimNewtonMethod newton(&f);
+//      newton.setLinearAlgebra(1);
       system->getTime() += dt;
+      system->getState() = newton.solve(system->getState());
+      if(newton.getInfo() != 0)
+        throw MBSimError("(Eigenanalyzer::computeEigenvalues): computation of equilibrium state failed!");
     }
   }
 
-  void EulerExplicitIntegrator::postIntegrate() {
+  void EulerImplicitIntegrator::postIntegrate() {
     if(plotIntegrationData) integPlot.close();
 
     if(writeIntegrationSummary) {
@@ -95,13 +112,13 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-  void EulerExplicitIntegrator::integrate() {
+  void EulerImplicitIntegrator::integrate() {
     preIntegrate();
     subIntegrate(tEnd);
     postIntegrate();
   }
 
-  void EulerExplicitIntegrator::initializeUsingXML(DOMElement *element) {
+  void EulerImplicitIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");

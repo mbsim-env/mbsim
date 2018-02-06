@@ -64,6 +64,11 @@ namespace MBSimIntegrator {
       /** use stiff (BDF) or nonstiff (Adams) method */
       Method method{nonstiff};
 
+       /** tolerance for position constraints */
+      double gMax{-1};
+      /** tolerance for velocity constraints */
+      double gdMax{-1};
+
     public:
 
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
@@ -74,6 +79,9 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
       void setMethod(Method method_) { method = method_; }
+
+      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
+      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
       void integrate();

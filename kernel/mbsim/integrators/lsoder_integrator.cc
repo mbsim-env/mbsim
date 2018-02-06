@@ -68,10 +68,12 @@ namespace MBSimIntegrator {
     if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimumStepSize");
-    if(e) setMinimumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
     if(e) setMaximumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimumStepSize");
+    if(e) setMinimumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    if(e) setStepLimit(E(e)->getText<int>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
     if(e) setPlotOnRoot(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
@@ -126,7 +128,7 @@ namespace MBSimIntegrator {
     rWork(6) = dtMin;
     liWork = (20+zSize)*10;
     iWork.resize(liWork);
-    iWork(5) = 10000;
+    iWork(5) = maxSteps;
     s0 = clock();
     time = 0;
     integrationSteps = 0;
@@ -165,12 +167,12 @@ namespace MBSimIntegrator {
 //          tPlot = tStop;
 
         // check drift
-        if(system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+        if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
           system->projectGeneralizedPositions(3);
           system->projectGeneralizedVelocities(3);
           istate=1;
         }
-        else if(system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+        else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
           system->projectGeneralizedVelocities(3);
           istate=1;
         }

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2014 MBSim Development Team
+/* Copyright (C) 2004-2009 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -17,24 +17,32 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _TIME_STEPPING_INTEGRATOR_H_ 
-#define _TIME_STEPPING_INTEGRATOR_H_
+#ifndef _EULER_IMPLICIT_INTEGRATOR_H_ 
+#define _EULER_IMPLICIT_INTEGRATOR_H_
 
 #include "integrator.h"
+#include "mbsim/functions/function.h"
 
 namespace MBSimIntegrator {
 
-  /** 
-   * brief half-explicit time-stepping integrator of first order
-   * \author Martin Foerg
-   * \date 2009-07-13 some comments (Thorsten Schindler)
-   */
-  class TimeSteppingIntegrator : public Integrator { 
+  /** \brief Implicit Euler integrator. */
+  class EulerImplicitIntegrator : public Integrator { 
+
+    class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
+      public:
+        Residuum(MBSim::DynamicSystemSolver *sys_, double dt_); 
+        fmatvec::Vec operator()(const fmatvec::Vec &z);
+      private:
+        MBSim::DynamicSystemSolver *sys;
+        fmatvec::Vec zk;
+        double dt;
+    };
+
     public:
       /**
        * \brief destructor
        */
-      ~TimeSteppingIntegrator() override = default;
+      ~EulerImplicitIntegrator() override = default;
 
       void preIntegrate() override;
       void subIntegrate(double tStop) override;
@@ -47,45 +55,22 @@ namespace MBSimIntegrator {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setStepSize(double dt_) { dt = dt_; }
-      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
+      void setStepSize(double dt_) {dt = dt_;}
       /***************************************************/
-    
+
     private:
       /**
        * \brief step size
        */
       double dt{1e-3};
 
-      /**
-       * \brief time and plot time
-       */
-      double tPlot{0.};
-
-      /**
-       * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
-       */
-      int step{0}, integrationSteps{0}, maxIter{0}, sumIter{0};
-
-      /**
-       * \brief computing time counter
-       */
-      double s0{0.}, time{0.};
-
-      /**
-       * \brief plot step difference
-       */
-      int stepPlot{0};
-
-      /** tolerance for position constraints */
-      double gMax{-1};
-
-      /**
-       * \brief file stream for integration information
-       */
+      double tPlot;
+      int iter, step, integrationSteps;
+      double s0, time;
+      int stepPlot;
       std::ofstream integPlot;
   };
 
 }
 
-#endif /* _TIME_STEPPING_INTEGRATOR_H_ */
+#endif

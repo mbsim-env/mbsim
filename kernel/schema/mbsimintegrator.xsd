@@ -329,6 +329,16 @@
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Lageebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForVelocityConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Geschwindigkeitsebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -365,14 +375,19 @@
                 Schrittweitenvorschlag zu Beginn der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="maximumStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Maximal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="minimumStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Minimal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="maximumStepSize" type="pv:timeScalar" minOccurs="0">
+          <xs:element name="stepLimit" type="pv:integerFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Maximal zu verwendende Schrittweite.
+                Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="plotOnRoot" type="pv:booleanFullEval" minOccurs="0">
@@ -426,14 +441,19 @@
                 Schrittweitenvorschlag zu Beginn der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="maximumStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Maximal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="minimumStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Minimal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="maximumStepSize" type="pv:timeScalar" minOccurs="0">
+          <xs:element name="stepLimit" type="pv:integerFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Maximal zu verwendende Schrittweite.
+                Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="plotOnRoot" type="pv:booleanFullEval" minOccurs="0">
@@ -458,7 +478,7 @@
 
   <xs:element name="TimeSteppingIntegrator" substitutionGroup="Integrator" type="TimeSteppingIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Halb-Explizite Timestepping Integration für Maßdifferentialinklusionen.
+        Halb-explizite Timestepping Integration für Maßdifferentialinklusionen.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="TimeSteppingIntegratorType">
@@ -470,6 +490,40 @@
                 Integrationsschrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Lageebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="ThetaTimeSteppingIntegrator" substitutionGroup="Integrator" type="ThetaTimeSteppingIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Halb-explizite Theta-Timestepping Integration für Maßdifferentialinklusionen.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="ThetaTimeSteppingIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:element name="stepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Integrationsschrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="theta" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Theta.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Lageebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -477,7 +531,7 @@
 
   <xs:element name="TimeSteppingSSCIntegrator" substitutionGroup="Integrator" type="TimeSteppingSSCIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-       Halb-Explizite Timestepping Integration für Maßdifferentialinklusionen mit Schrittweitensteuerung und höherer Ordnung.
+       Halb-explizite Timestepping Integration für Maßdifferentialinklusionen mit Schrittweitensteuerung und höherer Ordnung.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="TimeSteppingSSCIntegratorType">
@@ -657,9 +711,28 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="EulerImplicitIntegrator" substitutionGroup="Integrator" type="EulerImplicitIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Implizites Einschritt-Integrationsverfahren mit fester Schrittweite.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="EulerImplicitIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:element name="stepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Integrationsschrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="RKSuiteIntegrator" substitutionGroup="Integrator" type="RKSuiteIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Runge-Kutta Integrationsverfahren
+        Runge-Kutta Integrationsverfahren.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="RKSuiteIntegratorType">

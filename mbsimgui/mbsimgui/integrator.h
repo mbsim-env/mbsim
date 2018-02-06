@@ -85,6 +85,12 @@ namespace MBSimGUI {
       IntegratorPropertyDialog* createPropertyDialog() override { return new TimeSteppingIntegratorPropertyDialog(this); }
   };
 
+  class ThetaTimeSteppingIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "ThetaTimeSteppingIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new ThetaTimeSteppingIntegratorPropertyDialog(this); }
+  };
+
   class TimeSteppingSSCIntegrator : public Integrator {
     public:
       QString getType() const override { return "TimeSteppingSSCIntegrator"; }
@@ -101,6 +107,12 @@ namespace MBSimGUI {
     public:
       QString getType() const override { return "EulerExplicitIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() override { return new EulerExplicitIntegratorPropertyDialog(this); }
+  };
+
+  class EulerImplicitIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "EulerImplicitIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new EulerImplicitIntegratorPropertyDialog(this); }
   };
 
   class RKSuiteIntegrator : public Integrator {

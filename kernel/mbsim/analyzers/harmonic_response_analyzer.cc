@@ -34,11 +34,8 @@ namespace MBSimAnalyzer {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYZER, HarmonicResponseAnalyzer)
 
-  HarmonicResponseAnalyzer::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) { }
-
   Vec HarmonicResponseAnalyzer::Residuum::operator()(const Vec &z) {
     Vec res;
-    sys->setTime(t);
     sys->setState(z);
     sys->resetUpToDate();
     res = sys->evalzd();
@@ -59,7 +56,8 @@ namespace MBSimAnalyzer {
       throw MBSimError("(HarmonicResponseAnalyzer::computeFrequencyResponse): size of z0 does not match");
 
     if(compEq) {
-      Residuum f(system,tStart);
+      system->setTime(tStart);
+      Residuum f(system);
       MultiDimNewtonMethod newton(&f);
       newton.setLinearAlgebra(1);
       zEq = newton.solve(zEq);

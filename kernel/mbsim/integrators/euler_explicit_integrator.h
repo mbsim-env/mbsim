@@ -28,11 +28,6 @@ namespace MBSimIntegrator {
   class EulerExplicitIntegrator : public Integrator { 
     public:
       /**
-       * \brief constructor
-       */
-      EulerExplicitIntegrator();
-
-      /**
        * \brief destructor
        */
       ~EulerExplicitIntegrator() override = default;

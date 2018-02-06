@@ -286,12 +286,16 @@ namespace MBSimGUI {
       return new LSODERIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"TimeSteppingIntegrator")
       return new TimeSteppingIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"ThetaTimeSteppingIntegrator")
+      return new ThetaTimeSteppingIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"TimeSteppingSSCIntegrator")
       return new TimeSteppingSSCIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"HETS2Integrator")
       return new HETS2Integrator;
     else if(E(element)->getTagName()==MBSIMINT%"EulerExplicitIntegrator")
       return new EulerExplicitIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"EulerImplicitIntegrator")
+      return new EulerImplicitIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"RKSuiteIntegrator")
       return new RKSuiteIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"BoostOdeintDOS_RKDOPRI5")
