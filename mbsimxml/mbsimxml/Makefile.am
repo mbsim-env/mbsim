@@ -28,3 +28,8 @@ dist_schema_DATA = mbsimproject.xsd
 
 mbsimmoduleschemadir = @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimModule
 dist_mbsimmoduleschema_DATA = mbsimmodule.xsd
+
+# freedesktop.org
+freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org
+freedesktoporg_DATA = mbsim-env.org.mbsimxml.xml
+bin_SCRIPTS = desktopIntegration.sh
