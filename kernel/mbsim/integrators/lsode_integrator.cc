@@ -87,15 +87,14 @@ namespace MBSimIntegrator {
       assert (aTol.size() >= zSize);
     }
 
-//    int i, one=1, zero=0, two=2, istate=1;
     int one=1, istate=1;
     int nsv=system->getsvSize();
     int lrWork = (22+zSize*max(16,zSize+9)+3*nsv)*2;
     Vec rWork(lrWork);
-    rWork(4) = dt0; // integrator chooses the step size (dont use dt0)
+    rWork(4) = dt0;
     rWork(5) = dtMax;
     rWork(6) = dtMin;
-    int liWork=(20+zSize)                             *10;//////////////;
+    int liWork=(20+zSize)*10;
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
@@ -138,6 +137,17 @@ namespace MBSimIntegrator {
         s0 = s1; 
         if(plotIntegrationData) integPlot<< t << " " << rWork(10) << " " << time << endl;
         tPlot = min(tEnd,tPlot + dtPlot);
+
+        // check drift
+        if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+          system->projectGeneralizedPositions(3);
+          system->projectGeneralizedVelocities(3);
+          istate=1;
+        }
+        else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+          system->projectGeneralizedVelocities(3);
+          istate=1;
+        }
       }
       if(istate<0) throw MBSimError("Integrator LSODE failed with istate = "+toString(istate));
     }
@@ -181,6 +191,10 @@ namespace MBSimIntegrator {
     if(e) setMinimumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
+   e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
 }

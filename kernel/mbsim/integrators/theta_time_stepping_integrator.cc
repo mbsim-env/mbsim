@@ -107,7 +107,7 @@ namespace MBSimIntegrator {
       system->checkActive(1);
       if (system->gActiveChanged()) system->resize_();
 
-      if(gMax>0 and system->positionDriftCompensationNeeded(gMax))
+      if(gMax>=0 and system->positionDriftCompensationNeeded(gMax))
         system->projectGeneralizedPositions(3);
 
       const Mat &T = system->evalT();

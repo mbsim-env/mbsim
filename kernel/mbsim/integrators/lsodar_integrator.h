@@ -48,6 +48,8 @@ namespace MBSimIntegrator {
       double rTol{1e-6};
       /** step size for the first step */
       double dt0{0};
+      /**  maximum number of steps allowed during one call to the solver. (default 10000) */
+      int maxSteps{10000};
 
       bool plotOnRoot{true};
 
@@ -70,6 +72,7 @@ namespace MBSimIntegrator {
       void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
       void setRelativeTolerance(double rTol_) { rTol = rTol_; }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
+      void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
 
       void setPlotOnRoot(bool b) { plotOnRoot = b; }
 

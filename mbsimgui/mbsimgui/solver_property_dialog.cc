@@ -356,8 +356,8 @@ namespace MBSimGUI {
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
-    minimumStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
+    minimumStepSize->initializeUsingXML(item->getXMLElement());
     plotOnRoot->initializeUsingXML(item->getXMLElement());
     gMax->initializeUsingXML(item->getXMLElement());
     gdMax->initializeUsingXML(item->getXMLElement());
@@ -369,8 +369,8 @@ namespace MBSimGUI {
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
-    minimumStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
+    minimumStepSize->writeXMLFile(item->getXMLElement());
     plotOnRoot->writeXMLFile(item->getXMLElement());
     gMax->writeXMLFile(item->getXMLElement());
     gdMax->writeXMLFile(item->getXMLElement());
@@ -412,8 +412,8 @@ namespace MBSimGUI {
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
-    minimumStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
+    minimumStepSize->initializeUsingXML(item->getXMLElement());
     plotOnRoot->initializeUsingXML(item->getXMLElement());
     gMax->initializeUsingXML(item->getXMLElement());
     gdMax->initializeUsingXML(item->getXMLElement());
@@ -425,8 +425,8 @@ namespace MBSimGUI {
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
-    minimumStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
+    minimumStepSize->writeXMLFile(item->getXMLElement());
     plotOnRoot->writeXMLFile(item->getXMLElement());
     gMax->writeXMLFile(item->getXMLElement());
     gdMax->writeXMLFile(item->getXMLElement());

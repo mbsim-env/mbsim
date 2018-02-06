@@ -356,8 +356,8 @@
     <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
     <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
     <initialStepSize unit="s">1e-10</initialStepSize>
-    <minimumStepSize unit="s">0</minimumStepSize>
     <maximumStepSize unit="s">0</maximumStepSize>
+    <minimumStepSize unit="s">0</minimumStepSize>
     <plotOnRoot>0</plotOnRoot>
   </LSODARIntegrator>
 
