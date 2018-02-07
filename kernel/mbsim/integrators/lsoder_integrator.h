@@ -83,6 +83,7 @@ namespace MBSimIntegrator {
       void setRelativeTolerance(double rTol_) { rTol = rTol_; }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
+      void setMethod(Method method_) { method = method_; }
 
       void setPlotOnRoot(bool b) { plotOnRoot = b; }
 
