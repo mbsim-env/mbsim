@@ -22,11 +22,14 @@ void DLSODAR(void(*)(int*,double*,double*,double*),int*,double*,double*,
             int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),
             int*,void(*)(int*,double*,double*,int*,double*),int*,int*);
 
-#define DLSODER FC_FUNC(dlsoder,DLSODER)
-void DLSODER(void(*)(int*,double*,double*,double*),int*,double*,double*,
+#define DLSODKR FC_FUNC(dlsodkr,DLSODKR)
+void DLSODKR(void(*)(int*,double*,double*,double*),int*,double*,double*,
              double*,int*,double*,double*,int*,int*,int*,double*,int*,
-             int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),
-             int*,void(*)(int*,double*,double*,int*,double*),int*,int*,int*);
+             int*,int*,void(*)(void(*)(int*,double*,double*,double*),int*,
+             double*,double*,double*,double*,double*,double*,double*,int*,
+             double*,int*,int*),void(*)(int*,double*,double*,double*,double*,
+             double*,double*,int*,double*,int*,int*),int*,
+             void(*)(int*,double*,double*,int*,double*),int*,int*);
 
 #define DLSODE FC_FUNC(mbsim_dlsode,MBSIM_DLSODE)
 void DLSODE(void(*)(int*,double*,double*,double*),int*,double*,double*,

@@ -377,7 +377,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  LSODERIntegratorPropertyDialog::LSODERIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+  LSODKRIntegratorPropertyDialog::LSODKRIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
     addTab("Tolerances");
     addTab("Step size");
     addTab("Extra");
@@ -415,7 +415,7 @@ namespace MBSimGUI {
     addToTab("Tolerances", gdMax);
   }
 
-  DOMElement* LSODERIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* LSODKRIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     method->initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
@@ -429,7 +429,7 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* LSODERIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* LSODKRIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     method->writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());

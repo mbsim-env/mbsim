@@ -410,12 +410,12 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="LSODERIntegrator" substitutionGroup="Integrator" type="LSODERIntegratorType">
+  <xs:element name="LSODKRIntegrator" substitutionGroup="Integrator" type="LSODKRIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Livermore Solver für Ordinary Differential Equations mit Root-finding zur Lösung von Anfangswertproblemen für steife und nicht-steife gewöhnliche Differentialgleichungssysteme. LSODER ist eine Erweiterung von LSODE. Das Verfahren enthält einen Mechanismus, um Nullstellen von Indikatorfunktionen zu finden. Die Schrittweite wird dynamisch angepasst.
+        Livermore Solver für Ordinary Differential Equations mit Root-finding zur Lösung von Anfangswertproblemen für steife und nicht-steife gewöhnliche Differentialgleichungssysteme. LSODKR ist eine Erweiterung von LSODE. Das Verfahren enthält einen Mechanismus, um Nullstellen von Indikatorfunktionen zu finden. Die Schrittweite wird dynamisch angepasst.
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="LSODERIntegratorType">
+  <xs:complexType name="LSODKRIntegratorType">
     <xs:complexContent>
       <xs:extension base="IntegratorType">
         <xs:sequence>

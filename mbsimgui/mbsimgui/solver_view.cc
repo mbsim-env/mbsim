@@ -60,7 +60,7 @@ namespace MBSimGUI {
     type.emplace_back("ODEX integrator");
     type.emplace_back("LSODE integrator");
     type.emplace_back("LSODAR integrator");
-    type.emplace_back("LSODER integrator");
+    type.emplace_back("LSODKR integrator");
     type.emplace_back("Time stepping integrator");
     type.emplace_back("Theta time stepping integrator");
     type.emplace_back("Time stepping SSC integrator");
@@ -129,7 +129,7 @@ namespace MBSimGUI {
     else if(i==5)
       return new LSODARIntegrator;
     else if(i==6)
-      return new LSODERIntegrator;
+      return new LSODKRIntegrator;
     else if(i==7)
       return new TimeSteppingIntegrator;
     else if(i==8)
@@ -170,7 +170,7 @@ namespace MBSimGUI {
       i=4;
     else if(dynamic_cast<LSODARIntegrator*>(solver))
       i=5;
-    else if(dynamic_cast<LSODERIntegrator*>(solver))
+    else if(dynamic_cast<LSODKRIntegrator*>(solver))
       i=6;
     else if(dynamic_cast<TimeSteppingIntegrator*>(solver))
       i=7;

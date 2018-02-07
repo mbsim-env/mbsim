@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _LSODER_INTEGRATOR_H_
-#define _LSODER_INTEGRATOR_H_
+#ifndef _LSODKR_INTEGRATOR_H_
+#define _LSODKR_INTEGRATOR_H_
 
 #include "integrator.h"
 
@@ -29,10 +29,10 @@ namespace MBSimIntegrator {
 
   extern bool odePackInUse;
 
-  /** \brief ODE-Integrator LSODER
+  /** \brief ODE-Integrator LSODKR
     Integrator with root finding for ODEs.
     This integrator uses LSODE from http://www.netlib.org . */
-  class LSODERIntegrator : public Integrator {
+  class LSODKRIntegrator : public Integrator {
 
     public:
 
