@@ -128,7 +128,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *plotOnRoot, *gMax, *gdMax;
+      ExtWidget *method, *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *plotOnRoot, *gMax, *gdMax;
   };
 
   class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {

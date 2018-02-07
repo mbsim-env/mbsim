@@ -419,6 +419,17 @@
     <xs:complexContent>
       <xs:extension base="IntegratorType">
         <xs:sequence>
+          <xs:element name="method" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl der Integrationsmethode.
+              <ul>
+                <li>nonstiff: Nichtsteifes Verfahren (Adams Verfahren)</li>
+                <li>Adams: siehe nonstiff</li>
+                <li>stiff: Steifes Verfahren (bachward differentiation formula)</li>
+                <li>BDF: siehe stiff</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:choice>
             <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">

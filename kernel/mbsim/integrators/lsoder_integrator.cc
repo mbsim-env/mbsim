@@ -60,6 +60,12 @@ namespace MBSimIntegrator {
   void LSODERIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    if(e) {
+      string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(methodStr=="nonstiff" or methodStr=="Adams") method=nonstiff;
+      else if(methodStr=="stiff" or methodStr=="BDF") method=stiff;
+    }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
@@ -140,6 +146,7 @@ namespace MBSimIntegrator {
   }
 
   void LSODERIntegrator::subIntegrate(double tStop) {
+    int MF = method;
     int one = 1;
     int two = 2;
     rWork(4) = dt0;
@@ -150,7 +157,7 @@ namespace MBSimIntegrator {
       double tOut = min(tPlot, tStop);
       DLSODER(fzdot, neq, system->getState()(), &t, &tOut, &iTol, &rTol, aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(),
-          &liWork, NULL, &two, fsv, &nsv, system->getjsv()());
+          &liWork, NULL, &two, fsv, &nsv, system->getjsv()(), &MF);
       if(istate==2 || fabs(t-tPlot)<epsroot) {
         system->setTime(t);
 //        system->setState(z); Not needed as the integrator uses the state of the system

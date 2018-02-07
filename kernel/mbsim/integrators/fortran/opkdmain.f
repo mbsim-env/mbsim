@@ -5371,10 +5371,10 @@ C            END
 *DECK DLSODER
       SUBROUTINE DLSODER (F, NEQ, Y, T, TOUT, ITOL, RTOL, ATOL, ITASK,
      1            ISTATE, IOPT, RWORK, LRW, IWORK, LIW, JAC, JT,
-     2            G, NG, JROOT)
+     2            G, NG, JROOT, MF)
       EXTERNAL F, JAC, G
       INTEGER NEQ, ITOL, ITASK, ISTATE, IOPT, LRW, IWORK, LIW, JT,
-     1   NG, JROOT
+     1   NG, JROOT, MF
       DOUBLE PRECISION Y, T, TOUT, RTOL, ATOL, RWORK
       DIMENSION NEQ(*), Y(*), RTOL(*), ATOL(*), RWORK(LRW), IWORK(LIW),
      1   JROOT(NG)
@@ -6556,9 +6556,11 @@ C-----------------------------------------------------------------------
  25   N = NEQ(1)
       IF (ITOL .LT. 1 .OR. ITOL .GT. 4) GO TO 606
       IF (IOPT .LT. 0 .OR. IOPT .GT. 1) GO TO 607
-      IF (JT .EQ. 3 .OR. JT .LT. 1 .OR. JT .GT. 5) GO TO 608
-      JTYP = JT
-      IF (JT .LE. 2) GO TO 30
+      METH = MF/10
+      MITER = MF - 10*METH
+      IF (METH .LT. 1 .OR. METH .GT. 2) GO TO 608
+      IF (MITER .LT. 0 .OR. MITER .GT. 5) GO TO 608
+      IF (MITER .LE. 3) GO TO 30
       ML = IWORK(1)
       MU = IWORK(2)
       IF (ML .LT. 0 .OR. ML .GE. N) GO TO 609
@@ -6577,11 +6579,11 @@ C Next process and check the optional inputs. --------------------------
       HMIN = 0.0D0
       IF (ISTATE .NE. 1) GO TO 60
       H0 = 0.0D0
-      MXORDN = MORD(1)
-      MXORDS = MORD(2)
       GO TO 60
- 40   IXPR = IWORK(5)
-      IF (IXPR .LT. 0 .OR. IXPR .GT. 1) GO TO 611
+ 40   MAXORD = IWORK(5)
+      IF (MAXORD .LT. 0) GO TO 611
+      IF (MAXORD .EQ. 0) MAXORD = 100
+      MAXORD = MIN(MAXORD,MORD(METH))
       MXSTEP = IWORK(6)
       IF (MXSTEP .LT. 0) GO TO 612
       IF (MXSTEP .EQ. 0) MXSTEP = MXSTP0
@@ -6590,14 +6592,6 @@ C Next process and check the optional inputs. --------------------------
       IF (MXHNIL .EQ. 0) MXHNIL = MXHNL0
       IF (ISTATE .NE. 1) GO TO 50
       H0 = RWORK(5)
-      MXORDN = IWORK(8)
-      IF (MXORDN .LT. 0) GO TO 628
-      IF (MXORDN .EQ. 0) MXORDN = 100
-      MXORDN = MIN(MXORDN,MORD(1))
-      MXORDS = IWORK(9)
-      IF (MXORDS .LT. 0) GO TO 629
-      IF (MXORDS .EQ. 0) MXORDS = 100
-      MXORDS = MIN(MXORDS,MORD(2))
       IF ((TOUT - T)*H0 .LT. 0.0D0) GO TO 614
  50   HMAX = RWORK(6)
       IF (HMAX .LT. 0.0D0) GO TO 615
@@ -6619,8 +6613,7 @@ C first call, but as a problem interruption with ISTATE = -7 on a
 C continuation call.  If the lengths are sufficient for the current
 C method but not for both methods, a warning message is sent.
 C-----------------------------------------------------------------------
- 60   IF (ISTATE .EQ. 1) METH = 1
-      IF (ISTATE .EQ. 1) NYH = N
+ 60   IF (ISTATE .EQ. 1) NYH = N
       LG0 = 21
       LG1 = LG0 + NG
       LGX = LG1 + NG
@@ -6635,8 +6628,8 @@ C If ISTATE = 3 and NG was changed, shift YH to its new location. ------
       CALL DCOPY (LENYH, RWORK(LYH), I1, RWORK(LYHNEW), I1)
       LYH = LYHNEW
  62   CONTINUE
-      LEN1N = LYHNEW - 1 + (MXORDN + 1)*NYH
-      LEN1S = LYHNEW - 1 + (MXORDS + 1)*NYH
+      LEN1N = LYHNEW - 1 + (MAXORD + 1)*NYH
+      LEN1S = LYHNEW - 1 + (MAXORD + 1)*NYH
       LWM = LEN1S + 1
       IF (JT .LE. 2) LENWM = N*N + 2
       IF (JT .GE. 4) LENWM = (2*ML + MU + 1)*N + 2
@@ -6710,7 +6703,6 @@ C-----------------------------------------------------------------------
  100  UROUND = DUMACH()
       TN = T
       TSW = T
-      MAXORD = MXORDN
       IF (ITASK .NE. 4 .AND. ITASK .NE. 5) GO TO 110
       TCRIT = RWORK(1)
       IF ((TCRIT - TOUT)*(TOUT - T) .LT. 0.0D0) GO TO 625
@@ -6723,7 +6715,7 @@ C-----------------------------------------------------------------------
       NSLAST = 0
       HU = 0.0D0
       NQU = 0
-      MUSED = 0
+      MUSED = METH
       MITER = 0
       CCMAX = 0.3D0
       MAXCOR = 3
@@ -6898,11 +6890,9 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C   CALL DSTODA(NEQ,Y,YH,NYH,YH,EWT,SAVF,ACOR,WM,IWM,F,JAC,DPRJA,DSOLSY)
 C-----------------------------------------------------------------------
-       METH = 1
       CALL DSTODE (NEQ, Y, RWORK(LYH), NYH, RWORK(LYH), RWORK(LEWT),
      1   RWORK(LSAVF), RWORK(LACOR), RWORK(LWM), IWORK(LIWM),
      2   F, JAC, DPRJA, DSOLSY)
-      MUSED = 1
       KGO = 1 - KFLAG
       GO TO (300, 530, 540), KGO
 C-----------------------------------------------------------------------

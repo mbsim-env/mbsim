@@ -382,6 +382,14 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Extra");
 
+    vector<QString> list;
+    list.emplace_back("\"nonstiff\"");
+    list.emplace_back("\"Adams\"");
+    list.emplace_back("\"stiff\"");
+    list.emplace_back("\"BDF\"");
+    method = new ExtWidget("Method",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"method");
+    addToTab("General", method);
+
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
@@ -409,6 +417,7 @@ namespace MBSimGUI {
 
   DOMElement* LSODERIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    method->initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
@@ -422,6 +431,7 @@ namespace MBSimGUI {
 
   DOMElement* LSODERIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    method->writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());

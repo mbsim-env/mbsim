@@ -34,6 +34,13 @@ namespace MBSimIntegrator {
     This integrator uses LSODE from http://www.netlib.org . */
   class LSODERIntegrator : public Integrator {
 
+    public:
+
+      enum Method {
+        nonstiff=10,
+        stiff=22
+      };
+
     private:
 
       static void fzdot(int* neq, double* t, double* z_, double* zd_);
@@ -51,6 +58,8 @@ namespace MBSimIntegrator {
       double dt0{0};
       /**  maximum number of steps allowed during one call to the solver. (default 10000) */
       int maxSteps{10000};
+      /** use stiff (BDF) or nonstiff (Adams) method */
+      Method method{nonstiff};
 
       bool plotOnRoot{true};
 
