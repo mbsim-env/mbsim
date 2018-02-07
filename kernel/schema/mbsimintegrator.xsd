@@ -487,6 +487,67 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="LSODIIntegrator" substitutionGroup="Integrator" type="LSODIIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Livermore Solver for Ordinary Differential Equations (Implicit form). Integrator zur Lösung von Anfangswertproblemen für differential-algebraische Systeme vom Index 2.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="LSODIIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Schrittweitenvorschlag zu Beginn der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximumStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Maximal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="minimumStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Minimal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="stepLimit" type="pv:integerFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Maximale Anzahl von Integrationsschritten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Lageebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForVelocityConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Geschwindigkeitsebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="TimeSteppingIntegrator" substitutionGroup="Integrator" type="TimeSteppingIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Halb-explizite Timestepping Integration für Maßdifferentialinklusionen.
