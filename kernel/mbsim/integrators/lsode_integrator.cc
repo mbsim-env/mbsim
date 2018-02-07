@@ -88,8 +88,7 @@ namespace MBSimIntegrator {
     }
 
     int one=1, istate=1;
-    int nsv=system->getsvSize();
-    int lrWork = (22+zSize*max(16,zSize+9)+3*nsv)*2;
+    int lrWork = (22+zSize*max(16,zSize+9))*2;
     Vec rWork(lrWork);
     rWork(4) = dt0;
     rWork(5) = dtMax;
@@ -116,9 +115,6 @@ namespace MBSimIntegrator {
     }
 
     int MF = method;
-
-    VecInt jsv(nsv);  
-//    bool donedrift;
 
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
