@@ -34,7 +34,7 @@ namespace MBSimIntegrator {
    * Livermore Solver for Ordinary Differential Equations (Implicit form).
    * LSODI solves the initial-value problem for differential-algebraic systems
    * of index 2.
-   * It uses LSODE from http://www.netlib.org.
+   * This integrator uses ODEPACK (http://www.netlib.org/odepack).
    */
   class LSODIIntegrator : public Integrator {
 

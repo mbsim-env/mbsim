@@ -29,9 +29,13 @@ namespace MBSimIntegrator {
 
   extern bool odePackInUse;
 
-  /** \brief ODE-Integrator LSODKR
-    Integrator with root finding for ODEs.
-    This integrator uses LSODE from http://www.netlib.org . */
+  /** \brief Hindmarsh’s ODE solver LSODKR
+   *
+   * Livermore Solver for Ordinary Differential equations,
+   * with preconditioned Krylov iteration methods for the
+   * Newton correction linear systems, and with Rootfinding.
+   * This integrator uses ODEPACK (http://www.netlib.org/odepack).
+   */
   class LSODKRIntegrator : public Integrator {
 
     public:
