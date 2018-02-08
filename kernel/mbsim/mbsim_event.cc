@@ -46,7 +46,7 @@ namespace MBSim {
     if(!path.empty())
       str<<"At element "<<path<<"."<<endl;
     if(!locationStack.empty())
-      MBXMLUtils::DOMEvalException::locationStack2Stream("", locationStack, "", str);
+      MBXMLUtils::DOMEvalException::locationStack2Stream("", locationStack, str);
     whatMsg=str.str();
     whatMsg.resize(whatMsg.length()-1); // remote the trailing line feed
     return whatMsg.c_str();

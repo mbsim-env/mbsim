@@ -71,7 +71,7 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
     if(stack) {
       stack->generateWhat(str, indent.substr(0, indent.length()-2));
       str<<indent<<"+++ Created by "<<possibleType(nr, exVec.size(), it->first)<<endl;
-      DOMEvalException::locationStack2Stream(indent, stack->getLocationStack(), "", str);
+      DOMEvalException::locationStack2Stream(indent, stack->getLocationStack(), str);
     }
   }
   nr=1;
@@ -92,7 +92,7 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
       else
         str<<it->second->getMessage()<<endl;
       if(!wrongType || printNotCastableObjects)
-        DOMEvalException::locationStack2Stream(indent, it->second->getLocationStack(), "", str);
+        DOMEvalException::locationStack2Stream(indent, it->second->getLocationStack(), str);
     }
   }
   if(notPrintedWrongTypeErrors>0)

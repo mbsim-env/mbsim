@@ -222,7 +222,7 @@ namespace MBSim {
 
   void Element::initializeUsingXML(DOMElement *element) {
     // set the XML location stack of this element which can be used, later, by exceptions.
-    DOMEvalException::generateLocationStack(element, locationStack);
+    DOMEvalException::generateLocationStack(element, nullptr, locationStack);
 
     if(E(element)->hasAttribute("name")) // their are element with no name e.g. Function's
       setName(E(element)->getAttribute("name"));
