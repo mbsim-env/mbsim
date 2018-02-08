@@ -42,7 +42,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, LSODIIntegrator)
 
-  void LSODIIntegrator::resid(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires) {
+  void LSODIIntegrator::res(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires) {
     auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
     int nq = self->system->getqSize();
     int nu = self->system->getuSize();
@@ -60,15 +60,15 @@ namespace MBSimIntegrator {
     res(nq+nu+nx,neq[0]-1) = self->system->evalgd();
   }
 
-  void LSODIIntegrator::aplusp(int *neq, double *t, double *y_, int *ml, int *mu, double *P_, int *nrowp) {
+  void LSODIIntegrator::adda(int *neq, double *t, double *y_, int *ml, int *mu, double *P_, int *nrowp) {
     auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
     int nq = self->system->getqSize();
     int nu = self->system->getuSize();
     int nx = self->system->getxSize();
     SqrMat P(*nrowp, P_);
-    for(int i=0; i<nq; i++) P(i,i) = 1;
-    P(RangeV(nq,nq+nu-1),RangeV(nq,nq+nu-1)) = self->system->evalM(); // system is up to date, as resid is called immediately before
-    for(int i=nq+nu; i<nq+nu+nx-1; i++) P(i,i) = 1;
+    for(int i=0; i<nq; i++) P(i,i) += 1;
+    P(RangeV(nq,nq+nu-1),RangeV(nq,nq+nu-1)) += self->system->evalM(); // system is up to date, as res is called immediately before
+    for(int i=nq+nu; i<nq+nu+nx-1; i++) P(i,i) += 1;
   }
 
   void LSODIIntegrator::integrate() {
@@ -144,13 +144,9 @@ namespace MBSimIntegrator {
 
     int MF = 22;
 
-    int ires = 0;
-    Vec res(N);
-    resid(neq, &t, y(), yd(), res(), &ires);
-
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
-      DLSODI(resid, aplusp, 0, neq, y(), yd(), &t, &tPlot, &iTol, &rTol, absTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
+      DLSODI(res, adda, 0, neq, y(), yd(), &t, &tPlot, &iTol, &rTol, absTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
       if(istate==2 || fabs(t-tPlot)<epsroot) {
         system->setTime(t);
         system->setState(y(0,system->getzSize()-1));

@@ -40,9 +40,9 @@ namespace MBSimIntegrator {
 
     private:
 
-      static void resid(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires);
+      static void res(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires);
 
-      static void aplusp(int *neq, double* t, double* z_, int* ml, int* mu, double* P, int* nrowp);
+      static void adda(int *neq, double* t, double* z_, int* ml, int* mu, double* P, int* nrowp);
 
       /** maximal step size */
       double dtMax{0};
