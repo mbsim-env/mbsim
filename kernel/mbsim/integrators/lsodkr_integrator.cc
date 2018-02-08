@@ -22,7 +22,7 @@
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/utils.h>
 #include "fortran/fortran_wrapper.h"
-#include "lsoder_integrator.h"
+#include "lsodkr_integrator.h"
 #include <fstream>
 #include <time.h>
 
@@ -37,10 +37,10 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, LSODERIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, LSODKRIntegrator)
 
-  void LSODERIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
-    auto self=*reinterpret_cast<LSODERIntegrator**>(&neq[1]);
+  void LSODKRIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
+    auto self=*reinterpret_cast<LSODKRIntegrator**>(&neq[1]);
     Vec zd(neq[0], zd_);
     self->getSystem()->setTime(*t);
 //    self->getSystem()->setState(z); Not needed as the integrator uses the state of the system
@@ -48,8 +48,8 @@ namespace MBSimIntegrator {
     zd = self->getSystem()->evalzd();
   }
 
-  void LSODERIntegrator::fsv(int* neq, double* t, double* z_, int* nsv, double* sv_) {
-    auto self=*reinterpret_cast<LSODERIntegrator**>(&neq[1]);
+  void LSODKRIntegrator::fsv(int* neq, double* t, double* z_, int* nsv, double* sv_) {
+    auto self=*reinterpret_cast<LSODKRIntegrator**>(&neq[1]);
     Vec sv(*nsv, sv_);
     self->getSystem()->setTime(*t);
 //    self->getSystem()->setState(z); Not needed as the integrator uses the state of the system
@@ -57,9 +57,15 @@ namespace MBSimIntegrator {
     sv = self->getSystem()->evalsv();
   }
 
-  void LSODERIntegrator::initializeUsingXML(DOMElement *element) {
+  void LSODKRIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    if(e) {
+      string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(methodStr=="nonstiff" or methodStr=="Adams") method=nonstiff;
+      else if(methodStr=="stiff" or methodStr=="BDF") method=stiff;
+    }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
@@ -82,22 +88,22 @@ namespace MBSimIntegrator {
     if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
-  void LSODERIntegrator::integrate() {
+  void LSODKRIntegrator::integrate() {
     preIntegrate();
     subIntegrate(tEnd);
     postIntegrate();
   }
 
-  void LSODERIntegrator::preIntegrate() {
+  void LSODKRIntegrator::preIntegrate() {
     debugInit();
 
     if(odePackInUse)
-      throw MBSimError("Only one integration with LSODARIntegrator, LSODERIntegrator and LSODEIntegrator at a time is possible.");
+      throw MBSimError("Only one integration with LSODARIntegrator, LSODKRIntegrator and LSODEIntegrator at a time is possible.");
     odePackInUse = true;
 
     int zSize=system->getzSize();
     neq[0]=zSize;
-    LSODERIntegrator *self=this;
+    LSODKRIntegrator *self=this;
     memcpy(&neq[1], &self, sizeof(void*));
 
     if(z0.size()) {
@@ -139,18 +145,18 @@ namespace MBSimIntegrator {
     system->plot();
   }
 
-  void LSODERIntegrator::subIntegrate(double tStop) {
+  void LSODKRIntegrator::subIntegrate(double tStop) {
+    int MF = method;
     int one = 1;
-    int two = 2;
     rWork(4) = dt0;
     system->setTime(t);
 //    system->setState(z); Not needed as the integrator uses the state of the system
     while(t < tStop-epsroot) {
       integrationSteps++;
       double tOut = min(tPlot, tStop);
-      DLSODER(fzdot, neq, system->getState()(), &t, &tOut, &iTol, &rTol, aTol(), &one,
+      DLSODKR(fzdot, neq, system->getState()(), &t, &tOut, &iTol, &rTol, aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(),
-          &liWork, NULL, &two, fsv, &nsv, system->getjsv()());
+          &liWork, NULL, NULL, &MF, fsv, &nsv, system->getjsv()());
       if(istate==2 || fabs(t-tPlot)<epsroot) {
         system->setTime(t);
 //        system->setState(z); Not needed as the integrator uses the state of the system
@@ -200,11 +206,11 @@ namespace MBSimIntegrator {
         istate=1;
         rWork(4)=dt0;
       }
-      if(istate<0) throw MBSimError("Integrator LSODER failed with istate = "+toString(istate));
+      if(istate<0) throw MBSimError("Integrator LSODKR failed with istate = "+toString(istate));
     }
   }
 
-  void LSODERIntegrator::postIntegrate() {
+  void LSODKRIntegrator::postIntegrate() {
     system->setTime(t);
 //    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();

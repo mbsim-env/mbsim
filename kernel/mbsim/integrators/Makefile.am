@@ -1,8 +1,9 @@
 noinst_LTLIBRARIES = libintegrators.la
 libintegrators_la_SOURCES = integrator.cc\
 			    lsodar_integrator.cc \
-			    lsoder_integrator.cc \
+			    lsodkr_integrator.cc \
 			    lsode_integrator.cc \
+			    lsodi_integrator.cc \
 			    rksuite_integrator.cc \
 			    boost_odeint_integrator.cc \
 			    dopri5_integrator.cc \
@@ -47,8 +48,9 @@ integratorsinclude_HEADERS = integrator.h \
 			     euler_explicit_integrator.h \
 			     euler_implicit_integrator.h \
 			     lsodar_integrator.h \
-			     lsoder_integrator.h \
+			     lsodkr_integrator.h \
 			     lsode_integrator.h \
+			     lsodi_integrator.h \
 			     rksuite_integrator.h \
 			     boost_odeint_integrator.h \
 			     boost_odeint_integrator_predef.h \
