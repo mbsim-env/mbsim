@@ -159,6 +159,20 @@
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="formalism" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl des Formalismus.
+              <ul>
+                <li>ODE: gewöhnliches Differentialgleichungssystem</li>
+                <li>DAE: differential-algebraisches System vom Index 2</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="specialStructure" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Ausnutzung der speziellen Systemstruktur qd=T*u with T=I.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

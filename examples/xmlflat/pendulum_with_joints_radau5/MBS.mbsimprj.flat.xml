@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML">
+  <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
+  <DynamicSystemSolver name="MBS" xmlns="http://www.mbsim-env.de/MBSim"
+      xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+    <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+    <frames>
+      <FixedRelativeFrame name="Os">
+        <relativePosition>[0;0;0.04]</relativePosition>
+        <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+      </FixedRelativeFrame>
+    </frames>
+    <contours/>
+    <groups/>
+    <objects>
+      <RigidBody name="Stab1">
+        <generalizedInitialPosition>[0.2;0;1.57079632679490]</generalizedInitialPosition>
+        <generalizedInitialVelocity>[0;0;0]</generalizedInitialVelocity>
+        <frameOfReference ref="../Frame[I]"/>
+        <frameForKinematics ref="Frame[C]"/>
+        <mass>0.5</mass>
+        <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
+        <stateDependentTranslation>
+          <LinearTranslation>
+            <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
+          </LinearTranslation>
+        </stateDependentTranslation>
+        <stateDependentRotation>
+          <RotationAboutFixedAxis>
+            <axisOfRotation>[0;0;1]</axisOfRotation>
+          </RotationAboutFixedAxis>
+        </stateDependentRotation>
+        <frames>
+          <FixedRelativeFrame name="PunktO">
+            <relativePosition>[0;0.2;0]</relativePosition>
+            <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          </FixedRelativeFrame>
+          <FixedRelativeFrame name="PunktU">
+            <relativePosition>[0;-0.45;0]</relativePosition>
+            <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          </FixedRelativeFrame>
+        </frames>
+        <contours/>
+        <openMBVRigidBody>
+          <ombv:Frustum name="dummy">
+            <ombv:initialTranslation>[0;-0.5;-0.05]</ombv:initialTranslation>
+            <ombv:initialRotation>[1.5708;0;0]</ombv:initialRotation>
+            <ombv:scaleFactor>1</ombv:scaleFactor>
+            <ombv:baseRadius>0.02</ombv:baseRadius>
+            <ombv:topRadius>0.02</ombv:topRadius>
+            <ombv:height>1</ombv:height>
+            <ombv:innerBaseRadius>0</ombv:innerBaseRadius>
+            <ombv:innerTopRadius>0</ombv:innerTopRadius>
+          </ombv:Frustum>
+        </openMBVRigidBody>
+      </RigidBody>
+      <RigidBody name="Stab2">
+        <generalizedInitialPosition>[0.791421356237310;-0.141421356237310;0.785398163397448]</generalizedInitialPosition>
+        <generalizedInitialVelocity>[0;0;0]</generalizedInitialVelocity>
+        <frameOfReference ref="../Frame[Os]"/>
+        <frameForKinematics ref="Frame[C]"/>
+        <mass>0.5</mass>
+        <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
+        <stateDependentTranslation>
+          <LinearTranslation>
+            <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
+          </LinearTranslation>
+        </stateDependentTranslation>
+        <stateDependentRotation>
+          <RotationAboutFixedAxis>
+            <axisOfRotation>[0;0;1]</axisOfRotation>
+          </RotationAboutFixedAxis>
+        </stateDependentRotation>
+        <frames>
+          <FixedRelativeFrame name="Punkt">
+            <relativePosition>[0;0.2;0]</relativePosition>
+            <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          </FixedRelativeFrame>
+        </frames>
+        <contours/>
+        <openMBVRigidBody>
+          <ombv:Frustum name="dummy">
+            <ombv:initialTranslation>[0;-0.5;-0.05]</ombv:initialTranslation>
+            <ombv:initialRotation>[1.5708;0;0]</ombv:initialRotation>
+            <ombv:scaleFactor>1</ombv:scaleFactor>
+            <ombv:baseRadius>0.02</ombv:baseRadius>
+            <ombv:topRadius>0.02</ombv:topRadius>
+            <ombv:height>1</ombv:height>
+            <ombv:innerBaseRadius>0</ombv:innerBaseRadius>
+            <ombv:innerTopRadius>0</ombv:innerTopRadius>
+          </ombv:Frustum>
+        </openMBVRigidBody>
+      </RigidBody>
+    </objects>
+    <links>
+      <Joint name="Gelenk1">
+        <connect ref1="../Frame[I]" ref2="../Object[Stab1]/Frame[PunktO]"/>
+        <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
+        <forceLaw>
+          <BilateralConstraint/>
+        </forceLaw>
+      </Joint>
+      <Joint name="Gelenk2">
+        <connect ref1="../Object[Stab1]/Frame[PunktU]" ref2="../Object[Stab2]/Frame[Punkt]"/>
+        <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
+        <forceLaw>
+          <BilateralConstraint/>
+        </forceLaw>
+      </Joint>
+    </links>
+    <constraints/>
+    <observers>
+      <MechanicalLinkObserver name="MechanicalLinkObserver1">
+        <mechanicalLink ref="../Link[Gelenk1]"/>
+        <enableOpenMBVForce>
+          <scaleLength>0.02</scaleLength>
+        </enableOpenMBVForce>
+      </MechanicalLinkObserver>
+      <MechanicalLinkObserver name="MechanicalLinkObserver2">
+        <mechanicalLink ref="../Link[Gelenk2]"/>
+        <enableOpenMBVForce>
+          <scaleLength>0.02</scaleLength>
+        </enableOpenMBVForce>
+      </MechanicalLinkObserver>
+    </observers>
+    <environments>
+      <MBSimEnvironment>
+        <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+  </DynamicSystemSolver>
+  <RADAU5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+    <startTime>0</startTime>
+    <endTime>10.1</endTime>
+    <plotStepSize>1e-2</plotStepSize>
+    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
+    <relativeToleranceScalar>1e-6</relativeToleranceScalar>
+    <initialStepSize>0</initialStepSize>
+    <maximumStepSize>1e-1</maximumStepSize>
+    <formalism>'DAE'</formalism>
+  </RADAU5Integrator>
+</MBSimProject>

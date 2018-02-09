@@ -30,10 +30,20 @@ namespace MBSimIntegrator {
   /** \brief DAE-Integrator RADAU5
   */
   class RADAU5Integrator : public Integrator {
+    public:
+      enum Formalism {
+        ODE=0,
+        DAE=1
+      };
 
     private:
+      typedef void (*massptr)(int* n, double* m, int* lmas, double* rpar, int* ipar);
 
-      static void fzdot(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
+      static massptr mass;
+      static void fzdotODE(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
+      static void fzdotDAE(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
+      static void massidentity(int* n, double* m, int* lmas, double* rpar, int* ipar);
+      static void massreducedidentity(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
 
       double tPlot{0};
@@ -52,6 +62,10 @@ namespace MBSimIntegrator {
       int maxSteps{0};
       /** maximal step size */
       double dtMax{0};
+      /** formalism **/
+      Formalism formalism{ODE};
+      /** coordinate transformation **/
+      bool specialStructure{true};
 
     public:
 
@@ -64,6 +78,8 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
+      void setFormalism(Formalism formalism_) { formalism = formalism_; }
+      void setSpecialStructure(bool specialStructure_) { specialStructure = specialStructure_; }
 
       using Integrator::integrate;
       void integrate() override;
