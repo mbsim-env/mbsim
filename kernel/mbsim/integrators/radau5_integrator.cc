@@ -65,16 +65,10 @@ namespace MBSimIntegrator {
     yd(nq+nu+nx,*neq-1) = self->system->evalgd();
   }
 
-  void RADAU5Integrator::massidentity(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
+  void RADAU5Integrator::mass(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
     Mat M(*lmas,*zSize, m_);
     for(int i=0; i<self->system->getzSize(); i++) M(0,i) = 1;
-  }
-
-  void RADAU5Integrator::massreducedidentity(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Mat M(*lmas,*zSize, m_);
-    for(int i=0; i<self->system->getuSize()+self->system->getxSize(); i++) M(0,i) = 1;
   }
 
   void  RADAU5Integrator::plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
@@ -149,15 +143,11 @@ namespace MBSimIntegrator {
       iWork(4) = zSize;
       iWork(5) = system->getgdSize();
     }
-    if(specialStructure) {
-      iWork(8) = system->getqSize();
-      iWork(9) = system->getqSize();
-    }
 
     int iJac = 0; // jacobian is computed internally by finite differences
     int mlJac = neq; // jacobian is a full matrix
     int muJac = mlJac; // need not to be defined if mlJac = neq
-    int iMas = formalism; // gives information on the mass-matriX (identiy or user-defined)
+    int iMas = formalism; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix
     int muMas = 0; // upper bandwith of the mass-matrix
     int idid;
@@ -186,7 +176,7 @@ namespace MBSimIntegrator {
     RADAU5(&neq,formalism?fzdotDAE:fzdotODE,&t,y(),&tEnd,&dt0,
 	rTol(),aTol(),&iTol,
 	nullptr,&iJac,&mlJac,&muJac,
-	specialStructure?massreducedidentity:massidentity,&iMas,&mlMas,&muMas,
+	mass,&iMas,&mlMas,&muMas,
 	plot,&out,
 	work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
@@ -226,8 +216,6 @@ namespace MBSimIntegrator {
       if(formalismStr=="ODE") formalism=ODE;
       else if(formalismStr=="DAE") formalism=DAE;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"specialStructure");
-    if(e) setSpecialStructure(E(e)->getText<bool>());
   }
 
 }
