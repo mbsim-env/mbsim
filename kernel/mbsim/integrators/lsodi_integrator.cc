@@ -47,7 +47,6 @@ namespace MBSimIntegrator {
     int nq = self->system->getqSize();
     int nu = self->system->getuSize();
     int nx = self->system->getxSize();
-//    int nla = neq[0]-(nq+nu+nx);
     Vec y(neq[0], y_);
     Vec yd(neq[0], yd_);
     Vec res(neq[0], res_);
