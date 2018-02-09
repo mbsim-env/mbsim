@@ -71,7 +71,7 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
     if(stack) {
       stack->generateWhat(str, indent.substr(0, indent.length()-2));
       str<<indent<<"+++ Created by "<<possibleType(nr, exVec.size(), it->first)<<endl;
-      DOMEvalException::locationStack2Stream(indent, stack->getLocationStack(), str);
+      str<<DOMEvalException::errorLocationOutput(indent, stack->getLocationStack());
     }
   }
   nr=1;
@@ -83,16 +83,17 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
       std::shared_ptr<DOMEvalExceptionWrongType> wrongType=std::dynamic_pointer_cast<DOMEvalExceptionWrongType>(it->second);
       if(!wrongType || printNotCastableObjects)
         str<<indent<<"*** Error from "<<possibleType(nr, exVec.size(), it->first)<<endl;
+      string errorMsg;
       if(wrongType) {
         if(printNotCastableObjects)
-          str<<indent<<"Not castable to type "<<it->second->getMessage()<<endl;
+          errorMsg="Not castable to type "+it->second->getMessage();
         else
           notPrintedWrongTypeErrors++;
       }
       else
-        str<<it->second->getMessage()<<endl;
+        errorMsg=it->second->getMessage();
       if(!wrongType || printNotCastableObjects)
-        DOMEvalException::locationStack2Stream(indent, it->second->getLocationStack(), str);
+        str<<DOMEvalException::errorLocationOutput(indent, it->second->getLocationStack(), errorMsg);
     }
   }
   if(notPrintedWrongTypeErrors>0)

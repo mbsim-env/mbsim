@@ -41,13 +41,10 @@ namespace MBSim {
   }
 
   const char* MBSimError::what() const noexcept {
-    stringstream str;
-    str<<mbsim_error_message<<endl;
+    string mbsimLoc;
     if(!path.empty())
-      str<<"At element "<<path<<"."<<endl;
-    if(!locationStack.empty())
-      MBXMLUtils::DOMEvalException::locationStack2Stream("", locationStack, str);
-    whatMsg=str.str();
+      mbsimLoc="\n(At MBSim element "+path+")";
+    whatMsg=MBXMLUtils::DOMEvalException::errorLocationOutput("", locationStack, mbsim_error_message+mbsimLoc);
     whatMsg.resize(whatMsg.length()-1); // remote the trailing line feed
     return whatMsg.c_str();
   }
