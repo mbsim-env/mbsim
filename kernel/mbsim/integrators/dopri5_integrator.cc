@@ -115,9 +115,7 @@ namespace MBSimIntegrator {
     if(dtMax>0)
       work(5) = dtMax; // maximum step size
     work(6) = dt0; // initial step size
-
     iWork(0) = maxSteps; // maximum number of steps
-
     iWork(4) = zSize;
 
     int idid;
