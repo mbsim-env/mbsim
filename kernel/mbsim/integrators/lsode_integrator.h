@@ -34,7 +34,7 @@ namespace MBSimIntegrator {
    * Livermore Solver for Ordinary Differential Equations.
    * LSODE solves the initial-value problem for stiff or
    * nonstiff systems of first-order ODE's.
-   * It uses LSODE from http://www.netlib.org.
+   * This integrator uses ODEPACK (http://www.netlib.org/odepack).
    */
   class LSODEIntegrator : public Integrator {
 

@@ -73,8 +73,7 @@ namespace MBSimIntegrator {
   void DOPRI5Integrator::integrate() {
     debugInit();
 
-    int zSize=system->getzSize();
-    int nrDens = zSize;
+    int zSize = system->getzSize();
 
     double t = tStart;
 
@@ -102,29 +101,22 @@ namespace MBSimIntegrator {
       assert (aTol.size() >= zSize);
     }
 
-    int out = 2; // TODO
+    int out = 2; // dense output is performed in plot
 
     double rPar;
     int iPar[sizeof(void*)/sizeof(int)+1]; // store this at iPar[0..]
     DOPRI5Integrator *self=this;
     memcpy(&iPar[0], &self, sizeof(void*));
 
-    int lWork = 2*(8*zSize+5*nrDens+21);
-    int liWork = 2*(nrDens+21);
+    int lWork = 2*(8*zSize+5*zSize+21);
+    int liWork = 2*(zSize+21);
     VecInt iWork(liWork);
     Vec work(lWork);
     if(dtMax>0)
-      work(5)=dtMax;
-    work(6)=dt0;
-
-    //Maximum number of steps
-    iWork(0)=maxSteps; 
-    // if(warnLevel)
-    //   iWork(2) = warnLevel;
-    // else
-    //   iWork(2) = -1;
-
-    iWork(4) = nrDens;
+      work(5) = dtMax; // maximum step size
+    work(6) = dt0; // initial step size
+    iWork(0) = maxSteps; // maximum number of steps
+    iWork(4) = zSize;
 
     int idid;
 

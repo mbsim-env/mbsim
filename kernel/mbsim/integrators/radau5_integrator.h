@@ -30,10 +30,16 @@ namespace MBSimIntegrator {
   /** \brief DAE-Integrator RADAU5
   */
   class RADAU5Integrator : public Integrator {
+    public:
+      enum Formalism {
+        ODE=0,
+        DAE=1
+      };
 
     private:
-
-      static void fzdot(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
+      static void fzdotODE(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
+      static void fzdotDAE(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
+      static void mass(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
 
       double tPlot{0};
@@ -52,6 +58,8 @@ namespace MBSimIntegrator {
       int maxSteps{0};
       /** maximal step size */
       double dtMax{0};
+      /** formalism **/
+      Formalism formalism{ODE};
 
     public:
 
@@ -64,6 +72,7 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
+      void setFormalism(Formalism formalism_) { formalism = formalism_; }
 
       using Integrator::integrate;
       void integrate() override;

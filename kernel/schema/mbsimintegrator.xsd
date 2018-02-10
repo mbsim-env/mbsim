@@ -159,6 +159,20 @@
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="formalism" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl des Formalismus.
+              <ul>
+                <li>ODE: gewöhnliches Differentialgleichungssystem</li>
+                <li>DAE: differential-algebraisches System vom Index 2</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="specialStructure" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Ausnutzung der speziellen Systemstruktur qd=T*u with T=I.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -274,7 +288,7 @@
 
   <xs:element name="LSODEIntegrator" substitutionGroup="Integrator" type="LSODEIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Livermore Solver für Ordinary Differential Equations zur Lösung von Anfangswertproblemen für steife und nicht-steife gewöhnliche Differentialgleichungssysteme. Das Verfahren basiert auf dem BDF-Verfahren der Ordnung 1-5 enthält aber auch das Adams-Moulton Verfahren der Ordnung 1-12 für nicht-steife Probleme. Die Schrittweite wird dynamisch angepasst.
+        Livermore Solver for Ordinary Differential Equations. Integrator zur Lösung von Anfangswertproblemen für gewöhnliche Differentialgleichungssysteme. Das Verfahren enthält eine Schrittweitensteuerung und ist für steife und nicht-steife DGL-Systeme geeignet.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="LSODEIntegratorType">
@@ -346,7 +360,8 @@
 
   <xs:element name="LSODARIntegrator" substitutionGroup="Integrator" type="LSODARIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Livermore Solver für Ordinary Differential Equations mit Root-finding zur Lösung von Anfangswertproblemen für steife und nicht-steife gewöhnliche Differentialgleichungssysteme. LSODAR ist eine Erweiterung von LSODE. Zum einen entscheidet das Verfahren dynamisch, ob ein steifes oder nicht-steifes System vorliegt, zum anderen enthält es einen Mechanismus, um Nullstellen von Indikatorfunktionen zu finden. Die Schrittweite wird dynamisch angepasst.
+        Livermore Solver for Ordinary Differential Equations, with Automatic method switching for stiff and nonstiff problems, and with Root-finding.
+        Integrator zur Lösung von Anfangswertproblemen für gewöhnliche Differentialgleichungssysteme. Das Verfahren enthält eine Schrittweitensteuerung und eine Schaltpunktsuche. Es wählt automatisch die Integrationsmethode, je nach dem ob ein steifes oder nicht-steifes DGL-System vorliegt.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="LSODARIntegratorType">
@@ -412,7 +427,7 @@
 
   <xs:element name="LSODKRIntegrator" substitutionGroup="Integrator" type="LSODKRIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Livermore Solver für Ordinary Differential Equations mit Root-finding zur Lösung von Anfangswertproblemen für steife und nicht-steife gewöhnliche Differentialgleichungssysteme. LSODKR ist eine Erweiterung von LSODE. Das Verfahren enthält einen Mechanismus, um Nullstellen von Indikatorfunktionen zu finden. Die Schrittweite wird dynamisch angepasst.
+       Livermore Solver for Ordinary Differential equations, with preconditioned Krylov iteration methods for the Newton correction linear systems, and with Rootfinding. Integrator zur Lösung von Anfangswertproblemen für gewöhnliche Differentialgleichungssysteme. Das Verfahren enthält eine Schrittweitensteuerung und eine Schaltpunktsuche.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="LSODKRIntegratorType">

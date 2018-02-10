@@ -29,9 +29,13 @@ namespace MBSimIntegrator {
 
   extern bool odePackInUse;
 
-  /** \brief ODE-Integrator LSODAR
-    Integrator with root finding for ODEs.
-    This integrator uses LSODAR from http://www.netlib.org . */
+  /** \brief Hindmarsh’s ODE solver LSODAR
+   *
+   * Livermore Solver for Ordinary Differential Equations, with
+   * Automatic method switching for stiff and nonstiff problems,
+   * and with Root-finding.
+   * This integrator uses ODEPACK (http://www.netlib.org/odepack).
+   */
   class LSODARIntegrator : public Integrator {
     private:
 

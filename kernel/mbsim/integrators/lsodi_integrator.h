@@ -34,15 +34,15 @@ namespace MBSimIntegrator {
    * Livermore Solver for Ordinary Differential Equations (Implicit form).
    * LSODI solves the initial-value problem for differential-algebraic systems
    * of index 2.
-   * It uses LSODE from http://www.netlib.org.
+   * This integrator uses ODEPACK (http://www.netlib.org/odepack).
    */
   class LSODIIntegrator : public Integrator {
 
     private:
 
-      static void resid(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires);
+      static void res(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires);
 
-      static void aplusp(int *neq, double* t, double* z_, int* ml, int* mu, double* P, int* nrowp);
+      static void adda(int *neq, double* t, double* z_, int* ml, int* mu, double* P, int* nrowp);
 
       /** maximal step size */
       double dtMax{0};
