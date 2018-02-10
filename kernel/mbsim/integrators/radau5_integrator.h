@@ -36,16 +36,18 @@ namespace MBSimIntegrator {
         ODE=0,
         DAE1,
         DAE2,
-        DAE3
+        DAE3,
+        GGL
       };
 
     private:
       typedef void (*Fzdot)(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
-      static Fzdot fzdot[4];
+      static Fzdot fzdot[5];
       static void fzdotODE(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
       static void fzdotDAE1(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void fzdotDAE2(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void fzdotDAE3(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
+      static void fzdotGGL(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void mass(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
 

@@ -167,6 +167,7 @@
                 <li>DAE1: differential-algebraisches System vom Index 1</li>
                 <li>DAE2: differential-algebraisches System vom Index 2</li>
                 <li>DAE3: differential-algebraisches System vom Index 3</li>
+                <li>GGL: differential-algebraisches System vom Index 2 mit Gear Gupta Leimkuhler Stabilisierung</li>
               </ul>
             </xs:documentation></xs:annotation>
           </xs:element>

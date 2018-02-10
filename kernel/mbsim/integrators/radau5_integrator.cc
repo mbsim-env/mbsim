@@ -40,7 +40,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RADAU5Integrator)
 
-  RADAU5Integrator::Fzdot RADAU5Integrator::fzdot[4];
+  RADAU5Integrator::Fzdot RADAU5Integrator::fzdot[5];
 
   void RADAU5Integrator::fzdotODE(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
@@ -90,6 +90,21 @@ namespace MBSimIntegrator {
     yd(self->system->getzSize(),*neq-1) = self->system->evalg();
   }
 
+  void RADAU5Integrator::fzdotGGL(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
+    Vec y(*neq, y_);
+    Vec yd(*neq, yd_);
+    self->getSystem()->setTime(*t);
+    self->getSystem()->setState(y(0,self->system->getzSize()-1));
+    self->getSystem()->resetUpToDate();
+    self->getSystem()->setla(y(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1));
+    self->getSystem()->setUpdatela(false);
+    yd(0,self->system->getzSize()-1) = self->system->evalzd();
+    yd(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getlaSize(),*neq-1);
+    yd(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1) = self->system->evalgd();
+    yd(self->system->getzSize()+self->system->getgdSize(),*neq-1) = self->system->evalg();
+  }
+
   void RADAU5Integrator::mass(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
     Mat M(*lmas,*zSize, m_);
@@ -127,17 +142,20 @@ namespace MBSimIntegrator {
     fzdot[1] = &RADAU5Integrator::fzdotDAE1;
     fzdot[2] = &RADAU5Integrator::fzdotDAE2;
     fzdot[3] = &RADAU5Integrator::fzdotDAE3;
+    fzdot[4] = &RADAU5Integrator::fzdotGGL;
 
     debugInit();
 
     int zSize = system->getzSize();
     int neq;
-    if(formalism==0)
-      neq = zSize;
-    else if(formalism<=2)
+    if(formalism==DAE1 or formalism==DAE2)
       neq = zSize+system->getgdSize();
-    else
+    else if(formalism==DAE3)
       neq = zSize+system->getgSize();
+    else if(formalism==GGL)
+      neq = zSize+system->getgdSize()+system->getgSize();
+    else
+      neq = zSize;
 
     double t = tStart;
 
@@ -189,6 +207,10 @@ namespace MBSimIntegrator {
     else if(formalism==DAE3) {
       iWork(4) = zSize;
       iWork(6) = system->getgSize();
+    }
+    else if(formalism==GGL) {
+      iWork(4) = zSize;
+      iWork(5) = system->getgdSize() + system->getgSize();
     }
 
     int iJac = 0; // jacobian is computed internally by finite differences
@@ -264,6 +286,7 @@ namespace MBSimIntegrator {
       else if(formalismStr=="DAE1") formalism=DAE1;
       else if(formalismStr=="DAE2") formalism=DAE2;
       else if(formalismStr=="DAE3") formalism=DAE3;
+      else if(formalismStr=="GGL") formalism=GGL;
     }
   }
 
