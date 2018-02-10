@@ -42,13 +42,15 @@ namespace MBSimIntegrator {
       enum Formalism {
         ODE=0,
         DAE2,
+        GGL
       };
 
     private:
       typedef void (*Res)(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires);
-      static Res res[2];
+      static Res res[3];
       static void resODE(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires);
       static void resDAE2(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires);
+      static void resGGL(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires);
       static void adda(int *neq, double* t, double* y_, int* ml, int* mu, double* P, int* nrowp);
 
       /** maximal step size */

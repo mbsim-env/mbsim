@@ -42,7 +42,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, LSODIIntegrator)
 
-  LSODIIntegrator::Res LSODIIntegrator::res[2];
+  LSODIIntegrator::Res LSODIIntegrator::res[3];
 
   void LSODIIntegrator::resODE(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires) {
     auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
@@ -69,6 +69,22 @@ namespace MBSimIntegrator {
     res(self->system->getzSize(),neq[0]-1) = self->system->evalgd();
   }
 
+  void LSODIIntegrator::resGGL(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires) {
+    auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
+    Vec y(neq[0], y_);
+    Vec yd(neq[0], yd_);
+    Vec res(neq[0], res_);
+    self->getSystem()->setTime(*t);
+    self->getSystem()->setState(y(0,self->system->getzSize()-1));
+    self->getSystem()->resetUpToDate();
+    self->getSystem()->setla(y(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1));
+    self->getSystem()->setUpdatela(false);
+    res(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
+    res(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getlaSize(),neq[0]-1);
+    res(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1) = self->system->evalgd();
+    res(self->system->getzSize()+self->system->getgdSize(),neq[0]-1) = self->system->evalg();
+  }
+
   void LSODIIntegrator::adda(int *neq, double *t, double *y_, int *ml, int *mu, double *P_, int *nrowp) {
     auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
     SqrMat P(*nrowp, P_);
@@ -78,6 +94,7 @@ namespace MBSimIntegrator {
   void LSODIIntegrator::integrate() {
     res[0] = &LSODIIntegrator::resODE;
     res[1] = &LSODIIntegrator::resDAE2;
+    res[2] = &LSODIIntegrator::resGGL;
 
     debugInit();
 
@@ -85,7 +102,13 @@ namespace MBSimIntegrator {
       throw MBSimError("Only one integration with LSODARIntegrator, LSODKRIntegrator and LSODEIntegrator at a time is possible.");
     odePackInUse = true;
 
-    int N = formalism?system->getzSize()+system->getgdSize():system->getzSize();
+    int N;
+    if(formalism==DAE2)
+      N = system->getzSize()+system->getgdSize();
+    else if(formalism==GGL)
+      N = system->getzSize()+system->getgdSize()+system->getgSize();
+    else
+      N = system->getzSize();
     int neq[1+sizeof(void*)/sizeof(int)+1];
     neq[0] = N;
     LSODIIntegrator *self=this;
@@ -134,7 +157,7 @@ namespace MBSimIntegrator {
     system->resetUpToDate();
     system->plot();
     yd(0,system->getzSize()-1) = system->evalzd();
-    if(formalism) y(system->getzSize(),N-1) = system->getla();
+    if(formalism) y(system->getzSize(),system->getzSize()+system->getgdSize()-1) = system->getla();
 
     double s0 = clock();
     double time = 0;
@@ -158,7 +181,7 @@ namespace MBSimIntegrator {
         system->setState(y(0,system->getzSize()-1));
         system->resetUpToDate();
         if(formalism) {
-          system->setla(y(self->system->getzSize(),neq[0]-1));
+          system->setla(y(system->getzSize(),system->getzSize()+system->getgdSize()-1));
           system->setUpdatela(false);
         }
         system->plot();
@@ -220,10 +243,9 @@ namespace MBSimIntegrator {
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"formalism");
     if(e) {
       string formalismStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
-      cout << formalismStr << endl;
       if(formalismStr=="ODE") formalism=ODE;
       else if(formalismStr=="DAE2") formalism=DAE2;
-      cout << formalism << endl;
+      else if(formalismStr=="GGL") formalism=GGL;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
