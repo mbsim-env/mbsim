@@ -141,5 +141,6 @@
     <relativeToleranceScalar>1e-6</relativeToleranceScalar>
     <initialStepSize>0</initialStepSize>
     <maximumStepSize>1e-1</maximumStepSize>
+    <formalism>'DAE2'</formalism>
   </LSODIIntegrator>
 </MBSimProject>

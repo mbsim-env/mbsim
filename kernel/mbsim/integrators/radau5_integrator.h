@@ -30,15 +30,22 @@ namespace MBSimIntegrator {
   /** \brief DAE-Integrator RADAU5
   */
   class RADAU5Integrator : public Integrator {
+
     public:
       enum Formalism {
         ODE=0,
-        DAE=1
+        DAE1,
+        DAE2,
+        DAE3
       };
 
     private:
+      typedef void (*Fzdot)(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
+      static Fzdot fzdot[4];
       static void fzdotODE(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
-      static void fzdotDAE(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
+      static void fzdotDAE1(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
+      static void fzdotDAE2(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
+      static void fzdotDAE3(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void mass(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
 
@@ -62,7 +69,6 @@ namespace MBSimIntegrator {
       Formalism formalism{ODE};
 
     public:
-
       ~RADAU5Integrator() override = default;
 
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
