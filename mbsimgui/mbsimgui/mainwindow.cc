@@ -81,7 +81,7 @@ namespace MBSimGUI {
 
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), autoSave(false), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
     // use html output of MBXMLUtils
-    static string HTMLOUTPUT="MBXMLUTILS_ERROROUTPUT=HTML";
+    static string HTMLOUTPUT="MBXMLUTILS_ERROROUTPUT=XPATHHTML";
     putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
 
     serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);

@@ -20,13 +20,21 @@
 #include <config.h>
 #include "echo_view.h"
 #include "file_editor.h"
+#include "mainwindow.h"
+#include "embedding_view.h"
+#include "treemodel.h"
+#include "treeitem.h"
+#include "embeditemdata.h"
 #include <iostream>
 #include <QTextStream>
 #include <QProcessEnvironment>
 
 using namespace std;
+using namespace MBXMLUtils;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   EchoView::EchoView(QWidget *parent) : QTabWidget(parent) {
     out=new QTextBrowser(this);
@@ -95,20 +103,45 @@ namespace MBSimGUI {
     return size;
   }
 
+  void walk(QModelIndex index, EmbeddingTreeModel *model, const QUrl &link) {
+    // get the filename from the error message
+    boost::filesystem::path errorFile(boost::filesystem::absolute(link.path().toStdString()));
+    errorFile.remove_filename();//MISSING fix strange filename change of mbsimgui
+    errorFile/="MBS.mbsim.xml";//MISSING fix strange filename change of mbsimgui
+
+    int row = 0;
+    // loop over all elements in the current level
+    while(index.isValid()) {
+      // get the item of the current element (index)
+      EmbedItemData *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
+      // handle only embed elements but not parameters
+      if(item->getType().toStdString()!="scalarParameter") { //MISSING what is the clean way to detect embed elements from parameter elements
+        // get the root element of this embed
+        xercesc::DOMElement *e = item->getXMLElement();
+        // if the file name matchs than the error is from this embed
+        if(errorFile==E(e)->getOriginalFilename()) {
+          // evalute the xpath expression of the error message in this embed ...
+          xercesc::DOMNode *n=D(e->getOwnerDocument())->evalRootXPathExpression(link.queryItemValue("xpath").toStdString());
+          // ... the node n is there the error occured:
+          cout<<"MISSING this XML node generated the error addr="<<n<<" name="<<X()%n->getNodeName()<<" value="<<X()%n->getNodeValue()<<endl;
+        }
+      }
+
+      // walk child elements
+      walk(model->index(0, 0, index), model, link);
+
+      // next element on this level
+      index = index.sibling(++row, 0);
+    }
+  }
+
   void EchoView::linkClicked(const QUrl &link, QTextBrowser *std) {
-    if(QProcessEnvironment::systemEnvironment().contains("MBSIMGUI_EDITOR")) {
-      static QString editorCommand=QProcessEnvironment::systemEnvironment().value("MBSIMGUI_EDITOR", "gvim -R %1 +%2");
-      cout<<"Opening file using command '"<<editorCommand.toStdString()<<"'. "<<
-        "Where %1 is replaced by the filename and %2 by the line number. "<<
-        "Use the environment variable MBSIMGUI_EDITOR to overwrite this command."<<endl;
-      QString comm=editorCommand.arg(link.path()).arg(link.queryItemValue("line").toInt());
-      QProcess::startDetached(comm);
-    }
-    else {
-      FileEditor *edit = new FileEditor("Model file",link.path(),link.queryItemValue("line").toInt(),QString("Could not open file ")+link.path(),this);
-      edit->setModal(true);
-      edit->show();
-    }
+    //MISSING mbsimgui adds new elements e.g. <plotFeatureRecursive value="plotRecursive">false</plotFeatureRecursive>
+    //MISSING this break the xpath of the error messages
+    // get the model of the embedding
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(mw->getEmbeddingView()->model());
+    // walk all embeded elements
+    walk(model->index(0,0), model, link);
   }
 
   void EchoView::outLinkClicked(const QUrl &link) {
