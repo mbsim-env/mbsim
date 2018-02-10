@@ -264,22 +264,16 @@ namespace MBSim {
 
       if(bodyFixedRepresentationOfAngularVelocity) {
         frameForJacobianOfRotation = K;
-        // TODO: do not invert generalized mass matrix in case of special
-        // parametrisation
-//        if(K == C && dynamic_cast<DynamicSystem*>(R->getParent())) {
-//          if(fPrPK) {
-//            fPrPK->updateJacobian(qRel(iqT),0);
-//            PJT[0].set(i02,iuT,fPrPK->getJacobian());
-//          }
-//          if(fAPK) {
-//            fAPK->updateJacobian(qRel(iqR),0);
-//            PJR[0].set(i02,iuR,fAPK->getJacobian());
-//          }
-//          updateM_ = &RigidBody::updateMConst;
-//          Mbuf = m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0]);
-//          LLM = facLL(Mbuf);
-//          facLLM_ = &RigidBody::facLLMConst;
-//        }
+        // do not invert generalized mass matrix in case of special parametrisation
+        // the coordinates must be defined w.r.t. C and be absolute
+        // the Jacobians of translation and rotation must be constant
+        // the rigibbody must not be constrained
+        if(K == C && dynamic_cast<DynamicSystem*>(R->getParent()) and fPrPK->constParDer1() and fAPK->constParDer1() and not constraint) {
+          Mbuf = m*JTJ(C->evalJacobianOfTranslation()) + JTMJ(evalGlobalInertiaTensor(),C->evalJacobianOfRotation());
+          LLM = facLL(Mbuf);
+          updateM_ = &RigidBody::updateMConst;
+          updateLLM_ = &RigidBody::updateLLMConst;
+        }
       }
       else
         frameForJacobianOfRotation = R;
