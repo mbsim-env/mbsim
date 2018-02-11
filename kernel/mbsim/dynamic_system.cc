@@ -77,7 +77,7 @@ namespace MBSim {
       delete i;
   }
 
-   void DynamicSystem::updateT() {
+  void DynamicSystem::updateT() {
     for (auto & i : dynamicsystem)
       (*i).updateT();
 
