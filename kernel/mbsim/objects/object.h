@@ -276,6 +276,7 @@ namespace MBSim {
       void setq(const fmatvec::Vec &q_) { q = q_; }
       void setu(const fmatvec::Vec &u_) { u = u_; }
 
+      bool hasNonCostantMassMatrix() { return nonConstantMassMatrix; }
       /*******************************************************/ 
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
@@ -350,6 +351,8 @@ namespace MBSim {
       fmatvec::VecV qRel, uRel, qdRel, udRel;
 
       bool updSize, updq, updu, updqd, updud;
+
+      bool nonConstantMassMatrix{true};
   };
 
 }
