@@ -34,6 +34,7 @@
             <axisOfRotation>[0;0;1]</axisOfRotation>
           </RotationAboutFixedAxis>
         </stateDependentRotation>
+        <bodyFixedRepresentationOfAngularVelocity>true</bodyFixedRepresentationOfAngularVelocity>
         <frames>
           <FixedRelativeFrame name="PunktO">
             <relativePosition>[0;0.2;0]</relativePosition>
@@ -75,6 +76,7 @@
             <axisOfRotation>[0;0;1]</axisOfRotation>
           </RotationAboutFixedAxis>
         </stateDependentRotation>
+        <bodyFixedRepresentationOfAngularVelocity>true</bodyFixedRepresentationOfAngularVelocity>
         <frames>
           <FixedRelativeFrame name="Punkt">
             <relativePosition>[0;0.2;0]</relativePosition>
