@@ -713,39 +713,39 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  EulerExplicitIntegratorPropertyDialog::EulerExplicitIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+  ExplicitEulerIntegratorPropertyDialog::ExplicitEulerIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepSize");
     addToTab("Step size", stepSize);
   }
 
-  DOMElement* EulerExplicitIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* ExplicitEulerIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     stepSize->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
-  DOMElement* EulerExplicitIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* ExplicitEulerIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     stepSize->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  EulerImplicitIntegratorPropertyDialog::EulerImplicitIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+  ImplicitEulerIntegratorPropertyDialog::ImplicitEulerIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepSize");
     addToTab("Step size", stepSize);
   }
 
-  DOMElement* EulerImplicitIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* ImplicitEulerIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     stepSize->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
-  DOMElement* EulerImplicitIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* ImplicitEulerIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     stepSize->writeXMLFile(item->getXMLElement());
     return nullptr;

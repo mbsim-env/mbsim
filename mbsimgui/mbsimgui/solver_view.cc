@@ -66,8 +66,8 @@ namespace MBSimGUI {
     type.emplace_back("Theta time stepping integrator");
     type.emplace_back("Time stepping SSC integrator");
     type.emplace_back("HETS2 integrator");
-    type.emplace_back("Euler explicit integrator");
-    type.emplace_back("Euler implicit integrator");
+    type.emplace_back("Explicit Euler integrator");
+    type.emplace_back("Implicit Euler integrator");
     type.emplace_back("RKSuite integrator");
     type.emplace_back("Boost odeint DOS RKDOPRI5");
     type.emplace_back("Boost odeint DOS Burlisch Stoer");
@@ -142,9 +142,9 @@ namespace MBSimGUI {
     else if(i==11)
       return new HETS2Integrator;
     else if(i==12)
-      return new EulerExplicitIntegrator;
+      return new ExplicitEulerIntegrator;
     else if(i==13)
-      return new EulerImplicitIntegrator;
+      return new ImplicitEulerIntegrator;
     else if(i==14)
       return new RKSuiteIntegrator;
     else if(i==15)
@@ -185,9 +185,9 @@ namespace MBSimGUI {
       i=10;
     else if(dynamic_cast<HETS2Integrator*>(solver))
       i=11;
-    else if(dynamic_cast<EulerExplicitIntegrator*>(solver))
+    else if(dynamic_cast<ExplicitEulerIntegrator*>(solver))
       i=12;
-    else if(dynamic_cast<EulerImplicitIntegrator*>(solver))
+    else if(dynamic_cast<ImplicitEulerIntegrator*>(solver))
       i=13;
     else if(dynamic_cast<RKSuiteIntegrator*>(solver))
       i=14;
