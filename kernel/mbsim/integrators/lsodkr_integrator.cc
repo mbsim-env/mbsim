@@ -110,7 +110,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(LSODEIntegrator::integrate): size of z0 does not match");
+        throw MBSimError("(LSODKRIntegrator::integrate): size of z0 does not match " + toStr(zSize));
       system->setState(z0);
     }
     else
@@ -131,7 +131,7 @@ namespace MBSimIntegrator {
       else {
         iTol = 2;
         if(aTol.size() != zSize)
-          throw MBSimError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throw MBSimError("(LSODKRIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
     }
     else {
@@ -140,22 +140,27 @@ namespace MBSimIntegrator {
       else {
         iTol = 4;
         if(aTol.size() != zSize)
-          throw MBSimError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throw MBSimError("(LSODKRIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
       if(rTol.size() != zSize)
-        throw MBSimError("(LSODEIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
+        throw MBSimError("(LSODKRIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
     }
 
+    int lwp=0, liwp=0;
     istate=1;
     nsv=system->getsvSize();
-    lrWork = (22 + zSize * max(16, zSize + 9) + 3 * nsv) * 2;
+    lrWork = 2*(61+17*zSize+3*nsv+lwp);
     rWork.resize(lrWork);
     rWork(4) = dt0; 
     rWork(5) = dtMax;
     rWork(6) = dtMin;
-    liWork = (20+zSize)*10;
+    liWork = 2*(30+liwp);
     iWork.resize(liWork);
     iWork(5) = maxSteps;
+    iWork(0) = lwp;
+    iWork(1) = liwp;
+    iWork(2) = 0; // no preconditioning
+
     s0 = clock();
     time = 0;
     integrationSteps = 0;

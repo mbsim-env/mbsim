@@ -74,14 +74,13 @@ namespace MBSimIntegrator {
     debugInit();
 
     int zSize=system->getzSize();
-    int nrDens = zSize;
 
     double t = tStart;
 
     Vec z(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(ODEXIntegrator::integrate): size of z0 does not match");
+        throw MBSimError("(ODEXIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
@@ -110,21 +109,14 @@ namespace MBSimIntegrator {
     ODEXIntegrator *self=this;
     memcpy(&iPar[0], &self, sizeof(void*));
 
-    int lWork = 2*(zSize*(9+5)+5*9+20+(2*9*(9+2)+5)*nrDens);
-    int liWork = 2*(2*9+21+nrDens);
+    int lWork = 2*(zSize*(9+5)+5*9+20+(2*9*(9+2)+5)*zSize);
+    int liWork = 2*(2*9+21+zSize);
     VecInt iWork(liWork);
     Vec work(lWork);
     if(dtMax>0)
-      work(1)=dtMax;
-
-    //Maximum Step Numbers
-    iWork(0)=maxSteps;
-    // if(warnLevel)
-    //   iWork(2) = warnLevel;
-    // else
-    //   iWork(2) = -1;
-
-    iWork(7) = nrDens;
+      work(1)=dtMax; // maximum step size
+    iWork(0)=maxSteps; // maximum number of steps
+    iWork(7) = zSize;
 
     int idid;
 

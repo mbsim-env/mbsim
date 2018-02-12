@@ -38,7 +38,7 @@ namespace MBSimIntegrator {
       /**
        * \brief destructor
        */
-      virtual ~RKSuiteIntegrator() override { if(dworkarray) { delete[] dworkarray; dworkarray=nullptr; } }
+      virtual ~RKSuiteIntegrator() override { if(work) { delete[] work; work=nullptr; } }
 
       void preIntegrate();
       void subIntegrate(double tStop);
@@ -74,9 +74,9 @@ namespace MBSimIntegrator {
       double dt0{0};
 
 
-      int ndworkarray{100000}, messages{0}, integrationSteps{0};
+      int lenwrk, messages{0}, integrationSteps{0};
       double t{0}, tPlot{0}, s0{0}, time{0};
-      double *dworkarray{nullptr};
+      double *work{nullptr};
       fmatvec::Vec z, zdGot, zMax;
 
       std::ofstream integPlot;

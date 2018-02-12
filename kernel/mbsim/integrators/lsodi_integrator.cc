@@ -156,12 +156,12 @@ namespace MBSimIntegrator {
     }
 
     int itask=1, istate=1, iopt=0;
-    int lrWork = (22+9*N+N*N)*2;
+    int lrWork = 2*(22+9*N+N*N);
     Vec rWork(lrWork);
     rWork(4) = dt0;
     rWork(5) = dtMax;
     rWork(6) = dtMin;
-    int liWork=(20+N)*2;
+    int liWork = 2*(20+N);
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
