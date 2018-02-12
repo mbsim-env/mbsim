@@ -170,8 +170,11 @@ namespace MBSimIntegrator {
       integPlot << "#7 calculation time [s]:" << endl;
     }
 
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != zSize)
+        throw MBSimError("(TimeSteppingSSCIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       zi = z0;
+    }
     else
       zi = sysT1->evalz0();
 

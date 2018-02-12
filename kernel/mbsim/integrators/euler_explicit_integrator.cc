@@ -41,8 +41,11 @@ namespace MBSimIntegrator {
 
     system->setTime(tStart);
 
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != system->getzSize())
+        throw MBSimError("(EulerExplicitIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
+    }
     else
       system->evalz0();
 

@@ -97,10 +97,10 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != zSize)
-        throw MBSimError(string("(DOPRI5Integrator::integrate): size of aTol does not match, must be ") + toStr(zSize));
+        throw MBSimError("(DOPRI5Integrator::integrate): size of aTol does not match, must be " + toStr(zSize));
     }
     if(rTol.size() != aTol.size())
-      throw MBSimError(string("(DOPRI5Integrator::integrate): size of rTol does not match aTol, must be ") + toStr(aTol.size()));
+      throw MBSimError("(DOPRI5Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
     int out = 2; // dense output is performed in plot
 

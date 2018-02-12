@@ -125,7 +125,7 @@ namespace MBSimIntegrator {
       else {
         iTol = 2;
         if(aTol.size() != zSize)
-          throw MBSimError(string("(LSODEIntegrator::integrate): size of aTol does not match, must be ") + toStr(zSize));
+          throw MBSimError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
     }
     else {
@@ -134,10 +134,10 @@ namespace MBSimIntegrator {
       else {
         iTol = 4;
         if(aTol.size() != zSize)
-          throw MBSimError(string("(LSODEIntegrator::integrate): size of aTol does not match, must be ") + toStr(zSize));
+          throw MBSimError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
       if(rTol.size() != zSize)
-        throw MBSimError(string("(LSODEIntegrator::integrate): size of rTol does not match, must be ") + toStr(zSize));
+        throw MBSimError("(LSODEIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
     }
 
     istate=1;

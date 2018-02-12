@@ -180,10 +180,10 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != neq)
-        throw MBSimError(string("(RADAU5Integrator::integrate): size of aTol does not match, must be ") + toStr(neq));
+        throw MBSimError("(RADAU5Integrator::integrate): size of aTol does not match, must be " + toStr(neq));
     }
     if(rTol.size() != aTol.size())
-      throw MBSimError(string("(RADAU5Integrator::integrate): size of rTol does not match aTol, must be ") + toStr(aTol.size()));
+      throw MBSimError("(RADAU5Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
     int out = 1; // subroutine is available for output
 

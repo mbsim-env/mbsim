@@ -54,7 +54,7 @@ namespace MBSim {
     else if(x0.size() == x.size())
       x = x0;
     else
-      THROW_MBSIMERROR(string("(Constraint::initz): size of x0 does not match, must be ") + toStr(x.size()));
+      THROW_MBSIMERROR("(Constraint::initz): size of x0 does not match, must be " + toStr(x.size()));
   }
 
   void Constraint::writez(H5::GroupBase *group) {
