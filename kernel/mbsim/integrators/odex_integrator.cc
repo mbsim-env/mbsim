@@ -92,17 +92,18 @@ namespace MBSimIntegrator {
     if(rTol.size() == 0)
       rTol.resize(1,INIT,1e-6);
 
-    assert(aTol.size() == rTol.size());
-
     int iTol;
-    if(aTol.size() == 1) {
-      iTol = 0; // Skalar
-    } else {
-      iTol = 1; // Vektor
-      assert (aTol.size() >= zSize);
+    if(aTol.size() == 1)
+      iTol = 0;
+    else {
+      iTol = 1;
+      if(aTol.size() != zSize)
+        throw MBSimError(string("(ODEXIntegrator::integrate): size of aTol does not match, must be ") + toStr(zSize));
     }
+    if(rTol.size() != aTol.size())
+      throw MBSimError(string("(ODEXIntegrator::integrate): size of rTol does not match aTol, must be ") + toStr(aTol.size()));
 
-    int out = 2; // TODO
+    int out = 2; // dense output is performed in plot
 
     double rPar;
     int iPar[sizeof(void*)/sizeof(int)+1];
