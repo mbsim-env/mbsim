@@ -53,7 +53,7 @@ namespace MBSimAnalyzer {
     if(not(zEq.size()))
       zEq = system->evalz0();
     else if(zEq.size()!=system->getzSize())
-      throw MBSimError("(HarmonicResponseAnalyzer::computeFrequencyResponse): size of z0 does not match");
+      throw MBSimError(string("(HarmonicResponseAnalyzer::computeFrequencyResponse): size of z0 does not match, must be ") + toStr(system->getzSize()));
 
     if(compEq) {
       system->setTime(tStart);
