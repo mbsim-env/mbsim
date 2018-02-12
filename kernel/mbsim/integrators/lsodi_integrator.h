@@ -60,7 +60,7 @@ namespace MBSimIntegrator {
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
       /** Relative Toleranz */
-      double rTol{1e-6};
+      fmatvec::Vec rTol;
       /** step size for the first step */
       double dt0{0};
       /**  maximum number of steps allowed during one call to the solver. (default 10000) */
@@ -76,9 +76,10 @@ namespace MBSimIntegrator {
     public:
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       void setMinimumStepSize(double dtMin_) { dtMin = dtMin_; }
-      void setRelativeTolerance(double rTol_) { rTol = rTol_; }
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
       void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol = rTol_; }
+      void setRelativeTolerance(double rTol_) { rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }

@@ -119,7 +119,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throw MBSimError("(LSODIIntegrator::integrate): size of z0 does not match");
+        throw MBSimError("(LSODIIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       y(0,system->getzSize()-1) = z0;
     }
     else
@@ -128,18 +128,32 @@ namespace MBSimIntegrator {
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
 
-    Vec absTol(N,NONINIT);
-    if(aTol.size() == 0) 
-      absTol(0,system->getzSize()-1).init(1e-6);
-    else if(aTol.size() == 1)
-      absTol(0,system->getzSize()-1).init(aTol(0));
-    else {
-      absTol(0,system->getzSize()-1) = aTol;
-      assert (aTol.size() == system->getzSize());
-    }
-    absTol(system->getzSize(),N-1).init(1e15);
+    if(aTol.size() == 0)
+      aTol.resize(1,INIT,1e-6);
+    if(rTol.size() == 0)
+      rTol.resize(1,INIT,1e-6);
 
-    int iTol = 2; // Vektor
+    int iTol;
+    if(rTol.size() == 1) {
+      if(aTol.size() == 1)
+        iTol = 1;
+      else {
+        iTol = 2;
+        if(aTol.size() != N)
+          throw MBSimError(string("(LSODIIntegrator::integrate): size of aTol does not match, must be ") + toStr(N));
+      }
+    }
+    else {
+      if(aTol.size() == 1)
+        iTol = 3;
+      else {
+        iTol = 4;
+        if(aTol.size() != N)
+          throw MBSimError(string("(LSODIIntegrator::integrate): size of aTol does not match, must be ") + toStr(N));
+      }
+      if(rTol.size() != N)
+        throw MBSimError(string("(LSODIIntegrator::integrate): size of rTol does not match, must be ") + toStr(N));
+    }
 
     int itask=1, istate=1, iopt=0;
     int lrWork = (22+9*N+N*N)*2;
@@ -175,7 +189,7 @@ namespace MBSimIntegrator {
 
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
-      DLSODI(*res[formalism], adda, 0, neq, y(), yd(), &t, &tPlot, &iTol, &rTol, absTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
+      DLSODI(*res[formalism], adda, 0, neq, y(), yd(), &t, &tPlot, &iTol, rTol(), aTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
       if(istate==2 || fabs(t-tPlot)<epsroot) {
         system->setTime(t);
         system->setState(y(0,system->getzSize()-1));
@@ -230,6 +244,8 @@ namespace MBSimIntegrator {
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
     if(e) setAbsoluteTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    if(e) setRelativeTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");

@@ -68,7 +68,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(LSODEIntegrator::integrate): size of z0 does not match");
+        throw MBSimError("(LSODEIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       system->setState(z0);
     }
     else
@@ -77,14 +77,31 @@ namespace MBSimIntegrator {
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
 
-    int iTol; 
-    if(aTol.size() == 0) 
+    if(aTol.size() == 0)
       aTol.resize(1,INIT,1e-6);
-    if(aTol.size() == 1) {
-      iTol = 1; // Skalar
-    } else {
-      iTol = 2; // Vektor
-      assert (aTol.size() >= zSize);
+    if(rTol.size() == 0)
+      rTol.resize(1,INIT,1e-6);
+
+    int iTol;
+    if(rTol.size() == 1) {
+      if(aTol.size() == 1)
+        iTol = 1;
+      else {
+        iTol = 2;
+        if(aTol.size() != zSize)
+          throw MBSimError(string("(LSODEIntegrator::integrate): size of aTol does not match, must be ") + toStr(zSize));
+      }
+    }
+    else {
+      if(aTol.size() == 1)
+        iTol = 3;
+      else {
+        iTol = 4;
+        if(aTol.size() != zSize)
+          throw MBSimError(string("(LSODEIntegrator::integrate): size of aTol does not match, must be ") + toStr(zSize));
+      }
+      if(rTol.size() != zSize)
+        throw MBSimError(string("(LSODEIntegrator::integrate): size of rTol does not match, must be ") + toStr(zSize));
     }
 
     int one=1, istate=1;
@@ -118,7 +135,7 @@ namespace MBSimIntegrator {
 
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
-      DLSODE (fzdot, neq, system->getState()(), &t, &tPlot, &iTol, &rTol, aTol(),
+      DLSODE (fzdot, neq, system->getState()(), &t, &tPlot, &iTol, rTol(), aTol(),
         &one, &istate, &one, rWork(), &lrWork, iWork(), 
         &liWork, 0, &MF);
       if(istate==2 || fabs(t-tPlot)<epsroot) {
@@ -177,6 +194,8 @@ namespace MBSimIntegrator {
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
     if(e) setAbsoluteTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    if(e) setRelativeTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
