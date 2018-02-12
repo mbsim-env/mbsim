@@ -79,6 +79,12 @@ namespace MBSimGUI {
       IntegratorPropertyDialog* createPropertyDialog() override { return new LSODKRIntegratorPropertyDialog(this); }
   };
 
+  class LSODIIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "LSODIIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new LSODIIntegratorPropertyDialog(this); }
+  };
+
   class TimeSteppingIntegrator : public Integrator {
     public:
       QString getType() const override { return "TimeSteppingIntegrator"; }
