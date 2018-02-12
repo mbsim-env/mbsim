@@ -189,8 +189,17 @@ namespace MBSim {
 	PJR[1](i-3,i) = 1;
       jRel.resize(nu);
 
-      updateM_ = &RigidBody::updateMNotConst;
-      updateLLM_ = &RigidBody::updateLLMNotConst;
+      if(bodyFixedRepresentationOfAngularVelocity) {
+        frameForJacobianOfRotation = K;
+        // do not invert generalized mass matrix in case of special parametrisation
+        // the coordinates must be defined w.r.t. C and be absolute
+        // the Jacobians of translation and rotation must be constant
+        // the rigibbody must not be constrained
+        if(K == C && dynamic_cast<DynamicSystem*>(R->getParent()) and fPrPK->constParDer1() and fAPK->constParDer1() and not constraint)
+          nonConstantMassMatrix = false;
+      }
+      else
+        frameForJacobianOfRotation = R;
     }
     else if(stage==unknownStage) {
       JRel[0].resize(nu,hSize[0]);
@@ -262,30 +271,11 @@ namespace MBSim {
         }
       }
 
-      if(bodyFixedRepresentationOfAngularVelocity) {
-        frameForJacobianOfRotation = K;
-        // TODO: do not invert generalized mass matrix in case of special
-        // parametrisation
-//        if(K == C && dynamic_cast<DynamicSystem*>(R->getParent())) {
-//          if(fPrPK) {
-//            fPrPK->updateJacobian(qRel(iqT),0);
-//            PJT[0].set(i02,iuT,fPrPK->getJacobian());
-//          }
-//          if(fAPK) {
-//            fAPK->updateJacobian(qRel(iqR),0);
-//            PJR[0].set(i02,iuR,fAPK->getJacobian());
-//          }
-//          updateM_ = &RigidBody::updateMConst;
-//          Mbuf = m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0]);
-//          LLM = facLL(Mbuf);
-//          facLLM_ = &RigidBody::facLLMConst;
-//        }
-      }
-      else
-        frameForJacobianOfRotation = R;
-
       if(frameForInertiaTensor && frameForInertiaTensor!=C)
         SThetaS = JMJT(C->evalOrientation().T()*frameForInertiaTensor->evalOrientation(),SThetaS) - m*JTJ(tilde(C->evalOrientation().T()*(frameForInertiaTensor->evalPosition()-C->evalPosition())));
+
+      if(not nonConstantMassMatrix)
+        LLM = facLL(SymMat(m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0])));
     }
     Body::init(stage, config);
     if(fTR) fTR->init(stage, config);
@@ -486,18 +476,22 @@ namespace MBSim {
     Body::resetPositionsUpToDate();
     Z.resetPositionsUpToDate();
   }
+
   void RigidBody::resetVelocitiesUpToDate() {
     Body::resetVelocitiesUpToDate();
     Z.resetVelocitiesUpToDate();
   }
+
   void RigidBody::resetJacobiansUpToDate() {
     Body::resetJacobiansUpToDate();
     Z.resetJacobiansUpToDate();
   }
+
   void RigidBody::resetGyroscopicAccelerationsUpToDate() {
     Body::resetGyroscopicAccelerationsUpToDate();
     Z.resetGyroscopicAccelerationsUpToDate();
   }
+
   void RigidBody::resetUpToDate() {
     Body::resetUpToDate();
     Z.resetUpToDate();
@@ -518,11 +512,7 @@ namespace MBSim {
     openMBVBody=body;
   }
 
-  void RigidBody::updateMConst() {
-    M += Mbuf;
-  }
-
-  void RigidBody::updateMNotConst() {
+  void RigidBody::updateM() {
     M += m*JTJ(C->evalJacobianOfTranslation()) + JTMJ(evalGlobalInertiaTensor(),C->evalJacobianOfRotation());
   }
 

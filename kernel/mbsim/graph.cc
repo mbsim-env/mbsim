@@ -37,7 +37,29 @@ namespace MBSim {
     sethInd_[1] = &Graph::sethInd1;
   }
 
-  Graph::~Graph() = default;
+  void Graph::updateT() {
+    for (auto & i : object)
+      (*i).updateT();
+  }
+
+  void Graph::updateM() {
+    for (auto & i : object)
+      i->updateM();
+  }
+
+  void Graph::updateLLM() {
+    LLM = facLL(evalM());
+  }
+
+  void Graph::updateh(int k) {
+    for (auto & i : object)
+      i->updateh(k);
+  }
+
+  void Graph::updatedq() {
+    for (auto & i : object)
+      (*i).updatedq();
+  }
 
   void Graph::updatedu() {
     du = slvLLFac(evalLLM(), evalh()*getStepSize()+evalrdt());
@@ -56,7 +78,6 @@ namespace MBSim {
       for(unsigned int j=0; j<i.size(); j++)  {
       buf += i[j]->getuSize(0);
       i[j]->sethSize(buf,0);
-      //(*i)->sethInd(0,0);
     }
   } 
 
@@ -80,7 +101,6 @@ namespace MBSim {
     for(auto & i : obj) 
       for(unsigned int j=0; j<i.size(); j++) {
 	i[j]->calcqSize();
-	//obj[i][j]->setqInd(qSize);
 	qSize += i[j]->getqSize();
       }
   }
@@ -99,7 +119,6 @@ namespace MBSim {
     for(auto & i : obj) 
       for(unsigned int j=0; j<i.size(); j++) {
 	i[j]->calcuSize(0);
-	//obj[i][j]->setuInd(uSize[0],0);
 	uSize[0] += i[j]->getuSize(0);
       }
   }
@@ -119,10 +138,6 @@ namespace MBSim {
 
   void Graph::calcuSize1() {
     DynamicSystem::calcuSize(1);
-  }
-
-  void Graph::updateLLM() {
-    LLM = facLL(evalM());
   }
 
   void Graph::addObject(int level, Object* object) {
@@ -149,4 +164,3 @@ namespace MBSim {
   }
 
 }
-

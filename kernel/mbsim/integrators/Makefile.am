@@ -15,8 +15,8 @@ libintegrators_la_SOURCES = integrator.cc\
 			    theta_time_stepping_integrator.cc \
 			    time_stepping_ssc_integrator.cc \
 			    hets2_integrator.cc \
-			    euler_explicit_integrator.cc \
-			    euler_implicit_integrator.cc \
+			    explicit_euler_integrator.cc \
+			    implicit_euler_integrator.cc \
 			    fortran/opkda1.f\
 			    fortran/opkda2.f\
 			    fortran/opkdmain.f\
@@ -45,8 +45,8 @@ integratorsinclude_HEADERS = integrator.h \
 			     theta_time_stepping_integrator.h \
 			     time_stepping_ssc_integrator.h \
 			     hets2_integrator.h \
-			     euler_explicit_integrator.h \
-			     euler_implicit_integrator.h \
+			     explicit_euler_integrator.h \
+			     implicit_euler_integrator.h \
 			     lsodar_integrator.h \
 			     lsodkr_integrator.h \
 			     lsode_integrator.h \

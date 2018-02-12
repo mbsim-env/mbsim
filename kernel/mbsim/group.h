@@ -38,25 +38,14 @@ namespace MBSim {
        * \brief constructor
        * \param name of group
        */
-      Group(const std::string &name="");
+      Group(const std::string &name="") : DynamicSystem(name) { }
 
       /**
        * \brief destructor
        */
-      ~Group() override;
+      ~Group() override = default;
 
-      /* INHERITED INTERFACE OF DYNAMICSYSTEM */
-      void updateLLM() override;
       using DynamicSystem::addObject;
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      void updatedu() override;
-      void updatezd() override;
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF ELEMENT */
-      /***************************************************/
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
@@ -66,4 +55,3 @@ namespace MBSim {
 }
 
 #endif
-

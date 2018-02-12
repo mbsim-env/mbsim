@@ -48,22 +48,23 @@ namespace MBSimIntegrator {
     z.resize(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(RKSuiteIntegrator::integrate): size of z0 does not match");
+        throw MBSimError("(RKSuiteIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
       z = system->evalz0();
 
     if(thres.size() == 0)
-      thres.resize(1,INIT,1e-10);
-
-    if(thres.size() == 1) {
-      double buf = thres(0);
-      thres.resize(zSize,INIT,buf);
+      thres.resize(zSize,INIT,1e-10);
+    else if(thres.size() == 1) {
+      double thres_ = thres(0);
+      thres.resize(zSize,INIT,thres_);
     } 
-    assert (thres.size() == zSize);
+    if(thres.size() != zSize)
+      throw MBSimError("(RKSuiteIntegrator::integrate): size of thres does not match, must be " + toStr(zSize));
 
-    dworkarray=new double[ndworkarray];
+    lenwrk = 2*32*zSize;
+    work=new double[lenwrk];
     if (warnLevel)
       messages=1;
 
@@ -94,14 +95,14 @@ namespace MBSimIntegrator {
       int method_ = method;
 
       SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
-          &errass, &dt0, dworkarray, &ndworkarray, &messages);
+          &errass, &dt0, work, &lenwrk, &messages);
 
       while((tStop-t)>epsroot) {
 
         integrationSteps++;
 
         double dtLast = 0;
-        UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, &result, &dtLast);
+        UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), work, &result, &dtLast);
 
         if(result==1 || result==2 || fabs(t-tPlot)<epsroot) {
           system->setTime(t);

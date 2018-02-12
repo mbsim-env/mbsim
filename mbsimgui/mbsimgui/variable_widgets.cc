@@ -289,7 +289,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
+  VecWidget::VecWidget(int size, bool transpose_, QString defaultValue_) : transpose(transpose_), defaultValue(defaultValue_) {
 
     auto *layout = new QGridLayout;
     layout->setMargin(0);
@@ -297,7 +297,7 @@ namespace MBSimGUI {
     resize_(size);
   }
 
-  VecWidget::VecWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_) {
+  VecWidget::VecWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_), defaultValue("0") {
 
     auto *layout = new QGridLayout;
     layout->setMargin(0);
@@ -316,7 +316,7 @@ namespace MBSimGUI {
       box.resize(size);
       for(int i=0; i<size; i++) {
         box[i] = new QLineEdit(this);
-        box[i]->setPlaceholderText("0");
+        box[i]->setPlaceholderText(defaultValue);
         if(transpose) 
           static_cast<QGridLayout*>(layout())->addWidget(box[i], 0, i);
         else
@@ -331,7 +331,7 @@ namespace MBSimGUI {
     vector<QString> x(box.size());
     for(unsigned int i=0; i<box.size(); i++) {
       QString tmp = box[i]->text();
-      x[i] = tmp.isEmpty()?"0":tmp;
+      x[i] = tmp.isEmpty()?defaultValue:tmp;
     }
     return x;
   }
@@ -340,7 +340,7 @@ namespace MBSimGUI {
     if(x.size() != box.size())
       resize_(x.size());
     for(unsigned int i=0; i<box.size(); i++)
-      box[i]->setText(x[i]=="0"?"":x[i]);
+      box[i]->setText(x[i]==defaultValue?"":x[i]);
   }
 
   void VecWidget::setReadOnly(bool flag) {
@@ -357,7 +357,7 @@ namespace MBSimGUI {
     return true;
   }
 
-  VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_, int singleStep, bool transpose, bool table) : minSize(minSize_), maxSize(maxSize_) {
+  VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_, int singleStep, bool transpose, bool table, QString defaultValue) : minSize(minSize_), maxSize(maxSize_) {
 
     auto *layout = new QGridLayout;
     layout->setMargin(0);
@@ -369,7 +369,7 @@ namespace MBSimGUI {
     sizeCombo->setValue(size);
     connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     if(table) widget = new VecTableWidget(size);
-    else widget = new VecWidget(size, transpose);
+    else widget = new VecWidget(size, transpose, defaultValue);
     layout->addWidget(widget,1,0,1,3);
     layout->setColumnStretch(2,1);
     setLayout(layout);
@@ -1443,7 +1443,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, int singleStep_, vector<QStringList> unit_, vector<int> defaultUnit_, bool transpose_, bool table_, bool eval_) : m(m_), singleStep(singleStep_), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), transpose(transpose_), table(table_), eval(eval_) {
+  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, int singleStep_, vector<QStringList> unit_, vector<int> defaultUnit_, bool transpose_, bool table_, bool eval_, QString defaultValue_) : m(m_), singleStep(singleStep_), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), transpose(transpose_), table(table_), eval(eval_), defaultValue(defaultValue_) {
     name[0] = table?"Table":"Vector";
     name[1] = "File";
     name[2] = "Editor";
@@ -1451,7 +1451,7 @@ namespace MBSimGUI {
 
   QWidget* VecSizeVarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new VecSizeVarWidget(m,1,100,singleStep,transpose,table), unit[0], defaultUnit[0], eval);
+      return new PhysicalVariableWidget(new VecSizeVarWidget(m,1,100,singleStep,transpose,table,defaultValue), unit[0], defaultUnit[0], eval);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1], eval);
     if(i==2)

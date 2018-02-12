@@ -19,8 +19,7 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
-#include "euler_implicit_integrator.h"
-#include "mbsim/utils/nonlinear_algebra.h"
+#include "explicit_euler_integrator.h"
 #include <ctime>
 
 #ifndef NO_ISO_14882
@@ -34,28 +33,19 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, EulerImplicitIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, ExplicitEulerIntegrator)
 
-    EulerImplicitIntegrator::Residuum::Residuum(DynamicSystemSolver *sys_, double dt_) : sys(sys_), dt(dt_) {
-      zk = sys->getState();
-    }
-
-  Vec EulerImplicitIntegrator::Residuum::operator()(const Vec &z) {
-    Vec res;
-    sys->setState(z);
-    sys->resetUpToDate();
-    res =  z - zk - sys->evalzd()*dt;
-    return res;
-  } 
-
-  void EulerImplicitIntegrator::preIntegrate() {
+  void ExplicitEulerIntegrator::preIntegrate() {
     debugInit();
     assert(dtPlot >= dt);
 
     system->setTime(tStart);
 
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != system->getzSize())
+        throw MBSimError("(ExplicitEulerIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
+    }
     else
       system->evalz0();
 
@@ -73,7 +63,7 @@ namespace MBSimIntegrator {
     time = 0;
   }
 
-  void EulerImplicitIntegrator::subIntegrate(double tStop) { 
+  void ExplicitEulerIntegrator::subIntegrate(double tStop) {
     while(system->getTime()<tStop) { // time loop
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
@@ -88,17 +78,13 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
       }
 
-      Residuum f(system,dt);
-      MultiDimNewtonMethod newton(&f);
-//      newton.setLinearAlgebra(1);
+      system->resetUpToDate();
+      system->getState() += system->evalzd()*dt;
       system->getTime() += dt;
-      system->getState() = newton.solve(system->getState());
-      if(newton.getInfo() != 0)
-        throw MBSimError("(Eigenanalyzer::computeEigenvalues): computation of equilibrium state failed!");
     }
   }
 
-  void EulerImplicitIntegrator::postIntegrate() {
+  void ExplicitEulerIntegrator::postIntegrate() {
     if(plotIntegrationData) integPlot.close();
 
     if(writeIntegrationSummary) {
@@ -112,13 +98,13 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-  void EulerImplicitIntegrator::integrate() {
+  void ExplicitEulerIntegrator::integrate() {
     preIntegrate();
     subIntegrate(tEnd);
     postIntegrate();
   }
 
-  void EulerImplicitIntegrator::initializeUsingXML(DOMElement *element) {
+  void ExplicitEulerIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");

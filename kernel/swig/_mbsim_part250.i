@@ -57,6 +57,7 @@ namespace MBSim {
   class GlobalShiftCriteriaFunction;
   class IsotropicRotationalSpringDamper;
   class Joint;
+  class InverseKineticsJoint;
   class JointConstraint;
   class KinematicsObserver;
   class KineticExcitation;

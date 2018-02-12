@@ -74,7 +74,7 @@ namespace MBSimAnalyzer {
     if(not(zEq.size()))
       zEq = system->evalz0();
     else if(zEq.size()!=system->getzSize())
-      throw MBSimError("(Eigenanalyzer::computeEigenvalues): size of z0 does not match");
+      throw MBSimError(string("(Eigenanalyzer::computeEigenvalues): size of z0 does not match, must be ") + toStr(system->getzSize()));
 
     system->setTime(tStart);
 

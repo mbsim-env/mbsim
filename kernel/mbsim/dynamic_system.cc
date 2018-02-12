@@ -85,6 +85,22 @@ namespace MBSim {
       (*i).updateT();
   }
 
+  void DynamicSystem::updateM() {
+    for (auto & i : dynamicsystem)
+      i->updateM();
+
+    for (auto & i : object)
+      i->updateM();
+  }
+
+  void DynamicSystem::updateLLM() {
+    for(auto & i : dynamicsystem)
+      i->updateLLM();
+
+    for(auto & i : objectWithNonConstantMassMatrix)
+      i->updateLLM();
+  }
+
   void DynamicSystem::updateh(int k) {
     for (auto & i : dynamicsystem)
       i->updateh(k);
@@ -97,14 +113,6 @@ namespace MBSim {
 	i[j]->updateh(k);
   }
 
-  void DynamicSystem::updateM() {
-    for (auto & i : dynamicsystem)
-      i->updateM();
-
-    for (auto & i : object)
-      i->updateM();
-  }
-
   void DynamicSystem::updatedq() {
     for (auto & i : dynamicsystem)
       (*i).updatedq();
@@ -113,30 +121,114 @@ namespace MBSim {
       (*i).updatedq();
   }
 
+  void DynamicSystem::updatedu() {
+    for(auto & i : dynamicsystem)
+      i->updatedu();
+
+    for(auto & i : object)
+      i->updatedu();
+  }
+
+  void DynamicSystem::updatedx() {
+    for (auto & i : link)
+      (*i).updatedx();
+
+    for (auto & i : constraint)
+      (*i).updatedx();
+  }
+
+  void DynamicSystem::updatezd() {
+    for(auto & i : dynamicsystem)
+      i->updatezd();
+
+    for(auto & i : object) {
+      i->updateqd();
+      i->updateud();
+    }
+
+    for(auto & i : link)
+      i->updatexd();
+
+    for(auto & i : constraint)
+      i->updatexd();
+  }
+  void DynamicSystem::updatewb() {
+
+    for (auto & i : linkSetValued)
+      (*i).updatewb();
+  }
+
+  void DynamicSystem::updateW(int j) {
+
+    for (auto & i : linkSetValuedActive)
+      (*i).updateW(j);
+  }
+
+  void DynamicSystem::updateV(int j) {
+
+    for (auto & i : linkSetValued)
+      (*i).updateV(j);
+  }
+
+  void DynamicSystem::updateg() {
+
+    for (auto & i : linkSetValued)
+      i->updateg();
+  }
+
+  void DynamicSystem::updategd() {
+
+    for (auto & i : linkSetValued)
+      i->updategd();
+  }
+
+  void DynamicSystem::updateStopVector() {
+    for (auto & i : linkSetValued)
+      i->updateStopVector();
+  }
+
+  void DynamicSystem::updateLinkStatus() {
+    for (auto & i : linkSetValued)
+      i->updateLinkStatus();
+  }
+
+  void DynamicSystem::updateLinkStatusReg() {
+    for (auto & i : linkSingleValued)
+      i->updateLinkStatusReg();
+  }
+
+  void DynamicSystem::updateWInverseKinetics() {
+    WInverseKinetics.init(0);
+
+    for (auto & i : inverseKineticsLink)
+      (*i).updateW(1);
+  }
+
+  void DynamicSystem::updatebInverseKinetics() {
+    bInverseKinetics.init(0);
+
+    for (auto & i : inverseKineticsLink)
+      (*i).updateb();
+  }
+
   void DynamicSystem::sethSize(int hSize_, int j) {
     hSize[j] = hSize_;
 
-    for (auto & i : dynamicsystem) {
+    for (auto & i : dynamicsystem)
       i->sethSize(i->getuSize(j), j);
-      //(*i)->sethInd((*i)->getuInd(j),j);
-    }
 
-    for (auto & i : object) {
+    for (auto & i : object)
       i->sethSize(i->getuSize(j), j);
-      //(*i)->sethInd((*i)->getuInd(j),j);
-    }
   }
 
   void DynamicSystem::sethInd(int hInd_, int j) {
     hInd[j] = hInd_;
 
-    for (auto & i : dynamicsystem) {
+    for (auto & i : dynamicsystem)
       i->sethInd(i->getuInd(j), j);
-    }
 
-    for (auto & i : object) {
+    for (auto & i : object)
       i->sethInd(i->getuInd(j), j);
-    }
   }
 
   void DynamicSystem::calcqSize() {
@@ -144,12 +236,10 @@ namespace MBSim {
 
     for (auto & i : dynamicsystem) {
       i->calcqSize();
-      //(*i)->setqInd(qSize);
       qSize += i->getqSize();
     }
     for (auto & i : object) {
       i->calcqSize();
-      //(*i)->setqInd(qSize);
       qSize += i->getqSize();
     }
   }
@@ -185,12 +275,10 @@ namespace MBSim {
 
     for (auto & i : dynamicsystem) {
       i->calcuSize(j);
-      //     (*i)->setuInd(uSize[j],j);
       uSize[j] += i->getuSize(j);
     }
     for (auto & i : object) {
       i->calcuSize(j);
-      //    (*i)->setuInd(uSize[j],j);
       uSize[j] += i->getuSize(j);
     }
   }
@@ -208,96 +296,8 @@ namespace MBSim {
     }
   }
 
-//  int DynamicSystem::gethInd(DynamicSystem* sys, int i) {
-//    return (this == sys) ? 0 : hInd[i] + parent->gethInd(sys,i);
-//  }
-//
-//  int DynamicSystem::getuInd(DynamicSystem* sys, int i) {
-//    return (this == sys) ? 0 : uInd[i] + parent->getuInd(sys,i);
-//  }
-//
-//  int DynamicSystem::getqInd(DynamicSystem* sys) {
-//    return (this == sys) ? 0 : qInd + parent->getqInd(sys);
-//  }
-
   shared_ptr<OpenMBV::Group> DynamicSystem::getOpenMBVGrp() {
     return openMBVGrp;
-  }
-
-  void DynamicSystem::updatewb() {
-
-    for (auto & i : linkSetValued)
-      (*i).updatewb();
-  }
-
-  void DynamicSystem::updateW(int j) {
-
-    for (auto & i : linkSetValuedActive)
-      (*i).updateW(j);
-  }
-
-  void DynamicSystem::updateWInverseKinetics() {
-    WInverseKinetics.init(0);
-
-    for (auto & i : inverseKineticsLink)
-      (*i).updateW(1);
-  }
-
-  void DynamicSystem::updatebInverseKinetics() {
-    bInverseKinetics.init(0);
-
-    for (auto & i : inverseKineticsLink)
-      (*i).updateb();
-  }
-
-  void DynamicSystem::updateV(int j) {
-
-    for (auto & i : linkSetValued)
-      (*i).updateV(j);
-  }
-
-  void DynamicSystem::updateg() {
-
-    for (auto & i : linkSetValued)
-      i->updateg();
-  }
-
-  void DynamicSystem::updategd() {
-
-    for (auto & i : linkSetValued)
-      i->updategd();
-  }
-
-  void DynamicSystem::updatedx() {
-    for (auto & i : dynamicsystem)
-      (*i).updatedx();
-
-    for (auto & i : link)
-      (*i).updatedx();
-
-    for (auto & i : constraint)
-      (*i).updatedx();
-  }
-
-  void DynamicSystem::updateStopVector() {
-    for (auto & i : dynamicsystem)
-      i->updateStopVector();
-    for (auto & i : linkSetValued)
-      i->updateStopVector();
-  }
-
-  void DynamicSystem::updateLinkStatus() {
-    for (auto & i : dynamicsystem)
-      i->updateLinkStatus();
-    for (auto & i : linkSetValued)
-      i->updateLinkStatus();
-  }
-
-  void DynamicSystem::updateLinkStatusReg() {
-    for (auto & i : dynamicsystem)
-      i->updateLinkStatusReg();
-    for (auto & i : linkSingleValued)
-      i->updateLinkStatusReg();
   }
 
   void DynamicSystem::setDynamicSystemSolver(DynamicSystemSolver* sys) {
@@ -773,9 +773,6 @@ namespace MBSim {
   void DynamicSystem::updatelaInverseKineticsRef(const Vec &laParent) {
     laInverseKinetics >> laParent(0, laInverseKineticsSize - 1);
 
-    //for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-    //  (*i)->updatelaRefSpecial(la);
-
     for (auto & i : inverseKineticsLink)
       (*i).updatelaRef(laParent);
   }
@@ -1036,10 +1033,6 @@ namespace MBSim {
   bool DynamicSystem::gActiveChanged() {
     bool changed = false;
 
-    for (auto & i : dynamicsystem)
-      if (i->gActiveChanged())
-        changed = true;
-
     for (auto & i : linkSetValued)
       if (i->gActiveChanged())
         changed = true;
@@ -1050,10 +1043,6 @@ namespace MBSim {
   bool DynamicSystem::gActiveChangedReg() {
     bool changed = false;
 
-    for (auto & i : dynamicsystem)
-      if (i->gActiveChanged())
-        changed = true;
-
     for (auto & i : linkSingleValued)
       if (i->gActiveChanged())
         changed = true;
@@ -1063,10 +1052,6 @@ namespace MBSim {
 
   bool DynamicSystem::detectImpact() {
     bool impact = false;
-
-    for (auto & i : dynamicsystem)
-      if (i->detectImpact())
-        impact = true;
 
     for (auto & i : linkSetValued)
       if (i->detectImpact())
@@ -1216,6 +1201,14 @@ namespace MBSim {
     }
   }
 
+  void DynamicSystem::setUpObjectsWithNonConstantMassMatrix() {
+
+    for (auto & i : object) {
+      if (i->hasNonCostantMassMatrix())
+        objectWithNonConstantMassMatrix.push_back(i);
+    }
+  }
+
   void DynamicSystem::setUpActiveLinks() {
 
     linkSetValuedActive.clear();
@@ -1362,10 +1355,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::addInverseKineticsLink(Link *lnk) {
-    //if(getLink(lnk->getName(),false)) {
-    //  cout << "ERROR (DynamicSystem: addLink): The DynamicSystem " << this->name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
-    //  assert(getLink(lnk->getName(),false) == NULL);
-    //}
     inverseKineticsLink.push_back(lnk);
     lnk->setParent(this);
   }
@@ -1625,12 +1614,6 @@ namespace MBSim {
     return dx;
   }
 
-//
-//  fmatvec::Vec& DynamicSystem::getV(int i, bool check) {
-//    assert((not check) or (not ds->updV(i)));
-//    return V[i];
-//  }
-
   const Mat& DynamicSystem::evalT() {
     if(ds->getUpdateT()) ds->updateT();
     return T;
@@ -1695,10 +1678,5 @@ namespace MBSim {
     ds->updatebInverseKinetics();
     return bInverseKinetics;
   }
-
-//  const Mat& DynamicSystem::evalsv() {
-//    ds->updateStopVector();
-//    return sv;
-//  }
 
 }
