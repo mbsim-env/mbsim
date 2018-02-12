@@ -49,7 +49,12 @@ namespace MBSim {
   }
 
   void Constraint::initz() {
-    x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
+    if(x0() == NULL)
+      x.init(0);
+    else if(x0.size() == x.size())
+      x = x0;
+    else
+      THROW_MBSIMERROR(string("(Constraint::initz): size of x0 does not match, must be ") + toStr(x.size()));
   }
 
   void Constraint::writez(H5::GroupBase *group) {
