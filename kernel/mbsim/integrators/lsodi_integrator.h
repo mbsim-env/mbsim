@@ -38,11 +38,20 @@ namespace MBSimIntegrator {
    */
   class LSODIIntegrator : public Integrator {
 
+    public:
+      enum Formalism {
+        ODE=0,
+        DAE2,
+        GGL
+      };
+
     private:
-
-      static void res(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires);
-
-      static void adda(int *neq, double* t, double* z_, int* ml, int* mu, double* P, int* nrowp);
+      typedef void (*Res)(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires);
+      static Res res[3];
+      static void resODE(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires);
+      static void resDAE2(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires);
+      static void resGGL(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires);
+      static void adda(int *neq, double* t, double* y_, int* ml, int* mu, double* P, int* nrowp);
 
       /** maximal step size */
       double dtMax{0};
@@ -51,11 +60,13 @@ namespace MBSimIntegrator {
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
       /** Relative Toleranz */
-      double rTol{1e-6};
+      fmatvec::Vec rTol;
       /** step size for the first step */
       double dt0{0};
       /**  maximum number of steps allowed during one call to the solver. (default 10000) */
       int maxSteps{10000};
+      /** formalism **/
+      Formalism formalism{DAE2};
 
        /** tolerance for position constraints */
       double gMax{-1};
@@ -63,14 +74,15 @@ namespace MBSimIntegrator {
       double gdMax{-1};
 
     public:
-
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       void setMinimumStepSize(double dtMin_) { dtMin = dtMin_; }
-      void setRelativeTolerance(double rTol_) { rTol = rTol_; }
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
       void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol = rTol_; }
+      void setRelativeTolerance(double rTol_) { rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
+      void setFormalism(Formalism formalism_) { formalism = formalism_; }
 
       void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
       void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }

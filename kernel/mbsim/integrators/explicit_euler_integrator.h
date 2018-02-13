@@ -17,32 +17,20 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _EULER_IMPLICIT_INTEGRATOR_H_ 
-#define _EULER_IMPLICIT_INTEGRATOR_H_
+#ifndef _EXPLICIT_EULER_INTEGRATOR_H_
+#define _EXPLICIT_EULER_INTEGRATOR_H_
 
 #include "integrator.h"
-#include "mbsim/functions/function.h"
 
 namespace MBSimIntegrator {
 
-  /** \brief Implicit Euler integrator. */
-  class EulerImplicitIntegrator : public Integrator { 
-
-    class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
-      public:
-        Residuum(MBSim::DynamicSystemSolver *sys_, double dt_); 
-        fmatvec::Vec operator()(const fmatvec::Vec &z);
-      private:
-        MBSim::DynamicSystemSolver *sys;
-        fmatvec::Vec zk;
-        double dt;
-    };
-
+  /** \brief Explicit Euler integrator. */
+  class ExplicitEulerIntegrator : public Integrator {
     public:
       /**
        * \brief destructor
        */
-      ~EulerImplicitIntegrator() override = default;
+      ~ExplicitEulerIntegrator() override = default;
 
       void preIntegrate() override;
       void subIntegrate(double tStop) override;

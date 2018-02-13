@@ -238,6 +238,8 @@ namespace MBSim {
         sethSize(uSize[i], i);
         sethInd(0, i);
       }
+
+      setUpObjectsWithNonConstantMassMatrix();
       setUpLinks(); // is needed by calcgSize()
 
       calcxSize();

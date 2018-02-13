@@ -33,8 +33,8 @@
 #include "time_stepping_ssc_integrator.h"
 //#include "auto_time_stepping_ssc_integrator.h"
 #include "hets2_integrator.h"
-#include "euler_explicit_integrator.h"
-#include "euler_implicit_integrator.h"
+#include "explicit_euler_integrator.h"
+#include "implicit_euler_integrator.h"
 #include "quasi_static_integrator.h"
 //#include "daspk_integrator.h"
 

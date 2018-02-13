@@ -70,6 +70,8 @@ namespace MBSimIntegrator {
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
     if(e) setAbsoluteTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    if(e) setRelativeTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
@@ -108,7 +110,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(LSODEIntegrator::integrate): size of z0 does not match");
+        throw MBSimError("(LSODKRIntegrator::integrate): size of z0 does not match " + toStr(zSize));
       system->setState(z0);
     }
     else
@@ -117,24 +119,48 @@ namespace MBSimIntegrator {
     system->computeInitialCondition();
     t=tStart;
     tPlot=t+dtPlot;
+
     if(aTol.size() == 0)
       aTol.resize(1,INIT,1e-6);
-    if(aTol.size() == 1) {
-      iTol = 1; // Skalar
-    } else {
-      iTol = 2; // Vektor
-      assert (aTol.size() >= zSize);
+    if(rTol.size() == 0)
+      rTol.resize(1,INIT,1e-6);
+
+    if(rTol.size() == 1) {
+      if(aTol.size() == 1)
+        iTol = 1;
+      else {
+        iTol = 2;
+        if(aTol.size() != zSize)
+          throw MBSimError("(LSODKRIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+      }
     }
+    else {
+      if(aTol.size() == 1)
+        iTol = 3;
+      else {
+        iTol = 4;
+        if(aTol.size() != zSize)
+          throw MBSimError("(LSODKRIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+      }
+      if(rTol.size() != zSize)
+        throw MBSimError("(LSODKRIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
+    }
+
+    int lwp=0, liwp=0;
     istate=1;
     nsv=system->getsvSize();
-    lrWork = (22 + zSize * max(16, zSize + 9) + 3 * nsv) * 2;
+    lrWork = 2*(61+17*zSize+3*nsv+lwp);
     rWork.resize(lrWork);
     rWork(4) = dt0; 
     rWork(5) = dtMax;
     rWork(6) = dtMin;
-    liWork = (20+zSize)*10;
+    liWork = 2*(30+liwp);
     iWork.resize(liWork);
     iWork(5) = maxSteps;
+    iWork(0) = lwp;
+    iWork(1) = liwp;
+    iWork(2) = 0; // no preconditioning
+
     s0 = clock();
     time = 0;
     integrationSteps = 0;
@@ -154,7 +180,7 @@ namespace MBSimIntegrator {
     while(t < tStop-epsroot) {
       integrationSteps++;
       double tOut = min(tPlot, tStop);
-      DLSODKR(fzdot, neq, system->getState()(), &t, &tOut, &iTol, &rTol, aTol(), &one,
+      DLSODKR(fzdot, neq, system->getState()(), &t, &tOut, &iTol, rTol(), aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(),
           &liWork, NULL, NULL, &MF, fsv, &nsv, system->getjsv()());
       if(istate==2 || fabs(t-tPlot)<epsroot) {

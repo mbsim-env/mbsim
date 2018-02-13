@@ -74,14 +74,13 @@ namespace MBSimIntegrator {
     debugInit();
 
     int zSize=system->getzSize();
-    int nrDens = zSize;
 
     double t = tStart;
 
     Vec z(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(DOP853Integrator::integrate): size of z0 does not match");
+        throw MBSimError("(DOP853Integrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
@@ -92,39 +91,33 @@ namespace MBSimIntegrator {
     if(rTol.size() == 0)
       rTol.resize(1,INIT,1e-6);
 
-    assert(aTol.size() == rTol.size());
-
     int iTol;
-    if(aTol.size() == 1) {
-      iTol = 0; // Skalar
-    } else {
-      iTol = 1; // Vektor
-      assert (aTol.size() >= zSize);
+    if(aTol.size() == 1)
+      iTol = 0;
+    else {
+      iTol = 1;
+      if(aTol.size() != zSize)
+        throw MBSimError("(DOPRI5Integrator::integrate): size of aTol does not match, must be " + toStr(zSize));
     }
+    if(rTol.size() != aTol.size())
+      throw MBSimError("(DOPRI5Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
-    int out = 2; // TODO
+    int out = 2; // dense output is performed in plot
 
     double rPar;
     int iPar[sizeof(void*)/sizeof(int)+1]; // store this at iPar[0..]
     DOP853Integrator *self=this;
     memcpy(&iPar[0], &self, sizeof(void*));
 
-    int lWork = 2*(11*zSize+8*nrDens+21);
-    int liWork = 2*(nrDens+21);
+    int lWork = 2*(11*zSize+8*zSize+21);
+    int liWork = 2*(zSize+21);
     VecInt iWork(liWork);
     Vec work(lWork);
     if(dtMax>0)
-      work(5)=dtMax;
-    work(6)=dt0;
-
-    //Maximum Step Numbers
-    iWork(0)=maxSteps;
-    // if(warnLevel)
-    //   iWork(2) = warnLevel;
-    // else
-    //   iWork(2) = -1;
-
-    iWork(4) = nrDens;
+      work(5) = dtMax; // maximum step size
+    work(6) = dt0; // initial step size
+    iWork(0) = maxSteps; // maximum number of steps
+    iWork(4) = zSize;
 
     int idid;
 

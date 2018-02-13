@@ -28,7 +28,6 @@ namespace H5 {
 
 namespace MBSim {
 
-
   /**
    * \brief class for tree-structured mechanical systems with recursive and flat memory mechanism
    * \author Martin Foerg
@@ -45,9 +44,13 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      ~Graph() override;
+      ~Graph() override = default;
 
-      /* INHERITED INTERFACE OF OBJECTINTERFACE */
+      void updateT() override;
+      void updateM() override;
+      void updateLLM() override;
+      void updateh(int k=0) override;
+      void updatedq() override;
       void updatedu() override;
       void updatezd() override;
       void sethSize(int h, int j=0) override {(this->*sethSize_[j])(h);}
@@ -56,12 +59,6 @@ namespace MBSim {
       void setqInd(int qInd) override;
       void setuInd(int uInd, int j=0) override {(this->*setuInd_[j])(uInd);}
       void sethInd(int hInd, int j=0) override {(this->*sethInd_[j])(hInd);}
-
-      /* INHERITED INTERFACE OF ELEMENT */
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF SUBSYSTEM */
-      void updateLLM() override;
 
 #ifndef SWIG
       void (Graph::*calcuSize_[2])(); 
@@ -77,8 +74,6 @@ namespace MBSim {
       void setuInd1(int uInd);
       void sethInd0(int hInd);
       void sethInd1(int hInd);
-
-      /***************************************************/
 
       /**
        * \brief add new object to graph at level
@@ -100,4 +95,3 @@ namespace MBSim {
 }
 
 #endif
-

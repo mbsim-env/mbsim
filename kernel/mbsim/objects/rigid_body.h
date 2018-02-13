@@ -65,7 +65,7 @@ namespace MBSim {
       void updateqd() override;
       void updateT() override;
       void updateh(int j=0) override;
-      void updateM() override { (this->*updateM_)(); }
+      void updateM() override;
       void updateInertiaTensor();
       void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
@@ -93,7 +93,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECT */
       void init(InitStage stage, const InitConfigSet &config) override;
-      void updateLLM() override { (this->*updateLLM_)(); }
       void setUpInverseKinetics() override;
       /*****************************************************/
 
@@ -265,11 +264,6 @@ namespace MBSim {
       FixedRelativeFrame *K;
 
       /**
-       * \brief TODO
-       */
-      fmatvec::SymMat Mbuf;
-
-      /**
        * \brief boolean to use body fixed Frame for rotation
        */
       bool coordinateTransformation{true};
@@ -302,36 +296,6 @@ namespace MBSim {
        * \brief rotation from kinematic Frame to parent Frame
        */
       Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fAPK{nullptr};
-
-      /**
-       * \brief function pointer to update mass matrix
-       */
-      void (RigidBody::*updateM_)();
-
-      /**
-       * \brief update constant mass matrix
-       */
-      void updateMConst();
-
-      /**
-       * \brief update time dependend mass matrix
-       */
-      void updateMNotConst();
-
-      /**
-       * \brief function pointer for Cholesky decomposition of mass matrix
-       */
-      void (RigidBody::*updateLLM_)();
-
-      /**
-       * \brief Cholesky decomposition of constant mass matrix
-       */
-      void updateLLMConst() { }
-
-      /**
-       * \brief Cholesky decomposition of time dependent mass matrix
-       */
-      void updateLLMNotConst() { Object::updateLLM(); }
 
 #ifndef SWIG
       void (RigidBody::*updateJacobians_[3])(Frame *frame);

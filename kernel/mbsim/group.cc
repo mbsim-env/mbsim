@@ -43,42 +43,6 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Group)
 
-  Group::Group(const string &name) : DynamicSystem(name) {}
-
-  Group::~Group() = default;
-
-  void Group::updateLLM() {
-    for(auto & i : dynamicsystem)
-      i->updateLLM();
-
-    for(auto & i : object)
-      i->updateLLM();
-  }
-
-  void Group::updatedu() {
-    for(auto & i : dynamicsystem) 
-      i->updatedu();
-
-    for(auto & i : object)
-      i->updatedu();
-  }
-
-  void Group::updatezd() {
-    for(auto & i : dynamicsystem) 
-      i->updatezd();
-
-    for(auto & i : object) {
-      i->updateqd();
-      i->updateud();
-    }
-
-    for(auto & i : link)
-      i->updatexd();
-
-    for(auto & i : constraint)
-      i->updatexd();
-  }
-
   void Group::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
 

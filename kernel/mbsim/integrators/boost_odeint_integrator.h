@@ -260,7 +260,7 @@ namespace MBSimIntegrator {
     // get initial state
     if(z0.size()) {
       if(z0.size()!=system->getzSize())
-        throw MBSim::MBSimError("BoostOdeintDOS: size of z0 does not match");
+        throw MBSim::MBSimError("BoostOdeintDOS:: size of z0 does not match, must be " + MBSim::toStr(system->getzSize()));
       BoostOdeintHelper::assign(zTemp, z0);
     }
     else

@@ -164,13 +164,16 @@
               Auswahl des Formalismus.
               <ul>
                 <li>ODE: gewöhnliches Differentialgleichungssystem</li>
-                <li>DAE: differential-algebraisches System vom Index 2</li>
+                <li>DAE1: differential-algebraisches System vom Index 1</li>
+                <li>DAE2: differential-algebraisches System vom Index 2</li>
+                <li>DAE3: differential-algebraisches System vom Index 3</li>
+                <li>GGL: differential-algebraisches System vom Index 2 mit Gear Gupta Leimkuhler Stabilisierung</li>
               </ul>
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="specialStructure" type="pv:booleanFullEval" minOccurs="0">
+          <xs:element name="reducedForm" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-               Ausnutzung der speziellen Systemstruktur qd=T*u with T=I.
+                Lösen des nichtlinearen Gleichungssystems in reduzierter Form. Das differentielle System muss dazu die spezielle Struktur dq(i)/dt = u(i) für i=1,...,nq haben.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
@@ -318,11 +321,18 @@
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-            </xs:documentation></xs:annotation>
-          </xs:element>
+          <xs:choice>
+            <xs:element name="relativeTolerance" type="pv:unknownVector" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
@@ -380,11 +390,18 @@
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-            </xs:documentation></xs:annotation>
-          </xs:element>
+          <xs:choice>
+            <xs:element name="relativeTolerance" type="pv:unknownVector" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
@@ -457,11 +474,18 @@
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-            </xs:documentation></xs:annotation>
-          </xs:element>
+          <xs:choice>
+            <xs:element name="relativeTolerance" type="pv:unknownVector" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
@@ -523,11 +547,18 @@
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-            </xs:documentation></xs:annotation>
-          </xs:element>
+          <xs:choice>
+            <xs:element name="relativeTolerance" type="pv:unknownVector" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
@@ -546,6 +577,16 @@
           <xs:element name="stepLimit" type="pv:integerFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximale Anzahl von Integrationsschritten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="formalism" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl des Formalismus.
+              <ul>
+                <li>ODE: gewöhnliches Differentialgleichungssystem</li>
+                <li>DAE2: differential-algebraisches System vom Index 2</li>
+                <li>GGL: differential-algebraisches System vom Index 2 mit Gear Gupta Leimkuhler Stabilisierung</li>
+              </ul>
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
@@ -731,35 +772,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-<!--  <xs:element name="ThetaTimeSteppingIntegrator" substitutionGroup="Integrator" type="ThetaTimeSteppingIntegratorType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Timestepping Integration für Maßdifferentialinklusionen.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="ThetaTimeSteppingIntegratorType">
-    <xs:complexContent>
-      <xs:extension base="IntegratorType">
-        <xs:sequence>
-          <xs:element name="stepSize" type="pv:timeScalar">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Integrationsschrittweite.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="theta" type="pv:nounitScalar">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Gewichtungsfaktor des implizit ermittelten Systemzustandes. Wert zwischen 0 (voll explizit) und 1 (voll implizit).
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="driftCompensation" type="pv:booleanFullEval">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Driftkompensation
-            </xs:documentation></xs:annotation>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>-->
-
   <xs:element name="HETS2Integrator" substitutionGroup="Integrator" type="HETS2IntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
        Integrationsverfahren für nich-glatte dynamische Systeme. Das Verfahren basiert auf der halb-expliziten Trapez-Regel.
@@ -779,12 +791,12 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="EulerExplicitIntegrator" substitutionGroup="Integrator" type="EulerExplicitIntegratorType">
+  <xs:element name="ExplicitEulerIntegrator" substitutionGroup="Integrator" type="ExplicitEulerIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Explizites Einschritt-Integrationsverfahren mit fester Schrittweite.
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="EulerExplicitIntegratorType">
+  <xs:complexType name="ExplicitEulerIntegratorType">
     <xs:complexContent>
       <xs:extension base="IntegratorType">
         <xs:sequence>
@@ -798,18 +810,23 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="EulerImplicitIntegrator" substitutionGroup="Integrator" type="EulerImplicitIntegratorType">
+  <xs:element name="ImplicitEulerIntegrator" substitutionGroup="Integrator" type="ImplicitEulerIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Implizites Einschritt-Integrationsverfahren mit fester Schrittweite.
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="EulerImplicitIntegratorType">
+  <xs:complexType name="ImplicitEulerIntegratorType">
     <xs:complexContent>
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:element name="stepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Integrationsschrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="reducedForm" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Lösen des nichtlinearen Gleichungssystems in reduzierter Form. Das differentielle System muss dazu die spezielle Struktur dq(i)/dt = u(i) für i=1,...,nq haben.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
