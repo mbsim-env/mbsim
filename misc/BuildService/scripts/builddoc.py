@@ -22,6 +22,12 @@ mainFiles=glob.glob("*/main.tex")
 for texMain in mainFiles:
   os.chdir(os.path.dirname(texMain))
 
+  print("", file=f)
+  print("", file=f)
+  print("Building in directory "+os.getcwd(), file=f)
+  print("", file=f)
+  f.flush()
+
   if simplesandbox.call([scriptdir+"/builddocsb.py"], shareddir=["."], stderr=subprocess.STDOUT, stdout=f, buildSystemRun=True)!=0:
     nrDocFailed+=1
   f.flush()

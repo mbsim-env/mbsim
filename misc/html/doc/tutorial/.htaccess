@@ -1,1 +1,1 @@
-Header set Cache-Control "public, max-age=3600, must-revalidate"
+Header set Cache-Control "public, max-age=60, must-revalidate"
