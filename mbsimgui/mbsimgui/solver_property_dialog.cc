@@ -148,6 +148,7 @@ namespace MBSimGUI {
   RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
     addTab("Tolerances");
     addTab("Step size");
+    addTab("Extra");
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -170,8 +171,11 @@ namespace MBSimGUI {
     list.emplace_back("\"DAE2\"");
     list.emplace_back("\"DAE3\"");
     list.emplace_back("\"GGL\"");
-    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"formalism");
+    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,0,true),true,false,MBSIMINT%"formalism");
     addToTab("General", formalism);
+
+    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
+    addToTab("Extra", reducedForm);
   }
 
   DOMElement* RADAU5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -182,6 +186,7 @@ namespace MBSimGUI {
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
+    reducedForm->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -193,6 +198,7 @@ namespace MBSimGUI {
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
+    reducedForm->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -734,20 +740,26 @@ namespace MBSimGUI {
 
   ImplicitEulerIntegratorPropertyDialog::ImplicitEulerIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
+    addTab("Extra");
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepSize");
     addToTab("Step size", stepSize);
+
+    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
+    addToTab("Extra", reducedForm);
   }
 
   DOMElement* ImplicitEulerIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     stepSize->initializeUsingXML(item->getXMLElement());
+    reducedForm->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ImplicitEulerIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     stepSize->writeXMLFile(item->getXMLElement());
+    reducedForm->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
