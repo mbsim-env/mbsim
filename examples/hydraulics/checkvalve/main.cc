@@ -35,7 +35,7 @@ int main (int argc, char* argv[]) {
         else if (iintegrator==1)
           nameintegrator = "ThetaTimeStepping";
         else if (iintegrator==2)
-          nameintegrator = "EulerExplicit";
+          nameintegrator = "ExplicitEuler";
         else if (iintegrator==3)
           nameintegrator = "RADAU5";
         else if (iintegrator==4)
@@ -122,7 +122,7 @@ int main (int argc, char* argv[]) {
 //            endTime=clock();
           }
           else if (iintegrator==2) {
-            EulerExplicitIntegrator in;
+            ExplicitEulerIntegrator in;
             in.setStepSize(stepSizeFactor*dtPlot);
             in.setStartTime(0);
             in.setEndTime(tEnd);
