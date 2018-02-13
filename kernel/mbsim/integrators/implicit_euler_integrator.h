@@ -30,12 +30,24 @@ namespace MBSimIntegrator {
 
     class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
       public:
-        Residuum(MBSim::DynamicSystemSolver *sys_, double dt_); 
-        fmatvec::Vec operator()(const fmatvec::Vec &z);
-      private:
+        Residuum(MBSim::DynamicSystemSolver *sys_, double dt_) : sys(sys_), dt(dt_) { }
+        void setState(const fmatvec::Vec &zk_) { zk = zk_; }
+      protected:
         MBSim::DynamicSystemSolver *sys;
         fmatvec::Vec zk;
         double dt;
+    };
+
+    class ResiduumFull : public Residuum {
+      public:
+        ResiduumFull(MBSim::DynamicSystemSolver *sys, double dt) : Residuum(sys, dt) { }
+        fmatvec::Vec operator()(const fmatvec::Vec &z);
+    };
+
+    class ResiduumReduced : public Residuum {
+      public:
+        ResiduumReduced(MBSim::DynamicSystemSolver *sys, double dt) : Residuum(sys, dt) { }
+        fmatvec::Vec operator()(const fmatvec::Vec &ux);
     };
 
     public:
@@ -56,6 +68,7 @@ namespace MBSimIntegrator {
 
       /* GETTER / SETTER */
       void setStepSize(double dt_) {dt = dt_;}
+      void setReducedForm(bool reduced_) { reduced = reduced_; }
       /***************************************************/
 
     private:
@@ -64,11 +77,16 @@ namespace MBSimIntegrator {
        */
       double dt{1e-3};
 
+      /** reduced form **/
+      bool reduced{false};
+
       double tPlot;
       int iter, step, integrationSteps;
       double s0, time;
       int stepPlot;
       std::ofstream integPlot;
+
+      Residuum *res{nullptr};
   };
 
 }

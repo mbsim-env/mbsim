@@ -42,13 +42,16 @@ namespace MBSimIntegrator {
 
     private:
       typedef void (*Fzdot)(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
+      typedef void (*Mass)(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static Fzdot fzdot[5];
+      static Mass mass[2];
       static void fzdotODE(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
       static void fzdotDAE1(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void fzdotDAE2(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void fzdotDAE3(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void fzdotGGL(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
-      static void mass(int* n, double* m, int* lmas, double* rpar, int* ipar);
+      static void massFull(int* n, double* m, int* lmas, double* rpar, int* ipar);
+      static void massReduced(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
 
       double tPlot{0};
@@ -69,6 +72,8 @@ namespace MBSimIntegrator {
       double dtMax{0};
       /** formalism **/
       Formalism formalism{ODE};
+      /** reduced form **/
+      bool reduced{false};
 
     public:
       ~RADAU5Integrator() override = default;
@@ -81,6 +86,7 @@ namespace MBSimIntegrator {
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
+      void setReducedForm(bool reduced_) { reduced = reduced_; }
 
       using Integrator::integrate;
       void integrate() override;
