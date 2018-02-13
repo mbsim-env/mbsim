@@ -36,11 +36,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, ImplicitEulerIntegrator)
 
-    ImplicitEulerIntegrator::Residuum::Residuum(DynamicSystemSolver *sys_, double dt_) : sys(sys_), dt(dt_) {
-      zk = sys->getState();
-    }
-
-  Vec ImplicitEulerIntegrator::Residuum::operator()(const Vec &z) {
+  Vec ImplicitEulerIntegrator::ResiduumFull::operator()(const Vec &z) {
     Vec res;
     sys->setState(z);
     sys->resetUpToDate();
@@ -48,9 +44,25 @@ namespace MBSimIntegrator {
     return res;
   } 
 
+  Vec ImplicitEulerIntegrator::ResiduumReduced::operator()(const Vec &ux) {
+    Vec res;
+    Vec z(sys->getzSize(),NONINIT);
+    z(0,sys->getqSize()-1) = zk(0,sys->getqSize()-1) + ux(0,sys->getuSize()-1)*dt;
+    z(sys->getqSize(),sys->getzSize()-1) = ux;
+    sys->setState(z);
+    sys->resetUpToDate();
+    res =  ux - zk(sys->getqSize(),sys->getzSize()-1) - sys->evalzd()(sys->getqSize(),sys->getzSize()-1)*dt;
+    return res;
+  }
+
   void ImplicitEulerIntegrator::preIntegrate() {
     debugInit();
     assert(dtPlot >= dt);
+
+    if(reduced)
+      res = new ResiduumReduced(system,dt);
+    else
+      res = new ResiduumFull(system,dt);
 
     system->setTime(tStart);
 
@@ -77,7 +89,10 @@ namespace MBSimIntegrator {
   }
 
   void ImplicitEulerIntegrator::subIntegrate(double tStop) {
+    MultiDimNewtonMethod newton(res);
+    // newton.setLinearAlgebra(1);
     while(system->getTime()<tStop) { // time loop
+      res->setState(system->getState());
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
@@ -91,17 +106,24 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
       }
 
-      Residuum f(system,dt);
-      MultiDimNewtonMethod newton(&f);
-//      newton.setLinearAlgebra(1);
       system->getTime() += dt;
-      system->getState() = newton.solve(system->getState());
+      if(reduced) {
+        Vec qOld;
+        qOld = system->getq();
+        system->getState()(system->getqSize(),system->getzSize()-1) = newton.solve(system->getState()(system->getqSize(),system->getzSize()-1));
+        system->getq() = qOld + system->getu()*dt;
+      }
+      else
+        system->getState() = newton.solve(system->getState());
       if(newton.getInfo() != 0)
-        throw MBSimError("(Eigenanalyzer::computeEigenvalues): computation of equilibrium state failed!");
+        throw MBSimError("(ImplicitEulerIntegrator::subIntegrate): computation of new state failed!");
     }
   }
 
   void ImplicitEulerIntegrator::postIntegrate() {
+
+    delete res;
+
     if(plotIntegrationData) integPlot.close();
 
     if(writeIntegrationSummary) {
@@ -126,6 +148,8 @@ namespace MBSimIntegrator {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
     if(e) setStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
+    if(e) setReducedForm((E(e)->getText<bool>()));
   }
 
 }

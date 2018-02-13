@@ -41,6 +41,7 @@ namespace MBSimIntegrator {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RADAU5Integrator)
 
   RADAU5Integrator::Fzdot RADAU5Integrator::fzdot[5];
+  RADAU5Integrator::Mass RADAU5Integrator::mass[2];
 
   void RADAU5Integrator::fzdotODE(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
@@ -105,10 +106,16 @@ namespace MBSimIntegrator {
     yd(self->system->getzSize()+self->system->getgdSize(),*neq-1) = self->system->evalg();
   }
 
-  void RADAU5Integrator::mass(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
+  void RADAU5Integrator::massFull(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
     Mat M(*lmas,*zSize, m_);
     for(int i=0; i<self->system->getzSize(); i++) M(0,i) = 1;
+  }
+
+  void RADAU5Integrator::massReduced(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
+    Mat M(*lmas,*zSize, m_);
+    for(int i=0; i<self->system->getqSize(); i++) M(0,i) = 1;
   }
 
   void  RADAU5Integrator::plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
@@ -143,6 +150,8 @@ namespace MBSimIntegrator {
     fzdot[2] = &RADAU5Integrator::fzdotDAE2;
     fzdot[3] = &RADAU5Integrator::fzdotDAE3;
     fzdot[4] = &RADAU5Integrator::fzdotGGL;
+    mass[0] = &RADAU5Integrator::massFull;
+    mass[1] = &RADAU5Integrator::massReduced;
 
     debugInit();
 
@@ -213,6 +222,10 @@ namespace MBSimIntegrator {
       iWork(4) = zSize;
       iWork(5) = system->getgdSize() + system->getgSize();
     }
+    if(reduced) {
+      iWork(8) = system->getqSize();
+      iWork(9) = system->getqSize();
+    }
 
     int iJac = 0; // jacobian is computed internally by finite differences
     int mlJac = neq; // jacobian is a full matrix
@@ -246,7 +259,7 @@ namespace MBSimIntegrator {
     RADAU5(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt0,
 	rTol(),aTol(),&iTol,
 	nullptr,&iJac,&mlJac,&muJac,
-	mass,&iMas,&mlMas,&muMas,
+	*mass[reduced],&iMas,&mlMas,&muMas,
 	plot,&out,
 	work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
@@ -289,6 +302,8 @@ namespace MBSimIntegrator {
       else if(formalismStr=="DAE3") formalism=DAE3;
       else if(formalismStr=="GGL") formalism=GGL;
     }
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
+    if(e) setReducedForm((E(e)->getText<bool>()));
   }
 
 }
