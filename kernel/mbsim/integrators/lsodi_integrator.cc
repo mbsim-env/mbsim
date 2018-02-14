@@ -165,7 +165,6 @@ namespace MBSimIntegrator {
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
-    system->setStepSize(1);
     system->setTime(t);
     system->setState(y(0,system->getzSize()-1));
     system->resetUpToDate();
