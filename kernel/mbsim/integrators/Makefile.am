@@ -7,10 +7,11 @@ libintegrators_la_SOURCES = integrator.cc\
 			    rksuite_integrator.cc \
 			    boost_odeint_integrator.cc \
 			    dopri5_integrator.cc \
+			    radau5_integrator.cc \
 			    dop853_integrator.cc \
 			    odex_integrator.cc \
+			    daspk_integrator.cc \
 			    quasi_static_integrator.cc \
-			    radau5_integrator.cc \
 			    time_stepping_integrator.cc \
 			    theta_time_stepping_integrator.cc \
 			    time_stepping_ssc_integrator.cc \
@@ -25,11 +26,10 @@ libintegrators_la_SOURCES = integrator.cc\
 			    fortran/odex.f\
 			    fortran/radau5.f\
 			    fortran/dc_lapack.f\
-			    fortran/rksuite.f
+			    fortran/rksuite.f\
+			    fortran/ddaspk.f
 			     
 #auto_time_stepping_ssc_integrator.cc
-#daspk_integrator.cc
-#fortran/ddaspk.f
 #fortran/daux.f
 #fortran/mexax.f
 #mexax_integrator.cc 
@@ -41,12 +41,6 @@ integratorsincludedir = $(includedir)/mbsim/integrators
 
 integratorsinclude_HEADERS = integrator.h \
 			     integrators.h \
-			     time_stepping_integrator.h \
-			     theta_time_stepping_integrator.h \
-			     time_stepping_ssc_integrator.h \
-			     hets2_integrator.h \
-			     explicit_euler_integrator.h \
-			     implicit_euler_integrator.h \
 			     lsodar_integrator.h \
 			     lsodkr_integrator.h \
 			     lsode_integrator.h \
@@ -55,12 +49,17 @@ integratorsinclude_HEADERS = integrator.h \
 			     boost_odeint_integrator.h \
 			     boost_odeint_integrator_predef.h \
 			     dopri5_integrator.h \
+			     radau5_integrator.h \
 			     dop853_integrator.h \
 			     odex_integrator.h \
 			     quasi_static_integrator.h \
-			     radau5_integrator.h \
+			     time_stepping_integrator.h \
+			     theta_time_stepping_integrator.h \
+			     time_stepping_ssc_integrator.h \
+			     hets2_integrator.h \
+			     explicit_euler_integrator.h \
+			     implicit_euler_integrator.h \
 			     fortran/fortran_wrapper.h
 #auto_time_stepping_ssc_integrator.h
-#daspk_integrator.h
 # mexax_integrator.h 
 

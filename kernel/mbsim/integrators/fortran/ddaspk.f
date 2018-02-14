@@ -1,4 +1,13 @@
-#include "fortran_sym_renames.pp"
+#define DRCHEK mbsim_DRCHEK
+#define DROOTS mbsim_DROOTS
+#define IXSAV  mbsim_IXSAV
+#define DLSODE mbsim_DLSODE
+#define XERRWD mbsim_XERRWD
+#define DHELS  mbsim_DASPK_DHELS
+#define DHEQR  mbsim_DASPK_DHEQR
+#define XSETF  mbsim_XSETF
+#define DATV   mbsim_DASPK_DATV
+#define D1MACH DUMACH
       SUBROUTINE DDASPK (RES, NEQ, T, Y, YPRIME, TOUT, INFO, RTOL, ATOL,
      *   IDID, RWORK, LRW, IWORK, LIW, RPAR, IPAR, JAC, PSOL)
 C
