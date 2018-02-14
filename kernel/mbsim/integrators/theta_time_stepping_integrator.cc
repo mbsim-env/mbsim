@@ -131,14 +131,14 @@ namespace MBSimIntegrator {
       system->getu() += du;
       system->getx() += system->evaldx();
 
-      //cout << system->getgd() + W.T()*du << endl;
-      //cout << W.T()*system->getu() << endl;
       system->setTime(te);
 
-      //cout << "resetUpToDate" << endl;
+      system->setla(system->getLa()/dt);
+      system->setqd(system->getdq(false)/dt);
+      system->setud(system->getdu(false)/dt);
+      system->setxd(system->getdx(false)/dt);
+
       system->resetUpToDate();
-      //cout << system->evalgd() << endl;
-      //cout << "end" << endl;
 
       if(system->getIterI()>maxIter) maxIter = system->getIterI();
       sumIter += system->getIterI();
