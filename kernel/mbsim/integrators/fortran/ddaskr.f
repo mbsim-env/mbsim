@@ -1,43 +1,54 @@
 #define IXSAV  mbsim_IXSAV
 #define XERRWD mbsim_XERRWD
 #define XSETF  mbsim_XSETF
-#define DRCHEK DDASPK_DRCHEK
-#define DROOTS DDASPK_DROOTS
-#define DHELS  DASPK_DHELS
-#define DHEQR  DASPK_DHEQR
-#define DATV   DASPK_DATV
+#define DRCHEK DDASKR_DRCHEK
+#define DROOTS DDASKR_DROOTS
+#define DHELS  DASKR_DHELS
+#define DHEQR  DASKR_DHEQR
+#define DATV   DASKR_DATV
+#define DDWNRM DASKR_DDWNRM
+#define DNSK   DASKR_DNSK
+#define DSLVK  DASKR_DSLVK
+#define DSPIGM DASKR_DSPIGM
+#define DNSIK  DASKR_DNSIK
+#define DLINSK DASKR_DLINSK
+#define DFNRMK DASKR_DFNRMK
+#define DYYPNW DASKR_DYYPNW
+#define DCNSTR DASKR_DCNSTR
+#define DORTH  DASKR_DORTH
+#define DNSD   DASKR_DNSD
+#define DSLVD  DASKR_DSLVD
+#define DMATD  DASKR_DMATD
+#define DNSID  DASKR_DNSID
+#define DLINSD DASKR_DLINSD
+#define DFNRMD DASKR_DFNRMD
+#define DDATRP DASKR_DDATRP
+#define DDSTP  DASKR_DDSTP
+#define DINVWT DASKR_DINVWT
+#define DDAWTS DASKR_DDAWTS
+#define DDASIC DASKR_DDASIC
+#define DCNST0 DASKR_DCNST0
+#define DDASID DASKR_DDASID
+#define DDASIK DASKR_DDASIK
+#define DNEDD  DASKR_DNEDD
+#define DNEDK  DASKR_DNEDK
 #define D1MACH DUMACH
-      SUBROUTINE DDASPK (RES, NEQ, T, Y, YPRIME, TOUT, INFO, RTOL, ATOL,
-     *   IDID, RWORK, LRW, IWORK, LIW, RPAR, IPAR, JAC, PSOL)
+      SUBROUTINE DDASKR (RES, NEQ, T, Y, YPRIME, TOUT, INFO, RTOL, ATOL,
+     *   IDID, RWORK, LRW, IWORK, LIW, RPAR, IPAR, JAC, PSOL,
+     *   RT, NRT, JROOT)
 C
-C***BEGIN PROLOGUE  DDASPK
-C***DATE WRITTEN   890101   (YYMMDD)
-C***REVISION DATE  910624   (Added HMAX test at 525 in main driver.)
-C***REVISION DATE  920929   (CJ in RES call, RES counter fix.)
-C***REVISION DATE  921215   (Warnings on poor iteration performance)
-C***REVISION DATE  921216   (NRMAX as optional input)
-C***REVISION DATE  930315   (Name change: DDINI to DDINIT)
-C***REVISION DATE  940822   (Replaced initial condition calculation)
-C***REVISION DATE  941101   (Added linesearch in I.C. calculations)
-C***REVISION DATE  941220   (Misc. corrections throughout)
-C***REVISION DATE  950125   (Added DINVWT routine)
-C***REVISION DATE  950714   (Misc. corrections throughout)
-C***REVISION DATE  950802   (Default NRMAX = 5, based on tests.)
-C***REVISION DATE  950808   (Optional error test added.)
-C***REVISION DATE  950814   (Added I.C. constraints and INFO(14))
-C***REVISION DATE  950828   (Various minor corrections.)
-C***REVISION DATE  951006   (Corrected WT scaling in DFNRMK.)
-C***REVISION DATE  951030   (Corrected history update at end of DDASTP.)
-C***REVISION DATE  960129   (Corrected RL bug in DLINSD, DLINSK.)
-C***REVISION DATE  960301   (Added NONNEG to SAVE statement.)
-C***REVISION DATE  000512   (Removed copyright notices.)
-C***REVISION DATE  000622   (Corrected LWM value using NCPHI.)
-C***REVISION DATE  000628   (Corrected I.C. stopping tests when index = 0.)
-C***REVISION DATE  000628   (Fixed alpha test in I.C. calc., Krylov case.)
-C***REVISION DATE  000628   (Improved restart in I.C. calc., Krylov case.)
-C***REVISION DATE  000628   (Minor corrections throughout.)
-C***REVISION DATE  000711   (Fixed Newton convergence test in DNSD, DNSK.) 
-C***REVISION DATE  000712   (Fixed tests on TN - TOUT below 420 and 440.)
+C***BEGIN PROLOGUE  DDASKR
+C***REVISION HISTORY  (YYMMDD)
+C   020815  DATE WRITTEN   
+C   021105  Changed yprime argument in DRCHEK calls to YPRIME.
+C   021217  Modified error return for zeros found too close together.
+C   021217  Added root direction output in JROOT.
+C   040518  Changed adjustment to X2 in Subr. DROOTS.
+C   050511  Revised stopping tests in statements 530 - 580; reordered
+C           to test for tn at tstop before testing for tn past tout.
+C   060712  In DMATD, changed minimum D.Q. increment to 1/EWT(j).
+C   071003  In DRCHEK, fixed bug in TEMP2 (HMINR) below 110.
+C   110608  In DRCHEK, fixed bug in setting of T1 at 300.
 C***CATEGORY NO.  I1A2
 C***KEYWORDS  DIFFERENTIAL/ALGEBRAIC, BACKWARD DIFFERENTIATION FORMULAS,
 C             IMPLICIT DIFFERENTIAL SYSTEMS, KRYLOV ITERATION
@@ -63,10 +74,11 @@ C      IMPLICIT DOUBLE PRECISION(A-H,O-Z)
 C      INTEGER NEQ, INFO(N), IDID, LRW, LIW, IWORK(LIW), IPAR(*)
 C      DOUBLE PRECISION T, Y(*), YPRIME(*), TOUT, RTOL(*), ATOL(*),
 C         RWORK(LRW), RPAR(*)
-C      EXTERNAL  RES, JAC, PSOL
+C      EXTERNAL RES, JAC, PSOL, RT
 C
-C      CALL DDASPK (RES, NEQ, T, Y, YPRIME, TOUT, INFO, RTOL, ATOL,
-C     *   IDID, RWORK, LRW, IWORK, LIW, RPAR, IPAR, JAC, PSOL)
+C      CALL DDASKR (RES, NEQ, T, Y, YPRIME, TOUT, INFO, RTOL, ATOL,
+C     *             IDID, RWORK, LRW, IWORK, LIW, RPAR, IPAR, JAC, PSOL,
+C     *             RT, NRT, JROOT)
 C
 C  Quantities which may be altered by the code are:
 C     T, Y(*), YPRIME(*), INFO(1), RTOL, ATOL, IDID, RWORK(*), IWORK(*)
@@ -123,30 +135,42 @@ C
 C  JAC:EXT          This is the name of a subroutine which you may
 C                   provide (optionally) for calculating Jacobian 
 C                   (partial derivative) data involved in solving linear
-C                   systems within DDASPK.
+C                   systems within DDASKR.
 C
 C  PSOL:EXT         This is the name of a subroutine which you must
 C                   provide for solving linear systems if you selected
 C                   a Krylov method.  The purpose of PSOL is to solve
 C                   linear systems involving a left preconditioner P.
 C
+C  RT:EXT           This is the name of the subroutine for defining
+C                   constraint functions Ri(T,Y,Y')) whose roots are
+C                   desired during the integration.  This name must be
+C                   declared external in the calling program.
+C
+C  NRT:IN           This is the number of constraint functions
+C                   Ri(T,Y,Y').  If there are no constraints, set
+C                   NRT = 0, and pass a dummy name for RT.
+C
+C  JROOT:OUT        This is an integer array of length NRT for output
+C                   of root information.
+C
 C *Overview
 C
-C  The DDASPK solver uses the backward differentiation formulas of
+C  The DDASKR solver uses the backward differentiation formulas of
 C  orders one through five to solve a system of the form G(t,y,y') = 0
 C  for y = Y and y' = YPRIME.  Values for Y and YPRIME at the initial 
 C  time must be given as input.  These values should be consistent, 
 C  that is, if T, Y, YPRIME are the given initial values, they should 
 C  satisfy G(T,Y,YPRIME) = 0.  However, if consistent values are not
-C  known, in many cases you can have DDASPK solve for them -- see INFO(11).
-C  (This and other options are described in more detail below.)
+C  known, in many cases you can have DDASKR solve for them -- see
+C  INFO(11). (This and other options are described in detail below.)
 C
-C  Normally, DDASPK solves the system from T to TOUT.  It is easy to
+C  Normally, DDASKR solves the system from T to TOUT.  It is easy to
 C  continue the solution to get results at additional TOUT.  This is
 C  the interval mode of operation.  Intermediate results can also be
 C  obtained easily by specifying INFO(3).
 C
-C  On each step taken by DDASPK, a sequence of nonlinear algebraic  
+C  On each step taken by DDASKR, a sequence of nonlinear algebraic  
 C  systems arises.  These are solved by one of two types of
 C  methods:
 C    * a Newton iteration with a direct method for the linear
@@ -171,7 +195,7 @@ C  JAC and PSOL, to apply preconditioning to the linear system.
 C  If the system is A*x = b, the matrix is A = dG/dY + CJ*dG/dYPRIME
 C  (of order NEQ).  This system can then be preconditioned in the form
 C  (P-inverse)*A*x = (P-inverse)*b, with left preconditioner P.
-C  (DDASPK does not allow right preconditioning.)
+C  (DDASKR does not allow right preconditioning.)
 C  Then the Krylov method is applied to this altered, but equivalent,
 C  linear system, hopefully with much better performance than without
 C  preconditioning.  (In addition, a diagonal scaling matrix based on
@@ -184,10 +208,17 @@ C  make P approximate the matrix A as much as possible, while keeping
 C  the system P*x = b reasonably easy and inexpensive to solve for x,
 C  given a vector b.
 C
+C  While integrating the given DAE system, DDASKR also searches for
+C  roots of the given constraint functions Ri(T,Y,Y') given by RT.
+C  If DDASKR detects a sign change in any Ri(T,Y,Y'), it will return
+C  the intermediate value of T and Y for which Ri(T,Y,Y') = 0.
+C  Caution: If some Ri has a root at or very near the initial time,
+C  DDASKR may fail to find it, or may find extraneous roots there,
+C  because it does not yet have a sufficient history of the solution.
 C
 C *Description
 C
-C------INPUT - WHAT TO DO ON THE FIRST CALL TO DDASPK-------------------
+C------INPUT - WHAT TO DO ON THE FIRST CALL TO DDASKR-------------------
 C
 C
 C  The first call of the code is defined to be the start of each new
@@ -210,25 +241,25 @@ C         DELTA is a vector of length NEQ which is output from RES.
 C
 C         Subroutine RES must not alter T, Y, YPRIME, or CJ.
 C         You must declare the name RES in an EXTERNAL
-C         statement in your program that calls DDASPK.
+C         statement in your program that calls DDASKR.
 C         You must dimension Y, YPRIME, and DELTA in RES.
 C
 C         The input argument CJ can be ignored, or used to rescale
 C         constraint equations in the system (see Ref. 2, p. 145).
-C         Note: In this respect, DDASPK is not downward-compatible
+C         Note: In this respect, DDASKR is not downward-compatible
 C         with DDASSL, which does not have the RES argument CJ.
 C
 C         IRES is an integer flag which is always equal to zero
 C         on input.  Subroutine RES should alter IRES only if it
 C         encounters an illegal value of Y or a stop condition.
-C         Set IRES = -1 if an input value is illegal, and DDASPK
+C         Set IRES = -1 if an input value is illegal, and DDASKR
 C         will try to solve the problem without getting IRES = -1.
-C         If IRES = -2, DDASPK will return control to the calling
+C         If IRES = -2, DDASKR will return control to the calling
 C         program with IDID = -11.
 C
 C         RPAR and IPAR are real and integer parameter arrays which
 C         you can use for communication between your calling program
-C         and subroutine RES. They are not altered by DDASPK. If you
+C         and subroutine RES. They are not altered by DDASKR. If you
 C         do not need RPAR or IPAR, ignore these parameters by treat-
 C         ing them as dummy arguments. If you do choose to use them,
 C         dimension them in your calling program and in RES as arrays
@@ -277,10 +308,10 @@ C         TSTOP.  In this case any tout beyond TSTOP is invalid input.
 C
 C  INFO(*) - Use the INFO array to give the code more details about
 C            how you want your problem solved.  This array should be
-C            dimensioned of length 20, though DDASPK uses only the 
+C            dimensioned of length 20, though DDASKR uses only the 
 C            first 15 entries.  You must respond to all of the following
 C            items, which are arranged as questions.  The simplest use
-C            of DDASPK corresponds to setting all entries of INFO to 0.
+C            of DDASKR corresponds to setting all entries of INFO to 0.
 C
 C       INFO(1) - This parameter enables the code to initialize itself.
 C              You must set it to indicate the start of every new 
@@ -314,8 +345,8 @@ C              code will compute them efficiently.
 C
 C          **** Do you want the solution only at
 C               TOUT (and not at the next intermediate step) ...
-C                yes - set INFO(3) = 0
-C                 no - set INFO(3) = 1 ****
+C                yes - set INFO(3) = 0 (interval-output mode)
+C                 no - set INFO(3) = 1 (intermediate-output mode) ****
 C
 C       INFO(4) - To handle solutions at a great many specific
 C              values TOUT efficiently, this code may integrate past
@@ -354,9 +385,9 @@ C                       and provide subroutine JAC for evaluating the
 C                       matrix of partial derivatives ****
 C
 C       INFO(6) - used only when INFO(12) = 0 (direct methods).
-C              DDASPK will perform much better if the matrix of
+C              DDASKR will perform much better if the matrix of
 C              partial derivatives, dG/dY + CJ*dG/dYPRIME (here CJ is
-C              a scalar determined by DDASPK), is banded and the code
+C              a scalar determined by DDASKR), is banded and the code
 C              is told this.  In this case, the storage needed will be
 C              greatly reduced, numerical differencing will be performed
 C              much cheaper, and a number of important algorithms will
@@ -433,8 +464,8 @@ C                  condition calculation.
 C              2.  To enforce nonnegativity in Y during the integration.
 C              3.  To enforce both options 1 and 2.
 C
-C              When selecting option 2 or 3, it is probably best to try the
-C              code without using this option first, and only use
+C              When selecting option 2 or 3, it is probably best to try
+C              the code without using this option first, and only use
 C              this option if that does not work very well.
 C
 C          ****  Do you want the code to solve the problem without
@@ -454,14 +485,14 @@ C                  IWORK(40+I) = -1 if Y(I) must be .LE. 0, while
 C                  IWORK(40+I) = -2 if Y(I) must be .LT. 0, while
 C                  IWORK(40+I) =  0 if Y(I) is not constrained.
 C
-C       INFO(11) - DDASPK normally requires the initial T, Y, and
+C       INFO(11) - DDASKR normally requires the initial T, Y, and
 C              YPRIME to be consistent.  That is, you must have
 C              G(T,Y,YPRIME) = 0 at the initial T.  If you do not know
 C              the initial conditions precisely, in some cases
-C              DDASPK may be able to compute it.
+C              DDASKR may be able to compute it.
 C
 C              Denoting the differential variables in Y by Y_d
-C              and the algebraic variables by Y_a, DDASPK can solve
+C              and the algebraic variables by Y_a, DDASKR can solve
 C              one of two initialization problems:
 C              1.  Given Y_d, calculate Y_a and Y'_d, or
 C              2.  Given Y', calculate Y.
@@ -487,19 +518,19 @@ C                  where LID = 40 if INFO(10) = 0 or 2 and LID = 40+NEQ
 C                  if INFO(10) = 1 or 3.
 C
 C       INFO(12) - Except for the addition of the RES argument CJ,
-C              DDASPK by default is downward-compatible with DDASSL,
+C              DDASKR by default is downward-compatible with DDASSL,
 C              which uses only direct (dense or band) methods to solve 
 C              the linear systems involved.  You must set INFO(12) to
 C              indicate whether you want the direct methods or the
 C              Krylov iterative method.
-C          ****   Do you want DDASPK to use standard direct methods
+C          ****   Do you want DDASKR to use standard direct methods
 C                 (dense or band) or the Krylov (iterative) method ...
 C                   direct methods - set INFO(12) = 0.
 C                   Krylov method  - set INFO(12) = 1,
 C                       and check the settings of INFO(13) and INFO(15).
 C
 C       INFO(13) - used when INFO(12) = 1 (Krylov methods).  
-C              DDASPK uses scalars MAXL, KMP, NRMAX, and EPLI for the
+C              DDASKR uses scalars MAXL, KMP, NRMAX, and EPLI for the
 C              iterative solution of linear systems.  INFO(13) allows 
 C              you to override the default values of these parameters.  
 C              These parameters and their defaults are as follows:
@@ -546,7 +577,7 @@ C        INFO(15) - used when INFO(12) = 1 (Krylov methods).
 C               When using preconditioning in the Krylov method,
 C               you must supply a subroutine, PSOL, which solves the
 C               associated linear systems using P.
-C               The usage of DDASPK is simpler if PSOL can carry out
+C               The usage of DDASKR is simpler if PSOL can carry out
 C               the solution without any prior calculation of data.
 C               However, if some partial derivative data is to be
 C               calculated in advance and used repeatedly in PSOL,
@@ -583,9 +614,9 @@ C                                      variable,
 C                       where LID = 40 if INFO(10) = 0 or 2 and 
 C                       LID = 40 + NEQ if INFO(10) = 1 or 3.
 C
-C       INFO(17) - used when INFO(11) > 0 (DDASPK is to do an 
+C       INFO(17) - used when INFO(11) > 0 (DDASKR is to do an 
 C              initial condition calculation).
-C              DDASPK uses several heuristic control quantities in the
+C              DDASKR uses several heuristic control quantities in the
 C              initial condition calculation.  They have default values,
 C              but can  also be set by the user using INFO(17).
 C              These parameters and their defaults are as follows:
@@ -695,32 +726,33 @@ C               LRW (or greater).
 C
 C  LRW -- Set it to the declared length of the RWORK array.  The
 C               minimum length depends on the options you have selected,
-C               given by a base value plus additional storage as described
-C               below.
+C               given by a base value plus additional storage as
+C               described below.
 C
-C               If INFO(12) = 0 (standard direct method), the base value is
-C               base = 50 + max(MAXORD+4,7)*NEQ.
+C               If INFO(12) = 0 (standard direct method), the base value
+C               is BASE = 60 + max(MAXORD+4,7)*NEQ + 3*NRT.
 C               The default value is MAXORD = 5 (see INFO(9)).  With the
-C               default MAXORD, base = 50 + 9*NEQ.
+C               default MAXORD, BASE = 60 + 9*NEQ + 3*NRT.
 C               Additional storage must be added to the base value for
 C               any or all of the following options:
-C                 if INFO(6) = 0 (dense matrix), add NEQ**2
-C                 if INFO(6) = 1 (banded matrix), then
-C                    if INFO(5) = 0, add (2*ML+MU+1)*NEQ + 2*(NEQ/(ML+MU+1)+1),
-C                    if INFO(5) = 1, add (2*ML+MU+1)*NEQ,
-C                 if INFO(16) = 1, add NEQ.
+C                 If INFO(6) = 0 (dense matrix), add NEQ**2.
+C                 If INFO(6) = 1 (banded matrix), then:
+C                    if INFO(5) = 0, add (2*ML+MU+1)*NEQ
+C                                           + 2*[NEQ/(ML+MU+1) + 1], and
+C                    if INFO(5) = 1, add (2*ML+MU+1)*NEQ.
+C                 If INFO(16) = 1, add NEQ.
 C
-C              If INFO(12) = 1 (Krylov method), the base value is
-C              base = 50 + (MAXORD+5)*NEQ + (MAXL+3+MIN0(1,MAXL-KMP))*NEQ +
-C                      + (MAXL+3)*MAXL + 1 + LENWP.
-C              See PSOL for description of LENWP.  The default values are:
-C              MAXORD = 5 (see INFO(9)), MAXL = min(5,NEQ) and KMP = MAXL 
-C              (see INFO(13)).
-C              With the default values for MAXORD, MAXL and KMP,
-C              base = 91 + 18*NEQ + LENWP.
-C              Additional storage must be added to the base value for
-C              any or all of the following options:
-C                if INFO(16) = 1, add NEQ.
+C               If INFO(12) = 1 (Krylov method), the base value is
+C               BASE = 60 + (MAXORD+5)*NEQ + 3*NRT
+C                         + [MAXL + 3 + min(1,MAXL-KMP)]*NEQ
+C                         + (MAXL+3)*MAXL + 1 + LENWP.
+C               See PSOL for description of LENWP.  The default values
+C               are: MAXORD = 5 (see INFO(9)), MAXL = min(5,NEQ) and
+C               KMP = MAXL  (see INFO(13)).  With these default values,
+C               BASE = 101 + 18*NEQ + 3*NRT + LENWP.
+C               Additional storage must be added to the base value for
+C               the following option:
+C                 If INFO(16) = 1, add NEQ.
 C
 C
 C  IWORK(*) -- an integer work array, which should be dimensioned in
@@ -729,26 +761,24 @@ C              of LIW (or greater).
 C
 C  LIW -- Set it to the declared length of the IWORK array.  The
 C             minimum length depends on the options you have selected,
-C             given by a base value plus additional storage as described
-C             below.
+C             given by a base value plus additions as described below.
 C
-C             If INFO(12) = 0 (standard direct method), the base value is
-C             base = 40 + NEQ.
+C             If INFO(12) = 0 (standard direct method), the base value
+C             is BASE = 40 + NEQ.
 C             IF INFO(10) = 1 or 3, add NEQ to the base value.
 C             If INFO(11) = 1 or INFO(16) =1, add NEQ to the base value.
 C
 C             If INFO(12) = 1 (Krylov method), the base value is
-C             base = 40 + LENIWP.
-C             See PSOL for description of LENIWP.
-C             IF INFO(10) = 1 or 3, add NEQ to the base value.
-C             If INFO(11) = 1 or INFO(16) = 1, add NEQ to the base value.
+C             BASE = 40 + LENIWP.  See PSOL for description of LENIWP.
+C             If INFO(10) = 1 or 3, add NEQ to the base value.
+C             If INFO(11) = 1 or INFO(16) =1, add NEQ to the base value.
 C
 C
 C  RPAR, IPAR -- These are arrays of double precision and integer type,
 C             respectively, which are available for you to use
 C             for communication between your program that calls
-C             DDASPK and the RES subroutine (and the JAC and PSOL
-C             subroutines).  They are not altered by DDASPK.
+C             DDASKR and the RES subroutine (and the JAC and PSOL
+C             subroutines).  They are not altered by DDASKR.
 C             If you do not need RPAR or IPAR, ignore these
 C             parameters by treating them as dummy arguments.
 C             If you do choose to use them, dimension them in
@@ -830,7 +860,7 @@ C           WP and IWP are real and integer work arrays which you may
 C           use for communication between your JAC routine and your
 C           PSOL routine.  These may be used to store elements of the 
 C           preconditioner P, or related matrix data (such as factored
-C           forms).  They are not altered by DDASPK.
+C           forms).  They are not altered by DDASKR.
 C           If you do not need WP or IWP, ignore these parameters by
 C           treating them as dummy arguments.  If you do use them,
 C           dimension them appropriately in your JAC and PSOL routines.
@@ -849,7 +879,7 @@ C
 C         Regardless of the method type, subroutine JAC must not
 C         alter T, Y(*), YPRIME(*), H, CJ, or REWT(*).
 C         You must declare the name JAC in an EXTERNAL statement in
-C         your program that calls DDASPK.
+C         your program that calls DDASKR.
 C
 C PSOL --  This is the name of a routine you must supply if you have
 C         selected a Krylov method (INFO(12) = 1) with preconditioning.
@@ -909,19 +939,56 @@ C                 the step will be retried with a smaller step size.
 C           IER = 0 on entry to PSOL so need be reset only on a failure.
 C
 C         You must declare the name PSOL in an EXTERNAL statement in
-C         your program that calls DDASPK.
+C         your program that calls DDASKR.
+C
+C RT --   This is the name of the subroutine for defining the vector
+C         R(T,Y,Y') of constraint functions Ri(T,Y,Y'), whose roots
+C         are desired during the integration.  It is to have the form
+C             SUBROUTINE RT(NEQ, T, Y, YP, NRT, RVAL, RPAR, IPAR)
+C             DIMENSION Y(NEQ), YP(NEQ), RVAL(NRT),
+C         where NEQ, T, Y and NRT are INPUT, and the array RVAL is
+C         output.  NEQ, T, Y, and YP have the same meaning as in the
+C         RES routine, and RVAL is an array of length NRT.
+C         For i = 1,...,NRT, this routine is to load into RVAL(i) the
+C         value at (T,Y,Y') of the i-th constraint function Ri(T,Y,Y').
+C         DDASKR will find roots of the Ri of odd multiplicity
+C         (that is, sign changes) as they occur during the integration.
+C         RT must be declared EXTERNAL in the calling program.
+C
+C         CAUTION.. Because of numerical errors in the functions Ri
+C         due to roundoff and integration error, DDASKR may return
+C         false roots, or return the same root at two or more nearly
+C         equal values of T.  If such false roots are suspected,
+C         the user should consider smaller error tolerances and/or
+C         higher precision in the evaluation of the Ri.
+C
+C         If a root of some Ri defines the end of the problem,
+C         the input to DDASKR should nevertheless allow
+C         integration to a point slightly past that root, so
+C         that DDASKR can locate the root by interpolation.
+C
+C NRT --  The number of constraint functions Ri(T,Y,Y').  If there are
+C         no constraints, set NRT = 0 and pass a dummy name for RT.
+C
+C JROOT -- This is an integer array of length NRT, used only for output.
+C         On a return where one or more roots were found (IDID = 5),
+C         JROOT(i) = 1 or -1 if Ri(T,Y,Y') has a root at T, and
+C         JROOT(i) = 0 if not.  If nonzero, JROOT(i) shows the direction
+C         of the sign change in Ri in the direction of integration: 
+C         JROOT(i) = 1  means Ri changed from negative to positive.
+C         JROOT(i) = -1 means Ri changed from positive to negative.
 C
 C
 C  OPTIONALLY REPLACEABLE SUBROUTINE:
 C
-C  DDASPK uses a weighted root-mean-square norm to measure the 
+C  DDASKR uses a weighted root-mean-square norm to measure the 
 C  size of various error vectors.  The weights used in this norm
 C  are set in the following subroutine:
 C
 C    SUBROUTINE DDAWTS (NEQ, IWT, RTOL, ATOL, Y, EWT, RPAR, IPAR)
 C    DIMENSION RTOL(*), ATOL(*), Y(*), EWT(*), RPAR(*), IPAR(*)
 C
-C  A DDAWTS routine has been included with DDASPK which sets the
+C  A DDAWTS routine has been included with DDASKR which sets the
 C  weights according to
 C    EWT(I) = RTOL*ABS(Y(I)) + ATOL
 C  in the case of scalar tolerances (IWT = 0) or
@@ -935,13 +1002,13 @@ C  If you supply this routine, you may use the tolerances and Y
 C  as appropriate, but do not overwrite these variables.  You
 C  may also use RPAR and IPAR to communicate data as appropriate.
 C  ***Note: Aside from the values of the weights, the choice of 
-C  norm used in DDASPK (weighted root-mean-square) is not subject
-C  to replacement by the user.  In this respect, DDASPK is not
+C  norm used in DDASKR (weighted root-mean-square) is not subject
+C  to replacement by the user.  In this respect, DDASKR is not
 C  downward-compatible with the original DDASSL solver (in which
 C  the norm routine was optionally user-replaceable).
 C
 C
-C------OUTPUT - AFTER ANY RETURN FROM DDASPK----------------------------
+C------OUTPUT - AFTER ANY RETURN FROM DDASKR----------------------------
 C
 C  The principal aim of the code is to return a computed solution at
 C  T = TOUT, although it is also possible to obtain intermediate
@@ -962,66 +1029,69 @@ C
 C                     *** TASK COMPLETED ***
 C                Reported by positive values of IDID
 C
-C           IDID = 1 -- a step was successfully taken in the
-C                   intermediate-output mode.  The code has not
+C           IDID = 1 -- A step was successfully taken in the
+C                   interval-output mode.  The code has not
 C                   yet reached TOUT.
 C
-C           IDID = 2 -- the integration to TSTOP was successfully
+C           IDID = 2 -- The integration to TSTOP was successfully
 C                   completed (T = TSTOP) by stepping exactly to TSTOP.
 C
-C           IDID = 3 -- the integration to TOUT was successfully
+C           IDID = 3 -- The integration to TOUT was successfully
 C                   completed (T = TOUT) by stepping past TOUT.
 C                   Y(*) and YPRIME(*) are obtained by interpolation.
 C
-C           IDID = 4 -- the initial condition calculation, with
+C           IDID = 4 -- The initial condition calculation, with
 C                   INFO(11) > 0, was successful, and INFO(14) = 1.
 C                   No integration steps were taken, and the solution
 C                   is not considered to have been started.
 C
+C           IDID = 5 -- The integration was successfully completed
+C                   by finding one or more roots of R(T,Y,Y') at T.
+C
 C                    *** TASK INTERRUPTED ***
 C                Reported by negative values of IDID
 C
-C           IDID = -1 -- a large amount of work has been expended
+C           IDID = -1 -- A large amount of work has been expended
 C                     (about 500 steps).
 C
-C           IDID = -2 -- the error tolerances are too stringent.
+C           IDID = -2 -- The error tolerances are too stringent.
 C
-C           IDID = -3 -- the local error test cannot be satisfied
+C           IDID = -3 -- The local error test cannot be satisfied
 C                     because you specified a zero component in ATOL
 C                     and the corresponding computed solution component
 C                     is zero.  Thus, a pure relative error test is
 C                     impossible for this component.
 C
-C           IDID = -5 -- there were repeated failures in the evaluation
+C           IDID = -5 -- There were repeated failures in the evaluation
 C                     or processing of the preconditioner (in JAC).
 C
-C           IDID = -6 -- DDASPK had repeated error test failures on the
+C           IDID = -6 -- DDASKR had repeated error test failures on the
 C                     last attempted step.
 C
-C           IDID = -7 -- the nonlinear system solver in the time integration
-C                     could not converge.
+C           IDID = -7 -- The nonlinear system solver in the time
+C                     integration could not converge.
 C
-C           IDID = -8 -- the matrix of partial derivatives appears
+C           IDID = -8 -- The matrix of partial derivatives appears
 C                     to be singular (direct method).
 C
-C           IDID = -9 -- the nonlinear system solver in the time integration
-C                     failed to achieve convergence, and there were repeated 
-C                     error test failures in this step.
+C           IDID = -9 -- The nonlinear system solver in the integration
+C                     failed to achieve convergence, and there were
+C                     repeated  error test failures in this step.
 C
-C           IDID =-10 -- the nonlinear system solver in the time integration 
-C                     failed to achieve convergence because IRES was equal 
-C                     to -1.
+C           IDID =-10 -- The nonlinear system solver in the integration 
+C                     failed to achieve convergence because IRES was
+C                     equal  to -1.
 C
 C           IDID =-11 -- IRES = -2 was encountered and control is
 C                     being returned to the calling program.
 C
-C           IDID =-12 -- DDASPK failed to compute the initial Y, YPRIME.
+C           IDID =-12 -- DDASKR failed to compute the initial Y, YPRIME.
 C
-C           IDID =-13 -- unrecoverable error encountered inside user's
-C                     PSOL routine, and control is being returned to
-C                     the calling program.
+C           IDID =-13 -- An unrecoverable error was encountered inside
+C                     the user's PSOL routine, and control is being
+C                     returned to the calling program.
 C
-C           IDID =-14 -- the Krylov linear system solver could not 
+C           IDID =-14 -- The Krylov linear system solver could not 
 C                     achieve convergence.
 C
 C           IDID =-15,..,-32 -- Not applicable for this code.
@@ -1029,7 +1099,7 @@ C
 C                    *** TASK TERMINATED ***
 C                reported by the value of IDID=-33
 C
-C           IDID = -33 -- the code has encountered trouble from which
+C           IDID = -33 -- The code has encountered trouble from which
 C                   it cannot recover.  A message is printed
 C                   explaining the trouble and control is returned
 C                   to the calling program.  For example, this occurs
@@ -1109,8 +1179,11 @@ C               IWORK(21)--contains NPS, the number of PSOL calls so
 C                        far, for preconditioning solve operations or
 C                        for solutions with the user-supplied method.
 C
+C               IWORK(36)--contains the total number of calls to the
+C                        constraint function routine RT so far.
+C
 C               Note: The various counters in IWORK do not include 
-C               counts during a call made with INFO(11) > 0 and
+C               counts during a prior call made with INFO(11) > 0 and
 C               INFO(14) = 1.
 C
 C
@@ -1165,9 +1238,16 @@ C
 C     IDID = 4, reset INFO(11) = 0 and call the code again to begin
 C                  the integration.  (If you leave INFO(11) > 0 and
 C                  INFO(14) = 1, you may generate an infinite loop.)
-C                  In this situation, the next call to DASPK is 
+C                  In this situation, the next call to DDASKR is 
 C                  considered to be the first call for the problem,
 C                  in that all initializations are done.
+C
+C     IDID = 5, call the code again to continue the integration in the
+C                  direction of TOUT.  You may change the functions
+C                  Ri defined by RT after a return with IDID = 5, but
+C                  the number of constraint functions NRT must remain
+C                  the same.  If you wish to change the functions in
+C                  RES or in RT, then you must restart the code.
 C
 C                    *** FOLLOWING AN INTERRUPTED TASK ***
 C
@@ -1202,14 +1282,14 @@ C     IDID = -5, your JAC routine failed with the Krylov method.  Check
 C                  for errors in JAC and restart the integration.
 C
 C     IDID = -6, repeated error test failures occurred on the last
-C                  attempted step in DDASPK.  A singularity in the
+C                  attempted step in DDASKR.  A singularity in the
 C                  solution may be present.  If you are absolutely
 C                  certain you want to continue, you should restart
 C                  the integration.  (Provide initial values of Y and
 C                  YPRIME which are consistent.)
 C
 C     IDID = -7, repeated convergence test failures occurred on the last
-C                  attempted step in DDASPK.  An inaccurate or ill-
+C                  attempted step in DDASKR.  An inaccurate or ill-
 C                  conditioned Jacobian or preconditioner may be the
 C                  problem.  If you are absolutely certain you want
 C                  to continue, you should restart the integration.
@@ -1217,14 +1297,14 @@ C
 C
 C     IDID = -8, the matrix of partial derivatives is singular, with
 C                  the use of direct methods.  Some of your equations
-C                  may be redundant.  DDASPK cannot solve the problem
+C                  may be redundant.  DDASKR cannot solve the problem
 C                  as stated.  It is possible that the redundant
-C                  equations could be removed, and then DDASPK could
+C                  equations could be removed, and then DDASKR could
 C                  solve the problem.  It is also possible that a
 C                  solution to your problem either does not exist
 C                  or is not unique.
 C
-C     IDID = -9, DDASPK had multiple convergence test failures, preceded
+C     IDID = -9, DDASKR had multiple convergence test failures, preceded
 C                  by multiple error test failures, on the last
 C                  attempted step.  It is possible that your problem is
 C                  ill-posed and cannot be solved using this code.  Or,
@@ -1232,7 +1312,7 @@ C                  there may be a discontinuity or a singularity in the
 C                  solution.  If you are absolutely certain you want to
 C                  continue, you should restart the integration.
 C
-C     IDID = -10, DDASPK had multiple convergence test failures
+C     IDID = -10, DDASKR had multiple convergence test failures
 C                  because IRES was equal to -1.  If you are
 C                  absolutely certain you want to continue, you
 C                  should restart the integration.
@@ -1241,7 +1321,7 @@ C     IDID = -11, there was an unrecoverable error (IRES = -2) from RES
 C                  inside the nonlinear system solver.  Determine the
 C                  cause before trying again.
 C
-C     IDID = -12, DDASPK failed to compute the initial Y and YPRIME
+C     IDID = -12, DDASKR failed to compute the initial Y and YPRIME
 C                  vectors.  This could happen because the initial 
 C                  approximation to Y or YPRIME was not very good, or
 C                  because no consistent values of these vectors exist.
@@ -1292,8 +1372,11 @@ C      Systems, SIAM J. Sci. Comp. 19 (1998), pp. 1495-1512.
 C
 C***ROUTINES CALLED
 C
-C   The following are all the subordinate routines used by DDASPK.
+C   The following are all the subordinate routines used by DDASKR.
 C
+C   DRCHEK does preliminary checking for roots, and serves as an
+C          interface between Subroutine DDASKR and Subroutine DROOTS.
+C   DROOTS finds the leftmost root of a set of functions.
 C   DDASIC computes consistent initial conditions.
 C   DYYPNW updates Y and YPRIME in linesearch for initial condition
 C          calculation.
@@ -1344,11 +1427,11 @@ C          linear systems (dense or band direct methods).
 C   DAXPY, DCOPY, DDOT, DNRM2, DSCAL are Basic Linear Algebra (BLAS)
 C          routines.
 C
-C The routines called directly by DDASPK are:
+C The routines called directly by DDASKR are:
 C   DCNST0, DDAWTS, DINVWT, D1MACH, DDWNRM, DDASIC, DDATRP, DDSTP,
-C   XERRWD
+C   DRCHEK, XERRWD
 C
-C***END PROLOGUE DDASPK
+C***END PROLOGUE DDASKR
 C
 C
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
@@ -1359,7 +1442,7 @@ C
       DIMENSION RTOL(*),ATOL(*)
       DIMENSION RPAR(*),IPAR(*)
       CHARACTER MSG*80
-      EXTERNAL  RES, JAC, PSOL, DDASID, DDASIK, DNEDD, DNEDK
+      EXTERNAL  RES, JAC, PSOL, RT, DDASID, DDASIK, DNEDD, DNEDK
 C
 C     Set pointers into IWORK.
 C
@@ -1368,20 +1451,20 @@ C
      *   LNS=9, LNSTL=10, LNST=11, LNRE=12, LNJE=13, LETF=14, LNCFN=15,
      *   LNCFL=16, LNIW=17, LNRW=18, LNNI=19, LNLI=20, LNPS=21,
      *   LNPD=22, LMITER=23, LMAXL=24, LKMP=25, LNRMAX=26, LLNWP=27,
-     *   LLNIWP=28, LLOCWP=29, LLCIWP=30, LKPRIN=31,
-     *   LMXNIT=32, LMXNJ=33, LMXNH=34, LLSOFF=35, LICNS=41)
+     *   LLNIWP=28, LLOCWP=29, LLCIWP=30, LKPRIN=31, LMXNIT=32,
+     *   LMXNJ=33, LMXNH=34, LLSOFF=35, LNRTE=36, LIRFND=37, LICNS=41)
 C
 C     Set pointers into RWORK.
 C
       PARAMETER (LTSTOP=1, LHMAX=2, LH=3, LTN=4, LCJ=5, LCJOLD=6,
      *   LHOLD=7, LS=8, LROUND=9, LEPLI=10, LSQRN=11, LRSQRN=12,
-     *   LEPCON=13, LSTOL=14, LEPIN=15,
-     *   LALPHA=21, LBETA=27, LGAMMA=33, LPSI=39, LSIGMA=45, LDELTA=51)
+     *   LEPCON=13, LSTOL=14, LEPIN=15, LALPHA=21, LBETA=27,
+     *   LGAMMA=33, LPSI=39, LSIGMA=45, LT0=51, LTLAST=52, LDELTA=61)
 C
       SAVE LID, LENID, NONNEG, NCPHI
 C
 C
-C***FIRST EXECUTABLE STATEMENT  DDASPK
+C***FIRST EXECUTABLE STATEMENT  DDASKR
 C
 C
       IF(INFO(1).NE.0) GO TO 100
@@ -1508,7 +1591,7 @@ C
          NCPHI = MAX(MXORD + 1, 4)
          IF(INFO(6).EQ.0) THEN 
             LENPD = NEQ**2
-            LENRW = 50 + (NCPHI+3)*NEQ + LENPD
+            LENRW = 60 + 3*NRT + (NCPHI+3)*NEQ + LENPD
             IF(INFO(5).EQ.0) THEN
                IWORK(LMTYPE)=2
             ELSE
@@ -1522,10 +1605,10 @@ C
                IWORK(LMTYPE)=5
                MBAND=IWORK(LML)+IWORK(LMU)+1
                MSAVE=(NEQ/MBAND)+1
-               LENRW = 50 + (NCPHI+3)*NEQ + LENPD + 2*MSAVE
+               LENRW = 60 + 3*NRT + (NCPHI+3)*NEQ + LENPD + 2*MSAVE
             ELSE
                IWORK(LMTYPE)=4
-               LENRW = 50 + (NCPHI+3)*NEQ + LENPD
+               LENRW = 60 + 3*NRT + (NCPHI+3)*NEQ + LENPD
             ENDIF
          ENDIF
 C
@@ -1542,7 +1625,7 @@ C
          LENIWP = IWORK(LLNIWP)
          LENPD = (MAXL+3+MIN0(1,MAXL-IWORK(LKMP)))*NEQ
      1         + (MAXL+3)*MAXL + 1 + LENWP
-         LENRW = 50 + (MXORD+5)*NEQ + LENPD
+         LENRW = 60 + 3*NRT + (MXORD+5)*NEQ + LENPD
          LENIW = 40 + LENIC + LENID + LENIWP
 C
       ENDIF
@@ -1585,9 +1668,10 @@ C
  50       CONTINUE
         ENDIF
 C
-C     Check to see that TOUT is different from T.
+C     Check to see that TOUT is different from T, and NRT .ge. 0.
 C
       IF(TOUT .EQ. T)GO TO 719
+      IF(NRT .LT. 0) GO TO 730
 C
 C     Check HMAX.
 C
@@ -1607,6 +1691,7 @@ C
       IWORK(LNLI)=0
       IWORK(LNPS)=0
       IWORK(LNCFL)=0
+      IWORK(LNRTE)=0
       IWORK(LKPRIN)=INFO(18)
       IDID=1
       GO TO 200
@@ -1626,11 +1711,11 @@ C     If we are here, the last step was interrupted by an error
 C     condition from DDSTP, and appropriate action was not taken.
 C     This is a fatal error.
 C
-      MSG = 'DASPK--  THE LAST STEP TERMINATED WITH A NEGATIVE'
+      MSG = 'DASKR--  THE LAST STEP TERMINATED WITH A NEGATIVE'
       CALL XERRWD(MSG,49,201,0,0,0,0,0,0.0D0,0.0D0)
-      MSG = 'DASPK--  VALUE (=I1) OF IDID AND NO APPROPRIATE'
+      MSG = 'DASKR--  VALUE (=I1) OF IDID AND NO APPROPRIATE'
       CALL XERRWD(MSG,47,202,0,1,IDID,0,0,0.0D0,0.0D0)
-      MSG = 'DASPK--  ACTION WAS TAKEN. RUN TERMINATED'
+      MSG = 'DASKR--  ACTION WAS TAKEN. RUN TERMINATED'
       CALL XERRWD(MSG,41,203,1,0,0,0,0,0.0D0,0.0D0)
       RETURN
 110   CONTINUE
@@ -1679,7 +1764,10 @@ C
       LVT = LWT
       IF (INFO(16) .NE. 0) LVT = LWT + NEQ
       LPHI = LVT + NEQ
-      LWM = LPHI + NCPHI*NEQ
+      LR0 = LPHI + NCPHI*NEQ
+      LR1 = LR0 + NRT
+      LRX = LR1 + NRT
+      LWM = LRX + NRT
       IF (INFO(1) .EQ. 1) GO TO 400
 C
 C-----------------------------------------------------------------------
@@ -1866,7 +1954,21 @@ C
          RWORK(LPHI + I - 1) = Y(I)
 380      RWORK(ITEMP + I - 1) = H*YPRIME(I)
 C
-      GO TO 500
+C     Initialize T0 in RWORK; check for a zero of R near initial T.
+C
+      RWORK(LT0) = T
+      IWORK(LIRFND) = 0
+      RWORK(LPSI)=H
+      RWORK(LPSI+1)=2.0D0*H
+      IWORK(LKOLD)=1
+      IF (NRT .EQ. 0) GO TO 390
+      CALL DRCHEK(1,RT,NRT,NEQ,T,TOUT,Y,YPRIME,RWORK(LPHI),
+     *   RWORK(LPSI),IWORK(LKOLD),RWORK(LR0),RWORK(LR1),
+     *   RWORK(LRX),JROOT,IRT,RWORK(LROUND),INFO(3),
+     *   RWORK,IWORK,RPAR,IPAR)
+      IF (IRT .LT. 0) GO TO 731
+C
+ 390  GO TO 500
 C
 C-----------------------------------------------------------------------
 C     This block is for continuation calls only.
@@ -1879,6 +1981,23 @@ C
       DONE = .FALSE.
       TN=RWORK(LTN)
       H=RWORK(LH)
+      IF(NRT .EQ. 0) GO TO 405
+C
+C     Check for a zero of R near TN.
+C
+      CALL DRCHEK(2,RT,NRT,NEQ,TN,TOUT,Y,YPRIME,RWORK(LPHI),
+     *   RWORK(LPSI),IWORK(LKOLD),RWORK(LR0),RWORK(LR1),
+     *   RWORK(LRX),JROOT,IRT,RWORK(LROUND),INFO(3),
+     *   RWORK,IWORK,RPAR,IPAR)
+      IF (IRT .LT. 0) GO TO 731
+      IF (IRT .NE. 1) GO TO 405
+      IWORK(LIRFND) = 1
+      IDID = 5
+      T = RWORK(LT0)
+      DONE = .TRUE.
+      GO TO 490
+405   CONTINUE
+C
       IF(INFO(7) .EQ. 0) GO TO 410
          RH = ABS(H)/RWORK(LHMAX)
          IF(RH .GT. 1.0D0) H = H/RH
@@ -1992,19 +2111,19 @@ C
       NWARN = NWARN + 1
       IF (NWARN .GT. 10) GO TO 510
       IF (LAVL) THEN
-        MSG = 'DASPK-- Warning. Poor iterative algorithm performance   '
+        MSG = 'DASKR-- Warning. Poor iterative algorithm performance   '
         CALL XERRWD (MSG, 56, 501, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
         MSG = '      at T = R1. Average no. of linear iterations = R2  '
         CALL XERRWD (MSG, 56, 501, 0, 0, 0, 0, 2, TN, AVLIN)
         ENDIF
       IF (LCFN) THEN
-        MSG = 'DASPK-- Warning. Poor iterative algorithm performance   '
+        MSG = 'DASKR-- Warning. Poor iterative algorithm performance   '
         CALL XERRWD (MSG, 56, 502, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
         MSG = '      at T = R1. Nonlinear convergence failure rate = R2'
         CALL XERRWD (MSG, 56, 502, 0, 0, 0, 0, 2, TN, RCFN)
         ENDIF
       IF (LCFL) THEN
-        MSG = 'DASPK-- Warning. Poor iterative algorithm performance   '
+        MSG = 'DASKR-- Warning. Poor iterative algorithm performance   '
         CALL XERRWD (MSG, 56, 503, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
         MSG = '      at T = R1. Linear convergence failure rate = R2   '
         CALL XERRWD (MSG, 56, 503, 0, 0, 0, 0, 2, TN, RCFL)
@@ -2090,63 +2209,84 @@ C     This block handles the case of a successful return from DDSTP
 C     (IDID=1).  Test for stop conditions.
 C-----------------------------------------------------------------------
 C
-      IF(INFO(4).NE.0)GO TO 540
-           IF(INFO(3).NE.0)GO TO 530
-             IF((TN-TOUT)*H.LT.0.0D0)GO TO 500
-             CALL DDATRP(TN,TOUT,Y,YPRIME,NEQ,
-     *         IWORK(LKOLD),RWORK(LPHI),RWORK(LPSI))
-             IDID=3
-             T=TOUT
-             GO TO 580
-530          IF((TN-TOUT)*H.GE.0.0D0)GO TO 535
-             T=TN
-             IDID=1
-             GO TO 580
-535          CALL DDATRP(TN,TOUT,Y,YPRIME,NEQ,
-     *         IWORK(LKOLD),RWORK(LPHI),RWORK(LPSI))
-             IDID=3
-             T=TOUT
-             GO TO 580
-540   IF(INFO(3).NE.0)GO TO 550
-      IF((TN-TOUT)*H.LT.0.0D0)GO TO 542
-         CALL DDATRP(TN,TOUT,Y,YPRIME,NEQ,
-     *     IWORK(LKOLD),RWORK(LPHI),RWORK(LPSI))
-         T=TOUT
-         IDID=3
+      IF(NRT .EQ. 0) GO TO 530
+C
+C     Check for a zero of R near TN.
+C
+      CALL DRCHEK(3,RT,NRT,NEQ,TN,TOUT,Y,YPRIME,RWORK(LPHI),
+     *   RWORK(LPSI),IWORK(LKOLD),RWORK(LR0),RWORK(LR1),
+     *   RWORK(LRX),JROOT,IRT,RWORK(LROUND),INFO(3),
+     *   RWORK,IWORK,RPAR,IPAR)
+      IF(IRT .NE. 1) GO TO 530
+      IWORK(LIRFND) = 1
+      IDID = 5
+      T = RWORK(LT0)
+      GO TO 580
+C
+530   IF (INFO(4) .EQ. 0) THEN
+C        Stopping tests for the case of no TSTOP. ----------------------
+         IF ( (TN-TOUT)*H .GE. 0.0D0) THEN
+            CALL DDATRP(TN,TOUT,Y,YPRIME,NEQ,IWORK(LKOLD),
+     *                  RWORK(LPHI),RWORK(LPSI))
+            T = TOUT
+            IDID = 3
+            GO TO 580
+            ENDIF
+         IF (INFO(3) .EQ. 0) GO TO 500
+         T = TN
+         IDID = 1
          GO TO 580
-542   IF(ABS(TN-TSTOP).LE.100.0D0*UROUND*
-     *   (ABS(TN)+ABS(H)))GO TO 545
-      TNEXT=TN+H
-      IF((TNEXT-TSTOP)*H.LE.0.0D0)GO TO 500
-      H=TSTOP-TN
+         ENDIF
+C
+540   IF (INFO(3) .NE. 0) GO TO 550
+C     Stopping tests for the TSTOP case, interval-output mode. ---------
+      IF (ABS(TN-TSTOP) .LE. 100.0D0*UROUND*(ABS(TN)+ABS(H))) THEN
+         CALL DDATRP(TN,TSTOP,Y,YPRIME,NEQ,IWORK(LKOLD),
+     *               RWORK(LPHI),RWORK(LPSI))
+         T = TSTOP
+         IDID = 2
+         GO TO 580
+         ENDIF
+      IF ( (TN-TOUT)*H .GE. 0.0D0) THEN
+         CALL DDATRP(TN,TOUT,Y,YPRIME,NEQ,IWORK(LKOLD),
+     *               RWORK(LPHI),RWORK(LPSI))
+         T = TOUT
+         IDID = 3
+         GO TO 580
+         ENDIF
+      TNEXT = TN + H
+      IF ((TNEXT-TSTOP)*H .LE. 0.0D0) GO TO 500
+      H = TSTOP - TN
       GO TO 500
-545   CALL DDATRP(TN,TSTOP,Y,YPRIME,NEQ,
-     *  IWORK(LKOLD),RWORK(LPHI),RWORK(LPSI))
-      IDID=2
-      T=TSTOP
-      GO TO 580
-550   IF((TN-TOUT)*H.GE.0.0D0)GO TO 555
-      IF(ABS(TN-TSTOP).LE.100.0D0*UROUND*(ABS(TN)+ABS(H)))GO TO 552
-      T=TN
-      IDID=1
-      GO TO 580
-552   CALL DDATRP(TN,TSTOP,Y,YPRIME,NEQ,
-     *  IWORK(LKOLD),RWORK(LPHI),RWORK(LPSI))
-      IDID=2
-      T=TSTOP
-      GO TO 580
-555   CALL DDATRP(TN,TOUT,Y,YPRIME,NEQ,
-     *   IWORK(LKOLD),RWORK(LPHI),RWORK(LPSI))
-      T=TOUT
-      IDID=3
+C
+550   CONTINUE
+C     Stopping tests for the TSTOP case, intermediate-output mode. -----
+      IF (ABS(TN-TSTOP) .LE. 100.0D0*UROUND*(ABS(TN)+ABS(H))) THEN
+         CALL DDATRP(TN,TSTOP,Y,YPRIME,NEQ,IWORK(LKOLD),
+     *               RWORK(LPHI),RWORK(LPSI))
+         T = TSTOP
+         IDID = 2
+         GO TO 580
+         ENDIF
+      IF ( (TN-TOUT)*H .GE. 0.0D0) THEN
+         CALL DDATRP(TN,TOUT,Y,YPRIME,NEQ,IWORK(LKOLD),
+     *               RWORK(LPHI),RWORK(LPSI))
+         T = TOUT
+         IDID = 3
+         GO TO 580
+         ENDIF
+      T = TN
+      IDID = 1
+C
 580   CONTINUE
 C
 C-----------------------------------------------------------------------
-C     All successful returns from DDASPK are made from this block.
+C     All successful returns from DDASKR are made from this block.
 C-----------------------------------------------------------------------
 C
 590   CONTINUE
       RWORK(LTN)=TN
+      RWORK(LTLAST)=T
       RWORK(LH)=H
       RETURN
 C
@@ -2163,113 +2303,113 @@ C
 C     The maximum number of steps was taken before
 C     reaching tout.
 C
-610   MSG = 'DASPK--  AT CURRENT T (=R1)  500 STEPS'
+610   MSG = 'DASKR--  AT CURRENT T (=R1)  500 STEPS'
       CALL XERRWD(MSG,38,610,0,0,0,0,1,TN,0.0D0)
-      MSG = 'DASPK--  TAKEN ON THIS CALL BEFORE REACHING TOUT'
+      MSG = 'DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT'
       CALL XERRWD(MSG,48,611,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 700
 C
 C     Too much accuracy for machine precision.
 C
-620   MSG = 'DASPK--  AT T (=R1) TOO MUCH ACCURACY REQUESTED'
+620   MSG = 'DASKR--  AT T (=R1) TOO MUCH ACCURACY REQUESTED'
       CALL XERRWD(MSG,47,620,0,0,0,0,1,TN,0.0D0)
-      MSG = 'DASPK--  FOR PRECISION OF MACHINE. RTOL AND ATOL'
+      MSG = 'DASKR--  FOR PRECISION OF MACHINE. RTOL AND ATOL'
       CALL XERRWD(MSG,48,621,0,0,0,0,0,0.0D0,0.0D0)
-      MSG = 'DASPK--  WERE INCREASED TO APPROPRIATE VALUES'
-      CALL XERRWD(MSG,45,622,0,0,0,0,0,0.0D0,0.0D0)
+      MSG = 'DASKR--  WERE INCREASED BY A FACTOR R (=R1)'
+      CALL XERRWD(MSG,43,622,0,0,0,0,1,R,0.0D0)
       GO TO 700
 C
 C     WT(I) .LE. 0.0D0 for some I (not at start of problem).
 C
-630   MSG = 'DASPK--  AT T (=R1) SOME ELEMENT OF WT'
+630   MSG = 'DASKR--  AT T (=R1) SOME ELEMENT OF WT'
       CALL XERRWD(MSG,38,630,0,0,0,0,1,TN,0.0D0)
-      MSG = 'DASPK--  HAS BECOME .LE. 0.0'
+      MSG = 'DASKR--  HAS BECOME .LE. 0.0'
       CALL XERRWD(MSG,28,631,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 700
 C
 C     Error test failed repeatedly or with H=HMIN.
 C
-640   MSG = 'DASPK--  AT T (=R1) AND STEPSIZE H (=R2) THE'
+640   MSG = 'DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE'
       CALL XERRWD(MSG,44,640,0,0,0,0,2,TN,H)
-      MSG='DASPK--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN'
+      MSG='DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN'
       CALL XERRWD(MSG,57,641,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 700
 C
 C     Nonlinear solver failed to converge repeatedly or with H=HMIN.
 C
-650   MSG = 'DASPK--  AT T (=R1) AND STEPSIZE H (=R2) THE'
+650   MSG = 'DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE'
       CALL XERRWD(MSG,44,650,0,0,0,0,2,TN,H)
-      MSG = 'DASPK--  NONLINEAR SOLVER FAILED TO CONVERGE'
+      MSG = 'DASKR--  NONLINEAR SOLVER FAILED TO CONVERGE'
       CALL XERRWD(MSG,44,651,0,0,0,0,0,0.0D0,0.0D0)
-      MSG = 'DASPK--  REPEATEDLY OR WITH ABS(H)=HMIN'
+      MSG = 'DASKR--  REPEATEDLY OR WITH ABS(H)=HMIN'
       CALL XERRWD(MSG,40,652,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 700
 C
 C     The preconditioner had repeated failures.
 C
-655   MSG = 'DASPK--  AT T (=R1) AND STEPSIZE H (=R2) THE'
+655   MSG = 'DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE'
       CALL XERRWD(MSG,44,655,0,0,0,0,2,TN,H)
-      MSG = 'DASPK--  PRECONDITIONER HAD REPEATED FAILURES.'
+      MSG = 'DASKR--  PRECONDITIONER HAD REPEATED FAILURES.'
       CALL XERRWD(MSG,46,656,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 700
 C
 C     The iteration matrix is singular.
 C
-660   MSG = 'DASPK--  AT T (=R1) AND STEPSIZE H (=R2) THE'
+660   MSG = 'DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE'
       CALL XERRWD(MSG,44,660,0,0,0,0,2,TN,H)
-      MSG = 'DASPK--  ITERATION MATRIX IS SINGULAR.'
+      MSG = 'DASKR--  ITERATION MATRIX IS SINGULAR.'
       CALL XERRWD(MSG,38,661,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 700
 C
 C     Nonlinear system failure preceded by error test failures.
 C
-670   MSG = 'DASPK--  AT T (=R1) AND STEPSIZE H (=R2) THE'
+670   MSG = 'DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE'
       CALL XERRWD(MSG,44,670,0,0,0,0,2,TN,H)
-      MSG = 'DASPK--  NONLINEAR SOLVER COULD NOT CONVERGE.'
+      MSG = 'DASKR--  NONLINEAR SOLVER COULD NOT CONVERGE.'
       CALL XERRWD(MSG,45,671,0,0,0,0,0,0.0D0,0.0D0)
-      MSG = 'DASPK--  ALSO, THE ERROR TEST FAILED REPEATEDLY.'
+      MSG = 'DASKR--  ALSO, THE ERROR TEST FAILED REPEATEDLY.'
       CALL XERRWD(MSG,49,672,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 700
 C
 C     Nonlinear system failure because IRES = -1.
 C
-675   MSG = 'DASPK--  AT T (=R1) AND STEPSIZE H (=R2) THE'
+675   MSG = 'DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE'
       CALL XERRWD(MSG,44,675,0,0,0,0,2,TN,H)
-      MSG = 'DASPK--  NONLINEAR SYSTEM SOLVER COULD NOT CONVERGE'
+      MSG = 'DASKR--  NONLINEAR SYSTEM SOLVER COULD NOT CONVERGE'
       CALL XERRWD(MSG,51,676,0,0,0,0,0,0.0D0,0.0D0)
-      MSG = 'DASPK--  BECAUSE IRES WAS EQUAL TO MINUS ONE'
+      MSG = 'DASKR--  BECAUSE IRES WAS EQUAL TO MINUS ONE'
       CALL XERRWD(MSG,44,677,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 700
 C
 C     Failure because IRES = -2.
 C
-680   MSG = 'DASPK--  AT T (=R1) AND STEPSIZE H (=R2)'
+680   MSG = 'DASKR--  AT T (=R1) AND STEPSIZE H (=R2)'
       CALL XERRWD(MSG,40,680,0,0,0,0,2,TN,H)
-      MSG = 'DASPK--  IRES WAS EQUAL TO MINUS TWO'
+      MSG = 'DASKR--  IRES WAS EQUAL TO MINUS TWO'
       CALL XERRWD(MSG,36,681,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 700
 C
 C     Failed to compute initial YPRIME.
 C
-685   MSG = 'DASPK--  AT T (=R1) AND STEPSIZE H (=R2) THE'
+685   MSG = 'DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE'
       CALL XERRWD(MSG,44,685,0,0,0,0,0,0.0D0,0.0D0)
-      MSG = 'DASPK--  INITIAL (Y,YPRIME) COULD NOT BE COMPUTED'
+      MSG = 'DASKR--  INITIAL (Y,YPRIME) COULD NOT BE COMPUTED'
       CALL XERRWD(MSG,49,686,0,0,0,0,2,TN,H0)
       GO TO 700
 C
 C     Failure because IER was negative from PSOL.
 C
-690   MSG = 'DASPK--  AT T (=R1) AND STEPSIZE H (=R2)'
+690   MSG = 'DASKR--  AT T (=R1) AND STEPSIZE H (=R2)'
       CALL XERRWD(MSG,40,690,0,0,0,0,2,TN,H)
-      MSG = 'DASPK--  IER WAS NEGATIVE FROM PSOL'
+      MSG = 'DASKR--  IER WAS NEGATIVE FROM PSOL'
       CALL XERRWD(MSG,35,691,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 700
 C
 C     Failure because the linear system solver could not converge.
 C
-695   MSG = 'DASPK--  AT T (=R1) AND STEPSIZE H (=R2) THE'
+695   MSG = 'DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE'
       CALL XERRWD(MSG,44,695,0,0,0,0,2,TN,H)
-      MSG = 'DASPK--  LINEAR SYSTEM SOLVER COULD NOT CONVERGE.'
+      MSG = 'DASKR--  LINEAR SYSTEM SOLVER COULD NOT CONVERGE.'
       CALL XERRWD(MSG,50,696,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 700
 C
@@ -2288,95 +2428,520 @@ C     First the error message routine is called.  If this happens
 C     twice in succession, execution is terminated.
 C-----------------------------------------------------------------------
 C
-701   MSG = 'DASPK--  ELEMENT (=I1) OF INFO VECTOR IS NOT VALID'
+701   MSG = 'DASKR--  ELEMENT (=I1) OF INFO VECTOR IS NOT VALID'
       CALL XERRWD(MSG,50,1,0,1,ITEMP,0,0,0.0D0,0.0D0)
       GO TO 750
-702   MSG = 'DASPK--  NEQ (=I1) .LE. 0'
+702   MSG = 'DASKR--  NEQ (=I1) .LE. 0'
       CALL XERRWD(MSG,25,2,0,1,NEQ,0,0,0.0D0,0.0D0)
       GO TO 750
-703   MSG = 'DASPK--  MAXORD (=I1) NOT IN RANGE'
+703   MSG = 'DASKR--  MAXORD (=I1) NOT IN RANGE'
       CALL XERRWD(MSG,34,3,0,1,MXORD,0,0,0.0D0,0.0D0)
       GO TO 750
-704   MSG='DASPK--  RWORK LENGTH NEEDED, LENRW (=I1), EXCEEDS LRW (=I2)'
+704   MSG='DASKR--  RWORK LENGTH NEEDED, LENRW (=I1), EXCEEDS LRW (=I2)'
       CALL XERRWD(MSG,60,4,0,2,LENRW,LRW,0,0.0D0,0.0D0)
       GO TO 750
-705   MSG='DASPK--  IWORK LENGTH NEEDED, LENIW (=I1), EXCEEDS LIW (=I2)'
+705   MSG='DASKR--  IWORK LENGTH NEEDED, LENIW (=I1), EXCEEDS LIW (=I2)'
       CALL XERRWD(MSG,60,5,0,2,LENIW,LIW,0,0.0D0,0.0D0)
       GO TO 750
-706   MSG = 'DASPK--  SOME ELEMENT OF RTOL IS .LT. 0'
+706   MSG = 'DASKR--  SOME ELEMENT OF RTOL IS .LT. 0'
       CALL XERRWD(MSG,39,6,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 750
-707   MSG = 'DASPK--  SOME ELEMENT OF ATOL IS .LT. 0'
+707   MSG = 'DASKR--  SOME ELEMENT OF ATOL IS .LT. 0'
       CALL XERRWD(MSG,39,7,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 750
-708   MSG = 'DASPK--  ALL ELEMENTS OF RTOL AND ATOL ARE ZERO'
+708   MSG = 'DASKR--  ALL ELEMENTS OF RTOL AND ATOL ARE ZERO'
       CALL XERRWD(MSG,47,8,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 750
-709   MSG='DASPK--  INFO(4) = 1 AND TSTOP (=R1) BEHIND TOUT (=R2)'
+709   MSG='DASKR--  INFO(4) = 1 AND TSTOP (=R1) BEHIND TOUT (=R2)'
       CALL XERRWD(MSG,54,9,0,0,0,0,2,TSTOP,TOUT)
       GO TO 750
-710   MSG = 'DASPK--  HMAX (=R1) .LT. 0.0'
+710   MSG = 'DASKR--  HMAX (=R1) .LT. 0.0'
       CALL XERRWD(MSG,28,10,0,0,0,0,1,HMAX,0.0D0)
       GO TO 750
-711   MSG = 'DASPK--  TOUT (=R1) BEHIND T (=R2)'
+711   MSG = 'DASKR--  TOUT (=R1) BEHIND T (=R2)'
       CALL XERRWD(MSG,34,11,0,0,0,0,2,TOUT,T)
       GO TO 750
-712   MSG = 'DASPK--  INFO(8)=1 AND H0=0.0'
+712   MSG = 'DASKR--  INFO(8)=1 AND H0=0.0'
       CALL XERRWD(MSG,29,12,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 750
-713   MSG = 'DASPK--  SOME ELEMENT OF WT IS .LE. 0.0'
+713   MSG = 'DASKR--  SOME ELEMENT OF WT IS .LE. 0.0'
       CALL XERRWD(MSG,39,13,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 750
-714   MSG='DASPK-- TOUT (=R1) TOO CLOSE TO T (=R2) TO START INTEGRATION'
+714   MSG='DASKR-- TOUT (=R1) TOO CLOSE TO T (=R2) TO START INTEGRATION'
       CALL XERRWD(MSG,60,14,0,0,0,0,2,TOUT,T)
       GO TO 750
-715   MSG = 'DASPK--  INFO(4)=1 AND TSTOP (=R1) BEHIND T (=R2)'
+715   MSG = 'DASKR--  INFO(4)=1 AND TSTOP (=R1) BEHIND T (=R2)'
       CALL XERRWD(MSG,49,15,0,0,0,0,2,TSTOP,T)
       GO TO 750
-717   MSG = 'DASPK--  ML (=I1) ILLEGAL. EITHER .LT. 0 OR .GT. NEQ'
+717   MSG = 'DASKR--  ML (=I1) ILLEGAL. EITHER .LT. 0 OR .GT. NEQ'
       CALL XERRWD(MSG,52,17,0,1,IWORK(LML),0,0,0.0D0,0.0D0)
       GO TO 750
-718   MSG = 'DASPK--  MU (=I1) ILLEGAL. EITHER .LT. 0 OR .GT. NEQ'
+718   MSG = 'DASKR--  MU (=I1) ILLEGAL. EITHER .LT. 0 OR .GT. NEQ'
       CALL XERRWD(MSG,52,18,0,1,IWORK(LMU),0,0,0.0D0,0.0D0)
       GO TO 750
-719   MSG = 'DASPK--  TOUT (=R1) IS EQUAL TO T (=R2)'
+719   MSG = 'DASKR--  TOUT (=R1) IS EQUAL TO T (=R2)'
       CALL XERRWD(MSG,39,19,0,0,0,0,2,TOUT,T)
       GO TO 750
-720   MSG = 'DASPK--  MAXL (=I1) ILLEGAL. EITHER .LT. 1 OR .GT. NEQ'
+720   MSG = 'DASKR--  MAXL (=I1) ILLEGAL. EITHER .LT. 1 OR .GT. NEQ'
       CALL XERRWD(MSG,54,20,0,1,IWORK(LMAXL),0,0,0.0D0,0.0D0)
       GO TO 750
-721   MSG = 'DASPK--  KMP (=I1) ILLEGAL. EITHER .LT. 1 OR .GT. MAXL'
+721   MSG = 'DASKR--  KMP (=I1) ILLEGAL. EITHER .LT. 1 OR .GT. MAXL'
       CALL XERRWD(MSG,54,21,0,1,IWORK(LKMP),0,0,0.0D0,0.0D0)
       GO TO 750
-722   MSG = 'DASPK--  NRMAX (=I1) ILLEGAL. .LT. 0'
+722   MSG = 'DASKR--  NRMAX (=I1) ILLEGAL. .LT. 0'
       CALL XERRWD(MSG,36,22,0,1,IWORK(LNRMAX),0,0,0.0D0,0.0D0)
       GO TO 750
-723   MSG = 'DASPK--  EPLI (=R1) ILLEGAL. EITHER .LE. 0.D0 OR .GE. 1.D0'
+723   MSG = 'DASKR--  EPLI (=R1) ILLEGAL. EITHER .LE. 0.D0 OR .GE. 1.D0'
       CALL XERRWD(MSG,58,23,0,0,0,0,1,RWORK(LEPLI),0.0D0)
       GO TO 750
-724   MSG = 'DASPK--  ILLEGAL IWORK VALUE FOR INFO(11) .NE. 0'
+724   MSG = 'DASKR--  ILLEGAL IWORK VALUE FOR INFO(11) .NE. 0'
       CALL XERRWD(MSG,48,24,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 750
-725   MSG = 'DASPK--  ONE OF THE INPUTS FOR INFO(17) = 1 IS ILLEGAL'
+725   MSG = 'DASKR--  ONE OF THE INPUTS FOR INFO(17) = 1 IS ILLEGAL'
       CALL XERRWD(MSG,54,25,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 750
-726   MSG = 'DASPK--  ILLEGAL IWORK VALUE FOR INFO(10) .NE. 0'
+726   MSG = 'DASKR--  ILLEGAL IWORK VALUE FOR INFO(10) .NE. 0'
       CALL XERRWD(MSG,48,26,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 750
-727   MSG = 'DASPK--  Y(I) AND IWORK(40+I) (I=I1) INCONSISTENT'
+727   MSG = 'DASKR--  Y(I) AND IWORK(40+I) (I=I1) INCONSISTENT'
       CALL XERRWD(MSG,49,27,0,1,IRET,0,0,0.0D0,0.0D0)
       GO TO 750
+730   MSG = 'DASKR--  NRT (=I1) .LT. 0'
+      CALL XERRWD(MSG,25,30,1,1,NRT,0,0,0.0D0,0.0D0)
+      GO TO 750
+731   MSG = 'DASKR--  R IS ILL-DEFINED.  ZERO VALUES WERE FOUND AT TWO'
+      CALL XERRWD(MSG,57,31,1,0,0,0,0,0.0D0,0.0D0)
+      MSG = '         VERY CLOSE T VALUES, AT T = R1'
+      CALL XERRWD(MSG,39,31,1,0,0,0,1,RWORK(LT0),0.0D0)
+C
 750   IF(INFO(1).EQ.-1) GO TO 760
       INFO(1)=-1
       IDID=-33
       RETURN
-760   MSG = 'DASPK--  REPEATED OCCURRENCES OF ILLEGAL INPUT'
+760   MSG = 'DASKR--  REPEATED OCCURRENCES OF ILLEGAL INPUT'
       CALL XERRWD(MSG,46,701,0,0,0,0,0,0.0D0,0.0D0)
-770   MSG = 'DASPK--  RUN TERMINATED. APPARENT INFINITE LOOP'
+770   MSG = 'DASKR--  RUN TERMINATED. APPARENT INFINITE LOOP'
       CALL XERRWD(MSG,47,702,1,0,0,0,0,0.0D0,0.0D0)
       RETURN
 C
-C------END OF SUBROUTINE DDASPK-----------------------------------------
+C------END OF SUBROUTINE DDASKR-----------------------------------------
+      END
+      SUBROUTINE DRCHEK (JOB, RT, NRT, NEQ, TN, TOUT, Y, YP, PHI, PSI,
+     *   KOLD, R0, R1, RX, JROOT, IRT, UROUND, INFO3, RWORK, IWORK,
+     *   RPAR, IPAR)
+C
+C***BEGIN PROLOGUE  DRCHEK
+C***REFER TO DDASKR
+C***ROUTINES CALLED  DDATRP, DROOTS, DCOPY, RT
+C***REVISION HISTORY  (YYMMDD)
+C   020815  DATE WRITTEN   
+C   021217  Added test for roots close when JOB = 2.
+C   050510  Changed T increment after 110 so that TEMP1/H .ge. 0.1.
+C   071003  Fixed bug in TEMP2 (HMINR) below 110.
+C   110608  Fixed bug in setting of T1 at 300.
+C***END PROLOGUE  DRCHEK
+C
+      IMPLICIT DOUBLE PRECISION(A-H,O-Z)
+C Pointers into IWORK:
+      PARAMETER (LNRTE=36, LIRFND=37)
+C Pointers into RWORK:
+      PARAMETER (LT0=51, LTLAST=52)
+      EXTERNAL RT
+      INTEGER JOB, NRT, NEQ, KOLD, JROOT, IRT, INFO3, IWORK, IPAR
+      DOUBLE PRECISION TN, TOUT, Y, YP, PHI, PSI, R0, R1, RX, UROUND,
+     *  RWORK, RPAR
+      DIMENSION Y(*), YP(*), PHI(NEQ,*), PSI(*),
+     *          R0(*), R1(*), RX(*), JROOT(*), RWORK(*), IWORK(*)
+      INTEGER I, JFLAG
+      DOUBLE PRECISION H
+      DOUBLE PRECISION HMINR, T1, TEMP1, TEMP2, X, ZERO
+      LOGICAL ZROOT
+      DATA ZERO/0.0D0/
+C-----------------------------------------------------------------------
+C This routine checks for the presence of a root of R(T,Y,Y') in the
+C vicinity of the current T, in a manner depending on the
+C input flag JOB.  It calls subroutine DROOTS to locate the root
+C as precisely as possible.
+C
+C In addition to variables described previously, DRCHEK
+C uses the following for communication..
+C JOB    = integer flag indicating type of call..
+C          JOB = 1 means the problem is being initialized, and DRCHEK
+C                  is to look for a root at or very near the initial T.
+C          JOB = 2 means a continuation call to the solver was just
+C                  made, and DRCHEK is to check for a root in the
+C                  relevant part of the step last taken.
+C          JOB = 3 means a successful step was just taken, and DRCHEK
+C                  is to look for a root in the interval of the step.
+C R0     = array of length NRT, containing the value of R at T = T0.
+C          R0 is input for JOB .ge. 2 and on output in all cases.
+C R1,RX  = arrays of length NRT for work space.
+C IRT    = completion flag..
+C          IRT = 0  means no root was found.
+C          IRT = -1 means JOB = 1 and a zero was found both at T0 and
+C                   and very close to T0.
+C          IRT = -2 means JOB = 2 and some Ri was found to have a zero
+C                   both at T0 and very close to T0.
+C          IRT = 1  means a legitimate root was found (JOB = 2 or 3).
+C                   On return, T0 is the root location, and Y is the
+C                   corresponding solution vector.
+C T0     = value of T at one endpoint of interval of interest.  Only
+C          roots beyond T0 in the direction of integration are sought.
+C          T0 is input if JOB .ge. 2, and output in all cases.
+C          T0 is updated by DRCHEK, whether a root is found or not.
+C          Stored in the global array RWORK.
+C TLAST  = last value of T returned by the solver (input only).
+C          Stored in the global array RWORK.
+C TOUT   = final output time for the solver.
+C IRFND  = input flag showing whether the last step taken had a root.
+C          IRFND = 1 if it did, = 0 if not.
+C          Stored in the global array IWORK.
+C INFO3  = copy of INFO(3) (input only).
+C-----------------------------------------------------------------------
+C     
+      H = PSI(1)
+      IRT = 0
+      DO 10 I = 1,NRT
+ 10     JROOT(I) = 0
+      HMINR = (ABS(TN) + ABS(H))*UROUND*100.0D0
+C
+      GO TO (100, 200, 300), JOB
+C
+C Evaluate R at initial T (= RWORK(LT0)); check for zero values.--------
+ 100  CONTINUE
+      CALL DDATRP(TN,RWORK(LT0),Y,YP,NEQ,KOLD,PHI,PSI)
+      CALL RT (NEQ, RWORK(LT0), Y, YP, NRT, R0, RPAR, IPAR)
+      IWORK(LNRTE) = 1
+      ZROOT = .FALSE.
+      DO 110 I = 1,NRT
+ 110    IF (ABS(R0(I)) .EQ. ZERO) ZROOT = .TRUE.
+      IF (.NOT. ZROOT) GO TO 190
+C R has a zero at T.  Look at R at T + (small increment). --------------
+      TEMP2 = MAX(HMINR/ABS(H), 0.1D0)
+      TEMP1 = TEMP2*H
+      RWORK(LT0) = RWORK(LT0) + TEMP1
+      DO 120 I = 1,NEQ
+ 120    Y(I) = Y(I) + TEMP2*PHI(I,2)
+      CALL RT (NEQ, RWORK(LT0), Y, YP, NRT, R0, RPAR, IPAR)
+      IWORK(LNRTE) = IWORK(LNRTE) + 1
+      ZROOT = .FALSE.
+      DO 130 I = 1,NRT
+ 130    IF (ABS(R0(I)) .EQ. ZERO) ZROOT = .TRUE.
+      IF (.NOT. ZROOT) GO TO 190
+C R has a zero at T and also close to T.  Take error return. -----------
+      IRT = -1
+      RETURN
+C
+ 190  CONTINUE
+      RETURN
+C
+ 200  CONTINUE
+      IF (IWORK(LIRFND) .EQ. 0) GO TO 260
+C If a root was found on the previous step, evaluate R0 = R(T0). -------
+      CALL DDATRP (TN, RWORK(LT0), Y, YP, NEQ, KOLD, PHI, PSI)
+      CALL RT (NEQ, RWORK(LT0), Y, YP, NRT, R0, RPAR, IPAR)
+      IWORK(LNRTE) = IWORK(LNRTE) + 1
+      ZROOT = .FALSE.
+      DO 210 I = 1,NRT
+        IF (ABS(R0(I)) .EQ. ZERO) THEN
+          ZROOT = .TRUE.
+          JROOT(I) = 1
+        ENDIF
+ 210    CONTINUE
+      IF (.NOT. ZROOT) GO TO 260
+C R has a zero at T0.  Look at R at T0+ = T0 + (small increment). ------
+      TEMP1 = SIGN(HMINR,H)
+      RWORK(LT0) = RWORK(LT0) + TEMP1
+      IF ((RWORK(LT0) - TN)*H .LT. ZERO) GO TO 230
+      TEMP2 = TEMP1/H
+      DO 220 I = 1,NEQ
+ 220    Y(I) = Y(I) + TEMP2*PHI(I,2)
+      GO TO 240
+ 230  CALL DDATRP (TN, RWORK(LT0), Y, YP, NEQ, KOLD, PHI, PSI)
+ 240  CALL RT (NEQ, RWORK(LT0), Y, YP, NRT, R0, RPAR, IPAR)
+      IWORK(LNRTE) = IWORK(LNRTE) + 1
+      DO 250 I = 1,NRT
+        IF (ABS(R0(I)) .GT. ZERO) GO TO 250
+C If Ri has a zero at both T0+ and T0, return an error flag. -----------
+        IF (JROOT(I) .EQ. 1) THEN
+          IRT = -2
+          RETURN
+        ELSE
+C If Ri has a zero at T0+, but not at T0, return valid root. -----------
+          JROOT(I) = -SIGN(1.0D0,R0(I))
+          IRT = 1
+        ENDIF
+ 250    CONTINUE
+      IF (IRT .EQ. 1) RETURN
+C R0 has no zero components.  Proceed to check relevant interval. ------
+ 260  IF (TN .EQ. RWORK(LTLAST)) RETURN
+C
+ 300  CONTINUE
+C Set T1 to TN or TOUT, whichever comes first, and get R at T1. --------
+      IF ((TOUT - TN)*H .GE. ZERO) THEN
+         T1 = TN
+         GO TO 330
+         ENDIF
+      T1 = TOUT
+      IF ((T1 - RWORK(LT0))*H .LE. ZERO) GO TO 390
+ 330  CALL DDATRP (TN, T1, Y, YP, NEQ, KOLD, PHI, PSI)
+      CALL RT (NEQ, T1, Y, YP, NRT, R1, RPAR, IPAR)
+      IWORK(LNRTE) = IWORK(LNRTE) + 1
+C Call DROOTS to search for root in interval from T0 to T1. ------------
+      JFLAG = 0
+ 350  CONTINUE
+      CALL DROOTS (NRT, HMINR, JFLAG, RWORK(LT0),T1, R0,R1,RX, X, JROOT)
+      IF (JFLAG .GT. 1) GO TO 360
+      CALL DDATRP (TN, X, Y, YP, NEQ, KOLD, PHI, PSI)
+      CALL RT (NEQ, X, Y, YP, NRT, RX, RPAR, IPAR)
+      IWORK(LNRTE) = IWORK(LNRTE) + 1
+      GO TO 350
+ 360  RWORK(LT0) = X
+      CALL DCOPY (NRT, RX, 1, R0, 1)
+      IF (JFLAG .EQ. 4) GO TO 390
+C Found a root.  Interpolate to X and return. --------------------------
+      CALL DDATRP (TN, X, Y, YP, NEQ, KOLD, PHI, PSI)
+      IRT = 1
+      RETURN
+C
+ 390  CONTINUE
+      RETURN
+C---------------------- END OF SUBROUTINE DRCHEK -----------------------
+      END
+      SUBROUTINE DROOTS (NRT, HMIN, JFLAG, X0, X1, R0, R1, RX, X, JROOT)
+C
+C***BEGIN PROLOGUE  DROOTS
+C***REFER TO DRCHEK
+C***ROUTINES CALLED DCOPY
+C***REVISION HISTORY  (YYMMDD)
+C   020815  DATE WRITTEN   
+C   021217  Added root direction information in JROOT.
+C   040518  Changed adjustment to X2 at 180 to avoid infinite loop.
+C***END PROLOGUE  DROOTS
+C
+      INTEGER NRT, JFLAG, JROOT
+      DOUBLE PRECISION HMIN, X0, X1, R0, R1, RX, X
+      DIMENSION R0(NRT), R1(NRT), RX(NRT), JROOT(NRT)
+C-----------------------------------------------------------------------
+C This subroutine finds the leftmost root of a set of arbitrary
+C functions Ri(x) (i = 1,...,NRT) in an interval (X0,X1).  Only roots
+C of odd multiplicity (i.e. changes of sign of the Ri) are found.
+C Here the sign of X1 - X0 is arbitrary, but is constant for a given
+C problem, and -leftmost- means nearest to X0.
+C The values of the vector-valued function R(x) = (Ri, i=1...NRT)
+C are communicated through the call sequence of DROOTS.
+C The method used is the Illinois algorithm.
+C
+C Reference:
+C Kathie L. Hiebert and Lawrence F. Shampine, Implicitly Defined
+C Output Points for Solutions of ODEs, Sandia Report SAND80-0180,
+C February 1980.
+C
+C Description of parameters.
+C
+C NRT    = number of functions Ri, or the number of components of
+C          the vector valued function R(x).  Input only.
+C
+C HMIN   = resolution parameter in X.  Input only.  When a root is
+C          found, it is located only to within an error of HMIN in X.
+C          Typically, HMIN should be set to something on the order of
+C               100 * UROUND * MAX(ABS(X0),ABS(X1)),
+C          where UROUND is the unit roundoff of the machine.
+C
+C JFLAG  = integer flag for input and output communication.
+C
+C          On input, set JFLAG = 0 on the first call for the problem,
+C          and leave it unchanged until the problem is completed.
+C          (The problem is completed when JFLAG .ge. 2 on return.)
+C
+C          On output, JFLAG has the following values and meanings:
+C          JFLAG = 1 means DROOTS needs a value of R(x).  Set RX = R(X)
+C                    and call DROOTS again.
+C          JFLAG = 2 means a root has been found.  The root is
+C                    at X, and RX contains R(X).  (Actually, X is the
+C                    rightmost approximation to the root on an interval
+C                    (X0,X1) of size HMIN or less.)
+C          JFLAG = 3 means X = X1 is a root, with one or more of the Ri
+C                    being zero at X1 and no sign changes in (X0,X1).
+C                    RX contains R(X) on output.
+C          JFLAG = 4 means no roots (of odd multiplicity) were
+C                    found in (X0,X1) (no sign changes).
+C
+C X0,X1  = endpoints of the interval where roots are sought.
+C          X1 and X0 are input when JFLAG = 0 (first call), and
+C          must be left unchanged between calls until the problem is
+C          completed.  X0 and X1 must be distinct, but X1 - X0 may be
+C          of either sign.  However, the notion of -left- and -right-
+C          will be used to mean nearer to X0 or X1, respectively.
+C          When JFLAG .ge. 2 on return, X0 and X1 are output, and
+C          are the endpoints of the relevant interval.
+C
+C R0,R1  = arrays of length NRT containing the vectors R(X0) and R(X1),
+C          respectively.  When JFLAG = 0, R0 and R1 are input and
+C          none of the R0(i) should be zero.
+C          When JFLAG .ge. 2 on return, R0 and R1 are output.
+C
+C RX     = array of length NRT containing R(X).  RX is input
+C          when JFLAG = 1, and output when JFLAG .ge. 2.
+C
+C X      = independent variable value.  Output only.
+C          When JFLAG = 1 on output, X is the point at which R(x)
+C          is to be evaluated and loaded into RX.
+C          When JFLAG = 2 or 3, X is the root.
+C          When JFLAG = 4, X is the right endpoint of the interval, X1.
+C
+C JROOT  = integer array of length NRT.  Output only.
+C          When JFLAG = 2 or 3, JROOT indicates which components
+C          of R(x) have a root at X, and the direction of the sign
+C          change across the root in the direction of integration.
+C          JROOT(i) =  1 if Ri has a root and changes from - to +.
+C          JROOT(i) = -1 if Ri has a root and changes from + to -.
+C          Otherwise JROOT(i) = 0.
+C-----------------------------------------------------------------------
+      INTEGER I, IMAX, IMXOLD, LAST, NXLAST
+      DOUBLE PRECISION ALPHA, T2, TMAX, X2, FRACINT, FRACSUB,
+     1                 ZERO, TENTH, HALF, FIVE
+      LOGICAL ZROOT, SGNCHG, XROOT
+      SAVE ALPHA, X2, IMAX, LAST
+      DATA ZERO/0.0D0/, TENTH/0.1D0/, HALF/0.5D0/, FIVE/5.0D0/
+C
+      IF (JFLAG .EQ. 1) GO TO 200
+C JFLAG .ne. 1.  Check for change in sign of R or zero at X1. ----------
+      IMAX = 0
+      TMAX = ZERO
+      ZROOT = .FALSE.
+      DO 120 I = 1,NRT
+        IF (ABS(R1(I)) .GT. ZERO) GO TO 110
+        ZROOT = .TRUE.
+        GO TO 120
+C At this point, R0(i) has been checked and cannot be zero. ------------
+ 110    IF (SIGN(1.0D0,R0(I)) .EQ. SIGN(1.0D0,R1(I))) GO TO 120
+          T2 = ABS(R1(I)/(R1(I)-R0(I)))
+          IF (T2 .LE. TMAX) GO TO 120
+            TMAX = T2
+            IMAX = I
+ 120    CONTINUE
+      IF (IMAX .GT. 0) GO TO 130
+      SGNCHG = .FALSE.
+      GO TO 140
+ 130  SGNCHG = .TRUE.
+ 140  IF (.NOT. SGNCHG) GO TO 400
+C There is a sign change.  Find the first root in the interval. --------
+      XROOT = .FALSE.
+      NXLAST = 0
+      LAST = 1
+C
+C Repeat until the first root in the interval is found.  Loop point. ---
+ 150  CONTINUE
+      IF (XROOT) GO TO 300
+      IF (NXLAST .EQ. LAST) GO TO 160
+      ALPHA = 1.0D0
+      GO TO 180
+ 160  IF (LAST .EQ. 0) GO TO 170
+      ALPHA = 0.5D0*ALPHA
+      GO TO 180
+ 170  ALPHA = 2.0D0*ALPHA
+ 180  X2 = X1 - (X1-X0)*R1(IMAX)/(R1(IMAX) - ALPHA*R0(IMAX))
+      IF (ABS(X2 - X0) < HALF*HMIN) THEN
+        FRACINT = ABS(X1 - X0)/HMIN
+        IF (FRACINT .GT. FIVE) THEN
+          FRACSUB = TENTH
+        ELSE
+          FRACSUB = HALF/FRACINT
+        ENDIF
+        X2 = X0 + FRACSUB*(X1 - X0)
+      ENDIF
+      IF (ABS(X1 - X2) < HALF*HMIN) THEN
+        FRACINT = ABS(X1 - X0)/HMIN
+        IF (FRACINT .GT. FIVE) THEN
+          FRACSUB = TENTH
+        ELSE
+          FRACSUB = HALF/FRACINT
+        ENDIF
+        X2 = X1 - FRACSUB*(X1 - X0)
+      ENDIF
+      JFLAG = 1
+      X = X2
+C Return to the calling routine to get a value of RX = R(X). -----------
+      RETURN
+C Check to see in which interval R changes sign. -----------------------
+ 200  IMXOLD = IMAX
+      IMAX = 0
+      TMAX = ZERO
+      ZROOT = .FALSE.
+      DO 220 I = 1,NRT
+        IF (ABS(RX(I)) .GT. ZERO) GO TO 210
+        ZROOT = .TRUE.
+        GO TO 220
+C Neither R0(i) nor RX(i) can be zero at this point. -------------------
+ 210    IF (SIGN(1.0D0,R0(I)) .EQ. SIGN(1.0D0,RX(I))) GO TO 220
+          T2 = ABS(RX(I)/(RX(I) - R0(I)))
+          IF (T2 .LE. TMAX) GO TO 220
+            TMAX = T2
+            IMAX = I
+ 220    CONTINUE
+      IF (IMAX .GT. 0) GO TO 230
+      SGNCHG = .FALSE.
+      IMAX = IMXOLD
+      GO TO 240
+ 230  SGNCHG = .TRUE.
+ 240  NXLAST = LAST
+      IF (.NOT. SGNCHG) GO TO 250
+C Sign change between X0 and X2, so replace X1 with X2. ----------------
+      X1 = X2
+      CALL DCOPY (NRT, RX, 1, R1, 1)
+      LAST = 1
+      XROOT = .FALSE.
+      GO TO 270
+ 250  IF (.NOT. ZROOT) GO TO 260
+C Zero value at X2 and no sign change in (X0,X2), so X2 is a root. -----
+      X1 = X2
+      CALL DCOPY (NRT, RX, 1, R1, 1)
+      XROOT = .TRUE.
+      GO TO 270
+C No sign change between X0 and X2.  Replace X0 with X2. ---------------
+ 260  CONTINUE
+      CALL DCOPY (NRT, RX, 1, R0, 1)
+      X0 = X2
+      LAST = 0
+      XROOT = .FALSE.
+ 270  IF (ABS(X1-X0) .LE. HMIN) XROOT = .TRUE.
+      GO TO 150
+C
+C Return with X1 as the root.  Set JROOT.  Set X = X1 and RX = R1. -----
+ 300  JFLAG = 2
+      X = X1
+      CALL DCOPY (NRT, R1, 1, RX, 1)
+      DO 320 I = 1,NRT
+        JROOT(I) = 0
+        IF (ABS(R1(I)) .EQ. ZERO) THEN
+          JROOT(I) = -SIGN(1.0D0,R0(I))
+          GO TO 320
+          ENDIF
+        IF (SIGN(1.0D0,R0(I)) .NE. SIGN(1.0D0,R1(I)))
+     1     JROOT(I) = SIGN(1.0D0,R1(I) - R0(I))
+ 320    CONTINUE
+      RETURN
+C
+C No sign change in the interval.  Check for zero at right endpoint. ---
+ 400  IF (.NOT. ZROOT) GO TO 420
+C
+C Zero value at X1 and no sign change in (X0,X1).  Return JFLAG = 3. ---
+      X = X1
+      CALL DCOPY (NRT, R1, 1, RX, 1)
+      DO 410 I = 1,NRT
+        JROOT(I) = 0
+        IF (ABS(R1(I)) .EQ. ZERO) JROOT(I) = -SIGN(1.0D0,R0(I))
+ 410  CONTINUE
+      JFLAG = 3
+      RETURN
+C
+C No sign changes in this interval.  Set X = X1, return JFLAG = 4. -----
+ 420  CALL DCOPY (NRT, R1, 1, RX, 1)
+      X = X1
+      JFLAG = 4
+      RETURN
+C----------------------- END OF SUBROUTINE DROOTS ----------------------
       END
       SUBROUTINE DDASIC (X, Y, YPRIME, NEQ, ICOPT, ID, RES, JAC, PSOL,
      *   H, TSCALE, WT, NIC, IDID, RPAR, IPAR, PHI, SAVR, DELTA, E,
@@ -4395,7 +4960,8 @@ C***BEGIN PROLOGUE  DMATD
 C***REFER TO  DDASPK
 C***DATE WRITTEN   890101   (YYMMDD)
 C***REVISION DATE  900926   (YYMMDD)
-C***REVISION DATE  940701   (YYMMDD) (new LIPVT)
+C***REVISION DATE  940701   (new LIPVT)
+C***REVISION DATE  060712   (Changed minimum D.Q. increment to 1/EWT(j))
 C
 C-----------------------------------------------------------------------
 C***DESCRIPTION
@@ -4475,8 +5041,7 @@ C
       NROW=0
       SQUR = SQRT(UROUND)
       DO 210 I=1,NEQ
-         DEL=SQUR*MAX(ABS(Y(I)),ABS(H*YPRIME(I)),
-     *     ABS(1.D0/EWT(I)))
+         DEL=MAX(SQUR*MAX(ABS(Y(I)),ABS(H*YPRIME(I))), 1.0D0/EWT(I))
          DEL=SIGN(DEL,H*YPRIME(I))
          DEL=(Y(I)+DEL)-Y(I)
          YSAVE=Y(I)
@@ -4532,8 +5097,7 @@ C
           K= (N-J)/MBAND + 1
           WM(ISAVE+K)=Y(N)
           WM(IPSAVE+K)=YPRIME(N)
-          DEL=SQUR*MAX(ABS(Y(N)),ABS(H*YPRIME(N)),
-     *      ABS(1.D0/EWT(N)))
+          DEL=MAX(SQUR*MAX(ABS(Y(N)),ABS(H*YPRIME(N))), 1.0D0/EWT(N))
           DEL=SIGN(DEL,H*YPRIME(N))
           DEL=(Y(N)+DEL)-Y(N)
           Y(N)=Y(N)+DEL
@@ -4545,8 +5109,7 @@ C
           K= (N-J)/MBAND + 1
           Y(N)=WM(ISAVE+K)
           YPRIME(N)=WM(IPSAVE+K)
-          DEL=SQUR*MAX(ABS(Y(N)),ABS(H*YPRIME(N)),
-     *      ABS(1.D0/EWT(N)))
+          DEL=MAX(SQUR*MAX(ABS(Y(N)),ABS(H*YPRIME(N))), 1.0D0/EWT(N))
           DEL=SIGN(DEL,H*YPRIME(N))
           DEL=(Y(N)+DEL)-Y(N)
           DELINV=1.0D0/DEL
