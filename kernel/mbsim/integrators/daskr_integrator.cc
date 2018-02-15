@@ -116,13 +116,6 @@ namespace MBSimIntegrator {
     self->getSystem()->setTime(*t);
     self->getSystem()->setState(y(0,self->getSystem()->getzSize()-1));
     self->getSystem()->resetUpToDate();
-    // The following code would be faster but does not work, maybe due to round-off errors
-//    self->getSystem()->setzd(yd(0,self->getSystem()->getzSize()-1));
-//    self->getSystem()->setUpdatezd(false);
-//    if(self->getFormalism()) {
-//      self->getSystem()->setla(y(self->getSystem()->getzSize(),self->getSystem()->getzSize()+self->getSystem()->getlaSize()-1));
-//      self->getSystem()->setUpdatela(false);
-//    }
     rval = self->getSystem()->evalsv();
   }
 
