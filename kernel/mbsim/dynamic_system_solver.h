@@ -503,8 +503,6 @@ namespace MBSim {
       void setUpdatezd(bool updzd_) { updzd = updzd_; }
       void setUpdateW(bool updW_, int i=0) { updW[i] = updW_; }
 
-      void resize_();
-
       /**
        * \brief references to relative distances of dynamic system parent
        * \param vector to be referenced

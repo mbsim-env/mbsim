@@ -105,7 +105,7 @@ namespace MBSimIntegrator {
       system->resetUpToDate();
 
       system->checkActive(1);
-      if (system->gActiveChanged()) system->resize_();
+      if (system->gActiveChanged()) resize();
 
       if(gMax>=0 and system->positionDriftCompensationNeeded(gMax))
         system->projectGeneralizedPositions(3);
@@ -176,6 +176,21 @@ namespace MBSimIntegrator {
     if(e) setTheta(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
+  }
+
+  void ThetaTimeSteppingIntegrator::resize() {
+    system->calcgdSize(2); // contacts which stay closed
+    system->calclaSize(2); // contacts which stay closed
+    system->calcrFactorSize(2); // contacts which stay closed
+
+    system->updateWRef(system->getWParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
+    system->updateVRef(system->getVParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
+    system->updatelaRef(system->getlaParent()(0,system->getlaSize()-1));
+    system->updateLaRef(system->getLaParent()(0,system->getlaSize()-1));
+    system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
+    if (system->getImpactSolver() == DynamicSystemSolver::RootFinding)
+      system->updateresRef(system->getresParent()(0,system->getlaSize()-1));
+    system->updaterFactorRef(system->getrFactorParent()(0,system->getrFactorSize()-1));
   }
 
 }

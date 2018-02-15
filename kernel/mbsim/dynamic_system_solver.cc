@@ -974,21 +974,6 @@ namespace MBSim {
       (*i)->decreaserFactors();
   }
 
-  void DynamicSystemSolver::resize_() {
-      calcgdSize(2); // contacts which stay closed
-      calclaSize(2); // contacts which stay closed
-      calcrFactorSize(2); // contacts which stay closed
-
-      updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
-      updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
-      updatelaRef(laParent(0, laSize - 1));
-      updateLaRef(LaParent(0, laSize - 1));
-      updategdRef(gdParent(0, gdSize - 1));
-      if (impactSolver == RootFinding)
-        updateresRef(resParent(0, laSize - 1));
-      updaterFactorRef(rFactorParent(0, rFactorSize - 1));
-  }
-
   void DynamicSystemSolver::getLinkStatus(VecInt &LinkStatusExt) {
     if (LinkStatusExt.size() < LinkStatusSize)
       LinkStatusExt.resize(LinkStatusSize);
