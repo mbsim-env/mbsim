@@ -11,6 +11,7 @@ libintegrators_la_SOURCES = integrator.cc\
 			    dop853_integrator.cc \
 			    odex_integrator.cc \
 			    daspk_integrator.cc \
+			    daskr_integrator.cc \
 			    quasi_static_integrator.cc \
 			    time_stepping_integrator.cc \
 			    theta_time_stepping_integrator.cc \
@@ -27,7 +28,8 @@ libintegrators_la_SOURCES = integrator.cc\
 			    fortran/radau5.f\
 			    fortran/dc_lapack.f\
 			    fortran/rksuite.f\
-			    fortran/ddaspk.f
+			    fortran/ddaspk.f\
+			    fortran/ddaskr.f
 			     
 #auto_time_stepping_ssc_integrator.cc
 #fortran/daux.f
@@ -52,6 +54,8 @@ integratorsinclude_HEADERS = integrator.h \
 			     radau5_integrator.h \
 			     dop853_integrator.h \
 			     odex_integrator.h \
+			     daspk_integrator.h \
+			     daskr_integrator.h \
 			     quasi_static_integrator.h \
 			     time_stepping_integrator.h \
 			     theta_time_stepping_integrator.h \

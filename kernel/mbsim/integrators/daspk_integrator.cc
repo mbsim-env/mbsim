@@ -151,8 +151,8 @@ namespace MBSimIntegrator {
     // info(3) = 0; // integration does not stop at tStop (rWork(0))
     // info(4) = 0; // jacobian is computed internally
     // info(5) = 0; // jacobian is a full matrix
-    info(6) = dtMax; // maximum stepsize
-    info(7) = dt0; // initial stepsize
+    info(6) = dtMax>0; // set maximum stepsize
+    info(7) = dt0>0; // set initial stepsize
     //  info(8) = 0; // maximum order
     // info(9) = 0; // no components are nonnegative
     // info(10) = 0; // initial t, y, yd are consistent
@@ -175,6 +175,8 @@ namespace MBSimIntegrator {
     VecInt iWork(liWork);
     Vec work(lWork);
 
+    work(1) = dtMax; // maximum stepsize
+    work(2) = dt0; // initial stepsize
     if(info(15)) {
       for(int i=0; i<zSize; i++)
         iWork(40+i) = 1; // differential variable
@@ -210,6 +212,8 @@ namespace MBSimIntegrator {
         system->setTime(t);
         system->setState(y(0,zSize-1));
         system->resetUpToDate();
+        system->setzd(yd(0,zSize-1));
+        system->setUpdatezd(false);
         if(formalism) {
           system->setla(y(zSize,zSize+system->getgdSize()-1));
           system->setUpdatela(false);
