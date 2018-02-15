@@ -65,7 +65,7 @@ namespace MBSimIntegrator {
       /** use stiff (BDF) or nonstiff (Adams) method */
       Method method{nonstiff};
 
-      bool plotOnRoot{true};
+      bool plotOnRoot{false};
 
       /** tolerance for position constraints */
       double gMax{1e-5};

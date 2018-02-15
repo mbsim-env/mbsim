@@ -55,7 +55,7 @@ namespace MBSimIntegrator {
       /**  maximum number of steps allowed during one call to the solver. (default 10000) */
       int maxSteps{10000};
 
-      bool plotOnRoot{true};
+      bool plotOnRoot{false};
 
       /** tolerance for position constraints */
       double gMax{1e-5};

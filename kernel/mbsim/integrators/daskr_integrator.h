@@ -63,7 +63,7 @@ namespace MBSimIntegrator {
       /** exclude algebraic variables from error test **/
       bool excludeAlgebraicVariables{true};
 
-      bool plotOnRoot{true};
+      bool plotOnRoot{false};
 
        /** tolerance for position constraints */
       double gMax{-1};
