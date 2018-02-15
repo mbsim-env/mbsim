@@ -501,6 +501,7 @@ namespace MBSim {
       void setUpdatebi(bool updbi_) { updbi = updbi_; }
       void setUpdatebc(bool updbc_) { updbc = updbc_; }
       void setUpdatezd(bool updzd_) { updzd = updzd_; }
+      void setUpdateW(bool updW_, int i=0) { updW[i] = updW_; }
 
       void resize_();
 

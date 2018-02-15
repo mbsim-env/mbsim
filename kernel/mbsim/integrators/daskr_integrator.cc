@@ -94,9 +94,18 @@ namespace MBSimIntegrator {
     self->getSystem()->setla(y(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1));
     self->getSystem()->setUpdatela(false);
     delta(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
-    delta(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getlaSize(),ipar[0]-1);
     delta(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1) = self->system->evalgd();
     delta(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1) = self->system->evalg();
+    if(self->system->getgSize() != self->system->getgdSize()) {
+      self->system->calclaSize(5);
+      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
+      self->system->setUpdateW(false);
+      delta(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1);
+      self->system->calclaSize(3);
+      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
+    }
+    else
+      delta(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1);
   }
 
   void DASKRIntegrator::rt(int* neq, double* t, double* y_, double* yd_, int* nrt, double* rval_, double* rpar, int* ipar) {
@@ -129,11 +138,8 @@ namespace MBSimIntegrator {
     int neq;
     if(formalism==DAE1 or formalism==DAE2)
       neq = zSize+system->getgdSize();
-    else if(formalism==GGL) {
-      if(system->getgSize() != system->getgdSize())
-        throw MBSimError("(DASKRIntegrator::integrate): size of g and gd must be equal for GGL formalism");
+    else if(formalism==GGL)
       neq = zSize+system->getgdSize()+system->getgSize();
-    }
     else
       neq = zSize;
 
