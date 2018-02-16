@@ -270,11 +270,21 @@ namespace MBSimIntegrator {
         if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
           system->projectGeneralizedPositions(3);
           system->projectGeneralizedVelocities(3);
-//          info(0)=1;
+          y(0,zSize-1) = system->getState();
+          system->resetUpToDate();
+          yd(0,zSize-1) = system->evalzd();
+          if(formalism)
+            y(zSize,zSize+system->getlaSize()-1) = system->getla();
+          info(0)=0;
         }
         else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
           system->projectGeneralizedVelocities(3);
-//          info(0)=1;
+          y(0,zSize-1) = system->getState();
+          system->resetUpToDate();
+          yd(0,zSize-1) = system->evalzd();
+          if(formalism)
+            y(zSize,zSize+system->getlaSize()-1) = system->getla();
+          info(0)=0;
         }
       }
       if(idid==5) {

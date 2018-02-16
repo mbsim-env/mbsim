@@ -170,7 +170,7 @@ namespace MBSimIntegrator {
     system->resetUpToDate();
     system->plot();
     yd(0,system->getzSize()-1) = system->evalzd();
-    if(formalism) y(system->getzSize(),system->getzSize()+system->getgdSize()-1) = system->getla();
+    if(formalism) y(system->getzSize(),system->getzSize()+system->getlaSize()-1) = system->getla();
 
     double s0 = clock();
     double time = 0;
@@ -210,10 +210,20 @@ namespace MBSimIntegrator {
         if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
           system->projectGeneralizedPositions(3);
           system->projectGeneralizedVelocities(3);
+          y(0,system->getzSize()-1) = system->getState();
+          system->resetUpToDate();
+          yd(0,system->getzSize()-1) = system->evalzd();
+          if(formalism)
+            y(system->getzSize(),system->getzSize()+system->getlaSize()-1) = system->getla();
           istate=1;
         }
         else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
           system->projectGeneralizedVelocities(3);
+          y(0,system->getzSize()-1) = system->getState();
+          system->resetUpToDate();
+          yd(0,system->getzSize()-1) = system->evalzd();
+          if(formalism)
+            y(system->getzSize(),system->getzSize()+system->getlaSize()-1) = system->getla();
           istate=1;
         }
       }
