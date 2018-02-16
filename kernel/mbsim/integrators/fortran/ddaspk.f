@@ -7,6 +7,43 @@
 #define DHEQR  DASPK_DHEQR
 #define DATV   DASPK_DATV
 #define D1MACH DUMACH
+C
+C     Copyright (c) 2002, The Regents of the University of California. 
+C     Produced at the Lawrence Livermore National Laboratory 
+C     Written by A.C. Hindmarsh, P. N. Brown, and L. R. Petzold.
+C     All rights reserved. 
+C     
+C     Redistribution and use in source and binary forms, with or without
+C     modification, are permitted provided that the following conditions
+C     are met:
+C     
+C     1. Redistributions of source code must retain the above copyright
+C     notice, this list of conditions and the disclaimer below.
+C     
+C     2. Redistributions in binary form must reproduce the above copyright
+C     notice, this list of conditions and the disclaimer (as noted below)
+C     in the documentation and/or other materials provided with the
+C     distribution.
+C     
+C     3. Neither the name of the UC/LLNL nor the names of its contributors
+C     may be used to endorse or promote products derived from this software
+C     without specific prior written permission.
+C     
+C     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+C     "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+C     LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+C     FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+C     REGENTS OF THE UNIVERSITY OF CALIFORNIA, THE U.S. DEPARTMENT OF ENERGY
+C     OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+C     SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+C     LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+C     DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+C     THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+C     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+C     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+C
+C     Source Code acquired from www.netlib.org
+C
       SUBROUTINE DDASPK (RES, NEQ, T, Y, YPRIME, TOUT, INFO, RTOL, ATOL,
      *   IDID, RWORK, LRW, IWORK, LIW, RPAR, IPAR, JAC, PSOL)
 C
