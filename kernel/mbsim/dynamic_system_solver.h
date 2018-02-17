@@ -203,6 +203,8 @@ namespace MBSim {
       double getStepSize() const { return dt; }
       void setStepSize(double dt_) { dt = dt_; }
 
+      int getzSize() const { return zSize; }
+
       fmatvec::Vec& getState() { return z; }
       const fmatvec::Vec& getState() const { return z; }
       void setState(const fmatvec::Vec &z_) { z = z_; }
@@ -568,8 +570,19 @@ namespace MBSim {
        */
       double dt;
 
+      /**
+       * \brief size of state vector
+       */
+      int zSize;
+
+      /**
+       * \brief state vector
+       */
       fmatvec::Vec z;
 
+      /**
+       * \brief derivative of state vector
+       */
       fmatvec::Vec zd;
 
       /**

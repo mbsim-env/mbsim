@@ -245,6 +245,8 @@ namespace MBSim {
       calcxSize();
       setxInd(0);
 
+      zSize = qSize + uSize[0] + xSize;
+
       calclaInverseKineticsSize();
       calcbInverseKineticsSize();
 

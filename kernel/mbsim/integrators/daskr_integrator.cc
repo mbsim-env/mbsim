@@ -119,14 +119,13 @@ namespace MBSimIntegrator {
 
     debugInit();
 
-    int zSize = system->getzSize();
     int neq;
     if(formalism==DAE1 or formalism==DAE2)
-      neq = zSize+system->getgdSize();
+      neq = system->getzSize()+system->getgdSize();
     else if(formalism==GGL)
-      neq = zSize+system->getgdSize()+system->getgSize();
+      neq = system->getzSize()+system->getgdSize()+system->getgSize();
     else
-      neq = zSize;
+      neq = system->getzSize();
 
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
@@ -142,8 +141,8 @@ namespace MBSimIntegrator {
     Vec yd(neq);
 
     if(z0.size()) {
-      if(z0.size() != zSize)
-        throw MBSimError("(DASKRIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+      if(z0.size() != system->getzSize())
+        throw MBSimError("(DASKRIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
     }
     else
@@ -198,12 +197,12 @@ namespace MBSimIntegrator {
       }
     }
     system->plot();
-    yd(0,zSize-1) = system->evalzd();
+    yd(0,system->getzSize()-1) = system->evalzd();
     if(formalism) {
       if(formalism<3) // DAE1 or DAE2
-        neq = zSize+system->getlaSize();
+        neq = system->getzSize()+system->getlaSize();
       else // GGL
-        neq = zSize+system->getgdSize()+system->getgSize();
+        neq = system->getzSize()+system->getgdSize()+system->getgSize();
     }
 
     double rPar;
@@ -221,9 +220,9 @@ namespace MBSimIntegrator {
     work(1) = dtMax; // maximum stepsize
     work(2) = dt0; // initial stepsize
     if(info(15)) {
-      for(int i=0; i<zSize; i++)
+      for(int i=0; i<system->getzSize(); i++)
         iWork(40+i) = 1; // differential variable
-      for(int i=zSize; i<neq; i++)
+      for(int i=system->getzSize(); i<neq; i++)
         iWork(40+i) = -1; // algebraic variable
     }
 
@@ -247,7 +246,7 @@ namespace MBSimIntegrator {
       if(idid==3 || fabs(t-tPlot)<epsroot) {
         system->setTime(t);
         system->resetUpToDate();
-        system->setzd(yd(0,zSize-1));
+        system->setzd(yd(0,system->getzSize()-1));
         system->setUpdatezd(false);
         if(formalism) system->setUpdatela(false);
         system->plot();
@@ -264,13 +263,13 @@ namespace MBSimIntegrator {
           system->projectGeneralizedPositions(3);
           system->projectGeneralizedVelocities(3);
           system->resetUpToDate();
-          yd(0,zSize-1) = system->evalzd();
+          yd(0,system->getzSize()-1) = system->evalzd();
           info(0)=0;
         }
         else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
           system->projectGeneralizedVelocities(3);
           system->resetUpToDate();
-          yd(0,zSize-1) = system->evalzd();
+          yd(0,system->getzSize()-1) = system->evalzd();
           info(0)=0;
         }
       }
@@ -278,7 +277,7 @@ namespace MBSimIntegrator {
         if(plotOnRoot) { // plot before shifting
           system->setTime(t);
           system->resetUpToDate();
-          system->setzd(yd(0,zSize-1));
+          system->setzd(yd(0,system->getzSize()-1));
           system->setUpdatezd(false);
           if(formalism) system->setUpdatela(false);
           system->plot();
@@ -296,12 +295,12 @@ namespace MBSimIntegrator {
           }
         }
         system->resetUpToDate();
-        yd(0,zSize-1) = system->evalzd();
+        yd(0,system->getzSize()-1) = system->evalzd();
         if(formalism) {
           if(formalism<3) // DAE1 or DAE2
-            neq = zSize+system->getlaSize();
+            neq = system->getzSize()+system->getlaSize();
           else // GGL
-            neq = zSize+system->getgdSize()+system->getgSize();
+            neq = system->getzSize()+system->getgdSize()+system->getgSize();
         }
         if(plotOnRoot) { // plot after shifting
           system->setTime(t);
@@ -311,7 +310,7 @@ namespace MBSimIntegrator {
         iPar[0] = neq;
         info(0)=0;
         work(2)=dt0;
-        for(int i=zSize; i<neq; i++)
+        for(int i=system->getzSize(); i<neq; i++)
           iWork(40+i) = -1; // algebraic variable
       }
       if(idid<0) throw MBSimError("Integrator DASKR failed with istate = "+toString(idid));
