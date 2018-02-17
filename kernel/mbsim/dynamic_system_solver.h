@@ -203,11 +203,11 @@ namespace MBSim {
       double getStepSize() const { return dt; }
       void setStepSize(double dt_) { dt = dt_; }
 
-      fmatvec::Vec& getState() { return zParent; }
-      const fmatvec::Vec& getState() const { return zParent; }
-      void setState(const fmatvec::Vec &z) { zParent = z; }
+      fmatvec::Vec& getState() { return z; }
+      const fmatvec::Vec& getState() const { return z; }
+      void setState(const fmatvec::Vec &z_) { z = z_; }
 
-      void setzd(const fmatvec::Vec &zd) { zdParent = zd; }
+      void setzd(const fmatvec::Vec &zd_) { zd = zd_; }
 
       const fmatvec::SqrMat& getG(bool check=true) const { assert((not check) or (not updG)); return G; }
       const fmatvec::SparseMat& getGs(bool check=true) const { assert((not check) or (not updG)); return Gs; }
@@ -233,6 +233,12 @@ namespace MBSim {
       const fmatvec::Vec& evalla() { if(updla) updatela(); return la; }
       const fmatvec::Vec& evalLa() { if(updLa) updateLa(); return La; }
 
+      fmatvec::Vec& getzParent() { return zParent; }
+      fmatvec::Vec& getzdParent() { return zdParent; }
+      fmatvec::Vec& getlaParent() { return laParent; }
+      fmatvec::Vec& getLaParent() { return LaParent; }
+      const fmatvec::Vec& getzParent() const { return zParent; }
+      const fmatvec::Vec& getzdParent() const { return zdParent; }
       const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
       const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
       const fmatvec::Vec& getlaParent() const { return laParent; }
@@ -241,6 +247,9 @@ namespace MBSim {
       const fmatvec::Vec& getgdParent() const { return gdParent; }
       const fmatvec::Vec& getresParent() const { return resParent; }
       const fmatvec::Vec& getrFactorParent() const { return rFactorParent; }
+
+      void resizezParent(int nz) { zParent.resize(nz); }
+      void resizezdParent(int nz) { zdParent.resize(nz); }
 
       DynamicSystemSolver* getDynamicSystemSolver() { return this; }
       bool getIntegratorExitRequest() { return integratorExitRequest; }
@@ -558,6 +567,10 @@ namespace MBSim {
        * \brief step size
        */
       double dt;
+
+      fmatvec::Vec z;
+
+      fmatvec::Vec zd;
 
       /**
        * \brief mass matrix
