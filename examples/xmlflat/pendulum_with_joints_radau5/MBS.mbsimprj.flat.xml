@@ -142,5 +142,6 @@
     <initialStepSize>0</initialStepSize>
     <maximumStepSize>1e-1</maximumStepSize>
     <formalism>'DAE3'</formalism>
+    <reducedForm>true</reducedForm>
   </RADAU5Integrator>
 </MBSimProject>

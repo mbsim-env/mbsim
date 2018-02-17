@@ -165,13 +165,12 @@ namespace MBSimIntegrator {
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
-    system->setStepSize(1);
     system->setTime(t);
     system->setState(y(0,system->getzSize()-1));
     system->resetUpToDate();
     system->plot();
     yd(0,system->getzSize()-1) = system->evalzd();
-    if(formalism) y(system->getzSize(),system->getzSize()+system->getgdSize()-1) = system->getla();
+    if(formalism) y(system->getzSize(),system->getzSize()+system->getlaSize()-1) = system->getla();
 
     double s0 = clock();
     double time = 0;
@@ -203,7 +202,7 @@ namespace MBSimIntegrator {
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1; 
+        s0 = s1;
         if(plotIntegrationData) integPlot<< t << " " << rWork(10) << " " << time << endl;
         tPlot = min(tEnd,tPlot + dtPlot);
 
@@ -211,10 +210,20 @@ namespace MBSimIntegrator {
         if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
           system->projectGeneralizedPositions(3);
           system->projectGeneralizedVelocities(3);
+          y(0,system->getzSize()-1) = system->getState();
+          system->resetUpToDate();
+          yd(0,system->getzSize()-1) = system->evalzd();
+          if(formalism)
+            y(system->getzSize(),system->getzSize()+system->getlaSize()-1) = system->getla();
           istate=1;
         }
         else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
           system->projectGeneralizedVelocities(3);
+          y(0,system->getzSize()-1) = system->getState();
+          system->resetUpToDate();
+          yd(0,system->getzSize()-1) = system->evalzd();
+          if(formalism)
+            y(system->getzSize(),system->getzSize()+system->getlaSize()-1) = system->getla();
           istate=1;
         }
       }

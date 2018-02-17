@@ -222,13 +222,16 @@ namespace MBSimIntegrator {
       iWork(4) = zSize;
       iWork(5) = system->getgdSize() + system->getgSize();
     }
+    int iJac = 0; // jacobian is computed internally by finite differences
+    int mlJac;
     if(reduced) {
       iWork(8) = system->getqSize();
       iWork(9) = system->getqSize();
+      mlJac = neq - system->getqSize()// jacobian is a reduced matrix
+;
     }
-
-    int iJac = 0; // jacobian is computed internally by finite differences
-    int mlJac = neq; // jacobian is a full matrix
+    else
+      mlJac = neq; // jacobian is a full matrix
     int muJac = mlJac; // need not to be defined if mlJac = neq
     int iMas = formalism>0; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2006  Martin Förg
+/* Copyright (C) 2004-2018  Martin Förg
  
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -20,60 +20,72 @@
  *
  */
 
-//  #ifndef _DASPK_INTEGRATOR_H_
-//  #define _DASPK_INTEGRATOR_H_
-//  
-//  #include "integrator.h"
-//  
-//  namespace MBSimIntegrator {
-//  
-//    /** \brief ODE-Integrator DASPK
-//      Integrator with root finding for ODEs.
-//      This integrator uses DASPK from http://www.netlib.org . */
-//    class DASPKIntegrator : public Integrator {
-//  
-//      private:
-//  
-//        static void res(double *t, double *z, double *zd, double *cj, double *delta, int *ires, double *rpar, int *ipar);
-//        static void fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_);
-//  
-//        /** maximal step size */
-//        double dtMax;
-//        /** minimal step size */
-//        double dtMin;
-//        /** Absolute Toleranz */
-//        fmatvec::Vec aTol;
-//        /** Relative Toleranz */
-//        double rTol;
-//        /** step size for the first step */
-//        double dt0;
-//        /**  maximum number of steps allowed during one call to the solver. (default 10000) */
-//        int maxSteps;
-//        /** use stiff (BDF) method */
-//        bool stiff;
-//        /** number of differential equations */
-//        static int zSize;
-//  
-//      public:
-//  
-//        DASPKIntegrator();
-//        ~DASPKIntegrator() {}
-//  
-//        void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
-//        void setMinimalStepSize(double dtMin_) {dtMin = dtMin_;}
-//        void setRelativeTolerance(double rTol_) {rTol = rTol_;}
-//        void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
-//        void setAbsoluteTolerance(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-//        void setInitialStepSize(double dt0_) {dt0 = dt0_;}
-//        void setmaxSteps(int maxSteps_) {maxSteps = maxSteps_;}
-//        void setStiff(bool flag) {stiff = flag;}
-//  
-//      using Integrator::integrate;
-//        void integrate();
-//        
-//        virtual void initializeUsingXML(xercesc::DOMElement *element);
-//    };
-//  
-//  }
-//  
-//  #endif
+#ifndef _DASPK_INTEGRATOR_H_
+#define _DASPK_INTEGRATOR_H_
+
+#include "integrator.h"
+
+namespace MBSimIntegrator {
+
+  /** \brief Petzold’s DAE solver DASPK
+   *
+   * This integrator uses DASPK (http://www.netlib.org/ode).
+   */
+  class DASPKIntegrator : public Integrator {
+
+    public:
+      enum Formalism {
+        ODE=0,
+        DAE1,
+        DAE2,
+        GGL
+      };
+
+    private:
+      typedef void (*Delta)(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+      static Delta delta[4];
+      static void deltaODE(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+      static void deltaDAE1(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+      static void deltaDAE2(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+      static void deltaGGL(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+
+      /** maximal step size */
+      double dtMax{0};
+      /** Absolute Toleranz */
+      fmatvec::Vec aTol;
+      /** Relative Toleranz */
+      fmatvec::Vec rTol;
+      /** step size for the first step */
+      double dt0{0};
+      /** formalism **/
+      Formalism formalism{DAE2};
+      /** exclude algebraic variables from error test **/
+      bool excludeAlgebraicVariables{true};
+
+       /** tolerance for position constraints */
+      double gMax{-1};
+      /** tolerance for velocity constraints */
+      double gdMax{-1};
+
+    public:
+      void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
+      void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol = rTol_; }
+      void setRelativeTolerance(double rTol_) { rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_); }
+      void setInitialStepSize(double dt0_) { dt0 = dt0_; }
+      void setFormalism(Formalism formalism_) { formalism = formalism_; }
+      void setExcludeAlgebraicVariablesFromErrorTest(bool excludeAlgebraicVariables_) { excludeAlgebraicVariables = excludeAlgebraicVariables_; }
+
+      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
+      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
+
+      using Integrator::integrate;
+      void integrate();
+
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+  };
+
+}
+
+#endif

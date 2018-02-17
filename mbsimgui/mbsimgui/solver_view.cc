@@ -62,6 +62,8 @@ namespace MBSimGUI {
     type.emplace_back("LSODAR integrator");
     type.emplace_back("LSODKR integrator");
     type.emplace_back("LSODI integrator");
+    type.emplace_back("DASPK integrator");
+    type.emplace_back("DASKR integrator");
     type.emplace_back("Time stepping integrator");
     type.emplace_back("Theta time stepping integrator");
     type.emplace_back("Time stepping SSC integrator");
@@ -134,28 +136,32 @@ namespace MBSimGUI {
     else if(i==7)
       return new LSODIIntegrator;
     else if(i==8)
-      return new TimeSteppingIntegrator;
+      return new DASPKIntegrator;
     else if(i==9)
-      return new ThetaTimeSteppingIntegrator;
+      return new DASKRIntegrator;
     else if(i==10)
-      return new TimeSteppingSSCIntegrator;
+      return new TimeSteppingIntegrator;
     else if(i==11)
-      return new HETS2Integrator;
+      return new ThetaTimeSteppingIntegrator;
     else if(i==12)
-      return new ExplicitEulerIntegrator;
+      return new TimeSteppingSSCIntegrator;
     else if(i==13)
-      return new ImplicitEulerIntegrator;
+      return new HETS2Integrator;
     else if(i==14)
-      return new RKSuiteIntegrator;
+      return new ExplicitEulerIntegrator;
     else if(i==15)
-      return new BoostOdeintDOS_RKDOPRI5;
+      return new ImplicitEulerIntegrator;
     else if(i==16)
-      return new BoostOdeintDOS_BulirschStoer;
+      return new RKSuiteIntegrator;
     else if(i==17)
-      return new BoostOdeintDOS_Rosenbrock4;
+      return new BoostOdeintDOS_RKDOPRI5;
     else if(i==18)
-      return new Eigenanalyzer;
+      return new BoostOdeintDOS_BulirschStoer;
     else if(i==19)
+      return new BoostOdeintDOS_Rosenbrock4;
+    else if(i==20)
+      return new Eigenanalyzer;
+    else if(i==21)
       return new HarmonicResponseAnalyzer;
     return nullptr;
   }
@@ -177,30 +183,34 @@ namespace MBSimGUI {
       i=6;
     else if(dynamic_cast<LSODIIntegrator*>(solver))
       i=7;
-    else if(dynamic_cast<TimeSteppingIntegrator*>(solver))
+    else if(dynamic_cast<DASPKIntegrator*>(solver))
       i=8;
-    else if(dynamic_cast<ThetaTimeSteppingIntegrator*>(solver))
+    else if(dynamic_cast<DASKRIntegrator*>(solver))
       i=9;
-    else if(dynamic_cast<TimeSteppingSSCIntegrator*>(solver))
+    else if(dynamic_cast<TimeSteppingIntegrator*>(solver))
       i=10;
-    else if(dynamic_cast<HETS2Integrator*>(solver))
+    else if(dynamic_cast<ThetaTimeSteppingIntegrator*>(solver))
       i=11;
-    else if(dynamic_cast<ExplicitEulerIntegrator*>(solver))
+    else if(dynamic_cast<TimeSteppingSSCIntegrator*>(solver))
       i=12;
-    else if(dynamic_cast<ImplicitEulerIntegrator*>(solver))
+    else if(dynamic_cast<HETS2Integrator*>(solver))
       i=13;
-    else if(dynamic_cast<RKSuiteIntegrator*>(solver))
+    else if(dynamic_cast<ExplicitEulerIntegrator*>(solver))
       i=14;
-    else if(dynamic_cast<BoostOdeintDOS_RKDOPRI5*>(solver))
+    else if(dynamic_cast<ImplicitEulerIntegrator*>(solver))
       i=15;
-    else if(dynamic_cast<BoostOdeintDOS_BulirschStoer*>(solver))
+    else if(dynamic_cast<RKSuiteIntegrator*>(solver))
       i=16;
-    else if(dynamic_cast<BoostOdeintDOS_Rosenbrock4*>(solver))
+    else if(dynamic_cast<BoostOdeintDOS_RKDOPRI5*>(solver))
       i=17;
-    else if(dynamic_cast<Eigenanalyzer*>(solver))
+    else if(dynamic_cast<BoostOdeintDOS_BulirschStoer*>(solver))
       i=18;
-    else if(dynamic_cast<HarmonicResponseAnalyzer*>(solver))
+    else if(dynamic_cast<BoostOdeintDOS_Rosenbrock4*>(solver))
       i=19;
+    else if(dynamic_cast<Eigenanalyzer*>(solver))
+      i=20;
+    else if(dynamic_cast<HarmonicResponseAnalyzer*>(solver))
+      i=21;
     updateText();
   }
 

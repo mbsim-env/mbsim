@@ -141,6 +141,26 @@ namespace MBSimGUI {
       ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps, *formalism, *gMax, *gdMax;
   };
 
+  class DASPKIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      DASPKIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *formalism, *gMax, *gdMax;
+  };
+
+  class DASKRIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      DASKRIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *formalism, *gMax, *gdMax;
+  };
+
   class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:

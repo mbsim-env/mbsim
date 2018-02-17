@@ -306,6 +306,10 @@ namespace MBSimGUI {
       return new BoostOdeintDOS_BulirschStoer;
     else if(E(element)->getTagName()==MBSIMINT%"BoostOdeintDOS_Rosenbrock4")
       return new BoostOdeintDOS_Rosenbrock4;
+    else if(E(element)->getTagName()==MBSIMINT%"DASPKIntegrator")
+      return new DASPKIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"DASKRIntegrator")
+      return new DASKRIntegrator;
     else if(E(element)->getTagName()==MBSIMANALYZER%"Eigenanalyzer")
       return new Eigenanalyzer;
     else if(E(element)->getTagName()==MBSIMANALYZER%"HarmonicResponseAnalyzer")

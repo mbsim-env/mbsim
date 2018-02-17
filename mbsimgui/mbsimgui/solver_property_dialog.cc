@@ -545,6 +545,118 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  DASPKIntegratorPropertyDialog::DASPKIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+    addTab("Tolerances");
+    addTab("Step size");
+    addTab("Extra");
+
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", absTol);
+
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", relTol);
+
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
+    addToTab("Step size", initialStepSize);
+
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
+    addToTab("Step size", maximumStepSize);
+
+    vector<QString> list;
+    list.emplace_back("\"ODE\"");
+    list.emplace_back("\"DAE1\"");
+    list.emplace_back("\"DAE2\"");
+    list.emplace_back("\"GGL\"");
+    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"formalism");
+    addToTab("General", formalism);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
+  }
+
+  DOMElement* DASPKIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximumStepSize->initializeUsingXML(item->getXMLElement());
+    formalism->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DASPKIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximumStepSize->writeXMLFile(item->getXMLElement());
+    formalism->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
+  DASKRIntegratorPropertyDialog::DASKRIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+    addTab("Tolerances");
+    addTab("Step size");
+    addTab("Extra");
+
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", absTol);
+
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", relTol);
+
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
+    addToTab("Step size", initialStepSize);
+
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
+    addToTab("Step size", maximumStepSize);
+
+    vector<QString> list;
+    list.emplace_back("\"ODE\"");
+    list.emplace_back("\"DAE1\"");
+    list.emplace_back("\"DAE2\"");
+    list.emplace_back("\"GGL\"");
+    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"formalism");
+    addToTab("General", formalism);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
+  }
+
+  DOMElement* DASKRIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximumStepSize->initializeUsingXML(item->getXMLElement());
+    formalism->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DASKRIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximumStepSize->writeXMLFile(item->getXMLElement());
+    formalism->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
   TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
     addTab("Tolerances");

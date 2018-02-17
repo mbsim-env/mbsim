@@ -989,4 +989,157 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="DASPKIntegrator" substitutionGroup="Integrator" type="DASPKIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Löser für differential algebraische Gleichungen, basierend auf dem Backward Differentiation Formula (BDF) Verfahren.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="DASPKIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:choice>
+            <xs:element name="relativeTolerance" type="pv:unknownVector" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Schrittweitenvorschlag zu Beginn der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximumStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Maximal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="formalism" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl des Formalismus.
+              <ul>
+                <li>ODE: gewöhnliches Differentialgleichungssystem</li>
+                <li>DAE1: differential-algebraisches System vom Index 1</li>
+                <li>DAE2: differential-algebraisches System vom Index 2</li>
+                <li>GGL: differential-algebraisches System vom Index 2 mit Gear Gupta Leimkuhler Stabilisierung</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="excludeAlgebraicVariablesFromErrorTest" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Algebraische Variablen vom Fehlertest ausschließen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Lageebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForVelocityConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Geschwindigkeitsebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="DASKRIntegrator" substitutionGroup="Integrator" type="DASKRIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Löser für differential algebraische Gleichungen, basierend auf dem Backward Differentiation Formula (BDF) Verfahren mit Schaltpunktsuche.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="DASKRIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:choice>
+            <xs:element name="relativeTolerance" type="pv:unknownVector" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Schrittweitenvorschlag zu Beginn der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximumStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Maximal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="formalism" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl des Formalismus.
+              <ul>
+                <li>ODE: gewöhnliches Differentialgleichungssystem</li>
+                <li>DAE1: differential-algebraisches System vom Index 1</li>
+                <li>DAE2: differential-algebraisches System vom Index 2</li>
+                <li>GGL: differential-algebraisches System vom Index 2 mit Gear Gupta Leimkuhler Stabilisierung</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="excludeAlgebraicVariablesFromErrorTest" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Algebraische Variablen vom Fehlertest ausschließen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="plotOnRoot" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Gibt an, ob eine Plot-Ausgabe geschrieben werden soll, wenn eine Indikatorfunktion einen Nulldurchgang hat.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Lageebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForVelocityConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Geschwindigkeitsebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>

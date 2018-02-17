@@ -87,6 +87,8 @@ namespace MBSimIntegrator {
       };
 
     protected:
+      void resize(MBSim::DynamicSystemSolver *system);
+
       MBSim::DynamicSystemSolver* sysT1{NULL};
       MBSim::DynamicSystemSolver* sysT2{NULL};
       MBSim::DynamicSystemSolver* sysT3{NULL};

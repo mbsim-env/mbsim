@@ -237,6 +237,7 @@ namespace MBSim {
       const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
       const fmatvec::Vec& getlaParent() const { return laParent; }
       const fmatvec::Vec& getLaParent() const { return LaParent; }
+      const fmatvec::Vec& getgParent() const { return gParent; }
       const fmatvec::Vec& getgdParent() const { return gdParent; }
       const fmatvec::Vec& getresParent() const { return resParent; }
       const fmatvec::Vec& getrFactorParent() const { return rFactorParent; }
@@ -500,8 +501,7 @@ namespace MBSim {
       void setUpdatebi(bool updbi_) { updbi = updbi_; }
       void setUpdatebc(bool updbc_) { updbc = updbc_; }
       void setUpdatezd(bool updzd_) { updzd = updzd_; }
-
-      void resize_();
+      void setUpdateW(bool updW_, int i=0) { updW[i] = updW_; }
 
       /**
        * \brief references to relative distances of dynamic system parent

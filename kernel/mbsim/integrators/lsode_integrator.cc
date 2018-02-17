@@ -147,7 +147,7 @@ namespace MBSimIntegrator {
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1; 
+        s0 = s1;
         if(plotIntegrationData) integPlot<< t << " " << rWork(10) << " " << time << endl;
         tPlot = min(tEnd,tPlot + dtPlot);
 
