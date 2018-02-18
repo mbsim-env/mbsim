@@ -90,7 +90,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
           it!=boost::filesystem::directory_iterator(); it++) {
         if(it->path().string().length()<=string(".mbsimmodule.xml").length()) continue;
         if(it->path().string().substr(it->path().string().length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
-        std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
+        std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it, nullptr, false);
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
             getFirstElementChild();
             e!=nullptr; e=e->getNextElementSibling()) {
@@ -205,7 +205,7 @@ int MBSimXML::preInit(vector<string> args, DynamicSystemSolver*& dss, Solver*& s
     return x.size()>0 ? x[0]!='-' : false;
   });
   shared_ptr<DOMParser> parser=DOMParser::create();
-  shared_ptr<xercesc::DOMDocument> doc=parser->parse(*fileIt);
+  shared_ptr<xercesc::DOMDocument> doc=parser->parse(*fileIt, nullptr, false);
   DOMElement *e=doc->getDocumentElement();
 
   // check root element

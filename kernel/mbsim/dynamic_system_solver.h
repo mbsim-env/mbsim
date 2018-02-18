@@ -432,8 +432,6 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      static DynamicSystemSolver* readXMLFile(const std::string &filename);
-
       /**
        * \brief set tolerance for projection of generalized position
        * \param tolerance

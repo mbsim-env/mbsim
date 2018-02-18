@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
 
       // load MBSim project XML document
       cout<<"Load MBSim model from XML project file."<<endl;
-      std::shared_ptr<xercesc::DOMDocument> modelDoc=parser->parse(inputFilename, &dependencies);
+      std::shared_ptr<xercesc::DOMDocument> modelDoc=parser->parse(inputFilename, &dependencies, false);
       DOMElement *modelEle=modelDoc->getDocumentElement();
 
       // create a clean evaluator (get the evaluator name first form the dom)

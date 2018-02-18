@@ -49,14 +49,6 @@ namespace MBSimIntegrator {
     if(e) setWriteIntegrationSummary(E(e)->getText<bool>());
   }
 
-  Integrator* Integrator::readXMLFile(const string &filename) {
-    shared_ptr<DOMParser> parser=DOMParser::create();
-    shared_ptr<DOMDocument> doc=parser->parse(filename);
-    DOMElement *e=doc->getDocumentElement();
-    auto *integrator=ObjectFactory::createAndInit<Integrator>(e);
-    return integrator;
-  }
-
   // This function is called first by each implementation of Integrator::integrate.
   // We modify here some integrator date for debugging (valgrind) purposes.
   void Integrator::debugInit() {

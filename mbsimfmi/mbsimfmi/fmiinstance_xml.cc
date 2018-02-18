@@ -22,7 +22,7 @@ namespace MBSimFMI {
   
     // load MBSim project XML document
     msg(Debug)<<"Read MBSim flat XML model file."<<endl;
-    std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(mbsimflatxmlfile);
+    std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(mbsimflatxmlfile, nullptr, false);
   
     // create object for DynamicSystemSolver
     msg(Debug)<<"Create DynamicSystemSolver."<<endl;

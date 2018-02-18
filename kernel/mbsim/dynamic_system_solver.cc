@@ -1431,14 +1431,6 @@ namespace MBSim {
       setUseConstraintSolverForPlot(E(e)->getText<bool>());
   }
 
-  DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
-    shared_ptr<DOMParser> parser=DOMParser::create();
-    shared_ptr<DOMDocument> doc=parser->parse(filename);
-    DOMElement *e = doc->getDocumentElement();
-    DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory::createAndInit<Group>(e));
-    return dss;
-  }
-
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {
     Object *obj = dynamic_cast<Object*>(eleList[i]);
     if(obj) {

@@ -43,7 +43,7 @@ namespace MBSimFMI {
   
     // load MBSim project XML document
     msg(Debug)<<"Read MBSim XML model file."<<endl;
-    std::shared_ptr<xercesc::DOMDocument> doc=validatingParser->parse(mbsimxmlfile);
+    std::shared_ptr<xercesc::DOMDocument> doc=validatingParser->parse(mbsimxmlfile, nullptr, false);
     xercesc::DOMElement *ele=doc->getDocumentElement();
 
     // create a clean evaluator (get the evaluator name first form the dom)

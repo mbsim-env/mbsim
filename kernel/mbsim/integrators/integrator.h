@@ -93,8 +93,6 @@ namespace MBSimIntegrator {
        */
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      static Integrator* readXMLFile(const std::string &filename);
-
       void setPlotIntegrationData(bool plotIntegrationData_) { plotIntegrationData = plotIntegrationData_; }
 
       void setWriteIntegrationSummary(bool writeIntegrationSummary_) { writeIntegrationSummary = writeIntegrationSummary_; }
