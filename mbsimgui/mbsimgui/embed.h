@@ -50,6 +50,7 @@ namespace MBSimGUI {
               QString fileName = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"));
               QFileInfo fileInfo(MBXMLUtils::E(ele1)->convertPath(fileName.toStdString()).string().c_str());
               xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
+              MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
               param = Parameter::initializeParametersUsingXML(doc->getDocumentElement());
               embededParam = true;
             }
@@ -66,6 +67,7 @@ namespace MBSimGUI {
               QString fileName = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"));
               QFileInfo fileInfo(MBXMLUtils::E(ele1)->convertPath(fileName.toStdString()).string().c_str());
               xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
+              MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
               ele2 = doc->getDocumentElement();
               embeded = true;
             }
