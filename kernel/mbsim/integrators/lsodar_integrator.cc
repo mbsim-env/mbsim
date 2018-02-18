@@ -198,7 +198,7 @@ namespace MBSimIntegrator {
           istate=1;
         }
       }
-      if(istate==3) {
+      else if(istate==3) {
         if(plotOnRoot) { // plot before shifting
           system->setTime(t);
 //          system->setState(z); Not needed as the integrator uses the state of the system
@@ -221,7 +221,7 @@ namespace MBSimIntegrator {
         istate=1;
         rWork(4)=dt0;
       }
-      if(istate<0) throw MBSimError("Integrator LSODAR failed with istate = "+toString(istate));
+      else if(istate<0) throw MBSimError("Integrator LSODAR failed with istate = "+toString(istate));
     }
   }
 

@@ -273,7 +273,7 @@ namespace MBSimIntegrator {
           info(0)=0;
         }
       }
-      if(idid==5) {
+      else if(idid==5) {
         if(plotOnRoot) { // plot before shifting
           system->setTime(t);
           system->resetUpToDate();
@@ -313,7 +313,7 @@ namespace MBSimIntegrator {
         for(int i=system->getzSize(); i<neq; i++)
           iWork(40+i) = -1; // algebraic variable
       }
-      if(idid<0) throw MBSimError("Integrator DASKR failed with istate = "+toString(idid));
+      else if(idid<0) throw MBSimError("Integrator DASKR failed with istate = "+toString(idid));
     }
 
     if(plotIntegrationData) integPlot.close();

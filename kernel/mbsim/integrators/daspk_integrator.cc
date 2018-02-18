@@ -235,7 +235,7 @@ namespace MBSimIntegrator {
           info(0)=0;
         }
       }
-      if(idid<0) throw MBSimError("Integrator DASPK failed with istate = "+toString(idid));
+      else if(idid<0) throw MBSimError("Integrator DASPK failed with istate = "+toString(idid));
     }
 
     if(plotIntegrationData) integPlot.close();

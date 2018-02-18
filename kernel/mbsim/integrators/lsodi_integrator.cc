@@ -217,7 +217,7 @@ namespace MBSimIntegrator {
           istate=1;
         }
       }
-      if(istate<0) throw MBSimError("Integrator LSODI failed with istate = "+toString(istate));
+      else if(istate<0) throw MBSimError("Integrator LSODI failed with istate = "+toString(istate));
     }
 
     if(plotIntegrationData) integPlot.close();
