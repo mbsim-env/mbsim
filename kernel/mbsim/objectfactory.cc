@@ -70,8 +70,8 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
     std::shared_ptr<DOMEvalExceptionStack> stack=std::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
     if(stack) {
       stack->generateWhat(str, indent.substr(0, indent.length()-2));
-      str<<indent<<"+++ Created by "<<possibleType(nr, exVec.size(), it->first)<<endl;
-      str<<DOMEvalException::errorLocationOutput(indent, stack->getLocationStack());
+      str<<DOMEvalException::errorLocationOutput(indent, stack->getLocationStack(),
+        "Created by "+possibleType(nr, exVec.size(), it->first), true);
     }
   }
   nr=1;
