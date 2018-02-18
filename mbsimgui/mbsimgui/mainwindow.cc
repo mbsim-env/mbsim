@@ -81,7 +81,7 @@ namespace MBSimGUI {
 
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), autoSave(false), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
     // use html output of MBXMLUtils
-    static string HTMLOUTPUT="MBXMLUTILS_ERROROUTPUT=XPATHHTML";
+    static string HTMLOUTPUT="MBXMLUTILS_ERROROUTPUT=HTMLXPATH";
     putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
 
     serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
@@ -860,7 +860,7 @@ namespace MBSimGUI {
     currentTask = task;
 
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-    doc->setDocumentURI(X()%"file://Project.mbsimprj.xml");
+    doc->setDocumentURI(this->doc->getDocumentURI());
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
     projectView->getProject()->processIDAndHref(newDocElement);

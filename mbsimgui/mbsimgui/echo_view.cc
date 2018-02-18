@@ -106,20 +106,18 @@ namespace MBSimGUI {
   void walk(QModelIndex index, EmbeddingTreeModel *model, const QUrl &link) {
     // get the filename from the error message
     boost::filesystem::path errorFile(boost::filesystem::absolute(link.path().toStdString()));
-    errorFile.remove_filename();//MISSING fix strange filename change of mbsimgui
-    errorFile/="MBS.mbsim.xml";//MISSING fix strange filename change of mbsimgui
 
     int row = 0;
     // loop over all elements in the current level
     while(index.isValid()) {
       // get the item of the current element (index)
-      EmbedItemData *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
+      EmbedItemData *item = dynamic_cast<EmbedItemData*>(model->getItem(index)->getItemData());
       // handle only embed elements but not parameters
-      if(item->getType().toStdString()!="scalarParameter") { //MISSING what is the clean way to detect embed elements from parameter elements
+      if(item) {
         // get the root element of this embed
         xercesc::DOMElement *e = item->getXMLElement();
         // if the file name matchs than the error is from this embed
-        if(errorFile==E(e)->getOriginalFilename()) {
+        if(errorFile==boost::filesystem::absolute(D(e->getOwnerDocument())->getDocumentFilename())) {
           // evalute the xpath expression of the error message in this embed ...
           xercesc::DOMNode *n=D(e->getOwnerDocument())->evalRootXPathExpression(link.queryItemValue("xpath").toStdString());
           // ... the node n is there the error occured:
