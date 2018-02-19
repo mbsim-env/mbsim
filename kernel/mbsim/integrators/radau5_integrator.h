@@ -75,8 +75,16 @@ namespace MBSimIntegrator {
       /** reduced form **/
       bool reduced{false};
 
+       /** tolerance for position constraints */
+      double gMax{-1};
+      /** tolerance for velocity constraints */
+      double gdMax{-1};
+
     public:
       ~RADAU5Integrator() override = default;
+
+      double getToleranceForPositionConstraints() { return gMax; }
+      double getToleranceForVelocityConstraints() { return gdMax; }
 
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
       void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
@@ -87,6 +95,9 @@ namespace MBSimIntegrator {
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
       void setReducedForm(bool reduced_) { reduced = reduced_; }
+
+      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
+      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
       void integrate() override;

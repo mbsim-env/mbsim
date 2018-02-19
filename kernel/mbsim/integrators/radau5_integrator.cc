@@ -141,6 +141,18 @@ namespace MBSimIntegrator {
 
       if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
+
+    }
+
+    // check drift
+    if(self->getToleranceForPositionConstraints()>=0 and self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
+      self->getSystem()->projectGeneralizedPositions(3);
+      self->getSystem()->projectGeneralizedVelocities(3);
+      *irtrn=-1;
+    }
+    else if(self->getToleranceForVelocityConstraints()>=0 and self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
+      self->getSystem()->projectGeneralizedVelocities(3);
+      *irtrn=-1;
     }
   }
 
@@ -259,12 +271,16 @@ namespace MBSimIntegrator {
 
     s0 = clock();
 
-    RADAU5(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt0,
-	rTol(),aTol(),&iTol,
-	nullptr,&iJac,&mlJac,&muJac,
-	*mass[reduced],&iMas,&mlMas,&muMas,
-	plot,&out,
-	work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
+    while(t<tEnd) {
+      RADAU5(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt0,
+          rTol(),aTol(),&iTol,
+          nullptr,&iJac,&mlJac,&muJac,
+          *mass[reduced],&iMas,&mlMas,&muMas,
+          plot,&out,
+          work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
+
+      z = system->getState();
+    }
 
     if(plotIntegrationData) integPlot.close();
 
@@ -307,6 +323,10 @@ namespace MBSimIntegrator {
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
     if(e) setReducedForm((E(e)->getText<bool>()));
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
 }
