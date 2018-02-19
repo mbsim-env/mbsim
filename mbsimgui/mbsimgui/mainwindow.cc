@@ -351,12 +351,14 @@ namespace MBSimGUI {
     else
       echoView->setCurrentIndex(1);
     if(currentTask==1) {
-      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
-      QModelIndex index = elementView->selectionModel()->currentIndex();
-      auto *model = static_cast<ElementTreeModel*>(elementView->model());
-      auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-      if(element)
-        highlightObject(element->getID());
+      if(bfs::exists(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml")) {
+        inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
+        QModelIndex index = elementView->selectionModel()->currentIndex();
+        auto *model = static_cast<ElementTreeModel*>(elementView->model());
+        auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+        if(element)
+          highlightObject(element->getID());
+      }
     }
     else {
       if(exitStatus == QProcess::NormalExit) {

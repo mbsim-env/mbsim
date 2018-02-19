@@ -103,33 +103,38 @@ namespace MBSimGUI {
     return size;
   }
 
-  void walk(QModelIndex index, EmbeddingTreeModel *model, const QUrl &link) {
-    // get the filename from the error message
-    boost::filesystem::path errorFile(boost::filesystem::absolute(link.path().toStdString()));
+  namespace {
+    bool walk(QModelIndex index, EmbeddingTreeModel *model, const QUrl &link) {
+      // get the filename from the error message
+      boost::filesystem::path errorFile(boost::filesystem::absolute(link.path().toStdString()));
 
-    int row = 0;
-    // loop over all elements in the current level
-    while(index.isValid()) {
-      // get the item of the current element (index)
-      EmbedItemData *item = dynamic_cast<EmbedItemData*>(model->getItem(index)->getItemData());
-      // handle only embed elements but not parameters
-      if(item) {
-        // get the root element of this embed
-        xercesc::DOMElement *e = item->getXMLElement();
-        // if the file name matchs than the error is from this embed
-        if(errorFile==boost::filesystem::absolute(D(e->getOwnerDocument())->getDocumentFilename())) {
-          // evalute the xpath expression of the error message in this embed ...
-          xercesc::DOMNode *n=D(e->getOwnerDocument())->evalRootXPathExpression(link.queryItemValue("xpath").toStdString());
-          // ... the node n is there the error occured:
-          cout<<"MISSING this XML node generated the error addr="<<n<<" name="<<X()%n->getNodeName()<<" value="<<X()%n->getNodeValue()<<endl;
+      int row = 0;
+      // loop over all elements in the current level
+      while(index.isValid()) {
+        // get the item of the current element (index)
+        EmbedItemData *item = dynamic_cast<EmbedItemData*>(model->getItem(index)->getItemData());
+        // handle only embed elements but not parameters
+        if(item) {
+          // get the root element of this embed
+          xercesc::DOMElement *e = item->getXMLElement();
+          // if the file name matchs than the error is from this embed
+          if(errorFile==boost::filesystem::absolute(D(e->getOwnerDocument())->getDocumentFilename())) {
+            // evalute the xpath expression of the error message in this embed ...
+            xercesc::DOMNode *n=D(e->getOwnerDocument())->evalRootXPathExpression(link.queryItemValue("xpath").toStdString());
+            // ... the node n is there the error occured:
+            cout<<"MISSING this XML node generated the error addr="<<n<<" name="<<X()%n->getNodeName()<<" value="<<X()%n->getNodeValue()<<endl;
+            return true;
+          }
         }
+
+        // walk child elements
+        if(walk(model->index(0, 0, index), model, link))
+          return true;
+
+        // next element on this level
+        index = index.sibling(++row, 0);
       }
-
-      // walk child elements
-      walk(model->index(0, 0, index), model, link);
-
-      // next element on this level
-      index = index.sibling(++row, 0);
+      return false;
     }
   }
 
@@ -139,7 +144,9 @@ namespace MBSimGUI {
     // get the model of the embedding
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(mw->getEmbeddingView()->model());
     // walk all embeded elements
-    walk(model->index(0,0), model, link);
+    if(!walk(model->index(0,0), model, link))
+      cout<<"MISSING No XML node found for file="<<link.path().toStdString()<<endl<<
+            "        xpath="<<link.queryItemValue("xpath").toStdString()<<endl;
   }
 
   void EchoView::outLinkClicked(const QUrl &link) {
