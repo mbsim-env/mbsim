@@ -50,7 +50,6 @@ namespace MBSimIntegrator {
     Vec zd(ipar[0], zd_);
     Vec delta(ipar[0], delta_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(z);
     self->getSystem()->resetUpToDate();
     delta = zd - self->system->evalzd();
   }
@@ -61,9 +60,7 @@ namespace MBSimIntegrator {
     Vec yd(ipar[0], yd_);
     Vec delta(ipar[0], delta_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),ipar[0]-1));
     self->getSystem()->setUpdatela(false);
     delta(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
     delta(self->system->getzSize(),ipar[0]-1) = self->system->evalW().T()*yd(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1) + self->system->evalwb();
@@ -75,9 +72,7 @@ namespace MBSimIntegrator {
     Vec yd(ipar[0], yd_);
     Vec delta(ipar[0], delta_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),ipar[0]-1));
     self->getSystem()->setUpdatela(false);
     delta(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
     delta(self->system->getzSize(),ipar[0]-1) = self->system->evalgd();
@@ -89,9 +84,7 @@ namespace MBSimIntegrator {
     Vec yd(ipar[0], yd_);
     Vec delta(ipar[0], delta_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1));
     self->getSystem()->setUpdatela(false);
     delta(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
     delta(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getlaSize(),ipar[0]-1);
@@ -107,28 +100,34 @@ namespace MBSimIntegrator {
 
     debugInit();
 
-    int zSize = system->getzSize();
     int neq;
     if(formalism==DAE1 or formalism==DAE2)
-      neq = zSize+system->getgdSize();
+      neq = system->getzSize()+system->getgdSize();
     else if(formalism==GGL)
-      neq = zSize+system->getgdSize()+system->getgSize();
+      neq = system->getzSize()+system->getgdSize()+system->getgSize();
     else
-      neq = zSize;
+      neq = system->getzSize();
 
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
 
-    Vec y(neq);
+    // Enlarge workspace for state vector so that the integrator can use it (avoids copying of state vector)
+    system->resizezParent(neq);
+    system->updatezRef(system->getzParent());
+    if(formalism) {
+      system->getlaParent() >> system->getzParent()(system->getzSize(),system->getzSize()+system->getlaSize()-1);
+      system->updatelaRef(system->getlaParent());
+    }
+    // Integrator uses its own workspace for the state derivative
     Vec yd(neq);
-    Vec z = y(0,zSize-1);
+
     if(z0.size()) {
-      if(z0.size() != zSize)
-        throw MBSimError("(DASPKIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
-      z = z0;
+      if(z0.size() != system->getzSize())
+        throw MBSimError("(DASPKIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+      system->setState(z0);
     }
     else
-      z = system->evalz0();
+      system->evalz0();
 
     if(aTol.size() == 0)
       aTol.resize(1,INIT,1e-6);
@@ -178,20 +177,18 @@ namespace MBSimIntegrator {
     work(1) = dtMax; // maximum stepsize
     work(2) = dt0; // initial stepsize
     if(info(15)) {
-      for(int i=0; i<zSize; i++)
+      for(int i=0; i<system->getzSize(); i++)
         iWork(40+i) = 1; // differential variable
-      for(int i=zSize; i<neq; i++)
+      for(int i=system->getzSize(); i<neq; i++)
         iWork(40+i) = -1; // algebraic variable
     }
 
     int idid;
 
     system->setTime(t);
-    system->setState(y(0,zSize-1));
     system->resetUpToDate();
     system->plot();
-    yd(0,zSize-1) = system->evalzd();
-    if(formalism) y(zSize,zSize+system->getgdSize()-1) = system->getla();
+    yd(0,system->getzSize()-1) = system->evalzd();
 
     double s0 = clock();
     double time = 0;
@@ -207,17 +204,13 @@ namespace MBSimIntegrator {
 
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
-      DDASPK(*delta[formalism],&neq,&t,y(),yd(),&tPlot,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,&rPar,iPar,nullptr,nullptr);
+      DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tPlot,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,&rPar,iPar,nullptr,nullptr);
       if(idid==3 || fabs(t-tPlot)<epsroot) {
         system->setTime(t);
-        system->setState(y(0,zSize-1));
         system->resetUpToDate();
-        system->setzd(yd(0,zSize-1));
+        system->setzd(yd(0,system->getzSize()-1));
         system->setUpdatezd(false);
-        if(formalism) {
-          system->setla(y(zSize,zSize+system->getgdSize()-1));
-          system->setUpdatela(false);
-        }
+        if(formalism) system->setUpdatela(false);
         system->plot();
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< work(6) << "\r"<<flush;
@@ -231,24 +224,18 @@ namespace MBSimIntegrator {
         if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
           system->projectGeneralizedPositions(3);
           system->projectGeneralizedVelocities(3);
-          y(0,zSize-1) = system->getState();
           system->resetUpToDate();
-          yd(0,zSize-1) = system->evalzd();
-          if(formalism)
-            y(zSize,zSize+system->getlaSize()-1) = system->getla();
+          yd(0,system->getzSize()-1) = system->evalzd();
           info(0)=0;
         }
         else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
           system->projectGeneralizedVelocities(3);
-          y(0,zSize-1) = system->getState();
           system->resetUpToDate();
-          yd(0,zSize-1) = system->evalzd();
-          if(formalism)
-            y(zSize,zSize+system->getlaSize()-1) = system->getla();
+          yd(0,system->getzSize()-1) = system->evalzd();
           info(0)=0;
         }
       }
-      if(idid<0) throw MBSimError("Integrator DASPK failed with istate = "+toString(idid));
+      else if(idid<0) throw MBSimError("Integrator DASPK failed with istate = "+toString(idid));
     }
 
     if(plotIntegrationData) integPlot.close();

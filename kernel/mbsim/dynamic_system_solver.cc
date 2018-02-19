@@ -245,6 +245,8 @@ namespace MBSim {
       calcxSize();
       setxInd(0);
 
+      zSize = qSize + uSize[0] + xSize;
+
       calclaInverseKineticsSize();
       calcbInverseKineticsSize();
 
@@ -1309,10 +1311,11 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatezRef(const Vec &zParent) {
+    z >> zParent(0, getzSize()-1);
 
-    q >> (zParent(0, qSize - 1));
-    u >> (zParent(qSize, qSize + uSize[0] - 1));
-    x >> (zParent(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
+    q >> (z(0, qSize - 1));
+    u >> (z(qSize, qSize + uSize[0] - 1));
+    x >> (z(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
 
     updateqRef(q);
     updateuRef(u);
@@ -1320,10 +1323,11 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatezdRef(const Vec &zdParent) {
+    zd >> zdParent(0, getzSize()-1);
 
-    qd >> (zdParent(0, qSize - 1));
-    ud >> (zdParent(qSize, qSize + uSize[0] - 1));
-    xd >> (zdParent(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
+    qd >> (zd(0, qSize - 1));
+    ud >> (zd(qSize, qSize + uSize[0] - 1));
+    xd >> (zd(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
 
     updateqdRef(qd);
     updateudRef(ud);
@@ -1605,7 +1609,7 @@ namespace MBSim {
       solveDirectly = true;
       updatezd();
     }
-    return zdParent;
+    return zd;
   }
 
   void DynamicSystemSolver::plot() {
@@ -1629,7 +1633,7 @@ namespace MBSim {
       projectGeneralizedPositions(1, true);
       projectGeneralizedVelocities(1);
     }
-    return zParent;
+    return z;
   }
 
 }

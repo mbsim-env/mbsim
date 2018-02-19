@@ -50,7 +50,6 @@ namespace MBSimIntegrator {
     Vec zd(ipar[0], zd_);
     Vec delta(ipar[0], delta_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(z);
     self->getSystem()->resetUpToDate();
     delta = zd - self->system->evalzd();
   }
@@ -61,9 +60,7 @@ namespace MBSimIntegrator {
     Vec yd(ipar[0], yd_);
     Vec delta(ipar[0], delta_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),ipar[0]-1));
     self->getSystem()->setUpdatela(false);
     delta(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
     delta(self->system->getzSize(),ipar[0]-1) = self->system->evalW().T()*yd(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1) + self->system->evalwb();
@@ -75,9 +72,7 @@ namespace MBSimIntegrator {
     Vec yd(ipar[0], yd_);
     Vec delta(ipar[0], delta_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),ipar[0]-1));
     self->getSystem()->setUpdatela(false);
     delta(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
     delta(self->system->getzSize(),ipar[0]-1) = self->system->evalgd();
@@ -89,9 +84,7 @@ namespace MBSimIntegrator {
     Vec yd(ipar[0], yd_);
     Vec delta(ipar[0], delta_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1));
     self->getSystem()->setUpdatela(false);
     delta(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
     delta(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1) = self->system->evalgd();
@@ -114,7 +107,6 @@ namespace MBSimIntegrator {
     Vec yd(ipar[0], yd_);
     Vec rval(*nrt, rval_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->getSystem()->getzSize()-1));
     self->getSystem()->resetUpToDate();
     rval = self->getSystem()->evalsv();
   }
@@ -127,28 +119,34 @@ namespace MBSimIntegrator {
 
     debugInit();
 
-    int zSize = system->getzSize();
     int neq;
     if(formalism==DAE1 or formalism==DAE2)
-      neq = zSize+system->getgdSize();
+      neq = system->getzSize()+system->getgdSize();
     else if(formalism==GGL)
-      neq = zSize+system->getgdSize()+system->getgSize();
+      neq = system->getzSize()+system->getgdSize()+system->getgSize();
     else
-      neq = zSize;
+      neq = system->getzSize();
 
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
 
-    Vec y(neq);
+    // Enlarge workspace for state vector so that the integrator can use it (avoids copying of state vector)
+    system->resizezParent(neq);
+    system->updatezRef(system->getzParent());
+    if(formalism) {
+      system->getlaParent() >> system->getzParent()(system->getzSize(),system->getzSize()+system->getlaSize()-1);
+      system->updatelaRef(system->getlaParent());
+    }
+    // Integrator uses its own workspace for the state derivative
     Vec yd(neq);
-    Vec z = y(0,zSize-1);
+
     if(z0.size()) {
-      if(z0.size() != zSize)
-        throw MBSimError("(DASKRIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
-      z = z0;
+      if(z0.size() != system->getzSize())
+        throw MBSimError("(DASKRIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+      system->setState(z0);
     }
     else
-      z = system->evalz0();
+      system->evalz0();
 
     if(aTol.size() == 0)
       aTol.resize(1,INIT,1e-6);
@@ -188,7 +186,6 @@ namespace MBSimIntegrator {
     int liWork = 2*(40+neq+neq);
 
     system->setTime(t);
-    system->setState(y(0,zSize-1));
     system->resetUpToDate();
     system->computeInitialCondition();
     if(formalism>1) { // DAE2 or GGL
@@ -200,13 +197,12 @@ namespace MBSimIntegrator {
       }
     }
     system->plot();
-    yd(0,zSize-1) = system->evalzd();
-    if(formalism) { // DAE or GGL
-      y(zSize,zSize+system->getlaSize()-1) = system->getla();
+    yd(0,system->getzSize()-1) = system->evalzd();
+    if(formalism) {
       if(formalism<3) // DAE1 or DAE2
-        neq = zSize+system->getlaSize();
+        neq = system->getzSize()+system->getlaSize();
       else // GGL
-        neq = zSize+system->getgdSize()+system->getgSize();
+        neq = system->getzSize()+system->getgdSize()+system->getgSize();
     }
 
     double rPar;
@@ -224,9 +220,9 @@ namespace MBSimIntegrator {
     work(1) = dtMax; // maximum stepsize
     work(2) = dt0; // initial stepsize
     if(info(15)) {
-      for(int i=0; i<zSize; i++)
+      for(int i=0; i<system->getzSize(); i++)
         iWork(40+i) = 1; // differential variable
-      for(int i=zSize; i<neq; i++)
+      for(int i=system->getzSize(); i<neq; i++)
         iWork(40+i) = -1; // algebraic variable
     }
 
@@ -246,17 +242,13 @@ namespace MBSimIntegrator {
 
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
-      DDASKR(*delta[formalism],&neq,&t,y(),yd(),&tPlot,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,&rPar,iPar,nullptr,nullptr,rt,nrt,system->getjsv()());
+      DDASKR(*delta[formalism],&neq,&t,system->getState()(),yd(),&tPlot,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,&rPar,iPar,nullptr,nullptr,rt,nrt,system->getjsv()());
       if(idid==3 || fabs(t-tPlot)<epsroot) {
         system->setTime(t);
-        system->setState(y(0,zSize-1));
         system->resetUpToDate();
-        system->setzd(yd(0,zSize-1));
+        system->setzd(yd(0,system->getzSize()-1));
         system->setUpdatezd(false);
-        if(formalism) {
-          system->setla(y(zSize,zSize+system->getlaSize()-1));
-          system->setUpdatela(false);
-        }
+        if(formalism) system->setUpdatela(false);
         system->plot();
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< work(6) << "\r"<<flush;
@@ -270,40 +262,28 @@ namespace MBSimIntegrator {
         if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
           system->projectGeneralizedPositions(3);
           system->projectGeneralizedVelocities(3);
-          y(0,zSize-1) = system->getState();
           system->resetUpToDate();
-          yd(0,zSize-1) = system->evalzd();
-          if(formalism)
-            y(zSize,zSize+system->getlaSize()-1) = system->getla();
+          yd(0,system->getzSize()-1) = system->evalzd();
           info(0)=0;
         }
         else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
           system->projectGeneralizedVelocities(3);
-          y(0,zSize-1) = system->getState();
           system->resetUpToDate();
-          yd(0,zSize-1) = system->evalzd();
-          if(formalism)
-            y(zSize,zSize+system->getlaSize()-1) = system->getla();
+          yd(0,system->getzSize()-1) = system->evalzd();
           info(0)=0;
         }
       }
-      if(idid==5) {
+      else if(idid==5) {
         if(plotOnRoot) { // plot before shifting
           system->setTime(t);
-          system->setState(y(0,zSize-1));
           system->resetUpToDate();
-          system->setzd(yd(0,zSize-1));
+          system->setzd(yd(0,system->getzSize()-1));
           system->setUpdatezd(false);
-          if(formalism) {
-            system->setla(y(zSize,zSize+system->getlaSize()-1));
-            system->setUpdatela(false);
-          }
+          if(formalism) system->setUpdatela(false);
           system->plot();
           system->plotAtSpecialEvent();
         }
         system->setTime(t);
-        system->setState(y(0,zSize-1));
-//        system->setjsv(jsv);
         system->resetUpToDate();
         system->shift();
         if(formalism>1) { // DAE2 or GGL
@@ -314,15 +294,13 @@ namespace MBSimIntegrator {
             system->updategRef(system->getgParent()(0,system->getgSize()-1));
           }
         }
-        y(0,zSize-1) = system->getState();
         system->resetUpToDate();
-        yd(0,zSize-1) = system->evalzd();
+        yd(0,system->getzSize()-1) = system->evalzd();
         if(formalism) {
-          y(zSize,zSize+system->getlaSize()-1) = system->getla();
           if(formalism<3) // DAE1 or DAE2
-            neq = zSize+system->getlaSize();
+            neq = system->getzSize()+system->getlaSize();
           else // GGL
-            neq = zSize+system->getgdSize()+system->getgSize();
+            neq = system->getzSize()+system->getgdSize()+system->getgSize();
         }
         if(plotOnRoot) { // plot after shifting
           system->setTime(t);
@@ -332,10 +310,10 @@ namespace MBSimIntegrator {
         iPar[0] = neq;
         info(0)=0;
         work(2)=dt0;
-        for(int i=zSize; i<neq; i++)
+        for(int i=system->getzSize(); i<neq; i++)
           iWork(40+i) = -1; // algebraic variable
       }
-      if(idid<0) throw MBSimError("Integrator DASKR failed with istate = "+toString(idid));
+      else if(idid<0) throw MBSimError("Integrator DASKR failed with istate = "+toString(idid));
     }
 
     if(plotIntegrationData) integPlot.close();

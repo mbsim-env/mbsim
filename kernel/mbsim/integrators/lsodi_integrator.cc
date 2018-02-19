@@ -50,7 +50,6 @@ namespace MBSimIntegrator {
     Vec zd(neq[0], zd_);
     Vec res(neq[0], res_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(z);
     self->getSystem()->resetUpToDate();
     res = self->system->evalzd() - zd;
   }
@@ -61,9 +60,7 @@ namespace MBSimIntegrator {
     Vec yd(neq[0], yd_);
     Vec res(neq[0], res_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),neq[0]-1));
     self->getSystem()->setUpdatela(false);
     res(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
     res(self->system->getzSize(),neq[0]-1) = self->system->evalgd();
@@ -75,9 +72,7 @@ namespace MBSimIntegrator {
     Vec yd(neq[0], yd_);
     Vec res(neq[0], res_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1));
     self->getSystem()->setUpdatela(false);
     res(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
     res(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getlaSize(),neq[0]-1);
@@ -114,16 +109,23 @@ namespace MBSimIntegrator {
     LSODIIntegrator *self=this;
     memcpy(&neq[1], &self, sizeof(void*));
 
-    Vec y(N);
+    // Enlarge workspace for state vector so that the integrator can use it (avoids copying of state vector)
+    system->resizezParent(N);
+    system->updatezRef(system->getzParent());
+    if(formalism) {
+      system->getlaParent() >> system->getzParent()(system->getzSize(),system->getzSize()+system->getlaSize()-1);
+      system->updatelaRef(system->getlaParent());
+    }
+    // Integrator uses its own workspace for the state derivative
     Vec yd(N);
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
         throw MBSimError("(LSODIIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
-      y(0,system->getzSize()-1) = z0;
+      system->setState(z0);
     }
     else
-      y(0,system->getzSize()-1) = system->evalz0();
+      system->evalz0();
 
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
@@ -166,11 +168,9 @@ namespace MBSimIntegrator {
     iWork(5) = maxSteps;
 
     system->setTime(t);
-    system->setState(y(0,system->getzSize()-1));
     system->resetUpToDate();
     system->plot();
     yd(0,system->getzSize()-1) = system->evalzd();
-    if(formalism) y(system->getzSize(),system->getzSize()+system->getlaSize()-1) = system->getla();
 
     double s0 = clock();
     double time = 0;
@@ -188,15 +188,11 @@ namespace MBSimIntegrator {
 
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
-      DLSODI(*res[formalism], adda, 0, neq, y(), yd(), &t, &tPlot, &iTol, rTol(), aTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
+      DLSODI(*res[formalism], adda, 0, neq, system->getzParent()(), yd(), &t, &tPlot, &iTol, rTol(), aTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
       if(istate==2 || fabs(t-tPlot)<epsroot) {
         system->setTime(t);
-        system->setState(y(0,system->getzSize()-1));
         system->resetUpToDate();
-        if(formalism) {
-          system->setla(y(system->getzSize(),system->getzSize()+system->getgdSize()-1));
-          system->setUpdatela(false);
-        }
+        if(formalism) system->setUpdatela(false);
         system->plot();
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
@@ -210,24 +206,18 @@ namespace MBSimIntegrator {
         if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
           system->projectGeneralizedPositions(3);
           system->projectGeneralizedVelocities(3);
-          y(0,system->getzSize()-1) = system->getState();
           system->resetUpToDate();
           yd(0,system->getzSize()-1) = system->evalzd();
-          if(formalism)
-            y(system->getzSize(),system->getzSize()+system->getlaSize()-1) = system->getla();
           istate=1;
         }
         else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
           system->projectGeneralizedVelocities(3);
-          y(0,system->getzSize()-1) = system->getState();
           system->resetUpToDate();
           yd(0,system->getzSize()-1) = system->evalzd();
-          if(formalism)
-            y(system->getzSize(),system->getzSize()+system->getlaSize()-1) = system->getla();
           istate=1;
         }
       }
-      if(istate<0) throw MBSimError("Integrator LSODI failed with istate = "+toString(istate));
+      else if(istate<0) throw MBSimError("Integrator LSODI failed with istate = "+toString(istate));
     }
 
     if(plotIntegrationData) integPlot.close();
