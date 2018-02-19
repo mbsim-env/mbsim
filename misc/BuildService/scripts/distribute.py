@@ -271,7 +271,7 @@ def addMBSimEnvTest():
   print("Add test script mbsim-env-test[.bat]")
 
   if platform=="linux":
-    text=r'''#!/bin/sh
+    text=r'''#!/bin/bash
 
 INSTDIR="$(readlink -f $(dirname $0)/..)"
 
@@ -389,7 +389,7 @@ def addOctave():
   print("Add octave executable")
 
   if platform=="linux":
-    addStrToDist('''#!/bin/sh
+    addStrToDist('''#!/bin/bash
 INSTDIR="$(readlink -f $(dirname $0)/..)"
 export OCTAVE_HOME="$INSTDIR"
 export LD_LIBRARY_PATH="$INSTDIR/lib"

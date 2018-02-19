@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # run this check only if MBSIM_SWIG is set (to avoid a long build time)
 if test -z "$MBSIM_SWIG"; then
