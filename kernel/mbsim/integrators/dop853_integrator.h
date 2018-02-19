@@ -54,9 +54,17 @@ namespace MBSimIntegrator {
       /** maximale step size */
       double dtMax{0};
 
+       /** tolerance for position constraints */
+      double gMax{-1};
+      /** tolerance for velocity constraints */
+      double gdMax{-1};
+
     public:
 
       ~DOP853Integrator() override = default;
+
+      double getToleranceForPositionConstraints() { return gMax; }
+      double getToleranceForVelocityConstraints() { return gdMax; }
 
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
       void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
@@ -70,6 +78,9 @@ namespace MBSimIntegrator {
       double getInitialStepSize() const { return dt0; }
       int getStepLimit() const { return maxSteps; }
       double getMaximumStepSize() const { return dtMax; }
+
+      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
+      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
       void integrate() override;
