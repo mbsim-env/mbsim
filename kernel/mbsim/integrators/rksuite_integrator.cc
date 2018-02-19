@@ -118,6 +118,23 @@ namespace MBSimIntegrator {
           if(plotIntegrationData) integPlot<< t << " " << dtLast << " " << time << endl;
 
           tPlot += dtPlot;
+
+          // check drift
+          bool restart = false;
+          if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+            system->projectGeneralizedPositions(3);
+            system->projectGeneralizedVelocities(3);
+            restart = true;
+          }
+          else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+            system->projectGeneralizedVelocities(3);
+            restart = true;
+          }
+          if(restart) {
+            z = system->getState();
+            SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
+                &errass, &dt0, work, &lenwrk, &messages);
+          }
         }
 
         if(result==3 || result==4)
@@ -170,6 +187,10 @@ namespace MBSimIntegrator {
     if(e) setThreshold(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepsize");
     if(e) setInitialStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
   void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {
