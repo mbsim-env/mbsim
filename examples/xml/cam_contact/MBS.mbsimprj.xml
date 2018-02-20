@@ -196,8 +196,8 @@
     <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
     <initialStepSize unit="s">1e-10</initialStepSize>
     <maximumStepSize unit="s">1e-3</maximumStepSize>
-    <minimumStepSize unit="s">0</minimumStepSize>
-    <plotOnRoot>0</plotOnRoot>
+    <toleranceForPositionConstraints>1e-5</toleranceForPositionConstraints>
+    <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
   </LSODARIntegrator>
 
 </MBSimProject>

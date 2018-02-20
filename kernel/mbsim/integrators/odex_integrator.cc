@@ -68,6 +68,25 @@ namespace MBSimIntegrator {
       if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
     }
+
+    // check drift
+    if(self->getToleranceForPositionConstraints()>=0) {
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+      if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
+        self->getSystem()->projectGeneralizedPositions(3);
+        self->getSystem()->projectGeneralizedVelocities(3);
+        *irtrn=-1;
+      }
+    }
+    else if(self->getToleranceForVelocityConstraints()>=0) {
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+      if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
+        self->getSystem()->projectGeneralizedVelocities(3);
+        *irtrn=-1;
+      }
+    }
   }
 
   void ODEXIntegrator::integrate() {
@@ -134,8 +153,12 @@ namespace MBSimIntegrator {
 
     s0 = clock();
 
-    ODEX(&zSize,fzdot,&t,z(),&tEnd, &dt0,rTol(),aTol(),&iTol,plot,&out,
-	work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
+    while(t<tEnd) {
+      ODEX(&zSize,fzdot,&t,z(),&tEnd, &dt0,rTol(),aTol(),&iTol,plot,&out,
+          work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
+
+      z = system->getState();
+    }
 
     if(plotIntegrationData) integPlot.close();
 
@@ -170,6 +193,10 @@ namespace MBSimIntegrator {
     if(e) setMaximumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
 }

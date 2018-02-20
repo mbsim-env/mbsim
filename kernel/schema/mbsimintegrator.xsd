@@ -105,6 +105,16 @@
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Lageebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForVelocityConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Geschwindigkeitsebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -240,6 +250,16 @@
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Lageebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForVelocityConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Geschwindigkeitsebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -292,6 +312,16 @@
           <xs:element name="stepLimit" type="pv:integerFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximale Anzahl von Integrationsschritten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Lageebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForVelocityConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Geschwindigkeitsebene.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
@@ -883,6 +913,16 @@
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Integrationsschrittweite. (t=0: automatische Detektion)
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Lageebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForVelocityConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Geschwindigkeitsebene.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>

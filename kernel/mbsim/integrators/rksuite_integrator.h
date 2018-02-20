@@ -50,6 +50,8 @@ namespace MBSimIntegrator {
       void setThreshold(const fmatvec::Vec &thres_) { thres = thres_; }
       void setThreshold(double thres_) { thres = fmatvec::Vec(1,fmatvec::INIT,thres_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
+      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
+      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF INTEGRATOR */
@@ -73,6 +75,10 @@ namespace MBSimIntegrator {
       /** step size for the first step */
       double dt0{0};
 
+       /** tolerance for position constraints */
+      double gMax{-1};
+      /** tolerance for velocity constraints */
+      double gdMax{-1};
 
       int lenwrk, messages{0}, integrationSteps{0};
       double t{0}, tPlot{0}, s0{0}, time{0};

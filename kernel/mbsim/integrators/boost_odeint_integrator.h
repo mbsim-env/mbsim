@@ -172,8 +172,8 @@ namespace MBSimIntegrator {
       double rTol{1e-6};
       double dtMax{0.1};
       bool plotOnRoot{false};
-      double gMax{1e-6};
-      double gdMax{1e-6};
+      double gMax{-1};
+      double gdMax{-1};
 
       // internal variables
       double tPlot;
