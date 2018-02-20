@@ -1,5 +1,6 @@
 PROJECT_BRIEF          = "MBSim Kernel"
 INPUT                  = @top_srcdir@/mbsim
+EXCLUDE                = @top_srcdir@/mbsim/integrators/fortran/
 RECURSIVE              = YES
 PROJECT_NAME           = @PACKAGE@
 PROJECT_NUMBER         = @VERSION@
