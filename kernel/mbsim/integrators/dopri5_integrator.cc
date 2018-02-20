@@ -73,6 +73,7 @@ namespace MBSimIntegrator {
     if(self->getToleranceForPositionConstraints()>=0) {
       self->getSystem()->setTime(*t);
       self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+      self->getSystem()->resetUpToDate();
       if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
         self->getSystem()->projectGeneralizedPositions(3);
         self->getSystem()->projectGeneralizedVelocities(3);
@@ -82,6 +83,7 @@ namespace MBSimIntegrator {
     else if(self->getToleranceForVelocityConstraints()>=0) {
       self->getSystem()->setTime(*t);
       self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+      self->getSystem()->resetUpToDate();
       if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
         self->getSystem()->projectGeneralizedVelocities(3);
         *irtrn=-1;
