@@ -141,18 +141,25 @@ namespace MBSimIntegrator {
 
       if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
-
     }
 
     // check drift
-    if(self->getToleranceForPositionConstraints()>=0 and self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
-      self->getSystem()->projectGeneralizedPositions(3);
-      self->getSystem()->projectGeneralizedVelocities(3);
-      *irtrn=-1;
+    if(self->getToleranceForPositionConstraints()>=0) {
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+      if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
+        self->getSystem()->projectGeneralizedPositions(3);
+        self->getSystem()->projectGeneralizedVelocities(3);
+        *irtrn=-1;
+      }
     }
-    else if(self->getToleranceForVelocityConstraints()>=0 and self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
-      self->getSystem()->projectGeneralizedVelocities(3);
-      *irtrn=-1;
+    else if(self->getToleranceForVelocityConstraints()>=0) {
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+      if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
+        self->getSystem()->projectGeneralizedVelocities(3);
+        *irtrn=-1;
+      }
     }
   }
 
