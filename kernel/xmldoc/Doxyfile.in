@@ -1,4 +1,5 @@
 INPUT                  = @abs_top_srcdir@/mbsim
+EXCLUDE                = @abs_top_srcdir@/mbsim/integrators/fortran/
 RECURSIVE              = YES
 EXCLUDE_SYMLINKS       = YES
 GENERATE_HTML          = NO
