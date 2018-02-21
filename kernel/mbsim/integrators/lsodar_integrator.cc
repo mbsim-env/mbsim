@@ -110,6 +110,7 @@ namespace MBSimIntegrator {
     else
       system->evalz0();
 //    system->setState(z); Not needed as the integrator uses the state of the system
+    system->resetUpToDate();
     system->computeInitialCondition();
     t=tStart;
     tPlot=t+dtPlot;
@@ -156,7 +157,6 @@ namespace MBSimIntegrator {
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
     // plot initial state
-    system->resetUpToDate();
     system->plot();
   }
 

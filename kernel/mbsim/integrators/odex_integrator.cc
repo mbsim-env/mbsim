@@ -219,8 +219,8 @@ namespace MBSimIntegrator {
 
     system->setTime(t);
     system->setState(z);
-    system->computeInitialCondition();
     system->resetUpToDate();
+    system->computeInitialCondition();
     system->plot();
     svLast = system->evalsv();
 
