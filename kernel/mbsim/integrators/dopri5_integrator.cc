@@ -133,31 +133,30 @@ namespace MBSimIntegrator {
       *irtrn = -1;
     }
     else {
-
-    // check drift
-    if(self->getToleranceForPositionConstraints()>=0) {
-      if(curTimeAndState != *t) {
-        self->getSystem()->setTime(*t);
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-        self->getSystem()->resetUpToDate();
+      // check drift
+      if(self->getToleranceForPositionConstraints()>=0) {
+        if(curTimeAndState != *t) {
+          self->getSystem()->setTime(*t);
+          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+          self->getSystem()->resetUpToDate();
+        }
+        if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
+          self->getSystem()->projectGeneralizedPositions(3);
+          self->getSystem()->projectGeneralizedVelocities(3);
+          *irtrn=-1;
+        }
       }
-      if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
-        self->getSystem()->projectGeneralizedPositions(3);
-        self->getSystem()->projectGeneralizedVelocities(3);
-        *irtrn=-1;
+      else if(self->getToleranceForVelocityConstraints()>=0) {
+        if(curTimeAndState != *t) {
+          self->getSystem()->setTime(*t);
+          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+          self->getSystem()->resetUpToDate();
+        }
+        if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
+          self->getSystem()->projectGeneralizedVelocities(3);
+          *irtrn=-1;
+        }
       }
-    }
-    else if(self->getToleranceForVelocityConstraints()>=0) {
-      if(curTimeAndState != *t) {
-        self->getSystem()->setTime(*t);
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-        self->getSystem()->resetUpToDate();
-      }
-      if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
-        self->getSystem()->projectGeneralizedVelocities(3);
-        *irtrn=-1;
-      }
-    }
     }
   }
 
@@ -227,7 +226,7 @@ namespace MBSimIntegrator {
     system->computeInitialCondition();
     system->resetUpToDate();
     system->plot();
-    svLast=system->evalsv();
+    svLast = system->evalsv();
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
