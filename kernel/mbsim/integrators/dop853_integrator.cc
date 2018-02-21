@@ -52,11 +52,53 @@ namespace MBSimIntegrator {
   void DOP853Integrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
     auto self=*reinterpret_cast<DOP853Integrator**>(&ipar[0]);
 
-    while(*t >= self->tPlot) {
-      self->getSystem()->setTime(self->tPlot);
-      for(int i=1; i<=*n; i++)
-	self->getSystem()->getState()(i-1) = CONTD8(&i,&self->tPlot,con,icomp,nd);
+    double curTimeAndState = -1;
+    double tRoot = *t;
+    // root-finding
+    if(self->getSystem()->getsvSize()) {
+      self->getSystem()->setTime(*t);
+      curTimeAndState = *t;
+      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
       self->getSystem()->resetUpToDate();
+      self->shift = self->signChangedWRTsvLast(self->getSystem()->evalsv());
+      // if a root exists in the current step ...
+      if(self->shift) {
+        // ... search the first root and set step.second to this time
+        double dt = *t-*told;
+        while(dt>1e-10) {
+          dt/=2;
+          double tCheck = tRoot-dt;
+          self->getSystem()->setTime(tCheck);
+          curTimeAndState = tCheck;
+          for(int i=1; i<=*n; i++)
+            self->getSystem()->getState()(i-1) = CONTD8(&i,&tCheck,con,icomp,nd);
+          self->getSystem()->resetUpToDate();
+          if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
+            tRoot = tCheck;
+        }
+        // root found increase time by dt and set jsv
+        if(curTimeAndState != tRoot) {
+          curTimeAndState = tRoot;
+          self->getSystem()->setTime(tRoot);
+          for(int i=1; i<=*n; i++)
+            self->getSystem()->getState()(i-1) = CONTD8(&i,&tRoot,con,icomp,nd);
+        }
+        self->getSystem()->resetUpToDate();
+        auto &sv = self->getSystem()->evalsv();
+        auto &jsv = self->getSystem()->getjsv();
+        for(int i=0; i<sv.size(); ++i)
+          jsv(i)=self->svLast(i)*sv(i)<0;
+      }
+    }
+
+    while(tRoot >= self->tPlot) {
+      if(curTimeAndState != self->tPlot) {
+        curTimeAndState = self->tPlot;
+        self->getSystem()->setTime(self->tPlot);
+        for(int i=1; i<=*n; i++)
+          self->getSystem()->getState()(i-1) = CONTD8(&i,&self->tPlot,con,icomp,nd);
+        self->getSystem()->resetUpToDate();
+      }
       self->getSystem()->plot();
       if(self->output)
 	cout << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
@@ -69,26 +111,60 @@ namespace MBSimIntegrator {
       self->tPlot += self->dtOut;
     }
 
-    // check drift
-    if(self->getToleranceForPositionConstraints()>=0) {
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+    if(self->shift) {
+      // shift the system
+      if(curTimeAndState != tRoot) {
+        self->getSystem()->setTime(tRoot);
+        for(int i=1; i<=*n; i++)
+          self->getSystem()->getState()(i-1) = CONTD8(&i,&tRoot,con,icomp,nd);
+      }
+      if(self->plotOnRoot) {
+        self->getSystem()->resetUpToDate();
+        self->getSystem()->plot();
+      }
       self->getSystem()->resetUpToDate();
-      if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
-        self->getSystem()->projectGeneralizedPositions(3);
-        self->getSystem()->projectGeneralizedVelocities(3);
-        *irtrn=-1;
+      self->getSystem()->shift();
+      if(self->plotOnRoot) {
+        self->getSystem()->resetUpToDate();
+        self->getSystem()->plot();
+      }
+      self->getSystem()->resetUpToDate();
+      self->svLast=self->getSystem()->evalsv();
+      *irtrn = -1;
+    }
+    else {
+      // check drift
+      if(self->getToleranceForPositionConstraints()>=0) {
+        if(curTimeAndState != *t) {
+          self->getSystem()->setTime(*t);
+          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+          self->getSystem()->resetUpToDate();
+        }
+        if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
+          self->getSystem()->projectGeneralizedPositions(3);
+          self->getSystem()->projectGeneralizedVelocities(3);
+          *irtrn=-1;
+        }
+      }
+      else if(self->getToleranceForVelocityConstraints()>=0) {
+        if(curTimeAndState != *t) {
+          self->getSystem()->setTime(*t);
+          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+          self->getSystem()->resetUpToDate();
+        }
+        if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
+          self->getSystem()->projectGeneralizedVelocities(3);
+          *irtrn=-1;
+        }
       }
     }
-    else if(self->getToleranceForVelocityConstraints()>=0) {
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-      self->getSystem()->resetUpToDate();
-      if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
-        self->getSystem()->projectGeneralizedVelocities(3);
-        *irtrn=-1;
-      }
-    }
+  }
+
+  bool DOP853Integrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
+    for(int i=0; i<svStepEnd.size(); i++)
+      if(svLast(i)*svStepEnd(i)<0)
+        return true;
+    return false;
   }
 
   void DOP853Integrator::integrate() {
@@ -118,10 +194,10 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != zSize)
-        throw MBSimError("(DOPRI5Integrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+        throw MBSimError("(DOP853Integrator::integrate): size of aTol does not match, must be " + toStr(zSize));
     }
     if(rTol.size() != aTol.size())
-      throw MBSimError("(DOPRI5Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throw MBSimError("(DOP853Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
     int out = 2; // dense output is performed in plot
 
@@ -147,8 +223,10 @@ namespace MBSimIntegrator {
 
     system->setTime(t);
     system->setState(z);
+    system->computeInitialCondition();
     system->resetUpToDate();
     system->plot();
+    svLast = system->evalsv();
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
@@ -160,6 +238,8 @@ namespace MBSimIntegrator {
       DOP853(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
+      if(shift) work(6) = dt0;
+      t = system->getTime();
       z = system->getState();
     }
 
