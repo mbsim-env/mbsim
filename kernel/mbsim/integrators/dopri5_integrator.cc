@@ -76,7 +76,6 @@ namespace MBSimIntegrator {
           if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
             tRoot = tCheck;
         }
-        // root found increase time by dt and set jsv
         if(curTimeAndState != tRoot) {
           curTimeAndState = tRoot;
           self->getSystem()->setTime(tRoot);
@@ -97,8 +96,8 @@ namespace MBSimIntegrator {
         self->getSystem()->setTime(self->tPlot);
         for(int i=1; i<=*n; i++)
           self->getSystem()->getState()(i-1) = CONTD5(&i,&self->tPlot,con,icomp,nd);
-        self->getSystem()->resetUpToDate();
       }
+      self->getSystem()->resetUpToDate();
       self->getSystem()->plot();
       if(self->output)
 	cout << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
@@ -135,11 +134,9 @@ namespace MBSimIntegrator {
     else {
       // check drift
       if(self->getToleranceForPositionConstraints()>=0) {
-        if(curTimeAndState != *t) {
-          self->getSystem()->setTime(*t);
-          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-          self->getSystem()->resetUpToDate();
-        }
+        self->getSystem()->setTime(*t);
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+        self->getSystem()->resetUpToDate();
         if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
           self->getSystem()->projectGeneralizedPositions(3);
           self->getSystem()->projectGeneralizedVelocities(3);
@@ -147,11 +144,9 @@ namespace MBSimIntegrator {
         }
       }
       else if(self->getToleranceForVelocityConstraints()>=0) {
-        if(curTimeAndState != *t) {
-          self->getSystem()->setTime(*t);
-          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-          self->getSystem()->resetUpToDate();
-        }
+        self->getSystem()->setTime(*t);
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+        self->getSystem()->resetUpToDate();
         if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
           self->getSystem()->projectGeneralizedVelocities(3);
           *irtrn=-1;
