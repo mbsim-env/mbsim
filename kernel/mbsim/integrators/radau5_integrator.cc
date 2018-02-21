@@ -98,12 +98,21 @@ namespace MBSimIntegrator {
     self->getSystem()->setTime(*t);
     self->getSystem()->setState(y(0,self->system->getzSize()-1));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1));
+    self->getSystem()->setla(y(self->system->getzSize(),self->system->getzSize()+self->system->getlaSize()-1));
     self->getSystem()->setUpdatela(false);
     yd(0,self->system->getzSize()-1) = self->system->evalzd();
-    yd(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getlaSize(),*neq-1);
     yd(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1) = self->system->evalgd();
     yd(self->system->getzSize()+self->system->getgdSize(),*neq-1) = self->system->evalg();
+    if(self->system->getgSize() != self->system->getgdSize()) {
+      self->system->calclaSize(5);
+      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
+      self->system->setUpdateW(false);
+      yd(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getgdSize(),*neq-1);
+      self->system->calclaSize(3);
+      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
+    }
+    else
+      yd(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getgdSize(),*neq-1);
   }
 
   void RADAU5Integrator::massFull(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
@@ -121,10 +130,51 @@ namespace MBSimIntegrator {
   void  RADAU5Integrator::plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
     auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
 
-    while(*t >= self->tPlot) {
-      self->getSystem()->setTime(self->tPlot);
-      for(int i=1; i<=self->system->getzSize(); i++)
-	self->getSystem()->getState()(i-1) = CONTR5(&i,&self->tPlot,cont,lrc);
+    double curTimeAndState = -1;
+    double tRoot = *t;
+    // root-finding
+    if(self->getSystem()->getsvSize()) {
+      self->getSystem()->setTime(*t);
+      curTimeAndState = *t;
+      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+      self->getSystem()->resetUpToDate();
+      self->shift = self->signChangedWRTsvLast(self->getSystem()->evalsv());
+      // if a root exists in the current step ...
+      if(self->shift) {
+        // ... search the first root and set step.second to this time
+        double dt = *t-*told;
+        while(dt>1e-10) {
+          dt/=2;
+          double tCheck = tRoot-dt;
+          self->getSystem()->setTime(tCheck);
+          curTimeAndState = tCheck;
+          for(int i=1; i<=self->system->getzSize(); i++)
+            self->getSystem()->getState()(i-1) = CONTR5(&i,&tCheck,cont,lrc);
+          self->getSystem()->resetUpToDate();
+          if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
+            tRoot = tCheck;
+        }
+        if(curTimeAndState != tRoot) {
+          curTimeAndState = tRoot;
+          self->getSystem()->setTime(tRoot);
+          for(int i=1; i<=self->system->getzSize(); i++)
+            self->getSystem()->getState()(i-1) = CONTR5(&i,&tRoot,cont,lrc);
+        }
+        self->getSystem()->resetUpToDate();
+        auto &sv = self->getSystem()->evalsv();
+        auto &jsv = self->getSystem()->getjsv();
+        for(int i=0; i<sv.size(); ++i)
+          jsv(i)=self->svLast(i)*sv(i)<0;
+      }
+    }
+
+    while(tRoot >= self->tPlot) {
+      if(curTimeAndState != self->tPlot) {
+        curTimeAndState = self->tPlot;
+        self->getSystem()->setTime(self->tPlot);
+        for(int i=1; i<=self->system->getzSize(); i++)
+          self->getSystem()->getState()(i-1) = CONTR5(&i,&self->tPlot,cont,lrc);
+      }
       self->getSystem()->resetUpToDate();
       if(self->formalism) {
         for(int i=self->system->getzSize()+1; i<=self->system->getzSize()+self->system->getlaSize(); i++)
@@ -143,26 +193,64 @@ namespace MBSimIntegrator {
       self->tPlot += self->dtOut;
     }
 
-    // check drift
-    if(self->getToleranceForPositionConstraints()>=0) {
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+    if(self->shift) {
+      // shift the system
+      if(curTimeAndState != tRoot) {
+        self->getSystem()->setTime(tRoot);
+        for(int i=1; i<=self->getSystem()->getzSize(); i++)
+          self->getSystem()->getState()(i-1) = CONTR5(&i,&tRoot,cont,lrc);
+      }
+      if(self->plotOnRoot) {
+        self->getSystem()->resetUpToDate();
+        self->getSystem()->plot();
+      }
       self->getSystem()->resetUpToDate();
-      if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
-        self->getSystem()->projectGeneralizedPositions(3);
-        self->getSystem()->projectGeneralizedVelocities(3);
-        *irtrn=-1;
+      self->getSystem()->shift();
+      if(self->formalism>1) { // DAE2, DAE3 or GGL
+        self->system->calcgdSize(3); // IH
+        self->system->updategdRef(self->system->getgdParent()(0,self->system->getgdSize()-1));
+        if(self->formalism>2) { // DAE3 or GGL
+          self->system->calcgSize(2); // IB
+          self->system->updategRef(self->system->getgParent()(0,self->system->getgSize()-1));
+        }
+      }
+      if(self->plotOnRoot) {
+        self->getSystem()->resetUpToDate();
+        self->getSystem()->plot();
+      }
+      self->getSystem()->resetUpToDate();
+      self->svLast=self->getSystem()->evalsv();
+      *irtrn = -1;
+    }
+    else {
+      // check drift
+      if(self->getToleranceForPositionConstraints()>=0) {
+        self->getSystem()->setTime(*t);
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+        self->getSystem()->resetUpToDate();
+        if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
+          self->getSystem()->projectGeneralizedPositions(3);
+          self->getSystem()->projectGeneralizedVelocities(3);
+          *irtrn=-1;
+        }
+      }
+      else if(self->getToleranceForVelocityConstraints()>=0) {
+        self->getSystem()->setTime(*t);
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+        self->getSystem()->resetUpToDate();
+        if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
+          self->getSystem()->projectGeneralizedVelocities(3);
+          *irtrn=-1;
+        }
       }
     }
-    else if(self->getToleranceForVelocityConstraints()>=0) {
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-      self->getSystem()->resetUpToDate();
-      if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
-        self->getSystem()->projectGeneralizedVelocities(3);
-        *irtrn=-1;
-      }
-    }
+  }
+
+  bool RADAU5Integrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
+    for(int i=0; i<svStepEnd.size(); i++)
+      if(svLast(i)*svStepEnd(i)<0)
+        return true;
+    return false;
   }
 
   void RADAU5Integrator::integrate() {
@@ -179,7 +267,7 @@ namespace MBSimIntegrator {
     int zSize = system->getzSize();
     int neq;
     if(formalism==DAE1 or formalism==DAE2)
-      neq = zSize+system->getgdSize();
+      neq = zSize+system->getlaSize();
     else if(formalism==DAE3)
       neq = zSize+system->getgSize();
     else if(formalism==GGL)
@@ -229,8 +317,33 @@ namespace MBSimIntegrator {
     if(dtMax>0)
       work(6) = dtMax; // maximum step size
     iWork(1) = maxSteps; // maximum number of steps
+    int iMas = formalism>0; // mass-matrix
+    int mlMas = 0; // lower bandwith of the mass-matrix
+    int muMas = 0; // upper bandwith of the mass-matrix
+    int idid;
+
+    double dt = dt0;
+
+    tPlot = t + dtPlot;
+    dtOut = dtPlot;
+
+    system->setTime(t);
+    system->setState(z);
+    system->resetUpToDate();
+    system->computeInitialCondition();
+    if(formalism>1) { // DAE2, DAE3 or GGL
+      system->calcgdSize(3); // IH
+      system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
+      if(formalism>2) { // DAE3 or GGL
+        system->calcgSize(2); // IB
+        system->updategRef(system->getgParent()(0,system->getgSize()-1));
+      }
+    }
+    system->plot();
+    svLast = system->evalsv();
+
     if(formalism==DAE1)
-      iWork(4) = zSize + system->getgdSize();
+      iWork(4) = zSize + system->getlaSize();
     else if(formalism==DAE2) {
       iWork(4) = zSize;
       iWork(5) = system->getgdSize();
@@ -243,6 +356,16 @@ namespace MBSimIntegrator {
       iWork(4) = zSize;
       iWork(5) = system->getgdSize() + system->getgSize();
     }
+
+    if(formalism==DAE1 or formalism==DAE2)
+      neq = zSize+system->getlaSize();
+    else if(formalism==DAE3)
+      neq = zSize+system->getgSize();
+    else if(formalism==GGL)
+      neq = zSize+system->getgdSize()+system->getgSize();
+    else
+      neq = zSize;
+
     int iJac = 0; // jacobian is computed internally by finite differences
     int mlJac;
     if(reduced) {
@@ -254,19 +377,6 @@ namespace MBSimIntegrator {
     else
       mlJac = neq; // jacobian is a full matrix
     int muJac = mlJac; // need not to be defined if mlJac = neq
-    int iMas = formalism>0; // mass-matrix
-    int mlMas = 0; // lower bandwith of the mass-matrix
-    int muMas = 0; // upper bandwith of the mass-matrix
-    int idid;
-
-    tPlot = t + dtPlot;
-    dtOut = dtPlot;
-
-    system->setStepSize(1);
-    system->setTime(t);
-    system->setState(z);
-    system->resetUpToDate();
-    system->plot();
 
     if(plotIntegrationData) {
       integPlot.open((name + ".plt").c_str());
@@ -280,15 +390,46 @@ namespace MBSimIntegrator {
 
     s0 = clock();
 
-    while(t<tEnd) {
-      RADAU5(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt0,
+    while(t<=tEnd-dt) {
+      RADAU5(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt,
           rTol(),aTol(),&iTol,
           nullptr,&iJac,&mlJac,&muJac,
           *mass[reduced],&iMas,&mlMas,&muMas,
           plot,&out,
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
+      if(shift) {
+        dt = dt0;
+        work(20,work.size()-1).init(0);
+        if(formalism==DAE1)
+          iWork(4) = zSize + system->getlaSize();
+        else if(formalism==DAE2) {
+          iWork(4) = zSize;
+          iWork(5) = system->getgdSize();
+        }
+        else if(formalism==DAE3) {
+          iWork(4) = zSize;
+          iWork(6) = system->getgSize();
+        }
+        else if(formalism==GGL) {
+          iWork(4) = zSize;
+          iWork(5) = system->getgdSize() + system->getgSize();
+        }
+
+        if(formalism==DAE1 or formalism==DAE2)
+          neq = zSize+system->getlaSize();
+        else if(formalism==DAE3)
+          neq = zSize+system->getgSize();
+        else if(formalism==GGL)
+          neq = zSize+system->getgdSize()+system->getgSize();
+        else
+          neq = zSize;
+      }
+
+      t = system->getTime();
       z = system->getState();
+      if(formalism)
+        y(zSize,neq-1).init(0);
     }
 
     if(plotIntegrationData) integPlot.close();
@@ -332,6 +473,8 @@ namespace MBSimIntegrator {
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
     if(e) setReducedForm((E(e)->getText<bool>()));
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
+    if(e) setPlotOnRoot(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
