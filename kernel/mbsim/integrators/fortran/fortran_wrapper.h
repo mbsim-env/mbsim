@@ -90,6 +90,17 @@ void RADAU(int*,void(*)(int*,double*,double*,double*,double*,int*),double*,doubl
 #define CONTRA FC_FUNC(contra,CONTRA)
 double CONTRA(int*,double*,double*,int*);
 
+#define RODAS FC_FUNC(rodas,RODAS)
+void RODAS(int*,void(*)(int*,double*,double*,double*,double*,int*),int*,double*,double*,double*,
+            double*,double*,double*,int*,void(*)(int*,double*,double*,double*,int*,double*,int*),
+            int*,int*,int*,void(*)(int*,double*,double*,double*,double*,int*),int*,
+            void(*)(int*,double*,int*,double*,int*),int*,int*,int*,
+            void(*)(int*,double*,double*,double*,double*,int*,int*,double*,int*,int*),
+            int*,double*,int*,int*,int*,double*,int*,int*);
+
+#define CONTRO FC_FUNC(contro,CONTRO)
+double CONTRO(int*,double*,double*,int*);
+
 #define DDASPK FC_FUNC(ddaspk,DDASPK)
 void DDASPK(void(*)(double*,double*,double*,double*,double*,int*,double*,int*),int*,double*,
             double*,double*,double*,int*,double*,double*,int*,double*,int*,

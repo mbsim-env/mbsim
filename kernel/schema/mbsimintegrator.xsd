@@ -297,6 +297,93 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="RODASIntegrator" substitutionGroup="Integrator" type="RODASIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Eingebettetes Roesenbrock Verfahren der Ordnung (3)4 mit Schrittweitenkontrolle und 'dense output'.<br/>
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RODASIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:choice>
+            <xs:element name="relativeTolerance" type="pv:nounitVector" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Schrittweitenvorschlag zu Beginn der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximumStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Maximal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="stepLimit" type="pv:integerFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Maximale Anzahl von Integrationsschritten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="formalism" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl des Formalismus.
+              <ul>
+                <li>ODE: gewöhnliches Differentialgleichungssystem</li>
+                <li>DAE1: differential-algebraisches System vom Index 1</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="reducedForm" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Lösen des nichtlinearen Gleichungssystems in reduzierter Form. Das differentielle System muss dazu die spezielle Struktur dq(i)/dt = u(i) für i=1,...,nq haben.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="autonomousSystem" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob das System von der Zeit abhängt (nicht-autonomes System) oder nicht (autonomes System).
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="plotOnRoot" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Gibt an, ob eine Plot-Ausgabe geschrieben werden soll, wenn eine Indikatorfunktion einen Nulldurchgang hat.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Lageebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="toleranceForVelocityConstraints" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Bindungsgleichungen auf Geschwindigkeitsebene.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="DOP853Integrator" substitutionGroup="Integrator" type="DOP853IntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Explizites Runge-Kutta Verfahren der Ordnung 8(5,3) mit 'dense output'.<br/>
