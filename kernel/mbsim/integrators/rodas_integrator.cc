@@ -246,8 +246,8 @@ namespace MBSimIntegrator {
     iWork.resize(liWork);
     work.resize(lWork);
     if(dtMax>0)
-      work(6) = dtMax; // maximum step size
-    iWork(1) = maxSteps; // maximum number of steps
+      work(1) = dtMax; // maximum step size
+    iWork(0) = maxSteps; // maximum number of steps
     int ifcn = not autonom;
     int idfx = 0;
     int iMas = formalism>0; // mass-matrix
