@@ -38,7 +38,7 @@ namespace MBSimIntegrator {
       };
 
     private:
-      typedef void (*Fzdot)(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
+      typedef void (*Fzdot)(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       typedef void (*Mass)(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static Fzdot fzdot[2];
       static Mass mass[2];
@@ -46,7 +46,7 @@ namespace MBSimIntegrator {
       static void fzdotDAE1(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void massFull(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void massReduced(int* n, double* m, int* lmas, double* rpar, int* ipar);
-      static void plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
+      static void plot(int* nr, double* told, double* t, double* y, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
 
       bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
 
