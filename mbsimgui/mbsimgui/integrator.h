@@ -49,22 +49,46 @@ namespace MBSimGUI {
       IntegratorPropertyDialog* createPropertyDialog() override { return new DOP853IntegratorPropertyDialog(this); }
   };
 
-  class RADAU5Integrator : public Integrator {
-    public:
-      QString getType() const override { return "RADAU5Integrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new RADAU5IntegratorPropertyDialog(this); }
-  };
-
   class ODEXIntegrator : public Integrator {
     public:
       QString getType() const override { return "ODEXIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() override { return new ODEXIntegratorPropertyDialog(this); }
   };
 
+  class RADAU5Integrator : public Integrator {
+    public:
+      QString getType() const override { return "RADAU5Integrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new RADAU5IntegratorPropertyDialog(this); }
+  };
+
+  class RADAUIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "RADAUIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new RADAUIntegratorPropertyDialog(this); }
+  };
+
+  class RODASIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "RODASIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new RODASIntegratorPropertyDialog(this); }
+  };
+
+  class SEULEXIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "SEULEXIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new SEULEXIntegratorPropertyDialog(this); }
+  };
+
   class LSODEIntegrator : public Integrator {
     public:
       QString getType() const override { return "LSODEIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() override { return new LSODEIntegratorPropertyDialog(this); }
+  };
+
+  class LSODAIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "LSODAIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new LSODAIntegratorPropertyDialog(this); }
   };
 
   class LSODARIntegrator : public Integrator {
