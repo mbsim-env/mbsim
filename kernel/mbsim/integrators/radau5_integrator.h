@@ -56,6 +56,9 @@ namespace MBSimIntegrator {
 
       bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
 
+      void calcSize();
+      void reinit();
+
       double tPlot{0};
       double dtOut{0};
       std::ofstream integPlot;
@@ -86,6 +89,10 @@ namespace MBSimIntegrator {
 
       fmatvec::Vec svLast;
       bool shift{false};
+
+      int neq, mlJac, muJac;
+      fmatvec::VecInt iWork;
+      fmatvec::Vec work;
 
     public:
       ~RADAU5Integrator() override = default;

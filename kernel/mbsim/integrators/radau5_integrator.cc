@@ -265,15 +265,7 @@ namespace MBSimIntegrator {
     debugInit();
 
     int zSize = system->getzSize();
-    int neq;
-    if(formalism==DAE1 or formalism==DAE2)
-      neq = zSize+system->getlaSize();
-    else if(formalism==DAE3)
-      neq = zSize+system->getgSize();
-    else if(formalism==GGL)
-      neq = zSize+system->getgdSize()+system->getgSize();
-    else
-      neq = zSize;
+    calcSize();
 
     double t = tStart;
 
@@ -312,14 +304,15 @@ namespace MBSimIntegrator {
 
     int lWork = 2*(neq*(neq+neq+3*neq+12)+20);
     int liWork = 2*(3*neq+20);
-    VecInt iWork(liWork);
-    Vec work(lWork);
+    iWork.resize(liWork);
+    work.resize(lWork);
     if(dtMax>0)
       work(6) = dtMax; // maximum step size
     iWork(1) = maxSteps; // maximum number of steps
     int iMas = formalism>0; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix
     int muMas = 0; // upper bandwith of the mass-matrix
+    int iJac = 0; // jacobian is computed internally by finite differences
     int idid;
 
     double dt = dt0;
@@ -342,41 +335,8 @@ namespace MBSimIntegrator {
     system->plot();
     svLast = system->evalsv();
 
-    if(formalism==DAE1)
-      iWork(4) = zSize + system->getlaSize();
-    else if(formalism==DAE2) {
-      iWork(4) = zSize;
-      iWork(5) = system->getgdSize();
-    }
-    else if(formalism==DAE3) {
-      iWork(4) = zSize;
-      iWork(6) = system->getgSize();
-    }
-    else if(formalism==GGL) {
-      iWork(4) = zSize;
-      iWork(5) = system->getgdSize() + system->getgSize();
-    }
-
-    if(formalism==DAE1 or formalism==DAE2)
-      neq = zSize+system->getlaSize();
-    else if(formalism==DAE3)
-      neq = zSize+system->getgSize();
-    else if(formalism==GGL)
-      neq = zSize+system->getgdSize()+system->getgSize();
-    else
-      neq = zSize;
-
-    int iJac = 0; // jacobian is computed internally by finite differences
-    int mlJac;
-    if(reduced) {
-      iWork(8) = system->getqSize();
-      iWork(9) = system->getqSize();
-      mlJac = neq - system->getqSize()// jacobian is a reduced matrix
-;
-    }
-    else
-      mlJac = neq; // jacobian is a full matrix
-    int muJac = mlJac; // need not to be defined if mlJac = neq
+    calcSize();
+    reinit();
 
     if(plotIntegrationData) {
       integPlot.open((name + ".plt").c_str());
@@ -400,30 +360,8 @@ namespace MBSimIntegrator {
 
       if(shift) {
         dt = dt0;
-        work(20,work.size()-1).init(0);
-        if(formalism==DAE1)
-          iWork(4) = zSize + system->getlaSize();
-        else if(formalism==DAE2) {
-          iWork(4) = zSize;
-          iWork(5) = system->getgdSize();
-        }
-        else if(formalism==DAE3) {
-          iWork(4) = zSize;
-          iWork(6) = system->getgSize();
-        }
-        else if(formalism==GGL) {
-          iWork(4) = zSize;
-          iWork(5) = system->getgdSize() + system->getgSize();
-        }
-
-        if(formalism==DAE1 or formalism==DAE2)
-          neq = zSize+system->getlaSize();
-        else if(formalism==DAE3)
-          neq = zSize+system->getgSize();
-        else if(formalism==GGL)
-          neq = zSize+system->getgdSize()+system->getgSize();
-        else
-          neq = zSize;
+        calcSize();
+        reinit();
       }
 
       t = system->getTime();
@@ -443,6 +381,43 @@ namespace MBSimIntegrator {
 
     cout.unsetf (ios::scientific);
     cout << endl;
+  }
+
+  void RADAU5Integrator::calcSize() {
+    if(formalism==DAE1 or formalism==DAE2)
+      neq = system->getzSize()+system->getlaSize();
+    else if(formalism==DAE3)
+      neq = system->getzSize()+system->getgSize();
+    else if(formalism==GGL)
+      neq = system->getzSize()+system->getgdSize()+system->getgSize();
+    else
+      neq = system->getzSize();
+  }
+
+  void RADAU5Integrator::reinit() {
+    work(20,work.size()-1).init(0);
+    if(formalism==DAE1)
+      iWork(4) = system->getzSize() + system->getlaSize();
+    else if(formalism==DAE2) {
+      iWork(4) = system->getzSize();
+      iWork(5) = system->getgdSize();
+    }
+    else if(formalism==DAE3) {
+      iWork(4) = system->getzSize();
+      iWork(6) = system->getgSize();
+    }
+    else if(formalism==GGL) {
+      iWork(4) = system->getzSize();
+      iWork(5) = system->getgdSize() + system->getgSize();
+    }
+    if(reduced) {
+      iWork(8) = system->getqSize();
+      iWork(9) = system->getqSize();
+      mlJac = neq - system->getqSize(); // jacobian is a reduced matrix
+    }
+    else
+      mlJac = neq; // jacobian is a full matrix
+    muJac = mlJac; // need not to be defined if mlJac = neq
   }
 
   void RADAU5Integrator::initializeUsingXML(DOMElement *element) {
