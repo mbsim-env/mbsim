@@ -127,7 +127,7 @@ namespace MBSimIntegrator {
     for(int i=0; i<self->system->getqSize(); i++) M(0,i) = 1;
   }
 
-  void  RADAU5Integrator::plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
+  void RADAU5Integrator::plot(int* nr, double* told, double* t, double* y, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
     auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
 
     double curTimeAndState = -1;
@@ -136,7 +136,7 @@ namespace MBSimIntegrator {
     if(self->getSystem()->getsvSize()) {
       self->getSystem()->setTime(*t);
       curTimeAndState = *t;
-      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
       self->getSystem()->resetUpToDate();
       self->shift = self->signChangedWRTsvLast(self->getSystem()->evalsv());
       // if a root exists in the current step ...
@@ -226,7 +226,7 @@ namespace MBSimIntegrator {
       // check drift
       if(self->getToleranceForPositionConstraints()>=0) {
         self->getSystem()->setTime(*t);
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
         self->getSystem()->resetUpToDate();
         if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
           self->getSystem()->projectGeneralizedPositions(3);
@@ -236,7 +236,7 @@ namespace MBSimIntegrator {
       }
       else if(self->getToleranceForVelocityConstraints()>=0) {
         self->getSystem()->setTime(*t);
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
         self->getSystem()->resetUpToDate();
         if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
           self->getSystem()->projectGeneralizedVelocities(3);
