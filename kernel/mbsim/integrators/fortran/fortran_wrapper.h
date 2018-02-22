@@ -7,6 +7,16 @@
 extern "C" {
 #endif
 
+#define DLSODE FC_FUNC(mbsim_dlsode,MBSIM_DLSODE)
+void DLSODE(void(*)(int*,double*,double*,double*),int*,double*,double*,
+            double*,int*,double*,double*,int*,int*,int*,double*,int*,
+            int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),int*);
+
+#define DLSODA FC_FUNC(dlsoda,DLSODA)
+void DLSODA(void(*)(int*,double*,double*,double*),int*,double*,double*,
+            double*,int*,double*,double*,int*,int*,int*,double*,int*,
+            int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),int*);
+
 #define DLSODAR FC_FUNC(dlsodar,DLSODAR)
 void DLSODAR(void(*)(int*,double*,double*,double*),int*,double*,double*,
             double*,int*,double*,double*,int*,int*,int*,double*,int*,
@@ -21,11 +31,6 @@ void DLSODKR(void(*)(int*,double*,double*,double*),int*,double*,double*,
              double*,int*,int*),void(*)(int*,double*,double*,double*,double*,
              double*,double*,int*,double*,int*,int*),int*,
              void(*)(int*,double*,double*,int*,double*),int*,int*);
-
-#define DLSODE FC_FUNC(mbsim_dlsode,MBSIM_DLSODE)
-void DLSODE(void(*)(int*,double*,double*,double*),int*,double*,double*,
-            double*,int*,double*,double*,int*,int*,int*,double*,int*,
-            int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),int*);
 
 #define DLSODI FC_FUNC(dlsodi,DLSODI)
 void DLSODI(void(*)(int*,double*,double*,double*,double*,int*),
