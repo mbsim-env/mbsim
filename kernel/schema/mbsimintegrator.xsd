@@ -213,7 +213,7 @@
 
   <xs:element name="RADAUIntegrator" substitutionGroup="Integrator" type="RADAUIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Implizites Runge-Kutta Verfahren der Ordnung 5 (Radau IIA) mit 'dense output'.<br/>
+        Implizites Runge-Kutta Verfahren (Radau IIA) mit variabler Ordnung (5,9,13) und 'dense output'.<br/>
         Das Verfahren ist für steife Differentialgleichungen bestimmt und verwendet automatische Schrittweitenbestimmung.
     </xs:documentation></xs:annotation>
   </xs:element>
