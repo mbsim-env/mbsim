@@ -8,6 +8,7 @@ libintegrators_la_SOURCES = integrator.cc\
 			    boost_odeint_integrator.cc \
 			    dopri5_integrator.cc \
 			    radau5_integrator.cc \
+			    radau_integrator.cc \
 			    dop853_integrator.cc \
 			    odex_integrator.cc \
 			    daspk_integrator.cc \
@@ -26,6 +27,7 @@ libintegrators_la_SOURCES = integrator.cc\
 			    fortran/dop853.f\
 			    fortran/odex.f\
 			    fortran/radau5.f\
+			    fortran/radau.f\
 			    fortran/dc_lapack.f\
 			    fortran/rksuite.f\
 			    fortran/ddaspk.f\
@@ -52,6 +54,7 @@ integratorsinclude_HEADERS = integrator.h \
 			     boost_odeint_integrator_predef.h \
 			     dopri5_integrator.h \
 			     radau5_integrator.h \
+			     radau_integrator.h \
 			     dop853_integrator.h \
 			     odex_integrator.h \
 			     daspk_integrator.h \
