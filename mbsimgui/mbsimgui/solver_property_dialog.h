@@ -71,16 +71,6 @@ namespace MBSimGUI {
       ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps;
   };
 
-  class RADAU5IntegratorPropertyDialog : public IntegratorPropertyDialog {
-
-    public:
-      RADAU5IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm;
-  };
-
   class DOP853IntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
@@ -101,6 +91,46 @@ namespace MBSimGUI {
       ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps;
   };
 
+  class RADAU5IntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      RADAU5IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm;
+  };
+
+  class RADAUIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      RADAUIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm;
+  };
+
+  class RODASIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      RODASIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *autonomousSystem;
+  };
+
+  class SEULEXIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      SEULEXIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *autonomousSystem;
+  };
+
   class LSODEIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
@@ -109,6 +139,16 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *method, *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps, *gMax, *gdMax;
+  };
+
+  class LSODAIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      LSODAIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps, *gMax, *gdMax;
   };
 
   class LSODARIntegratorPropertyDialog : public IntegratorPropertyDialog {

@@ -108,6 +108,9 @@ namespace MBSimIntegrator {
     else
       neq = system->getzSize();
 
+    if(not neq)
+      throw MBSimError("(DASPKIntegrator::integrate): dimension of the system must be at least 1");
+
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
 

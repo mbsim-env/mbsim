@@ -266,6 +266,7 @@ namespace MBSimIntegrator {
     else
       BoostOdeintHelper::assign(zTemp, system->evalz0());
 
+    system->resetUpToDate();
     system->computeInitialCondition();
     nrPlots++;
     system->plot();

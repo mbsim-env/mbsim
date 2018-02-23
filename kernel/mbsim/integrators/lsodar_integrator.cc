@@ -98,6 +98,10 @@ namespace MBSimIntegrator {
     odePackInUse = true;
 
     int zSize=system->getzSize();
+
+    if(not zSize)
+      throw MBSimError("(LSODARIntegrator::integrate): dimension of the system must be at least 1");
+
     neq[0]=zSize;
     LSODARIntegrator *self=this;
     memcpy(&neq[1], &self, sizeof(void*));
@@ -110,6 +114,7 @@ namespace MBSimIntegrator {
     else
       system->evalz0();
 //    system->setState(z); Not needed as the integrator uses the state of the system
+    system->resetUpToDate();
     system->computeInitialCondition();
     t=tStart;
     tPlot=t+dtPlot;
@@ -156,7 +161,6 @@ namespace MBSimIntegrator {
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
     // plot initial state
-    system->resetUpToDate();
     system->plot();
   }
 
@@ -170,8 +174,7 @@ namespace MBSimIntegrator {
       integrationSteps++;
       double tOut = min(tPlot, tStop);
       DLSODAR(fzdot, neq, system->getState()(), &t, &tOut, &iTol, rTol(), aTol(), &one,
-          &istate, &one, rWork(), &lrWork, iWork(),
-          &liWork, NULL, &two, fsv, &nsv, system->getjsv()());
+          &istate, &one, rWork(), &lrWork, iWork(), &liWork, NULL, &two, fsv, &nsv, system->getjsv()());
       if(istate==2 || fabs(t-tPlot)<epsroot) {
         system->setTime(t);
 //        system->setState(z); Not needed as the integrator uses the state of the system

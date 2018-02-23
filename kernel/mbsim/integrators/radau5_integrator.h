@@ -41,7 +41,7 @@ namespace MBSimIntegrator {
       };
 
     private:
-      typedef void (*Fzdot)(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
+      typedef void (*Fzdot)(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       typedef void (*Mass)(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static Fzdot fzdot[5];
       static Mass mass[2];
@@ -52,7 +52,12 @@ namespace MBSimIntegrator {
       static void fzdotGGL(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void massFull(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void massReduced(int* n, double* m, int* lmas, double* rpar, int* ipar);
-      static void plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
+      static void plot(int* nr, double* told, double* t, double* y, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
+
+      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
+
+      void calcSize();
+      void reinit();
 
       double tPlot{0};
       double dtOut{0};
@@ -75,10 +80,19 @@ namespace MBSimIntegrator {
       /** reduced form **/
       bool reduced{false};
 
+      bool plotOnRoot{false};
+
        /** tolerance for position constraints */
       double gMax{-1};
       /** tolerance for velocity constraints */
       double gdMax{-1};
+
+      fmatvec::Vec svLast;
+      bool shift{false};
+
+      int neq, mlJac, muJac;
+      fmatvec::VecInt iWork;
+      fmatvec::Vec work;
 
     public:
       ~RADAU5Integrator() override = default;
@@ -95,6 +109,8 @@ namespace MBSimIntegrator {
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
       void setReducedForm(bool reduced_) { reduced = reduced_; }
+
+      void setPlotOnRoot(bool b) { plotOnRoot = b; }
 
       void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
       void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }

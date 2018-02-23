@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2006  Martin Förg
+/* Copyright (C) 2004-2018  Martin Förg
  
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -23,7 +23,7 @@
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
 #include "fortran/fortran_wrapper.h"
-#include "radau5_integrator.h"
+#include "seulex_integrator.h"
 #include <ctime>
 #include <fstream>
 
@@ -38,13 +38,13 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RADAU5Integrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, SEULEXIntegrator)
 
-  RADAU5Integrator::Fzdot RADAU5Integrator::fzdot[5];
-  RADAU5Integrator::Mass RADAU5Integrator::mass[2];
+  SEULEXIntegrator::Fzdot SEULEXIntegrator::fzdot[2];
+  SEULEXIntegrator::Mass SEULEXIntegrator::mass[2];
 
-  void RADAU5Integrator::fzdotODE(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
+  void SEULEXIntegrator::fzdotODE(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<SEULEXIntegrator**>(&ipar[0]);
     Vec zd(*zSize, zd_);
     self->getSystem()->setTime(*t);
     self->getSystem()->setState(Vec(*zSize, z_));
@@ -52,8 +52,8 @@ namespace MBSimIntegrator {
     zd = self->getSystem()->evalzd();
   }
 
-  void RADAU5Integrator::fzdotDAE1(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
+  void SEULEXIntegrator::fzdotDAE1(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<SEULEXIntegrator**>(&ipar[0]);
     Vec y(*neq, y_);
     Vec yd(*neq, yd_);
     self->getSystem()->setTime(*t);
@@ -65,70 +65,20 @@ namespace MBSimIntegrator {
     yd(self->system->getzSize(),*neq-1) = self->system->evalW().T()*yd(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1) + self->system->evalwb();
   }
 
-  void RADAU5Integrator::fzdotDAE2(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Vec y(*neq, y_);
-    Vec yd(*neq, yd_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),*neq-1));
-    self->getSystem()->setUpdatela(false);
-    yd(0,self->system->getzSize()-1) = self->system->evalzd();
-    yd(self->system->getzSize(),*neq-1) = self->system->evalgd();
-  }
-
-  void RADAU5Integrator::fzdotDAE3(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Vec y(*neq, y_);
-    Vec yd(*neq, yd_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),*neq-1));
-    self->getSystem()->setUpdatela(false);
-    yd(0,self->system->getzSize()-1) = self->system->evalzd();
-    yd(self->system->getzSize(),*neq-1) = self->system->evalg();
-  }
-
-  void RADAU5Integrator::fzdotGGL(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Vec y(*neq, y_);
-    Vec yd(*neq, yd_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),self->system->getzSize()+self->system->getlaSize()-1));
-    self->getSystem()->setUpdatela(false);
-    yd(0,self->system->getzSize()-1) = self->system->evalzd();
-    yd(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1) = self->system->evalgd();
-    yd(self->system->getzSize()+self->system->getgdSize(),*neq-1) = self->system->evalg();
-    if(self->system->getgSize() != self->system->getgdSize()) {
-      self->system->calclaSize(5);
-      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
-      self->system->setUpdateW(false);
-      yd(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getgdSize(),*neq-1);
-      self->system->calclaSize(3);
-      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
-    }
-    else
-      yd(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getgdSize(),*neq-1);
-  }
-
-  void RADAU5Integrator::massFull(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
+  void SEULEXIntegrator::massFull(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<SEULEXIntegrator**>(&ipar[0]);
     Mat M(*lmas,*zSize, m_);
     for(int i=0; i<self->system->getzSize(); i++) M(0,i) = 1;
   }
 
-  void RADAU5Integrator::massReduced(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
+  void SEULEXIntegrator::massReduced(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<SEULEXIntegrator**>(&ipar[0]);
     Mat M(*lmas,*zSize, m_);
     for(int i=0; i<self->system->getqSize(); i++) M(0,i) = 1;
   }
 
-  void RADAU5Integrator::plot(int* nr, double* told, double* t, double* y, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
+  void SEULEXIntegrator::plot(int* nr, double* told, double* t, double *y, double *rc, int* lrc, int* ic, int* lic, int* n, double* rpar, int* ipar, int* irtrn) {
+    auto self=*reinterpret_cast<SEULEXIntegrator**>(&ipar[0]);
 
     double curTimeAndState = -1;
     double tRoot = *t;
@@ -149,7 +99,7 @@ namespace MBSimIntegrator {
           self->getSystem()->setTime(tCheck);
           curTimeAndState = tCheck;
           for(int i=1; i<=self->system->getzSize(); i++)
-            self->getSystem()->getState()(i-1) = CONTR5(&i,&tCheck,cont,lrc);
+            self->getSystem()->getState()(i-1) = CONTSX(&i,&tCheck,rc,lrc,ic,lic);
           self->getSystem()->resetUpToDate();
           if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
             tRoot = tCheck;
@@ -158,7 +108,7 @@ namespace MBSimIntegrator {
           curTimeAndState = tRoot;
           self->getSystem()->setTime(tRoot);
           for(int i=1; i<=self->system->getzSize(); i++)
-            self->getSystem()->getState()(i-1) = CONTR5(&i,&tRoot,cont,lrc);
+            self->getSystem()->getState()(i-1) = CONTSX(&i,&tRoot,rc,lrc,ic,lic);
         }
         self->getSystem()->resetUpToDate();
         auto &sv = self->getSystem()->evalsv();
@@ -173,12 +123,12 @@ namespace MBSimIntegrator {
         curTimeAndState = self->tPlot;
         self->getSystem()->setTime(self->tPlot);
         for(int i=1; i<=self->system->getzSize(); i++)
-          self->getSystem()->getState()(i-1) = CONTR5(&i,&self->tPlot,cont,lrc);
+          self->getSystem()->getState()(i-1) = CONTSX(&i,&self->tPlot,rc,lrc,ic,lic);
       }
       self->getSystem()->resetUpToDate();
       if(self->formalism) {
         for(int i=self->system->getzSize()+1; i<=self->system->getzSize()+self->system->getlaSize(); i++)
-          self->getSystem()->getla(false)(i-(self->system->getzSize()+1)) = CONTR5(&i,&self->tPlot,cont,lrc);
+          self->getSystem()->getla(false)(i-(self->system->getzSize()+1)) = CONTSX(&i,&self->tPlot,rc,lrc,ic,lic);
         self->getSystem()->setUpdatela(false);
       }
       self->getSystem()->plot();
@@ -198,7 +148,7 @@ namespace MBSimIntegrator {
       if(curTimeAndState != tRoot) {
         self->getSystem()->setTime(tRoot);
         for(int i=1; i<=self->getSystem()->getzSize(); i++)
-          self->getSystem()->getState()(i-1) = CONTR5(&i,&tRoot,cont,lrc);
+          self->getSystem()->getState()(i-1) = CONTSX(&i,&tRoot,rc,lrc,ic,lic);
       }
       if(self->plotOnRoot) {
         self->getSystem()->resetUpToDate();
@@ -246,21 +196,18 @@ namespace MBSimIntegrator {
     }
   }
 
-  bool RADAU5Integrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
+  bool SEULEXIntegrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
     for(int i=0; i<svStepEnd.size(); i++)
       if(svLast(i)*svStepEnd(i)<0)
         return true;
     return false;
   }
 
-  void RADAU5Integrator::integrate() {
-    fzdot[0] = &RADAU5Integrator::fzdotODE;
-    fzdot[1] = &RADAU5Integrator::fzdotDAE1;
-    fzdot[2] = &RADAU5Integrator::fzdotDAE2;
-    fzdot[3] = &RADAU5Integrator::fzdotDAE3;
-    fzdot[4] = &RADAU5Integrator::fzdotGGL;
-    mass[0] = &RADAU5Integrator::massFull;
-    mass[1] = &RADAU5Integrator::massReduced;
+  void SEULEXIntegrator::integrate() {
+    fzdot[0] = &SEULEXIntegrator::fzdotODE;
+    fzdot[1] = &SEULEXIntegrator::fzdotDAE1;
+    mass[0] = &SEULEXIntegrator::massFull;
+    mass[1] = &SEULEXIntegrator::massReduced;
 
     debugInit();
 
@@ -268,10 +215,7 @@ namespace MBSimIntegrator {
     calcSize();
 
     if(not neq)
-      throw MBSimError("(RADAU5Integrator::integrate): dimension of the system must be at least 1");
-
-    if(formalism==DAE3 and system->getgSize()!=system->getgdSize())
-      throw MBSimError("(RADAU5Integrator::integrate): size of g (" + toStr(system->getgSize()) + ") must be equal to size of gd (" + toStr(system->getgdSize()) + ") when using the DAE3 formalism");
+      throw MBSimError("(SEULEXIntegrator::integrate): dimension of the system must be at least 1");
 
     double t = tStart;
 
@@ -279,7 +223,7 @@ namespace MBSimIntegrator {
     Vec z = y(0,zSize-1);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(RADAU5Integrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throw MBSimError("(SEULEXIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
@@ -296,25 +240,25 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != neq)
-        throw MBSimError("(RADAU5Integrator::integrate): size of aTol does not match, must be " + toStr(neq));
+        throw MBSimError("(SEULEXIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
     }
     if(rTol.size() != aTol.size())
-      throw MBSimError("(RADAU5Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throw MBSimError("(SEULEXIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
-    int out = 1; // subroutine is available for output
+    int out = 2; // dense output is performed in plot
 
     double rPar;
     int iPar[sizeof(void*)/sizeof(int)+1];
-    RADAU5Integrator *self=this;
+    SEULEXIntegrator *self=this;
     memcpy(&iPar[0], &self, sizeof(void*));
-
-    int lWork = 2*(neq*(neq+neq+3*neq+12)+20);
-    int liWork = 2*(3*neq+20);
+    int lWork = 2*(neq*(neq+neq+neq+20)+4*12+20+2+12*8*neq);
+    int liWork = 2*(2*neq+12+20+neq);
     iWork.resize(liWork);
     work.resize(lWork);
     if(dtMax>0)
-      work(6) = dtMax; // maximum step size
+      work(1) = dtMax; // maximum step size
     iWork(1) = maxSteps; // maximum number of steps
+    int ifcn = not autonom;
     int iMas = formalism>0; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix
     int muMas = 0; // upper bandwith of the mass-matrix
@@ -357,7 +301,7 @@ namespace MBSimIntegrator {
     s0 = clock();
 
     while(t<=tEnd-dt) {
-      RADAU5(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt,
+      SEULEX(&neq,(*fzdot[formalism]),&ifcn,&t,y(),&tEnd,&dt,
           rTol(),aTol(),&iTol,
           nullptr,&iJac,&mlJac,&muJac,
           *mass[reduced],&iMas,&mlMas,&muMas,
@@ -389,7 +333,7 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-  void RADAU5Integrator::calcSize() {
+  void SEULEXIntegrator::calcSize() {
     if(formalism==DAE1 or formalism==DAE2)
       neq = system->getzSize()+system->getlaSize();
     else if(formalism==DAE3)
@@ -400,22 +344,11 @@ namespace MBSimIntegrator {
       neq = system->getzSize();
   }
 
-  void RADAU5Integrator::reinit() {
+  void SEULEXIntegrator::reinit() {
     work(20,work.size()-1).init(0);
-    if(formalism==DAE1)
-      iWork(4) = system->getzSize() + system->getlaSize();
-    else if(formalism==DAE2) {
-      iWork(4) = system->getzSize();
-      iWork(5) = system->getgdSize();
-    }
-    else if(formalism==DAE3) {
-      iWork(4) = system->getzSize();
-      iWork(6) = system->getgSize();
-    }
-    else if(formalism==GGL) {
-      iWork(4) = system->getzSize();
-      iWork(5) = system->getgdSize() + system->getgSize();
-    }
+    iWork(5) = neq; // number of components, for which dense output is required
+    for(int i=0; i<neq; i++)
+      iWork(20+i) = i+1;
     if(reduced) {
       iWork(8) = system->getqSize();
       iWork(9) = system->getqSize();
@@ -426,7 +359,7 @@ namespace MBSimIntegrator {
     muJac = mlJac; // need not to be defined if mlJac = neq
   }
 
-  void RADAU5Integrator::initializeUsingXML(DOMElement *element) {
+  void SEULEXIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
@@ -448,12 +381,11 @@ namespace MBSimIntegrator {
       string formalismStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(formalismStr=="ODE") formalism=ODE;
       else if(formalismStr=="DAE1") formalism=DAE1;
-      else if(formalismStr=="DAE2") formalism=DAE2;
-      else if(formalismStr=="DAE3") formalism=DAE3;
-      else if(formalismStr=="GGL") formalism=GGL;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
     if(e) setReducedForm((E(e)->getText<bool>()));
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"autonomousSystem");
+    if(e) setAutonomousSystem((E(e)->getText<bool>()));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
     if(e) setPlotOnRoot(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");

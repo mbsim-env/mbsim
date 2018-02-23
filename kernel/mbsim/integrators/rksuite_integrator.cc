@@ -45,6 +45,9 @@ namespace MBSimIntegrator {
     selfStatic = this;
     zSize=system->getzSize();
 
+    if(not zSize)
+      throw MBSimError("(RKSuiteIntegrator::integrate): dimension of the system must be at least 1");
+
     z.resize(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
