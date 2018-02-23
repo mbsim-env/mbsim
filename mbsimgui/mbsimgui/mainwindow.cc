@@ -611,6 +611,7 @@ namespace MBSimGUI {
       delete project;
 
       doc = impl->createDocument();
+      doc->setDocumentURI(X()%QString("file://"+QDir::currentPath()+"/Project.mbsimprj.xml").toStdString());
 
       project = new Project;
       project->createXMLElement(doc);
