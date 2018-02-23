@@ -270,6 +270,9 @@ namespace MBSimIntegrator {
     if(not neq)
       throw MBSimError("(RADAU5Integrator::integrate): dimension of the system must be at least 1");
 
+    if(formalism==DAE3 and system->getgSize()!=system->getgdSize())
+      throw MBSimError("(RADAU5Integrator::integrate): size of g (" + toStr(system->getgSize()) + ") must be equal to size of gd (" + toStr(system->getgdSize()) + ") when using the DAE3 formalism");
+
     double t = tStart;
 
     Vec y(neq);
