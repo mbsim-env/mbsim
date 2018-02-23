@@ -267,6 +267,9 @@ namespace MBSimIntegrator {
     int zSize = system->getzSize();
     calcSize();
 
+    if(not neq)
+      throw MBSimError("(RADAU5Integrator::integrate): dimension of the system must be at least 1");
+
     double t = tStart;
 
     Vec y(neq);

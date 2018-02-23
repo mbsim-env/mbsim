@@ -167,6 +167,9 @@ namespace MBSimIntegrator {
 
     int zSize=system->getzSize();
 
+    if(not zSize)
+      throw MBSimError("(DOP853Integrator::integrate): dimension of the system must be at least 1");
+
     double t = tStart;
 
     Vec z(zSize);

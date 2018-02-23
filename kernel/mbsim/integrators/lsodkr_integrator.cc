@@ -104,6 +104,10 @@ namespace MBSimIntegrator {
     odePackInUse = true;
 
     int zSize=system->getzSize();
+
+    if(not zSize)
+      throw MBSimError("(LSODKRIntegrator::integrate): dimension of the system must be at least 1");
+
     neq[0]=zSize;
     LSODKRIntegrator *self=this;
     memcpy(&neq[1], &self, sizeof(void*));
