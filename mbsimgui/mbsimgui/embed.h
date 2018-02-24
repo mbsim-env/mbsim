@@ -31,7 +31,6 @@
 namespace MBSimGUI {
 
   class Element;
-  extern QDir mbsDir;
   extern xercesc::DOMLSParser *parser;
   extern MainWindow *mw;
 

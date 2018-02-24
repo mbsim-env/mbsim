@@ -38,7 +38,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern QDir mbsDir;
   extern DOMImplementation *impl;
   extern DOMLSSerializer *serializer;
 

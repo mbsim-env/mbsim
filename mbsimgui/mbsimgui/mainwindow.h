@@ -218,7 +218,6 @@ namespace MBSimGUI {
 
     private slots:
       void selectElement(const std::string& ID);
-      void changeWorkingDir();
       void openOptionsMenu();
       void selectionChanged(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
