@@ -23,7 +23,6 @@
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
-#include <mbsim/utils/utils.h>
 #include "fortran/fortran_wrapper.h"
 #include "lsodi_integrator.h"
 #include <fstream>
@@ -132,7 +131,7 @@ namespace MBSimIntegrator {
       system->evalz0();
 
     double t = tStart;
-    double tPlot = min(tEnd,t + dtPlot);
+    double tPlot = min(tEnd, t+dtPlot);
 
     if(aTol.size() == 0)
       aTol.resize(1,INIT,1e-6);
@@ -191,7 +190,7 @@ namespace MBSimIntegrator {
     int MF = 22;
 
     cout.setf(ios::scientific, ios::floatfield);
-    while(t<tEnd) {
+    while(t<tEnd-epsroot) {
       DLSODI(*res[formalism], adda, 0, neq, system->getzParent()(), yd(), &t, &tPlot, &iTol, rTol(), aTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
       if(istate==2 or istate==1) {
         system->setTime(t);
@@ -204,7 +203,7 @@ namespace MBSimIntegrator {
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;
         if(plotIntegrationData) integPlot<< t << " " << rWork(10) << " " << time << endl;
-        tPlot = min(tEnd,tPlot + dtPlot);
+        tPlot = min(tEnd, tPlot+dtPlot);
 
         // check drift
         if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities

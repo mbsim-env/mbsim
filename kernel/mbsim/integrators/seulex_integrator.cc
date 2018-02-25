@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
 #include "seulex_integrator.h"
 #include <ctime>
@@ -300,7 +301,7 @@ namespace MBSimIntegrator {
 
     s0 = clock();
 
-    while(t<=tEnd-dt) {
+    while(t<tEnd-epsroot) {
       SEULEX(&neq,(*fzdot[formalism]),&ifcn,&t,y(),&tEnd,&dt,
           rTol(),aTol(),&iTol,
           nullptr,&iJac,&mlJac,&muJac,

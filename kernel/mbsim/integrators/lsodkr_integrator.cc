@@ -20,7 +20,6 @@
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
-#include <mbsim/utils/utils.h>
 #include "fortran/fortran_wrapper.h"
 #include "lsodkr_integrator.h"
 #include <fstream>
@@ -181,7 +180,7 @@ namespace MBSimIntegrator {
     rWork(4) = dt0;
     system->setTime(t);
 //    system->setState(z); Not needed as the integrator uses the state of the system
-    while(t < tStop-epsroot) {
+    while(t<tStop-epsroot) {
       integrationSteps++;
       double tOut = min(tPlot, tStop);
       DLSODKR(fzdot, neq, system->getState()(), &t, &tOut, &iTol, rTol(), aTol(), &one,

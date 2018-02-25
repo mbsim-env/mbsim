@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
 #include "radau5_integrator.h"
 #include <ctime>
@@ -356,7 +357,7 @@ namespace MBSimIntegrator {
 
     s0 = clock();
 
-    while(t<=tEnd-dt) {
+    while(t<tEnd-epsroot) {
       RADAU5(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt,
           rTol(),aTol(),&iTol,
           nullptr,&iJac,&mlJac,&muJac,

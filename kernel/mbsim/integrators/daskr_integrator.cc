@@ -23,7 +23,6 @@
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
-#include <mbsim/utils/utils.h>
 #include "fortran/fortran_wrapper.h"
 #include "daskr_integrator.h"
 #include <fstream>

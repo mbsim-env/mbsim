@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
 #include "odex_integrator.h"
 #include <fstream>
@@ -233,7 +234,7 @@ namespace MBSimIntegrator {
 
     s0 = clock();
 
-    while(t<tEnd) {
+    while(t<tEnd-epsroot) {
       ODEX(&zSize,fzdot,&t,z(),&tEnd, &dt,rTol(),aTol(),&iTol,plot,&out,
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 

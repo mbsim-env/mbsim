@@ -100,7 +100,7 @@ namespace MBSimIntegrator {
       SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
           &errass, &dt0, work, &lenwrk, &messages);
 
-      while((tStop-t)>epsroot) {
+      while(t<tStop-epsroot) {
 
         integrationSteps++;
 
@@ -120,7 +120,7 @@ namespace MBSimIntegrator {
           s0 = s1; 
           if(plotIntegrationData) integPlot<< t << " " << dtLast << " " << time << endl;
 
-          tPlot = min(tEnd,tPlot+dtPlot);
+          tPlot = min(tEnd, tPlot+dtPlot);
 
           // check drift
           bool restart = false;
