@@ -23,7 +23,6 @@
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
-#include <mbsim/utils/utils.h>
 #include "fortran/fortran_wrapper.h"
 #include "daskr_integrator.h"
 #include <fstream>
@@ -126,6 +125,9 @@ namespace MBSimIntegrator {
       neq = system->getzSize()+system->getgdSize()+system->getgSize();
     else
       neq = system->getzSize();
+
+    if(not neq)
+      throw MBSimError("(DASKRIntegrator::integrate): dimension of the system must be at least 1");
 
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
@@ -243,7 +245,7 @@ namespace MBSimIntegrator {
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
       DDASKR(*delta[formalism],&neq,&t,system->getState()(),yd(),&tPlot,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,&rPar,iPar,nullptr,nullptr,rt,nrt,system->getjsv()());
-      if(idid==3 || fabs(t-tPlot)<epsroot) {
+      if(idid==3 or idid==2) {
         system->setTime(t);
         system->resetUpToDate();
         system->setzd(yd(0,system->getzSize()-1));

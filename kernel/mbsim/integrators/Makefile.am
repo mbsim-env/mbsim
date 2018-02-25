@@ -1,15 +1,19 @@
 noinst_LTLIBRARIES = libintegrators.la
 libintegrators_la_SOURCES = integrator.cc\
+			    lsode_integrator.cc \
+			    lsoda_integrator.cc \
 			    lsodar_integrator.cc \
 			    lsodkr_integrator.cc \
-			    lsode_integrator.cc \
 			    lsodi_integrator.cc \
 			    rksuite_integrator.cc \
 			    boost_odeint_integrator.cc \
 			    dopri5_integrator.cc \
-			    radau5_integrator.cc \
 			    dop853_integrator.cc \
 			    odex_integrator.cc \
+			    radau5_integrator.cc \
+			    radau_integrator.cc \
+			    rodas_integrator.cc \
+			    seulex_integrator.cc \
 			    daspk_integrator.cc \
 			    daskr_integrator.cc \
 			    quasi_static_integrator.cc \
@@ -26,13 +30,14 @@ libintegrators_la_SOURCES = integrator.cc\
 			    fortran/dop853.f\
 			    fortran/odex.f\
 			    fortran/radau5.f\
+			    fortran/radau.f\
+			    fortran/rodas.f\
+			    fortran/seulex.f\
 			    fortran/dc_lapack.f\
 			    fortran/rksuite.f\
 			    fortran/ddaspk.f\
 			    fortran/ddaskr.f
-			     
 #auto_time_stepping_ssc_integrator.cc
-#fortran/daux.f
 #fortran/mexax.f
 #mexax_integrator.cc 
 
@@ -43,17 +48,21 @@ integratorsincludedir = $(includedir)/mbsim/integrators
 
 integratorsinclude_HEADERS = integrator.h \
 			     integrators.h \
+			     lsode_integrator.h \
+			     lsoda_integrator.h \
 			     lsodar_integrator.h \
 			     lsodkr_integrator.h \
-			     lsode_integrator.h \
 			     lsodi_integrator.h \
 			     rksuite_integrator.h \
 			     boost_odeint_integrator.h \
 			     boost_odeint_integrator_predef.h \
 			     dopri5_integrator.h \
-			     radau5_integrator.h \
 			     dop853_integrator.h \
 			     odex_integrator.h \
+			     radau5_integrator.h \
+			     radau_integrator.h \
+			     rodas_integrator.h \
+			     seulex_integrator.h \
 			     daspk_integrator.h \
 			     daskr_integrator.h \
 			     quasi_static_integrator.h \

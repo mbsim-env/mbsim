@@ -145,63 +145,6 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
-    addTab("Step size");
-    addTab("Extra");
-
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", absTol);
-
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", relTol);
-
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
-    addToTab("Step size", initialStepSize);
-
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
-    addToTab("Step size", maximumStepSize);
-
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
-    addToTab("Step size", maxSteps);
-
-    vector<QString> list;
-    list.emplace_back("\"ODE\"");
-    list.emplace_back("\"DAE1\"");
-    list.emplace_back("\"DAE2\"");
-    list.emplace_back("\"DAE3\"");
-    list.emplace_back("\"GGL\"");
-    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,0,true),true,false,MBSIMINT%"formalism");
-    addToTab("General", formalism);
-
-    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
-    addToTab("Extra", reducedForm);
-  }
-
-  DOMElement* RADAU5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
-    absTol->initializeUsingXML(item->getXMLElement());
-    relTol->initializeUsingXML(item->getXMLElement());
-    initialStepSize->initializeUsingXML(item->getXMLElement());
-    maximumStepSize->initializeUsingXML(item->getXMLElement());
-    maxSteps->initializeUsingXML(item->getXMLElement());
-    formalism->initializeUsingXML(item->getXMLElement());
-    reducedForm->initializeUsingXML(item->getXMLElement());
-    return parent;
-  }
-
-  DOMElement* RADAU5IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
-    absTol->writeXMLFile(item->getXMLElement());
-    relTol->writeXMLFile(item->getXMLElement());
-    initialStepSize->writeXMLFile(item->getXMLElement());
-    maximumStepSize->writeXMLFile(item->getXMLElement());
-    maxSteps->writeXMLFile(item->getXMLElement());
-    formalism->writeXMLFile(item->getXMLElement());
-    reducedForm->writeXMLFile(item->getXMLElement());
-    return nullptr;
-  }
-
   DOP853IntegratorPropertyDialog::DOP853IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
     addTab("Tolerances");
     addTab("Step size");
@@ -282,6 +225,238 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+    addTab("Tolerances");
+    addTab("Step size");
+    addTab("Extra");
+
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", absTol);
+
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", relTol);
+
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
+    addToTab("Step size", initialStepSize);
+
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
+    addToTab("Step size", maximumStepSize);
+
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
+    addToTab("Step size", maxSteps);
+
+    vector<QString> list;
+    list.emplace_back("\"ODE\"");
+    list.emplace_back("\"DAE1\"");
+    list.emplace_back("\"DAE2\"");
+    list.emplace_back("\"DAE3\"");
+    list.emplace_back("\"GGL\"");
+    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,0,true),true,false,MBSIMINT%"formalism");
+    addToTab("General", formalism);
+
+    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
+    addToTab("Extra", reducedForm);
+  }
+
+  DOMElement* RADAU5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximumStepSize->initializeUsingXML(item->getXMLElement());
+    maxSteps->initializeUsingXML(item->getXMLElement());
+    formalism->initializeUsingXML(item->getXMLElement());
+    reducedForm->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RADAU5IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximumStepSize->writeXMLFile(item->getXMLElement());
+    maxSteps->writeXMLFile(item->getXMLElement());
+    formalism->writeXMLFile(item->getXMLElement());
+    reducedForm->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
+  RADAUIntegratorPropertyDialog::RADAUIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+    addTab("Tolerances");
+    addTab("Step size");
+    addTab("Extra");
+
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", absTol);
+
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", relTol);
+
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
+    addToTab("Step size", initialStepSize);
+
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
+    addToTab("Step size", maximumStepSize);
+
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
+    addToTab("Step size", maxSteps);
+
+    vector<QString> list;
+    list.emplace_back("\"ODE\"");
+    list.emplace_back("\"DAE1\"");
+    list.emplace_back("\"DAE2\"");
+    list.emplace_back("\"DAE3\"");
+    list.emplace_back("\"GGL\"");
+    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,0,true),true,false,MBSIMINT%"formalism");
+    addToTab("General", formalism);
+
+    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
+    addToTab("Extra", reducedForm);
+  }
+
+  DOMElement* RADAUIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximumStepSize->initializeUsingXML(item->getXMLElement());
+    maxSteps->initializeUsingXML(item->getXMLElement());
+    formalism->initializeUsingXML(item->getXMLElement());
+    reducedForm->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RADAUIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximumStepSize->writeXMLFile(item->getXMLElement());
+    maxSteps->writeXMLFile(item->getXMLElement());
+    formalism->writeXMLFile(item->getXMLElement());
+    reducedForm->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
+  RODASIntegratorPropertyDialog::RODASIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+    addTab("Tolerances");
+    addTab("Step size");
+    addTab("Extra");
+
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", absTol);
+
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", relTol);
+
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
+    addToTab("Step size", initialStepSize);
+
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
+    addToTab("Step size", maximumStepSize);
+
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
+    addToTab("Step size", maxSteps);
+
+    vector<QString> list;
+    list.emplace_back("\"ODE\"");
+    list.emplace_back("\"DAE1\"");
+    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,0,true),true,false,MBSIMINT%"formalism");
+    addToTab("General", formalism);
+
+    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
+    addToTab("Extra", reducedForm);
+
+    autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"autonomousSystem");
+    addToTab("Extra", autonomousSystem);
+  }
+
+  DOMElement* RODASIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximumStepSize->initializeUsingXML(item->getXMLElement());
+    maxSteps->initializeUsingXML(item->getXMLElement());
+    formalism->initializeUsingXML(item->getXMLElement());
+    reducedForm->initializeUsingXML(item->getXMLElement());
+    autonomousSystem->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RODASIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximumStepSize->writeXMLFile(item->getXMLElement());
+    maxSteps->writeXMLFile(item->getXMLElement());
+    formalism->writeXMLFile(item->getXMLElement());
+    reducedForm->writeXMLFile(item->getXMLElement());
+    autonomousSystem->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
+  SEULEXIntegratorPropertyDialog::SEULEXIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+    addTab("Tolerances");
+    addTab("Step size");
+    addTab("Extra");
+
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", absTol);
+
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", relTol);
+
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
+    addToTab("Step size", initialStepSize);
+
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
+    addToTab("Step size", maximumStepSize);
+
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
+    addToTab("Step size", maxSteps);
+
+    vector<QString> list;
+    list.emplace_back("\"ODE\"");
+    list.emplace_back("\"DAE1\"");
+    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,0,true),true,false,MBSIMINT%"formalism");
+    addToTab("General", formalism);
+
+    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
+    addToTab("Extra", reducedForm);
+
+    autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"autonomousSystem");
+    addToTab("Extra", autonomousSystem);
+  }
+
+  DOMElement* SEULEXIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximumStepSize->initializeUsingXML(item->getXMLElement());
+    maxSteps->initializeUsingXML(item->getXMLElement());
+    formalism->initializeUsingXML(item->getXMLElement());
+    reducedForm->initializeUsingXML(item->getXMLElement());
+    autonomousSystem->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* SEULEXIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximumStepSize->writeXMLFile(item->getXMLElement());
+    maxSteps->writeXMLFile(item->getXMLElement());
+    formalism->writeXMLFile(item->getXMLElement());
+    reducedForm->writeXMLFile(item->getXMLElement());
+    autonomousSystem->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
   LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
     addTab("Tolerances");
     addTab("Step size");
@@ -337,6 +512,62 @@ namespace MBSimGUI {
   DOMElement* LSODEIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     method->writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximumStepSize->writeXMLFile(item->getXMLElement());
+    minimumStepSize->writeXMLFile(item->getXMLElement());
+    maxSteps->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
+  LSODAIntegratorPropertyDialog::LSODAIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+    addTab("Tolerances");
+    addTab("Step size");
+    addTab("Extra");
+
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", absTol);
+
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", relTol);
+
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
+    addToTab("Step size", initialStepSize);
+
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
+    addToTab("Step size", maximumStepSize);
+
+    minimumStepSize = new ExtWidget("Minimum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"minimumStepSize");
+    addToTab("Step size", minimumStepSize);
+
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
+    addToTab("Step size", maxSteps);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
+  }
+
+  DOMElement* LSODAIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximumStepSize->initializeUsingXML(item->getXMLElement());
+    minimumStepSize->initializeUsingXML(item->getXMLElement());
+    maxSteps->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* LSODAIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());

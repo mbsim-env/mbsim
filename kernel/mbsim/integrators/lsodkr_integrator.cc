@@ -20,7 +20,6 @@
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
-#include <mbsim/utils/utils.h>
 #include "fortran/fortran_wrapper.h"
 #include "lsodkr_integrator.h"
 #include <fstream>
@@ -104,6 +103,10 @@ namespace MBSimIntegrator {
     odePackInUse = true;
 
     int zSize=system->getzSize();
+
+    if(not zSize)
+      throw MBSimError("(LSODKRIntegrator::integrate): dimension of the system must be at least 1");
+
     neq[0]=zSize;
     LSODKRIntegrator *self=this;
     memcpy(&neq[1], &self, sizeof(void*));
@@ -116,6 +119,7 @@ namespace MBSimIntegrator {
     else
       system->evalz0();
 //    system->setState(z); Not needed as the integrator uses the state of the system
+    system->resetUpToDate();
     system->computeInitialCondition();
     t=tStart;
     tPlot=t+dtPlot;
@@ -167,7 +171,6 @@ namespace MBSimIntegrator {
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
     // plot initial state
-    system->resetUpToDate();
     system->plot();
   }
 
@@ -177,13 +180,12 @@ namespace MBSimIntegrator {
     rWork(4) = dt0;
     system->setTime(t);
 //    system->setState(z); Not needed as the integrator uses the state of the system
-    while(t < tStop-epsroot) {
+    while(t<tStop-epsroot) {
       integrationSteps++;
       double tOut = min(tPlot, tStop);
       DLSODKR(fzdot, neq, system->getState()(), &t, &tOut, &iTol, rTol(), aTol(), &one,
-          &istate, &one, rWork(), &lrWork, iWork(),
-          &liWork, NULL, NULL, &MF, fsv, &nsv, system->getjsv()());
-      if(istate==2 || fabs(t-tPlot)<epsroot) {
+          &istate, &one, rWork(), &lrWork, iWork(), &liWork, NULL, NULL, &MF, fsv, &nsv, system->getjsv()());
+      if(istate==2 or istate==1) {
         system->setTime(t);
 //        system->setState(z); Not needed as the integrator uses the state of the system
         system->resetUpToDate();

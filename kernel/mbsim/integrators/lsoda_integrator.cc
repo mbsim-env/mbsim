@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2006  Martin Förg
+/* Copyright (C) 2004-2018  Martin Förg
  
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -24,7 +24,7 @@
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
-#include "lsode_integrator.h"
+#include "lsoda_integrator.h"
 #include <fstream>
 #include <time.h>
 
@@ -39,12 +39,10 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, LSODEIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, LSODAIntegrator)
 
-  bool odePackInUse = false;
-
-  void LSODEIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
-    auto self=*reinterpret_cast<LSODEIntegrator**>(&neq[1]);
+  void LSODAIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
+    auto self=*reinterpret_cast<LSODAIntegrator**>(&neq[1]);
     Vec zd(neq[0], zd_);
     self->getSystem()->setTime(*t);
 //    self->getSystem()->setState(Vec(neq[0], z_)); Not needed as the integrator uses the state of the system
@@ -52,7 +50,7 @@ namespace MBSimIntegrator {
     zd = self->getSystem()->evalzd();
   }
 
-  void LSODEIntegrator::integrate() {
+  void LSODAIntegrator::integrate() {
     debugInit();
 
     if(odePackInUse)
@@ -62,16 +60,16 @@ namespace MBSimIntegrator {
     int zSize=system->getzSize();
 
     if(not zSize)
-      throw MBSimError("(LSODEIntegrator::integrate): dimension of the system must be at least 1");
+      throw MBSimError("(LSODAIntegrator::integrate): dimension of the system must be at least 1");
 
     int neq[1+sizeof(void*)/sizeof(int)+1];
     neq[0]=zSize;
-    LSODEIntegrator *self=this;
+    LSODAIntegrator *self=this;
     memcpy(&neq[1], &self, sizeof(void*));
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(LSODEIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throw MBSimError("(LSODAIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       system->setState(z0);
     }
     else
@@ -92,7 +90,7 @@ namespace MBSimIntegrator {
       else {
         iTol = 2;
         if(aTol.size() != zSize)
-          throw MBSimError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throw MBSimError("(LSODAIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
     }
     else {
@@ -101,13 +99,13 @@ namespace MBSimIntegrator {
       else {
         iTol = 4;
         if(aTol.size() != zSize)
-          throw MBSimError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throw MBSimError("(LSODAIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
       if(rTol.size() != zSize)
-        throw MBSimError("(LSODEIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
+        throw MBSimError("(LSODAIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
     }
 
-    int one=1, istate=1;
+    int one=1, two=2, istate=1;
     int lrWork = 2*(22+9*zSize+zSize*zSize);
     Vec rWork(lrWork);
     rWork(4) = dt0;
@@ -134,12 +132,10 @@ namespace MBSimIntegrator {
       integPlot << "#1 calculation time [s]:" << endl;
     }
 
-    int MF = method;
-
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd-epsroot) {
-      DLSODE(fzdot, neq, system->getState()(), &t, &tPlot, &iTol, rTol(), aTol(),
-          &one, &istate, &one, rWork(), &lrWork, iWork(), &liWork, 0, &MF);
+      DLSODA(fzdot, neq, system->getState()(), &t, &tPlot, &iTol, rTol(), aTol(), &one,
+          &istate, &one, rWork(), &lrWork, iWork(), &liWork, NULL, &two);
       if(istate==2 or istate==1) {
         system->setTime(t);
 //        system->setState(z); Not needed as the integrator uses the state of the system
@@ -164,7 +160,7 @@ namespace MBSimIntegrator {
           istate=1;
         }
       }
-      else if(istate<0) throw MBSimError("Integrator LSODE failed with istate = "+toString(istate));
+      else if(istate<0) throw MBSimError("Integrator LSODA failed with istate = "+toString(istate));
     }
 
     if(plotIntegrationData) integPlot.close();
@@ -183,15 +179,9 @@ namespace MBSimIntegrator {
     odePackInUse = false;
   }
 
-  void LSODEIntegrator::initializeUsingXML(DOMElement *element) {
+  void LSODAIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
-    if(e) {
-      string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
-      if(methodStr=="nonstiff" or methodStr=="Adams") method=nonstiff;
-      else if(methodStr=="stiff" or methodStr=="BDF") method=stiff;
-    }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
