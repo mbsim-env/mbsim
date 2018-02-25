@@ -14,7 +14,6 @@ grep "^.*hierachical_modelling/ppError/MBS.mbsimprj.xml:8: \[ecount=1] included 
 mbsimxml hierachical_modelling/parseError/MBS.mbsimprj.xml &> $OUTFILE
 test $? -eq 0 && echo ERRORA6
 grep "^.*hierachical_modelling/parseError/submodel/Untergruppe.xml:16:" $OUTFILE > /dev/null || echo ERRORA7
-grep "^.*hierachical_modelling/parseError/submodel/Untergruppe.xml:70:" $OUTFILE > /dev/null || echo ERRORA8
 grep "^hierachical_modelling/parseError/Hauptgruppe.xml:40:" $OUTFILE > /dev/null || echo ERRORA9
 grep "^hierachical_modelling/parseError/MBS.mbsim.xml:18: \[ecount=1] included from here" $OUTFILE > /dev/null || echo ERRORA10
 grep "^.*hierachical_modelling/parseError/MBS.mbsimprj.xml:8: \[ecount=1] included from here" $OUTFILE > /dev/null || echo ERRORA11
@@ -42,7 +41,6 @@ grep ".*hierachical_modelling_inlineembed1/ppError/MBS.mbsimprj.xml:8: \[ecount=
 mbsimxml hierachical_modelling_inlineembed1/parseError/MBS.mbsimprj.xml &> $OUTFILE
 test $? -eq 0 && echo ERRORA26
 grep "^.*hierachical_modelling_inlineembed1/parseError/Hauptgruppe.xml:55:" $OUTFILE > /dev/null || echo ERRORA27
-grep "^.*hierachical_modelling_inlineembed1/parseError/Hauptgruppe.xml:109:" $OUTFILE > /dev/null || echo ERRORA28
 grep "^hierachical_modelling_inlineembed1/parseError/MBS.mbsim.xml:18:" $OUTFILE > /dev/null || echo ERRORA29
 grep "^.*hierachical_modelling_inlineembed1/parseError/MBS.mbsimprj.xml:8: \[ecount=1] included from here" $OUTFILE > /dev/null || echo ERRORA30
 
@@ -67,7 +65,6 @@ grep "^.*hierachical_modelling_inlineembed2/ppError/MBS.mbsimprj.xml:8: \[ecount
 mbsimxml hierachical_modelling_inlineembed2/parseError/MBS.mbsimprj.xml &> $OUTFILE
 test $? -eq 0 && echo ERRORA43
 grep "^.*hierachical_modelling_inlineembed2/parseError/submodel/Untergruppe.xml:16:" $OUTFILE > /dev/null || echo ERRORA44
-grep "^.*hierachical_modelling_inlineembed2/parseError/submodel/Untergruppe.xml:70:" $OUTFILE > /dev/null || echo ERRORA45
 grep "^hierachical_modelling_inlineembed2/parseError/MBS.mbsim.xml:57:" $OUTFILE > /dev/null || echo ERRORA46
 grep "^.*hierachical_modelling_inlineembed2/parseError/MBS.mbsimprj.xml:8: \[ecount=1] included from here" $OUTFILE > /dev/null || echo ERRORA47
 
@@ -97,7 +94,6 @@ grep "xpath=/${NS}Embed\[1]/${NS}MBSimProject\[1]/${NS}Embed\[1][\"&].*>.*hierac
 
 mbsimxml hierachical_modelling/parseError/MBS.mbsimprj.xml &> $OUTFILE
 test $? -eq 0 && echo ERRORB6
-grep ".*xpath=/${NS}Group\[1]/${NS}objects\[1]/${NS}RigidBody\[1][\"&].*>.*hierachical_modelling/parseError/submodel/Untergruppe.xml<" $OUTFILE > /dev/null || echo ERRORB7
 grep ".*xpath=/${NS}Group\[1]/${NS}objects\[1]/${NS}RigidBody\[1][\"&].*>.*hierachical_modelling/parseError/submodel/Untergruppe.xml<" $OUTFILE > /dev/null || echo ERRORB8
 grep ".*xpath=/${NS}Group\[1]/${NS}groups\[1]/${NS}Embed\[2][\"&].*>hierachical_modelling/parseError/Hauptgruppe.xml<" $OUTFILE > /dev/null || echo ERRORB9
 grep "xpath=/${NS}DynamicSystemSolver\[1]/${NS}groups\[1]/${NS}Embed\[1][\"&].*>hierachical_modelling/parseError/MBS.mbsim.xml<.*>included from here" $OUTFILE > /dev/null || echo ERRORB10
@@ -125,7 +121,6 @@ grep "xpath=/${NS}Embed\[1]/${NS}MBSimProject\[1]/${NS}Embed\[1][\"&].*>.*hierac
 
 mbsimxml hierachical_modelling_inlineembed1/parseError/MBS.mbsimprj.xml &> $OUTFILE
 test $? -eq 0 && echo ERRORB26
-grep ".*xpath=/${NS}Group\[1]/${NS}groups\[1]/${NS}Embed\[2]/${NS}Group\[1]/${NS}objects\[1]/${NS}RigidBody\[1][\"&].*>.*hierachical_modelling_inlineembed1/parseError/Hauptgruppe.xml<" $OUTFILE > /dev/null || echo ERRORB27
 grep ".*xpath=/${NS}Group\[1]/${NS}groups\[1]/${NS}Embed\[2]/${NS}Group\[1]/${NS}objects\[1]/${NS}RigidBody\[1][\"&].*>.*hierachical_modelling_inlineembed1/parseError/Hauptgruppe.xml<" $OUTFILE > /dev/null || echo ERRORB28
 grep ".*xpath=/${NS}DynamicSystemSolver\[1]/${NS}groups\[1]/${NS}Embed\[1][\"&].*>hierachical_modelling_inlineembed1/parseError/MBS.mbsim.xml<" $OUTFILE > /dev/null || echo ERRORB29
 grep "xpath=/${NS}Embed\[1]/${NS}MBSimProject\[1]/${NS}Embed\[1][\"&].*>.*hierachical_modelling_inlineembed1/parseError/MBS.mbsimprj.xml<.*>included from here" $OUTFILE > /dev/null || echo ERRORB30
@@ -150,7 +145,6 @@ grep "xpath=/${NS}Embed\[1]/${NS}MBSimProject\[1]/${NS}Embed\[1][\"&].*>.*hierac
 
 mbsimxml hierachical_modelling_inlineembed2/parseError/MBS.mbsimprj.xml &> $OUTFILE
 test $? -eq 0 && echo ERRORB43
-grep ".*xpath=/${NS}Group\[1]/${NS}objects\[1]/${NS}RigidBody\[1][\"&].*>.*hierachical_modelling_inlineembed2/parseError/submodel/Untergruppe.xml<" $OUTFILE > /dev/null || echo ERRORB44
 grep ".*xpath=/${NS}Group\[1]/${NS}objects\[1]/${NS}RigidBody\[1][\"&].*>.*hierachical_modelling_inlineembed2/parseError/submodel/Untergruppe.xml<" $OUTFILE > /dev/null || echo ERRORB45
 grep ".*xpath=/${NS}DynamicSystemSolver\[1]/${NS}groups\[1]/${NS}Embed\[1]/${NS}Group\[1]/${NS}groups\[1]/${NS}Embed\[2][\"&].*>hierachical_modelling_inlineembed2/parseError/MBS.mbsim.xml<" $OUTFILE > /dev/null || echo ERRORB46
 grep "xpath=/${NS}Embed\[1]/${NS}MBSimProject\[1]/${NS}Embed\[1][\"&].*>.*hierachical_modelling_inlineembed2/parseError/MBS.mbsimprj.xml<.*>included from here" $OUTFILE > /dev/null || echo ERRORB47

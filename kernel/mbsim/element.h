@@ -169,10 +169,6 @@ namespace MBSim {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-      //! Special XML helper function to return the XML (DOM) location stack of this element.
-      //! This stack is set uing Element::initializeUsingXML.
-      const std::vector<MBXMLUtils::EmbedDOMLocator>& getLocationStack() const { return locationStack; }
-
       /**
        * \brief Get the object of type T represented by the path path.
        * Do not set any argurment other than path!
@@ -225,6 +221,10 @@ namespace MBSim {
       const double& getTime() const;
       double getStepSize() const;
 
+#ifndef SWIG
+      const MBXMLUtils::DOMEvalException& getDOMEvalError() const { return domEvalError; };
+#endif
+
     protected:
       Element *parent;
 
@@ -240,8 +240,10 @@ namespace MBSim {
        */
       std::string path;
 
-      //! Special XML helper variable. See getLocationStack for details.
-      std::vector<MBXMLUtils::EmbedDOMLocator> locationStack;
+#ifndef SWIG
+      //! Special XML helper variable.
+      MBXMLUtils::DOMEvalException domEvalError;
+#endif
 
       /**
        * \brief dynamic system

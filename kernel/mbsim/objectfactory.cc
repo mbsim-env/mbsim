@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include <mbsim/objectfactory.h>
+#include <boost/algorithm/string/replace.hpp>
 
 using namespace std;
 using namespace fmatvec;
@@ -46,7 +47,11 @@ namespace {
 
   string possibleType(int nr, int size, const string &type) {
     stringstream str;
-    str<<nr<<(nr==1?"st":nr==2?"nd":nr==3?"rd":"th")<<" ("<<type<<") of "<<size<<" possible objects:";
+    if(nr==1)
+      str<<"Created by object of type "<<type;
+    else
+      str<<"Created by object of type "<<type<<" being the "<<
+           nr<<(nr==2?"nd":nr==3?"rd":"th")<<" of "<<size<<" possible object types.";
     return str.str();
   }
 }
@@ -70,8 +75,9 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
     std::shared_ptr<DOMEvalExceptionStack> stack=std::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
     if(stack) {
       stack->generateWhat(str, indent.substr(0, indent.length()-2));
-      str<<DOMEvalException::errorLocationOutput(indent, stack->getLocationStack(),
-        "Created by "+possibleType(nr, exVec.size(), it->first), true);
+      stack->setMessage(possibleType(nr, exVec.size(), it->first));
+      stack->setSubsequentError(true);
+      str<<indent<<boost::replace_all_copy(string(stack->DOMEvalException::what()), "\n", "\n"+indent)<<endl;
     }
   }
   nr=1;
@@ -81,8 +87,6 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
     std::shared_ptr<DOMEvalExceptionStack> stack=std::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
     if(!stack) {
       std::shared_ptr<DOMEvalExceptionWrongType> wrongType=std::dynamic_pointer_cast<DOMEvalExceptionWrongType>(it->second);
-      if(!wrongType || printNotCastableObjects)
-        str<<indent<<"*** Error from "<<possibleType(nr, exVec.size(), it->first)<<endl;
       string errorMsg;
       if(wrongType) {
         if(printNotCastableObjects)
@@ -92,8 +96,11 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
       }
       else
         errorMsg=it->second->getMessage();
-      if(!wrongType || printNotCastableObjects)
-        str<<DOMEvalException::errorLocationOutput(indent, it->second->getLocationStack(), errorMsg);
+      if(!wrongType || printNotCastableObjects) {
+        it->second->setMessage(errorMsg+"\n"+
+                               indent+possibleType(nr, exVec.size(), it->first));
+        str<<indent<<boost::replace_all_copy(string(it->second->what()), "\n", "\n"+indent)<<endl;
+      }
     }
   }
   if(notPrintedWrongTypeErrors>0)

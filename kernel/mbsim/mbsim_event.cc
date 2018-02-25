@@ -29,23 +29,19 @@ using namespace xercesc;
 namespace MBSim {
   
   MBSimError::MBSimError(const Element *context, std::string mbsim_error_message_) noexcept : exception(),
-    mbsim_error_message(std::move(mbsim_error_message_)), path(context->getPath()), locationStack(context->getLocationStack()) {
+    mbsim_error_message(std::move(mbsim_error_message_)), path(context->getPath()), domEvalError(context->getDOMEvalError()) {
   }
 
   MBSimError::MBSimError(std::string mbsim_error_message_) noexcept : exception(),
-    mbsim_error_message(std::move(mbsim_error_message_)), path() {
-  }
-
-  void MBSimError::setContext(const Element *context) {
-    path=context->getPath();
+    mbsim_error_message(std::move(mbsim_error_message_)), path(), domEvalError("", nullptr) {
   }
 
   const char* MBSimError::what() const noexcept {
     string mbsimLoc;
     if(!path.empty())
       mbsimLoc="\n(At MBSim element "+path+")";
-    whatMsg=MBXMLUtils::DOMEvalException::errorLocationOutput("", locationStack, mbsim_error_message+mbsimLoc);
-    whatMsg.resize(whatMsg.length()-1); // remote the trailing line feed
+    domEvalError.setMessage(mbsim_error_message+mbsimLoc);
+    whatMsg=domEvalError.what();
     return whatMsg.c_str();
   }
 
