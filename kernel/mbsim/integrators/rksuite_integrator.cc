@@ -107,7 +107,7 @@ namespace MBSimIntegrator {
         double dtLast = 0;
         UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), work, &result, &dtLast);
 
-        if(result==1 || result==2 || fabs(t-tPlot)<epsroot) {
+        if(result==1 || result==2) {
           system->setTime(t);
           system->setState(z);
           system->resetUpToDate();

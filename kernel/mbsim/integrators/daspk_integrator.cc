@@ -208,7 +208,7 @@ namespace MBSimIntegrator {
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
       DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tPlot,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,&rPar,iPar,nullptr,nullptr);
-      if(idid==3 || fabs(t-tPlot)<epsroot) {
+      if(idid==3 || idid==2) {
         system->setTime(t);
         system->resetUpToDate();
         system->setzd(yd(0,system->getzSize()-1));

@@ -193,7 +193,7 @@ namespace MBSimIntegrator {
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
       DLSODI(*res[formalism], adda, 0, neq, system->getzParent()(), yd(), &t, &tPlot, &iTol, rTol(), aTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
-      if(istate==2 || fabs(t-tPlot)<epsroot) {
+      if(istate==2 or istate==1) {
         system->setTime(t);
         system->resetUpToDate();
         if(formalism) system->setUpdatela(false);

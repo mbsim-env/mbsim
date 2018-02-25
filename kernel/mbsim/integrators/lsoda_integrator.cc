@@ -137,7 +137,7 @@ namespace MBSimIntegrator {
     while(t<tEnd) {
       DLSODA(fzdot, neq, system->getState()(), &t, &tPlot, &iTol, rTol(), aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(), &liWork, NULL, &two);
-      if(istate==2 || fabs(t-tPlot)<epsroot) {
+      if(istate==2 or istate==1) {
         system->setTime(t);
 //        system->setState(z); Not needed as the integrator uses the state of the system
         system->resetUpToDate();

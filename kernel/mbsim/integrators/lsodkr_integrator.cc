@@ -186,7 +186,7 @@ namespace MBSimIntegrator {
       double tOut = min(tPlot, tStop);
       DLSODKR(fzdot, neq, system->getState()(), &t, &tOut, &iTol, rTol(), aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(), &liWork, NULL, NULL, &MF, fsv, &nsv, system->getjsv()());
-      if(istate==2 || fabs(t-tPlot)<epsroot) {
+      if(istate==2 or istate==1) {
         system->setTime(t);
 //        system->setState(z); Not needed as the integrator uses the state of the system
         system->resetUpToDate();
