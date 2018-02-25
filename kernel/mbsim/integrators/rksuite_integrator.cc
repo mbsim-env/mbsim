@@ -120,7 +120,7 @@ namespace MBSimIntegrator {
           s0 = s1; 
           if(plotIntegrationData) integPlot<< t << " " << dtLast << " " << time << endl;
 
-          tPlot += dtPlot;
+          tPlot = min(tEnd,tPlot+dtPlot);
 
           // check drift
           bool restart = false;
@@ -139,14 +139,10 @@ namespace MBSimIntegrator {
                 &errass, &dt0, work, &lenwrk, &messages);
           }
         }
-
-        if(result==3 or result==4)
+        else if(result==3 or result==4)
           continue;
-        if(result>=5) 
+        else if(result>=5)
           throw MBSimError("Integrator RKSUITE failed with result = "+toString(result));
-
-        if (tPlot>tStop)
-          tPlot=tStop;
       }
     }
 
