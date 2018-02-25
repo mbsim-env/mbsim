@@ -123,7 +123,7 @@ namespace MBSimFlexibleBody {
 
       /* EIGENFREQUENCIES */
       if (eigval(M(Ipart))(0) < 0)
-        THROW_MBSIMERROR("TEST");
+        throwError("TEST");
 
       //with MAPLE
       stringstream filename;
@@ -186,15 +186,15 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!");
+    throwError("(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!");
   }
 
   void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!");
+    throwError("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!");
   }
 
   void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!");
+    throwError("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!");
   }
 
   Vec3 FlexibleBody2s13MFRMindlin::evalPosition() {
@@ -216,11 +216,11 @@ namespace MBSimFlexibleBody {
         frame->setPosition(R->evalPosition() + R->evalOrientation() * getq()(0,2));
         break;
       default:
-        THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Unknown number of reference dofs!");
+        throwError("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Unknown number of reference dofs!");
     }
     }
     else
-      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updatePositions): Parameters must be zero!");
+      throwError("(FlexibleBody2s13MFRMindlin::updatePositions): Parameters must be zero!");
   }
 
   void FlexibleBody2s13MFRMindlin::updateVelocities(Frame2s *frame) {
@@ -236,15 +236,15 @@ namespace MBSimFlexibleBody {
         frame->setAngularVelocity(R->getOrientation() * evalA() * evalG() * getu()(3,5));
         break;
         default:
-        THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateVelocities): Unknown number of reference dofs!");
+        throwError("(FlexibleBody2s13MFRMindlin::updateVelocities): Unknown number of reference dofs!");
       }
     }
     else
-      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateVelocities): Parameters must be zero!");
+      throwError("(FlexibleBody2s13MFRMindlin::updateVelocities): Parameters must be zero!");
   }
 
   void FlexibleBody2s13MFRMindlin::updateAccelerations(Frame2s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13MFRMindlin::updateJacobians(Frame2s *frame, int j) {
@@ -265,12 +265,12 @@ namespace MBSimFlexibleBody {
       frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot,j);
     }
     else { // on the disk
-      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateJacobians): Parameters must be zero!");
+      throwError("(FlexibleBody2s13MFRMindlin::updateJacobians): Parameters must be zero!");
     }
   }
 
   void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(Frame2s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13MFRMindlin::updatePositions(NodeFrame *frame) {
@@ -317,7 +317,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13MFRMindlin::updateJacobians(NodeFrame *frame, int j) {
@@ -415,7 +415,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13MFRMindlin::init(InitStage stage, const InitConfigSet &config) {

@@ -100,7 +100,7 @@ namespace MBSim {
       for(const auto & i : saved_body)
         body.push_back(getByPath<RigidBody>(i));
       if(body.size()==0)
-        THROW_MBSIMERROR("No rigid bodies given!");
+        throwError("No rigid bodies given!");
     }
     else if(stage==preInit) {
       RigidBodyLink::init(stage, config);

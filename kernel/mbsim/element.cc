@@ -183,7 +183,7 @@ namespace MBSim {
         string relToPath=relTo->getPath(NULL, sep).substr(1)+sep;
         // check for "real" absolute path (see above)
         if(thisPath.substr(0, sep.length())!=sep || relToPath.substr(0, sep.length())!=sep)
-          THROW_MBSIMERROR("Can not generate a relative path: at least one element is not part of a DynamicSystemSolver");
+          throwError("Can not generate a relative path: at least one element is not part of a DynamicSystemSolver");
         // remove sub path which are equal in both
         while(1) {
           size_t thisIdx=thisPath.find(sep);

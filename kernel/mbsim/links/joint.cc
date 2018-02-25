@@ -109,7 +109,7 @@ namespace MBSim {
         else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(0,1))<=macheps)
           iR = 0;
         else
-          THROW_MBSIMERROR("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
+          throwError("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
       }
       else if(momentDir.cols()==1) {
         msg(Warn) << "Evaluation of generalized relative velocity of rotation may be wrong for spatial rotation. In this case turn on integration of generalized relative velocity of rotation." << endl;
@@ -120,7 +120,7 @@ namespace MBSim {
         else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(1,0))<=macheps)
           iR = 0;
         else
-          THROW_MBSIMERROR("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
+          throwError("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
       }
       eR(iR) = 1;
     }
@@ -133,13 +133,13 @@ namespace MBSim {
         fifl->setParent(this);
       }
       else if(forceDir.cols()>0)
-        THROW_MBSIMERROR("No force law is given!");
+        throwError("No force law is given!");
       if (fml) {
         fiml = new BilateralImpact;
         fiml->setParent(this);
       }
       else if(momentDir.cols()>0)
-        THROW_MBSIMERROR("No moment law is given!");
+        throwError("No moment law is given!");
 
       JT.resize(3 - forceDir.cols());
       if (forceDir.cols() == 2)

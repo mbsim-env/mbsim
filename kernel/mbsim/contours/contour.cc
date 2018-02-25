@@ -35,41 +35,41 @@ namespace MBSim {
   }
 
   Vec3 Contour::evalPosition(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalPosition): Not implemented.");
+    throwError("(Contour::evalPosition): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalKrPS(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalKrPS): Not implemented.");
+    throwError("(Contour::evalKrPS): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalKs(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalKs): Not implemented.");
+    throwError("(Contour::evalKs): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalKt(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalKt): Not implemented.");
+    throwError("(Contour::evalKt): Not implemented.");
     return 0;
   }
   Vec3 Contour::evalParDer1Ks(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalParDer1Ks): Not implemented.");
+    throwError("(Contour::evalParDer1Ks): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalParDer2Ks(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalParDer2Ks): Not implemented.");
+    throwError("(Contour::evalParDer2Ks): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalParDer1Kt(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalParDer1Kt): Not implemented.");
+    throwError("(Contour::evalParDer1Kt): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalParDer2Kt(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalParDer2Kt): Not implemented.");
+    throwError("(Contour::evalParDer2Kt): Not implemented.");
     return 0;
   }
 
@@ -134,47 +134,47 @@ namespace MBSim {
   }
 
   Vec3 Contour::evalParDer1Wn(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalParDer1Wn): Not implemented.");
+    throwError("(Contour::evalParDer1Wn): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalParDer2Wn(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalParDer2Wn): Not implemented.");
+    throwError("(Contour::evalParDer2Wn): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalParDer1Wu(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalParDer1Wu): Not implemented.");
+    throwError("(Contour::evalParDer1Wu): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalParDer2Wu(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalParDer2Wu): Not implemented.");
+    throwError("(Contour::evalParDer2Wu): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalParDer1Wv(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalParDer1Wv): Not implemented.");
+    throwError("(Contour::evalParDer1Wv): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalParDer2Wv(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalParDer2Wv): Not implemented.");
+    throwError("(Contour::evalParDer2Wv): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalWrPS(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalWrPS): Not implemented.");
+    throwError("(Contour::evalWrPS): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalWs(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalWs): Not implemented.");
+    throwError("(Contour::evalWs): Not implemented.");
     return 0;
   }
 
   Vec3 Contour::evalWt(const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::evalWt): Not implemented.");
+    throwError("(Contour::evalWt): Not implemented.");
     return 0;
   }
 
@@ -207,28 +207,28 @@ namespace MBSim {
   }
 
   Vec2 Contour::evalZeta(const Vec3 &WrPS) {
-    THROW_MBSIMERROR("(Contour::evalZeta): Not implemented.");
+    throwError("(Contour::evalZeta): Not implemented.");
     return 0;
   }
 
   void Contour::updatePositions(ContourFrame *frame) {
-    THROW_MBSIMERROR("(Contour::updatePositions): Not implemented.");
+    throwError("(Contour::updatePositions): Not implemented.");
   }
 
   void Contour::updateVelocities(ContourFrame *frame) {
-    THROW_MBSIMERROR("(Contour::updateVelocities): Not implemented.");
+    throwError("(Contour::updateVelocities): Not implemented.");
   }
 
   void Contour::updateAccelerations(ContourFrame *frame) {
-    THROW_MBSIMERROR("(Contour::updateAccelerations): Not implemented.");
+    throwError("(Contour::updateAccelerations): Not implemented.");
   }
 
   void Contour::updateJacobians(ContourFrame *frame, int j) {
-    THROW_MBSIMERROR("(Contour::updateJacobians): Not implemented.");
+    throwError("(Contour::updateJacobians): Not implemented.");
   }
 
   void Contour::updateGyroscopicAccelerations(ContourFrame *frame) {
-    THROW_MBSIMERROR("(Contour::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(Contour::updateGyroscopicAccelerations): Not implemented.");
 
   }
 

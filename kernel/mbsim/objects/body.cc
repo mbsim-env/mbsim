@@ -84,7 +84,7 @@ namespace MBSim {
       if(!R)
         R = static_cast<DynamicSystem*>(parent)->getFrameI();
       else if(R->getParent()==this)
-        THROW_MBSIMERROR("(Body::init): frame of reference must not be part of " + name);
+        throwError("(Body::init): frame of reference must not be part of " + name);
       addDependency(dynamic_cast<Body*>(R->getParent()));
     }
     else if(stage==plotting) {
@@ -109,7 +109,7 @@ namespace MBSim {
 
   void Body::addContour(Contour* contour_) {
     if(getContour(contour_->getName(),false)) { //Contourname exists already
-      THROW_MBSIMERROR("(Body::addContour): The body can only comprise one contour by the name \""+contour_->getName()+"\"!");
+      throwError("(Body::addContour): The body can only comprise one contour by the name \""+contour_->getName()+"\"!");
       assert(getContour(contour_->getName(),false)==nullptr);
     }
     contour.push_back(contour_);
@@ -118,7 +118,7 @@ namespace MBSim {
 
   void Body::addFrame(Frame* frame_) {
     if(getFrame(frame_->getName(),false)) { //Contourname exists already
-      THROW_MBSIMERROR("(Body::addFrame): The body can only comprise one frame by the name \""+frame_->getName()+"\"!");
+      throwError("(Body::addFrame): The body can only comprise one frame by the name \""+frame_->getName()+"\"!");
       assert(getFrame(frame_->getName(),false)==nullptr);
     }
     frame.push_back(frame_);
@@ -133,7 +133,7 @@ namespace MBSim {
     }
     if(check) {
       if(!(i<contour.size()))
-        THROW_MBSIMERROR("(Body::getContour): The body comprises no contour \""+name_+"\"!"); 
+        throwError("(Body::getContour): The body comprises no contour \""+name_+"\"!"); 
       assert(i<contour.size());
     }
     return nullptr;
@@ -147,7 +147,7 @@ namespace MBSim {
     }             
     if(check) {
       if(!(i<frame.size()))
-        THROW_MBSIMERROR("(Body::getFrame): The body comprises no frame \""+name_+"\"!"); 
+        throwError("(Body::getFrame): The body comprises no frame \""+name_+"\"!"); 
       assert(i<frame.size());
     }
     return nullptr;
@@ -187,7 +187,7 @@ namespace MBSim {
     else if (container=="Contour")
       return getContour(name);
     else
-      THROW_MBSIMERROR("Unknown container '"+container+"'.");
+      throwError("Unknown container '"+container+"'.");
   }
 
   void Body::resetUpToDate() {

@@ -540,7 +540,7 @@ namespace MBSim {
     }
     if (check) {
       if (!(i < frame.size()))
-        THROW_MBSIMERROR("DynamicSystem comprises no frame \"" + name + "\"!");
+        throwError("DynamicSystem comprises no frame \"" + name + "\"!");
       assert(i < frame.size());
     }
     return nullptr;
@@ -554,7 +554,7 @@ namespace MBSim {
     }
     if (check) {
       if (!(i < contour.size()))
-        THROW_MBSIMERROR("DynamicSystem comprises no contour \"" + name + "\"!");
+        throwError("DynamicSystem comprises no contour \"" + name + "\"!");
       assert(i < contour.size());
     }
     return nullptr;
@@ -1282,7 +1282,7 @@ namespace MBSim {
 
   void DynamicSystem::addFrame(Frame *frame_) {
     if (getFrame(frame_->getName(), false)) {
-      THROW_MBSIMERROR("DynamicSystem can only comprise one Frame by the name \"" + frame_->getName() + "\"!");
+      throwError("DynamicSystem can only comprise one Frame by the name \"" + frame_->getName() + "\"!");
       assert(getFrame(frame_->getName(),false)==nullptr);
     }
     frame.push_back(frame_);
@@ -1291,7 +1291,7 @@ namespace MBSim {
 
   void DynamicSystem::addContour(Contour* contour_) {
     if (getContour(contour_->getName(), false)) {
-      THROW_MBSIMERROR("DynamicSystem can only comprise one Contour by the name \"" + contour_->getName() + "\"!");
+      throwError("DynamicSystem can only comprise one Contour by the name \"" + contour_->getName() + "\"!");
       assert(getContour(contour_->getName(),false)==nullptr);
     }
     contour.push_back(contour_);
@@ -1314,7 +1314,7 @@ namespace MBSim {
     }
     if (check) {
       if (!(i < dynamicsystem.size()))
-        THROW_MBSIMERROR("DynamicSystem comprises no DynamicSystem \"" + name + "\"!");
+        throwError("DynamicSystem comprises no DynamicSystem \"" + name + "\"!");
       assert(i < dynamicsystem.size());
     }
     return nullptr;
@@ -1328,7 +1328,7 @@ namespace MBSim {
     }
     if (check) {
       if (!(i < object.size()))
-        THROW_MBSIMERROR("DynamicSystem comprises no Object \"" + name + "\"!");
+        throwError("DynamicSystem comprises no Object \"" + name + "\"!");
       assert(i < object.size());
     }
     return nullptr;
@@ -1336,7 +1336,7 @@ namespace MBSim {
 
   void DynamicSystem::addLink(Link *lnk) {
     if (getLink(lnk->getName(), false)) {
-      THROW_MBSIMERROR("DynamicSystem can only comprise one Link by the name \"" + lnk->getName() + "\"!");
+      throwError("DynamicSystem can only comprise one Link by the name \"" + lnk->getName() + "\"!");
       assert(getLink(lnk->getName(),false) == nullptr);
     }
 
@@ -1346,7 +1346,7 @@ namespace MBSim {
 
   void DynamicSystem::addConstraint(Constraint *crt) {
     if (getConstraint(crt->getName(), false)) {
-      THROW_MBSIMERROR("DynamicSystem can only comprise one Constraint by the name \"" + crt->getName() + "\"!");
+      throwError("DynamicSystem can only comprise one Constraint by the name \"" + crt->getName() + "\"!");
       assert(getConstraint(crt->getName(),false) == nullptr);
     }
 
@@ -1367,7 +1367,7 @@ namespace MBSim {
     }
     if (check) {
       if (!(i < link.size()))
-        THROW_MBSIMERROR("DynamicSystem comprises no Link \"" + name + "\"!");
+        throwError("DynamicSystem comprises no Link \"" + name + "\"!");
       assert(i < link.size());
     }
     return nullptr;
@@ -1381,7 +1381,7 @@ namespace MBSim {
     }
     if (check) {
       if (!(i < constraint.size()))
-        THROW_MBSIMERROR("DynamicSystem comprises no Constraint \"" + name + "\"!");
+        throwError("DynamicSystem comprises no Constraint \"" + name + "\"!");
       assert(i < constraint.size());
     }
     return nullptr;
@@ -1389,7 +1389,7 @@ namespace MBSim {
 
   void DynamicSystem::addModel(ModellingInterface *model_) {
     if (getModel(model_->getName(), false)) {
-      THROW_MBSIMERROR("DynamicSystem can only comprise one model by the name \"" + model_->getName() + "\"!");
+      throwError("DynamicSystem can only comprise one model by the name \"" + model_->getName() + "\"!");
       assert(getModel(model_->getName(),false) == nullptr);
     }
     model.push_back(model_);
@@ -1404,7 +1404,7 @@ namespace MBSim {
     }
     if (check) {
       if (!(i < model.size()))
-        THROW_MBSIMERROR("DynamicSystem comprises no model \"" + name + "\"!");
+        throwError("DynamicSystem comprises no model \"" + name + "\"!");
       assert(i < model.size());
     }
     return nullptr;
@@ -1412,7 +1412,7 @@ namespace MBSim {
 
   void DynamicSystem::addGroup(DynamicSystem *sys) {
     if (getGroup(sys->getName(), false)) {
-      THROW_MBSIMERROR("DynamicSystem can only comprise one DynamicSystem by the name \"" + sys->getName() + "\"!");
+      throwError("DynamicSystem can only comprise one DynamicSystem by the name \"" + sys->getName() + "\"!");
       assert(getGroup(sys->getName(),false) == nullptr);
     }
     dynamicsystem.push_back(sys);
@@ -1421,7 +1421,7 @@ namespace MBSim {
 
   void DynamicSystem::addObject(Object *obj) {
     if (getObject(obj->getName(), false)) {
-      THROW_MBSIMERROR("DynamicSystem can only comprise one Object by the name \"" + obj->getName() + "\"!");
+      throwError("DynamicSystem can only comprise one Object by the name \"" + obj->getName() + "\"!");
       assert(getObject(obj->getName(),false) == nullptr);
     }
     object.push_back(obj);
@@ -1444,7 +1444,7 @@ namespace MBSim {
     else if (container == "Observer")
       return getObserver(name);
     else
-      THROW_MBSIMERROR("Unknown container '"+container+"'.");
+      throwError("Unknown container '"+container+"'.");
   }
 
   Observer* DynamicSystem::getObserver(const string &name, bool check) const {
@@ -1455,7 +1455,7 @@ namespace MBSim {
     }
     if (check) {
       if (!(i < observer.size()))
-        THROW_MBSIMERROR("DynamicSystem comprises no Observer \"" + name + "\"!");
+        throwError("DynamicSystem comprises no Observer \"" + name + "\"!");
       assert(i < observer.size());
     }
     return nullptr;
@@ -1463,7 +1463,7 @@ namespace MBSim {
 
   void DynamicSystem::addObserver(Observer *ele) {
     if (getObserver(ele->getName(), false)) {
-      THROW_MBSIMERROR("DynamicSystem can only comprise one Observer by the name \"" + ele->getName() + "\"!");
+      throwError("DynamicSystem can only comprise one Observer by the name \"" + ele->getName() + "\"!");
       assert(getObserver(ele->getName(),false) == nullptr);
     }
     observer.push_back(ele);

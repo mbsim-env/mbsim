@@ -61,7 +61,7 @@ namespace MBSim {
     else if(stage==unknownStage) {
       Observer::init(stage, config);
       if((openMBVForce or openMBVMoment) and not getDynamicSystemSolver()->getInverseKinetics())
-        THROW_MBSIMERROR("(MechanicalConstraintObserver::init()): inverse kinetics not enabled");
+        throwError("(MechanicalConstraintObserver::init()): inverse kinetics not enabled");
     }
     else
       Observer::init(stage, config);

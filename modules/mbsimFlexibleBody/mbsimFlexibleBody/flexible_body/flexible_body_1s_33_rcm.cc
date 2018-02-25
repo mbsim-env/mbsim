@@ -149,7 +149,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updateAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33RCM::updateJacobians(Frame1s *frame, int j) {
@@ -174,7 +174,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updateGyroscopicAccelerations(Frame1s *frame) {
-//    THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
+//    throwError("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33RCM::updatePositions(NodeFrame *frame) {
@@ -197,7 +197,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33RCM::updateJacobians(NodeFrame *frame, int j) {
@@ -224,7 +224,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
   }
 
   Vec3 FlexibleBody1s33RCM::getAngles(double s) {
@@ -271,7 +271,7 @@ namespace MBSimFlexibleBody {
       if (q0Tmp.size() == q0.size())
         q0 = q0Tmp.copy();
       else
-        THROW_MBSIMERROR("Dimension of q0 wrong!");
+        throwError("Dimension of q0 wrong!");
     }
 
     uSize[0] = qSize;
@@ -284,7 +284,7 @@ namespace MBSimFlexibleBody {
       if (u0Tmp.size() == u0.size())
         u0 = u0Tmp.copy();
       else
-        THROW_MBSIMERROR("Dimension of u0 wrong!");
+        throwError("Dimension of u0 wrong!");
     }
   }
 

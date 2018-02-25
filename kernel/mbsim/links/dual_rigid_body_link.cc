@@ -36,11 +36,11 @@ namespace MBSim {
       if(saved_ref1!="" and saved_ref2!="")
         connect(getByPath<RigidBody>(saved_ref1),getByPath<RigidBody>(saved_ref2));
       if(not body.size())
-        THROW_MBSIMERROR("No connection given!");
+        throwError("No connection given!");
     }
     else if(stage==unknownStage) {
       if(body.size()>1 and (body[0]->getGeneralizedVelocitySize()!=body[1]->getGeneralizedVelocitySize()))
-        THROW_MBSIMERROR("rigid bodies must have the same dof!");
+        throwError("rigid bodies must have the same dof!");
     }
     RigidBodyLink::init(stage, config);
   }

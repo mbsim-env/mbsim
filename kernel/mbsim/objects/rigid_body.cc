@@ -151,7 +151,7 @@ namespace MBSim {
     if(stage==preInit) {
       // Note we explicity make this check here to check exceptions in init
       if(SThetaS(0,0)<0 || SThetaS(1,1)<0 || SThetaS(2,2)<0)
-        THROW_MBSIMERROR("The diagonal elements of the inertia tensor must be none negative.");
+        throwError("The diagonal elements of the inertia tensor must be none negative.");
 
       for(unsigned int k=1; k<frame.size(); k++) {
         if(not(static_cast<FixedRelativeFrame*>(frame[k])->getFrameOfReference()))
@@ -241,7 +241,7 @@ namespace MBSim {
       }
       else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZYX<VecV>*>(Atmp->getFunction())) {
         if(bodyFixedRepresentationOfAngularVelocity)
-          THROW_MBSIMERROR("(RigidBody::init): coordinate transformation not yet available for zyx-rotation");
+          throwError("(RigidBody::init): coordinate transformation not yet available for zyx-rotation");
         else
           fTR = new RotationAboutAxesZYXMapping<VecV>;
         fTR->setParent(this);

@@ -57,7 +57,7 @@ namespace MBSim {
   void PlanarContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       if (etaNodes.size() < 2)
-        THROW_MBSIMERROR("(PlanarContour::init): Size of etaNodes must be greater than 1.");
+        throwError("(PlanarContour::init): Size of etaNodes must be greater than 1.");
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {

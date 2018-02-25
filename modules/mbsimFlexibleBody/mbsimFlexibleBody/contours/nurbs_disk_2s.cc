@@ -169,11 +169,11 @@ namespace MBSimFlexibleBody {
     frame->getVelocity(false)(0) = Tmpv.x();
     frame->getVelocity(false)(1) = Tmpv.y();
     frame->getVelocity(false)(2) = Tmpv.z();
-    //      THROW_MBSIMERROR("(NurbsDisk2s::updateVelocities): Not implemented!");
+    //      throwError("(NurbsDisk2s::updateVelocities): Not implemented!");
   }
 
   void NurbsDisk2s::updateAccelerations(ContourFrame *frame) {
-    THROW_MBSIMERROR("(NurbsDisk2s::updateAccelerations): Not implemented!");
+    throwError("(NurbsDisk2s::updateAccelerations): Not implemented!");
   }
 
   void NurbsDisk2s::updateJacobians(ContourFrame *frame, int j) {
@@ -197,7 +197,7 @@ namespace MBSimFlexibleBody {
   }
 
   void NurbsDisk2s::updateGyroscopicAccelerations(ContourFrame *frame) {
-    THROW_MBSIMERROR("(NurbsDisk2s::updateGyroscopicAccelerations): Not implemented!");
+    throwError("(NurbsDisk2s::updateGyroscopicAccelerations): Not implemented!");
   }
 
   Vec3 NurbsDisk2s::evalPosition() {

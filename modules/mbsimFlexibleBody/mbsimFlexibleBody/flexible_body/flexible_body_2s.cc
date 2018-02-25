@@ -60,23 +60,23 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s::updatePositions(Frame2s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s::updatePositions): Not implemented.");
+    throwError("(FlexibleBody2s::updatePositions): Not implemented.");
   }
 
   void FlexibleBody2s::updateVelocities(Frame2s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s::updateVelocities): Not implemented.");
+    throwError("(FlexibleBody2s::updateVelocities): Not implemented.");
   }
 
   void FlexibleBody2s::updateAccelerations(Frame2s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s::updateJacobians(Frame2s *frame, int j) {
-    THROW_MBSIMERROR("(FlexibleBody2s::updateJacobians): Not implemented.");
+    throwError("(FlexibleBody2s::updateJacobians): Not implemented.");
   }
 
   void FlexibleBody2s::updateGyroscopicAccelerations(Frame2s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s::updateGyroscopicAccelerations): Not implemented.");
   }
 
 }

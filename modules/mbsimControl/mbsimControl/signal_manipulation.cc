@@ -150,7 +150,7 @@ namespace MBSimControl {
       else if(signal.size()==2)
         updateSignal_ = &SignalOperation::updateSignal2;
       else
-        THROW_MBSIMERROR("(SignalOperation::init): number of input signals must be 1 or 2");
+        throwError("(SignalOperation::init): number of input signals must be 1 or 2");
     }
     Signal::init(stage, config);
     if(f1) f1->init(stage, config);

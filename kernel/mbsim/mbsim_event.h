@@ -73,10 +73,6 @@ namespace MBSim {
       // just a string to store the memory which is returned by the what() function
       mutable std::string whatMsg;
   };
-
-  // Helper to throw a error with this as the context of the error
-  #define THROW_MBSIMERROR(msg) \
-    throw MBSim::MBSimError(this, msg)
 }
 
 #endif /* _MBSIM_EVENT_H */

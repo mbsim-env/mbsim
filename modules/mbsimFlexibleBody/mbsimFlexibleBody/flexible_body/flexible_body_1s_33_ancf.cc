@@ -93,7 +93,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33ANCF::updateAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33ANCF::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33ANCF::updateJacobians(Frame1s *frame, int j) {
@@ -115,7 +115,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33ANCF::updateGyroscopicAccelerations(Frame1s *frame) {
-//    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateGyroscopicAccelerations): Not implemented.");
+//    throwError("(FlexibleBody1s33ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33ANCF::updatePositions(NodeFrame *frame) {
@@ -149,12 +149,12 @@ namespace MBSimFlexibleBody {
     tmp(0) = 0.;
     tmp(1) = 0.;
     tmp(2) = 0.;
-//    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateKinematicsForFrame): angularVelocity not implemented.");
+//    throwError("(FlexibleBody1s33ANCF::updateKinematicsForFrame): angularVelocity not implemented.");
     frame->setAngularVelocity(R->evalOrientation() * tmp);
   }
 
   void FlexibleBody1s33ANCF::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33ANCF::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33ANCF::updateJacobians(NodeFrame *frame, int j) {
@@ -171,7 +171,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33ANCF::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33ANCF::init(InitStage stage, const InitConfigSet &config) {

@@ -81,7 +81,7 @@ namespace MBSim {
         Function<Ret(Arg)>::init(stage, config);
         if(stage==Element::preInit) {
           if(y.rows() != x.size())
-            THROW_MBSIMERROR("Dimension missmatch in size of x");
+            this->throwError("Dimension missmatch in size of x");
           if(x.size()) calculateSpline();
           nPoly = (coefs[0]).rows();
           order = coefs.size()-1;
@@ -92,7 +92,7 @@ namespace MBSim {
         if(method == cSplinePeriodic) calculateSplinePeriodic();
         else if(method == cSplineNatural) calculateSplineNatural();
         else if(method == piecewiseLinear) calculatePLinear();
-        else THROW_MBSIMERROR("(PiecewisePolynomFunction::init): No valid method to calculate pp-form");
+        else this->throwError("(PiecewisePolynomFunction::init): No valid method to calculate pp-form");
       }
 
       void reset() {
@@ -134,7 +134,7 @@ namespace MBSim {
       void sety(const fmatvec::MatV &y_) { y = y_; }
       void setxy(const fmatvec::MatV &xy) {
         if(xy.cols() <= 1)
-          THROW_MBSIMERROR("Dimension missmatch in size of xy");
+          this->throwError("Dimension missmatch in size of xy");
         x = xy.col(0);
         y = xy(fmatvec::RangeV(0, xy.rows() - 1), fmatvec::RangeV(1, xy.cols() - 1));
       }
@@ -278,7 +278,7 @@ namespace MBSim {
   void PiecewisePolynomFunction<Ret(Arg)>::calculateSplinePeriodic() {
     double hi, hii;
     int N = x.size();
-    if(nrm2(y.row(0)-y.row(y.rows()-1))>epsroot) THROW_MBSIMERROR("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+fmatvec::toString(y.row(0))+"!="+fmatvec::toString(y.row(y.rows()-1))+" =f(end)");
+    if(nrm2(y.row(0)-y.row(y.rows()-1))>epsroot) this->throwError("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+fmatvec::toString(y.row(0))+"!="+fmatvec::toString(y.row(y.rows()-1))+" =f(end)");
     fmatvec::SqrMat C(N-1,fmatvec::INIT,0.0);
     fmatvec::Mat rs(N-1,y.cols(),fmatvec::INIT,0.0);
 

@@ -93,7 +93,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21ANCF::updateAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21ANCF::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21ANCF::updateJacobians(Frame1s *frame, int j) {
@@ -117,7 +117,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21ANCF::updateGyroscopicAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21ANCF::updatePositions(NodeFrame *frame) {
@@ -173,7 +173,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21ANCF::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21ANCF::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21ANCF::updateJacobians(NodeFrame *frame, int j) {
@@ -192,7 +192,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21ANCF::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21ANCF::init(InitStage stage, const InitConfigSet &config) {

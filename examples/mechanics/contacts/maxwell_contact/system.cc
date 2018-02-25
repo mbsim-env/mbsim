@@ -231,7 +231,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     }
     break;
     default:
-      THROW_MBSIMERROR("No valid contactType chosen.");
+      throwError("No valid contactType chosen.");
   }
 
   for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {

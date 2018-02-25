@@ -148,23 +148,23 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::updatePositions(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updatePositions): Not implemented.");
+    throwError("(FlexibleBody1s33Cosserat::updatePositions): Not implemented.");
   }
 
   void FlexibleBody1s33Cosserat::updateVelocities(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateVelocities): Not implemented.");
+    throwError("(FlexibleBody1s33Cosserat::updateVelocities): Not implemented.");
   }
 
   void FlexibleBody1s33Cosserat::updateAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33Cosserat::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33Cosserat::updateJacobians(Frame1s *frame, int j) {
-    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateJacobians): Not implemented.");
+    throwError("(FlexibleBody1s33Cosserat::updateJacobians): Not implemented.");
   }
 
   void FlexibleBody1s33Cosserat::updateGyroscopicAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33Cosserat::updatePositions(NodeFrame *frame) {
@@ -192,7 +192,7 @@ namespace MBSimFlexibleBody {
  }
 
   void FlexibleBody1s33Cosserat::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33Cosserat::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33Cosserat::updateJacobians(NodeFrame *frame, int j) {
@@ -216,7 +216,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
   Vec3 FlexibleBody1s33Cosserat::getAngles(int i) {
@@ -303,7 +303,7 @@ namespace MBSimFlexibleBody {
       if (q0Tmp.size() == q0.size())
         q0 = q0Tmp.copy();
       else
-        THROW_MBSIMERROR("Dimension of q0 wrong!");
+        throwError("Dimension of q0 wrong!");
     }
 
     uSize[0] = qSize;
@@ -316,7 +316,7 @@ namespace MBSimFlexibleBody {
       if (u0Tmp.size() == u0.size())
         u0 = u0Tmp.copy();
       else
-        THROW_MBSIMERROR("Dimension of u0 wrong !");
+        throwError("Dimension of u0 wrong !");
     }
   }
 
@@ -326,7 +326,7 @@ namespace MBSimFlexibleBody {
 //    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
 //    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
 
-    THROW_MBSIMERROR("FlexibleBody1s33Cosserat::getPositions not implemented");
+    throwError("FlexibleBody1s33Cosserat::getPositions not implemented");
     fmatvec::Vector<Fixed<6>, double> temp(NONINIT);
 //    ncc->updateKinematicsForFrame(cp, Frame::position);
 //    ncc->updateKinematicsForFrame(cp, Frame::angle);
@@ -341,7 +341,7 @@ namespace MBSimFlexibleBody {
 //    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
 //    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getVelocities(getqElement(currentElement), getuElement(currentElement), sLocal);
 
-    THROW_MBSIMERROR("FlexibleBody1s33Cosserat::getVelocities not implemented");
+    throwError("FlexibleBody1s33Cosserat::getVelocities not implemented");
     fmatvec::Vector<Fixed<6>, double> temp(NONINIT);
 //    ncc->updateKinematicsForFrame(cp, Frame::position);
 //    ncc->updateKinematicsForFrame(cp, Frame::angle);
@@ -470,7 +470,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::exportPositionVelocity(const string & filenamePos, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
-    THROW_MBSIMERROR("To be adapted to new internal nurbs ...");
+    throwError("To be adapted to new internal nurbs ...");
 
 //    PlNurbsCurved curvePos;
 //    PlNurbsCurved curveVel;
@@ -535,7 +535,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
-    THROW_MBSIMERROR("To be adapted to new internal nurbs ...");
+    throwError("To be adapted to new internal nurbs ...");
 
 //    int DEBUGLEVEL = 0;
 //

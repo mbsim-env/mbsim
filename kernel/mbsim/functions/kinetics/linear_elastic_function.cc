@@ -34,7 +34,7 @@ namespace MBSim {
       if(not D.size())
         D.resize(K.size());
       else if(D.size() != K.size())
-        THROW_MBSIMERROR("Size of damping matrix does not match!");
+        throwError("Size of damping matrix does not match!");
     }
     Function<VecV(VecV,VecV)>::init(stage, config);
   }

@@ -550,7 +550,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyLinearExternalFFR::updatePositions(Frame *frame) {
     if (nrm2(R->evalVelocity()) > epsroot) {
-      THROW_MBSIMERROR("Only absolute description of FFR-bodies possible (right now)!");
+      throwError("Only absolute description of FFR-bodies possible (right now)!");
     }
     frame->setOrientation(R->evalOrientation() * evalA());
     frame->setPosition(R->getPosition() + R->getOrientation() * q(0, 2)); // transformation from Reference Frame R into world frame
@@ -558,7 +558,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyLinearExternalFFR::updateVelocities(Frame *frame) {
     if (nrm2(R->evalVelocity()) > epsroot) {
-      THROW_MBSIMERROR("Only absolute description of FFR-bodies possible (right now)!");
+      throwError("Only absolute description of FFR-bodies possible (right now)!");
     }
     // Update kinematics part
     frame->setVelocity(R->evalOrientation() * u(0, 2));
@@ -568,7 +568,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyLinearExternalFFR::updateAccelerations(Frame *frame) {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::updateAccelerations(): Not implemented!");
+    throwError("(FlexibleBodyLinearExternalFFR::updateAccelerations(): Not implemented!");
   }
 
   void FlexibleBodyLinearExternalFFR::updateJacobians(Frame *frame, int j) {
@@ -586,7 +586,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations(Frame *frame) {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations(): Not implemented!");
+    throwError("(FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations(): Not implemented!");
   }
 
   void FlexibleBodyLinearExternalFFR::updatePositions(NodeFrame *frame) {
@@ -634,7 +634,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyLinearExternalFFR::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBodyLinearExternalFFR::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBodyLinearExternalFFR::updateJacobians(NodeFrame *frame, int j) {
@@ -661,7 +661,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations): Not implemented.");
   }
 
   Vec3 FlexibleBodyLinearExternalFFR::evalLocalPosition(int i) {
@@ -676,23 +676,23 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyLinearExternalFFR::BuildElements() {
-//    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::BuildElements(): Not implemented");
+//    throwError("(FlexibleBodyLinearExternalFFR::BuildElements(): Not implemented");
   }
 
   void FlexibleBodyLinearExternalFFR::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalVectorContribution(): Not implemented!");
+    throwError("(FlexibleBodyLinearExternalFFR::GlobalVectorContribution(): Not implemented!");
   }
 
   void FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
+    throwError("(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
   }
 
   void FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
+    throwError("(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
   }
 
   double FlexibleBodyLinearExternalFFR::getLength() const {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::getLength(): Not implemented!");
+    throwError("(FlexibleBodyLinearExternalFFR::getLength(): Not implemented!");
   }
 
   void FlexibleBodyLinearExternalFFR::resetUpToDate() {

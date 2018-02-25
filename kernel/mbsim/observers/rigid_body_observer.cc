@@ -88,7 +88,7 @@ namespace MBSim {
     else if(stage==unknownStage) {
       Observer::init(stage, config);
       if((FArrow or MArrow) and not getDynamicSystemSolver()->getInverseKinetics())
-        THROW_MBSIMERROR("(RigidBodyObserver::init()): inverse kinetics not enabled");
+        throwError("(RigidBodyObserver::init()): inverse kinetics not enabled");
     }
     else
       Observer::init(stage, config);

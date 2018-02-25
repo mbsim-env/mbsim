@@ -256,59 +256,59 @@ namespace MBSim {
        * solve impact equations of motion with single step fixed point scheme on velocity level
        * \param time step-size
        */
-      virtual void solveImpactsFixpointSingle() { THROW_MBSIMERROR("(Link::solveImpactsFixpointSingle): Not implemented."); }
+      virtual void solveImpactsFixpointSingle() { throwError("(Link::solveImpactsFixpointSingle): Not implemented."); }
 
       /**
        * solve contact equations of motion with single step fixed point scheme
        */
-      virtual void solveConstraintsFixpointSingle() { THROW_MBSIMERROR("(Link::solveConstraintsFixpointSingle): Not implemented."); }
+      virtual void solveConstraintsFixpointSingle() { throwError("(Link::solveConstraintsFixpointSingle): Not implemented."); }
 
       /**
        * solve impact equations of motion with Gauss-Seidel scheme on velocity level
        * \param time step-size
        */
-      virtual void solveImpactsGaussSeidel() { THROW_MBSIMERROR("(Link::solveImpactsGaussSeidel): Not implemented."); }
+      virtual void solveImpactsGaussSeidel() { throwError("(Link::solveImpactsGaussSeidel): Not implemented."); }
 
       /**
        * solve contact equations of motion with Gauss-Seidel scheme
        */
-      virtual void solveConstraintsGaussSeidel() { THROW_MBSIMERROR("(Link::solveConstraintsGaussSeidel): Not implemented."); }
+      virtual void solveConstraintsGaussSeidel() { throwError("(Link::solveConstraintsGaussSeidel): Not implemented."); }
 
       /**
        * solve impact equations of motion with Newton scheme on velocity level
        * \param time step-size
        */
-      virtual void solveImpactsRootFinding() { THROW_MBSIMERROR("(Link::solveImpactsRootFinding): Not implemented."); }
+      virtual void solveImpactsRootFinding() { throwError("(Link::solveImpactsRootFinding): Not implemented."); }
 
       /**
        * solve contact equations of motion with Newton scheme
        */
-      virtual void solveConstraintsRootFinding() { THROW_MBSIMERROR("(Link::solveConstraintsRootFinding): Not implemented."); }
+      virtual void solveConstraintsRootFinding() { throwError("(Link::solveConstraintsRootFinding): Not implemented."); }
 
       /**
        * \brief computes JACOBIAN and mass action matrix of nonlinear contact equations
        */
-      virtual void jacobianConstraints() { THROW_MBSIMERROR("(Link::jacobianConstraints): Not implemented."); }
+      virtual void jacobianConstraints() { throwError("(Link::jacobianConstraints): Not implemented."); }
 
       /**
        * \brief computes JACOBIAN and mass action matrix of nonlinear contact equations on velocity level
        */
-      virtual void jacobianImpacts() { THROW_MBSIMERROR("(Link::jacobianImpacts): Not implemented."); }
+      virtual void jacobianImpacts() { throwError("(Link::jacobianImpacts): Not implemented."); }
 
       /**
        * \brief update relaxation factors for contact equations
        */
-      virtual void updaterFactors() { THROW_MBSIMERROR("(Link::updaterFactors): Not implemented."); }
+      virtual void updaterFactors() { throwError("(Link::updaterFactors): Not implemented."); }
 
       /**
        * \brief verify underlying force laws on velocity level concerning given tolerances
        */
-      virtual void checkImpactsForTermination() { THROW_MBSIMERROR("(Link::checkImpactsForTermination): Not implemented."); }
+      virtual void checkImpactsForTermination() { throwError("(Link::checkImpactsForTermination): Not implemented."); }
       
       /**
        * \brief verify underlying force laws concerning given tolerances
        */
-      virtual void checkConstraintsForTermination() { THROW_MBSIMERROR("(Link::checkConstraintsForTermination): Not implemented."); }
+      virtual void checkConstraintsForTermination() { throwError("(Link::checkConstraintsForTermination): Not implemented."); }
 
       /**
        * \brief check if set-valued contacts are active and set corresponding attributes

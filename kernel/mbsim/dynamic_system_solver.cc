@@ -383,7 +383,7 @@ namespace MBSim {
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
       }
       else
-        THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown contact solver");
+        throwError("(DynamicSystemSolver::init()): Unknown contact solver");
 
       // impact solver specific settings
       msg(Info) << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
@@ -400,7 +400,7 @@ namespace MBSim {
         solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
       }
       else
-        THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown impact solver");
+        throwError("(DynamicSystemSolver::init()): Unknown impact solver");
 
       msg(Info) << "End of special group stage==unknownStage" << endl;
 
@@ -577,7 +577,7 @@ namespace MBSim {
       else if (linAlg == PseudoInverse)
         dx >> slvLS(Jprox, res0);
       else
-        THROW_MBSIMERROR("Internal error");
+        throwError("Internal error");
 
       Vec La_old = la.copy();
       double alpha = 1;
@@ -653,7 +653,7 @@ namespace MBSim {
       else if (linAlg == PseudoInverse)
         dx >> slvLS(Jprox, res0);
       else
-        THROW_MBSIMERROR("Internal error");
+        throwError("Internal error");
 
       Vec La_old = La.copy();
       double alpha = 1.;
@@ -708,7 +708,7 @@ namespace MBSim {
   }
 
   Mat DynamicSystemSolver::dhdq(int lb, int ub) {
-    THROW_MBSIMERROR("DynamicSystemSolver::dhdq not implemented.");
+    throwError("DynamicSystemSolver::dhdq not implemented.");
 //    if (lb != 0 || ub != 0) {
 //      assert(lb >= 0);
 //      assert(ub <= qSize);
@@ -746,7 +746,7 @@ namespace MBSim {
   }
 
   Mat DynamicSystemSolver::dhdu(int lb, int ub) {
-    THROW_MBSIMERROR("DynamicSystemSolver::dhdu not implemented.");
+    throwError("DynamicSystemSolver::dhdu not implemented.");
 //    if (lb != 0 || ub != 0) {
 //      assert(lb >= 0);
 //      assert(ub <= uSize[0]);
@@ -782,11 +782,11 @@ namespace MBSim {
   }
 
   Mat DynamicSystemSolver::dhdx() {
-    THROW_MBSIMERROR("Internal error");
+    throwError("Internal error");
   }
 
   Vec DynamicSystemSolver::dhdt() {
-    THROW_MBSIMERROR("Internal error");
+    throwError("Internal error");
   }
 
   void DynamicSystemSolver::updateT() {
@@ -920,7 +920,7 @@ namespace MBSim {
       if (stopIfNoConvergence) {
         if (dropContactInfo)
           dropContactMatrices();
-        THROW_MBSIMERROR("Maximal Number of Iterations reached");
+        throwError("Maximal Number of Iterations reached");
       }
       msg(Warn) << "Anyway, continuing integration..." << endl;
     }
@@ -954,7 +954,7 @@ namespace MBSim {
       if (stopIfNoConvergence) {
         if (dropContactInfo)
           dropContactMatrices();
-        THROW_MBSIMERROR("Maximal Number of Iterations reached");
+        throwError("Maximal Number of Iterations reached");
       }
       msg(Warn) << "Anyway, continuing integration..." << endl;
     }
@@ -1038,7 +1038,7 @@ namespace MBSim {
       corrID = 2;
     }
     else
-      THROW_MBSIMERROR("Internal error");
+      throwError("Internal error");
 
     calcgSize(gID);
     calccorrSize(corrID);
@@ -1085,7 +1085,7 @@ namespace MBSim {
       corrID = 4; // IH
     }
     else
-      THROW_MBSIMERROR("Internal error");
+      throwError("Internal error");
     calccorrSize(corrID); // IH
     if (corrSize) {
       calcgdSize(gdID); // IH
@@ -1150,7 +1150,7 @@ namespace MBSim {
     else if (link_)
       addLink(link_);
     else {
-      THROW_MBSIMERROR("(DynamicSystemSolver: addElement()): No such type of Element to add!");
+      throwError("(DynamicSystemSolver: addElement()): No such type of Element to add!");
     }
   }
 
@@ -1271,7 +1271,7 @@ namespace MBSim {
 
   void DynamicSystemSolver::checkExitRequest() {
     if (integratorExitRequest) // if the integrator has not exit after a integratorExitRequest
-      THROW_MBSIMERROR("MBSim: Integrator has not stopped integration! Terminate NOW the hard way!");
+      throwError("MBSim: Integrator has not stopped integration! Terminate NOW the hard way!");
 
     if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
       msg(Info) << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
@@ -1350,12 +1350,12 @@ namespace MBSim {
       //     }
       //     rFactor.init(rFac);
 
-      THROW_MBSIMERROR("(DynamicSystemSolver::updaterFactors()): Global r-Factor strategy currently not not available.");
+      throwError("(DynamicSystemSolver::updaterFactors()): Global r-Factor strategy currently not not available.");
     }
     else if (strategy == local)
       Group::updaterFactors();
     else
-      THROW_MBSIMERROR("(DynamicSystemSolver::updaterFactors()): Unknown strategy.");
+      throwError("(DynamicSystemSolver::updaterFactors()): Unknown strategy.");
   }
 
   void DynamicSystemSolver::constructor() {

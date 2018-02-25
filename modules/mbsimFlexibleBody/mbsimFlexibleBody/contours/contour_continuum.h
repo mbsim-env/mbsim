@@ -57,7 +57,7 @@ namespace MBSimFlexibleBody {
          * \return radius of contour in contour point
          * \param contour position
          */
-        virtual double evalCurvature(const fmatvec::Vec2 &zeta) { THROW_MBSIMERROR("(Contour::computeRadius): Not implemented."); return 0; }
+        virtual double evalCurvature(const fmatvec::Vec2 &zeta) { throwError("(Contour::computeRadius): Not implemented."); return 0; }
 
         /* GETTER / SETTER */
         void setAlphaStart(AT as_) { as = as_; }
