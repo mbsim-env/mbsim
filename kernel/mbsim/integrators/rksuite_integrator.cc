@@ -107,7 +107,7 @@ namespace MBSimIntegrator {
         double dtLast = 0;
         UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), work, &result, &dtLast);
 
-        if(result==1 || result==2) {
+        if(result==1 or result==2) {
           system->setTime(t);
           system->setState(z);
           system->resetUpToDate();
@@ -140,7 +140,7 @@ namespace MBSimIntegrator {
           }
         }
 
-        if(result==3 || result==4)
+        if(result==3 or result==4)
           continue;
         if(result>=5) 
           throw MBSimError("Integrator RKSUITE failed with result = "+toString(result));
