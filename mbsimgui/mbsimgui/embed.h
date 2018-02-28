@@ -31,7 +31,6 @@
 namespace MBSimGUI {
 
   class Element;
-  extern QDir mbsDir;
   extern xercesc::DOMLSParser *parser;
   extern MainWindow *mw;
 
@@ -77,7 +76,6 @@ namespace MBSimGUI {
               for(auto & i : param)
                 object->addParameter(i);
             }
-            MBXMLUtils::E(object->getXMLElement())->setOriginalFilename();
             object->setEmbedXMLElement(ele1);
             if(embededParam) object->setEmbededParameters(embededParam);
             if(embeded) object->setEmbeded(embeded);

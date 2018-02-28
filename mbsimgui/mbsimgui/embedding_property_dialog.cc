@@ -37,7 +37,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern QDir mbsDir;
   extern DOMImplementation *impl;
 
   EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item, bool name_, QWidget *parent, const Qt::WindowFlags& f) : EmbedItemPropertyDialog(item,parent,f), name(nullptr), count(nullptr), counterName(nullptr) {
