@@ -346,10 +346,6 @@ namespace MBSimGUI {
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
     echoViewTimer.stop();
     updateEchoView();
-    if(exitStatus==QProcess::NormalExit && exitCode==0)
-      echoView->setCurrentIndex(0);
-    else
-      echoView->setCurrentIndex(1);
     if(currentTask==1) {
       if(bfs::exists(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml")) {
         inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
@@ -878,8 +874,16 @@ namespace MBSimGUI {
         static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
     }
 
+    echoView->clearOutput();
     DOMElement *root;
     QString errorText;
+    EchoStream infoStream (echoView, "MBSIMGUI_INFO");
+    EchoStream warnStream (echoView, "MBSIMGUI_WARN");
+    EchoStream debugStream(echoView, "MBSIMGUI_DEBUG");
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info , make_shared<bool>(true), make_shared<ostream>(&infoStream));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn , make_shared<bool>(true), make_shared<ostream>(&warnStream));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug, make_shared<bool>(echoView->debugEnabled()),
+                                                                 make_shared<ostream>(&debugStream));
     try {
       D(doc)->validate();
       root = doc->getDocumentElement();
@@ -892,12 +896,15 @@ namespace MBSimGUI {
     catch(...) {
       errorText = "Unknown error";
     }
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info );
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn );
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug);
     if(not errorText.isEmpty()) {
-      echoView->setErrorText(errorText);
-      echoView->updateOutputAndError();
-      echoView->setCurrentIndex(1);
+      echoView->addOutputText(errorText);
+      echoView->updateOutput();
       return;
     }
+    echoView->updateOutput();
     // adapt the evaluator in the dom
     DOMElement *evaluator=D(doc)->createElement(PV%"evaluator");
     evaluator->appendChild(doc->createTextNode(X()%"xmlflat"));
@@ -909,7 +916,6 @@ namespace MBSimGUI {
     else if(saveFinalStateVector)
       arg.append("--savefinalstatevector");
     arg.append(projectFile);
-    echoView->clearOutputAndError();
     echoViewTimer.start(250);
     process.setWorkingDirectory(uniqueTempDir_);
     process.start((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
@@ -962,7 +968,7 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::debug() {
+  void MainWindow::debug() {//MFMF
     currentTask = 0;
     auto *newdoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
     projectView->getProject()->processHref(newdoc->getDocumentElement());
@@ -972,7 +978,7 @@ namespace MBSimGUI {
     QStringList arg;
     arg.append("--stopafterfirststep");
     arg.append(projectFile);
-    echoView->clearOutputAndError();
+    echoView->clearOutput();
     process.setWorkingDirectory(uniqueTempDir_);
     process.start((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
   }
@@ -2070,19 +2076,23 @@ namespace MBSimGUI {
   }
 
   void MainWindow::interrupt() {
-    echoView->setErrorText("Simulation interrupted\n");
+    echoView->clearOutput();
+    echoView->addOutputText("Simulation interrupted\n");
+    echoView->updateOutput();
     process.terminate();
   }
 
   void MainWindow::kill() {
-    echoView->setErrorText("Simulation killed\n");
+    echoView->clearOutput();
+    echoView->addOutputText("Simulation killed\n");
+    echoView->updateOutput();
     process.kill();
   }
 
   void MainWindow::updateEchoView() {
-    echoView->addOutputText(process.readAllStandardOutput().data());
-    echoView->addErrorText(process.readAllStandardError().data());
-    echoView->updateOutputAndError();
+    echoView->addOutputText(process.readAllStandardOutput().data());//MFMF this will mix stdout and stderr
+    echoView->addOutputText(process.readAllStandardError().data());//MFMF this will mix stdout and stderr
+    echoView->updateOutput();
   }
 
   void MainWindow::setAllowUndo(bool allowUndo_) {

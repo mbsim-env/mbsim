@@ -18,6 +18,12 @@
 */
 
 #include <config.h>
+#include <QtGui/QGridLayout>
+#include <QDesktopWidget>
+#include <QWebFrame>
+#include <QToolBar>
+#include <mbxmlutilshelper/getinstallpath.h>
+#include "utils.h"
 #include "echo_view.h"
 #include "file_editor.h"
 #include "mainwindow.h"
@@ -36,69 +42,143 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  EchoView::EchoView(QWidget *parent) : QTabWidget(parent) {
-    out=new QTextBrowser(this);
-    err=new QTextBrowser(this);
-    out->setOpenLinks(false);
-    err->setOpenLinks(false);
-    connect(out, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(outLinkClicked(const QUrl &)));
-    connect(err, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(errLinkClicked(const QUrl &)));
-    addTab(out, "Out");
-    addTab(err, "Err");
-    setCurrentIndex(0);
+  EchoView::EchoView(QMainWindow *parent) : QMainWindow(parent) {
+    out=new QWebView(this);
+    connect(out, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(linkClicked(const QUrl &)));
+    setCentralWidget(out);
+    auto tb=new QToolBar(this);
+    addToolBar(Qt::RightToolBarArea, tb);
+
+    showSSE=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"error.svg").string().c_str()),
+                        "S", this);
+    showSSE->setToolTip("<p>Show/hide subsequent errors message</p>");
+    showSSE->setCheckable(true);
+    showSSE->setChecked(true);
+    connect(showSSE, SIGNAL(triggered()), this, SLOT(updateOutput()));
+    tb->addAction(showSSE);
+
+    showWarn=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"warn.svg").string().c_str()),
+                         "W", this);
+    showWarn->setToolTip("<p>Show/hide warning messages</p>");
+    showWarn->setCheckable(true);
+    showWarn->setChecked(true);
+    connect(showWarn, SIGNAL(triggered()), this, SLOT(updateOutput()));
+    tb->addAction(showWarn);
+
+    showInfo=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"info.svg").string().c_str()),
+                         "I", this);
+    showInfo->setToolTip("<p>Show/hide info messages</p>");
+    showInfo->setCheckable(true);
+    showInfo->setChecked(true);
+    connect(showInfo, SIGNAL(triggered()), this, SLOT(updateOutput()));
+    tb->addAction(showInfo);
+
+    enableDebug=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debugBlueEnable.svg").string().c_str()),
+                          "D", this);
+    enableDebug->setToolTip("<p>Enable debug messages. This may decrease the performance.</p>");
+    enableDebug->setCheckable(true);
+    enableDebug->setChecked(false);
+    connect(enableDebug, SIGNAL(triggered()), this, SLOT(updateDebug()));
+    tb->addAction(enableDebug);
+
+    showDebug=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debugBlue.svg").string().c_str()),
+                          "D", this);
+    showDebug->setToolTip("<p>Show/hide debug messages</p>");
+    showDebug->setCheckable(true);
+    showDebug->setChecked(false);
+    showDebug->setDisabled(true);
+    connect(showDebug, SIGNAL(triggered()), this, SLOT(updateOutput()));
+    tb->addAction(showDebug);
+
     setMinimumHeight(80);
-    setTabPosition(QTabWidget::West);
   }
 
-  void EchoView::clearOutputAndError() {
+  void EchoView::clearOutput() {
     outText="";
-    errText="";
-    out->clear();
-    err->clear();
-    setCurrentIndex(0);
+    out->setHtml("");
   }
 
-  void EchoView::updateOutputAndError() {
-    out->setHtml(convertToHtml(outText));
-    out->moveCursor(QTextCursor::End);
-
-    err->setHtml(convertToHtml(errText));
-    err->moveCursor(QTextCursor::Start);
+  namespace {
+    QColor mergeColor(const QColor &a, double fac, const QColor &b) {
+      return QColor(
+        static_cast<int>(a.red()  *fac+b.red()  *(1-fac)),
+        static_cast<int>(a.green()*fac+b.green()*(1-fac)),
+        static_cast<int>(a.blue() *fac+b.blue() *(1-fac))
+      );
+    }
   }
 
-  QString EchoView::convertToHtml(QString &text) {
-    // the following operations modify the original text
-
-#ifdef _WIN32
-    // convert windows line ending to linux line ending (they are later replaced to html line ending)
-    text.replace("\x0D\x0A", "\x0A");
-#endif
-    // from now on use linux line ending => do not use \n, \r in string literals but \x0A, \x0D
-
-    // remove all lines but the last ending with carriage return '\x0D'
-    static QRegExp carriageReturn("(^|\x0A)[^\x0A]*\x0D([^\x0A\x0D]*\x0D)");
-    text.replace(carriageReturn, "\\1\\2");
-
-    // make some replace on text here
-    // (currently nothing since MBXMLUtils can now directly print html style output)
-
-    // the following operations modify only the QString return value
-    QString ret=text;
-
-    // newlines '\x0A' to html
-    ret.replace("\x0A", "<br/>");
-
-    return ret;
+  void EchoView::updateOutput() {
+    // some colors
+    static const QColor bg(QPalette().brush(QPalette::Active, QPalette::Base).color());
+    static const QColor fg(QPalette().brush(QPalette::Active, QPalette::Text).color());
+    static const QColor red("red");
+    static const QColor yellow("yellow");
+    static const QColor blue("blue");
+    // set the text as html, prefix with a style element and sourounded by a pre element
+    out->setHtml(QString(R"+(
+<html>
+  <head>
+    <style type="text/css">
+      body {
+        color: %1;
+        font-size: %4pt;
+      }
+      .MBXMLUTILS_ERROROUTPUT { 
+        background-color: %2;
+      }
+      .MBXMLUTILS_MSG {
+        font-weight: bold;
+      }
+      .MBXMLUTILS_SSE {
+        background-color: %3;
+        display: %7;
+      }
+      .MBSIMGUI_WARN {
+        background-color: %5;
+        display: %8;
+      }
+      .MBSIMGUI_INFO {
+        display: %9;
+      }
+      .MBSIMGUI_DEBUG {
+        background-color: %6;
+        display: %10;
+      }
+    </style>
+  </head>
+  <body>
+    <pre>
+)+").arg(fg.name()).arg(mergeColor(red, 0.2, bg).name()).arg(mergeColor(red, 0.075, bg).name()).
+     arg(QFont().pointSize()*qApp->desktop()->logicalDpiY()/96).
+     arg(mergeColor(yellow, 0.2, bg).name()).arg(mergeColor(blue, 0.2, bg).name()).
+     arg(showSSE->isChecked()?"inline":"none").arg(showWarn->isChecked()?"inline":"none").
+     arg(showInfo->isChecked()?"inline":"none").arg(showDebug->isChecked()?"inline":"none")+
+      outText+
+R"+(
+    </pre>
+  </body>
+</html>
+)+");
+    // scroll to the first error if their is one, else scroll to the end
+    out->page()->mainFrame()->evaluateJavaScript(R"+(
+var e=document.getElementsByClassName("MBXMLUTILS_ERROROUTPUT");
+if(e.length==0)
+  window.scrollTo(0, document.body.scrollHeight);
+else
+  e[0].scrollIntoView(true);
+)+");
   }
 
   QSize EchoView::sizeHint() const {
-    QSize size=QTabWidget::sizeHint();
-    size.setHeight(80);
+    QSize size=QMainWindow::sizeHint();
+    //MFMFsize.setHeight(80);
+    size.setHeight(280);
     return size;
   }
 
   QSize EchoView::minimumSizeHint() const {
-    QSize size=QTabWidget::minimumSizeHint();
+    QSize size=QMainWindow::minimumSizeHint();
     size.setHeight(80);
     return size;
   }
@@ -138,7 +218,7 @@ namespace MBSimGUI {
     }
   }
 
-  void EchoView::linkClicked(const QUrl &link, QTextBrowser *std) {
+  void EchoView::linkClicked(const QUrl &link) {
     //MISSING mbsimgui adds new elements e.g. <plotFeatureRecursive value="plotRecursive">false</plotFeatureRecursive>
     //MISSING this break the xpath of the error messages
     // get the model of the embedding
@@ -149,12 +229,23 @@ namespace MBSimGUI {
             "        xpath="<<link.queryItemValue("xpath").toStdString()<<endl;
   }
 
-  void EchoView::outLinkClicked(const QUrl &link) {
-    linkClicked(link, out);
+  void EchoView::updateDebug() {
+    if(enableDebug->isChecked()) {
+      showDebug->setDisabled(false);
+      showDebug->setChecked(true);
+      mw->refresh();
+    }
+    else {
+      showDebug->setDisabled(true);
+      showDebug->setChecked(false);
+    }
   }
 
-  void EchoView::errLinkClicked(const QUrl &link) {
-    linkClicked(link, err);
+  int EchoStream::sync() {
+    ev->addOutputText(("<span class=\""+className+"\">"+str()+"</span>").c_str());
+    // clear the buffer and return
+    str("");
+    return 0;
   }
 
 }
