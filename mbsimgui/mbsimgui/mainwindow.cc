@@ -128,6 +128,8 @@ namespace MBSimGUI {
       make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_ERROR")));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
       make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_DEPRECATED")));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
+      make_shared<ostream>(new StatusStream(this)));
 
     initInlineOpenMBV();
 
@@ -306,6 +308,8 @@ namespace MBSimGUI {
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
     mbsimDW->setWidget(echoView);
     connect(&process,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(processFinished(int,QProcess::ExitStatus)));
+    connect(&process,SIGNAL(readyReadStandardOutput()),this,SLOT(updateEchoView()));
+    connect(&process,SIGNAL(readyReadStandardError()),this,SLOT(updateStatus()));
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
@@ -342,8 +346,7 @@ namespace MBSimGUI {
 
     connect(&autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSaveProject()));
     autoSaveTimer.start(autoSaveInterval*60000);
-
-    connect(&echoViewTimer, SIGNAL(timeout()), this, SLOT(updateEchoView()));
+    statusTime.start();
 
     setWindowIcon(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"mbsimgui.svg").string())));
   }
@@ -353,7 +356,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    echoViewTimer.stop();
     updateEchoView();
     if(currentTask==1) {
       if(bfs::exists(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml")) {
@@ -907,6 +909,8 @@ namespace MBSimGUI {
       arg.append("--stopafterfirststep");
     else if(saveFinalStateVector)
       arg.append("--savefinalstatevector");
+
+    // we print everything except status messages to stdout
     arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>)#");
     arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>)#");
     if(*debugStreamFlag) {
@@ -914,8 +918,10 @@ namespace MBSimGUI {
     }
     arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>)#");
     arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>)#");
+    // status message go to stderr
+    arg.append("--stderr"); arg.append("status~~\n");
+
     arg.append(projectFile);
-    echoViewTimer.start(250);
     process.setWorkingDirectory(uniqueTempDir_);
     process.start((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
   }
@@ -2105,6 +2111,31 @@ namespace MBSimGUI {
   void MainWindow::setAllowUndo(bool allowUndo_) {
     allowUndo = allowUndo_;
     actionUndo->setEnabled(allowUndo);
+  }
+
+  void MainWindow::updateStatus() {
+    // call this function only every 0.25 sec
+    if(statusTime.elapsed()<250)
+      return;
+    statusTime.restart();
+
+    // show only last line
+    string s=process.readAllStandardError().data();
+    s.resize(s.length()-1);
+    auto i=s.rfind('\n');
+    i = i==string::npos ? 0 : i+1;
+    statusBar()->showMessage(s.substr(i).c_str());
+  }
+
+  int StatusStream::sync() {
+    // call this function only every 0.25 sec
+    if(mw->getStatusTime().elapsed()<250)
+      return 0;
+    mw->getStatusTime().restart();
+
+    mw->statusBar()->showMessage(str().c_str());
+    str("");
+    return 0;
   }
 
 }
