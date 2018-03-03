@@ -210,13 +210,13 @@ namespace MBSimElectronics {
       }
       objectList.push_back(i);
       // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
-      i->setPath("<created_by_ModellingInterface_"+toString(objectList.size()-1));
+      i->setPath("[created_by_ModellingInterface_"+toString(objectList.size()-1)+"]");
     }
 
     for(auto & i : branchList) {
       objectList.push_back(i);
       // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
-      i->setPath("<created_by_ModellingInterface_"+toString(objectList.size()-1));
+      i->setPath("[created_by_ModellingInterface_"+toString(objectList.size()-1)+"]");
       for(int j=0; j<i->getNumberOfConnectedMeshes(); j++)
 	i->addDependency(i->getMesh(j));
     }
@@ -227,13 +227,13 @@ namespace MBSimElectronics {
       if(objectcomp) {
 	objectList.push_back(objectcomp);
         // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
-        objectcomp->setPath("<created_by_ModellingInterface_"+toString(objectList.size()-1));
+        objectcomp->setPath("[created_by_ModellingInterface_"+toString(objectList.size()-1)+"]");
 	objectcomp->addDependency(i->getBranch());
       }
       else if(linkcomp) {
 	linkList.push_back(linkcomp);
         // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
-        linkcomp->setPath("<created_by_ModellingInterface_"+toString(linkList.size()-1));
+        linkcomp->setPath("[created_by_ModellingInterface_"+toString(linkList.size()-1)+"]");
       }
       else {
 	throw runtime_error("Error 2 in ElectronicComponent::processModellList");

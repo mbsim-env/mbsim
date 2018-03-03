@@ -173,7 +173,7 @@ namespace MBSim {
         // no parent exits and its not a DynamicSystemSolver (we can not generate a absolute path ->
         // append address to local name to have a unique local name!)
         stringstream str;
-        str<<containerName(this)<<"["<<getName()<<"<with_ID_"<<this<<">]";
+        str<<containerName(this)<<"["<<getName()<<"(with_ID_"<<this<<")]";
         return str.str();
       }
       // compose a relative path

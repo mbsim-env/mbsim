@@ -113,7 +113,7 @@ namespace MBSimIntegrator {
           system->resetUpToDate();
           system->plot();
 
-          if(output) cout << "   t = " <<  t << ",\tdt = "<< dtLast << "\r"<<flush;
+          if(msgAct(Status)) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtLast << flush;
 
           const double s1 = clock();
           time += (s1-s0)/CLOCKS_PER_SEC;

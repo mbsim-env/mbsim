@@ -116,6 +116,19 @@ namespace MBSimGUI {
     solverView = new SolverView;
     echoView = new EchoView(this);
 
+    // initialize streams
+    debugStreamFlag=std::make_shared<bool>(false);
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
+      make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_INFO")));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true),
+      make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_WARN")));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag,
+      make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_DEBUG")));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true),
+      make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_ERROR")));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
+      make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_DEPRECATED")));
+
     initInlineOpenMBV();
 
     MBSimObjectFactory::initialize();
@@ -681,7 +694,7 @@ namespace MBSimGUI {
       cout << ex.what() << endl;
     }
     catch(const DOMException &ex) {
-      cout << "DOM exception: " + X()%ex.getMessage() << endl;
+      cout << X()%ex.getMessage() << endl;
     }
     catch(...) {
       cout << "Unknown exception." << endl;
@@ -861,14 +874,11 @@ namespace MBSimGUI {
     echoView->clearOutput();
     DOMElement *root;
     QString errorText;
-    EchoStream infoStream (echoView, "MBSIMGUI_INFO");
-    EchoStream warnStream (echoView, "MBSIMGUI_WARN");
-    EchoStream debugStream(echoView, "MBSIMGUI_DEBUG");
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info , make_shared<bool>(true), make_shared<ostream>(&infoStream));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn , make_shared<bool>(true), make_shared<ostream>(&warnStream));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug, make_shared<bool>(echoView->debugEnabled()),
-                                                                 make_shared<ostream>(&debugStream));
+
+    *debugStreamFlag=echoView->debugEnabled();
+
     try {
+      fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Validate "<<D(doc)->getDocumentFilename().string()<<endl;
       D(doc)->validate();
       root = doc->getDocumentElement();
       shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
@@ -880,25 +890,30 @@ namespace MBSimGUI {
     catch(...) {
       errorText = "Unknown error";
     }
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info );
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn );
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug);
     if(not errorText.isEmpty()) {
-      echoView->addOutputText(errorText);
-      echoView->updateOutput();
+      echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">"+errorText+"</span>");
+      echoView->updateOutput(true);
       return;
     }
-    echoView->updateOutput();
+    echoView->updateOutput(true);
     // adapt the evaluator in the dom
     DOMElement *evaluator=D(doc)->createElement(PV%"evaluator");
     evaluator->appendChild(doc->createTextNode(X()%"xmlflat"));
     root->insertBefore(evaluator, root->getFirstChild());
+    E(root)->setOriginalFilename();
     basicSerializer->writeToURI(doc.get(), X()%projectFile.toStdString());
     QStringList arg;
     if(currentTask==1)
       arg.append("--stopafterfirststep");
     else if(saveFinalStateVector)
       arg.append("--savefinalstatevector");
+    arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>)#");
+    arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>)#");
+    if(*debugStreamFlag) {
+      arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>)#");
+    }
+    arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>)#");
+    arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>)#");
     arg.append(projectFile);
     echoViewTimer.start(250);
     process.setWorkingDirectory(uniqueTempDir_);
@@ -2070,22 +2085,21 @@ namespace MBSimGUI {
 
   void MainWindow::interrupt() {
     echoView->clearOutput();
-    echoView->addOutputText("Simulation interrupted\n");
-    echoView->updateOutput();
+    echoView->addOutputText("<span class=\"MBSIMGUI_WARN\">Simulation interrupted</span>\n");
+    echoView->updateOutput(true);
     process.terminate();
   }
 
   void MainWindow::kill() {
     echoView->clearOutput();
-    echoView->addOutputText("Simulation killed\n");
-    echoView->updateOutput();
+    echoView->addOutputText("<span class=\"MBSIMGUI_WARN\">Simulation killed</span>\n");
+    echoView->updateOutput(true);
     process.kill();
   }
 
   void MainWindow::updateEchoView() {
-    echoView->addOutputText(process.readAllStandardOutput().data());//MFMF this will mix stdout and stderr
-    echoView->addOutputText(process.readAllStandardError().data());//MFMF this will mix stdout and stderr
-    echoView->updateOutput();
+    echoView->addOutputText(process.readAllStandardOutput().data());
+    echoView->updateOutput(true);
   }
 
   void MainWindow::setAllowUndo(bool allowUndo_) {

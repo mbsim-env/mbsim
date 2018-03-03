@@ -107,6 +107,7 @@ dist_mbsimguiicon_DATA = icons/simulate.svg \
 			 icons/error.svg \
 			 icons/warn.svg \
 			 icons/info.svg \
+			 icons/deprecated.svg \
 			 icons/debugBlue.svg \
 			 icons/debugBlueEnable.svg \
 			 icons/kill.svg \

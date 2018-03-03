@@ -78,6 +78,7 @@ namespace MBSimGUI {
       SolverView *solverView;
       ProjectView *projectView;
       EchoView *echoView;
+      std::shared_ptr<bool> debugStreamFlag;
       QString projectFile;
       QProcess process;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;

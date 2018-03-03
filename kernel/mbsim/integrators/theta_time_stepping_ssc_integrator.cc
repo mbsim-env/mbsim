@@ -113,7 +113,7 @@ namespace MBSimIntegrator {
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
         integPlot << t << " " << dt << " " <<  iter << " " << time << " "<<system->getlaSize() << endl;
-        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<< setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
+        if(msgAct(Status)) msg(Status) << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<< setw(5) << setiosflags(ios::left) << iter << flush;
         tPlot += dtPlot;
       }
 

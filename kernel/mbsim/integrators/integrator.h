@@ -55,13 +55,11 @@ namespace MBSimIntegrator {
       void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
       void setInitialState(const fmatvec::Vec &z0_) { z0 = z0_; }
       void setWarnLevel(int level) { warnLevel = level; }
-      void setOutput(bool flag) { output = flag; }
       double getStartTime() const { return tStart; }
       double getEndTime() const { return tEnd; }
       double getPlotStepSize() const { return dtPlot; }
       const fmatvec::Vec& getInitialState() const override { return z0; }
       int getWarnLevel() const { return warnLevel; }
-      bool getOutput() const { return output; }
       /***************************************************/
       
       void execute() override { integrate(); }
@@ -112,11 +110,6 @@ namespace MBSimIntegrator {
        * \brief warn level
        */
       int warnLevel{0};
-
-      /**
-       * \brief flag for ouput printing
-       */
-      bool output{true};
 
       /**
        * \brief name of integrator

@@ -102,7 +102,7 @@ namespace MBSimIntegrator {
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;
         if(plotIntegrationData) integPlot<< system->getTime() << " " << dt << " " << time << endl;
-        if(output) cout << "   t = " << system->getTime() << ",\tdt = "<< dt << "\r"<<flush;
+        if(msgAct(Status)) msg(Status) << "   t = " << system->getTime() << ",\tdt = "<< dt << flush;
         tPlot += dtPlot;
       }
 

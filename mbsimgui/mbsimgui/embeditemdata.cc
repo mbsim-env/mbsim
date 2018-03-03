@@ -143,8 +143,6 @@ namespace MBSimGUI {
       element->insertBefore(ele2,NULL);
       MBXMLUtils::E(element)->removeAttribute("href");
     }
-    else
-      E(E(element)->getTagName()==PV%"Embed"?element->getLastElementChild():element)->setOriginalFilename();
     if(MBXMLUtils::E(element)->hasAttribute("parameterHref") and getNumberOfParameters()) {
       E(static_cast<xercesc::DOMElement*>(getParameter(0)->getXMLElement()->getParentNode()))->setOriginalFilename();
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getParameter(0)->getXMLElement()->getParentNode(),true));

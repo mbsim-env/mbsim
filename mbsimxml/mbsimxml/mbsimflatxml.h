@@ -15,12 +15,13 @@ namespace MBSim {
   //! A string buffer which prefixes every line.
   class PrefixedStringBuf : public std::stringbuf {
     public:
-      //! Prefix each line with prefix_ and print to str_.
-      PrefixedStringBuf(std::string prefix_, std::ostream &outstr_) :
-        std::stringbuf(std::ios_base::out), prefix(std::move(prefix_)), outstr(outstr_) {}
+      //! Prefix each line with prefix_  and postfix with postfix_ and print to str_.
+      PrefixedStringBuf(std::string prefix_, std::string postfix_, std::ostream &outstr_) :
+        std::stringbuf(std::ios_base::out), prefix(std::move(prefix_)), postfix(std::move(postfix_)), outstr(outstr_) {}
     protected:
       int sync() override;
       std::string prefix;
+      std::string postfix;
       std::ostream &outstr;
   };
 

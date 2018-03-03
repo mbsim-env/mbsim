@@ -40,7 +40,6 @@ int main(int argc, char *argv[]) {
   RADAU5Integrator integrator;
   integrator.setEndTime(5e-1);
   integrator.setPlotStepSize(dtPlot);
-  integrator.setOutput(true);
   integrator.setMaximumStepSize(dtPlot);
   start=clock();
   integrator.integrate(*sys);

@@ -892,8 +892,8 @@ namespace MBSimIntegrator {
       time += Timer.stop();
       integPlot<< t << " " << dtOld << " " <<order << " " << iter << " " << sysT1->getlaSize()  << " "<<AnzahlAktiverKontakte<<" "<<time  <<endl;
     }
-    if (output and (not FlagOutputOnlyAtTPlot or (FlagOutputOnlyAtTPlot and FlagtPlot) ))
-        cout << "   t = " << t << ",\tdt = " << dtOld << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << ",\torder = " << order << "\r" << flush;
+    if (msgAct(Status) and (not FlagOutputOnlyAtTPlot or (FlagOutputOnlyAtTPlot and FlagtPlot) ))
+        msg(Status) << "   t = " << t << ",\tdt = " << dtOld << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << ",\torder = " << order << flush;
   }
 
   void TimeSteppingSSCIntegrator::postIntegrate() {           // system: only dummy!
@@ -937,7 +937,6 @@ namespace MBSimIntegrator {
       integSum.close();
     }   
     if (FlagCoutInfo) {
-      if (output) cout << endl <<endl;
       int maxStepsPerThread = singleStepsT1;
       if (maxStepsPerThread<singleStepsT2) maxStepsPerThread = singleStepsT2;
       if (maxStepsPerThread<singleStepsT3) maxStepsPerThread = singleStepsT3;

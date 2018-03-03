@@ -197,8 +197,8 @@ namespace MBSimIntegrator {
         system->resetUpToDate();
         if(formalism) system->setUpdatela(false);
         system->plot();
-        if(output)
-          cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
+        if(msgAct(Status))
+          msg(Status) << "   t = " <<  t << ",\tdt = "<< rWork(10) << flush;
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;

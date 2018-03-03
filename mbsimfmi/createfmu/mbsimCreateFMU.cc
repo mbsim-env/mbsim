@@ -486,7 +486,7 @@ int main(int argc, char *argv[]) {
     return 0;
   }
   catch(const exception &ex) {
-    cerr<<"Exception:\n"<<ex.what()<<endl;
+    cerr<<ex.what()<<endl;
     return 1;
   }
   catch(...) {

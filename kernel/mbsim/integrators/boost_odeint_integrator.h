@@ -341,8 +341,8 @@ namespace MBSimIntegrator {
         }
         nrPlots++;
         system->plot();
-        if(output)
-          msg(Info)<<"t = "<<tPlot<<", dt="<<dos->current_time_step()<<"\r"<<std::flush;
+        if(msgAct(Status))
+          msg(Status)<<"t = "<<tPlot<<", dt="<<dos->current_time_step()<<std::flush;
         tPlot+=dtPlot;
       }
 

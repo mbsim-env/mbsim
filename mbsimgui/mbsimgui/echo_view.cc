@@ -73,6 +73,14 @@ namespace MBSimGUI {
     connect(showInfo, SIGNAL(triggered()), this, SLOT(updateOutput()));
     tb->addAction(showInfo);
 
+    showDepr=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"deprecated.svg").string().c_str()),
+                         "D", this);
+    showDepr->setToolTip("<p>Show/hide messages about deprecated features.</p>");
+    showDepr->setCheckable(true);
+    showDepr->setChecked(true);
+    connect(showDepr, SIGNAL(triggered()), this, SLOT(updateOutput()));
+    tb->addAction(showDepr);
+
     enableDebug=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debugBlueEnable.svg").string().c_str()),
                           "D", this);
     enableDebug->setToolTip("<p>Enable debug messages. This may decrease the performance.</p>");
@@ -108,23 +116,28 @@ namespace MBSimGUI {
     }
   }
 
-  void EchoView::updateOutput() {
+  void EchoView::updateOutput(bool moveToErrorOrEnd) {
+    int currentScrollY=out->page()->mainFrame()->evaluateJavaScript(R"+(window.scrollY)+").toInt();
     // some colors
     static const QColor bg(QPalette().brush(QPalette::Active, QPalette::Base).color());
     static const QColor fg(QPalette().brush(QPalette::Active, QPalette::Text).color());
     static const QColor red("red");
     static const QColor yellow("yellow");
     static const QColor blue("blue");
+    static const QColor green("green");
     // set the text as html, prefix with a style element and sourounded by a pre element
-    out->setHtml(QString(R"+(
-<html>
+    QString html=QString(R"+(
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <style type="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>MBSim Echo View</title>
+    <style>
       body {
         color: %1;
         font-size: %4pt;
       }
-      .MBXMLUTILS_ERROROUTPUT { 
+      .MBSIMGUI_ERROR { 
         background-color: %2;
       }
       .MBXMLUTILS_MSG {
@@ -141,6 +154,10 @@ namespace MBSimGUI {
       .MBSIMGUI_INFO {
         display: %9;
       }
+      .MBSIMGUI_DEPRECATED {
+        background-color: %11;
+        display: %12;
+      }
       .MBSIMGUI_DEBUG {
         background-color: %6;
         display: %10;
@@ -149,25 +166,33 @@ namespace MBSimGUI {
   </head>
   <body>
     <pre>
-)+").arg(fg.name()).arg(mergeColor(red, 0.2, bg).name()).arg(mergeColor(red, 0.075, bg).name()).
+)+").
+     arg(fg.name()).arg(mergeColor(red, 0.3, bg).name()).arg(mergeColor(red, 0.1, bg).name()).
      arg(QFont().pointSize()*qApp->desktop()->logicalDpiY()/96).
-     arg(mergeColor(yellow, 0.2, bg).name()).arg(mergeColor(blue, 0.2, bg).name()).
+     arg(mergeColor(yellow, 0.3, bg).name()).arg(mergeColor(blue, 0.3, bg).name()).
      arg(showSSE->isChecked()?"inline":"none").arg(showWarn->isChecked()?"inline":"none").
-     arg(showInfo->isChecked()?"inline":"none").arg(showDebug->isChecked()?"inline":"none")+
+     arg(showInfo->isChecked()?"inline":"none").arg(showDebug->isChecked()?"inline":"none").
+     arg(mergeColor(green, 0.3, bg).name()).arg(showDepr->isChecked()?"inline":"none")+
       outText+
 R"+(
     </pre>
   </body>
 </html>
-)+");
-    // scroll to the first error if their is one, else scroll to the end
-    out->page()->mainFrame()->evaluateJavaScript(R"+(
-var e=document.getElementsByClassName("MBXMLUTILS_ERROROUTPUT");
+)+";
+    out->setHtml(html);
+
+    if(moveToErrorOrEnd) {
+      // scroll to the first error if their is one, else scroll to the end
+      out->page()->mainFrame()->evaluateJavaScript(R"+(
+var e=document.getElementsByClassName("MBSIMGUI_ERROR");
 if(e.length==0)
   window.scrollTo(0, document.body.scrollHeight);
 else
   e[0].scrollIntoView(true);
 )+");
+    }
+    else
+      out->page()->mainFrame()->evaluateJavaScript(QString(R"+(window.scrollTo(0, %1);)+").arg(currentScrollY));
   }
 
   QSize EchoView::sizeHint() const {
@@ -239,13 +264,6 @@ else
       showDebug->setDisabled(true);
       showDebug->setChecked(false);
     }
-  }
-
-  int EchoStream::sync() {
-    ev->addOutputText(("<span class=\""+className+"\">"+str()+"</span>").c_str());
-    // clear the buffer and return
-    str("");
-    return 0;
   }
 
 }

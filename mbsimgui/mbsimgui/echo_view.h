@@ -38,13 +38,14 @@ namespace MBSimGUI {
       void addOutputText(const QString &outText_) { outText += outText_; }
       bool debugEnabled() { return enableDebug->isChecked(); }
     public slots:
-      void updateOutput();
+      void updateOutput(bool moveToErrorOrEnd=false);
     private:
       QWebView *out;
       QString outText;
       QAction *showSSE;
       QAction *showWarn;
       QAction *showInfo;
+      QAction *showDepr;
       QAction *enableDebug;
       QAction *showDebug;
     private slots:
@@ -57,7 +58,12 @@ namespace MBSimGUI {
       EchoStream(EchoView *ev_, const std::string &className_) : std::stringbuf(std::ios_base::out),
         ev(ev_), className(className_) {}
     protected:
-      int sync() override; // overwrite the sync function from stringbuf
+      int sync() override { // overwrite the sync function from stringbuf
+        ev->addOutputText(("<span class=\""+className+"\">"+str()+"</span>").c_str());
+        // clear the buffer and return
+        str("");
+        return 0;
+      }
       EchoView *ev;
       std::string className;
   };

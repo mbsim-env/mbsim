@@ -141,20 +141,8 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
 }
 
 int PrefixedStringBuf::sync() {
-  // split current buffer into lines
-  vector<string> line;
-  string full=str();
-  boost::split(line, full, boost::is_from_range('\n', '\n'));
-  // clear the current buffer
+  outstr<<prefix<<str()<<postfix<<flush;
   str("");
-  // print each line prefixed with prefix to outstr
-  for(auto it=line.begin(); it!=line.end(); ++it)
-    if(it!=--line.end())
-      outstr<<prefix<<*it<<"\n";
-    else
-      if(*it!="")
-        outstr<<prefix<<*it;
-  outstr<<flush;
   return 0;
 }
 
@@ -164,6 +152,7 @@ int MBSimXML::preInit(vector<string> args, DynamicSystemSolver*& dss, Solver*& s
   if(args.size()<1) {
     cout<<"Usage: mbsimflatxml [--donotintegrate|--savestatevector|--stopafterfirststep]"<<endl;
     cout<<"                    [--modulePath <dir> [--modulePath <dir> ...]]"<<endl;
+    cout<<"                    [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]"<<endl;
     cout<<"                    <mbsimprjfile>"<<endl;
     cout<<endl;
     cout<<"Copyright (C) 2004-2009 MBSim Development Team"<<endl;
@@ -178,26 +167,31 @@ int MBSimXML::preInit(vector<string> args, DynamicSystemSolver*& dss, Solver*& s
     cout<<"--savefinalstatevector         Save the state vector to the file \"statevector.asc\" after integration"<<endl;
     cout<<"--modulePath <dir>             Add <dir> to MBSim module serach path. The central MBSim installation"<<endl;
     cout<<"                               module dir and the current dir is always included."<<endl;
+    cout<<"--stdout <msg>                 Print on stdout messages of type <msg>."<<endl;
+    cout<<"                               <msg> may be info~<pre>~<post>, warn~<pre>~<post>, debug~<pre>~<post>"<<endl;
+    cout<<"                               error~<pre>~<post>~ or depr~<pre>~<post>~."<<endl;
+    cout<<"                               Each message is prefixed/postfixed with <pre>/<post>."<<endl;
+    cout<<"                               --stdout may be specified multiple times."<<endl;
+    cout<<"                               If --stdout and --stderr is not specified --stdout 'info~Info: ~'"<<endl;
+    cout<<"                               --stderr 'warn~Warn: ~' --stderr 'error~~' --stderr 'depr~Depr:~'"<<endl;
+    cout<<"                               --stderr 'status~~\\r' is used."<<endl;
+    cout<<"--stderr <msg>                 Analog to --stdout but prints to stderr."<<endl;
     cout<<"<mbsimprjfile>                 The preprocessed mbsim project xml file"<<endl;
     return 1;
   }
 
-  // setup message streams
-  static PrefixedStringBuf infoBuf("Info:    ", cout);
-  static PrefixedStringBuf warnBuf("Warning: ", cerr);
-  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, std::make_shared<bool>(true), std::make_shared<ostream>(&infoBuf));
-  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, std::make_shared<bool>(true), std::make_shared<ostream>(&warnBuf));
-
   set<boost::filesystem::path> searchDirs;
   for(auto it=args.begin(); it!=args.end(); ++it) {
     if(*it!="--modulePath") continue;
+
     auto itn=it; itn++;
     if(itn==args.end()) {
-      cout<<"Invalid argument"<<endl;
+      cerr<<"Invalid argument"<<endl;
       return 1;
     }
     searchDirs.insert(*itn);
   }
+
   loadModules(searchDirs);
 
   // load MBSim project XML document
@@ -214,7 +208,7 @@ int MBSimXML::preInit(vector<string> args, DynamicSystemSolver*& dss, Solver*& s
   // check evaluator
   DOMElement *evaluator=E(e)->getFirstElementChildNamed(PV%"evaluator");
   if(!evaluator)
-    Deprecated::message(cerr, "No {"+PV.getNamespaceURI()+"}evaluator element defined.", e);
+    Deprecated::message(fmatvec::Atom::msgStatic(fmatvec::Atom::Deprecated), "No {"+PV.getNamespaceURI()+"}evaluator element defined.", e);
   if(evaluator && X()%E(evaluator)->getFirstTextChild()->getData()!="xmlflat")
     throw runtime_error("The evaluator must be 'xmlflat'.");
 

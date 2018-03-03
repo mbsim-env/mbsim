@@ -1625,14 +1625,14 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
       }
     }
-    if((output && expInt==true) || (output && expInt==false && itMax==1)) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << "\r"<<flush;
-    if(output && expInt==false && itMax>1) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << ",\timpiter = "<<setw(5)<<setiosflags(ios::left) << maxImpIter << "\r"<<flush;
+    if((msgAct(Status) && expInt==true) || (msgAct(Status) && expInt==false && itMax==1)) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << flush;
+    if(msgAct(Status) && expInt==false && itMax>1) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << ",\timpiter = "<<setw(5)<<setiosflags(ios::left) << maxImpIter <<flush;
     timePlotPar += TimerPlotPar.stop();
     //if (FlagPlotIntegrator) {
     //  time += Timer.stop();
     //  integPlot<< t << " " << dtOld << " " <<order << " " << iter << " " << sysTP->getlaSize()  << " "<<AnzahlAktiverKontakte<<" "<<time  <<endl;
     //}
-    //if(output) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << "\r"<<flush;
+    //if(msgAct(Status)) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << flush;
     //timePlot += TimerPlot.stop();
   }
 
@@ -1690,8 +1690,8 @@ namespace MBSimIntegrator {
       }
     }
 
-    if((output && expInt==true) || (output && expInt==false && itMax==1)) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << "\r"<<flush;
-    if(output && expInt==false && itMax>1) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << ",\timpiter = "<<setw(5)<<setiosflags(ios::left) << maxImpIter << "\r"<<flush;
+    if((msgAct(Status) && expInt==true) || (msgAct(Status) && expInt==false && itMax==1)) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << flush;
+    if(msgAct(Status) && expInt==false && itMax>1) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << ",\timpiter = "<<setw(5)<<setiosflags(ios::left) << maxImpIter << flush;
     timePlotPar += TimerPlotPar.stop();
   }
 
