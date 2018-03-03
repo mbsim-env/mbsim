@@ -34,7 +34,6 @@ namespace MBSimGUI {
       EchoView(QMainWindow *parent);
       void clearOutput();
       QSize sizeHint() const override;
-      QSize minimumSizeHint() const override;
       void addOutputText(const QString &outText_) { outText += outText_; }
       bool debugEnabled() { return enableDebug->isChecked(); }
     public slots:

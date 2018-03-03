@@ -43,6 +43,8 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   EchoView::EchoView(QMainWindow *parent) : QMainWindow(parent) {
+    setIconSize(iconSize()*qApp->desktop()->logicalDpiY()/96*0.5);
+
     out=new QWebView(this);
     connect(out, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(linkClicked(const QUrl &)));
     setCentralWidget(out);
@@ -197,14 +199,7 @@ else
 
   QSize EchoView::sizeHint() const {
     QSize size=QMainWindow::sizeHint();
-    //MFMFsize.setHeight(80);
-    size.setHeight(280);
-    return size;
-  }
-
-  QSize EchoView::minimumSizeHint() const {
-    QSize size=QMainWindow::minimumSizeHint();
-    size.setHeight(80);
+    size.setHeight(iconSize().height()*5*2);
     return size;
   }
 
