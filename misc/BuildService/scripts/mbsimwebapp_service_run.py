@@ -12,6 +12,9 @@ def run(token, display):
   # configuration
   # * adaption in /etc/fstab are required
   #   /home/mbsim/linux64-dailydebug /usr/local/mbsim/linux64-dailydebug none bind,ro
+  #   /home/mbsim/linux64-dailyrelease /usr/local/mbsim/linux64-dailyrelease none bind,ro
+  #   /home/mbsim/win64-dailyrelease /usr/local/mbsim/win64-dailyrelease none bind,ro
+  #   /home/mbsim/linux64-ci /usr/local/mbsim/linux64-ci none bind,ro
   #   /home/mbsim/3rdparty /usr/local/mbsim/3rdparty none bind,ro
   #   /home/mbsim/SCRIPTS /usr/local/mbsim/SCRIPTS none bind,ro
   XAUTHTMPL='/tmp/mbsimwebapp-xauth-%d.'+getpass.getuser()
