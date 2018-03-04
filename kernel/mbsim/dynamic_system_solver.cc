@@ -1044,10 +1044,12 @@ namespace MBSim {
     calccorrSize(corrID);
     updatecorrRef(corrParent(0, corrSize - 1));
     updategRef(gParent(0, gSize - 1));
+    updg = true;
     updatecorr(corrID);
     Vec nu(getuSize());
     calclaSize(laID);
     updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
+    updW[0] = true;
     SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
     Mat T = evalT();
     int iter = 0;
@@ -1056,13 +1058,13 @@ namespace MBSim {
         msg(Warn) << endl << "Error in DynamicSystemSolver: projection of generalized positions failed at t = " << t << "!" << endl;
         break;
       }
+      if(fullUpdate) Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
       Vec mu = slvLS(Gv, -evalg() + getW(0,false).T() * nu + corr);
       Vec dnu = slvLLFac(getLLM(false), getW(0,false) * mu) - nu;
       nu += dnu;
       q += T * dnu;
       resetUpToDate();
-      if(fullUpdate) Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
-   }
+    }
     calclaSize(3);
     updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
     calcgSize(0);
@@ -1091,10 +1093,12 @@ namespace MBSim {
       calcgdSize(gdID); // IH
       updatecorrRef(corrParent(0, corrSize - 1));
       updategdRef(gdParent(0, gdSize - 1));
+      updgd = true;
       updatecorr(corrID);
 
       calclaSize(gdID);
       updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
+      updW[0] = true;
 
       if (laSize) {
         SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
