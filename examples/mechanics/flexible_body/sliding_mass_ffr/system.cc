@@ -61,7 +61,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     addFrame(ffrRef);
     ffrRef->enableOpenMBV(1e-1);
 
-    FlexibleBodyLinearExternalFFR *beam = new FlexibleBodyLinearExternalFFR("FFRBeam", false);
+    FlexibleBodyLinearExternalFFR *beam = new FlexibleBodyLinearExternalFFR("FFRBeam");
 
     beam->readFEMData("FFRBeam/", true);
 

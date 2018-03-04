@@ -75,13 +75,13 @@ namespace MBSimFlexibleBody {
 
   Vec Cardan::computentil(const Vec& q) const {
     Vec ntil(3,INIT,0.);
-    cout << "Tilde-Vector for Cardan: TODO" << endl;
+    msg(Warn) << "Tilde-Vector for Cardan: TODO" << endl;
     return ntil.copy(); 
   }
 
   Vec Cardan::computebtil(const Vec& q) const {
     Vec btil(3,INIT,0.);
-    cout << "Tilde-Vector for Cardan: TODO" << endl;
+    msg(Warn) << "Tilde-Vector for Cardan: TODO" << endl;
     return btil.copy();
   }
 
@@ -154,13 +154,13 @@ namespace MBSimFlexibleBody {
 
   SqrMat Cardan::computentilq(const Vec& q) const {
     SqrMat ntilq(3,INIT,0.);
-    cout << "Tilde-Vector for Cardan: TODO" << endl;
+    msg(Warn) << "Tilde-Vector for Cardan: TODO" << endl;
     return ntilq.copy();
   }
 
   SqrMat Cardan::computebtilq(const Vec& q) const {
     SqrMat btilq(3,INIT,0.);
-    cout << "Tilde-Vector for Cardan: TODO" << endl;
+    msg(Warn) << "Tilde-Vector for Cardan: TODO" << endl;
     return btilq.copy();
   }
 
@@ -269,13 +269,13 @@ namespace MBSimFlexibleBody {
 
   Mat Cardan::computentilq2(const Vec& q) const {
     Mat ntilq2(3,6,INIT,0.);
-    cout << "Tilde-Vector for Cardan: TODO" << endl;
+    msg(Warn) << "Tilde-Vector for Cardan: TODO" << endl;
     return ntilq2.copy();
   }
 
   Mat Cardan::computebtilq2(const Vec& q) const {
     Mat btilq2(3,6,INIT,0.);
-    cout << "Tilde-Vector for Cardan: TODO" << endl;
+    msg(Warn) << "Tilde-Vector for Cardan: TODO" << endl;
     return btilq2.copy();
   }
 

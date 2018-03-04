@@ -172,7 +172,7 @@ namespace MBSimFlexibleBody {
     tmp(2) = qext(0) + qext(RefDofs + node * NodeDofs) + (computeThickness(NodeCoordinates(node, 0))) / 2.;
     frame->setPosition(R->evalPosition() + R->evalOrientation() * tmp);
 
-//    cout << "(FlexibleBody2s13Disk::updateOrientation): Not implemented!" << endl;
+//    msg(Debug) << "(FlexibleBody2s13Disk::updateOrientation): Not implemented!" << endl;
     //frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(Phi));
     //frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(Phi));
     //frame->getOrientation(false).set(2, crossProduct(frame->getOrientation().col(0), frame->getOrientation().col(1)));

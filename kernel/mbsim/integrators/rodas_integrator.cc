@@ -283,8 +283,6 @@ namespace MBSimIntegrator {
       integPlot << "#1 calculation time [s]:" << endl;
     }
 
-    cout.setf(ios::scientific, ios::floatfield);
-
     s0 = clock();
 
     while(t<tEnd-epsroot) {
@@ -315,9 +313,6 @@ namespace MBSimIntegrator {
       //integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
   }
 
   void RODASIntegrator::calcSize() {

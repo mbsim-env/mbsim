@@ -107,7 +107,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   crank->setInertiaTensor(inertia_crank);
 
   /* rod */
-  FlexibleBodyLinearExternalFFR *rod = new FlexibleBodyLinearExternalFFR("rod", false);
+  FlexibleBodyLinearExternalFFR *rod = new FlexibleBodyLinearExternalFFR("rod");
   rod->readFEMData("rod", true);
 
   const int nf = rod->getNumberModes();

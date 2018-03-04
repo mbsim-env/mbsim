@@ -227,7 +227,7 @@ namespace MBSim {
     }
 //    else if (status2) {
 //      cFrame[ifrustum]->getPosition() = computeContourPoint(x2, v);
-//      cout << "Solution 2 found " << endl;
+//      msg(Debug) << "Solution 2 found " << endl;
 //      return true;
 //    }
 
@@ -488,7 +488,7 @@ namespace MBSim {
 
   void ContactKinematicsPlatePolynomialFrustum::setGridSizeY(int gridSizeY_) {
     if (gridSizeY_ < 2) {
-      cout << "Grid Size \"" << gridSizeY_ << "\" to small in Y direction. Setting to 2" << endl;
+      msg(Warn) << "Grid Size \"" << gridSizeY_ << "\" to small in Y direction. Setting to 2" << endl;
       gridSizeY_ = 2;
     }
     gridSizeY = gridSizeY_;
@@ -496,7 +496,7 @@ namespace MBSim {
 
   void ContactKinematicsPlatePolynomialFrustum::setGridSizeZ(int gridSizeZ_) {
     if (gridSizeZ_ < 2) {
-      cout << "Grid Size \"" << gridSizeZ_ << "\" to small in Y direction. Setting to 2" << endl;
+      msg(Warn) << "Grid Size \"" << gridSizeZ_ << "\" to small in Y direction. Setting to 2" << endl;
       gridSizeZ_ = 2;
     }
     gridSizeZ = gridSizeZ_;

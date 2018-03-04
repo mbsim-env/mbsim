@@ -51,7 +51,6 @@ namespace MBSimIntegrator {
 
     tPlot = 0.;
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
     
     stepPlot =(int) (dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
@@ -93,9 +92,6 @@ namespace MBSimIntegrator {
       integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
-
-    cout.unsetf(ios::scientific);
-    cout << endl;
   }
 
   void ExplicitEulerIntegrator::integrate() {

@@ -59,8 +59,6 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setDebug(bool DEBUG_);
-      void setWarnLevel(int warnLevel_);
       void setLocalSearch(bool LOCALSEARCH_);
       /***************************************************/
 
@@ -77,16 +75,6 @@ namespace MBSim {
       Circle *circle;
 
       /**
-       * \brief debug information during calculation?
-       */
-      bool DEBUG;
-
-      /**
-       * \brief warnings during calculation?
-       */
-      int warnLevel;
-
-      /**
        * \brief local contact search?
        */
       bool LOCALSEARCH;
@@ -94,8 +82,6 @@ namespace MBSim {
       fmatvec::Vec2 zeta;
   };
 
-  inline void ContactKinematicsCircleFrustum::setDebug(bool DEBUG_) { DEBUG=DEBUG_; }
-  inline void ContactKinematicsCircleFrustum::setWarnLevel(int warnLevel_) { warnLevel=warnLevel_; }
   inline void ContactKinematicsCircleFrustum::setLocalSearch(bool LOCALSEARCH_) { LOCALSEARCH=LOCALSEARCH_; }
 
 }

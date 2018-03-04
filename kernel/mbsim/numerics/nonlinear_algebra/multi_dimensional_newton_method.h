@@ -38,7 +38,7 @@ namespace MBSim {
    * \brief Newton method for multidimensional root finding
    * \author Kilian Grundl (3.2.2012)
    */
-  class MultiDimensionalNewtonMethod {
+  class MultiDimensionalNewtonMethod : public virtual fmatvec::Atom {
     public:
       /*!
        * \brief plain constructor

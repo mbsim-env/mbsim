@@ -68,8 +68,7 @@ namespace MBSimIntegrator {
 
     lenwrk = 2*32*zSize;
     work=new double[lenwrk];
-    if (warnLevel)
-      messages=1;
+    messages=1;
 
     zdGot.resize(zSize);
     zMax.resize(zSize);
@@ -82,7 +81,6 @@ namespace MBSimIntegrator {
 
     tPlot = t + dtPlot;
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
 
     integrationSteps = 0;
 
@@ -155,9 +153,6 @@ namespace MBSimIntegrator {
         integSum << "Integration steps: " << integrationSteps << endl;
         integSum.close();
       }
-
-      cout.unsetf (ios::scientific);
-      cout << endl;
 
       selfStatic = nullptr;
     }

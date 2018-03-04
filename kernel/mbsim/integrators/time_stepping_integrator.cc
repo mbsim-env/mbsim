@@ -60,11 +60,10 @@ namespace MBSimIntegrator {
       system->evalz0();
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
 
     stepPlot = (int) (dtPlot/dt + 0.5);
     if(fabs(stepPlot*dt - dtPlot) > dt*dt) {
-      cout << "WARNING: Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
+      msg(Warn) << "Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
     }
 
     s0 = clock();
@@ -122,7 +121,7 @@ namespace MBSimIntegrator {
       typedef tee_device<ostream, ofstream> TeeDevice;
       typedef stream<TeeDevice> TeeStream;
       ofstream integSum((name + ".sum").c_str());
-      TeeDevice ts_tee(cout, integSum);
+      TeeDevice ts_tee(msg(Info), integSum);
       TeeStream ts_split(ts_tee);
 
       ts_split << endl << endl << "******************************" << endl;
@@ -136,9 +135,6 @@ namespace MBSimIntegrator {
       ts_split.flush();
       ts_split.close();
     }
-
-    cout.unsetf(ios::scientific);
-    cout << endl;
   }
 
   void TimeSteppingIntegrator::integrate() {

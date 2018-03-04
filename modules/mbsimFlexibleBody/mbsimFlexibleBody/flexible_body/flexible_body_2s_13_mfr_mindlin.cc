@@ -32,8 +32,8 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody2s13MFRMindlin::FlexibleBody2s13MFRMindlin(const string &name, const int & DEBUGLEVEL_) :
-      FlexibleBody2s13(name, DEBUGLEVEL_), N_compl(0), R_compl(0), R_ij(0) {
+  FlexibleBody2s13MFRMindlin::FlexibleBody2s13MFRMindlin(const string &name) :
+      FlexibleBody2s13(name), N_compl(0), R_compl(0), R_ij(0) {
     RefDofs = 6;
     for (int i = 0; i < 3; i++)
       for (int j = 0; j < 3; j++) {
@@ -101,7 +101,7 @@ namespace MBSimFlexibleBody {
     M = condenseMatrix(Mext, ILocked).copy();
 
     /* Eigenvalues of M */
-    if (DEBUGLEVEL >= 2) {
+    if (msgAct(Debug)) {
       stringstream filenameM;
       filenameM << "M" << nr << "x" << nj << "t" << getTime() << ".txt";
       ofstream file_M(filenameM.str().c_str());

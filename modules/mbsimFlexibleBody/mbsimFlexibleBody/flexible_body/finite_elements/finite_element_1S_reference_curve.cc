@@ -80,16 +80,16 @@ namespace MBSimFlexibleBody {
       }
 
       if (0) {
-        cout << "Free Local DoFs of Element #" << element << "  are: \t";
+        msg(Debug) << "Free Local DoFs of Element #" << element << "  are: \t";
         for (size_t i = 0; i < freeDoFs.size(); i++) {
-          cout << setfill(' ') << setw(3) << freeDoFs[i] << ", ";
+          msg(Debug) << setfill(' ') << setw(3) << freeDoFs[i] << ", ";
         }
-        cout << endl;
-        cout << "Corresponding Global DoFs are \t\t";
+        msg(Debug) << endl;
+        msg(Debug) << "Corresponding Global DoFs are \t\t";
         for (size_t i = 0; i < freeDoFs.size(); i++) {
-          cout << setfill(' ') << setw(3) << dofDirs(freeDoFs[i]) << ", ";
+          msg(Debug) << setfill(' ') << setw(3) << dofDirs(freeDoFs[i]) << ", ";
         }
-        cout << endl;
+        msg(Debug) << endl;
       }
 
       h.resize(freeDoFs.size(), INIT, 0.);
@@ -113,7 +113,7 @@ namespace MBSimFlexibleBody {
             double xi = -1 + 2. * i / (pnts - 1.);
             out(i) = computeLegendre(j, xi, 0);
           }
-          cout << out << endl;
+          msg(Debug) << out << endl;
         }
       }
 
@@ -133,22 +133,22 @@ namespace MBSimFlexibleBody {
             }
             if (der == 0 and j == 0) {
               //plot x only once
-              cout << "x" << " = [ ";
+              msg(Debug) << "x" << " = [ ";
               for (int k = 0; k < y.size(); k++) {
                 if (k > 0)
-                  cout << ", ";
-                cout << x(k);
+                  msg(Debug) << ", ";
+                msg(Debug) << x(k);
               }
-              cout << "];" << endl;
+              msg(Debug) << "];" << endl;
             }
             // plot y
-            cout << "y" << der << "(" << j + 1 << ",:) = [ ";
+            msg(Debug) << "y" << der << "(" << j + 1 << ",:) = [ ";
             for (int k = 0; k < y.size(); k++) {
               if (k > 0)
-                cout << ", ";
-              cout << y(k);
+                msg(Debug) << ", ";
+              msg(Debug) << y(k);
             }
-            cout << "];" << endl;
+            msg(Debug) << "];" << endl;
           }
         }
         throwError("init failed");

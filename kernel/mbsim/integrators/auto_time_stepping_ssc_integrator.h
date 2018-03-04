@@ -172,9 +172,6 @@ namespace MBSimIntegrator {
       /** Flag: write integration summary to a file (default true)*/
       bool FlagPlotIntegrationSum;
       
-      /** Flag: write integration info (integ. summary) to cout  (default true)*/
-      bool FlagCoutInfo;
-      
       /** every successful integration step is ploted (set dtPlot=0 to activate FlagPlotEveryStep) (default false)*/
       bool FlagPlotEveryStep;
       
@@ -279,9 +276,6 @@ namespace MBSimIntegrator {
 
       /** Set-valued force laws with explicit or implicit discretization */
       bool SetValuedForceLawsExplicit;
-
-      /** Flag if Debug-Output should be displayed */
-      bool debugOutput;
 
       /** Flag if Plotting should be done in Parallel */
       bool plotParallel;
@@ -443,9 +437,6 @@ namespace MBSimIntegrator {
 
       /** Set-valued force laws with explicit or implicit discretization */
       void setSetValuedForceLawsExplicit(bool SetValuedForceLawsExplicit_) {SetValuedForceLawsExplicit = SetValuedForceLawsExplicit_;}
-
-      /** Flag if Debug-Output should be displayed */
-      void setDebugOutput(bool debugOutput_) {debugOutput = debugOutput_;}
 
       /** Flag if Plotting should be done in Parallel */
       void setPlotParallel(bool plotParallel_) {plotParallel = plotParallel_;}

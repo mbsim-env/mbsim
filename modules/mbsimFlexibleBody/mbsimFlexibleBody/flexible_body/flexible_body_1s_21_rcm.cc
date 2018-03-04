@@ -406,7 +406,7 @@ namespace MBSimFlexibleBody {
     //      if (writePsFile) {
     //        string psfile = filenamePos + ".ps";
     //
-    //        cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+    //        msg(Debug) << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
     //      }
     //
     //      if (not filenameVel.empty()) {
@@ -417,8 +417,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
-
-    int DEBUGLEVEL = 0;
 
     PlNurbsCurved curvePos;
     PlNurbsCurved curveVel;
@@ -485,13 +483,13 @@ namespace MBSimFlexibleBody {
     if (not filenameVel.empty())
       setu0(u0Dummy);
 
-    if (DEBUGLEVEL == 1) {
+    if (msgAct(Debug)) {
       for (double i = 0; i < Elements; i++) {
-        cout << "i=" << i << endl << curvePos.pointAt(i) << endl;
+        msg(Debug) << "i=" << i << endl << curvePos.pointAt(i) << endl;
       }
-      cout << "Test of Nurbs-Curve" << endl;
+      msg(Debug) << "Test of Nurbs-Curve" << endl;
       string psfile = "test.ps";
-      cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+      msg(Debug) << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
     }
   }
 

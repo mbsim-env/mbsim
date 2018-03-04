@@ -230,8 +230,6 @@ namespace MBSimIntegrator {
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
-    cout.setf(ios::scientific, ios::floatfield);
-
     s0 = clock();
 
     while(t<tEnd-epsroot) {
@@ -254,9 +252,6 @@ namespace MBSimIntegrator {
       integSum << "Number of function evaluations" << iWork(16) <<endl;
       integSum.close();
     }
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
   }
 
   void ODEXIntegrator::initializeUsingXML(DOMElement *element) {

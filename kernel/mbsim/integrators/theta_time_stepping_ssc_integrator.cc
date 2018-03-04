@@ -94,7 +94,6 @@ namespace MBSimIntegrator {
       z = system->evalz0();
 
     integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
     
     stepPlot = (int)(dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
@@ -158,9 +157,6 @@ namespace MBSimIntegrator {
     integSum << "Maximum number of iterations: " << maxIter << endl;
     integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
     integSum.close();
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
   }
 
   void ThetaTimeSteppingSSCIntegrator::integrate() {

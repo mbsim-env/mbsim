@@ -67,7 +67,7 @@ namespace MBSimFlexibleBody {
       P.setParent(parent);
       Nodelist.set(i, trans(P.evalPosition()));
     }
-//    cout << "neutralPosition"<< Nodelist << endl << endl;
+//    msg(Debug) << "neutralPosition"<< Nodelist << endl << endl;
   }
 
 } /* namespace MBSimFlexibleBody */

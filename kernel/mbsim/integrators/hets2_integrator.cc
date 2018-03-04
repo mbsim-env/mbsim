@@ -67,7 +67,6 @@ namespace MBSimIntegrator {
       integPlot.open((name + ".plt").c_str());
       integPlot << "time" << " " << "time step-size" << " " <<  "constraint iterations" << " " << "calculation time" << " " << "size of constraint system" << endl;
     }
-    cout.setf(ios::scientific, ios::floatfield);
 
     assert(fabs(((int) (dtPlot/dt + 0.5))*dt - dtPlot) < dt*dt);
 
@@ -221,7 +220,7 @@ namespace MBSimIntegrator {
       typedef tee_device<ostream, ofstream> TeeDevice;
       typedef stream<TeeDevice> TeeStream;
       ofstream integSum((name + ".sum").c_str());
-      TeeDevice hets2_tee(cout, integSum);
+      TeeDevice hets2_tee(msg(Info), integSum);
       TeeStream hets2_split(hets2_tee);
 
       hets2_split << endl << endl << "******************************" << endl;
@@ -236,9 +235,6 @@ namespace MBSimIntegrator {
       hets2_split.flush();
       hets2_split.close();
     }
-
-    cout.unsetf(ios::scientific);
-    cout << endl;
   }
 
   void HETS2Integrator::integrate() {

@@ -59,7 +59,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -440,8 +440,7 @@ namespace MBSim {
         level++;
         decreaserFactors();
         msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
-        if (warnLevel >= 2)
-          msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
+        msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveConstraintsFixpointSingle();
@@ -472,8 +471,7 @@ namespace MBSim {
         level++;
         decreaserFactors();
         msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
-        if (warnLevel >= 2)
-          msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
+        msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveImpactsFixpointSingle();
@@ -925,7 +923,7 @@ namespace MBSim {
       msg(Warn) << "Anyway, continuing integration..." << endl;
     }
 
-    if (warnLevel >= 1 && iterc > highIter)
+    if (iterc > highIter)
       msg(Warn) << endl << "high number of iterations: " << iterc << endl;
 
     if (useOldla)
@@ -959,7 +957,7 @@ namespace MBSim {
       msg(Warn) << "Anyway, continuing integration..." << endl;
     }
 
-    if (warnLevel >= 1 && iteri > highIter)
+    if (iteri > highIter)
       msg(Warn) << "high number of iterations: " << iteri << endl;
 
     if (useOldla)
@@ -1176,7 +1174,7 @@ namespace MBSim {
     //   for(i3=0; i3<extraDynamic.size(); i3++) {
     //     if(extraDynamic[i3]->getPath() == name) return (Element*)extraDynamic[i3];
     //   }
-    //   if(!(i1<object.size())||!(i2<link.size())||!(i3<extraDynamic.size())) cout << "Error: The DynamicSystemSolver " << this->name <<" comprises no element " << name << "!" << endl; 
+    //   if(!(i1<object.size())||!(i2<link.size())||!(i3<extraDynamic.size())) msg(Error) << "Error: The DynamicSystemSolver " << this->name <<" comprises no element " << name << "!" << endl; 
     //   assert(i1<object.size()||i2<link.size()||!(i3<extraDynamic.size()));
     return NULL;
   }

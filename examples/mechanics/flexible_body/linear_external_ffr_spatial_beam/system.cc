@@ -38,7 +38,7 @@ System::System(const string &projectName) :
   Vec grav(3, INIT, 0.); //grav(1) = -9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
-  FlexibleBodyLinearExternalFFR *beam = new FlexibleBodyLinearExternalFFR("beam", false);
+  FlexibleBodyLinearExternalFFR *beam = new FlexibleBodyLinearExternalFFR("beam");
 
   beam->readFEMData("spatial_beam_model", false);
   beam->enableFramePlot(1);

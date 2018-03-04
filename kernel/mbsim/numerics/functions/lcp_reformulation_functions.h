@@ -38,7 +38,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      LCPReformulationFunction(const fmatvec::Vec &q_, const fmatvec::SqrMat &M_, const double &r_ = 10, const unsigned int & DEBUGLEVEL_ = 0);
+      LCPReformulationFunction(const fmatvec::Vec &q_, const fmatvec::SqrMat &M_, const double &r_ = 10);
 
       /*
        * \brief destructor
@@ -94,11 +94,6 @@ namespace MBSim {
        * \brief parameter for the prox-function (r>0)
        */
       double r;
-
-      /**
-       * \brief parameter to print information
-       */
-      unsigned int DEBUGLEVEL{0};
   };
 
   class LCPNewtonReformulationFunction : public LCPReformulationFunction {
@@ -115,9 +110,8 @@ namespace MBSim {
        * \param q_           constant vector of LCP
        * \param M_           Coupling Matrix of LCP
        * \param r_           r-factor for the project-function
-       * \param DEBUGLEVEL_  print information to console?
        */
-      LCPNewtonReformulationFunction(const fmatvec::Vec &q_, const fmatvec::SqrMat &M_, const double &r_ = 10, const unsigned int & DEBUGLEVEL_ = 0);
+      LCPNewtonReformulationFunction(const fmatvec::Vec &q_, const fmatvec::SqrMat &M_, const double &r_ = 10);
 
       /**
        * \brief destructor
@@ -146,9 +140,8 @@ namespace MBSim {
        * \param q_           constant vector of LCP
        * \param M_           Coupling Matrix of LCP
        * \param r_           r-factor for the project-function
-       * \param DEBUGLEVEL_  print information to console?
        */
-      LCPFixpointReformulationFunction(const fmatvec::Vec &q_, const fmatvec::SqrMat &M_, const double &r_ = 10, const unsigned int & DEBUGLEVEL_ = 0);
+      LCPFixpointReformulationFunction(const fmatvec::Vec &q_, const fmatvec::SqrMat &M_, const double &r_ = 10);
 
       /**
        * \brief destructor

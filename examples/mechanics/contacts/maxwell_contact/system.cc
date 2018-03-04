@@ -200,7 +200,6 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     {
       contact = new MaxwellContact("Contact");
       //Debug features
-      //contact->setDebuglevel(0);
 
       CountourCouplingCantileverBeam* couplingBeam = new CountourCouplingCantileverBeam(E, I);
       static_cast<MaxwellContact*>(contact)->addContourCoupling(BeamContour, BeamContour, couplingBeam);

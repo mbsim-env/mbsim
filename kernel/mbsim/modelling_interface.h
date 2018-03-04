@@ -32,7 +32,7 @@ namespace MBSim {
    * \date 2009-05-04 initial commit (Martin Foerg)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    */
-  class ModellingInterface {
+  class ModellingInterface : public virtual fmatvec::Atom {
     public:
 
       /*!

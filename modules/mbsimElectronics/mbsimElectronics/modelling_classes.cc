@@ -89,7 +89,7 @@ namespace MBSimElectronics {
 
   void ElectronicComponent::addTerminal(Terminal *terminal_) {
     if(getTerminal(terminal_->getName(),false)) {
-      cerr << "Error: The Component " << getName() << " can only comprise one Object by the name " <<  terminal_->getName() << "!" << endl;
+      msg(Error) << "The Component " << getName() << " can only comprise one Object by the name " <<  terminal_->getName() << "!" << endl;
       assert(getTerminal(terminal_->getName(),false) == nullptr); 
     }
     terminal.push_back(terminal_);
@@ -108,7 +108,7 @@ namespace MBSimElectronics {
         return terminal[i];
     }
     if(check){
-      if(!(i<terminal.size())) cerr << "Error: The Component " << this->getName() <<" comprises no terminal " << name << "!" << endl; 
+      if(!(i<terminal.size())) msg(Error) << "The Component " << this->getName() <<" comprises no terminal " << name << "!" << endl; 
       assert(i<terminal.size());
     }
     return nullptr;

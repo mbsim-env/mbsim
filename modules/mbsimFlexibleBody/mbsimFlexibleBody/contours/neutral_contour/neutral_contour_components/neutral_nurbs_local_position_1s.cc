@@ -43,6 +43,6 @@ namespace MBSimFlexibleBody {
       r = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalLocalPosition(nodes(i));
       Nodelist.set(i, trans(r));
     }
-    cout << "neutralLocalPosition"<< Nodelist << endl << endl;
+    msg(Info) << "neutralLocalPosition"<< Nodelist << endl << endl;
   }
 } /* namespace MBSimFlexibleBody */

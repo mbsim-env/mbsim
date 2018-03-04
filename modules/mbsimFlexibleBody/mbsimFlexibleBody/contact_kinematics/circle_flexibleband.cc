@@ -170,9 +170,9 @@ namespace MBSimFlexibleBody {
 //    l0 = 1.0 * fabs(extrusion->getAlphaEnd() - extrusion->getAlphaStart()) / staticNodes.size(); /* bandwidth of mesh deformer: higher values leads to stronger attraction of last contact points */
 //    epsTol = 5.e-2 * l0; /* distance, when two contact points should be treated as one */
 
-    cout << numberOfPotentialContactPoints << endl;
-    cout << possibleContactsPerNode << endl;
-    cout << staticNodes.size() << endl;
+    msg(Info) << numberOfPotentialContactPoints << endl;
+    msg(Info) << possibleContactsPerNode << endl;
+    msg(Info) << staticNodes.size() << endl;
     for (int i = 0; i < staticNodes.size(); i++) {
       auto *ck = new ContactKinematicsCircleNode(staticNodes(i));
       ck->assignContours(contour);

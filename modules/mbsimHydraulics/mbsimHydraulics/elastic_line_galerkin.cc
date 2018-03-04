@@ -179,24 +179,24 @@ namespace MBSimHydraulics {
   }
 
   void ElasticLineGalerkin::plotParameters() {
-    cout << "mdim=" << mdim << endl;
-    cout << "g=" << g << endl;
-    cout << "E=" << E << endl;
-    cout << "k=" << k << endl;
-    cout << "WInt=" << WInt << endl;
-    cout << "wA=" << wA << endl;
-    cout << "wE=" << wE << endl;
-    cout << "MatIntWWT=" << MatIntWWT << endl;
-    cout << "MatIntWSWST=" << MatIntWSWST << endl;
-    cout << "M=" << MFac << endl;
-    cout << "K=" << K << endl;
-    cout << "D=" << D << endl;
-    cout << "lambda=" << lambda << endl;
-    cout << "Omega=" << Omega << endl;
-    cout << "phi=" << phi << endl;
-    cout << "N=" << N << endl;
-    cout << "plotVecW=" << plotVecW << endl;
-    cout << "plotVecWS=" << plotVecWS << endl;
+    msg(Info) << "mdim=" << mdim << endl;
+    msg(Info) << "g=" << g << endl;
+    msg(Info) << "E=" << E << endl;
+    msg(Info) << "k=" << k << endl;
+    msg(Info) << "WInt=" << WInt << endl;
+    msg(Info) << "wA=" << wA << endl;
+    msg(Info) << "wE=" << wE << endl;
+    msg(Info) << "MatIntWWT=" << MatIntWWT << endl;
+    msg(Info) << "MatIntWSWST=" << MatIntWSWST << endl;
+    msg(Info) << "M=" << MFac << endl;
+    msg(Info) << "K=" << K << endl;
+    msg(Info) << "D=" << D << endl;
+    msg(Info) << "lambda=" << lambda << endl;
+    msg(Info) << "Omega=" << Omega << endl;
+    msg(Info) << "phi=" << phi << endl;
+    msg(Info) << "N=" << N << endl;
+    msg(Info) << "plotVecW=" << plotVecW << endl;
+    msg(Info) << "plotVecWS=" << plotVecWS << endl;
   }
 
   void ElasticLineGalerkin::initializeUsingXML(DOMElement * element) {

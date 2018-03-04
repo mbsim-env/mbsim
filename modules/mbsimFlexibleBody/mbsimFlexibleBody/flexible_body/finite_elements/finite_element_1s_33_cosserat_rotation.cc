@@ -81,7 +81,7 @@ namespace MBSimFlexibleBody {
 
     /* generalized forces */
     h = (dBTtorsiondqG+dBTbending1dqG+dBTbending2dqG)*(-l0);
-    //cout << h << endl;
+    //msg(Debug) << h << endl;
     //throw;
   }
 

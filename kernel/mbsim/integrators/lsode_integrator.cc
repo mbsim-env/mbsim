@@ -136,7 +136,6 @@ namespace MBSimIntegrator {
 
     int MF = method;
 
-    cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd-epsroot) {
       DLSODE(fzdot, neq, system->getState()(), &t, &tPlot, &iTol, rTol(), aTol(),
           &one, &istate, &one, rWork(), &lrWork, iWork(), &liWork, 0, &MF);
@@ -176,9 +175,6 @@ namespace MBSimIntegrator {
       integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
 
     odePackInUse = false;
   }

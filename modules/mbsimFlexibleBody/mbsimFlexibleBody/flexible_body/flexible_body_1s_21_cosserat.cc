@@ -547,7 +547,7 @@ namespace MBSimFlexibleBody {
 //      if (writePsFile) {
 //        string psfile = filenamePos + ".ps";
 //
-//        cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+//        msg(Debug) << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
 //      }
 //
 //      if (not filenameVel.empty()) {
@@ -559,8 +559,6 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21Cosserat::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
     throwError("To be adapted to new interface...");
-//
-//    int DEBUGLEVEL = 0;
 //
 //    PlNurbsCurved curvePos;
 //    PlNurbsCurved curveVel;
@@ -625,16 +623,16 @@ namespace MBSimFlexibleBody {
 //        u0Dummy(i * 6 + 2) = velI(2);
 //      }
 //
-//      if (DEBUGLEVEL == 1) {
-//        cout << "START(" << i + 1 << ",1:end) = [" << posStart << "];" << endl;
-//        cout << "Tangent(" << i + 1 << ",1:end) = [" << tangHalf << "];" << endl;
-//        cout << "Normal(" << i + 1 << ",1:end) = [" << norHalf << "];" << endl;
-//        cout << "Binormal(" << i + 1 << ",1:end) = [" << binHalf << "];" << endl;
-//        cout << "%----------------------------------" << endl;
-//        cout << "alpha_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 3) << ";" << endl;
-//        cout << "beta_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 4) << ";" << endl;
-//        cout << "gamma_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 5) << ";" << endl;
-//        cout << "%----------------------------------" << endl;
+//      if (msgAct(Debug) == 1) {
+//        msg(Debug) << "START(" << i + 1 << ",1:end) = [" << posStart << "];" << endl;
+//        msg(Debug) << "Tangent(" << i + 1 << ",1:end) = [" << tangHalf << "];" << endl;
+//        msg(Debug) << "Normal(" << i + 1 << ",1:end) = [" << norHalf << "];" << endl;
+//        msg(Debug) << "Binormal(" << i + 1 << ",1:end) = [" << binHalf << "];" << endl;
+//        msg(Debug) << "%----------------------------------" << endl;
+//        msg(Debug) << "alpha_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 3) << ";" << endl;
+//        msg(Debug) << "beta_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 4) << ";" << endl;
+//        msg(Debug) << "gamma_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 5) << ";" << endl;
+//        msg(Debug) << "%----------------------------------" << endl;
 //      }
 //    }
 //    setq0(q0Dummy);
@@ -679,8 +677,8 @@ namespace MBSimFlexibleBody {
     else {
       start = 0;
       end = qsize;
-      cout << "---------------------------------------" << endl;
-      cout << "no job has been selected: make job = A" << endl << endl;
+      msg(Debug) << "---------------------------------------" << endl;
+      msg(Debug) << "no job has been selected: make job = A" << endl << endl;
     }
 
     for (i = start; i < end; i++) {

@@ -183,7 +183,7 @@ namespace MBSim {
     updateUVecs(uMin, uMax);
 
 //    double chordLength = chordLengthParam(Q,u);
-//    cout << "chrodLength" << chordLength << endl;
+//    msg(Debug) << "chrodLength" << chordLength << endl;
 //    knotAveraging(u, deg);
 
     // Initialize the basis matrix A
@@ -191,11 +191,11 @@ namespace MBSim {
 
     for (i = 1; i < Q.rows() - 1; i++) {
       int span = findSpan(u(i));
-//      cout << span << endl;
+//      msg(Debug) << span << endl;
       basisFuns(u(i), span, deg, U, N);
       for (j = 0; j <= deg; j++) {
         A(i, span - deg + j) = N(j);
-//        cout << N(j) << endl;
+//        msg(Debug) << N(j) << endl;
       }
     }
     A(0, 0) = 1.0;
@@ -291,16 +291,16 @@ namespace MBSim {
 
     for (i = 1; i < Qw.rows() - 1; i++) {
       int span = findSpan(ub(i));
-//      cout << span << endl;
+//      msg(Debug) << span << endl;
       basisFuns(ub(i), span, deg, U, N);
       for (j = 0; j <= deg; j++) {
         A(i, span - deg + j) = N(j);
-//        cout << N(j) << endl;
+//        msg(Debug) << N(j) << endl;
       }
     }
     A(0, 0) = 1.0;
     A(Qw.rows() - 1, Qw.rows() - 1) = 1.0;
-//    cout << "A = " << A << endl << endl;
+//    msg(Debug) << "A = " << A << endl << endl;
     if (updateLater) {
       inverse.resize() = inv(A);
       update(Qw);
@@ -351,7 +351,7 @@ namespace MBSim {
         A(i, j % (iN)) = (double) N(j - span + d);
     }
 
-//    cout << "A = "  << A  << endl << endl;
+//    msg(Debug) << "A = "  << A  << endl << endl;
 
     if (updateLater) {
       inverse.resize() = inv(A);
@@ -400,8 +400,8 @@ namespace MBSim {
     else {
       P = inverse * Qw;
     }
-//    cout << "fmatvec_surface: Qw =" << Qw << endl;
-//    cout << "fmatvec_surface: P =" << P << endl;
+//    msg(Debug) << "fmatvec_surface: Qw =" << Qw << endl;
+//    msg(Debug) << "fmatvec_surface: P =" << P << endl;
 
   }
   void NurbsCurve::resize(int n, int Deg) {

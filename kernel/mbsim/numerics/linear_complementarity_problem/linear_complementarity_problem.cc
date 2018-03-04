@@ -73,8 +73,8 @@ namespace MBSim {
     }
   }
 
-  LinearComplementarityProblem::LinearComplementarityProblem(const SymMat & M_, const Vec & q_, const LCPSolvingStrategy & strategy_ /*= Standard*/, const JacobianType & jacobianType_ /*= LCPSpecial*/, const unsigned int & DEBUGLEVEL_ /*= 0*/) :
-      strategy(strategy_), mediumEigenValue(0.0), jacobianType(jacobianType_), lemkeSolver(), newtonSolver(nullptr), newtonFunction(nullptr), jacobianFunction(nullptr), criteriaNewton(nullptr), fixpointSolver(nullptr), fixpointFunction(nullptr), criteriaFixedpoint(nullptr), DEBUGLEVEL(DEBUGLEVEL_) {
+  LinearComplementarityProblem::LinearComplementarityProblem(const SymMat & M_, const Vec & q_, const LCPSolvingStrategy & strategy_ /*= Standard*/, const JacobianType & jacobianType_ /*= LCPSpecial*/) :
+      strategy(strategy_), mediumEigenValue(0.0), jacobianType(jacobianType_), lemkeSolver(), newtonSolver(nullptr), newtonFunction(nullptr), jacobianFunction(nullptr), criteriaNewton(nullptr), fixpointSolver(nullptr), fixpointFunction(nullptr), criteriaFixedpoint(nullptr) {
 
     //set properties
 
@@ -163,11 +163,11 @@ namespace MBSim {
     StopWatch mainwatch;
     mainwatch.start();
 
-    if (DEBUGLEVEL >= 1) {
-      cout << "*****" << __func__ << "*****" << endl;
-      cout << "Solving-strategy is: " << strategy << endl;
-      cout << "Jacobian Type is: " << jacobianType << endl;
-      cout << "dimension: " << dimension << endl;
+    if (msgAct(Debug)) {
+      msg(Debug) << "*****" << __func__ << "*****" << endl;
+      msg(Debug) << "Solving-strategy is: " << strategy << endl;
+      msg(Debug) << "Jacobian Type is: " << jacobianType << endl;
+      msg(Debug) << "dimension: " << dimension << endl;
     }
 
     //NOTE: Fortran-NewtonSolver seems to work worse than the "native" NewtonSolver of the utils in mbsim
@@ -182,16 +182,16 @@ namespace MBSim {
         if (lemkeSolver.getInfo() == 0) {
           solved = true;
 
-          if (DEBUGLEVEL >= 1) {
-            cout << "LemkerSolver found solution in " << lemkeSolver.getSteps() << " step(s)." << endl;
-            if (DEBUGLEVEL >= 2) {
+          if (msgAct(Debug)) {
+            msg(Debug) << "LemkerSolver found solution in " << lemkeSolver.getSteps() << " step(s)." << endl;
+            if (msgAct(Debug)) {
               double cpuTime = double(clock() - t_start_Lemke1) / CLOCKS_PER_SEC;
-              cout << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
-              if (DEBUGLEVEL >= 4) { //Lemke-Solver Info
-                cout << "solution: " << solution << endl;
-                cout << "gaps       forces   " << endl;
+              msg(Debug) << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
+              if (msgAct(Debug)) { //Lemke-Solver Info
+                msg(Debug) << "solution: " << solution << endl;
+                msg(Debug) << "gaps       forces   " << endl;
                 for (int i = 0; i < solution.size() / 2; i++) {
-                  cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+                  msg(Debug) << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
                 }
               }
             }
@@ -199,8 +199,8 @@ namespace MBSim {
         }
 
         else {
-          if (DEBUGLEVEL >= 1) {
-            cout << "No Solution for Lemke-Algorithm. Now Trying combination of Newton + FixpointIteration" << endl;
+          if (msgAct(Debug)) {
+            msg(Debug) << "No Solution for Lemke-Algorithm. Now Trying combination of Newton + FixpointIteration" << endl;
           }
         }
       } //End Lemke-Solver in standard strategy
@@ -241,16 +241,16 @@ namespace MBSim {
 
       /*If no solution is found with the other algorithms use the Lemke-Algorithm with a maxmimal number of steps as fallback*/
       if (!solved) {
-        if (DEBUGLEVEL >= 1) {
-          cout << "No convergence during calculation of contact forces with reformulated system scheme!" << endl;
-          cout << "Using Lemke Algorithm with maximal number of steps as fallback." << endl;
+        if (msgAct(Debug)) {
+          msg(Debug) << "No convergence during calculation of contact forces with reformulated system scheme!" << endl;
+          msg(Debug) << "Using Lemke Algorithm with maximal number of steps as fallback." << endl;
         }
 
 //        if (strategy == ReformulatedFixpointOnly or strategy == ReformulatedNewtonOnly or strategy == ReformulatedStandard) {
 //          // If reformulated routines fails: assume that they will fail in the future and switch back to standard solution
 //          strategy = Standard;
-//          if (DEBUGLEVEL >= 1) {
-//            cout << "Switching back to standard solution strategy!" << endl;
+//          if (msgAct(Debug)) {
+//            msg(Debug) << "Switching back to standard solution strategy!" << endl;
 //          }
 //        }
       }
@@ -267,16 +267,16 @@ namespace MBSim {
       solution = lemkeSolver.solve();
 
       if (lemkeSolver.getInfo() == 0) {
-        if (DEBUGLEVEL >= 1) {
-          cout << "LemkerSolver found solution (in fallback case): " << lemkeSolver.getSteps() << " step(s)." << endl;
-          if (DEBUGLEVEL >= 2) {
+        if (msgAct(Debug)) {
+          msg(Debug) << "LemkerSolver found solution (in fallback case): " << lemkeSolver.getSteps() << " step(s)." << endl;
+          if (msgAct(Debug)) {
             double cpuTime = double(clock() - t_start_Lemke1) / CLOCKS_PER_SEC;
-            cout << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
-            if (DEBUGLEVEL >= 4) { //Newton-Solver Info
-              cout << "solution: " << solution << endl;
-              cout << "gaps       forces   " << endl;
+            msg(Debug) << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
+            if (msgAct(Debug)) { //Newton-Solver Info
+              msg(Debug) << "solution: " << solution << endl;
+              msg(Debug) << "gaps       forces   " << endl;
               for (int i = 0; i < solution.size() / 2; i++) {
-                cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+                msg(Debug) << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
               }
             }
           }
@@ -287,8 +287,8 @@ namespace MBSim {
       }
     }
 
-    if (DEBUGLEVEL >= 1) {
-      cout << "The complete algorithm needed: " << mainwatch.stop(false) << "s = " << mainwatch.stop(false) / 3600 << "h" << endl;
+    if (msgAct(Debug)) {
+      msg(Debug) << "The complete algorithm needed: " << mainwatch.stop(false) << "s = " << mainwatch.stop(false) / 3600 << "h" << endl;
     }
 
     return solution;
@@ -332,29 +332,29 @@ namespace MBSim {
   }
 
   void LinearComplementarityProblem::useNewton(Vec & solution, bool & solved) {
-    if (DEBUGLEVEL >= 1)
-      cout << "Trying Newton Solver ... " << endl;
+    if (msgAct(Debug))
+      msg(Debug) << "Trying Newton Solver ... " << endl;
 
     int i = 0;
     do {
       solution = newtonSolver->solve(solution);
 
       if (newtonSolver->getInfo() == 1)
-        if (DEBUGLEVEL >= 2) {
-          cout << "Newton scheme seems to converge but has not finished --> Going on ..." << endl;
+        if (msgAct(Debug)) {
+          msg(Debug) << "Newton scheme seems to converge but has not finished --> Going on ..." << endl;
         }
     } while (i++ < 3 and newtonSolver->getInfo() == 1);
 
-    if (DEBUGLEVEL >= 1) {
-      cout << "Iterations = " << newtonSolver->getNumberOfIterations() << endl;
-      if (DEBUGLEVEL >= 3) {
-        cout << "Info about NewtonSolver" << endl;
-        cout << "nrm2(f(solution)):  " << nrm2((*newtonFunction)(solution)) << endl;
-        if (DEBUGLEVEL >= 4) { //Newton-Solver Info
-          cout << "solution: " << solution << endl;
-          cout << "gaps       forces   " << endl;
+    if (msgAct(Debug)) {
+      msg(Debug) << "Iterations = " << newtonSolver->getNumberOfIterations() << endl;
+      if (msgAct(Debug)) {
+        msg(Debug) << "Info about NewtonSolver" << endl;
+        msg(Debug) << "nrm2(f(solution)):  " << nrm2((*newtonFunction)(solution)) << endl;
+        if (msgAct(Debug)) { //Newton-Solver Info
+          msg(Debug) << "solution: " << solution << endl;
+          msg(Debug) << "gaps       forces   " << endl;
           for (int i = 0; i < solution.size() / 2; i++) {
-            cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+            msg(Debug) << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
           }
         }
       }
@@ -363,17 +363,17 @@ namespace MBSim {
     if (newtonSolver->getInfo() == 0) {
       solved = true;
 
-      if (DEBUGLEVEL >= 1) {
-        cout << "Newton-Solver found solution" << endl;
+      if (msgAct(Debug)) {
+        msg(Debug) << "Newton-Solver found solution" << endl;
 
-        if (DEBUGLEVEL >= 2) {
+        if (msgAct(Debug)) {
           //double cpuTime = double(clock() - t_start_Iterative) / CLOCKS_PER_SEC;
-          //cout << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
-          if (DEBUGLEVEL >= 4) { //Newton-Solver Info
-            cout << "solution: " << solution << endl;
-            cout << "gaps       forces   " << endl;
+          //msg(Debug) << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
+          if (msgAct(Debug)) { //Newton-Solver Info
+            msg(Debug) << "solution: " << solution << endl;
+            msg(Debug) << "gaps       forces   " << endl;
             for (int i = 0; i < solution.size() / 2; i++) {
-              cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+              msg(Debug) << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
             }
           }
         }
@@ -382,29 +382,29 @@ namespace MBSim {
   }
 
   void LinearComplementarityProblem::useFixpoint(Vec & solution, bool & solved) {
-    if (DEBUGLEVEL >= 1)
-      cout << "Trying Fixpoint Solver ... " << endl;
+    if (msgAct(Debug))
+      msg(Debug) << "Trying Fixpoint Solver ... " << endl;
 
     int i = 0;
     do {
       solution = fixpointSolver->solve(solution);
 
       if (fixpointSolver->getInfo() == 1)
-        if (DEBUGLEVEL >= 2) {
-          cout << "Fixpoint scheme seems to converge but has not finished --> Going on ..." << endl;
+        if (msgAct(Debug)) {
+          msg(Debug) << "Fixpoint scheme seems to converge but has not finished --> Going on ..." << endl;
         }
     } while (i++ < 3 and fixpointSolver->getInfo() == 1);
 
-    if (DEBUGLEVEL >= 1) {
-      cout << "Iterations = " << fixpointSolver->getNumberOfIterations() << endl;
-      if (DEBUGLEVEL >= 3) {
-        cout << "Info about FixpointSolver" << endl;
-        cout << "nrm2(f(solution)):  " << nrm2((*newtonFunction)(solution)) << endl;
-        if (DEBUGLEVEL >= 4) {
-          cout << "solution: " << solution << endl;
-          cout << "gaps       forces   " << endl;
+    if (msgAct(Debug)) {
+      msg(Debug) << "Iterations = " << fixpointSolver->getNumberOfIterations() << endl;
+      if (msgAct(Debug)) {
+        msg(Debug) << "Info about FixpointSolver" << endl;
+        msg(Debug) << "nrm2(f(solution)):  " << nrm2((*newtonFunction)(solution)) << endl;
+        if (msgAct(Debug)) {
+          msg(Debug) << "solution: " << solution << endl;
+          msg(Debug) << "gaps       forces   " << endl;
           for (int i = 0; i < solution.size() / 2; i++) {
-            cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+            msg(Debug) << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
           }
         }
       }
@@ -413,16 +413,16 @@ namespace MBSim {
     if (fixpointSolver->getInfo() == 0) {
       solved = true;
 
-      if (DEBUGLEVEL >= 1) {
-        cout << "Fixpoint-Solver found solution" << endl;
-        if (DEBUGLEVEL >= 2) {
+      if (msgAct(Debug)) {
+        msg(Debug) << "Fixpoint-Solver found solution" << endl;
+        if (msgAct(Debug)) {
           //double cpuTime = double(clock() - t_start_Iterative) / CLOCKS_PER_SEC;
-          //cout << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
-          if (DEBUGLEVEL >= 4) {
-            cout << "solution: " << solution << endl;
-            cout << "gaps       forces   " << endl;
+          //msg(Debug) << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
+          if (msgAct(Debug)) {
+            msg(Debug) << "solution: " << solution << endl;
+            msg(Debug) << "gaps       forces   " << endl;
             for (int i = 0; i < solution.size() / 2; i++) {
-              cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+              msg(Debug) << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
             }
           }
         }

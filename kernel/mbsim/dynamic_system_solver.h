@@ -777,11 +777,6 @@ namespace MBSim {
       int limitGSize;
 
       /**
-       * \brief level for warning output (0-2)
-       */
-      int warnLevel;
-
-      /**
        * \brief TODO, flag for occuring impact and sticking in event driven solver
        */
       bool peds;

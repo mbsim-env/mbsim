@@ -229,8 +229,6 @@ namespace MBSimIntegrator {
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
-    cout.setf(ios::scientific, ios::floatfield);
-
     s0 = clock();
 
     while(t<tEnd-epsroot) {
@@ -252,9 +250,6 @@ namespace MBSimIntegrator {
       //integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
   }
 
   void DOP853Integrator::initializeUsingXML(DOMElement *element) {

@@ -97,11 +97,11 @@ namespace MBSimFlexibleBody {
 
             if (0) {
               //DEBUG for locked DoFs
-              cout << "Locked DoFs for this ring, with at max " << 2 + elements * ele->getAddDoFSizeMax() / 2 << " Dofs are: ";
+              msg(Debug) << "Locked DoFs for this ring, with at max " << 2 + elements * ele->getAddDoFSizeMax() / 2 << " Dofs are: ";
               for (set<int>::iterator i = lockedDofsFull.begin(); i != lockedDofsFull.end(); i++) {
-                cout << *i << ",";
+                msg(Debug) << *i << ",";
               }
-              cout << endl;
+              msg(Debug) << endl;
             }
 
             // This holds for elements where also the first derivatives are shared at the element interface (Hermite elements of first order)
@@ -139,11 +139,11 @@ namespace MBSimFlexibleBody {
             throw MBSimError("This is not implemented for hermite-order 5... --> Fix it now!");
             if (0) {
               //DEBUG for locked DoFs
-              cout << "Locked DoFs for this ring, with at max " << 2 + elements * ele->getAddDoFSizeMax() / 2 << " Dofs are: ";
+              msg(Debug) << "Locked DoFs for this ring, with at max " << 2 + elements * ele->getAddDoFSizeMax() / 2 << " Dofs are: ";
               for (set<int>::iterator i = lockedDofsFull.begin(); i != lockedDofsFull.end(); i++) {
-                cout << *i << ",";
+                msg(Debug) << *i << ",";
               }
-              cout << endl;
+              msg(Debug) << endl;
             }
 
             // This holds for elements where also the first derivatives are shared at the element interface (Hermite elements of first order)
@@ -184,7 +184,7 @@ namespace MBSimFlexibleBody {
 
         // testing the indices
         if (0)
-          cout << "These are the DoF direction of Element \"" << i + 1 << "\" " << dofDirElement << endl;
+          msg(Debug) << "These are the DoF direction of Element \"" << i + 1 << "\" " << dofDirElement << endl;
 
       }
 
@@ -208,9 +208,9 @@ namespace MBSimFlexibleBody {
         lambdauFSwitches.resize(getEleDofs() / 2 + 2, INIT, -1);
 
       if (lambdaqFSwitches.size() != getEleDofs() / 2 + 2)
-        cout << "WARNING: The given lambda-switches for q are not set correctly for the given order of \"" << elementOrder << "\" and the given node Dofs of \"" << nodeDoFs << "\". It is therefore disabled!";
+        msg(Warn) << "The given lambda-switches for q are not set correctly for the given order of \"" << elementOrder << "\" and the given node Dofs of \"" << nodeDoFs << "\". It is therefore disabled!";
       if (lambdauFSwitches.size() != getEleDofs() / 2 + 2)
-        cout << "WARNING: The given lambda-switches for u are not set correctly for the given order of \"" << elementOrder << "\" and the given node Dofs of \"" << nodeDoFs << "\". It is therefore disabled!";
+        msg(Warn) << "The given lambda-switches for u are not set correctly for the given order of \"" << elementOrder << "\" and the given node Dofs of \"" << nodeDoFs << "\". It is therefore disabled!";
 
 // set the sizes for the different parts in the h-vector
 //      hT1.resize(uSize[0], INIT, 0.);
@@ -295,10 +295,10 @@ namespace MBSimFlexibleBody {
 
       if (0) {
         // debug-output for the lambda-factors
-        cout << "lambdaqFSw" << lambdaqFSwitches.T() << endl;
-        cout << "lambdaqF" << lambdaqF.T() << endl;
-        cout << "lambdauFSw" << lambdauFSwitches.T() << endl;
-        cout << "lambdauF" << lambdauF.T() << endl;
+        msg(Debug) << "lambdaqFSw" << lambdaqFSwitches.T() << endl;
+        msg(Debug) << "lambdaqF" << lambdaqF.T() << endl;
+        msg(Debug) << "lambdauFSw" << lambdauFSwitches.T() << endl;
+        msg(Debug) << "lambdauF" << lambdauF.T() << endl;
       }
 
         //TODO_Grundl: get the following into the sub-reference curve!
@@ -316,8 +316,8 @@ namespace MBSimFlexibleBody {
 //            x(i) = vec(0);
 //            y(i) = vec(1);
 //          }
-//          cout << "theta = " << theta;
-//          cout << x << endl << y << endl;
+//          msg(Debug) << "theta = " << theta;
+//          msg(Debug) << x << endl << y << endl;
 //
 //        }
 //      }
@@ -450,9 +450,9 @@ namespace MBSimFlexibleBody {
       }
 
       if (0) {
-        cout << "EleNo = " << eleNo << endl;
-        cout << qElement[eleNo].T() << endl;
-        cout << qElementAll[eleNo].T() << endl;
+        msg(Debug) << "EleNo = " << eleNo << endl;
+        msg(Debug) << qElement[eleNo].T() << endl;
+        msg(Debug) << qElementAll[eleNo].T() << endl;
       }
 
 // update the borders for the integrals
@@ -677,8 +677,8 @@ namespace MBSimFlexibleBody {
 //        kappa(i) = ele->computeKappan(xi);
 //        dkappadq(i) = ele->computedKappandqk(xi, 9);
 //      }
-//      cout << kappa.T() << ";" << endl;
-//      cout << dkappadq.T() << ";" << endl;
+//      msg(Debug) << kappa.T() << ";" << endl;
+//      msg(Debug) << dkappadq.T() << ";" << endl;
 //      exit(0);
 //    }
 //  }
@@ -768,8 +768,8 @@ namespace MBSimFlexibleBody {
     newton.setJacobianFunction(&numJac);
 //    newton.setDampingFunction(&damping);
     Vec res(newton.solve(q));
-    cout << newton.getInfo() << endl;
-    cout << newton.getNumberOfIterations() << endl;
+    msg(Debug) << newton.getInfo() << endl;
+    msg(Debug) << newton.getNumberOfIterations() << endl;
     return res;
 
   }

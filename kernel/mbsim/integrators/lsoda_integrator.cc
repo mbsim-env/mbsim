@@ -132,7 +132,6 @@ namespace MBSimIntegrator {
       integPlot << "#1 calculation time [s]:" << endl;
     }
 
-    cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd-epsroot) {
       DLSODA(fzdot, neq, system->getState()(), &t, &tPlot, &iTol, rTol(), aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(), &liWork, NULL, &two);
@@ -172,9 +171,6 @@ namespace MBSimIntegrator {
       integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
 
     odePackInUse = false;
   }

@@ -91,7 +91,6 @@ namespace MBSimInterface {
     svSize=system->getsvSize();
 
     integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
 
     resolveInputOutputNames();
 
@@ -99,13 +98,11 @@ namespace MBSimInterface {
       mbsimServer->start();
     }
     catch (std::exception& e) {
-      std::cerr << e.what()<<endl;
+      msg(Error) << e.what()<<endl;
     }
 
     integPlot.close();
 
-    cout.unsetf (ios::scientific);
-    cout << endl;
   }
 
   void InterfaceIntegrator::getz(double** z_) {
@@ -185,14 +182,14 @@ namespace MBSimInterface {
           break;
       } while (ll==nullptr);
       if (ll==nullptr)
-        cerr << "Could not find Signal >>" << i << "<<" << endl;
+        msg(Warn) << "Could not find Signal >>" << i << "<<" << endl;
       else
         if (dynamic_cast<MBSimControl::Signal*>(ll)) {
           outputSignal.push_back((MBSimControl::Signal*)ll);
           outputSignalName.push_back(outputSignal.back()->getName());
         }
         else
-          cerr << "Link >>" << i << "<< is not of MBSimControl::Signal-Type." << endl;
+          msg(Warn) << "Link >>" << i << "<< is not of MBSimControl::Signal-Type." << endl;
     }
     for (const auto & i : inputSignalRef) {
       MBSim::Link *ll=nullptr;
@@ -205,35 +202,35 @@ namespace MBSimInterface {
           break;
       } while (ll==nullptr);
       if (ll==nullptr)
-        cerr << "Could not find ExternSignalSource >>" << i << "<<" << endl;
+        msg(Warn) << "Could not find ExternSignalSource >>" << i << "<<" << endl;
       else
         if (dynamic_cast<MBSimControl::ExternSignalSource*>(ll)) {
           inputSignal.push_back((MBSimControl::ExternSignalSource*)ll);
           inputSignalName.push_back(inputSignal.back()->getName());
         }
         else
-          cerr << "Link >>" << i << "<< is not of MBSimControl::ExternSignalSource-Type." << endl;
+          msg(Warn) << "Link >>" << i << "<< is not of MBSimControl::ExternSignalSource-Type." << endl;
     }
 
-    cout << "interfaceIntegrator: " << endl;
-    cout << "  output signals: " << endl;
+    msg(Info) << "interfaceIntegrator: " << endl;
+    msg(Info) << "  output signals: " << endl;
     int outDim=0, inDim=0;
     outputSignalSize.resize(outputSignal.size(), NONINIT);
     for (unsigned int i=0; i<outputSignal.size(); i++) {
       outputSignalSize(i)=(outputSignal[i]->getSignal()).size();
       outDim+=outputSignalSize(i);
-      cout << "    " << i << ": " << outputSignalName[i] << " with size " << outputSignalSize(i) << endl;
+      msg(Info) << "    " << i << ": " << outputSignalName[i] << " with size " << outputSignalSize(i) << endl;
     }
-    cout << "  -> total size of output: " << outDim << endl;
-    cout << "  input signals: " << endl;
+    msg(Info) << "  -> total size of output: " << outDim << endl;
+    msg(Info) << "  input signals: " << endl;
     outputVector.resize(outDim, NONINIT);
     inputSignalSize.resize(inputSignal.size(), NONINIT);
     for (unsigned int i=0; i<inputSignal.size(); i++) {
       inputSignalSize(i)=(inputSignal[i]->getSignal()).size();
       inDim+=inputSignalSize(i);
-      cout << "    " << i << ": " << inputSignalName[i] << " with size " << inputSignalSize(i) << endl;
+      msg(Info) << "    " << i << ": " << inputSignalName[i] << " with size " << inputSignalSize(i) << endl;
     }
-    cout << "  -> total size of input: " << inDim << endl;
+    msg(Info) << "  -> total size of input: " << inDim << endl;
     inputVector.resize(inDim, NONINIT);
   }
 
@@ -331,11 +328,11 @@ namespace MBSimInterface {
           const Vec z_(interface2mbsim);
           if (z_.size()!=zSize)
           {
-            cerr << "==== wrong size of given vector z! ===" << endl;
-            cout << "  interface2mbsim: " << interface2mbsim << endl;
-            cout << "  z_: " << z_ << endl;
-            cout << "  z_.size(): " << z_.size() << endl;
-            cout << "  zSize: " << zSize << endl;
+            msg(Info) << "==== wrong size of given vector z! ===" << endl;
+            msg(Info) << "  interface2mbsim: " << interface2mbsim << endl;
+            msg(Info) << "  z_: " << z_ << endl;
+            msg(Info) << "  z_.size(): " << z_.size() << endl;
+            msg(Info) << "  zSize: " << zSize << endl;
             throw MBSim::MBSimError("wrong size of given vector z!");
           }
           double* p=nullptr;
@@ -435,11 +432,11 @@ namespace MBSimInterface {
           const Vec z_(interface2mbsim);
           if (z_.size()!=inputVector.size())
           {
-            cerr << "==== wrong size of given vector z! ===" << endl;
-            cout << "  interface2mbsim: " << interface2mbsim << endl;
-            cout << "  z_: " << z_ << endl;
-            cout << "  z_.size(): " << z_.size() << endl;
-            cout << "  zSize: " << zSize << endl;
+            msg(Info) << "==== wrong size of given vector z! ===" << endl;
+            msg(Info) << "  interface2mbsim: " << interface2mbsim << endl;
+            msg(Info) << "  z_: " << z_ << endl;
+            msg(Info) << "  z_.size(): " << z_.size() << endl;
+            msg(Info) << "  zSize: " << zSize << endl;
             throw MBSim::MBSimError("wrong size of given vector z!");
           }
           inputVector=z_;
@@ -475,7 +472,7 @@ namespace MBSimInterface {
         }
         break;
       default:
-        cerr << "Unknown IPC message!!!" << endl;
+        msg(Info) << "Unknown IPC message!!!" << endl;
     }
 
     (*mbsim2interface) << ends; // the sign '\0' is used for signalizing the end of message transfer
