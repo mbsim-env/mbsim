@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2006  Martin Förg
+/* Copyright (C) 2004-2018  Martin Förg
  
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -24,9 +24,9 @@
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
-#include "dopri5_integrator.h"
-#include <fstream>
+#include "rodas_integrator.h"
 #include <ctime>
+#include <fstream>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -39,10 +39,13 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, DOPRI5Integrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RODASIntegrator)
 
-  void DOPRI5Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<DOPRI5Integrator**>(&ipar[0]);
+  RODASIntegrator::Fzdot RODASIntegrator::fzdot[2];
+  RODASIntegrator::Mass RODASIntegrator::mass[2];
+
+  void RODASIntegrator::fzdotODE(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<RODASIntegrator**>(&ipar[0]);
     Vec zd(*zSize, zd_);
     self->getSystem()->setTime(*t);
     self->getSystem()->setState(Vec(*zSize, z_));
@@ -50,8 +53,33 @@ namespace MBSimIntegrator {
     zd = self->getSystem()->evalzd();
   }
 
-  void DOPRI5Integrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
-    auto self=*reinterpret_cast<DOPRI5Integrator**>(&ipar[0]);
+  void RODASIntegrator::fzdotDAE1(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<RODASIntegrator**>(&ipar[0]);
+    Vec y(*neq, y_);
+    Vec yd(*neq, yd_);
+    self->getSystem()->setTime(*t);
+    self->getSystem()->setState(y(0,self->system->getzSize()-1));
+    self->getSystem()->resetUpToDate();
+    self->getSystem()->setla(y(self->system->getzSize(),*neq-1));
+    self->getSystem()->setUpdatela(false);
+    yd(0,self->system->getzSize()-1) = self->system->evalzd();
+    yd(self->system->getzSize(),*neq-1) = self->system->evalW().T()*yd(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1) + self->system->evalwb();
+  }
+
+  void RODASIntegrator::massFull(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<RODASIntegrator**>(&ipar[0]);
+    Mat M(*lmas,*zSize, m_);
+    for(int i=0; i<self->system->getzSize(); i++) M(0,i) = 1;
+  }
+
+  void RODASIntegrator::massReduced(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<RODASIntegrator**>(&ipar[0]);
+    Mat M(*lmas,*zSize, m_);
+    for(int i=0; i<self->system->getqSize(); i++) M(0,i) = 1;
+  }
+
+  void RODASIntegrator::plot(int* nr, double* told, double* t, double* y, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
+    auto self=*reinterpret_cast<RODASIntegrator**>(&ipar[0]);
 
     double curTimeAndState = -1;
     double tRoot = *t;
@@ -59,7 +87,7 @@ namespace MBSimIntegrator {
     if(self->getSystem()->getsvSize()) {
       self->getSystem()->setTime(*t);
       curTimeAndState = *t;
-      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
       self->getSystem()->resetUpToDate();
       self->shift = self->signChangedWRTsvLast(self->getSystem()->evalsv());
       // if a root exists in the current step ...
@@ -71,8 +99,8 @@ namespace MBSimIntegrator {
           double tCheck = tRoot-dt;
           self->getSystem()->setTime(tCheck);
           curTimeAndState = tCheck;
-          for(int i=1; i<=*n; i++)
-            self->getSystem()->getState()(i-1) = CONTD5(&i,&tCheck,con,icomp,nd);
+          for(int i=1; i<=self->system->getzSize(); i++)
+            self->getSystem()->getState()(i-1) = CONTRO(&i,&tCheck,cont,lrc);
           self->getSystem()->resetUpToDate();
           if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
             tRoot = tCheck;
@@ -80,8 +108,8 @@ namespace MBSimIntegrator {
         if(curTimeAndState != tRoot) {
           curTimeAndState = tRoot;
           self->getSystem()->setTime(tRoot);
-          for(int i=1; i<=*n; i++)
-            self->getSystem()->getState()(i-1) = CONTD5(&i,&tRoot,con,icomp,nd);
+          for(int i=1; i<=self->system->getzSize(); i++)
+            self->getSystem()->getState()(i-1) = CONTRO(&i,&tRoot,cont,lrc);
         }
         self->getSystem()->resetUpToDate();
         auto &sv = self->getSystem()->evalsv();
@@ -95,10 +123,15 @@ namespace MBSimIntegrator {
       if(curTimeAndState != self->tPlot) {
         curTimeAndState = self->tPlot;
         self->getSystem()->setTime(self->tPlot);
-        for(int i=1; i<=*n; i++)
-          self->getSystem()->getState()(i-1) = CONTD5(&i,&self->tPlot,con,icomp,nd);
+        for(int i=1; i<=self->system->getzSize(); i++)
+          self->getSystem()->getState()(i-1) = CONTRO(&i,&self->tPlot,cont,lrc);
       }
       self->getSystem()->resetUpToDate();
+      if(self->formalism) {
+        for(int i=self->system->getzSize()+1; i<=self->system->getzSize()+self->system->getlaSize(); i++)
+          self->getSystem()->getla(false)(i-(self->system->getzSize()+1)) = CONTRO(&i,&self->tPlot,cont,lrc);
+        self->getSystem()->setUpdatela(false);
+      }
       self->getSystem()->plot();
       if(self->output)
 	cout << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
@@ -115,8 +148,8 @@ namespace MBSimIntegrator {
       // shift the system
       if(curTimeAndState != tRoot) {
         self->getSystem()->setTime(tRoot);
-        for(int i=1; i<=*n; i++)
-          self->getSystem()->getState()(i-1) = CONTD5(&i,&tRoot,con,icomp,nd);
+        for(int i=1; i<=self->getSystem()->getzSize(); i++)
+          self->getSystem()->getState()(i-1) = CONTRO(&i,&tRoot,cont,lrc);
       }
       if(self->plotOnRoot) {
         self->getSystem()->resetUpToDate();
@@ -136,7 +169,7 @@ namespace MBSimIntegrator {
       // check drift
       if(self->getToleranceForPositionConstraints()>=0) {
         self->getSystem()->setTime(*t);
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
         self->getSystem()->resetUpToDate();
         if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
           self->getSystem()->projectGeneralizedPositions(3);
@@ -146,7 +179,7 @@ namespace MBSimIntegrator {
       }
       else if(self->getToleranceForVelocityConstraints()>=0) {
         self->getSystem()->setTime(*t);
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
         self->getSystem()->resetUpToDate();
         if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
           self->getSystem()->projectGeneralizedVelocities(3);
@@ -156,27 +189,34 @@ namespace MBSimIntegrator {
     }
   }
 
-  bool DOPRI5Integrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
+  bool RODASIntegrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
     for(int i=0; i<svStepEnd.size(); i++)
       if(svLast(i)*svStepEnd(i)<0)
         return true;
     return false;
   }
 
-  void DOPRI5Integrator::integrate() {
+  void RODASIntegrator::integrate() {
+    fzdot[0] = &RODASIntegrator::fzdotODE;
+    fzdot[1] = &RODASIntegrator::fzdotDAE1;
+    mass[0] = &RODASIntegrator::massFull;
+    mass[1] = &RODASIntegrator::massReduced;
+
     debugInit();
 
     int zSize = system->getzSize();
+    calcSize();
 
-    if(not zSize)
-      throw MBSimError("(DOPRI5Integrator::integrate): dimension of the system must be at least 1");
+    if(not neq)
+      throw MBSimError("(RODASIntegrator::integrate): dimension of the system must be at least 1");
 
     double t = tStart;
 
-    Vec z(zSize);
+    Vec y(neq);
+    Vec z = y(0,zSize-1);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(DOPRI5Integrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throw MBSimError("(RODASIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
@@ -192,30 +232,35 @@ namespace MBSimIntegrator {
       iTol = 0;
     else {
       iTol = 1;
-      if(aTol.size() != zSize)
-        throw MBSimError("(DOPRI5Integrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+      if(aTol.size() != neq)
+        throw MBSimError("(RODASIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
     }
     if(rTol.size() != aTol.size())
-      throw MBSimError("(DOPRI5Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throw MBSimError("(RODASIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
-    int out = 2; // dense output is performed in plot
+    int out = 1; // subroutine is available for output
 
     double rPar;
-    int iPar[sizeof(void*)/sizeof(int)+1]; // store this at iPar[0..]
-    DOPRI5Integrator *self=this;
+    int iPar[sizeof(void*)/sizeof(int)+1];
+    RODASIntegrator *self=this;
     memcpy(&iPar[0], &self, sizeof(void*));
 
-    int lWork = 2*(8*zSize+5*zSize+21);
-    int liWork = 2*(zSize+21);
-    VecInt iWork(liWork);
-    Vec work(lWork);
+    int lWork = 2*(neq*(neq+neq+neq+14)+20);
+    int liWork = 2*(neq+20);
+    iWork.resize(liWork);
+    work.resize(lWork);
     if(dtMax>0)
-      work(5) = dtMax; // maximum step size
-    work(6) = dt0; // initial step size
+      work(1) = dtMax; // maximum step size
     iWork(0) = maxSteps; // maximum number of steps
-    iWork(4) = zSize;
-
+    int ifcn = not autonom;
+    int idfx = 0;
+    int iMas = formalism>0; // mass-matrix
+    int mlMas = 0; // lower bandwith of the mass-matrix
+    int muMas = 0; // upper bandwith of the mass-matrix
+    int iJac = 0; // jacobian is computed internally by finite differences
     int idid;
+
+    double dt = dt0;
 
     tPlot = t + dtPlot;
     dtOut = dtPlot;
@@ -227,28 +272,46 @@ namespace MBSimIntegrator {
     system->plot();
     svLast = system->evalsv();
 
-    if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
+    calcSize();
+    reinit();
+
+    if(plotIntegrationData) {
+      integPlot.open((name + ".plt").c_str());
+
+      integPlot << "#1 t [s]:" << endl;
+      integPlot << "#1 dt [s]:" << endl;
+      integPlot << "#1 calculation time [s]:" << endl;
+    }
 
     cout.setf(ios::scientific, ios::floatfield);
 
     s0 = clock();
 
     while(t<tEnd-epsroot) {
-      DOPRI5(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
+      RODAS(&neq,(*fzdot[formalism]),&ifcn,&t,y(),&tEnd,&dt,
+          rTol(),aTol(),&iTol,
+          nullptr,&iJac,&mlJac,&muJac,nullptr,&idfx,
+          *mass[reduced],&iMas,&mlMas,&muMas,
+          plot,&out,
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
-      if(shift) work(6) = dt0;
+      if(shift) {
+        dt = dt0;
+        calcSize();
+        reinit();
+      }
+
       t = system->getTime();
       z = system->getState();
+      if(formalism)
+        y(zSize,neq-1).init(0);
     }
 
     if(plotIntegrationData) integPlot.close();
 
     if(writeIntegrationSummary) {
       ofstream integSum((name + ".sum").c_str());
-      integSum.precision(8);
       integSum << "Integration time: " << time << endl;
-      integSum << "Simulation time: " << t << endl;
       //integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
@@ -257,7 +320,26 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-  void DOPRI5Integrator::initializeUsingXML(DOMElement *element) {
+  void RODASIntegrator::calcSize() {
+    if(formalism==DAE1)
+      neq = system->getzSize()+system->getlaSize();
+    else
+      neq = system->getzSize();
+  }
+
+  void RODASIntegrator::reinit() {
+    work(20,work.size()-1).init(0);
+    if(reduced) {
+      iWork(8) = system->getqSize();
+      iWork(9) = system->getqSize();
+      mlJac = neq - system->getqSize(); // jacobian is a reduced matrix
+    }
+    else
+      mlJac = neq; // jacobian is a full matrix
+    muJac = mlJac; // need not to be defined if mlJac = neq
+  }
+
+  void RODASIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
@@ -274,6 +356,16 @@ namespace MBSimIntegrator {
     if(e) setMaximumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"formalism");
+    if(e) {
+      string formalismStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(formalismStr=="ODE") formalism=ODE;
+      else if(formalismStr=="DAE1") formalism=DAE1;
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
+    if(e) setReducedForm((E(e)->getText<bool>()));
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"autonomousSystem");
+    if(e) setAutonomousSystem((E(e)->getText<bool>()));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
     if(e) setPlotOnRoot(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");

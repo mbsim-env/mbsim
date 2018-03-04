@@ -271,8 +271,6 @@ namespace MBSim {
       void setLinkStatusInd(int LinkStatusInd_) {LinkStatusInd = LinkStatusInd_;};      
       void setLinkStatusRegInd(int LinkStatusRegInd_) {LinkStatusRegInd = LinkStatusRegInd_;};
 
-      int getzSize() const { return qSize + uSize[0] + xSize; }
-
       void setqSize(int qSize_) { qSize = qSize_; }
       void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
       void setxSize(int xSize_) { xSize = xSize_; }

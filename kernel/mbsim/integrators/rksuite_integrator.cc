@@ -45,6 +45,9 @@ namespace MBSimIntegrator {
     selfStatic = this;
     zSize=system->getzSize();
 
+    if(not zSize)
+      throw MBSimError("(RKSuiteIntegrator::integrate): dimension of the system must be at least 1");
+
     z.resize(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
@@ -97,14 +100,14 @@ namespace MBSimIntegrator {
       SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
           &errass, &dt0, work, &lenwrk, &messages);
 
-      while((tStop-t)>epsroot) {
+      while(t<tStop-epsroot) {
 
         integrationSteps++;
 
         double dtLast = 0;
         UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), work, &result, &dtLast);
 
-        if(result==1 || result==2 || fabs(t-tPlot)<epsroot) {
+        if(result==1 or result==2) {
           system->setTime(t);
           system->setState(z);
           system->resetUpToDate();
@@ -117,16 +120,29 @@ namespace MBSimIntegrator {
           s0 = s1; 
           if(plotIntegrationData) integPlot<< t << " " << dtLast << " " << time << endl;
 
-          tPlot += dtPlot;
+          tPlot = min(tEnd, tPlot+dtPlot);
+
+          // check drift
+          bool restart = false;
+          if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+            system->projectGeneralizedPositions(3);
+            system->projectGeneralizedVelocities(3);
+            restart = true;
+          }
+          else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+            system->projectGeneralizedVelocities(3);
+            restart = true;
+          }
+          if(restart) {
+            z = system->getState();
+            SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
+                &errass, &dt0, work, &lenwrk, &messages);
+          }
         }
-
-        if(result==3 || result==4)
+        else if(result==3 or result==4)
           continue;
-        if(result>=5) 
+        else if(result>=5)
           throw MBSimError("Integrator RKSUITE failed with result = "+toString(result));
-
-        if (tPlot>tStop)
-          tPlot=tStop;
       }
     }
 
@@ -170,6 +186,10 @@ namespace MBSimIntegrator {
     if(e) setThreshold(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepsize");
     if(e) setInitialStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
   void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {

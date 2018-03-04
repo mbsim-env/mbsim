@@ -55,12 +55,12 @@ namespace MBSimIntegrator {
       /**  maximum number of steps allowed during one call to the solver. (default 10000) */
       int maxSteps{10000};
 
-      bool plotOnRoot{true};
+      bool plotOnRoot{false};
 
       /** tolerance for position constraints */
-      double gMax{1e-5};
+      double gMax{-1};
       /** tolerance for velocity constraints */
-      double gdMax{1e-5};
+      double gdMax{-1};
 
       int neq[1+sizeof(void*)/sizeof(int)+1]; // store zSize at neq[0]; store this at neq[1..]
       int iTol, istate, nsv, lrWork, liWork, integrationSteps;

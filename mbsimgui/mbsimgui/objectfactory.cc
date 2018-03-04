@@ -272,20 +272,32 @@ namespace MBSimGUI {
     if(element==nullptr) return nullptr;
     if(E(element)->getTagName()==MBSIMINT%"DOPRI5Integrator")
       return new DOPRI5Integrator;
-    else if(E(element)->getTagName()==MBSIMINT%"RADAU5Integrator")
-      return new RADAU5Integrator;
     else if(E(element)->getTagName()==MBSIMINT%"DOP853Integrator")
       return new DOP853Integrator;
     else if(E(element)->getTagName()==MBSIMINT%"ODEXIntegrator")
       return new ODEXIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"RADAU5Integrator")
+      return new RADAU5Integrator;
+    else if(E(element)->getTagName()==MBSIMINT%"RADAUIntegrator")
+      return new RADAUIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"RODASIntegrator")
+      return new RODASIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"SEULEXIntegrator")
+      return new SEULEXIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"LSODEIntegrator")
       return new LSODEIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"LSODAIntegrator")
+      return new LSODAIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"LSODARIntegrator")
       return new LSODARIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"LSODKRIntegrator")
       return new LSODKRIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"LSODIIntegrator")
       return new LSODIIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"DASPKIntegrator")
+      return new DASPKIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"DASKRIntegrator")
+      return new DASKRIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"TimeSteppingIntegrator")
       return new TimeSteppingIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"ThetaTimeSteppingIntegrator")

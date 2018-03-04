@@ -7,14 +7,15 @@
 extern "C" {
 #endif
 
-#define DDASPK FC_FUNC(ddaspk,DDASPK)
-void DDASPK(void(*)(double*,double*,double*,double*,double*,int*,double*,int*),int*,double*,
-            double*,double*,double*,int*,double*,double*,int*,double*,int*,
-            int*,int*,double*,int*,void(*)(double*,int*,int*,double*,
-            double*,double*,double*,double*,double*,double*,double*,
-            double*,int*,int*,double*,int*),void(*)(int*,double*,
-            double*,double*,double*,double*,double*,double*,double*,
-            int*,double*,double*,int*,double*,int*));
+#define DLSODE FC_FUNC(mbsim_dlsode,MBSIM_DLSODE)
+void DLSODE(void(*)(int*,double*,double*,double*),int*,double*,double*,
+            double*,int*,double*,double*,int*,int*,int*,double*,int*,
+            int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),int*);
+
+#define DLSODA FC_FUNC(dlsoda,DLSODA)
+void DLSODA(void(*)(int*,double*,double*,double*),int*,double*,double*,
+            double*,int*,double*,double*,int*,int*,int*,double*,int*,
+            int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),int*);
 
 #define DLSODAR FC_FUNC(dlsodar,DLSODAR)
 void DLSODAR(void(*)(int*,double*,double*,double*),int*,double*,double*,
@@ -30,11 +31,6 @@ void DLSODKR(void(*)(int*,double*,double*,double*),int*,double*,double*,
              double*,int*,int*),void(*)(int*,double*,double*,double*,double*,
              double*,double*,int*,double*,int*,int*),int*,
              void(*)(int*,double*,double*,int*,double*),int*,int*);
-
-#define DLSODE FC_FUNC(mbsim_dlsode,MBSIM_DLSODE)
-void DLSODE(void(*)(int*,double*,double*,double*),int*,double*,double*,
-            double*,int*,double*,double*,int*,int*,int*,double*,int*,
-            int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),int*);
 
 #define DLSODI FC_FUNC(dlsodi,DLSODI)
 void DLSODI(void(*)(int*,double*,double*,double*,double*,int*),
@@ -89,9 +85,50 @@ void RADAU5(int*,void(*)(int*,double*,double*,double*,double*,int*),double*,doub
 #define CONTR5 FC_FUNC(contr5,CONTR5)
 double CONTR5(int*,double*,double*,int*);
 
+#define RADAU FC_FUNC(radau,RADAU)
+void RADAU(int*,void(*)(int*,double*,double*,double*,double*,int*),double*,double*,double*,
+            double*,double*,double*,int*,void(*)(int*,double*,double*,double*,int*,double*,int*),
+            int*,int*,int*,void(*)(int*,double*,int*,double*,int*),int*,int*,int*,
+            void(*)(int*,double*,double*,double*,double*,int*,int*,double*,int*,int*),
+            int*,double*,int*,int*,int*,double*,int*,int*);
+
+#define CONTRA FC_FUNC(contra,CONTRA)
+double CONTRA(int*,double*,double*,int*);
+
+#define RODAS FC_FUNC(rodas,RODAS)
+void RODAS(int*,void(*)(int*,double*,double*,double*,double*,int*),int*,double*,double*,double*,
+            double*,double*,double*,int*,void(*)(int*,double*,double*,double*,int*,double*,int*),
+            int*,int*,int*,void(*)(int*,double*,double*,double*,double*,int*),int*,
+            void(*)(int*,double*,int*,double*,int*),int*,int*,int*,
+            void(*)(int*,double*,double*,double*,double*,int*,int*,double*,int*,int*),
+            int*,double*,int*,int*,int*,double*,int*,int*);
+
+#define CONTRO FC_FUNC(contro,CONTRO)
+double CONTRO(int*,double*,double*,int*);
+
+#define SEULEX FC_FUNC(seulex,SEULEX)
+void SEULEX(int*,void(*)(int*,double*,double*,double*,double*,int*),int*,double*,double*,double*,
+            double*,double*,double*,int*,void(*)(int*,double*,double*,double*,int*,double*,int*),
+            int*,int*,int*,void(*)(int*,double*,int*,double*,int*),int*,int*,int*,
+            void(*)(int*,double*,double*,double*,double*,int*,int*,int*,int*,double*,int*,int*),
+            int*,double*,int*,int*,int*,double*,int*,int*);
+
+#define CONTSX FC_FUNC(contsx,CONTSX)
+double CONTSX(int*,double*,double*,int*,int*,int*);
+
+#define DDASPK FC_FUNC(ddaspk,DDASPK)
+void DDASPK(void(*)(double*,double*,double*,double*,double*,int*,double*,int*),int*,double*,
+            double*,double*,double*,int*,double*,double*,int*,double*,int*,
+            int*,int*,double*,int*,void(*)(double*,double*,double*,double*,double*,double*,int*),
+            void(*)(int*,double*,double*,double*,double*,double*,double*,double*,
+            double*,int*,double*,double*,int*,double*,double*));
+
 #define DDASKR FC_FUNC(ddaskr,DDASKR)
-void DDASKR(void(*)(double*,double*,double*,double*,double*,double*,int*),int*,double*,double*,double*,double*,int*,double*,double*,
-            int*,double*,int*,int*,int*,double*,int*,void(*)(double*,double*,double*,double*,double*,double*,int*),double*,
+void DDASKR(void(*)(double*,double*,double*,double*,double*,int*,double*,int*),int*,double*,
+            double*,double*,double*,int*,double*,double*,int*,double*,int*,
+            int*,int*,double*,int*,void(*)(double*,double*,double*,double*,double*,double*,int*),
+            void(*)(int*,double*,double*,double*,double*,double*,double*,double*,
+            double*,int*,double*,double*,int*,double*,double*),
             void(*)(int*,double*,double*,double*,int*,double*,double*,int*),int*,int*);
 
 #define MEXX FC_FUNC(mexx,MEXX)

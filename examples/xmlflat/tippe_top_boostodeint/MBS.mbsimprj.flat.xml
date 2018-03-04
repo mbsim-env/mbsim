@@ -160,6 +160,7 @@
     <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
     <relativeToleranceScalar>1e-6</relativeToleranceScalar>
     <initialStepSize>1e-8</initialStepSize>
-    <plotOnRoot>false</plotOnRoot>
+    <toleranceForPositionConstraints>1e-6</toleranceForPositionConstraints>
+    <toleranceForVelocityConstraints>1e-6</toleranceForVelocityConstraints>
   </BoostOdeintDOS_RKDOPRI5>
 </MBSimProject>

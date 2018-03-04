@@ -52,6 +52,8 @@ namespace MBSimIntegrator {
       /***************************************************/
     
     private:
+      void resize();
+
       /**
        * \brief step size
        */

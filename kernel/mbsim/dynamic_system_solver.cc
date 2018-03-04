@@ -245,6 +245,8 @@ namespace MBSim {
       calcxSize();
       setxInd(0);
 
+      zSize = qSize + uSize[0] + xSize;
+
       calclaInverseKineticsSize();
       calcbInverseKineticsSize();
 
@@ -974,21 +976,6 @@ namespace MBSim {
       (*i)->decreaserFactors();
   }
 
-  void DynamicSystemSolver::resize_() {
-      calcgdSize(2); // contacts which stay closed
-      calclaSize(2); // contacts which stay closed
-      calcrFactorSize(2); // contacts which stay closed
-
-      updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
-      updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
-      updatelaRef(laParent(0, laSize - 1));
-      updateLaRef(LaParent(0, laSize - 1));
-      updategdRef(gdParent(0, gdSize - 1));
-      if (impactSolver == RootFinding)
-        updateresRef(resParent(0, laSize - 1));
-      updaterFactorRef(rFactorParent(0, rFactorSize - 1));
-  }
-
   void DynamicSystemSolver::getLinkStatus(VecInt &LinkStatusExt) {
     if (LinkStatusExt.size() < LinkStatusSize)
       LinkStatusExt.resize(LinkStatusSize);
@@ -1324,10 +1311,11 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatezRef(const Vec &zParent) {
+    z >> zParent(0, getzSize()-1);
 
-    q >> (zParent(0, qSize - 1));
-    u >> (zParent(qSize, qSize + uSize[0] - 1));
-    x >> (zParent(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
+    q >> (z(0, qSize - 1));
+    u >> (z(qSize, qSize + uSize[0] - 1));
+    x >> (z(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
 
     updateqRef(q);
     updateuRef(u);
@@ -1335,10 +1323,11 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatezdRef(const Vec &zdParent) {
+    zd >> zdParent(0, getzSize()-1);
 
-    qd >> (zdParent(0, qSize - 1));
-    ud >> (zdParent(qSize, qSize + uSize[0] - 1));
-    xd >> (zdParent(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
+    qd >> (zd(0, qSize - 1));
+    ud >> (zd(qSize, qSize + uSize[0] - 1));
+    xd >> (zd(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
 
     updateqdRef(qd);
     updateudRef(ud);
@@ -1628,7 +1617,7 @@ namespace MBSim {
       solveDirectly = true;
       updatezd();
     }
-    return zdParent;
+    return zd;
   }
 
   void DynamicSystemSolver::plot() {
@@ -1652,7 +1641,7 @@ namespace MBSim {
       projectGeneralizedPositions(1, true);
       projectGeneralizedVelocities(1);
     }
-    return zParent;
+    return z;
   }
 
 }

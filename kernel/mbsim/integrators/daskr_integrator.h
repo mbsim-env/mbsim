@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2006  Martin Förg
+/* Copyright (C) 2004-2018  Martin Förg
  
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -20,41 +20,48 @@
  *
  */
 
-#ifndef _ODEX_INTEGRATOR_H_
-#define _ODEX_INTEGRATOR_H_
+#ifndef _DASKR_INTEGRATOR_H_
+#define _DASKR_INTEGRATOR_H_
 
 #include "integrator.h"
 
 namespace MBSimIntegrator {
 
-  /** \brief ODE-Integrator ODEX
-  */
+  /** \brief Petzold’s DAE solver DASKR
+   *
+   * This integrator uses DASKR (http://www.netlib.org/ode).
+   */
+  class DASKRIntegrator : public Integrator {
 
-  class ODEXIntegrator : public Integrator {
+    public:
+      enum Formalism {
+        ODE=0,
+        DAE1,
+        DAE2,
+        GGL
+      };
 
     private:
+      typedef void (*Delta)(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+      static Delta delta[4];
+      static void deltaODE(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+      static void deltaDAE1(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+      static void deltaDAE2(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+      static void deltaGGL(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+      static void rt(int* neq, double* t, double* y, double* yp, int* nrt, double* rval_, double* rpar, int* ipar);
 
-      static void fzdot(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
-      static void plot(int* nr, double* told, double* t,double* z, int* n, double* con, int *ncon, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn);
-
-      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
-
-      double tPlot{0};
-      double dtOut{0};
-      std::ofstream integPlot;
-      double s0; 
-      double time{0};
-
+      /** maximal step size */
+      double dtMax{0};
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
       /** Relative Toleranz */
       fmatvec::Vec rTol;
-      /** Step size for the first step */
+      /** step size for the first step */
       double dt0{0};
-      /** Maximal number of allowed steps */
-      int maxSteps{2000000000};
-      /** maximale step size */
-      double dtMax{0};
+      /** formalism **/
+      Formalism formalism{DAE2};
+      /** exclude algebraic variables from error test **/
+      bool excludeAlgebraicVariables{true};
 
       bool plotOnRoot{false};
 
@@ -63,29 +70,17 @@ namespace MBSimIntegrator {
       /** tolerance for velocity constraints */
       double gdMax{-1};
 
-      fmatvec::Vec svLast;
-      bool shift{false};
-
     public:
+      Formalism getFormalism() const { return formalism; }
 
-      ~ODEXIntegrator() override = default;
-
-      const fmatvec::Vec& getAbsoluteTolerance() const { return aTol; }
-      const fmatvec::Vec& getRelativeTolerance() const { return rTol; }
-      double getInitialStepSize() const { return dt0; }
-      int getStepLimit() const { return maxSteps; }
-      double getMaximumStepSize() const { return dtMax; }
-
-      double getToleranceForPositionConstraints() { return gMax; }
-      double getToleranceForVelocityConstraints() { return gdMax; }
-
+      void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
       void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
       void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol = rTol_; }
       void setRelativeTolerance(double rTol_) { rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
-      void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
-      void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
+      void setFormalism(Formalism formalism_) { formalism = formalism_; }
+      void setExcludeAlgebraicVariablesFromErrorTest(bool excludeAlgebraicVariables_) { excludeAlgebraicVariables = excludeAlgebraicVariables_; }
 
       void setPlotOnRoot(bool b) { plotOnRoot = b; }
 
@@ -93,9 +88,9 @@ namespace MBSimIntegrator {
       void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
-      void integrate() override;
+      void integrate();
 
-      void initializeUsingXML(xercesc::DOMElement *element) override;
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
   };
 
 }
