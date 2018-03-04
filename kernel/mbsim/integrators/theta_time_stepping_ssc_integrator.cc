@@ -87,7 +87,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(ThetaTimeSteppingSSCIntegrator::integrate): size of z0 does not match");
+        throwError("(ThetaTimeSteppingSSCIntegrator::integrate): size of z0 does not match");
       z = z0;
     }
     else

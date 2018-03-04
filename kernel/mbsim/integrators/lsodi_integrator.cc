@@ -93,7 +93,7 @@ namespace MBSimIntegrator {
     debugInit();
 
     if(odePackInUse)
-      throw MBSimError("Only one integration with LSODARIntegrator, LSODKRIntegrator and LSODEIntegrator at a time is possible.");
+      throwError("Only one integration with LSODARIntegrator, LSODKRIntegrator and LSODEIntegrator at a time is possible.");
     odePackInUse = true;
 
     int N;
@@ -105,7 +105,7 @@ namespace MBSimIntegrator {
       N = system->getzSize();
 
     if(not N)
-      throw MBSimError("(LSODIIntegrator::integrate): dimension of the system must be at least 1");
+      throwError("(LSODIIntegrator::integrate): dimension of the system must be at least 1");
 
     int neq[1+sizeof(void*)/sizeof(int)+1];
     neq[0] = N;
@@ -124,7 +124,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throw MBSimError("(LSODIIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(LSODIIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
     }
     else
@@ -145,7 +145,7 @@ namespace MBSimIntegrator {
       else {
         iTol = 2;
         if(aTol.size() != N)
-          throw MBSimError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + toStr(N));
+          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + toStr(N));
       }
     }
     else {
@@ -154,10 +154,10 @@ namespace MBSimIntegrator {
       else {
         iTol = 4;
         if(aTol.size() != N)
-          throw MBSimError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + toStr(N));
+          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + toStr(N));
       }
       if(rTol.size() != N)
-        throw MBSimError("(LSODIIntegrator::integrate): size of rTol does not match, must be " + toStr(N));
+        throwError("(LSODIIntegrator::integrate): size of rTol does not match, must be " + toStr(N));
     }
 
     int itask=1, istate=1, iopt=0;
@@ -219,7 +219,7 @@ namespace MBSimIntegrator {
           istate=1;
         }
       }
-      else if(istate<0) throw MBSimError("Integrator LSODI failed with istate = "+toString(istate));
+      else if(istate<0) throwError("Integrator LSODI failed with istate = "+toString(istate));
     }
 
     if(plotIntegrationData) integPlot.close();

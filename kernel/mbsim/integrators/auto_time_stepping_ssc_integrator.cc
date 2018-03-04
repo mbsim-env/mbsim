@@ -125,7 +125,7 @@ namespace MBSimIntegrator {
       nthr = (*psystems).size()/6; // wegen 3 Systemen
     }
     else {
-      throw MBSimError("Number of Systems for parallel calculation of Jaocobis wrong!");
+      throwError("Number of Systems for parallel calculation of Jaocobis wrong!");
     }
 
     int nthr_q=0;
@@ -301,7 +301,7 @@ namespace MBSimIntegrator {
         piter = &iter_T3;
         break;
       default:
-        throw MBSimError("nrSys_ is out of range.");
+        throwError("nrSys_ is out of range.");
     }
 
     *piter = 0;
@@ -367,7 +367,7 @@ namespace MBSimIntegrator {
         dhdu_n << dhdu_n_T3;
         break;
       default:
-        throw MBSimError("nrSys_ is out of range.");
+        throwError("nrSys_ is out of range.");
     }
 
     *pit = 0;
@@ -569,7 +569,7 @@ namespace MBSimIntegrator {
         piter = &iter_T3;
         break;
       default:
-        throw MBSimError("nrSys_ is out of range.");
+        throwError("nrSys_ is out of range.");
     }
 
     *piter = 0;
@@ -867,15 +867,15 @@ namespace MBSimIntegrator {
     }
 
     if (theta>epsroot && (method || FlagGapControl)) { // SSC-Methode und Gap-Control fuer implizite Integration pruefen
-      throw MBSimError("Using implicit integration only method=0 and FlagGapControl=0 allowed!");
+      throwError("Using implicit integration only method=0 and FlagGapControl=0 allowed!");
     }
 
     if (theta>epsroot && (inexactJac && itMax==1 && !FlagSSC)) { // linear implizite Integration mit inexakter Jakobi nur mit SSC (Kopplung des Updatens an SSC)
-      throw MBSimError("Linear implicit Integration with inexact Jabobians only allowed with SSC!");
+      throwError("Linear implicit Integration with inexact Jabobians only allowed with SSC!");
     }
 
     if (theta>epsroot && inexactJac && itMax>1 && !((FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==2))) { // schließe noch nicht getestete Versionen aus
-      throw MBSimError("Implicit Integration with inexact Jabobians only tested with (FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==2)!");
+      throwError("Implicit Integration with inexact Jabobians only tested with (FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==2)!");
     }    
 
     if (!FlagSSC) dt=dtMin;

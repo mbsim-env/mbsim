@@ -46,6 +46,13 @@ namespace MBSim {
        * \brief destructor
        */
       ~Solver() override = default;
+
+#ifndef SWIG
+      [[noreturn]]
+#endif
+      void throwError(const std::string &msg) const {
+        throw MBSimError(this, msg);
+      }
       
       /* INTERFACE FOR DERIVED CLASSES */
       /*! 
@@ -53,18 +60,30 @@ namespace MBSim {
        */
       virtual void execute() = 0;
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element) = 0;
+      virtual void initializeUsingXML(xercesc::DOMElement *element) {
+        // set the XML location of this element which can be used, later, by exceptions.
+        domEvalError=MBXMLUtils::DOMEvalException("", element);
+      }
 
       virtual const fmatvec::Vec& getInitialState() const = 0;
 
       void setSystem(DynamicSystemSolver *s) { system=s; }
       MBSim::DynamicSystemSolver* getSystem() { return system; }
 
+#ifndef SWIG
+      const MBXMLUtils::DOMEvalException& getDOMEvalError() const { return domEvalError; };
+#endif
+
     protected:
       /**
        * \brief dynamic system
        */
       MBSim::DynamicSystemSolver* system;
+
+#ifndef SWIG
+      //! Special XML helper variable.
+      MBXMLUtils::DOMEvalException domEvalError;
+#endif
   };
 
 }

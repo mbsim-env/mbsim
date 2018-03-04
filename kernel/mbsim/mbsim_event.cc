@@ -20,6 +20,7 @@
 #include <config.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/element.h>
+#include <mbsim/solver.h>
 #include <iostream>
 #include <utility>
 
@@ -30,6 +31,10 @@ namespace MBSim {
   
   MBSimError::MBSimError(const Element *context, std::string mbsim_error_message_) noexcept : exception(),
     mbsim_error_message(std::move(mbsim_error_message_)), path(context->getPath()), domEvalError(context->getDOMEvalError()) {
+  }
+
+  MBSimError::MBSimError(const Solver *context, std::string mbsim_error_message_) noexcept : exception(),
+    mbsim_error_message(std::move(mbsim_error_message_)), path(), domEvalError(context->getDOMEvalError()) {
   }
 
   MBSimError::MBSimError(std::string mbsim_error_message_) noexcept : exception(),

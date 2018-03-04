@@ -28,6 +28,7 @@
 namespace MBSim {
 
   class Element;
+  class Solver;
 
   /**
    * \brief basic error class for mbsim
@@ -43,6 +44,13 @@ namespace MBSim {
        * \param context the conext MBSim::Element where the error occured
        */
       MBSimError(const Element *context, std::string mbsim_error_message_) noexcept; 
+
+      /**
+       * \brief constructor
+       * \param message to be written
+       * \param context the conext MBSim::Solver where the error occured
+       */
+      MBSimError(const Solver *context, std::string mbsim_error_message_) noexcept; 
 
       /**
        * \brief constructor

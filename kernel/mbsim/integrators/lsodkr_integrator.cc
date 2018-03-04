@@ -99,13 +99,13 @@ namespace MBSimIntegrator {
     debugInit();
 
     if(odePackInUse)
-      throw MBSimError("Only one integration with LSODARIntegrator, LSODKRIntegrator and LSODEIntegrator at a time is possible.");
+      throwError("Only one integration with LSODARIntegrator, LSODKRIntegrator and LSODEIntegrator at a time is possible.");
     odePackInUse = true;
 
     int zSize=system->getzSize();
 
     if(not zSize)
-      throw MBSimError("(LSODKRIntegrator::integrate): dimension of the system must be at least 1");
+      throwError("(LSODKRIntegrator::integrate): dimension of the system must be at least 1");
 
     neq[0]=zSize;
     LSODKRIntegrator *self=this;
@@ -113,7 +113,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(LSODKRIntegrator::integrate): size of z0 does not match " + toStr(zSize));
+        throwError("(LSODKRIntegrator::integrate): size of z0 does not match " + toStr(zSize));
       system->setState(z0);
     }
     else
@@ -135,7 +135,7 @@ namespace MBSimIntegrator {
       else {
         iTol = 2;
         if(aTol.size() != zSize)
-          throw MBSimError("(LSODKRIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throwError("(LSODKRIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
     }
     else {
@@ -144,10 +144,10 @@ namespace MBSimIntegrator {
       else {
         iTol = 4;
         if(aTol.size() != zSize)
-          throw MBSimError("(LSODKRIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throwError("(LSODKRIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
       if(rTol.size() != zSize)
-        throw MBSimError("(LSODKRIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
+        throwError("(LSODKRIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
     }
 
     int lwp=0, liwp=0;
@@ -234,7 +234,7 @@ namespace MBSimIntegrator {
         istate=1;
         rWork(4)=dt0;
       }
-      else if(istate<0) throw MBSimError("Integrator LSODKR failed with istate = "+toString(istate));
+      else if(istate<0) throwError("Integrator LSODKR failed with istate = "+toString(istate));
     }
   }
 

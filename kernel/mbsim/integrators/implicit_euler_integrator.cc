@@ -68,7 +68,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throw MBSimError("(ImplicitEulerIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(ImplicitEulerIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
     }
     else
@@ -115,7 +115,7 @@ namespace MBSimIntegrator {
       else
         system->getState() = newton.solve(system->getState());
       if(newton.getInfo() != 0)
-        throw MBSimError("(ImplicitEulerIntegrator::subIntegrate): computation of new state failed!");
+        throwError("(ImplicitEulerIntegrator::subIntegrate): computation of new state failed!");
     }
   }
 

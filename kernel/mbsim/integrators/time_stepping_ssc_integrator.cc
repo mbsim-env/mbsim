@@ -171,7 +171,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(TimeSteppingSSCIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(TimeSteppingSSCIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       zi = z0;
     }
     else
@@ -843,7 +843,7 @@ namespace MBSimIntegrator {
       sysT1->plot();
     }
     if ((t>=tPlot) && outputInterpolation && !FlagPlotEveryStep) {
-      throw MBSimError("Not implemented");
+      throwError("Not implemented");
 
       // Dimension/size von la und lae synchronisieren
       Vec laSynchron;
@@ -1417,7 +1417,7 @@ namespace MBSimIntegrator {
   // Vector<int> laSizes contains the singel la-size of each link
 
   void TimeSteppingSSCIntegrator::getDataForGapControl() {
-    throw MBSimError("TimeSteppingSSCIntegrator::getDataForGapControl not implemented");
+    throwError("TimeSteppingSSCIntegrator::getDataForGapControl not implemented");
 //    int nInActive=0;
 //    int nActive=0;
 //    throw;

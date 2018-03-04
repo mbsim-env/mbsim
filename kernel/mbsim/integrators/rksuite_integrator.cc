@@ -41,17 +41,17 @@ namespace MBSimIntegrator {
     debugInit();
 
     if(selfStatic)
-      throw MBSimError("RKSuiteIntegrator can only integrate one system.");
+      throwError("RKSuiteIntegrator can only integrate one system.");
     selfStatic = this;
     zSize=system->getzSize();
 
     if(not zSize)
-      throw MBSimError("(RKSuiteIntegrator::integrate): dimension of the system must be at least 1");
+      throwError("(RKSuiteIntegrator::integrate): dimension of the system must be at least 1");
 
     z.resize(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(RKSuiteIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(RKSuiteIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
@@ -64,7 +64,7 @@ namespace MBSimIntegrator {
       thres.resize(zSize,INIT,thres_);
     } 
     if(thres.size() != zSize)
-      throw MBSimError("(RKSuiteIntegrator::integrate): size of thres does not match, must be " + toStr(zSize));
+      throwError("(RKSuiteIntegrator::integrate): size of thres does not match, must be " + toStr(zSize));
 
     lenwrk = 2*32*zSize;
     work=new double[lenwrk];
@@ -140,7 +140,7 @@ namespace MBSimIntegrator {
         else if(result==3 or result==4)
           continue;
         else if(result>=5)
-          throw MBSimError("Integrator RKSUITE failed with result = "+toString(result));
+          throwError("Integrator RKSUITE failed with result = "+toString(result));
       }
     }
 

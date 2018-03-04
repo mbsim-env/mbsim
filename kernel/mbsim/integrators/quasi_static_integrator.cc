@@ -69,7 +69,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throw MBSimError("(QuasiStaticIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(QuasiStaticIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       z = z0;
     }
     else
@@ -149,7 +149,7 @@ namespace MBSimIntegrator {
 //      qla = newton.solve(qla);
 
       if (newton.getInfo() != 0)
-        throw MBSimError("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
+        throwError("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
       iter = newton.getNumberOfIterations();
 
       for (int i = 0; i < q.size(); i++)

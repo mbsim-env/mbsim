@@ -34,6 +34,7 @@ namespace MBSimIntegrator {
   Integrator::Integrator() :  name("Integrator") {}
 
   void Integrator::initializeUsingXML(DOMElement *element) {
+    Solver::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"startTime");
     setStartTime(E(e)->getText<double>());

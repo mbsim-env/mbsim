@@ -108,7 +108,7 @@ namespace MBSimIntegrator {
       neq = system->getzSize();
 
     if(not neq)
-      throw MBSimError("(DASPKIntegrator::integrate): dimension of the system must be at least 1");
+      throwError("(DASPKIntegrator::integrate): dimension of the system must be at least 1");
 
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
@@ -125,7 +125,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throw MBSimError("(DASPKIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(DASPKIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
     }
     else
@@ -143,10 +143,10 @@ namespace MBSimIntegrator {
     if(aTol.size()>1) {
       info(1) = 1; // aTol und rTol are vectors
       if(aTol.size() != neq)
-        throw MBSimError("(DASPKIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
+        throwError("(DASPKIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
     }
     if(rTol.size() != aTol.size())
-      throw MBSimError("(DASPKIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throwError("(DASPKIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
     // info(2) = 0; // solution only at tOut, no intermediate-output
     // info(3) = 0; // integration does not stop at tStop (rWork(0))
@@ -236,7 +236,7 @@ namespace MBSimIntegrator {
           info(0)=0;
         }
       }
-      else if(idid<0) throw MBSimError("Integrator DASPK failed with istate = "+toString(idid));
+      else if(idid<0) throwError("Integrator DASPK failed with istate = "+toString(idid));
     }
 
     if(plotIntegrationData) integPlot.close();

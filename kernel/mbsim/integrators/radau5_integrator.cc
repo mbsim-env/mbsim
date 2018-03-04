@@ -269,10 +269,10 @@ namespace MBSimIntegrator {
     calcSize();
 
     if(not neq)
-      throw MBSimError("(RADAU5Integrator::integrate): dimension of the system must be at least 1");
+      throwError("(RADAU5Integrator::integrate): dimension of the system must be at least 1");
 
     if(formalism==DAE3 and system->getgSize()!=system->getgdSize())
-      throw MBSimError("(RADAU5Integrator::integrate): size of g (" + toStr(system->getgSize()) + ") must be equal to size of gd (" + toStr(system->getgdSize()) + ") when using the DAE3 formalism");
+      throwError("(RADAU5Integrator::integrate): size of g (" + toStr(system->getgSize()) + ") must be equal to size of gd (" + toStr(system->getgdSize()) + ") when using the DAE3 formalism");
 
     double t = tStart;
 
@@ -280,7 +280,7 @@ namespace MBSimIntegrator {
     Vec z = y(0,zSize-1);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(RADAU5Integrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(RADAU5Integrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
@@ -297,10 +297,10 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != neq)
-        throw MBSimError("(RADAU5Integrator::integrate): size of aTol does not match, must be " + toStr(neq));
+        throwError("(RADAU5Integrator::integrate): size of aTol does not match, must be " + toStr(neq));
     }
     if(rTol.size() != aTol.size())
-      throw MBSimError("(RADAU5Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throwError("(RADAU5Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
     int out = 1; // subroutine is available for output
 

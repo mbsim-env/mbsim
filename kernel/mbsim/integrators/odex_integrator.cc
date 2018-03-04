@@ -169,14 +169,14 @@ namespace MBSimIntegrator {
     int zSize=system->getzSize();
 
     if(not zSize)
-      throw MBSimError("(ODEXIntegrator::integrate): dimension of the system must be at least 1");
+      throwError("(ODEXIntegrator::integrate): dimension of the system must be at least 1");
 
     double t = tStart;
 
     Vec z(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(ODEXIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(ODEXIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
@@ -193,10 +193,10 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != zSize)
-        throw MBSimError("(ODEXIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+        throwError("(ODEXIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
     }
     if(rTol.size() != aTol.size())
-      throw MBSimError("(ODEXIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throwError("(ODEXIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
     int out = 2; // dense output is performed in plot
 

@@ -56,13 +56,13 @@ namespace MBSimIntegrator {
     debugInit();
 
     if(odePackInUse)
-      throw MBSimError("Only one integration with LSODARIntegrator, LSODERIntegrator and LSODEIntegrator at a time is possible.");
+      throwError("Only one integration with LSODARIntegrator, LSODERIntegrator and LSODEIntegrator at a time is possible.");
     odePackInUse = true;
 
     int zSize=system->getzSize();
 
     if(not zSize)
-      throw MBSimError("(LSODEIntegrator::integrate): dimension of the system must be at least 1");
+      throwError("(LSODEIntegrator::integrate): dimension of the system must be at least 1");
 
     int neq[1+sizeof(void*)/sizeof(int)+1];
     neq[0]=zSize;
@@ -71,7 +71,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(LSODEIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(LSODEIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       system->setState(z0);
     }
     else
@@ -92,7 +92,7 @@ namespace MBSimIntegrator {
       else {
         iTol = 2;
         if(aTol.size() != zSize)
-          throw MBSimError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throwError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
     }
     else {
@@ -101,10 +101,10 @@ namespace MBSimIntegrator {
       else {
         iTol = 4;
         if(aTol.size() != zSize)
-          throw MBSimError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throwError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
       if(rTol.size() != zSize)
-        throw MBSimError("(LSODEIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
+        throwError("(LSODEIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
     }
 
     int one=1, istate=1;
@@ -163,7 +163,7 @@ namespace MBSimIntegrator {
           istate=1;
         }
       }
-      else if(istate<0) throw MBSimError("Integrator LSODE failed with istate = "+toString(istate));
+      else if(istate<0) throwError("Integrator LSODE failed with istate = "+toString(istate));
     }
 
     if(plotIntegrationData) integPlot.close();
