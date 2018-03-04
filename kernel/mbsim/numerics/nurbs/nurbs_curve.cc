@@ -114,10 +114,10 @@ namespace MBSim {
         Qnew(i, j) = Q.at(i)(j);
 
     if (d <= 0) {
-      throw MBSimError("Degree is too small!");
+      throw runtime_error("Degree is too small!");
     }
     if (d >= Qnew.rows()) {
-      throw MBSimError("The degree specified is greater then Q.rows()+1\n");
+      throw runtime_error("The degree specified is greater then Q.rows()+1\n");
     }
 
     // resize control point matrix and knotVector matrix
@@ -171,10 +171,10 @@ namespace MBSim {
     int i, j;
 
     if (d <= 0) {
-      throw MBSimError("Degree is too small!");
+      throw runtime_error("Degree is too small!");
     }
     if (d >= Q.rows()) {
-      throw MBSimError("The degree specified should be smaller or equal than Q.rows()-1\n");
+      throw runtime_error("The degree specified should be smaller or equal than Q.rows()-1\n");
     }
 
     resize(Q.rows(), d);
@@ -264,7 +264,7 @@ namespace MBSim {
 
 //  if(Uc.n() != U.n())  // TODO:: check this!
     if (Uc.rows() != U.rows())
-      throw MBSimError("(NurbsCurve::globalInterpH: The length of knot vectors are not equal !)");
+      throw runtime_error("(NurbsCurve::globalInterpH: The length of knot vectors are not equal !)");
 
     U = Uc;
 
@@ -338,7 +338,7 @@ namespace MBSim {
 
     SqrMat A(iN, INIT, 0.);
     if (Uc.rows() != U.rows())
-      throw MBSimError("(NurbsCurve::globalInterpClosedH: The length of knot vectors are not equal !)");
+      throw runtime_error("(NurbsCurve::globalInterpClosedH: The length of knot vectors are not equal !)");
 
     U = Uc;
     // Initialize the basis matrix A

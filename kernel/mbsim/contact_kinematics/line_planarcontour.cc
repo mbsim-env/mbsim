@@ -48,7 +48,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsLinePlanarContour::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    throw MBSimError("(ContactKinematicsLinePlanarContour::updateg): Not implemented!");
+    throw runtime_error("(ContactKinematicsLinePlanarContour::updateg): Not implemented!");
   }
 
 }

@@ -37,10 +37,6 @@ namespace MBSim {
     mbsim_error_message(std::move(mbsim_error_message_)), path(), domEvalError(context->getDOMEvalError()) {
   }
 
-  MBSimError::MBSimError(std::string mbsim_error_message_) noexcept : exception(),
-    mbsim_error_message(std::move(mbsim_error_message_)), path(), domEvalError("", nullptr) {
-  }
-
   const char* MBSimError::what() const noexcept {
     string mbsimLoc;
     if(!path.empty())

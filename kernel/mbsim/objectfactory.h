@@ -101,7 +101,7 @@ class ObjectFactory {
         "In MBSim::ObjectFactory::create<ContainerType>(...) ContainerType must be derived from fmatvec::Atom.");
       // throw error if NULL is supplied as element
       if(element==nullptr)
-        throw MBSimError("Internal error: NULL argument specified.");
+        throw std::runtime_error("Internal error: NULL argument specified.");
       // get all allocate functions for the given name
       MBXMLUtils::FQN fqn=MBXMLUtils::E(element)->getTagName();
       auto nameIt=instance().registeredType.find(fqn);

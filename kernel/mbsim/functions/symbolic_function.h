@@ -108,7 +108,7 @@ namespace MBSim {
   class FromCasadi {
     public:
       static Ret cast(const casadi::Matrix<double> &x) {
-        throw MBSimError("FromCasadi::cast not implemented for current type.");
+        throw std::runtime_error("FromCasadi::cast not implemented for current type.");
       }
   };
 

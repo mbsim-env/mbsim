@@ -55,7 +55,7 @@ namespace MBSim {
   }
 
   Vec SpatialCoulombFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
-    throw MBSimError("(SpatialCoulombFriction::solve): Not implemented!");
+    throwError("(SpatialCoulombFriction::solve): Not implemented!");
   }
 
   bool SpatialCoulombFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {

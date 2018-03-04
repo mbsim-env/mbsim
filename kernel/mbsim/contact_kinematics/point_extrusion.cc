@@ -87,7 +87,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointExtrusion::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    throw MBSimError("(ContactKinematicsPointExtrusion::updatewb): Not implemented!");
+    throw runtime_error("(ContactKinematicsPointExtrusion::updatewb): Not implemented!");
   }
 
 }

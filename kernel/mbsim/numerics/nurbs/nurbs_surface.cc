@@ -146,9 +146,9 @@ namespace MBSim {
 
   void NurbsSurface::globalInterp(const GeneralMatrix<fmatvec::Vec3 >& Q, const Vec& uk, const Vec& vk, int DegU, int DegV) {
     if (uk.size() != Q.rows())
-      throw MBSimError("(NurbsCurve::globalInterpH: In the U direction, the length of lagrange parameters vectors is not equal to the number of the given interpolated points!)");
+      throw runtime_error("(NurbsCurve::globalInterpH: In the U direction, the length of lagrange parameters vectors is not equal to the number of the given interpolated points!)");
     if (vk.size() != Q.cols())
-      throw MBSimError("(NurbsCurve::globalInterpH: In the V direction, the length of lagrange parameters vectors is not equal to the number of the given interpolated points!)");
+      throw runtime_error("(NurbsCurve::globalInterpH: In the V direction, the length of lagrange parameters vectors is not equal to the number of the given interpolated points!)");
 
     resize(Q.rows(), Q.cols(), DegU, DegV);
 
@@ -276,9 +276,9 @@ namespace MBSim {
 
   void NurbsSurface::globalInterpClosedU(const GeneralMatrix<fmatvec::Vec3 >& Q, const Vec& uk, const Vec& vk, int DegU, int DegV) {
     if (uk.size() != Q.rows() + DegU)
-      throw MBSimError("(NurbsCurve::globalInterpH: In the U direction, the length of lagrange parameters vectors is not equal to the number of the given interpolated points plus degU!)");
+      throw runtime_error("(NurbsCurve::globalInterpH: In the U direction, the length of lagrange parameters vectors is not equal to the number of the given interpolated points plus degU!)");
     if (vk.size() != Q.cols())
-      throw MBSimError("(NurbsCurve::globalInterpH: In the V direction, the length of lagrange parameters vectors is not equal to the number of the given interpolated points!)");
+      throw runtime_error("(NurbsCurve::globalInterpH: In the V direction, the length of lagrange parameters vectors is not equal to the number of the given interpolated points!)");
 
     resize(Q.rows() + DegU, Q.cols(), DegU, DegV); // the U direction is closed interpolation, thus need to plus additional DegU size.
 

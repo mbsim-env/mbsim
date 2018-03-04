@@ -75,7 +75,7 @@ namespace MBSimFlexibleBody {
   }
 
   void ContactKinematicsPointNurbsDisk2s::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    throw MBSim::MBSimError("(ContactKinematicsPointNurbsDisk2s:updatewb): Not implemented!");
+    throw runtime_error("(ContactKinematicsPointNurbsDisk2s:updatewb): Not implemented!");
   }
 
 }

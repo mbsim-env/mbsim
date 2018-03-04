@@ -101,7 +101,7 @@ namespace MBSim {
     }
 
     if (!outCont_F && !outCont_C) // inner circle, inner frustum
-      throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Contact setting not defined!");
+      throw runtime_error("(ContactKinematicsCircleFrustum:updateg): Contact setting not defined!");
 
     double max = r_F(0) > r_F(1) ? r_F(0) : r_F(1); // too far away? -> HitSphere-Concept
     double min = r_F(0) < r_F(1) ? r_F(0) : r_F(1);
@@ -138,7 +138,7 @@ namespace MBSim {
           if (g < eps) {
             if (outCont_F && !outCont_C) { // inner circle, outer frustum
               if (fabs(c_CF_nrm2) < epsroot)
-                throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
+                throw runtime_error("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
               else {
                 cFrame[icircle]->setPosition(circle->getFrame()->getPosition() - r_C * c_CF / c_CF_nrm2);
                 cFrame[icircle]->getOrientation(false).set(0, sin(phi_F) * Wa_F + cos(phi_F) * c_CF / c_CF_nrm2);
@@ -149,7 +149,7 @@ namespace MBSim {
             else if (!outCont_F && outCont_C) { // outer circle, inner frustum
               if (g < eps) {
                 if (fabs(c_CF_nrm2) < epsroot)
-                  throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
+                  throw runtime_error("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
                 else {
                   cFrame[icircle]->setPosition(circle->getFrame()->getPosition() + r_C * c_CF / c_CF_nrm2);
                   cFrame[icircle]->getOrientation(false).set(0, -sin(phi_F) * Wa_F + cos(phi_F) * c_CF / c_CF_nrm2);
@@ -181,7 +181,7 @@ namespace MBSim {
 
         else if (fabs(phi_F) < epsroot) { // special case: frustum=cylinder (circle-ellipse)
           if (fabs(al_CF - M_PI / 2.) < epsroot) {
-            throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Circle axis-Cylinder axis angle equals 90° -> indefinite contact configuration!");
+            throw runtime_error("(ContactKinematicsCircleFrustum:updateg): Circle axis-Cylinder axis angle equals 90° -> indefinite contact configuration!");
           }
           double cE1_star_nrm2 = r_F(0) / t_CF;
           Vec3 cE1 = t_CF * eF1 + sin(al_CF) * Wa_F; // semi-major axis
@@ -333,7 +333,7 @@ namespace MBSim {
           }
 
           if(!funcRho)
-            throw MBSimError("(ContactKinematicsCircleFrustum::updateg): funcRho is not defined.");
+            throw runtime_error("(ContactKinematicsCircleFrustum::updateg): funcRho is not defined.");
           funcRho->setDiffVec(Wd_SC);
           funcRho->setSectionCOS(c1, c2);
 

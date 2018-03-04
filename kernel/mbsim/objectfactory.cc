@@ -118,7 +118,7 @@ void registerClass_internal(const FQN &name, const AllocateBase *alloc, const De
   if(find_if(allocDealloc.begin(), allocDealloc.end(), [&alloc](const ObjectFactory::AllocDeallocPair &x){
     return *x.first == *alloc;
   })!=allocDealloc.end())
-    throw MBSimError("Internal error: Redundant registration of a class in the XML object factory.");
+    throw runtime_error("Internal error: Redundant registration of a class in the XML object factory.");
   allocDealloc.emplace_back(alloc, dealloc);
 }
 

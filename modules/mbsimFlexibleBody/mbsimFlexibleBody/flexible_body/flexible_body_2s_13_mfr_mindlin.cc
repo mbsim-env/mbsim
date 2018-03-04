@@ -137,7 +137,7 @@ namespace MBSimFlexibleBody {
       Vec NaturalHarmonics(EigVal.size(), INIT, 0.);
       for (int i = 0; i < EigVal.size() - 1; i++) {
         if (EigVal(i).imag() < 0 or EigVal(i).imag() > 0)
-          throw new MBSimError("updateM() - imaginary parts in EigVal");
+          throwError("updateM() - imaginary parts in EigVal");
         NaturalHarmonics(NaturalHarmonics.size() - 1 - i) = 1 / (M_PI * 2) * EigVal(i).real();
       }
       for (int i = 0; i < NaturalHarmonics.size(); i++)
@@ -158,7 +158,7 @@ namespace MBSimFlexibleBody {
     }
 
     //for testing
-    //throw new MBSimError("FlexibleBody2s13MFRMindlin::updateM -- Testing the Mass matrix");
+    //throwError("FlexibleBody2s13MFRMindlin::updateM -- Testing the Mass matrix");
 
     // LU-decomposition of M
     LLM = facLL(M);

@@ -189,7 +189,7 @@ namespace MBSimFlexibleBody {
   inline const fmatvec::SqrMat& FiniteElement1s21CosseratTranslation::getdhdu() const { return dhdu; }
   inline int FiniteElement1s21CosseratTranslation::getqSize() const { return 5; }
   inline int FiniteElement1s21CosseratTranslation::getuSize() const { return 5; }
-  inline void  FiniteElement1s21CosseratTranslation::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("(FiniteElement1s21CosseratTranslation::computedhdz): Not implemented"); }
+  inline void  FiniteElement1s21CosseratTranslation::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw std::runtime_error("(FiniteElement1s21CosseratTranslation::computedhdz): Not implemented"); }
   inline void FiniteElement1s21CosseratTranslation::setShearCorrectionFactors(double sigma1_) { sigma1 = sigma1_; }
   inline double FiniteElement1s21CosseratTranslation::getl0() const { return l0; }
 

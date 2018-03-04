@@ -51,12 +51,6 @@ namespace MBSim {
        * \param context the conext MBSim::Solver where the error occured
        */
       MBSimError(const Solver *context, std::string mbsim_error_message_) noexcept; 
-
-      /**
-       * \brief constructor
-       * ctor variant without a context
-       */
-      MBSimError(std::string mbsim_error_message_) noexcept; 
       
       ~MBSimError() noexcept override = default;
 

@@ -40,67 +40,67 @@ namespace MBSimFlexibleBody {
   FiniteElementLinearExternalLumpedNode::~FiniteElementLinearExternalLumpedNode()= default;
 
   const SymMat& FiniteElementLinearExternalLumpedNode::getM() const {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::getM): Not implemented");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::getM): Not implemented");
   }
 
   const Vec& FiniteElementLinearExternalLumpedNode::geth() const {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::geth): Not implemented");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::geth): Not implemented");
   }
 
   const SqrMat& FiniteElementLinearExternalLumpedNode::getdhdq() const {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::getdhdq): Not implemented");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::getdhdq): Not implemented");
   }
 
   const SqrMat& FiniteElementLinearExternalLumpedNode::getdhdu() const {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::getdhdu): Not implemented");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::getdhdu): Not implemented");
   }
 
-  int FiniteElementLinearExternalLumpedNode::getqSize() const { throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::getqSize): Not implemented"); }
+  int FiniteElementLinearExternalLumpedNode::getqSize() const { throw runtime_error("(FiniteElementLinearExternalLumpedNode::getqSize): Not implemented"); }
 
   int FiniteElementLinearExternalLumpedNode::getuSize() const {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::getuSize): Not implemented");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::getuSize): Not implemented");
   }
 
-  void  FiniteElementLinearExternalLumpedNode::computeM(const Vec& qG) { throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::computeM): Not implemented"); }
+  void  FiniteElementLinearExternalLumpedNode::computeM(const Vec& qG) { throw runtime_error("(FiniteElementLinearExternalLumpedNode::computeM): Not implemented"); }
 
   void  FiniteElementLinearExternalLumpedNode::computeh(const Vec& qG, const Vec& qGt) {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::computeh): Not implemented");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::computeh): Not implemented");
   }
 
   void  FiniteElementLinearExternalLumpedNode::computedhdz(const Vec& qG, const Vec& qGt) {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::computedhdz): Not implemented");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::computedhdz): Not implemented");
   }
 
   double FiniteElementLinearExternalLumpedNode::computeKineticEnergy(const Vec& qG, const Vec& qGt) {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::computeKineticEnergy): Not implemented");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::computeKineticEnergy): Not implemented");
   }
 
   double FiniteElementLinearExternalLumpedNode::computeGravitationalEnergy(const Vec& qG) {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::computeGravitationalEnergy): Not implemented");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::computeGravitationalEnergy): Not implemented");
   }
 
   double FiniteElementLinearExternalLumpedNode::computeElasticEnergy(const Vec& qG) {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::computeElasticEnergy): Not implemented");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::computeElasticEnergy): Not implemented");
   }
 
   Vec3 FiniteElementLinearExternalLumpedNode::getPosition(const Vec& qElement, double s) {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::getPosition): Not implemented!");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::getPosition): Not implemented!");
   }
 
   SqrMat3 FiniteElementLinearExternalLumpedNode::getOrientation(const Vec& qElement, double s) {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::getOrientation): Not implemented!");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::getOrientation): Not implemented!");
   }
 
   Vec3 FiniteElementLinearExternalLumpedNode::getVelocity(const Vec& qElement, const Vec& qpElement, double s) {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::getVelocity): Not implemented!");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::getVelocity): Not implemented!");
   }
 
   Vec3 FiniteElementLinearExternalLumpedNode::getAngularVelocity(const Vec& qElement, const Vec& qpElement, double s) {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::getAngularVelocity): Not implemented!");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::getAngularVelocity): Not implemented!");
   }
 
   Mat FiniteElementLinearExternalLumpedNode::getJacobianOfMotion(const Vec& qElement, double s) {
-    throw MBSim::MBSimError("(FiniteElementLinearExternalLumpedNode::getJacobianOfMotion): Not implemented");
+    throw runtime_error("(FiniteElementLinearExternalLumpedNode::getJacobianOfMotion): Not implemented");
   }
 
 }

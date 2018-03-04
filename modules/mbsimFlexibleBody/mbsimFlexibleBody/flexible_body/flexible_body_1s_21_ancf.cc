@@ -312,7 +312,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21ANCF::initRelaxed(double alpha) {
     if(!initialised) {
       if(Elements==0)
-        throw(new MBSimError("(FlexibleBody1s21ANCF::initRelaxed): Set number of finite elements!"));
+        throwError("(FlexibleBody1s21ANCF::initRelaxed): Set number of finite elements!");
       Vec q0Dummy(q0.size(),INIT,0.);
       if(openStructure) {
         Vec direction(2);
@@ -358,7 +358,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21ANCF::setEulerPerspective(bool Euler_, double v0_) {
     if(openStructure) {
-      throw(new MBSim::MBSimError("(FlexibleBody1s21ANCF::setEulerPerspective): implemented only for closed structures!"));
+      throwError("(FlexibleBody1s21ANCF::setEulerPerspective): implemented only for closed structures!");
     }
     else {
       Euler = Euler_;

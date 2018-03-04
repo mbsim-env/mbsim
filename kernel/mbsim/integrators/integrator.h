@@ -79,9 +79,9 @@ namespace MBSimIntegrator {
        */
       void debugInit();
 
-      virtual void preIntegrate() { throw MBSim::MBSimError("preIntegrate is not defined"); }
-      virtual void subIntegrate(double tStop) { throw MBSim::MBSimError("subIntegrate is not defined"); }
-      virtual void postIntegrate() { throw MBSim::MBSimError("postIntegrate is not defined"); }
+      virtual void preIntegrate() { throwError("preIntegrate is not defined"); }
+      virtual void subIntegrate(double tStop) { throwError("subIntegrate is not defined"); }
+      virtual void postIntegrate() { throwError("postIntegrate is not defined"); }
 
       /*! 
        * \brief initialize integrator

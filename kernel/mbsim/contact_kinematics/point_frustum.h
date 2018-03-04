@@ -43,7 +43,7 @@ namespace MBSim {
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
       void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw MBSimError("(ContactKinematicsPointFrustum:updatewb): Not implemented!"); }
+      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsPointFrustum:updatewb): Not implemented!"); }
       /***************************************************/
 
     protected:

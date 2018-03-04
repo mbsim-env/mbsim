@@ -285,7 +285,7 @@ namespace MBSimInterface {
         {
           const Vec t=Vec(interface2mbsim);
           if (t.size()!=1)
-            throw MBSim::MBSimError("wrong size of given double t!");
+            throwError("wrong size of given double t!");
           setTime(t(0));
         }
         break;
@@ -333,7 +333,7 @@ namespace MBSimInterface {
             msg(Info) << "  z_: " << z_ << endl;
             msg(Info) << "  z_.size(): " << z_.size() << endl;
             msg(Info) << "  zSize: " << zSize << endl;
-            throw MBSim::MBSimError("wrong size of given vector z!");
+            throwError("wrong size of given vector z!");
           }
           double* p=nullptr;
           getz(&p);
@@ -437,7 +437,7 @@ namespace MBSimInterface {
             msg(Info) << "  z_: " << z_ << endl;
             msg(Info) << "  z_.size(): " << z_.size() << endl;
             msg(Info) << "  zSize: " << zSize << endl;
-            throw MBSim::MBSimError("wrong size of given vector z!");
+            throwError("wrong size of given vector z!");
           }
           inputVector=z_;
           int index0=0, index1=0;
@@ -464,7 +464,7 @@ namespace MBSimInterface {
         {
           const Vec p=Vec(interface2mbsim);
           if (p.size()!=1)
-            throw MBSim::MBSimError("wrong size of given value!");
+            throwError("wrong size of given value!");
           int i=round(p(0));
           if (i<6)
             i=6;

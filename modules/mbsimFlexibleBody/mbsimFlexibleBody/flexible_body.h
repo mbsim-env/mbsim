@@ -168,14 +168,14 @@ namespace MBSimFlexibleBody {
        *
        * Remark: the knot vector is parametrized between [0,L]
        */
-      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool &writePsFile = false){throw  MBSim::MBSimError("exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel, const int& deg, const bool& writePsFile) is not implemented for " + boost::core::demangle(typeid(*this).name())) ;}
+      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool &writePsFile = false){throwError("exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel, const int& deg, const bool& writePsFile) is not implemented for " + boost::core::demangle(typeid(*this).name())) ;}
 
       /**
        * \brief imports the interpolated position and optional the velocity files (created with exportPositionVelocity) and fits the rigid and flexible coordinate dofs and optional the translatory velocity components of flexible body to the imported nurbs curve
        * \param filenamePos    Name of the imported position curve file
        * \param filenameVel    Name of the imported velocity curve file
        */
-      virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string()){throw  MBSim::MBSimError("importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel) is not implemented for " + boost::core::demangle(typeid(*this).name())) ;}
+      virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string()){throwError("importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel) is not implemented for " + boost::core::demangle(typeid(*this).name())) ;}
 
       void resetUpToDate() override;
 

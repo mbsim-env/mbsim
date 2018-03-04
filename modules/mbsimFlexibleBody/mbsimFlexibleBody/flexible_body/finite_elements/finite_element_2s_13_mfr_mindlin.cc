@@ -83,67 +83,67 @@ namespace MBSimFlexibleBody {
   }
 
   const SymMat& FiniteElement2s13MFRMindlin::getM() const {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::getM): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::getM): Not implemented!");
   }
 
   const Vec& FiniteElement2s13MFRMindlin::geth() const {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::geth): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::geth): Not implemented!");
   }
 
   const SqrMat& FiniteElement2s13MFRMindlin::getdhdq() const {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::getdhdq): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::getdhdq): Not implemented!");
   }
 
   const SqrMat& FiniteElement2s13MFRMindlin::getdhdu() const {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::getdhdu): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::getdhdu): Not implemented!");
   }
 
   void FiniteElement2s13MFRMindlin::computeM(const Vec& q) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeM): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::computeM): Not implemented!");
   }
 
   void FiniteElement2s13MFRMindlin::computeh(const Vec& q,const Vec& u) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeh): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::computeh): Not implemented!");
   }
 
   void FiniteElement2s13MFRMindlin::computedhdz(const Vec& q,const Vec& u) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computedhdz): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::computedhdz): Not implemented!");
   }
 
   double FiniteElement2s13MFRMindlin::computeKineticEnergy(const Vec& q,const Vec& u) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeKineticEnergy): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::computeKineticEnergy): Not implemented!");
   }
 
   double FiniteElement2s13MFRMindlin::computeGravitationalEnergy(const Vec& q) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeGravitationalEnergy): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::computeGravitationalEnergy): Not implemented!");
   }
 
   double FiniteElement2s13MFRMindlin::computeElasticEnergy(const Vec& q) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeElasticEnergy): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::computeElasticEnergy): Not implemented!");
   }
 
   Vec3 FiniteElement2s13MFRMindlin::getPosition(const Vec& q, const Vec2 &s) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::getPosition): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::getPosition): Not implemented!");
   }
 
   SqrMat3 FiniteElement2s13MFRMindlin::getOrientation(const Vec& q, const Vec2 &s) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::getOrientation): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::getOrientation): Not implemented!");
   }
 
   Vec3 FiniteElement2s13MFRMindlin::getVelocity(const Vec& q, const Vec& u, const Vec2 &s) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::getVelocity): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::getVelocity): Not implemented!");
   }
 
   Vec3 FiniteElement2s13MFRMindlin::getAngularVelocity(const Vec& q, const Vec& u, const Vec2 &s) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::getAngularVelocity): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::getAngularVelocity): Not implemented!");
   }
 
   Mat FiniteElement2s13MFRMindlin::getJacobianOfMotion(const Vec& qG, const Vec2 &s) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeJacobianOfMotion): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::computeJacobianOfMotion): Not implemented!");
   }
 
   Mat FiniteElement2s13MFRMindlin::JGeneralized(const Vec &NodeCoordinates,const Vec2 &s) {
-    throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::JGeneralized): Not implemented!");
+    throw runtime_error("(FiniteElement2s13MFRMindlin::JGeneralized): Not implemented!");
   }
 
   void FiniteElement2s13MFRMindlin::computeNR_ij(int i, int j) {

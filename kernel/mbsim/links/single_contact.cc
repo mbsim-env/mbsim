@@ -556,7 +556,7 @@ namespace MBSim {
     }
     else if(stage==LASTINITSTAGE) {
       if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
-        throw MBSimError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
+        throwError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
     }
     ContourLink::init(stage, config);
     if(fcl) fcl->init(stage, config);

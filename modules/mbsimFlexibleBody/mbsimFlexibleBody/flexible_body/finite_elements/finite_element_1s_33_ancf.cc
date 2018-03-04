@@ -42,7 +42,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s33ANCF::setMaterialDamping(double depsilons) {
-    throw MBSimError("(FiniteElement1s33ANCF::setMaterialDamping): Not implemented");
+    throw runtime_error("(FiniteElement1s33ANCF::setMaterialDamping): Not implemented");
     //  depsilon  += depsilons;
     //  Damp(3,3) += -depsilon;
   }
@@ -385,23 +385,23 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s33ANCF::computedhdz(const Vec& qElement, const Vec& qpElement) {
-    throw MBSim::MBSimError("(FiniteElement1s33ANCF::computedhdz): not implemented!");
+    throw runtime_error("(FiniteElement1s33ANCF::computedhdz): not implemented!");
   }
 
   double FiniteElement1s33ANCF::computeKineticEnergy(const Vec& qElement, const Vec& qpElement) {
-    throw MBSim::MBSimError("(FiniteElement1s33ANCF::computeKineticEnergy): not implemented!");
+    throw runtime_error("(FiniteElement1s33ANCF::computeKineticEnergy): not implemented!");
   }
 
   double FiniteElement1s33ANCF::computeGravitationalEnergy(const Vec& qElement) {
-    throw MBSim::MBSimError("(FiniteElement1s33ANCF::computeGravitationalEnergy): not implemented!");
+    throw runtime_error("(FiniteElement1s33ANCF::computeGravitationalEnergy): not implemented!");
   }
 
   double FiniteElement1s33ANCF::computeElasticEnergy(const Vec& qElement) {
-    throw MBSim::MBSimError("(FiniteElement1s33ANCF::computeElasticEnergy): not implemented!");
+    throw runtime_error("(FiniteElement1s33ANCF::computeElasticEnergy): not implemented!");
   }
 
   void FiniteElement1s33ANCF::FiniteElement1s33ANCF::computeM(const fmatvec::Vec& qG) {
-    throw MBSim::MBSimError("(FiniteElement1s33ANCF::computeM): Not implemented");
+    throw runtime_error("(FiniteElement1s33ANCF::computeM): Not implemented");
   }
 
 }

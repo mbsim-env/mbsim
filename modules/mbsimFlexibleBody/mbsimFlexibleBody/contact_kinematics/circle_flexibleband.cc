@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
       ContactKinematicsCircleNode(double node_) : node(node_), circle(nullptr), extrusion(nullptr) { }
       void assignContours(const vector<Contour*> &contour) override;
       void updateg(double &g, vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) override { throw MBSimError("ContactKinematicsCircleNode::updatewb not implemented!"); }
+      void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) override { throw runtime_error("ContactKinematicsCircleNode::updatewb not implemented!"); }
     private:
       double node;
       int icircle, inode;
@@ -92,7 +92,7 @@ namespace MBSimFlexibleBody {
       ContactKinematicsCircleNodeInterpolation(const Vec &nodes_) : nodes(nodes_), circle(nullptr), extrusion(nullptr) { }
       void assignContours(const vector<Contour*> &contour) override;
       void updateg(double &g, vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) override { throw MBSimError("ContactKinematicsCircleNodeInterpolation::updatewb not implemented!"); }
+      void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) override { throw runtime_error("ContactKinematicsCircleNodeInterpolation::updatewb not implemented!"); }
     private:
       Vec nodes;
       int icircle, inode;
@@ -186,10 +186,10 @@ namespace MBSimFlexibleBody {
   }
 
   void ContactKinematicsCircleFlexibleBand::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
-    throw MBSimError("ContactKinematicsCircleFlexibleBand::updateg not implemented!");
+    throw runtime_error("ContactKinematicsCircleFlexibleBand::updateg not implemented!");
   }
 
   void ContactKinematicsCircleFlexibleBand::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    throw MBSimError("ContactKinematicsCircleFlexibleBand::updatewb not implemented!");
+    throw runtime_error("ContactKinematicsCircleFlexibleBand::updatewb not implemented!");
   }
 }
