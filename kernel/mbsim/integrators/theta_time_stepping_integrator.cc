@@ -70,6 +70,10 @@ namespace MBSimIntegrator {
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
+        system->setla(system->getLa(false)/dt);
+        system->setqd(system->getdq(false)/dt);
+        system->setud(system->getdu(false)/dt);
+        system->setxd(system->getdx(false)/dt);
         system->setUpdatela(false);
         system->setUpdateLa(false);
         system->setUpdatezd(false);
@@ -132,11 +136,6 @@ namespace MBSimIntegrator {
       system->getx() += system->evaldx();
 
       system->setTime(te);
-
-      system->setla(system->getLa()/dt);
-      system->setqd(system->getdq(false)/dt);
-      system->setud(system->getdu(false)/dt);
-      system->setxd(system->getdx(false)/dt);
 
       system->resetUpToDate();
 
