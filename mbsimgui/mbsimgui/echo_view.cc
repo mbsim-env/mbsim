@@ -46,7 +46,8 @@ namespace MBSimGUI {
     setIconSize(iconSize()*qApp->desktop()->logicalDpiY()/96*0.5);
 
     out=new QWebView(this);
-    connect(out, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(linkClicked(const QUrl &)));
+    out->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    connect(out, SIGNAL(linkClicked(const QUrl &)), this, SLOT(linkClicked(const QUrl &)));
     setCentralWidget(out);
     auto tb=new QToolBar(this);
     addToolBar(Qt::RightToolBarArea, tb);
