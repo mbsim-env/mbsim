@@ -29,8 +29,8 @@ int main(int argc, char *argv[]) {
   group->setFrameOfReference(sys->getFrame("Q2"));
   MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;0;0]");
 
-  sys->setConstraintSolver(DynamicSystemSolver::LinearEquations);
-  sys->setImpactSolver(DynamicSystemSolver::LinearEquations);
+  sys->setConstraintSolver(DynamicSystemSolver::direct);
+  sys->setImpactSolver(DynamicSystemSolver::direct);
   sys->setGeneralizedRelativeVelocityTolerance(1e-9);
 
   sys->initialize();

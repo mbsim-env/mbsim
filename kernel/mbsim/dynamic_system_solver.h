@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2014 MBSim Development Team
+/* Copyright (C) 2004-2018 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,6 @@ namespace MBSim {
    * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
    *
    * \todo projectGeneralizedPositions seems to be buggy with at least TimeSteppingIntegrator (see SliderCrank)
-   * \todo RootFinding seems to be buggy (see EdgeMill)
    */
   class DynamicSystemSolver : public Group {
     public:
@@ -51,17 +50,12 @@ namespace MBSim {
       /**
        * \brief solver for contact equations
        */
-      enum Solver { FixedPointTotal, FixedPointSingle, GaussSeidel, LinearEquations, RootFinding };
-
-      /**
-       * \brief relaxation strategies in solution of contact equations
-       */
-      enum Strategy { global, local };
+      enum Solver { fixedpoint, GaussSeidel, direct, rootfinding };
 
       /**
        * \brief linear algebra for Newton scheme in solution of contact equations
        */
-      enum LinAlg { LUDecomposition, LevenbergMarquardt, PseudoInverse };
+      enum LinearAlgebra { LUDecomposition, LevenbergMarquardt, pseudoinverse };
 
       /**
        * \brief constructor
@@ -182,13 +176,12 @@ namespace MBSim {
       const Solver& getConstraintSolver() { return contactSolver; }
       const Solver& getImpactSolver() { return impactSolver; }
       void setTermination(bool term_) { term = term_; }
-      void setStrategy(Strategy strategy_) { strategy = strategy_; }
-      void setMaxIter(int iter) { maxIter = iter; }
-      void setHighIter(int iter) { highIter = iter; }
-      void setNumJacProj(bool numJac_) { numJac = numJac_; }
-      void setMaxDampingSteps(int maxDSteps) { maxDampingSteps = maxDSteps; }
-      void setLevenbergMarquardtParam(double lmParm_) { lmParm = lmParm_; }
-      void setLinAlg(LinAlg linAlg_) { linAlg = linAlg_; }
+      void setMaximumIterations(int iter) { maxIter = iter; }
+      void setHighIterations(int iter) { highIter = iter; }
+      void setNumericalJacobian(bool numJac_) { numJac = numJac_; }
+      void setLinearAlgebra(LinearAlgebra linAlg_) { linAlg = linAlg_; }
+      void setMaximumDampingSteps(int maxDSteps) { maxDampingSteps = maxDSteps; }
+      void setLevenbergMarquardtParamater(double lmParm_) { lmParm = lmParm_; }
 
       void setUseOldla(bool flag) { useOldla = flag; }
       void setDecreaseLevels(const fmatvec::VecInt &decreaseLevels_) { decreaseLevels = decreaseLevels_; }
@@ -393,7 +386,7 @@ namespace MBSim {
       Element* getElement(const std::string &name);
 
       /**
-       * \return information for solver including strategy and linear algebra
+       * \return information for solver
        */
       std::string getSolverInfo();
 
@@ -729,14 +722,9 @@ namespace MBSim {
       Solver contactSolver, impactSolver;
 
       /**
-       * \brief relaxarion strategy for solution of fixed-point scheme
-       */
-      Strategy strategy;
-
-      /**
        * \brief linear system solver used for Newton scheme in contact equations
        */
-      LinAlg linAlg;
+      LinearAlgebra linAlg;
 
       /**
        * \brief flag if the contact equations should be stopped if there is no convergence
@@ -804,12 +792,6 @@ namespace MBSim {
        * \brief Tolerance for projection of generalized position.
        */
       double tolProj;
-
-      /**
-       * \brief update relaxation factors for contact equations
-       * \todo global not available because of unsymmetric mass action matrix TODO
-       */
-      void updaterFactors() override;
 
       /**
        * \brief

@@ -40,7 +40,7 @@ int main (int argc, char* argv[]) {
     //  sys->setImpactSolver(RootFinding);
     //  sys->setConstraintSolver(RootFinding);
     //  sys->setLinAlg(PseudoInverse);
-    sys->setNumJacProj(true);
+    sys->setNumericalJacobian(true);
     sys->initialize();
 
     TimeSteppingIntegrator integrator;

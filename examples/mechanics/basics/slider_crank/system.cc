@@ -176,7 +176,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact_point_piston_1_top->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   contact_point_piston_1_top->setNormalForceLaw(new UnilateralConstraint());
   contact_point_piston_1_top->setNormalImpactLaw(new UnilateralNewtonImpact(epsN)); // epsN1
-  contact_point_piston_1_top->enableOpenMBVContactPoints();
   this->addLink(contact_point_piston_1_top);
 
   Contact *contact_point_piston_2_top = new Contact("Contact_Point_Piston_2_Top");
@@ -185,7 +184,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact_point_piston_2_top->setTangentialImpactLaw(new PlanarCoulombImpact(0.01));
   contact_point_piston_2_top->setNormalForceLaw(new UnilateralConstraint());
   contact_point_piston_2_top->setNormalImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN2
-  contact_point_piston_2_top->enableOpenMBVContactPoints();
   this->addLink(contact_point_piston_2_top);
 
   Contact *contact_point_piston_3_bottom = new Contact("Contact_Point_Piston_3_Bottom");

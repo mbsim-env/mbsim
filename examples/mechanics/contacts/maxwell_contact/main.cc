@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
 
       sys = new System(MBSName.str(), contactType, 0, contactNums, shift);
 
-      sys->setLinAlg(DynamicSystemSolver::PseudoInverse);
+      sys->setLinearAlgebra(DynamicSystemSolver::pseudoinverse);
       sys->initialize();
 
       integrator = new TimeSteppingIntegrator;
