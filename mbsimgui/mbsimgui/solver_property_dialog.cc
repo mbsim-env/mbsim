@@ -123,6 +123,12 @@ namespace MBSimGUI {
 
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* DOPRI5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -132,6 +138,8 @@ namespace MBSimGUI {
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -142,6 +150,8 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -163,6 +173,12 @@ namespace MBSimGUI {
 
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* DOP853IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -172,6 +188,8 @@ namespace MBSimGUI {
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -182,6 +200,8 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -203,6 +223,12 @@ namespace MBSimGUI {
 
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* ODEXIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -212,6 +238,8 @@ namespace MBSimGUI {
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -222,6 +250,8 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -256,6 +286,12 @@ namespace MBSimGUI {
 
     reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
     addToTab("Extra", reducedForm);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* RADAU5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -267,6 +303,8 @@ namespace MBSimGUI {
     maxSteps->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -279,6 +317,8 @@ namespace MBSimGUI {
     maxSteps->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -313,6 +353,12 @@ namespace MBSimGUI {
 
     reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
     addToTab("Extra", reducedForm);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* RADAUIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -324,6 +370,8 @@ namespace MBSimGUI {
     maxSteps->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -336,6 +384,8 @@ namespace MBSimGUI {
     maxSteps->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -370,6 +420,12 @@ namespace MBSimGUI {
 
     autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"autonomousSystem");
     addToTab("Extra", autonomousSystem);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* RODASIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -382,6 +438,8 @@ namespace MBSimGUI {
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
     autonomousSystem->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -395,6 +453,8 @@ namespace MBSimGUI {
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
     autonomousSystem->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -429,6 +489,12 @@ namespace MBSimGUI {
 
     autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"autonomousSystem");
     addToTab("Extra", autonomousSystem);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* SEULEXIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -441,6 +507,8 @@ namespace MBSimGUI {
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
     autonomousSystem->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -454,6 +522,8 @@ namespace MBSimGUI {
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
     autonomousSystem->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
