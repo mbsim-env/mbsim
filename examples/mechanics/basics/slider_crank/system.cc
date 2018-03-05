@@ -15,6 +15,11 @@ using namespace fmatvec;
 using namespace std;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
+  setPlotFeatureRecursive(generalizedPosition, true);
+  setPlotFeatureRecursive(generalizedVelocity, true);
+  setPlotFeatureRecursive(generalizedRelativePosition, true);
+  setPlotFeatureRecursive(generalizedRelativeVelocity, true);
+  setPlotFeatureRecursive(generalizedForce, true);
 
   // geometrical characteristics
   double width_crank = 0.05;
@@ -192,7 +197,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact_point_piston_3_bottom->setTangentialImpactLaw(new PlanarCoulombImpact(0.01));
   contact_point_piston_3_bottom->setNormalForceLaw(new UnilateralConstraint());
   contact_point_piston_3_bottom->setNormalImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN3
-  contact_point_piston_3_bottom->enableOpenMBVContactPoints();
   this->addLink(contact_point_piston_3_bottom);
   
   Contact *contact_point_piston_4_bottom = new Contact("Contact_Point_Piston_4_Bottom");
@@ -201,7 +205,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact_point_piston_4_bottom->setTangentialImpactLaw(new PlanarCoulombImpact(0.01));
   contact_point_piston_4_bottom->setNormalForceLaw(new UnilateralConstraint());
   contact_point_piston_4_bottom->setNormalImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN4
-  contact_point_piston_4_bottom->enableOpenMBVContactPoints();
   this->addLink(contact_point_piston_4_bottom);
   //---------------------------------------------------------------------------
 

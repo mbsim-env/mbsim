@@ -41,8 +41,6 @@ namespace MBSim {
    * \date 2012-05-08 modifications for AutoTimeSteppingSSCIntegrator (Jan Clauberg)
    * \date 2012-05-08 dhdq and dhdu with lower and upper bound (Jan Clauberg)
    * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
-   *
-   * \todo projectGeneralizedPositions seems to be buggy with at least TimeSteppingIntegrator (see SliderCrank)
    */
   class DynamicSystemSolver : public Group {
     public:
