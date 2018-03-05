@@ -231,7 +231,6 @@ namespace MBSimGUI {
       i=24;
     else if(dynamic_cast<HarmonicResponseAnalyzer*>(solver))
       i=25;
-    std::cout << "i = " << i << std::endl;
     updateText();
   }
 
