@@ -345,7 +345,7 @@
     <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
     <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
     <initialStepSize unit="s">0</initialStepSize>
-    <maximalStepSize unit="s">0</maximalStepSize>
+    <maximumStepSize unit="s">0</maximumStepSize>
   </DOPRI5Integrator>
 
 </MBSimProject>

@@ -40,8 +40,7 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  HETS2Integrator::HETS2Integrator() : integPlot() {
-  }
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, HETS2Integrator)
 
   void HETS2Integrator::preIntegrate() {
     debugInit();
@@ -51,10 +50,14 @@ namespace MBSimIntegrator {
     system->setTime(tStart);
 
     // define initial state
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != system->getzSize())
+        throw MBSimError("(HETS2Integrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
+    }
     else
       system->evalz0();
+
     system->setUseOldla(false);
     system->setGeneralizedForceTolerance(1e-10/dt); // adaptation from impulse
     system->setGeneralizedRelativeAccelerationTolerance(1e-10/dt); // as we use local velocities to express accelerations within solveConstraints
@@ -249,7 +252,7 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
-    setStepSize(E(e)->getText<double>());
+    if(e) setStepSize(E(e)->getText<double>());
   }
 
   bool HETS2Integrator::evaluateStage() {

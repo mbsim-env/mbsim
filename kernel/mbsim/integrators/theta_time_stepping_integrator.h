@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _MU_TIME_STEPPING_INTEGRATOR_H_ 
-#define _MU_TIME_STEPPING_INTEGRATOR_H_
+#ifndef _THETA_TIME_STEPPING_INTEGRATOR_H_
+#define _THETA_TIME_STEPPING_INTEGRATOR_H_
 
 #include "integrator.h"
 
@@ -36,102 +36,67 @@ namespace MBSimIntegrator {
   class ThetaTimeSteppingIntegrator : public Integrator { 
     public:
       /**
-       * \brief constructor
-       */
-      ThetaTimeSteppingIntegrator();
-
-      /**
        * \brief destructor
        */
-      virtual ~ThetaTimeSteppingIntegrator() {}
+      ~ThetaTimeSteppingIntegrator() override = default;
+
+      void preIntegrate() override;
+      void subIntegrate(double tStop) override;
+      void postIntegrate() override;
 
       /* INHERITED INTERFACE OF INTEGRATOR */
       using Integrator::integrate;
-      void integrate();
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void integrate() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */
       void setStepSize(double dt_) { dt = dt_; }
       void setTheta(double theta_ ) { theta  = theta_; }
-      void setDriftCompensation(bool dc) { driftCompensation = dc; }
+      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
       /***************************************************/
 
-      /**
-       * \brief update of dynamic system necessary values concerning theta time stepping integrator
-       * \param dynamic system
-       * \param state vector
-       * \param time
-       */
-      void update(const fmatvec::Vec& z, double t);
-
-      /**
-       * \brief preintegration steps
-       * \param dynamic system
-       */
-      void preIntegrate();
-      
-      /**
-       * \brief integration steps
-       * \param dynamic system
-       * \param end time of integration
-       */
-      void subIntegrate(double tStop);
-
-      /**
-       * \brief postintegration steps
-       * \param dynamic system
-       */
-      void postIntegrate();
-
     private:
+      void resize();
+
       /**
        * \brief step size
        */
-      double dt;
+      double dt{1e-3};
 
       /**
        * \brief convex combination parameter between explicit (0) and implicit (1) Euler scheme
        */
-      double theta;
+      double theta{0.5};
 
       /**
        * \brief time and plot time
        */
-      double t, tPlot;
+      double t{0}, tPlot{0};
 
       /**
        * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
        */
-      int iter,step, integrationSteps, maxIter, sumIter;
+      int iter{0}, step{0}, integrationSteps{0}, maxIter{0}, sumIter{0};
 
       /**
        * \brief computing time counter
        */
-      double s0, time;
+      double s0{0}, time{0};
 
       /**
        * \brief plot step difference
        */
-      int stepPlot;
+      int stepPlot{0};
 
-      /**
-       * \brief state, position, velocity, order coordinate of dynamical system
-       */
-      fmatvec::Vec z, q, u, x;
-
+      /** tolerance for position constraints */
+      double gMax{-1};
       /**
        * \brief file stream for integration information
        */
       std::ofstream integPlot;
-
-      /**
-       * \brief flag for drift compensation
-       */
-      bool driftCompensation;    
   };
 
 }
 
-#endif /* _MU_TIME_STEPPING_INTEGRATOR_H_ */
-
+#endif /* _THETA_TIME_STEPPING_INTEGRATOR_H_ */

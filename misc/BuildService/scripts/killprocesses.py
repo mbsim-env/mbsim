@@ -14,10 +14,10 @@ def killCrashedProcess(name, timedelta):
       if curTime-startTime>timedelta:
         print("Killing program "+name+" with pid "+pid+" and all childs.")
         line=subprocess.check_output(["pstree", "-lAp", pid]).rstrip()
-        for p in re.sub("[^(]*\(([0-9]+)\)", r'\1 ', line).split():
+        for p in reversed(re.sub("[^(]*\(([0-9]+)\)", r'\1 ', line).split()):
           os.kill(int(p), signal.SIGTERM)
         time.sleep(10)
-        for p in re.sub("[^(]*\(([0-9]+)\)", r'\1 ', line).split():
+        for p in reversed(re.sub("[^(]*\(([0-9]+)\)", r'\1 ', line).split()):
           os.kill(int(p), 9)
   except:
     pass

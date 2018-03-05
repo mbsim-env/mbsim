@@ -76,7 +76,7 @@ namespace MBSimIntegrator {
       //! Convinent function: call setSystem(&sys) and integrate()
       void integrate(MBSim::DynamicSystemSolver& sys) { setSystem(&sys); integrate(); }
 
-      /*! Each class implemeting the Integrator::integrate function should call this function first.
+      /*! Each class implementing the Integrator::integrate function should call this function first.
        * This function does currently only some minor modification of the integrator data (like
        * end time) dependent on environment variables. This is used mainly for debugging purposes like
        * automatic valgrind runs with a very small tEnd time.

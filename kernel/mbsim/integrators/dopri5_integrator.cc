@@ -22,7 +22,7 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
-#include <mbsim/utils/utils.h>
+#include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
 #include "dopri5_integrator.h"
 #include <fstream>
@@ -41,9 +41,6 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, DOPRI5Integrator)
 
-  DOPRI5Integrator::DOPRI5Integrator()  {
-  }
-
   void DOPRI5Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<DOPRI5Integrator**>(&ipar[0]);
     Vec zd(*zSize, zd_);
@@ -56,10 +53,51 @@ namespace MBSimIntegrator {
   void DOPRI5Integrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
     auto self=*reinterpret_cast<DOPRI5Integrator**>(&ipar[0]);
 
-    while(*t >= self->tPlot) {
-      self->getSystem()->setTime(self->tPlot);
-      for(int i=1; i<=*n; i++)
-	self->getSystem()->getState()(i-1) = CONTD5(&i,&self->tPlot,con,icomp,nd);
+    double curTimeAndState = -1;
+    double tRoot = *t;
+    // root-finding
+    if(self->getSystem()->getsvSize()) {
+      self->getSystem()->setTime(*t);
+      curTimeAndState = *t;
+      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+      self->getSystem()->resetUpToDate();
+      self->shift = self->signChangedWRTsvLast(self->getSystem()->evalsv());
+      // if a root exists in the current step ...
+      if(self->shift) {
+        // ... search the first root and set step.second to this time
+        double dt = *t-*told;
+        while(dt>1e-10) {
+          dt/=2;
+          double tCheck = tRoot-dt;
+          self->getSystem()->setTime(tCheck);
+          curTimeAndState = tCheck;
+          for(int i=1; i<=*n; i++)
+            self->getSystem()->getState()(i-1) = CONTD5(&i,&tCheck,con,icomp,nd);
+          self->getSystem()->resetUpToDate();
+          if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
+            tRoot = tCheck;
+        }
+        if(curTimeAndState != tRoot) {
+          curTimeAndState = tRoot;
+          self->getSystem()->setTime(tRoot);
+          for(int i=1; i<=*n; i++)
+            self->getSystem()->getState()(i-1) = CONTD5(&i,&tRoot,con,icomp,nd);
+        }
+        self->getSystem()->resetUpToDate();
+        auto &sv = self->getSystem()->evalsv();
+        auto &jsv = self->getSystem()->getjsv();
+        for(int i=0; i<sv.size(); ++i)
+          jsv(i)=self->svLast(i)*sv(i)<0;
+      }
+    }
+
+    while(tRoot >= self->tPlot) {
+      if(curTimeAndState != self->tPlot) {
+        curTimeAndState = self->tPlot;
+        self->getSystem()->setTime(self->tPlot);
+        for(int i=1; i<=*n; i++)
+          self->getSystem()->getState()(i-1) = CONTD5(&i,&self->tPlot,con,icomp,nd);
+      }
       self->getSystem()->resetUpToDate();
       self->getSystem()->plot();
       if(self->output)
@@ -72,64 +110,111 @@ namespace MBSimIntegrator {
       if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
     }
+
+    if(self->shift) {
+      // shift the system
+      if(curTimeAndState != tRoot) {
+        self->getSystem()->setTime(tRoot);
+        for(int i=1; i<=*n; i++)
+          self->getSystem()->getState()(i-1) = CONTD5(&i,&tRoot,con,icomp,nd);
+      }
+      if(self->plotOnRoot) {
+        self->getSystem()->resetUpToDate();
+        self->getSystem()->plot();
+      }
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->shift();
+      if(self->plotOnRoot) {
+        self->getSystem()->resetUpToDate();
+        self->getSystem()->plot();
+      }
+      self->getSystem()->resetUpToDate();
+      self->svLast=self->getSystem()->evalsv();
+      *irtrn = -1;
+    }
+    else {
+      // check drift
+      if(self->getToleranceForPositionConstraints()>=0) {
+        self->getSystem()->setTime(*t);
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+        self->getSystem()->resetUpToDate();
+        if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
+          self->getSystem()->projectGeneralizedPositions(3);
+          self->getSystem()->projectGeneralizedVelocities(3);
+          *irtrn=-1;
+        }
+      }
+      else if(self->getToleranceForVelocityConstraints()>=0) {
+        self->getSystem()->setTime(*t);
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+        self->getSystem()->resetUpToDate();
+        if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
+          self->getSystem()->projectGeneralizedVelocities(3);
+          *irtrn=-1;
+        }
+      }
+    }
+  }
+
+  bool DOPRI5Integrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
+    for(int i=0; i<svStepEnd.size(); i++)
+      if(svLast(i)*svStepEnd(i)<0)
+        return true;
+    return false;
   }
 
   void DOPRI5Integrator::integrate() {
     debugInit();
 
-    int zSize=system->getzSize();
-    int nrDens = zSize;
+    int zSize = system->getzSize();
+
+    if(not zSize)
+      throw MBSimError("(DOPRI5Integrator::integrate): dimension of the system must be at least 1");
 
     double t = tStart;
 
     Vec z(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(DOPRI5Integrator::integrate): size of z0 does not match");
+        throw MBSimError("(DOPRI5Integrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
       z = system->evalz0();
 
-    if(aTol.size() == 0) 
+    if(aTol.size() == 0)
       aTol.resize(1,INIT,1e-6);
-    if(rTol.size() == 0) 
+    if(rTol.size() == 0)
       rTol.resize(1,INIT,1e-6);
 
-    assert(aTol.size() == rTol.size());
-
     int iTol;
-    if(aTol.size() == 1) {
-      iTol = 0; // Skalar
-    } else {
-      iTol = 1; // Vektor
-      assert (aTol.size() >= zSize);
+    if(aTol.size() == 1)
+      iTol = 0;
+    else {
+      iTol = 1;
+      if(aTol.size() != zSize)
+        throw MBSimError("(DOPRI5Integrator::integrate): size of aTol does not match, must be " + toStr(zSize));
     }
+    if(rTol.size() != aTol.size())
+      throw MBSimError("(DOPRI5Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
-    int out = 2; // TODO
+    int out = 2; // dense output is performed in plot
 
     double rPar;
     int iPar[sizeof(void*)/sizeof(int)+1]; // store this at iPar[0..]
     DOPRI5Integrator *self=this;
     memcpy(&iPar[0], &self, sizeof(void*));
 
-    int lWork = 2*(8*zSize+5*nrDens+21);
-    int liWork = 2*(nrDens+21);
+    int lWork = 2*(8*zSize+5*zSize+21);
+    int liWork = 2*(zSize+21);
     VecInt iWork(liWork);
     Vec work(lWork);
     if(dtMax>0)
-      work(5)=dtMax;
-    work(6)=dt0;
+      work(5) = dtMax; // maximum step size
+    work(6) = dt0; // initial step size
+    iWork(0) = maxSteps; // maximum number of steps
+    iWork(4) = zSize;
 
-    //Maximum Step Numbers
-    iWork(0)=maxSteps; 
-    // if(warnLevel)
-    //   iWork(2) = warnLevel;
-    // else
-    //   iWork(2) = -1;
-
-    iWork(4) = nrDens;
-    
     int idid;
 
     tPlot = t + dtPlot;
@@ -138,7 +223,9 @@ namespace MBSimIntegrator {
     system->setTime(t);
     system->setState(z);
     system->resetUpToDate();
+    system->computeInitialCondition();
     system->plot();
+    svLast = system->evalsv();
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
@@ -146,8 +233,14 @@ namespace MBSimIntegrator {
 
     s0 = clock();
 
-    DOPRI5(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
-	work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
+    while(t<tEnd-epsroot) {
+      DOPRI5(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
+          work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
+
+      if(shift) work(6) = dt0;
+      t = system->getTime();
+      z = system->getState();
+    }
 
     if(plotIntegrationData) integPlot.close();
 
@@ -177,10 +270,16 @@ namespace MBSimIntegrator {
     if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if(e) setMaximalStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalNumberOfSteps");
-    if(e) setMaxStepNumber(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    if(e) setMaximumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    if(e) setStepLimit(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
+    if(e) setPlotOnRoot(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
 }

@@ -36,7 +36,6 @@ namespace MBSim {
   class Constraint;
   class ModellingInterface;
   class Contact;
-  class InverseKineticsJoint;
   class Observer;
 
   /**
@@ -72,25 +71,32 @@ namespace MBSim {
       virtual void updateT();
       virtual void updateh(int k=0);
       virtual void updateM();
+      virtual void updateLLM();
       virtual void updatedq();
-      virtual void updatezd() = 0;
-      virtual void updatedu() = 0;
+      virtual void updatedu();
+      virtual void updatedx();
+      virtual void updatezd();
+      virtual void updatewb();
+      virtual void updateW(int j=0);
+      virtual void updateV(int j=0);
+      virtual void updateg();
+      virtual void updategd();
+      virtual void updateStopVector();
+      virtual void updateLinkStatus();
+      virtual void updateLinkStatusReg();
+      virtual void updateWInverseKinetics();
+      virtual void updatebInverseKinetics();
       virtual void sethSize(int hSize_, int j=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }
       virtual int getuSize(int i=0) const { return uSize[i]; }
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
-      //virtual int getqInd(DynamicSystem* sys);
       virtual int getuInd(int i=0) { return uInd[i]; }
-      //virtual int getuInd(DynamicSystem* sys, int i=0);
-      //virtual void setqInd(int qInd_) { qInd = qInd_; }
-      //virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       virtual void setqInd(int qInd_);
       virtual void setuInd(int uInd_, int j=0);
       virtual void sethInd(int hInd_, int j=0);
       virtual void setxInd(int xInd_);
-      //virtual int gethInd(DynamicSystem* sys, int i=0); 
       virtual const fmatvec::Vec& getq() const { return q; };
       virtual fmatvec::Vec& getq() { return q; };
       virtual const fmatvec::Vec& getu() const { return u; };
@@ -102,19 +108,6 @@ namespace MBSim {
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override;
 
-      virtual void updatewb();
-      virtual void updateW(int j=0);
-      virtual void updateV(int j=0);
-      virtual void updateg();
-      virtual void updategd();
-      virtual void updateStopVector();
-      virtual void updateLinkStatus();
-      virtual void updateLinkStatusReg();
-
-      virtual void updateWInverseKinetics();
-      virtual void updatebInverseKinetics();
-
-      virtual void updatedx();
       virtual void calcxSize();
       const fmatvec::Vec& getx() const { return x; };
       fmatvec::Vec& getx() { return x; };
@@ -134,12 +127,6 @@ namespace MBSim {
       void plot() override;
       void plotAtSpecialEvent() override;
       /*****************************************************/
-
-      /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \brief compute Cholesky decomposition of mass matrix TODO necessary?
-       */
-      virtual void updateLLM() = 0;
 
       /**
        * \brief solve contact equations with single step fixed point scheme
@@ -283,8 +270,6 @@ namespace MBSim {
       virtual void setsvInd(int svInd_);
       void setLinkStatusInd(int LinkStatusInd_) {LinkStatusInd = LinkStatusInd_;};      
       void setLinkStatusRegInd(int LinkStatusRegInd_) {LinkStatusRegInd = LinkStatusRegInd_;};
-
-      int getzSize() const { return qSize + uSize[0] + xSize; }
 
       void setqSize(int qSize_) { qSize = qSize_; }
       void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
@@ -613,6 +598,11 @@ namespace MBSim {
       /** 
        * \brief rearrange vector of active setvalued links
        */
+      void setUpObjectsWithNonConstantMassMatrix();
+
+      /**
+       * \brief rearrange vector of active setvalued links
+       */
       void setUpActiveLinks();
 
       /**
@@ -773,6 +763,7 @@ namespace MBSim {
        * \brief container for possible ingredients
        */
       std::vector<Object*> object;
+      std::vector<Object*> objectWithNonConstantMassMatrix;
       std::vector<Link*> link;
       std::vector<Link*> linkSingleValued;
       std::vector<Link*> linkSetValued;
@@ -781,7 +772,6 @@ namespace MBSim {
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> inverseKineticsLink;
       std::vector<Observer*> observer;
-      std::vector<Link*> linkSmoothPart;
       std::vector< std::vector<Element*> > elementOrdered;
       std::vector< std::vector<Link*> > linkOrdered;
       std::vector<Constraint*> constraint;

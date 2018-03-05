@@ -19,7 +19,8 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
-#include "euler_explicit_integrator.h"
+#include "implicit_euler_integrator.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 #include <ctime>
 
 #ifndef NO_ISO_14882
@@ -33,19 +34,43 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, EulerExplicitIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, ImplicitEulerIntegrator)
 
-  EulerExplicitIntegrator::EulerExplicitIntegrator()  {
+  Vec ImplicitEulerIntegrator::ResiduumFull::operator()(const Vec &z) {
+    Vec res;
+    sys->setState(z);
+    sys->resetUpToDate();
+    res =  z - zk - sys->evalzd()*dt;
+    return res;
+  } 
+
+  Vec ImplicitEulerIntegrator::ResiduumReduced::operator()(const Vec &ux) {
+    Vec res;
+    Vec z(sys->getzSize(),NONINIT);
+    z(0,sys->getqSize()-1) = zk(0,sys->getqSize()-1) + ux(0,sys->getuSize()-1)*dt;
+    z(sys->getqSize(),sys->getzSize()-1) = ux;
+    sys->setState(z);
+    sys->resetUpToDate();
+    res =  ux - zk(sys->getqSize(),sys->getzSize()-1) - sys->evalzd()(sys->getqSize(),sys->getzSize()-1)*dt;
+    return res;
   }
 
-  void EulerExplicitIntegrator::preIntegrate() {
+  void ImplicitEulerIntegrator::preIntegrate() {
     debugInit();
     assert(dtPlot >= dt);
 
+    if(reduced)
+      res = new ResiduumReduced(system,dt);
+    else
+      res = new ResiduumFull(system,dt);
+
     system->setTime(tStart);
 
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != system->getzSize())
+        throw MBSimError("(ImplicitEulerIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
+    }
     else
       system->evalz0();
 
@@ -63,8 +88,11 @@ namespace MBSimIntegrator {
     time = 0;
   }
 
-  void EulerExplicitIntegrator::subIntegrate(double tStop) { 
+  void ImplicitEulerIntegrator::subIntegrate(double tStop) {
+    MultiDimNewtonMethod newton(res);
+    // newton.setLinearAlgebra(1);
     while(system->getTime()<tStop) { // time loop
+      res->setState(system->getState());
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
@@ -78,13 +106,24 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
       }
 
-      system->resetUpToDate();
-      system->getState() += system->evalzd()*dt;
       system->getTime() += dt;
+      if(reduced) {
+        Vec qOld;
+        qOld = system->getq();
+        system->getState()(system->getqSize(),system->getzSize()-1) = newton.solve(system->getState()(system->getqSize(),system->getzSize()-1));
+        system->getq() = qOld + system->getu()*dt;
+      }
+      else
+        system->getState() = newton.solve(system->getState());
+      if(newton.getInfo() != 0)
+        throw MBSimError("(ImplicitEulerIntegrator::subIntegrate): computation of new state failed!");
     }
   }
 
-  void EulerExplicitIntegrator::postIntegrate() {
+  void ImplicitEulerIntegrator::postIntegrate() {
+
+    delete res;
+
     if(plotIntegrationData) integPlot.close();
 
     if(writeIntegrationSummary) {
@@ -98,17 +137,19 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-  void EulerExplicitIntegrator::integrate() {
+  void ImplicitEulerIntegrator::integrate() {
     preIntegrate();
     subIntegrate(tEnd);
     postIntegrate();
   }
 
-  void EulerExplicitIntegrator::initializeUsingXML(DOMElement *element) {
+  void ImplicitEulerIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
     if(e) setStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
+    if(e) setReducedForm((E(e)->getText<bool>()));
   }
 
 }

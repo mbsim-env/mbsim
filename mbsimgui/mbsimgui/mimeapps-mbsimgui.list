@@ -1,0 +1,3 @@
+[Default Applications]
+application/vnd.mbsim-env.mbsimflatxml=mbsim-env.org.mbsimgui.desktop;
+application/vnd.mbsim-env.mbsimxml=mbsim-env.org.mbsimgui.desktop;

@@ -28,7 +28,7 @@ int main (int argc, char* argv[])
    else {
 
    integrator = new RADAU5Integrator;
-   static_cast<RADAU5Integrator*>(integrator)->setMaximalStepSize(1e-5);
+   static_cast<RADAU5Integrator*>(integrator)->setMaximumStepSize(1e-5);
    static_cast<RADAU5Integrator*>(integrator)->setRelativeTolerance(1e-10);
    }
 

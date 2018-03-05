@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2014 MBSim Development Team
+/* Copyright (C) 2004-2018 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -59,7 +59,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -238,10 +238,14 @@ namespace MBSim {
         sethSize(uSize[i], i);
         sethInd(0, i);
       }
+
+      setUpObjectsWithNonConstantMassMatrix();
       setUpLinks(); // is needed by calcgSize()
 
       calcxSize();
       setxInd(0);
+
+      zSize = qSize + uSize[0] + xSize;
 
       calclaInverseKineticsSize();
       calcbInverseKineticsSize();
@@ -305,7 +309,7 @@ namespace MBSim {
       LaParent.resize(getlaSize());
       rFactorParent.resize(getlaSize());
       sParent.resize(getlaSize());
-      if (impactSolver == RootFinding)
+      if (impactSolver == rootfinding)
         resParent.resize(getlaSize());
       gParent.resize(getgSize());
       gdParent.resize(getgdSize());
@@ -360,7 +364,7 @@ namespace MBSim {
       updateWInverseKineticsRef(WInverseKineticsParent);
       updatebInverseKineticsRef(bInverseKineticsParent);
 
-      if (impactSolver == RootFinding)
+      if (impactSolver == rootfinding)
         updateresRef(resParent);
       updaterFactorRef(rFactorParent);
 
@@ -368,16 +372,14 @@ namespace MBSim {
       msg(Info) << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
       if (contactSolver == GaussSeidel)
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsGaussSeidel;
-      else if (contactSolver == LinearEquations) {
+      else if (contactSolver == direct) {
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsLinearEquations;
         msg(Warn) << "solveLL is only valid for bilateral constrained systems!" << endl;
       }
-      else if (contactSolver == FixedPointSingle)
+      else if (contactSolver == fixedpoint)
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
-      else if (contactSolver == RootFinding) {
-        msg(Warn) << "RootFinding solver is BUGGY at least if there is friction!" << endl;
+      else if (contactSolver == rootfinding)
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
-      }
       else
         THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown contact solver");
 
@@ -385,16 +387,14 @@ namespace MBSim {
       msg(Info) << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
       if (impactSolver == GaussSeidel)
         solveImpacts_ = &DynamicSystemSolver::solveImpactsGaussSeidel;
-      else if (impactSolver == LinearEquations) {
+      else if (impactSolver == direct) {
         solveImpacts_ = &DynamicSystemSolver::solveImpactsLinearEquations;
         msg(Warn) << "solveLL is only valid for bilateral constrained systems!" << endl;
       }
-      else if (impactSolver == FixedPointSingle)
+      else if (impactSolver == fixedpoint)
         solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
-      else if (impactSolver == RootFinding) {
-        msg(Warn) << "RootFinding solver is BUGGY at least if there is friction!" << endl;
+      else if (impactSolver == rootfinding)
         solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
-      }
       else
         THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown impact solver");
 
@@ -570,7 +570,7 @@ namespace MBSim {
         SymMat J = SymMat(JTJ(Jprox) + lmParm * I);
         dx >> slvLL(J, Jprox.T() * res0);
       }
-      else if (linAlg == PseudoInverse)
+      else if (linAlg == pseudoinverse)
         dx >> slvLS(Jprox, res0);
       else
         THROW_MBSIMERROR("Internal error");
@@ -646,7 +646,7 @@ namespace MBSim {
         SymMat J = SymMat(JTJ(Jprox) + lmParm * I);
         dx >> slvLL(J, Jprox.T() * res0);
       }
-      else if (linAlg == PseudoInverse)
+      else if (linAlg == pseudoinverse)
         dx >> slvLS(Jprox, res0);
       else
         THROW_MBSIMERROR("Internal error");
@@ -972,21 +972,6 @@ namespace MBSim {
       (*i)->decreaserFactors();
   }
 
-  void DynamicSystemSolver::resize_() {
-      calcgdSize(2); // contacts which stay closed
-      calclaSize(2); // contacts which stay closed
-      calcrFactorSize(2); // contacts which stay closed
-
-      updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
-      updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
-      updatelaRef(laParent(0, laSize - 1));
-      updateLaRef(LaParent(0, laSize - 1));
-      updategdRef(gdParent(0, gdSize - 1));
-      if (impactSolver == RootFinding)
-        updateresRef(resParent(0, laSize - 1));
-      updaterFactorRef(rFactorParent(0, rFactorSize - 1));
-  }
-
   void DynamicSystemSolver::getLinkStatus(VecInt &LinkStatusExt) {
     if (LinkStatusExt.size() < LinkStatusSize)
       LinkStatusExt.resize(LinkStatusSize);
@@ -1055,10 +1040,12 @@ namespace MBSim {
     calccorrSize(corrID);
     updatecorrRef(corrParent(0, corrSize - 1));
     updategRef(gParent(0, gSize - 1));
+    updg = true;
     updatecorr(corrID);
     Vec nu(getuSize());
     calclaSize(laID);
     updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
+    updW[0] = true;
     SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
     Mat T = evalT();
     int iter = 0;
@@ -1067,13 +1054,13 @@ namespace MBSim {
         msg(Warn) << endl << "Error in DynamicSystemSolver: projection of generalized positions failed at t = " << t << "!" << endl;
         break;
       }
+      if(fullUpdate) Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
       Vec mu = slvLS(Gv, -evalg() + getW(0,false).T() * nu + corr);
       Vec dnu = slvLLFac(getLLM(false), getW(0,false) * mu) - nu;
       nu += dnu;
       q += T * dnu;
       resetUpToDate();
-      if(fullUpdate) Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
-   }
+    }
     calclaSize(3);
     updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
     calcgSize(0);
@@ -1102,10 +1089,12 @@ namespace MBSim {
       calcgdSize(gdID); // IH
       updatecorrRef(corrParent(0, corrSize - 1));
       updategdRef(gdParent(0, gdSize - 1));
+      updgd = true;
       updatecorr(corrID);
 
       calclaSize(gdID);
       updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
+      updW[0] = true;
 
       if (laSize) {
         SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
@@ -1197,33 +1186,25 @@ namespace MBSim {
 
     if (impactSolver == GaussSeidel)
       info << "GaussSeidel";
-    else if (impactSolver == LinearEquations)
-      info << "LinearEquations";
-    else if (impactSolver == FixedPointSingle)
-      info << "FixedPointSingle";
-    else if (impactSolver == FixedPointTotal)
-      info << "FixedPointTotal";
-    else if (impactSolver == RootFinding)
-      info << "RootFinding";
+    else if (impactSolver == direct)
+      info << "direct";
+    else if (impactSolver == fixedpoint)
+      info << "fixedpoint";
+    else if (impactSolver == rootfinding)
+      info << "rootfinding";
 
     // Gauss-Seidel & solveLL do not depend on the following ...
-    if (impactSolver != GaussSeidel && impactSolver != LinearEquations) {
+    if (impactSolver != GaussSeidel && impactSolver != direct) {
       info << "(";
 
-      // r-Factor strategy
-      if (strategy == global)
-        info << "global";
-      else if (strategy == local)
-        info << "local";
-
       // linear algebra for RootFinding only
-      if (impactSolver == RootFinding) {
+      if (impactSolver == rootfinding) {
         info << ",";
         if (linAlg == LUDecomposition)
           info << "LU";
         else if (linAlg == LevenbergMarquardt)
           info << "LM";
-        else if (linAlg == PseudoInverse)
+        else if (linAlg == pseudoinverse)
           info << "PI";
       }
       info << ")";
@@ -1322,10 +1303,11 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatezRef(const Vec &zParent) {
+    z >> zParent(0, getzSize()-1);
 
-    q >> (zParent(0, qSize - 1));
-    u >> (zParent(qSize, qSize + uSize[0] - 1));
-    x >> (zParent(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
+    q >> (z(0, qSize - 1));
+    u >> (z(qSize, qSize + uSize[0] - 1));
+    x >> (z(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
 
     updateqRef(q);
     updateuRef(u);
@@ -1333,38 +1315,17 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatezdRef(const Vec &zdParent) {
+    zd >> zdParent(0, getzSize()-1);
 
-    qd >> (zdParent(0, qSize - 1));
-    ud >> (zdParent(qSize, qSize + uSize[0] - 1));
-    xd >> (zdParent(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
+    qd >> (zd(0, qSize - 1));
+    ud >> (zd(qSize, qSize + uSize[0] - 1));
+    xd >> (zd(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
 
     updateqdRef(qd);
     updateudRef(ud);
     updatexdRef(xd);
 
     updateudallRef(ud);
-  }
-
-  void DynamicSystemSolver::updaterFactors() {
-    if (strategy == global) {
-      //     double rFac;
-      //     if(G.size() == 1) rFac = 1./G(0,0);
-      //     else {
-      //       Vec eta = eigvalSel(G,1,G.size());
-      //       double etaMax = eta(G.size()-1);
-      //       double etaMin = eta(0);
-      //       int i=1;
-      //       while(abs(etaMin) < 1e-8 && i<G.size()) etaMin = eta(i++);
-      //       rFac = 2./(etaMax + etaMin);
-      //     }
-      //     rFactor.init(rFac);
-
-      THROW_MBSIMERROR("(DynamicSystemSolver::updaterFactors()): Global r-Factor strategy currently not not available.");
-    }
-    else if (strategy == local)
-      Group::updaterFactors();
-    else
-      THROW_MBSIMERROR("(DynamicSystemSolver::updaterFactors()): Unknown strategy.");
   }
 
   void DynamicSystemSolver::constructor() {
@@ -1390,31 +1351,36 @@ namespace MBSim {
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"constraintSolver");
     if (e) {
-      Solver solver=FixedPointSingle;
       std::string str=X()%E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
-      if(str=="FixedPointTotal") solver=FixedPointTotal;
-      else if(str=="FixedPointSingle") solver=FixedPointSingle;
-      else if(str=="GaussSeidel") solver=GaussSeidel;
-      else if(str=="LinearEquations") solver=LinearEquations;
-      else if(str=="RootFinding") solver=RootFinding;
-      setConstraintSolver(solver);
+      if(str=="fixedpoint") contactSolver=fixedpoint;
+      else if(str=="GaussSeidel") contactSolver=GaussSeidel;
+      else if(str=="direct") contactSolver=direct;
+      else if(str=="rootfinding") contactSolver=rootfinding;
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"impactSolver");
     if (e) {
-      Solver solver=FixedPointSingle;
       std::string str=X()%E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
-      if(str=="FixedPointTotal") solver=FixedPointTotal;
-      else if(str=="FixedPointSingle") solver=FixedPointSingle;
-      else if(str=="GaussSeidel") solver=GaussSeidel;
-      else if(str=="LinearEquations") solver=LinearEquations;
-      else if(str=="RootFinding") solver=RootFinding;
-      setImpactSolver(solver);
+      if(str=="fixedpoint") impactSolver=fixedpoint;
+      else if(str=="GaussSeidel") impactSolver=GaussSeidel;
+      else if(str=="direct") impactSolver=direct;
+      else if(str=="rootfinding") impactSolver=rootfinding;
     }
-    e = E(element)->getFirstElementChildNamed(MBSIM%"numberOfMaximalIterations");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"maximumIterations");
     if (e)
-      setMaxIter(E(e)->getText<int>());
+      setMaximumIterations(E(e)->getText<int>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
+    if (e)
+      setNumericalJacobian(E(e)->getText<bool>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"linearAlgebra");
+    if (e) {
+      std::string str=X()%E(e)->getFirstTextChild()->getData();
+      str=str.substr(1,str.length()-2);
+      if(str=="LUDecomposition") linAlg=LUDecomposition;
+      else if(str=="LevenbergMarquardt") linAlg=LevenbergMarquardt;
+      else if(str=="pseudoinverse") linAlg=pseudoinverse;
+    }
     e = E(element)->getFirstElementChildNamed(MBSIM%"projectionTolerance");
     if (e)
       setProjectionTolerance(E(e)->getText<double>());
@@ -1626,7 +1592,7 @@ namespace MBSim {
       solveDirectly = true;
       updatezd();
     }
-    return zdParent;
+    return zd;
   }
 
   void DynamicSystemSolver::plot() {
@@ -1650,7 +1616,7 @@ namespace MBSim {
       projectGeneralizedPositions(1, true);
       projectGeneralizedVelocities(1);
     }
-    return zParent;
+    return z;
   }
 
 }

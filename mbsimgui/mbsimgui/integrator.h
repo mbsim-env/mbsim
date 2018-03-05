@@ -43,10 +43,40 @@ namespace MBSimGUI {
       IntegratorPropertyDialog* createPropertyDialog() override { return new DOPRI5IntegratorPropertyDialog(this); }
   };
 
+  class DOP853Integrator : public Integrator {
+    public:
+      QString getType() const override { return "DOP853Integrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new DOP853IntegratorPropertyDialog(this); }
+  };
+
+  class ODEXIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "ODEXIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new ODEXIntegratorPropertyDialog(this); }
+  };
+
   class RADAU5Integrator : public Integrator {
     public:
       QString getType() const override { return "RADAU5Integrator"; }
       IntegratorPropertyDialog* createPropertyDialog() override { return new RADAU5IntegratorPropertyDialog(this); }
+  };
+
+  class RADAUIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "RADAUIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new RADAUIntegratorPropertyDialog(this); }
+  };
+
+  class RODASIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "RODASIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new RODASIntegratorPropertyDialog(this); }
+  };
+
+  class SEULEXIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "SEULEXIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new SEULEXIntegratorPropertyDialog(this); }
   };
 
   class LSODEIntegrator : public Integrator {
@@ -55,10 +85,40 @@ namespace MBSimGUI {
       IntegratorPropertyDialog* createPropertyDialog() override { return new LSODEIntegratorPropertyDialog(this); }
   };
 
+  class LSODAIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "LSODAIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new LSODAIntegratorPropertyDialog(this); }
+  };
+
   class LSODARIntegrator : public Integrator {
     public:
       QString getType() const override { return "LSODARIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() override { return new LSODARIntegratorPropertyDialog(this); }
+  };
+
+  class LSODKRIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "LSODKRIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new LSODKRIntegratorPropertyDialog(this); }
+  };
+
+  class LSODIIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "LSODIIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new LSODIIntegratorPropertyDialog(this); }
+  };
+
+  class DASPKIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "DASPKIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new DASPKIntegratorPropertyDialog(this); }
+  };
+
+  class DASKRIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "DASKRIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new DASKRIntegratorPropertyDialog(this); }
   };
 
   class TimeSteppingIntegrator : public Integrator {
@@ -67,10 +127,34 @@ namespace MBSimGUI {
       IntegratorPropertyDialog* createPropertyDialog() override { return new TimeSteppingIntegratorPropertyDialog(this); }
   };
 
-  class EulerExplicitIntegrator : public Integrator {
+  class ThetaTimeSteppingIntegrator : public Integrator {
     public:
-      QString getType() const override { return "EulerExplicitIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new EulerExplicitIntegratorPropertyDialog(this); }
+      QString getType() const override { return "ThetaTimeSteppingIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new ThetaTimeSteppingIntegratorPropertyDialog(this); }
+  };
+
+  class TimeSteppingSSCIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "TimeSteppingSSCIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new TimeSteppingSSCIntegratorPropertyDialog(this); }
+  };
+
+  class HETS2Integrator : public Integrator {
+    public:
+      QString getType() const override { return "HETS2Integrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new HETS2IntegratorPropertyDialog(this); }
+  };
+
+  class ExplicitEulerIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "ExplicitEulerIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new ExplicitEulerIntegratorPropertyDialog(this); }
+  };
+
+  class ImplicitEulerIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "ImplicitEulerIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new ImplicitEulerIntegratorPropertyDialog(this); }
   };
 
   class RKSuiteIntegrator : public Integrator {
@@ -97,6 +181,11 @@ namespace MBSimGUI {
       IntegratorPropertyDialog* createPropertyDialog() override { return new BoostOdeintDOS_Rosenbrock4PropertyDialog(this); }
   };
 
+  class QuasiStaticIntegrator : public Integrator {
+    public:
+      QString getType() const override { return "QuasiStaticIntegrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new QuasiStaticIntegratorPropertyDialog(this); }
+  };
 
 }
 

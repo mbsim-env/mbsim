@@ -21,7 +21,7 @@
 #define _INTEGRATORS_H_
 
 #include "lsodar_integrator.h"
-#include "lsoder_integrator.h"
+#include "lsodkr_integrator.h"
 #include "lsode_integrator.h"
 #include "rksuite_integrator.h"
 #include "dopri5_integrator.h"
@@ -29,11 +29,12 @@
 #include "odex_integrator.h"
 #include "radau5_integrator.h"
 #include "time_stepping_integrator.h"
+#include "theta_time_stepping_integrator.h"
 #include "time_stepping_ssc_integrator.h"
 //#include "auto_time_stepping_ssc_integrator.h"
 #include "hets2_integrator.h"
-//#include "theta_time_stepping_integrator.h"
-#include "euler_explicit_integrator.h"
+#include "explicit_euler_integrator.h"
+#include "implicit_euler_integrator.h"
 #include "quasi_static_integrator.h"
 //#include "daspk_integrator.h"
 

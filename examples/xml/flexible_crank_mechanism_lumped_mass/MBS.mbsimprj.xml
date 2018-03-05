@@ -328,13 +328,13 @@
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
+    <method>'stiff'</method>
     <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
     <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
     <initialStepSize unit="s">0</initialStepSize>
-    <maximalStepSize unit="s">0</maximalStepSize>
-    <minimalStepSize unit="s">0</minimalStepSize>
-    <numberOfMaximalSteps>0</numberOfMaximalSteps>
-    <stiffModus>1</stiffModus>
+    <maximumStepSize unit="s">0</maximumStepSize>
+    <minimumStepSize unit="s">0</minimumStepSize>
+    <stepLimit>0</stepLimit>
   </LSODEIntegrator>
 
 </MBSimProject>

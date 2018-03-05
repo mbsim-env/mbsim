@@ -34,6 +34,7 @@
             <axisOfRotation>[0;0;1]</axisOfRotation>
           </RotationAboutFixedAxis>
         </stateDependentRotation>
+        <bodyFixedRepresentationOfAngularVelocity>true</bodyFixedRepresentationOfAngularVelocity>
         <frames>
           <FixedRelativeFrame name="PunktO">
             <relativePosition>[0;0.2;0]</relativePosition>
@@ -75,6 +76,7 @@
             <axisOfRotation>[0;0;1]</axisOfRotation>
           </RotationAboutFixedAxis>
         </stateDependentRotation>
+        <bodyFixedRepresentationOfAngularVelocity>true</bodyFixedRepresentationOfAngularVelocity>
         <frames>
           <FixedRelativeFrame name="Punkt">
             <relativePosition>[0;0.2;0]</relativePosition>
@@ -140,6 +142,6 @@
     <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
     <relativeToleranceScalar>1e-6</relativeToleranceScalar>
     <initialStepSize>0</initialStepSize>
-    <maximalStepSize>1e-1</maximalStepSize>
+    <maximumStepSize>1e-1</maximumStepSize>
   </DOPRI5Integrator>
 </MBSimProject>

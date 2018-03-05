@@ -42,8 +42,6 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, TimeSteppingIntegrator)
 
-  TimeSteppingIntegrator::TimeSteppingIntegrator()  {}
-
   void TimeSteppingIntegrator::preIntegrate() {
     debugInit();
     // initialisation
@@ -53,15 +51,18 @@ namespace MBSimIntegrator {
 
     system->setStepSize(dt);
 
-    if(z0.size())
+    if(z0.size()) {
+      if(z0.size() != system->getzSize())
+        throw MBSimError("(TimeSteppingIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
+    }
     else
       system->evalz0();
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
 
-    stepPlot =(int) (dtPlot/dt + 0.5);
+    stepPlot = (int) (dtPlot/dt + 0.5);
     if(fabs(stepPlot*dt - dtPlot) > dt*dt) {
       cout << "WARNING: Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
     }
@@ -74,7 +75,10 @@ namespace MBSimIntegrator {
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
-        if(driftCompensation) system->projectGeneralizedPositions(0);
+        system->setla(system->getLa(false)/dt);
+        system->setqd(system->getdq(false)/dt);
+        system->setud(system->getdu(false)/dt);
+        system->setxd(system->getdx(false)/dt);
         system->setUpdatela(false);
         system->setUpdateLa(false);
         system->setUpdatezd(false);
@@ -92,7 +96,10 @@ namespace MBSimIntegrator {
       system->resetUpToDate();
 
       system->checkActive(1);
-      if (system->gActiveChanged()) system->resize_();
+      if (system->gActiveChanged()) resize();
+
+      if(gMax>=0 and system->positionDriftCompensationNeeded(gMax))
+        system->projectGeneralizedPositions(3);
 
       system->getbi(false) << system->evalgd() + system->evalW().T()*slvLLFac(system->evalLLM(),system->evalh())*dt;
       system->setUpdatebi(false);
@@ -100,16 +107,10 @@ namespace MBSimIntegrator {
       system->getu() += system->evaldu();
       system->getx() += system->evaldx();
 
-      system->setla(system->getLa()/dt);
-      system->setqd(system->getdq(false)/dt);
-      system->setud(system->getdu(false)/dt);
-      system->setxd(system->getdx(false)/dt);
-
       system->resetUpToDate();
 
       if(system->getIterI()>maxIter) maxIter = system->getIterI();
       sumIter += system->getIterI();
-
     }
   }
 
@@ -150,6 +151,23 @@ namespace MBSimIntegrator {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
     if(e) setStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
+  }
+
+  void TimeSteppingIntegrator::resize() {
+    system->calcgdSize(2); // contacts which stay closed
+    system->calclaSize(2); // contacts which stay closed
+    system->calcrFactorSize(2); // contacts which stay closed
+
+    system->updateWRef(system->getWParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
+    system->updateVRef(system->getVParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
+    system->updatelaRef(system->getlaParent()(0,system->getlaSize()-1));
+    system->updateLaRef(system->getLaParent()(0,system->getlaSize()-1));
+    system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
+    if (system->getImpactSolver() == DynamicSystemSolver::rootfinding)
+      system->updateresRef(system->getresParent()(0,system->getlaSize()-1));
+    system->updaterFactorRef(system->getrFactorParent()(0,system->getrFactorSize()-1));
   }
 
 }

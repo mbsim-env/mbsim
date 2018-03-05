@@ -23,7 +23,6 @@
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
-#include <mbsim/utils/utils.h>
 #include "fortran/fortran_wrapper.h"
 #include "lsode_integrator.h"
 #include <fstream>
@@ -44,9 +43,6 @@ namespace MBSimIntegrator {
 
   bool odePackInUse = false;
 
-  LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), maxSteps(10000), stiff(false) {
-  }
-
   void LSODEIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
     auto self=*reinterpret_cast<LSODEIntegrator**>(&neq[1]);
     Vec zd(neq[0], zd_);
@@ -64,6 +60,10 @@ namespace MBSimIntegrator {
     odePackInUse = true;
 
     int zSize=system->getzSize();
+
+    if(not zSize)
+      throw MBSimError("(LSODEIntegrator::integrate): dimension of the system must be at least 1");
+
     int neq[1+sizeof(void*)/sizeof(int)+1];
     neq[0]=zSize;
     LSODEIntegrator *self=this;
@@ -71,34 +71,49 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(LSODEIntegrator::integrate): size of z0 does not match");
+        throw MBSimError("(LSODEIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       system->setState(z0);
     }
     else
       system->evalz0();
 
     double t = tStart;
-    double tPlot = min(tEnd,t + dtPlot);
+    double tPlot = min(tEnd, t+dtPlot);
 
-    int iTol; 
-    if(aTol.size() == 0) 
+    if(aTol.size() == 0)
       aTol.resize(1,INIT,1e-6);
-    if(aTol.size() == 1) {
-      iTol = 1; // Skalar
-    } else {
-      iTol = 2; // Vektor
-      assert (aTol.size() >= zSize);
+    if(rTol.size() == 0)
+      rTol.resize(1,INIT,1e-6);
+
+    int iTol;
+    if(rTol.size() == 1) {
+      if(aTol.size() == 1)
+        iTol = 1;
+      else {
+        iTol = 2;
+        if(aTol.size() != zSize)
+          throw MBSimError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+      }
+    }
+    else {
+      if(aTol.size() == 1)
+        iTol = 3;
+      else {
+        iTol = 4;
+        if(aTol.size() != zSize)
+          throw MBSimError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+      }
+      if(rTol.size() != zSize)
+        throw MBSimError("(LSODEIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
     }
 
-//    int i, one=1, zero=0, two=2, istate=1;
     int one=1, istate=1;
-    int nsv=system->getsvSize();
-    int lrWork = (22+zSize*max(16,zSize+9)+3*nsv)*2;
+    int lrWork = 2*(22+9*zSize+zSize*zSize);
     Vec rWork(lrWork);
-    rWork(4) = dt0; // integrator chooses the step size (dont use dt0)
+    rWork(4) = dt0;
     rWork(5) = dtMax;
     rWork(6) = dtMin;
-    int liWork=(20+zSize)                             *10;//////////////;
+    int liWork = 2*(20+zSize);
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
@@ -119,21 +134,13 @@ namespace MBSimIntegrator {
       integPlot << "#1 calculation time [s]:" << endl;
     }
 
-    int MF;
-    if(stiff) 
-      MF = 22; // Stiff (BDF) method, internally generated full Jacobian.
-    else
-      MF = 10; // Nonstiff (Adams) method, no Jacobian used.
-
-    VecInt jsv(nsv);  
-//    bool donedrift;
+    int MF = method;
 
     cout.setf(ios::scientific, ios::floatfield);
-    while(t<tEnd) {
-      DLSODE (fzdot, neq, system->getState()(), &t, &tPlot, &iTol, &rTol, aTol(),
-        &one, &istate, &one, rWork(), &lrWork, iWork(), 
-        &liWork, 0, &MF);
-      if(istate==2 || fabs(t-tPlot)<epsroot) {
+    while(t<tEnd-epsroot) {
+      DLSODE(fzdot, neq, system->getState()(), &t, &tPlot, &iTol, rTol(), aTol(),
+          &one, &istate, &one, rWork(), &lrWork, iWork(), &liWork, 0, &MF);
+      if(istate==2 or istate==1) {
         system->setTime(t);
 //        system->setState(z); Not needed as the integrator uses the state of the system
         system->resetUpToDate();
@@ -142,11 +149,22 @@ namespace MBSimIntegrator {
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1; 
+        s0 = s1;
         if(plotIntegrationData) integPlot<< t << " " << rWork(10) << " " << time << endl;
-        tPlot = min(tEnd,tPlot + dtPlot);
+        tPlot = min(tEnd, tPlot+dtPlot);
+
+        // check drift
+        if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+          system->projectGeneralizedPositions(3);
+          system->projectGeneralizedVelocities(3);
+          istate=1;
+        }
+        else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+          system->projectGeneralizedVelocities(3);
+          istate=1;
+        }
       }
-      if(istate<0) throw MBSimError("Integrator LSODE failed with istate = "+toString(istate));
+      else if(istate<0) throw MBSimError("Integrator LSODE failed with istate = "+toString(istate));
     }
 
     if(plotIntegrationData) integPlot.close();
@@ -168,22 +186,32 @@ namespace MBSimIntegrator {
   void LSODEIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    if(e) {
+      string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(methodStr=="nonstiff" or methodStr=="Adams") method=nonstiff;
+      else if(methodStr=="stiff" or methodStr=="BDF") method=stiff;
+    }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
     if(e) setAbsoluteTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    if(e) setRelativeTolerance(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
-    if(e) setMaximalStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimalStepSize");
-    if(e) setMinimalStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"numberOfMaximalSteps");
-    if(e) setmaxSteps(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stiffModus");
-    if(e) setStiff(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    if(e) setMaximumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimumStepSize");
+    if(e) setMinimumStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    if(e) setStepLimit(E(e)->getText<int>());
+   e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
 }

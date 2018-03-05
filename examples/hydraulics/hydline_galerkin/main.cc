@@ -35,7 +35,7 @@ int main (int argc, char* argv[]) {
         else if (iintegrator==1)
           nameintegrator = "ThetaTimeStepping";
         else if (iintegrator==2)
-          nameintegrator = "EulerExplicit";
+          nameintegrator = "ExplicitEuler";
         else if (iintegrator==3)
           nameintegrator = "RADAU5";
         else if (iintegrator==4)
@@ -70,20 +70,20 @@ int main (int argc, char* argv[]) {
           MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;-9.81;0]");
 
           if (isolver==0) {
-            dss->setConstraintSolver(DynamicSystemSolver::LinearEquations);
-            dss->setImpactSolver(DynamicSystemSolver::LinearEquations);
+            dss->setConstraintSolver(DynamicSystemSolver::direct);
+            dss->setImpactSolver(DynamicSystemSolver::direct);
           }
           else if (isolver==1) {
             dss->setConstraintSolver(DynamicSystemSolver::GaussSeidel);
             dss->setImpactSolver(DynamicSystemSolver::GaussSeidel);
           }
           else if(isolver==2) {
-            dss->setConstraintSolver(DynamicSystemSolver::FixedPointSingle);
-            dss->setImpactSolver(DynamicSystemSolver::FixedPointSingle);
+            dss->setConstraintSolver(DynamicSystemSolver::fixedpoint);
+            dss->setImpactSolver(DynamicSystemSolver::fixedpoint);
           }
           else if(isolver==3) {
-            dss->setConstraintSolver(DynamicSystemSolver::RootFinding);
-            dss->setImpactSolver(DynamicSystemSolver::RootFinding);
+            dss->setConstraintSolver(DynamicSystemSolver::rootfinding);
+            dss->setImpactSolver(DynamicSystemSolver::rootfinding);
           }
           dss->setGeneralizedRelativeVelocityTolerance(1e-9);
           dss->initialize();
@@ -120,7 +120,7 @@ int main (int argc, char* argv[]) {
 //            endTime=clock();
           }
           else if (iintegrator==2) {
-            EulerExplicitIntegrator in;
+            ExplicitEulerIntegrator in;
             in.setStepSize(stepSizeFactor*dtPlot);
             in.setStartTime(0);
             in.setEndTime(tEnd);
@@ -135,7 +135,7 @@ int main (int argc, char* argv[]) {
             in.setStartTime(0);
             in.setEndTime(tEnd);
             in.setPlotStepSize(dtPlot);
-            in.setMaximalStepSize(dtPlot/2.);
+            in.setMaximumStepSize(dtPlot/2.);
             in.setOutput(true);
 //            in.setAbsoluteTolerance(1e-4);
 //            in.setRelativeTolerance(1e-4);
@@ -148,7 +148,7 @@ int main (int argc, char* argv[]) {
             in.setStartTime(0);
             in.setEndTime(tEnd);
             in.setPlotStepSize(dtPlot);
-            in.setMaximalStepSize(dtPlot/2.);
+            in.setMaximumStepSize(dtPlot/2.);
             in.setOutput(true);
             in.setInitialStepSize(1e-7);
             startTime=clock();
@@ -160,7 +160,7 @@ int main (int argc, char* argv[]) {
             in.setStartTime(0);
             in.setEndTime(tEnd);
             in.setPlotStepSize(dtPlot);
-            in.setMaximalStepSize(dtPlot/2.);
+            in.setMaximumStepSize(dtPlot/2.);
             in.setOutput(true);
             in.setInitialStepSize(1e-8);
             in.setAbsoluteTolerance(1e-7);

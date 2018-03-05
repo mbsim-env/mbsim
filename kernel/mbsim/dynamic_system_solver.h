@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2014 MBSim Development Team
+/* Copyright (C) 2004-2018 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,9 +41,6 @@ namespace MBSim {
    * \date 2012-05-08 modifications for AutoTimeSteppingSSCIntegrator (Jan Clauberg)
    * \date 2012-05-08 dhdq and dhdu with lower and upper bound (Jan Clauberg)
    * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
-   *
-   * \todo projectGeneralizedPositions seems to be buggy with at least TimeSteppingIntegrator (see SliderCrank)
-   * \todo RootFinding seems to be buggy (see EdgeMill)
    */
   class DynamicSystemSolver : public Group {
     public:
@@ -51,17 +48,12 @@ namespace MBSim {
       /**
        * \brief solver for contact equations
        */
-      enum Solver { FixedPointTotal, FixedPointSingle, GaussSeidel, LinearEquations, RootFinding };
-
-      /**
-       * \brief relaxation strategies in solution of contact equations
-       */
-      enum Strategy { global, local };
+      enum Solver { fixedpoint, GaussSeidel, direct, rootfinding };
 
       /**
        * \brief linear algebra for Newton scheme in solution of contact equations
        */
-      enum LinAlg { LUDecomposition, LevenbergMarquardt, PseudoInverse };
+      enum LinearAlgebra { LUDecomposition, LevenbergMarquardt, pseudoinverse };
 
       /**
        * \brief constructor
@@ -182,13 +174,12 @@ namespace MBSim {
       const Solver& getConstraintSolver() { return contactSolver; }
       const Solver& getImpactSolver() { return impactSolver; }
       void setTermination(bool term_) { term = term_; }
-      void setStrategy(Strategy strategy_) { strategy = strategy_; }
-      void setMaxIter(int iter) { maxIter = iter; }
-      void setHighIter(int iter) { highIter = iter; }
-      void setNumJacProj(bool numJac_) { numJac = numJac_; }
-      void setMaxDampingSteps(int maxDSteps) { maxDampingSteps = maxDSteps; }
-      void setLevenbergMarquardtParam(double lmParm_) { lmParm = lmParm_; }
-      void setLinAlg(LinAlg linAlg_) { linAlg = linAlg_; }
+      void setMaximumIterations(int iter) { maxIter = iter; }
+      void setHighIterations(int iter) { highIter = iter; }
+      void setNumericalJacobian(bool numJac_) { numJac = numJac_; }
+      void setLinearAlgebra(LinearAlgebra linAlg_) { linAlg = linAlg_; }
+      void setMaximumDampingSteps(int maxDSteps) { maxDampingSteps = maxDSteps; }
+      void setLevenbergMarquardtParamater(double lmParm_) { lmParm = lmParm_; }
 
       void setUseOldla(bool flag) { useOldla = flag; }
       void setDecreaseLevels(const fmatvec::VecInt &decreaseLevels_) { decreaseLevels = decreaseLevels_; }
@@ -203,11 +194,13 @@ namespace MBSim {
       double getStepSize() const { return dt; }
       void setStepSize(double dt_) { dt = dt_; }
 
-      fmatvec::Vec& getState() { return zParent; }
-      const fmatvec::Vec& getState() const { return zParent; }
-      void setState(const fmatvec::Vec &z) { zParent = z; }
+      int getzSize() const { return zSize; }
 
-      void setzd(const fmatvec::Vec &zd) { zdParent = zd; }
+      fmatvec::Vec& getState() { return z; }
+      const fmatvec::Vec& getState() const { return z; }
+      void setState(const fmatvec::Vec &z_) { z = z_; }
+
+      void setzd(const fmatvec::Vec &zd_) { zd = zd_; }
 
       const fmatvec::SqrMat& getG(bool check=true) const { assert((not check) or (not updG)); return G; }
       const fmatvec::SparseMat& getGs(bool check=true) const { assert((not check) or (not updG)); return Gs; }
@@ -233,13 +226,23 @@ namespace MBSim {
       const fmatvec::Vec& evalla() { if(updla) updatela(); return la; }
       const fmatvec::Vec& evalLa() { if(updLa) updateLa(); return La; }
 
+      fmatvec::Vec& getzParent() { return zParent; }
+      fmatvec::Vec& getzdParent() { return zdParent; }
+      fmatvec::Vec& getlaParent() { return laParent; }
+      fmatvec::Vec& getLaParent() { return LaParent; }
+      const fmatvec::Vec& getzParent() const { return zParent; }
+      const fmatvec::Vec& getzdParent() const { return zdParent; }
       const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
       const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
       const fmatvec::Vec& getlaParent() const { return laParent; }
       const fmatvec::Vec& getLaParent() const { return LaParent; }
+      const fmatvec::Vec& getgParent() const { return gParent; }
       const fmatvec::Vec& getgdParent() const { return gdParent; }
       const fmatvec::Vec& getresParent() const { return resParent; }
       const fmatvec::Vec& getrFactorParent() const { return rFactorParent; }
+
+      void resizezParent(int nz) { zParent.resize(nz); }
+      void resizezdParent(int nz) { zdParent.resize(nz); }
 
       DynamicSystemSolver* getDynamicSystemSolver() { return this; }
       bool getIntegratorExitRequest() { return integratorExitRequest; }
@@ -381,7 +384,7 @@ namespace MBSim {
       Element* getElement(const std::string &name);
 
       /**
-       * \return information for solver including strategy and linear algebra
+       * \return information for solver
        */
       std::string getSolverInfo();
 
@@ -496,11 +499,11 @@ namespace MBSim {
       bool getUpdatedx() { return upddx; }
       void setUpdatela(bool updla_) { updla = updla_; }
       void setUpdateLa(bool updLa_) { updLa = updLa_; }
+      void setUpdateG(bool updG_) { updG = updG_; }
       void setUpdatebi(bool updbi_) { updbi = updbi_; }
       void setUpdatebc(bool updbc_) { updbc = updbc_; }
       void setUpdatezd(bool updzd_) { updzd = updzd_; }
-
-      void resize_();
+      void setUpdateW(bool updW_, int i=0) { updW[i] = updW_; }
 
       /**
        * \brief references to relative distances of dynamic system parent
@@ -557,6 +560,21 @@ namespace MBSim {
        * \brief step size
        */
       double dt;
+
+      /**
+       * \brief size of state vector
+       */
+      int zSize;
+
+      /**
+       * \brief state vector
+       */
+      fmatvec::Vec z;
+
+      /**
+       * \brief derivative of state vector
+       */
+      fmatvec::Vec zd;
 
       /**
        * \brief mass matrix
@@ -702,14 +720,9 @@ namespace MBSim {
       Solver contactSolver, impactSolver;
 
       /**
-       * \brief relaxarion strategy for solution of fixed-point scheme
-       */
-      Strategy strategy;
-
-      /**
        * \brief linear system solver used for Newton scheme in contact equations
        */
-      LinAlg linAlg;
+      LinearAlgebra linAlg;
 
       /**
        * \brief flag if the contact equations should be stopped if there is no convergence
@@ -777,12 +790,6 @@ namespace MBSim {
        * \brief Tolerance for projection of generalized position.
        */
       double tolProj;
-
-      /**
-       * \brief update relaxation factors for contact equations
-       * \todo global not available because of unsymmetric mass action matrix TODO
-       */
-      void updaterFactors() override;
 
       /**
        * \brief

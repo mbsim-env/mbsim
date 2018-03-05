@@ -28,8 +28,10 @@ int main (int argc, char* argv[]) {
     integrator = new LSODARIntegrator;
     static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
     static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-10);
-    static_cast<LSODARIntegrator*>(integrator)->setMaximalStepSize(1e-2);
-  } 
+    static_cast<LSODARIntegrator*>(integrator)->setMaximumStepSize(1e-2);
+    static_cast<LSODARIntegrator*>(integrator)->setToleranceForPositionConstraints(1e-5);
+    static_cast<LSODARIntegrator*>(integrator)->setToleranceForVelocityConstraints(1e-5);
+  }
   else { // time stepping integration
     double dt = 1e-5;
     sys.setGeneralizedImpulseTolerance(1e-2*dt);

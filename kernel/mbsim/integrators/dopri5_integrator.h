@@ -37,12 +37,14 @@ namespace MBSimIntegrator {
       static void fzdot(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t,double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn);
 
+      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
+
       double tPlot{0};
       double dtOut{0};
       std::ofstream integPlot;
       double s0; 
       double time{0};
-   
+
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
       /** Relative Toleranz */
@@ -50,27 +52,45 @@ namespace MBSimIntegrator {
       /** step size for the first step */
       double dt0{0};
       /** maximum number of steps */
-      int maxSteps{2000000000};  
+      int maxSteps{2000000000};
       /** maximale step size */
       double dtMax{0};
 
+      bool plotOnRoot{false};
+
+       /** tolerance for position constraints */
+      double gMax{-1};
+      /** tolerance for velocity constraints */
+      double gdMax{-1};
+
+      fmatvec::Vec svLast;
+      bool shift{false};
+
     public:
 
-      DOPRI5Integrator();
       ~DOPRI5Integrator() override = default;
 
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
-      void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol = rTol_;}
-      void setRelativeTolerance(double rTol_) {rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
-      void setInitialStepSize(double dt0_) {dt0 = dt0_;}
-      void setMaxStepNumber(int maxSteps_) {maxSteps = maxSteps_;}    
-      void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
       const fmatvec::Vec& getAbsoluteTolerance() const { return aTol; }
       const fmatvec::Vec& getRelativeTolerance() const { return rTol; }
       double getInitialStepSize() const { return dt0; }
-      int getMaxStepNumber() const { return maxSteps; }
-      double getMaximalStepSize() const { return dtMax; }
+      int getStepLimit() const { return maxSteps; }
+      double getMaximumStepSize() const { return dtMax; }
+
+      double getToleranceForPositionConstraints() { return gMax; }
+      double getToleranceForVelocityConstraints() { return gdMax; }
+
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
+      void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol = rTol_; }
+      void setRelativeTolerance(double rTol_) { rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_); }
+      void setInitialStepSize(double dt0_) { dt0 = dt0_; }
+      void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
+      void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
+
+      void setPlotOnRoot(bool b) { plotOnRoot = b; }
+
+      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
+      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
       void integrate() override;

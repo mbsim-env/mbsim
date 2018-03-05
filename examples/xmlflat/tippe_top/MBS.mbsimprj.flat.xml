@@ -160,8 +160,7 @@
     <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
     <relativeToleranceScalar>1e-6</relativeToleranceScalar>
     <initialStepSize>1e-8</initialStepSize>
-    <minimalStepSize>0</minimalStepSize>
-    <maximalStepSize>0</maximalStepSize>
-    <plotOnRoot>0</plotOnRoot>
+    <toleranceForPositionConstraints>1e-5</toleranceForPositionConstraints>
+    <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
   </LSODARIntegrator>
 </MBSimProject>

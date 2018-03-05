@@ -17,25 +17,20 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _EULER_EXPLICIT_INTEGRATOR_H_ 
-#define _EULER_EXPLICIT_INTEGRATOR_H_
+#ifndef _EXPLICIT_EULER_INTEGRATOR_H_
+#define _EXPLICIT_EULER_INTEGRATOR_H_
 
 #include "integrator.h"
 
 namespace MBSimIntegrator {
 
   /** \brief Explicit Euler integrator. */
-  class EulerExplicitIntegrator : public Integrator { 
+  class ExplicitEulerIntegrator : public Integrator {
     public:
-      /**
-       * \brief constructor
-       */
-      EulerExplicitIntegrator();
-
       /**
        * \brief destructor
        */
-      ~EulerExplicitIntegrator() override = default;
+      ~ExplicitEulerIntegrator() override = default;
 
       void preIntegrate() override;
       void subIntegrate(double tStop) override;

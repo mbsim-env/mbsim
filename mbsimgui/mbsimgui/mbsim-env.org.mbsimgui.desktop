@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=MBSimGUI
+Icon=mbsim-env.mbsimgui
+Exec=@bindir@/mbsimgui --maximized %f
+MimeType=application/vnd.mbsim-env.mbsimflatxml;application/vnd.mbsim-env.mbsimxml;

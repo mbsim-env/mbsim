@@ -36,32 +36,28 @@ namespace MBSimIntegrator {
       };
 
       /**
-       * \brief constructor
-       */
-      RKSuiteIntegrator();
-      
-      /**
        * \brief destructor
        */
-      virtual ~RKSuiteIntegrator() { if(dworkarray) { delete[] dworkarray; dworkarray=0; } }
+      virtual ~RKSuiteIntegrator() override { if(work) { delete[] work; work=nullptr; } }
 
       void preIntegrate();
       void subIntegrate(double tStop);
       void postIntegrate();
 
       /* GETTER / SETTER */
-      void setMethod(Method method_) {method = method_;}
-      void setrTol(double rTol_) {rTol = rTol_;}
-      void setThreshold(const fmatvec::Vec &thres_) {thres = thres_;}
-      void setThreshold(double thres_) {thres = fmatvec::Vec(1,fmatvec::INIT,thres_);}
-      void setInitialStepSize(double dt0_) {dt0 = dt0_;}
+      void setMethod(Method method_) { method = method_; }
+      void setRelativeTolerance(double rTol_) { rTol = rTol_; }
+      void setThreshold(const fmatvec::Vec &thres_) { thres = thres_; }
+      void setThreshold(double thres_) { thres = fmatvec::Vec(1,fmatvec::INIT,thres_); }
+      void setInitialStepSize(double dt0_) { dt0 = dt0_; }
+      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
+      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
       /***************************************************/
-
 
       /* INHERITED INTERFACE OF INTEGRATOR */
       using Integrator::integrate;
-      virtual void integrate();
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      void integrate() override;
+      virtual void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
     private:
@@ -71,22 +67,25 @@ namespace MBSimIntegrator {
       int zSize;
       static RKSuiteIntegrator *selfStatic;
 
-      Method method;
+      Method method{RK45};
       /** Absolute Toleranz */
       fmatvec::Vec thres;
       /** Relative Toleranz */
-      double rTol;
+      double rTol{1e-6};
       /** step size for the first step */
-      double dt0;
+      double dt0{0};
 
+       /** tolerance for position constraints */
+      double gMax{-1};
+      /** tolerance for velocity constraints */
+      double gdMax{-1};
 
-      int ndworkarray, messages, integrationSteps;
-      double t, tPlot, s0, time;
-      double * dworkarray;
+      int lenwrk, messages{0}, integrationSteps{0};
+      double t{0}, tPlot{0}, s0{0}, time{0};
+      double *work{nullptr};
       fmatvec::Vec z, zdGot, zMax;
 
       std::ofstream integPlot;
-
   };
 
 }

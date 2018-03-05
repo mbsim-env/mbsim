@@ -10,9 +10,8 @@ int main (int argc, char* argv[]) {
   System *sys = new System("MBS");
 
   sys->setStopIfNoConvergence(true,true);
-  sys->setConstraintSolver(DynamicSystemSolver::FixedPointSingle);
-  sys->setImpactSolver(DynamicSystemSolver::FixedPointSingle);
-  sys->setStrategy(DynamicSystemSolver::local);
+  sys->setConstraintSolver(DynamicSystemSolver::fixedpoint);
+  sys->setImpactSolver(DynamicSystemSolver::fixedpoint);
   sys->initialize();
 //  sys->dropContactMatrices(0);
 

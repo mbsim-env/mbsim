@@ -37,9 +37,6 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RKSuiteIntegrator)
 
-  RKSuiteIntegrator::RKSuiteIntegrator() : method(RK45), thres(1,INIT,1e-10), rTol(1e-6), dt0(0), ndworkarray(100000), messages(0), integrationSteps(0), t(0), tPlot(0), s0(0), time(0), z(0), zdGot(0), zMax(0) {
-  }
-
   void RKSuiteIntegrator::preIntegrate() {
     debugInit();
 
@@ -48,22 +45,29 @@ namespace MBSimIntegrator {
     selfStatic = this;
     zSize=system->getzSize();
 
+    if(not zSize)
+      throw MBSimError("(RKSuiteIntegrator::integrate): dimension of the system must be at least 1");
+
     z.resize(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(RKSuiteIntegrator::integrate): size of z0 does not match");
+        throw MBSimError("(RKSuiteIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
       z = system->evalz0();
 
-    if(thres.size() == 1) {
-      double buf = thres(0);
-      thres.resize(zSize,INIT,buf);
+    if(thres.size() == 0)
+      thres.resize(zSize,INIT,1e-10);
+    else if(thres.size() == 1) {
+      double thres_ = thres(0);
+      thres.resize(zSize,INIT,thres_);
     } 
-    assert (thres.size() == zSize);
+    if(thres.size() != zSize)
+      throw MBSimError("(RKSuiteIntegrator::integrate): size of thres does not match, must be " + toStr(zSize));
 
-    dworkarray=new double[ndworkarray];
+    lenwrk = 2*32*zSize;
+    work=new double[lenwrk];
     if (warnLevel)
       messages=1;
 
@@ -94,16 +98,16 @@ namespace MBSimIntegrator {
       int method_ = method;
 
       SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
-          &errass, &dt0, dworkarray, &ndworkarray, &messages);
+          &errass, &dt0, work, &lenwrk, &messages);
 
-      while((tStop-t)>epsroot) {
+      while(t<tStop-epsroot) {
 
         integrationSteps++;
 
         double dtLast = 0;
-        UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, &result, &dtLast);
+        UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), work, &result, &dtLast);
 
-        if(result==1 || result==2 || fabs(t-tPlot)<epsroot) {
+        if(result==1 or result==2) {
           system->setTime(t);
           system->setState(z);
           system->resetUpToDate();
@@ -116,16 +120,29 @@ namespace MBSimIntegrator {
           s0 = s1; 
           if(plotIntegrationData) integPlot<< t << " " << dtLast << " " << time << endl;
 
-          tPlot += dtPlot;
+          tPlot = min(tEnd, tPlot+dtPlot);
+
+          // check drift
+          bool restart = false;
+          if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+            system->projectGeneralizedPositions(3);
+            system->projectGeneralizedVelocities(3);
+            restart = true;
+          }
+          else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+            system->projectGeneralizedVelocities(3);
+            restart = true;
+          }
+          if(restart) {
+            z = system->getState();
+            SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
+                &errass, &dt0, work, &lenwrk, &messages);
+          }
         }
-
-        if(result==3 || result==4)
+        else if(result==3 or result==4)
           continue;
-        if(result>=5) 
+        else if(result>=5)
           throw MBSimError("Integrator RKSUITE failed with result = "+toString(result));
-
-        if (tPlot>tStop)
-          tPlot=tStop;
       }
     }
 
@@ -154,19 +171,25 @@ namespace MBSimIntegrator {
   void RKSuiteIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
-    e = E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
     if(e) {
       string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(methodStr=="RK23") method=RK23;
-      if(methodStr=="RK45") method=RK45;
-      if(methodStr=="RK78") method=RK78;
+      else if(methodStr=="RK45") method=RK45;
+      else if(methodStr=="RK78") method=RK78;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-    if(e) setrTol(E(e)->getText<double>());
+    if(e) setRelativeTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"threshold");
+    if(e) setThreshold(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"thresholdScalar");
     if(e) setThreshold(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepsize");
     if(e) setInitialStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
   void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {

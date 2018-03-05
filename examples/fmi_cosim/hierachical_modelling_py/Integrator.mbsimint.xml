@@ -5,5 +5,5 @@
   <plotStepSize>1e-3</plotStepSize>
   <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
   <relativeToleranceScalar>1e-6</relativeToleranceScalar>
-  <maximalStepSize>1e-1</maximalStepSize>
+  <maximumStepSize>1e-1</maximumStepSize>
 </BoostOdeintDOS_Rosenbrock4>

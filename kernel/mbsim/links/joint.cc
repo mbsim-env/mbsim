@@ -340,11 +340,10 @@ namespace MBSim {
 
   void Joint::jacobianConstraints() {
 
-    const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->evalG();
 
     for (int i = 0; i < forceDir.cols(); i++) {
-      RowVec jp1 = Jprox.row(laInd + i);
+      RowVec jp1 = ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = ffl->diff(la(i), gdd(i), rFactor(i));
@@ -356,7 +355,7 @@ namespace MBSim {
 
     for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
 
-      RowVec jp1 = Jprox.row(laInd + i);
+      RowVec jp1 = ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = fml->diff(la(i), gdd(i), rFactor(i));
@@ -369,11 +368,10 @@ namespace MBSim {
 
   void Joint::jacobianImpacts() {
 
-    const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->evalG();
 
     for (int i = 0; i < forceDir.cols(); i++) {
-      RowVec jp1 = Jprox.row(laInd + i);
+      RowVec jp1 = ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = fifl->diff(La(i), gdn(i), gd(i), rFactor(i));
@@ -384,7 +382,7 @@ namespace MBSim {
     }
 
     for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
-      RowVec jp1 = Jprox.row(laInd + i);
+      RowVec jp1 = ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = fiml->diff(La(i), gdn(i), gd(i), rFactor(i));

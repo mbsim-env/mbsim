@@ -50,11 +50,8 @@ namespace MBSimAnalyzer {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYZER, Eigenanalyzer)
 
-  Eigenanalyzer::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) { }
-
   Vec Eigenanalyzer::Residuum::operator()(const Vec &z) {
     Vec res;
-    sys->setTime(t);
     sys->setState(z);
     sys->resetUpToDate();
     res = sys->evalzd();
@@ -77,10 +74,12 @@ namespace MBSimAnalyzer {
     if(not(zEq.size()))
       zEq = system->evalz0();
     else if(zEq.size()!=system->getzSize())
-      throw MBSimError("(Eigenanalyzer::computeEigenvalues): size of z0 does not match");
+      throw MBSimError(string("(Eigenanalyzer::computeEigenvalues): size of z0 does not match, must be ") + toStr(system->getzSize()));
+
+    system->setTime(tStart);
 
     if(compEq) {
-      Residuum f(system,tStart);
+      Residuum f(system);
       MultiDimNewtonMethod newton(&f);
       newton.setLinearAlgebra(1);
       zEq = newton.solve(zEq);
@@ -90,7 +89,6 @@ namespace MBSimAnalyzer {
 
     SqrMat A(system->getzSize());
     Vec zd, zdOld;
-    system->setTime(tStart);
     system->setState(zEq);
     system->resetUpToDate();
     zdOld = system->evalzd();

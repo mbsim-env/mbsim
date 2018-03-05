@@ -6,7 +6,7 @@
   <absoluteTolerance>1e-6</absoluteTolerance>
   <relativeToleranceScalar>1e-6</relativeToleranceScalar>
   <initialStepSize>1e-6</initialStepSize>
-  <minimalStepSize>1e-6</minimalStepSize>
-  <maximalStepSize>1e-2</maximalStepSize>
+  <maximumStepSize>1e-2</maximumStepSize>
+  <minimumStepSize>1e-6</minimumStepSize>
   <plotOnRoot>false</plotOnRoot>
 </LSODARIntegrator>

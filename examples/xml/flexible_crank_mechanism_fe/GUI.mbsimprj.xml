@@ -416,9 +416,9 @@ ret = 0;
     <absoluteToleranceScalar>1e-10</absoluteToleranceScalar>
     <relativeToleranceScalar unit="-">1e-10</relativeToleranceScalar>
     <initialStepSize unit="s">0</initialStepSize>
-    <maximalStepSize unit="s">0</maximalStepSize>
-    <minimalStepSize unit="s">0</minimalStepSize>
-    <numberOfMaximalSteps>5000</numberOfMaximalSteps>
+    <maximumStepSize unit="s">0</maximumStepSize>
+    <minimumStepSize unit="s">0</minimumStepSize>
+    <stepLimit>5000</stepLimit>
   </LSODEIntegrator>
 
 </MBSimProject>
