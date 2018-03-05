@@ -108,7 +108,7 @@ namespace MBSim {
   class FromCasadi {
     public:
       static Ret cast(const casadi::Matrix<double> &x) {
-        throw MBSimError("FromCasadi::cast not implemented for current type.");
+        throw std::runtime_error("FromCasadi::cast not implemented for current type.");
       }
   };
 
@@ -237,7 +237,7 @@ namespace MBSim {
 
     typename B::DRetDArg parDer(const Arg &x) override {
       if(pd_(0,0).scalar().isNan())
-        THROW_MBSIMERROR("Cannot calculate this partial derivative, would be a tensor of order 3.");
+        this->throwError("Cannot calculate this partial derivative, would be a tensor of order 3.");
       return c<typename B::DRetDArg>(pd(std::vector<casadi::SX>{c(x)})[0]);
     }
 
@@ -247,13 +247,13 @@ namespace MBSim {
 
     typename B::DRetDArg parDerDirDer(const Arg &xd, const Arg &x) override {
       if(pddd_(0,0).scalar().isNan())
-        THROW_MBSIMERROR("Cannot calculate this partial derivative, would be a tensor of order 3.");
+        this->throwError("Cannot calculate this partial derivative, would be a tensor of order 3.");
       return c<typename B::DRetDArg>(pddd(std::vector<casadi::SX>{c(xd), c(x)})[0]);
     }
 
     typename B::DDRetDDArg parDerParDer(const Arg &x) override {
       if(pdpd_(0,0).scalar().isNan())
-        THROW_MBSIMERROR("Cannot calculate this partial derivative, would be a tensor of order 3.");
+        this->throwError("Cannot calculate this partial derivative, would be a tensor of order 3.");
       return c<typename B::DDRetDDArg>(pdpd(std::vector<casadi::SX>{c(x)})[0]);
     }
 
@@ -274,14 +274,14 @@ namespace MBSim {
 
     void checkFunctionIODim() {
       // check function: only scalar and vector arguments are supported
-      if(arg.size2()!=1) THROW_MBSIMERROR("Matrix parameters are not allowed.");
+      if(arg.size2()!=1) this->throwError("Matrix parameters are not allowed.");
       // check function <-> template argument dimension
       if(this->argSize!=0 && arg.size1()!=this->argSize)
-        THROW_MBSIMERROR("The dimension of the parameter does not match.");
+        this->throwError("The dimension of the parameter does not match.");
       if(this->retSize1!=0 && ret.size1()!=this->retSize1)
-        THROW_MBSIMERROR("The output row dimension does not match.");
+        this->throwError("The output row dimension does not match.");
       if(this->retSize2!=0 && ret.size2()!=this->retSize2)
-        THROW_MBSIMERROR("The output column dimension does not match.");
+        this->throwError("The output column dimension does not match.");
     }
   };
 
@@ -363,73 +363,73 @@ namespace MBSim {
 
     typename B::DRetDArg1 parDer1(const Arg1 &x1, const Arg2 &x2) override {
       if(pd1_(0,0).scalar().isNan())
-        THROW_MBSIMERROR("Cannot calculate this partial derivative, would be a tensor of order 3.");
+        this->throwError("Cannot calculate this partial derivative, would be a tensor of order 3.");
       return c<typename B::DRetDArg1>(pd1(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
     Ret dirDer1(const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("Not implemented");
+      this->throwError("Not implemented");
     }
 
     typename B::DRetDArg2 parDer2(const Arg1 &x1, const Arg2 &x2) override {
       if(pd2_(0,0).scalar().isNan())
-        THROW_MBSIMERROR("Cannot calculate this partial derivative, would be a tensor of order 3.");
+        this->throwError("Cannot calculate this partial derivative, would be a tensor of order 3.");
       return c<typename B::DRetDArg2>(pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
     Ret dirDer2(const Arg2 &arg2Dir, const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("Not implemented");
+      this->throwError("Not implemented");
     }
 
     typename B::DDRetDDArg1 parDer1ParDer1(const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("Not implemented");
+      this->throwError("Not implemented");
     }
 
     typename B::DRetDArg1 parDer1DirDer1(const Arg1 &xd1, const Arg1 &x1, const Arg2 &x2) override {
       if(pd1dd1_(0,0).scalar().isNan())
-        THROW_MBSIMERROR("Cannot calculate this partial derivative, would be a tensor of order 3.");
+        this->throwError("Cannot calculate this partial derivative, would be a tensor of order 3.");
       return c<typename B::DRetDArg1>(pd1dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
     }
 
     Ret dirDer1DirDer1(const Arg1 &arg1Dir_1, const Arg1 &arg1Dir_2, const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("Not implemented");
+      this->throwError("Not implemented");
     }
 
     typename B::DDRetDDArg2 parDer2ParDer2(const Arg1 &arg1, const Arg2 &arg2) override {
       if(pd2pd2_(0,0).scalar().isNan())
-        THROW_MBSIMERROR("Cannot calculate this partial derivative, would be a tensor of order 3.");
+        this->throwError("Cannot calculate this partial derivative, would be a tensor of order 3.");
       return c<typename B::DDRetDDArg2>(pd2pd2(std::vector<casadi::SX>{c(arg1), c(arg2)})[0]);
     }
 
     typename B::DRetDArg1 parDer1DirDer2(const Arg2 &xd2, const Arg1 &x1, const Arg2 &x2) override {
       if(pd1dd2_(0,0).scalar().isNan())
-        THROW_MBSIMERROR("Cannot calculate this partial derivative, would be a tensor of order 3.");
+        this->throwError("Cannot calculate this partial derivative, would be a tensor of order 3.");
       return c<typename B::DRetDArg1>(pd1dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
     }
 
     typename B::DRetDArg2 parDer2DirDer1(const Arg1 &xd1, const Arg1 &x1, const Arg2 &x2) override {
       if(pd2dd1_(0,0).scalar().isNan())
-        THROW_MBSIMERROR("Cannot calculate this partial derivative, would be a tensor of order 3.");
+        this->throwError("Cannot calculate this partial derivative, would be a tensor of order 3.");
       return c<typename B::DRetDArg2>(pd2dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
     }
 
     Ret dirDer2DirDer2(const Arg2 &arg2Dir_1, const Arg2 &arg2Dir_2, const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("Not implemented");
+      this->throwError("Not implemented");
     }
 
     typename B::DDRetDArg1DArg2 parDer1ParDer2(const Arg1 &arg1, const Arg2 &arg2) override {
       if(pd1pd2_(0,0).scalar().isNan())
-        THROW_MBSIMERROR("Cannot calculate this partial derivative, would be a tensor of order 3.");
+        this->throwError("Cannot calculate this partial derivative, would be a tensor of order 3.");
       return c<typename B::DDRetDArg1DArg2>(pd1pd2(std::vector<casadi::SX>{c(arg1), c(arg2)})[0]);
     }
 
     Ret dirDer2DirDer1(const Arg2 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("Not implemented");
+      this->throwError("Not implemented");
     }
 
     typename B::DRetDArg2 parDer2DirDer2(const Arg2 &xd2, const Arg1 &x1, const Arg2 &x2) override {
       if(pd2dd2_(0,0).scalar().isNan())
-        THROW_MBSIMERROR("Cannot calculate this partial derivative, would be a tensor of order 3.");
+        this->throwError("Cannot calculate this partial derivative, would be a tensor of order 3.");
       return c<typename B::DRetDArg2>(pd2dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
     }
 
@@ -447,17 +447,17 @@ namespace MBSim {
 
     void checkFunctionIODim() {
       // check function: only scalar and vector arguments are supported
-      if(arg1.size2()!=1) THROW_MBSIMERROR("Matrix parameters are not allowed.");
-      if(arg2.size2()!=1) THROW_MBSIMERROR("Matrix parameters are not allowed.");
+      if(arg1.size2()!=1) this->throwError("Matrix parameters are not allowed.");
+      if(arg2.size2()!=1) this->throwError("Matrix parameters are not allowed.");
       // check function <-> template argument dimension
       if(this->arg1Size!=0 && arg1.size1()!=this->arg1Size)
-        THROW_MBSIMERROR("The dimension of the first parameter does not match.");
+        this->throwError("The dimension of the first parameter does not match.");
       if(this->arg2Size!=0 && arg2.size1()!=this->arg2Size)
-        THROW_MBSIMERROR("The dimension of the second parameter does not match.");
+        this->throwError("The dimension of the second parameter does not match.");
       if(this->retSize1!=0 && ret.size1()!=this->retSize1)
-        THROW_MBSIMERROR("The output row dimension does not match.");
+        this->throwError("The output row dimension does not match.");
       if(this->retSize2!=0 && ret.size2()!=this->retSize2)
-        THROW_MBSIMERROR("The output column dimension does not match.");
+        this->throwError("The output column dimension does not match.");
     }
   };
 

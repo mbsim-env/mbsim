@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
       virtual void updateg(double &g, std::vector<MBSim::Frame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::Frame*> &cFrame) { throw MBSim::MBSimError("(ContactKinematicsCircleHollowCylinderFlexible::updatewb): Not implemented!"); };
+      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::Frame*> &cFrame) { throw runtime_error("(ContactKinematicsCircleHollowCylinderFlexible::updatewb): Not implemented!"); };
       /***************************************************/
     
     private:

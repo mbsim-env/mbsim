@@ -54,14 +54,10 @@ namespace MBSimIntegrator {
       void setEndTime(double tEnd_) { tEnd = tEnd_; }
       void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
       void setInitialState(const fmatvec::Vec &z0_) { z0 = z0_; }
-      void setWarnLevel(int level) { warnLevel = level; }
-      void setOutput(bool flag) { output = flag; }
       double getStartTime() const { return tStart; }
       double getEndTime() const { return tEnd; }
       double getPlotStepSize() const { return dtPlot; }
       const fmatvec::Vec& getInitialState() const override { return z0; }
-      int getWarnLevel() const { return warnLevel; }
-      bool getOutput() const { return output; }
       /***************************************************/
       
       void execute() override { integrate(); }
@@ -83,17 +79,15 @@ namespace MBSimIntegrator {
        */
       void debugInit();
 
-      virtual void preIntegrate() { throw MBSim::MBSimError("preIntegrate is not defined"); }
-      virtual void subIntegrate(double tStop) { throw MBSim::MBSimError("subIntegrate is not defined"); }
-      virtual void postIntegrate() { throw MBSim::MBSimError("postIntegrate is not defined"); }
+      virtual void preIntegrate() { throwError("preIntegrate is not defined"); }
+      virtual void subIntegrate(double tStop) { throwError("subIntegrate is not defined"); }
+      virtual void postIntegrate() { throwError("postIntegrate is not defined"); }
 
       /*! 
        * \brief initialize integrator
        * \param XML description
        */
       void initializeUsingXML(xercesc::DOMElement *element) override;
-
-      static Integrator* readXMLFile(const std::string &filename);
 
       void setPlotIntegrationData(bool plotIntegrationData_) { plotIntegrationData = plotIntegrationData_; }
 
@@ -109,16 +103,6 @@ namespace MBSimIntegrator {
        * \brief initial state
        */
       fmatvec::Vec z0;
-
-      /**
-       * \brief warn level
-       */
-      int warnLevel{0};
-
-      /**
-       * \brief flag for ouput printing
-       */
-      bool output{true};
 
       /**
        * \brief name of integrator

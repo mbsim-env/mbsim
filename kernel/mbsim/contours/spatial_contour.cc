@@ -72,9 +72,9 @@ namespace MBSim {
   void SpatialContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       if (etaNodes.size() < 2)
-        THROW_MBSIMERROR("(SpatialContour::init): Size of etaNodes must be greater than 1.");
+        throwError("(SpatialContour::init): Size of etaNodes must be greater than 1.");
       if (xiNodes.size() < 2)
-        THROW_MBSIMERROR("(SpatialContour::init): Size of xiNodes must be greater than 1.");
+        throwError("(SpatialContour::init): Size of xiNodes must be greater than 1.");
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {

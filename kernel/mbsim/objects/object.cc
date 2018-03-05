@@ -45,7 +45,7 @@ namespace MBSim {
   }
 
   void Object::updatedhdz() {
-    THROW_MBSIMERROR("Object::updatedhdz not implemented.");
+    throwError("Object::updatedhdz not implemented.");
 //    Vec h0 = h[0].copy();
 //
 //    updateh(); // update with correct state
@@ -236,13 +236,13 @@ namespace MBSim {
     else if(q0.size() == q.size())
       q = q0;
     else
-      THROW_MBSIMERROR("(Object::initz): size of q0 does not match, must be " + toStr(q.size()));
+      throwError("(Object::initz): size of q0 does not match, must be " + toStr(q.size()));
     if(u0() == NULL)
       u.init(0);
     else if(u0.size() == u.size())
       u = u0;
     else
-      THROW_MBSIMERROR("(Object::initz): size of u0 does not match, must be " + toStr(u.size()));
+      throwError("(Object::initz): size of u0 does not match, must be " + toStr(u.size()));
   }
 
   void Object::writez(H5::GroupBase *group) {

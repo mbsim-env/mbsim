@@ -40,9 +40,9 @@ namespace MBSim {
       for(const auto & i : saved_IndependentBody)
         bi.push_back(getByPath<RigidBody>(i));
       if(not bd)
-        THROW_MBSIMERROR("No dependent rigid body given!");
+        throwError("No dependent rigid body given!");
       if(bi.empty())
-        THROW_MBSIMERROR("No independent rigid bodies given!");
+        throwError("No independent rigid bodies given!");
     }
     else if(stage==preInit) {
       bd->addDependency(this);

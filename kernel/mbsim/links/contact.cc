@@ -319,7 +319,7 @@ namespace MBSim {
       }
 
       if(not(contour.size()))
-        THROW_MBSIMERROR("no connection given!");
+        throwError("no connection given!");
 
       Link::init(stage, config);
     }
@@ -679,7 +679,7 @@ namespace MBSim {
           if (contactKinematics[cK] == 0) {
             contactKinematics[cK] = contour1->findContactPairingWith(typeid(*contour0), typeid(*contour1));
             if (contactKinematics[cK] == 0) {
-              THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour0).name()) + "\" and Contour \"" + boost::core::demangle(typeid(*contour1).name()) + "\"!");
+              throwError("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour0).name()) + "\" and Contour \"" + boost::core::demangle(typeid(*contour1).name()) + "\"!");
             }
           }
         }

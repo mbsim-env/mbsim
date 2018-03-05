@@ -84,10 +84,10 @@ namespace MBSimFlexibleBody {
         NodeFrame P("P",nodes(i,j));
         P.setParent(parent);
         Nodelist(i,j) = P.evalPosition();
-//        cout << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
-//        cout << "nP2(" << i <<","<< j<< ")" << trans(Nodelist(i,j)) << endl << endl;
+//        msg(Debug) << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
+//        msg(Debug) << "nP2(" << i <<","<< j<< ")" << trans(Nodelist(i,j)) << endl << endl;
       }
-//    cout << "neutralPosition2s"<< Nodelist << endl << endl;
+//    msg(Debug) << "neutralPosition2s"<< Nodelist << endl << endl;
     }
   }
 

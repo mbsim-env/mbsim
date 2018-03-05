@@ -94,7 +94,7 @@ namespace MBSimHydraulics {
   };
 
   /*! OilBulkModulus */
-  class OilBulkModulus {
+  class OilBulkModulus : public virtual fmatvec::Atom {
     public:
       OilBulkModulus(const std::string &name, double E0, double pinf, double kappa, double fracAir) {
         ownerName=name;

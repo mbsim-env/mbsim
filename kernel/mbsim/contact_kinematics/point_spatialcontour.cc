@@ -51,7 +51,7 @@ namespace MBSim {
     if(zeta0.size() == 0)
       zeta0.resize(2);
     else if(zeta0.size() != 2)
-      MBSimError("(ContactKinematicsPointSpatialContour::assignContours): size of zeta0 does not match");
+      throw runtime_error("(ContactKinematicsPointSpatialContour::assignContours): size of zeta0 does not match");
   }
 
   void ContactKinematicsPointSpatialContour::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {

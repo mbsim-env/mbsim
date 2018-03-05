@@ -200,7 +200,6 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     {
       contact = new MaxwellContact("Contact");
       //Debug features
-      //contact->setDebuglevel(0);
 
       CountourCouplingCantileverBeam* couplingBeam = new CountourCouplingCantileverBeam(E, I);
       static_cast<MaxwellContact*>(contact)->addContourCoupling(BeamContour, BeamContour, couplingBeam);
@@ -231,7 +230,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     }
     break;
     default:
-      THROW_MBSIMERROR("No valid contactType chosen.");
+      throwError("No valid contactType chosen.");
   }
 
   for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {

@@ -430,59 +430,59 @@ namespace MBSimFlexibleBody {
   }
 
   const Vec& FiniteElement2s13Disk::geth() const {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::geth): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::geth): Not implemented!");
   }
 
   const SqrMat& FiniteElement2s13Disk::getdhdq() const {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::getdhdq): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::getdhdq): Not implemented!");
   }
 
   const SqrMat& FiniteElement2s13Disk::getdhdu() const {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::getdhdu): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::getdhdu): Not implemented!");
   }
 
   void FiniteElement2s13Disk::computeM(const Vec& q) {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeM): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::computeM): Not implemented!");
   }
 
   void FiniteElement2s13Disk::computeh(const Vec& q, const Vec& u) {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeh): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::computeh): Not implemented!");
   }
 
   void FiniteElement2s13Disk::computedhdz(const Vec& q, const Vec& u) {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::computedhdz): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::computedhdz): Not implemented!");
   }
 
   double FiniteElement2s13Disk::computeKineticEnergy(const Vec& q, const Vec& u) {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeKineticEnergy): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::computeKineticEnergy): Not implemented!");
   }
 
   double FiniteElement2s13Disk::computeGravitationalEnergy(const Vec& q) {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeGravitationalEnergy): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::computeGravitationalEnergy): Not implemented!");
   }
 
   double FiniteElement2s13Disk::computeElasticEnergy(const Vec& q) {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeElasticEnergy): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::computeElasticEnergy): Not implemented!");
   }
 
   Vec3 FiniteElement2s13Disk::getPosition(const Vec& q, const Vec2 &s) {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::getPosition): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::getPosition): Not implemented!");
   }
 
   SqrMat3 FiniteElement2s13Disk::getOrientation(const Vec& q, const Vec2 &s) {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::getOrientation): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::getOrientation): Not implemented!");
   }
 
   Vec3 FiniteElement2s13Disk::getVelocity(const Vec& q, const Vec& u, const Vec2 &s) {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::getVelocity): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::getVelocity): Not implemented!");
   }
 
   Vec3 FiniteElement2s13Disk::getAngularVelocity(const Vec& q, const Vec& u, const Vec2 &s) {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::getAngularVelocity): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::getAngularVelocity): Not implemented!");
   }
 
   Mat FiniteElement2s13Disk::getJacobianOfMotion(const Vec& qG, const Vec2 &s) {
-    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeJacobianOfMotion): Not implemented!");
+    throw runtime_error("(FiniteElement2s13Disk::computeJacobianOfMotion): Not implemented!");
   }
 
 }

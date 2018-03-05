@@ -16,7 +16,7 @@ namespace MBSim {
 
 namespace MBSimFlexibleBody {
   
-  class NeutralNurbs1s {
+  class NeutralNurbs1s : public virtual fmatvec::Atom {
     public:
       NeutralNurbs1s(MBSim::Element* parent_, const fmatvec::VecInt &nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~NeutralNurbs1s();

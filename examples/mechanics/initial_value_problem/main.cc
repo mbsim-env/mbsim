@@ -21,7 +21,6 @@ int main (int argc, char* argv[]) {
   TimeSteppingIntegrator integrator; integrator.setStepSize(1e-4);
   integrator.setEndTime(2e-0);
   integrator.setPlotStepSize(1e-4);
-  integrator.setOutput(true);
   Watch.start();
   integrator.integrate(*sys);
   cout << "Integration Time TimeStepping: " << Watch.stop() << " [s]." << endl;

@@ -244,7 +244,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s21RCM::setCurlRadius(double R) {
-    if (fabs(R) < epsroot) throw MBSimError("CurlRadius must not be 0!\n");
+    if (fabs(R) < epsroot) throw runtime_error("CurlRadius must not be 0!\n");
     wss0 = 1/R;
   }
 
@@ -1006,19 +1006,19 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FiniteElement1s21RCM::getPosition(const Vec& qElement, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s21RCM::getPosition): not implemented!");
+    throw runtime_error("(FiniteElement1s21RCM::getPosition): not implemented!");
   }
 
   SqrMat3 FiniteElement1s21RCM::getOrientation(const Vec& qElement, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s21RCM::getOrientation): not implemented!");
+    throw runtime_error("(FiniteElement1s21RCM::getOrientation): not implemented!");
   }
 
   Vec3 FiniteElement1s21RCM::getVelocity (const Vec& qElement, const Vec& qpElement, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s21RCM::getVelocity): not implemented!");
+    throw runtime_error("(FiniteElement1s21RCM::getVelocity): not implemented!");
   }
 
   Vec3 FiniteElement1s21RCM::getAngularVelocity(const Vec& qElement, const Vec& qpElement, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s21RCM::getAngularVelocity): not implemented!");
+    throw runtime_error("(FiniteElement1s21RCM::getAngularVelocity): not implemented!");
   }
 
 }

@@ -69,18 +69,17 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throw MBSimError("(QuasiStaticIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(QuasiStaticIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       z = z0;
     }
     else
       z = system->evalz0();
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
 
     stepPlot = (int) (dtPlot / dt + 0.5);
     if (fabs(stepPlot * dt - dtPlot) > dt * dt) {
-      cout << "WARNING: Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
+      msg(Warn) << "Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
     }
 
     s0 = clock();
@@ -150,7 +149,7 @@ namespace MBSimIntegrator {
 //      qla = newton.solve(qla);
 
       if (newton.getInfo() != 0)
-        throw MBSimError("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
+        throwError("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
       iter = newton.getNumberOfIterations();
 
       for (int i = 0; i < q.size(); i++)
@@ -171,8 +170,8 @@ namespace MBSimIntegrator {
         time += (s1 - s0) / CLOCKS_PER_SEC;
         s0 = s1;
         if(plotIntegrationData) integPlot << t << " " << dt << " " << iter << " " << time << " " << system->getlaSize() << endl;
-        if (output)
-          cout << "   t = " << t << ",\tdt = " << dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
+        if (msgAct(Status))
+          msg(Status) << "   t = " << t << ",\tdt = " << dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << flush;
         tPlot += dtPlot;
       }
 
@@ -192,7 +191,7 @@ namespace MBSimIntegrator {
       typedef stream<TeeDevice> TeeStream;
       ofstream integSum;
       integSum.open((name + ".sum").c_str());
-      TeeDevice ts_tee(cout, integSum);
+      TeeDevice ts_tee(msg(Info), integSum);
       TeeStream ts_split(ts_tee);
 
       ts_split << endl << endl << "******************************" << endl;
@@ -206,9 +205,6 @@ namespace MBSimIntegrator {
       ts_split.flush();
       ts_split.close();
     }
-
-    cout.unsetf(ios::scientific);
-    cout << endl;
   }
 
   void QuasiStaticIntegrator::integrate() {
@@ -242,12 +238,12 @@ namespace MBSimIntegrator {
     hg(0, qSize - 1) = sys->evalh() + sys->evalW() * qla(qSize, qlaSize - 1);
     hg(qSize, qlaSize - 1) = sys->evalg().copy();
 
-//    cout << "t = "  << t << "\n";
-//    cout << "sys.geth() = "  <<  sys->geth().T() << "\n";
-//    cout << "la= " << sys->getla().T() << endl;
-//    cout << "W= " << sys->getW().T() << endl;
-//    cout << "w * la = "  << Vec(sys->getW() * sys->getla()).T()  << "\n \n";
-//    cout << "hg = "  << hg.T()  << "\n \n";
+//    msg(Info) << "t = "  << t << "\n";
+//    msg(Info) << "sys.geth() = "  <<  sys->geth().T() << "\n";
+//    msg(Info) << "la= " << sys->getla().T() << endl;
+//    msg(Info) << "W= " << sys->getW().T() << endl;
+//    msg(Info) << "w * la = "  << Vec(sys->getW() * sys->getla()).T()  << "\n \n";
+//    msg(Info) << "hg = "  << hg.T()  << "\n \n";
 
     return hg;
   }

@@ -53,18 +53,17 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throw MBSimError("(TimeSteppingIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(TimeSteppingIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
     }
     else
       system->evalz0();
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
 
     stepPlot = (int) (dtPlot/dt + 0.5);
     if(fabs(stepPlot*dt - dtPlot) > dt*dt) {
-      cout << "WARNING: Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
+      msg(Warn) << "Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
     }
 
     s0 = clock();
@@ -87,7 +86,7 @@ namespace MBSimIntegrator {
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
         if(plotIntegrationData) integPlot<< system->getTime() << " " << dt << " " <<  system->getIterI() << " " << time << " "<<system->getlaSize() <<endl;
-        if(output) cout << "   t = " << system->getTime() << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << system->getIterI() <<  "\r"<<flush;
+        if(msgAct(Status)) msg(Status) << "   t = " << system->getTime() << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << system->getIterI() <<  flush;
         tPlot += dtPlot;
       }
 
@@ -121,7 +120,7 @@ namespace MBSimIntegrator {
       typedef tee_device<ostream, ofstream> TeeDevice;
       typedef stream<TeeDevice> TeeStream;
       ofstream integSum((name + ".sum").c_str());
-      TeeDevice ts_tee(cout, integSum);
+      TeeDevice ts_tee(msg(Info), integSum);
       TeeStream ts_split(ts_tee);
 
       ts_split << endl << endl << "******************************" << endl;
@@ -135,9 +134,6 @@ namespace MBSimIntegrator {
       ts_split.flush();
       ts_split.close();
     }
-
-    cout.unsetf(ios::scientific);
-    cout << endl;
   }
 
   void TimeSteppingIntegrator::integrate() {

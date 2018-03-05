@@ -48,7 +48,6 @@ int main (int argc, char* argv[]) {
   //RADAU5Integrator integrator; integrator.setMaximalStepSize(1e-4);
   integrator->setEndTime(2e-0);
   integrator->setPlotStepSize(1e-3);
-  integrator->setOutput(true);
   start=clock();
   integrator->integrate(*sys);
   end=clock();

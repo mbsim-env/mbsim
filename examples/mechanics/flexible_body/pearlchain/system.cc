@@ -495,7 +495,7 @@ cs * Perlchain::compressWToCsparse_direct(int j) {
       }
 
       else {
-        THROW_MBSIMERROR("Not implemented!");
+        throwError("Not implemented!");
       }
     }
   }

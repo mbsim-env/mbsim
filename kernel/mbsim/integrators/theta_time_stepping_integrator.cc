@@ -48,18 +48,17 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throw MBSimError("(ThetaTimeSteppingIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(ThetaTimeSteppingIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
     }
     else
       system->evalz0();
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
     
     stepPlot = (int) (dtPlot/dt + 0.5);
     if(fabs(stepPlot*dt - dtPlot) > dt*dt) {
-      cout << "WARNING: Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
+      msg(Warn) << "Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
     }
 
     s0 = clock();
@@ -82,7 +81,7 @@ namespace MBSimIntegrator {
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;
         if(plotIntegrationData) integPlot<< system->getTime() << " " << dt << " " <<  system->getIterI() << " " << time << " "<<system->getlaSize() <<endl;
-        if(output) cout << "   t = " << system->getTime() << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << system->getIterI() <<  "\r"<<flush;
+        if(msgAct(Status)) msg(Status) << "   t = " << system->getTime() << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << system->getIterI() <<  flush;
         tPlot += dtPlot;
       }
 
@@ -155,9 +154,6 @@ namespace MBSimIntegrator {
       integSum << "Average number of iterations: " << double(sumIter) / integrationSteps << endl;
       integSum.close();
     }
-
-    cout.unsetf(ios::scientific);
-    cout << endl;
   }
 
   void ThetaTimeSteppingIntegrator::integrate() {

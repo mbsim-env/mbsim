@@ -21,30 +21,50 @@
 #define __ECHO_VIEW_H_
 
 #include <QTabWidget>
-#include <QTextBrowser>
+#include <QWebView>
+#include <QAction>
+#include <sstream>
+#include <QMainWindow>
 
 namespace MBSimGUI {
 
-  class EchoView : public QTabWidget {
+  class EchoView : public QMainWindow {
     Q_OBJECT
     public:
-      EchoView(QWidget *parent);
-      void clearOutputAndError();
-      void updateOutputAndError();
+      EchoView(QMainWindow *parent);
+      void clearOutput();
       QSize sizeHint() const override;
-      QSize minimumSizeHint() const override;
-      void setErrorText(const QString &errText_) { errText = errText_; }
-      void setOutputText(const QString &outText_) { outText = outText_; }
-      void addErrorText(const QString &errText_) { errText += errText_; }
       void addOutputText(const QString &outText_) { outText += outText_; }
+      bool debugEnabled() { return enableDebug->isChecked(); }
+    public slots:
+      void updateOutput(bool moveToErrorOrEnd=false);
     private:
-      QTextBrowser *out, *err;
-      QString outText, errText;
-      static QString convertToHtml(QString &text);
-      void linkClicked(const QUrl &link, QTextBrowser *std);
+      QWebView *out;
+      QString outText;
+      QAction *showSSE;
+      QAction *showWarn;
+      QAction *showInfo;
+      QAction *showDepr;
+      QAction *enableDebug;
+      QAction *showDebug;
     private slots:
-      void outLinkClicked(const QUrl &link);
-      void errLinkClicked(const QUrl &link);
+      void linkClicked(const QUrl &link);
+      void updateDebug();
+  };
+
+  class EchoStream : public std::stringbuf {
+    public:
+      EchoStream(EchoView *ev_, const std::string &className_) : std::stringbuf(std::ios_base::out),
+        ev(ev_), className(className_) {}
+    protected:
+      int sync() override { // overwrite the sync function from stringbuf
+        ev->addOutputText(("<span class=\""+className+"\">"+str()+"</span>").c_str());
+        // clear the buffer and return
+        str("");
+        return 0;
+      }
+      EchoView *ev;
+      std::string className;
   };
 
 }

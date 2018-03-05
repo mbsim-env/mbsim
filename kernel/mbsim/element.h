@@ -83,6 +83,13 @@ namespace MBSim {
        */
       ~Element() override = default;
 
+#ifndef SWIG
+      [[noreturn]]
+#endif
+      void throwError(const std::string &msg) const {
+        throw MBSimError(this, msg);
+      }
+
       /**
        * \brief sets the used dynamics system solver to the element
        * \param pointer to the dynamic system solver of which the element is part of
@@ -169,10 +176,6 @@ namespace MBSim {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-      //! Special XML helper function to return the XML (DOM) location stack of this element.
-      //! This stack is set uing Element::initializeUsingXML.
-      const std::vector<MBXMLUtils::EmbedDOMLocator>& getLocationStack() const { return locationStack; }
-
       /**
        * \brief Get the object of type T represented by the path path.
        * Do not set any argurment other than path!
@@ -190,7 +193,7 @@ namespace MBSim {
        * \brief Get the Element named name in the container named container.
        */
       virtual Element* getChildByContainerAndName(const std::string &container, const std::string &name) const {
-        THROW_MBSIMERROR("This element has no containers with childs.");
+        throwError("This element has no containers with childs.");
       }
 
       virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return std::shared_ptr<OpenMBV::Group>();}
@@ -225,6 +228,10 @@ namespace MBSim {
       const double& getTime() const;
       double getStepSize() const;
 
+#ifndef SWIG
+      const MBXMLUtils::DOMEvalException& getDOMEvalError() const { return domEvalError; };
+#endif
+
     protected:
       Element *parent;
 
@@ -240,8 +247,10 @@ namespace MBSim {
        */
       std::string path;
 
-      //! Special XML helper variable. See getLocationStack for details.
-      std::vector<MBXMLUtils::EmbedDOMLocator> locationStack;
+#ifndef SWIG
+      //! Special XML helper variable.
+      MBXMLUtils::DOMEvalException domEvalError;
+#endif
 
       /**
        * \brief dynamic system
@@ -292,7 +301,7 @@ namespace MBSim {
       }
       else if (path.substr(0, 3) == "../") { // if relative path to parent ...
         if(!parent)
-          THROW_MBSIMERROR("Reference to parent '"+path+"' requested but already at the root node.");
+          throwError("Reference to parent '"+path+"' requested but already at the root node.");
         return parent->getByPath<T>(path.substr(3), false); // ... call getByPath of the parent with the leading "../" removed
       }
       else { // if relative path to a child ...
@@ -305,10 +314,10 @@ namespace MBSim {
         // get the object of the first child path by calling the virtual function getChildByContainerAndName
         size_t pos0=first.find('[');
         if(pos0==std::string::npos)
-          THROW_MBSIMERROR("Syntax error in subreference '"+first+"': no [ found.");
+          throwError("Syntax error in subreference '"+first+"': no [ found.");
         std::string container=first.substr(0, pos0);
         if(first[first.size()-1]!=']')
-          THROW_MBSIMERROR("Syntax error in subreference '"+first+"': not ending with ].");
+          throwError("Syntax error in subreference '"+first+"': not ending with ].");
         std::string name=first.substr(pos0+1, first.size()-pos0-2);
         Element *e=getChildByContainerAndName(container, name);
         // if their are other child paths call getByPath of e for this
@@ -319,12 +328,12 @@ namespace MBSim {
         if(t)
           return t;
         else
-          THROW_MBSIMERROR("Cannot cast this element to type "+container+".");
+          throwError("Cannot cast this element to type "+container+".");
       }
     }
     catch(MBSimError &ex) {
       if(initialCaller)
-        THROW_MBSIMERROR("Evaluation of refernece '"+path+"' failed: Message from "+
+        throwError("Evaluation of refernece '"+path+"' failed: Message from "+
           ex.getPath()+": "+ex.getErrorMessage());
       else
         throw ex;

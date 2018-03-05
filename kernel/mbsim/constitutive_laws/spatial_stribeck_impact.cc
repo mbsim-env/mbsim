@@ -54,7 +54,7 @@ namespace MBSim {
   }
 
   Vec SpatialStribeckImpact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) {
-    throw MBSimError("(SpatialStribeckImpact::solve): Not implemented!");
+    throwError("(SpatialStribeckImpact::solve): Not implemented!");
   }
 
   bool SpatialStribeckImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {

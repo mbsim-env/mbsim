@@ -35,7 +35,7 @@ namespace MBSim {
    *
    * \todo: find a better concept for the properties of the used solving algorithms (maybe single "option" - classes)
    */
-  class LinearComplementarityProblem {
+  class LinearComplementarityProblem : public virtual fmatvec::Atom {
     public:
       enum LCPSolvingStrategy {
         Standard,      //trying to solve the LCP in a standard way (first some steps of Lemke algorithm, then trying iterative schemes in reformulated system, then trying Lemke again as fallback with all steps)
@@ -63,9 +63,8 @@ namespace MBSim {
        * \param q                   constant vector of the LCP
        * \param LCPSolvingStrategy  algorithm strategy to solve the LCP
        * \param mediumEigVal        parameter for finding the start solution for the reformulated system
-       * \param DEBUGLEVEL  Define output (information) level
        */
-      LinearComplementarityProblem(const fmatvec::SymMat & M_, const fmatvec::Vec & q_, const LCPSolvingStrategy & strategy_ = Standard, const JacobianType & jacobianType_ = LCPSpecial, const unsigned int & DEBUGLEVEL = 0);
+      LinearComplementarityProblem(const fmatvec::SymMat & M_, const fmatvec::Vec & q_, const LCPSolvingStrategy & strategy_ = Standard, const JacobianType & jacobianType_ = LCPSpecial);
 
       virtual ~LinearComplementarityProblem();
 
@@ -83,9 +82,6 @@ namespace MBSim {
       }
       void setFixpointCriteriaFunction(CriteriaFunction * criteriaFunction_) {
         fixpointSolver->setCriteriaFunction(criteriaFunction_);
-      }
-      void setDebugLevel(const unsigned int & DEBUGLEVEL_) {
-        DEBUGLEVEL = DEBUGLEVEL_;
       }
       /****************/
 
@@ -186,11 +182,6 @@ namespace MBSim {
        * \brief criteria function for Fixedpoint solver
        */
       CriteriaFunction * criteriaFixedpoint;
-
-      /**
-       * \brief Output (information) level
-       */
-      unsigned int DEBUGLEVEL;
   };
 
   std::ostream& operator <<(std::ostream & o, const LinearComplementarityProblem::LCPSolvingStrategy &strategy);

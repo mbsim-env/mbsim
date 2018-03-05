@@ -32,8 +32,8 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody2s13MFRMindlin::FlexibleBody2s13MFRMindlin(const string &name, const int & DEBUGLEVEL_) :
-      FlexibleBody2s13(name, DEBUGLEVEL_), N_compl(0), R_compl(0), R_ij(0) {
+  FlexibleBody2s13MFRMindlin::FlexibleBody2s13MFRMindlin(const string &name) :
+      FlexibleBody2s13(name), N_compl(0), R_compl(0), R_ij(0) {
     RefDofs = 6;
     for (int i = 0; i < 3; i++)
       for (int j = 0; j < 3; j++) {
@@ -101,7 +101,7 @@ namespace MBSimFlexibleBody {
     M = condenseMatrix(Mext, ILocked).copy();
 
     /* Eigenvalues of M */
-    if (DEBUGLEVEL >= 2) {
+    if (msgAct(Debug)) {
       stringstream filenameM;
       filenameM << "M" << nr << "x" << nj << "t" << getTime() << ".txt";
       ofstream file_M(filenameM.str().c_str());
@@ -123,7 +123,7 @@ namespace MBSimFlexibleBody {
 
       /* EIGENFREQUENCIES */
       if (eigval(M(Ipart))(0) < 0)
-        THROW_MBSIMERROR("TEST");
+        throwError("TEST");
 
       //with MAPLE
       stringstream filename;
@@ -137,7 +137,7 @@ namespace MBSimFlexibleBody {
       Vec NaturalHarmonics(EigVal.size(), INIT, 0.);
       for (int i = 0; i < EigVal.size() - 1; i++) {
         if (EigVal(i).imag() < 0 or EigVal(i).imag() > 0)
-          throw new MBSimError("updateM() - imaginary parts in EigVal");
+          throwError("updateM() - imaginary parts in EigVal");
         NaturalHarmonics(NaturalHarmonics.size() - 1 - i) = 1 / (M_PI * 2) * EigVal(i).real();
       }
       for (int i = 0; i < NaturalHarmonics.size(); i++)
@@ -158,7 +158,7 @@ namespace MBSimFlexibleBody {
     }
 
     //for testing
-    //throw new MBSimError("FlexibleBody2s13MFRMindlin::updateM -- Testing the Mass matrix");
+    //throwError("FlexibleBody2s13MFRMindlin::updateM -- Testing the Mass matrix");
 
     // LU-decomposition of M
     LLM = facLL(M);
@@ -186,15 +186,15 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!");
+    throwError("(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!");
   }
 
   void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!");
+    throwError("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!");
   }
 
   void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!");
+    throwError("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!");
   }
 
   Vec3 FlexibleBody2s13MFRMindlin::evalPosition() {
@@ -216,11 +216,11 @@ namespace MBSimFlexibleBody {
         frame->setPosition(R->evalPosition() + R->evalOrientation() * getq()(0,2));
         break;
       default:
-        THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Unknown number of reference dofs!");
+        throwError("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Unknown number of reference dofs!");
     }
     }
     else
-      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updatePositions): Parameters must be zero!");
+      throwError("(FlexibleBody2s13MFRMindlin::updatePositions): Parameters must be zero!");
   }
 
   void FlexibleBody2s13MFRMindlin::updateVelocities(Frame2s *frame) {
@@ -236,15 +236,15 @@ namespace MBSimFlexibleBody {
         frame->setAngularVelocity(R->getOrientation() * evalA() * evalG() * getu()(3,5));
         break;
         default:
-        THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateVelocities): Unknown number of reference dofs!");
+        throwError("(FlexibleBody2s13MFRMindlin::updateVelocities): Unknown number of reference dofs!");
       }
     }
     else
-      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateVelocities): Parameters must be zero!");
+      throwError("(FlexibleBody2s13MFRMindlin::updateVelocities): Parameters must be zero!");
   }
 
   void FlexibleBody2s13MFRMindlin::updateAccelerations(Frame2s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13MFRMindlin::updateJacobians(Frame2s *frame, int j) {
@@ -265,12 +265,12 @@ namespace MBSimFlexibleBody {
       frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot,j);
     }
     else { // on the disk
-      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateJacobians): Parameters must be zero!");
+      throwError("(FlexibleBody2s13MFRMindlin::updateJacobians): Parameters must be zero!");
     }
   }
 
   void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(Frame2s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13MFRMindlin::updatePositions(NodeFrame *frame) {
@@ -317,7 +317,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13MFRMindlin::updateJacobians(NodeFrame *frame, int j) {
@@ -415,7 +415,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13MFRMindlin::init(InitStage stage, const InitConfigSet &config) {

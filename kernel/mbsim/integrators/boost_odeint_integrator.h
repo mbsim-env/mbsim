@@ -260,7 +260,7 @@ namespace MBSimIntegrator {
     // get initial state
     if(z0.size()) {
       if(z0.size()!=system->getzSize())
-        throw MBSim::MBSimError("BoostOdeintDOS:: size of z0 does not match, must be " + MBSim::toStr(system->getzSize()));
+        throwError("BoostOdeintDOS:: size of z0 does not match, must be " + MBSim::toStr(system->getzSize()));
       BoostOdeintHelper::assign(zTemp, z0);
     }
     else
@@ -341,8 +341,8 @@ namespace MBSimIntegrator {
         }
         nrPlots++;
         system->plot();
-        if(output)
-          msg(Info)<<"t = "<<tPlot<<", dt="<<dos->current_time_step()<<"\r"<<std::flush;
+        if(msgAct(Status))
+          msg(Status)<<"t = "<<tPlot<<", dt="<<dos->current_time_step()<<std::flush;
         tPlot+=dtPlot;
       }
 
@@ -459,13 +459,13 @@ namespace MBSimIntegrator {
         // we are not checking in the XML schema for isControlled -> do it here at runtime
 
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
-        if(e) throw MBSim::MBSimError("absoluteToleranceScalar element used for an fixed step-size stepper.");
+        if(e) self->throwError("absoluteToleranceScalar element used for an fixed step-size stepper.");
 
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
-        if(e) throw MBSim::MBSimError("relativeToleranceScalar element used for an fixed step-size stepper.");
+        if(e) self->throwError("relativeToleranceScalar element used for an fixed step-size stepper.");
 
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
-        if(e) throw MBSim::MBSimError("maximumStepSize element used for an fixed step-size stepper.");
+        if(e) self->throwError("maximumStepSize element used for an fixed step-size stepper.");
       }
     };
   }

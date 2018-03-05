@@ -64,23 +64,23 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s::updatePositions(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s::updatePositions): Not implemented.");
+    throwError("(FlexibleBody1s::updatePositions): Not implemented.");
   }
 
   void FlexibleBody1s::updateVelocities(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s::updateVelocities): Not implemented.");
+    throwError("(FlexibleBody1s::updateVelocities): Not implemented.");
   }
 
   void FlexibleBody1s::updateAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s::updateJacobians(Frame1s *frame, int j) {
-    THROW_MBSIMERROR("(FlexibleBody1s::updateJacobians): Not implemented.");
+    throwError("(FlexibleBody1s::updateJacobians): Not implemented.");
   }
 
   void FlexibleBody1s::updateGyroscopicAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s::updateGyroscopicAccelerations): Not implemented.");
   }
 
   Vec3 FlexibleBody1s::getPosition(double s) {

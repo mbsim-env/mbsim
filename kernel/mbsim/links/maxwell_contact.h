@@ -176,17 +176,6 @@ namespace MBSim {
        */
       bool matConstSetted;
 
-      /**
-       * \brief print INFO output?
-       *
-       * 0 = no DEBUGOutput
-       * 1 = most important information
-       * 2 = ...
-       * 5 = Matrices and Vectors
-       * \todo wouldn't a logger for MBSim be nice
-       */
-      int DEBUGLEVEL;
-
     private:
       struct xmlInfo {
           InfluenceFunction * function;

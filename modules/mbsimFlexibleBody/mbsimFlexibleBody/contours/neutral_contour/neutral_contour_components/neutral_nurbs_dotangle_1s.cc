@@ -43,7 +43,7 @@ namespace MBSimFlexibleBody {
     for (int i = 0; i < nodes.size(); i++) {
       Nodelist.set(i, trans(static_cast<FlexibleBody*>(parent)->getDerivativeOfAngles(nodes(i))));
     }
-//    cout << "neutralDotAngle" << Nodelist << endl << endl;
+//    msg(Debug) << "neutralDotAngle" << Nodelist << endl << endl;
   }
 
   void NeutralNurbsDotangle1s::computeCurve(bool update) {
@@ -54,7 +54,7 @@ namespace MBSimFlexibleBody {
     else {
       curve.globalInterp(Nodelist, uMin, uMax, degU, true);
     }
-//    cout << "Neutral nurbs dotAngle 1s curve: " << endl;
+//    msg(Debug) << "Neutral nurbs dotAngle 1s curve: " << endl;
 ////    stringstream x;
 ////    x << "xdA = [";
 //    stringstream z;
@@ -66,7 +66,7 @@ namespace MBSimFlexibleBody {
 //    }
 ////    x << "];" << endl;
 //    z << "];" << endl;
-//    cout << z.str();
+//    msg(Debug) << z.str();
 
   }
 

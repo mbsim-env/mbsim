@@ -31,7 +31,6 @@
 namespace MBSimGUI {
 
   class Element;
-  extern QDir mbsDir;
   extern xercesc::DOMLSParser *parser;
   extern MainWindow *mw;
 
@@ -48,8 +47,9 @@ namespace MBSimGUI {
             xercesc::DOMElement *ele2 = nullptr;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               QString fileName = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"));
-              QFileInfo fileInfo(mbsDir.absoluteFilePath(fileName));
+              QFileInfo fileInfo(MBXMLUtils::E(ele1)->convertPath(fileName.toStdString()).string().c_str());
               xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
+              MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
               param = Parameter::initializeParametersUsingXML(doc->getDocumentElement());
               embededParam = true;
             }
@@ -64,8 +64,9 @@ namespace MBSimGUI {
             bool embeded = false;
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               QString fileName = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"));
-              QFileInfo fileInfo(mbsDir.absoluteFilePath(fileName));
+              QFileInfo fileInfo(MBXMLUtils::E(ele1)->convertPath(fileName.toStdString()).string().c_str());
               xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
+              MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
               ele2 = doc->getDocumentElement();
               embeded = true;
             }

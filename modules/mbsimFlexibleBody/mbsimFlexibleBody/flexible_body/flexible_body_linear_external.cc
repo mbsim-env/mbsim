@@ -210,12 +210,12 @@ namespace MBSimFlexibleBody {
       throw runtime_error(error.str());
     }
 
-    //      cout << "reading from " << jacobifile << endl;
+    //      msg(Debug) << "reading from " << jacobifile << endl;
 
     Mat JTemp;
     datafile >> JTemp;
 
-    //      cout << "Jacobian: " << JTemp << endl;
+    //      msg(Debug) << "Jacobian: " << JTemp << endl;
 
     char buffer[100]; // fmatvec-read method does not read end of line
     datafile.getline(buffer,100);

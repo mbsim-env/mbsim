@@ -59,7 +59,7 @@ namespace MBSim {
         else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(0,1))<=macheps)
           iR = 0;
         else
-          THROW_MBSIMERROR("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
+          throwError("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
       }
       else if(momentDir.cols()==1) {
         msg(Warn) << "Evaluation of generalized relative velocity of rotation may be wrong for spatial rotation. In this case turn on integration of generalized relative velocity of rotation." << endl;
@@ -70,12 +70,12 @@ namespace MBSim {
         else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(1,0))<=macheps)
           iR = 0;
         else
-          THROW_MBSIMERROR("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
+          throwError("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
       }
       eR(iR) = 1;
     }
     else if(stage==unknownStage) {
-      if(func and (func->getRetSize().first!=forceDir.cols()+momentDir.cols())) THROW_MBSIMERROR("Size of generalized forces does not match!");
+      if(func and (func->getRetSize().first!=forceDir.cols()+momentDir.cols())) throwError("Size of generalized forces does not match!");
     }
     FloatingFrameLink::init(stage, config);
     if(func) func->init(stage, config);

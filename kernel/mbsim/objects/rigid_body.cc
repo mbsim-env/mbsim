@@ -149,6 +149,9 @@ namespace MBSim {
   void RigidBody::init(InitStage stage, const InitConfigSet &config) {
     Z.init(stage, config);
     if(stage==preInit) {
+      // Note we explicity make this check here to check exceptions in init
+      if(SThetaS(0,0)<0 || SThetaS(1,1)<0 || SThetaS(2,2)<0)
+        throwError("The diagonal elements of the inertia tensor must be none negative.");
 
       for(unsigned int k=1; k<frame.size(); k++) {
         if(not(static_cast<FixedRelativeFrame*>(frame[k])->getFrameOfReference()))
@@ -238,7 +241,7 @@ namespace MBSim {
       }
       else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZYX<VecV>*>(Atmp->getFunction())) {
         if(bodyFixedRepresentationOfAngularVelocity)
-          THROW_MBSIMERROR("(RigidBody::init): coordinate transformation not yet available for zyx-rotation");
+          throwError("(RigidBody::init): coordinate transformation not yet available for zyx-rotation");
         else
           fTR = new RotationAboutAxesZYXMapping<VecV>;
         fTR->setParent(this);
@@ -538,8 +541,12 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameForKinematics");
     if(e) setFrameForKinematics(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
+
     e=E(element)->getFirstElementChildNamed(MBSIM%"mass");
     setMass(E(e)->getText<double>());
+    // Note we explicity make this check here to check exceptions in initializeUsingXML
+    if(getMass()<=0) throw DOMEvalException("Mass must be positive", e);
+
     e=E(element)->getFirstElementChildNamed(MBSIM%"inertiaTensor");
     setInertiaTensor(E(e)->getText<SymMat3>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameForInertiaTensor");

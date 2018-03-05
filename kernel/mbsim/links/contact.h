@@ -163,7 +163,7 @@ namespace MBSim {
         if (pos < static_cast<int>(ckNames.size())) {
           return contactKinematics[pos];
         }
-        throw MBSimError("Name of contact Kinematics is not valid");
+        throwError("Name of contact Kinematics is not valid");
         return nullptr;
       }
 

@@ -107,7 +107,7 @@ namespace MBSimElectronics {
       void updaterRef(const fmatvec::Vec &rParent, int j=0) override;
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updater() { THROW_MBSIMERROR("(ElectronicLink::updater): Not implemented!"); }
+      virtual void updater() { throwError("(ElectronicLink::updater): Not implemented!"); }
       /*****************************************************/
 
       /* INHERITED INTERFACE OF LINK */

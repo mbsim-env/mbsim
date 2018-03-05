@@ -104,7 +104,7 @@ namespace MBSimFlexibleBody {
        */
       virtual fmatvec::Mat3xV transformJacobian(fmatvec::Mat3xV J) { return J; }
 
-      virtual int getNumberOfElementDOF() const { THROW_MBSIMERROR("(FlexibleBody1sCosserat::getNumberOfElementDOF): Not implemented!"); }
+      virtual int getNumberOfElementDOF() const { throwError("(FlexibleBody1sCosserat::getNumberOfElementDOF): Not implemented!"); }
       virtual int getNumberElements() const { return Elements; }
       virtual int getqSizeFull() const { return getqSize(); }
 

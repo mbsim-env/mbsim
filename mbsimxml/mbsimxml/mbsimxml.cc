@@ -72,7 +72,7 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
         string path=it->path().string();
         if(path.length()<=string(".mbsimmodule.xml").length() || path.substr(path.length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml")
           continue;
-        std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
+        std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it, nullptr, false);
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"schemas")->getFirstElementChild();
             e!=nullptr; e=e->getNextElementSibling()) {
           if(stage==Loading && E(e)->getTagName()==MBSIMMODULE%"File") {

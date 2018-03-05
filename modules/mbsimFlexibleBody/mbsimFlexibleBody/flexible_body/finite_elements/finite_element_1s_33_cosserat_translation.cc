@@ -229,27 +229,27 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s33CosseratTranslation::computedhdz(const Vec& qG, const Vec& qGt) { 
-    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computedhdz): Not implemented");
+    throw runtime_error("(FiniteElement1s33CosseratTranslation::computedhdz): Not implemented");
   }
 
   Vec3 FiniteElement1s33CosseratTranslation::getPosition(const Vec& q, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computePosition): Not implemented!");
+    throw runtime_error("(FiniteElement1s33CosseratTranslation::computePosition): Not implemented!");
   }
 
   SqrMat3 FiniteElement1s33CosseratTranslation::getOrientation(const Vec& q, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computeOrientation): Not implemented!");
+    throw runtime_error("(FiniteElement1s33CosseratTranslation::computeOrientation): Not implemented!");
   }
 
   Vec3 FiniteElement1s33CosseratTranslation::getVelocity(const Vec& q, const Vec& u, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computeVelocity): Not implemented!");
+    throw runtime_error("(FiniteElement1s33CosseratTranslation::computeVelocity): Not implemented!");
   }
 
   Vec3 FiniteElement1s33CosseratTranslation::getAngularVelocity(const Vec& q, const Vec& u, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computeAngularVelocity): Not implemented!");
+    throw runtime_error("(FiniteElement1s33CosseratTranslation::computeAngularVelocity): Not implemented!");
   }
 
   Mat FiniteElement1s33CosseratTranslation::computeJXqG(const Vec& qG, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computeJXqG): Not implemented!");
+    throw runtime_error("(FiniteElement1s33CosseratTranslation::computeJXqG): Not implemented!");
   }
 
 }

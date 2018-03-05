@@ -146,16 +146,16 @@ namespace MBSimFlexibleBody {
       FiniteElement1s21CosseratRotation& operator=(const FiniteElement1s21CosseratRotation&); // assignment operator
   };
 
-  inline const fmatvec::SymMat& FiniteElement1s21CosseratRotation::getM() const { throw MBSim::MBSimError("(FiniteElement1s21CosseratRotation::getM): Not implemented");  }
+  inline const fmatvec::SymMat& FiniteElement1s21CosseratRotation::getM() const { throw std::runtime_error("(FiniteElement1s21CosseratRotation::getM): Not implemented");  }
   inline const fmatvec::Vec& FiniteElement1s21CosseratRotation::geth() const { return h; }
   inline const fmatvec::SqrMat& FiniteElement1s21CosseratRotation::getdhdq() const { return dhdq; }
   inline const fmatvec::SqrMat& FiniteElement1s21CosseratRotation::getdhdu() const { return dhdu; }
   inline int FiniteElement1s21CosseratRotation::getqSize() const { return 4; }
   inline int FiniteElement1s21CosseratRotation::getuSize() const { return 4; }
-  inline void  FiniteElement1s21CosseratRotation::computeM(const fmatvec::Vec& qG) { throw MBSim::MBSimError("(FiniteElement1s21CosseratRotation::computeM): Not implemented"); }
-  inline void  FiniteElement1s21CosseratRotation::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("(FiniteElement1s21CosseratRotation::computedhdz): Not implemented"); }
-  inline double FiniteElement1s21CosseratRotation::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("(FiniteElement1s21CosseratRotation::computeKineticEnergy): Not implemented"); }
-  inline double FiniteElement1s21CosseratRotation::computeGravitationalEnergy(const fmatvec::Vec& qG) { throw MBSim::MBSimError("(FiniteElement1s21CosseratRotation::computeGravitationalEnergy): Not implemented"); }
+  inline void  FiniteElement1s21CosseratRotation::computeM(const fmatvec::Vec& qG) { throw std::runtime_error("(FiniteElement1s21CosseratRotation::computeM): Not implemented"); }
+  inline void  FiniteElement1s21CosseratRotation::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw std::runtime_error("(FiniteElement1s21CosseratRotation::computedhdz): Not implemented"); }
+  inline double FiniteElement1s21CosseratRotation::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw std::runtime_error("(FiniteElement1s21CosseratRotation::computeKineticEnergy): Not implemented"); }
+  inline double FiniteElement1s21CosseratRotation::computeGravitationalEnergy(const fmatvec::Vec& qG) { throw std::runtime_error("(FiniteElement1s21CosseratRotation::computeGravitationalEnergy): Not implemented"); }
   inline double FiniteElement1s21CosseratRotation::getl0() const { return l0; }
 
 }

@@ -67,11 +67,11 @@ namespace MBSim {
   } 
 
   void ContourLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
-    THROW_MBSIMERROR("Internal error");
+    throwError("Internal error");
   }
 
   void ContourLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
-    THROW_MBSIMERROR("Internal error");
+    throwError("Internal error");
   }
 
   void ContourLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
@@ -117,7 +117,7 @@ namespace MBSim {
         connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
 
       if(contour[0]==nullptr or contour[1]==nullptr)
-        THROW_MBSIMERROR("Not all connections are given!");
+        throwError("Not all connections are given!");
     }
     else if(stage==preInit) {
       cFrame[0] = contour[0]->createContourFrame("P0");

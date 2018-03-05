@@ -131,7 +131,7 @@ namespace MBSim {
 
       void setxyz(const fmatvec::MatV &xyz) {
         if(xyz.rows() <= 1 or xyz.cols() <= 1)
-          THROW_MBSIMERROR("Dimension missmatch in size of xyz");
+          this->throwError("Dimension missmatch in size of xyz");
         x = xyz.row(0)(fmatvec::RangeV(1,xyz.cols()-1)).T();
         y = xyz.col(0)(fmatvec::RangeV(1,xyz.rows()-1));
         z = xyz(fmatvec::RangeV(1,xyz.rows()-1),fmatvec::RangeV(1,xyz.cols()-1));
@@ -144,15 +144,15 @@ namespace MBSim {
         Function<Ret(Arg1, Arg2)>::init(stage, config);
         if(stage==Element::preInit) {
           if (z.cols() != x.size())
-            THROW_MBSIMERROR("Dimension missmatch in xSize");
+            this->throwError("Dimension missmatch in xSize");
           if (z.rows() != y.size())
-            THROW_MBSIMERROR("Dimension missmatch in ySize");
+            this->throwError("Dimension missmatch in ySize");
           for (int i = 1; i < x.size(); i++)
             if (x(i - 1) >= x(i))
-              THROW_MBSIMERROR("x values must be strictly monotonic increasing!");
+              this->throwError("x values must be strictly monotonic increasing!");
           for (int i = 1; i < y.size(); i++)
             if (y(i - 1) >= y(i))
-              THROW_MBSIMERROR("y values must be strictly monotonic increasing!");
+              this->throwError("y values must be strictly monotonic increasing!");
           f1.setx(x);
           f1.sety(z.T());
           f1.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<fmatvec::VecV(Arg1)>::InterpolationMethod>(method1));

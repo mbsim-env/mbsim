@@ -146,23 +146,23 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::updatePositions(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updatePositions): Not implemented.");
+    throwError("(FlexibleBody1s21Cosserat::updatePositions): Not implemented.");
   }
 
   void FlexibleBody1s21Cosserat::updateVelocities(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateVelocities): Not implemented.");
+    throwError("(FlexibleBody1s21Cosserat::updateVelocities): Not implemented.");
   }
 
   void FlexibleBody1s21Cosserat::updateAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21Cosserat::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21Cosserat::updateJacobians(Frame1s *frame, int j) {
-    THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateJacobians): Not implemented.");
+    throwError("(FlexibleBody1s21Cosserat::updateJacobians): Not implemented.");
   }
 
   void FlexibleBody1s21Cosserat::updateGyroscopicAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21Cosserat::updatePositions(NodeFrame *frame) {
@@ -194,7 +194,7 @@ namespace MBSimFlexibleBody {
  }
 
   void FlexibleBody1s21Cosserat::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21Cosserat::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21Cosserat::updateJacobians(NodeFrame *frame, int j) {
@@ -214,7 +214,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21Cosserat::init(InitStage stage, const InitConfigSet &config) {
@@ -343,12 +343,12 @@ namespace MBSimFlexibleBody {
     int info = svd(Snapshots, SVD, POM, POV, 1); //TODO: what is last parameter of svd for?
 
     if (info != 0) {
-      THROW_MBSIMERROR("FlexibleBody1s21Cosserat::enablePOD(const string & h5Path, bool reduceEnergy): Single-Value-Decomposition was not succesfull");
+      throwError("FlexibleBody1s21Cosserat::enablePOD(const string & h5Path, bool reduceEnergy): Single-Value-Decomposition was not succesfull");
     }
 
     if (reduceMode == 1) {
       if (POMSize <= 0)
-        THROW_MBSIMERROR("FlexibleBody1s21Cosserat::enablePOD(): No valid POMSize chosen -> Has to be positive!");
+        throwError("FlexibleBody1s21Cosserat::enablePOD(): No valid POMSize chosen -> Has to be positive!");
     }
     else {
       // k: Reduce Total Energy
@@ -493,7 +493,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::exportPositionVelocity(const string & filenamePos, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
-    THROW_MBSIMERROR("To be adapted to new interface...");
+    throwError("To be adapted to new interface...");
 //
 //    PlNurbsCurved curvePos;
 //    PlNurbsCurved curveVel;
@@ -547,7 +547,7 @@ namespace MBSimFlexibleBody {
 //      if (writePsFile) {
 //        string psfile = filenamePos + ".ps";
 //
-//        cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+//        msg(Debug) << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
 //      }
 //
 //      if (not filenameVel.empty()) {
@@ -558,9 +558,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
-    THROW_MBSIMERROR("To be adapted to new interface...");
-//
-//    int DEBUGLEVEL = 0;
+    throwError("To be adapted to new interface...");
 //
 //    PlNurbsCurved curvePos;
 //    PlNurbsCurved curveVel;
@@ -625,16 +623,16 @@ namespace MBSimFlexibleBody {
 //        u0Dummy(i * 6 + 2) = velI(2);
 //      }
 //
-//      if (DEBUGLEVEL == 1) {
-//        cout << "START(" << i + 1 << ",1:end) = [" << posStart << "];" << endl;
-//        cout << "Tangent(" << i + 1 << ",1:end) = [" << tangHalf << "];" << endl;
-//        cout << "Normal(" << i + 1 << ",1:end) = [" << norHalf << "];" << endl;
-//        cout << "Binormal(" << i + 1 << ",1:end) = [" << binHalf << "];" << endl;
-//        cout << "%----------------------------------" << endl;
-//        cout << "alpha_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 3) << ";" << endl;
-//        cout << "beta_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 4) << ";" << endl;
-//        cout << "gamma_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 5) << ";" << endl;
-//        cout << "%----------------------------------" << endl;
+//      if (msgAct(Debug) == 1) {
+//        msg(Debug) << "START(" << i + 1 << ",1:end) = [" << posStart << "];" << endl;
+//        msg(Debug) << "Tangent(" << i + 1 << ",1:end) = [" << tangHalf << "];" << endl;
+//        msg(Debug) << "Normal(" << i + 1 << ",1:end) = [" << norHalf << "];" << endl;
+//        msg(Debug) << "Binormal(" << i + 1 << ",1:end) = [" << binHalf << "];" << endl;
+//        msg(Debug) << "%----------------------------------" << endl;
+//        msg(Debug) << "alpha_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 3) << ";" << endl;
+//        msg(Debug) << "beta_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 4) << ";" << endl;
+//        msg(Debug) << "gamma_New(" << i + 1 << ") = " << q0Dummy(i * 6 + 5) << ";" << endl;
+//        msg(Debug) << "%----------------------------------" << endl;
 //      }
 //    }
 //    setq0(q0Dummy);
@@ -679,8 +677,8 @@ namespace MBSimFlexibleBody {
     else {
       start = 0;
       end = qsize;
-      cout << "---------------------------------------" << endl;
-      cout << "no job has been selected: make job = A" << endl << endl;
+      msg(Debug) << "---------------------------------------" << endl;
+      msg(Debug) << "no job has been selected: make job = A" << endl << endl;
     }
 
     for (i = start; i < end; i++) {

@@ -73,7 +73,7 @@ namespace MBSim {
       void sety(const fmatvec::MatV &y_) { y = y_; }
       void setxy(const fmatvec::MatV &xy) {
         if(xy.cols() <= 1)
-          THROW_MBSIMERROR("Dimension missmatch in size of xy");
+          this->throwError("Dimension missmatch in size of xy");
         x = xy.col(0);
         y = xy(fmatvec::RangeV(0, xy.rows() - 1), fmatvec::RangeV(1, xy.cols() - 1));
       }
@@ -82,9 +82,9 @@ namespace MBSim {
         if(stage==Element::preInit) {
           for(int i=1; i<x.size(); i++)
             if(x(i) <= x(i-1))
-              THROW_MBSIMERROR("Values of x must be strictly monotonic increasing!");
+              this->throwError("Values of x must be strictly monotonic increasing!");
           if(y.rows() != x.size())
-            THROW_MBSIMERROR("Dimension missmatch in size of x");
+            this->throwError("Dimension missmatch in size of x");
         }
       }
     protected:

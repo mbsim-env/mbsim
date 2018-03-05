@@ -87,14 +87,13 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(ThetaTimeSteppingSSCIntegrator::integrate): size of z0 does not match");
+        throwError("(ThetaTimeSteppingSSCIntegrator::integrate): size of z0 does not match");
       z = z0;
     }
     else
       z = system->evalz0();
 
     integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
     
     stepPlot = (int)(dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
@@ -113,7 +112,7 @@ namespace MBSimIntegrator {
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
         integPlot << t << " " << dt << " " <<  iter << " " << time << " "<<system->getlaSize() << endl;
-        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<< setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
+        if(msgAct(Status)) msg(Status) << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<< setw(5) << setiosflags(ios::left) << iter << flush;
         tPlot += dtPlot;
       }
 
@@ -158,9 +157,6 @@ namespace MBSimIntegrator {
     integSum << "Maximum number of iterations: " << maxIter << endl;
     integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
     integSum.close();
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
   }
 
   void ThetaTimeSteppingSSCIntegrator::integrate() {

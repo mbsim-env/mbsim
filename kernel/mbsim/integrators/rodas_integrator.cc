@@ -133,8 +133,8 @@ namespace MBSimIntegrator {
         self->getSystem()->setUpdatela(false);
       }
       self->getSystem()->plot();
-      if(self->output)
-	cout << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
+      if(self->msgAct(Status))
+	self->msg(Status) << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << flush;
 
       double s1 = clock();
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
@@ -208,7 +208,7 @@ namespace MBSimIntegrator {
     calcSize();
 
     if(not neq)
-      throw MBSimError("(RODASIntegrator::integrate): dimension of the system must be at least 1");
+      throwError("(RODASIntegrator::integrate): dimension of the system must be at least 1");
 
     double t = tStart;
 
@@ -216,7 +216,7 @@ namespace MBSimIntegrator {
     Vec z = y(0,zSize-1);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(RODASIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(RODASIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
@@ -233,10 +233,10 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != neq)
-        throw MBSimError("(RODASIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
+        throwError("(RODASIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
     }
     if(rTol.size() != aTol.size())
-      throw MBSimError("(RODASIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throwError("(RODASIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
     int out = 1; // subroutine is available for output
 
@@ -283,8 +283,6 @@ namespace MBSimIntegrator {
       integPlot << "#1 calculation time [s]:" << endl;
     }
 
-    cout.setf(ios::scientific, ios::floatfield);
-
     s0 = clock();
 
     while(t<tEnd-epsroot) {
@@ -315,9 +313,6 @@ namespace MBSimIntegrator {
       //integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
   }
 
   void RODASIntegrator::calcSize() {

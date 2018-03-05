@@ -45,7 +45,7 @@ namespace MBSim {
   void GeneralizedFriction::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
       if(body[0]->getGeneralizedVelocitySize()!=1)
-        THROW_MBSIMERROR("rigid bodies must have 1 dof!");
+        throwError("rigid bodies must have 1 dof!");
     }
     DualRigidBodyLink::init(stage, config);
     func->init(stage, config);

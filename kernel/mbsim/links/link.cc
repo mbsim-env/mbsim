@@ -170,7 +170,7 @@ namespace MBSim {
     else if(x0.size() == x.size())
       x = x0;
     else
-      THROW_MBSIMERROR("(Constraint::initz): size of x0 does not match, must be " + toStr(x.size()));
+      throwError("(Constraint::initz): size of x0 does not match, must be " + toStr(x.size()));
   }
 
   void Link::writez(H5::GroupBase *group) {

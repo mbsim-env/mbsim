@@ -434,8 +434,6 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      static DynamicSystemSolver* readXMLFile(const std::string &filename);
-
       /**
        * \brief set tolerance for projection of generalized position
        * \param tolerance
@@ -763,11 +761,6 @@ namespace MBSim {
        * \brief TODO
        */
       int limitGSize;
-
-      /**
-       * \brief level for warning output (0-2)
-       */
-      int warnLevel;
 
       /**
        * \brief TODO, flag for occuring impact and sticking in event driven solver

@@ -33,23 +33,23 @@ namespace MBSimFlexibleBody {
   NodeBasedBody::NodeBasedBody(const string &name) : Body(name) { }
 
   void NodeBasedBody::updatePositions(NodeFrame* frame) {
-    THROW_MBSIMERROR("(NodeBasedBody::updatePositions): Not implemented.");
+    throwError("(NodeBasedBody::updatePositions): Not implemented.");
   }
 
   void NodeBasedBody::updateVelocities(NodeFrame* frame) {
-    THROW_MBSIMERROR("(NodeBasedBody::updateVelocities): Not implemented.");
+    throwError("(NodeBasedBody::updateVelocities): Not implemented.");
   }
 
   void NodeBasedBody::updateAccelerations(NodeFrame* frame) {
-    THROW_MBSIMERROR("(NodeBasedBody::updateAccelerations): Not implemented.");
+    throwError("(NodeBasedBody::updateAccelerations): Not implemented.");
   }
 
   void NodeBasedBody::updateJacobians(NodeFrame* frame, int j) {
-    THROW_MBSIMERROR("(NodeBasedBody::updateJacobians): Not implemented.");
+    throwError("(NodeBasedBody::updateJacobians): Not implemented.");
   }
 
   void NodeBasedBody::updateGyroscopicAccelerations(NodeFrame* frame) {
-    THROW_MBSIMERROR("(NodeBasedBody::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(NodeBasedBody::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void NodeBasedBody::addFrame(NodeFrame *frame) {

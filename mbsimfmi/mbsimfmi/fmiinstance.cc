@@ -89,7 +89,7 @@ namespace MBSimFMI {
     msg(Debug)<<"Read modelDescription file."<<endl;
     path modelDescriptionXMLFile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path().parent_path()/
       "modelDescription.xml";
-    shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile);
+    shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile, nullptr, false);
 
     if(!cosim) {
       // init state vector size (just to be usable before initialize is called)

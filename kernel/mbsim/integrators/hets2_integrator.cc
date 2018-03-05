@@ -52,7 +52,7 @@ namespace MBSimIntegrator {
     // define initial state
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throw MBSimError("(HETS2Integrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(HETS2Integrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
     }
     else
@@ -67,7 +67,6 @@ namespace MBSimIntegrator {
       integPlot.open((name + ".plt").c_str());
       integPlot << "time" << " " << "time step-size" << " " <<  "constraint iterations" << " " << "calculation time" << " " << "size of constraint system" << endl;
     }
-    cout.setf(ios::scientific, ios::floatfield);
 
     assert(fabs(((int) (dtPlot/dt + 0.5))*dt - dtPlot) < dt*dt);
 
@@ -104,7 +103,7 @@ namespace MBSimIntegrator {
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
         if(plotIntegrationData) integPlot << system->getTime() << " " << dtInfo << " " <<  system->getIterC() << " " << time << " "<< system->getlaSize() << endl;
-        if(output) cout << "   t = " << system->getTime() << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << system->getIterC() << "\r" << flush;
+        if(msgAct(Status)) msg(Status) << "   t = " << system->getTime() << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << system->getIterC() << flush;
         tPlot += dtPlot;
       }
       /*****************************************/
@@ -221,7 +220,7 @@ namespace MBSimIntegrator {
       typedef tee_device<ostream, ofstream> TeeDevice;
       typedef stream<TeeDevice> TeeStream;
       ofstream integSum((name + ".sum").c_str());
-      TeeDevice hets2_tee(cout, integSum);
+      TeeDevice hets2_tee(msg(Info), integSum);
       TeeStream hets2_split(hets2_tee);
 
       hets2_split << endl << endl << "******************************" << endl;
@@ -236,9 +235,6 @@ namespace MBSimIntegrator {
       hets2_split.flush();
       hets2_split.close();
     }
-
-    cout.unsetf(ios::scientific);
-    cout << endl;
   }
 
   void HETS2Integrator::integrate() {

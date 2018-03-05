@@ -44,7 +44,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, MaxwellContact)
 
-  MaxwellContact::MaxwellContact(const string &name) : Contact(name), LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(0.), gLim(0.), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
+  MaxwellContact::MaxwellContact(const string &name) : Contact(name), LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(0.), gLim(0.), matConst(0), matConstSetted(false) {
   }
 
   MaxwellContact::~MaxwellContact() {
@@ -123,14 +123,13 @@ namespace MBSim {
       tolerances.insert(pair<RangeV, double>(RangeV(possibleContactPoints.size(), 2 * possibleContactPoints.size() - 1), 1e-3)); //tolerances for forces
       LocalResidualCriteriaFunction critfunc(tolerances);
       LCP.setNewtonCriteriaFunction(&critfunc);
-      LCP.setDebugLevel(0);
 
       solution0.resize() = LCP.solve(solution0);
 
       Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size() - 1);
 
-      if (DEBUGLEVEL >= 3) {
-        cout << "lambda = " << lambda << endl;
+      if (msg(Debug)) {
+        msg(Debug) << "lambda = " << lambda << endl;
       }
 
       for (size_t i = 0; i < possibleContactPoints.size(); ++i) {
@@ -167,9 +166,9 @@ namespace MBSim {
       }
     }
 
-    if (DEBUGLEVEL >= 5) {
-      cout << "The InfluenceMatrix is: " << C << endl;
-      cout << "With eigenvalues: " << eigval(C) << endl;
+    if (msg(Debug)) {
+      msg(Debug) << "The InfluenceMatrix is: " << C << endl;
+      msg(Debug) << "With eigenvalues: " << eigval(C) << endl;
     }
   }
 
@@ -180,8 +179,8 @@ namespace MBSim {
       rigidBodyGap(i) = contacts[possibleContactPoints[i].first][possibleContactPoints[i].second].evalGeneralizedRelativePosition()(0);
     }
 
-    if (DEBUGLEVEL >= 5)
-      cout << "rigidBodyGap: " << rigidBodyGap << endl;
+    if (msg(Debug))
+      msg(Debug) << "rigidBodyGap: " << rigidBodyGap << endl;
   }
 
   double MaxwellContact::computeInfluenceCoefficient(const std::pair<int, int> & contactIndex) {
@@ -198,8 +197,8 @@ namespace MBSim {
         pair<Contour*, ContourFrame*> contInfo(contour, contacts[contactIndex.first][contactIndex.second].getContourFrame(i));
         //        Vec2 lagrangeParameter = contour->getLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[i].getFrameOfReference().getPosition());
 
-        //        if (DEBUGLEVEL >= 3) {
-        //          cout << "LagrangeParameter of contour \"" << contour->getPath() << "\" is:" << lagrangeParameter << endl;
+        //        if (msg(Debug)) {
+        //          msg(Debug) << "LagrangeParameter of contour \"" << contour->getPath() << "\" is:" << lagrangeParameter << endl;
         //        }
 
         FactorC += (*fct)(contInfo, contInfo);
@@ -207,7 +206,7 @@ namespace MBSim {
     }
 
     if (fabs(FactorC) <= macheps) {
-      throw MBSimError("No elasticity is given for one of the following contours:\n  -" + contacts[contactIndex.first][contactIndex.second].getContour(0)->getPath() + "\n  -" + contacts[contactIndex.first][contactIndex.second].getContour(0)->getPath() + "\nThat is not an option!");
+      throwError("No elasticity is given for one of the following contours:\n  -" + contacts[contactIndex.first][contactIndex.second].getContour(0)->getPath() + "\n  -" + contacts[contactIndex.first][contactIndex.second].getContour(0)->getPath() + "\nThat is not an option!");
     }
 
     return FactorC;
@@ -236,9 +235,9 @@ namespace MBSim {
           pair<Contour*, ContourFrame*> cont1Info(contour1, contacts[contactIndex.first][contactIndex.second].getContourFrame(affectedContourIterator));
           pair<Contour*, ContourFrame*> cont2Info(contour2, contacts[coupledContactIndex.first][coupledContactIndex.second].getContourFrame(coupledContourIterator));
 
-          //          if (DEBUGLEVEL >= 3) {
-          //            cout << "First LagrangeParameter of contour \"" << contour1->getPath() << "\" is:" << firstLagrangeParameter << endl;
-          //            cout << "Second LagrangeParameter contour \"" << contour2->getPath() << "\" is:" << secondLagrangeParameter << endl;
+          //          if (msg(Debug)) {
+          //            msg(Debug) << "First LagrangeParameter of contour \"" << contour1->getPath() << "\" is:" << firstLagrangeParameter << endl;
+          //            msg(Debug) << "Second LagrangeParameter contour \"" << contour2->getPath() << "\" is:" << secondLagrangeParameter << endl;
           //          }
 
           FactorC += (*fct)(cont1Info, cont2Info);

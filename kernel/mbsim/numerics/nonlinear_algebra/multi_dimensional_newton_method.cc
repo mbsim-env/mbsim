@@ -127,18 +127,18 @@ namespace MBSim {
 
       if ((iter % jacobianUpdateFreq) == 0) {
         J = (*jacobian)(x);
-//        cout << "update Jacobian, at iter =" << iter << endl;
+//        msg(Debug) << "update Jacobian, at iter =" << iter << endl;
       }
 
       if (0) {
-        cout << "+++++ iter = " << iter << "++++++++++++\n";
-        cout << "J = " << J << "\n";
-        cout << "f = " << f << "\n";
+        msg(Debug) << "+++++ iter = " << iter << "++++++++++++\n";
+        msg(Debug) << "J = " << J << "\n";
+        msg(Debug) << "f = " << f << "\n";
       }
       //get step
       dx = slv(J, f, info);
 
-      //cout << "dxn[" << iter << "] = " << dx << endl;
+      //msg(Debug) << "dxn[" << iter << "] = " << dx << endl;
 
       //Damp the solution
       if (damping)

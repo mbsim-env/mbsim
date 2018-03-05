@@ -59,7 +59,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -381,7 +381,7 @@ namespace MBSim {
       else if (contactSolver == rootfinding)
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
       else
-        THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown contact solver");
+        throwError("(DynamicSystemSolver::init()): Unknown contact solver");
 
       // impact solver specific settings
       msg(Info) << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
@@ -396,7 +396,7 @@ namespace MBSim {
       else if (impactSolver == rootfinding)
         solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
       else
-        THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown impact solver");
+        throwError("(DynamicSystemSolver::init()): Unknown impact solver");
 
       msg(Info) << "End of special group stage==unknownStage" << endl;
 
@@ -436,8 +436,7 @@ namespace MBSim {
         level++;
         decreaserFactors();
         msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
-        if (warnLevel >= 2)
-          msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
+        msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveConstraintsFixpointSingle();
@@ -468,8 +467,7 @@ namespace MBSim {
         level++;
         decreaserFactors();
         msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
-        if (warnLevel >= 2)
-          msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
+        msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveImpactsFixpointSingle();
@@ -573,7 +571,7 @@ namespace MBSim {
       else if (linAlg == pseudoinverse)
         dx >> slvLS(Jprox, res0);
       else
-        THROW_MBSIMERROR("Internal error");
+        throwError("Internal error");
 
       Vec La_old = la.copy();
       double alpha = 1;
@@ -649,7 +647,7 @@ namespace MBSim {
       else if (linAlg == pseudoinverse)
         dx >> slvLS(Jprox, res0);
       else
-        THROW_MBSIMERROR("Internal error");
+        throwError("Internal error");
 
       Vec La_old = La.copy();
       double alpha = 1.;
@@ -704,7 +702,7 @@ namespace MBSim {
   }
 
   Mat DynamicSystemSolver::dhdq(int lb, int ub) {
-    THROW_MBSIMERROR("DynamicSystemSolver::dhdq not implemented.");
+    throwError("DynamicSystemSolver::dhdq not implemented.");
 //    if (lb != 0 || ub != 0) {
 //      assert(lb >= 0);
 //      assert(ub <= qSize);
@@ -742,7 +740,7 @@ namespace MBSim {
   }
 
   Mat DynamicSystemSolver::dhdu(int lb, int ub) {
-    THROW_MBSIMERROR("DynamicSystemSolver::dhdu not implemented.");
+    throwError("DynamicSystemSolver::dhdu not implemented.");
 //    if (lb != 0 || ub != 0) {
 //      assert(lb >= 0);
 //      assert(ub <= uSize[0]);
@@ -778,11 +776,11 @@ namespace MBSim {
   }
 
   Mat DynamicSystemSolver::dhdx() {
-    THROW_MBSIMERROR("Internal error");
+    throwError("Internal error");
   }
 
   Vec DynamicSystemSolver::dhdt() {
-    THROW_MBSIMERROR("Internal error");
+    throwError("Internal error");
   }
 
   void DynamicSystemSolver::updateT() {
@@ -916,12 +914,12 @@ namespace MBSim {
       if (stopIfNoConvergence) {
         if (dropContactInfo)
           dropContactMatrices();
-        THROW_MBSIMERROR("Maximal Number of Iterations reached");
+        throwError("Maximal Number of Iterations reached");
       }
       msg(Warn) << "Anyway, continuing integration..." << endl;
     }
 
-    if (warnLevel >= 1 && iterc > highIter)
+    if (iterc > highIter)
       msg(Warn) << endl << "high number of iterations: " << iterc << endl;
 
     if (useOldla)
@@ -950,12 +948,12 @@ namespace MBSim {
       if (stopIfNoConvergence) {
         if (dropContactInfo)
           dropContactMatrices();
-        THROW_MBSIMERROR("Maximal Number of Iterations reached");
+        throwError("Maximal Number of Iterations reached");
       }
       msg(Warn) << "Anyway, continuing integration..." << endl;
     }
 
-    if (warnLevel >= 1 && iteri > highIter)
+    if (iteri > highIter)
       msg(Warn) << "high number of iterations: " << iteri << endl;
 
     if (useOldla)
@@ -1034,7 +1032,7 @@ namespace MBSim {
       corrID = 2;
     }
     else
-      THROW_MBSIMERROR("Internal error");
+      throwError("Internal error");
 
     calcgSize(gID);
     calccorrSize(corrID);
@@ -1083,7 +1081,7 @@ namespace MBSim {
       corrID = 4; // IH
     }
     else
-      THROW_MBSIMERROR("Internal error");
+      throwError("Internal error");
     calccorrSize(corrID); // IH
     if (corrSize) {
       calcgdSize(gdID); // IH
@@ -1150,7 +1148,7 @@ namespace MBSim {
     else if (link_)
       addLink(link_);
     else {
-      THROW_MBSIMERROR("(DynamicSystemSolver: addElement()): No such type of Element to add!");
+      throwError("(DynamicSystemSolver: addElement()): No such type of Element to add!");
     }
   }
 
@@ -1176,7 +1174,7 @@ namespace MBSim {
     //   for(i3=0; i3<extraDynamic.size(); i3++) {
     //     if(extraDynamic[i3]->getPath() == name) return (Element*)extraDynamic[i3];
     //   }
-    //   if(!(i1<object.size())||!(i2<link.size())||!(i3<extraDynamic.size())) cout << "Error: The DynamicSystemSolver " << this->name <<" comprises no element " << name << "!" << endl; 
+    //   if(!(i1<object.size())||!(i2<link.size())||!(i3<extraDynamic.size())) msg(Error) << "Error: The DynamicSystemSolver " << this->name <<" comprises no element " << name << "!" << endl; 
     //   assert(i1<object.size()||i2<link.size()||!(i3<extraDynamic.size()));
     return NULL;
   }
@@ -1263,7 +1261,7 @@ namespace MBSim {
 
   void DynamicSystemSolver::checkExitRequest() {
     if (integratorExitRequest) // if the integrator has not exit after a integratorExitRequest
-      THROW_MBSIMERROR("MBSim: Integrator has not stopped integration! Terminate NOW the hard way!");
+      throwError("MBSim: Integrator has not stopped integration! Terminate NOW the hard way!");
 
     if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
       msg(Info) << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
@@ -1408,14 +1406,6 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"useConstraintSolverForPlot");
     if (e)
       setUseConstraintSolverForPlot(E(e)->getText<bool>());
-  }
-
-  DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
-    shared_ptr<DOMParser> parser=DOMParser::create();
-    shared_ptr<DOMDocument> doc=parser->parse(filename);
-    DOMElement *e = doc->getDocumentElement();
-    DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory::createAndInit<Group>(e));
-    return dss;
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {

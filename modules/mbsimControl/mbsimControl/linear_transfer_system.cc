@@ -60,7 +60,7 @@ namespace MBSimControl {
       if(inputSignalString!="")
         setInputSignal(getByPath<Signal>(inputSignalString));
       if(not inputSignal)
-        THROW_MBSIMERROR("(LinearTransferSystem::init): input signal must be given");
+        throwError("(LinearTransferSystem::init): input signal must be given");
     }
     else if(stage==preInit) {
       if(not A.size()) {
@@ -70,19 +70,19 @@ namespace MBSimControl {
       else
       {
         if(B.rows() != A.size())
-          THROW_MBSIMERROR("Number of rows of input matrix must be equal to size of state matrix");
+          throwError("Number of rows of input matrix must be equal to size of state matrix");
         if(B.cols() != getSignalSize())
-          THROW_MBSIMERROR("Number of columns of input matrix must be equal to signal size");
+          throwError("Number of columns of input matrix must be equal to signal size");
         if(C.rows() != B.cols())
-          THROW_MBSIMERROR("Number of rows of output matrix must be equal to signal size");
+          throwError("Number of rows of output matrix must be equal to signal size");
         if(C.cols() != A.size())
-          THROW_MBSIMERROR("Number of columns of output matrix must be equal size of state matrix");
+          throwError("Number of columns of output matrix must be equal size of state matrix");
       }
       if(not D.size())
         D.resize(getSignalSize());
       else {
         if(D.size() != C.rows())
-          THROW_MBSIMERROR("Size of feedthrough matrix must be equal to signal size");
+          throwError("Size of feedthrough matrix must be equal to signal size");
       }
     }
     Signal::init(stage, config);

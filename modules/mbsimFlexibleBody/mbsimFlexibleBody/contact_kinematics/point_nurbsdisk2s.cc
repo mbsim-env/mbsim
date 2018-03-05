@@ -65,17 +65,17 @@ namespace MBSimFlexibleBody {
       cFrame[ipoint]->getOrientation(false).set(1, -cFrame[inurbsdisk]->getOrientation(false).col(1));
       cFrame[ipoint]->getOrientation(false).set(2,  cFrame[inurbsdisk]->getOrientation(false).col(2));   // to have a legal framework the second tangent is not the negative of the tanget of the disk
 
-//      cout << "Normale: " <<  cFrame[inurbsdisk]->getOrientation(false).col(0) << endl;
-//      cout << "1.Tangente: " <<  cFrame[inurbsdisk]->getOrientation(false).col(1) << endl;
-//      cout << "2.Tangente: " <<  cFrame[inurbsdisk]->getOrientation(false).col(2) << endl;
+//      msg(Info) << "Normale: " <<  cFrame[inurbsdisk]->getOrientation(false).col(0) << endl;
+//      msg(Info) << "1.Tangente: " <<  cFrame[inurbsdisk]->getOrientation(false).col(1) << endl;
+//      msg(Info) << "2.Tangente: " <<  cFrame[inurbsdisk]->getOrientation(false).col(2) << endl;
 
       g = cFrame[inurbsdisk]->getOrientation(false).col(0).T() * (cFrame[ipoint]->getPosition(false) - cFrame[inurbsdisk]->getPosition(false));
-      // cout << "Abstand: " << g << endl;
+      // msg(Info) << "Abstand: " << g << endl;
     }
   }
 
   void ContactKinematicsPointNurbsDisk2s::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    throw MBSim::MBSimError("(ContactKinematicsPointNurbsDisk2s:updatewb): Not implemented!");
+    throw runtime_error("(ContactKinematicsPointNurbsDisk2s:updatewb): Not implemented!");
   }
 
 }

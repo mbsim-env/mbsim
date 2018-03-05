@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
       ContactKinematicsCircleNode(double node_) : node(node_), circle(nullptr), extrusion(nullptr) { }
       void assignContours(const vector<Contour*> &contour) override;
       void updateg(double &g, vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) override { throw MBSimError("ContactKinematicsCircleNode::updatewb not implemented!"); }
+      void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) override { throw runtime_error("ContactKinematicsCircleNode::updatewb not implemented!"); }
     private:
       double node;
       int icircle, inode;
@@ -92,7 +92,7 @@ namespace MBSimFlexibleBody {
       ContactKinematicsCircleNodeInterpolation(const Vec &nodes_) : nodes(nodes_), circle(nullptr), extrusion(nullptr) { }
       void assignContours(const vector<Contour*> &contour) override;
       void updateg(double &g, vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) override { throw MBSimError("ContactKinematicsCircleNodeInterpolation::updatewb not implemented!"); }
+      void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) override { throw runtime_error("ContactKinematicsCircleNodeInterpolation::updatewb not implemented!"); }
     private:
       Vec nodes;
       int icircle, inode;
@@ -170,9 +170,9 @@ namespace MBSimFlexibleBody {
 //    l0 = 1.0 * fabs(extrusion->getAlphaEnd() - extrusion->getAlphaStart()) / staticNodes.size(); /* bandwidth of mesh deformer: higher values leads to stronger attraction of last contact points */
 //    epsTol = 5.e-2 * l0; /* distance, when two contact points should be treated as one */
 
-    cout << numberOfPotentialContactPoints << endl;
-    cout << possibleContactsPerNode << endl;
-    cout << staticNodes.size() << endl;
+    msg(Info) << numberOfPotentialContactPoints << endl;
+    msg(Info) << possibleContactsPerNode << endl;
+    msg(Info) << staticNodes.size() << endl;
     for (int i = 0; i < staticNodes.size(); i++) {
       auto *ck = new ContactKinematicsCircleNode(staticNodes(i));
       ck->assignContours(contour);
@@ -186,10 +186,10 @@ namespace MBSimFlexibleBody {
   }
 
   void ContactKinematicsCircleFlexibleBand::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
-    throw MBSimError("ContactKinematicsCircleFlexibleBand::updateg not implemented!");
+    throw runtime_error("ContactKinematicsCircleFlexibleBand::updateg not implemented!");
   }
 
   void ContactKinematicsCircleFlexibleBand::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    throw MBSimError("ContactKinematicsCircleFlexibleBand::updatewb not implemented!");
+    throw runtime_error("ContactKinematicsCircleFlexibleBand::updatewb not implemented!");
   }
 }

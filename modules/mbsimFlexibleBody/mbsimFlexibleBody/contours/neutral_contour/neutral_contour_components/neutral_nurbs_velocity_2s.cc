@@ -33,10 +33,10 @@ namespace MBSimFlexibleBody {
         NodeFrame P("P",nodes(i,j));
         P.setParent(parent);
         Nodelist(i,j) = P.evalVelocity();
-//        cout << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
-//        cout << "neutralVelocity2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
+//        msg(Debug) << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
+//        msg(Debug) << "neutralVelocity2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
       }
-//    cout << "neutralVelocity2s"<< Nodelist << endl << endl;
+//    msg(Debug) << "neutralVelocity2s"<< Nodelist << endl << endl;
     }
   }
 

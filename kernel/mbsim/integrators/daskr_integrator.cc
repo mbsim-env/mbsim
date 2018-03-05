@@ -127,7 +127,7 @@ namespace MBSimIntegrator {
       neq = system->getzSize();
 
     if(not neq)
-      throw MBSimError("(DASKRIntegrator::integrate): dimension of the system must be at least 1");
+      throwError("(DASKRIntegrator::integrate): dimension of the system must be at least 1");
 
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
@@ -144,7 +144,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throw MBSimError("(DASKRIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(DASKRIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
     }
     else
@@ -162,10 +162,10 @@ namespace MBSimIntegrator {
     if(aTol.size()>1) {
       info(1) = 1; // aTol und rTol are vectors
       if(aTol.size() != neq)
-        throw MBSimError("(DASKRIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
+        throwError("(DASKRIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
     }
     if(rTol.size() != aTol.size())
-      throw MBSimError("(DASKRIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throwError("(DASKRIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
     // info(2) = 0; // solution only at tOut, no intermediate-output
     // info(3) = 0; // integration does not stop at tStop (rWork(0))
@@ -242,7 +242,6 @@ namespace MBSimIntegrator {
       integPlot << "#1 calculation time [s]:" << endl;
     }
 
-    cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
       DDASKR(*delta[formalism],&neq,&t,system->getState()(),yd(),&tPlot,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,&rPar,iPar,nullptr,nullptr,rt,nrt,system->getjsv()());
       if(idid==3 or idid==2) {
@@ -252,8 +251,8 @@ namespace MBSimIntegrator {
         system->setUpdatezd(false);
         if(formalism) system->setUpdatela(false);
         system->plot();
-        if(output)
-          cout << "   t = " <<  t << ",\tdt = "<< work(6) << "\r"<<flush;
+        if(msgAct(Status))
+          msg(Status) << "   t = " <<  t << ",\tdt = "<< work(6) << flush;
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;
@@ -315,7 +314,7 @@ namespace MBSimIntegrator {
         for(int i=system->getzSize(); i<neq; i++)
           iWork(40+i) = -1; // algebraic variable
       }
-      else if(idid<0) throw MBSimError("Integrator DASKR failed with istate = "+toString(idid));
+      else if(idid<0) throwError("Integrator DASKR failed with istate = "+toString(idid));
     }
 
     if(plotIntegrationData) integPlot.close();
@@ -327,9 +326,6 @@ namespace MBSimIntegrator {
       integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
   }
 
   void DASKRIntegrator::initializeUsingXML(DOMElement *element) {

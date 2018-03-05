@@ -63,7 +63,7 @@ namespace MBSim {
   void Function<Sig>::initializeUsingXML(xercesc::DOMElement *element) {
     FunctionBase::initializeUsingXML(element);
     if(MBXMLUtils::E(element)->hasAttribute("name"))
-      THROW_MBSIMERROR("No 'name' attribute allowed for Function's.");
+      throw MBXMLUtils::DOMEvalException("No 'name' attribute allowed for Function's.", element);
   }
 
 }

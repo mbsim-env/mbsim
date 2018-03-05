@@ -149,7 +149,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updateAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33RCM::updateJacobians(Frame1s *frame, int j) {
@@ -174,7 +174,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updateGyroscopicAccelerations(Frame1s *frame) {
-//    THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
+//    throwError("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33RCM::updatePositions(NodeFrame *frame) {
@@ -197,7 +197,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33RCM::updateJacobians(NodeFrame *frame, int j) {
@@ -224,7 +224,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
   }
 
   Vec3 FlexibleBody1s33RCM::getAngles(double s) {
@@ -271,7 +271,7 @@ namespace MBSimFlexibleBody {
       if (q0Tmp.size() == q0.size())
         q0 = q0Tmp.copy();
       else
-        THROW_MBSIMERROR("Dimension of q0 wrong!");
+        throwError("Dimension of q0 wrong!");
     }
 
     uSize[0] = qSize;
@@ -284,7 +284,7 @@ namespace MBSimFlexibleBody {
       if (u0Tmp.size() == u0.size())
         u0 = u0Tmp.copy();
       else
-        THROW_MBSIMERROR("Dimension of u0 wrong!");
+        throwError("Dimension of u0 wrong!");
     }
   }
 
@@ -441,7 +441,7 @@ namespace MBSimFlexibleBody {
 //      if (writePsFile) {
 //        string psfile = filenamePos + ".ps";
 //
-//        cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+//        msg(Debug) << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
 //      }
 //
 //      if (not filenameVel.empty()) {
@@ -452,8 +452,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
-
-    int DEBUGLEVEL = 0;
 
     PlNurbsCurved curvePos;
     PlNurbsCurved curveVel;
@@ -522,24 +520,24 @@ namespace MBSimFlexibleBody {
         u0Dummy(i * 10 + 2) = velI(2);
       }
 
-      if (DEBUGLEVEL == 1) {
-        cout << "START(" << i + 1 << ",1:end) = [" << posStart << "];" << endl;
-        cout << "Tangent(" << i + 1 << ",1:end) = [" << tangStart << "];" << endl;
-        cout << "Normal(" << i + 1 << ",1:end) = [" << norStart << "];" << endl;
-        cout << "Binormal(" << i + 1 << ",1:end) = [" << binStart << "];" << endl;
+      if (msgAct(Debug)) {
+        msg(Debug) << "START(" << i + 1 << ",1:end) = [" << posStart << "];" << endl;
+        msg(Debug) << "Tangent(" << i + 1 << ",1:end) = [" << tangStart << "];" << endl;
+        msg(Debug) << "Normal(" << i + 1 << ",1:end) = [" << norStart << "];" << endl;
+        msg(Debug) << "Binormal(" << i + 1 << ",1:end) = [" << binStart << "];" << endl;
 
-        cout << "alpha_Old(" << i + 1 << ") = " << q(i * 10 + 3) << ";" << endl;
-        cout << "beta_Old(" << i + 1 << ") = " << q(i * 10 + 4) << ";" << endl;
-        cout << "gamma_Old(" << i + 1 << ") = " << q(i * 10 + 5) << ";" << endl;
-        cout << "%----------------------------------" << endl;
-        cout << "alpha_New(" << i + 1 << ") = " << q0Dummy(i * 10 + 3) << ";" << endl;
-        cout << "beta_New(" << i + 1 << ") = " << q0Dummy(i * 10 + 4) << ";" << endl;
-        cout << "gamma_New(" << i + 1 << ") = " << q0Dummy(i * 10 + 5) << ";" << endl;
-        cout << "%----------------------------------" << endl;
-        cout << "diff_alpha(" << i + 1 << ") = " << q(i * 10 + 3) - q0Dummy(i * 10 + 3) << ";" << endl;
-        cout << "diff_beta(" << i + 1 << ") = " << q(i * 10 + 4) - q0Dummy(i * 10 + 4) << ";" << endl;
-        cout << "diff_gamma(" << i + 1 << ") = " << q(i * 10 + 5) - q0Dummy(i * 10 + 5) << ";" << endl;
-        cout << "%----------------------------------" << endl;
+        msg(Debug) << "alpha_Old(" << i + 1 << ") = " << q(i * 10 + 3) << ";" << endl;
+        msg(Debug) << "beta_Old(" << i + 1 << ") = " << q(i * 10 + 4) << ";" << endl;
+        msg(Debug) << "gamma_Old(" << i + 1 << ") = " << q(i * 10 + 5) << ";" << endl;
+        msg(Debug) << "%----------------------------------" << endl;
+        msg(Debug) << "alpha_New(" << i + 1 << ") = " << q0Dummy(i * 10 + 3) << ";" << endl;
+        msg(Debug) << "beta_New(" << i + 1 << ") = " << q0Dummy(i * 10 + 4) << ";" << endl;
+        msg(Debug) << "gamma_New(" << i + 1 << ") = " << q0Dummy(i * 10 + 5) << ";" << endl;
+        msg(Debug) << "%----------------------------------" << endl;
+        msg(Debug) << "diff_alpha(" << i + 1 << ") = " << q(i * 10 + 3) - q0Dummy(i * 10 + 3) << ";" << endl;
+        msg(Debug) << "diff_beta(" << i + 1 << ") = " << q(i * 10 + 4) - q0Dummy(i * 10 + 4) << ";" << endl;
+        msg(Debug) << "diff_gamma(" << i + 1 << ") = " << q(i * 10 + 5) - q0Dummy(i * 10 + 5) << ";" << endl;
+        msg(Debug) << "%----------------------------------" << endl;
       }
     }
 
@@ -547,42 +545,42 @@ namespace MBSimFlexibleBody {
     if (not filenameVel.empty())
       setu0(u0Dummy);
 
-//    if (DEBUGLEVEL > 0) {
-//      cout << "Positions = [ ";
+//    if (msgAct(Debug)) {
+//      msg(Debug) << "Positions = [ ";
 //      for (int ele = 0; ele < Elements; ele++) {
 //        ContourPointData cp(ele);
 //        updateKinematicsForFrame(cp, Frame::position_cosy);
 //
-//        cout << cp.getFrameOfReference().getPosition()(0) << " " << cp.getFrameOfReference().getPosition()(1) << " " << cp.getFrameOfReference().getPosition()(2) << ";";
+//        msg(Debug) << cp.getFrameOfReference().getPosition()(0) << " " << cp.getFrameOfReference().getPosition()(1) << " " << cp.getFrameOfReference().getPosition()(2) << ";";
 //      }
-//      cout << "];" << endl;
+//      msg(Debug) << "];" << endl;
 //
-//      cout << "Normals = [ ";
+//      msg(Debug) << "Normals = [ ";
 //      for (int ele = 0; ele < Elements; ele++) {
 //        ContourPointData cp(ele);
 //        updateKinematicsForFrame(cp, Frame::position_cosy);
 //
-//        cout << cp.getFrameOfReference().getOrientation()(0, 0) << " " << cp.getFrameOfReference().getOrientation()(0, 1) << " " << cp.getFrameOfReference().getOrientation()(0, 2) << ";";
+//        msg(Debug) << cp.getFrameOfReference().getOrientation()(0, 0) << " " << cp.getFrameOfReference().getOrientation()(0, 1) << " " << cp.getFrameOfReference().getOrientation()(0, 2) << ";";
 //      }
-//      cout << "];" << endl;
+//      msg(Debug) << "];" << endl;
 //
-//      cout << "Tangents = [ ";
+//      msg(Debug) << "Tangents = [ ";
 //      for (int ele = 0; ele < Elements; ele++) {
 //        ContourPointData cp(ele);
 //        updateKinematicsForFrame(cp, Frame::position_cosy);
 //
-//        cout << cp.getFrameOfReference().getOrientation()(1, 0) << " " << cp.getFrameOfReference().getOrientation()(1, 1) << " " << cp.getFrameOfReference().getOrientation()(1, 2) << ";";
+//        msg(Debug) << cp.getFrameOfReference().getOrientation()(1, 0) << " " << cp.getFrameOfReference().getOrientation()(1, 1) << " " << cp.getFrameOfReference().getOrientation()(1, 2) << ";";
 //      }
-//      cout << "];" << endl;
+//      msg(Debug) << "];" << endl;
 //
-//      cout << "Binormals = [ ";
+//      msg(Debug) << "Binormals = [ ";
 //      for (int ele = 0; ele < Elements; ele++) {
 //        ContourPointData cp(ele);
 //        updateKinematicsForFrame(cp, Frame::position_cosy);
 //
-//        cout << cp.getFrameOfReference().getOrientation()(2, 0) << " " << cp.getFrameOfReference().getOrientation()(2, 1) << " " << cp.getFrameOfReference().getOrientation()(2, 2) << ";";
+//        msg(Debug) << cp.getFrameOfReference().getOrientation()(2, 0) << " " << cp.getFrameOfReference().getOrientation()(2, 1) << " " << cp.getFrameOfReference().getOrientation()(2, 2) << ";";
 //      }
-//      cout << "];" << endl;
+//      msg(Debug) << "];" << endl;
 //    }
 
   }

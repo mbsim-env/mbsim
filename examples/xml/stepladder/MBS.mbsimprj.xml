@@ -60,7 +60,7 @@
                 <ele>q0(3)</ele>
               </xmlVector>
             </generalizedInitialPosition>
-            <mass unit="kg">0</mass>
+            <mass unit="kg">1e-9</mass>
             <inertiaTensor unit="kg*m^2">
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>

@@ -83,7 +83,7 @@ namespace MBSimFlexibleBody {
 
       // qG_Old = qG.copy();
 
-      throw MBSimError("(FiniteElement1s33RCM::computeM): Not implemented!");
+      throw runtime_error("(FiniteElement1s33RCM::computeM): Not implemented!");
     }
 
     /* global description */
@@ -423,19 +423,19 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FiniteElement1s33RCM::getPosition(const Vec& qElement, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s33RCM::getPosition): not implemented!");
+    throw runtime_error("(FiniteElement1s33RCM::getPosition): not implemented!");
   }
 
   SqrMat3 FiniteElement1s33RCM::getOrientation(const Vec& qElement, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s33RCM::getOrientation): not implemented!");
+    throw runtime_error("(FiniteElement1s33RCM::getOrientation): not implemented!");
   }
 
   Vec3 FiniteElement1s33RCM::getVelocity (const Vec& qElement, const Vec& qpElement, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s33RCM::getVelocity): not implemented!");
+    throw runtime_error("(FiniteElement1s33RCM::getVelocity): not implemented!");
   }
 
   Vec3 FiniteElement1s33RCM::getAngularVelocity(const Vec& qElement, const Vec& qpElement, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s33RCM::getAngularVelocity): not implemented!");
+    throw runtime_error("(FiniteElement1s33RCM::getAngularVelocity): not implemented!");
   }
 
 }

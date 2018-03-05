@@ -296,35 +296,35 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s23BTA::setMaterialDamping(double) {
-    throw MBSim::MBSimError("(FiniteElement1s23BTA:setMaterialDamping): Not implemented!");
+    throw std::runtime_error("(FiniteElement1s23BTA:setMaterialDamping): Not implemented!");
   }
 
   void FiniteElement1s23BTA::setLehrDamping(double) {
-    throw MBSim::MBSimError("(FiniteElement1s23BTA:setLehrDamping): Not implemented!");
+    throw std::runtime_error("(FiniteElement1s23BTA:setLehrDamping): Not implemented!");
   }
 
   Vec3 FiniteElement1s23BTA::getPosition(const Vec& qElement, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s23BTA::getPosition): not implemented!");
+    throw std::runtime_error("(FiniteElement1s23BTA::getPosition): not implemented!");
   }
 
   Vec3 FiniteElement1s23BTA::getVelocity (const Vec& qElement, const Vec& qpElement, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s23BTA::getVelocity): not implemented!");
+    throw std::runtime_error("(FiniteElement1s23BTA::getVelocity): not implemented!");
   }
 
   Vec3 FiniteElement1s23BTA::getAngularVelocity(const Vec& qElement, const Vec& qpElement, double s) {
-    throw MBSim::MBSimError("(FiniteElement1s23BTA::getAngularVelocity): not implemented!");
+    throw std::runtime_error("(FiniteElement1s23BTA::getAngularVelocity): not implemented!");
   }
 
   double FiniteElement1s23BTA::computeKineticEnergy(const Vec& q,const Vec& u) {
-    throw MBSim::MBSimError("(FiniteElement1s23BTA:computeKineticEnergy): Not implemented!");
+    throw std::runtime_error("(FiniteElement1s23BTA:computeKineticEnergy): Not implemented!");
   }
 
   double FiniteElement1s23BTA::computeGravitationalEnergy(const Vec& q) {
-    throw MBSim::MBSimError("(FiniteElement1s23BTA:computeGravitationalEnergy): Not implemented!");
+    throw std::runtime_error("(FiniteElement1s23BTA:computeGravitationalEnergy): Not implemented!");
   }
 
   double FiniteElement1s23BTA::computeElasticEnergy(const Vec& q) {
-    throw MBSim::MBSimError("(FiniteElement1s23BTA:computeElasticEnergy): Not implemented!");
+    throw std::runtime_error("(FiniteElement1s23BTA:computeElasticEnergy): Not implemented!");
   }
 
 }

@@ -43,12 +43,11 @@ using namespace xercesc;
 namespace MBSimIntegrator {
 
 
-  AutoTimeSteppingSSCIntegrator::AutoTimeSteppingSSCIntegrator() : sysT1(NULL), sysT2(NULL), sysT3(NULL), sysTP(NULL), dt(1e-6), dtOld(1e-6), dte(1e-6), dtMin(0), dtMax(1e-3), dt_SSC_vorGapControl(0), driftCompensation(false), t(0), tPlot(0), tPlotP(0), qSize(0), xSize(0), uSize(0),zSize(0), StepsWithUnchangedConstraints(-1), FlagErrorTest(2), FlagErrorTestAlwaysValid(true), aTol(1,INIT,1e-6), rTol(1,INIT,1e-4),FlagSSC(1), maxOrder(1), method(0), FlagGapControl(false), gapTol(1e-6), maxGainSSC(2.2), safetyFactorSSC(0.7), FlagPlotIntegrator(true), FlagPlotIntegrationSum(true), FlagCoutInfo(true), FlagPlotEveryStep(false), outputInterpolation(false), safetyFactorGapControl(-1), GapControlStrategy(1), numThreads(0), time(0.0), dhdztime(0.0), iter(0), iterA(0), iterB1(0), iterB2(0), iterC1(0), iterC2(0), iterC3(0), iterC4(0), iterB2RE(0), maxIterUsed(0), maxIter(0), sumIter(0), integrationSteps(0), integrationStepswithChange(0), refusedSteps(0), refusedStepsWithImpact(0), wrongAlertGapControl(0), stepsOkAfterGapControl(0), stepsRefusedAfterGapControl(0), statusGapControl(0), singleStepsT1(0), singleStepsT2(0), singleStepsT3(0), dtRelGapControl(1), qUncertaintyByExtrapolation(0), indexLSException(-1), Penetration(0), PenetrationCounter(0), PenetrationLog(0), PenetrationMin(0), PenetrationMax(0), maxdtUsed(0), mindtUsed(0), ChangeByGapControl(false), calcBlock2(0), IterConvergence(0), ConstraintsChanged(0), ConstraintsChangedBlock1(0), ConstraintsChangedBlock2(0), integrationStepsOrder1(0), integrationStepsOrder2(0), order(1), StepTrials(0), AnzahlAktiverKontakte(0), gNDurchschnittprostep(0), iter_T1(0), iter_T2(0), iter_T3(0), step(0), expInt(true), it_T1(0), it_T2(0), it_T3(0), gAC_T1(true), gAC_T2(true), gAC_T3(true), gAC_reg_T1(true), gAC_reg_T2(true), gAC_reg_T3(true), upgedated_T1(false), upgedated_T2(false), upgedated_T3(false), JacUpdate_B1_T1(false), JacUpdate_B2_T1(false), JacUpdate_B1_T2(false), JacUpdate_B2_T2(false), JacUpdate_T1(false), JacUpdate_T2(false), itMax(1), itTol(1e-8), theta(0.), parJac(false), parInt(true), psystems(NULL), inexactJac(false), maxImpIter(0), SetValuedForceLawsExplicit(false), debugOutput(false), plotParallel(false), JacCounter(0) {
+  AutoTimeSteppingSSCIntegrator::AutoTimeSteppingSSCIntegrator() : sysT1(NULL), sysT2(NULL), sysT3(NULL), sysTP(NULL), dt(1e-6), dtOld(1e-6), dte(1e-6), dtMin(0), dtMax(1e-3), dt_SSC_vorGapControl(0), driftCompensation(false), t(0), tPlot(0), tPlotP(0), qSize(0), xSize(0), uSize(0),zSize(0), StepsWithUnchangedConstraints(-1), FlagErrorTest(2), FlagErrorTestAlwaysValid(true), aTol(1,INIT,1e-6), rTol(1,INIT,1e-4),FlagSSC(1), maxOrder(1), method(0), FlagGapControl(false), gapTol(1e-6), maxGainSSC(2.2), safetyFactorSSC(0.7), FlagPlotIntegrator(true), FlagPlotIntegrationSum(true), FlagPlotEveryStep(false), outputInterpolation(false), safetyFactorGapControl(-1), GapControlStrategy(1), numThreads(0), time(0.0), dhdztime(0.0), iter(0), iterA(0), iterB1(0), iterB2(0), iterC1(0), iterC2(0), iterC3(0), iterC4(0), iterB2RE(0), maxIterUsed(0), maxIter(0), sumIter(0), integrationSteps(0), integrationStepswithChange(0), refusedSteps(0), refusedStepsWithImpact(0), wrongAlertGapControl(0), stepsOkAfterGapControl(0), stepsRefusedAfterGapControl(0), statusGapControl(0), singleStepsT1(0), singleStepsT2(0), singleStepsT3(0), dtRelGapControl(1), qUncertaintyByExtrapolation(0), indexLSException(-1), Penetration(0), PenetrationCounter(0), PenetrationLog(0), PenetrationMin(0), PenetrationMax(0), maxdtUsed(0), mindtUsed(0), ChangeByGapControl(false), calcBlock2(0), IterConvergence(0), ConstraintsChanged(0), ConstraintsChangedBlock1(0), ConstraintsChangedBlock2(0), integrationStepsOrder1(0), integrationStepsOrder2(0), order(1), StepTrials(0), AnzahlAktiverKontakte(0), gNDurchschnittprostep(0), iter_T1(0), iter_T2(0), iter_T3(0), step(0), expInt(true), it_T1(0), it_T2(0), it_T3(0), gAC_T1(true), gAC_T2(true), gAC_T3(true), gAC_reg_T1(true), gAC_reg_T2(true), gAC_reg_T3(true), upgedated_T1(false), upgedated_T2(false), upgedated_T3(false), JacUpdate_B1_T1(false), JacUpdate_B2_T1(false), JacUpdate_B1_T2(false), JacUpdate_B2_T2(false), JacUpdate_T1(false), JacUpdate_T2(false), itMax(1), itTol(1e-8), theta(0.), parJac(false), parInt(true), psystems(NULL), inexactJac(false), maxImpIter(0), SetValuedForceLawsExplicit(false), plotParallel(false), JacCounter(0) {
 
     // Flags for Output 
     FlagPlotIntegrator     = true;
     FlagPlotIntegrationSum = true; 
-    FlagCoutInfo           = true; 
     outputInterpolation    = false; 
 
     // SSC and GapControl
@@ -126,7 +125,7 @@ namespace MBSimIntegrator {
       nthr = (*psystems).size()/6; // wegen 3 Systemen
     }
     else {
-      throw MBSimError("Number of Systems for parallel calculation of Jaocobis wrong!");
+      throwError("Number of Systems for parallel calculation of Jaocobis wrong!");
     }
 
     int nthr_q=0;
@@ -302,7 +301,7 @@ namespace MBSimIntegrator {
         piter = &iter_T3;
         break;
       default:
-        throw MBSimError("nrSys_ is out of range.");
+        throwError("nrSys_ is out of range.");
     }
 
     *piter = 0;
@@ -368,7 +367,7 @@ namespace MBSimIntegrator {
         dhdu_n << dhdu_n_T3;
         break;
       default:
-        throw MBSimError("nrSys_ is out of range.");
+        throwError("nrSys_ is out of range.");
     }
 
     *pit = 0;
@@ -423,7 +422,7 @@ namespace MBSimIntegrator {
         }
         else {
           JacCounter++;
-          if (debugOutput) cout << "Update Jakobis seq." << endl;
+          if (msgAct(Debug)) msg(Debug) << "Update Jakobis seq." << endl;
           dhdq_n = system_.dhdq(t_);
           dhdu_n = system_.dhdu(t_);
           saveJac=true;
@@ -434,7 +433,7 @@ namespace MBSimIntegrator {
 
         if (parJac && !parInt) {
           JacCounter++;
-          cout << "update Jacobis!" << endl;
+          msg(Debug) << "update Jacobis!" << endl;
           getdhdqdhdu(dhdq_n,dhdu_n,z_n,t_,1);
           *pupgedated=true;
           saveJac=true;
@@ -447,8 +446,8 @@ namespace MBSimIntegrator {
         }
         else {
           JacCounter++;
-          if (debugOutput) cout << endl << "update Jacobis! System= " << nrSys_ << endl;
-          cout << endl << "update Jacobis! System= " << nrSys_ << endl;
+          if (msgAct(Debug)) msg(Debug) << endl << "update Jacobis! System= " << nrSys_ << endl;
+          msg(Debug) << endl << "update Jacobis! System= " << nrSys_ << endl;
           dhdq_n = system_.dhdq(t_);
           dhdu_n = system_.dhdu(t_);
           *pupgedated=true;
@@ -535,7 +534,7 @@ namespace MBSimIntegrator {
         JacAttempts++;
       }
       else if (*pit==itMax && JacAttempts>=1) {
-        //cout << "Jacobi-Update didn't help to converge... continuing anyway!" << endl;
+        //msg(Debug) << "Jacobi-Update didn't help to converge... continuing anyway!" << endl;
       }
 
     } while(*pit<itMax && maxdevi_u>itTol);
@@ -570,7 +569,7 @@ namespace MBSimIntegrator {
         piter = &iter_T3;
         break;
       default:
-        throw MBSimError("nrSys_ is out of range.");
+        throwError("nrSys_ is out of range.");
     }
 
     *piter = 0;
@@ -612,7 +611,7 @@ namespace MBSimIntegrator {
       }
       else {
         JacCounter++;
-        if (debugOutput) cout << "Update Jakobis seq." << endl;
+        if (msgAct(Debug)) msg(Debug) << "Update Jakobis seq." << endl;
         dhdzTimer.start();
         dhdq_n = system_.dhdq(t_);
         dhdu_n = system_.dhdu(t_);
@@ -639,7 +638,7 @@ namespace MBSimIntegrator {
         dhdu_n = system_.dhdu(t_);
         saveJac=true;
         *pupgedated=true;
-        if (debugOutput) cout << "Update Jakobis seq." << endl;
+        if (msgAct(Debug)) msg(Debug) << "Update Jakobis seq." << endl;
       }
     }
 
@@ -824,7 +823,6 @@ namespace MBSimIntegrator {
     if (dtPlot<=0) FlagPlotEveryStep = true;
     else FlagPlotEveryStep = false;
 
-    cout.setf(ios::scientific, ios::floatfield);
     if (FlagPlotIntegrator) {
 
       integPlot.open((name + ".plt").c_str());
@@ -869,15 +867,15 @@ namespace MBSimIntegrator {
     }
 
     if (theta>epsroot && (method || FlagGapControl)) { // SSC-Methode und Gap-Control fuer implizite Integration pruefen
-      throw MBSimError("Using implicit integration only method=0 and FlagGapControl=0 allowed!");
+      throwError("Using implicit integration only method=0 and FlagGapControl=0 allowed!");
     }
 
     if (theta>epsroot && (inexactJac && itMax==1 && !FlagSSC)) { // linear implizite Integration mit inexakter Jakobi nur mit SSC (Kopplung des Updatens an SSC)
-      throw MBSimError("Linear implicit Integration with inexact Jabobians only allowed with SSC!");
+      throwError("Linear implicit Integration with inexact Jabobians only allowed with SSC!");
     }
 
     if (theta>epsroot && inexactJac && itMax>1 && !((FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==2))) { // schließe noch nicht getestete Versionen aus
-      throw MBSimError("Implicit Integration with inexact Jabobians only tested with (FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==2)!");
+      throwError("Implicit Integration with inexact Jabobians only tested with (FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==1) || (!FlagSSC && maxOrder==2)!");
     }    
 
     if (!FlagSSC) dt=dtMin;
@@ -1564,11 +1562,11 @@ namespace MBSimIntegrator {
       }
     }
 
-    cout << endl << endl << "Time for dhdz= " << dhdztime << endl;
-    cout << "Time for B1= " << timeB1 << endl;
-    cout << "Time for B2= " << timeB2 << endl;
-    cout << "Time for Plot= " << timePlot << endl;
-    cout << "Time for PlotPar= " << timePlotPar << endl;
+    msg(Info) << endl << endl << "Time for dhdz= " << dhdztime << endl;
+    msg(Info) << "Time for B1= " << timeB1 << endl;
+    msg(Info) << "Time for B2= " << timeB2 << endl;
+    msg(Info) << "Time for Plot= " << timePlot << endl;
+    msg(Info) << "Time for PlotPar= " << timePlotPar << endl;
   }
 
   void AutoTimeSteppingSSCIntegrator::plot() {
@@ -1625,14 +1623,14 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
       }
     }
-    if((output && expInt==true) || (output && expInt==false && itMax==1)) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << "\r"<<flush;
-    if(output && expInt==false && itMax>1) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << ",\timpiter = "<<setw(5)<<setiosflags(ios::left) << maxImpIter << "\r"<<flush;
+    if((msgAct(Status) && expInt==true) || (msgAct(Status) && expInt==false && itMax==1)) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << flush;
+    if(msgAct(Status) && expInt==false && itMax>1) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << ",\timpiter = "<<setw(5)<<setiosflags(ios::left) << maxImpIter <<flush;
     timePlotPar += TimerPlotPar.stop();
     //if (FlagPlotIntegrator) {
     //  time += Timer.stop();
     //  integPlot<< t << " " << dtOld << " " <<order << " " << iter << " " << sysTP->getlaSize()  << " "<<AnzahlAktiverKontakte<<" "<<time  <<endl;
     //}
-    //if(output) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << "\r"<<flush;
+    //if(msgAct(Status)) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << flush;
     //timePlot += TimerPlot.stop();
   }
 
@@ -1690,8 +1688,8 @@ namespace MBSimIntegrator {
       }
     }
 
-    if((output && expInt==true) || (output && expInt==false && itMax==1)) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << "\r"<<flush;
-    if(output && expInt==false && itMax>1) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << ",\timpiter = "<<setw(5)<<setiosflags(ios::left) << maxImpIter << "\r"<<flush;
+    if((msgAct(Status) && expInt==true) || (msgAct(Status) && expInt==false && itMax==1)) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << flush;
+    if(msgAct(Status) && expInt==false && itMax>1) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << ",\timpiter = "<<setw(5)<<setiosflags(ios::left) << maxImpIter << flush;
     timePlotPar += TimerPlotPar.stop();
   }
 
@@ -1702,7 +1700,6 @@ namespace MBSimIntegrator {
 
   void AutoTimeSteppingSSCIntegrator::postIntegrate(DynamicSystemSolver& system) {           // system: only dummy!
     time += Timer.stop();
-    cout.unsetf(ios::scientific);
     if (FlagPlotIntegrator) {
       integPlot.close();
     }
@@ -1743,44 +1740,41 @@ namespace MBSimIntegrator {
       integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
       integSum.close();
     }   
-    if (FlagCoutInfo) {
-      if (output) cout << endl <<endl;
-      int maxStepsPerThread = singleStepsT1;
-      if (maxStepsPerThread<singleStepsT2) maxStepsPerThread = singleStepsT2;
-      if (maxStepsPerThread<singleStepsT3) maxStepsPerThread = singleStepsT3;
-      cout << "Summary Integration with AutoTimeStepperSSC: "<<endl;
-      cout << "Integration time:   " << time << endl;
-      cout << "Integration steps:  " << integrationSteps << endl;
-      cout << "Evaluations MBS:    " << (singleStepsT1+singleStepsT2+singleStepsT3)<<"   (max/Thread: "<<maxStepsPerThread<<")"<<endl;
-      cout << "Steps with events: " << integrationStepswithChange<< endl;
-      cout << "Jacobian Updates: " << JacCounter << endl;
-      if (maxOrder>=2) {
-        cout<<"Integration steps order 1: "<<integrationStepsOrder1<<endl;
-        cout<<"Integration steps order "<<maxOrder<<": "<<integrationStepsOrder2<<endl;
-      }
-      if (FlagSSC) {
-        cout << "Refused steps: " << refusedSteps << endl;
-        cout << "Refused steps with events: " << refusedStepsWithImpact << endl;
-        cout << "Maximum step size: " << maxdtUsed << endl;
-        cout << "Minimum step size: " << mindtUsed << endl;
-        cout << "Average step size: " << (t-tStart)/integrationSteps << endl;
-      }
-      if (FlagGapControl) {
-        if (GapControlStrategy>0) {
-          cout << "Steps accepted after GapControl  :"<<stepsOkAfterGapControl<<endl;
-          cout << "Steps refused after GapControl   :"<<stepsRefusedAfterGapControl<<endl;
-          cout << "No impact after GapControl alert :"<<wrongAlertGapControl<<endl;
-        }
-        cout << "Average Penetration  (arithm.)     :"<<Penetration/PenetrationCounter<<endl;
-        cout << "Average Penetration  (geom.)       :"<<exp(PenetrationLog/PenetrationCounter)<<endl;
-        cout << "PenetrationCounter "<<PenetrationCounter<<endl;
-        cout << "Penetration Min    "<<PenetrationMin<<endl;
-        cout << "Penetration Max    "<<PenetrationMax<<endl;
-      }
-      cout << "Maximum number of iterations: " << maxIterUsed << endl;
-      cout << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
-
+    if (output) msg(Info) << endl <<endl;
+    int maxStepsPerThread = singleStepsT1;
+    if (maxStepsPerThread<singleStepsT2) maxStepsPerThread = singleStepsT2;
+    if (maxStepsPerThread<singleStepsT3) maxStepsPerThread = singleStepsT3;
+    msg(Info) << "Summary Integration with AutoTimeStepperSSC: "<<endl;
+    msg(Info) << "Integration time:   " << time << endl;
+    msg(Info) << "Integration steps:  " << integrationSteps << endl;
+    msg(Info) << "Evaluations MBS:    " << (singleStepsT1+singleStepsT2+singleStepsT3)<<"   (max/Thread: "<<maxStepsPerThread<<")"<<endl;
+    msg(Info) << "Steps with events: " << integrationStepswithChange<< endl;
+    msg(Info) << "Jacobian Updates: " << JacCounter << endl;
+    if (maxOrder>=2) {
+      msg(Info)<<"Integration steps order 1: "<<integrationStepsOrder1<<endl;
+      msg(Info)<<"Integration steps order "<<maxOrder<<": "<<integrationStepsOrder2<<endl;
     }
+    if (FlagSSC) {
+      msg(Info) << "Refused steps: " << refusedSteps << endl;
+      msg(Info) << "Refused steps with events: " << refusedStepsWithImpact << endl;
+      msg(Info) << "Maximum step size: " << maxdtUsed << endl;
+      msg(Info) << "Minimum step size: " << mindtUsed << endl;
+      msg(Info) << "Average step size: " << (t-tStart)/integrationSteps << endl;
+    }
+    if (FlagGapControl) {
+      if (GapControlStrategy>0) {
+        msg(Info) << "Steps accepted after GapControl  :"<<stepsOkAfterGapControl<<endl;
+        msg(Info) << "Steps refused after GapControl   :"<<stepsRefusedAfterGapControl<<endl;
+        msg(Info) << "No impact after GapControl alert :"<<wrongAlertGapControl<<endl;
+      }
+      msg(Info) << "Average Penetration  (arithm.)     :"<<Penetration/PenetrationCounter<<endl;
+      msg(Info) << "Average Penetration  (geom.)       :"<<exp(PenetrationLog/PenetrationCounter)<<endl;
+      msg(Info) << "PenetrationCounter "<<PenetrationCounter<<endl;
+      msg(Info) << "Penetration Min    "<<PenetrationMin<<endl;
+      msg(Info) << "Penetration Max    "<<PenetrationMax<<endl;
+    }
+    msg(Info) << "Maximum number of iterations: " << maxIterUsed << endl;
+    msg(Info) << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
   }
 
 
@@ -2156,7 +2150,7 @@ namespace MBSimIntegrator {
         if (dt/2.0>dtMin) {
           testOK= false; 
           dt=dt/2.0;
-          //cout<<"step size halved because of failed convergence"<<endl;
+          //msg(Warn)<<"step size halved because of failed convergence"<<endl;
         }
         else {
           msg(Warn)<<"No convergence despite minimum stepsize("<<maxIter<<" iterations) Anyway, continuing integration..."<<endl;

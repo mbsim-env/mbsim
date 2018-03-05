@@ -47,7 +47,6 @@ int main (int argc, char* argv[]) {
       TimeSteppingIntegrator integrator; integrator.setStepSize(5e-5);
       integrator.setEndTime(tEnd);
       integrator.setPlotStepSize(dtPlot);
-      integrator.setOutput(true);
       start=clock();
       integrator.integrate(*dss);
       end=clock();
@@ -57,7 +56,6 @@ int main (int argc, char* argv[]) {
       RADAU5Integrator integrator;
       integrator.setEndTime(tEnd);
       integrator.setPlotStepSize(dtPlot);
-      integrator.setOutput(true);
       start=clock();
       integrator.integrate(*dss);
       end=clock();

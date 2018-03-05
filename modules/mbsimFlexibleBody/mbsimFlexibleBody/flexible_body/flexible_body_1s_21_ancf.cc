@@ -93,7 +93,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21ANCF::updateAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21ANCF::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21ANCF::updateJacobians(Frame1s *frame, int j) {
@@ -117,7 +117,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21ANCF::updateGyroscopicAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21ANCF::updatePositions(NodeFrame *frame) {
@@ -173,7 +173,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21ANCF::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21ANCF::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21ANCF::updateJacobians(NodeFrame *frame, int j) {
@@ -192,7 +192,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21ANCF::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21ANCF::init(InitStage stage, const InitConfigSet &config) {
@@ -312,7 +312,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21ANCF::initRelaxed(double alpha) {
     if(!initialised) {
       if(Elements==0)
-        throw(new MBSimError("(FlexibleBody1s21ANCF::initRelaxed): Set number of finite elements!"));
+        throwError("(FlexibleBody1s21ANCF::initRelaxed): Set number of finite elements!");
       Vec q0Dummy(q0.size(),INIT,0.);
       if(openStructure) {
         Vec direction(2);
@@ -358,7 +358,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21ANCF::setEulerPerspective(bool Euler_, double v0_) {
     if(openStructure) {
-      throw(new MBSim::MBSimError("(FlexibleBody1s21ANCF::setEulerPerspective): implemented only for closed structures!"));
+      throwError("(FlexibleBody1s21ANCF::setEulerPerspective): implemented only for closed structures!");
     }
     else {
       Euler = Euler_;
