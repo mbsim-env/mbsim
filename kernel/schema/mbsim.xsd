@@ -618,12 +618,12 @@
           <xs:element name="constraintSolver" minOccurs="0" type="pv:stringFullEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                <p>Nebenbedingungsgleichungen auf Beschleunigungsebene.</p>
+                <p>Lösungsverfahren für Nebenbedingungsgleichungen auf Beschleunigungsebene.</p>
                 <dl>
-                  <dt>"FixedPointSingle"</dt> <dd>Gauss-Seidel-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
+                  <dt>"fixedpoint"</dt> <dd>Fixpunktiteration mit Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
                   <dt>"GaussSeidel"</dt> <dd>Gauss-Seidel-Verfahren (Anwendungsfall: Ebene Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
-                  <dt>"LinearEquations"</dt> <dd>Cholesky-Zerlegung für reguläre Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).</dd>
-                  <dt>"RootFinding"</dt> <dd>Gedämpftes und globalisiertes Newton-Verfahren (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: sehr robust).</dd>
+                  <dt>"direct"</dt> <dd>Cholesky-Zerlegung für reguläre Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).</dd>
+                  <dt>"rootfinding"</dt> <dd>Gedämpftes und globalisiertes Newton-Verfahren (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: sehr robust).</dd>
                 </dl>
               </xs:documentation>
             </xs:annotation>
@@ -631,20 +631,39 @@
           <xs:element name="impactSolver" minOccurs="0" type="pv:stringFullEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                <p>Nebenbedingungsgleichungen auf Geschwindigkeitssebene.</p>
+                <p>Lösungsverfahren für Nebenbedingungsgleichungen auf Geschwindigkeitssebene.</p>
                 <dl>
-                  <dt>"FixedPointSingle"</dt> <dd>Gauss-Seidel-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
+                  <dt>"fixedpoint"</dt> <dd>Fixpunktiteration mit Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
                   <dt>"GaussSeidel"</dt> <dd>Gauss-Seidel-Verfahren (Anwendungsfall: Ebene Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
-                  <dt>"LinearEquations"</dt> <dd>Cholesky-Zerlegung für reguläre Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).</dd>
-                  <dt>"RootFinding"</dt> <dd>Gedämpftes und globalisiertes Newton-Verfahren (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: sehr robust).</dd>
+                  <dt>"direct"</dt> <dd>Cholesky-Zerlegung für reguläre Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).</dd>
+                  <dt>"rootfinding"</dt> <dd>Gedämpftes und globalisiertes Newton-Verfahren (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: sehr robust).</dd>
                 </dl>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="numberOfMaximalIterations" type="pv:integerFullEval" minOccurs="0">
+          <xs:element name="maximumIterations" type="pv:integerFullEval" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Maximale Iterationszahl der Löser bis zum Abruch.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="numericalJacobian" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob beim Lösungsverfahren "rootFinding" die Jacobi-Matrix numerisch berechnet werden soll.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="linearAlgebra" minOccurs="0" type="pv:stringFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                <p>Lineare Algebra beim Lösungsverfahren "rootFinding".</p>
+                <dl>
+                  <dt>"LUDecomposition"</dt> <dd>.</dd>
+                  <dt>"LevenbergMarquardt"</dt> <dd>.</dd>
+                  <dt>"pseudoinverse"</dt> <dd>.</dd>
+                </dl>
               </xs:documentation>
             </xs:annotation>
           </xs:element>

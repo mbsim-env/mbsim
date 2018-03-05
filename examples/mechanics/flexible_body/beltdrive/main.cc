@@ -11,16 +11,15 @@ int main (int argc, char* argv[]) {
 
   sys->setStopIfNoConvergence(false);
 //  sys->dropContactMatrices();
-  sys->setConstraintSolver(DynamicSystemSolver::FixedPointSingle);
-  sys->setImpactSolver(DynamicSystemSolver::FixedPointSingle);
-  sys->setStrategy(DynamicSystemSolver::local);
+  sys->setConstraintSolver(DynamicSystemSolver::fixedpoint);
+  sys->setImpactSolver(DynamicSystemSolver::fixedpoint);
   sys->initialize();
 
   sys->setGeneralizedRelativeVelocityTolerance (1.0e-6);
   sys->setGeneralizedRelativeAccelerationTolerance(1.0e-8);
   sys->setGeneralizedForceTolerance (1.0e-8);
   sys->setGeneralizedImpulseTolerance (1.0e-6);
-  sys->setMaxIter(1000+0*pow(150*sys->getlaSize(),0.85));
+  sys->setMaximumIterations(1000+0*pow(150*sys->getlaSize(),0.85));
 
   Integrator *integrator;
 
