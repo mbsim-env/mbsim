@@ -1,6 +1,6 @@
 #include "config.h"
 #include <cstring>
-#include <regex>
+#include <boost/regex.hpp>
 #include "mbsimflatxml.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -56,9 +56,9 @@ int main(int argc, char *argv[]) {
       if(itn->substr(0, 6)=="error~" ) msgType=fmatvec::Atom::Error;
       if(itn->substr(0, 5)=="depr~"  ) msgType=fmatvec::Atom::Deprecated;
       if(itn->substr(0, 7)=="status~") msgType=fmatvec::Atom::Status;
-      static regex re(".*~(.*)~(.*)", std::regex::extended);
-      smatch m;
-      if(!regex_match(*itn, m, re)) {
+      static boost::regex re(".*~(.*)~(.*)", boost::regex::extended);
+      boost::smatch m;
+      if(!boost::regex_match(*itn, m, re)) {
         cerr<<"Invalid argument"<<endl;
         return 1;
       }
