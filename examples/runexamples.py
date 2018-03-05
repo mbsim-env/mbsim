@@ -966,7 +966,7 @@ def webapp(example):
     gui={'buildType': args.buildType, 'prog': 'mbsimgui'}
     if os.path.exists("MBS.mbsimprj.xml"):
       gui['file']=[example+'/MBS.mbsimprj.xml']
-    if os.path.exists("FMI.mbsimprj.xml"):
+    elif os.path.exists("FMI.mbsimprj.xml"):
       gui['file']=[example+'/FMI.mbsimprj.xml']
     else:
       gui['file']=[example+'/FMI_cosim.mbsimprj.xml']
