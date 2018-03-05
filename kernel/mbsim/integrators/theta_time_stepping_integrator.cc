@@ -69,6 +69,10 @@ namespace MBSimIntegrator {
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
+        system->setla(system->getLa(false)/dt);
+        system->setqd(system->getdq(false)/dt);
+        system->setud(system->getdu(false)/dt);
+        system->setxd(system->getdx(false)/dt);
         system->setUpdatela(false);
         system->setUpdateLa(false);
         system->setUpdatezd(false);
@@ -132,11 +136,6 @@ namespace MBSimIntegrator {
 
       system->setTime(te);
 
-      system->setla(system->getLa()/dt);
-      system->setqd(system->getdq(false)/dt);
-      system->setud(system->getdu(false)/dt);
-      system->setxd(system->getdx(false)/dt);
-
       system->resetUpToDate();
 
       if(system->getIterI()>maxIter) maxIter = system->getIterI();
@@ -184,7 +183,7 @@ namespace MBSimIntegrator {
     system->updatelaRef(system->getlaParent()(0,system->getlaSize()-1));
     system->updateLaRef(system->getLaParent()(0,system->getlaSize()-1));
     system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
-    if (system->getImpactSolver() == DynamicSystemSolver::RootFinding)
+    if (system->getImpactSolver() == DynamicSystemSolver::rootfinding)
       system->updateresRef(system->getresParent()(0,system->getlaSize()-1));
     system->updaterFactorRef(system->getrFactorParent()(0,system->getrFactorSize()-1));
   }

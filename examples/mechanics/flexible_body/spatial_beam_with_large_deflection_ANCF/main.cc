@@ -9,7 +9,7 @@ int main (int argc, char* argv[]) {
 
   System *sys = new System("MBS");
 
-  sys->setImpactSolver(DynamicSystemSolver::RootFinding);
+  sys->setImpactSolver(DynamicSystemSolver::rootfinding);
   sys->setStopIfNoConvergence(true,true);
   sys->initialize();
 

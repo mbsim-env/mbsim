@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
   sw.start();
   PlanarBeamWithLargeDeflectionSystem *sys = new PlanarBeamWithLargeDeflectionSystem("MBS");
 
-  sys->setImpactSolver(DynamicSystemSolver::RootFinding);
+  sys->setImpactSolver(DynamicSystemSolver::rootfinding);
   sys->setStopIfNoConvergence(true, true);
   sys->initialize();
 

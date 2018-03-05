@@ -544,18 +544,28 @@ namespace MBSimGUI {
     addToTab("Environment", environment);
 
     vector<QString> list;
-    list.emplace_back("\"FixedPointSingle\"");
+    list.emplace_back("\"fixedpoint\"");
     list.emplace_back("\"GaussSeidel\"");
-    list.emplace_back("\"LinearEquations\"");
-    list.emplace_back("\"RootFinding\"");
-    constraintSolver = new ExtWidget("Constraint solver",new TextChoiceWidget(list,1,true),true,false,MBSIM%"constraintSolver");
+    list.emplace_back("\"direct\"");
+    list.emplace_back("\"rootfinding\"");
+    constraintSolver = new ExtWidget("Constraint solver",new TextChoiceWidget(list,0,true),true,false,MBSIM%"constraintSolver");
     addToTab("Solver parameters", constraintSolver);
 
-    impactSolver = new ExtWidget("Impact solver",new TextChoiceWidget(list,1,true),true,false,MBSIM%"impactSolver");
+    impactSolver = new ExtWidget("Impact solver",new TextChoiceWidget(list,0,true),true,false,MBSIM%"impactSolver");
     addToTab("Solver parameters", impactSolver);
 
-    numberOfMaximalIterations = new ExtWidget("Number of maximal iterations",new ChoiceWidget2(new ScalarWidgetFactory("10000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numberOfMaximalIterations");
-    addToTab("Solver parameters", numberOfMaximalIterations);
+    maxIter = new ExtWidget("Maximum iterations",new ChoiceWidget2(new ScalarWidgetFactory("10000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumIterations");
+    addToTab("Solver parameters", maxIter);
+
+    numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget2(new BoolWidgetFactory("false"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
+    addToTab("Solver parameters", numericalJacobian);
+
+    list.clear();
+    list.emplace_back("\"LUDecomposition\"");
+    list.emplace_back("\"LevenbergMarquardt\"");
+    list.emplace_back("\"pseudoinverse\"");
+    linearAlgebra = new ExtWidget("Linear algebra",new TextChoiceWidget(list,0,true),true,false,MBSIM%"linearAlgebra");
+    addToTab("Solver parameters", linearAlgebra);
 
     projection = new ExtWidget("Projection tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");
     addToTab("Solver parameters", projection);
@@ -590,7 +600,9 @@ namespace MBSimGUI {
     environment->initializeUsingXML(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
     constraintSolver->initializeUsingXML(item->getXMLElement());
     impactSolver->initializeUsingXML(item->getXMLElement());
-    numberOfMaximalIterations->initializeUsingXML(item->getXMLElement());
+    maxIter->initializeUsingXML(item->getXMLElement());
+    numericalJacobian->initializeUsingXML(item->getXMLElement());
+    linearAlgebra->initializeUsingXML(item->getXMLElement());
     projection->initializeUsingXML(item->getXMLElement());
     g->initializeUsingXML(item->getXMLElement());
     gd->initializeUsingXML(item->getXMLElement());
@@ -608,7 +620,9 @@ namespace MBSimGUI {
     environment->writeXMLFile(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
     constraintSolver->writeXMLFile(item->getXMLElement());
     impactSolver->writeXMLFile(item->getXMLElement());
-    numberOfMaximalIterations->writeXMLFile(item->getXMLElement());
+    maxIter->writeXMLFile(item->getXMLElement());
+    numericalJacobian->writeXMLFile(item->getXMLElement());
+    linearAlgebra->writeXMLFile(item->getXMLElement());
     projection->writeXMLFile(item->getXMLElement());
     g->writeXMLFile(item->getXMLElement());
     gd->writeXMLFile(item->getXMLElement());

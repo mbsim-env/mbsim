@@ -842,12 +842,11 @@ namespace MBSim {
   void SingleContact::jacobianConstraints() {
     if (gdActive[normal]) {
 
-      const SqrMat Jprox = ds->getJprox();
       const SqrMat G = ds->evalG();
 
       //TODO: separate normal and tangential
 
-      RowVec jp1 = Jprox.row(laInd);
+      RowVec jp1 = ds->getJprox().row(laInd);
       RowVec e1(jp1.size());
       e1(laInd) = 1;
 
@@ -863,7 +862,7 @@ namespace MBSim {
 
       if (getFrictionDirections() == 1) {
         Mat diff = fdf->diff(laT, gddT(0, 0), fcl->isSetValued()?laN(0):lambdaN, rFactor(addIndexNormal));
-        RowVec jp2 = Jprox.row(laInd + addIndexNormal);
+        RowVec jp2 = ds->getJprox().row(laInd + addIndexNormal);
         RowVec e2(jp2.size());
         e2(laInd + 1) = 1;
         Mat e(2, jp2.size());
@@ -877,7 +876,7 @@ namespace MBSim {
       }
       else if (getFrictionDirections() == 2) {
         Mat diff = ftil->diff(laT, gddT, gdT, fcl->isSetValued()?laN(0):lambdaN, rFactor(addIndexNormal));
-        Mat jp2 = Jprox(RangeV(laInd + addIndexNormal, laInd + addIndexNormal + 1), RangeV(0, Jprox.cols() - 1));
+        Mat jp2 = ds->getJprox()(RangeV(laInd + addIndexNormal, laInd + addIndexNormal + 1), RangeV(0, ds->getJprox().cols() - 1));
         Mat e2(2, jp2.cols());
         e2(0, laInd + addIndexNormal) = 1;
         e2(1, laInd + addIndexNormal + 1) = 1;
@@ -893,10 +892,9 @@ namespace MBSim {
   void SingleContact::jacobianImpacts() {
     if (gActive) {
 
-      const SqrMat Jprox = ds->getJprox();
       const SqrMat G = ds->evalG();
 
-      RowVec jp1 = Jprox.row(laInd);
+      RowVec jp1 = ds->getJprox().row(laInd);
       RowVec e1(jp1.size());
       e1(laInd) = 1;
 
@@ -913,7 +911,7 @@ namespace MBSim {
 
       if (getFrictionDirections() == 1) {
         Mat diff = ftil->diff(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(addIndexNormal));
-        RowVec jp2 = Jprox.row(laInd + addIndexNormal);
+        RowVec jp2 = ds->getJprox().row(laInd + addIndexNormal);
         RowVec e2(jp2.size());
         e2(laInd + addIndexNormal) = 1;
         Mat e(2, jp2.size());
@@ -927,14 +925,14 @@ namespace MBSim {
       }
       else if (getFrictionDirections() == 2) {
         Mat diff = ftil->diff(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(addIndexNormal));
-        Mat jp2 = Jprox(RangeV(laInd + addIndexNormal, laInd + addIndexNormal + 1), RangeV(0, Jprox.cols() - 1));
+        Mat jp2 = ds->getJprox()(RangeV(laInd + addIndexNormal, laInd + addIndexNormal + 1), RangeV(0, ds->getJprox().cols() - 1));
         Mat e2(2, jp2.cols());
         e2(0, laInd + addIndexNormal) = 1;
         e2(1, laInd + addIndexNormal + 1) = 1;
         jp2 = e2 - diff(RangeV(0, 1), RangeV(4, 4)) * e1 - diff(RangeV(0, 1), RangeV(0, 1)) * e2; // -diff(RangeV(0,1),RangeV(4,5))*G(RangeV(laInd+laIndk+1,laInd+laIndk+2),RangeV(0,G.size()-1))
         for (int i = 0; i < G.size(); i++) {
-          jp2(0, i) = diff(0, 2) * G(laInd + addIndexNormal, i) + diff(0, 3) * G(laInd + addIndexNormal + 1, i);
-          jp2(1, i) = diff(1, 2) * G(laInd + addIndexNormal, i) + diff(1, 3) * G(laInd + addIndexNormal + 1, i);
+          jp2(0, i) -= diff(0, 2) * G(laInd + addIndexNormal, i) + diff(0, 3) * G(laInd + addIndexNormal + 1, i);
+          jp2(1, i) -= diff(1, 2) * G(laInd + addIndexNormal, i) + diff(1, 3) * G(laInd + addIndexNormal + 1, i);
         }
       }
     }
