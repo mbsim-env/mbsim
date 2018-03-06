@@ -40,7 +40,7 @@ void Perlchain::initialize() {
       setValuedContacts.push_back(static_cast<Contact*>(*i));
     }
     else {
-      throw MBSimError("Not implemented!");
+      throw runtime_error("Not implemented!");
     }
   }
 }
