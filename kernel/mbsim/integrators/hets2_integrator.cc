@@ -92,7 +92,6 @@ namespace MBSimIntegrator {
       Mat TStage0 = system->evalT().copy();
       SymMat LLMStage0 = system->evalLLM().copy();
       Vec hStage0 = system->evalh().copy();
-      Mat VStage0 = system->evalV().copy();
 
       // plot
       if(system->getTime() >= tPlot) {
@@ -132,6 +131,7 @@ namespace MBSimIntegrator {
 
         // save values
         Vec laStage0 = system->evalla().copy();
+        Mat VStage0 = system->evalV().copy();
 
         if(system->getIterC()>maxIter) maxIter = system->getIterC();
         sumIter += system->getIterC();
