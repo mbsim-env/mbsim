@@ -120,18 +120,18 @@ namespace MBSimGUI {
 
     // initialize streams
     debugStreamFlag=std::make_shared<bool>(false);
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
-      make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_INFO")));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true),
-      make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_WARN")));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag,
-      make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_DEBUG")));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true),
-      make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_ERROR")));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
-      make_shared<ostream>(new EchoStream(echoView, "MBSIMGUI_DEPRECATED")));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
-      make_shared<ostream>(new StatusStream(this)));
+    infoBuf.reset(new EchoStream(echoView, "MBSIMGUI_INFO"));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true), make_shared<ostream>(infoBuf.get()));
+    warnBuf.reset(new EchoStream(echoView, "MBSIMGUI_WARN"));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true), make_shared<ostream>(warnBuf.get()));
+    debugBuf.reset(new EchoStream(echoView, "MBSIMGUI_DEBUG"));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag             , make_shared<ostream>(debugBuf.get()));
+    errorBuf.reset(new EchoStream(echoView, "MBSIMGUI_ERROR"));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true), make_shared<ostream>(errorBuf.get()));
+    deprBuf.reset(new EchoStream(echoView, "MBSIMGUI_DEPRECATED"));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true), make_shared<ostream>(deprBuf.get()));
+    statusBuf.reset(new StatusStream(this));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true), make_shared<ostream>(statusBuf.get()));
 
     initInlineOpenMBV();
 
