@@ -50,12 +50,13 @@ int main(int argc, char *argv[]) {
         return 1;
       }
       fmatvec::Atom::MsgType msgType;
-      if(itn->substr(0, 5)=="info~"  ) msgType=fmatvec::Atom::Info;
-      if(itn->substr(0, 5)=="warn~"  ) msgType=fmatvec::Atom::Warn;
-      if(itn->substr(0, 6)=="debug~" ) msgType=fmatvec::Atom::Debug;
-      if(itn->substr(0, 6)=="error~" ) msgType=fmatvec::Atom::Error;
-      if(itn->substr(0, 5)=="depr~"  ) msgType=fmatvec::Atom::Deprecated;
-      if(itn->substr(0, 7)=="status~") msgType=fmatvec::Atom::Status;
+      if     (itn->substr(0, 5)=="info~"  ) msgType=fmatvec::Atom::Info;
+      else if(itn->substr(0, 5)=="warn~"  ) msgType=fmatvec::Atom::Warn;
+      else if(itn->substr(0, 6)=="debug~" ) msgType=fmatvec::Atom::Debug;
+      else if(itn->substr(0, 6)=="error~" ) msgType=fmatvec::Atom::Error;
+      else if(itn->substr(0, 5)=="depr~"  ) msgType=fmatvec::Atom::Deprecated;
+      else if(itn->substr(0, 7)=="status~") msgType=fmatvec::Atom::Status;
+      else throw runtime_error("Unknown message stream.");
       static boost::regex re(".*~(.*)~(.*)", boost::regex::extended);
       boost::smatch m;
       if(!boost::regex_match(*itn, m, re)) {
