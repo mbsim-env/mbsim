@@ -63,8 +63,10 @@ int main(int argc, char *argv[]) {
         cerr<<"Invalid argument"<<endl;
         return 1;
       }
+      static list<PrefixedStringBuf> buf;
+      buf.emplace_back(m.str(1), m.str(2), ostr);
       fmatvec::Atom::setCurrentMessageStream(msgType, std::make_shared<bool>(true),
-        std::make_shared<ostream>(new PrefixedStringBuf(m.str(1), m.str(2), ostr)));
+        std::make_shared<ostream>(&buf.back()));
 
       args.erase(itn);
       args.erase(it);

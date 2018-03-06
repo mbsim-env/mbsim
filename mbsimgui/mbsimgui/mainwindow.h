@@ -68,6 +68,8 @@ namespace MBSimGUI {
   class EmbedItemData;
   class Project;
   class WebDialog;
+  class EchoStream;
+  class StatusStream;
 
   class MainWindow : public QMainWindow {
 
@@ -81,6 +83,12 @@ namespace MBSimGUI {
       ProjectView *projectView;
       EchoView *echoView;
       std::shared_ptr<bool> debugStreamFlag;
+      std::unique_ptr<EchoStream> infoBuf;
+      std::unique_ptr<EchoStream> warnBuf;
+      std::unique_ptr<EchoStream> debugBuf;
+      std::unique_ptr<EchoStream> errorBuf;
+      std::unique_ptr<EchoStream> deprBuf;
+      std::unique_ptr<StatusStream> statusBuf;
       QString projectFile;
       QProcess process;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
