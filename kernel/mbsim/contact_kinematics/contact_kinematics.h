@@ -90,11 +90,21 @@ namespace MBSim {
       virtual void setSearchAllContactPoints(bool searchAllCP_=true) { }
       virtual void setInitialGuess(const fmatvec::VecV &zeta0_) { }
 
+      /**
+       * \brief set tolerance for root-finding
+       */
+      void setTolerance(double tol_) { tol = tol_; }
+
     protected:
       /**
        * \brief number of potential contact points
        */
       int numberOfPotentialContactPoints{1};
+
+      /**
+       * \brief tolerance for root-finding
+       */
+      double tol{1e-10};
   };
 
 }

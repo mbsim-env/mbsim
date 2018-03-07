@@ -53,6 +53,7 @@ namespace MBSim {
   void ContactKinematicsPointExtrusion::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
     PlanarContactSearch search(func);
+    search.setTolerance(tol);
     search.setNodes(extrusion->getEtaNodes()); // defining search areas for contacts
 
     if (!searchAllCP) { // select start value from last search

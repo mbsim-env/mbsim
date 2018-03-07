@@ -827,7 +827,7 @@ namespace MBSim {
       }
 
       //compute residuum for tangential directions
-      if (fdf and fdf->isSetValued()) {
+      if (fdf and fdf->isSetValued() and gdActive[tangential]) {
         for (int i = 0; i < getFrictionDirections(); i++) {
           gddT(i) = b(laInd + i + addIndexnormal);
           for (int j = ia[laInd + i + addIndexnormal]; j < ia[laInd + 1 + i + addIndexnormal]; j++)

@@ -43,6 +43,7 @@ namespace MBSimGUI {
     QActionGroup *actionGroup = new QActionGroup(this);
     for(size_t i = 0; i<type.size(); i++)
       actionGroup->addAction(new QAction(type[i], this));
+    actionGroup->setEnabled(not(mw->getProject()->getSolver()->getEmbeded()));
     addActions(actionGroup->actions());
     connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(selectSolver(QAction*)));
   }

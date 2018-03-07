@@ -58,9 +58,10 @@ namespace MBSim {
   }
 
   bool SpatialStribeckFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
-    if (nrm2(la + gdn / nrm2(gdn) * (*fmu)(nrm2(gdn)) * fabs(laN)) <= laTol)
+    double norm = nrm2(gdn);
+    if (nrm2(la + (norm!=0 ? gdn / norm : Vec(gdn.size(), INIT, 0.0)) * (*fmu)(norm) * fabs(laN)) <= laTol)
       return true;
-    else if (nrm2(la) <= (*fmu)(nrm2(gdn)) * fabs(laN) + laTol && nrm2(gdn) <= gdTol)
+    else if (nrm2(la) <= (*fmu)(norm) * fabs(laN) + laTol && norm <= gdTol)
       return true;
     else
       return false;
