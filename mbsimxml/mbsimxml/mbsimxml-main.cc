@@ -28,13 +28,13 @@ using namespace MBXMLUtils;
 namespace bfs=boost::filesystem;
 
 int runProgram(const vector<string> &arg) {
+#if !defined _WIN32
   // convert arg to c style
   auto **argv=new char*[arg.size()+1];
   for(size_t i=0; i<arg.size(); i++)
     argv[i]=const_cast<char*>(arg[i].c_str());
   argv[arg.size()]=nullptr;
 
-#if !defined _WIN32
   pid_t child;
   int spawnRet;
   // Use posix_spawn from a older glibc implementation to allow binary distributions to run on older systems
@@ -56,6 +56,16 @@ int runProgram(const vector<string> &arg) {
   else
     throw runtime_error("Spawn process terminated abnormally.");
 #else
+  // convert arg to c style and quote with " (this is required by Windows even so earch arg is passed seperately)
+  auto **argv=new char*[arg.size()+1];
+  list<string> quotedArgs;
+  argv[0]=const_cast<char*>(arg[0].c_str());
+  for(size_t i=1; i<arg.size(); i++) {
+    quotedArgs.emplace_back("\""+arg[i]+"\"");
+    argv[i]=const_cast<char*>(quotedArgs.back().c_str());
+  }
+  argv[arg.size()]=nullptr;
+
   int ret;
   ret=_spawnv(_P_WAIT, argv[0], argv);
   delete[]argv;
