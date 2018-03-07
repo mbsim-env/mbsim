@@ -88,6 +88,11 @@ namespace MBSim {
        */
       fmatvec::Mat slvAll();
 
+      /**
+       * \brief set tolerance for root-finding
+       */
+      void setTolerance(double tol_) { tol = tol_; }
+
     private:
       /** 
        * \brief distance-function holding all information for contact-search 
@@ -113,6 +118,11 @@ namespace MBSim {
        * \brief all area searching by Regular-Falsi or known initial value for Newton-Method? 
        */
       bool searchAll{false};
+
+      /**
+       * \brief tolerance for root-finding
+       */
+      double tol{1e-10};
   };
 
 }

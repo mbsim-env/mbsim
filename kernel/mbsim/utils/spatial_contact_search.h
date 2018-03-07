@@ -77,6 +77,11 @@ namespace MBSim {
 //       */
 //      fmatvec::Mat slvAll();
 
+      /**
+       * \brief set tolerance for root-finding
+       */
+      void setTolerance(double tol_) { tol = tol_; }
+
     protected:
       /**
        * \brief search all possible contact point along the V direction
@@ -108,6 +113,11 @@ namespace MBSim {
        * \brief all area searching by Regular-Falsi or known initial value for Newton-Method?
        */
       bool searchAll{false};
+
+      /**
+       * \brief tolerance for root-finding
+       */
+      double tol{1e-10};
   };
 }
 

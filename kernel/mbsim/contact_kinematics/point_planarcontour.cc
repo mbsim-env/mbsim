@@ -52,6 +52,7 @@ namespace MBSim {
   void ContactKinematicsPointPlanarContour::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     
     PlanarContactSearch search(func);
+    search.setTolerance(tol);
     search.setNodes(planarcontour->getEtaNodes());
 
     if(!searchAllCP)

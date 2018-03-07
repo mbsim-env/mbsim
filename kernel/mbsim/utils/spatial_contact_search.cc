@@ -46,6 +46,7 @@ namespace MBSim {
 
     if (!searchAll) {
       MultiDimNewtonMethod rf(func, jac);
+      rf.setTolerance(tol);
       alphaC[0] = rf.solve(s0);
       if (rf.getInfo() == 0)
         nRoots = 1;
@@ -55,6 +56,7 @@ namespace MBSim {
 
     if (searchAll) {
       MultiDimNewtonMethod rf(func, jac);
+      rf.setTolerance(tol);
 
       gbuf >> Vec(alphaC.size());  // TODO:: ??
       Vec startingValue(2, NONINIT);

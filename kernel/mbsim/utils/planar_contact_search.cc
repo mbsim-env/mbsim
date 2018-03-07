@@ -41,6 +41,7 @@ namespace MBSim {
 
     if (!searchAll) {
       NewtonMethod rf(func, jac);
+      rf.setTolerance(tol);
       alphaC(0) = rf.solve(s0);
       if (rf.getInfo() == 0)
         nRoots = 1;
@@ -50,6 +51,7 @@ namespace MBSim {
 
     if (searchAll) {
       RegulaFalsi rf(func);
+      rf.setTolerance(tol);
       gbuf >> Vec(alphaC.size());
 
       for (int i = 0; i < nodes.size() - 1; i++) {
