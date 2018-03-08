@@ -120,7 +120,9 @@ namespace MBSimGUI {
   }
 
   void EchoView::updateOutput(bool moveToErrorOrEnd) {
+#ifndef _WIN32 // evaluateJavaScript is crashing on Windows
     int currentScrollY=out->page()->mainFrame()->evaluateJavaScript(R"+(window.scrollY)+").toInt();
+#endif
     // some colors
     static const QColor bg(QPalette().brush(QPalette::Active, QPalette::Base).color());
     static const QColor fg(QPalette().brush(QPalette::Active, QPalette::Text).color());
@@ -184,6 +186,7 @@ R"+(
 )+";
     out->setHtml(html);
 
+#ifndef _WIN32 // evaluateJavaScript is crashing on Windows
     if(moveToErrorOrEnd) {
       // scroll to the first error if their is one, else scroll to the end
       out->page()->mainFrame()->evaluateJavaScript(R"+(
@@ -196,6 +199,7 @@ else
     }
     else
       out->page()->mainFrame()->evaluateJavaScript(QString(R"+(window.scrollTo(0, %1);)+").arg(currentScrollY));
+#endif
   }
 
   QSize EchoView::sizeHint() const {
