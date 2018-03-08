@@ -100,25 +100,13 @@
                 </xmlVector>
               </xiNodes>
               <contourFunction>
-                <ContinuedFunction>
-                  <function>
-                    <SymbolicFunction arg1="zeta" arg1Dim="2">
-                      <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                        <ele>a*cos(zeta(1))*cos(zeta(2))</ele>
-                        <ele>b*sin(zeta(1))*cos(zeta(2))</ele>
-                        <ele>c*sin(zeta(2))</ele>
-                      </xmlVector>
-                    </SymbolicFunction>
-                  </function>
-                  <continuationRule>
-                    <SymbolicFunction arg1="x" arg1Dim="2">n = floor((x(2)+pi/2)/pi);
-eta = x(1) + n*pi;
-s = (-1)^abs(n);
-t = s*x(2)+pi/2;
-xi = (t - pi * floor (t / pi))-pi/2;
-ret = [eta;xi]</SymbolicFunction>
-                  </continuationRule>
-                </ContinuedFunction>
+                <SymbolicFunction arg1="zeta" arg1Dim="2">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>a*cos(zeta(1))*cos(zeta(2))</ele>
+                    <ele>b*sin(zeta(1))*cos(zeta(2))</ele>
+                    <ele>c*sin(zeta(2))</ele>
+                  </xmlVector>
+                </SymbolicFunction>
               </contourFunction>
               <enableOpenMBV>
                 <diffuseColor>
