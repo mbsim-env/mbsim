@@ -204,6 +204,7 @@ namespace MBSim {
           jacRho->setSectionCOS(cE1, cE2);
 
           PlanarContactSearch searchRho(funcRho, jacRho);
+          searchRho.setTolerance(tol);
 
           if (LOCALSEARCH) { // select start value from last search if decided by user
             searchRho.setInitialValue(zeta(0));
@@ -341,6 +342,7 @@ namespace MBSim {
           jacRho->setSectionCOS(c1, c2);
 
           PlanarContactSearch searchRho(funcRho, jacRho);
+          searchRho.setTolerance(tol);
 
           if(LOCALSEARCH) { // select start value from last search if decided by user
             searchRho.setInitialValue(zeta(0));

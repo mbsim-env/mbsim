@@ -57,6 +57,7 @@ namespace MBSim {
   void ContactKinematicsPointSpatialContour::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
 
     SpatialContactSearch search(func);
+    search.setTolerance(tol);
 
     if ((!spatialcontour->getEtaNodes().empty()) && (!spatialcontour->getXiNodes().empty()))
       search.setNodes(spatialcontour->getEtaNodes(), spatialcontour->getXiNodes());

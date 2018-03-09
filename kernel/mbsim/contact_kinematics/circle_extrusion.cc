@@ -65,6 +65,7 @@ namespace MBSim {
 
   void ContactKinematicsCircleExtrusion::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     PlanarContactSearch search(func);
+    search.setTolerance(tol);
     search.setNodes(extrusion->getEtaNodes());
 
     if(searchAllCP==false)
