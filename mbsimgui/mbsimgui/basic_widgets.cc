@@ -31,6 +31,9 @@
 #include "mainwindow.h"
 #include "project.h"
 #include <QtGui>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QColorDialog>
 #include <boost/lexical_cast.hpp>
 #include <utility>
 #include <xercesc/dom/DOMDocument.hpp>

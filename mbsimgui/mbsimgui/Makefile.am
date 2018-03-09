@@ -117,10 +117,10 @@ dist_mbsimguiicon_DATA = icons/simulate.svg \
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines
 pluginsiconengines_DATA = @QT_PLUGINS@/iconengines/*qsvgicon*
-pluginsaccessibledir = @bindir@/accessible
-pluginsaccessible_DATA = @QT_PLUGINS@/accessible/*qtaccessiblewidgets*
-pluginsaccessiblebridgedir = @bindir@/accessiblebridge
-#pluginsaccessiblebridge_DATA = @QT_PLUGINS@/accessiblebridge/*qspiaccessiblebridge* # not available on centos7
+pluginsplatformsdir = @bindir@/platforms
+pluginsplatforms_DATA = @QT_PLUGINS@/platforms/*qxcb*
+pluginsxcbglintegrationsdir = @bindir@/xcbglintegrations
+pluginsxcbglintegrations_DATA = @QT_PLUGINS@/xcbglintegrations/*qxcb*
 
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org

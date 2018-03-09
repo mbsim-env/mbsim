@@ -58,6 +58,7 @@
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include <QSettings>
+#include <QtWidgets/QDesktopWidget>
 #include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include <mbxmlutilshelper/getinstallpath.h>
@@ -89,7 +90,6 @@ namespace MBSimGUI {
   WebDialog* MainWindow::xmlHelpDialog = nullptr;
 
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), autoSave(false), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
-    setIconSize(iconSize()*qApp->desktop()->logicalDpiY()/96);
 
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_ERROROUTPUT=HTMLXPATH";
