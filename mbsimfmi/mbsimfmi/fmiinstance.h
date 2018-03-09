@@ -3,9 +3,12 @@
 
 #include <string>
 #include <map>
-#include <utils.h>
 #include <fmatvec/atom.h>
 #include "fmiinstancebase.h"
+
+// define getFMUSharedLibPath() which returns the FMU shared library path = .../resources/local/[lib|bin]/<name>.[so|dll]
+#define MBXMLUTILS_SHAREDLIBNAME FMU
+#include <mbxmlutilshelper/getsharedlibpath.h>
 
 // fmi function declarations must be included as extern C
 extern "C" {
@@ -101,11 +104,6 @@ namespace MBSimFMI {
       // store FMI instanceName and logger
       std::string instanceName;
       fmiCallbackLogger logger;
-
-      // stream buffers for MBSim objects
-      LoggerBuffer infoBuffer;
-      LoggerBuffer warnBuffer;
-      LoggerBuffer debugBuffer;
 
       // XML parser (none validating)
       std::shared_ptr<MBXMLUtils::DOMParser> parser;

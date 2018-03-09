@@ -140,12 +140,6 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
   return moduleLibFile;
 }
 
-int PrefixedStringBuf::sync() {
-  outstr<<prefix<<str()<<postfix<<flush;
-  str("");
-  return 0;
-}
-
 int MBSimXML::preInit(vector<string> args, DynamicSystemSolver*& dss, Solver*& solver) {
 
   // help

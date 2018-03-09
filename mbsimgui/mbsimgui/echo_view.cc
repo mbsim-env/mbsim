@@ -259,6 +259,7 @@ else
     else {
       showDebug->setDisabled(true);
       showDebug->setChecked(false);
+      updateOutput();
     }
   }
 

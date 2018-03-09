@@ -69,7 +69,6 @@ namespace MBSimGUI {
   class Project;
   class WebDialog;
   class EchoStream;
-  class StatusStream;
 
   class MainWindow : public QMainWindow {
 
@@ -83,12 +82,6 @@ namespace MBSimGUI {
       ProjectView *projectView;
       EchoView *echoView;
       std::shared_ptr<bool> debugStreamFlag;
-      std::unique_ptr<EchoStream> infoBuf;
-      std::unique_ptr<EchoStream> warnBuf;
-      std::unique_ptr<EchoStream> debugBuf;
-      std::unique_ptr<EchoStream> errorBuf;
-      std::unique_ptr<EchoStream> deprBuf;
-      std::unique_ptr<StatusStream> statusBuf;
       QString projectFile;
       QProcess process;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
@@ -242,14 +235,6 @@ namespace MBSimGUI {
       void kill();
       void updateEchoView();
       void updateStatus();
-  };
-
-  class StatusStream : public std::stringbuf {
-    public:
-      StatusStream(MainWindow *mw_) : std::stringbuf(std::ios_base::out), mw(mw_) {}
-    protected:
-      int sync() override; // overwrite the sync function from stringbuf
-      MainWindow *mw;
   };
 
 }

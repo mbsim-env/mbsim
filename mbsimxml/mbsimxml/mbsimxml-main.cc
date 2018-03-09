@@ -86,23 +86,6 @@ void createOrTouch(const string &filename) {
   ofstream f(filename.c_str()); // Note: ofstream use precise file timestamp
 }
 
-//! A string buffer which prefixes every line.
-class PrefixedStringBuf : public std::stringbuf {
-  public:
-    //! Prefix each line with prefix_  and postfix with postfix_ and print to str_.
-    PrefixedStringBuf(std::string prefix_, std::string postfix_, std::ostream &outstr_) :
-      std::stringbuf(std::ios_base::out), prefix(std::move(prefix_)), postfix(std::move(postfix_)), outstr(outstr_) {}
-  protected:
-    int sync() override {
-      outstr<<prefix<<str()<<postfix<<flush;
-      str("");
-      return 0;
-    }
-    std::string prefix;
-    std::string postfix;
-    std::ostream &outstr;
-};
-
 int main(int argc, char *argv[]) {
   try {
 
@@ -204,10 +187,8 @@ int main(int argc, char *argv[]) {
         cerr<<"Invalid argument"<<endl;
         return 1;
       }
-      static list<PrefixedStringBuf> buf;
-      buf.emplace_back(m.str(1), m.str(2), ostr);
       fmatvec::Atom::setCurrentMessageStream(msgType, std::make_shared<bool>(true),
-        std::make_shared<ostream>(&buf.back()));
+        std::make_shared<fmatvec::PrePostfixedStream>(m.str(1), m.str(2), ostr));
 
       args.erase(itn);
       args.erase(it);
