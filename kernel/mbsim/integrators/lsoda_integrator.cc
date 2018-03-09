@@ -54,13 +54,13 @@ namespace MBSimIntegrator {
     debugInit();
 
     if(odePackInUse)
-      throw MBSimError("Only one integration with LSODARIntegrator, LSODERIntegrator and LSODEIntegrator at a time is possible.");
+      throwError("Only one integration with LSODARIntegrator, LSODERIntegrator and LSODEIntegrator at a time is possible.");
     odePackInUse = true;
 
     int zSize=system->getzSize();
 
     if(not zSize)
-      throw MBSimError("(LSODAIntegrator::integrate): dimension of the system must be at least 1");
+      throwError("(LSODAIntegrator::integrate): dimension of the system must be at least 1");
 
     int neq[1+sizeof(void*)/sizeof(int)+1];
     neq[0]=zSize;
@@ -69,7 +69,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(LSODAIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(LSODAIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       system->setState(z0);
     }
     else
@@ -90,7 +90,7 @@ namespace MBSimIntegrator {
       else {
         iTol = 2;
         if(aTol.size() != zSize)
-          throw MBSimError("(LSODAIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throwError("(LSODAIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
     }
     else {
@@ -99,10 +99,10 @@ namespace MBSimIntegrator {
       else {
         iTol = 4;
         if(aTol.size() != zSize)
-          throw MBSimError("(LSODAIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throwError("(LSODAIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
       }
       if(rTol.size() != zSize)
-        throw MBSimError("(LSODAIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
+        throwError("(LSODAIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
     }
 
     int one=1, two=2, istate=1;
@@ -132,7 +132,6 @@ namespace MBSimIntegrator {
       integPlot << "#1 calculation time [s]:" << endl;
     }
 
-    cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd-epsroot) {
       DLSODA(fzdot, neq, system->getState()(), &t, &tPlot, &iTol, rTol(), aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(), &liWork, NULL, &two);
@@ -141,8 +140,8 @@ namespace MBSimIntegrator {
 //        system->setState(z); Not needed as the integrator uses the state of the system
         system->resetUpToDate();
         system->plot();
-        if(output)
-          cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
+        if(msgAct(Status))
+          msg(Status) << "   t = " <<  t << ",\tdt = "<< rWork(10) << flush;
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;
@@ -160,7 +159,7 @@ namespace MBSimIntegrator {
           istate=1;
         }
       }
-      else if(istate<0) throw MBSimError("Integrator LSODA failed with istate = "+toString(istate));
+      else if(istate<0) throwError("Integrator LSODA failed with istate = "+toString(istate));
     }
 
     if(plotIntegrationData) integPlot.close();
@@ -172,9 +171,6 @@ namespace MBSimIntegrator {
       integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
 
     odePackInUse = false;
   }

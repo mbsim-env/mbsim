@@ -100,8 +100,8 @@ namespace MBSimIntegrator {
       }
       self->getSystem()->resetUpToDate();
       self->getSystem()->plot();
-      if(self->output)
-	cout << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
+      if(self->msgAct(Status))
+	self->msg(Status) << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << flush;
 
       double s1 = clock();
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
@@ -134,6 +134,7 @@ namespace MBSimIntegrator {
     }
     else {
       // check drift
+      bool projVel = true;
       if(self->getToleranceForPositionConstraints()>=0) {
         self->getSystem()->setTime(*t);
         self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
@@ -141,10 +142,11 @@ namespace MBSimIntegrator {
         if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
           self->getSystem()->projectGeneralizedPositions(3);
           self->getSystem()->projectGeneralizedVelocities(3);
+          projVel = false;
           *irtrn=-1;
         }
       }
-      else if(self->getToleranceForVelocityConstraints()>=0) {
+      if(self->getToleranceForVelocityConstraints()>=0 and projVel) {
         self->getSystem()->setTime(*t);
         self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
         self->getSystem()->resetUpToDate();
@@ -169,14 +171,14 @@ namespace MBSimIntegrator {
     int zSize=system->getzSize();
 
     if(not zSize)
-      throw MBSimError("(DOP853Integrator::integrate): dimension of the system must be at least 1");
+      throwError("(DOP853Integrator::integrate): dimension of the system must be at least 1");
 
     double t = tStart;
 
     Vec z(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(DOP853Integrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(DOP853Integrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
@@ -193,10 +195,10 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != zSize)
-        throw MBSimError("(DOP853Integrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+        throwError("(DOP853Integrator::integrate): size of aTol does not match, must be " + toStr(zSize));
     }
     if(rTol.size() != aTol.size())
-      throw MBSimError("(DOP853Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throwError("(DOP853Integrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
 
     int out = 2; // dense output is performed in plot
 
@@ -229,8 +231,6 @@ namespace MBSimIntegrator {
 
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
-    cout.setf(ios::scientific, ios::floatfield);
-
     s0 = clock();
 
     while(t<tEnd-epsroot) {
@@ -252,9 +252,6 @@ namespace MBSimIntegrator {
       //integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
   }
 
   void DOP853Integrator::initializeUsingXML(DOMElement *element) {

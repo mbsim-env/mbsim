@@ -29,9 +29,8 @@
 #include "utils.h"
 #include "variable_widgets.h"
 #include "mainwindow.h"
-#include <QLabel>
-#include <QFileDialog>
-#include <QColorDialog>
+#include "project.h"
+#include <QtGui>
 #include <boost/lexical_cast.hpp>
 #include <utility>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -42,7 +41,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern QDir mbsDir;
   extern MainWindow *mw;
 
   LocalFrameComboBox::LocalFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
@@ -676,10 +674,11 @@ namespace MBSimGUI {
     else
       file = QFileDialog::getExistingDirectory ( nullptr, description, file);
     if(not file.isEmpty()) {
+      QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%mw->getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
       if(path->isChecked())
-        filePath->setText(quote?("\""+mbsDir.absoluteFilePath(file)+"\""):mbsDir.absoluteFilePath(file));
+        filePath->setText(quote?("\""+dir.absoluteFilePath(file)+"\""):dir.absoluteFilePath(file));
       else
-        filePath->setText(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
+        filePath->setText(quote?("\""+dir.relativeFilePath(file)+"\""):dir.relativeFilePath(file));
     }
   }
 
@@ -703,10 +702,11 @@ namespace MBSimGUI {
 
   void FileWidget::changePath(int i) {
     QString file = quote?getFile().mid(1,getFile().length()-2):getFile();
+    QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%mw->getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
     if(i)
-      filePath->setText(quote?("\""+mbsDir.absoluteFilePath(file)+"\""):mbsDir.absoluteFilePath(file));
+      filePath->setText(quote?("\""+dir.absoluteFilePath(file)+"\""):dir.absoluteFilePath(file));
     else
-      filePath->setText(quote?("\""+mbsDir.relativeFilePath(file)+"\""):mbsDir.relativeFilePath(file));
+      filePath->setText(quote?("\""+dir.relativeFilePath(file)+"\""):dir.relativeFilePath(file));
   }
 
   SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {

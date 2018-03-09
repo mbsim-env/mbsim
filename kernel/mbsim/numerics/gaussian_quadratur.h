@@ -95,7 +95,7 @@ namespace MBSim {
     protected:
       const Ret integrateSingle(double l, double u) {
         if (Nb > 5)
-          throw MBSim::MBSimError("It is not possible to use more than 5 Gauss-Points atm!");
+          throw std::runtime_error("It is not possible to use more than 5 Gauss-Points atm!");
 
         int posInpW = 0;
 

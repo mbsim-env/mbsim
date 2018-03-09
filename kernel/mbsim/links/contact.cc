@@ -43,7 +43,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Contact)
 
-  Contact::Contact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), searchAllCP(false), saved_ref(0) {
+  Contact::Contact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), searchAllCP(false), tol(1e-10), saved_ref(0) {
   }
 
   Contact::~Contact() {
@@ -319,7 +319,7 @@ namespace MBSim {
       }
 
       if(not(contour.size()))
-        THROW_MBSIMERROR("no connection given!");
+        throwError("no connection given!");
 
       Link::init(stage, config);
     }
@@ -328,6 +328,7 @@ namespace MBSim {
       for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
         contactKinematics[cK]->setSearchAllContactPoints(searchAllCP);
         contactKinematics[cK]->setInitialGuess(zeta0);
+        contactKinematics[cK]->setTolerance(tol);
         contactKinematics[cK]->assignContours(contour[0][cK], contour[1][cK]);
         contacts.push_back(vector<SingleContact>());
         for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); ++k) {
@@ -679,7 +680,7 @@ namespace MBSim {
           if (contactKinematics[cK] == 0) {
             contactKinematics[cK] = contour1->findContactPairingWith(typeid(*contour0), typeid(*contour1));
             if (contactKinematics[cK] == 0) {
-              THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour0).name()) + "\" and Contour \"" + boost::core::demangle(typeid(*contour1).name()) + "\"!");
+              throwError("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour0).name()) + "\" and Contour \"" + boost::core::demangle(typeid(*contour1).name()) + "\"!");
             }
           }
         }
@@ -821,6 +822,9 @@ namespace MBSim {
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
     if (e) setInitialGuess(E(e)->getText<Vec>());
+
+    e = E(element)->getFirstElementChildNamed(MBSIM%"tolerance");
+    if (e) setTolerance(E(e)->getText<double>());
   }
 
   void Contact::updatecorrRef(const Vec& corrParent) {

@@ -54,7 +54,7 @@ namespace MBSim {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(frame[0]==nullptr or frame[1]==nullptr)
-        THROW_MBSIMERROR("Not all connections are given!");
+        throwError("Not all connections are given!");
     }
     else if(stage==preInit) {
       if(isSetValued()) {
@@ -94,11 +94,11 @@ namespace MBSim {
   }
 
   void FrameLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
-    THROW_MBSIMERROR("Internal error");
+    throwError("Internal error");
   }
 
   void FrameLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
-    THROW_MBSIMERROR("Internal error");
+    throwError("Internal error");
   }
 
   void FrameLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {

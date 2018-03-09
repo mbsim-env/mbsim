@@ -41,17 +41,17 @@ namespace MBSimIntegrator {
     debugInit();
 
     if(selfStatic)
-      throw MBSimError("RKSuiteIntegrator can only integrate one system.");
+      throwError("RKSuiteIntegrator can only integrate one system.");
     selfStatic = this;
     zSize=system->getzSize();
 
     if(not zSize)
-      throw MBSimError("(RKSuiteIntegrator::integrate): dimension of the system must be at least 1");
+      throwError("(RKSuiteIntegrator::integrate): dimension of the system must be at least 1");
 
     z.resize(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(RKSuiteIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(RKSuiteIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       z = z0;
     }
     else
@@ -64,12 +64,11 @@ namespace MBSimIntegrator {
       thres.resize(zSize,INIT,thres_);
     } 
     if(thres.size() != zSize)
-      throw MBSimError("(RKSuiteIntegrator::integrate): size of thres does not match, must be " + toStr(zSize));
+      throwError("(RKSuiteIntegrator::integrate): size of thres does not match, must be " + toStr(zSize));
 
     lenwrk = 2*32*zSize;
     work=new double[lenwrk];
-    if (warnLevel)
-      messages=1;
+    messages=1;
 
     zdGot.resize(zSize);
     zMax.resize(zSize);
@@ -82,7 +81,6 @@ namespace MBSimIntegrator {
 
     tPlot = t + dtPlot;
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
 
     integrationSteps = 0;
 
@@ -113,7 +111,7 @@ namespace MBSimIntegrator {
           system->resetUpToDate();
           system->plot();
 
-          if(output) cout << "   t = " <<  t << ",\tdt = "<< dtLast << "\r"<<flush;
+          if(msgAct(Status)) msg(Status) << "   t = " <<  t << ",\tdt = "<< dtLast << flush;
 
           const double s1 = clock();
           time += (s1-s0)/CLOCKS_PER_SEC;
@@ -142,7 +140,7 @@ namespace MBSimIntegrator {
         else if(result==3 or result==4)
           continue;
         else if(result>=5)
-          throw MBSimError("Integrator RKSUITE failed with result = "+toString(result));
+          throwError("Integrator RKSUITE failed with result = "+toString(result));
       }
     }
 
@@ -155,9 +153,6 @@ namespace MBSimIntegrator {
         integSum << "Integration steps: " << integrationSteps << endl;
         integSum.close();
       }
-
-      cout.unsetf (ios::scientific);
-      cout << endl;
 
       selfStatic = nullptr;
     }

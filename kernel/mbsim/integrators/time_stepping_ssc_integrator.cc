@@ -158,7 +158,6 @@ namespace MBSimIntegrator {
     if (dtPlot<=0) FlagPlotEveryStep = true;
     else FlagPlotEveryStep = false;
 
-    cout.setf(ios::scientific, ios::floatfield);
     if(plotIntegrationData) {
       integPlot.open((name + ".plt").c_str());
       integPlot << "#1 t [s]:" << endl; 
@@ -172,7 +171,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throw MBSimError("(TimeSteppingSSCIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(TimeSteppingSSCIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
       zi = z0;
     }
     else
@@ -844,7 +843,7 @@ namespace MBSimIntegrator {
       sysT1->plot();
     }
     if ((t>=tPlot) && outputInterpolation && !FlagPlotEveryStep) {
-      throw MBSimError("Not implemented");
+      throwError("Not implemented");
 
       // Dimension/size von la und lae synchronisieren
       Vec laSynchron;
@@ -892,13 +891,12 @@ namespace MBSimIntegrator {
       time += Timer.stop();
       integPlot<< t << " " << dtOld << " " <<order << " " << iter << " " << sysT1->getlaSize()  << " "<<AnzahlAktiverKontakte<<" "<<time  <<endl;
     }
-    if (output and (not FlagOutputOnlyAtTPlot or (FlagOutputOnlyAtTPlot and FlagtPlot) ))
-        cout << "   t = " << t << ",\tdt = " << dtOld << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << ",\torder = " << order << "\r" << flush;
+    if (msgAct(Status) and (not FlagOutputOnlyAtTPlot or (FlagOutputOnlyAtTPlot and FlagtPlot) ))
+        msg(Status) << "   t = " << t << ",\tdt = " << dtOld << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << ",\torder = " << order << flush;
   }
 
   void TimeSteppingSSCIntegrator::postIntegrate() {           // system: only dummy!
     time += Timer.stop();
-    cout.unsetf(ios::scientific);
     if(plotIntegrationData) integPlot.close();
     if(writeIntegrationSummary) {
       int maxStepsPerThread = singleStepsT1;
@@ -936,43 +934,39 @@ namespace MBSimIntegrator {
       integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
       integSum.close();
     }   
-    if (FlagCoutInfo) {
-      if (output) cout << endl <<endl;
-      int maxStepsPerThread = singleStepsT1;
-      if (maxStepsPerThread<singleStepsT2) maxStepsPerThread = singleStepsT2;
-      if (maxStepsPerThread<singleStepsT3) maxStepsPerThread = singleStepsT3;
-      cout << "Summary Integration with TimeStepperSSC: "<<endl;
-      cout << "Integration time:   " << time << endl;
-      cout << "Integration steps:  " << integrationSteps << endl;
-      cout << "Evaluations MBS:    " << (singleStepsT1+singleStepsT2+singleStepsT3)<<"   (max/Thread: "<<maxStepsPerThread<<")"<<endl;
-      cout << "Steps with events: " << integrationStepswithChange<< endl;
-      if (maxOrder>=2) {
-        cout<<"Integration steps order 1: "<<integrationStepsOrder1<<endl;
-        cout<<"Integration steps order "<<maxOrder<<": "<<integrationStepsOrder2<<endl;
-      }
-      if (FlagSSC) {
-        cout << "Refused steps: " << refusedSteps << endl;
-        cout << "Refused steps with events: " << refusedStepsWithImpact << endl;
-        cout << "Maximum step size: " << maxdtUsed << endl;
-        cout << "Minimum step size: " << mindtUsed << endl;
-        cout << "Average step size: " << (t-tStart)/integrationSteps << endl;
-      }
-      if (FlagGapControl) {
-        if (GapControlStrategy>0) {
-          cout << "Steps accepted after GapControl  :"<<stepsOkAfterGapControl<<endl;
-          cout << "Steps refused after GapControl   :"<<stepsRefusedAfterGapControl<<endl;
-          cout << "No impact after GapControl alert :"<<wrongAlertGapControl<<endl;
-        }
-        cout << "Average Penetration  (arithm.)     :"<<Penetration/PenetrationCounter<<endl;
-        cout << "Average Penetration  (geom.)       :"<<exp(PenetrationLog/PenetrationCounter)<<endl;
-        cout << "PenetrationCounter "<<PenetrationCounter<<endl;
-        cout << "Penetration Min    "<<PenetrationMin<<endl;
-        cout << "Penetration Max    "<<PenetrationMax<<endl;
-      }
-      cout << "Maximum number of iterations: " << maxIterUsed << endl;
-      cout << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
-
+    int maxStepsPerThread = singleStepsT1;
+    if (maxStepsPerThread<singleStepsT2) maxStepsPerThread = singleStepsT2;
+    if (maxStepsPerThread<singleStepsT3) maxStepsPerThread = singleStepsT3;
+    msg(Info) << "Summary Integration with TimeStepperSSC: "<<endl;
+    msg(Info) << "Integration time:   " << time << endl;
+    msg(Info) << "Integration steps:  " << integrationSteps << endl;
+    msg(Info) << "Evaluations MBS:    " << (singleStepsT1+singleStepsT2+singleStepsT3)<<"   (max/Thread: "<<maxStepsPerThread<<")"<<endl;
+    msg(Info) << "Steps with events: " << integrationStepswithChange<< endl;
+    if (maxOrder>=2) {
+      msg(Info)<<"Integration steps order 1: "<<integrationStepsOrder1<<endl;
+      msg(Info)<<"Integration steps order "<<maxOrder<<": "<<integrationStepsOrder2<<endl;
     }
+    if (FlagSSC) {
+      msg(Info) << "Refused steps: " << refusedSteps << endl;
+      msg(Info) << "Refused steps with events: " << refusedStepsWithImpact << endl;
+      msg(Info) << "Maximum step size: " << maxdtUsed << endl;
+      msg(Info) << "Minimum step size: " << mindtUsed << endl;
+      msg(Info) << "Average step size: " << (t-tStart)/integrationSteps << endl;
+    }
+    if (FlagGapControl) {
+      if (GapControlStrategy>0) {
+        msg(Info) << "Steps accepted after GapControl  :"<<stepsOkAfterGapControl<<endl;
+        msg(Info) << "Steps refused after GapControl   :"<<stepsRefusedAfterGapControl<<endl;
+        msg(Info) << "No impact after GapControl alert :"<<wrongAlertGapControl<<endl;
+      }
+      msg(Info) << "Average Penetration  (arithm.)     :"<<Penetration/PenetrationCounter<<endl;
+      msg(Info) << "Average Penetration  (geom.)       :"<<exp(PenetrationLog/PenetrationCounter)<<endl;
+      msg(Info) << "PenetrationCounter "<<PenetrationCounter<<endl;
+      msg(Info) << "Penetration Min    "<<PenetrationMin<<endl;
+      msg(Info) << "Penetration Max    "<<PenetrationMax<<endl;
+    }
+    msg(Info) << "Maximum number of iterations: " << maxIterUsed << endl;
+    msg(Info) << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
   }
 
 
@@ -1228,7 +1222,7 @@ namespace MBSimIntegrator {
         if (dt/2.0>dtMin) {
           testOK= false; 
           dt=dt/2.0;
-          //cout<<"step size halved because of failed convergence"<<endl;
+          //msg(Warn)<<"step size halved because of failed convergence"<<endl;
         }
         else {
           msg(Warn)<<"No convergence despite minimum stepsize("<<maxIter<<" iterations) Anyway, continuing integration..."<<endl;
@@ -1423,7 +1417,7 @@ namespace MBSimIntegrator {
   // Vector<int> laSizes contains the singel la-size of each link
 
   void TimeSteppingSSCIntegrator::getDataForGapControl() {
-    throw MBSimError("TimeSteppingSSCIntegrator::getDataForGapControl not implemented");
+    throwError("TimeSteppingSSCIntegrator::getDataForGapControl not implemented");
 //    int nInActive=0;
 //    int nActive=0;
 //    throw;

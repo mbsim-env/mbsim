@@ -76,16 +76,16 @@ namespace MBSimHydraulics {
   void HydraulicEnvironment::initializeFluidData() {
     rho=(this->*calcRho)(T);
     nu=(this->*calcNu)(T);
-    cout << endl;
-    cout << "===============================================" << endl;
-    cout << "initializing hydraulic environment at T=" << T-273.16 << " [degC]" << endl;
-    cout << "            with kinematic viscosity nu=" << nu*1e6 << " [mm^2/s]" << endl;
-    cout << "                      specific mass rho=" << rho << " [kg/m^3]" << endl;
-    cout << "                  dynamic viscosity eta=" << getDynamicViscosity()*1e3 << " [mPa*s]" << endl;
-    cout << "                                  kappa=" << kappa << " [-]" << endl;
-    cout << "                      boundary pressure=" << pinf*1e-5 << " [bar]" << endl;
-    cout << "===============================================\n\n" << endl;
-    cout << endl;
+    msg(Info) << endl;
+    msg(Info) << "===============================================" << endl;
+    msg(Info) << "initializing hydraulic environment at T=" << T-273.16 << " [degC]" << endl;
+    msg(Info) << "            with kinematic viscosity nu=" << nu*1e6 << " [mm^2/s]" << endl;
+    msg(Info) << "                      specific mass rho=" << rho << " [kg/m^3]" << endl;
+    msg(Info) << "                  dynamic viscosity eta=" << getDynamicViscosity()*1e3 << " [mPa*s]" << endl;
+    msg(Info) << "                                  kappa=" << kappa << " [-]" << endl;
+    msg(Info) << "                      boundary pressure=" << pinf*1e-5 << " [bar]" << endl;
+    msg(Info) << "===============================================\n\n" << endl;
+    msg(Info) << endl;
     assert(pinf>0);
     assert(rho>0);
     assert(E0>0);
@@ -134,7 +134,7 @@ namespace MBSimHydraulics {
 
   double OilBulkModulus::operator()(const double &p) {
     if(p<=0.1) {
-      cout << "OilBulkModulus of \"" << ownerName << "\": pressure near zero! Continuing anyway, using p=0.1 Pa" << endl;
+      msg(Warn) << "OilBulkModulus of \"" << ownerName << "\": pressure near zero! Continuing anyway, using p=0.1 Pa" << endl;
       return factor[0]/(1.+factor[1]*pow(.1, factor[2]));
     }
     else {
@@ -149,7 +149,7 @@ namespace MBSimHydraulics {
       // Formel nach HYSIM
       // const double EHysim= HYSIM[0]*pow(1.+HYSIM[1]/p, HYSIM[3]) / (1. + HYSIM[2]/pow(p, 1+HYSIM[3]));
 
-      // std::cerr << " " << p << " " << EBacke << " " << EHysim << std::endl;
+      // msg(Info) << " " << p << " " << EBacke << " " << EHysim << std::endl;
 
       return EBacke;
     }

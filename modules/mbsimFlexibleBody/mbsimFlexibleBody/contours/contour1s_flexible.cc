@@ -68,7 +68,7 @@ namespace MBSimFlexibleBody {
  }
 
   void Contour1sFlexible::updateAccelerations(ContourFrame *frame) {
-    THROW_MBSIMERROR("(Contour1sFlexible::updateAccelerations): Not implemented!");
+    throwError("(Contour1sFlexible::updateAccelerations): Not implemented!");
   }
 
   void Contour1sFlexible::updateJacobians(ContourFrame *frame, int j) {
@@ -79,7 +79,7 @@ namespace MBSimFlexibleBody {
   }
 
   void Contour1sFlexible::updateGyroscopicAccelerations(ContourFrame *frame) {
-    THROW_MBSIMERROR("(Contour1sFlexible::updateGyroscopicAccelerations): Not implemented!");
+    throwError("(Contour1sFlexible::updateGyroscopicAccelerations): Not implemented!");
   }
 
 }

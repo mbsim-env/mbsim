@@ -106,7 +106,7 @@ namespace MBSimFlexibleBody {
     if (dynamic_cast<DynamicSystem*>(frame->getParent()))
       R = frame;
     else
-      THROW_MBSIMERROR("(FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!");
+      throwError("(FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!");
   }
 
   void FlexibleBody::addFrame(ContourFrame *frame) {

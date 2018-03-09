@@ -1,3 +1,4 @@
+examples/**/.err.MBS.mbsim*.xml
 kernel/INSTALL
 kernel/compile
 kernel/Makefile.in

@@ -26,7 +26,6 @@ SymMat makeInfluenceMat(int dim, double influenceDisk, double influenceElement) 
 
 void solve(SymMat& C, Vec& q, int dim) {
   LinearComplementarityProblem problem(C, q);
-  problem.setDebugLevel(1);
   Vec result;
   for (int strategy = 0; strategy < 5; strategy++) {
     problem.setStrategy(LinearComplementarityProblem::LCPSolvingStrategy(strategy));

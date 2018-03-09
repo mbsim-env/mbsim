@@ -139,8 +139,6 @@ namespace MBSimIntegrator {
       double safetyFactorSSC{0.7};
       /** filestream for integrator info at each step */
       std::ofstream integPlot;
-      /** Flag: write integration info (integ. summary) to cout  (default true)*/
-      bool FlagCoutInfo{true};
       /** Flag: write output info to cout only for plot-time-instances (default false)*/
       bool FlagOutputOnlyAtTPlot{false};
       /** every successful integration step is ploted (set dtPlot=0 to activate FlagPlotEveryStep) (default false)*/

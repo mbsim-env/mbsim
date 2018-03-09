@@ -114,10 +114,10 @@ namespace MBSim {
         Qnew(i, j) = Q.at(i)(j);
 
     if (d <= 0) {
-      throw MBSimError("Degree is too small!");
+      throw runtime_error("Degree is too small!");
     }
     if (d >= Qnew.rows()) {
-      throw MBSimError("The degree specified is greater then Q.rows()+1\n");
+      throw runtime_error("The degree specified is greater then Q.rows()+1\n");
     }
 
     // resize control point matrix and knotVector matrix
@@ -171,10 +171,10 @@ namespace MBSim {
     int i, j;
 
     if (d <= 0) {
-      throw MBSimError("Degree is too small!");
+      throw runtime_error("Degree is too small!");
     }
     if (d >= Q.rows()) {
-      throw MBSimError("The degree specified should be smaller or equal than Q.rows()-1\n");
+      throw runtime_error("The degree specified should be smaller or equal than Q.rows()-1\n");
     }
 
     resize(Q.rows(), d);
@@ -183,7 +183,7 @@ namespace MBSim {
     updateUVecs(uMin, uMax);
 
 //    double chordLength = chordLengthParam(Q,u);
-//    cout << "chrodLength" << chordLength << endl;
+//    msg(Debug) << "chrodLength" << chordLength << endl;
 //    knotAveraging(u, deg);
 
     // Initialize the basis matrix A
@@ -191,11 +191,11 @@ namespace MBSim {
 
     for (i = 1; i < Q.rows() - 1; i++) {
       int span = findSpan(u(i));
-//      cout << span << endl;
+//      msg(Debug) << span << endl;
       basisFuns(u(i), span, deg, U, N);
       for (j = 0; j <= deg; j++) {
         A(i, span - deg + j) = N(j);
-//        cout << N(j) << endl;
+//        msg(Debug) << N(j) << endl;
       }
     }
     A(0, 0) = 1.0;
@@ -264,7 +264,7 @@ namespace MBSim {
 
 //  if(Uc.n() != U.n())  // TODO:: check this!
     if (Uc.rows() != U.rows())
-      throw MBSimError("(NurbsCurve::globalInterpH: The length of knot vectors are not equal !)");
+      throw runtime_error("(NurbsCurve::globalInterpH: The length of knot vectors are not equal !)");
 
     U = Uc;
 
@@ -291,16 +291,16 @@ namespace MBSim {
 
     for (i = 1; i < Qw.rows() - 1; i++) {
       int span = findSpan(ub(i));
-//      cout << span << endl;
+//      msg(Debug) << span << endl;
       basisFuns(ub(i), span, deg, U, N);
       for (j = 0; j <= deg; j++) {
         A(i, span - deg + j) = N(j);
-//        cout << N(j) << endl;
+//        msg(Debug) << N(j) << endl;
       }
     }
     A(0, 0) = 1.0;
     A(Qw.rows() - 1, Qw.rows() - 1) = 1.0;
-//    cout << "A = " << A << endl << endl;
+//    msg(Debug) << "A = " << A << endl << endl;
     if (updateLater) {
       inverse.resize() = inv(A);
       update(Qw);
@@ -338,7 +338,7 @@ namespace MBSim {
 
     SqrMat A(iN, INIT, 0.);
     if (Uc.rows() != U.rows())
-      throw MBSimError("(NurbsCurve::globalInterpClosedH: The length of knot vectors are not equal !)");
+      throw runtime_error("(NurbsCurve::globalInterpClosedH: The length of knot vectors are not equal !)");
 
     U = Uc;
     // Initialize the basis matrix A
@@ -351,7 +351,7 @@ namespace MBSim {
         A(i, j % (iN)) = (double) N(j - span + d);
     }
 
-//    cout << "A = "  << A  << endl << endl;
+//    msg(Debug) << "A = "  << A  << endl << endl;
 
     if (updateLater) {
       inverse.resize() = inv(A);
@@ -400,8 +400,8 @@ namespace MBSim {
     else {
       P = inverse * Qw;
     }
-//    cout << "fmatvec_surface: Qw =" << Qw << endl;
-//    cout << "fmatvec_surface: P =" << P << endl;
+//    msg(Debug) << "fmatvec_surface: Qw =" << Qw << endl;
+//    msg(Debug) << "fmatvec_surface: P =" << P << endl;
 
   }
   void NurbsCurve::resize(int n, int Deg) {

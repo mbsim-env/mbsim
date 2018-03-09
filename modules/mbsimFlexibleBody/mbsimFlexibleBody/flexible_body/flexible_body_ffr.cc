@@ -349,7 +349,7 @@ namespace MBSimFlexibleBody {
       }
       else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZYX<VecV>*>(Atmp->getFunction())) {
         if(bodyFixedRepresentationOfAngularVelocity)
-          THROW_MBSIMERROR("(FlexibleBodyFFR::init): coordinate transformation not yet available for zyx-rotation");
+          throwError("(FlexibleBodyFFR::init): coordinate transformation not yet available for zyx-rotation");
         else
           fTR = new RotationAboutAxesZYXMapping<VecV>;
         fTR->setParent(this);

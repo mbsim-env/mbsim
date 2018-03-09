@@ -74,7 +74,7 @@ namespace MBSimAnalyzer {
     if(not(zEq.size()))
       zEq = system->evalz0();
     else if(zEq.size()!=system->getzSize())
-      throw MBSimError(string("(Eigenanalyzer::computeEigenvalues): size of z0 does not match, must be ") + toStr(system->getzSize()));
+      throwError(string("(Eigenanalyzer::computeEigenvalues): size of z0 does not match, must be ") + toStr(system->getzSize()));
 
     system->setTime(tStart);
 
@@ -84,7 +84,7 @@ namespace MBSimAnalyzer {
       newton.setLinearAlgebra(1);
       zEq = newton.solve(zEq);
       if(newton.getInfo() != 0)
-        throw MBSimError("(Eigenanalyzer::computeEigenvalues): computation of equilibrium state failed!");
+        throwError("(Eigenanalyzer::computeEigenvalues): computation of equilibrium state failed!");
     }
 
     SqrMat A(system->getzSize());
@@ -122,7 +122,7 @@ namespace MBSimAnalyzer {
     VecV Av(system->getzSize()/2,INIT,A);
     for(int i=0; i<MA.rows(); i++) {
       if(int(MA(i,0))<0 or int(MA(i,0))>=Av.size())
-        throw MBSimError("(Eigenanalyzer::computeEigenmodes): size of mode amplitude matrix does not match");
+        throwError("(Eigenanalyzer::computeEigenmodes): size of mode amplitude matrix does not match");
       Av(int(MA(i,0))) = MA(i,1);
     }
 

@@ -84,7 +84,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of body
        */
-      FlexibleBody2s13(const std::string &name, const int & DEBUGLEVEL_=0);
+      FlexibleBody2s13(const std::string &name);
 
       /**
        * \brief destructor
@@ -304,15 +304,6 @@ namespace MBSimFlexibleBody {
        * \brief contour for contact description
        */
       NurbsDisk2s *contour;
-
-      /*
-       * \brief Debug-Output-Level
-       *
-       * 0 = no Debug output
-       * 1 = console Debug Output
-       * 2 = File Debug Output
-       */
-      int DEBUGLEVEL;
 
       /*!
        * \brief detect involved element for contact description

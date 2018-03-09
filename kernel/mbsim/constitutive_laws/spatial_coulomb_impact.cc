@@ -55,7 +55,7 @@ namespace MBSim {
   }
 
   Vec SpatialCoulombImpact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) {
-    throw MBSimError("(SpatialCoulombImpact::solve): Not implemented!");
+    throwError("(SpatialCoulombImpact::solve): Not implemented!");
   }
 
   bool SpatialCoulombImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {

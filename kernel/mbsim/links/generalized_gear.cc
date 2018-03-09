@@ -61,14 +61,14 @@ namespace MBSim {
       for(const auto & i : saved_gearInput)
         body.push_back(getByPath<RigidBody>(i));
       if(not body[0])
-        THROW_MBSIMERROR("No gear output given!");
+        throwError("No gear output given!");
       if(body.size()==1)
-        THROW_MBSIMERROR("No gear inputs given!");
+        throwError("No gear inputs given!");
     }
     else if(stage==unknownStage) {
       for(auto & i : body) {
         if(i->getGeneralizedVelocitySize()!=1)
-          THROW_MBSIMERROR("rigid bodies must have of 1 dof!");
+          throwError("rigid bodies must have of 1 dof!");
       }
       if(fl->isSetValued()) {
         il = new BilateralImpact;

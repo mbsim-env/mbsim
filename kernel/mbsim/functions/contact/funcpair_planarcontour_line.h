@@ -40,14 +40,14 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &s) override {
-        THROW_MBSIMERROR("(FuncPairPlanarContourLine::operator): Not implemented!");
+        throwError("(FuncPairPlanarContourLine::operator): Not implemented!");
         //fmatvec::Vec WtC = (contour->computeWt(s)).col(0);
         //fmatvec::Vec WnL = line->computeWn();
         //return trans(WtC)*WnL;
       }
 
       fmatvec::Vec3 evalWrD(const double &s) override {
-        THROW_MBSIMERROR("(FuncPairPlanarContourLine::evalWrD): Not implemented!");
+        throwError("(FuncPairPlanarContourLine::evalWrD): Not implemented!");
         //fmatvec::Vec WrOCContour =  contour->getWrOC(s);
         //fmatvec::Vec Wn = contour->computeWn(s);
         //double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition());

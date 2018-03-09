@@ -104,7 +104,7 @@ namespace MBSim {
   class FromDouble {
     public:
       static Ret cast(double x) {
-        throw MBSimError("FromDouble::cast not implemented for current type.");
+        throw std::runtime_error("FromDouble::cast not implemented for current type.");
       }
   };
 

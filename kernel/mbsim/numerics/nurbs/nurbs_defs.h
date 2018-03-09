@@ -130,7 +130,7 @@ namespace fmatvec {
   inline GeneralMatrix<T>::GeneralMatrix(int nrows_, int ncols_) :
       nrows(nrows_), ncols(ncols_) {
     if (nrows_ == 0 || ncols_ == 0)
-      throw MBSim::MBSimError("(GeneralMatrix:: The number of rows or columns of the matrix is zero!)");
+      throw std::runtime_error("(GeneralMatrix:: The number of rows or columns of the matrix is zero!)");
     data = new T[nrows_ * ncols_];
   }
   template <typename T>
@@ -156,14 +156,14 @@ namespace fmatvec {
   template <typename T>
   inline T& GeneralMatrix<T>::operator()(int row, int col) {
     if (row >= nrows || col >= ncols)
-      throw MBSim::MBSimError("(GeneralMatrix::operator(): trying to access data out of range of the GeneralMatrix!)");
+      throw std::runtime_error("(GeneralMatrix::operator(): trying to access data out of range of the GeneralMatrix!)");
     return data[row * ncols + col];
   }
 
   template <typename T>
   inline T const& GeneralMatrix<T>::operator()(int row, int col) const {
     if (row >= nrows || col >= ncols)
-      throw MBSim::MBSimError("(GeneralMatrix::operator(): trying to access data out of range of the GeneralMatrix!)");
+      throw std::runtime_error("(GeneralMatrix::operator(): trying to access data out of range of the GeneralMatrix!)");
     return data[row * ncols + col];
   }
 
@@ -181,7 +181,7 @@ namespace fmatvec {
   void GeneralMatrix<T>::resize(int nrows_, int ncols_) {
 
     if (nrows_ <= 0 || ncols_ <= 0) {
-      throw MBSim::MBSimError("(GeneralMatrix::resize(): non-positive resize number of rows or columns!)");
+      throw std::runtime_error("(GeneralMatrix::resize(): non-positive resize number of rows or columns!)");
       return;
     }
 

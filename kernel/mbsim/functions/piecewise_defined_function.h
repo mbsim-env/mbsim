@@ -56,25 +56,25 @@ namespace MBSim {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return y0[i] + (*function[i])(x-x0[i]);
-        throw MBSimError("(PiecewiseDefinedFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
+        this->throwError("(PiecewiseDefinedFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
       typename B::DRetDArg parDer(const double &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return function[i]->parDer(x-x0[i]);
-        throw MBSimError("(PiecewiseDefinedFunction::parDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
+        this->throwError("(PiecewiseDefinedFunction::parDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
       typename B::DRetDArg parDerDirDer(const double &xDir, const double &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return function[i]->parDerDirDer(xDir,x-x0[i]);
-        throw MBSimError("(PiecewiseDefinedFunction::parDerDirDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
+        this->throwError("(PiecewiseDefinedFunction::parDerDirDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
       typename B::DDRetDDArg parDerParDer(const double &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return function[i]->parDerParDer(x-x0[i]);
-        throw MBSimError("(PiecewiseDefinedFunction::parDerParDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
+        this->throwError("(PiecewiseDefinedFunction::parDerParDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
 
       void initializeUsingXML(xercesc::DOMElement *element) override {
@@ -139,19 +139,19 @@ namespace MBSim {
         for(unsigned int i=0; i<function.size(); i++)
           if(ToDouble<Arg>::cast(x)<=a[i+1])
             return y0[i] + (*function[i])(x-FromDouble<Arg>::cast(x0[i]));
-        throw MBSimError("(PiecewiseDefinedFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
+        this->throwError("(PiecewiseDefinedFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
       typename B::DRetDArg parDer(const Arg &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(ToDouble<Arg>::cast(x)<=a[i+1])
             return function[i]->parDer(x-FromDouble<Arg>::cast(x0[i]));
-        throw MBSimError("(PiecewiseDefinedFunction::parDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
+        this->throwError("(PiecewiseDefinedFunction::parDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override {
         for(unsigned int i=0; i<function.size(); i++)
           if(ToDouble<Arg>::cast(x)<=a[i+1])
             return function[i]->parDerDirDer(xDir,x-FromDouble<Arg>::cast(x0[i]));
-        throw MBSimError("(PiecewiseDefinedFunction::parDerDirDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
+        this->throwError("(PiecewiseDefinedFunction::parDerDirDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
 
       void initializeUsingXML(xercesc::DOMElement *element) override {

@@ -23,9 +23,11 @@
 #include <QMainWindow>
 #include <QProcess>
 #include <QTimer>
+#include <QTime>
 #include <boost/filesystem/path.hpp>
 #include <xercesc/util/XercesDefs.hpp>
 #include <deque>
+#include <sstream>
 
 class QAction;
 class QModelIndex;
@@ -66,6 +68,7 @@ namespace MBSimGUI {
   class EmbedItemData;
   class Project;
   class WebDialog;
+  class EchoStream;
 
   class MainWindow : public QMainWindow {
 
@@ -78,12 +81,14 @@ namespace MBSimGUI {
       SolverView *solverView;
       ProjectView *projectView;
       EchoView *echoView;
+      std::shared_ptr<bool> debugStreamFlag;
       QString projectFile;
       QProcess process;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
       QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionFrequencyResponse, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs, *actionUndo, *actionRedo;
-      QTimer autoSaveTimer, echoViewTimer;
+      QTimer autoSaveTimer;
+      QTime statusTime;
       QString currentID;
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
@@ -148,6 +153,7 @@ namespace MBSimGUI {
       const std::pair<Element*,bool>& getElementBuffer() const { return elementBuffer; }
       const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
       Project* getProject() { return project; }
+      QTime& getStatusTime() { return statusTime; }
 
     public slots:
       void elementViewClicked();
@@ -218,7 +224,6 @@ namespace MBSimGUI {
 
     private slots:
       void selectElement(const std::string& ID);
-      void changeWorkingDir();
       void openOptionsMenu();
       void selectionChanged(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
@@ -229,6 +234,7 @@ namespace MBSimGUI {
       void interrupt();
       void kill();
       void updateEchoView();
+      void updateStatus();
   };
 
 }

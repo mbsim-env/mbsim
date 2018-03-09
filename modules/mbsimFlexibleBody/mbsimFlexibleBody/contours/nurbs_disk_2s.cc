@@ -169,11 +169,11 @@ namespace MBSimFlexibleBody {
     frame->getVelocity(false)(0) = Tmpv.x();
     frame->getVelocity(false)(1) = Tmpv.y();
     frame->getVelocity(false)(2) = Tmpv.z();
-    //      THROW_MBSIMERROR("(NurbsDisk2s::updateVelocities): Not implemented!");
+    //      throwError("(NurbsDisk2s::updateVelocities): Not implemented!");
   }
 
   void NurbsDisk2s::updateAccelerations(ContourFrame *frame) {
-    THROW_MBSIMERROR("(NurbsDisk2s::updateAccelerations): Not implemented!");
+    throwError("(NurbsDisk2s::updateAccelerations): Not implemented!");
   }
 
   void NurbsDisk2s::updateJacobians(ContourFrame *frame, int j) {
@@ -197,7 +197,7 @@ namespace MBSimFlexibleBody {
   }
 
   void NurbsDisk2s::updateGyroscopicAccelerations(ContourFrame *frame) {
-    THROW_MBSIMERROR("(NurbsDisk2s::updateGyroscopicAccelerations): Not implemented!");
+    throwError("(NurbsDisk2s::updateGyroscopicAccelerations): Not implemented!");
   }
 
   Vec3 NurbsDisk2s::evalPosition() {
@@ -364,34 +364,34 @@ namespace MBSimFlexibleBody {
 
     /*TESTBLOCK...
     //testing the "real"values and the surface values at the nodes
-    cout << "Surface-Berechnung:" << endl;
+    msg(Debug) << "Surface-Berechnung:" << endl;
     double maxerr = 0;
     double minerr = 1;
     double stepU = 2*M_PI / nj;
     double stepV = ((*vvec)[vvec->size()-1] - (*vvec)[0]) / nr;
     for(int i=0; i<=nr; i++) {
       for(int j=0; j<nj; j++) {
-        cout << "i = " << i << ", j = " << j << endl;
+        msg(Debug) << "i = " << i << ", j = " << j << endl;
         Point3Dd PointUV = Surface->pointAt(j*stepU,(*vVec)[0]+i*stepV);
-        cout << "Surface Auswertung = " << PointUV.x() << " "<< PointUV.y() << " " << PointUV.z() << endl;
+        msg(Debug) << "Surface Auswertung = " << PointUV.x() << " "<< PointUV.y() << " " << PointUV.z() << endl;
 
         ContourPointData cp(i*nj+j);
         (static_cast<FlexibleBody2s13*>(parent))->updateKinematicsForFrame(cp,position);
         Vec InterpPoint = cp.getFrameOfReference().getPosition();
-        cout << "Interpolationspunkt = " << InterpPoint(0) << " " << InterpPoint(1) << " " << InterpPoint(2) << endl << endl;
+        msg(Debug) << "Interpolationspunkt = " << InterpPoint(0) << " " << InterpPoint(1) << " " << InterpPoint(2) << endl << endl;
 
         Vec error(3);
         error(0) = PointUV.x()-InterpPoint(0);
         error(1) = PointUV.y()-InterpPoint(1);
         error(2) = PointUV.z()-InterpPoint(2);
-        cout << "Fehler = " << nrm2(error) << endl;
+        msg(Debug) << "Fehler = " << nrm2(error) << endl;
         if(maxerr < nrm2(error)) maxerr = nrm2(error);
         if(minerr > nrm2(error)) minerr = nrm2(error);
       }
     }
-    cout << "Maximaler Fehler ist: " << maxerr << endl;
-    cout << "Minimaler Fehler ist: " << minerr << endl;
-    cout << " ***************************************************** " << endl << endl;
+    msg(Debug) << "Maximaler Fehler ist: " << maxerr << endl;
+    msg(Debug) << "Minimaler Fehler ist: " << minerr << endl;
+    msg(Debug) << " ***************************************************** " << endl << endl;
 
     //testing derivations
     const int degDev = 10;
@@ -399,12 +399,12 @@ namespace MBSimFlexibleBody {
     int k = 0;
     int l = 0;
 
-    cout << "TEST der Ableitungen:" << endl;
+    msg(Debug) << "TEST der Ableitungen:" << endl;
 
     Vec test_pt(3);
     test_pt(0) = ((*vvec)[vvec->size()-1]-(*vvec)[0])/2;
     test_pt(1) = 0;
-    cout << "Punkt ist bei phi=0" << endl;
+    msg(Debug) << "Punkt ist bei phi=0" << endl;
     for(int i=1;i<=degDev;i++) {
       TestVec[k][l][0] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(0);
       TestVec[k++][l][1] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(1);
@@ -412,17 +412,17 @@ namespace MBSimFlexibleBody {
     l++; k =0;
 
     test_pt(1) = 2*M_PI;
-    cout << "Punkt ist bei phi=2*PI" << endl;
+    msg(Debug) << "Punkt ist bei phi=2*PI" << endl;
     for(int i=1;i<=degDev;i++) {
       TestVec[k][l][0] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(0);
       TestVec[k++][l][1] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(1);
     }
 
     for(int i=0;i<degDev;i++) {
-      cout << i+1 << "-te Ableitung ..." << endl;
+      msg(Debug) << i+1 << "-te Ableitung ..." << endl;
       for(int j=0;j<2;j++) {
-        cout << "j=" << j << "(j=0...V-Richtung, j=1...U-Richtung)" << endl;
-        cout << "Fehler der Punkte am Rande: " << computeError(TestVec[i][0][j],TestVec[i][1][j]) << endl;
+        msg(Debug) << "j=" << j << "(j=0...V-Richtung, j=1...U-Richtung)" << endl;
+        msg(Debug) << "Fehler der Punkte am Rande: " << computeError(TestVec[i][0][j],TestVec[i][1][j]) << endl;
       }
     }
     */

@@ -47,6 +47,7 @@ namespace fmatvec {
 %ignore fmatvec::Atom::adoptMessageStreams;
 %ignore fmatvec::Atom::msg;
 %ignore fmatvec::Atom::msgStatic;
+%ignore fmatvec::PrePostfixedStream;
 %include <fmatvec/atom.h>
 
 
@@ -416,9 +417,9 @@ namespace fmatvec {
 %template() fmatvec::Matrix<fmatvec::Symmetric  , fmatvec::Fixed< 4>, fmatvec::Fixed< 4>, double>;
 %template() fmatvec::Matrix<fmatvec::Symmetric  , fmatvec::Fixed< 5>, fmatvec::Fixed< 5>, double>;
 
-//MFMF not working %template() fmatvec::Matrix<fmatvec::Sparse     , fmatvec::Ref      , fmatvec::Ref      , double>;
-//MFMF not working %template() fmatvec::Matrix<fmatvec::Diagonal   , fmatvec::Ref      , fmatvec::Ref      , double>;
-//MFMF not working %template() fmatvec::Matrix<fmatvec::GeneralBand, fmatvec::Ref      , fmatvec::Ref      , double>;
+//MISSING not working %template() fmatvec::Matrix<fmatvec::Sparse     , fmatvec::Ref      , fmatvec::Ref      , double>;
+//MISSING not working %template() fmatvec::Matrix<fmatvec::Diagonal   , fmatvec::Ref      , fmatvec::Ref      , double>;
+//MISSING not working %template() fmatvec::Matrix<fmatvec::GeneralBand, fmatvec::Ref      , fmatvec::Ref      , double>;
 
 %template() fmatvec::SquareMatrix<fmatvec::Ref      , double>;
 %template() fmatvec::SquareMatrix<fmatvec::Var      , double>;

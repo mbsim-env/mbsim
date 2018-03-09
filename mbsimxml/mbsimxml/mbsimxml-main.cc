@@ -1,5 +1,6 @@
 #include "config.h"
 #include <iostream>
+#include <boost/regex.hpp>
 #include <list>
 #include <vector>
 #include <algorithm>
@@ -27,13 +28,13 @@ using namespace MBXMLUtils;
 namespace bfs=boost::filesystem;
 
 int runProgram(const vector<string> &arg) {
+#if !defined _WIN32
   // convert arg to c style
   auto **argv=new char*[arg.size()+1];
   for(size_t i=0; i<arg.size(); i++)
     argv[i]=const_cast<char*>(arg[i].c_str());
   argv[arg.size()]=nullptr;
 
-#if !defined _WIN32
   pid_t child;
   int spawnRet;
   // Use posix_spawn from a older glibc implementation to allow binary distributions to run on older systems
@@ -55,6 +56,16 @@ int runProgram(const vector<string> &arg) {
   else
     throw runtime_error("Spawn process terminated abnormally.");
 #else
+  // convert arg to c style and quote with " (this is required by Windows even so earch arg is passed seperately)
+  auto **argv=new char*[arg.size()+1];
+  list<string> quotedArgs;
+  argv[0]=const_cast<char*>(arg[0].c_str());
+  for(size_t i=1; i<arg.size(); i++) {
+    quotedArgs.emplace_back("\""+arg[i]+"\"");
+    argv[i]=const_cast<char*>(quotedArgs.back().c_str());
+  }
+  argv[arg.size()]=nullptr;
+
   int ret;
   ret=_spawnv(_P_WAIT, argv[0], argv);
   delete[]argv;
@@ -89,21 +100,22 @@ int main(int argc, char *argv[]) {
   try {
 
     // convert args to c++
-    list<string> arg;
+    list<string> args;
     list<string>::iterator i, i2;
     for(int i=1; i<argc; i++)
-      arg.emplace_back(argv[i]);
+      args.emplace_back(argv[i]);
 
-    bool ONLYLISTSCHEMAS=std::find(arg.begin(), arg.end(), "--onlyListSchemas")!=arg.end();
+    bool ONLYLISTSCHEMAS=std::find(args.begin(), args.end(), "--onlyListSchemas")!=args.end();
   
     // help
-    if(arg.size()<1 ||
-       std::find(arg.begin(), arg.end(), "-h")!=arg.end() ||
-       std::find(arg.begin(), arg.end(), "--help")!=arg.end() ||
-       std::find(arg.begin(), arg.end(), "-?")!=arg.end()) {
+    if(args.size()<1 ||
+       std::find(args.begin(), args.end(), "-h")!=args.end() ||
+       std::find(args.begin(), args.end(), "--help")!=args.end() ||
+       std::find(args.begin(), args.end(), "-?")!=args.end()) {
       cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"<<endl
           <<"                 --autoreload|--onlyListSchemas]"<<endl
           <<"                [--modulesPath <dir> [--modulePath <dir> ...]]"<<endl
+          <<"                [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]"<<endl
           <<"                <mbsimprjfile>"<<endl
           <<""<<endl
           <<"Copyright (C) 2004-2009 MBSim Development Team"<<endl
@@ -121,8 +133,76 @@ int main(int argc, char *argv[]) {
           <<"--onlyListSchemas    List all XML schema files including MBSim modules"<<endl
           <<"--modulePath <dir>   Add <dir> to MBSim module serach path. The central MBSim installation"<<endl
           <<"                     module dir and the current dir is always included."<<endl
+          <<"--stdout <msg>       Print on stdout messages of type <msg>."<<endl
+          <<"                     <msg> may be info~<pre>~<post>, warn~<pre>~<post>, debug~<pre>~<post>"<<endl
+          <<"                     error~<pre>~<post>~ or depr~<pre>~<post>~."<<endl
+          <<"                     Each message is prefixed/postfixed with <pre>/<post>."<<endl
+          <<"                     --stdout may be specified multiple times."<<endl
+          <<"                     If --stdout and --stderr is not specified --stdout 'info~Info: ~'"<<endl
+          <<"                     --stderr 'warn~Warn: ~' --stderr 'error~~' --stderr 'depr~Depr:~'"<<endl
+          <<"                     --stderr 'status~~\\r' is used."<<endl
+          <<"--stderr <msg>       Analog to --stdout but prints to stderr."<<endl
           <<"<mbsimprjfile>       Use <mbsimprjfile> as mbsim xml project file"<<endl;
       return 0;
+    }
+
+    // defaults for --stdout and --stderr
+    if(find(args.begin(), args.end(), "--stdout")==args.end() &&
+       find(args.begin(), args.end(), "--stderr")==args.end()) {
+      args.push_back("--stdout"); args.push_back("info~Info: ~");
+      args.push_back("--stderr"); args.push_back("warn~Warn: ~");
+      args.push_back("--stderr"); args.push_back("error~~");
+      args.push_back("--stderr"); args.push_back("depr~Depr: ~");
+      args.push_back("--stdout"); args.push_back("status~~\r");
+    }
+
+    // disable all streams
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(false));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(false));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , std::make_shared<bool>(false));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(false));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(false));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(false));
+
+    // get --stdout --stderr args to pass to other processes
+    vector<string> streamArgs;
+    for(auto it=args.begin(); it!=args.end(); ++it) {
+      if(*it!="--stdout" && *it!="--stderr") continue;
+
+      streamArgs.emplace_back(*it);
+      streamArgs.emplace_back(*next(it));
+    }
+
+    // handle --stdout and --stderr args
+    list<string>::iterator it;
+    while((it=find_if(args.begin(), args.end(), [](const string &x){ return x=="--stdout" || x=="--stderr"; }))!=args.end()) {
+      if(*it!="--stdout" && *it!="--stderr") continue;
+
+      ostream &ostr=*it=="--stdout"?cout:cerr;
+      auto itn=next(it);
+      if(itn==args.end()) {
+        cerr<<"Invalid argument"<<endl;
+        return 1;
+      }
+      fmatvec::Atom::MsgType msgType;
+      if     (itn->substr(0, 5)=="info~"  ) msgType=fmatvec::Atom::Info;
+      else if(itn->substr(0, 5)=="warn~"  ) msgType=fmatvec::Atom::Warn;
+      else if(itn->substr(0, 6)=="debug~" ) msgType=fmatvec::Atom::Debug;
+      else if(itn->substr(0, 6)=="error~" ) msgType=fmatvec::Atom::Error;
+      else if(itn->substr(0, 5)=="depr~"  ) msgType=fmatvec::Atom::Deprecated;
+      else if(itn->substr(0, 7)=="status~") msgType=fmatvec::Atom::Status;
+      else throw runtime_error("Unknown message stream.");
+      static boost::regex re(".*~(.*)~(.*)", boost::regex::extended);
+      boost::smatch m;
+      if(!boost::regex_match(*itn, m, re)) {
+        cerr<<"Invalid argument"<<endl;
+        return 1;
+      }
+      fmatvec::Atom::setCurrentMessageStream(msgType, std::make_shared<bool>(true),
+        std::make_shared<fmatvec::PrePostfixedStream>(m.str(1), m.str(2), ostr));
+
+      args.erase(itn);
+      args.erase(it);
     }
   
     // get path of this executable
@@ -140,11 +220,11 @@ int main(int argc, char *argv[]) {
 
     // generate mbsimxml.xsd
     set<bfs::path> searchDirs;
-    while((i=find(arg.begin(), arg.end(), "--modulePath"))!=arg.end()) {
+    while((i=find(args.begin(), args.end(), "--modulePath"))!=args.end()) {
       i2=i; i2++;
       searchDirs.insert(*i2);
-      arg.erase(i);
-      arg.erase(i2);
+      args.erase(i);
+      args.erase(i2);
     }
     set<bfs::path> schemas=MBSim::getMBSimXMLSchemas(searchDirs);
     if(ONLYLISTSCHEMAS) {
@@ -154,40 +234,40 @@ int main(int argc, char *argv[]) {
     }
   
     bool ONLYPP=false;
-    if((i=std::find(arg.begin(), arg.end(), "--onlypreprocess"))!=arg.end()) {
+    if((i=std::find(args.begin(), args.end(), "--onlypreprocess"))!=args.end()) {
       ONLYPP=true;
-      arg.erase(i);
+      args.erase(i);
     }
   
     string NOINT;
-    if((i=std::find(arg.begin(), arg.end(), "--donotintegrate"))!=arg.end()) {
+    if((i=std::find(args.begin(), args.end(), "--donotintegrate"))!=args.end()) {
       NOINT="--donotintegrate";
-      arg.erase(i);
+      args.erase(i);
     }
   
     string ONLY1OUT;
-    if((i=std::find(arg.begin(), arg.end(), "--stopafterfirststep"))!=arg.end()) {
+    if((i=std::find(args.begin(), args.end(), "--stopafterfirststep"))!=args.end()) {
       ONLY1OUT="--stopafterfirststep";
-      arg.erase(i);
+      args.erase(i);
     }
   
     int AUTORELOADTIME=0;
-    if((i=std::find(arg.begin(), arg.end(), "--autoreload"))!=arg.end()) {
+    if((i=std::find(args.begin(), args.end(), "--autoreload"))!=args.end()) {
       i2=i; i2++;
       char *error;
       ONLY1OUT="--stopafterfirststep";
       AUTORELOADTIME=strtol(i2->c_str(), &error, 10);
       // AUTORELOAD is set delayed since we currently do not know the MBSim file name (see later)
       if(AUTORELOADTIME<0) AUTORELOADTIME=250;
-      arg.erase(i);
+      args.erase(i);
       if(error && strlen(error)==0)
-        arg.erase(i2);
+        args.erase(i2);
       else
         AUTORELOADTIME=250;
     }
   
-    string MBSIMPRJ=*arg.begin();
-    arg.erase(arg.begin());
+    string MBSIMPRJ=*args.begin();
+    args.erase(args.begin());
     string PPMBSIMPRJ=".pp."+basename(MBSIMPRJ);
     string DEPMBSIMPRJ=".dep."+basename(MBSIMPRJ);
     string ERRFILE=".err."+basename(MBSIMPRJ);
@@ -209,6 +289,7 @@ int main(int argc, char *argv[]) {
       // validate the project file with mbsimxml.xsd
       vector<string> command;
       command.push_back((MBXMLUTILSBIN/(string("mbxmlutilspp")+EXEEXT)).string());
+      command.insert(command.end(), streamArgs.begin(), streamArgs.end());
       command.insert(command.end(), AUTORELOAD.begin(), AUTORELOAD.end());
       for(auto &schema: schemas)
         command.push_back(schema.string());
@@ -220,6 +301,7 @@ int main(int argc, char *argv[]) {
         command.push_back((MBXMLUTILSBIN/(string("mbsimflatxml")+EXEEXT)).string());
         if(NOINT!="") command.push_back(NOINT);
         if(ONLY1OUT!="") command.push_back(ONLY1OUT);
+        command.insert(command.end(), streamArgs.begin(), streamArgs.end());
         command.push_back(PPMBSIMPRJ);
         ret=runProgram(command);
       }
@@ -258,12 +340,11 @@ int main(int argc, char *argv[]) {
     return ret;
   }
   catch(const exception &e) {
-    cerr<<"Exception:"<<endl
-        <<e.what()<<endl;
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<e.what()<<endl;
     return 1;
   }
   catch(...) {
-    cerr<<"Unknown exception"<<endl;
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<endl;
     return 1;
   }
   return 0;

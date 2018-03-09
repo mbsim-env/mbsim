@@ -28,6 +28,7 @@
 namespace MBSim {
 
   class Element;
+  class Solver;
 
   /**
    * \brief basic error class for mbsim
@@ -46,22 +47,16 @@ namespace MBSim {
 
       /**
        * \brief constructor
-       * ctor variant without a context
+       * \param message to be written
+       * \param context the conext MBSim::Solver where the error occured
        */
-      MBSimError(std::string mbsim_error_message_) noexcept; 
+      MBSimError(const Solver *context, std::string mbsim_error_message_) noexcept; 
       
       ~MBSimError() noexcept override = default;
-
-      /* \brief set the context of the error
-       * Use this function to set the context in a catch(...) block if the context is not known
-       * at the original throw statement. */
-      void setContext(const Element *context);
 
       const std::string& getErrorMessage() const { return mbsim_error_message; }
 
       const std::string& getPath() const { return path; }
-
-      const std::vector<MBXMLUtils::EmbedDOMLocator>& getLocationStack() const { return locationStack; }
 
       const char* what() const noexcept override;
 
@@ -73,15 +68,13 @@ namespace MBSim {
 
       std::string path;
 
-      std::vector<MBXMLUtils::EmbedDOMLocator> locationStack;
+      // domEvalError stores the DOM stack of this error, if available.
+      // It is used in what() to generated the message for whatMsg.
+      mutable MBXMLUtils::DOMEvalException domEvalError;
 
       // just a string to store the memory which is returned by the what() function
       mutable std::string whatMsg;
   };
-
-  // Helper to throw a error with this as the context of the error
-  #define THROW_MBSIMERROR(msg) \
-    throw MBSim::MBSimError(this, msg)
 }
 
 #endif /* _MBSIM_EVENT_H */

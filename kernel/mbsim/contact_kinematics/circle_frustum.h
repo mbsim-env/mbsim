@@ -55,12 +55,10 @@ namespace MBSim {
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour) override;
       void updateg(double& g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec& wb, double g, std::vector<ContourFrame*> &cFrame) override { throw MBSimError("(ContactKinematicsCircleFrustum::updatewb): not implemented!"); }
+      void updatewb(fmatvec::Vec& wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsCircleFrustum::updatewb): not implemented!"); }
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setDebug(bool DEBUG_);
-      void setWarnLevel(int warnLevel_);
       void setLocalSearch(bool LOCALSEARCH_);
       /***************************************************/
 
@@ -77,16 +75,6 @@ namespace MBSim {
       Circle *circle;
 
       /**
-       * \brief debug information during calculation?
-       */
-      bool DEBUG;
-
-      /**
-       * \brief warnings during calculation?
-       */
-      int warnLevel;
-
-      /**
        * \brief local contact search?
        */
       bool LOCALSEARCH;
@@ -94,8 +82,6 @@ namespace MBSim {
       fmatvec::Vec2 zeta;
   };
 
-  inline void ContactKinematicsCircleFrustum::setDebug(bool DEBUG_) { DEBUG=DEBUG_; }
-  inline void ContactKinematicsCircleFrustum::setWarnLevel(int warnLevel_) { warnLevel=warnLevel_; }
   inline void ContactKinematicsCircleFrustum::setLocalSearch(bool LOCALSEARCH_) { LOCALSEARCH=LOCALSEARCH_; }
 
 }

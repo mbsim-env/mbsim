@@ -221,7 +221,7 @@ namespace MBSim {
   void SingleContact::updateStopVector() {
     // TODO account for regularized normal force
     if (gActive != gdActive[normal])
-      THROW_MBSIMERROR("Internal error");
+      throwError("Internal error");
     if (gActive) {
       sv(0) = evalgddN() - gddTol;
       if (gdActive[tangential]) {
@@ -364,7 +364,7 @@ namespace MBSim {
       laSize = gActive * gdActive[normal];
     }
     else
-      THROW_MBSIMERROR("Internal error");
+      throwError("Internal error");
   }
 
   void SingleContact::calcgSize(int j) {
@@ -379,7 +379,7 @@ namespace MBSim {
       gSize = gActive * gdActive[normal];
     }
     else
-      THROW_MBSIMERROR("Internal error");
+      throwError("Internal error");
   }
 
   void SingleContact::calcgdSize(int j) {
@@ -440,7 +440,7 @@ namespace MBSim {
 
     }
     else
-      THROW_MBSIMERROR("Internal error");
+      throwError("Internal error");
   }
 
   void SingleContact::calcrFactorSize(int j) {
@@ -548,7 +548,7 @@ namespace MBSim {
             if (contactKinematics == nullptr) {
               contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
               if (contactKinematics == nullptr)
-                THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour[0]).name()) + "\" and Contour\"" + boost::core::demangle(typeid(*contour[1]).name()) + "\"!");
+                throwError("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour[0]).name()) + "\" and Contour\"" + boost::core::demangle(typeid(*contour[1]).name()) + "\"!");
             }
           }
         }
@@ -556,7 +556,7 @@ namespace MBSim {
     }
     else if(stage==LASTINITSTAGE) {
       if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
-        throw MBSimError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
+        throwError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
     }
     ContourLink::init(stage, config);
     if(fcl) fcl->init(stage, config);
@@ -827,7 +827,7 @@ namespace MBSim {
       }
 
       //compute residuum for tangential directions
-      if (fdf and fdf->isSetValued()) {
+      if (fdf and fdf->isSetValued() and gdActive[tangential]) {
         for (int i = 0; i < getFrictionDirections(); i++) {
           gddT(i) = b(laInd + i + addIndexnormal);
           for (int j = ia[laInd + i + addIndexnormal]; j < ia[laInd + 1 + i + addIndexnormal]; j++)
@@ -1178,7 +1178,7 @@ namespace MBSim {
       }
     }
     else
-      THROW_MBSIMERROR("Internal error");
+      throwError("Internal error");
   }
 
   int SingleContact::getFrictionDirections() const {
@@ -1263,7 +1263,7 @@ namespace MBSim {
       }
     }
     else
-      THROW_MBSIMERROR("Internal error");
+      throwError("Internal error");
   }
 
   void SingleContact::calccorrSize(int j) {
@@ -1285,7 +1285,7 @@ namespace MBSim {
       corrSize = gActive * gdActive[normal] * (1 + gdActive[tangential] * getFrictionDirections());
     }
     else
-      THROW_MBSIMERROR("Internal error");
+      throwError("Internal error");
   }
 
   void SingleContact::checkRoot() {

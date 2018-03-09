@@ -79,7 +79,7 @@ namespace MBSimFlexibleBody {
       case 6:
         return R->evalPosition() + R->evalOrientation() * getq()(0,2);
       default:
-        THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateKinematicsForFrame): Unknown number of reference dofs!");
+        throwError("(FlexibleBody2s13Disk::updateKinematicsForFrame): Unknown number of reference dofs!");
     }
   }
 
@@ -93,7 +93,7 @@ namespace MBSimFlexibleBody {
       frame->setPosition(evalPosition());
     }
     else
-      THROW_MBSIMERROR("(FlexibleBody2s13Disk::updatePositions): Parameters must be zero!");
+      throwError("(FlexibleBody2s13Disk::updatePositions): Parameters must be zero!");
   }
 
   void FlexibleBody2s13Disk::updateVelocities(Frame2s *frame) {
@@ -109,15 +109,15 @@ namespace MBSimFlexibleBody {
         frame->setAngularVelocity(R->getOrientation() * evalA() * evalG() * getu()(3,5));
         break;
         default:
-        THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateVelocities): Unknown number of reference dofs!");
+        throwError("(FlexibleBody2s13Disk::updateVelocities): Unknown number of reference dofs!");
       }
     }
     else
-      THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateVelocities): Parameters must be zero!");
+      throwError("(FlexibleBody2s13Disk::updateVelocities): Parameters must be zero!");
   }
 
   void FlexibleBody2s13Disk::updateAccelerations(Frame2s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13Disk::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13Disk::updateJacobians(Frame2s *frame, int j) {
@@ -152,7 +152,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13Disk::updateGyroscopicAccelerations(Frame2s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13Disk::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13Disk::updatePositions(NodeFrame *frame) {
@@ -172,7 +172,7 @@ namespace MBSimFlexibleBody {
     tmp(2) = qext(0) + qext(RefDofs + node * NodeDofs) + (computeThickness(NodeCoordinates(node, 0))) / 2.;
     frame->setPosition(R->evalPosition() + R->evalOrientation() * tmp);
 
-//    cout << "(FlexibleBody2s13Disk::updateOrientation): Not implemented!" << endl;
+//    msg(Debug) << "(FlexibleBody2s13Disk::updateOrientation): Not implemented!" << endl;
     //frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(Phi));
     //frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(Phi));
     //frame->getOrientation(false).set(2, crossProduct(frame->getOrientation().col(0), frame->getOrientation().col(1)));
@@ -221,7 +221,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13Disk::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13Disk::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13Disk::updateJacobians(NodeFrame *frame, int j) {
@@ -260,7 +260,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13Disk::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody2s13Disk::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13Disk::init(InitStage stage, const InitConfigSet &config) {
@@ -467,15 +467,15 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13Disk::GlobalVectorContribution(int CurrentElement, const Vec& locVec, Vec& gloVec) {
-    THROW_MBSIMERROR("(FlexibleBody2s13Disk::GlobalVectorContribution): Not implemented!");
+    throwError("(FlexibleBody2s13Disk::GlobalVectorContribution): Not implemented!");
   }
 
   void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const Mat& locMat, Mat& gloMat) {
-    THROW_MBSIMERROR("(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!");
+    throwError("(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!");
   }
 
   void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const SymMat& locMat, SymMat& gloMat) {
-    THROW_MBSIMERROR("(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!");
+    throwError("(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!");
   }
 
 }

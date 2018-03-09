@@ -55,7 +55,7 @@ namespace MBSimFlexibleBody {
        */
       virtual void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config);
       virtual int getqSize() const {
-        throw MBSim::MBSimError("Not implemented" + string(__func__));
+        throw std::runtime_error("Not implemented" + string(__func__));
       }
 
       virtual fmatvec::Vec getq() const {
@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
       }
 
       virtual int getuSize() const {
-        throw MBSim::MBSimError("Not implemented" + string(__func__));
+        throw std::runtime_error("Not implemented" + string(__func__));
       }
 
       virtual const fmatvec::SymMat& getM() const {
@@ -74,39 +74,39 @@ namespace MBSimFlexibleBody {
       }
 
       virtual const fmatvec::SqrMat& getdhdq() const {
-        throw MBSim::MBSimError("Not implemented" + string(__func__));
+        throw std::runtime_error("Not implemented" + string(__func__));
       }
       virtual const fmatvec::SqrMat& getdhdu() const {
-        throw MBSim::MBSimError("Not implemented");
+        throw std::runtime_error("Not implemented");
       }
       virtual void computeM(const fmatvec::Vec& q);
       virtual void computeh(const fmatvec::Vec& q, const fmatvec::Vec& u);
       virtual void computedhdz(const fmatvec::Vec& q, const fmatvec::Vec& u) {
-        throw MBSim::MBSimError("Not implemented");
+        throw std::runtime_error("Not implemented");
       }
       virtual double computeKineticEnergy(const fmatvec::Vec& q, const fmatvec::Vec& u) {
-        throw MBSim::MBSimError("Not implemented");
+        throw std::runtime_error("Not implemented");
       }
       virtual double computeGravitationalEnergy(const fmatvec::Vec& q) {
-        throw MBSim::MBSimError("Not implemented");
+        throw std::runtime_error("Not implemented");
       }
       virtual double computeElasticEnergy(const fmatvec::Vec& q) {
-        throw MBSim::MBSimError("Not implemented");
+        throw std::runtime_error("Not implemented");
       }
       virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) {
-        throw MBSim::MBSimError("Not implemented");
+        throw std::runtime_error("Not implemented");
       }
       virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) {
-        throw MBSim::MBSimError("Not implemented");
+        throw std::runtime_error("Not implemented");
       }
       virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) {
-        throw MBSim::MBSimError("Not implemented");
+        throw std::runtime_error("Not implemented");
       }
       virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) {
-        throw MBSim::MBSimError("Not implemented");
+        throw std::runtime_error("Not implemented");
       }
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& q, const MBSim::ContourPointData &data) {
-        throw MBSim::MBSimError("Not implemented");
+        throw std::runtime_error("Not implemented");
       }
 
       virtual void setDofDir(fmatvec::VecInt dofDirElement_) {

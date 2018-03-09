@@ -43,7 +43,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throw MBSimError("(ExplicitEulerIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(ExplicitEulerIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
       system->setState(z0);
     }
     else
@@ -51,7 +51,6 @@ namespace MBSimIntegrator {
 
     tPlot = 0.;
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-    cout.setf(ios::scientific, ios::floatfield);
     
     stepPlot =(int) (dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
@@ -74,7 +73,7 @@ namespace MBSimIntegrator {
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;
         if(plotIntegrationData) integPlot<< system->getTime() << " " << dt << " " << time << endl;
-        if(output) cout << "   t = " << system->getTime() << ",\tdt = "<< dt << "\r"<<flush;
+        if(msgAct(Status)) msg(Status) << "   t = " << system->getTime() << ",\tdt = "<< dt << flush;
         tPlot += dtPlot;
       }
 
@@ -93,9 +92,6 @@ namespace MBSimIntegrator {
       integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
-
-    cout.unsetf(ios::scientific);
-    cout << endl;
   }
 
   void ExplicitEulerIntegrator::integrate() {

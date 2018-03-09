@@ -18,7 +18,7 @@ mbsim_cosim_la_LIBADD = $(LIBDL)
 
 
 # build main FMU library (common part; static archive)
-libmbsim_fmi_la_SOURCES = fmiinstance.cc utils.cc
+libmbsim_fmi_la_SOURCES = fmiinstance.cc
 libmbsim_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS)
 
 # build main FMU library for XML models

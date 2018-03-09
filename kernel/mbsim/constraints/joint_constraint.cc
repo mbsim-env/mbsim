@@ -84,13 +84,13 @@ namespace MBSim {
       for (const auto & i : saved_IndependentBody)
         bi.push_back(getByPath<RigidBody>(i));
       if(bi.empty())
-        THROW_MBSIMERROR("No independent rigid bodies given!");
+        throwError("No independent rigid bodies given!");
       if((bd1.empty()) and (bd2.empty()))
-        THROW_MBSIMERROR("No dependent rigid bodies given!");
+        throwError("No dependent rigid bodies given!");
       if(!saved_ref1.empty() && !saved_ref2.empty())
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(frame1==nullptr or frame2==nullptr)
-        THROW_MBSIMERROR("Not all connections are given!");
+        throwError("Not all connections are given!");
       if(!bd1.empty()) {
         for(unsigned int i=0; i<bd1.size()-1; i++) 
           if1.push_back(bd1[i+1]->getFrameOfReference());
@@ -167,7 +167,7 @@ namespace MBSim {
       else if(q0.size() == q.size())
         q = q0;
       else
-        THROW_MBSIMERROR("(JointConstraint::initz): size of q0 does not match, must be " + toStr(q.size()));
+        throwError("(JointConstraint::initz): size of q0 does not match, must be " + toStr(q.size()));
 
       A.resize(nu);
     }

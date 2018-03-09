@@ -41,7 +41,7 @@ namespace MBSimFlexibleBody {
     }
     updCurve = false;
 
-//    cout << "Neutral nurbs ?? 1s curve: " << endl;
+//    msg(Debug) << "Neutral nurbs ?? 1s curve: " << endl;
 //    stringstream x;
 //    x << "xpl = [";
 //    stringstream y;
@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
 //    }
 //    x << "];" << endl;
 //    y << "];" << endl;
-//    cout << x.str() << y.str();
+//    msg(Debug) << x.str() << y.str();
   }
 
 }

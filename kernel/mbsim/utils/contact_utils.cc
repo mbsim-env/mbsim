@@ -71,6 +71,7 @@
 #include <mbsim/contact_kinematics/plate_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/point_spatialcontour.h>
+#include <mbsim/contact_kinematics/plane_spatialcontour.h>
 // --- List of contact kinematic implementations - END ---
 
 using namespace std;
@@ -84,15 +85,14 @@ namespace MBSim {
   fmatvec::Vec2 computeAnglesOnUnitSphere(const fmatvec::Vec3& r) {
     fmatvec::Vec2 zeta(fmatvec::NONINIT);
     double l = sqrt(r(0)*r(0) + r(1)*r(1));
-    zeta(0)= r(1)>=0 ? acos(r(0)/l) : 2*M_PI-acos(r(0)/l);
-    zeta(1)= asin(r(2));
+    zeta(0) = r(1)>=0 ? acos(r(0)/l) : 2*M_PI-acos(r(0)/l);
+    zeta(1) = asin(r(2));
     return zeta;
   }
 
   ContactKinematics* findContactPairingRigidRigid(const type_info &contour0, const type_info &contour1) {
 
-    if(( contour0==typeid(Circle) && contour1==typeid(Frustum) ) ||
-       ( contour0==typeid(Circle) && contour1==typeid(Frustum) ) )
+    if ( contour0==typeid(Circle) && contour1==typeid(Frustum) )
       return new ContactKinematicsCircleFrustum;
     
     else if ( contour0==typeid(Circle) && contour1==typeid(Circle) )
@@ -124,14 +124,6 @@ namespace MBSim {
     else if (( contour0==typeid(Cuboid) && contour1==typeid(Room) ) or
         ( contour0==typeid(Cuboid) && contour1==typeid(Cuboid) ))
       return new ContactKinematicsCompoundContourCompoundContour;
-
-    /*
-     *else if ( contour0==typeid(CompoundContour) )
-     *  if ( contour1==typeid(CompoundContour) )
-     *    return new ContactKinematicsCompoundContourCompoundContour;  
-     *  else 
-     *    return new ContactKinematicsCompoundContourContour;  
-     */
 
     else if ( contour0==typeid(Edge) && contour1==typeid(Edge) )
       return new ContactKinematicsEdgeEdge;
@@ -190,8 +182,10 @@ namespace MBSim {
     else if ( contour0==typeid(Plate) && contour1==typeid(PolynomialFrustum) )
       return new ContactKinematicsPlatePolynomialFrustum;
 
+    else if ( contour0==typeid(Plane) && contour1==typeid(SpatialContour) )
+      return new ContactKinematicsPlaneSpatialContour;
+
     else
       return nullptr;
   }
 }
-

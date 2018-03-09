@@ -58,13 +58,14 @@ namespace MBSim {
 //        minRadius=(radius<minRadius)?radius:minRadius;
 //      }
 //      if (circle->getRadius()>minRadius)
-//        throw MBSimError("Just one contact point is allowed in Contactpairing Contour-SolidCircle, but either the circle radius is to big or the minimal Radius of Contour is to small.\n minimal radius of Contour="+toString(minRadius)+"\n Radius of SolidCircle="+toString(circle->getRadius()));
+//        throw runtime_error("Just one contact point is allowed in Contactpairing Contour-SolidCircle, but either the circle radius is to big or the minimal Radius of Contour is to small.\n minimal radius of Contour="+toString(minRadius)+"\n Radius of SolidCircle="+toString(circle->getRadius()));
 //    }
 
   }
 
   void ContactKinematicsCirclePlanarContour::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     PlanarContactSearch search(func);
+    search.setTolerance(tol);
     search.setNodes(planarcontour->getEtaNodes());
 
     if(searchAllCP==false)

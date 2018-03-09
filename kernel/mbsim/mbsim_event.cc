@@ -20,6 +20,7 @@
 #include <config.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/element.h>
+#include <mbsim/solver.h>
 #include <iostream>
 #include <utility>
 
@@ -29,26 +30,19 @@ using namespace xercesc;
 namespace MBSim {
   
   MBSimError::MBSimError(const Element *context, std::string mbsim_error_message_) noexcept : exception(),
-    mbsim_error_message(std::move(mbsim_error_message_)), path(context->getPath()), locationStack(context->getLocationStack()) {
+    mbsim_error_message(std::move(mbsim_error_message_)), path(context->getPath()), domEvalError(context->getDOMEvalError()) {
   }
 
-  MBSimError::MBSimError(std::string mbsim_error_message_) noexcept : exception(),
-    mbsim_error_message(std::move(mbsim_error_message_)), path() {
-  }
-
-  void MBSimError::setContext(const Element *context) {
-    path=context->getPath();
+  MBSimError::MBSimError(const Solver *context, std::string mbsim_error_message_) noexcept : exception(),
+    mbsim_error_message(std::move(mbsim_error_message_)), path(), domEvalError(context->getDOMEvalError()) {
   }
 
   const char* MBSimError::what() const noexcept {
-    stringstream str;
-    str<<mbsim_error_message<<endl;
+    string mbsimLoc;
     if(!path.empty())
-      str<<"At element "<<path<<"."<<endl;
-    if(!locationStack.empty())
-      MBXMLUtils::DOMEvalException::locationStack2Stream("", locationStack, "", str);
-    whatMsg=str.str();
-    whatMsg.resize(whatMsg.length()-1); // remote the trailing line feed
+      mbsimLoc="\n(At MBSim element "+path+")";
+    domEvalError.setMessage(mbsim_error_message+mbsimLoc);
+    whatMsg=domEvalError.what();
     return whatMsg.c_str();
   }
 

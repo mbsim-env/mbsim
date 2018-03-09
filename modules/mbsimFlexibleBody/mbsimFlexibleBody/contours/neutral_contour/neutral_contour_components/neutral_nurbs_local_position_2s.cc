@@ -37,10 +37,10 @@ namespace MBSimFlexibleBody {
       for (int j = 0; j < numOfNodesV; j++) {
         r = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalLocalPosition(nodes(i,j));
         Nodelist(i,j) = r;
-//        cout << "contourLocalPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl; // the index get here is one less than the index in Abaqus.
-//        cout << "neutralLocalPosition2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
+//        msg(Debug) << "contourLocalPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl; // the index get here is one less than the index in Abaqus.
+//        msg(Debug) << "neutralLocalPosition2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
       }
-//    cout << "neutralLocalPosition2s"<< Nodelist << endl << endl;
+//    msg(Debug) << "neutralLocalPosition2s"<< Nodelist << endl << endl;
     }
   }
 

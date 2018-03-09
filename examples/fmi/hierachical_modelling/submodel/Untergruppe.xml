@@ -53,9 +53,7 @@
           <relativePosition>[0;-h1/2;0]</relativePosition>
           <relativeOrientation>rotateAboutX(0)</relativeOrientation>
         </FixedRelativeFrame>
-        <pv:Embed>
-          <include href="../frame.xml" xmlns="http://www.w3.org/2001/XInclude"/>
-        </pv:Embed>
+        <pv:Embed href="../frame.xml"/>
       </frames>
       <contours/>
       <openMBVRigidBody>

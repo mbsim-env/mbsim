@@ -27,18 +27,17 @@ namespace MBSim {
 
   class LemkeAlgorithm : virtual public fmatvec::Atom {
     public:
-      LemkeAlgorithm(const bool & DEBUGLEVEL_ = false) :
-          M(), q(),  DEBUGLEVEL(DEBUGLEVEL_) {
+      LemkeAlgorithm() :
+          M(), q() {
       }
 
-      LemkeAlgorithm(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_, const bool & DEBUGLEVEL_ = false) :
-          M(M_), q(q_), steps(0), DEBUGLEVEL(DEBUGLEVEL_), info(-1) {
+      LemkeAlgorithm(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_) :
+          M(M_), q(q_), steps(0), info(-1) {
         assert(M_.rows() == q.size());
         assert(M_.cols() == q.size());
       }
 
-      LemkeAlgorithm(const fmatvec::SymMat & M_, const fmatvec::Vec & q_, const bool & DEBUGLEVEL_ = false) :
-          DEBUGLEVEL(DEBUGLEVEL_) {
+      LemkeAlgorithm(const fmatvec::SymMat & M_, const fmatvec::Vec & q_) {
         setSystem(M_, q_);
       }
 
@@ -100,11 +99,6 @@ namespace MBSim {
        * \brief number of steps until the Lemke algorithm found a solution
        */
       unsigned int steps{0};
-
-      /**
-       * \brief define level of debug output
-       */
-      int DEBUGLEVEL;
 
       /**
        * \brief did the algorithm find a solution

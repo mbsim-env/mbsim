@@ -37,16 +37,16 @@ namespace MBSim {
      * Das lineare Komplementaritätsproblem: Eine Einführung  (Uwe Schäfer) pages 7 ff
      */
 
-    if(DEBUGLEVEL >= 1) {
-      cout << "******" << __FUNCTION__ << "*******" << endl;
+    if(msg(Debug)) {
+      msg(Debug) << "******" << __FUNCTION__ << "*******" << endl;
     }
 
     steps = 0;
 
     size_t dim = q.size();
 
-    if(DEBUGLEVEL >= 1) {
-      cout << "Dimension = " << dim << endl;
+    if(msg(Debug)) {
+      msg(Debug) << "Dimension = " << dim << endl;
     }
 
     Vec solutionVector(2 * dim, INIT, 0.);
@@ -69,14 +69,14 @@ namespace MBSim {
     size_t z0Row = pivotRowIndex;           // remember the col of z0 for ending algorithm afterwards
     size_t pivotColIndex = 2 * dim;         // first col is that of z0
 
-    if (DEBUGLEVEL >= 3) {
-      cout << "A: " << A << endl;
-      cout << "pivotRowIndex " << pivotRowIndex << endl;
-      cout << "pivotColIndex " << pivotColIndex << endl;
-      cout << "Basis: ";
+    if (msg(Debug)) {
+      msg(Debug) << "A: " << A << endl;
+      msg(Debug) << "pivotRowIndex " << pivotRowIndex << endl;
+      msg(Debug) << "pivotColIndex " << pivotColIndex << endl;
+      msg(Debug) << "Basis: ";
       for (size_t i = 0; i < basis.size(); i++)
-        cout << basis[i] << " ";
-      cout << endl;
+        msg(Debug) << basis[i] << " ";
+      msg(Debug) << endl;
     }
 
     if(!greaterZero(q_)) {
@@ -90,14 +90,14 @@ namespace MBSim {
 
         GaussJordanEliminationStep(A, pivotRowIndex, pivotColIndex, basis);
 
-        if (DEBUGLEVEL >= 3) {
-          cout << "A: " << A << endl;
-          cout << "pivotRowIndex " << pivotRowIndex << endl;
-          cout << "pivotColIndex " << pivotColIndex << endl;
-          cout << "Basis: ";
+        if (msg(Debug)) {
+          msg(Debug) << "A: " << A << endl;
+          msg(Debug) << "pivotRowIndex " << pivotRowIndex << endl;
+          msg(Debug) << "pivotColIndex " << pivotColIndex << endl;
+          msg(Debug) << "Basis: ";
           for (size_t i = 0; i < basis.size(); i++)
-            cout << basis[i] << " ";
-          cout << endl;
+            msg(Debug) << basis[i] << " ";
+          msg(Debug) << endl;
         }
 
         int pivotColIndexOld = pivotColIndex;
@@ -121,14 +121,14 @@ namespace MBSim {
       }
 
       }
-      if(DEBUGLEVEL >= 1) {
-        cout << "Number of loops: " << steps << endl;
-        cout << "Number of maximal loops: " << maxloops << endl;
+      if(msg(Debug)) {
+        msg(Debug) << "Number of loops: " << steps << endl;
+        msg(Debug) << "Number of maximal loops: " << maxloops << endl;
       }
 
       if(!validBasis(basis)) {
         info = -1;
-        if(DEBUGLEVEL >= 1)
+        if(msg(Debug))
           msg(Debug) << "Lemke-Algorithm ended with Ray-Termination (no valid solution)." << endl;
 
         return solutionVector;
@@ -136,10 +136,10 @@ namespace MBSim {
 
     }
 
-    if (DEBUGLEVEL >= 2) {
-      cout << "A: " << A << endl;
-      cout << "pivotRowIndex " << pivotRowIndex << endl;
-      cout << "pivotColIndex " << pivotColIndex << endl;
+    if (msg(Debug)) {
+      msg(Debug) << "A: " << A << endl;
+      msg(Debug) << "pivotRowIndex " << pivotRowIndex << endl;
+      msg(Debug) << "pivotColIndex " << pivotColIndex << endl;
     }
 
     for (size_t i = 0; i < basis.size(); i++)
@@ -163,8 +163,8 @@ namespace MBSim {
         for (size_t j = 2; j < dim + 1; j++)
           Rows[row](j) = A(row, j - 1) / a;
 
-        if (DEBUGLEVEL) {
-          cout << "Rows(" << row << ") = " << Rows[row] << endl;
+        if (msgAct(Debug)) {
+          msg(Debug) << "Rows(" << row << ") = " << Rows[row] << endl;
         }
       }
     }
@@ -192,8 +192,8 @@ namespace MBSim {
 
   bool LemkeAlgorithm::LexicographicPositive(const fmatvec::Vec & v) {
     int i = 0;
-    if (DEBUGLEVEL)
-      cout << "v " << v << endl;
+    if (msgAct(Debug))
+      msg(Debug) << "v " << v << endl;
 
     while(i < v.size()-1 and fabs(v(i)) < macheps)
       i++;

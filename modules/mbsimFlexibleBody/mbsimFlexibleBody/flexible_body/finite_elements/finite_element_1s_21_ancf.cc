@@ -39,7 +39,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s21ANCF::setCurlRadius(double R) {
-    if (fabs(R) < epsroot) throw MBSimError("CurlRadius must not be 0!\n");
+    if (fabs(R) < epsroot) throw runtime_error("CurlRadius must not be 0!\n");
     wss0 = 1/R;
   }
 
@@ -382,23 +382,23 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s21ANCF::computedhdz(const Vec& qElement, const Vec& qpElement) {
-    throw MBSim::MBSimError("(FiniteElement1s21ANCF::computedhdz): not implemented!");
+    throw runtime_error("(FiniteElement1s21ANCF::computedhdz): not implemented!");
   }
 
   double FiniteElement1s21ANCF::computeKineticEnergy(const Vec& qElement, const Vec& qpElement) {
-    throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeKineticEnergy): not implemented!");
+    throw runtime_error("(FiniteElement1s21ANCF::computeKineticEnergy): not implemented!");
   }
 
   double FiniteElement1s21ANCF::computeGravitationalEnergy(const Vec& qElement) {
-    throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeGravitationalEnergy): not implemented!");
+    throw runtime_error("(FiniteElement1s21ANCF::computeGravitationalEnergy): not implemented!");
   }
 
   double FiniteElement1s21ANCF::computeElasticEnergy(const Vec& qElement) {
-    throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeElasticEnergy): not implemented!");
+    throw runtime_error("(FiniteElement1s21ANCF::computeElasticEnergy): not implemented!");
   }
 
   void FiniteElement1s21ANCF::computeM(const Vec& qG) {
-    throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeM): Not implemented");
+    throw runtime_error("(FiniteElement1s21ANCF::computeM): Not implemented");
   }
 
 }

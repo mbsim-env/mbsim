@@ -81,7 +81,6 @@ namespace MBSimGUI {
   DOMLSSerializer *basicSerializer=impl->createLSSerializer();
 
   bool currentTask;
-  QDir mbsDir;
 
   MainWindow *mw;
 
@@ -90,8 +89,10 @@ namespace MBSimGUI {
   WebDialog* MainWindow::xmlHelpDialog = nullptr;
 
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), autoSave(false), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
+    setIconSize(iconSize()*qApp->desktop()->logicalDpiY()/96);
+
     // use html output of MBXMLUtils
-    static string HTMLOUTPUT="MBXMLUTILS_HTMLOUTPUT=1";
+    static string HTMLOUTPUT="MBXMLUTILS_ERROROUTPUT=HTMLXPATH";
     putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
 
     serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
@@ -127,6 +128,30 @@ namespace MBSimGUI {
     solverView = new SolverView;
     echoView = new EchoView(this);
 
+    // initialize streams
+    auto f=[this](const string &s){
+      echoView->addOutputText(s.c_str());
+    };
+    debugStreamFlag=std::make_shared<bool>(false);
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_INFO\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_WARN\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag             ,
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEBUG\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_ERROR\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEPRECATED\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("", "", [this](const string &s){
+        // call this function only every 0.25 sec
+        if(getStatusTime().elapsed()<250) return;
+        getStatusTime().restart();
+        // print to status bar
+        statusBar()->showMessage(s.c_str());
+      }));
+
     initInlineOpenMBV();
 
     MBSimObjectFactory::initialize();
@@ -134,10 +159,7 @@ namespace MBSimGUI {
     QMenu *GUIMenu = new QMenu("GUI", menuBar());
     menuBar()->addMenu(GUIMenu);
 
-    QAction *action = GUIMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirHomeIcon)),"Workdir", this, SLOT(changeWorkingDir()));
-    action->setStatusTip(tr("Change working directory"));
-
-    action = GUIMenu->addAction(QIcon::fromTheme("document-properties"), "Options", this, SLOT(openOptionsMenu()));
+    QAction *action = GUIMenu->addAction(QIcon::fromTheme("document-properties"), "Options", this, SLOT(openOptionsMenu()));
     action->setStatusTip(tr("Open options menu"));
 
     GUIMenu->addSeparator();
@@ -307,6 +329,8 @@ namespace MBSimGUI {
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
     mbsimDW->setWidget(echoView);
     connect(&process,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(processFinished(int,QProcess::ExitStatus)));
+    connect(&process,SIGNAL(readyReadStandardOutput()),this,SLOT(updateEchoView()));
+    connect(&process,SIGNAL(readyReadStandardError()),this,SLOT(updateStatus()));
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
@@ -343,30 +367,26 @@ namespace MBSimGUI {
 
     connect(&autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSaveProject()));
     autoSaveTimer.start(autoSaveInterval*60000);
-
-    connect(&echoViewTimer, SIGNAL(timeout()), this, SLOT(updateEchoView()));
+    statusTime.start();
 
     setWindowIcon(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"mbsimgui.svg").string())));
   }
 
   void MainWindow::autoSaveProject() {
-    saveProject("./.MBS.mbsimprj.xml",true,false);
+    saveProject("./.Project.mbsimprj.xml",true,false);
   }
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    echoViewTimer.stop();
     updateEchoView();
-    if(exitStatus==QProcess::NormalExit && exitCode==0)
-      echoView->setCurrentIndex(0);
-    else
-      echoView->setCurrentIndex(1);
     if(currentTask==1) {
-      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
-      QModelIndex index = elementView->selectionModel()->currentIndex();
-      auto *model = static_cast<ElementTreeModel*>(elementView->model());
-      auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-      if(element)
-        highlightObject(element->getID());
+      if(bfs::exists(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml")) {
+        inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
+        QModelIndex index = elementView->selectionModel()->currentIndex();
+        auto *model = static_cast<ElementTreeModel*>(elementView->model());
+        auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+        if(element)
+          highlightObject(element->getID());
+      }
     }
     else {
       if(exitStatus == QProcess::NormalExit) {
@@ -425,7 +445,7 @@ namespace MBSimGUI {
     // use nothrow boost::filesystem functions to avoid exceptions in this dtor
     boost::system::error_code ec;
     bfs::remove_all(uniqueTempDir, ec);
-    bfs::remove("./.MBS.mbsimprj.xml", ec);
+    bfs::remove("./.Project.mbsimprj.xml", ec);
     delete project;
   }
 
@@ -461,17 +481,6 @@ namespace MBSimGUI {
         return false;
     }
     return true;
-  }
-
-  void MainWindow::changeWorkingDir() {
-    QString dir = QFileDialog::getExistingDirectory (nullptr, "Working directory", ".");
-    if(not(dir.isEmpty())) {
-      QString absoluteMBSFilePath = QDir::current().absoluteFilePath(projectFile);
-      QDir::setCurrent(dir);
-      mbsDir = QFileInfo(absoluteMBSFilePath).absolutePath();
-      projectFile = QDir::current().relativeFilePath(absoluteMBSFilePath);
-      updateRecentProjectFileActions();
-    }
   }
 
   void MainWindow::openOptionsMenu() {
@@ -596,7 +605,6 @@ namespace MBSimGUI {
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
       setProjectChanged(false);
-      mbsDir = QDir::current();
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       actionEigenanalysis->setDisabled(true);
@@ -619,6 +627,7 @@ namespace MBSimGUI {
       delete project;
 
       doc = impl->createDocument();
+      doc->setDocumentURI(X()%QString("file://"+QDir::currentPath()+"/Project.mbsimprj.xml").toStdString());
 
       project = new Project;
       project->createXMLElement(doc);
@@ -632,7 +641,7 @@ namespace MBSimGUI {
 
       projectFile="";
       mbsimxml(1);
-      setWindowTitle("MBS.mbsimprj.xml[*]");
+      setWindowTitle("Project.mbsimprj.xml[*]");
     }
   }
 
@@ -642,7 +651,6 @@ namespace MBSimGUI {
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
       setProjectChanged(false);
-      mbsDir = QFileInfo(file).absolutePath();
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       actionEigenanalysis->setDisabled(true);
@@ -653,12 +661,12 @@ namespace MBSimGUI {
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
       actionSaveProject->setDisabled(false);
-      QDir::setCurrent(QFileInfo(file).absolutePath());
       projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       std::string message;
       try { 
         doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMParser::handleCDATA(doc->getDocumentElement());
       }
       catch(const std::exception &ex) {
         message = ex.what();
@@ -676,7 +684,7 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject() {
     if(maybeSave()) {
-      QString file=QFileDialog::getOpenFileName(nullptr, "XML project files", ".", "XML files (*.mbsimprj.xml)");
+      QString file=QFileDialog::getOpenFileName(nullptr, "XML project files", QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath(), "XML files (*.mbsimprj.xml)");
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       loadProject(file);
@@ -684,11 +692,10 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProjectAs() {
-    QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", project->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
+    QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath()+"/"+project->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
     if(not(file.isEmpty())) {
       file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
-      mbsDir = QFileInfo(file).absolutePath();
-      QDir::setCurrent(QFileInfo(file).absolutePath());
+      doc->setDocumentURI(X()%QString("file://"+file).toStdString());
       projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       setWindowTitle(projectFile+"[*]");
@@ -708,7 +715,7 @@ namespace MBSimGUI {
       cout << ex.what() << endl;
     }
     catch(const DOMException &ex) {
-      cout << "DOM exception: " + X()%ex.getMessage() << endl;
+      cout << X()%ex.getMessage() << endl;
     }
     catch(...) {
       cout << "Unknown exception." << endl;
@@ -733,7 +740,7 @@ namespace MBSimGUI {
   // update model parameters including additional paramters from paramList
   void MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-    doc->setDocumentURI(X()%"file://Project.mbsimprj.xml");
+    doc->setDocumentURI(getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI());
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,nullptr);
 
@@ -868,7 +875,7 @@ namespace MBSimGUI {
     currentTask = task;
 
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-    doc->setDocumentURI(X()%"file://Project.mbsimprj.xml");
+    doc->setDocumentURI(this->doc->getDocumentURI());
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
     projectView->getProject()->processIDAndHref(newDocElement);
@@ -883,9 +890,14 @@ namespace MBSimGUI {
         static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
     }
 
+    echoView->clearOutput();
     DOMElement *root;
     QString errorText;
+
+    *debugStreamFlag=echoView->debugEnabled();
+
     try {
+      fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Validate "<<D(doc)->getDocumentFilename().string()<<endl;
       D(doc)->validate();
       root = doc->getDocumentElement();
       shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
@@ -898,24 +910,35 @@ namespace MBSimGUI {
       errorText = "Unknown error";
     }
     if(not errorText.isEmpty()) {
-      echoView->setErrorText(errorText);
-      echoView->updateOutputAndError();
-      echoView->setCurrentIndex(1);
+      echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">"+errorText+"</span>");
+      echoView->updateOutput(true);
       return;
     }
+    echoView->updateOutput(true);
     // adapt the evaluator in the dom
     DOMElement *evaluator=D(doc)->createElement(PV%"evaluator");
     evaluator->appendChild(doc->createTextNode(X()%"xmlflat"));
     root->insertBefore(evaluator, root->getFirstChild());
+    E(root)->setOriginalFilename();
     basicSerializer->writeToURI(doc.get(), X()%projectFile.toStdString());
     QStringList arg;
     if(currentTask==1)
       arg.append("--stopafterfirststep");
     else if(saveFinalStateVector)
       arg.append("--savefinalstatevector");
+
+    // we print everything except status messages to stdout
+    arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>)#");
+    arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>)#");
+    if(*debugStreamFlag) {
+      arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>)#");
+    }
+    arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>)#");
+    arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>)#");
+    // status message go to stderr
+    arg.append("--stderr"); arg.append("status~~\n");
+
     arg.append(projectFile);
-    echoView->clearOutputAndError();
-    echoViewTimer.start(250);
     process.setWorkingDirectory(uniqueTempDir_);
     process.start((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
   }
@@ -967,7 +990,7 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::debug() {
+  void MainWindow::debug() {//MFMF
     currentTask = 0;
     auto *newdoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
     projectView->getProject()->processHref(newdoc->getDocumentElement());
@@ -977,7 +1000,7 @@ namespace MBSimGUI {
     QStringList arg;
     arg.append("--stopafterfirststep");
     arg.append(projectFile);
-    echoView->clearOutputAndError();
+    echoView->clearOutput();
     process.setWorkingDirectory(uniqueTempDir_);
     process.start((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
   }
@@ -1593,6 +1616,7 @@ namespace MBSimGUI {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMParser::handleCDATA(doc->getDocumentElement());
         DOMElement *ele = embed?doc->getDocumentElement()->getFirstElementChild():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true))->getFirstElementChild();
         while(ele) {
           elements.push_back(ele);
@@ -1609,8 +1633,10 @@ namespace MBSimGUI {
         QMessageBox::warning(nullptr, "Load", "Cannot load file.");
         return;
       }
-      if(embed)
-        E(parent->createEmbedXMLElement())->setAttribute("parameterHref",mbsDir.relativeFilePath(file).toStdString());
+      if(embed) {
+        QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
+        E(parent->createEmbedXMLElement())->setAttribute("parameterHref",dir.relativeFilePath(file).toStdString());
+      } 
       else
         parent->createParameterXMLElement()->insertBefore(element,nullptr);
       parameter->initializeUsingXML(element);
@@ -1654,6 +1680,7 @@ namespace MBSimGUI {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1667,7 +1694,8 @@ namespace MBSimGUI {
     if(embed) {
       frame->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLFrames()->insertBefore(frame->getEmbedXMLElement(), nullptr);
-      E(frame->getEmbedXMLElement())->setAttribute("href",mbsDir.relativeFilePath(file).toStdString());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
+      E(frame->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
       parent->getXMLFrames()->insertBefore(ele, nullptr);
@@ -1701,6 +1729,7 @@ namespace MBSimGUI {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1714,7 +1743,8 @@ namespace MBSimGUI {
     if(embed) {
       contour->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLContours()->insertBefore(contour->getEmbedXMLElement(), nullptr);
-      E(contour->getEmbedXMLElement())->setAttribute("href",mbsDir.relativeFilePath(file).toStdString());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
+      E(contour->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
       parent->getXMLContours()->insertBefore(ele, nullptr);
@@ -1748,6 +1778,7 @@ namespace MBSimGUI {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1761,7 +1792,8 @@ namespace MBSimGUI {
     if(embed) {
       group->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLGroups()->insertBefore(group->getEmbedXMLElement(), nullptr);
-      E(group->getEmbedXMLElement())->setAttribute("href",mbsDir.relativeFilePath(file).toStdString());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
+      E(group->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
       parent->getXMLGroups()->insertBefore(ele, nullptr);
@@ -1795,6 +1827,7 @@ namespace MBSimGUI {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1808,7 +1841,8 @@ namespace MBSimGUI {
     if(embed) {
       object->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLObjects()->insertBefore(object->getEmbedXMLElement(), nullptr);
-      E(object->getEmbedXMLElement())->setAttribute("href",mbsDir.relativeFilePath(file).toStdString());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
+      E(object->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
       parent->getXMLObjects()->insertBefore(ele, nullptr);
@@ -1842,6 +1876,7 @@ namespace MBSimGUI {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1855,7 +1890,8 @@ namespace MBSimGUI {
     if(embed) {
       link->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLLinks()->insertBefore(link->getEmbedXMLElement(), nullptr);
-      E(link->getEmbedXMLElement())->setAttribute("href",mbsDir.relativeFilePath(file).toStdString());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
+      E(link->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
       parent->getXMLLinks()->insertBefore(ele, nullptr);
@@ -1889,6 +1925,7 @@ namespace MBSimGUI {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1902,7 +1939,8 @@ namespace MBSimGUI {
     if(embed) {
       constraint->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLConstraints()->insertBefore(constraint->getEmbedXMLElement(), nullptr);
-      E(constraint->getEmbedXMLElement())->setAttribute("href",mbsDir.relativeFilePath(file).toStdString());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
+      E(constraint->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
       parent->getXMLConstraints()->insertBefore(ele, nullptr);
@@ -1936,6 +1974,7 @@ namespace MBSimGUI {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
       else
@@ -1949,7 +1988,8 @@ namespace MBSimGUI {
     if(embed) {
       observer->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLObservers()->insertBefore(observer->getEmbedXMLElement(), nullptr);
-      E(observer->getEmbedXMLElement())->setAttribute("href",mbsDir.relativeFilePath(file).toStdString());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
+      E(observer->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
       parent->getXMLObservers()->insertBefore(ele, nullptr);
@@ -1970,6 +2010,7 @@ namespace MBSimGUI {
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+      DOMParser::handleCDATA(doc->getDocumentElement());
       ele = static_cast<DOMElement*>(project->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
     }
     else
@@ -2066,24 +2107,41 @@ namespace MBSimGUI {
   }
 
   void MainWindow::interrupt() {
-    echoView->setErrorText("Simulation interrupted\n");
+    echoView->clearOutput();
+    echoView->addOutputText("<span class=\"MBSIMGUI_WARN\">Simulation interrupted</span>\n");
+    echoView->updateOutput(true);
     process.terminate();
   }
 
   void MainWindow::kill() {
-    echoView->setErrorText("Simulation killed\n");
+    echoView->clearOutput();
+    echoView->addOutputText("<span class=\"MBSIMGUI_WARN\">Simulation killed</span>\n");
+    echoView->updateOutput(true);
     process.kill();
   }
 
   void MainWindow::updateEchoView() {
     echoView->addOutputText(process.readAllStandardOutput().data());
-    echoView->addErrorText(process.readAllStandardError().data());
-    echoView->updateOutputAndError();
+    echoView->updateOutput(true);
   }
 
   void MainWindow::setAllowUndo(bool allowUndo_) {
     allowUndo = allowUndo_;
     actionUndo->setEnabled(allowUndo);
+  }
+
+  void MainWindow::updateStatus() {
+    // call this function only every 0.25 sec
+    if(statusTime.elapsed()<250)
+      return;
+    statusTime.restart();
+
+    // show only last line
+    string s=process.readAllStandardError().data();
+    s.resize(s.length()-1);
+    auto i=s.rfind('\n');
+    i = i==string::npos ? 0 : i+1;
+    statusBar()->showMessage(s.substr(i).c_str());
   }
 
 }

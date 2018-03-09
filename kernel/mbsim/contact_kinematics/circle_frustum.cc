@@ -35,7 +35,7 @@ using namespace fmatvec;
 namespace MBSim {
 
   ContactKinematicsCircleFrustum::ContactKinematicsCircleFrustum() :
-      icircle(0), ifrustum(0), frustum(0), circle(0), DEBUG(false), warnLevel(0), LOCALSEARCH(false) {
+      icircle(0), ifrustum(0), frustum(0), circle(0), LOCALSEARCH(false) {
   }
 
   ContactKinematicsCircleFrustum::~ContactKinematicsCircleFrustum() {
@@ -87,21 +87,21 @@ namespace MBSim {
     double z_CF_nrm2 = nrm2(z_CF);  //length of projection of rotational vector
     double c_CF_nrm2 = nrm2(c_CF);  // length of projection of translational vector
 
-    if (DEBUG) {
-      cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Wa_F= " << Wa_F << endl;
-      cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): r_F= " << r_F << endl;
-      cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): h_F= " << h_F << endl;
-      cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): phi_F= " << phi_F << endl;
-      cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Wb_C= " << Wb_C << endl;
-      cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): r_C= " << r_C << endl;
-      cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Wd_CF= " << Wd_CF << endl;
-      cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): t_CF= " << t_CF << endl;
-      cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c_CF= " << c_CF << endl;
-      cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): z_CF= " << z_CF << endl;
+    if (msgAct(Debug)) {
+      msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): Wa_F= " << Wa_F << endl;
+      msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): r_F= " << r_F << endl;
+      msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): h_F= " << h_F << endl;
+      msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): phi_F= " << phi_F << endl;
+      msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): Wb_C= " << Wb_C << endl;
+      msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): r_C= " << r_C << endl;
+      msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): Wd_CF= " << Wd_CF << endl;
+      msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): t_CF= " << t_CF << endl;
+      msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c_CF= " << c_CF << endl;
+      msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): z_CF= " << z_CF << endl;
     }
 
     if (!outCont_F && !outCont_C) // inner circle, inner frustum
-      throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Contact setting not defined!");
+      throw runtime_error("(ContactKinematicsCircleFrustum:updateg): Contact setting not defined!");
 
     double max = r_F(0) > r_F(1) ? r_F(0) : r_F(1); // too far away? -> HitSphere-Concept
     double min = r_F(0) < r_F(1) ? r_F(0) : r_F(1);
@@ -138,7 +138,7 @@ namespace MBSim {
           if (g < eps) {
             if (outCont_F && !outCont_C) { // inner circle, outer frustum
               if (fabs(c_CF_nrm2) < epsroot)
-                throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
+                throw runtime_error("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
               else {
                 cFrame[icircle]->setPosition(circle->getFrame()->getPosition() - r_C * c_CF / c_CF_nrm2);
                 cFrame[icircle]->getOrientation(false).set(0, sin(phi_F) * Wa_F + cos(phi_F) * c_CF / c_CF_nrm2);
@@ -149,7 +149,7 @@ namespace MBSim {
             else if (!outCont_F && outCont_C) { // outer circle, inner frustum
               if (g < eps) {
                 if (fabs(c_CF_nrm2) < epsroot)
-                  throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
+                  throw runtime_error("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
                 else {
                   cFrame[icircle]->setPosition(circle->getFrame()->getPosition() + r_C * c_CF / c_CF_nrm2);
                   cFrame[icircle]->getOrientation(false).set(0, -sin(phi_F) * Wa_F + cos(phi_F) * c_CF / c_CF_nrm2);
@@ -181,7 +181,7 @@ namespace MBSim {
 
         else if (fabs(phi_F) < epsroot) { // special case: frustum=cylinder (circle-ellipse)
           if (fabs(al_CF - M_PI / 2.) < epsroot) {
-            throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Circle axis-Cylinder axis angle equals 90° -> indefinite contact configuration!");
+            throw runtime_error("(ContactKinematicsCircleFrustum:updateg): Circle axis-Cylinder axis angle equals 90° -> indefinite contact configuration!");
           }
           double cE1_star_nrm2 = r_F(0) / t_CF;
           Vec3 cE1 = t_CF * eF1 + sin(al_CF) * Wa_F; // semi-major axis
@@ -204,6 +204,7 @@ namespace MBSim {
           jacRho->setSectionCOS(cE1, cE2);
 
           PlanarContactSearch searchRho(funcRho, jacRho);
+          searchRho.setTolerance(tol);
 
           if (LOCALSEARCH) { // select start value from last search if decided by user
             searchRho.setInitialValue(zeta(0));
@@ -227,7 +228,7 @@ namespace MBSim {
             double s_PF = Wa_F.T() * Wd_PF;
 
             if (s_PF < 0. || s_PF > h_F) {
-              if (warnLevel != 0) {
+              if (msgAct(Warn)) {
                 msg(Warn) << "(ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Cylinder not represented at the moment!" << endl;
               }
               g = 1.;
@@ -274,8 +275,8 @@ namespace MBSim {
 
           if (fabs(q) <= 1.) { // ellipse and parabola
             c2_star_nrm2 = fabs(p) / sqrt(fabs(1. - q * q));
-            if (DEBUG) {
-              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Ellipse Contact!" << endl;
+            if (msgAct(Debug)) {
+              msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): Ellipse Contact!" << endl;
             }
             drho = 2. * M_PI / SEC * 1.01; // 10% intersection for improved convergence of solver
             rhoStartSpacing = -2. * M_PI * 0.01 * 0.5;
@@ -292,8 +293,8 @@ namespace MBSim {
           else if (fabs(q) > 1.) { // hyperbola
             c2_star_nrm2 = fabs(p) / sqrt(fabs(1. - q * q));
             // c2_star_nrm2 = abs(p)/sqrt(2.*abs(1.+q)+(1.+q)*(1.+q));
-            if (DEBUG) {
-              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Hyperbola Contact!" << endl;
+            if (msgAct(Debug)) {
+              msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): Hyperbola Contact!" << endl;
             }
             double sigma;
             if (r_F(0) < r_F(1)) {
@@ -306,8 +307,8 @@ namespace MBSim {
               sigma = asinh(sqrt(r_F(0) * r_F(0) - sigma * sigma) / c2_star_nrm2);
             }
             if (p * q > 0.) {
-              if (DEBUG) {
-                cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Re-Definition of basis axis necessary!" << endl;
+              if (msgAct(Debug)) {
+                msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): Re-Definition of basis axis necessary!" << endl;
               }
               c1 *= -1.;
               c1_star *= -1.;
@@ -325,15 +326,15 @@ namespace MBSim {
             jacRho = new JacobianPairHyperbolaCircle(c1_star_nrm2, c2_star_nrm2);
           }
           /********************************/
-          if (DEBUG) {
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): p= " << p << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): q= " << q << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1_star_nrm2= " << c1_star_nrm2 << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2_star_nrm2= " << c2_star_nrm2 << endl;
+          if (msgAct(Debug)) {
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): p= " << p << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): q= " << q << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c1_star_nrm2= " << c1_star_nrm2 << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c2_star_nrm2= " << c2_star_nrm2 << endl;
           }
 
           if(!funcRho)
-            throw MBSimError("(ContactKinematicsCircleFrustum::updateg): funcRho is not defined.");
+            throw runtime_error("(ContactKinematicsCircleFrustum::updateg): funcRho is not defined.");
           funcRho->setDiffVec(Wd_SC);
           funcRho->setSectionCOS(c1, c2);
 
@@ -341,6 +342,7 @@ namespace MBSim {
           jacRho->setSectionCOS(c1, c2);
 
           PlanarContactSearch searchRho(funcRho, jacRho);
+          searchRho.setTolerance(tol);
 
           if(LOCALSEARCH) { // select start value from last search if decided by user
             searchRho.setInitialValue(zeta(0));
@@ -361,7 +363,7 @@ namespace MBSim {
             double s_PF = Wa_F.T() * Wd_PF;
 
             if (s_PF < 0. || s_PF > h_F) {
-              if (warnLevel != 0) {
+              if (msgAct(Warn)) {
                 msg(Warn) << "(ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Frustum not represented at the moment!" << endl;
               }
               g = 1.;
@@ -383,21 +385,21 @@ namespace MBSim {
               cFrame[icircle]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
             }
           }
-          if (DEBUG) {
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): zeta(0)= " << zeta(0) << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): rootfunction= " << (*funcRho)(zeta(0)) << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): dist= " << (*funcRho)[zeta(0)] << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Wd_SC= " << Wd_SC << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): eF1= " << eF1 << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): eF2= " << eF2 << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1= " << c1 << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2= " << c2 << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Non-Complanar Circle-Conesection= " << Wd_SC.T() * crossProduct(c1, c2) << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1^T*Wd_SC= " << c1.T() * Wd_SC << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2^T*Wd_SC= " << c2.T() * Wd_SC << endl;
+          if (msgAct(Debug)) {
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): zeta(0)= " << zeta(0) << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): rootfunction= " << (*funcRho)(zeta(0)) << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): dist= " << (*funcRho)[zeta(0)] << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): Wd_SC= " << Wd_SC << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): eF1= " << eF1 << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): eF2= " << eF2 << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c1= " << c1 << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c2= " << c2 << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): Non-Complanar Circle-Conesection= " << Wd_SC.T() * crossProduct(c1, c2) << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c1^T*Wd_SC= " << c1.T() * Wd_SC << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c2^T*Wd_SC= " << c2.T() * Wd_SC << endl;
             if ((*funcRho)[zeta(0)] < eps) {
-              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1^T*Contact_Circle= " << c1.T() * (cFrame[icircle]->getPosition(false) - circle->getFrame()->getPosition() - Wd_SC) << endl;
-              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2^T*Contact_Circle= " << c2.T() * (cFrame[icircle]->getPosition(false) - circle->getFrame()->getPosition() - Wd_SC) << endl;
+              msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c1^T*Contact_Circle= " << c1.T() * (cFrame[icircle]->getPosition(false) - circle->getFrame()->getPosition() - Wd_SC) << endl;
+              msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c2^T*Contact_Circle= " << c2.T() * (cFrame[icircle]->getPosition(false) - circle->getFrame()->getPosition() - Wd_SC) << endl;
             }
           }
           delete funcRho;

@@ -40,7 +40,7 @@ void Perlchain::initialize() {
       setValuedContacts.push_back(static_cast<Contact*>(*i));
     }
     else {
-      throw MBSimError("Not implemented!");
+      throw runtime_error("Not implemented!");
     }
   }
 }
@@ -495,7 +495,7 @@ cs * Perlchain::compressWToCsparse_direct(int j) {
       }
 
       else {
-        THROW_MBSIMERROR("Not implemented!");
+        throwError("Not implemented!");
       }
     }
   }

@@ -37,7 +37,7 @@ namespace MBSimFlexibleBody {
       P.setParent(parent);
       Nodelist.set(i, trans(P.evalVelocity()));
     }
-//    cout << "neutralVelocity"<< Nodelist << endl << endl;
+//    msg(Debug) << "neutralVelocity"<< Nodelist << endl << endl;
   }
 
 

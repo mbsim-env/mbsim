@@ -77,7 +77,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s23BTA::updateAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s23BTA::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s23BTA::updateJacobians(Frame1s *frame, int j) {
@@ -96,27 +96,27 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s23BTA::updateGyroscopicAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s23BTA::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s23BTA::updatePositions(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s23BTA::updatePositions): Not implemented.");
+    throwError("(FlexibleBody1s23BTA::updatePositions): Not implemented.");
   }
 
   void FlexibleBody1s23BTA::updateVelocities(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateVelocities): Not implemented.");
+    throwError("(FlexibleBody1s23BTA::updateVelocities): Not implemented.");
   }
 
   void FlexibleBody1s23BTA::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s23BTA::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s23BTA::updateJacobians(NodeFrame *frame, int j) {
-    THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateJacobians): Not implemented.");
+    throwError("(FlexibleBody1s23BTA::updateJacobians): Not implemented.");
   }
 
   void FlexibleBody1s23BTA::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s23BTA::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s23BTA::init(InitStage stage, const InitConfigSet &config) {

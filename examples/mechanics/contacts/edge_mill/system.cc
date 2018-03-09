@@ -141,7 +141,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
       dh = -r_muller / cos(delta) - l_axis;
       ground->setOutCont(false);
     }
-    else THROW_MBSIMERROR("Bad Configuration!");
+    else throwError("Bad Configuration!");
   }
   else {
     if(abs(delta)<M_PI/2.) {
@@ -159,7 +159,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
       dh = -r_muller / cos(delta) - l_axis + h;
       ground->setOutCont(true);
     }
-    else THROW_MBSIMERROR("Bad Configuration!");
+    else throwError("Bad Configuration!");
   }
 
   WrOK(0) = 0., WrOK(1) = -dh;
@@ -311,8 +311,6 @@ void System::initialize() {
   DynamicSystemSolver::initialize();
 
   for(unsigned i=0; i<link.size(); i++) {
-    dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics())->setDebug(false);
-    dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics())->setWarnLevel(0);
     dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics())->setLocalSearch(true);
   }
 }

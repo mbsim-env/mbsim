@@ -100,7 +100,7 @@ namespace MBSim {
         wb(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
     }
     else
-      throw MBSimError("ContactKinematicsCircleLineSegment::updatewb not implemented for contact on edge.");
+      throw runtime_error("ContactKinematicsCircleLineSegment::updatewb not implemented for contact on edge.");
   }
       
 }

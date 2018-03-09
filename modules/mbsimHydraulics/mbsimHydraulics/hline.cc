@@ -55,11 +55,11 @@ namespace MBSimHydraulics {
     else if (stage==preInit) {
       Object::init(stage, config);
       if (!nFrom && !nFromRelative) 
-        THROW_MBSIMERROR("No fromNode!");
+        throwError("No fromNode!");
       if (!nTo && !nToRelative) 
-        THROW_MBSIMERROR("No toNode!");
+        throwError("No toNode!");
       if (nFrom && nFrom==nTo) 
-        THROW_MBSIMERROR("fromNode and toNode are the same!");
+        throwError("fromNode and toNode are the same!");
     }
     else
       Object::init(stage, config);
@@ -94,7 +94,7 @@ namespace MBSimHydraulics {
   Mat RigidHLine::calculateJacobian(vector<RigidHLine*> dep_check) {
     for (unsigned int i=0; i<dep_check.size()-1; i++)
       if (this==dep_check[i])
-        THROW_MBSIMERROR("Kinematic Loop in hydraulic system. Check model!");
+        throwError("Kinematic Loop in hydraulic system. Check model!");
 
     // TODO efficient calculation (not every loop is necessary)
     Mat JLocal;
@@ -228,9 +228,9 @@ namespace MBSimHydraulics {
     if (stage==preInit) {
       Object::init(stage, config); // no check of connected lines
       if (!nFrom && !nTo) 
-        THROW_MBSIMERROR("needs at least one connected node!");
+        throwError("needs at least one connected node!");
       if (nFrom==nTo) 
-        THROW_MBSIMERROR("fromNode and toNode are the same!");
+        throwError("fromNode and toNode are the same!");
     }
     else
       HLine::init(stage, config);
@@ -255,9 +255,9 @@ namespace MBSimHydraulics {
     if (stage==preInit) {
       Object::init(stage, config); // no check of connected lines
       if (!nFrom && !nTo) 
-        THROW_MBSIMERROR("needs at least one connected node!");
+        throwError("needs at least one connected node!");
       if (nFrom==nTo)
-        THROW_MBSIMERROR("fromNode and toNode are the same!");
+        throwError("fromNode and toNode are the same!");
     }
     else
       HLine::init(stage, config);
@@ -285,9 +285,9 @@ namespace MBSimHydraulics {
   void StatelessOrifice::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
       if (!nFrom && !nTo) 
-        THROW_MBSIMERROR("needs at least one connected node!");
+        throwError("needs at least one connected node!");
       if (nFrom==nTo)
-        THROW_MBSIMERROR("fromNode and toNode are the same!");
+        throwError("fromNode and toNode are the same!");
     }
     else if (stage==plotting) {
       if (plotFeature[plotRecursive]) {

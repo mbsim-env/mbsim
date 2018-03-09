@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
+    xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+  <frames>
+    <pv:Embed count="2" counterName="numHG">
+    <FixedRelativeFrame name="Q{numHG}" xmlns="http://www.mbsim-env.de/MBSim">
+      <relativePosition unit="mm">
+        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <ele>rHG(numHG)*1000</ele><ele>0</ele><ele>0</ele>
+        </xmlVector>
+      </relativePosition>
+      <relativeOrientation><pv:aboutZ unit="degree">-alphaHG(numHG)*180/pi</pv:aboutZ></relativeOrientation>
+    </FixedRelativeFrame>
+    </pv:Embed>
+  </frames>
+  <contours/>
+  <groups>
+    <pv:Embed count="2" counterName="numHG">
+      <Group name="Hauptgruppe{numHG}" xmlns="http://www.mbsim-env.de/MBSim"
+          xmlns:mbsimns="http://www.mbsim-env.de/MBSim"
+          xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
+          xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+        <plotFeatureRecursive value="mbsimns:deflection">true</plotFeatureRecursive>
+        <plotFeatureRecursive value="generalizedRelativePosition">1</plotFeatureRecursive>
+        <plotFeatureRecursive value="generalizedRelativeVelocity">1</plotFeatureRecursive>
+        <plotFeatureRecursive value="generalizedForce">1</plotFeatureRecursive>
+        <plotFeatureRecursive value="mbsimns:generalizedPosition">1</plotFeatureRecursive>
+        <plotFeatureRecursive value="mbsimns:generalizedVelocity">1</plotFeatureRecursive>
+        <plotFeatureRecursive value="{plotSubType}">plotSubTypeEnabled</plotFeatureRecursive>
+        <plotFeature value="separateFilePerGroup">1</plotFeature>
+        <frameOfReference ref="../Frame[Q{numHG}]"/>
+        <frames>
+          <FixedRelativeFrame name="Q">
+            <relativePosition>[cot(2)/cot(2);0*det([4,5;6,3]);0]</relativePosition>
+            <relativeOrientation>
+              <pv:cardan unit="degree">
+                <pv:alpha>0</pv:alpha>
+                <pv:beta>0</pv:beta>
+                <pv:gamma>-alphaUG*180/pi</pv:gamma>
+              </pv:cardan>
+            </relativeOrientation>
+          </FixedRelativeFrame>
+        </frames>
+        <contours/>
+        <groups>
+          <pv:Embed>
+            <Group name="dummy">
+              <frames/>
+              <contours/>
+              <groups/>
+              <objects/>
+              <links/>
+              <constraints/>
+              <observers/>
+            </Group>
+          </pv:Embed>
+          <pv:Embed href="submodel/Untergruppe.xml" parameterHref="submodel/Untergruppe.param.xml"/>
+        </groups>
+        <objects>
+          <RigidBody name="Box1">
+            <plotFeature value="generalizedAcceleration">1</plotFeature>
+            <generalizedInitialPosition>[0]</generalizedInitialPosition>
+            <generalizedInitialVelocity>[0.1]</generalizedInitialVelocity>
+            <frameOfReference ref="../Frame[I]"/>
+            <frameForKinematics ref="Frame[C]"/>
+            <mass>m</mass>
+            <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
+            <stateDependentTranslation>
+              <TranslationAlongYAxis/>
+            </stateDependentTranslation>
+            <frames/>
+            <contours/>
+            <openMBVRigidBody>
+              <ombv:CompoundRigidBody name="dummy">
+                <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+                <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+                <ombv:scaleFactor>1</ombv:scaleFactor>
+                <Sphere name="crb_1" xmlns="http://www.mbsim-env.de/OpenMBV">
+                  <diffuseColor>[0.5;0.5;0.5]</diffuseColor>
+                  <initialTranslation>[0;0;0]</initialTranslation>
+                  <initialRotation>[0;0;0]</initialRotation>
+                  <scaleFactor>1</scaleFactor>
+                  <radius>h/3</radius>
+                </Sphere>
+                <Cube name="crb_2" xmlns="http://www.mbsim-env.de/OpenMBV">
+                  <initialTranslation>[2*h/3;0;0]</initialTranslation>
+                  <initialRotation unit="degree">[45;0;0]</initialRotation>
+                  <scaleFactor>1</scaleFactor>
+                  <length>h/2</length>
+                </Cube>
+                <IvBody name="crb_3" xmlns="http://www.mbsim-env.de/OpenMBV">
+                  <diffuseColor>[-1;0.0;0.5]</diffuseColor>
+                  <initialTranslation>[2*h/3;2*h/3;0]</initialTranslation>
+                  <initialRotation unit="degree">[0;30;20]</initialRotation>
+                  <scaleFactor>1</scaleFactor>
+                  <ivFileName>"iv/hat.iv"</ivFileName>
+                  <creaseEdges unit="degree">30</creaseEdges>
+                </IvBody>
+              </ombv:CompoundRigidBody>
+            </openMBVRigidBody>
+            <enableOpenMBVFrameC>
+              <size>2*h</size>
+              <offset>dummyvar=4;ret=1</offset>
+            </enableOpenMBVFrameC>
+          </RigidBody>
+        </objects>
+        <links/>
+        <constraints/>
+        <observers/>
+      </Group>
+    </pv:Embed>
+  </groups>
+  <objects/>
+  <links/>
+  <constraints/>
+  <observers/>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity><pv:fromFile href="{grav}"/></accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+</DynamicSystemSolver>

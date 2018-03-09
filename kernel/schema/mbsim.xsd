@@ -2168,6 +2168,11 @@
                 Anfangswerte für Newton-Löser.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="tolerance" minOccurs="0" type="pv:nounitScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Newton-Löser.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>

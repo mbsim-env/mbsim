@@ -75,7 +75,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsSpherePlate::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
-    throw MBSimError("ContactKinematicsSpherePlate::updatewb(): not implemented yet");
+    throw runtime_error("ContactKinematicsSpherePlate::updatewb(): not implemented yet");
   }
 }
 

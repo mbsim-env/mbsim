@@ -134,7 +134,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21RCM::updateAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21RCM::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21RCM::updateJacobians(Frame1s *frame, int j) {
@@ -158,7 +158,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21RCM::updateGyroscopicAccelerations(Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21RCM::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21RCM::updatePositions(NodeFrame *frame) {
@@ -191,7 +191,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21RCM::updateAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21RCM::updateAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21RCM::updateJacobians(NodeFrame *frame, int j) {
@@ -207,7 +207,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21RCM::updateGyroscopicAccelerations(NodeFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateGyroscopicAccelerations): Not implemented.");
+    throwError("(FlexibleBody1s21RCM::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21RCM::init(InitStage stage, const InitConfigSet &config) {
@@ -311,7 +311,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21RCM::initRelaxed(double alpha) {
     if (!initialized) {
       if (Elements == 0)
-        throw(new MBSimError("(FlexibleBody1s21RCM::initRelaxed): Set number of finite elements!"));
+        throwError("(FlexibleBody1s21RCM::initRelaxed): Set number of finite elements!");
       Vec q0Dummy(q0.size(), INIT, 0.);
       if (openStructure) {
         Vec direction(2);
@@ -406,7 +406,7 @@ namespace MBSimFlexibleBody {
     //      if (writePsFile) {
     //        string psfile = filenamePos + ".ps";
     //
-    //        cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+    //        msg(Debug) << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
     //      }
     //
     //      if (not filenameVel.empty()) {
@@ -417,8 +417,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
-
-    int DEBUGLEVEL = 0;
 
     PlNurbsCurved curvePos;
     PlNurbsCurved curveVel;
@@ -485,13 +483,13 @@ namespace MBSimFlexibleBody {
     if (not filenameVel.empty())
       setu0(u0Dummy);
 
-    if (DEBUGLEVEL == 1) {
+    if (msgAct(Debug)) {
       for (double i = 0; i < Elements; i++) {
-        cout << "i=" << i << endl << curvePos.pointAt(i) << endl;
+        msg(Debug) << "i=" << i << endl << curvePos.pointAt(i) << endl;
       }
-      cout << "Test of Nurbs-Curve" << endl;
+      msg(Debug) << "Test of Nurbs-Curve" << endl;
       string psfile = "test.ps";
-      cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+      msg(Debug) << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
     }
   }
 

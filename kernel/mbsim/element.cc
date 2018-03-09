@@ -173,7 +173,7 @@ namespace MBSim {
         // no parent exits and its not a DynamicSystemSolver (we can not generate a absolute path ->
         // append address to local name to have a unique local name!)
         stringstream str;
-        str<<containerName(this)<<"["<<getName()<<"<with_ID_"<<this<<">]";
+        str<<containerName(this)<<"["<<getName()<<"(with_ID_"<<this<<")]";
         return str.str();
       }
       // compose a relative path
@@ -183,7 +183,7 @@ namespace MBSim {
         string relToPath=relTo->getPath(NULL, sep).substr(1)+sep;
         // check for "real" absolute path (see above)
         if(thisPath.substr(0, sep.length())!=sep || relToPath.substr(0, sep.length())!=sep)
-          THROW_MBSIMERROR("Can not generate a relative path: at least one element is not part of a DynamicSystemSolver");
+          throwError("Can not generate a relative path: at least one element is not part of a DynamicSystemSolver");
         // remove sub path which are equal in both
         while(1) {
           size_t thisIdx=thisPath.find(sep);
@@ -221,8 +221,8 @@ namespace MBSim {
   }
 
   void Element::initializeUsingXML(DOMElement *element) {
-    // set the XML location stack of this element which can be used, later, by exceptions.
-    DOMEvalException::generateLocationStack(element, locationStack);
+    // set the XML location of this element which can be used, later, by exceptions.
+    domEvalError=DOMEvalException("", element);
 
     if(E(element)->hasAttribute("name")) // their are element with no name e.g. Function's
       setName(E(element)->getAttribute("name"));

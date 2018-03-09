@@ -34,6 +34,7 @@ namespace MBSimIntegrator {
   Integrator::Integrator() :  name("Integrator") {}
 
   void Integrator::initializeUsingXML(DOMElement *element) {
+    Solver::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"startTime");
     setStartTime(E(e)->getText<double>());
@@ -47,14 +48,6 @@ namespace MBSimIntegrator {
     if(e) setPlotIntegrationData(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"writeIntegrationSummary");
     if(e) setWriteIntegrationSummary(E(e)->getText<bool>());
-  }
-
-  Integrator* Integrator::readXMLFile(const string &filename) {
-    shared_ptr<DOMParser> parser=DOMParser::create();
-    shared_ptr<DOMDocument> doc=parser->parse(filename);
-    DOMElement *e=doc->getDocumentElement();
-    auto *integrator=ObjectFactory::createAndInit<Integrator>(e);
-    return integrator;
   }
 
   // This function is called first by each implementation of Integrator::integrate.

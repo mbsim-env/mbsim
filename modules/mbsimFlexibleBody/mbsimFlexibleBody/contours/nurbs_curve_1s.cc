@@ -168,23 +168,23 @@ namespace MBSimFlexibleBody {
   }
 
   void NurbsCurve1s::computeRootFunctionPosition(MBSim::ContourFrame *frame) {
-    THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionPosition): Not implemented!");
+    throwError("(NurbsCurve1s::computeRootFunctionPosition): Not implemented!");
   }
 
   void NurbsCurve1s::computeRootFunctionFirstTangent(MBSim::ContourFrame *frame) {
-    THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionFirstTangent): Not implemented!");
+    throwError("(NurbsCurve1s::computeRootFunctionFirstTangent): Not implemented!");
   }
 
   void NurbsCurve1s::computeRootFunctionNormal(MBSim::ContourFrame *frame) {
-    THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionNormal): Not implemented!");
+    throwError("(NurbsCurve1s::computeRootFunctionNormal): Not implemented!");
   }
 
   void NurbsCurve1s::computeRootFunctionSecondTangent(MBSim::ContourFrame *frame) {
-    THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!");
+    throwError("(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!");
   }
 
   ContactKinematics *NurbsCurve1s::findContactPairingWith(const std::type_info &type0, const std::type_info &type1) {
-    THROW_MBSIMERROR("(NurbsCurve1s::findContactPairingWith): Not implemented!");
+    throwError("(NurbsCurve1s::findContactPairingWith): Not implemented!");
   }
 
 }

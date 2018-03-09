@@ -51,7 +51,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of body
        */
-      FlexibleBodyLinearExternalFFR(const std::string &name, const bool &DEBUG_);
+      FlexibleBodyLinearExternalFFR(const std::string &name);
 
       /**
        * \brief destructor
@@ -266,11 +266,6 @@ namespace MBSimFlexibleBody {
        * \brief open or closed beam structure
        */
       bool openStructure;
-
-      /**
-       * \brief debug flag
-       */
-      bool DEBUG;
 
       bool updAG, updQv;
   };

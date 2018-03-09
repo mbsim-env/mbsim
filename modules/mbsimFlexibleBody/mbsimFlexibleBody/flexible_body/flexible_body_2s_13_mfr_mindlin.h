@@ -40,7 +40,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of body
        */
-      FlexibleBody2s13MFRMindlin(const std::string &name, const int & DEBUGLEVEL_ = 0);
+      FlexibleBody2s13MFRMindlin(const std::string &name);
 
       /**
        * \brief destructor

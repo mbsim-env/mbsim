@@ -54,13 +54,14 @@ namespace MBSim {
   }
 
   Vec SpatialStribeckFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
-    throw MBSimError("(SpatialStribeckFriction::solve): Not implemented!");
+    throwError("(SpatialStribeckFriction::solve): Not implemented!");
   }
 
   bool SpatialStribeckFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
-    if (nrm2(la + gdn / nrm2(gdn) * (*fmu)(nrm2(gdn)) * fabs(laN)) <= laTol)
+    double norm = nrm2(gdn);
+    if (nrm2(la + (norm!=0 ? gdn / norm : Vec(gdn.size(), INIT, 0.0)) * (*fmu)(norm) * fabs(laN)) <= laTol)
       return true;
-    else if (nrm2(la) <= (*fmu)(nrm2(gdn)) * fabs(laN) + laTol && nrm2(gdn) <= gdTol)
+    else if (nrm2(la) <= (*fmu)(norm) * fabs(laN) + laTol && norm <= gdTol)
       return true;
     else
       return false;

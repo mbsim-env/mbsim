@@ -80,16 +80,16 @@ namespace MBSimFlexibleBody {
       }
 
       if (0) {
-        cout << "Free Local DoFs of Element #" << element << "  are: \t";
+        msg(Debug) << "Free Local DoFs of Element #" << element << "  are: \t";
         for (size_t i = 0; i < freeDoFs.size(); i++) {
-          cout << setfill(' ') << setw(3) << freeDoFs[i] << ", ";
+          msg(Debug) << setfill(' ') << setw(3) << freeDoFs[i] << ", ";
         }
-        cout << endl;
-        cout << "Corresponding Global DoFs are \t\t";
+        msg(Debug) << endl;
+        msg(Debug) << "Corresponding Global DoFs are \t\t";
         for (size_t i = 0; i < freeDoFs.size(); i++) {
-          cout << setfill(' ') << setw(3) << dofDirs(freeDoFs[i]) << ", ";
+          msg(Debug) << setfill(' ') << setw(3) << dofDirs(freeDoFs[i]) << ", ";
         }
-        cout << endl;
+        msg(Debug) << endl;
       }
 
       h.resize(freeDoFs.size(), INIT, 0.);
@@ -113,7 +113,7 @@ namespace MBSimFlexibleBody {
             double xi = -1 + 2. * i / (pnts - 1.);
             out(i) = computeLegendre(j, xi, 0);
           }
-          cout << out << endl;
+          msg(Debug) << out << endl;
         }
       }
 
@@ -133,25 +133,25 @@ namespace MBSimFlexibleBody {
             }
             if (der == 0 and j == 0) {
               //plot x only once
-              cout << "x" << " = [ ";
+              msg(Debug) << "x" << " = [ ";
               for (int k = 0; k < y.size(); k++) {
                 if (k > 0)
-                  cout << ", ";
-                cout << x(k);
+                  msg(Debug) << ", ";
+                msg(Debug) << x(k);
               }
-              cout << "];" << endl;
+              msg(Debug) << "];" << endl;
             }
             // plot y
-            cout << "y" << der << "(" << j + 1 << ",:) = [ ";
+            msg(Debug) << "y" << der << "(" << j + 1 << ",:) = [ ";
             for (int k = 0; k < y.size(); k++) {
               if (k > 0)
-                cout << ", ";
-              cout << y(k);
+                msg(Debug) << ", ";
+              msg(Debug) << y(k);
             }
-            cout << "];" << endl;
+            msg(Debug) << "];" << endl;
           }
         }
-        THROW_MBSIMERROR("init failed");
+        throwError("init failed");
       }
     }
   }
@@ -246,7 +246,7 @@ namespace MBSimFlexibleBody {
     if ((xiGlob >= alpha(0)) and (xiGlob <= alpha(1))) {
       return (2 * xiGlob - alpha(1) - alpha(0)) / (alpha(1) - alpha(0));
     }
-    throw MBSimError("Invalid global coordinate xiGlob = " + toString(xiGlob) + " given.");
+    throw runtime_error("Invalid global coordinate xiGlob = " + toString(xiGlob) + " given.");
     return -2.;
   }
 
@@ -254,7 +254,7 @@ namespace MBSimFlexibleBody {
     if (xiLoc >= -1 and xiLoc <= 1) {
       return ((alpha(1) - alpha(0)) * xiLoc + (alpha(1) + alpha(0))) / 2;
     }
-    throw MBSimError("Invalid local coordinate xiloc = " + toString(xiLoc) + " given.");
+    throw runtime_error("Invalid local coordinate xiloc = " + toString(xiLoc) + " given.");
     return -2.;
   }
 
@@ -368,7 +368,7 @@ namespace MBSimFlexibleBody {
         return ret;
       }
       else {
-        throw MBSimError("Not implemented yet " + string(__func__));
+        throw runtime_error("Not implemented yet " + string(__func__));
       }
     }
 
@@ -417,7 +417,7 @@ namespace MBSimFlexibleBody {
         rf = part1 + part2 + part3 + part4;
       }
       else
-        throw MBSimError("Not Implemented for higher derivatives!");
+        throw runtime_error("Not Implemented for higher derivatives!");
 
     }
 
@@ -462,7 +462,7 @@ namespace MBSimFlexibleBody {
         vf = part1 + part2 + part3 + part4;
       }
       else
-        throw MBSimError("Not Implemented for higher derivatives!");
+        throw runtime_error("Not Implemented for higher derivatives!");
 
     }
 
@@ -731,7 +731,7 @@ namespace MBSimFlexibleBody {
     }
 
     if (ret.size() == 0)
-      throw MBSimError("Hermite Coefficients only implemented for order 3 and order 5");
+      throw runtime_error("Hermite Coefficients only implemented for order 3 and order 5");
 
     return ret;
   }
@@ -875,7 +875,7 @@ namespace MBSimFlexibleBody {
 
     double eps = 0.;
 
-    throw MBSimError("Not implemented!");
+    throw runtime_error("Not implemented!");
     return eps;
   }
 
@@ -883,7 +883,7 @@ namespace MBSimFlexibleBody {
 
     double depsdqk = 0.;
 
-    throw MBSimError("Not implemented!");
+    throw runtime_error("Not implemented!");
     return depsdqk;
 
     //TODO: The following is wrong!!!
@@ -905,7 +905,7 @@ namespace MBSimFlexibleBody {
 //    }
 //    else {
 //      // kappa of overlaid curve --> general formula (should not be used/ called) just stated for sake of completeness
-//      throw MBSimError("This is a case that should never be reached. Please ask your system administrator for help.");
+//      throw runtime_error("This is a case that should never be reached. Please ask your system administrator for help.");
 //      //TODO: maybe exclude the option here, that it depends on the binormal deflection? --> Could speed up the process
 //      Vec3 nR = parent->computenRef(xiGlob, 0, 0);
 //      return nR.T() * computeB(localDofDir, xiGlob, 2, 0);
@@ -954,7 +954,7 @@ namespace MBSimFlexibleBody {
       else {
 
         // kappa of overlaid curve --> general formula (should not be used/ called) just stated for sake of completeness
-        throw MBSimError("This is a case that should never be reached. Please ask your system administrator for help.");
+        throw runtime_error("This is a case that should never be reached. Please ask your system administrator for help.");
         //TODO: maybe exclude the option here, that it depends on the binormal deflection? --> Could speed up the process
         Vec3 nR = parent->computenRef(xiGlob, 0, 0);
         return nR.T() * computeB(qIndLocal, xiGlob, 2, 0);
@@ -1027,7 +1027,7 @@ namespace MBSimFlexibleBody {
     else {
 
       // kappa of overlaid curve --> general formula (should not be used/ called) just stated for sake of completeness
-      throw MBSimError("This is a case that should never be reached. Please ask your system administrator for help.");
+      throw runtime_error("This is a case that should never be reached. Please ask your system administrator for help.");
       //TODO: maybe exclude the option here, that it depends on the binormal deflection? --> Could speed up the process
       Vec3 nR = parent->computenRef(xiGlob, 0, 0);
       return nR.T() * computeB(qIndLocal, xiGlob, 2, 0);
@@ -1066,7 +1066,7 @@ namespace MBSimFlexibleBody {
 
   double FlexibleBody1SReferenceCurveFE::computeXiOfDOF(int dofDirLocal) {
     if (dofDirLocal < 2) {
-      throw MBSimError("This is not a valid local dof direction. It must be bigger than 1!");
+      throw runtime_error("This is not a valid local dof direction. It must be bigger than 1!");
     }
     //TODO: only implemented for Hermite splines
     if (dofDirLocal < dofDirs.size() / 2)

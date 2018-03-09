@@ -20,6 +20,7 @@
 #include <config.h>
 #include "variable_widgets.h"
 #include "mainwindow.h"
+#include "project.h"
 #include "dialogs.h"
 #include "custom_widgets.h"
 #include <mbxmlutils/eval.h>
@@ -38,7 +39,6 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   extern MainWindow *mw;
-  extern QDir mbsDir;
 
   OctaveHighlighter::OctaveHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
     //  QPlainTextEdit dummy;
@@ -1359,10 +1359,11 @@ namespace MBSimGUI {
     QString file = getFile();
     file=QFileDialog::getOpenFileName(nullptr, "ASCII files", file, "all files (*.*)");
     if(not file.isEmpty()) {
+      QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%mw->getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
       if(path->isChecked())
-        setFile(mbsDir.absoluteFilePath(file));
+        setFile(dir.absoluteFilePath(file));
       else
-        setFile(mbsDir.relativeFilePath(file));
+        setFile(dir.relativeFilePath(file));
     }
   }
 
@@ -1396,7 +1397,8 @@ namespace MBSimGUI {
   }
 
   void FromFileWidget::changePath(int i) {
-    relativeFilePath->setText(i?mbsDir.absoluteFilePath(getFile()):mbsDir.relativeFilePath(getFile()));
+    QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%mw->getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
+    relativeFilePath->setText(i?dir.absoluteFilePath(getFile()):dir.relativeFilePath(getFile()));
   }
 
   BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,0) {

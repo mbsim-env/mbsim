@@ -64,6 +64,8 @@ namespace MBSimGUI {
   void Project::initializeUsingXML(DOMElement *element) {
     this->element = element;
     DOMElement *ele = element->getFirstElementChild();
+    if(E(ele)->getTagName()==PV%"evaluator")
+      ele = ele->getNextElementSibling();
     setDynamicSystemSolver(Embed<DynamicSystemSolver>::createAndInit(ele));
     ele = ele->getNextElementSibling();
     setSolver(Embed<Solver>::createAndInit(ele));

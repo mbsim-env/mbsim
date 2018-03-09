@@ -55,7 +55,7 @@ namespace MBSim {
       }
       typename B::DRetDArg parDer(const Arg &q) override { return a; }
       typename B::DRetDArg parDerDirDer(const Arg &qd, const Arg &q) override { return typename B::DRetDArg(1); }
-      typename B::DDRetDDArg parDerParDer(const Arg &arg) override { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
+      typename B::DDRetDDArg parDerParDer(const Arg &arg) override { this->throwError("parDerParDer is not available for given template parameters."); }
       bool constParDer() const override { return true; }
       const fmatvec::Vec3& getAxisOfRotation() const { return a; }
       void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
