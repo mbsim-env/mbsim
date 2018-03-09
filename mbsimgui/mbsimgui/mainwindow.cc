@@ -354,7 +354,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::autoSaveProject() {
-    saveProject("./.MBS.mbsimprj.xml",true,false);
+    saveProject("./.Project.mbsimprj.xml",true,false);
   }
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
@@ -426,7 +426,7 @@ namespace MBSimGUI {
     // use nothrow boost::filesystem functions to avoid exceptions in this dtor
     boost::system::error_code ec;
     bfs::remove_all(uniqueTempDir, ec);
-    bfs::remove("./.MBS.mbsimprj.xml", ec);
+    bfs::remove("./.Project.mbsimprj.xml", ec);
     delete project;
   }
 
@@ -622,7 +622,7 @@ namespace MBSimGUI {
 
       projectFile="";
       mbsimxml(1);
-      setWindowTitle("MBS.mbsimprj.xml[*]");
+      setWindowTitle("Project.mbsimprj.xml[*]");
     }
   }
 
@@ -642,7 +642,6 @@ namespace MBSimGUI {
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
       actionSaveProject->setDisabled(false);
-      QDir::setCurrent(QFileInfo(file).absolutePath());
       projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       std::string message;
@@ -666,7 +665,7 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject() {
     if(maybeSave()) {
-      QString file=QFileDialog::getOpenFileName(nullptr, "XML project files", ".", "XML files (*.mbsimprj.xml)");
+      QString file=QFileDialog::getOpenFileName(nullptr, "XML project files", QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath(), "XML files (*.mbsimprj.xml)");
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       loadProject(file);
@@ -674,11 +673,10 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProjectAs() {
-    QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", project->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
+    QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath()+"/"+project->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
     if(not(file.isEmpty())) {
       file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
       doc->setDocumentURI(X()%QString("file://"+file).toStdString());
-      QDir::setCurrent(QFileInfo(file).absolutePath());
       projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       setWindowTitle(projectFile+"[*]");
@@ -1619,7 +1617,7 @@ namespace MBSimGUI {
         return;
       }
       if(embed) {
-        QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
+        QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
         E(parent->createEmbedXMLElement())->setAttribute("parameterHref",dir.relativeFilePath(file).toStdString());
       } 
       else
@@ -1679,7 +1677,7 @@ namespace MBSimGUI {
     if(embed) {
       frame->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLFrames()->insertBefore(frame->getEmbedXMLElement(), nullptr);
-      QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
       E(frame->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
@@ -1728,7 +1726,7 @@ namespace MBSimGUI {
     if(embed) {
       contour->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLContours()->insertBefore(contour->getEmbedXMLElement(), nullptr);
-      QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
       E(contour->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
@@ -1777,7 +1775,7 @@ namespace MBSimGUI {
     if(embed) {
       group->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLGroups()->insertBefore(group->getEmbedXMLElement(), nullptr);
-      QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
       E(group->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
@@ -1826,7 +1824,7 @@ namespace MBSimGUI {
     if(embed) {
       object->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLObjects()->insertBefore(object->getEmbedXMLElement(), nullptr);
-      QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
       E(object->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
@@ -1875,7 +1873,7 @@ namespace MBSimGUI {
     if(embed) {
       link->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLLinks()->insertBefore(link->getEmbedXMLElement(), nullptr);
-      QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
       E(link->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
@@ -1924,7 +1922,7 @@ namespace MBSimGUI {
     if(embed) {
       constraint->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLConstraints()->insertBefore(constraint->getEmbedXMLElement(), nullptr);
-      QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
       E(constraint->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
@@ -1973,7 +1971,7 @@ namespace MBSimGUI {
     if(embed) {
       observer->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLObservers()->insertBefore(observer->getEmbedXMLElement(), nullptr);
-      QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
+      QDir dir(QFileInfo(QUrl(QString::fromStdString(X()%getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).absolutePath());
       E(observer->getEmbedXMLElement())->setAttribute("href",dir.relativeFilePath(file).toStdString());
     }
     else
