@@ -25,6 +25,9 @@
 #include <QFileInfo>
 #include "mainwindow.h"
 #include <QLocale>
+#ifdef _WIN32
+#  include <windows.h>
+#endif
 
 using namespace std;
 using namespace MBSimGUI;

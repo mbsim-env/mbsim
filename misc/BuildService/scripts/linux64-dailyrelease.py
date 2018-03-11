@@ -23,7 +23,7 @@ ret=subprocess.call([SCRIPTDIR+"/build.py", "--forceBuild", "--enableDistributio
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin", "--with-qmake=qmake-qt5",
   "--with-qwt-inc-prefix=/home/mbsim/3rdparty/qwt-6.1.3-local-linux64/include",
   "--with-qwt-lib-name=qwt",
-  "--with-qwt-prefix=/home/mbsim/3rdparty/qwt-6.1.3-local-linux64/lib",
+  "--with-qwt-lib-prefix=/home/mbsim/3rdparty/qwt-6.1.3-local-linux64/lib",
   "COIN_LIBS=-L/home/mbsim/3rdparty/coin-soqt-bb-local-linux64/lib64 -lCoin",
   "COIN_CFLAGS=-I/home/mbsim/3rdparty/coin-soqt-bb-local-linux64/include",
   "SOQT_LIBS=-L/home/mbsim/3rdparty/coin-soqt-bb-local-linux64/lib64 -lSoQt",

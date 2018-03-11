@@ -52,6 +52,6 @@ SUFFIXES=.moc.cc .moc.cpp .moc.cxx .moc.C\
 
 # windows rc rules
 .rc.o:
-	windres $^ -o $@
+	$(WINDRES) $^ -o $@
 
 CLEANFILES = $(QT_BUILT_SOURCES)

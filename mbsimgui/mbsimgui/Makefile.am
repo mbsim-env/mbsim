@@ -118,9 +118,13 @@ dist_mbsimguiicon_DATA = icons/simulate.svg \
 pluginsiconenginesdir = @bindir@/iconengines
 pluginsiconengines_DATA = @QT_PLUGINS@/iconengines/*qsvgicon*
 pluginsplatformsdir = @bindir@/platforms
-pluginsplatforms_DATA = @QT_PLUGINS@/platforms/*qxcb*
+if COND_WIN32
+pluginsplatforms_DATA = @QT_PLUGINS@/platforms/qwindows.dll
+else
+pluginsplatforms_DATA = @QT_PLUGINS@/platforms/libqxcb.so
 pluginsxcbglintegrationsdir = @bindir@/xcbglintegrations
 pluginsxcbglintegrations_DATA = @QT_PLUGINS@/xcbglintegrations/*qxcb*
+endif
 
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org

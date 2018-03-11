@@ -12,12 +12,21 @@ AC_LANG([C++])
 # enable C++11
 CXXFLAGS="$CXXFLAGS -std=c++11"
 
+# windres
+AC_ARG_WITH(windres,
+  [  --with-windres=prog  The windres program (defaults to windres)],
+  [WINDRES="$withval"],
+  [WINDRES="windres"])
+AC_SUBST([WINDRES])
+
 if test "_$host_os" = "_mingw32" ; then
   # -fno-keep-inline-dllexport: requires gcc >= 4.6; and is reauired by Qt to avoid the generatoin of
   # code for inline functions which causes undefines symbols on linkage.
-  CPPFLAGS="-fno-keep-inline-dllexport $CPPFLAGS"
+  CPPFLAGS="-fno-keep-inline-dllexport $CPPFLAGS -DCOIN_DLL -DSOQT_DLL"
   LDFLAGS="-mwindows $LDFLAGS"
 fi
+
+AM_CONDITIONAL([COND_WIN32], [test "_$host_os" = "_mingw32"])
 
 dnl Qt
 PKG_CHECK_MODULES(QT, [Qt5Core >= 5.6 Qt5Gui >= 5.6 Qt5Widgets >= 5.6])
