@@ -43,268 +43,197 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Contact)
 
-  Contact::Contact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), searchAllCP(false), tol(1e-10), saved_ref(0) {
+  Contact::Contact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), searchAllCP(false), tol(1e-10), saved_ref(0) {
   }
 
   Contact::~Contact() {
-    for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
-      for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); ++k)
-        delete contactKinematics[cK]->getContactKinematics(k);
-      delete contactKinematics[cK];
-    }
+    delete contactKinematics;
     delete fcl;
     delete fdf;
     delete fnil;
     delete ftil;
   }
 
-  void Contact::setPlotFeatureContactKinematics(std::string cKName, std::size_t pf, bool value) {
-    if (ckNames.end() != find(ckNames.begin(), ckNames.end(), cKName)) {
-      pair<string, std::size_t> Pair(cKName, pf);
-      plotFeatureMap.insert(pair<pair<string, std::size_t>, bool>(Pair, value));
-    }
-  }
-
   void Contact::updatewb() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatewb();
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updatewb();
   }
 
   void Contact::updateW(int j) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateW(j);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateW(j);
   }
 
   void Contact::updateV(int j) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateV(j);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateV(j);
   }
 
   void Contact::updateh(int j) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateh(j);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateh(j);
   }
 
   void Contact::updateg() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateg();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateg();
   }
 
   void Contact::updategd() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updategd();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updategd();
   }
 
   void Contact::updateStopVector() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateStopVector();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateStopVector();
   }
 
   void Contact::updateJacobians(int j) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateJacobians(j);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateJacobians(j);
   }
 
   void Contact::updateWRef(const Mat& WParent, int j) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateWRef(WParent, j);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateWRef(WParent, j);
   }
 
   void Contact::updateVRef(const Mat& VParent, int j) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateVRef(VParent, j);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateVRef(VParent, j);
   }
 
   void Contact::updatehRef(const Vec& hParent, int j) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatehRef(hParent, j);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updatehRef(hParent, j);
   }
 
   void Contact::updaterRef(const Vec& rParent, int j) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updaterRef(rParent, j);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updaterRef(rParent, j);
   }
 
   void Contact::updatewbRef(const Vec& wbParent) {
     Link::updatewbRef(wbParent);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatewbRef(wbParent);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updatewbRef(wbParent);
   }
 
   void Contact::updatelaRef(const Vec& laParent) {
     Link::updatelaRef(laParent);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatelaRef(laParent);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updatelaRef(laParent);
   }
 
   void Contact::updateLaRef(const Vec& LaParent) {
     Link::updateLaRef(LaParent);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateLaRef(LaParent);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateLaRef(LaParent);
   }
 
   void Contact::updategRef(const Vec& gParent) {
     Link::updategRef(gParent);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->updategRef(gParent);
-      }
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updategRef(gParent);
   }
 
   void Contact::updategdRef(const Vec& gdParent) {
     Link::updategdRef(gdParent);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updategdRef(gdParent);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updategdRef(gdParent);
   }
 
   void Contact::updateresRef(const Vec& resParent) {
     Link::updateresRef(resParent);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateresRef(resParent);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateresRef(resParent);
   }
 
   void Contact::updaterFactorRef(const Vec& rFactorParent) {
     Link::updaterFactorRef(rFactorParent);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updaterFactorRef(rFactorParent);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updaterFactorRef(rFactorParent);
   }
 
   void Contact::updatesvRef(const Vec &svParent) {
     Link::updatesvRef(svParent);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatesvRef(svParent);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updatesvRef(svParent);
   }
 
   void Contact::updatejsvRef(const VecInt &jsvParent) {
     Link::updatejsvRef(jsvParent);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatejsvRef(jsvParent);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updatejsvRef(jsvParent);
   }
 
   void Contact::updateLinkStatusRef(const VecInt &LinkStatusParent) {
     Link::updateLinkStatusRef(LinkStatusParent);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateLinkStatusRef(LinkStatusParent);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateLinkStatusRef(LinkStatusParent);
   }
 
   void Contact::updateLinkStatusRegRef(const VecInt &LinkStatusRegParent) {
     Link::updateLinkStatusRegRef(LinkStatusRegParent);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateLinkStatusRegRef(LinkStatusRegParent);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateLinkStatusRegRef(LinkStatusRegParent);
   }
 
   void Contact::calclaSize(int j) {
     Link::calclaSize(j);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->calclaSize(j);
-        laSize += jter->getlaSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->calclaSize(j);
+      laSize += iter->getlaSize();
     }
   }
 
   void Contact::calcgSize(int j) {
     Link::calcgSize(j);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->calcgSize(j);
-        gSize += jter->getgSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->calcgSize(j);
+      gSize += iter->getgSize();
     }
   }
 
   void Contact::calcgdSize(int j) {
     Link::calcgdSize(j);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->calcgdSize(j);
-        gdSize += jter->getgdSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->calcgdSize(j);
+      gdSize += iter->getgdSize();
     }
   }
 
   void Contact::calcrFactorSize(int j) {
     Link::calcrFactorSize(j);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->calcrFactorSize(j);
-        rFactorSize += jter->getrFactorSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->calcrFactorSize(j);
+      rFactorSize += iter->getrFactorSize();
     }
   }
 
   void Contact::calcsvSize() {
     Link::calcsvSize();
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->calcsvSize();
-        svSize += jter->getsvSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->calcsvSize();
+      svSize += iter->getsvSize();
     }
   }
 
   void Contact::calcLinkStatusSize() {
     Link::calcLinkStatusSize();
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->calcLinkStatusSize();
-        LinkStatusSize += jter->getLinkStatusSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->calcLinkStatusSize();
+      LinkStatusSize += iter->getLinkStatusSize();
     }
     LinkStatus.resize(LinkStatusSize);
   }
 
   void Contact::calcLinkStatusRegSize() {
     Link::calcLinkStatusRegSize();
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->calcLinkStatusRegSize();
-        LinkStatusRegSize += jter->getLinkStatusRegSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->calcLinkStatusRegSize();
+      LinkStatusRegSize += iter->getLinkStatusRegSize();
     }
     LinkStatusReg.resize(LinkStatusRegSize);
   }
@@ -314,8 +243,7 @@ namespace MBSim {
       //connect all contours given in xml file
       for (size_t i = 0; i < saved_ref.size(); i++) {
         if (saved_ref[i].name1 != "" && saved_ref[i].name2 != "")
-          connect(getByPath<Contour>(saved_ref[i].name1), getByPath<Contour>(saved_ref[i].name2), 0, saved_ref[i].contourPairingName);
-        //TODO: add option to specifiy contact_kinematics
+          connect(getByPath<Contour>(saved_ref[i].name1), getByPath<Contour>(saved_ref[i].name2));
       }
 
       if(not(contour.size()))
@@ -325,61 +253,51 @@ namespace MBSim {
     }
     else if (stage == preInit) {
       Link::init(stage, config);
-      for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
-        contactKinematics[cK]->setSearchAllContactPoints(searchAllCP);
-        contactKinematics[cK]->setInitialGuess(zeta0);
-        contactKinematics[cK]->setTolerance(tol);
-        contactKinematics[cK]->assignContours(contour[0][cK], contour[1][cK]);
-        contacts.push_back(vector<SingleContact>());
-        for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); ++k) {
-          stringstream contactName;
-          contactName << ckNames[cK];
-          if (contactKinematics[cK]->getNumberOfPotentialContactPoints() > 1)
-            contactName << "_" << k;
-          contacts[cK].push_back(SingleContact(contactName.str()));
-          contacts[cK][k].setContactKinematics(contactKinematics[cK]->getContactKinematics(k) ? contactKinematics[cK]->getContactKinematics(k) : contactKinematics[cK]);
-          contacts[cK][k].connect(contour[0][cK], contour[1][cK]);
-          contacts[cK][k].plotFeature = plotFeature;
-          contacts[cK][k].plotFeatureForChildren = plotFeatureForChildren;
+      contactKinematics->setSearchAllContactPoints(searchAllCP);
+      contactKinematics->setInitialGuess(zeta0);
+      contactKinematics->setTolerance(tol);
+      contactKinematics->assignContours(contour[0], contour[1]);
+      for (int k = 0; k < contactKinematics->getNumberOfPotentialContactPoints(); ++k) {
+        stringstream contactName;
+        contactName << name << "_" <<0;
+        if (contactKinematics->getNumberOfPotentialContactPoints() > 1) contactName << "_" << k;
+        contacts.push_back(SingleContact(contactName.str()));
+        contacts[k].setContactKinematics(contactKinematics->getContactKinematics(k) ? contactKinematics->getContactKinematics(k) : contactKinematics);
+        contacts[k].connect(contour[0], contour[1]);
+        contacts[k].plotFeature = plotFeature;
+        contacts[k].plotFeatureForChildren = plotFeatureForChildren;
 
-          //set the tolerances for the single contacts
-          contacts[cK][k].setGeneralizedRelativePositionTolerance(gTol);
-          contacts[cK][k].setGeneralizedRelativeVelocityTolerance(gdTol);
-          contacts[cK][k].setGeneralizedRelativeAccelerationTolerance(gddTol);
-          contacts[cK][k].setGeneralizedForceTolerance(laTol);
-          contacts[cK][k].setGeneralizedImpulseTolerance(LaTol);
-          contacts[cK][k].setrMax(rMax);
-        }
+        //set the tolerances for the single contacts
+        contacts[k].setGeneralizedRelativePositionTolerance(gTol);
+        contacts[k].setGeneralizedRelativeVelocityTolerance(gdTol);
+        contacts[k].setGeneralizedRelativeAccelerationTolerance(gddTol);
+        contacts[k].setGeneralizedForceTolerance(laTol);
+        contacts[k].setGeneralizedImpulseTolerance(LaTol);
+        contacts[k].setrMax(rMax);
       }
 
-      for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-        for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-          //set parent
-          jter->setParent(this);
+      for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+        //set parent
+        iter->setParent(this);
 
-          //set contact laws for children
-          jter->setNormalForceLaw(fcl);
-          jter->setNormalImpactLaw(fnil);
-          jter->setTangentialForceLaw(fdf);
-          jter->setTangentialImpactLaw(ftil);
+        //set contact laws for children
+        iter->setNormalForceLaw(fcl);
+        iter->setNormalImpactLaw(fnil);
+        iter->setTangentialForceLaw(fdf);
+        iter->setTangentialImpactLaw(ftil);
 
-          jter->init(stage, config);
-        }
+        iter->init(stage, config);
       }
     }
     else if (stage == plotting) {
       Element::init(stage, config);
-      for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-        for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-          jter->init(stage, config);
-      }
+      for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+        iter->init(stage, config);
     }
     else {
       Link::init(stage, config);
-      for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-        for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-          jter->init(stage, config);
-      }
+      for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+        iter->init(stage, config);
     }
     //Don't call init()-routines for "sub"-contacts with stage "LASTINITSTAGE" as here is checked if contactKinematics has more than one possible contact point, which is only possible in multi-contact
     if(fcl) fcl->init(stage, config);
@@ -406,64 +324,51 @@ namespace MBSim {
   }
 
   void Contact::updateLinkStatus() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->updateLinkStatus();
-      }
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateLinkStatus();
   }
 
   void Contact::updateLinkStatusReg() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->updateLinkStatusReg();
-      }
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateLinkStatusReg();
   }
 
   bool Contact::isActive() const {
-    for (std::vector<std::vector<SingleContact> >::const_iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::const_iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        if (jter->isActive())
-          return true;
+    for (vector<SingleContact>::const_iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      if (iter->isActive())
+        return true;
     }
     return false;
   }
 
   bool Contact::gActiveChanged() {
     bool changed = false;
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        if (jter->gActiveChanged())
-          changed = true;
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      if (iter->gActiveChanged())
+        changed = true;
     }
     return changed;
   }
 
   bool Contact::detectImpact() {
     bool impact = false;
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        if (jter->detectImpact())
-          impact = true;
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      if (iter->detectImpact())
+        impact = true;
     }
     return impact;
   }
 
   void Contact::plot() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->plot();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->plot();
   }
 
   void Contact::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Link::setDynamicSystemSolver(sys);
 
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->setDynamicSystemSolver(ds);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->setDynamicSystemSolver(ds);
   }
 
   void Contact::setNormalForceLaw(GeneralizedForceLaw *fcl_) {
@@ -489,172 +394,132 @@ namespace MBSim {
   void Contact::setgInd(int gInd_) {
     Link::setgInd(gInd_);
     int nextgInd = gInd_;
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setgInd(nextgInd);
-        nextgInd += jter->getgSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->setgInd(nextgInd);
+      nextgInd += iter->getgSize();
     }
   }
 
   void Contact::setgdInd(int gdInd_) {
     Link::setgdInd(gdInd_);
     int nextgdInd = gdInd_;
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setgdInd(nextgdInd);
-        nextgdInd += jter->getgdSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->setgdInd(nextgdInd);
+      nextgdInd += iter->getgdSize();
     }
   }
 
   void Contact::setsvInd(int svInd_) {
     Link::setsvInd(svInd_);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setsvInd(svInd_);
-        svInd_ += jter->getsvSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->setsvInd(svInd_);
+      svInd_ += iter->getsvSize();
     }
   }
 
   void Contact::setlaInd(int laInd_) {
     Link::setlaInd(laInd_);
     int nextlaInd = laInd_;
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setlaInd(nextlaInd);
-        nextlaInd += jter->getlaSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->setlaInd(nextlaInd);
+      nextlaInd += iter->getlaSize();
     }
   }
 
   void Contact::setrFactorInd(int rFactorInd_) {
     Link::setrFactorInd(rFactorInd_);
     int nextrFactorInd = rFactorInd_;
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setrFactorInd(nextrFactorInd);
-        nextrFactorInd += jter->getrFactorSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->setrFactorInd(nextrFactorInd);
+      nextrFactorInd += iter->getrFactorSize();
     }
   }
 
   void Contact::setcorrInd(int corrInd_) {
     Link::setcorrInd(corrInd_);
     int nextcorrInd = corrInd_;
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setcorrInd(nextcorrInd);
-        nextcorrInd += jter->getcorrSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->setcorrInd(nextcorrInd);
+      nextcorrInd += iter->getcorrSize();
     }
   }
 
   void Contact::setLinkStatusInd(int LinkStatusInd_) {
     Link::setLinkStatusInd(LinkStatusInd_);
     int nextLinkStatusInd = LinkStatusInd_;
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setLinkStatusInd(nextLinkStatusInd);
-        nextLinkStatusInd += jter->getLinkStatusSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->setLinkStatusInd(nextLinkStatusInd);
+      nextLinkStatusInd += iter->getLinkStatusSize();
     }
   }
 
   void Contact::setLinkStatusRegInd(int LinkStatusRegInd_) {
     Link::setLinkStatusRegInd(LinkStatusRegInd_);
     int nextLinkStatusRegInd = LinkStatusRegInd_;
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setLinkStatusRegInd(nextLinkStatusRegInd);
-        nextLinkStatusRegInd += jter->getLinkStatusRegSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->setLinkStatusRegInd(nextLinkStatusRegInd);
+      nextLinkStatusRegInd += iter->getLinkStatusRegSize();
     }
   }
 
   void Contact::solveImpactsFixpointSingle() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveImpactsFixpointSingle();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->solveImpactsFixpointSingle();
   }
 
   void Contact::solveConstraintsFixpointSingle() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveConstraintsFixpointSingle();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->solveConstraintsFixpointSingle();
   }
 
   void Contact::solveImpactsGaussSeidel() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveImpactsGaussSeidel();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->solveImpactsGaussSeidel();
   }
 
   void Contact::solveConstraintsGaussSeidel() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveConstraintsGaussSeidel();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->solveConstraintsGaussSeidel();
   }
 
   void Contact::solveImpactsRootFinding() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveImpactsRootFinding();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->solveImpactsRootFinding();
   }
 
   void Contact::solveConstraintsRootFinding() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveConstraintsRootFinding();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->solveConstraintsRootFinding();
   }
 
   void Contact::jacobianConstraints() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->jacobianConstraints();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->jacobianConstraints();
   }
 
   void Contact::jacobianImpacts() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->jacobianImpacts();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->jacobianImpacts();
   }
 
   void Contact::updaterFactors() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updaterFactors();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updaterFactors();
   }
 
   void Contact::checkConstraintsForTermination() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->checkConstraintsForTermination();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->checkConstraintsForTermination();
   }
 
   void Contact::checkImpactsForTermination() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->checkImpactsForTermination();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->checkImpactsForTermination();
   }
 
   void Contact::checkActive(int j) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->checkActive(j);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->checkActive(j);
   }
 
   int Contact::getFrictionDirections() {
@@ -664,103 +529,71 @@ namespace MBSim {
       return 0;
   }
 
-  void Contact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_ /*=0*/, const string & name_ /* ="" */) {
-    contour[0].push_back(contour0);
-    contour[1].push_back(contour1);
-    contactKinematics.push_back(contactKinematics_);
+  void Contact::connect(Contour *contour0, Contour* contour1) {
+    contour[0] = contour0;
+    contour[1] = contour1;
 
-    int cK = contactKinematics.size() - 1;
-
-    if (contactKinematics[cK] == 0) {
-      contactKinematics[cK] = contour0->findContactPairingWith(typeid(*contour0), typeid(*contour1));
-      if (contactKinematics[cK] == 0) {
-        contactKinematics[cK] = contour1->findContactPairingWith(typeid(*contour1), typeid(*contour0));
-        if (contactKinematics[cK] == 0) {
-          contactKinematics[cK] = contour0->findContactPairingWith(typeid(*contour1), typeid(*contour0));
-          if (contactKinematics[cK] == 0) {
-            contactKinematics[cK] = contour1->findContactPairingWith(typeid(*contour0), typeid(*contour1));
-            if (contactKinematics[cK] == 0) {
+    if (contactKinematics == 0) {
+      contactKinematics = contour0->findContactPairingWith(typeid(*contour0), typeid(*contour1));
+      if (contactKinematics == 0) {
+        contactKinematics = contour1->findContactPairingWith(typeid(*contour1), typeid(*contour0));
+        if (contactKinematics == 0) {
+          contactKinematics = contour0->findContactPairingWith(typeid(*contour1), typeid(*contour0));
+          if (contactKinematics == 0) {
+            contactKinematics = contour1->findContactPairingWith(typeid(*contour0), typeid(*contour1));
+            if (contactKinematics == 0) {
               throwError("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour0).name()) + "\" and Contour \"" + boost::core::demangle(typeid(*contour1).name()) + "\"!");
             }
           }
         }
       }
     }
-
-    //Create a single contact(with all the information) for every sub contact of each contact kinematics that is part of the multiple contact
-    if (name_ == "")
-      ckNames.push_back(name + "_" + toString(cK));
-    else
-      ckNames.push_back(name_);
-
   }
 
   void Contact::LinearImpactEstimation(double t, Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->LinearImpactEstimation(t, gInActive_, gdInActive_, IndInActive_, gAct_, IndActive_);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->LinearImpactEstimation(t, gInActive_, gdInActive_, IndInActive_, gAct_, IndActive_);
   }
 
   void Contact::SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->SizeLinearImpactEstimation(sizeInActive_, sizeActive_);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->SizeLinearImpactEstimation(sizeInActive_, sizeActive_);
   }
 
   void Contact::setGeneralizedForceTolerance(double tol) {
     Link::setGeneralizedForceTolerance(tol);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setGeneralizedForceTolerance(tol);
-      }
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->setGeneralizedForceTolerance(tol);
   }
 
   void Contact::setGeneralizedImpulseTolerance(double tol) {
     Link::setGeneralizedImpulseTolerance(tol);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setGeneralizedImpulseTolerance(tol);
-      }
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->setGeneralizedImpulseTolerance(tol);
   }
 
   void Contact::setGeneralizedRelativePositionTolerance(double tol) {
     Link::setGeneralizedRelativePositionTolerance(tol);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setGeneralizedRelativePositionTolerance(tol);
-      }
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->setGeneralizedRelativePositionTolerance(tol);
   }
 
   void Contact::setGeneralizedRelativeVelocityTolerance(double tol) {
     Link::setGeneralizedRelativeVelocityTolerance(tol);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setGeneralizedRelativeVelocityTolerance(tol);
-      }
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->setGeneralizedRelativeVelocityTolerance(tol);
   }
 
   void Contact::setGeneralizedRelativeAccelerationTolerance(double tol) {
     Link::setGeneralizedRelativeAccelerationTolerance(tol);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setGeneralizedRelativeAccelerationTolerance(tol);
-      }
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->setGeneralizedRelativeAccelerationTolerance(tol);
   }
 
   void Contact::setrMax(double rMax_) {
     Link::setrMax(rMax_);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setrMax(rMax_);
-      }
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->setrMax(rMax_);
   }
 
   void Contact::initializeUsingXML(DOMElement *element) {
@@ -775,11 +608,6 @@ namespace MBSim {
         saved_references ref;
         ref.name1 = E(e)->getAttribute("ref1");
         ref.name2 = E(e)->getAttribute("ref2");
-        if (E(e)->hasAttribute("name"))
-          ref.contourPairingName = E(e)->getAttribute("name");
-        else
-          ref.contourPairingName = "";
-        //TODO: add possibility of defining own contactKinematics? (also in Contact-class)
 
         saved_ref.push_back(ref);
         e = e->getNextElementSibling();
@@ -828,47 +656,36 @@ namespace MBSim {
   }
 
   void Contact::updatecorrRef(const Vec& corrParent) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatecorrRef(corrParent);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updatecorrRef(corrParent);
   }
 
   void Contact::updatecorr(int j) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatecorr(j);
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updatecorr(j);
   }
 
   void Contact::calccorrSize(int j) {
     Link::calccorrSize(j);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->calccorrSize(j);
-        corrSize += jter->getcorrSize();
-      }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      iter->calccorrSize(j);
+      corrSize += iter->getcorrSize();
     }
   }
 
   void Contact::checkRoot() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->checkRoot();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->checkRoot();
   }
 
   void Contact::resetUpToDate() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->resetUpToDate();
-    }
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->resetUpToDate();
   }
 
   void Contact::updateGeneralizedNormalForce() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updlaN = false;
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updlaN = false;
   }
 
 }

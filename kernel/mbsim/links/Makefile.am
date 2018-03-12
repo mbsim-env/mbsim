@@ -11,7 +11,6 @@ liblink_la_SOURCES = link.cc\
 		     dual_rigid_body_link.cc\
 		     kinetic_excitation.cc\
 		     contact.cc\
-		     maxwell_contact.cc\
 		     single_contact.cc\
 		     joint.cc\
 		     elastic_joint.cc\
@@ -44,7 +43,6 @@ linkinclude_HEADERS = link.h\
 		      dual_rigid_body_link.h\
 		      kinetic_excitation.h\
 		      contact.h\
-		      maxwell_contact.h\
 		      single_contact.h\
 		      joint.h\
 		      elastic_joint.h\
