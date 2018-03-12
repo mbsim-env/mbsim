@@ -45,43 +45,37 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       Observer::init(stage, config);
-      contactObserver.resize(static_cast<Contact*>(link)->getSubcontacts().size(),vector<SingleContactObserver>(static_cast<Contact*>(link)->getSubcontacts()[0].size()));
+      contactObserver.resize(static_cast<Contact*>(link)->getSubcontacts().size());
       for (unsigned int i=0; i<contactObserver.size(); i++) {
-        for (unsigned int j=0; j<contactObserver[i].size(); j++) {
-          contactObserver[i][j].setParent(this);
-          contactObserver[i][j].setMechanicalLink(&static_cast<Contact*>(link)->getSingleContact(i,j));
-          stringstream contactName;
-          contactName << "Contact_" << i << "_" << j;
-          contactObserver[i][j].setName(contactName.str());
-          contactObserver[i][j].plotFeature = plotFeature;
-          contactObserver[i][j].plotFeatureForChildren = plotFeatureForChildren;
-          //Set OpenMBV-Properties to single contacts
-          if(openMBVForce)
-            contactObserver[i][j].setOpenMBVForce((i==0 and j==0)?openMBVForce:OpenMBV::ObjectFactory::create(openMBVForce));
-          if(openMBVMoment)
-            contactObserver[i][j].setOpenMBVMoment((i==0 and j==0)?openMBVMoment:OpenMBV::ObjectFactory::create(openMBVMoment));
-          if(openMBVContactFrame)
-            contactObserver[i][j].setOpenMBVContactPoints((i==0 and j==0)?openMBVContactFrame:OpenMBV::ObjectFactory::create(openMBVContactFrame));
-          if(contactArrow)
-            contactObserver[i][j].setOpenMBVNormalForce((i==0 and j==0)?contactArrow:OpenMBV::ObjectFactory::create(contactArrow));
-          if(frictionArrow)
-            contactObserver[i][j].setOpenMBVTangentialForce((i==0 and j==0)?frictionArrow:OpenMBV::ObjectFactory::create(frictionArrow));
-          contactObserver[i][j].init(stage, config);
-        }
+        contactObserver[i].setParent(this);
+        contactObserver[i].setMechanicalLink(&static_cast<Contact*>(link)->getSingleContact(i));
+        stringstream contactName;
+        contactName << "Contact_" << 0 << "_" << i;
+        contactObserver[i].setName(contactName.str());
+        contactObserver[i].plotFeature = plotFeature;
+        contactObserver[i].plotFeatureForChildren = plotFeatureForChildren;
+        //Set OpenMBV-Properties to single contacts
+        if(openMBVForce)
+          contactObserver[i].setOpenMBVForce((i==0)?openMBVForce:OpenMBV::ObjectFactory::create(openMBVForce));
+        if(openMBVMoment)
+          contactObserver[i].setOpenMBVMoment((i==0)?openMBVMoment:OpenMBV::ObjectFactory::create(openMBVMoment));
+        if(openMBVContactFrame)
+          contactObserver[i].setOpenMBVContactPoints((i==0)?openMBVContactFrame:OpenMBV::ObjectFactory::create(openMBVContactFrame));
+        if(contactArrow)
+          contactObserver[i].setOpenMBVNormalForce((i==0)?contactArrow:OpenMBV::ObjectFactory::create(contactArrow));
+        if(frictionArrow)
+          contactObserver[i].setOpenMBVTangentialForce((i==0)?frictionArrow:OpenMBV::ObjectFactory::create(frictionArrow));
+        contactObserver[i].init(stage, config);
       }
     }
     else if (stage == plotting) {
       Observer::init(stage, config);
-      for (auto & iter : contactObserver) {
-        for (auto jter = iter.begin(); jter != iter.end(); ++jter)
-          jter->init(stage, config);
-      }
+      for (auto & iter : contactObserver)
+        iter.init(stage, config);
     }
     else if (stage == unknownStage) {
-      for (auto & iter : contactObserver) {
-        for (auto jter = iter.begin(); jter != iter.end(); ++jter)
-          jter->init(stage, config);
-      }
+      for (auto & iter : contactObserver)
+        iter.init(stage, config);
       Observer::init(stage, config);
     }
     else
@@ -90,10 +84,8 @@ namespace MBSim {
 
   void ContactObserver::plot() {
     Observer::plot();
-    for (auto & iter : contactObserver) {
-      for (auto jter = iter.begin(); jter != iter.end(); ++jter)
-        jter->plot();
-    }
+    for (auto & iter : contactObserver)
+      iter.plot();
   }
 
   void ContactObserver::initializeUsingXML(DOMElement *element) {
@@ -136,10 +128,8 @@ namespace MBSim {
   void ContactObserver::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Observer::setDynamicSystemSolver(sys);
 
-    for (auto & iter : contactObserver) {
-      for (auto jter = iter.begin(); jter != iter.end(); ++jter)
-        jter->setDynamicSystemSolver(ds);
-    }
+    for (auto & iter : contactObserver)
+      iter.setDynamicSystemSolver(ds);
   }
 
 
