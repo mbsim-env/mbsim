@@ -4,9 +4,9 @@ from __future__ import print_function # to enable the print function for backwar
 import os
 import subprocess
 
-SRCDIR="/home/mbsim/win64-dailyrelease2"
-OUTDIR="/var/www/html/mbsim/win64-dailyrelease2"
-URL="https://www.mbsim-env.de/mbsim/win64-dailyrelease2"
+SRCDIR="/home/mbsim/win64-dailyrelease"
+OUTDIR="/var/www/html/mbsim/win64-dailyrelease"
+URL="https://www.mbsim-env.de/mbsim/win64-dailyrelease"
 SCRIPTDIR=os.path.dirname(os.path.realpath(__file__))
 
 
@@ -15,12 +15,12 @@ os.environ["PKG_CONFIG_PATH"]=SRCDIR+"/local/lib/pkgconfig:/home/mbsim/3rdparty/
   "/home/mbsim/3rdparty/xerces-c-local-win64/lib/pkgconfig:/home/mbsim/3rdparty/libarchive-local-win64/lib/pkgconfig"
 os.environ["WINEPATH"]="/usr/x86_64-w64-mingw32/sys-root/mingw/bin;/home/mbsim/3rdparty/lapack-local-win64/bin;"+ \
   "/home/mbsim/3rdparty/xerces-c-local-win64/bin;/home/mbsim/3rdparty/casadi3py-local-win64/lib;"+ \
-  "/home/mbsim/win64-dailyrelease2/local/bin;/home/mbsim/3rdparty/octave-local-win64/bin;"+ \
+  "/home/mbsim/win64-dailyrelease/local/bin;/home/mbsim/3rdparty/octave-local-win64/bin;"+ \
   "/home/mbsim/3rdparty/hdf5-local-win64/bin;/home/mbsim/3rdparty/libarchive-local-win64/bin;"+ \
   "/home/mbsim/3rdparty/python-win64"
-os.environ["CXXFLAGS"]="-g -O2 -DNDEBUG"
-os.environ["CFLAGS"]="-g -O2 -DNDEBUG"
-os.environ["FFLAGS"]="-g -O2 -DNDEBUG"
+os.environ["CXXFLAGS"]="-g -O2 -gdwarf-2 -DNDEBUG"
+os.environ["CFLAGS"]="-g -O2 -gdwarf-2 -DNDEBUG"
+os.environ["FFLAGS"]="-g -O2 -gdwarf-2 -DNDEBUG"
 os.environ["MOC"]="/usr/x86_64-w64-mingw32/bin/qt5/moc"
 os.environ["UIC"]="/usr/x86_64-w64-mingw32/bin/qt5/uic"
 os.environ["RCC"]="/usr/x86_64-w64-mingw32/bin/qt5/rcc"
@@ -28,7 +28,7 @@ os.environ["PLATFORM"]="Windows" # required for source code examples
 os.environ["CXX"]="x86_64-w64-mingw32-g++" # required for source code examples
 os.environ['MBSIM_SWIG']='1'
 
-ret=subprocess.call([SCRIPTDIR+"/build.py", "--enableDistribution", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix",
+ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix",
   SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "win64-dailyrelease", "--webapp",
   "--enableCleanPrefix", "--passToConfigure", "--with-lowram", "--enable-python", "--enable-shared", "--disable-static", "--build=x86_64-redhat-linux", "--host=x86_64-w64-mingw32",
   "--with-javajniosdir="+SCRIPTDIR+"/buildPreparation/windows",
@@ -49,4 +49,4 @@ ret=subprocess.call([SCRIPTDIR+"/build.py", "--enableDistribution", "--rotate", 
   "--passToRunexamples", "--disableCompare",
   "--disableValidate", "--exeExt", ".exe", "--filter", "'basic' in labels"])
 if ret!=0 and ret!=255:
-  print("win64-dailyrelease2 failed.")
+  print("win64-dailyrelease failed.")
