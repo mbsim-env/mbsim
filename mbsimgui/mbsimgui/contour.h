@@ -90,6 +90,12 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new SpatialContourPropertyDialog(this);}
   };
 
+  class FCLBox : public RigidContour {
+    public:
+      QString getType() const override { return "FCLBox"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new FCLBoxPropertyDialog(this);}
+  };
+
 }
 
 #endif

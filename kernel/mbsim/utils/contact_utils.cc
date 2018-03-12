@@ -39,6 +39,7 @@
 #include <mbsim/contours/room.h>
 #include <mbsim/contours/spatial_contour.h>
 #include <mbsim/contours/sphere.h>
+#include <mbsim/contours/fcl_box.h>
 // --- List of contact implementations - END ---
 
 // --- List of contact kinematic implementations - BEGIN ---
@@ -72,6 +73,7 @@
 #include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/point_spatialcontour.h>
 #include <mbsim/contact_kinematics/plane_spatialcontour.h>
+#include <mbsim/contact_kinematics/fclbox_fclbox.h>
 // --- List of contact kinematic implementations - END ---
 
 using namespace std;
@@ -184,6 +186,9 @@ namespace MBSim {
 
     else if ( contour0==typeid(Plane) && contour1==typeid(SpatialContour) )
       return new ContactKinematicsPlaneSpatialContour;
+
+    else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLBox) )
+      return new ContactKinematicsFCLBoxFCLBox;
 
     else
       return nullptr;

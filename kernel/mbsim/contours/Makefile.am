@@ -21,7 +21,8 @@ libcontour_la_SOURCES = contour.cc\
 			planar_contour.cc\
 			contour_interpolation.cc\
 			contour_quad.cc\
-			spatial_contour.cc
+			spatial_contour.cc\
+			fcl_box.cc
 
 libcontour_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
 libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
@@ -47,4 +48,5 @@ contourinclude_HEADERS = contour.h\
 			 planar_contour.h\
 			 contour_interpolation.h\
 			 contour_quad.h\
-			 spatial_contour.h
+			 spatial_contour.h\
+			 fcl_box.h

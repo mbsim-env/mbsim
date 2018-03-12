@@ -28,6 +28,7 @@ namespace MBSim {
 
   class ContourFrame;
   class Contour;
+  class SingleContact;
 
   /** 
    * \brief basic class for contact kinematical calculations
@@ -63,6 +64,8 @@ namespace MBSim {
        * \param index  index of the contact point that should be updated
        */
       virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) = 0;
+
+      virtual double updateg(std::vector<SingleContact> &contact) { return 1; }
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration
