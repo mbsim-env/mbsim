@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  ContourLink::ContourLink(const std::string &name) : MechanicalLink(name), contour(2), cFrame(2), updPos(true), updVel(true), updDF(true) {
+  ContourLink::ContourLink(const std::string &name) : MechanicalLink(name), contour(2), cFrame(2), /*updPos(true), updVel(true),*/ updDF(true) {
     P.resize(2);
     F.resize(2);
   }
@@ -146,8 +146,8 @@ namespace MBSim {
 
   void ContourLink::resetUpToDate() {
     MechanicalLink::resetUpToDate();
-    updPos = true;
-    updVel = true;
+//    updPos = true;
+//    updVel = true;
     updDF = true;
     cFrame[0]->resetUpToDate();
     cFrame[1]->resetUpToDate();

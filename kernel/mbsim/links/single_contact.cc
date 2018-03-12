@@ -140,25 +140,12 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedPositions() {
-    updatePositions();
+//    updatePositions();
+    contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
     updrrel = false;
   }
 
   void SingleContact::updateGeneralizedVelocities() {
-    updateVelocities();
-    updvrel = false;
-  }
-
-  void SingleContact::updatePositions() {
-    contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
-    updPos = false;
-  }
-
-  void SingleContact::updatePositions(Frame *frame) {
-    if(updPos) contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
-  }
-
-  void SingleContact::updateVelocities() {
     if ((fcl->isSetValued() and gdActive[normal]) or (not fcl->isSetValued() and fcl->isClosed(evalGeneralizedRelativePosition()(0), 0))) { // TODO: nicer implementation
       Vec3 Wn = cFrame[0]->evalOrientation().col(0);
 
@@ -177,7 +164,42 @@ namespace MBSim {
     }
     else
       vrel.init(0);
-    updVel = false;
+//    updateVelocities();
+    updvrel = false;
+  }
+
+  void SingleContact::updatePositions() {
+    throw;
+    contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
+//    updPos = false;
+  }
+
+  void SingleContact::updatePositions(Frame *frame) {
+    if(updrrel) contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
+    //if(updPos) contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
+  }
+
+  void SingleContact::updateVelocities() {
+    throw;
+    if ((fcl->isSetValued() and gdActive[normal]) or (not fcl->isSetValued() and fcl->isClosed(evalGeneralizedRelativePosition()(0), 0))) { // TODO: nicer implementation
+      Vec3 Wn = cFrame[0]->evalOrientation().col(0);
+
+      Vec3 WvD = cFrame[1]->evalVelocity() - cFrame[0]->evalVelocity();
+
+      vrel(0) = Wn.T() * WvD;
+
+      if (getFrictionDirections()) {
+        Mat3xV Wt(getFrictionDirections());
+        Wt.set(0, cFrame[0]->getOrientation().col(1));
+        if (getFrictionDirections() > 1)
+          Wt.set(1, cFrame[0]->getOrientation().col(2));
+
+        vrel.set(RangeV(1,getFrictionDirections()), Wt.T() * WvD);
+      }
+    }
+    else
+      vrel.init(0);
+//    updVel = false;
   }
 
   void SingleContact::updateg() {
