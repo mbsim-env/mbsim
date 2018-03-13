@@ -36,7 +36,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsPlaneSpatialContour()  { }
+      ContactKinematicsPlaneSpatialContour() = default;
 
       /**
        * \brief destructor
@@ -68,7 +68,7 @@ namespace MBSim {
       /**
        * \brief root function
        */
-      MBSim::FuncPairSpatialContourPlane *func;
+      FuncPairSpatialContourPlane *func;
 
       bool searchAllCP{false};
 
