@@ -44,6 +44,7 @@ namespace MBSim {
   }
 
   void CompoundContour::plot() {
+    RigidContour::plot();
     for (auto & i : element)
       i->plot();
   }
@@ -54,19 +55,13 @@ namespace MBSim {
   }
 
   void CompoundContour::init(InitStage stage, const InitConfigSet &config) {
-    if (stage == unknownStage) {
+    if (stage == preInit) {
+      for (auto & i : element)
+        i->setPlotFeature(openMBV, false);
+    }
+    else if (stage == unknownStage) {
       for (auto & i : element)
         i->sethSize(hSize[0]);
-    }
-    else if (stage == plotting) {
-      if (plotFeature[openMBV] and openMBVGroup == nullptr) {
-        openMBVGroup = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-        openMBVGroup->setName(name + "Group");
-        if (parent)
-          parent->getOpenMBVGrp()->addObject(openMBVGroup);
-        if (plotFeature[separateFilePerGroup])
-          openMBVGroup->setSeparateFile(true);
-      }
     }
     RigidContour::init(stage, config);
 

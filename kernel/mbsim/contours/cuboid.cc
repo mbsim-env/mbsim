@@ -324,7 +324,7 @@ namespace MBSim {
       addContour(edge);
     }
     else if (stage == plotting) {
-      if(openMBVRigidBody)
+      if(plotFeature[openMBV] && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(lx,ly,lz);
     }
     CompoundContour::init(stage, config);
@@ -336,13 +336,9 @@ namespace MBSim {
     setLength(E(e)->getText<Vec3>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      DOMElement *d, *t;
-      d=E(e)->getFirstElementChildNamed(MBSIM%"diffuseColor");
-      t=E(e)->getFirstElementChildNamed(MBSIM%"transparency");
-      if( d &&  t) enableOpenMBV(_diffuseColor=E(d)->getText<Vec3>(), _transparency=E(e)->getText<double>());
-      if(!d &&  t) enableOpenMBV(                          _transparency=E(e)->getText<double>());
-      if( d && !t) enableOpenMBV(_diffuseColor=E(d)->getText<Vec3>()                                       );
-      if(!d && !t) enableOpenMBV(                                                                          );
+      OpenMBVCuboid ombv;
+      ombv.initializeUsingXML(e);
+      openMBVRigidBody=ombv.createOpenMBV();
     }
   }
 

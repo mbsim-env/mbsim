@@ -47,8 +47,6 @@ namespace MBSim {
       void setZLength(double h_) { h = h_; }
       /***************************************************/
 
-      void plot() override;
-   
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVCuboid ombv(fmatvec::Vec3(),diffuseColor,transparency);
         openMBVRigidBody=ombv.createOpenMBV(); 
