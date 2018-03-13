@@ -24,4 +24,17 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  double FuncPairPlanarContourLine::operator()(const double &alpha) {
+    zeta(0) = alpha;
+    Vec3 Wu = contour->evalWu(zeta);
+    return Wu.T() * line->getFrame()->evalOrientation().col(0); // projection of the lines normal vector into the first tangent direction: scalar value
+  }
+
+  Vec3 FuncPairPlanarContourLine::evalWrD(const double &alpha) {
+    zeta(0) = alpha;
+    Vec3 Wn = line->getFrame()->evalOrientation().col(0);
+    double g = Wn.T()*(contour->evalPosition(zeta) - line->getFrame()->getPosition());
+    return Wn*g;
+  }
+
 }

@@ -102,7 +102,7 @@ namespace MBSimGUI {
     int p = precision->value();
     for(int i=0; i<tab->rowCount(); i++) {
       for(int j=0; j<tab->columnCount(); j++)
-        tab->item(i,j)->setText(QString::number(var[i][j],f[0].toAscii(),p));
+        tab->item(i,j)->setText(QString::number(var[i][j],f[0].toLatin1(),p));
     }
   }
 

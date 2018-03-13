@@ -23,7 +23,6 @@
 #include <QTabWidget>
 #include <QWebView>
 #include <QAction>
-#include <sstream>
 #include <QMainWindow>
 
 namespace MBSimGUI {
@@ -50,21 +49,6 @@ namespace MBSimGUI {
     private slots:
       void linkClicked(const QUrl &link);
       void updateDebug();
-  };
-
-  class EchoStream : public std::stringbuf {
-    public:
-      EchoStream(EchoView *ev_, const std::string &className_) : std::stringbuf(std::ios_base::out),
-        ev(ev_), className(className_) {}
-    protected:
-      int sync() override { // overwrite the sync function from stringbuf
-        ev->addOutputText(("<span class=\""+className+"\">"+str()+"</span>").c_str());
-        // clear the buffer and return
-        str("");
-        return 0;
-      }
-      EchoView *ev;
-      std::string className;
   };
 
 }

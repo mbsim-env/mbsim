@@ -25,7 +25,6 @@
 #include "utils.h"
 #include "function.h"
 #include "function_widget_factory.h"
-#include <QtGui>
 #include "mainwindow.h"
 #include <mbxmlutils/eval.h>
 #include <fmatvec/toString.h>

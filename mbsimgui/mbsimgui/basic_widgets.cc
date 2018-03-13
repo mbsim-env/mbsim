@@ -31,6 +31,9 @@
 #include "mainwindow.h"
 #include "project.h"
 #include <QtGui>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QColorDialog>
 #include <boost/lexical_cast.hpp>
 #include <utility>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -692,7 +695,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* FileWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     auto *ele0 = static_cast<DOMElement*>(parent);
     //DOMText *text = doc->createTextNode(X()%(quote?("\""+getFile().toStdString()+"\""):getFile().toStdString()));
     DOMText *text = doc->createTextNode(X()%getFile().toStdString());
@@ -734,7 +737,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* SpinBoxWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text= doc->createTextNode(X()%toStr(getValue()));
     parent->insertBefore(text, nullptr);
     return nullptr;
@@ -762,7 +765,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* BasicTextWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text_ = doc->createTextNode(X()%getText().toStdString());
     parent->insertBefore(text_, nullptr);
     return nullptr;
@@ -1123,7 +1126,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlotFeatureWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
       E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());
@@ -1148,7 +1151,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlotFeatureWidget::writeXMLFile2(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
       E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());

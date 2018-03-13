@@ -47,6 +47,7 @@ namespace fmatvec {
 %ignore fmatvec::Atom::adoptMessageStreams;
 %ignore fmatvec::Atom::msg;
 %ignore fmatvec::Atom::msgStatic;
+%ignore fmatvec::PrePostfixedStream;
 %include <fmatvec/atom.h>
 
 

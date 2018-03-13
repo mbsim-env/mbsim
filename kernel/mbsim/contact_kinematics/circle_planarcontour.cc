@@ -49,18 +49,13 @@ namespace MBSim {
       planarcontour = static_cast<Contour*>(contour[0]);
     }
     func = new FuncPairPlanarContourCircle(circle,planarcontour);
+  }
 
-//    if (dynamic_cast<Contour*>(planarcontour)) {
-//      double minRadius=1./epsroot;
-//      for (double alpha=planarcontour->getAlphaStart(); alpha<=planarcontour->getAlphaEnd(); alpha+=(planarcontour->getAlphaEnd()-planarcontour->getAlphaStart())*1e-4) {
-//        zeta(0) = alpha;
-//        double radius=1./planarcontour->getCurvature(zeta);
-//        minRadius=(radius<minRadius)?radius:minRadius;
-//      }
-//      if (circle->getRadius()>minRadius)
-//        throw runtime_error("Just one contact point is allowed in Contactpairing Contour-SolidCircle, but either the circle radius is to big or the minimal Radius of Contour is to small.\n minimal radius of Contour="+toString(minRadius)+"\n Radius of SolidCircle="+toString(circle->getRadius()));
-//    }
-
+  void ContactKinematicsCirclePlanarContour::setInitialGuess(const fmatvec::VecV &zeta0_) {
+    if(zeta0_.size()) {
+      if(zeta0_.size() != 1) throw runtime_error("(ContactKinematicsCirclePlanarContour::assignContours): size of zeta0 does not match");
+      zeta0 = zeta0_(0);
+    }
   }
 
   void ContactKinematicsCirclePlanarContour::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
@@ -69,13 +64,14 @@ namespace MBSim {
     search.setNodes(planarcontour->getEtaNodes());
 
     if(searchAllCP==false)
-      search.setInitialValue(cFrame[iplanarcontour]->getEta());
+      search.setInitialValue(zeta0);
     else {
       search.setSearchAll(true);
       searchAllCP=false;
     }
 
-    cFrame[iplanarcontour]->setEta(search.slv());
+    zeta0 = search.slv();
+    cFrame[iplanarcontour]->setEta(zeta0);
 
     cFrame[iplanarcontour]->getOrientation(false).set(0, planarcontour->evalWn(cFrame[iplanarcontour]->getZeta()));
     cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->evalWu(cFrame[iplanarcontour]->getZeta()));

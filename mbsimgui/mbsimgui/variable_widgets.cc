@@ -26,7 +26,11 @@
 #include <mbxmlutils/eval.h>
 #include <utility>
 #include <vector>
-#include <QtGui>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QTableWidget>
+#include <QMessageBox>
+#include <QFileDialog>
 
 using namespace std;
 using namespace MBXMLUtils;

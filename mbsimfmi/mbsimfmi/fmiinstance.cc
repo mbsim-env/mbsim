@@ -8,6 +8,9 @@
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/integrators/integrator.h>
 
+#define MBXMLUTILS_SHAREDLIBNAME FMU
+#include <mbxmlutilshelper/getsharedlibpath_impl.h>
+
 // rethrow a catched exception after prefixing the what() string with the FMI variable name
 #define RETHROW_VR(vr) \
   catch(const std::exception &ex) { \
@@ -59,18 +62,26 @@ namespace MBSimFMI {
     cosim(cosim_),
     instanceName(instanceName_),
     logger(logger_),
-    infoBuffer (logger, this, instanceName, fmiOK,      "info"),
-    warnBuffer (logger, this, instanceName, fmiWarning, "warning"),
-    debugBuffer(logger, this, instanceName, fmiOK,      "debug"),
     time(timeStore),
     z(zStore) {
 
     driftCompensation=none; // only needed for ME
 
     // use the per FMIInstance provided buffers for all subsequent fmatvec::Atom objects
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info,  make_shared<bool>(true),  make_shared<ostream>(&infoBuffer));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn,  make_shared<bool>(true),  make_shared<ostream>(&warnBuffer));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug, make_shared<bool>(false), make_shared<ostream>(&debugBuffer));
+    auto f=[this](const string &s, fmiStatus status, const string &category){
+      logger(this, instanceName.c_str(), status, category.c_str(), s.c_str());
+    };
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Info,       make_shared<bool>(true ),
+      make_shared<fmatvec::PrePostfixedStream>("", "", bind(f, placeholders::_1, fmiOK     , "info"      )));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Warn,       make_shared<bool>(true ),
+      make_shared<fmatvec::PrePostfixedStream>("", "", bind(f, placeholders::_1, fmiWarning, "warning"   )));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Debug,      make_shared<bool>(true ),
+      make_shared<fmatvec::PrePostfixedStream>("", "", bind(f, placeholders::_1, fmiOK     , "debug"     )));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Error,      make_shared<bool>(true ),
+      make_shared<fmatvec::PrePostfixedStream>("", "", bind(f, placeholders::_1, fmiError  , "error"     )));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Deprecated, make_shared<bool>(true ),
+      make_shared<fmatvec::PrePostfixedStream>("", "", bind(f, placeholders::_1, fmiWarning, "deprecated")));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Status,     make_shared<bool>(false));
     // also use these streams for this object.
     // Note: we can not create a FMIInstance object with the correct streams but we can adopt the streams now!
     adoptMessageStreams(); // note: no arg means adopt the current (static) message streams (set above)

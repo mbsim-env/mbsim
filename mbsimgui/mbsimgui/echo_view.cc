@@ -18,7 +18,7 @@
 */
 
 #include <config.h>
-#include <QtGui/QGridLayout>
+#include <QtWidgets/QGridLayout>
 #include <QDesktopWidget>
 #include <QWebFrame>
 #include <QToolBar>
@@ -34,6 +34,7 @@
 #include <iostream>
 #include <QTextStream>
 #include <QProcessEnvironment>
+#include <QUrlQuery>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -43,7 +44,7 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   EchoView::EchoView(QMainWindow *parent) : QMainWindow(parent) {
-    setIconSize(iconSize()*qApp->desktop()->logicalDpiY()/96*0.5);
+    setIconSize(iconSize()*0.5);
 
     out=new QWebView(this);
     out->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
@@ -120,9 +121,7 @@ namespace MBSimGUI {
   }
 
   void EchoView::updateOutput(bool moveToErrorOrEnd) {
-#ifndef _WIN32 // evaluateJavaScript is crashing on Windows
     int currentScrollY=out->page()->mainFrame()->evaluateJavaScript(R"+(window.scrollY)+").toInt();
-#endif
     // some colors
     static const QColor bg(QPalette().brush(QPalette::Active, QPalette::Base).color());
     static const QColor fg(QPalette().brush(QPalette::Active, QPalette::Text).color());
@@ -140,7 +139,7 @@ namespace MBSimGUI {
     <style>
       body {
         color: %1;
-        font-size: %4pt;
+        font-size: 12pt;
       }
       .MBSIMGUI_ERROR { 
         background-color: %2;
@@ -150,22 +149,22 @@ namespace MBSimGUI {
       }
       .MBXMLUTILS_SSE {
         background-color: %3;
-        display: %7;
+        display: %6;
       }
       .MBSIMGUI_WARN {
-        background-color: %5;
-        display: %8;
+        background-color: %4;
+        display: %7;
       }
       .MBSIMGUI_INFO {
-        display: %9;
+        display: %8;
       }
       .MBSIMGUI_DEPRECATED {
-        background-color: %11;
-        display: %12;
+        background-color: %10;
+        display: %11;
       }
       .MBSIMGUI_DEBUG {
-        background-color: %6;
-        display: %10;
+        background-color: %5;
+        display: %9;
       }
     </style>
   </head>
@@ -173,7 +172,6 @@ namespace MBSimGUI {
     <pre>
 )+").
      arg(fg.name()).arg(mergeColor(red, 0.3, bg).name()).arg(mergeColor(red, 0.1, bg).name()).
-     arg(QFont().pointSize()*qApp->desktop()->logicalDpiY()/96).
      arg(mergeColor(yellow, 0.3, bg).name()).arg(mergeColor(blue, 0.3, bg).name()).
      arg(showSSE->isChecked()?"inline":"none").arg(showWarn->isChecked()?"inline":"none").
      arg(showInfo->isChecked()?"inline":"none").arg(showDebug->isChecked()?"inline":"none").
@@ -186,7 +184,6 @@ R"+(
 )+";
     out->setHtml(html);
 
-#ifndef _WIN32 // evaluateJavaScript is crashing on Windows
     if(moveToErrorOrEnd) {
       // scroll to the first error if their is one, else scroll to the end
       out->page()->mainFrame()->evaluateJavaScript(R"+(
@@ -199,7 +196,6 @@ else
     }
     else
       out->page()->mainFrame()->evaluateJavaScript(QString(R"+(window.scrollTo(0, %1);)+").arg(currentScrollY));
-#endif
   }
 
   QSize EchoView::sizeHint() const {
@@ -225,7 +221,7 @@ else
           // if the file name matchs than the error is from this embed
           if(errorFile==boost::filesystem::absolute(D(e->getOwnerDocument())->getDocumentFilename())) {
             // evalute the xpath expression of the error message in this embed ...
-            xercesc::DOMNode *n=D(e->getOwnerDocument())->evalRootXPathExpression(link.queryItemValue("xpath").toStdString());
+            xercesc::DOMNode *n=D(e->getOwnerDocument())->evalRootXPathExpression(QUrlQuery(link).queryItemValue("xpath").toStdString());
             // ... the node n is there the error occured:
             cout<<"MISSING this XML node generated the error addr="<<n<<" name="<<X()%n->getNodeName()<<" value="<<X()%n->getNodeValue()<<endl;
             return true;
@@ -251,7 +247,7 @@ else
     // walk all embeded elements
     if(!walk(model->index(0,0), model, link))
       cout<<"MISSING No XML node found for file="<<link.path().toStdString()<<endl<<
-            "        xpath="<<link.queryItemValue("xpath").toStdString()<<endl;
+            "        xpath="<<QUrlQuery(link).queryItemValue("xpath").toStdString()<<endl;
   }
 
   void EchoView::updateDebug() {
@@ -263,6 +259,7 @@ else
     else {
       showDebug->setDisabled(true);
       showDebug->setChecked(false);
+      updateOutput();
     }
   }
 

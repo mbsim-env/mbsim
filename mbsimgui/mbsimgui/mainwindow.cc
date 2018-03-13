@@ -47,7 +47,18 @@
 #include "basicitemdata.h"
 #include <openmbv/mainwindow.h>
 #include <utime.h>
-#include <QtGui>
+#include <QMenu>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QStatusBar>
+#include <QDockWidget>
+#include <QGridLayout>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QDragEnterEvent>
+#include <QMimeData>
+#include <QSettings>
+#include <QtWidgets/QDesktopWidget>
 #include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include <mbxmlutilshelper/getinstallpath.h>
@@ -79,7 +90,6 @@ namespace MBSimGUI {
   WebDialog* MainWindow::xmlHelpDialog = nullptr;
 
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), autoSave(false), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
-    setIconSize(iconSize()*qApp->desktop()->logicalDpiY()/96);
 
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_ERROROUTPUT=HTMLXPATH";
@@ -119,19 +129,28 @@ namespace MBSimGUI {
     echoView = new EchoView(this);
 
     // initialize streams
+    auto f=[this](const string &s){
+      echoView->addOutputText(s.c_str());
+    };
     debugStreamFlag=std::make_shared<bool>(false);
-    infoBuf.reset(new EchoStream(echoView, "MBSIMGUI_INFO"));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true), make_shared<ostream>(infoBuf.get()));
-    warnBuf.reset(new EchoStream(echoView, "MBSIMGUI_WARN"));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true), make_shared<ostream>(warnBuf.get()));
-    debugBuf.reset(new EchoStream(echoView, "MBSIMGUI_DEBUG"));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag             , make_shared<ostream>(debugBuf.get()));
-    errorBuf.reset(new EchoStream(echoView, "MBSIMGUI_ERROR"));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true), make_shared<ostream>(errorBuf.get()));
-    deprBuf.reset(new EchoStream(echoView, "MBSIMGUI_DEPRECATED"));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true), make_shared<ostream>(deprBuf.get()));
-    statusBuf.reset(new StatusStream(this));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true), make_shared<ostream>(statusBuf.get()));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_INFO\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_WARN\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag             ,
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEBUG\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_ERROR\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEPRECATED\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("", "", [this](const string &s){
+        // call this function only every 0.25 sec
+        if(getStatusTime().elapsed()<250) return;
+        getStatusTime().restart();
+        // print to status bar
+        statusBar()->showMessage(s.c_str());
+      }));
 
     initInlineOpenMBV();
 
@@ -824,8 +843,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveStateVectorAs() {
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    QModelIndex index = model->index(0,0);
     QString file=QFileDialog::getSaveFileName(nullptr, "Export state vector file", "./statevector.asc", "ASCII files (*.asc)");
     if(file!="") {
       saveStateVector(file);
@@ -2125,17 +2142,6 @@ namespace MBSimGUI {
     auto i=s.rfind('\n');
     i = i==string::npos ? 0 : i+1;
     statusBar()->showMessage(s.substr(i).c_str());
-  }
-
-  int StatusStream::sync() {
-    // call this function only every 0.25 sec
-    if(mw->getStatusTime().elapsed()<250)
-      return 0;
-    mw->getStatusTime().restart();
-
-    mw->statusBar()->showMessage(str().c_str());
-    str("");
-    return 0;
   }
 
 }

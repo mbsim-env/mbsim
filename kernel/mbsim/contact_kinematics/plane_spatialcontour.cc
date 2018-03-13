@@ -23,7 +23,6 @@
 #include "mbsim/contours/plane.h"
 #include "mbsim/functions/contact/funcpair_spatialcontour_plane.h"
 #include "mbsim/utils/spatial_contact_search.h"
-#include "mbsim/utils/contact_utils.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -91,10 +90,6 @@ namespace MBSim {
     if(g < -spatialcontour->getThickness()) g = 1;
 
     cFrame[iplane]->setPosition(cFrame[ispatialcontour]->getPosition(false) - Wn*g);
-//    cout << "updateg contour at t = " << spatialcontour->getTime() << endl;
-//    cout << "rS = " << cFrame[ispatialcontour]->getPosition(false) << endl;
-//    cout << "rP = " << cFrame[iplane]->getPosition(false) << endl;
-//    cout << "g = " << g << endl;
   }
 
   void ContactKinematicsPlaneSpatialContour::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
@@ -102,12 +97,7 @@ namespace MBSim {
     const Vec3 u1 = cFrame[iplane]->getOrientation().col(1);
     const Vec3 v1 = cFrame[iplane]->getOrientation().col(2);
     const Mat3x2 R1 = plane->evalWR(Vec2(NONINIT));
-//    const Mat3x2 U1 = plane->evalWU(zeta1);
-//    const Mat3x2 V1 = plane->evalWV(zeta1);
-//    const Mat3x2 N1 = plane->evalWN(zeta1);
 
-//    const Vec3 u2 = cFrame[ispatialcontour]->evalOrientation().col(1);
-//    const Vec3 v2 = cFrame[ispatialcontour]->getOrientation().col(2);
     const Vec3 u2 = spatialcontour->evalWu(cFrame[ispatialcontour]->getZeta());
     const Vec3 v2 = spatialcontour->evalWv(cFrame[ispatialcontour]->getZeta());
     const Mat3x2 R2 = spatialcontour->evalWR(cFrame[ispatialcontour]->getZeta());
@@ -147,24 +137,6 @@ namespace MBSim {
       if (wb.size()>2)
         wb(2) += (/**(vC2-vC1).T()*V1**/-v1.T()*tOm1*R1)*zetad1+v1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
     }
-//    cout << "updatewb contour at t = " << spatialcontour->getTime() << endl;
-//    cout << "zeta = " << zeta0 << endl;
-//    cout<< "n1 = " << n1 << endl;
-//    cout<< "u1 = " << u1 << endl;
-//    cout<< "v1 = " << v1 << endl;
-//    cout<< "u2 = " << u2 << endl;
-//    cout<< "v2 = " << v2 << endl;
-//    cout<< "vC1 = " << vC1 << endl;
-//    cout<< "vC2 = " << vC2 << endl;
-//    cout<< "Om1 = " << Om1 << endl;
-//    cout<< "Om2 = " << Om2 << endl;
-//    cout<< "A = " << A << endl;
-//    cout<< "b = " << b << endl;
-//    cout<< "zetad1 = " << zetad1 << endl;
-//    cout<< "zetad2 = " << zetad2 << endl;
-//    cout<< "R1 = " << R1 << endl;
-//    cout<< "R2 = " << R2 << endl;
-//    cout << "wb = " << wb << endl;
   }
 
 }

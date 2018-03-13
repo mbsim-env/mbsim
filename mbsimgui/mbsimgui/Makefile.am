@@ -4,9 +4,9 @@ bin_PROGRAMS = mbsimgui
 
 mbsimguidir = $(includedir)/mbsimgui
 
-mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS) $(OPENMBV_CFLAGS)
+mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS) $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
 
-mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS)
+mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS)
 
 mbsimgui_SOURCES = mainwindow.cc \
 		   options.cc \
@@ -117,10 +117,14 @@ dist_mbsimguiicon_DATA = icons/simulate.svg \
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines
 pluginsiconengines_DATA = @QT_PLUGINS@/iconengines/*qsvgicon*
-pluginsaccessibledir = @bindir@/accessible
-pluginsaccessible_DATA = @QT_PLUGINS@/accessible/*qtaccessiblewidgets*
-pluginsaccessiblebridgedir = @bindir@/accessiblebridge
-#pluginsaccessiblebridge_DATA = @QT_PLUGINS@/accessiblebridge/*qspiaccessiblebridge* # not available on centos7
+pluginsplatformsdir = @bindir@/platforms
+if COND_WIN32
+pluginsplatforms_DATA = @QT_PLUGINS@/platforms/qwindows.dll
+else
+pluginsplatforms_DATA = @QT_PLUGINS@/platforms/libqxcb.so
+pluginsxcbglintegrationsdir = @bindir@/xcbglintegrations
+pluginsxcbglintegrations_DATA = @QT_PLUGINS@/xcbglintegrations/*qxcb*
+endif
 
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org

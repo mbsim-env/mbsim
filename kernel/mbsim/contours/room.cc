@@ -111,8 +111,4 @@ namespace MBSim {
     CompoundContour::init(stage, config);
   }
 
-  void Room::plot() {
-    RigidContour::plot();
-  }
-
 }

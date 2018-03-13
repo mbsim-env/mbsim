@@ -36,7 +36,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointPlanarContour()  { }
+      ContactKinematicsPointPlanarContour() = default;
 
       /**
        * \brief destructor
@@ -50,6 +50,7 @@ namespace MBSim {
       /***************************************************/
 
       void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
+      void setInitialGuess(const fmatvec::VecV &zeta0_) override;
 
    private:
       /**
@@ -70,6 +71,8 @@ namespace MBSim {
       FuncPairPlanarContourPoint *func;
 
       bool searchAllCP{false};
+
+      double zeta0{0};
   };
 
 }
