@@ -43,15 +43,13 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SingleContact)
 
-  SingleContact::SingleContact(const string &name) : ContourLink(name) {
-  }
-
   void SingleContact::updatewb() {
     if(gdActive[normal]) {
       wb -= evalGlobalForceDirection()(RangeV(0,2),RangeV(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
       wb += evalGlobalForceDirection()(RangeV(0,2),RangeV(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
 
-      contactKinematics->updatewb(wb, evalGeneralizedRelativePosition()(0), cFrame);
+      static_cast<Contact*>(parent)->getContactKinematics()->updatewb(*this);
+//      contactKinematics->updatewb(wb, evalGeneralizedRelativePosition()(0), cFrame);
     }
   }
 
@@ -140,10 +138,8 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedPositions() {
-//    updatePositions();
     if(static_cast<Contact*>(parent)->getUpdaterrel())
       static_cast<Contact*>(parent)->updateGeneralizedPositions();
-//    contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
     updrrel = false;
   }
 
@@ -172,15 +168,11 @@ namespace MBSim {
 
   void SingleContact::updatePositions() {
     throw;
-    contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
-//    updPos = false;
   }
 
   void SingleContact::updatePositions(Frame *frame) {
     if(static_cast<Contact*>(parent)->getUpdaterrel())
       static_cast<Contact*>(parent)->updateGeneralizedPositions();
-    //if(updrrel) contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
-    //if(updPos) contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
   }
 
   void SingleContact::updateVelocities() {
@@ -501,14 +493,12 @@ namespace MBSim {
 
   void SingleContact::calcLinkStatusSize() {
     ContourLink::calcLinkStatusSize();
-    //assert(contactKinematics->getNumberOfPotentialContactPoints() == 1); //not necessary anymore as SingleContact has only one contact point
     LinkStatusSize = 1;
     LinkStatus.resize(LinkStatusSize);
   }
 
   void SingleContact::calcLinkStatusRegSize() {
     ContourLink::calcLinkStatusRegSize();
-    //assert(contactKinematics->getNumberOfPotentialContactPoints() == 1); //not necessary anymore as SingleContact has only one contact point
     LinkStatusRegSize = 1;
     LinkStatusReg.resize(LinkStatusRegSize);
   }
@@ -563,26 +553,6 @@ namespace MBSim {
 
       if (getFrictionDirections() == 0)
         gdActive[tangential] = false;
-    }
-    else if(stage==unknownStage) {
-      if (contactKinematics == nullptr) {
-        contactKinematics = contour[0]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
-        if (contactKinematics == nullptr) {
-          contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[1]), typeid(*contour[0]));
-          if (contactKinematics == nullptr) {
-            contactKinematics = contour[0]->findContactPairingWith(typeid(*contour[1]), typeid(*contour[0]));
-            if (contactKinematics == nullptr) {
-              contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
-              if (contactKinematics == nullptr)
-                throwError("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour[0]).name()) + "\" and Contour\"" + boost::core::demangle(typeid(*contour[1]).name()) + "\"!");
-            }
-          }
-        }
-      }
-    }
-    else if(stage==LASTINITSTAGE) {
-      if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
-        throwError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
     }
     ContourLink::init(stage, config);
     if(fcl) fcl->init(stage, config);
@@ -1300,13 +1270,6 @@ namespace MBSim {
     else if (j == 2) { // IB
       corrSize = gActive * gdActive[normal];
     }
-    //    else if(j==3) { // IG
-    //      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-    //        corrIndk = corrSize;
-    //        corrSizek = gActive[i]*(nla);
-    //        corrSize = corrSizek;
-    //      }
-    //    }
     else if (j == 4) { // IH
       corrSize = gActive * gdActive[normal] * (1 + gdActive[tangential] * getFrictionDirections());
     }

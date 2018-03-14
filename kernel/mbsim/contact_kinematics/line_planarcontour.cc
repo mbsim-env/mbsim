@@ -56,7 +56,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsLinePlanarContour::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
+  bool ContactKinematicsLinePlanarContour::updateg(SingleContact &contact) {
 
     PlanarContactSearch search(func);
     search.setTolerance(tol);
@@ -71,39 +71,42 @@ namespace MBSim {
     }
 
     zeta0 = search.slv();
-    cFrame[iplanarcontour]->setEta(zeta0);
+    contact.getContourFrame(iplanarcontour)->setEta(zeta0);
 
-    cFrame[iline]->setOrientation(line->getFrame()->evalOrientation());
-    cFrame[iplanarcontour]->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
-    cFrame[iplanarcontour]->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
-    cFrame[iplanarcontour]->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
+    contact.getContourFrame(iline)->setOrientation(line->getFrame()->evalOrientation());
+    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
+    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
+    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
 
-    cFrame[iplanarcontour]->setPosition(planarcontour->evalPosition(cFrame[iplanarcontour]->getZeta()));
+    contact.getContourFrame(iplanarcontour)->setPosition(planarcontour->evalPosition(contact.getContourFrame(iplanarcontour)->getZeta()));
 
-    Vec3 Wn = cFrame[iline]->getOrientation(false).col(0);
+    Vec3 Wn = contact.getContourFrame(iline)->getOrientation(false).col(0);
 
-    if(planarcontour->isZetaOutside(cFrame[iplanarcontour]->getZeta()))
+    double g;
+    if(planarcontour->isZetaOutside(contact.getContourFrame(iplanarcontour)->getZeta()))
       g = 1;
     else
-      g = Wn.T()*(cFrame[iplanarcontour]->getPosition(false) - line->getFrame()->getPosition());
+      g = Wn.T()*(contact.getContourFrame(iplanarcontour)->getPosition(false) - line->getFrame()->getPosition());
     if(g < -planarcontour->getThickness()) g = 1;
 
-    cFrame[iline]->setPosition(cFrame[iplanarcontour]->getPosition(false) - Wn*g);
+    contact.getContourFrame(iline)->setPosition(contact.getContourFrame(iplanarcontour)->getPosition(false) - Wn*g);
+    contact.getGeneralizedRelativePosition(false)(0) = g;
+    return g <= 0;
   }
 
-  void ContactKinematicsLinePlanarContour::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    const Vec3 n1 = cFrame[iline]->evalOrientation().col(0);
-    const Vec3 u1 = cFrame[iline]->getOrientation().col(1);
+  void ContactKinematicsLinePlanarContour::updatewb(SingleContact &contact) {
+    const Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);
+    const Vec3 u1 = contact.getContourFrame(iline)->getOrientation().col(1);
     const Vec3 R1 = u1;
 
-    const Vec3 v2 = planarcontour->evalWv(cFrame[iplanarcontour]->getZeta());
-    const Vec3 R2 = planarcontour->evalWs(cFrame[iplanarcontour]->getZeta());
-    const Vec3 U2 = planarcontour->evalParDer1Wu(cFrame[iplanarcontour]->getZeta());
+    const Vec3 v2 = planarcontour->evalWv(contact.getContourFrame(iplanarcontour)->getZeta());
+    const Vec3 R2 = planarcontour->evalWs(contact.getContourFrame(iplanarcontour)->getZeta());
+    const Vec3 U2 = planarcontour->evalParDer1Wu(contact.getContourFrame(iplanarcontour)->getZeta());
 
-    const Vec3 vC1 = cFrame[iline]->evalVelocity();
-    const Vec3 vC2 = cFrame[iplanarcontour]->evalVelocity();
-    const Vec3 Om1 = cFrame[iline]->evalAngularVelocity();
-    const Vec3 Om2 = cFrame[iplanarcontour]->evalAngularVelocity();
+    const Vec3 vC1 = contact.getContourFrame(iline)->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(iplanarcontour)->evalVelocity();
+    const Vec3 Om1 = contact.getContourFrame(iline)->evalAngularVelocity();
+    const Vec3 Om2 = contact.getContourFrame(iplanarcontour)->evalAngularVelocity();
 
     SqrMat A(2,NONINIT);
     A(0,0) = -u1.T()*R1;
@@ -119,10 +122,9 @@ namespace MBSim {
     const Mat3x3 tOm1 = tilde(Om1);
     const Mat3x3 tOm2 = tilde(Om2);
 
-    wb(0) += (/**(vC2-vC1).T()*N1**/-n1.T()*tOm1*R1)*zetad(0)+n1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
-    if (wb.size()>1)
-      wb(1) += (/**(vC2-vC1).T()*U1**/-u1.T()*tOm1*R1)*zetad(0)+u1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
+    contact.getwb(false)(0) += (/**(vC2-vC1).T()*N1**/-n1.T()*tOm1*R1)*zetad(0)+n1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
+    if (contact.getwb(false).size()>1)
+      contact.getwb(false)(1) += (/**(vC2-vC1).T()*U1**/-u1.T()*tOm1*R1)*zetad(0)+u1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
   }
 
 }
-

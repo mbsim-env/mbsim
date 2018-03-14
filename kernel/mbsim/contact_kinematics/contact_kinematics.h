@@ -20,6 +20,7 @@
 #ifndef _CONTACT_KINEMATICS_H_
 #define _CONTACT_KINEMATICS_H_
 
+#include "mbsim/links/single_contact.h"
 #include "fmatvec/fmatvec.h"
 #include "fmatvec/atom.h"
 #include <vector>
@@ -28,7 +29,6 @@ namespace MBSim {
 
   class ContourFrame;
   class Contour;
-  class SingleContact;
 
   /** 
    * \brief basic class for contact kinematical calculations
@@ -65,7 +65,7 @@ namespace MBSim {
        */
       virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) = 0;
 
-      virtual bool updateg(std::vector<SingleContact> &contact);
+      virtual bool updateg(std::vector<SingleContact> &contact) { return updateg(contact[0]); }
       virtual bool updateg(SingleContact &contact) { return false; }
 
       /**
@@ -76,6 +76,9 @@ namespace MBSim {
        * \param cFrame contact point parametrisation
        */
       virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) = 0;
+
+      virtual void updatewb(std::vector<SingleContact> &contact) { updatewb(contact[0]); }
+      virtual void updatewb(SingleContact &contact) { }
       
       /** 
        * \brief treats ordering of contours

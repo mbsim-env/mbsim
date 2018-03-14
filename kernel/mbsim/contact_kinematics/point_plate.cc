@@ -22,7 +22,6 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/plate.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/links/single_contact.h"
 
 using namespace fmatvec;
 using namespace std;

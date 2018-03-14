@@ -57,6 +57,7 @@ namespace MBSim {
   void Contact::updatewb() {
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updatewb();
+//    contactKinematics->updatewb(contacts);
   }
 
   void Contact::updateW(int j) {
@@ -262,7 +263,6 @@ namespace MBSim {
         contactName << name << "_" <<0;
         if (contactKinematics->getNumberOfPotentialContactPoints() > 1) contactName << "_" << k;
         contacts.push_back(SingleContact(contactName.str()));
-        contacts[k].setContactKinematics(contactKinematics->getContactKinematics(k) ? contactKinematics->getContactKinematics(k) : contactKinematics);
         contacts[k].connect(contour[0], contour[1]);
         contacts[k].plotFeature = plotFeature;
         contacts[k].plotFeatureForChildren = plotFeatureForChildren;

@@ -21,7 +21,6 @@
 #include "mbsim/contact_kinematics/compoundcontour_compoundcontour.h"
 #include "mbsim/contours/compound_contour.h"
 #include "mbsim/utils/contact_utils.h"
-#include "mbsim/links/single_contact.h"
 
 using namespace fmatvec;
 using namespace std;

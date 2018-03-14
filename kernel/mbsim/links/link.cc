@@ -263,4 +263,9 @@ namespace MBSim {
     return La;
   }
 
+  fmatvec::Vec& Link::getwb(bool check) {
+    assert((not check) or (not ds->getUpdatewb()));
+    return wb;
+  }
+
 }

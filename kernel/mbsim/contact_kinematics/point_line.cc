@@ -41,6 +41,39 @@ namespace MBSim {
     }
   }
 
+  bool ContactKinematicsPointLine::updateg(SingleContact &contact) {
+    contact.getContourFrame(iline)->setOrientation(line->getFrame()->evalOrientation());
+    contact.getContourFrame(ipoint)->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
+
+    Vec3 Wn = contact.getContourFrame(iline)->getOrientation(false).col(0);
+
+    Vec3 Wd =  point->getFrame()->evalPosition() - line->getFrame()->evalPosition();
+
+    double g = Wn.T()*Wd;
+
+    contact.getContourFrame(ipoint)->setPosition(point->getFrame()->getPosition());
+    contact.getContourFrame(iline)->setPosition(contact.getContourFrame(ipoint)->getPosition(false) - Wn*g);
+    contact.getGeneralizedRelativePosition(false)(0) = g;
+    return g <= 0;
+  }
+
+  void ContactKinematicsPointLine::updatewb(SingleContact &contact) {
+    Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);
+    Vec3 u1 = contact.getContourFrame(iline)->getOrientation().col(1);
+    Vec3 vC1 = contact.getContourFrame(iline)->evalVelocity();
+    Vec3 vC2 = contact.getContourFrame(ipoint)->evalVelocity();
+    Vec3 Om1 = contact.getContourFrame(iline)->evalAngularVelocity();
+
+    double sd1 = u1.T()*(vC2 - vC1);
+
+    contact.getwb(false)(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
+
+    if(contact.getwb(false).size() > 1)
+      contact.getwb(false)(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
+  }
+
   void ContactKinematicsPointLine::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     cFrame[iline]->setOrientation(line->getFrame()->evalOrientation());
     cFrame[ipoint]->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));

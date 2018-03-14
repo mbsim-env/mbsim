@@ -21,7 +21,6 @@
 #include "fclbox_fclbox.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/fcl_box.h"
-#include "mbsim/links/single_contact.h"
 #include "fcl/narrowphase/distance.h"
 
 using namespace fmatvec;

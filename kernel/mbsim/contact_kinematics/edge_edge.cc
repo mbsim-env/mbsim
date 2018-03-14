@@ -21,7 +21,6 @@
 #include "mbsim/contact_kinematics/edge_edge.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/edge.h"
-#include "mbsim/links/single_contact.h"
 
 using namespace fmatvec;
 using namespace std;
