@@ -17,40 +17,40 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_FCLBOX_FCLBOX_H_
-#define _CONTACT_KINEMATICS_FCLBOX_FCLBOX_H_
+#ifndef _CONTACT_KINEMATICS_FCLCONTOUR_FCLCONTOUR_H_
+#define _CONTACT_KINEMATICS_FCLCONTOUR_FCLCONTOUR_H_
 
 #include "contact_kinematics.h"
 #include "fcl/narrowphase/collision_object.h"
 
 namespace MBSim {
 
-  class FCLBox;
+  class FCLContour;
 
   /** 
-   * \brief pairing box to box using FCL
+   * \brief pairing contour to contour using FCL
    * \author Martin Foerg
    */
-  class ContactKinematicsFCLBoxFCLBox : public ContactKinematics {
+  class ContactKinematicsFCLContourFCLContour : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
-      ContactKinematicsFCLBoxFCLBox(int maxNumContacts=1) : ContactKinematics(maxNumContacts) { }
+      ContactKinematicsFCLContourFCLContour(int maxNumContacts=1) : ContactKinematics(maxNumContacts) { }
       void assignContours(const std::vector<Contour*> &contour) override;
       bool updateg(std::vector<SingleContact> &contact) override;
       void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsFCLBoxFCLBox::updatewb): Not implemented!"); };
+      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsFCLContourFCLContour::updatewb): Not implemented!"); };
       /***************************************************/
 
     protected:
       /**
        * \brief contour index
        */
-      int ibox0, ibox1;
+      int icontour0, icontour1;
 
       /**
        * \brief contour classes
        */
-      FCLBox *box0, *box1;
+      FCLContour *contour0, *contour1;
 
       std::shared_ptr<fcl::CollisionObject<double> > obj0, obj1;
   };

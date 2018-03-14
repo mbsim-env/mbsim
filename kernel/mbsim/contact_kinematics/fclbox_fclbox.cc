@@ -20,7 +20,7 @@
 #include <config.h> 
 #include "fclbox_fclbox.h"
 #include "mbsim/frames/contour_frame.h"
-#include "mbsim/contours/fcl_box.h"
+#include "mbsim/contours/fcl_contour.h"
 #include "fcl/narrowphase/distance.h"
 
 using namespace fmatvec;
@@ -59,19 +59,19 @@ namespace MBSim {
     return B;
   }
 
-  void ContactKinematicsFCLBoxFCLBox::assignContours(const vector<Contour*> &contour) {
-    ibox0 = 0; ibox1 = 1;
-    box0 = static_cast<FCLBox*>(contour[0]);
-    box1 = static_cast<FCLBox*>(contour[1]);
-    obj0 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(box0->getCollisionGeometry()));
-    obj1 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(box1->getCollisionGeometry()));
+  void ContactKinematicsFCLContourFCLContour::assignContours(const vector<Contour*> &contour) {
+    icontour0 = 0; icontour1 = 1;
+    contour0 = static_cast<FCLContour*>(contour[0]);
+    contour1 = static_cast<FCLContour*>(contour[1]);
+    obj0 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(contour0->getCollisionGeometry()));
+    obj1 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(contour1->getCollisionGeometry()));
   }
 
-  bool ContactKinematicsFCLBoxFCLBox::updateg(vector<SingleContact> &contact) {
-    obj0->setTranslation(Vec3ToVector3d(box0->getFrame()->evalPosition()));
-    obj0->setRotation(SqrMat3ToMatrix3d(box0->getFrame()->getOrientation()));
-    obj1->setTranslation(Vec3ToVector3d(box1->getFrame()->evalPosition()));
-    obj1->setRotation(SqrMat3ToMatrix3d(box1->getFrame()->getOrientation()));
+  bool ContactKinematicsFCLContourFCLContour::updateg(vector<SingleContact> &contact) {
+    obj0->setTranslation(Vec3ToVector3d(contour0->getFrame()->evalPosition()));
+    obj0->setRotation(SqrMat3ToMatrix3d(contour0->getFrame()->getOrientation()));
+    obj1->setTranslation(Vec3ToVector3d(contour1->getFrame()->evalPosition()));
+    obj1->setRotation(SqrMat3ToMatrix3d(contour1->getFrame()->getOrientation()));
 
     CollisionRequest<double> request(maxNumContacts,true);
     CollisionResult<double> result;
@@ -94,21 +94,21 @@ namespace MBSim {
       t1 = crossProduct(n,t);
       t2 = crossProduct(n,t1);
       contact[i].getGeneralizedRelativePosition(false)(0) = g;
-      contact[i].getContourFrame(ibox0)->getOrientation(false).set(0, n);
-      contact[i].getContourFrame(ibox0)->getOrientation(false).set(1, t1);
-      contact[i].getContourFrame(ibox0)->getOrientation(false).set(2, t2);
-      contact[i].getContourFrame(ibox1)->getOrientation(false).set(0, -n);
-      contact[i].getContourFrame(ibox1)->getOrientation(false).set(1, -t1);
-      contact[i].getContourFrame(ibox1)->getOrientation(false).set(2, t2);
-      contact[i].getContourFrame(ibox0)->setPosition(r + n*g/2.);
-      contact[i].getContourFrame(ibox1)->setPosition(r - n*g/2.);
+      contact[i].getContourFrame(icontour0)->getOrientation(false).set(0, n);
+      contact[i].getContourFrame(icontour0)->getOrientation(false).set(1, t1);
+      contact[i].getContourFrame(icontour0)->getOrientation(false).set(2, t2);
+      contact[i].getContourFrame(icontour1)->getOrientation(false).set(0, -n);
+      contact[i].getContourFrame(icontour1)->getOrientation(false).set(1, -t1);
+      contact[i].getContourFrame(icontour1)->getOrientation(false).set(2, t2);
+      contact[i].getContourFrame(icontour0)->setPosition(r + n*g/2.);
+      contact[i].getContourFrame(icontour1)->setPosition(r - n*g/2.);
       }
       for(int i=result.numContacts(); i<maxNumContacts; i++) {
         contact[i].getGeneralizedRelativePosition(false)(0) = 1;
-        contact[i].getContourFrame(ibox0)->setPosition(box0->getFrame()->getPosition());
-        contact[i].getContourFrame(ibox0)->setOrientation(box0->getFrame()->getOrientation());
-        contact[i].getContourFrame(ibox1)->setPosition(box1->getFrame()->getPosition());
-        contact[i].getContourFrame(ibox1)->setOrientation(box1->getFrame()->getOrientation());
+        contact[i].getContourFrame(icontour0)->setPosition(contour0->getFrame()->getPosition());
+        contact[i].getContourFrame(icontour0)->setOrientation(contour0->getFrame()->getOrientation());
+        contact[i].getContourFrame(icontour1)->setPosition(contour1->getFrame()->getPosition());
+        contact[i].getContourFrame(icontour1)->setOrientation(contour1->getFrame()->getOrientation());
       }
       return true;
     }
@@ -119,20 +119,20 @@ namespace MBSim {
 //      g = result.min_distance;
       for(int i=0; i<maxNumContacts; i++) {
       contact[i].getGeneralizedRelativePosition(false)(0) = 1;
-      contact[i].getContourFrame(ibox0)->setPosition(box0->getFrame()->getPosition());
-      contact[i].getContourFrame(ibox0)->setOrientation(box0->getFrame()->getOrientation());
-      contact[i].getContourFrame(ibox1)->setPosition(box1->getFrame()->getPosition());
-      contact[i].getContourFrame(ibox1)->setOrientation(box1->getFrame()->getOrientation());
+      contact[i].getContourFrame(icontour0)->setPosition(contour0->getFrame()->getPosition());
+      contact[i].getContourFrame(icontour0)->setOrientation(contour0->getFrame()->getOrientation());
+      contact[i].getContourFrame(icontour1)->setPosition(contour1->getFrame()->getPosition());
+      contact[i].getContourFrame(icontour1)->setOrientation(contour1->getFrame()->getOrientation());
       }
       return false;
     }
   }
 
-  void ContactKinematicsFCLBoxFCLBox::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    obj0->setTranslation(Vec3ToVector3d(box0->getFrame()->evalPosition()));
-    obj0->setRotation(SqrMat3ToMatrix3d(box0->getFrame()->getOrientation()));
-    obj1->setTranslation(Vec3ToVector3d(box1->getFrame()->evalPosition()));
-    obj1->setRotation(SqrMat3ToMatrix3d(box1->getFrame()->getOrientation()));
+  void ContactKinematicsFCLContourFCLContour::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
+    obj0->setTranslation(Vec3ToVector3d(contour0->getFrame()->evalPosition()));
+    obj0->setRotation(SqrMat3ToMatrix3d(contour0->getFrame()->getOrientation()));
+    obj1->setTranslation(Vec3ToVector3d(contour1->getFrame()->evalPosition()));
+    obj1->setRotation(SqrMat3ToMatrix3d(contour1->getFrame()->getOrientation()));
 
     CollisionRequest<double> request(1,true);
     CollisionResult<double> result;
@@ -151,14 +151,14 @@ namespace MBSim {
       }
       t1 = crossProduct(n,t);
       t2 = crossProduct(n,t1);
-      cFrame[ibox0]->getOrientation(false).set(0, n);
-      cFrame[ibox0]->getOrientation(false).set(1, t1);
-      cFrame[ibox0]->getOrientation(false).set(2, t2);
-      cFrame[ibox1]->getOrientation(false).set(0, -n);
-      cFrame[ibox0]->getOrientation(false).set(1, -t1);
-      cFrame[ibox0]->getOrientation(false).set(2, t2);
-      cFrame[ibox0]->setPosition(r + n*g/2.);
-      cFrame[ibox1]->setPosition(r - n*g/2.);
+      cFrame[icontour0]->getOrientation(false).set(0, n);
+      cFrame[icontour0]->getOrientation(false).set(1, t1);
+      cFrame[icontour0]->getOrientation(false).set(2, t2);
+      cFrame[icontour1]->getOrientation(false).set(0, -n);
+      cFrame[icontour0]->getOrientation(false).set(1, -t1);
+      cFrame[icontour0]->getOrientation(false).set(2, t2);
+      cFrame[icontour0]->setPosition(r + n*g/2.);
+      cFrame[icontour1]->setPosition(r - n*g/2.);
     }
     else {
 //      DistanceRequest<double> request;
@@ -166,10 +166,10 @@ namespace MBSim {
 //      distance<double>(obj0.get(), obj1.get(), request, result);
 //      g = result.min_distance;
       g = 1;
-      cFrame[ibox0]->setPosition(box0->getFrame()->getPosition());
-      cFrame[ibox0]->setOrientation(box0->getFrame()->getOrientation());
-      cFrame[ibox1]->setPosition(box1->getFrame()->getPosition());
-      cFrame[ibox1]->setOrientation(box1->getFrame()->getOrientation());
+      cFrame[icontour0]->setPosition(contour0->getFrame()->getPosition());
+      cFrame[icontour0]->setOrientation(contour0->getFrame()->getOrientation());
+      cFrame[icontour1]->setPosition(contour1->getFrame()->getPosition());
+      cFrame[icontour1]->setOrientation(contour1->getFrame()->getOrientation());
     }
 
   }

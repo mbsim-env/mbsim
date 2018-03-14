@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/contours/fcl_box.h"
-
+#include "fcl/geometry/shape/box.h"
 #include <openmbvcppinterface/cuboid.h>
 
 using namespace std;
@@ -48,13 +48,9 @@ namespace MBSim {
     setLength(E(e)->getText<Vec3>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      DOMElement *d, *t;
-      d=E(e)->getFirstElementChildNamed(MBSIM%"diffuseColor");
-      t=E(e)->getFirstElementChildNamed(MBSIM%"transparency");
-      if( d &&  t) enableOpenMBV(_diffuseColor=E(d)->getText<Vec3>(), _transparency=E(e)->getText<double>());
-      if(!d &&  t) enableOpenMBV(                          _transparency=E(e)->getText<double>());
-      if( d && !t) enableOpenMBV(_diffuseColor=E(d)->getText<Vec3>()                                       );
-      if(!d && !t) enableOpenMBV(                                                                          );
+      OpenMBVCuboid ombv;
+      ombv.initializeUsingXML(e);
+      openMBVRigidBody=ombv.createOpenMBV();
     }
   }
 

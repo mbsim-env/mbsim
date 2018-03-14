@@ -49,4 +49,5 @@ contourinclude_HEADERS = contour.h\
 			 contour_interpolation.h\
 			 contour_quad.h\
 			 spatial_contour.h\
+			 fcl_contour.h\
 			 fcl_box.h

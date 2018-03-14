@@ -20,9 +20,7 @@
 #ifndef _FCL_BOX_H_
 #define _FCL_BOX_H_
 
-#include "mbsim/contours/rigid_contour.h"
-#include "fcl/geometry/shape/box.h"
-
+#include "mbsim/contours/fcl_contour.h"
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
 
@@ -31,13 +29,13 @@ namespace MBSim {
   /**
    * \brief FCLBox
    */
-  class FCLBox : public RigidContour {
+  class FCLBox : public FCLContour {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      FCLBox(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
+      FCLBox(const std::string &name="", Frame *R=nullptr) : FCLContour(name,R) { }
 
       FCLBox(const std::string &name, double lx_, double ly_, double lz_, Frame *R=nullptr);
 
@@ -58,8 +56,6 @@ namespace MBSim {
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
 
-      std::shared_ptr<fcl::CollisionGeometry<double> > getCollisionGeometry() const { return cg; }
-
     private:
       /**
        * \brief x-, y- and z-length of cuboid
@@ -67,8 +63,6 @@ namespace MBSim {
       double lx{1.0};
       double ly{1.0};
       double lz{1.0};
-
-      std::shared_ptr<fcl::CollisionGeometry<double> > cg;
 
       void init(InitStage stage, const InitConfigSet &config) override;
   };

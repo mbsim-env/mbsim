@@ -188,7 +188,7 @@ namespace MBSim {
       return new ContactKinematicsPlaneSpatialContour;
 
     else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLBox) )
-      return new ContactKinematicsFCLBoxFCLBox(4);
+      return new ContactKinematicsFCLContourFCLContour(4);
 
     else
       return nullptr;
