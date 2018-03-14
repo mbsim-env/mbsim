@@ -44,7 +44,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointFrustum::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointFrustum::updateg(SingleContact &contact, int i) {
     double eps = 5.e-2; // tolerance for rough contact description
     Vec3 Wd = point->getFrame()->evalPosition() - frustum->getFrame()->evalPosition(); // difference vector of Point and Frustum basis point in inertial FR
     Vec3 Wa = frustum->getFrame()->evalOrientation().col(1); // (height) axis in inertial FR
@@ -57,7 +57,7 @@ namespace MBSim {
     double r_h = r(0) + (r(1)-r(0))/h * s; // radius of Frustum at s
     bool outCont = frustum->getOutCont(); // contact on outer surface?
 
-
+    double g;
     if(s<0 || s>h  || d < (r_h-eps) || d > (r_h+eps))
       g = 1.;
     else {
@@ -66,36 +66,37 @@ namespace MBSim {
 
         Vec3 b = Wd-s*Wa;
         b /= d;
-        cFrame[ifrustum]->getOrientation(false).set(0,  cos(phi)*b - sin(phi)*Wa);
-        cFrame[ipoint]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
+        contact.getContourFrame(ifrustum)->getOrientation(false).set(0,  cos(phi)*b - sin(phi)*Wa);
+        contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(ifrustum)->getOrientation(false).col(0));
         g = (d-r_h)*cos(phi);
       }
       else { // contact on inner surface
         double  phi = atan((r(1) - r(0))/h); // half cone angle
         Vec3 b = Wd-s*Wa;
         b /= d;
-        cFrame[ifrustum]->getOrientation(false).set(0, sin(phi)*Wa - cos(phi)*b);
-        cFrame[ipoint]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
+        contact.getContourFrame(ifrustum)->getOrientation(false).set(0, sin(phi)*Wa - cos(phi)*b);
+        contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(ifrustum)->getOrientation(false).col(0));
         g = (r_h-d)*cos(phi);
       }
 
       //Set positions
-      cFrame[ipoint]->setPosition(point->getFrame()->getPosition());
-      cFrame[ifrustum]->setPosition(cFrame[ipoint]->getPosition(false) + cFrame[ipoint]->getOrientation(false).col(0)*g);
+      contact.getContourFrame(ipoint)->setPosition(point->getFrame()->getPosition());
+      contact.getContourFrame(ifrustum)->setPosition(contact.getContourFrame(ipoint)->getPosition(false) + contact.getContourFrame(ipoint)->getOrientation(false).col(0)*g);
 
       /*Set tangential (=friction) directions*/
       // radial direction
       if(outCont)
-        cFrame[ifrustum]->getOrientation(false).set(1, (Wa + sin(phi)*cFrame[ifrustum]->getOrientation(false).col(0))/cos(phi));
+        contact.getContourFrame(ifrustum)->getOrientation(false).set(1, (Wa + sin(phi)*contact.getContourFrame(ifrustum)->getOrientation(false).col(0))/cos(phi));
       else
-        cFrame[ifrustum]->getOrientation(false).set(1, (Wa - sin(phi)*cFrame[ifrustum]->getOrientation(false).col(0))/cos(phi));
+        contact.getContourFrame(ifrustum)->getOrientation(false).set(1, (Wa - sin(phi)*contact.getContourFrame(ifrustum)->getOrientation(false).col(0))/cos(phi));
 
-      cFrame[ipoint]->getOrientation(false).set(1, -cFrame[ifrustum]->getOrientation(false).col(1));
+      contact.getContourFrame(ipoint)->getOrientation(false).set(1, -contact.getContourFrame(ifrustum)->getOrientation(false).col(1));
 
       //azimuthal
-      cFrame[ifrustum]->getOrientation(false).set(2, crossProduct(cFrame[ifrustum]->getOrientation(false).col(0),cFrame[ifrustum]->getOrientation(false).col(1)));
-      cFrame[ipoint]->getOrientation(false).set(2, cFrame[ifrustum]->getOrientation(false).col(2));
+      contact.getContourFrame(ifrustum)->getOrientation(false).set(2, crossProduct(contact.getContourFrame(ifrustum)->getOrientation(false).col(0),contact.getContourFrame(ifrustum)->getOrientation(false).col(1)));
+      contact.getContourFrame(ipoint)->getOrientation(false).set(2, contact.getContourFrame(ifrustum)->getOrientation(false).col(2));
     }
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
 }

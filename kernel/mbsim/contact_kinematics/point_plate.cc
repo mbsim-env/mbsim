@@ -43,7 +43,7 @@ namespace MBSim {
     }
   }
 
-  bool ContactKinematicsPointPlate::updateg(SingleContact &contact, int i) {
+  void ContactKinematicsPointPlate::updateg(SingleContact &contact, int i) {
     double g;
     Vec3 Ar = plate->getFrame()->evalOrientation().T() * (point->getFrame()->evalPosition() - plate->getFrame()->evalPosition());
     if(fabs(Ar(1)) <= plate->getYLength()/2 and fabs(Ar(2)) <= plate->getZLength()/2){
@@ -62,26 +62,6 @@ namespace MBSim {
     else
       g = 1.;
     contact.getGeneralizedRelativePosition(false)(0) = g;
-    return g <= 0;
-  }
-
-  void ContactKinematicsPointPlate::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    Vec3 Ar = plate->getFrame()->evalOrientation().T() * (point->getFrame()->evalPosition() - plate->getFrame()->evalPosition());
-    if(fabs(Ar(1)) <= plate->getYLength()/2 and fabs(Ar(2)) <= plate->getZLength()/2){
-      g = Ar(0);
-      if(g < -plate->getThickness())
-        g = 1;
-      else {
-        cFrame[ipoint]->getPosition(false) = point->getFrame()->getPosition();
-        cFrame[iplate]->getPosition(false) = point->getFrame()->getPosition() - g * plate->getFrame()->getOrientation().col(0);
-        cFrame[iplate]->getOrientation(false) = plate->getFrame()->getOrientation();
-        cFrame[ipoint]->getOrientation(false).set(0,-plate->getFrame()->getOrientation().col(0));
-        cFrame[ipoint]->getOrientation(false).set(1,-plate->getFrame()->getOrientation().col(1));
-        cFrame[ipoint]->getOrientation(false).set(2,plate->getFrame()->getOrientation().col(2));
-      }
-    }
-    else
-      g = 1.;
   }
 
 }

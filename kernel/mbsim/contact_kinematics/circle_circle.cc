@@ -44,45 +44,45 @@ namespace MBSim {
     rEff1 = circle1->getSign()*circle1->getRadius();
   }
 
-  void ContactKinematicsCircleCircle::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCircleCircle::updateg(SingleContact &contact, int i) {
     Vec3 WrD = circle0->getFrame()->evalPosition() - circle1->getFrame()->evalPosition();
-    cFrame[icircle1]->getOrientation(false).set(0, circle1->getSign()*WrD/nrm2(WrD));
-    cFrame[icircle0]->getOrientation(false).set(0, -cFrame[icircle1]->getOrientation(false).col(0));
-    cFrame[icircle0]->getOrientation(false).set(2, circle0->getSign()*circle0->getFrame()->getOrientation(false).col(2));
-    cFrame[icircle1]->getOrientation(false).set(2, circle1->getSign()*circle1->getFrame()->getOrientation(false).col(2));
-    cFrame[icircle0]->getOrientation(false).set(1, crossProduct(cFrame[icircle0]->getOrientation(false).col(2),cFrame[icircle0]->getOrientation(false).col(0)));
-    cFrame[icircle1]->getOrientation(false).set(1, crossProduct(cFrame[icircle1]->getOrientation(false).col(2),cFrame[icircle1]->getOrientation(false).col(0)));
-    cFrame[icircle0]->setPosition(circle0->getFrame()->getPosition() + cFrame[icircle0]->getOrientation(false).col(0)*rEff0);
-    cFrame[icircle1]->setPosition(circle1->getFrame()->getPosition() + cFrame[icircle1]->getOrientation(false).col(0)*rEff1);
+    contact.getContourFrame(icircle1)->getOrientation(false).set(0, circle1->getSign()*WrD/nrm2(WrD));
+    contact.getContourFrame(icircle0)->getOrientation(false).set(0, -contact.getContourFrame(icircle1)->getOrientation(false).col(0));
+    contact.getContourFrame(icircle0)->getOrientation(false).set(2, circle0->getSign()*circle0->getFrame()->getOrientation(false).col(2));
+    contact.getContourFrame(icircle1)->getOrientation(false).set(2, circle1->getSign()*circle1->getFrame()->getOrientation(false).col(2));
+    contact.getContourFrame(icircle0)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle0)->getOrientation(false).col(2),contact.getContourFrame(icircle0)->getOrientation(false).col(0)));
+    contact.getContourFrame(icircle1)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle1)->getOrientation(false).col(2),contact.getContourFrame(icircle1)->getOrientation(false).col(0)));
+    contact.getContourFrame(icircle0)->setPosition(circle0->getFrame()->getPosition() + contact.getContourFrame(icircle0)->getOrientation(false).col(0)*rEff0);
+    contact.getContourFrame(icircle1)->setPosition(circle1->getFrame()->getPosition() + contact.getContourFrame(icircle1)->getOrientation(false).col(0)*rEff1);
 
-    g = cFrame[icircle1]->getOrientation(false).col(0).T()*WrD - rEff0 - rEff1;
+    contact.getGeneralizedRelativePosition(false)(0) = contact.getContourFrame(icircle1)->getOrientation(false).col(0).T()*WrD - rEff0 - rEff1;
   }
       
-  void ContactKinematicsCircleCircle::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsCircleCircle::updatewb(SingleContact &contact, int i) {
     throw; // TODO: check implementation for the example that throws this exception
 
-    const Vec3 KrPC1 = circle0->getFrame()->evalOrientation().T()*(cFrame[icircle0]->evalPosition() - circle0->getFrame()->evalPosition());
+    const Vec3 KrPC1 = circle0->getFrame()->evalOrientation().T()*(contact.getContourFrame(icircle0)->evalPosition() - circle0->getFrame()->evalPosition());
     Vec2 zeta1;
     zeta1(0)=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
-    const Vec3 n1 = cFrame[icircle0]->getOrientation().col(0); //crossProduct(s1, t1);
+    const Vec3 n1 = contact.getContourFrame(icircle0)->getOrientation().col(0); //crossProduct(s1, t1);
     const Vec3 u1 = circle0->evalWu(zeta1);
     const Vec3 R1 = circle0->evalWs(zeta1);
     const Vec3 N1 = circle0->evalParDer1Wn(zeta1);
     const Vec3 U1 = circle0->evalParDer1Wu(zeta1);
 
-    const Vec3 KrPC2 = circle1->getFrame()->evalOrientation().T()*(cFrame[icircle1]->evalPosition() - circle1->getFrame()->evalPosition());
+    const Vec3 KrPC2 = circle1->getFrame()->evalOrientation().T()*(contact.getContourFrame(icircle1)->evalPosition() - circle1->getFrame()->evalPosition());
     Vec2 zeta2;
     zeta2(0)=(KrPC2(1)>0) ? acos(KrPC2(0)/nrm2(KrPC2)) : 2.*M_PI - acos(KrPC2(0)/nrm2(KrPC2));
-    const Vec3 n2 = cFrame[icircle1]->getOrientation().col(0); //crossProduct(s1, t1);
+    const Vec3 n2 = contact.getContourFrame(icircle1)->getOrientation().col(0); //crossProduct(s1, t1);
     const Vec3 u2 = circle1->evalWu(zeta2);
     const Vec3 R2 = circle1->evalWs(zeta2);
     const Vec3 U2 = circle1->evalParDer1Wu(zeta2);
     const Vec3 v2 = crossProduct(n2, u2);
 
-    const Vec3 vC1 = cFrame[icircle0]->getVelocity();
-    const Vec3 vC2 = cFrame[icircle1]->getVelocity();
-    const Vec3 Om1 = cFrame[icircle0]->getAngularVelocity();
-    const Vec3 Om2 = cFrame[icircle1]->getAngularVelocity();
+    const Vec3 vC1 = contact.getContourFrame(icircle0)->getVelocity();
+    const Vec3 vC2 = contact.getContourFrame(icircle1)->getVelocity();
+    const Vec3 Om1 = contact.getContourFrame(icircle0)->getAngularVelocity();
+    const Vec3 Om2 = contact.getContourFrame(icircle1)->getAngularVelocity();
 
     SqrMat A(2,NONINIT);
     A(0,0)=-u1.T()*R1;
@@ -97,9 +97,8 @@ namespace MBSim {
     const Mat3x3 tOm1 = tilde(Om1);
     const Mat3x3 tOm2 = tilde(Om2);
     
-    wb(0) += ((vC2-vC1).T()*N1-n1.T()*tOm1*R1)*zetad(0)+n1.T()*tOm2*R2*zetad(1)-n1.T()*tOm1*(vC2-vC1);
-    if (wb.size()>1) 
-      wb(1) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad(0)+u1.T()*tOm2*R2*zetad(1)-u1.T()*tOm1*(vC2-vC1);
+    contact.getwb(false)(0) += ((vC2-vC1).T()*N1-n1.T()*tOm1*R1)*zetad(0)+n1.T()*tOm2*R2*zetad(1)-n1.T()*tOm1*(vC2-vC1);
+    if (contact.getwb(false).size()>1)
+      contact.getwb(false)(1) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad(0)+u1.T()*tOm2*R2*zetad(1)-u1.T()*tOm1*(vC2-vC1);
   }
 }
-

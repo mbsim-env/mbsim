@@ -50,46 +50,43 @@ namespace MBSim {
     func = new FuncPairPlanarContourPoint(point, extrusion); // root function for searching contact parameters
   }
 
-  void ContactKinematicsPointExtrusion::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointExtrusion::updateg(SingleContact &contact, int i) {
 
     PlanarContactSearch search(func);
     search.setTolerance(tol);
     search.setNodes(extrusion->getEtaNodes()); // defining search areas for contacts
 
     if (!searchAllCP) { // select start value from last search
-      search.setInitialValue(cFrame[iextrusion]->getEta());
+      search.setInitialValue(contact.getContourFrame(iextrusion)->getEta());
     }
     else { // define start search with regula falsi
       search.setSearchAll(true);
       searchAllCP = false;
     }
 
-    cFrame[iextrusion]->setEta(search.slv());
+    contact.getContourFrame(iextrusion)->setEta(search.slv());
 
-    cFrame[iextrusion]->setPosition(extrusion->evalPosition(cFrame[iextrusion]->getZeta()));
-    cFrame[iextrusion]->getOrientation(false).set(0, extrusion->evalWn(cFrame[iextrusion]->getZeta()));
-    cFrame[iextrusion]->getOrientation(false).set(1, extrusion->evalWu(cFrame[iextrusion]->getZeta()));
-    cFrame[iextrusion]->getOrientation(false).set(2, extrusion->evalWv(cFrame[iextrusion]->getZeta()));
+    contact.getContourFrame(iextrusion)->setPosition(extrusion->evalPosition(contact.getContourFrame(iextrusion)->getZeta()));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(iextrusion)->getZeta()));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(1, extrusion->evalWu(contact.getContourFrame(iextrusion)->getZeta()));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(2, extrusion->evalWv(contact.getContourFrame(iextrusion)->getZeta()));
 
-    cFrame[ipoint]->setPosition(point->getFrame()->evalPosition()); // position of point
-    cFrame[ipoint]->getOrientation(false).set(0, -cFrame[iextrusion]->getOrientation(false).col(0));
-    cFrame[ipoint]->getOrientation(false).set(1, -cFrame[iextrusion]->getOrientation(false).col(1));
-    cFrame[ipoint]->getOrientation(false).set(2, cFrame[iextrusion]->getOrientation(false).col(2));
+    contact.getContourFrame(ipoint)->setPosition(point->getFrame()->evalPosition()); // position of point
+    contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(iextrusion)->getOrientation(false).col(0));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(1, -contact.getContourFrame(iextrusion)->getOrientation(false).col(1));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(2, contact.getContourFrame(iextrusion)->getOrientation(false).col(2));
 
-    Vec3 Wd = cFrame[ipoint]->getPosition(false) - cFrame[iextrusion]->getPosition(false);
-    cFrame[iextrusion]->setXi(cFrame[iextrusion]->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
-    cFrame[iextrusion]->getPosition(false) += cFrame[iextrusion]->getXi() * cFrame[iextrusion]->getOrientation(false).col(2);
+    Vec3 Wd = contact.getContourFrame(ipoint)->getPosition(false) - contact.getContourFrame(iextrusion)->getPosition(false);
+    contact.getContourFrame(iextrusion)->setXi(contact.getContourFrame(iextrusion)->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
+    contact.getContourFrame(iextrusion)->getPosition(false) += contact.getContourFrame(iextrusion)->getXi() * contact.getContourFrame(iextrusion)->getOrientation(false).col(2);
 
-    if(extrusion->isZetaOutside(cFrame[iextrusion]->getZeta()))
+    double g;
+    if(extrusion->isZetaOutside(contact.getContourFrame(iextrusion)->getZeta()))
       g = 1;
     else
-      g = cFrame[iextrusion]->getOrientation(false).col(0).T() * Wd;
+      g = contact.getContourFrame(iextrusion)->getOrientation(false).col(0).T() * Wd;
     if(g < -extrusion->getThickness()) g = 1;
-  }
-
-  void ContactKinematicsPointExtrusion::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    throw runtime_error("(ContactKinematicsPointExtrusion::updatewb): Not implemented!");
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
 }
-

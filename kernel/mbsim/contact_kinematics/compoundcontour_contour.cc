@@ -26,6 +26,7 @@ using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
+
   void ContactKinematicsCompoundContourContour::assignContours(const vector<Contour*> &contour_) {
 
     if (dynamic_cast<CompoundContour*>(contour_[0])) {
@@ -57,5 +58,18 @@ namespace MBSim {
     }
   }
 
-}
+  void ContactKinematicsCompoundContourContour::updateg(vector<SingleContact> &contact) {
+    int k=0;
+    for(size_t i=0; i<contactKinematics.size(); i++) {
+      contactKinematics[i]->updateg(contact[k]);
+      bool collision = contact[k].getGeneralizedRelativePosition(false)(0) <= 0;
+      if(collision) {
+        k++;
+        if(k==maxNumContacts) break;
+      }
+    }
+    for(int i=k; i<maxNumContacts; i++)
+     contact[i].getGeneralizedRelativePosition(false)(0) = 1;
+  }
 
+}

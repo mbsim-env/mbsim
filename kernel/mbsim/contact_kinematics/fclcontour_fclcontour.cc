@@ -67,7 +67,7 @@ namespace MBSim {
     obj1 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(contour1->getCollisionGeometry()));
   }
 
-  bool ContactKinematicsFCLContourFCLContour::updateg(vector<SingleContact> &contact) {
+  void ContactKinematicsFCLContourFCLContour::updateg(vector<SingleContact> &contact) {
     obj0->setTranslation(Vec3ToVector3d(contour0->getFrame()->evalPosition()));
     obj0->setRotation(SqrMat3ToMatrix3d(contour0->getFrame()->getOrientation()));
     obj1->setTranslation(Vec3ToVector3d(contour1->getFrame()->evalPosition()));
@@ -110,7 +110,6 @@ namespace MBSim {
         contact[i].getContourFrame(icontour1)->setPosition(contour1->getFrame()->getPosition());
         contact[i].getContourFrame(icontour1)->setOrientation(contour1->getFrame()->getOrientation());
       }
-      return true;
     }
     else {
 //      DistanceRequest<double> request;
@@ -124,54 +123,7 @@ namespace MBSim {
       contact[i].getContourFrame(icontour1)->setPosition(contour1->getFrame()->getPosition());
       contact[i].getContourFrame(icontour1)->setOrientation(contour1->getFrame()->getOrientation());
       }
-      return false;
     }
-  }
-
-  void ContactKinematicsFCLContourFCLContour::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    obj0->setTranslation(Vec3ToVector3d(contour0->getFrame()->evalPosition()));
-    obj0->setRotation(SqrMat3ToMatrix3d(contour0->getFrame()->getOrientation()));
-    obj1->setTranslation(Vec3ToVector3d(contour1->getFrame()->evalPosition()));
-    obj1->setRotation(SqrMat3ToMatrix3d(contour1->getFrame()->getOrientation()));
-
-    CollisionRequest<double> request(1,true);
-    CollisionResult<double> result;
-    collide<double>(obj0.get(), obj1.get(), request, result);
-    cout << result.isCollision() << endl;
-    if(result.isCollision()) {
-      Vec3 n = Vector3dToVec3(result.getContact(0).normal);
-      Vec3 r = Vector3dToVec3(result.getContact(0).pos);
-      g = -result.getContact(0).penetration_depth;
-      Vec3 t;
-      t(0) = 1;
-      Vec3 t1, t2;
-      if(fabs(t.T()*n) > 0.9) {
-        t(0) = 0;
-        t(1) = 1;
-      }
-      t1 = crossProduct(n,t);
-      t2 = crossProduct(n,t1);
-      cFrame[icontour0]->getOrientation(false).set(0, n);
-      cFrame[icontour0]->getOrientation(false).set(1, t1);
-      cFrame[icontour0]->getOrientation(false).set(2, t2);
-      cFrame[icontour1]->getOrientation(false).set(0, -n);
-      cFrame[icontour0]->getOrientation(false).set(1, -t1);
-      cFrame[icontour0]->getOrientation(false).set(2, t2);
-      cFrame[icontour0]->setPosition(r + n*g/2.);
-      cFrame[icontour1]->setPosition(r - n*g/2.);
-    }
-    else {
-//      DistanceRequest<double> request;
-//      DistanceResult<double> result;
-//      distance<double>(obj0.get(), obj1.get(), request, result);
-//      g = result.min_distance;
-      g = 1;
-      cFrame[icontour0]->setPosition(contour0->getFrame()->getPosition());
-      cFrame[icontour0]->setOrientation(contour0->getFrame()->getOrientation());
-      cFrame[icontour1]->setPosition(contour1->getFrame()->getPosition());
-      cFrame[icontour1]->setOrientation(contour1->getFrame()->getOrientation());
-    }
-
   }
 
 }

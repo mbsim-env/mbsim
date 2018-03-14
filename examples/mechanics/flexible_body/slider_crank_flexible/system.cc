@@ -256,7 +256,8 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
 
     contactCrankRod->setSearchAllContactPoints(true);
 
-    contactCrankRod->connect(pnt, ncc, new ContactKinematicsPointSpatialContour);
+    contactCrankRod->connect(pnt, ncc);
+    contactCrankRod->setContactKinematics(new ContactKinematicsPointSpatialContour);
   }
 
   Joint *joint_rod_piston = new Joint("Joint_Rod_Piston");

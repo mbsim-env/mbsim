@@ -49,70 +49,60 @@ namespace MBSim {
       extrusion = static_cast<Contour*>(contour[0]);
     }
     func = new FuncPairPlanarContourCircle(circle,extrusion);
-
-//    if (dynamic_cast<Contour*>(extrusion)) {
-//      double minRadius=1./epsroot;
-//      for (double alpha=extrusion->getAlphaStart(); alpha<=extrusion->getAlphaEnd(); alpha+=(extrusion->getAlphaEnd()-extrusion->getAlphaStart())*1e-4) {
-//        zeta(0) = alpha;
-//        double radius=1./extrusion->getCurvature(zeta);
-//        minRadius=(radius<minRadius)?radius:minRadius;
-//      }
-//      if (circle->getRadius()>minRadius)
-//        throw runtime_error("Just one contact circle is allowed in Contactpairing Contour-SolidCircle, but either the circle radius is to big or the minimal Radius of Contour is to small.\n minimal radius of Contour="+toString(minRadius)+"\n Radius of SolidCircle="+toString(circle->getRadius()));
-//    }
-
   }
 
-  void ContactKinematicsCircleExtrusion::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCircleExtrusion::updateg(SingleContact &contact, int i) {
     PlanarContactSearch search(func);
     search.setTolerance(tol);
     search.setNodes(extrusion->getEtaNodes());
 
     if(searchAllCP==false)
-      search.setInitialValue(cFrame[iextrusion]->getEta());
+      search.setInitialValue(contact.getContourFrame(iextrusion)->getEta());
     else { 
       search.setSearchAll(true);
       searchAllCP=false;
     }
 
-    cFrame[iextrusion]->setEta(search.slv());
+    contact.getContourFrame(iextrusion)->setEta(search.slv());
 
-    cFrame[iextrusion]->getOrientation(false).set(0, extrusion->evalWn(cFrame[iextrusion]->getZeta()));
-    cFrame[iextrusion]->getOrientation(false).set(1, extrusion->evalWu(cFrame[iextrusion]->getZeta()));
-    cFrame[iextrusion]->getOrientation(false).set(2, extrusion->evalWv(cFrame[iextrusion]->getZeta()));
-    cFrame[icircle]->getOrientation(false).set(0, -cFrame[iextrusion]->getOrientation(false).col(0));
-    cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
-    cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2),cFrame[icircle]->getOrientation(false).col(0)));
-    cFrame[iextrusion]->setPosition(extrusion->evalPosition(cFrame[iextrusion]->getZeta()));
-    cFrame[icircle]->setPosition(circle->getFrame()->evalPosition()+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(iextrusion)->getZeta()));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(1, extrusion->evalWu(contact.getContourFrame(iextrusion)->getZeta()));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(2, extrusion->evalWv(contact.getContourFrame(iextrusion)->getZeta()));
+    contact.getContourFrame(icircle)->getOrientation(false).set(0, -contact.getContourFrame(iextrusion)->getOrientation(false).col(0));
+    contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
+    contact.getContourFrame(icircle)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(2),contact.getContourFrame(icircle)->getOrientation(false).col(0)));
+    contact.getContourFrame(iextrusion)->setPosition(extrusion->evalPosition(contact.getContourFrame(iextrusion)->getZeta()));
+    contact.getContourFrame(icircle)->setPosition(circle->getFrame()->evalPosition()+circle->getRadius()*contact.getContourFrame(icircle)->getOrientation(false).col(0));
 
-    Vec3 Wd = cFrame[icircle]->getPosition(false) - cFrame[iextrusion]->getPosition(false);
-    cFrame[iextrusion]->setXi(cFrame[iextrusion]->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
-    cFrame[iextrusion]->getPosition(false) += cFrame[iextrusion]->getXi() * cFrame[iextrusion]->getOrientation(false).col(2);
+    Vec3 Wd = contact.getContourFrame(icircle)->getPosition(false) - contact.getContourFrame(iextrusion)->getPosition(false);
+    contact.getContourFrame(iextrusion)->setXi(contact.getContourFrame(iextrusion)->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
+    contact.getContourFrame(iextrusion)->getPosition(false) += contact.getContourFrame(iextrusion)->getXi() * contact.getContourFrame(iextrusion)->getOrientation(false).col(2);
 
-    if(extrusion->isZetaOutside(cFrame[iextrusion]->getZeta()))
+    double g;
+    if(extrusion->isZetaOutside(contact.getContourFrame(iextrusion)->getZeta()))
       g = 1;
     else
-      g = cFrame[iextrusion]->getOrientation(false).col(0).T() * (cFrame[icircle]->getPosition(false) - cFrame[iextrusion]->getPosition(false));
+      g = contact.getContourFrame(iextrusion)->getOrientation(false).col(0).T() * (contact.getContourFrame(icircle)->getPosition(false) - contact.getContourFrame(iextrusion)->getPosition(false));
     if(g < -extrusion->getThickness()) g = 1;
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
-  void ContactKinematicsCircleExtrusion::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsCircleExtrusion::updatewb(SingleContact &contact, int i) {
     
-    const Vec3 n1 = cFrame[icircle]->evalOrientation().col(0);
-    const Vec3 u1 = cFrame[icircle]->getOrientation().col(1);
+    const Vec3 n1 = contact.getContourFrame(icircle)->evalOrientation().col(0);
+    const Vec3 u1 = contact.getContourFrame(icircle)->getOrientation().col(1);
     const Vec3 R1 = circle->getRadius()*u1;
     const Vec3 N1 = u1;
 
-    const Vec3 u2 = cFrame[iextrusion]->evalOrientation().col(1);
-    const Vec3 v2 = cFrame[iextrusion]->getOrientation().col(2);
-    const Vec3 R2 = extrusion->evalWs(cFrame[iextrusion]->getZeta());
-    const Vec3 U2 = extrusion->evalParDer1Wu(cFrame[iextrusion]->getZeta());
+    const Vec3 u2 = contact.getContourFrame(iextrusion)->evalOrientation().col(1);
+    const Vec3 v2 = contact.getContourFrame(iextrusion)->getOrientation().col(2);
+    const Vec3 R2 = extrusion->evalWs(contact.getContourFrame(iextrusion)->getZeta());
+    const Vec3 U2 = extrusion->evalParDer1Wu(contact.getContourFrame(iextrusion)->getZeta());
 
-    const Vec3 vC1 = cFrame[icircle]->evalVelocity();
-    const Vec3 vC2 = cFrame[iextrusion]->evalVelocity();
-    const Vec3 Om1 = cFrame[icircle]->evalAngularVelocity();
-    const Vec3 Om2 = cFrame[iextrusion]->evalAngularVelocity();
+    const Vec3 vC1 = contact.getContourFrame(icircle)->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(iextrusion)->evalVelocity();
+    const Vec3 Om1 = contact.getContourFrame(icircle)->evalAngularVelocity();
+    const Vec3 Om2 = contact.getContourFrame(iextrusion)->evalAngularVelocity();
 
     SqrMat A(2,NONINIT);
     A(0,0)=-u1.T()*R1;
@@ -127,10 +117,10 @@ namespace MBSim {
     const Mat3x3 tOm1 = tilde(Om1);
     const Mat3x3 tOm2 = tilde(Om2);
     
-    wb(0) += ((vC2-vC1).T()*N1-n1.T()*tOm1*R1)*zetad(0)+n1.T()*tOm2*R2*zetad(1)-n1.T()*tOm1*(vC2-vC1);
-    if (wb.size()>1) {
+    contact.getwb(false)(0) += ((vC2-vC1).T()*N1-n1.T()*tOm1*R1)*zetad(0)+n1.T()*tOm2*R2*zetad(1)-n1.T()*tOm1*(vC2-vC1);
+    if (contact.getwb(false).size()>1) {
       const Vec3 U1=-n1;
-      wb(1) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad(0)+u1.T()*tOm2*R2*zetad(1)-u1.T()*tOm1*(vC2-vC1);
+      contact.getwb(false)(1) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad(0)+u1.T()*tOm2*R2*zetad(1)-u1.T()*tOm1*(vC2-vC1);
     }
   }
 

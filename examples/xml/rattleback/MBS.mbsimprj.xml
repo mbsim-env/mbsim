@@ -145,10 +145,12 @@
             </SpatialCoulombImpact>
           </tangentialImpactLaw>
           <initialGuess>
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>0</ele>
-              <ele>-pi/4</ele>
-            </xmlVector>
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+                <ele>-pi/4</ele>
+              </row>
+            </xmlMatrix>
           </initialGuess>
         </Contact>
       </links>

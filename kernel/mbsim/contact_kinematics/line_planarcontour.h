@@ -21,7 +21,6 @@
 #define _CONTACT_KINEMATICS_LINE_PLANAR_CONTOUR_H_
 
 #include "contact_kinematics.h"
-#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -46,10 +45,8 @@ namespace MBSim {
       
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      bool updateg(SingleContact &contact, int i=0) override;
+      void updateg(SingleContact &contact, int i=0) override;
       void updatewb(SingleContact &contact, int i=0) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override { }
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { }
       /***************************************************/
 
       void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }

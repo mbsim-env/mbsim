@@ -48,18 +48,16 @@ namespace MBSim {
       spatialcontour = static_cast<Contour*>(contour[0]);
     }
     func = new FuncPairSpatialContourPoint(point,spatialcontour);
-    zeta0.resize(maxNumContacts);
   }
 
   void ContactKinematicsPointSpatialContour::setInitialGuess(const fmatvec::MatV &zeta0_) {
     if(zeta0_.rows()) {
-      if(zeta0_.rows() != maxNumContacts or zeta0_.cols() != 2) throw runtime_error("(ContactKinematicsPointSpatialContour::assignContours): size of zeta0 does not match");
-      for(int i=0; i<maxNumContacts; i++)
-        zeta0[i] = zeta0_.row(i).T();
+      if(zeta0_.rows() != 1 or zeta0_.cols() != 2) throw runtime_error("(ContactKinematicsPointSpatialContour::assignContours): size of zeta0 does not match");
+      zeta0 = zeta0_.row(0).T();
     }
   }
 
-  void ContactKinematicsPointSpatialContour::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointSpatialContour::updateg(SingleContact &contact, int i) {
 
     SpatialContactSearch search(func);
     search.setTolerance(tol);
@@ -70,53 +68,55 @@ namespace MBSim {
       search.setEqualSpacing(10, 10, 0, 0, 0.1, 0.1);
 
     if (!searchAllCP) {
-      search.setInitialValue(zeta0[index]);
+      search.setInitialValue(zeta0);
     }
     else {
       search.setSearchAll(true);
       searchAllCP = false;
     }
 
-    zeta0[index] = search.slv();
-    cFrame[ispatialcontour]->setZeta(zeta0[index]);
+    zeta0 = search.slv();
+    contact.getContourFrame(ispatialcontour)->setZeta(zeta0);
 
-    cFrame[ispatialcontour]->getOrientation(false).set(0, spatialcontour->evalWn(cFrame[ispatialcontour]->getZeta()));
-    cFrame[ispatialcontour]->getOrientation(false).set(1, spatialcontour->evalWu(cFrame[ispatialcontour]->getZeta()));
-    cFrame[ispatialcontour]->getOrientation(false).set(2, spatialcontour->evalWv(cFrame[ispatialcontour]->getZeta()));
+    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(0, spatialcontour->evalWn(contact.getContourFrame(ispatialcontour)->getZeta()));
+    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(1, spatialcontour->evalWu(contact.getContourFrame(ispatialcontour)->getZeta()));
+    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(2, spatialcontour->evalWv(contact.getContourFrame(ispatialcontour)->getZeta()));
 
-    cFrame[ipoint]->getOrientation(false).set(0, -cFrame[ispatialcontour]->getOrientation(false).col(0));
-    cFrame[ipoint]->getOrientation(false).set(1, -cFrame[ispatialcontour]->getOrientation(false).col(1));
-    cFrame[ipoint]->getOrientation(false).set(2, cFrame[ispatialcontour]->getOrientation(false).col(2));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(ispatialcontour)->getOrientation(false).col(0));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(1, -contact.getContourFrame(ispatialcontour)->getOrientation(false).col(1));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(2, contact.getContourFrame(ispatialcontour)->getOrientation(false).col(2));
 
-    cFrame[ispatialcontour]->setPosition(spatialcontour->evalPosition(cFrame[ispatialcontour]->getZeta()));
-    cFrame[ipoint]->setPosition(point->getFrame()->evalPosition());
+    contact.getContourFrame(ispatialcontour)->setPosition(spatialcontour->evalPosition(contact.getContourFrame(ispatialcontour)->getZeta()));
+    contact.getContourFrame(ipoint)->setPosition(point->getFrame()->evalPosition());
 
-    if(spatialcontour->isZetaOutside(cFrame[ispatialcontour]->getZeta()))
+    double g;
+    if(spatialcontour->isZetaOutside(contact.getContourFrame(ispatialcontour)->getZeta()))
       g = 1;
     else
-      g = cFrame[ispatialcontour]->getOrientation(false).col(0).T() * (cFrame[ipoint]->getPosition(false) - cFrame[ispatialcontour]->getPosition(false));
+      g = contact.getContourFrame(ispatialcontour)->getOrientation(false).col(0).T() * (contact.getContourFrame(ipoint)->getPosition(false) - contact.getContourFrame(ispatialcontour)->getPosition(false));
     if(g < -spatialcontour->getThickness()) g = 1;
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
-  void ContactKinematicsPointSpatialContour::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    const Vec3 n1 = cFrame[ipoint]->evalOrientation().col(0);
-    const Vec3 u1 = cFrame[ipoint]->getOrientation().col(1);
-    const Vec3 v1 = cFrame[ipoint]->getOrientation().col(2);
+  void ContactKinematicsPointSpatialContour::updatewb(SingleContact &contact, int i) {
+    const Vec3 n1 = contact.getContourFrame(ipoint)->evalOrientation().col(0);
+    const Vec3 u1 = contact.getContourFrame(ipoint)->getOrientation().col(1);
+    const Vec3 v1 = contact.getContourFrame(ipoint)->getOrientation().col(2);
     Vec2 zeta1 = computeAnglesOnUnitSphere(point->getFrame()->evalOrientation().T()*n1);
     const Mat3x2 U1 = point->evalWU(zeta1);
     const Mat3x2 V1 = point->evalWV(zeta1);
     const Mat3x2 N1 = point->evalWN(zeta1);
 
-    const Vec3 u2 = cFrame[ispatialcontour]->evalOrientation().col(1);
-    const Vec3 v2 = cFrame[ispatialcontour]->getOrientation().col(2);
-    const Mat3x2 R2 = spatialcontour->evalWR(cFrame[ispatialcontour]->getZeta());
-    const Mat3x2 U2 = spatialcontour->evalWU(cFrame[ispatialcontour]->getZeta());
-    const Mat3x2 V2 = spatialcontour->evalWV(cFrame[ispatialcontour]->getZeta());
+    const Vec3 u2 = contact.getContourFrame(ispatialcontour)->evalOrientation().col(1);
+    const Vec3 v2 = contact.getContourFrame(ispatialcontour)->getOrientation().col(2);
+    const Mat3x2 R2 = spatialcontour->evalWR(contact.getContourFrame(ispatialcontour)->getZeta());
+    const Mat3x2 U2 = spatialcontour->evalWU(contact.getContourFrame(ispatialcontour)->getZeta());
+    const Mat3x2 V2 = spatialcontour->evalWV(contact.getContourFrame(ispatialcontour)->getZeta());
 
-    const Vec3 vC1 = cFrame[ipoint]->evalVelocity();
-    const Vec3 vC2 = cFrame[ispatialcontour]->evalVelocity();
-    const Vec3 Om1 = cFrame[ipoint]->evalAngularVelocity();
-    const Vec3 Om2 = cFrame[ispatialcontour]->evalAngularVelocity();
+    const Vec3 vC1 = contact.getContourFrame(ipoint)->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(ispatialcontour)->evalVelocity();
+    const Vec3 Om1 = contact.getContourFrame(ipoint)->evalAngularVelocity();
+    const Vec3 Om2 = contact.getContourFrame(ispatialcontour)->evalAngularVelocity();
 
     SqrMat A(4,NONINIT);
     A(RangeV(0,0),RangeV(0,1)).init(0);// = -u1.T()*R1;
@@ -140,11 +140,11 @@ namespace MBSim {
     const Mat3x3 tOm1 = tilde(Om1);
     const Mat3x3 tOm2 = tilde(Om2);
 
-    wb(0) += ((vC2-vC1).T()*N1/**-n1.T()*tOm1*R1**/)*zetad1+n1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
-    if (wb.size()>1) {
-      wb(1) += ((vC2-vC1).T()*U1/**-u1.T()*tOm1*R1**/)*zetad1+u1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
-      if (wb.size()>2)
-        wb(2) += ((vC2-vC1).T()*V1/**-v1.T()*tOm1*R1**/)*zetad1+v1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+    contact.getwb(false)(0) += ((vC2-vC1).T()*N1/**-n1.T()*tOm1*R1**/)*zetad1+n1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+    if (contact.getwb(false).size()>1) {
+      contact.getwb(false)(1) += ((vC2-vC1).T()*U1/**-u1.T()*tOm1*R1**/)*zetad1+u1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+      if (contact.getwb(false).size()>2)
+        contact.getwb(false)(2) += ((vC2-vC1).T()*V1/**-v1.T()*tOm1*R1**/)*zetad1+v1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
     }
   }
 

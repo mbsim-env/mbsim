@@ -21,7 +21,6 @@
 #define _CONTACT_KINEMATICS_POINT_FRUSTUM_H_
 
 #include "contact_kinematics.h"
-#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -32,9 +31,6 @@ namespace MBSim {
    * \brief pairing point to frustum surface
    * \author Martin Foerg
    * \author Thorsten Schindler
-   * \date 2009-04-02 some comments (Thorsten Schindler)
-   * \date 2009-07-08 new interface (Thorsten Schindler)
-   * \date 2012-10-09 update kinematics (Kilian Grundl)
    *
    * REMARK The first tangential of the contact frame of the frustum points in positive axial direction, i.e. the height direction
    */
@@ -42,8 +38,7 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsPointFrustum:updatewb): Not implemented!"); }
+      void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
 
     protected:
@@ -62,4 +57,3 @@ namespace MBSim {
 }
 
 #endif /* _CONTACT_KINEMATICS_POINT_FRUSTUM_H_ */
-

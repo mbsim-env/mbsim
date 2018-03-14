@@ -41,45 +41,44 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleLine::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCircleLine::updateg(SingleContact &contact, int i) {
 
-    cFrame[iline]->setOrientation(line->getFrame()->evalOrientation());
-    cFrame[icircle]->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
-    cFrame[icircle]->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
-    cFrame[icircle]->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
+    contact.getContourFrame(iline)->setOrientation(line->getFrame()->evalOrientation());
+    contact.getContourFrame(icircle)->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
+    contact.getContourFrame(icircle)->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
+    contact.getContourFrame(icircle)->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cFrame[iline]->getOrientation(false).col(0);
+    Vec3 Wn = contact.getContourFrame(iline)->getOrientation(false).col(0);
 
     Vec3 Wd = circle->getFrame()->evalPosition() - line->getFrame()->evalPosition();
 
-    g = Wn.T()*Wd - circle->getRadius();
+    double g = Wn.T()*Wd - circle->getRadius();
 
-    cFrame[icircle]->setPosition(circle->getFrame()->getPosition() - Wn*circle->getRadius());
-    cFrame[iline]->setPosition(cFrame[icircle]->getPosition(false) - Wn*g);
+    contact.getContourFrame(icircle)->setPosition(circle->getFrame()->getPosition() - Wn*circle->getRadius());
+    contact.getContourFrame(iline)->setPosition(contact.getContourFrame(icircle)->getPosition(false) - Wn*g);
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
-  void ContactKinematicsCircleLine::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsCircleLine::updatewb(SingleContact &contact, int i) {
 
-    Vec3 v2 = cFrame[icircle]->evalOrientation().col(2);
-    Vec3 n1 = cFrame[iline]->evalOrientation().col(0);
-    // Vec3 n2 = cFrame[icircle]->getOrientation().col(0);
-    Vec3 u1 = cFrame[iline]->getOrientation().col(1);
-    Vec3 u2 = cFrame[icircle]->getOrientation().col(1);
-    Vec3 vC1 = cFrame[iline]->evalVelocity();
-    Vec3 vC2 = cFrame[icircle]->evalVelocity();
-    Vec3 Om1 = cFrame[iline]->evalAngularVelocity();
-    Vec3 Om2 = cFrame[icircle]->evalAngularVelocity();
+    Vec3 v2 = contact.getContourFrame(icircle)->evalOrientation().col(2);
+    Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);
+    Vec3 u1 = contact.getContourFrame(iline)->getOrientation().col(1);
+    Vec3 u2 = contact.getContourFrame(icircle)->getOrientation().col(1);
+    Vec3 vC1 = contact.getContourFrame(iline)->evalVelocity();
+    Vec3 vC2 = contact.getContourFrame(icircle)->evalVelocity();
+    Vec3 Om1 = contact.getContourFrame(iline)->evalAngularVelocity();
+    Vec3 Om2 = contact.getContourFrame(icircle)->evalAngularVelocity();
     double r = circle->getRadius();
 
     double ad2 = -v2.T()*(Om2-Om1);
     double ad1 = u1.T()*(vC2-vC1) - r*ad2;
     Vec3 s2 = u2*r;
 
-    wb(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
+    contact.getwb(false)(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
     
-    if(wb.size() > 1) 
-      wb(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
+    if(contact.getwb(false).size() > 1)
+      contact.getwb(false)(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
   }
       
 }
-

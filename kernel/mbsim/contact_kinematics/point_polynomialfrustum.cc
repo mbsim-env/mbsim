@@ -121,7 +121,7 @@ namespace MBSim {
     newtonProjectAlongNormal.setDampingFunction(&dampingProjectAlongNormal);
   }
 
-  void ContactKinematicsPointPolynomialFrustum::updateg(double & g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointPolynomialFrustum::updateg(SingleContact &contact, int i) {
     /*Geometry*/
     //point in frustum-coordinates
     Vec3 rPoint = frustum->getFrame()->evalOrientation().T() * (point->getFrame()->evalPosition() - frustum->getFrame()->evalPosition());
@@ -132,6 +132,7 @@ namespace MBSim {
     const double r = sqrt(pow(rPoint(1), 2) + pow(rPoint(2), 2));
     const double R = frustum->evalValue(h);
 
+    double g;
     if(signh*h >= 0 and signh*h <= signh*frustum->getHeight() and r <= R) {
       double phi = ArcTan(rPoint(1), rPoint(2));
       funcProjectAlongNormal->setUpSystemParamters(rPoint, phi);
@@ -151,22 +152,21 @@ namespace MBSim {
         //Frustum
         Vec3 rF = frustum->getFrame()->getPosition();
         SqrMat3 AWF = frustum->getFrame()->getOrientation();
-        cFrame[ifrustum]->setPosition(rF + AWF * contactPointFrustum);
-        cFrame[ifrustum]->getOrientation(false).set(0, frustum->evalWn(zeta));
-        cFrame[ifrustum]->getOrientation(false).set(1, signh * frustum->evalWu(zeta));
-        cFrame[ifrustum]->getOrientation(false).set(2, signh * frustum->evalWv(zeta));
+        contact.getContourFrame(ifrustum)->setPosition(rF + AWF * contactPointFrustum);
+        contact.getContourFrame(ifrustum)->getOrientation(false).set(0, frustum->evalWn(zeta));
+        contact.getContourFrame(ifrustum)->getOrientation(false).set(1, signh * frustum->evalWu(zeta));
+        contact.getContourFrame(ifrustum)->getOrientation(false).set(2, signh * frustum->evalWv(zeta));
 
         //Point
-        cFrame[ipoint]->setPosition(rF + AWF  * rPoint);
-        cFrame[ipoint]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
-        cFrame[ipoint]->getOrientation(false).set(1, -cFrame[ifrustum]->getOrientation(false).col(1));
-        cFrame[ipoint]->getOrientation(false).set(2, cFrame[ifrustum]->getOrientation(false).col(2));
-
+        contact.getContourFrame(ipoint)->setPosition(rF + AWF  * rPoint);
+        contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(ifrustum)->getOrientation(false).col(0));
+        contact.getContourFrame(ipoint)->getOrientation(false).set(1, -contact.getContourFrame(ifrustum)->getOrientation(false).col(1));
+        contact.getContourFrame(ipoint)->getOrientation(false).set(2, contact.getContourFrame(ifrustum)->getOrientation(false).col(2));
       }
     }
-    else {
+    else
       g = 1.;
-    }
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
 

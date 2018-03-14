@@ -30,14 +30,13 @@ namespace MBSim {
   /**
    * \brief pairing point to circesolid
    * \author Markus Schneider
-   * * \date 2010-07-28 initial commit
    */
   class ContactKinematicsPointCircle : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override;
+      void updateg(SingleContact &contact, int i=0) override;
+      void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
 
     private:
@@ -51,10 +50,8 @@ namespace MBSim {
        */
       Point *point;
       Circle *circle;
-
   };
 
 }
 
 #endif
-

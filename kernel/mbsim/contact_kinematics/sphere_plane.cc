@@ -42,34 +42,35 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSpherePlane::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    cFrame[iplane]->setOrientation(plane->getFrame()->evalOrientation());
-    cFrame[isphere]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
-    cFrame[isphere]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
-    cFrame[isphere]->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
+  void ContactKinematicsSpherePlane::updateg(SingleContact &contact, int i) {
+    contact.getContourFrame(iplane)->setOrientation(plane->getFrame()->evalOrientation());
+    contact.getContourFrame(isphere)->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    contact.getContourFrame(isphere)->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
+    contact.getContourFrame(isphere)->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cFrame[iplane]->getOrientation(false).col(0);
+    Vec3 Wn = contact.getContourFrame(iplane)->getOrientation(false).col(0);
 
     Vec3 Wd = sphere->getFrame()->evalPosition() - plane->getFrame()->evalPosition();
 
-    g = Wn.T()*Wd - sphere->getRadius();
+    double g = Wn.T()*Wd - sphere->getRadius();
 
-    cFrame[isphere]->setPosition(sphere->getFrame()->getPosition() - Wn*sphere->getRadius());
-    cFrame[iplane]->setPosition(cFrame[isphere]->getPosition(false) - Wn*g);
+    contact.getContourFrame(isphere)->setPosition(sphere->getFrame()->getPosition() - Wn*sphere->getRadius());
+    contact.getContourFrame(iplane)->setPosition(contact.getContourFrame(isphere)->getPosition(false) - Wn*g);
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
-  void ContactKinematicsSpherePlane::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
-    Vec3 n1 = cFrame[iplane]->evalOrientation().col(0);
-    Vec3 n2 = cFrame[isphere]->evalOrientation().col(0);
-    Vec3 vC1 = cFrame[iplane]->evalVelocity();
-    Vec3 vC2 = cFrame[isphere]->evalVelocity();
-    Vec3 Om1 = cFrame[iplane]->evalAngularVelocity();
-    Vec3 Om2 = cFrame[isphere]->evalAngularVelocity();
+  void ContactKinematicsSpherePlane::updatewb(SingleContact &contact, int i) {
+    Vec3 n1 = contact.getContourFrame(iplane)->evalOrientation().col(0);
+    Vec3 n2 = contact.getContourFrame(isphere)->evalOrientation().col(0);
+    Vec3 vC1 = contact.getContourFrame(iplane)->evalVelocity();
+    Vec3 vC2 = contact.getContourFrame(isphere)->evalVelocity();
+    Vec3 Om1 = contact.getContourFrame(iplane)->evalAngularVelocity();
+    Vec3 Om2 = contact.getContourFrame(isphere)->evalAngularVelocity();
 
     Vec2 zeta = computeAnglesOnUnitSphere(sphere->getFrame()->evalOrientation().T()*n2);
 
-    Vec3 u1 = cFrame[iplane]->getOrientation().col(1);
-    Vec3 v1 = cFrame[iplane]->getOrientation().col(2);
+    Vec3 u1 = contact.getContourFrame(iplane)->getOrientation().col(1);
+    Vec3 v1 = contact.getContourFrame(iplane)->getOrientation().col(2);
     Vec3 u2 = sphere->evalWu(zeta);
     Vec3 v2 = crossProduct(n2,u2);
 
@@ -99,10 +100,10 @@ namespace MBSim {
 
     Mat3x3 tOm1 = tilde(Om1);
     Mat3x3 tOm2 = tilde(Om2);
-    wb(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    contact.getwb(false)(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
 
-    if(wb.size() > 1) wb(1) += u1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
-    if(wb.size() > 2) wb(2) += v1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    if(contact.getwb(false).size() > 1) contact.getwb(false)(1) += u1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    if(contact.getwb(false).size() > 2) contact.getwb(false)(2) += v1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
   }
 
 }

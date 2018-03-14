@@ -58,7 +58,7 @@ namespace MBSim {
     }
   }
 
-  bool ContactKinematicsLinePlanarContour::updateg(SingleContact &contact, int i) {
+  void ContactKinematicsLinePlanarContour::updateg(SingleContact &contact, int i) {
 
     PlanarContactSearch search(func);
     search.setTolerance(tol);
@@ -93,7 +93,6 @@ namespace MBSim {
 
     contact.getContourFrame(iline)->setPosition(contact.getContourFrame(iplanarcontour)->getPosition(false) - Wn*g);
     contact.getGeneralizedRelativePosition(false)(0) = g;
-    return g <= 0;
   }
 
   void ContactKinematicsLinePlanarContour::updatewb(SingleContact &contact, int i) {

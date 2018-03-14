@@ -251,6 +251,21 @@ namespace MBSim {
     }
     else if (stage == preInit) {
       Link::init(stage, config);
+      if (contactKinematics == 0) {
+        contactKinematics = contour[0]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
+        if (contactKinematics == 0) {
+          contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[1]), typeid(*contour[0]));
+          if (contactKinematics == 0) {
+            contactKinematics = contour[0]->findContactPairingWith(typeid(*contour[1]), typeid(*contour[0]));
+            if (contactKinematics == 0) {
+              contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
+              if (contactKinematics == 0) {
+                throwError("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour[0]).name()) + "\" and Contour \"" + boost::core::demangle(typeid(*contour[1]).name()) + "\"!");
+              }
+            }
+          }
+        }
+      }
       contactKinematics->setSearchAllContactPoints(searchAllCP);
       if(maxNumContacts>-1) contactKinematics->setMaximumNumberOfContacts(maxNumContacts);
       contactKinematics->assignContours(contour[0], contour[1]);
@@ -530,22 +545,6 @@ namespace MBSim {
   void Contact::connect(Contour *contour0, Contour* contour1) {
     contour[0] = contour0;
     contour[1] = contour1;
-
-    if (contactKinematics == 0) {
-      contactKinematics = contour0->findContactPairingWith(typeid(*contour0), typeid(*contour1));
-      if (contactKinematics == 0) {
-        contactKinematics = contour1->findContactPairingWith(typeid(*contour1), typeid(*contour0));
-        if (contactKinematics == 0) {
-          contactKinematics = contour0->findContactPairingWith(typeid(*contour1), typeid(*contour0));
-          if (contactKinematics == 0) {
-            contactKinematics = contour1->findContactPairingWith(typeid(*contour0), typeid(*contour1));
-            if (contactKinematics == 0) {
-              throwError("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour0).name()) + "\" and Contour \"" + boost::core::demangle(typeid(*contour1).name()) + "\"!");
-            }
-          }
-        }
-      }
-    }
   }
 
   void Contact::LinearImpactEstimation(double t, Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {

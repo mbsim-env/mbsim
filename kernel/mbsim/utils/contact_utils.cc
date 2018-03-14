@@ -118,14 +118,18 @@ namespace MBSim {
     else if ( contour0==typeid(Circle) && contour1==typeid(Plane) )
       return new ContactKinematicsCirclePlane;
     
-    else if (( contour0==typeid(Cuboid) && contour1==typeid(Plane) ) or
-        ( contour0==typeid(Room) && contour1==typeid(Point) ) or
-        ( contour0==typeid(Cuboid) && contour1==typeid(Frustum) ))
-      return new ContactKinematicsCompoundContourContour;
+    else if (( contour0==typeid(Cuboid) && contour1==typeid(Plane) ))
+      return new ContactKinematicsCompoundContourContour(4);
+
+    else if (( contour0==typeid(Cuboid) && contour1==typeid(Frustum) ))
+      return new ContactKinematicsCompoundContourContour(4);
+
+    else if (( contour0==typeid(Room) && contour1==typeid(Point) ))
+      return new ContactKinematicsCompoundContourContour(1);
 
     else if (( contour0==typeid(Cuboid) && contour1==typeid(Room) ) or
         ( contour0==typeid(Cuboid) && contour1==typeid(Cuboid) ))
-      return new ContactKinematicsCompoundContourCompoundContour(4);
+      return new ContactKinematicsCompoundContourCompoundContour(8);
 
     else if ( contour0==typeid(Edge) && contour1==typeid(Edge) )
       return new ContactKinematicsEdgeEdge;

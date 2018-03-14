@@ -48,8 +48,7 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<MBSim::Contour*> &contour) override;
-      void updateg(double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame) override;
+      void updateg(MBSim::SingleContact &contact, int i=0) override;
       /***************************************************/
 
       /* GETTER / SETTER */

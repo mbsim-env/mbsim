@@ -33,7 +33,7 @@ namespace MBSim {
     edge1 = static_cast<Edge*>(contour[1]);
   }
 
-  bool ContactKinematicsEdgeEdge::updateg(SingleContact &contact, int i) {
+  void ContactKinematicsEdgeEdge::updateg(SingleContact &contact, int i) {
     double g;
     Vec Wd = edge1->getFrame()->evalPosition() - edge0->getFrame()->evalPosition();
     Vec Wd0 = edge0->getFrame()->evalOrientation().col(1);
@@ -74,48 +74,6 @@ namespace MBSim {
     else
       g = 1;
     contact.getGeneralizedRelativePosition(false)(0) = g;
-    return g <= 0;
-  }
-
-  void ContactKinematicsEdgeEdge::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    Vec Wd = edge1->getFrame()->evalPosition() - edge0->getFrame()->evalPosition();
-    Vec Wd0 = edge0->getFrame()->evalOrientation().col(1);
-    Vec Wd1 = edge1->getFrame()->evalOrientation().col(1);
-    Vec Wn = crossProduct(Wd0,Wd1);
-    Wn = Wn/nrm2(Wn);
-    double d = Wn.T()*Wd;
-    if(d<0) {
-      Wn *= -1.;
-      d *= -1.;
-    }
-    Vec We0 = -edge0->getFrame()->getOrientation().col(0);
-    Vec We1 = -edge1->getFrame()->getOrientation().col(0);
-    if(Wn.T()*We0 >= 0 && Wn.T()*We1 <= 0) {
-      if(d > max(edge0->getThickness(),edge1->getThickness())) {
-        g = 1;
-      } else {
-        double t0 = trans(Wd0)*(Wd - Wd1*trans(Wd1)*Wd)/(1.0-trans(Wd0)*Wd1*trans(Wd1)*Wd0);
-        double t1 = t0*trans(Wd1)*Wd0 - trans(Wd1)*Wd;
-
-        if(fabs(t1) <= edge1->getLength()/2 and fabs(t0) <= edge0->getLength()/2) {
-          cFrame[iedge0]->setPosition(edge0->getFrame()->getPosition() + t0*Wd0);
-          cFrame[iedge1]->setPosition(edge1->getFrame()->getPosition() + t1*Wd1);
-          cFrame[iedge0]->getOrientation(false).set(0, -Wn);
-          cFrame[iedge1]->getOrientation(false).set(0, -cFrame[iedge0]->getOrientation(false).col(0));
-          cFrame[iedge0]->getOrientation(false).set(1, Wd0);
-          cFrame[iedge1]->getOrientation(false).set(1, -cFrame[iedge0]->getOrientation(false).col(1));
-          cFrame[iedge0]->getOrientation(false).set(2, crossProduct(Wn,Wd0));
-          cFrame[iedge1]->getOrientation(false).set(2, cFrame[iedge0]->getOrientation(false).col(2));
-
-          g = -d;
-        }
-        else
-          g = 1;
-      }
-    } else if(Wn.T()*We0 < 0 && Wn.T()*We1 > 0)
-      g = d;
-    else
-      g = 1;
   }
 
 }

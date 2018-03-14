@@ -57,29 +57,32 @@ namespace MBSim {
       virtual void assignContours(const std::vector<Contour*> &contour) = 0;
 
       /**
-       * \brief compute normal distance, possible contact point positions and orientation (cf. contact.cc)
-       * \param t      time
-       * \param g      normal distance
-       * \param cFrame contour point Frame
-       * \param index  index of the contact point that should be updated
+       * \brief compute contact kinematics for all contacts
+       * \param contact vector of all contacts
+       * \param i index of the contact point that should be updated
        */
-      virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) = 0;
-
-      virtual bool updateg(std::vector<SingleContact> &contact) { for(int i=0; i<maxNumContacts; i++) updateg(contact[i],i); return 0; }
-
-      virtual bool updateg(SingleContact &contact, int i=0) { return false; }
+      virtual void updateg(std::vector<SingleContact> &contact) { for(int i=0; i<maxNumContacts; i++) updateg(contact[i],i); }
 
       /**
-       * \brief compute acceleration in terms of contour parameters for event driven integration
-       * \param t      time
-       * \param wb acceleration in terms of contour parameters
-       * \param g normal distance
-       * \param cFrame contact point parametrisation
+       * \brief compute contact kinematics for a single contact
+       * \param conctact single contact
+       * \param i index of the contact that should be updated
        */
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) = 0;
+      virtual void updateg(SingleContact &contact, int i=0) { }
 
+      /**
+       * \brief compute contact kinematics on acceleration level for all contacts
+       * \param conctact single contact
+       * \param i index of the contact that should be updated
+       */
       virtual void updatewb(std::vector<SingleContact> &contact) { for(int i=0; i<maxNumContacts; i++) updatewb(contact[i],i); }
-      virtual void updatewb(SingleContact &contact, int i=0) { }
+
+      /**
+       * \brief compute contact kinematics on acceleration level for a single contact
+       * \param conctact single contact
+       * \param i index of the contact that should be updated
+       */
+      virtual void updatewb(SingleContact &contact, int i=0) { throw std::runtime_error("(ContactKinematics:updatewb): Not implemented!"); }
       
       /** 
        * \brief treats ordering of contours
@@ -93,9 +96,11 @@ namespace MBSim {
        */
       int getMaximumNumberOfContacts() const { return maxNumContacts; }
 
-      virtual ContactKinematics* getContactKinematics(int i=0) const { return nullptr; }
-
       virtual void setSearchAllContactPoints(bool searchAllCP_=true) { }
+
+      /**
+       * \brief set initial guess for root-finding
+       */
       virtual void setInitialGuess(const fmatvec::MatV &zeta0_) { }
 
       /**

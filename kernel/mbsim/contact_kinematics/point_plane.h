@@ -30,14 +30,13 @@ namespace MBSim {
   /** 
    * \brief pairing point to plane
    * \author Martin Foerg
-   * \date 2009-04-02 some comments (Thorsten Schindler)
    */
   class ContactKinematicsPointPlane : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override;
+      void updateg(SingleContact &contact, int i=0) override;
+      void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
 
     protected:
@@ -57,4 +56,3 @@ namespace MBSim {
 }
 
 #endif /* _CONTACT_KINEMATICS_POINT_PLANE_H_ */
-

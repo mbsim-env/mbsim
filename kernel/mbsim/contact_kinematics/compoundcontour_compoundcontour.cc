@@ -52,10 +52,11 @@ namespace MBSim {
     }
   }
 
-  bool ContactKinematicsCompoundContourCompoundContour::updateg(vector<SingleContact> &contact) {
+  void ContactKinematicsCompoundContourCompoundContour::updateg(vector<SingleContact> &contact) {
     int k=0;
     for(size_t i=0; i<contactKinematics.size(); i++) {
-      bool collision = contactKinematics[i]->updateg(contact[k]);
+      contactKinematics[i]->updateg(contact[k]);
+      bool collision = contact[k].getGeneralizedRelativePosition(false)(0) <= 0;
       if(collision) {
         k++;
         if(k==maxNumContacts) break;
@@ -63,7 +64,6 @@ namespace MBSim {
     }
     for(int i=k; i<maxNumContacts; i++)
      contact[i].getGeneralizedRelativePosition(false)(0) = 1;
-    return k;
   }
 
 }

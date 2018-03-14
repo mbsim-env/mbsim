@@ -58,8 +58,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPlaneSpatialContour::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
-
+  void ContactKinematicsPlaneSpatialContour::updateg(SingleContact &contact, int i) {
     SpatialContactSearch search(func);
     search.setTolerance(tol);
 
@@ -69,50 +68,52 @@ namespace MBSim {
       search.setEqualSpacing(10, 10, 0, 0, 0.1, 0.1);
 
     if (!searchAllCP) {
-      search.setInitialValue(zeta0[index]);
+      search.setInitialValue(zeta0[i]);
     }
     else {
       search.setSearchAll(true);
       searchAllCP = false;
     }
 
-    zeta0[index] = search.slv();
-    cFrame[ispatialcontour]->setZeta(zeta0[index]);
+    zeta0[i] = search.slv();
+    contact.getContourFrame(ispatialcontour)->setZeta(zeta0[i]);
 
-    cFrame[iplane]->setOrientation(plane->getFrame()->evalOrientation());
-    cFrame[ispatialcontour]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
-    cFrame[ispatialcontour]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
-    cFrame[ispatialcontour]->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
+    contact.getContourFrame(iplane)->setOrientation(plane->getFrame()->evalOrientation());
+    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
+    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
-    cFrame[ispatialcontour]->setPosition(spatialcontour->evalPosition(cFrame[ispatialcontour]->getZeta()));
+    contact.getContourFrame(ispatialcontour)->setPosition(spatialcontour->evalPosition(contact.getContourFrame(ispatialcontour)->getZeta()));
 
-    Vec3 Wn = cFrame[iplane]->getOrientation(false).col(0);
+    Vec3 Wn = contact.getContourFrame(iplane)->getOrientation(false).col(0);
 
-    if(spatialcontour->isZetaOutside(cFrame[ispatialcontour]->getZeta()))
+    double g;
+    if(spatialcontour->isZetaOutside(contact.getContourFrame(ispatialcontour)->getZeta()))
       g = 1;
     else
-      g = Wn.T()*(cFrame[ispatialcontour]->getPosition(false) - plane->getFrame()->getPosition());
+      g = Wn.T()*(contact.getContourFrame(ispatialcontour)->getPosition(false) - plane->getFrame()->getPosition());
     if(g < -spatialcontour->getThickness()) g = 1;
 
-    cFrame[iplane]->setPosition(cFrame[ispatialcontour]->getPosition(false) - Wn*g);
+    contact.getContourFrame(iplane)->setPosition(contact.getContourFrame(ispatialcontour)->getPosition(false) - Wn*g);
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
-  void ContactKinematicsPlaneSpatialContour::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    const Vec3 n1 = cFrame[iplane]->evalOrientation().col(0);
-    const Vec3 u1 = cFrame[iplane]->getOrientation().col(1);
-    const Vec3 v1 = cFrame[iplane]->getOrientation().col(2);
+  void ContactKinematicsPlaneSpatialContour::updatewb(SingleContact &contact, int i) {
+    const Vec3 n1 = contact.getContourFrame(iplane)->evalOrientation().col(0);
+    const Vec3 u1 = contact.getContourFrame(iplane)->getOrientation().col(1);
+    const Vec3 v1 = contact.getContourFrame(iplane)->getOrientation().col(2);
     const Mat3x2 R1 = plane->evalWR(Vec2(NONINIT));
 
-    const Vec3 u2 = spatialcontour->evalWu(cFrame[ispatialcontour]->getZeta());
-    const Vec3 v2 = spatialcontour->evalWv(cFrame[ispatialcontour]->getZeta());
-    const Mat3x2 R2 = spatialcontour->evalWR(cFrame[ispatialcontour]->getZeta());
-    const Mat3x2 U2 = spatialcontour->evalWU(cFrame[ispatialcontour]->getZeta());
-    const Mat3x2 V2 = spatialcontour->evalWV(cFrame[ispatialcontour]->getZeta());
+    const Vec3 u2 = spatialcontour->evalWu(contact.getContourFrame(ispatialcontour)->getZeta());
+    const Vec3 v2 = spatialcontour->evalWv(contact.getContourFrame(ispatialcontour)->getZeta());
+    const Mat3x2 R2 = spatialcontour->evalWR(contact.getContourFrame(ispatialcontour)->getZeta());
+    const Mat3x2 U2 = spatialcontour->evalWU(contact.getContourFrame(ispatialcontour)->getZeta());
+    const Mat3x2 V2 = spatialcontour->evalWV(contact.getContourFrame(ispatialcontour)->getZeta());
 
-    const Vec3 vC1 = cFrame[iplane]->evalVelocity();
-    const Vec3 vC2 = cFrame[ispatialcontour]->evalVelocity();
-    const Vec3 Om1 = cFrame[iplane]->evalAngularVelocity();
-    const Vec3 Om2 = cFrame[ispatialcontour]->evalAngularVelocity();
+    const Vec3 vC1 = contact.getContourFrame(iplane)->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(ispatialcontour)->evalVelocity();
+    const Vec3 Om1 = contact.getContourFrame(iplane)->evalAngularVelocity();
+    const Vec3 Om2 = contact.getContourFrame(ispatialcontour)->evalAngularVelocity();
 
     SqrMat A(4,NONINIT);
     A(RangeV(0,0),RangeV(0,1)) = -u1.T()*R1;
@@ -136,11 +137,11 @@ namespace MBSim {
     const Mat3x3 tOm1 = tilde(Om1);
     const Mat3x3 tOm2 = tilde(Om2);
 
-    wb(0) += (/**(vC2-vC1).T()*N1**/-n1.T()*tOm1*R1)*zetad1+n1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
-    if (wb.size()>1) {
-      wb(1) += (/**(vC2-vC1).T()*U1**/-u1.T()*tOm1*R1)*zetad1+u1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
-      if (wb.size()>2)
-        wb(2) += (/**(vC2-vC1).T()*V1**/-v1.T()*tOm1*R1)*zetad1+v1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+    contact.getwb(false)(0) += (/**(vC2-vC1).T()*N1**/-n1.T()*tOm1*R1)*zetad1+n1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+    if (contact.getwb(false).size()>1) {
+      contact.getwb(false)(1) += (/**(vC2-vC1).T()*U1**/-u1.T()*tOm1*R1)*zetad1+u1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+      if (contact.getwb(false).size()>2)
+        contact.getwb(false)(2) += (/**(vC2-vC1).T()*V1**/-v1.T()*tOm1*R1)*zetad1+v1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
     }
   }
 
