@@ -1838,11 +1838,14 @@ namespace MBSimGUI {
     searchAllContactPoints = new ExtWidget("Search all contact points",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"searchAllContactPoints");
     addToTab("Extra", searchAllContactPoints);
 
-    initialGuess = new ExtWidget("Initial guess",new ChoiceWidget2(new VecSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
+    initialGuess = new ExtWidget("Initial guess",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
     addToTab("Extra", initialGuess);
 
     tolerance = new ExtWidget("Tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"tolerance");
     addToTab("Extra", tolerance);
+
+    maxNumContacts = new ExtWidget("Maximum number of contacts",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumNumberOfContacts");
+    addToTab("Extra", maxNumContacts);
   }
 
   DOMElement* ContactPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1855,6 +1858,7 @@ namespace MBSimGUI {
     searchAllContactPoints->initializeUsingXML(item->getXMLElement());
     initialGuess->initializeUsingXML(item->getXMLElement());
     tolerance->initializeUsingXML(item->getXMLElement());
+    maxNumContacts->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1868,6 +1872,7 @@ namespace MBSimGUI {
     searchAllContactPoints->writeXMLFile(item->getXMLElement(),ref);
     initialGuess->writeXMLFile(item->getXMLElement(),ref);
     tolerance->writeXMLFile(item->getXMLElement(),ref);
+    maxNumContacts->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 

@@ -36,8 +36,8 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      bool updateg(SingleContact &contact) override;
-      void updatewb(SingleContact &contact) override;
+      bool updateg(SingleContact &contact, int i=0) override;
+      void updatewb(SingleContact &contact, int i=0) override;
       void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
       void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override;
       /***************************************************/

@@ -252,10 +252,10 @@ namespace MBSim {
     else if (stage == preInit) {
       Link::init(stage, config);
       contactKinematics->setSearchAllContactPoints(searchAllCP);
+      if(maxNumContacts>-1) contactKinematics->setMaximumNumberOfContacts(maxNumContacts);
+      contactKinematics->assignContours(contour[0], contour[1]);
       contactKinematics->setInitialGuess(zeta0);
       contactKinematics->setTolerance(tol);
-      contactKinematics->assignContours(contour[0], contour[1]);
-      if(maxNumContacts>-1) contactKinematics->setMaximumNumberOfContacts(maxNumContacts);
       for (int k = 0; k < contactKinematics->getMaximumNumberOfContacts(); ++k) {
         stringstream contactName;
         contactName << name << "_" <<0;

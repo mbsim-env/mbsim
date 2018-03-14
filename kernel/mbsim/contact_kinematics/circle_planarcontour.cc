@@ -49,12 +49,14 @@ namespace MBSim {
       planarcontour = static_cast<Contour*>(contour[0]);
     }
     func = new FuncPairPlanarContourCircle(circle,planarcontour);
+    zeta0.resize(maxNumContacts);
   }
 
-  void ContactKinematicsCirclePlanarContour::setInitialGuess(const fmatvec::VecV &zeta0_) {
-    if(zeta0_.size()) {
-      if(zeta0_.size() != 1) throw runtime_error("(ContactKinematicsCirclePlanarContour::assignContours): size of zeta0 does not match");
-      zeta0 = zeta0_(0);
+  void ContactKinematicsCirclePlanarContour::setInitialGuess(const fmatvec::MatV &zeta0_) {
+   if(zeta0_.rows()) {
+      if(zeta0_.rows() != maxNumContacts or zeta0_.cols() != 1) throw runtime_error("(ContactKinematicsLinePlanarContour::assignContours): size of zeta0 does not match");
+      for(int i=0; i<maxNumContacts; i++)
+        zeta0[i] = zeta0_(i,0);
     }
   }
 
@@ -64,14 +66,14 @@ namespace MBSim {
     search.setNodes(planarcontour->getEtaNodes());
 
     if(searchAllCP==false)
-      search.setInitialValue(zeta0);
+      search.setInitialValue(zeta0[index]);
     else {
       search.setSearchAll(true);
       searchAllCP=false;
     }
 
-    zeta0 = search.slv();
-    cFrame[iplanarcontour]->setEta(zeta0);
+    zeta0[index] = search.slv();
+    cFrame[iplanarcontour]->setEta(zeta0[index]);
 
     cFrame[iplanarcontour]->getOrientation(false).set(0, planarcontour->evalWn(cFrame[iplanarcontour]->getZeta()));
     cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->evalWu(cFrame[iplanarcontour]->getZeta()));

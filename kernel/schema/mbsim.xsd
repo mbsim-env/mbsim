@@ -2163,7 +2163,7 @@
                 Definiert, ob initial alle möglichen Kontaktpunkte gesucht werden sollen.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownVector">
+          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownMatrix">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Anfangswerte für Newton-Löser.
             </xs:documentation></xs:annotation>

@@ -47,31 +47,33 @@ namespace MBSim {
       planarcontour = static_cast<Contour*>(contour[0]);
     }
     func = new FuncPairPlanarContourLine(line,planarcontour);
+    zeta0.resize(maxNumContacts);
   }
 
-  void ContactKinematicsLinePlanarContour::setInitialGuess(const fmatvec::VecV &zeta0_) {
-    if(zeta0_.size()) {
-      if(zeta0_.size() != 1) throw runtime_error("(ContactKinematicsLinePlanarContour::assignContours): size of zeta0 does not match");
-      zeta0 = zeta0_(0);
+  void ContactKinematicsLinePlanarContour::setInitialGuess(const fmatvec::MatV &zeta0_) {
+    if(zeta0_.rows()) {
+      if(zeta0_.rows() != maxNumContacts or zeta0_.cols() != 1) throw runtime_error("(ContactKinematicsLinePlanarContour::assignContours): size of zeta0 does not match");
+      for(int i=0; i<maxNumContacts; i++)
+        zeta0[i] = zeta0_(i,0);
     }
   }
 
-  bool ContactKinematicsLinePlanarContour::updateg(SingleContact &contact) {
+  bool ContactKinematicsLinePlanarContour::updateg(SingleContact &contact, int i) {
 
     PlanarContactSearch search(func);
     search.setTolerance(tol);
     search.setNodes(planarcontour->getEtaNodes());
 
     if (!searchAllCP) {
-      search.setInitialValue(zeta0);
+      search.setInitialValue(zeta0[i]);
     }
     else {
       search.setSearchAll(true);
       searchAllCP = false;
     }
 
-    zeta0 = search.slv();
-    contact.getContourFrame(iplanarcontour)->setEta(zeta0);
+    zeta0[i] = search.slv();
+    contact.getContourFrame(iplanarcontour)->setEta(zeta0[i]);
 
     contact.getContourFrame(iline)->setOrientation(line->getFrame()->evalOrientation());
     contact.getContourFrame(iplanarcontour)->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
@@ -94,7 +96,7 @@ namespace MBSim {
     return g <= 0;
   }
 
-  void ContactKinematicsLinePlanarContour::updatewb(SingleContact &contact) {
+  void ContactKinematicsLinePlanarContour::updatewb(SingleContact &contact, int i) {
     const Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);
     const Vec3 u1 = contact.getContourFrame(iline)->getOrientation().col(1);
     const Vec3 R1 = u1;

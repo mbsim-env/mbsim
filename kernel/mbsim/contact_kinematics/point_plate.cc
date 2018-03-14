@@ -43,7 +43,7 @@ namespace MBSim {
     }
   }
 
-  bool ContactKinematicsPointPlate::updateg(SingleContact &contact) {
+  bool ContactKinematicsPointPlate::updateg(SingleContact &contact, int i) {
     double g;
     Vec3 Ar = plate->getFrame()->evalOrientation().T() * (point->getFrame()->evalPosition() - plate->getFrame()->evalPosition());
     if(fabs(Ar(1)) <= plate->getYLength()/2 and fabs(Ar(2)) <= plate->getZLength()/2){

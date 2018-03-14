@@ -103,7 +103,7 @@ namespace MBSim {
       contact[i].getContourFrame(ibox0)->setPosition(r + n*g/2.);
       contact[i].getContourFrame(ibox1)->setPosition(r - n*g/2.);
       }
-      for(size_t i=result.numContacts(); i<maxNumContacts; i++) {
+      for(int i=result.numContacts(); i<maxNumContacts; i++) {
         contact[i].getGeneralizedRelativePosition(false)(0) = 1;
         contact[i].getContourFrame(ibox0)->setPosition(box0->getFrame()->getPosition());
         contact[i].getContourFrame(ibox0)->setOrientation(box0->getFrame()->getOrientation());
@@ -117,7 +117,7 @@ namespace MBSim {
 //      DistanceResult<double> result;
 //      distance<double>(obj0.get(), obj1.get(), request, result);
 //      g = result.min_distance;
-      for(size_t i=0; i<maxNumContacts; i++) {
+      for(int i=0; i<maxNumContacts; i++) {
       contact[i].getGeneralizedRelativePosition(false)(0) = 1;
       contact[i].getContourFrame(ibox0)->setPosition(box0->getFrame()->getPosition());
       contact[i].getContourFrame(ibox0)->setOrientation(box0->getFrame()->getOrientation());

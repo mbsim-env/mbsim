@@ -65,8 +65,9 @@ namespace MBSim {
        */
       virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) = 0;
 
-      virtual bool updateg(std::vector<SingleContact> &contact) { return updateg(contact[0]); }
-      virtual bool updateg(SingleContact &contact) { return false; }
+      virtual bool updateg(std::vector<SingleContact> &contact) { for(int i=0; i<maxNumContacts; i++) updateg(contact[i],i); return 0; }
+
+      virtual bool updateg(SingleContact &contact, int i=0) { return false; }
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration
@@ -77,8 +78,8 @@ namespace MBSim {
        */
       virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) = 0;
 
-      virtual void updatewb(std::vector<SingleContact> &contact) { updatewb(contact[0]); }
-      virtual void updatewb(SingleContact &contact) { }
+      virtual void updatewb(std::vector<SingleContact> &contact) { for(int i=0; i<maxNumContacts; i++) updatewb(contact[i],i); }
+      virtual void updatewb(SingleContact &contact, int i=0) { }
       
       /** 
        * \brief treats ordering of contours
@@ -95,7 +96,7 @@ namespace MBSim {
       virtual ContactKinematics* getContactKinematics(int i=0) const { return nullptr; }
 
       virtual void setSearchAllContactPoints(bool searchAllCP_=true) { }
-      virtual void setInitialGuess(const fmatvec::VecV &zeta0_) { }
+      virtual void setInitialGuess(const fmatvec::MatV &zeta0_) { }
 
       /**
        * \brief set tolerance for root-finding

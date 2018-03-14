@@ -33,7 +33,7 @@ namespace MBSim {
     edge1 = static_cast<Edge*>(contour[1]);
   }
 
-  bool ContactKinematicsEdgeEdge::updateg(SingleContact &contact) {
+  bool ContactKinematicsEdgeEdge::updateg(SingleContact &contact, int i) {
     double g;
     Vec Wd = edge1->getFrame()->evalPosition() - edge0->getFrame()->evalPosition();
     Vec Wd0 = edge0->getFrame()->evalOrientation().col(1);

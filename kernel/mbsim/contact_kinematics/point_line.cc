@@ -41,7 +41,7 @@ namespace MBSim {
     }
   }
 
-  bool ContactKinematicsPointLine::updateg(SingleContact &contact) {
+  bool ContactKinematicsPointLine::updateg(SingleContact &contact, int i) {
     contact.getContourFrame(iline)->setOrientation(line->getFrame()->evalOrientation());
     contact.getContourFrame(ipoint)->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
     contact.getContourFrame(ipoint)->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
@@ -59,7 +59,7 @@ namespace MBSim {
     return g <= 0;
   }
 
-  void ContactKinematicsPointLine::updatewb(SingleContact &contact) {
+  void ContactKinematicsPointLine::updatewb(SingleContact &contact, int i) {
     Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);
     Vec3 u1 = contact.getContourFrame(iline)->getOrientation().col(1);
     Vec3 vC1 = contact.getContourFrame(iline)->evalVelocity();

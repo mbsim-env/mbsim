@@ -50,7 +50,7 @@ namespace MBSim {
       /***************************************************/
 
       void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
-      void setInitialGuess(const fmatvec::VecV &zeta0_) override;
+      void setInitialGuess(const fmatvec::MatV &zeta0_) override;
 
    private:
       /**
@@ -72,7 +72,7 @@ namespace MBSim {
 
       bool searchAllCP{false};
 
-      double zeta0{0};
+      std::vector<double> zeta0;
   };
 
 }
