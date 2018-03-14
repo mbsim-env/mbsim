@@ -2173,6 +2173,11 @@
                 Toleranz für Newton-Löser.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="maximumNumberOfContacts" minOccurs="0" type="pv:nounitScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Maximale Anzahl an Kontakten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>

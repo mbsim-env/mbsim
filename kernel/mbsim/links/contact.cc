@@ -43,9 +43,6 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Contact)
 
-  Contact::Contact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), searchAllCP(false), tol(1e-10), saved_ref(0) {
-  }
-
   Contact::~Contact() {
     delete contactKinematics;
     delete fcl;
@@ -258,10 +255,11 @@ namespace MBSim {
       contactKinematics->setInitialGuess(zeta0);
       contactKinematics->setTolerance(tol);
       contactKinematics->assignContours(contour[0], contour[1]);
-      for (int k = 0; k < contactKinematics->getNumberOfPotentialContactPoints(); ++k) {
+      if(maxNumContacts>-1) contactKinematics->setMaximumNumberOfContacts(maxNumContacts);
+      for (int k = 0; k < contactKinematics->getMaximumNumberOfContacts(); ++k) {
         stringstream contactName;
         contactName << name << "_" <<0;
-        if (contactKinematics->getNumberOfPotentialContactPoints() > 1) contactName << "_" << k;
+        if (contactKinematics->getMaximumNumberOfContacts() > 1) contactName << "_" << k;
         contacts.push_back(SingleContact(contactName.str()));
         contacts[k].connect(contour[0], contour[1]);
         contacts[k].plotFeature = plotFeature;
@@ -653,6 +651,9 @@ namespace MBSim {
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"tolerance");
     if (e) setTolerance(E(e)->getText<double>());
+
+    e = E(element)->getFirstElementChildNamed(MBSIM%"maximumNumberOfContacts");
+    if (e) setMaximumNumberOfContacts(E(e)->getText<int>());
   }
 
   void Contact::updatecorrRef(const Vec& corrParent) {

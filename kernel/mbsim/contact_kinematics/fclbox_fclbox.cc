@@ -65,7 +65,6 @@ namespace MBSim {
     box1 = static_cast<FCLBox*>(contour[1]);
     obj0 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(box0->getCollisionGeometry()));
     obj1 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(box1->getCollisionGeometry()));
-    numberOfPotentialContactPoints = 4;
   }
 
   bool ContactKinematicsFCLBoxFCLBox::updateg(vector<SingleContact> &contact) {
@@ -74,7 +73,7 @@ namespace MBSim {
     obj1->setTranslation(Vec3ToVector3d(box1->getFrame()->evalPosition()));
     obj1->setRotation(SqrMat3ToMatrix3d(box1->getFrame()->getOrientation()));
 
-    CollisionRequest<double> request(4,true);
+    CollisionRequest<double> request(maxNumContacts,true);
     CollisionResult<double> result;
     collide<double>(obj0.get(), obj1.get(), request, result);
 //    cout << result.isCollision() << endl;
@@ -104,7 +103,7 @@ namespace MBSim {
       contact[i].getContourFrame(ibox0)->setPosition(r + n*g/2.);
       contact[i].getContourFrame(ibox1)->setPosition(r - n*g/2.);
       }
-      for(size_t i=result.numContacts(); i<4; i++) {
+      for(size_t i=result.numContacts(); i<maxNumContacts; i++) {
         contact[i].getGeneralizedRelativePosition(false)(0) = 1;
         contact[i].getContourFrame(ibox0)->setPosition(box0->getFrame()->getPosition());
         contact[i].getContourFrame(ibox0)->setOrientation(box0->getFrame()->getOrientation());
@@ -118,7 +117,7 @@ namespace MBSim {
 //      DistanceResult<double> result;
 //      distance<double>(obj0.get(), obj1.get(), request, result);
 //      g = result.min_distance;
-      for(size_t i=0; i<4; i++) {
+      for(size_t i=0; i<maxNumContacts; i++) {
       contact[i].getGeneralizedRelativePosition(false)(0) = 1;
       contact[i].getContourFrame(ibox0)->setPosition(box0->getFrame()->getPosition());
       contact[i].getContourFrame(ibox0)->setOrientation(box0->getFrame()->getOrientation());

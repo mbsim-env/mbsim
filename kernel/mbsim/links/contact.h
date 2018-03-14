@@ -51,7 +51,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contact
        */
-      Contact(const std::string &name = "");
+      Contact(const std::string &name = "") : Link(name) { }
 
       /**
        * \brief destructor
@@ -183,6 +183,11 @@ namespace MBSim {
        */
       void setTolerance(double tol_) { tol = tol_; }
 
+      /**
+       * \brief set maximum number of contacts
+       */
+      void setMaximumNumberOfContacts(int maxNumContacts_) { maxNumContacts = maxNumContacts_; }
+
       bool getUpdaterrel() const { return updrrel; }
 
       void updateGeneralizedPositions() override;
@@ -196,9 +201,9 @@ namespace MBSim {
       /**
        * \brief contact kinematics
        */
-      ContactKinematics* contactKinematics;
+      ContactKinematics* contactKinematics{nullptr};
 
-      std::vector<Contour*> contour;
+      std::vector<Contour*> contour{2};
 
       /*!
        * \brief plotFeatures of sub-contacts
@@ -210,31 +215,36 @@ namespace MBSim {
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level
        */
-      GeneralizedForceLaw *fcl;
+      GeneralizedForceLaw *fcl{nullptr};
 
       /**
        * \brief force law defining relation between tangential velocities and tangential forces
        */
-      FrictionForceLaw *fdf;
+      FrictionForceLaw *fdf{nullptr};
 
       /**
        * \brief force law defining relation between penetration velocity and resulting normal impulses
        */
-      GeneralizedImpactLaw *fnil;
+      GeneralizedImpactLaw *fnil{nullptr};
 
       /** 
        * \brief force law defining relation between tangential velocities and forces impulses
        */
-      FrictionImpactLaw *ftil;
+      FrictionImpactLaw *ftil{nullptr};
 
-      bool searchAllCP;
+      bool searchAllCP{false};
 
       fmatvec::VecV zeta0;
 
       /**
        * \brief tolerance for root-finding
        */
-      double tol;
+      double tol{1e-10};
+
+      /**
+       * \brief maximum number of contacts
+       */
+      int maxNumContacts{-1};
 
     private:
       struct saved_references {

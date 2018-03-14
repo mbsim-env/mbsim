@@ -125,7 +125,7 @@ namespace MBSim {
 
     else if (( contour0==typeid(Cuboid) && contour1==typeid(Room) ) or
         ( contour0==typeid(Cuboid) && contour1==typeid(Cuboid) ))
-      return new ContactKinematicsCompoundContourCompoundContour;
+      return new ContactKinematicsCompoundContourCompoundContour(4);
 
     else if ( contour0==typeid(Edge) && contour1==typeid(Edge) )
       return new ContactKinematicsEdgeEdge;
@@ -188,7 +188,7 @@ namespace MBSim {
       return new ContactKinematicsPlaneSpatialContour;
 
     else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLBox) )
-      return new ContactKinematicsFCLBoxFCLBox;
+      return new ContactKinematicsFCLBoxFCLBox(4);
 
     else
       return nullptr;

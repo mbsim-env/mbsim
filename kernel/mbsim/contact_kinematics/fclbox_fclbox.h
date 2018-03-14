@@ -34,6 +34,7 @@ namespace MBSim {
   class ContactKinematicsFCLBoxFCLBox : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
+      ContactKinematicsFCLBoxFCLBox(int maxNumContacts=1) : ContactKinematics(maxNumContacts) { }
       void assignContours(const std::vector<Contour*> &contour) override;
       bool updateg(std::vector<SingleContact> &contact) override;
       void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;

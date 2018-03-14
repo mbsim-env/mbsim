@@ -32,7 +32,7 @@ namespace MBSim {
     contour0 = static_cast<CompoundContour*>(contour[0]);
     contour1 = static_cast<CompoundContour*>(contour[1]);
 
-    numberOfPotentialContactPoints = 0;
+//    numberOfPotentialContactPoints = 0;
 
     for(auto & contactKinematic : contactKinematics)
       delete contactKinematic;
@@ -46,11 +46,10 @@ namespace MBSim {
         if(tmp) {
           contactKinematics.push_back(tmp); 
           tmp->assignContours(contour0->getContourElement(i),contour1->getContourElement(j));
-          numberOfPotentialContactPoints += tmp->getNumberOfPotentialContactPoints();
+//          numberOfPotentialContactPoints += tmp->getNumberOfPotentialContactPoints();
         }
       }
     }
-    numberOfPotentialContactPoints = 4;
   }
 
   bool ContactKinematicsCompoundContourCompoundContour::updateg(vector<SingleContact> &contact) {
@@ -59,10 +58,10 @@ namespace MBSim {
       bool collision = contactKinematics[i]->updateg(contact[k]);
       if(collision) {
         k++;
-        if(k==numberOfPotentialContactPoints) break;
+        if(k==maxNumContacts) break;
       }
     }
-    for(int i=k; i<numberOfPotentialContactPoints; i++)
+    for(int i=k; i<maxNumContacts; i++)
      contact[i].getGeneralizedRelativePosition(false)(0) = 1;
     return k;
   }
