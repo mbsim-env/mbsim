@@ -679,6 +679,7 @@ namespace MBSim {
   }
 
   void Contact::resetUpToDate() {
+    updrrel = true;
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->resetUpToDate();
   }
@@ -686,6 +687,12 @@ namespace MBSim {
   void Contact::updateGeneralizedNormalForce() {
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updlaN = false;
+  }
+
+  void Contact::updateGeneralizedPositions() {
+//    cout << "normalDist = " << contactKinematics->updateg(contacts) << endl;
+    contactKinematics->updateg(contacts);
+    updrrel = false;
   }
 
 }

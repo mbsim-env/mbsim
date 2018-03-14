@@ -116,6 +116,8 @@ namespace MBSimGUI {
       return new PlanarContour;
     else if(E(element)->getTagName()==MBSIM%"SpatialContour")
       return new SpatialContour;
+    else if(E(element)->getTagName()==MBSIM%"FCLBox")
+      return new FCLBox;
     return nullptr;
   }
 

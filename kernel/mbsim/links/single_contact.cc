@@ -141,7 +141,9 @@ namespace MBSim {
 
   void SingleContact::updateGeneralizedPositions() {
 //    updatePositions();
-    contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
+    if(static_cast<Contact*>(parent)->getUpdaterrel())
+      static_cast<Contact*>(parent)->updateGeneralizedPositions();
+//    contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
     updrrel = false;
   }
 
@@ -175,7 +177,9 @@ namespace MBSim {
   }
 
   void SingleContact::updatePositions(Frame *frame) {
-    if(updrrel) contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
+    if(static_cast<Contact*>(parent)->getUpdaterrel())
+      static_cast<Contact*>(parent)->updateGeneralizedPositions();
+    //if(updrrel) contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
     //if(updPos) contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
   }
 

@@ -21,6 +21,7 @@
 #include "fclbox_fclbox.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/fcl_box.h"
+#include "mbsim/links/single_contact.h"
 #include "fcl/narrowphase/distance.h"
 
 using namespace fmatvec;
@@ -66,6 +67,66 @@ namespace MBSim {
     obj0 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(box0->getCollisionGeometry()));
     obj1 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(box1->getCollisionGeometry()));
     numberOfPotentialContactPoints = 4;
+  }
+
+  double ContactKinematicsFCLBoxFCLBox::updateg(vector<SingleContact> &contact) {
+    obj0->setTranslation(Vec3ToVector3d(box0->getFrame()->evalPosition()));
+    obj0->setRotation(SqrMat3ToMatrix3d(box0->getFrame()->getOrientation()));
+    obj1->setTranslation(Vec3ToVector3d(box1->getFrame()->evalPosition()));
+    obj1->setRotation(SqrMat3ToMatrix3d(box1->getFrame()->getOrientation()));
+
+    CollisionRequest<double> request(4,true);
+    CollisionResult<double> result;
+    collide<double>(obj0.get(), obj1.get(), request, result);
+//    cout << result.isCollision() << endl;
+    if(result.isCollision()) {
+//      cout << "numContacts = " << result.numContacts() << endl;
+      for(size_t i=0; i<result.numContacts(); i++) {
+      Vec3 n = Vector3dToVec3(result.getContact(i).normal);
+      Vec3 r = Vector3dToVec3(result.getContact(i).pos);
+      double g = -result.getContact(i).penetration_depth;
+      Vec3 t;
+      t(0) = 1;
+      Vec3 t1, t2;
+      if(fabs(t.T()*n) > 0.9) {
+        t(0) = 0;
+        t(1) = 1;
+      }
+      t1 = crossProduct(n,t);
+      t2 = crossProduct(n,t1);
+      contact[i].getGeneralizedRelativePosition(false)(0) = g;
+      contact[i].getContourFrame(ibox0)->getOrientation(false).set(0, n);
+      contact[i].getContourFrame(ibox0)->getOrientation(false).set(1, t1);
+      contact[i].getContourFrame(ibox0)->getOrientation(false).set(2, t2);
+      contact[i].getContourFrame(ibox1)->getOrientation(false).set(0, -n);
+      contact[i].getContourFrame(ibox1)->getOrientation(false).set(1, -t1);
+      contact[i].getContourFrame(ibox1)->getOrientation(false).set(2, t2);
+      contact[i].getContourFrame(ibox0)->setPosition(r + n*g/2.);
+      contact[i].getContourFrame(ibox1)->setPosition(r - n*g/2.);
+      }
+      for(size_t i=result.numContacts(); i<4; i++) {
+        contact[i].getGeneralizedRelativePosition(false)(0) = 1;
+        contact[i].getContourFrame(ibox0)->setPosition(box0->getFrame()->getPosition());
+        contact[i].getContourFrame(ibox0)->setOrientation(box0->getFrame()->getOrientation());
+        contact[i].getContourFrame(ibox1)->setPosition(box1->getFrame()->getPosition());
+        contact[i].getContourFrame(ibox1)->setOrientation(box1->getFrame()->getOrientation());
+      }
+      return 0;
+    }
+    else {
+//      DistanceRequest<double> request;
+//      DistanceResult<double> result;
+//      distance<double>(obj0.get(), obj1.get(), request, result);
+//      g = result.min_distance;
+      for(size_t i=0; i<result.numContacts(); i++) {
+      contact[i].getGeneralizedRelativePosition(false)(0) = 1;
+      contact[i].getContourFrame(ibox0)->setPosition(box0->getFrame()->getPosition());
+      contact[i].getContourFrame(ibox0)->setOrientation(box0->getFrame()->getOrientation());
+      contact[i].getContourFrame(ibox1)->setPosition(box1->getFrame()->getPosition());
+      contact[i].getContourFrame(ibox1)->setOrientation(box1->getFrame()->getOrientation());
+      }
+      return 1;
+    }
   }
 
   void ContactKinematicsFCLBoxFCLBox::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {

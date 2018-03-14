@@ -183,6 +183,10 @@ namespace MBSim {
        */
       void setTolerance(double tol_) { tol = tol_; }
 
+      bool getUpdaterrel() const { return updrrel; }
+
+      void updateGeneralizedPositions() override;
+
     protected:
       /**
        * \brief list of the single sub-contact(-points)
