@@ -18,6 +18,7 @@
  */
 
 #include <config.h> 
+#ifdef HAVE_FCL
 #include "fclcontour_fclcontour.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/fcl_contour.h"
@@ -127,3 +128,4 @@ namespace MBSim {
   }
 
 }
+#endif

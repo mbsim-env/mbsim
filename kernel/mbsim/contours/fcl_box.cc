@@ -18,6 +18,7 @@
  */
 
 #include <config.h>
+#ifdef HAVE_FCL
 #include "mbsim/contours/fcl_box.h"
 #include "fcl/geometry/shape/box.h"
 #include <openmbvcppinterface/cuboid.h>
@@ -55,3 +56,4 @@ namespace MBSim {
   }
 
 }
+#endif
