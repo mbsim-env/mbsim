@@ -16,7 +16,7 @@ libutils_la_SOURCES = colors.cc\
 utilsincludedir = $(includedir)/mbsim/utils
 
 libutils_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
-libutils_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
+libutils_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(EIGEN3_CFLAGS) $(CCD_CFLAGS) $(FCL_CFLAGS)
 
 utilsinclude_HEADERS = colors.h\
                        eps.h\

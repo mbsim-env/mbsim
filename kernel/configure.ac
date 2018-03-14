@@ -19,9 +19,7 @@ AC_LANG([C++])
 AC_FC_WRAPPERS
 
 # enable C++11
-CXXFLAGS="$CXXFLAGS -std=c++11 -D_USE_MATH_DEFINES -I/home/foerg/install/include/eigen3"
-
-LIBS="$LIBS -L/home/foerg/install/lib64 -lfcl -lccd"
+CXXFLAGS="$CXXFLAGS -std=c++11 -D_USE_MATH_DEFINES"
 
 AC_C_CONST
 
@@ -54,6 +52,15 @@ PKG_CHECK_MODULES(CASADI, casadi >= 3.0.0, [], [AC_MSG_ERROR([CasADi not found!]
 
 dnl check for OpenMBV-Cpp-Interface
 PKG_CHECK_MODULES(OPENMBVCPPINTERFACE, openmbvcppinterface >= 3.0.0,[],[AC_MSG_ERROR([OpenMBVC++Interface not found!])])
+
+dnl Check for eigen3
+PKG_CHECK_MODULES(EIGEN3, eigen3, [], [AC_MSG_ERROR([eigen3 not found!])])
+
+dnl Check for ccd
+PKG_CHECK_MODULES(CCD, ccd, [], [AC_MSG_ERROR([ccd not found!])])
+
+dnl Check for fcl
+PKG_CHECK_MODULES(FCL, fcl, [], [AC_MSG_ERROR([fcl not found!])])
 
 dnl By autoscan
 AC_CHECK_FUNCS([mkdir])
