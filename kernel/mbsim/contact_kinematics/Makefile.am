@@ -31,7 +31,7 @@ libcontactkinematics_la_SOURCES = point_line.cc\
 				  plate_polynomialfrustum.cc\
 				  compoundcontour_contour.cc\
 				  compoundcontour_compoundcontour.cc\
-				  fclbox_fclbox.cc
+				  fclcontour_fclcontour.cc
 
 contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 
@@ -71,4 +71,4 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h\
 				   plate_polynomialfrustum.h\
 				   compoundcontour_contour.h\
 				   compoundcontour_compoundcontour.h\
-				   fclbox_fclbox.h
+				   fclcontour_fclcontour.h

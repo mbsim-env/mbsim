@@ -18,7 +18,7 @@
  */
 
 #include <config.h> 
-#include "fclbox_fclbox.h"
+#include "fclcontour_fclcontour.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/fcl_contour.h"
 #include "fcl/narrowphase/distance.h"

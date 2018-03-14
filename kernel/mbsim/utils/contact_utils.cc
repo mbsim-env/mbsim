@@ -73,7 +73,7 @@
 #include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/point_spatialcontour.h>
 #include <mbsim/contact_kinematics/plane_spatialcontour.h>
-#include <mbsim/contact_kinematics/fclbox_fclbox.h>
+#include <mbsim/contact_kinematics/fclcontour_fclcontour.h>
 // --- List of contact kinematic implementations - END ---
 
 using namespace std;
