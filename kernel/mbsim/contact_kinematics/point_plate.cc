@@ -22,6 +22,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/plate.h"
 #include "mbsim/contours/point.h"
+#include "mbsim/links/single_contact.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -43,6 +44,28 @@ namespace MBSim {
     }
   }
 
+  bool ContactKinematicsPointPlate::updateg(SingleContact &contact) {
+    double g;
+    Vec3 Ar = plate->getFrame()->evalOrientation().T() * (point->getFrame()->evalPosition() - plate->getFrame()->evalPosition());
+    if(fabs(Ar(1)) <= plate->getYLength()/2 and fabs(Ar(2)) <= plate->getZLength()/2){
+      g = Ar(0);
+      if(g < -plate->getThickness())
+        g = 1;
+      else {
+        contact.getContourFrame(ipoint)->getPosition(false) = point->getFrame()->getPosition();
+        contact.getContourFrame(iplate)->getPosition(false) = point->getFrame()->getPosition() - g * plate->getFrame()->getOrientation().col(0);
+        contact.getContourFrame(iplate)->getOrientation(false) = plate->getFrame()->getOrientation();
+        contact.getContourFrame(ipoint)->getOrientation(false).set(0,-plate->getFrame()->getOrientation().col(0));
+        contact.getContourFrame(ipoint)->getOrientation(false).set(1,-plate->getFrame()->getOrientation().col(1));
+        contact.getContourFrame(ipoint)->getOrientation(false).set(2,plate->getFrame()->getOrientation().col(2));
+      }
+    }
+    else
+      g = 1.;
+    contact.getGeneralizedRelativePosition(false)(0) = g;
+    return g <= 0;
+  }
+
   void ContactKinematicsPointPlate::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     Vec3 Ar = plate->getFrame()->evalOrientation().T() * (point->getFrame()->evalPosition() - plate->getFrame()->evalPosition());
     if(fabs(Ar(1)) <= plate->getYLength()/2 and fabs(Ar(2)) <= plate->getZLength()/2){
@@ -60,8 +83,6 @@ namespace MBSim {
     }
     else
       g = 1.;
-
   }
 
 }
-

@@ -65,7 +65,8 @@ namespace MBSim {
        */
       virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) = 0;
 
-      virtual double updateg(std::vector<SingleContact> &contact) { return 1; }
+      virtual bool updateg(std::vector<SingleContact> &contact);
+      virtual bool updateg(SingleContact &contact) { return false; }
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration

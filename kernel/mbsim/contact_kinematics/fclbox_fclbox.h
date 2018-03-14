@@ -35,7 +35,7 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      double updateg(std::vector<SingleContact> &contact) override;
+      bool updateg(std::vector<SingleContact> &contact) override;
       void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
       void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsFCLBoxFCLBox::updatewb): Not implemented!"); };
       /***************************************************/

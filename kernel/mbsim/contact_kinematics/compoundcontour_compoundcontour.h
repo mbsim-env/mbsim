@@ -39,6 +39,7 @@ namespace MBSim {
 
       void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override { }
       void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { }
+      bool updateg(std::vector<SingleContact> &contact) override;
 
       ContactKinematics* getContactKinematics(int i=0) const override { return contactKinematics[i]; }
       /***************************************************/
@@ -59,4 +60,3 @@ namespace MBSim {
 }
 
 #endif /* _CONTACT_KINEMATICS_COMPOUNDCONTOUR_COMPOUNDCONTOUR_H_ */
-

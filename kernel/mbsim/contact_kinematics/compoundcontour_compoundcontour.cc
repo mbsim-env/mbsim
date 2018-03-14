@@ -21,6 +21,7 @@
 #include "mbsim/contact_kinematics/compoundcontour_compoundcontour.h"
 #include "mbsim/contours/compound_contour.h"
 #include "mbsim/utils/contact_utils.h"
+#include "mbsim/links/single_contact.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -50,6 +51,21 @@ namespace MBSim {
         }
       }
     }
+    numberOfPotentialContactPoints = 4;
+  }
+
+  bool ContactKinematicsCompoundContourCompoundContour::updateg(vector<SingleContact> &contact) {
+    int k=0;
+    for(size_t i=0; i<contactKinematics.size(); i++) {
+      bool collision = contactKinematics[i]->updateg(contact[k]);
+      if(collision) {
+        k++;
+        if(k==numberOfPotentialContactPoints) break;
+      }
+    }
+    for(int i=k; i<numberOfPotentialContactPoints; i++)
+     contact[i].getGeneralizedRelativePosition(false)(0) = 1;
+    return k;
   }
 
 }

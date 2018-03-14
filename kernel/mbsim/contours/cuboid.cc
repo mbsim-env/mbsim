@@ -117,7 +117,7 @@ namespace MBSim {
       point->setFrameOfReference(frame);
       addContour(point);
 
-      double thicknessFactor = 0.5;
+      double thicknessFactor = 0.05;
 
       r(0) = -lx/2.0;
       r(1) = 0;

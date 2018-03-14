@@ -69,7 +69,7 @@ namespace MBSim {
     numberOfPotentialContactPoints = 4;
   }
 
-  double ContactKinematicsFCLBoxFCLBox::updateg(vector<SingleContact> &contact) {
+  bool ContactKinematicsFCLBoxFCLBox::updateg(vector<SingleContact> &contact) {
     obj0->setTranslation(Vec3ToVector3d(box0->getFrame()->evalPosition()));
     obj0->setRotation(SqrMat3ToMatrix3d(box0->getFrame()->getOrientation()));
     obj1->setTranslation(Vec3ToVector3d(box1->getFrame()->evalPosition()));
@@ -79,6 +79,7 @@ namespace MBSim {
     CollisionResult<double> result;
     collide<double>(obj0.get(), obj1.get(), request, result);
 //    cout << result.isCollision() << endl;
+//    cout << result.numContacts() << endl;
     if(result.isCollision()) {
 //      cout << "numContacts = " << result.numContacts() << endl;
       for(size_t i=0; i<result.numContacts(); i++) {
@@ -111,21 +112,21 @@ namespace MBSim {
         contact[i].getContourFrame(ibox1)->setPosition(box1->getFrame()->getPosition());
         contact[i].getContourFrame(ibox1)->setOrientation(box1->getFrame()->getOrientation());
       }
-      return 0;
+      return true;
     }
     else {
 //      DistanceRequest<double> request;
 //      DistanceResult<double> result;
 //      distance<double>(obj0.get(), obj1.get(), request, result);
 //      g = result.min_distance;
-      for(size_t i=0; i<result.numContacts(); i++) {
+      for(size_t i=0; i<4; i++) {
       contact[i].getGeneralizedRelativePosition(false)(0) = 1;
       contact[i].getContourFrame(ibox0)->setPosition(box0->getFrame()->getPosition());
       contact[i].getContourFrame(ibox0)->setOrientation(box0->getFrame()->getOrientation());
       contact[i].getContourFrame(ibox1)->setPosition(box1->getFrame()->getPosition());
       contact[i].getContourFrame(ibox1)->setOrientation(box1->getFrame()->getOrientation());
       }
-      return 1;
+      return false;
     }
   }
 
@@ -173,21 +174,6 @@ namespace MBSim {
       cFrame[ibox1]->setOrientation(box1->getFrame()->getOrientation());
     }
 
-
-
-    //    cFrame[iplane]->setOrientation(plane->getFrame()->evalOrientation()); // data of possible contact point
-    //    cFrame[ipoint]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
-    //    cFrame[ipoint]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
-    //    cFrame[ipoint]->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
-    //
-    //    Vec3 Wn = cFrame[iplane]->getOrientation(false).col(0); // normal is first vector of coordinate orientation
-    //
-    //    Vec3 Wd =  point->getFrame()->evalPosition() - plane->getFrame()->evalPosition();
-    //
-    //    g = Wn.T()*Wd; // distance
-    //
-    //    cFrame[ipoint]->setPosition(point->getFrame()->getPosition()); // possible contact locations
-    //    cFrame[iplane]->setPosition(cFrame[ipoint]->getPosition(false) - Wn*g);
   }
 
 }
