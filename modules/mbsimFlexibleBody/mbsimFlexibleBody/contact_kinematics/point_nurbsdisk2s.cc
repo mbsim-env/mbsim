@@ -49,33 +49,31 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void ContactKinematicsPointNurbsDisk2s::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
-    cFrame[ipoint]->setPosition(point->getFrame()->evalPosition()); // position of the point in worldcoordinates
-    cFrame[inurbsdisk]->setZeta(nurbsdisk->transformCW(nurbsdisk->evalOrientation().T()*(cFrame[ipoint]->getPosition(false) - nurbsdisk->evalPosition()))(0,1)); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
+  void ContactKinematicsPointNurbsDisk2s::updateg(SingleContact &contact, int i) {
+    contact.getContourFrame(ipoint)->setPosition(point->getFrame()->evalPosition()); // position of the point in worldcoordinates
+    contact.getContourFrame(inurbsdisk)->setZeta(nurbsdisk->transformCW(nurbsdisk->evalOrientation().T()*(contact.getContourFrame(ipoint)->getPosition(false) - nurbsdisk->evalPosition()))(0,1)); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
 
-    if(nurbsdisk->isZetaOutside(cFrame[inurbsdisk]->getZeta()))
+    double g;
+    if(nurbsdisk->isZetaOutside(contact.getContourFrame(inurbsdisk)->getZeta()))
       g = 1.;
     else {
-      cFrame[inurbsdisk]->setPosition(nurbsdisk->evalPosition(cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(0, nurbsdisk->evalWn(cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(1, nurbsdisk->evalWu(cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(2, nurbsdisk->evalWv(cFrame[inurbsdisk]->getZeta()));
+      contact.getContourFrame(inurbsdisk)->setPosition(nurbsdisk->evalPosition(contact.getContourFrame(inurbsdisk)->getZeta()));
+      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(0, nurbsdisk->evalWn(contact.getContourFrame(inurbsdisk)->getZeta()));
+      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(1, nurbsdisk->evalWu(contact.getContourFrame(inurbsdisk)->getZeta()));
+      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(2, nurbsdisk->evalWv(contact.getContourFrame(inurbsdisk)->getZeta()));
 
-      cFrame[ipoint]->getOrientation(false).set(0, -cFrame[inurbsdisk]->getOrientation(false).col(0));
-      cFrame[ipoint]->getOrientation(false).set(1, -cFrame[inurbsdisk]->getOrientation(false).col(1));
-      cFrame[ipoint]->getOrientation(false).set(2,  cFrame[inurbsdisk]->getOrientation(false).col(2));   // to have a legal framework the second tangent is not the negative of the tanget of the disk
+      contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(inurbsdisk)->getOrientation(false).col(0));
+      contact.getContourFrame(ipoint)->getOrientation(false).set(1, -contact.getContourFrame(inurbsdisk)->getOrientation(false).col(1));
+      contact.getContourFrame(ipoint)->getOrientation(false).set(2,  contact.getContourFrame(inurbsdisk)->getOrientation(false).col(2));   // to have a legal framework the second tangent is not the negative of the tanget of the disk
 
-//      msg(Info) << "Normale: " <<  cFrame[inurbsdisk]->getOrientation(false).col(0) << endl;
-//      msg(Info) << "1.Tangente: " <<  cFrame[inurbsdisk]->getOrientation(false).col(1) << endl;
-//      msg(Info) << "2.Tangente: " <<  cFrame[inurbsdisk]->getOrientation(false).col(2) << endl;
+//      msg(Info) << "Normale: " <<  contact.getContourFrame(inurbsdisk)->getOrientation(false).col(0) << endl;
+//      msg(Info) << "1.Tangente: " <<  contact.getContourFrame(inurbsdisk)->getOrientation(false).col(1) << endl;
+//      msg(Info) << "2.Tangente: " <<  contact.getContourFrame(inurbsdisk)->getOrientation(false).col(2) << endl;
 
-      g = cFrame[inurbsdisk]->getOrientation(false).col(0).T() * (cFrame[ipoint]->getPosition(false) - cFrame[inurbsdisk]->getPosition(false));
+      g = contact.getContourFrame(inurbsdisk)->getOrientation(false).col(0).T() * (contact.getContourFrame(ipoint)->getPosition(false) - contact.getContourFrame(inurbsdisk)->getPosition(false));
       // msg(Info) << "Abstand: " << g << endl;
     }
-  }
-
-  void ContactKinematicsPointNurbsDisk2s::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    throw runtime_error("(ContactKinematicsPointNurbsDisk2s:updatewb): Not implemented!");
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
 }

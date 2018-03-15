@@ -182,7 +182,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* contact */
   Contact *contact = new Contact("Contact");
-  contact->connect(nurbsdisk->getContour("SurfaceContour"),muller->getContour("Disk"), new ContactKinematicsCircleNurbsDisk2s());
+  contact->connect(nurbsdisk->getContour("SurfaceContour"),muller->getContour("Disk"));
+  contact->setContactKinematics(new ContactKinematicsCircleNurbsDisk2s());
   contact->setNormalForceLaw(new UnilateralConstraint);
   contact->setNormalImpactLaw(new UnilateralNewtonImpact);
   contact->setTangentialForceLaw(new SpatialCoulombFriction(0.2));
