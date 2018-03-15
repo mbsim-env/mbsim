@@ -24,6 +24,7 @@
 #include "mbsim/contours/circle.h"
 #include "mbsim/functions/contact/funcpair_planarcontour_circle.h"
 #include "mbsim/utils/planar_contact_search.h"
+#include "mbsim/links/single_contact.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -185,6 +186,11 @@ namespace MBSimFlexibleBody {
       ck->assignContours(contour);
       contactKinematics.push_back(ck);
     }
+  }
+
+  void ContactKinematicsCircleFlexibleBand::updateg(vector<SingleContact> &contact) {
+    for(size_t i=0; i<contactKinematics.size(); i++)
+      contactKinematics[i]->updateg(contact[i]);
   }
 
 }
