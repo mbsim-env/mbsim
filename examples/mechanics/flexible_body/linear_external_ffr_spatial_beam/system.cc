@@ -171,7 +171,8 @@ System::System(const string &projectName) :
     contact->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
   }
 
-  contact->connect(ball->getContour("Point"), ncc, new ContactKinematicsPointSpatialContour);
+  contact->connect(ball->getContour("Point"), ncc);
+  contact->setContactKinematics(new ContactKinematicsPointSpatialContour);
 
   ContactObserver *observer = new ContactObserver("Observer");
   addObserver(observer);

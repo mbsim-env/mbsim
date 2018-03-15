@@ -97,37 +97,6 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
 
     table->setOpenMBVRigidBody(v_table);
 
-    /*Prepare Contact*/
-    Contact* ballOben = new Contact("Ball_Boden");
-    if (not ODE) {
-      ballOben->setNormalForceLaw(new UnilateralConstraint());
-      ballOben->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
-    }
-    else {
-      ballOben->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, isoDamping)));
-    }
-    addLink(ballOben);
-
-    Contact* ballUnten = new Contact("Ball_Unten");
-    if (not ODE) {
-      ballUnten->setNormalForceLaw(new UnilateralConstraint());
-      ballUnten->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
-    }
-    else {
-      ballUnten->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, 100 * isoDamping)));
-    }
-    addLink(ballUnten);
-
-    Contact* ballCup = new Contact("Ball_Cup");
-    if (not ODE) {
-      ballCup->setNormalForceLaw(new UnilateralConstraint());
-      ballCup->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
-    }
-    else {
-      ballCup->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, 100 * isoDamping)));
-    }
-    addLink(ballCup);
-
     /*Balls*/
 
     SymMat3 theta;
@@ -136,6 +105,37 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
     theta(2, 2) = theta(1, 1);
 
     for (int ele = 0; ele < elements; ele++) {
+      /*Prepare Contact*/
+      Contact* ballOben = new Contact("Ball_Boden_"+to_string(ele));
+      if (not ODE) {
+        ballOben->setNormalForceLaw(new UnilateralConstraint());
+        ballOben->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+      }
+      else {
+        ballOben->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, isoDamping)));
+      }
+      addLink(ballOben);
+
+      Contact* ballUnten = new Contact("Ball_Unten"+to_string(ele));
+      if (not ODE) {
+        ballUnten->setNormalForceLaw(new UnilateralConstraint());
+        ballUnten->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+      }
+      else {
+        ballUnten->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, 100 * isoDamping)));
+      }
+      addLink(ballUnten);
+
+      Contact* ballCup = new Contact("Ball_Cup"+to_string(ele));
+      if (not ODE) {
+        ballCup->setNormalForceLaw(new UnilateralConstraint());
+        ballCup->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+      }
+      else {
+        ballCup->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, 100 * isoDamping)));
+      }
+      addLink(ballCup);
+
       balls.push_back(new RigidBody("Ball" + toString(ele)));
       balls[ele]->setMass(mass);
       balls[ele]->setInertiaTensor(theta);

@@ -288,39 +288,47 @@ void BlockCompression::addContacts() {
   double cBlBlTop = 5e5;
   double cBlRod = 1e4;
 
-  Contact * BlBlBottom = new Contact("BottomContacts");
+  for (int i = 1; i < NoBlocks; i++) {
+  Contact * BlBlBottom = new Contact("BottomContacts_"+to_string(i));
   BlBlBottom->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlBlBottom, 0.)));
   addLink(BlBlBottom);
-  ContactObserver *observer = new ContactObserver("BottomContactsObserver");
+  ContactObserver *observer = new ContactObserver("BottomContactsObserver_"+to_string(i));
   addObserver(observer);
   observer->setContact(BlBlBottom);
   observer->enableOpenMBVNormalForce(1e-3);
 
-  Contact * BlBlTop = new Contact("TopContacts");
+  Contact * BlBlTop = new Contact("TopContacts_"+to_string(i));
   BlBlTop->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlBlTop, 0.)));
   addLink(BlBlTop);
-  observer = new ContactObserver("TopContactsObserver");
+  observer = new ContactObserver("TopContactsObserver_"+to_string(i));
   addObserver(observer);
   observer->setContact(BlBlTop);
   observer->enableOpenMBVNormalForce(1e-3);
 
-  Contact * BlRod = new Contact("BlockRodContacts");
-  BlRod->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlRod, 0.)));
-  addLink(BlRod);
-  observer = new ContactObserver("BlockRodContactsObserver");
-  addObserver(observer);
-  observer->setContact(BlRod);
-  observer->enableOpenMBVNormalForce(1e-3);
-
-  for (int i = 1; i < NoBlocks; i++) {
     /*(Inter-)Contact between Blocks*/
     BlBlBottom->connect(blocks[i]->bottom, blocks[i - 1]->back);
     BlBlTop->connect(blocks[i]->top, blocks[i - 1]->back);
   }
   for (int i = 0; i < NoBlocks; i++) {
+  Contact * BlRodBottom = new Contact("BlockRodContactsBottom_"+to_string(i));
+  BlRodBottom->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlRod, 0.)));
+  addLink(BlRodBottom);
+  ContactObserver *observer = new ContactObserver("BlockRodContactsObserverBottom_"+to_string(i));
+  addObserver(observer);
+  observer->setContact(BlRodBottom);
+  observer->enableOpenMBVNormalForce(1e-3);
+
+  Contact * BlRodTop = new Contact("BlockRodContactsTop_"+to_string(i));
+  BlRodTop->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlRod, 0.)));
+  addLink(BlRodTop);
+  observer = new ContactObserver("BlockRodContactsObserverTop_"+to_string(i));
+  addObserver(observer);
+  observer->setContact(BlRodTop);
+  observer->enableOpenMBVNormalForce(1e-3);
+
     /*Contact between block and rod*/
-    BlRod->connect(blocks[i]->saddle, rod->getContour("Bottom"));
-    BlRod->connect(blocks[i]->ear, rod->getContour("Top"));
+    BlRodBottom->connect(blocks[i]->saddle, rod->getContour("Bottom"));
+    BlRodTop->connect(blocks[i]->ear, rod->getContour("Top"));
   }
 }
 

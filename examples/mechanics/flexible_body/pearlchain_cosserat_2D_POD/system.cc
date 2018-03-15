@@ -195,7 +195,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 		Contact *contact = new Contact("Band_"+balls[i]->getName());
 		contact->setNormalForceLaw(new BilateralConstraint);
 		contact->setNormalImpactLaw(new BilateralImpact);
-		contact->connect(balls[i]->getContour("COG"),rodCont,new ContactKinematicsPointPlanarContour);
+		contact->connect(balls[i]->getContour("COG"),rodCont);
+		contact->setContactKinematics(new ContactKinematicsPointPlanarContour);
                 contact->setSearchAllContactPoints(true);
 		this->addLink(contact);
 

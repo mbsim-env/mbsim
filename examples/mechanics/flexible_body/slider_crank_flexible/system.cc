@@ -201,22 +201,6 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   load->setMomentDirection(Mat("[0;0;1]"));
   load->connect(kinematicsFrameCrank);
 
-  Contact * contactCrankRod = new Contact("CrankRodContact");
-  addLink(contactCrankRod);
-  if (0) {
-    contactCrankRod->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e7, 0.)));
-  }
-  else {
-    contactCrankRod->setNormalForceLaw(new UnilateralConstraint());
-    contactCrankRod->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
-  }
-
-  ContactObserver *observer = new ContactObserver(contactCrankRod->getName()+"_Observer");
-  addObserver(observer);
-  observer->setContact(contactCrankRod);
-  observer->enableOpenMBVContactPoints(1e-5);
-  observer->enableOpenMBVNormalForce();
-
   //Add contact to crank
   Vec3 cylinderCenterPos;
   cylinderCenterPos(0) = length_crank / 2;
@@ -253,11 +237,24 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
     pnt->setOpenMBVRigidBody(sphere);
     pnt->setFrameOfReference(pointRef);
     crank->addContour(pnt);
-
+    Contact * contactCrankRod = new Contact("CrankRodContact_"+to_string(i));
+    addLink(contactCrankRod);
+    if (0) {
+      contactCrankRod->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e7, 0.)));
+    }
+    else {
+      contactCrankRod->setNormalForceLaw(new UnilateralConstraint());
+      contactCrankRod->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+    }
     contactCrankRod->setSearchAllContactPoints(true);
-
     contactCrankRod->connect(pnt, ncc);
     contactCrankRod->setContactKinematics(new ContactKinematicsPointSpatialContour);
+
+    ContactObserver *observer = new ContactObserver(contactCrankRod->getName()+"_Observer_"+to_string(i));
+    addObserver(observer);
+    observer->setContact(contactCrankRod);
+    observer->enableOpenMBVContactPoints(1e-5);
+    observer->enableOpenMBVNormalForce();
   }
 
   Joint *joint_rod_piston = new Joint("Joint_Rod_Piston");
