@@ -20,7 +20,6 @@
 #include <config.h> 
 #include <mbsim/links/contact.h>
 #include <mbsim/frames/contour_frame.h>
-#include <mbsim/contours/contour.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/constitutive_laws/friction_force_law.h>
@@ -44,13 +43,8 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SingleContact)
 
   void SingleContact::updatewb() {
-    if(gdActive[normal]) {
       wb -= evalGlobalForceDirection()(RangeV(0,2),RangeV(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
       wb += evalGlobalForceDirection()(RangeV(0,2),RangeV(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
-
-      static_cast<Contact*>(parent)->getContactKinematics()->updatewb(*this);
-//      contactKinematics->updatewb(wb, evalGeneralizedRelativePosition()(0), cFrame);
-    }
   }
 
   void SingleContact::resetUpToDate() {
@@ -115,7 +109,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedNormalForceP() {
-    static_cast<Contact*>(parent)->updateGeneralizedNormalForce();
+    static_cast<Link*>(parent)->updateGeneralizedForces();
   }
 
   void SingleContact::updateGeneralizedTangentialForceM() {
@@ -138,8 +132,8 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedPositions() {
-    if(static_cast<Contact*>(parent)->getUpdaterrel())
-      static_cast<Contact*>(parent)->updateGeneralizedPositions();
+    if(static_cast<Link*>(parent)->getUpdaterrel())
+      static_cast<Link*>(parent)->updateGeneralizedPositions();
     updrrel = false;
   }
 
@@ -162,17 +156,12 @@ namespace MBSim {
     }
     else
       vrel.init(0);
-//    updateVelocities();
     updvrel = false;
   }
 
-  void SingleContact::updatePositions() {
-    throw;
-  }
-
   void SingleContact::updatePositions(Frame *frame) {
-    if(static_cast<Contact*>(parent)->getUpdaterrel())
-      static_cast<Contact*>(parent)->updateGeneralizedPositions();
+    if(static_cast<Link*>(parent)->getUpdaterrel())
+      static_cast<Link*>(parent)->updateGeneralizedPositions();
   }
 
   void SingleContact::updateVelocities() {
@@ -1182,37 +1171,6 @@ namespace MBSim {
       return fdf->getFrictionDirections();
     else
       return 0;
-  }
-
-  void SingleContact::initializeUsingXML(DOMElement *element) {
-    ContourLink::initializeUsingXML(element);
-    DOMElement *e;
-
-    //Set contact law
-    e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");
-    auto *gfl = ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
-    setNormalForceLaw(gfl);
-
-    //Set impact law (if given)
-    e = E(element)->getFirstElementChildNamed(MBSIM%"normalImpactLaw");
-    if (e) {
-      auto *gifl = ObjectFactory::createAndInit<GeneralizedImpactLaw>(e->getFirstElementChild());
-      setNormalImpactLaw(gifl);
-    }
-
-    //Set friction law (if given)
-    e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialForceLaw");
-    if (e) {
-      auto *ffl = ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild());
-      setTangentialForceLaw(ffl);
-    }
-
-    //Set friction impact law (if given)
-    e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialImpactLaw");
-    if (e) {
-      auto *fil = ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
-      setTangentialImpactLaw(fil);
-    }
   }
 
   void SingleContact::updatecorr(int j) {

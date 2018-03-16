@@ -23,6 +23,7 @@
 #include <mbsim/functions/kinetics/kinetics.h>
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/observers/contact_observer.h"
+#include "mbsim/observers/maxwell_contact_observer.h"
 
 using namespace std;
 using namespace MBSim;
@@ -193,62 +194,83 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 //    }
   }
 
-  Contact *contact;
+  std::vector<Contact*> contact;
+  MaxwellContact* maxwellContact = 0;
 
   switch (contactType) {
     case 0: //Maxwell Contact
     {
-      contact = new MaxwellContact("Contact");
+      maxwellContact = new MaxwellContact("Contact");
       //Debug features
 
       CountourCouplingCantileverBeam* couplingBeam = new CountourCouplingCantileverBeam(E, I);
-      static_cast<MaxwellContact*>(contact)->addContourCoupling(BeamContour, BeamContour, couplingBeam);
+      maxwellContact->addContourCoupling(BeamContour, BeamContour, couplingBeam);
 
       //Force Law (friction)
 //      contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-      contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
-      contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+      maxwellContact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+      maxwellContact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+      this->addLink(maxwellContact);
     }
     break;
 
     case 1: //regularized contact
     {
-      contact = new Contact("Contact");
-      double i = 2*(space+ 2*radius);  //this results in the stiffness of the first ball
-      contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(3*E*I/ (i*i*i), 0)));
-      contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+      for(int k=0; k<balls.size(); k++) {
+        contact.push_back(new Contact("Contact_"+to_string(k)));
+        double i = 2*(space+ 2*radius);  //this results in the stiffness of the first ball
+        contact[k]->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(3*E*I/ (i*i*i), 0)));
+        contact[k]->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+        this->addLink(contact[k]);
+      }
     }
     break;
 
     case 2:
     {
-      contact = new Contact("Contact");
-      contact->setNormalForceLaw(new UnilateralConstraint);
-      contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.));
-      contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
-      contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+      for(int k=0; k<balls.size(); k++) {
+        contact.push_back(new Contact("Contact_"+to_string(k)));
+        contact[k]->setNormalForceLaw(new UnilateralConstraint);
+        contact[k]->setNormalImpactLaw(new UnilateralNewtonImpact(1.));
+        contact[k]->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+        contact[k]->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+        this->addLink(contact[k]);
+      }
     }
     break;
     default:
       throwError("No valid contactType chosen.");
   }
 
-  for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
+  for (size_t k = 0; k < balls.size(); k++) {
     stringstream contactname;
-    contactname << "Contact_Beam_" << ballsContours[contactIter]->getName();
+    contactname << "Contact_Beam_" << ballsContours[k]->getName();
 
-    contact->connect(BeamContour, ballsContours[contactIter]);
+   if(contactType==0)
+     maxwellContact->connect(BeamContour, ballsContours[k]);
+    else
+      contact[k]->connect(BeamContour, ballsContours[k]);
   }
 
-  addLink(contact);
+  if(maxwellContact) {
+    //fancy stuff
+    MaxwellContactObserver *observer = new MaxwellContactObserver("Observer");
+    addObserver(observer);
+    observer->setMaxwellContact(maxwellContact);
+    observer->enableOpenMBVContactPoints(1.,false);
+    observer->enableOpenMBVNormalForce(_scaleLength=0.00001);
+    observer->enableOpenMBVTangentialForce(_scaleLength=0.001);
+  }
 
-
-  ContactObserver *observer = new ContactObserver("Observer");
-  addObserver(observer);
-  observer->setContact(contact);
-  observer->enableOpenMBVContactPoints(1.,false);
-  observer->enableOpenMBVNormalForce(_scaleLength=0.00001);
-  observer->enableOpenMBVTangentialForce(_scaleLength=0.001);
+  for(size_t i=0; i<contact.size(); i++) {
+    //fancy stuff
+    ContactObserver *observer = new ContactObserver("Observer_"+to_string(i));
+    addObserver(observer);
+    observer->setContact(contact[i]);
+    observer->enableOpenMBVContactPoints(1.,false);
+    observer->enableOpenMBVNormalForce(_scaleLength=0.00001);
+    observer->enableOpenMBVTangentialForce(_scaleLength=0.001);
+  }
 
   //fancy stuff
 

@@ -132,7 +132,6 @@ namespace MBSim {
       void calccorrSize(int j) override;
       void setcorrInd(int corrInd_) override;
       void checkRoot() override;
-      virtual void updateGeneralizedNormalForce();
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -187,8 +186,6 @@ namespace MBSim {
        * \brief set maximum number of contacts
        */
       void setMaximumNumberOfContacts(int maxNumContacts_) { maxNumContacts = maxNumContacts_; }
-
-      bool getUpdaterrel() const { return updrrel; }
 
       void updateGeneralizedPositions() override;
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2016 MBSim Development Team
+/* Copyright (C) 2004-2018 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -17,40 +17,53 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _SINGLE_CONTACT_OBSERVER_H__
-#define _SINGLE_CONTACT_OBSERVER_H__
+#ifndef _MAXWELL_CONTACT_OBSERVER_H__
+#define _MAXWELL_CONTACT_OBSERVER_H__
 
-#include "mbsim/observers/mechanical_link_observer.h"
+#include "mbsim/observers/single_contact_observer.h"
 
 #include <mbsim/utils/boost_parameters.h>
 #include <mbsim/utils/openmbv_utils.h>
 
 namespace MBSim {
 
-  class SingleContact;
+  class MaxwellContact;
 
-  class SingleContactObserver : public MechanicalLinkObserver {
-
-    friend class ContactObserver;
-    friend class MaxwellContactObserver;
-
+  class MaxwellContactObserver : public Observer {
     protected:
+      std::vector<std::vector<SingleContactObserver> > contactObserver;
+
+      MaxwellContact* link;
+      std::string saved_link;
+
       /**
        * \brief container of ContactFrames to draw
        */
-      std::vector<std::shared_ptr<OpenMBV::Frame> > openMBVContactFrame;
+      std::shared_ptr<OpenMBV::Frame> openMBVContactFrame;
 
       /**
        * \brief pointer to memory of normal and friction forces to draw
        */
-      std::shared_ptr<OpenMBV::Arrow> contactArrow, frictionArrow;
+      std::shared_ptr<OpenMBV::Arrow> openMBVForce, openMBVMoment, contactArrow, frictionArrow;
 
     public:
-      SingleContactObserver(const std::string &name="");
+      MaxwellContactObserver(const std::string &name="");
+      void setMaxwellContact(MaxwellContact *link_) { link = link_; }
 
       void init(InitStage stage, const InitConfigSet &config) override;
       void plot() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
+      void setDynamicSystemSolver(DynamicSystemSolver *sys) override;
+
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        openMBVForce=ombv.createOpenMBV();
+      }
+
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        openMBVMoment=ombv.createOpenMBV();
+      }
 
       /** 
        * \brief Draw two OpenMBV::Frame's of size 'size' at the contact points if 'enable'==true, otherwise the object is available but disabled.
@@ -60,12 +73,7 @@ namespace MBSim {
        */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVContactPoints, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) {
         OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
-        setOpenMBVContactPoints(ombv.createOpenMBV());
-      }
-
-      void setOpenMBVContactPoints(const std::shared_ptr<OpenMBV::Frame> &frame) { 
-        openMBVContactFrame[0]=frame;
-        openMBVContactFrame[1]=OpenMBV::ObjectFactory::create(openMBVContactFrame[0]);
+        openMBVContactFrame=ombv.createOpenMBV();
       }
 
       /** 
@@ -78,8 +86,6 @@ namespace MBSim {
         contactArrow=ombv.createOpenMBV(); 
       }
 
-      void setOpenMBVNormalForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { contactArrow=arrow; }
-
       /** 
        * \brief Sets the OpenMBV::Arrow to be used for drawing the friction force vector.
        * This vector is the friction which is applied on the second contour.
@@ -91,8 +97,6 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         frictionArrow=ombv.createOpenMBV(); 
       }
-
-      void setOpenMBVTangentialForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { frictionArrow=arrow; }
   };
 
 }  

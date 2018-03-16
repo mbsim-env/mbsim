@@ -47,6 +47,7 @@ namespace MBSim {
   class SingleContact: public ContourLink {
 
     friend class Contact;
+    friend class MaxwellContact;
 
     public:
       /*!
@@ -92,7 +93,6 @@ namespace MBSim {
       void updateGeneralizedForces() override;
       void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
-      void updatePositions() override;
       void updatePositions(Frame *frame) override;
       void updateVelocities() override;
       void updateg() override;
@@ -154,8 +154,6 @@ namespace MBSim {
        * \return number of considered friction directions
        */
       virtual int getFrictionDirections() const;
-
-      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void calccorrSize(int j) override;
       void updatecorr(int j) override;

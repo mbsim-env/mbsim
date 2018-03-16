@@ -432,6 +432,8 @@ namespace MBSim {
       
       int getcorrSize() const { return corrSize; } 
 
+      bool getUpdaterrel() const { return updrrel; }
+
     protected:
       int ng, ngd, nla;
 

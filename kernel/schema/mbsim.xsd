@@ -2027,68 +2027,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SingleContact" substitutionGroup="ContourLink" type="SingleContactType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Definiert einen Kontakt als Interaktion zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>
-        Bei der Simulation von Mehrkörpersystemen kann es aufgrund der Bewegung der Körper zu Kontakten zwischen einzelnen Körpern, aber auch zwischen einem Körper und der Umwelt kommen. Kommen zwei Körper in Kontakt, bildet sich an den sich berührenden Konturen (siehe <a class="link" href="mbsim:Contour">&lt;Contour&gt;</a>) eine Kontaktfläche aus, in der die Kontaktkräfte zwischen den Kontaktpartnern übertragen werden.<br/>
-        Idealisiert wird davon ausgegangen, dass nur punktförmige Kontakte existieren; dies ist für eine Vielzahl von Problemstellungen ausreichend. Bei flächenhaften Kontakten muss die Oberfläche durch eine endliche Anzahl von Punkten diskretisiert werden.<br/>
-        Es wird zwischen Kontaktkinematik und -kinetik unterschieden. In der Kontaktkinematik wird die relative Lage und Bewegung von zwei Konturen, also potentielle Kontaktpunkte, Abstand, relative Geschwindigkeiten in Konturnormalenrichtung und in der Tangentialebene der Kontur sowie u.U. auch Beschleunigungsgrößen bestimmt. Sie sind Eingangsgrößen der Kontaktkinetik und bestimmen somit anschließend die Kontaktkräfte über konstitutive Gesetze.
-        <object class="figure" data="contact.svg">Kinematik einer Kontaktpaarung</object>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="SingleContactType">
-    <xs:complexContent>
-      <xs:extension base="ContourLinkType">
-        <xs:sequence>
-          <xs:element name="normalForceLaw">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="GeneralizedForceLaw"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="normalImpactLaw" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Geschwindigkeitsebene in Konturnormalenrichtung (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="GeneralizedImpactLaw"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:sequence minOccurs="0">
-            <xs:element name="tangentialForceLaw">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
-              </xs:documentation></xs:annotation>
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element ref="FrictionForceLaw"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-            <xs:element name="tangentialImpactLaw" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
-              </xs:documentation></xs:annotation>
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element ref="FrictionImpactLaw"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType> 
-
   <xs:element name="Contact" substitutionGroup="Link" type="ContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -2104,7 +2042,7 @@
     <xs:complexContent>
       <xs:extension base="LinkType">
         <xs:sequence>
-          <xs:element name="connect" maxOccurs="unbounded">
+          <xs:element name="connect">
            <xs:annotation>
              <xs:documentation xml:lang="de" xmlns="">
                Bindet zwei Konturen an einen Kontakt.
@@ -2113,7 +2051,6 @@
              <xs:complexType>
                <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
                <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
-               <xs:attribute name="name" type="pv:stringPartialEval" use="optional"/>
              </xs:complexType>
           </xs:element>
           <xs:element name="normalForceLaw" minOccurs="0">
@@ -2181,9 +2118,9 @@
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>   
+  </xs:complexType>
 
-  <xs:element name="MaxwellContact" substitutionGroup="Contact" type="MaxwellContactType">
+  <xs:element name="MaxwellContact" substitutionGroup="Link" type="MaxwellContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
       tbd
@@ -2192,8 +2129,77 @@
   </xs:element>
   <xs:complexType name="MaxwellContactType">
     <xs:complexContent>
-      <xs:extension base="ContactType">
+      <xs:extension base="LinkType">
         <xs:sequence>
+          <xs:element name="connect" maxOccurs="unbounded">
+           <xs:annotation>
+             <xs:documentation xml:lang="de" xmlns="">
+               Bindet zwei Konturen an einen Kontakt.
+             </xs:documentation>
+           </xs:annotation>
+             <xs:complexType>
+               <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
+               <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
+               <xs:attribute name="name" type="pv:stringPartialEval" use="optional"/>
+             </xs:complexType>
+          </xs:element>
+          <xs:element name="normalForceLaw" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="GeneralizedForceLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="normalImpactLaw" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Geschwindigkeitsebene in Konturnormalenrichtung (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="GeneralizedImpactLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:sequence minOccurs="0">
+            <xs:element name="tangentialForceLaw">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="FrictionForceLaw"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="tangentialImpactLaw" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="FrictionImpactLaw"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:element name="searchAllContactPoints" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob initial alle möglichen Kontaktpunkte gesucht werden sollen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownVector">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Anfangswerte für Newton-Löser.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="tolerance" minOccurs="0" type="pv:nounitScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Newton-Löser.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="InfluenceFunction">
             <xs:complexType>
               <xs:sequence>
@@ -4856,6 +4862,66 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType> 
+
+  <xs:element name="MaxwellContactObserver" substitutionGroup="Observer" type="MaxwellContactObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="MaxwellContactObserverType">
+    <xs:complexContent>
+      <xs:extension base="ObserverType">
+        <xs:sequence>
+          <xs:element name="maxwellContact">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="LinkReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
+                Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
+                Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVFrameParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVNormalForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVTangentialForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="MechanicalConstraintObserver" substitutionGroup="Observer" type="MechanicalConstraintObserverType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">

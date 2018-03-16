@@ -88,15 +88,15 @@
   </links>
   <constraints/>
   <observers>
-    <ContactObserver name="ContactObserver1">
-      <contact ref="../Link[Contact]"/>
+    <MaxwellContactObserver name="ContactObserver1">
+      <maxwellContact ref="../Link[Contact]"/>
       <enableOpenMBVContactPoints>
         <size>0.1</size>
       </enableOpenMBVContactPoints>
       <enableOpenMBVNormalForce>
         <scaleLength>.01</scaleLength>
       </enableOpenMBVNormalForce>
-    </ContactObserver> 
+    </MaxwellContactObserver>
   </observers>
   <environments>
     <MBSimEnvironment>

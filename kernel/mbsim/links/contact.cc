@@ -52,9 +52,12 @@ namespace MBSim {
   }
 
   void Contact::updatewb() {
-    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
-      iter->updatewb();
-//    contactKinematics->updatewb(contacts);
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      if(iter->gdActive[SingleContact::normal]) {
+        iter->updatewb();
+        contactKinematics->updatewb(*iter);
+      }
+    }
   }
 
   void Contact::updateW(int j) {
@@ -684,13 +687,7 @@ namespace MBSim {
       iter->resetUpToDate();
   }
 
-  void Contact::updateGeneralizedNormalForce() {
-    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
-      iter->updlaN = false;
-  }
-
   void Contact::updateGeneralizedPositions() {
-//    cout << "normalDist = " << contactKinematics->updateg(contacts) << endl;
     contactKinematics->updateg(contacts);
     updrrel = false;
   }
