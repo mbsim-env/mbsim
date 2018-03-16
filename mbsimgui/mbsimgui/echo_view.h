@@ -21,7 +21,6 @@
 #define __ECHO_VIEW_H_
 
 #include <QTabWidget>
-#include <QWebView>
 #include <QAction>
 #include <QMainWindow>
 
@@ -38,7 +37,6 @@ namespace MBSimGUI {
     public slots:
       void updateOutput(bool moveToErrorOrEnd=false);
     private:
-      QWebView *out;
       QString outText;
       QAction *showSSE;
       QAction *showWarn;
