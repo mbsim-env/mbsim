@@ -30,28 +30,23 @@ namespace MBSim {
   /**
    * \brief sphere 
    * \author Martin Foerg
-   * \date 2009-04-20 some comments (Thorsten Schindler) 
-   * \date 2009-05-28 new interface (Bastian Esefeld)
    */
   class Sphere : public RigidContour {
     public:
       /**
        * \brief constructor
-       * \param name of contour
-       */
-      Sphere(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) {}
-
-      /**
-       * \brief constructor
        * \param name of sphere
        * \param radius of sphere
+       * \param R frame of reference
        */
-      Sphere(const std::string &name, double r_, Frame *R=nullptr) : RigidContour(name,R), r(r_) {}
+      Sphere(const std::string &name="", double r_=1, Frame *R=nullptr) : RigidContour(name,R), r(r_) { }
       
       /* INHERITED INTERFACE OF ELEMENT */
       void init(InitStage stage, const InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
+      /* INHERITED INTERFACE OF CONTOUR */
       fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override;
 
       fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override;
@@ -68,7 +63,6 @@ namespace MBSim {
 
       fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta) override;
 
-      /* INHERITED INTERFACE OF CONTOUR */
       fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint) override;
       /**********************************/
 
@@ -82,13 +76,11 @@ namespace MBSim {
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
 
-      void initializeUsingXML(xercesc::DOMElement *element) override;
-
     protected:
       /** 
        * \brief radius
        */
-      double r{0.};
+      double r{1};
   };
 
 }

@@ -34,10 +34,6 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Cuboid::Cuboid(const string &name, Frame *R) : CompoundContour(name,R) { }
-
-  Cuboid::Cuboid(const string &name, double lx_, double ly_, double lz_, Frame *R) : CompoundContour(name,R), lx(lx_), ly(ly_), lz(lz_) { }
-
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Cuboid)
 
   void Cuboid::init(InitStage stage, const InitConfigSet &config) {

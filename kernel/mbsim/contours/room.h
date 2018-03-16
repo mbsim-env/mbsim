@@ -34,17 +34,20 @@ namespace MBSim {
     public:
       /**
        * \brief constructor
-       * \param name of contour
+       * \param name of room
+       * \param length of room
+       * \param R frame of reference
        */
-      Room(const std::string &name);
+      Room(const std::string &name="", const fmatvec::Vec3 &length=fmatvec::Vec3(fmatvec::INIT,1), Frame *R=nullptr) : CompoundContour(name,R), l(length(0)), h(length(1)), d(length(2)) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
+      void init(InitStage stage, const InitConfigSet &config) override;
+      /***************************************************/
 
       /* GETTER / SETTER */
-      void setXLength(double l_) { l = l_; }
-      void setYLength(double d_) { d = d_; }
-      void setZLength(double h_) { h = h_; }
+      void setLength(const fmatvec::Vec3 &length) { l = length(0); h = length(1); d = length(2); }
+      void setLength(double l_, double h_, double d_) { l = l_; h = h_; d = d_; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
@@ -56,22 +59,20 @@ namespace MBSim {
       /**
        * \brief length, height and depth of room
        */
-      double l, h, d;
+      double l{1};
+      double h{1};
+      double d{1};
 
       /*!
        * \brief enable openMBV output
        */
-      bool enable;
+      bool enable{false};
 
       /*!
        * \brief grid size
        */
-      int gridSize;
-
-
-      void init(InitStage stage, const InitConfigSet &config) override;
+      int gridSize{10};
   };
 }
 
 #endif /* _ROOM_H_ */
-

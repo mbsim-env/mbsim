@@ -30,12 +30,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Room::Room(const string &name) :
-      CompoundContour(name),
-          enable(false), gridSize(10)
-  {
-  }
-
   void Room::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       Vec3 Kr[6];

@@ -63,9 +63,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setInertiaTensor(Theta);
 
   Cuboid *cuboid = new Cuboid("Wuerfel");
-  cuboid->setXLength(l);
-  cuboid->setYLength(h);
-  cuboid->setZLength(b);
+  cuboid->setLength(l,h,b);
   body->addContour(cuboid);
 
   Contact *cnf = new Contact("Kontakt_Wuerfel");

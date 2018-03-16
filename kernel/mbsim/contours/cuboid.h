@@ -34,22 +34,21 @@ namespace MBSim {
     public:
       /**
        * \brief constructor
-       * \param name of contour
+       * \param name of cuboid
+       * \param length of cuboid
+       * \param R frame of reference
        */
-      Cuboid(const std::string &name="", Frame *R=nullptr);
-
-      Cuboid(const std::string &name, double lx_, double ly_, double lz_, Frame *R=nullptr);
+      Cuboid(const std::string &name="", const fmatvec::Vec3 &length=fmatvec::Vec3(fmatvec::INIT,1), Frame *R=nullptr) : CompoundContour(name,R), lx(length(0)), ly(length(1)), lz(length(2)) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
-
       void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const InitConfigSet &config) override;
+      /***************************************************/
 
       /* GETTER / SETTER */
-      void setXLength(double lx_) { lx = lx_; }
-      void setYLength(double ly_) { ly = ly_; }
-      void setZLength(double lz_) { lz = lz_; }
       void setLength(const fmatvec::Vec3 &length) { lx = length(0); ly = length(1); lz = length(2); }
+      void setLength(double lx_, double ly_, double lz_) { lx = lx_; ly = ly_; lz = lz_; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
@@ -61,13 +60,10 @@ namespace MBSim {
       /**
        * \brief x-, y- and z-length of cuboid
        */
-      double lx{1.0};
-      double ly{1.0};
-      double lz{1.0};
-
-      void init(InitStage stage, const InitConfigSet &config) override;
+      double lx{1};
+      double ly{1};
+      double lz{1};
   };
 }
 
 #endif /* _CUBOID_H_ */
-

@@ -163,9 +163,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     Cuboid *cuboid = new Cuboid("Cuboid");
     cuboid->setFrameOfReference(body[i]->getFrame("C"));
     body[i]->addContour(cuboid);
-    cuboid->setXLength(l);
-    cuboid->setYLength(b);
-    cuboid->setZLength(h);
+    cuboid->setLength(l,b,h);
     //cuboid->enableOpenMBV();
 
     obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
