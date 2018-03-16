@@ -93,6 +93,7 @@ namespace MBSim {
         t(1) = 1;
       }
       t1 = crossProduct(n,t);
+      t1 /= nrm2(t1);
       t2 = crossProduct(n,t1);
       contact[i].getGeneralizedRelativePosition(false)(0) = g;
       contact[i].getContourFrame(icontour0)->getOrientation(false).set(0, n);
