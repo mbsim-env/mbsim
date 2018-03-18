@@ -536,6 +536,80 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  FCLSpherePropertyDialog::FCLSpherePropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : RigidContourPropertyDialog(contour,parent,f) {
+    addTab("Visualisation",1);
+
+    radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
+    addToTab("General", radius);
+
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
+    addToTab("Visualisation", visu);
+  }
+
+  DOMElement* FCLSpherePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    radius->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FCLSpherePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    radius->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
+  FCLMeshPropertyDialog::FCLMeshPropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : RigidContourPropertyDialog(contour,parent,f) {
+    addTab("Visualisation",1);
+
+    vertices = new ExtWidget("Vertices",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,3,vector<QStringList>(3,lengthUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"vertices");
+    addToTab("General", vertices);
+
+    triangles = new ExtWidget("Triangles",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,3,vector<QStringList>(3,QStringList()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"triangles");
+    addToTab("General", triangles);
+
+    vector<QString> list;
+    list.emplace_back("\"AABB\"");
+    list.emplace_back("\"KDOP\"");
+    list.emplace_back("\"kIOS\"");
+    list.emplace_back("\"OBB\"");
+    list.emplace_back("\"OBBRSS\"");
+    list.emplace_back("\"RSS\"");
+    collisionStructure = new ExtWidget("Collision structure",new TextChoiceWidget(list,0,true),true,false,MBSIM%"collisionStructure");
+    addToTab("General", collisionStructure);
+
+    N = new ExtWidget("N",new ChoiceWidget2(new ScalarWidgetFactory("16"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"N");
+    addToTab("General", N);
+
+    computeLocalAABB = new ExtWidget("Compute local AABB",new ChoiceWidget2(new BoolWidgetFactory("true"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"computeLocalAABB");
+    addToTab("General", computeLocalAABB);
+
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
+    addToTab("Visualisation", visu);
+  }
+
+  DOMElement* FCLMeshPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    vertices->initializeUsingXML(item->getXMLElement());
+    triangles->initializeUsingXML(item->getXMLElement());
+    collisionStructure->initializeUsingXML(item->getXMLElement());
+    N->initializeUsingXML(item->getXMLElement());
+    computeLocalAABB->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FCLMeshPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    vertices->writeXMLFile(item->getXMLElement(),nullptr);
+    triangles->writeXMLFile(item->getXMLElement(),nullptr);
+    collisionStructure->writeXMLFile(item->getXMLElement(),nullptr);
+    N->writeXMLFile(item->getXMLElement(),nullptr);
+    computeLocalAABB->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
 
   GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, const Qt::WindowFlags& f, bool kinematics) : ElementPropertyDialog(group,parent,f), frameOfReference(nullptr) {
     if(kinematics) {

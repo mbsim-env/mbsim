@@ -22,6 +22,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/contact_utils.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -39,18 +40,7 @@ namespace MBSim {
     double l = nrm2(Wd);
     Wd = Wd/l;
     double g = l-sphere0->getRadius()-sphere1->getRadius();
-    Vec3 t_;
-    if(fabs(Wd(0))<epsroot && fabs(Wd(1))<epsroot) {
-      t_(0) = 1.;
-      t_(1) = 0.;
-      t_(2) = 0.;
-    }
-    else {
-      t_(0) = -Wd(1);
-      t_(1) = Wd(0);
-      t_(2) = 0.0;
-    }
-    t_ = t_/nrm2(t_);
+    Vec3 t_ = orthonormal(Wd);
     contact.getContourFrame(isphere0)->getOrientation(false).set(0, Wd);
     contact.getContourFrame(isphere1)->getOrientation(false).set(0, -Wd);
     contact.getContourFrame(isphere0)->getOrientation(false).set(1, t_);

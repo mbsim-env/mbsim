@@ -246,8 +246,14 @@ namespace MBSimGUI {
     action = new QAction("Add spatial contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSpatialContour()));
     addAction(action);
-    action = new QAction("Add cuboid", this);
+    action = new QAction("Add fcl box", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFCLBox()));
+    addAction(action);
+    action = new QAction("Add fcl sphere", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFCLSphere()));
+    addAction(action);
+    action = new QAction("Add fcl mesh", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFCLMesh()));
     addAction(action);
   }
 
@@ -301,6 +307,14 @@ namespace MBSimGUI {
 
   void ContoursContextMenu::addFCLBox() {
     mw->addContour(new FCLBox, element);
+  }
+
+  void ContoursContextMenu::addFCLSphere() {
+    mw->addContour(new FCLSphere, element);
+  }
+
+  void ContoursContextMenu::addFCLMesh() {
+    mw->addContour(new FCLMesh, element);
   }
 
   GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {

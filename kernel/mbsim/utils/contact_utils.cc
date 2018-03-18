@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/utils/contact_utils.h"
+#include "mbsim/utils/eps.h"
 #include <cstdio>
 
 // --- List of contact implementations - BEGIN ---
@@ -41,6 +42,8 @@
 #include <mbsim/contours/sphere.h>
 #ifdef HAVE_FCL
 #include <mbsim/contours/fcl_box.h>
+#include <mbsim/contours/fcl_sphere.h>
+#include <mbsim/contours/fcl_mesh.h>
 #endif
 // --- List of contact implementations - END ---
 
@@ -81,19 +84,36 @@
 // --- List of contact kinematic implementations - END ---
 
 using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 
-  double computeAngleOnUnitCircle(const fmatvec::Vec3& r) {
+  double computeAngleOnUnitCircle(const Vec3& r) {
     return r(1)>=0 ? acos(r(0)) : 2*M_PI-acos(r(0));
   }
 
-  fmatvec::Vec2 computeAnglesOnUnitSphere(const fmatvec::Vec3& r) {
-    fmatvec::Vec2 zeta(fmatvec::NONINIT);
+  Vec2 computeAnglesOnUnitSphere(const Vec3& r) {
+    Vec2 zeta(NONINIT);
     double l = sqrt(r(0)*r(0) + r(1)*r(1));
     zeta(0) = r(1)>=0 ? acos(r(0)/l) : 2*M_PI-acos(r(0)/l);
     zeta(1) = asin(r(2));
     return zeta;
+  }
+
+  Vec3 orthonormal(const Vec3 &n) {
+    static Vec3 t;
+    if(fabs(n(0))<epsroot and fabs(n(1))<epsroot) {
+      t(0) = 1;
+      t(1) = 0;
+      t(2) = 0;
+    }
+    else {
+      t(0) = -n(1);
+      t(1) = n(0);
+      t(2) = 0;
+      t /= nrm2(t);
+    }
+    return t;
   }
 
   ContactKinematics* findContactPairingRigidRigid(const type_info &contour0, const type_info &contour1) {
@@ -198,6 +218,18 @@ namespace MBSim {
 #ifdef HAVE_FCL
     else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLBox) )
       return new ContactKinematicsFCLContourFCLContour(4);
+
+    else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLSphere) )
+      return new ContactKinematicsFCLContourFCLContour(1);
+
+//    else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLMesh) )
+//      return new ContactKinematicsFCLContourFCLContour(1);
+
+    else if ( contour0==typeid(FCLMesh) && contour1==typeid(FCLMesh) )
+      return new ContactKinematicsFCLContourFCLContour(1);
+
+//    else if ( dynamic_cast<FCLContour*>(c0) && dynamic_cast<FCLContour*>(c1) )
+//      return new ContactKinematicsFCLContourFCLContour(1);
 #endif
 
     else

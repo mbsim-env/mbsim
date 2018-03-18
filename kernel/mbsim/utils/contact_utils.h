@@ -45,6 +45,12 @@ namespace MBSim {
   fmatvec::Vec2 computeAnglesOnUnitSphere(const fmatvec::Vec3& r);
 
   /**
+   * \brief computes an orthonormal vector
+   * \author Martin Foerg
+   */
+  fmatvec::Vec3 orthonormal(const fmatvec::Vec3 &n);
+
+  /**
    * \brief defines contact kinematics between two contours
    * \author Martin Foerg
    * \date 2009-07-14 some comments (Thorsten Schindler)

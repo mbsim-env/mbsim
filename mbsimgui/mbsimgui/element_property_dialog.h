@@ -276,6 +276,26 @@ namespace MBSimGUI {
       ExtWidget *length, *visu;
   };
 
+  class FCLSpherePropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      FCLSpherePropertyDialog(RigidContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *radius, *visu;
+  };
+
+  class FCLMeshPropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      FCLMeshPropertyDialog(RigidContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *vertices, *triangles, *collisionStructure, *N, *computeLocalAABB, *visu;
+  };
+
   class GroupPropertyDialog : public ElementPropertyDialog {
 
     public:

@@ -22,6 +22,7 @@
 #include "fclcontour_fclcontour.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/fcl_contour.h"
+#include "mbsim/utils/contact_utils.h"
 #include "fcl/narrowphase/distance.h"
 
 using namespace fmatvec;
@@ -82,28 +83,20 @@ namespace MBSim {
     if(result.isCollision()) {
 //      cout << "numContacts = " << result.numContacts() << endl;
       for(size_t i=0; i<result.numContacts(); i++) {
-      Vec3 n = Vector3dToVec3(result.getContact(i).normal);
-      Vec3 r = Vector3dToVec3(result.getContact(i).pos);
-      double g = -result.getContact(i).penetration_depth;
-      Vec3 t;
-      t(0) = 1;
-      Vec3 t1, t2;
-      if(fabs(t.T()*n) > 0.9) {
-        t(0) = 0;
-        t(1) = 1;
-      }
-      t1 = crossProduct(n,t);
-      t1 /= nrm2(t1);
-      t2 = crossProduct(n,t1);
-      contact[i].getGeneralizedRelativePosition(false)(0) = g;
-      contact[i].getContourFrame(icontour0)->getOrientation(false).set(0, n);
-      contact[i].getContourFrame(icontour0)->getOrientation(false).set(1, t1);
-      contact[i].getContourFrame(icontour0)->getOrientation(false).set(2, t2);
-      contact[i].getContourFrame(icontour1)->getOrientation(false).set(0, -n);
-      contact[i].getContourFrame(icontour1)->getOrientation(false).set(1, -t1);
-      contact[i].getContourFrame(icontour1)->getOrientation(false).set(2, t2);
-      contact[i].getContourFrame(icontour0)->setPosition(r + n*g/2.);
-      contact[i].getContourFrame(icontour1)->setPosition(r - n*g/2.);
+        Vec3 n = Vector3dToVec3(result.getContact(i).normal);
+        Vec3 r = Vector3dToVec3(result.getContact(i).pos);
+        double g = -result.getContact(i).penetration_depth;
+        Vec3 t1 = orthonormal(n);
+        Vec3 t2 = crossProduct(n,t1);
+        contact[i].getGeneralizedRelativePosition(false)(0) = g;
+        contact[i].getContourFrame(icontour0)->getOrientation(false).set(0, n);
+        contact[i].getContourFrame(icontour0)->getOrientation(false).set(1, t1);
+        contact[i].getContourFrame(icontour0)->getOrientation(false).set(2, t2);
+        contact[i].getContourFrame(icontour1)->getOrientation(false).set(0, -n);
+        contact[i].getContourFrame(icontour1)->getOrientation(false).set(1, -t1);
+        contact[i].getContourFrame(icontour1)->getOrientation(false).set(2, t2);
+        contact[i].getContourFrame(icontour0)->setPosition(r + n*g/2.);
+        contact[i].getContourFrame(icontour1)->setPosition(r - n*g/2.);
       }
       for(int i=result.numContacts(); i<maxNumContacts; i++) {
         contact[i].getGeneralizedRelativePosition(false)(0) = 1;
