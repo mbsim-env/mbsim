@@ -23,6 +23,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/fcl_contour.h"
 #include "mbsim/utils/contact_utils.h"
+#include "mbsim/utils/fcl_utils.h"
 #include "fcl/narrowphase/distance.h"
 
 using namespace fmatvec;
@@ -30,36 +31,6 @@ using namespace std;
 using namespace fcl;
 
 namespace MBSim {
-
-  Vector3d Vec3ToVector3d(const Vec3 &x) {
-    Vector3d y;
-    for(int i=0; i<3; i++)
-      y(i) = x(i);
-    return y;
-  }
-
-  Matrix3d SqrMat3ToMatrix3d(const SqrMat3 &A) {
-    Matrix3d B;
-    for(int i=0; i<3; i++)
-      for(int j=0; j<3; j++)
-        B(i,j) = A(i,j);
-    return B;
-  }
-
-  Vec3 Vector3dToVec3(const Vector3d &x) {
-    Vec3 y;
-    for(int i=0; i<3; i++)
-      y(i) = x(i);
-    return y;
-  }
-
-  SqrMat3 Matrix3dToSqrMat3(const Matrix3d &A) {
-    SqrMat3 B;
-    for(int i=0; i<3; i++)
-      for(int j=0; j<3; j++)
-        B(i,j) = A(i,j);
-    return B;
-  }
 
   void ContactKinematicsFCLContourFCLContour::assignContours(const vector<Contour*> &contour) {
     icontour0 = 0; icontour1 = 1;

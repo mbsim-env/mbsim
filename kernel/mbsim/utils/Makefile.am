@@ -11,7 +11,8 @@ libutils_la_SOURCES = colors.cc\
                       ansatz_functions.cc\
                       openmbv_utils.cc\
 		      planar_contact_search.cc\
-		      spatial_contact_search.cc
+		      spatial_contact_search.cc\
+		      fcl_utils.cc
 
 utilsincludedir = $(includedir)/mbsim/utils
 
@@ -34,7 +35,8 @@ utilsinclude_HEADERS = colors.h\
 		       openmbv_utils.h\
 		       planar_contact_search.h\
 		       spatial_contact_search.h\
-		       index.h
+		       index.h\
+		       fcl_utils.h
 
 noinst_PROGRAMS = cppCasADiToXML
 cppCasADiToXML_SOURCES = cppCasADiToXML.cc
