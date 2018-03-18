@@ -41,7 +41,8 @@ def config():
 
   # enviroment variables
   if platform=="linux":
-    os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib"
+    os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib:"+\
+      "/home/mbsim/3rdparty/coin-soqt-bb-local-linux64/lib64:/home/mbsim/3rdparty/qwt-6.1.3-local-linux64/lib"
   if platform=="win":
     os.environ["WINEPATH"]="/usr/x86_64-w64-mingw32/sys-root/mingw/bin;/home/mbsim/3rdparty/lapack-local-win64/bin;"+ \
       "/home/mbsim/3rdparty/xerces-c-local-win64/bin;/home/mbsim/3rdparty/casadi3py-local-win64/lib;"+ \
