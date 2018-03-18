@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <Parameter>
+    <stringParameter name="cs">'AABB'</stringParameter>
+  </Parameter>
+  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+    <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+    <frames/>
+    <contours>
+      <FCLMesh name="FCLMesh">
+        <vertices unit="m">
+          <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <row>
+              <ele>-1</ele>
+              <ele>0.5</ele>
+              <ele>-1</ele>
+            </row>
+            <row>
+              <ele>-1</ele>
+              <ele>0.5</ele>
+              <ele>1</ele>
+            </row>
+            <row>
+              <ele>1</ele>
+              <ele>0.5</ele>
+              <ele>-1</ele>
+            </row>
+            <row>
+              <ele>1</ele>
+              <ele>0.5</ele>
+              <ele>1</ele>
+            </row>
+          </xmlMatrix>
+        </vertices>
+        <triangles>
+          <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <row>
+              <ele>1</ele>
+              <ele>2</ele>
+              <ele>3</ele>
+            </row>
+            <row>
+              <ele>4</ele>
+              <ele>3</ele>
+              <ele>2</ele>
+            </row>
+          </xmlMatrix>
+        </triangles>
+        <collisionStructure>cs</collisionStructure>
+        <enableOpenMBV/>
+      </FCLMesh>
+    </contours>
+    <groups/>
+    <objects>
+      <RigidBody name="RigidBody">
+        <generalizedInitialPosition>
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>0</ele>
+            <ele>1</ele>
+            <ele>0</ele>
+            <ele>0.1</ele>
+            <ele>0.2</ele>
+            <ele>-0.3</ele>
+          </xmlVector>
+        </generalizedInitialPosition>
+        <generalizedInitialVelocity>
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>0.1</ele>
+            <ele>0</ele>
+            <ele>0.3</ele>
+            <ele>0</ele>
+            <ele>0</ele>
+            <ele>0</ele>
+          </xmlVector>
+        </generalizedInitialVelocity>
+        <mass unit="kg">1</mass>
+        <inertiaTensor unit="kg*m^2">
+          <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <row>
+              <ele>0.01</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0.01</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>0.01</ele>
+            </row>
+          </xmlMatrix>
+        </inertiaTensor>
+        <stateDependentTranslation>
+          <TranslationAlongAxesXYZ/>
+        </stateDependentTranslation>
+        <stateDependentRotation>
+          <RotationAboutAxesXYZ/>
+        </stateDependentRotation>
+        <frames/>
+        <contours>
+          <FCLMesh name="FCLMesh">
+            <vertices unit="dm">[ 1 0 0,
+                          -1 0 0,
+                          0 1 0,
+                          0 -1 0,
+                          0 0 1,
+                          0 0 -1]*3
+            </vertices>
+            <triangles>[ 0, 2, 4
+             4, 2, 1
+             1, 2, 5
+             5, 2, 0
+             4, 3, 0
+             1, 3, 4
+             5, 3, 1
+             0, 3, 5]+1
+            </triangles>
+            <collisionStructure>cs</collisionStructure>
+            <enableOpenMBV/>
+          </FCLMesh>
+        </contours>
+        <enableOpenMBVFrameC>
+          <size unit="dm">1</size>
+        </enableOpenMBVFrameC></RigidBody>
+    </objects>
+    <links>
+      <Contact name="Contact">
+        <connect ref1="../Contour[FCLMesh]" ref2="../Object[RigidBody]/Contour[FCLMesh]"/>
+        <normalForceLaw>
+          <UnilateralConstraint/>
+        </normalForceLaw>
+        <normalImpactLaw>
+          <UnilateralNewtonImpact>
+            <restitutionCoefficient>0</restitutionCoefficient>
+          </UnilateralNewtonImpact>
+        </normalImpactLaw>
+        <tangentialForceLaw>
+          <SpatialCoulombFriction>
+            <frictionCoefficient>0.1</frictionCoefficient>
+          </SpatialCoulombFriction>
+        </tangentialForceLaw>
+        <tangentialImpactLaw>
+          <SpatialCoulombImpact>
+            <frictionCoefficient>0.1</frictionCoefficient>
+          </SpatialCoulombImpact>
+        </tangentialImpactLaw>
+        <maximumNumberOfContacts>3</maximumNumberOfContacts>
+      </Contact>
+    </links>
+    <constraints/>
+    <observers>
+      <ContactObserver name="ContactObserver">
+        <contact ref="../Link[Contact]"/>
+        <enableOpenMBVContactPoints>
+          <size unit="dm">1</size>
+        </enableOpenMBVContactPoints>
+        <enableOpenMBVNormalForce/>
+        <enableOpenMBVTangentialForce/>
+      </ContactObserver>
+    </observers>
+    <enableOpenMBVFrameI>
+      <size unit="dm">1</size>
+    </enableOpenMBVFrameI><environments>
+      <MBSimEnvironment>
+        <accelerationOfGravity unit="m/s^2">
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>0</ele>
+            <ele>-9.81</ele>
+            <ele>0</ele>
+          </xmlVector>
+        </accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+  </DynamicSystemSolver>
+  </Embed>
+
+  <TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">1</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+  </TimeSteppingIntegrator>
+
+</MBSimProject>
