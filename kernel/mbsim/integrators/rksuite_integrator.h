@@ -32,7 +32,8 @@ namespace MBSimIntegrator {
       enum Method {
         RK23=1,
         RK45,
-        RK78
+        RK78,
+        unknown
       };
 
       /**

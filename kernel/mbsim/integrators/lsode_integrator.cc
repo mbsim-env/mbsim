@@ -53,6 +53,9 @@ namespace MBSimIntegrator {
   }
 
   void LSODEIntegrator::integrate() {
+    if(method==unknown)
+      throwError("(LSODEIntegrator::integrate): method unknown");
+
     debugInit();
 
     if(odePackInUse)
@@ -187,6 +190,7 @@ namespace MBSimIntegrator {
       string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(methodStr=="nonstiff" or methodStr=="Adams") method=nonstiff;
       else if(methodStr=="stiff" or methodStr=="BDF") method=stiff;
+      else method=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());

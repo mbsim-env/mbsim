@@ -33,7 +33,8 @@ namespace MBSim {
       enum InterpolationMethod {
         cSplinePeriodic,
         cSplineNatural,
-        piecewiseLinear
+        piecewiseLinear,
+        unknown
       };
 
       TwoDimensionalPiecewisePolynomFunction() : method1(cSplineNatural), method2(cSplineNatural) {
@@ -59,6 +60,7 @@ namespace MBSim {
           if(str=="cSplinePeriodic") method1=cSplinePeriodic;
           else if(str=="cSplineNatural") method1=cSplineNatural;
           else if(str=="piecewiseLinear") method1=piecewiseLinear;
+          else method1=unknown;
         }
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethodSecondDimension");
         if(e) {
@@ -67,6 +69,7 @@ namespace MBSim {
           if(str=="cSplinePeriodic") method2=cSplinePeriodic;
           else if(str=="cSplineNatural") method2=cSplineNatural;
           else if(str=="piecewiseLinear") method2=piecewiseLinear;
+          else method2=unknown;
         }
       }
 
@@ -143,6 +146,10 @@ namespace MBSim {
       void init(Element::InitStage stage, const InitConfigSet &config) {
         Function<Ret(Arg1, Arg2)>::init(stage, config);
         if(stage==Element::preInit) {
+          if(method1==unknown)
+            Element::throwError("(TwoDimensionalPiecewisePolynomFunction::init): interpolation method first dimension unknown");
+          if(method2==unknown)
+            Element::throwError("(TwoDimensionalPiecewisePolynomFunction::init): interpolation method second dimension unknown");
           if (z.cols() != x.size())
             this->throwError("Dimension missmatch in xSize");
           if (z.rows() != y.size())

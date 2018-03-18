@@ -48,12 +48,12 @@ namespace MBSim {
       /**
        * \brief solver for contact equations
        */
-      enum Solver { fixedpoint, GaussSeidel, direct, rootfinding };
+      enum Solver { fixedpoint, GaussSeidel, direct, rootfinding, unknownSolver };
 
       /**
        * \brief linear algebra for Newton scheme in solution of contact equations
        */
-      enum LinearAlgebra { LUDecomposition, LevenbergMarquardt, pseudoinverse };
+      enum LinearAlgebra { LUDecomposition, LevenbergMarquardt, pseudoinverse, unknownLinearAlgebra };
 
       /**
        * \brief constructor

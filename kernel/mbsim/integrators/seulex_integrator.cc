@@ -207,6 +207,9 @@ namespace MBSimIntegrator {
   }
 
   void SEULEXIntegrator::integrate() {
+    if(formalism==unknown)
+      throwError("(SEULEXIntegrator::integrate): formalism unknown");
+
     fzdot[0] = &SEULEXIntegrator::fzdotODE;
     fzdot[1] = &SEULEXIntegrator::fzdotDAE1;
     mass[0] = &SEULEXIntegrator::massFull;
@@ -332,12 +335,8 @@ namespace MBSimIntegrator {
   }
 
   void SEULEXIntegrator::calcSize() {
-    if(formalism==DAE1 or formalism==DAE2)
+    if(formalism==DAE1)
       neq = system->getzSize()+system->getlaSize();
-    else if(formalism==DAE3)
-      neq = system->getzSize()+system->getgSize();
-    else if(formalism==GGL)
-      neq = system->getzSize()+system->getgdSize()+system->getgSize();
     else
       neq = system->getzSize();
   }
@@ -379,6 +378,7 @@ namespace MBSimIntegrator {
       string formalismStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(formalismStr=="ODE") formalism=ODE;
       else if(formalismStr=="DAE1") formalism=DAE1;
+      else formalism=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
     if(e) setReducedForm((E(e)->getText<bool>()));

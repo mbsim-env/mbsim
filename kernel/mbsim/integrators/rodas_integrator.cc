@@ -199,6 +199,9 @@ namespace MBSimIntegrator {
   }
 
   void RODASIntegrator::integrate() {
+    if(formalism==unknown)
+      throwError("(RODASIntegrator::integrate): formalism unknown");
+
     fzdot[0] = &RODASIntegrator::fzdotODE;
     fzdot[1] = &RODASIntegrator::fzdotDAE1;
     mass[0] = &RODASIntegrator::massFull;
@@ -358,6 +361,7 @@ namespace MBSimIntegrator {
       string formalismStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(formalismStr=="ODE") formalism=ODE;
       else if(formalismStr=="DAE1") formalism=DAE1;
+      else formalism=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
     if(e) setReducedForm((E(e)->getText<bool>()));

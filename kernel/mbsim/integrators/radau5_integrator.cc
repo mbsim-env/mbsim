@@ -255,6 +255,9 @@ namespace MBSimIntegrator {
   }
 
   void RADAU5Integrator::integrate() {
+    if(formalism==unknown)
+      throwError("(RADAU5Integrator::integrate): formalism unknown");
+
     fzdot[0] = &RADAU5Integrator::fzdotODE;
     fzdot[1] = &RADAU5Integrator::fzdotDAE1;
     fzdot[2] = &RADAU5Integrator::fzdotDAE2;
@@ -447,6 +450,7 @@ namespace MBSimIntegrator {
       else if(formalismStr=="DAE2") formalism=DAE2;
       else if(formalismStr=="DAE3") formalism=DAE3;
       else if(formalismStr=="GGL") formalism=GGL;
+      else formalism=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
     if(e) setReducedForm((E(e)->getText<bool>()));

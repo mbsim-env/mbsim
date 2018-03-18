@@ -404,6 +404,12 @@ namespace MBSim {
     }
     else if (stage == preInit) {
       msg(Info) << "  initialising preInit ..." << endl;
+      if(contactSolver==unknownSolver)
+        throwError("(DynamicSystemSolver::init): constraint solver unknown");
+      if(impactSolver==unknownSolver)
+        throwError("(DynamicSystemSolver::init): impact solver unknown");
+      if(linAlg==unknownLinearAlgebra)
+        throwError("(DynamicSystemSolver::init): linear algebra unknown");
       if (inverseKinetics)
         setUpInverseKinetics();
       Group::init(stage, config);
@@ -1355,6 +1361,7 @@ namespace MBSim {
       else if(str=="GaussSeidel") contactSolver=GaussSeidel;
       else if(str=="direct") contactSolver=direct;
       else if(str=="rootfinding") contactSolver=rootfinding;
+      else contactSolver=unknownSolver;
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"impactSolver");
     if (e) {
@@ -1364,6 +1371,7 @@ namespace MBSim {
       else if(str=="GaussSeidel") impactSolver=GaussSeidel;
       else if(str=="direct") impactSolver=direct;
       else if(str=="rootfinding") impactSolver=rootfinding;
+      else impactSolver=unknownSolver;
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"maximumIterations");
     if (e)
@@ -1378,6 +1386,7 @@ namespace MBSim {
       if(str=="LUDecomposition") linAlg=LUDecomposition;
       else if(str=="LevenbergMarquardt") linAlg=LevenbergMarquardt;
       else if(str=="pseudoinverse") linAlg=pseudoinverse;
+      else linAlg=unknownLinearAlgebra;
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"projectionTolerance");
     if (e)

@@ -68,7 +68,8 @@ namespace MBSim {
       enum InterpolationMethod {
         cSplinePeriodic,
         cSplineNatural,
-        piecewiseLinear
+        piecewiseLinear,
+        unknown
       };
 
       PiecewisePolynomFunction() : index(0), method(cSplineNatural), f(this), fd(this), fdd(this) { }
@@ -80,6 +81,8 @@ namespace MBSim {
       void init(Element::InitStage stage, const InitConfigSet &config) {
         Function<Ret(Arg)>::init(stage, config);
         if(stage==Element::preInit) {
+          if(method==unknown)
+            Element::throwError("(PiecewisePolynomFunction::init): interpolation method unknown");
           if(y.rows() != x.size())
             this->throwError("Dimension missmatch in size of x");
           if(x.size()) calculateSpline();
@@ -529,6 +532,7 @@ namespace MBSim {
       if(str=="cSplinePeriodic") method=cSplinePeriodic;
       else if(str=="cSplineNatural") method=cSplineNatural;
       else if(str=="piecewiseLinear") method=piecewiseLinear;
+      else method=unknown;
     }
   }
 

@@ -42,7 +42,8 @@ namespace MBSimIntegrator {
 
       enum Method {
         nonstiff=10,
-        stiff=22
+        stiff=22,
+        unknown
       };
 
     private:

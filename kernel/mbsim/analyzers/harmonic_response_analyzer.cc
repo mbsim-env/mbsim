@@ -44,6 +44,7 @@ namespace MBSimAnalyzer {
 
   void HarmonicResponseAnalyzer::execute() {
     if(task == frequencyResponse) computeFrequencyResponse();
+    else throwError("(HarmonicResponseAnalyzer::init): task unknown");
   }
 
   void HarmonicResponseAnalyzer::computeFrequencyResponse() {
@@ -178,6 +179,7 @@ namespace MBSimAnalyzer {
       string str=X()%E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
       if(str=="frequencyResponse") task=frequencyResponse;
+      else task=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"determineEquilibriumState");
     if(e) setDetermineEquilibriumState(E(e)->getText<bool>());

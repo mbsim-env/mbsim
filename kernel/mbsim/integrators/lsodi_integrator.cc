@@ -86,6 +86,9 @@ namespace MBSimIntegrator {
   }
 
   void LSODIIntegrator::integrate() {
+    if(formalism==unknown)
+      throwError("(LSODIIntegrator::integrate): formalism unknown");
+
     res[0] = &LSODIIntegrator::resODE;
     res[1] = &LSODIIntegrator::resDAE2;
     res[2] = &LSODIIntegrator::resGGL;
@@ -260,6 +263,7 @@ namespace MBSimIntegrator {
       if(formalismStr=="ODE") formalism=ODE;
       else if(formalismStr=="DAE2") formalism=DAE2;
       else if(formalismStr=="GGL") formalism=GGL;
+      else formalism=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(E(e)->getText<double>());

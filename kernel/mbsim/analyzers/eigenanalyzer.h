@@ -44,7 +44,7 @@ namespace MBSimAnalyzer {
 
     public:
 
-      enum Task { eigenmodes, eigenmotion };
+      enum Task { eigenmodes, eigenmotion, unknown };
 
       /**
        * \brief Standard constructor 

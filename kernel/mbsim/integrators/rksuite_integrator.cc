@@ -38,6 +38,9 @@ namespace MBSimIntegrator {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RKSuiteIntegrator)
 
   void RKSuiteIntegrator::preIntegrate() {
+    if(method==unknown)
+      throwError("(RKSuiteIntegrator::integrate): method unknown");
+
     debugInit();
 
     if(selfStatic)
@@ -172,6 +175,7 @@ namespace MBSimIntegrator {
       if(methodStr=="RK23") method=RK23;
       else if(methodStr=="RK45") method=RK45;
       else if(methodStr=="RK78") method=RK78;
+      else method=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     if(e) setRelativeTolerance(E(e)->getText<double>());

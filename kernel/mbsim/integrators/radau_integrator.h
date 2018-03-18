@@ -37,7 +37,8 @@ namespace MBSimIntegrator {
         DAE1,
         DAE2,
         DAE3,
-        GGL
+        GGL,
+        unknown
       };
 
     private:

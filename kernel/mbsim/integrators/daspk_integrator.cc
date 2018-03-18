@@ -92,6 +92,9 @@ namespace MBSimIntegrator {
   }
 
   void DASPKIntegrator::integrate() {
+    if(formalism==unknown)
+      throwError("(DASPKIntegrator::integrate): formalism unknown");
+
     delta[0] = &DASPKIntegrator::deltaODE;
     delta[1] = &DASPKIntegrator::deltaDAE1;
     delta[2] = &DASPKIntegrator::deltaDAE2;
@@ -272,6 +275,7 @@ namespace MBSimIntegrator {
       else if(formalismStr=="DAE1") formalism=DAE1;
       else if(formalismStr=="DAE2") formalism=DAE2;
       else if(formalismStr=="GGL") formalism=GGL;
+      else formalism=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"excludeAlgebraicVariablesFromErrorTest");
     if(e) setExcludeAlgebraicVariablesFromErrorTest(E(e)->getText<bool>());
