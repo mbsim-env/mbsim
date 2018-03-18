@@ -252,6 +252,9 @@ namespace MBSimGUI {
     action = new QAction("Add fcl sphere", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFCLSphere()));
     addAction(action);
+    action = new QAction("Add fcl plane", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFCLPlane()));
+    addAction(action);
     action = new QAction("Add fcl mesh", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFCLMesh()));
     addAction(action);
@@ -311,6 +314,10 @@ namespace MBSimGUI {
 
   void ContoursContextMenu::addFCLSphere() {
     mw->addContour(new FCLSphere, element);
+  }
+
+  void ContoursContextMenu::addFCLPlane() {
+    mw->addContour(new FCLPlane, element);
   }
 
   void ContoursContextMenu::addFCLMesh() {

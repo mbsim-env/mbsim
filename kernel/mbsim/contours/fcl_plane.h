@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FCL_BOX_H_
-#define _FCL_BOX_H_
+#ifndef _FCL_PLANE_H_
+#define _FCL_PLANE_H_
 
 #include "mbsim/contours/fcl_contour.h"
 #include "mbsim/utils/boost_parameters.h"
@@ -27,17 +27,16 @@
 namespace MBSim {
 
   /**
-   * \brief FCLBox
+   * \brief FCLPlane
    */
-  class FCLBox : public FCLContour {
+  class FCLPlane : public FCLContour {
     public:
       /**
        * \brief constructor
-       * \param name of box
-       * \param length of box
+       * \param name of plane
        * \param R frame of reference
        */
-      FCLBox(const std::string &name="", const fmatvec::Vec3 &length=fmatvec::Vec3(fmatvec::INIT,1), Frame *R=nullptr) : FCLContour(name,R), lx(length(0)), ly(length(1)), lz(length(2)) { }
+      FCLPlane(const std::string &name="", Frame *R=nullptr) : FCLContour(name,R) { normal(0) = 1; }
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
@@ -46,22 +45,25 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setLength(const fmatvec::Vec3 &length) { lx = length(0); ly = length(1); lz = length(2); }
-      void setLength(double lx_, double ly_, double lz_) { lx = lx_; ly = ly_; lz = lz_; }
+      void setNormal(const fmatvec::Vec3 &normal_) { normal = normal_; }
+      void setOffset(double offset_) { offset = offset_; }
       /***************************************************/
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-        OpenMBVCuboid ombv(fmatvec::Vec3(),diffuseColor,transparency);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (length,(fmatvec::Vec2),fmatvec::Vec2(fmatvec::INIT,1))(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {       
+        OpenMBVPlane ombv(length,diffuseColor,transparency);
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
 
     private:
       /**
-       * \brief x-, y- and z-length of cuboid
+       * \brief normal
        */
-      double lx{1};
-      double ly{1};
-      double lz{1};
+      fmatvec::Vec3 normal;
+
+      /**
+       * \brief offset
+       */
+      double offset;
   };
 }
 

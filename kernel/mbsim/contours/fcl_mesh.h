@@ -57,15 +57,14 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
-      void initializeUsingXML(xercesc::DOMElement *element) override;
       void init(InitStage stage, const InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */
       void setVertices(const fmatvec::MatVx3 &vertex_) { vertex = vertex_; }
       void setTriangles(const fmatvec::Matrix<fmatvec::General, fmatvec::Var, fmatvec::Fixed<3>, Index> &triangle_) { triangle = triangle_; }
       void setCollisionStructure(CollisionStructure collisionStructure_) { collisionStructure = collisionStructure_; }
-      void setComputeLocalAABB(bool computeLocalAABB_) { computeLocalAABB = computeLocalAABB_; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
@@ -88,11 +87,6 @@ namespace MBSim {
        * \brief collision structure
        */
       CollisionStructure collisionStructure{AABB};
-
-      /**
-       * \brief compute local AABB
-       */
-      bool computeLocalAABB{true};
   };
 }
 

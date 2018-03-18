@@ -2886,7 +2886,11 @@
   </xs:element>
   <xs:complexType name="FCLContourType">
     <xs:complexContent>
-      <xs:extension base="RigidContourType"/>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="computeLocalAABB" type="pv:booleanFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
@@ -2951,6 +2955,32 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="FCLPlane" substitutionGroup="FCLContour" type="FCLPlaneType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        FCL-Plane.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FCLPlaneType">
+    <xs:complexContent>
+      <xs:extension base="FCLContourType">
+        <xs:sequence>
+          <xs:element name="normal" type="pv:nounitVector"/>
+          <xs:element name="offset" type="pv:lengthScalar"/>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="FCLMesh" substitutionGroup="FCLContour" type="FCLMeshType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -2965,7 +2995,6 @@
           <xs:element name="vertices" type="pv:lengthMatrix"/>
           <xs:element name="triangles" type="pv:indexMatrix"/>
           <xs:element name="collisionStructure" type="pv:stringFullEval" minOccurs="0"/>
-          <xs:element name="computeLocalAABB" type="pv:booleanFullEval" minOccurs="0"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:complexType>
               <xs:sequence>

@@ -512,10 +512,27 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FCLBoxPropertyDialog::FCLBoxPropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : RigidContourPropertyDialog(contour,parent,f) {
+  FCLContourPropertyDialog::FCLContourPropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : RigidContourPropertyDialog(contour,parent,f) {
+    computeLocalAABB = new ExtWidget("Compute local AABB",new ChoiceWidget2(new BoolWidgetFactory("true"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"computeLocalAABB");
+    addToTab("General", computeLocalAABB);
+  }
+
+  DOMElement* FCLContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    computeLocalAABB->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FCLContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    computeLocalAABB->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
+  FCLBoxPropertyDialog::FCLBoxPropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : FCLContourPropertyDialog(contour,parent,f) {
     addTab("Visualisation",1);
 
-    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
+    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
     addToTab("General", length);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
@@ -523,20 +540,20 @@ namespace MBSimGUI {
   }
 
   DOMElement* FCLBoxPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    FCLContourPropertyDialog::initializeUsingXML(item->getXMLElement());
     length->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FCLBoxPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    FCLContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
     length->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
-  FCLSpherePropertyDialog::FCLSpherePropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : RigidContourPropertyDialog(contour,parent,f) {
+  FCLSpherePropertyDialog::FCLSpherePropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : FCLContourPropertyDialog(contour,parent,f) {
     addTab("Visualisation",1);
 
     radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
@@ -547,23 +564,54 @@ namespace MBSimGUI {
   }
 
   DOMElement* FCLSpherePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    FCLContourPropertyDialog::initializeUsingXML(item->getXMLElement());
     radius->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FCLSpherePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    FCLContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
     radius->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 
-  FCLMeshPropertyDialog::FCLMeshPropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : RigidContourPropertyDialog(contour,parent,f) {
+  FCLPlanePropertyDialog::FCLPlanePropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : FCLContourPropertyDialog(contour,parent,f) {
     addTab("Visualisation",1);
 
-    vertices = new ExtWidget("Vertices",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,3,vector<QStringList>(3,lengthUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"vertices");
+    vector<QString> n = getVec<QString>(3,"0");
+    n[0] = "1";
+    normal = new ExtWidget("Normal",new ChoiceWidget2(new VecWidgetFactory(n,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"normal");
+    addToTab("General", normal);
+
+    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"offset");
+    addToTab("General", offset);
+
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
+    addToTab("Visualisation", visu);
+  }
+
+  DOMElement* FCLPlanePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FCLContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    normal->initializeUsingXML(item->getXMLElement());
+    offset->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FCLPlanePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FCLContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    normal->writeXMLFile(item->getXMLElement(),nullptr);
+    offset->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
+  FCLMeshPropertyDialog::FCLMeshPropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : FCLContourPropertyDialog(contour,parent,f) {
+    addTab("Visualisation",1);
+
+    vertices = new ExtWidget("Vertices",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"vertices");
     addToTab("General", vertices);
 
     triangles = new ExtWidget("Triangles",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,3,vector<QStringList>(3,QStringList()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"triangles");
@@ -581,29 +629,24 @@ namespace MBSimGUI {
     collisionStructure = new ExtWidget("Collision structure",new TextChoiceWidget(list,0,true),true,false,MBSIM%"collisionStructure");
     addToTab("General", collisionStructure);
 
-    computeLocalAABB = new ExtWidget("Compute local AABB",new ChoiceWidget2(new BoolWidgetFactory("true"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"computeLocalAABB");
-    addToTab("General", computeLocalAABB);
-
     visu = new ExtWidget("Enable openMBV",new MBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
   }
 
   DOMElement* FCLMeshPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    FCLContourPropertyDialog::initializeUsingXML(item->getXMLElement());
     vertices->initializeUsingXML(item->getXMLElement());
     triangles->initializeUsingXML(item->getXMLElement());
     collisionStructure->initializeUsingXML(item->getXMLElement());
-    computeLocalAABB->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FCLMeshPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    FCLContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
     vertices->writeXMLFile(item->getXMLElement(),nullptr);
     triangles->writeXMLFile(item->getXMLElement(),nullptr);
     collisionStructure->writeXMLFile(item->getXMLElement(),nullptr);
-    computeLocalAABB->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }

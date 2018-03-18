@@ -131,6 +131,7 @@ namespace MBSimGUI {
       void addSpatialContour();
       void addFCLBox();
       void addFCLSphere();
+      void addFCLPlane();
       void addFCLMesh();
       void paste();
       void load();

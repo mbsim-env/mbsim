@@ -19,7 +19,10 @@
 
 #include <config.h>
 #ifdef HAVE_FCL
-#include "mbsim/contours/fcl_box.h"
+#include "mbsim/contours/fcl_plane.h"
+#include "mbsim/utils/fcl_utils.h"
+#include "fcl/geometry/shape/plane.h"
+#include <openmbvcppinterface/grid.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -29,18 +32,27 @@ using namespace fcl;
 
 namespace MBSim {
 
-  void FCLContour::init(InitStage stage, const InitConfigSet &config) {
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FCLPlane)
+
+  void FCLPlane::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
-      if(computeLocalAABB) cg->computeLocalAABB();
-    RigidContour::init(stage, config);
+      cg = shared_ptr<CollisionGeometry<double> >(new Plane<double>(Vec3ToVector3d(normal),offset));
+    FCLContour::init(stage, config);
   }
 
-  void FCLContour::initializeUsingXML(DOMElement *element) {
-    RigidContour::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"computeLocalAABB");
-    if(e) setComputeLocalAABB(E(e)->getText<bool>());
+  void FCLPlane::initializeUsingXML(DOMElement *element) {
+    FCLContour::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"normal");
+    setNormal(E(e)->getText<Vec3>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"offset");
+    setOffset(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    if(e) {
+      OpenMBVPlane ombv;
+      ombv.initializeUsingXML(e);
+      openMBVRigidBody=ombv.createOpenMBV();
+    }
   }
 
 }
-
 #endif

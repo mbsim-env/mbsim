@@ -120,6 +120,8 @@ namespace MBSimGUI {
       return new FCLBox;
     else if(E(element)->getTagName()==MBSIM%"FCLSphere")
       return new FCLSphere;
+    else if(E(element)->getTagName()==MBSIM%"FCLPlane")
+      return new FCLPlane;
     else if(E(element)->getTagName()==MBSIM%"FCLMesh")
       return new FCLMesh;
     return nullptr;

@@ -43,6 +43,7 @@
 #ifdef HAVE_FCL
 #include <mbsim/contours/fcl_box.h>
 #include <mbsim/contours/fcl_sphere.h>
+#include <mbsim/contours/fcl_plane.h>
 #include <mbsim/contours/fcl_mesh.h>
 #endif
 // --- List of contact implementations - END ---
@@ -220,6 +221,12 @@ namespace MBSim {
       return new ContactKinematicsFCLContourFCLContour(4);
 
     else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLSphere) )
+      return new ContactKinematicsFCLContourFCLContour(1);
+
+    else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLPlane) )
+      return new ContactKinematicsFCLContourFCLContour(4);
+
+    else if ( contour0==typeid(FCLSphere) && contour1==typeid(FCLPlane) )
       return new ContactKinematicsFCLContourFCLContour(1);
 
 //    else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLMesh) )

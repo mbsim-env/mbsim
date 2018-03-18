@@ -94,7 +94,6 @@ namespace MBSim {
       }
       else if(collisionStructure==unknown)
         throwError("(FCLMesh::init): unknown collision structure");
-      if(computeLocalAABB) cg->computeLocalAABB();
     }
     else if (stage == plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
@@ -136,8 +135,6 @@ namespace MBSim {
       else if(str=="RSS") collisionStructure=RSS;
       else collisionStructure=unknown;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"computeLocalAABB");
-    if(e) setComputeLocalAABB(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVIndexedFaceSet ombv;

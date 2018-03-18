@@ -36,10 +36,20 @@ namespace MBSim {
        */
       FCLContour(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
 
+      void init(InitStage stage, const InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+
       std::shared_ptr<fcl::CollisionGeometry<double> > getCollisionGeometry() const { return cg; }
+
+      void setComputeLocalAABB(bool computeLocalAABB_) { computeLocalAABB = computeLocalAABB_; }
 
     protected:
       std::shared_ptr<fcl::CollisionGeometry<double> > cg;
+
+      /**
+       * \brief compute local AABB
+       */
+      bool computeLocalAABB{true};
   };
 }
 

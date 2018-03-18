@@ -102,6 +102,12 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new FCLSpherePropertyDialog(this);}
   };
 
+  class FCLPlane : public RigidContour {
+    public:
+      QString getType() const override { return "FCLPlane"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new FCLPlanePropertyDialog(this);}
+  };
+
   class FCLMesh : public RigidContour {
     public:
       QString getType() const override { return "FCLMesh"; }
