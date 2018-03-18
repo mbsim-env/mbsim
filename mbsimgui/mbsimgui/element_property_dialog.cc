@@ -571,16 +571,15 @@ namespace MBSimGUI {
 
     vector<QString> list;
     list.emplace_back("\"AABB\"");
-    list.emplace_back("\"KDOP\"");
+    list.emplace_back("\"KDOP16\"");
+    list.emplace_back("\"KDOP18\"");
+    list.emplace_back("\"KDOP24\"");
     list.emplace_back("\"kIOS\"");
     list.emplace_back("\"OBB\"");
     list.emplace_back("\"OBBRSS\"");
     list.emplace_back("\"RSS\"");
     collisionStructure = new ExtWidget("Collision structure",new TextChoiceWidget(list,0,true),true,false,MBSIM%"collisionStructure");
     addToTab("General", collisionStructure);
-
-    N = new ExtWidget("N",new ChoiceWidget2(new ScalarWidgetFactory("16"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"N");
-    addToTab("General", N);
 
     computeLocalAABB = new ExtWidget("Compute local AABB",new ChoiceWidget2(new BoolWidgetFactory("true"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"computeLocalAABB");
     addToTab("General", computeLocalAABB);
@@ -594,7 +593,6 @@ namespace MBSimGUI {
     vertices->initializeUsingXML(item->getXMLElement());
     triangles->initializeUsingXML(item->getXMLElement());
     collisionStructure->initializeUsingXML(item->getXMLElement());
-    N->initializeUsingXML(item->getXMLElement());
     computeLocalAABB->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -605,7 +603,6 @@ namespace MBSimGUI {
     vertices->writeXMLFile(item->getXMLElement(),nullptr);
     triangles->writeXMLFile(item->getXMLElement(),nullptr);
     collisionStructure->writeXMLFile(item->getXMLElement(),nullptr);
-    N->writeXMLFile(item->getXMLElement(),nullptr);
     computeLocalAABB->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;

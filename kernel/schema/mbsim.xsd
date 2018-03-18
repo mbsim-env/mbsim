@@ -2965,7 +2965,6 @@
           <xs:element name="vertices" type="pv:lengthMatrix"/>
           <xs:element name="triangles" type="pv:indexMatrix"/>
           <xs:element name="collisionStructure" type="pv:stringFullEval" minOccurs="0"/>
-          <xs:element name="N" type="pv:integerFullEval" minOccurs="0"/>
           <xs:element name="computeLocalAABB" type="pv:booleanFullEval" minOccurs="0"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:complexType>

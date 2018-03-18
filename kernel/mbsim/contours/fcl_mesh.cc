@@ -50,25 +50,23 @@ namespace MBSim {
         static_cast<BVHModel<fcl::AABB<double> >*>(cg.get())->addSubModel(vertices, triangles);
         static_cast<BVHModel<fcl::AABB<double> >*>(cg.get())->endModel();
       }
-      else if(collisionStructure==KDOP) {
-        if(N==16) {
-          cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::KDOP<double,16> >);
-          static_cast<BVHModel<fcl::KDOP<double,16> >*>(cg.get())->beginModel();
-          static_cast<BVHModel<fcl::KDOP<double,16> >*>(cg.get())->addSubModel(vertices, triangles);
-          static_cast<BVHModel<fcl::KDOP<double,16> >*>(cg.get())->endModel();
-        } 
-        else if(N==18) {
-          cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::KDOP<double,18> >);
-          static_cast<BVHModel<fcl::KDOP<double,18> >*>(cg.get())->beginModel();
-          static_cast<BVHModel<fcl::KDOP<double,18> >*>(cg.get())->addSubModel(vertices, triangles);
-          static_cast<BVHModel<fcl::KDOP<double,18> >*>(cg.get())->endModel();
-        } 
-        else if(N==24) {
-          cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::KDOP<double,24> >);
-          static_cast<BVHModel<fcl::KDOP<double,24> >*>(cg.get())->beginModel();
-          static_cast<BVHModel<fcl::KDOP<double,24> >*>(cg.get())->addSubModel(vertices, triangles);
-          static_cast<BVHModel<fcl::KDOP<double,24> >*>(cg.get())->endModel();
-        } 
+      else if(collisionStructure==KDOP16) {
+        cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::KDOP<double,16> >);
+        static_cast<BVHModel<fcl::KDOP<double,16> >*>(cg.get())->beginModel();
+        static_cast<BVHModel<fcl::KDOP<double,16> >*>(cg.get())->addSubModel(vertices, triangles);
+        static_cast<BVHModel<fcl::KDOP<double,16> >*>(cg.get())->endModel();
+      }
+      else if(collisionStructure==KDOP18) {
+        cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::KDOP<double,18> >);
+        static_cast<BVHModel<fcl::KDOP<double,18> >*>(cg.get())->beginModel();
+        static_cast<BVHModel<fcl::KDOP<double,18> >*>(cg.get())->addSubModel(vertices, triangles);
+        static_cast<BVHModel<fcl::KDOP<double,18> >*>(cg.get())->endModel();
+      }
+      else if(collisionStructure==KDOP24) {
+        cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::KDOP<double,24> >);
+        static_cast<BVHModel<fcl::KDOP<double,24> >*>(cg.get())->beginModel();
+        static_cast<BVHModel<fcl::KDOP<double,24> >*>(cg.get())->addSubModel(vertices, triangles);
+        static_cast<BVHModel<fcl::KDOP<double,24> >*>(cg.get())->endModel();
       }
       else if(collisionStructure==kIOS) {
         cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::kIOS<double> >);
@@ -129,15 +127,15 @@ namespace MBSim {
       std::string str=X()%E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
       if(str=="AABB") collisionStructure=AABB;
-      else if(str=="KDOP") collisionStructure=KDOP;
+      else if(str=="KDOP16") collisionStructure=KDOP16;
+      else if(str=="KDOP18") collisionStructure=KDOP18;
+      else if(str=="KDOP24") collisionStructure=KDOP24;
       else if(str=="kIOS") collisionStructure=kIOS;
       else if(str=="OBB") collisionStructure=OBB;
       else if(str=="OBBRSS") collisionStructure=OBBRSS;
       else if(str=="RSS") collisionStructure=RSS;
       else collisionStructure=unknown;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"N");
-    if(e) setN(E(e)->getText<int>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"computeLocalAABB");
     if(e) setComputeLocalAABB(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");

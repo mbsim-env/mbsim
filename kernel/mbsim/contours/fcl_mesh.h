@@ -37,7 +37,9 @@ namespace MBSim {
        */
       enum CollisionStructure {
         AABB=0,
-        KDOP,
+        KDOP16,
+        KDOP18,
+        KDOP24,
         kIOS,
         OBB,
         OBBRSS,
@@ -63,14 +65,13 @@ namespace MBSim {
       void setVertices(const fmatvec::MatVx3 &vertex_) { vertex = vertex_; }
       void setTriangles(const fmatvec::Matrix<fmatvec::General, fmatvec::Var, fmatvec::Fixed<3>, Index> &triangle_) { triangle = triangle_; }
       void setCollisionStructure(CollisionStructure collisionStructure_) { collisionStructure = collisionStructure_; }
-      void setN(bool N_) { N = N_; }
       void setComputeLocalAABB(bool computeLocalAABB_) { computeLocalAABB = computeLocalAABB_; }
       /***************************************************/
 
-//      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-//        OpenMBVIndexedFaceSet ombv(fmatvec::Vec3(),diffuseColor,transparency);
-//        openMBVRigidBody=ombv.createOpenMBV(); 
-//      }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVIndexedFaceSet ombv(diffuseColor,transparency);
+        openMBVRigidBody=ombv.createOpenMBV();
+      }
 
     private:
       /**
@@ -87,11 +88,6 @@ namespace MBSim {
        * \brief collision structure
        */
       CollisionStructure collisionStructure{AABB};
-
-      /**
-       * \brief parameter for KDOP collision structure
-       */
-      int N{16};
 
       /**
        * \brief compute local AABB

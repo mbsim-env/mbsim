@@ -293,7 +293,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *vertices, *triangles, *collisionStructure, *N, *computeLocalAABB, *visu;
+      ExtWidget *vertices, *triangles, *collisionStructure, *computeLocalAABB, *visu;
   };
 
   class GroupPropertyDialog : public ElementPropertyDialog {
