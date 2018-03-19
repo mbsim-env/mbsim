@@ -223,8 +223,8 @@ namespace MBSim {
     else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLSphere) )
       return new ContactKinematicsFCLContourFCLContour(1);
 
-    else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLPlane) )
-      return new ContactKinematicsFCLContourFCLContour(4);
+//    else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLPlane) )
+//      return new ContactKinematicsFCLContourFCLContour(4);
 
     else if ( contour0==typeid(FCLSphere) && contour1==typeid(FCLPlane) )
       return new ContactKinematicsFCLContourFCLContour(1);
