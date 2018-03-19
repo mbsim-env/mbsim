@@ -37,6 +37,22 @@ namespace MBSim {
   void FCLPlane::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
       cg = shared_ptr<CollisionGeometry<double> >(new Plane<double>(Vec3ToVector3d(normal),offset));
+    else if(stage==plotting) {
+      if(plotFeature[openMBV] && openMBVRigidBody) {
+        double al=0, be=0, ga=0;
+        if(normal(2)>1e-10) {
+          al = atan(normal(1)/normal(2));
+          be = acos(normal(0));
+        }
+        else if(normal(1)>1e-10) {
+          be = acos(normal(0));
+          al = asin(normal(1)/sin(be));
+        }
+        Vec3 tr = normal*offset;
+        openMBVRigidBody->setInitialTranslation(tr(0),tr(1),tr(2));
+        openMBVRigidBody->setInitialRotation(al,be,ga);
+      }
+    }
     FCLContour::init(stage, config);
   }
 
