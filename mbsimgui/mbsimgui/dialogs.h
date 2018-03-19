@@ -29,6 +29,7 @@
 class QTableWidget;
 class QSpinBox;
 class QComboBox;
+class QWebView;
 
 namespace MBSimGUI {
 
@@ -229,6 +230,7 @@ namespace MBSimGUI {
       WebDialog(QWidget *parent=0);
       void load(const QUrl &url_);
     private:
+      QWebView *webView;
       QUrl url;
   };
 

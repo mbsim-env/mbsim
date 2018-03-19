@@ -20,6 +20,7 @@
 #include <config.h>
 #include <QtWidgets/QGridLayout>
 #include <QDesktopWidget>
+#include <QWebFrame>
 #include <QToolBar>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include "utils.h"
@@ -45,6 +46,10 @@ namespace MBSimGUI {
   EchoView::EchoView(QMainWindow *parent) : QMainWindow(parent) {
     setIconSize(iconSize()*0.5);
 
+    out=new QWebView(this);
+    out->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    connect(out, SIGNAL(linkClicked(const QUrl &)), this, SLOT(linkClicked(const QUrl &)));
+    setCentralWidget(out);
     auto tb=new QToolBar(this);
     addToolBar(Qt::RightToolBarArea, tb);
 
@@ -102,6 +107,7 @@ namespace MBSimGUI {
 
   void EchoView::clearOutput() {
     outText="";
+    out->setHtml("");
   }
 
   namespace {
@@ -115,6 +121,7 @@ namespace MBSimGUI {
   }
 
   void EchoView::updateOutput(bool moveToErrorOrEnd) {
+    int currentScrollY=out->page()->mainFrame()->evaluateJavaScript(R"+(window.scrollY)+").toInt();
     // some colors
     static const QColor bg(QPalette().brush(QPalette::Active, QPalette::Base).color());
     static const QColor fg(QPalette().brush(QPalette::Active, QPalette::Text).color());
@@ -175,6 +182,20 @@ R"+(
   </body>
 </html>
 )+";
+    out->setHtml(html);
+
+    if(moveToErrorOrEnd) {
+      // scroll to the first error if their is one, else scroll to the end
+      out->page()->mainFrame()->evaluateJavaScript(R"+(
+var e=document.getElementsByClassName("MBSIMGUI_ERROR");
+if(e.length==0)
+  window.scrollTo(0, document.body.scrollHeight);
+else
+  e[0].scrollIntoView(true);
+)+");
+    }
+    else
+      out->page()->mainFrame()->evaluateJavaScript(QString(R"+(window.scrollTo(0, %1);)+").arg(currentScrollY));
   }
 
   QSize EchoView::sizeHint() const {
