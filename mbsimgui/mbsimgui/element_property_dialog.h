@@ -116,6 +116,16 @@ namespace MBSimGUI {
       ExtWidget *name, *plotFeature;
   };
 
+  class UnknownElementPropertyDialog : public ElementPropertyDialog {
+
+    public:
+      UnknownElementPropertyDialog(Element *element, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *editor;
+  };
+
   class FramePropertyDialog : public ElementPropertyDialog {
 
     public:

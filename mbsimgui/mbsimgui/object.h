@@ -30,6 +30,12 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override { return new ObjectContextMenu(this); }
   };
 
+  class UnknownObject : public Object {
+    public:
+      QString getType() const override { return "UnknownObject"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+  };
+
 }
 
 #endif

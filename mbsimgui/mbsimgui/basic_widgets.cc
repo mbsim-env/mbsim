@@ -37,6 +37,7 @@
 #include <boost/lexical_cast.hpp>
 #include <utility>
 #include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMLSSerializer.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -45,6 +46,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   extern MainWindow *mw;
+  extern DOMLSSerializer *serializer;
 
   LocalFrameComboBox::LocalFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
     connect(this,SIGNAL(highlighted(const QString&)),this,SLOT(highlightObject(const QString&)));
@@ -1158,6 +1160,29 @@ namespace MBSimGUI {
       ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), nullptr);
       parent->insertBefore(ele, ref);
     }
+    return nullptr;
+  }
+
+  XMLEditorWidget::XMLEditorWidget() {
+    auto *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    edit = new QTextEdit;
+    layout->addWidget(edit);
+//    connect(value,SIGNAL(valueChanged(int)),this,SIGNAL(valueChanged(int)));
+  }
+
+  DOMElement* XMLEditorWidget::initializeUsingXML(DOMElement *element) {
+    string text = X()%serializer->writeToString(element);
+    edit->setText(QString::fromStdString(text));
+    return element;
+  }
+
+  DOMElement* XMLEditorWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+//    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+//    DOMText *text= doc->createTextNode(X()%toStr(getValue()));
+//    parent->insertBefore(text, nullptr);
     return nullptr;
   }
 

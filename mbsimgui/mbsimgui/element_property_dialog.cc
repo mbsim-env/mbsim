@@ -156,6 +156,25 @@ namespace MBSimGUI {
     static_cast<TextWidget*>(name->getWidget())->setReadOnly(readOnly);
   }
 
+  UnknownElementPropertyDialog::UnknownElementPropertyDialog(Element *element, QWidget *parent, const Qt::WindowFlags& f) : ElementPropertyDialog(element,parent,f) {
+    name->setDisabled(true);
+    plotFeature->setDisabled(true);
+    editor = new ExtWidget("XML Editor",new XMLEditorWidget);
+    addToTab("General", editor);
+  }
+
+  DOMElement* UnknownElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ElementPropertyDialog::initializeUsingXML(item->getXMLElement());
+    editor->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* UnknownElementPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+//    ElementPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+//    editor->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, const Qt::WindowFlags& f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
     visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");

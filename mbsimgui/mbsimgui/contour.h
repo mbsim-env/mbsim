@@ -31,6 +31,12 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override { return new ContourContextMenu(this); }
   };
 
+  class UnknownContour : public Contour {
+    public:
+      QString getType() const override { return "UnknownContour"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+  };
+
   class RigidContour : public Contour {
     public:
       ElementPropertyDialog* createPropertyDialog() override {return new RigidContourPropertyDialog(this);}

@@ -87,6 +87,8 @@ namespace MBSimGUI {
       return new FixedRelativeFrame;
     if(E(element)->getTagName()==MBSIMFLEX%"NodeFrame")
       return new NodeFrame;
+    else
+      return new UnknownFrame;
     return nullptr;
   }
 
@@ -124,6 +126,8 @@ namespace MBSimGUI {
       return new FCLPlane;
     else if(E(element)->getTagName()==MBSIM%"FCLMesh")
       return new FCLMesh;
+    else
+      return new UnknownContour;
     return nullptr;
   }
 
@@ -140,6 +144,8 @@ namespace MBSimGUI {
       return new DynamicSystemSolver;
     else if(E(element)->getTagName()==MBSIM%"Group")
       return new Group;
+    else
+      return new UnknownGroup;
     return nullptr;
   }
 
@@ -155,6 +161,8 @@ namespace MBSimGUI {
       return new RigidBody;
     if(E(element)->getTagName()==MBSIMFLEX%"FlexibleBodyFFR")
       return new FlexibleBodyFFR;
+    else
+      return new UnknownObject;
     return nullptr;
   }
 
@@ -216,6 +224,8 @@ namespace MBSimGUI {
       return new ExternSignalSource;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")
       return new ExternSignalSink;
+    else
+      return new UnknownLink;
     return nullptr;
   }  
 
@@ -239,6 +249,8 @@ namespace MBSimGUI {
       return new JointConstraint;
     else if(E(element)->getTagName()==MBSIM%"GeneralizedConnectionConstraint")
       return new GeneralizedConnectionConstraint;
+    else
+      return new UnknownConstraint;
     return nullptr;
   }
 
@@ -266,6 +278,8 @@ namespace MBSimGUI {
       return new RigidBodyObserver;
     if(E(element)->getTagName()==MBSIM%"RigidBodySystemObserver")
       return new RigidBodySystemObserver;
+    else
+      return new UnknownObserver;
     return nullptr;
   }  
 

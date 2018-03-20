@@ -112,6 +112,12 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override { return new GroupContextMenu(this); }
   };
 
+  class UnknownGroup : public Group {
+    public:
+      QString getType() const override { return "UnknownGroup"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+  };
+
 }
 
 #endif
