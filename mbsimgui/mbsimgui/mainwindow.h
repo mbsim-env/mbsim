@@ -31,6 +31,7 @@
 
 class QAction;
 class QModelIndex;
+class QWebView;
 
 namespace OpenMBVGUI {
   class MainWindow;
