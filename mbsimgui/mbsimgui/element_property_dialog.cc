@@ -2041,7 +2041,7 @@ namespace MBSimGUI {
     addToTab("General", frame);
 
     refFrame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(observer,nullptr),true,false,MBSIM%"frameOfReference");
-    addToTab("General", frame);
+    addToTab("General", refFrame);
 
     position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVPosition");
     addToTab("Visualisation",position);
