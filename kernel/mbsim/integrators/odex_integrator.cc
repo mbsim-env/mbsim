@@ -50,7 +50,7 @@ namespace MBSimIntegrator {
     zd = self->getSystem()->evalzd();
   }
 
-  void ODEXIntegrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int *ncon, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
+  void ODEXIntegrator::plot(int* nr, double* told, double* t, double* z, int* n, double* con, int *ncon, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
     auto self=*reinterpret_cast<ODEXIntegrator**>(&ipar[0]);
 
     double curTimeAndState = -1;

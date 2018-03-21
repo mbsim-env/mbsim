@@ -50,7 +50,7 @@ namespace MBSimIntegrator {
     zd = self->getSystem()->evalzd();
   }
 
-  void DOP853Integrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
+  void DOP853Integrator::plot(int* nr, double* told, double* t, double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
     auto self=*reinterpret_cast<DOP853Integrator**>(&ipar[0]);
 
     double curTimeAndState = -1;
