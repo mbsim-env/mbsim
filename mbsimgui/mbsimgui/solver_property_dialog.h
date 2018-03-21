@@ -268,7 +268,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *method, *relTol, *threshold, *initialStepSize;
+      ExtWidget *method, *task, *relTol, *threshold, *initialStepSize, *plotOnRoot, *gMax, *gdMax;
   };
 
   class BoostOdeintDOSPropertyDialog : public IntegratorPropertyDialog {
