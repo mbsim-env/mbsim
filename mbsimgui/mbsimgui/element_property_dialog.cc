@@ -170,8 +170,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* UnknownElementPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-//    ElementPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
-//    editor->writeXMLFile(item->getXMLElement(),ref);
+    item->setXMLElement(editor->writeXMLFile(item->getXMLElement(),ref));
     return nullptr;
   }
 

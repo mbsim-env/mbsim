@@ -70,13 +70,13 @@ namespace MBSimGUI {
       DOMDocument *doc = parent->getOwnerDocument();
       DOMElement *newele = D(doc)->createElement(xmlName);
       if(isActive()) {
-        dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
+        return dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
         parent->insertBefore(newele,ref);
       }
     }
     else {
       if(isActive())
-        dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
+        return dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
     }
     return nullptr;
   }

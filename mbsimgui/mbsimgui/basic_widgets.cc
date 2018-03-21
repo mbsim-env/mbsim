@@ -37,7 +37,9 @@
 #include <boost/lexical_cast.hpp>
 #include <utility>
 #include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
+#include <xercesc/dom/DOMLSInput.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -46,6 +48,8 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   extern MainWindow *mw;
+  extern DOMImplementation *impl;
+  extern DOMLSParser *parser;
   extern DOMLSSerializer *serializer;
 
   LocalFrameComboBox::LocalFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
@@ -1170,19 +1174,25 @@ namespace MBSimGUI {
 
     edit = new QTextEdit;
     layout->addWidget(edit);
-//    connect(value,SIGNAL(valueChanged(int)),this,SIGNAL(valueChanged(int)));
   }
 
   DOMElement* XMLEditorWidget::initializeUsingXML(DOMElement *element) {
     string text = X()%serializer->writeToString(element);
     edit->setText(QString::fromStdString(text));
+    cout << edit->toPlainText().toStdString() << endl;
     return element;
   }
 
   DOMElement* XMLEditorWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-//    xercesc::DOMDocument *doc=parent->getOwnerDocument();
-//    DOMText *text= doc->createTextNode(X()%toStr(getValue()));
-//    parent->insertBefore(text, nullptr);
+    DOMLSInput *source = impl->createLSInput();
+    X x;
+    source->setStringData(x%edit->toPlainText().toStdString());
+    try {
+      return static_cast<xercesc::DOMElement*>(parser->parseWithContext(source, parent, DOMLSParser::ACTION_REPLACE));
+    }
+    catch(DOMLSException &ex) {
+      cout << X()%ex.msg << endl;
+    }
     return nullptr;
   }
 
