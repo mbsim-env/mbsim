@@ -33,7 +33,13 @@ namespace MBSimIntegrator {
         RK23=1,
         RK45,
         RK78,
-        unknown
+        unknownMethod
+      };
+
+      enum Task {
+        usual=0,
+        complex,
+        unknownTask
       };
 
       /**
@@ -47,10 +53,14 @@ namespace MBSimIntegrator {
 
       /* GETTER / SETTER */
       void setMethod(Method method_) { method = method_; }
+      void setTask(Task task_) { task = task_; }
       void setRelativeTolerance(double rTol_) { rTol = rTol_; }
       void setThreshold(const fmatvec::Vec &thres_) { thres = thres_; }
       void setThreshold(double thres_) { thres = fmatvec::Vec(1,fmatvec::INIT,thres_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
+
+      void setPlotOnRoot(bool b) { plotOnRoot = b; }
+
       void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
       void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
       /***************************************************/
@@ -65,26 +75,37 @@ namespace MBSimIntegrator {
 
       static void fzdot(double* t, double* z_, double* zd_);
 
+      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
+
       int zSize;
       static RKSuiteIntegrator *selfStatic;
 
+      /** method */
       Method method{RK45};
-      /** Absolute Toleranz */
+      /** task */
+      Task task{complex};
+      /** threshold */
       fmatvec::Vec thres;
-      /** Relative Toleranz */
+      /** relative tolerance */
       double rTol{1e-6};
-      /** step size for the first step */
+      /** initial step size */
       double dt0{0};
+
+      bool plotOnRoot{false};
 
        /** tolerance for position constraints */
       double gMax{-1};
       /** tolerance for velocity constraints */
       double gdMax{-1};
 
-      int lenwrk, messages{0}, integrationSteps{0};
+      fmatvec::Vec svLast;
+      bool shift{false};
+
+      int lenwrk, messages{0}, integrationSteps{0}, lenint;
       double t{0}, tPlot{0}, s0{0}, time{0};
       double *work{nullptr};
-      fmatvec::Vec z, zdGot, zMax;
+      double *workint{nullptr};
+      fmatvec::Vec z, zd, zMax, zWant, zdWant;
 
       std::ofstream integPlot;
   };

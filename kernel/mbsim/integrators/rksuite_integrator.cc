@@ -38,8 +38,10 @@ namespace MBSimIntegrator {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RKSuiteIntegrator)
 
   void RKSuiteIntegrator::preIntegrate() {
-    if(method==unknown)
+    if(method==unknownMethod)
       throwError("(RKSuiteIntegrator::integrate): method unknown");
+    if(task==unknownTask)
+      throwError("(RKSuiteIntegrator::integrate): task unknown");
 
     debugInit();
 
@@ -70,17 +72,23 @@ namespace MBSimIntegrator {
       throwError("(RKSuiteIntegrator::integrate): size of thres does not match, must be " + toStr(zSize));
 
     lenwrk = 2*32*zSize;
-    work=new double[lenwrk];
-    messages=1;
+    work = new double[lenwrk];
+    lenint = 2*6*zSize;
+    workint = new double[lenint];
+    messages = 1;
 
-    zdGot.resize(zSize);
+    zd.resize(zSize);
     zMax.resize(zSize);
+    zWant.resize(zSize);
+    zdWant.resize(zSize);
 
-    t=tStart;
+    t = tStart;
     system->setTime(t);
     system->setState(z);
     system->resetUpToDate();
+    system->computeInitialCondition();
     system->plot();
+    svLast = system->evalsv();
 
     tPlot = t + dtPlot;
     if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
@@ -91,22 +99,160 @@ namespace MBSimIntegrator {
     time = 0;
   }
 
-    void RKSuiteIntegrator::subIntegrate(double tStop) {
+  bool RKSuiteIntegrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
+    for(int i=0; i<svStepEnd.size(); i++)
+      if(svLast(i)*svStepEnd(i)<0)
+        return true;
+    return false;
+  }
 
-      int result=0, errass=0;
-      double tEND=tEnd+dtPlot; // tEND must be greater than tEnd
-      char task='U';
-      int method_ = method;
+  void RKSuiteIntegrator::subIntegrate(double tStop) {
 
-      SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
-          &errass, &dt0, work, &lenwrk, &messages);
+    int result=0, errass=0;
+    char taskStr = task==usual?'U':'C';
+    char request = 'S';
+    int method_ = method;
 
+    SETUP(&zSize, &t, z(), &tStop, &rTol, thres(), &method_, &taskStr,
+        &errass, &dt0, work, &lenwrk, &messages);
+
+    if(task==complex) {
       while(t<tStop-epsroot) {
 
         integrationSteps++;
 
         double dtLast = 0;
-        UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), work, &result, &dtLast);
+        CT(fzdot, &t, z(), zd(), work, &result, &dtLast);
+
+        int n = system->getzSize();
+        bool restart = false;
+        if(result==1 or result==2) {
+          double curTimeAndState = -1;
+          double tRoot = t;
+          // root-finding
+          if(getSystem()->getsvSize()) {
+            getSystem()->setTime(t);
+            curTimeAndState = t;
+            getSystem()->setState(z);
+            getSystem()->resetUpToDate();
+            shift = signChangedWRTsvLast(getSystem()->evalsv());
+            // if a root exists in the current step ...
+            double dt = dtLast;
+            if(shift) {
+              // ... search the first root and set step.second to this time
+              while(dt>1e-10) {
+                dt/=2;
+                double tCheck = tRoot-dt;
+                curTimeAndState = tCheck;
+                INTRP(&tCheck,&request,&n,zWant(),zdWant(),fzdot,work,workint,&lenint);
+                getSystem()->setTime(tCheck);
+                getSystem()->setState(zWant);
+                getSystem()->resetUpToDate();
+                if(signChangedWRTsvLast(getSystem()->evalsv()))
+                  tRoot = tCheck;
+              }
+              if(curTimeAndState != tRoot) {
+                curTimeAndState = tRoot;
+                INTRP(&tRoot,&request,&n,zWant(),zdWant(),fzdot,work,workint,&lenint);
+                getSystem()->setTime(tRoot);
+                getSystem()->setState(zWant);
+              }
+              getSystem()->resetUpToDate();
+              auto &sv = getSystem()->evalsv();
+              auto &jsv = getSystem()->getjsv();
+              for(int i=0; i<sv.size(); ++i)
+                jsv(i)=svLast(i)*sv(i)<0;
+            }
+          }
+
+          while(tRoot >= tPlot) {
+            if(curTimeAndState != tPlot) {
+              curTimeAndState = tPlot;
+              INTRP(&tPlot,&request,&n,zWant(),zdWant(),fzdot,work,workint,&lenint);
+              getSystem()->setTime(tPlot);
+              getSystem()->setState(zWant);
+            }
+            getSystem()->resetUpToDate();
+            getSystem()->plot();
+            if(msgAct(Status))
+              msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< dtLast << flush;
+
+            double s1 = clock();
+            time += (s1-s0)/CLOCKS_PER_SEC;
+            s0 = s1;
+
+            if(plotIntegrationData) integPlot<< tPlot << " " << dtLast << " " << time << endl;
+            tPlot += dtPlot;
+          }
+
+          if(shift) {
+            // shift the system
+            if(curTimeAndState != tRoot) {
+              INTRP(&tRoot,&request,&n,zWant(),zdWant(),fzdot,work,workint,&lenint);
+              getSystem()->setTime(tRoot);
+              getSystem()->setState(zWant);
+            }
+            if(plotOnRoot) {
+              getSystem()->resetUpToDate();
+              getSystem()->plot();
+            }
+            getSystem()->resetUpToDate();
+            getSystem()->shift();
+            if(plotOnRoot) {
+              getSystem()->resetUpToDate();
+              getSystem()->plot();
+            }
+            getSystem()->resetUpToDate();
+            svLast=getSystem()->evalsv();
+            restart = true;
+          }
+          else {
+            // check drift
+            bool projVel = true;
+            if(gMax>=0) {
+              getSystem()->setTime(t);
+              getSystem()->setState(z);
+              getSystem()->resetUpToDate();
+              if(getSystem()->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+                getSystem()->projectGeneralizedPositions(3);
+                getSystem()->projectGeneralizedVelocities(3);
+                projVel = false;
+                restart = true;
+              }
+            }
+            if(gdMax>=0 and projVel) {
+              getSystem()->setTime(t);
+              getSystem()->setState(z);
+              getSystem()->resetUpToDate();
+              if(getSystem()->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+                getSystem()->projectGeneralizedVelocities(3);
+                restart = true;
+              }
+            }
+          }
+          if(restart) {
+//            cout << "t = " << t << endl;
+            cout << "tSys = " << system->getTime() << endl;
+//            cout << "tStop = " << tStop << endl;
+            t = system->getTime();
+            z = system->getState();
+            SETUP(&zSize, &t, z(), &tStop, &rTol, thres(), &method_, &taskStr,
+                &errass, &dt0, work, &lenwrk, &messages);
+          }
+        }
+        else if(result==3 or result==4)
+          continue;
+        else if(result>=5)
+          throwError("Integrator RKSUITE failed with result = "+toString(result));
+      }
+    }
+    else {
+      while(t<tStop-epsroot) {
+        integrationSteps++;
+
+        double dtLast = 0;
+
+        UT(fzdot, &tPlot, &t, z(), zd(), zMax(), work, &result, &dtLast);
 
         if(result==1 or result==2) {
           system->setTime(t);
@@ -121,7 +267,7 @@ namespace MBSimIntegrator {
           s0 = s1; 
           if(plotIntegrationData) integPlot<< t << " " << dtLast << " " << time << endl;
 
-          tPlot = min(tEnd, tPlot+dtPlot);
+          tPlot = min(tStop, tPlot+dtPlot);
 
           // check drift
           bool restart = false;
@@ -136,7 +282,7 @@ namespace MBSimIntegrator {
           }
           if(restart) {
             z = system->getState();
-            SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
+            SETUP(&zSize, &t, z(), &tStop, &rTol, thres(), &method_, &taskStr,
                 &errass, &dt0, work, &lenwrk, &messages);
           }
         }
@@ -146,19 +292,20 @@ namespace MBSimIntegrator {
           throwError("Integrator RKSUITE failed with result = "+toString(result));
       }
     }
+  }
 
-    void RKSuiteIntegrator::postIntegrate() {
-      if(plotIntegrationData) integPlot.close();
+  void RKSuiteIntegrator::postIntegrate() {
+    if(plotIntegrationData) integPlot.close();
 
-      if(writeIntegrationSummary) {
-        ofstream integSum((name + ".sum").c_str());
-        integSum << "Integration time: " << time << endl;
-        integSum << "Integration steps: " << integrationSteps << endl;
-        integSum.close();
-      }
-
-      selfStatic = nullptr;
+    if(writeIntegrationSummary) {
+      ofstream integSum((name + ".sum").c_str());
+      integSum << "Integration time: " << time << endl;
+      integSum << "Integration steps: " << integrationSteps << endl;
+      integSum.close();
     }
+
+    selfStatic = nullptr;
+  }
 
   void RKSuiteIntegrator::integrate() {
     preIntegrate();
@@ -175,7 +322,14 @@ namespace MBSimIntegrator {
       if(methodStr=="RK23") method=RK23;
       else if(methodStr=="RK45") method=RK45;
       else if(methodStr=="RK78") method=RK78;
-      else method=unknown;
+      else method=unknownMethod;
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"task");
+    if(e) {
+      string taskStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(taskStr=="usual") task=usual;
+      else if(taskStr=="complex") task=complex;
+      else task=unknownTask;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     if(e) setRelativeTolerance(E(e)->getText<double>());
@@ -185,6 +339,8 @@ namespace MBSimIntegrator {
     if(e) setThreshold(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepsize");
     if(e) setInitialStepSize(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
+    if(e) setPlotOnRoot(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
