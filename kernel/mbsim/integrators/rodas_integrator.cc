@@ -138,7 +138,7 @@ namespace MBSimIntegrator {
 
       double s1 = clock();
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
-      self->s0 = s1; 
+      self->s0 = s1;
 
       if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
