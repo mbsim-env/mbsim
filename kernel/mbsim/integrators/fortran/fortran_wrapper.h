@@ -131,13 +131,6 @@ void DDASKR(void(*)(double*,double*,double*,double*,double*,int*,double*,int*),i
             double*,int*,double*,double*,int*,double*,double*),
             void(*)(int*,double*,double*,double*,int*,double*,double*,int*),int*,int*);
 
-#define MEXX FC_FUNC(mexx,MEXX)
-void MEXX(int*,int*,int*,int*,int*,void(*)(int*,int*,int*,int*,int*,double*,double*,double*,double*,double*,int*,int*,int*,double*,
-          double*,double*,double*,double*,double*,double*,double*,int*,int*),double*,double*,double*,double*,double*,double*,
-          double*,int*,double*,double*,double*,int*,int*,int*,int*,int*,double*,void(*)(int*,int*,int*,int*,int*,double*,double*,
-          double*,double*,double*,double*,int*),void(*)(int*,int*,int*,double*,int*,double*,int*),int*,
-          void(*)(int*,int*,int*,int*,double*,double*,double*,double*,double*,double*,int*,double),int*);
-
 // END: Define as extern "C" if using a C++ compiler
 #ifdef __cplusplus
 }
