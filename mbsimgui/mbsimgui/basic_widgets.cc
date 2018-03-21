@@ -1179,7 +1179,6 @@ namespace MBSimGUI {
   DOMElement* XMLEditorWidget::initializeUsingXML(DOMElement *element) {
     string text = X()%serializer->writeToString(element);
     edit->setText(QString::fromStdString(text));
-    cout << edit->toPlainText().toStdString() << endl;
     return element;
   }
 

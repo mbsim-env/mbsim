@@ -25,6 +25,7 @@
 #include "rigid_body.h"
 #include "signal_.h"
 #include "constraint.h"
+#include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "mainwindow.h"
 #include "octave_utils.h"
@@ -709,6 +710,19 @@ namespace MBSimGUI {
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox,1,0,1,1);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+  }
+
+  SourceDialog::SourceDialog(Element *element, QWidget *parent) : QDialog(parent) {
+    setWindowTitle(QString("XML View"));
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    XMLEditorWidget *edit = new XMLEditorWidget;
+    edit->initializeUsingXML(element->getXMLElement());
+    layout->addWidget(edit);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    layout->addWidget(buttonBox);
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
   }
 
