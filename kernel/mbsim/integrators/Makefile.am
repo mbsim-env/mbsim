@@ -37,9 +37,6 @@ libintegrators_la_SOURCES = integrator.cc\
 			    fortran/rksuite.f\
 			    fortran/ddaspk.f\
 			    fortran/ddaskr.f
-#auto_time_stepping_ssc_integrator.cc
-#fortran/mexax.f
-#mexax_integrator.cc 
 
 libintegrators_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 libintegrators_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
@@ -73,6 +70,4 @@ integratorsinclude_HEADERS = integrator.h \
 			     explicit_euler_integrator.h \
 			     implicit_euler_integrator.h \
 			     fortran/fortran_wrapper.h
-#auto_time_stepping_ssc_integrator.h
-# mexax_integrator.h 
 
