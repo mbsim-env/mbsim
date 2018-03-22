@@ -37,9 +37,9 @@ namespace MBSimFlexibleBody {
   class ContactKinematicsCircleFlexibleBand : public MBSim::ContactKinematics {
     public:
       /**
-       * \brief constructor
+       * \brief destructor
        */
-      ContactKinematicsCircleFlexibleBand();
+      ~ContactKinematicsCircleFlexibleBand() override;
 
       /*!
       */

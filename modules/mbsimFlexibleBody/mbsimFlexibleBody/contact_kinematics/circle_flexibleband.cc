@@ -152,7 +152,10 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  ContactKinematicsCircleFlexibleBand::ContactKinematicsCircleFlexibleBand() : ContactKinematics() { }
+  ContactKinematicsCircleFlexibleBand::~ContactKinematicsCircleFlexibleBand() {
+    for (size_t cK = 0; cK < contactKinematics.size(); cK++)
+      delete contactKinematics[cK];
+  }
 
   void ContactKinematicsCircleFlexibleBand::assignContours(const vector<Contour*>& contour) {
     if (dynamic_cast<Circle*>(contour[0])) {
