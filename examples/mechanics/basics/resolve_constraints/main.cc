@@ -14,6 +14,7 @@ int main (int argc, char* argv[])
   
   RKSuiteIntegrator integrator;
 
+  integrator.setTask(RKSuiteIntegrator::usual);
   integrator.setEndTime(10.1);
   integrator.setPlotStepSize(1e-2);
 
