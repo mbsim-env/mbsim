@@ -27,6 +27,11 @@ using namespace std;
 
 namespace MBSim {
 
+  ContactKinematicsCompoundContourContour::~ContactKinematicsCompoundContourContour() {
+    for(auto & contactKinematic : contactKinematics)
+      delete contactKinematic;
+  }
+
   void ContactKinematicsCompoundContourContour::assignContours(const vector<Contour*> &contour_) {
 
     if (dynamic_cast<CompoundContour*>(contour_[0])) {

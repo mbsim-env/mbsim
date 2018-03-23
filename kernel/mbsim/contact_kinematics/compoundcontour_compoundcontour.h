@@ -36,6 +36,8 @@ namespace MBSim {
     public:
       ContactKinematicsCompoundContourCompoundContour(int maxNumContacts=1) : ContactKinematics(maxNumContacts) { }
 
+      ~ContactKinematicsCompoundContourCompoundContour() override;
+
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
       void updateg(std::vector<SingleContact> &contact) override;

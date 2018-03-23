@@ -37,6 +37,17 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RKSuiteIntegrator)
 
+  RKSuiteIntegrator::~RKSuiteIntegrator() {
+    if(work) {
+      delete[] work;
+      work = nullptr;
+    }
+    if(workint) {
+      delete[] workint;
+      workint = nullptr;
+    }
+  }
+
   void RKSuiteIntegrator::preIntegrate() {
     if(method==unknownMethod)
       throwError("(RKSuiteIntegrator::integrate): method unknown");

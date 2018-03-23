@@ -45,7 +45,7 @@ namespace MBSimIntegrator {
       /**
        * \brief destructor
        */
-      virtual ~RKSuiteIntegrator() override { if(work) { delete[] work; work=nullptr; } }
+      virtual ~RKSuiteIntegrator() override;
 
       void preIntegrate();
       void subIntegrate(double tStop);
