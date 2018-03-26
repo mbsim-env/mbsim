@@ -40,7 +40,7 @@ namespace MBSim {
     public:
       NurbsSurface();
       NurbsSurface(const NurbsSurface& nS);
-//  NurbsSurface(int DegU, int DegV, const Vector<T>& Uk, const Vector<T>& Vk, const Matrix< HPoint_nD<T,N> >& Cp) ;
+      NurbsSurface(int DegU, int DegV, const fmatvec::Vec& Uk, const fmatvec::Vec& Vk, fmatvec::GeneralMatrix<fmatvec::Vec4>& Q) ;
 //  NurbsSurface(int DegU, int DegV, Vector<T>& Uk, Vector<T>& Vk, Matrix< Point_nD<T,N> >& Cp, Matrix<T>& W) ;
       //! Empty desctructor
       virtual ~NurbsSurface()

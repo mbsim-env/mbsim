@@ -35,6 +35,10 @@ namespace MBSim {
       U(nS.U), V(nS.V), P(nS.P), degU(nS.degU), degV(nS.degV) {
   }
 
+  NurbsSurface::NurbsSurface(int DegU, int DegV, const Vec& Uk, const Vec& Vk, fmatvec::GeneralMatrix<fmatvec::Vec4>& Q) :
+      U(Uk), V(Vk), P(Q), degU(DegU), degV(DegV) {
+  }
+
   /*!
    \brief NurbsSurface assignment
    \param nS the NURBS surface to copy

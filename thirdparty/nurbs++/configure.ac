@@ -268,14 +268,6 @@ dnl
 dnl creating a double floating point library
 dnl
 
-AC_ARG_ENABLE(float,
-  AS_HELP_STRING([--enable-float],
-    [creates a single floating point library [default=yes]]),
-if test "$enable_float" != no; then 
-build_float=yes
-else
-build_float=no
-fi,build_float=yes)
 
 AC_ARG_ENABLE(double,
   AS_HELP_STRING([--enable-double],
@@ -290,33 +282,7 @@ dnl
 dnl setting the libraries to build
 dnl
 
-if test "$inside_mindseye" = yes; then
- build_float=yes
- build_double=no
-fi
-
-AC_MSG_CHECKING(if building a float NURBS library)
-if test "$build_float" = yes; then
-build_lib="libnurbsf.la"
-AM_CONDITIONAL(BUILD_FLOAT_DOUBLE,test $build_double = yes)
-AM_CONDITIONAL(BUILD_FLOAT,test "$build_double" = no)
-AC_MSG_RESULT(yes)
-else
-AC_MSG_RESULT(no)
-fi
-
-AC_MSG_CHECKING(if building a double NURBS library)
-if test "$build_double" = yes; then
-build_lib=$build_lib" libnurbsd.la"
-AM_CONDITIONAL(BUILD_DOUBLE,test "$build_float" = no)
-AC_MSG_RESULT(yes)
-else
-AC_MSG_RESULT(no)
-fi
-
-
 nurbs_include='-I$(top_srcdir)/nurbs'
-nurbs_libf='$(packagedir)/nurbs/libnurbsf.la'
 nurbs_libd='$(packagedir)/nurbs/libnurbsd.la'
 nurbs_lib="$nurbs_libf $nurbs_libd"
 
