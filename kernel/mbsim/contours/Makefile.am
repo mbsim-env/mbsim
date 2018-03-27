@@ -22,6 +22,7 @@ libcontour_la_SOURCES = contour.cc\
 			contour_interpolation.cc\
 			contour_quad.cc\
 			spatial_contour.cc\
+			planar_nurbs_contour.cc\
 			spatial_nurbs_contour.cc\
 			fcl_contour.cc\
 			fcl_box.cc\
@@ -55,6 +56,7 @@ contourinclude_HEADERS = contour.h\
 			 contour_interpolation.h\
 			 contour_quad.h\
 			 spatial_contour.h\
+			 planar_nurbs_contour.h\
 			 spatial_nurbs_contour.h\
 			 fcl_contour.h\
 			 fcl_box.h\

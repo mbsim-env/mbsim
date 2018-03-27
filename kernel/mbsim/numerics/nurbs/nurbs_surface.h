@@ -38,17 +38,22 @@ namespace MBSim {
 //template <class T, int N>
   class NurbsSurface {
     public:
-      NurbsSurface();
-      NurbsSurface(const NurbsSurface& nS);
-      NurbsSurface(int DegU, int DegV, const fmatvec::Vec& Uk, const fmatvec::Vec& Vk, fmatvec::GeneralMatrix<fmatvec::Vec4>& Q) ;
+      /**
+       * \brief default constructor
+       */
+      NurbsSurface() : U(1), V(1), P(1, 1) { }
+      /**
+       * \brief copy constructor
+       */
+      NurbsSurface(const NurbsSurface& nS) : U(nS.U), V(nS.V), P(nS.P), degU(nS.degU), degV(nS.degV) { }
+      /**
+       * \brief constructor
+       */
+      NurbsSurface(int DegU, int DegV, const fmatvec::Vec& Uk, const fmatvec::Vec& Vk, fmatvec::GeneralMatrix<fmatvec::Vec4>& Q) : U(Uk), V(Vk), P(Q), degU(DegU), degV(DegV) { }
 //  NurbsSurface(int DegU, int DegV, Vector<T>& Uk, Vector<T>& Vk, Matrix< Point_nD<T,N> >& Cp, Matrix<T>& W) ;
       //! Empty desctructor
-      virtual ~NurbsSurface()
-      {
-        ;
-      }
+      virtual ~NurbsSurface() = default;
 
-    public:
       // Reference to internal data
       //! A reference to the U knot vector
       const fmatvec::Vec& knotU() const { return U; }

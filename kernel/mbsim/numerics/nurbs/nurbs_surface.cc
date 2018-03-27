@@ -16,28 +16,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  /*!
-   \brief  Default constructor
-
-   \warning The surface is initialized to invalid values. Use a reset or
-   a read function to set them to correct values.
-   */
-  NurbsSurface::NurbsSurface() :
-      U(1), V(1), P(1, 1) {
-  }
-
-  /*!
-   \brief  the copy constructor
-
-   \param s the NurbsSurface to copy
-   */
-  NurbsSurface::NurbsSurface(const NurbsSurface& nS) :
-      U(nS.U), V(nS.V), P(nS.P), degU(nS.degU), degV(nS.degV) {
-  }
-
-  NurbsSurface::NurbsSurface(int DegU, int DegV, const Vec& Uk, const Vec& Vk, fmatvec::GeneralMatrix<fmatvec::Vec4>& Q) :
-      U(Uk), V(Vk), P(Q), degU(DegU), degV(DegV) {
-  }
 
   /*!
    \brief NurbsSurface assignment

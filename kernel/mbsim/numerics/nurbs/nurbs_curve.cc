@@ -11,10 +11,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  NurbsCurve::NurbsCurve()  {
-  }
-  NurbsCurve::~NurbsCurve() = default;
-
   HPoint<3> NurbsCurve::operator()(double u) const {
     return hpointAt(u, findSpan(u));
   }

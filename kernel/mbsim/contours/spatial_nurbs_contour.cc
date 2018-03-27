@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsim/contours/spatial_nurbs_contour.h"
-#include "mbsim/utils/contact_utils.h"
 
 using namespace std;
 using namespace fmatvec;

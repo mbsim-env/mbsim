@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2016 MBSim Development Team
+/* Copyright (C) 2004-2018 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -17,36 +17,33 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _SPATIAL_CONTOUR_H_
-#define _SPATIAL_CONTOUR_H_
+#ifndef _PLANAR_NURBS_CONTOUR_H_
+#define _PLANAR_NURBS_CONTOUR_H_
 
 #include "mbsim/contours/rigid_contour.h"
 
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
+#include <mbsim/numerics/nurbs/nurbs_curve.h>
 
 namespace MBSim {
 
-  template <class Sig> class Function;
-
   /** 
-   * \brief analytical description of contours with two contour parameters
-   * \author Robert Huber
-   * \date 2009-04-20 some comments (Thorsten Schindler)
-   * \date 2009-06-04 new file (Thorsten Schindler)
+   * \brief nurbs curve
+   * \author Martin Foerg
    */
-  class SpatialContour : public RigidContour {
+  class PlanarNurbsContour : public RigidContour {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      SpatialContour(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
+      PlanarNurbsContour(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
 
       /**
        * \brief destructor
        */
-      ~SpatialContour() override;
+      ~PlanarNurbsContour() override = default;
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
@@ -58,37 +55,36 @@ namespace MBSim {
       fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer1Ks(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalParDer2Ks(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalParDer1Kt(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalParDer2Kt(const fmatvec::Vec2 &zeta) override;
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setContourFunction(Function<fmatvec::Vec3(fmatvec::Vec2)> *func);
-      Function<fmatvec::Vec3(fmatvec::Vec2)>* getContourFunction() { return funcCrPC; }
+      void setControlPoints(const fmatvec::MatVx4 &cp_) { cp = cp_; }
+      void setKnotVector(const fmatvec::Vec &knot_) { knot = knot_; }
       /***************************************************/
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (etaNodes,(const std::vector<double>&),std::vector<double>())(xiNodes,(const std::vector<double>&),std::vector<double>())(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVIndexedFaceSet ombv(diffuseColor,transparency);
-        openMBVRigidBody=ombv.createOpenMBV();
-        ombvEtaNodes = etaNodes;
-        ombvXiNodes = xiNodes;
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (nodes,(const std::vector<double>&),std::vector<double>())(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVNurbsCurve ombv(diffuseColor,transparency);
+        openMBVRigidBody=ombv.createOpenMBV(); 
       }
       
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
+//      void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1] or zeta(1) < xiNodes[0] or zeta(1) > xiNodes[xiNodes.size()-1]); }
+      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]); }
 
       void setOpen(bool open_=true) { open = open_; }
 
     protected:
-      Function<fmatvec::Vec3(fmatvec::Vec2)> * funcCrPC{nullptr};
-      bool open{false};
+      void updateHessianMatrix(double eta);
+      const fmatvec::MatVx4& evalHessianMatrix(double eta){ if(eta!=etaOld) updateHessianMatrix(eta); return hess; }
 
-      std::vector<double> ombvEtaNodes;
-      std::vector<double> ombvXiNodes;
+      fmatvec::MatVx4 cp;
+      fmatvec::Vec knot;
+      bool open{false};
+      NurbsCurve crv;
+      double etaOld;
+      fmatvec::MatVx4 hess;
   };
 
 }

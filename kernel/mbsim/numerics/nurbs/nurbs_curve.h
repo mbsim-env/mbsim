@@ -40,7 +40,7 @@ namespace MBSim {
       /*!
        * \brief standard constructor
        */
-      NurbsCurve();
+      NurbsCurve() = default;
 //        NurbsCurve(Matrix<T> inverse) {
 //          Inverse = inverse;
 //          Inverse_setted = 1;
@@ -48,38 +48,28 @@ namespace MBSim {
 //        NurbsCurve(const NurbsCurve<T, N>& nurb);
 //        NurbsCurve(const Vector<fmatvec::HPoint<3>  >& P1, const std::vector<double> &U1, int deg = 3);
 //        NurbsCurve(const Vector<fmatvec::Point<3>  >& P1, const std::vector<double> &W, const std::vector<double> &U1, int deg = 3);
-      virtual ~NurbsCurve(); // empty destructor
+      virtual ~NurbsCurve() = default;
 
       // Reference to internal data
       //! a reference to the degree of the curve
-      int degree() const
-      {
-        return deg;
-      }
+      int degree() const { return deg; }
       //! a reference to the vector of control points
-      const fmatvec::MatVx4 & ctrlPnts() const
-      {
-        return P;
-      }
+      const fmatvec::MatVx4 & ctrlPnts() const { return P; }
       //! a reference to one of the control points
-      const fmatvec::Vec4 ctrlPnts(int i) const
-      {
-        return trans(P.row(i));
-      }
+      const fmatvec::Vec4 ctrlPnts(int i) const { return trans(P.row(i)); }
       //! a reference to the vector of knots
-      const fmatvec::Vec& knot() const
-      {
-        return U;
-      }
+      const fmatvec::Vec& knot() const { return U; }
       //! the i-th knot
-      double knot(int i) const
-      {
-        return U(i);
-      }
+      double knot(int i) const { return U(i); }
+      //! a reference to the parametric points
+      const fmatvec::Vec getuVec() const { return u; }
 
-      const fmatvec::Vec getuVec() const {
-        return u;
-      }
+      void setKnot(const fmatvec::Vec& U_) { U = U_; }
+      void setCtrlPnts(const fmatvec::MatVx4& P_) { P = P_; }
+      void setDegree(int deg_) { deg = deg_; }
+      void setu(const fmatvec::Vec& u_) { u = u_; }
+
+      void resize(int n, int Deg);
 
       // basic functions
 
@@ -292,8 +282,6 @@ namespace MBSim {
       fmatvec::Vec u;  // the knot vector
       fmatvec::Vec U;  // the knot vector
       int deg{0};  // the degree of the NURBS curve
-
-      void resize(int n, int Deg);
 
       void knotAveraging(const std::vector<double>& uk, int deg);
       double chordLengthParam(const fmatvec::MatVx3& Q, fmatvec::Vec& ub);

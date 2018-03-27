@@ -40,6 +40,7 @@
 #include <mbsim/contours/room.h>
 #include <mbsim/contours/spatial_contour.h>
 #include <mbsim/contours/sphere.h>
+#include <mbsim/contours/planar_nurbs_contour.h>
 #include <mbsim/contours/spatial_nurbs_contour.h>
 #ifdef HAVE_FCL
 #include <mbsim/contours/fcl_box.h>
@@ -216,6 +217,9 @@ namespace MBSim {
 
     else if ( contour0==typeid(Plane) && contour1==typeid(SpatialContour) )
       return new ContactKinematicsPlaneSpatialContour;
+
+    else if ( contour0==typeid(Point) && contour1==typeid(PlanarNurbsContour) )
+      return new ContactKinematicsPointPlanarContour;
 
     else if ( contour0==typeid(Point) && contour1==typeid(SpatialNurbsContour) )
       return new ContactKinematicsPointSpatialContour;

@@ -27,7 +27,6 @@
 
 namespace MBSim {
 
-  class ContactKinematics;
   template <class Sig> class Function;
 
   /** 
@@ -90,4 +89,3 @@ namespace MBSim {
 }
 
 #endif
-

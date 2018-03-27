@@ -288,6 +288,12 @@ namespace MBSim {
     return object;
   }
 
+  shared_ptr<OpenMBV::NurbsCurve> OpenMBVNurbsCurve::createOpenMBV() {
+    shared_ptr<OpenMBV::NurbsCurve> object = OpenMBV::ObjectFactory::create<OpenMBV::NurbsCurve>();
+    initializeObject(object);
+    return object;
+  }
+
   shared_ptr<OpenMBV::NurbsSurface> OpenMBVNurbsSurface::createOpenMBV() {
     shared_ptr<OpenMBV::NurbsSurface> object = OpenMBV::ObjectFactory::create<OpenMBV::NurbsSurface>();
     initializeObject(object);

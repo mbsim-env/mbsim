@@ -2807,6 +2807,61 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="PlanarNurbsContour" substitutionGroup="RigidContour" type="PlanarNurbsContourType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Ebene NURBS Kontur.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PlanarNurbsContourType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="controlPoints" type="pv:nounitMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Kontrollpunkte.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="numberOfControlPoints" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anzahl der Kontrollpunkte.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="knotVector" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knotenvektor.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="open" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="SpatialContour" substitutionGroup="RigidContour" type="SpatialContourType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
