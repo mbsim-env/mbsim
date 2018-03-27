@@ -149,7 +149,9 @@ namespace fmatvec {
   inline GeneralMatrix<T>& GeneralMatrix<T>::operator=(const GeneralMatrix<T>& m) {
     nrows = m.nrows;
     ncols = m.ncols;
-    data = m.data;
+    delete[] data;
+    data = new T[nrows * ncols];
+    std::copy(m.data, m.data + nrows * ncols, data);
     return *this;
   }
 

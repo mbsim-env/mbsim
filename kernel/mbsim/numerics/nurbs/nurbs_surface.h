@@ -51,45 +51,27 @@ namespace MBSim {
     public:
       // Reference to internal data
       //! A reference to the U knot vector
-      const fmatvec::Vec& knotU() const
-      {
-        return U;
-      }
+      const fmatvec::Vec& knotU() const { return U; }
       //! A reference to the V knot vector
-      const fmatvec::Vec& knotV() const
-      {
-        return V;
-      }
+      const fmatvec::Vec& knotV() const { return V; }
       //! Returns the i-th knot from U
-      double knotU(int i) const
-      {
-        return U(i);
-      }
+      double knotU(int i) const { return U(i); }
       //! Returns the i-th knot from V
-      double knotV(int i) const
-      {
-        return V(i);
-      }
+      double knotV(int i) const { return V(i); }
       //! A reference to the control points
-      const fmatvec::GeneralMatrix<fmatvec::Vec4>& ctrlPnts() const
-      {
-        return P;
-      }
+      const fmatvec::GeneralMatrix<fmatvec::Vec4>& ctrlPnts() const { return P; }
       //! A reference to the control point at (i,j)
-      const fmatvec::Vec4 ctrlPnts(int i, int j) const
-      {
-        return P(i, j);
-      }
+      const fmatvec::Vec4 ctrlPnts(int i, int j) const { return P(i, j); }
       //! A reference to the degree in U of the surface
-      int degreeU() const
-      {
-        return degU;
-      }
+      int degreeU() const { return degU; }
       //! A reference to the degree in V of the surface
-      int degreeV() const
-      {
-        return degV;
-      }
+      int degreeV() const { return degV; }
+
+      void setKnotU(const fmatvec::Vec& U_) { U = U_; }
+      void setKnotV(const fmatvec::Vec& V_) { V = V_; }
+      void setCtrlPnts(const fmatvec::GeneralMatrix<fmatvec::Vec4>& P_) { P = P_; }
+      void setDegreeU(int degU_) { degU = degU_; }
+      void setDegreeV(int degV_) { degV = degV_; }
 
       // Basic operators
       virtual NurbsSurface& operator=(const NurbsSurface&);

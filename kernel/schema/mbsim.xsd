@@ -53,7 +53,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
@@ -63,7 +63,7 @@
       <xs:element name="scaleSize" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="referencePoint" minOccurs="0" type="pv:stringFullEval"/>
       <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
@@ -75,7 +75,7 @@
       <xs:element name="nominalLength" type="pv:lengthScalar" minOccurs="0"/>
       <xs:element name="type" minOccurs="0" type="pv:stringFullEval"/>
       <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="minimalColorValue" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="maximalColorValue" type="pv:nounitScalar" minOccurs="0"/>
     </xs:sequence>
@@ -2355,7 +2355,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2425,7 +2425,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2457,7 +2457,7 @@
               <xs:sequence>
                 <xs:element name="length" type="pv:lengthScalar" minOccurs="0"/>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2484,7 +2484,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2522,7 +2522,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2554,7 +2554,7 @@
               <xs:sequence>
                 <xs:element name="length" type="pv:lengthVector" minOccurs="0"/>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2637,7 +2637,7 @@
               <xs:sequence>
                 <xs:element name="size" type="pv:lengthScalar" minOccurs="0"/>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2868,7 +2868,76 @@
                 <xs:element name="etaNodes" type="pv:nounitVector" minOccurs="0"/>
                 <xs:element name="xiNodes" type="pv:nounitVector" minOccurs="0"/>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SpatialNurbsContour" substitutionGroup="RigidContour" type="SpatialNurbsContourType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Räumliche NURBS Kontur.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SpatialNurbsContourType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="controlPoints" type="pv:nounitMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Kontrollpunkte.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="numberOfEtaControlPoints" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anzahl der Kontrollpunkte in eta-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="numberOfXiControlPoints" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anzahl der Kontrollpunkte in xi-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="etaKnotVector" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knotenvektor in eta-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="xiKnotVector" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knotenvektor in xi-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="open" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
