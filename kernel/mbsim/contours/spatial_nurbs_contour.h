@@ -64,8 +64,6 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       void setControlPoints(const fmatvec::GeneralMatrix<fmatvec::Vec4> &cp_) { cp = cp_; }
-//      void setEtaDegree(int degU_) { degU = degU_; }
-//      void setXiDegree(int degV_) { degV = degV_; }
       void setEtaKnotVector(const fmatvec::Vec &uKnot_) { uKnot = uKnot_; }
       void setXiKnotVector(const fmatvec::Vec &vKnot_) { vKnot = vKnot_; }
       /***************************************************/
@@ -79,14 +77,13 @@ namespace MBSim {
 
 //      void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-//      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]); }
+      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]); }
 
       void setOpen(bool open_=true) { open = open_; }
 
     protected:
       fmatvec::GeneralMatrix<fmatvec::Vec4> cp;
       fmatvec::Vec uKnot, vKnot;
-//      int degU{3}, degV{3};
       bool open{false};
       NurbsSurface srf;
   };
@@ -94,4 +91,3 @@ namespace MBSim {
 }
 
 #endif
-

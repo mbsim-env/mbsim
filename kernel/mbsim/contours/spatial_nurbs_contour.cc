@@ -72,16 +72,18 @@ namespace MBSim {
 
   void SpatialNurbsContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
-//      if (etaNodes.size() < 2)
-//        throwError("(SpatialNurbsContour::init): Size of etaNodes must be greater than 1.");
-//      if (xiNodes.size() < 2)
-//        throwError("(SpatialNurbsContour::init): Size of xiNodes must be greater than 1.");
       srf.resize(cp.rows(),cp.cols(),uKnot.size()-cp.rows()-1,vKnot.size()-cp.cols()-1);
       srf.setDegreeU(uKnot.size()-cp.rows()-1);
       srf.setDegreeV(vKnot.size()-cp.cols()-1);
       srf.setKnotU(uKnot);
       srf.setKnotV(vKnot);
       srf.setCtrlPnts(cp);
+      etaNodes.resize(2);
+      etaNodes[0] = uKnot(srf.degreeU());
+      etaNodes[1] = uKnot(uKnot.size()-srf.degreeU()-1);
+      xiNodes.resize(2);
+      xiNodes[0] = vKnot(srf.degreeV());
+      xiNodes[1] = vKnot(vKnot.size()-srf.degreeV()-1);
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
@@ -114,7 +116,7 @@ namespace MBSim {
 //    e=E(element)->getFirstElementChildNamed(MBSIM%"xiNodes");
 //    xiNodes=E(e)->getText<Vec>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"controlPoints");
-    MatVx4 pts=E(e)->getText<MatVx4>();
+    MatV pts=E(e)->getText<MatV>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"numberOfEtaControlPoints");
     int nu = E(e)->getText<int>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"numberOfXiControlPoints");
@@ -125,8 +127,12 @@ namespace MBSim {
     setXiKnotVector(E(e)->getText<Vec>());
     cp.resize(nu,nv);
     for(int i=0; i<nu; i++) {
-      for(int j=0; j<nv; j++)
-        cp(i,j) = pts.row(j*nu+i).T();
+      for(int j=0; j<nv; j++) {
+        for(int k=0; k<std::max(pts.cols(),4); k++)
+          cp(i,j)(k) = pts(j*nu+i,k);
+        if(pts.cols()<4)
+          cp(i,j)(3) = 1;
+      }
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"open");
     if(e) setOpen(E(e)->getText<bool>());
