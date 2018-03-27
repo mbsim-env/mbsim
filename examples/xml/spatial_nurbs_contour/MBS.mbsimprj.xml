@@ -131,9 +131,6 @@
     </observers><enableOpenMBVFrameI/>
     <environments>
       <MBSimEnvironment>
-        
-        
-        
         <accelerationOfGravity unit="m/s^2">
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <ele>0</ele>
