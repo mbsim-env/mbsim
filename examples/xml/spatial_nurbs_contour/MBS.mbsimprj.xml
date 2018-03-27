@@ -65,9 +65,6 @@
             <ele>-3</ele>
             <ele>-0.2</ele>
             <ele>2</ele>
-            <ele>0</ele>
-            <ele>0</ele>
-            <ele>0</ele>
           </xmlVector>
         </generalizedInitialPosition>
         <mass unit="kg">1</mass>
@@ -93,9 +90,6 @@
         <stateDependentTranslation>
           <TranslationAlongAxesXYZ/>
         </stateDependentTranslation>
-        <stateDependentRotation>
-          <RotationAboutAxesXYZ/>
-        </stateDependentRotation>
         <frames/>
         <contours>
           <Point name="Point">
