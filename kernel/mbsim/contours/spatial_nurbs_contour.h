@@ -82,10 +82,15 @@ namespace MBSim {
       void setOpen(bool open_=true) { open = open_; }
 
     protected:
+      void updateHessianMatrix(const fmatvec::Vec2 &zeta);
+      const fmatvec::GeneralMatrix<fmatvec::Vec3>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(zeta!=zetaOld) updateHessianMatrix(zeta); return hess; }
+
       fmatvec::GeneralMatrix<fmatvec::Vec4> cp;
       fmatvec::Vec uKnot, vKnot;
       bool open{false};
       NurbsSurface srf;
+      fmatvec::Vec2 zetaOld;
+      fmatvec::GeneralMatrix<fmatvec::Vec3> hess;
   };
 
 }
