@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+    <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+    <frames/>
+    <contours/>
+    <groups/>
+    <objects>
+      <RigidBody name="RigidBody">
+        <mass unit="kg">1</mass>
+        <inertiaTensor unit="kg*m^2">
+          <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <row>
+              <ele>0.01</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0.01</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>0.01</ele>
+            </row>
+          </xmlMatrix>
+        </inertiaTensor>
+        <frames/>
+        <contours>
+          <SpatialNurbsContour name="SpatialNurbsContour" xmlns="http://www.mbsim-env.de/MBSim">
+            <controlPoints>
+    [ -4.5 -2 8
+         -2 1 8
+          2 -3 6
+          5 -1 8
+          -3 3 4
+          0 -1 4
+          1 -1 4
+          3 2 4
+          -5 -2 -2
+          -2 -4 -2
+          2 -1 -2
+          5 0 -2
+          -4.5 2 -6
+          -2 -4 -5
+          2 3 -5
+          4.5 -2 -6 ]
+            </controlPoints>
+            <numberOfEtaControlPoints>4</numberOfEtaControlPoints>
+            <numberOfXiControlPoints>4</numberOfXiControlPoints>
+            <etaKnotVector> [0; 0; 0; 0; 1; 1; 1; 1]</etaKnotVector>
+            <xiKnotVector> [0; 0; 0; 0; 1; 1; 1; 1]</xiKnotVector>
+            <enableOpenMBV/>
+          </SpatialNurbsContour>
+        </contours><enableOpenMBVFrameC/>
+      </RigidBody>
+      <RigidBody name="RigidBody2">
+        <generalizedInitialPosition>
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>-3</ele>
+            <ele>-0.2</ele>
+            <ele>2</ele>
+            <ele>0</ele>
+            <ele>0</ele>
+            <ele>0</ele>
+          </xmlVector>
+        </generalizedInitialPosition>
+        <mass unit="kg">1</mass>
+        <inertiaTensor unit="kg*m^2">
+          <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <row>
+              <ele>0.01</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0.01</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>0.01</ele>
+            </row>
+          </xmlMatrix>
+        </inertiaTensor>
+        <stateDependentTranslation>
+          <TranslationAlongAxesXYZ/>
+        </stateDependentTranslation>
+        <stateDependentRotation>
+          <RotationAboutAxesXYZ/>
+        </stateDependentRotation>
+        <frames/>
+        <contours>
+          <Point name="Point">
+            <enableOpenMBV>
+              <size unit="m">0.1</size>
+              <transparency unit="-">0.5</transparency>
+            </enableOpenMBV>
+          </Point>
+        </contours><enableOpenMBVFrameC>
+          <size unit="dm">1</size>
+        </enableOpenMBVFrameC></RigidBody>
+    </objects>
+    <links>
+      <Contact name="Contact">
+        <connect ref1="../Object[RigidBody]/Contour[SpatialNurbsContour]" ref2="../Object[RigidBody2]/Contour[Point]"/>
+        <normalForceLaw>
+          <UnilateralConstraint/>
+        </normalForceLaw>
+        <normalImpactLaw>
+          <UnilateralNewtonImpact>
+            <restitutionCoefficient>0</restitutionCoefficient>
+          </UnilateralNewtonImpact>
+        </normalImpactLaw>
+      </Contact>
+    </links><constraints/>
+    <observers>
+      <ContactObserver name="ContactObserver">
+        <contact ref="../Link[Contact]"/>
+        <enableOpenMBVContactPoints>
+          <size unit="dm">1</size>
+        </enableOpenMBVContactPoints>
+      </ContactObserver>
+    </observers><enableOpenMBVFrameI/>
+    <environments>
+      <MBSimEnvironment>
+        
+        
+        
+        <accelerationOfGravity unit="m/s^2">
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>0</ele>
+            <ele>-9.81</ele>
+            <ele>0</ele>
+          </xmlVector>
+        </accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+    <projectionTolerance>1e-15</projectionTolerance>
+    <generalizedRelativePositionTolerance>1e-6</generalizedRelativePositionTolerance>
+    <generalizedRelativeVelocityTolerance>1e-6</generalizedRelativeVelocityTolerance>
+    <generalizedRelativeAccelerationTolerance>1e-8</generalizedRelativeAccelerationTolerance>
+    <generalizedForceTolerance>1e-8</generalizedForceTolerance>
+    <generalizedImpulseTolerance>1e-6</generalizedImpulseTolerance>
+  </DynamicSystemSolver>
+
+  <LSODKRIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">2</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+  </LSODKRIntegrator>
+
+</MBSimProject>
