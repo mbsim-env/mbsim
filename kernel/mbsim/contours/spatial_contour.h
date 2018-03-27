@@ -80,7 +80,7 @@ namespace MBSim {
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]); }
+      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1] or zeta(1) < xiNodes[0] or zeta(1) > xiNodes[xiNodes.size()-1]); }
 
       void setOpen(bool open_=true) { open = open_; }
 

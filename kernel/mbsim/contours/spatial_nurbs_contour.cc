@@ -31,36 +31,36 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpatialNurbsContour)
 
   void SpatialNurbsContour::updateHessianMatrix(const Vec2 &zeta) {
-    srf.deriveAt(zeta(0),zeta(1),2,hess);
+    srf.deriveAtH(zeta(0),zeta(1),2,hess);
     zetaOld = zeta;
   }
 
   Vec3 SpatialNurbsContour::evalKrPS(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(0,0);
+    return evalHessianMatrix(zeta)(0,0)(Range<Fixed<0>,Fixed<2> >());
   }
 
   Vec3 SpatialNurbsContour::evalKs(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(1,0);
+    return evalHessianMatrix(zeta)(1,0)(Range<Fixed<0>,Fixed<2> >());
   }
 
   Vec3 SpatialNurbsContour::evalKt(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(0,1);
+    return evalHessianMatrix(zeta)(0,1)(Range<Fixed<0>,Fixed<2> >());
   }
 
   Vec3 SpatialNurbsContour::evalParDer1Ks(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(2,0);
+    return evalHessianMatrix(zeta)(2,0)(Range<Fixed<0>,Fixed<2> >());
   }
 
   Vec3 SpatialNurbsContour::evalParDer2Ks(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(1,1);
+    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2> >());
   }
 
   Vec3 SpatialNurbsContour::evalParDer1Kt(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(1,1);
+    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2> >());
   }
 
   Vec3 SpatialNurbsContour::evalParDer2Kt(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(0,2);
+    return evalHessianMatrix(zeta)(0,2)(Range<Fixed<0>,Fixed<2> >());
   }
 
   void SpatialNurbsContour::init(InitStage stage, const InitConfigSet &config) {
@@ -71,7 +71,7 @@ namespace MBSim {
       srf.setKnotU(uKnot);
       srf.setKnotV(vKnot);
       srf.setCtrlPnts(cp);
-      srf.deriveAt(zetaOld(0),zetaOld(1),2,hess);
+      srf.deriveAtH(zetaOld(0),zetaOld(1),2,hess);
       etaNodes.resize(2);
       etaNodes[0] = uKnot(srf.degreeU());
       etaNodes[1] = uKnot(uKnot.size()-srf.degreeU()-1);
@@ -122,7 +122,7 @@ namespace MBSim {
     cp.resize(nu,nv);
     for(int i=0; i<nu; i++) {
       for(int j=0; j<nv; j++) {
-        for(int k=0; k<std::max(pts.cols(),4); k++)
+        for(int k=0; k<std::min(pts.cols(),4); k++)
           cp(i,j)(k) = pts(j*nu+i,k);
         if(pts.cols()<4)
           cp(i,j)(3) = 1;

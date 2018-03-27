@@ -28,8 +28,6 @@
 
 namespace MBSim {
 
-  class ContactKinematics;
-
   /** 
    * \brief nurbs surface
    * \author Martin Foerg
@@ -77,20 +75,20 @@ namespace MBSim {
 
 //      void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]); }
+      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1] or zeta(1) < xiNodes[0] or zeta(1) > xiNodes[xiNodes.size()-1]); }
 
       void setOpen(bool open_=true) { open = open_; }
 
     protected:
       void updateHessianMatrix(const fmatvec::Vec2 &zeta);
-      const fmatvec::GeneralMatrix<fmatvec::Vec3>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(zeta!=zetaOld) updateHessianMatrix(zeta); return hess; }
+      const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(zeta!=zetaOld) updateHessianMatrix(zeta); return hess; }
 
       fmatvec::GeneralMatrix<fmatvec::Vec4> cp;
       fmatvec::Vec uKnot, vKnot;
       bool open{false};
       NurbsSurface srf;
       fmatvec::Vec2 zetaOld;
-      fmatvec::GeneralMatrix<fmatvec::Vec3> hess;
+      fmatvec::GeneralMatrix<fmatvec::Vec4> hess;
   };
 
 }
