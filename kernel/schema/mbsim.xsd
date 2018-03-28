@@ -2818,6 +2818,16 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
+        <xs:element name="interpolation" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl der Interpolationsmethode.
+              <ul>
+                <li>equallySpaced: "equally spaced" Interpolation</li>
+                <li>chordLength: "chord length" Interpolation</li>
+                <li>none: keine Interpolation</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="controlPoints" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -2832,12 +2842,17 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="knotVector" type="pv:nounitVector">
+          <xs:element name="knotVector" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Knotenvektor.
               </xs:documentation>
             </xs:annotation>
+          </xs:element>
+          <xs:element name="degree" type="pv:integerFullEval" minOccurs="0" >
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Polynomgrad.
+            </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="open" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
