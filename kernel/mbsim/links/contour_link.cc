@@ -22,7 +22,6 @@
 #include "mbsim/dynamic_system.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/contour.h"
-#include "mbsim/utils/utils.h"
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/arrow.h>
 

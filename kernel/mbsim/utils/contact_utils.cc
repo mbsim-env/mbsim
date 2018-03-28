@@ -221,6 +221,9 @@ namespace MBSim {
     else if ( contour0==typeid(Point) && contour1==typeid(PlanarNurbsContour) )
       return new ContactKinematicsPointPlanarContour;
 
+    else if ( contour0==typeid(Line) && contour1==typeid(PlanarNurbsContour) )
+      return new ContactKinematicsLinePlanarContour;
+
     else if ( contour0==typeid(Point) && contour1==typeid(SpatialNurbsContour) )
       return new ContactKinematicsPointSpatialContour;
 

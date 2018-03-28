@@ -23,6 +23,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "sphere_polynomialfrustum.h"
 #include "mbsim/contours/polynomial_frustum.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace fmatvec;

@@ -21,7 +21,6 @@
 #include <cstdlib>
 #include "integrator.h"
 #include "mbsim/element.h"
-#include "mbsim/utils/utils.h"
 #include "mbsim/objectfactory.h"
 
 using namespace std;

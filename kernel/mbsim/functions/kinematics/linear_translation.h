@@ -21,6 +21,7 @@
 #define _LINEAR_TRANSLATION_H_
 
 #include "mbsim/functions/function.h"
+#include "mbsim/utils/utils.h"
 
 namespace MBSim {
 

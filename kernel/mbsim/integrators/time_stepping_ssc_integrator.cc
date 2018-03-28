@@ -178,7 +178,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throwError("(TimeSteppingSSCIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(TimeSteppingSSCIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
       zi = z0;
     }
     else

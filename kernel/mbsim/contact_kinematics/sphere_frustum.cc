@@ -22,6 +22,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/sphere.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 
 using namespace fmatvec;

@@ -26,7 +26,6 @@
 #include <mbsim/constitutive_laws/friction_impact_law.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
-#include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
@@ -700,7 +699,7 @@ namespace MBSim {
 
     //Create a single contact(with all the information) for every sub contact of each contact kinematics that is part of the multiple contact
     if (name_ == "")
-      ckNames.push_back(name + "_" + toString(cK));
+      ckNames.push_back(name + "_" + to_string(cK));
     else
       ckNames.push_back(name_);
 

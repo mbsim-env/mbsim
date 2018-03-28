@@ -19,7 +19,6 @@
 #include <config.h>
 #include "mbsim/objects/object.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 
 #include <hdf5serie/simpledataset.h>
@@ -206,19 +205,19 @@ namespace MBSim {
       if (plotFeature[plotRecursive]) {
         if (plotFeature[generalizedPosition]) {
           for (int i = 0; i < qRel.size(); ++i)
-            plotColumns.push_back("generalized position (" + toString(i) + ")");
+            plotColumns.push_back("generalized position (" + to_string(i) + ")");
         }
         if (plotFeature[generalizedVelocity]) {
           for (int i = 0; i < uRel.size(); ++i)
-            plotColumns.push_back("generalized velocity (" + toString(i) + ")");
+            plotColumns.push_back("generalized velocity (" + to_string(i) + ")");
         }
         if (plotFeature[derivativeOfGeneralizedPosition]) {
           for (int i = 0; i < qdRel.size(); ++i)
-            plotColumns.push_back("derivative of generalized position (" + toString(i) + ")");
+            plotColumns.push_back("derivative of generalized position (" + to_string(i) + ")");
         }
         if (plotFeature[generalizedAcceleration]) {
           for (int i = 0; i < udRel.size(); ++i)
-            plotColumns.push_back("generalized acceleration (" + toString(i) + ")");
+            plotColumns.push_back("generalized acceleration (" + to_string(i) + ")");
         }
         if (plotFeature[energy]) {
           plotColumns.push_back("kinetic energy");
@@ -236,13 +235,13 @@ namespace MBSim {
     else if(q0.size() == q.size())
       q = q0;
     else
-      throwError("(Object::initz): size of q0 does not match, must be " + toStr(q.size()));
+      throwError("(Object::initz): size of q0 does not match, must be " + to_string(q.size()));
     if(u0() == NULL)
       u.init(0);
     else if(u0.size() == u.size())
       u = u0;
     else
-      throwError("(Object::initz): size of u0 does not match, must be " + toStr(u.size()));
+      throwError("(Object::initz): size of u0 does not match, must be " + to_string(u.size()));
   }
 
   void Object::writez(H5::GroupBase *group) {

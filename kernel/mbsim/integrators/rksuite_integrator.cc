@@ -67,7 +67,7 @@ namespace MBSimIntegrator {
     z.resize(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throwError("(RKSuiteIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(RKSuiteIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
       z = z0;
     }
     else
@@ -80,7 +80,7 @@ namespace MBSimIntegrator {
       thres.resize(zSize,INIT,thres_);
     } 
     if(thres.size() != zSize)
-      throwError("(RKSuiteIntegrator::integrate): size of thres does not match, must be " + toStr(zSize));
+      throwError("(RKSuiteIntegrator::integrate): size of thres does not match, must be " + to_string(zSize));
 
     lenwrk = 2*32*zSize;
     work = new double[lenwrk];
@@ -254,7 +254,7 @@ namespace MBSimIntegrator {
         else if(result==3 or result==4)
           continue;
         else if(result>=5)
-          throwError("Integrator RKSUITE failed with result = "+toString(result));
+          throwError("Integrator RKSUITE failed with result = "+to_string(result));
       }
     }
     else {
@@ -300,7 +300,7 @@ namespace MBSimIntegrator {
         else if(result==3 or result==4)
           continue;
         else if(result>=5)
-          throwError("Integrator RKSUITE failed with result = "+toString(result));
+          throwError("Integrator RKSUITE failed with result = "+to_string(result));
       }
     }
   }

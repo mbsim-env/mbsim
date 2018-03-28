@@ -19,10 +19,6 @@
 
 #include <config.h>
 #include "mbsim/links/link.h"
-#include "mbsim/frames/frame.h"
-#include "mbsim/objects/object.h"
-#include "mbsim/utils/utils.h"
-#include "mbsim/dynamic_system.h"
 #include "mbsim/dynamic_system_solver.h"
 
 #include <hdf5serie/simpledataset.h>
@@ -145,15 +141,15 @@ namespace MBSim {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[generalizedRelativePosition]) {
           for(int i=0; i<rrel.size(); ++i)
-            plotColumns.push_back("generalized relative position ("+toString(i)+")");
+            plotColumns.push_back("generalized relative position ("+to_string(i)+")");
         }
         if(plotFeature[generalizedRelativeVelocity]) {
           for(int i=0; i<vrel.size(); ++i)
-            plotColumns.push_back("generalized relative velocity ("+toString(i)+")");
+            plotColumns.push_back("generalized relative velocity ("+to_string(i)+")");
         }
         if(plotFeature[generalizedForce]) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
           for(int i=0; i<lambda.size(); ++i)
-            plotColumns.push_back("generalized force ("+toString(i)+")");
+            plotColumns.push_back("generalized force ("+to_string(i)+")");
         }
         if(plotFeature[energy])
           plotColumns.emplace_back("potential energy");
@@ -170,7 +166,7 @@ namespace MBSim {
     else if(x0.size() == x.size())
       x = x0;
     else
-      throwError("(Constraint::initz): size of x0 does not match, must be " + toStr(x.size()));
+      throwError("(Constraint::initz): size of x0 does not match, must be " + to_string(x.size()));
   }
 
   void Link::writez(H5::GroupBase *group) {

@@ -107,7 +107,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throwError("(LSODARIntegrator::integrate): size of z0 does not match " + toStr(zSize));
+        throwError("(LSODARIntegrator::integrate): size of z0 does not match " + to_string(zSize));
       system->setState(z0);
     }
     else
@@ -129,7 +129,7 @@ namespace MBSimIntegrator {
       else {
         iTol = 2;
         if(aTol.size() != zSize)
-          throwError("(LSODARIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throwError("(LSODARIntegrator::integrate): size of aTol does not match, must be " + to_string(zSize));
       }
     }
     else {
@@ -138,10 +138,10 @@ namespace MBSimIntegrator {
       else {
         iTol = 4;
         if(aTol.size() != zSize)
-          throwError("(LSODARIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throwError("(LSODARIntegrator::integrate): size of aTol does not match, must be " + to_string(zSize));
       }
       if(rTol.size() != zSize)
-        throwError("(LSODARIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
+        throwError("(LSODARIntegrator::integrate): size of rTol does not match, must be " + to_string(zSize));
     }
 
     istate=1;
@@ -223,7 +223,7 @@ namespace MBSimIntegrator {
         istate=1;
         rWork(4)=dt0;
       }
-      else if(istate<0) throwError("Integrator LSODAR failed with istate = "+toString(istate));
+      else if(istate<0) throwError("Integrator LSODAR failed with istate = "+to_string(istate));
     }
   }
 

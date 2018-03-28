@@ -135,27 +135,27 @@ namespace MBSim {
       /****** reorganize ******/
 
       for (unsigned int i = 0; i < frmList.size(); i++) {
-        frmList[i]->setName("Frame_"+toString(i)); // just a unique local name
+        frmList[i]->setName("Frame_"+to_string(i)); // just a unique local name
         addFrame(frmList[i]);
       }
       for (unsigned int i = 0; i < cntList.size(); i++) {
-        cntList[i]->setName("Contour_"+toString(i)); // just a unique local name
+        cntList[i]->setName("Contour_"+to_string(i)); // just a unique local name
         addContour(cntList[i]);
       }
       for (unsigned int i = 0; i < lnkList.size(); i++) {
-        lnkList[i]->setName("Link_"+toString(i)); // just a unique local name
+        lnkList[i]->setName("Link_"+to_string(i)); // just a unique local name
         addLink(lnkList[i]);
       }
       for (unsigned int i = 0; i < crtList.size(); i++) {
-        crtList[i]->setName("Constraint_"+toString(i)); // just a unique local name
+        crtList[i]->setName("Constraint_"+to_string(i)); // just a unique local name
         addConstraint(crtList[i]);
       }
       for (unsigned int i = 0; i < iKlnkList.size(); i++) {
-        iKlnkList[i]->setName("InverseKinetic_"+toString(i)); // just a unique local name
+        iKlnkList[i]->setName("InverseKinetic_"+to_string(i)); // just a unique local name
         addInverseKineticsLink(iKlnkList[i]);
       }
       for (unsigned int i = 0; i < obsrvList.size(); i++) {
-        obsrvList[i]->setName("Observer_"+toString(i)); // just a unique local name
+        obsrvList[i]->setName("Observer_"+to_string(i)); // just a unique local name
         addObserver(obsrvList[i]);
       }
 
@@ -194,14 +194,14 @@ namespace MBSim {
       for (int i = 0; i < A.size(); i++) {
         double a = max(A.T().col(i));
         if (a > 0 && fabs(A(i, i) + 1) > epsroot) { // root of relativ kinematics
-          Graph *graph = new Graph("InvisibleGraph_"+toString(nt++));
+          Graph *graph = new Graph("InvisibleGraph_"+to_string(nt++));
           addToGraph(graph, A, i, eleList);
           bufGraph.push_back(graph);
         }
         else if (fabs(a) < epsroot) { // absolut kinematics
           Object *obj = dynamic_cast<Object*>(eleList[i]);
           if(obj) {
-            eleList[i]->setName("Object_absolute_"+toString(i)); // just a unique local name
+            eleList[i]->setName("Object_absolute_"+to_string(i)); // just a unique local name
             addObject(obj);
           }
         }
@@ -1420,7 +1420,7 @@ namespace MBSim {
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {
     Object *obj = dynamic_cast<Object*>(eleList[i]);
     if(obj) {
-      eleList[i]->setName("Object_graph_"+toString(i)); // just a unique local name
+      eleList[i]->setName("Object_graph_"+to_string(i)); // just a unique local name
       graph->addObject(eleList[i]->computeLevel(), obj);
     }
     A(i, i) = -1;

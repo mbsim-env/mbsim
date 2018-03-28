@@ -23,6 +23,7 @@
 #include "plate_polynomialfrustum.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/polynomial_frustum.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "fmatvec/linear_algebra_double.h"
 #include "fmatvec/linear_algebra.h"

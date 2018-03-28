@@ -30,6 +30,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpatialNurbsContour)
 
   void SpatialNurbsContour::updateHessianMatrix(const Vec2 &zeta) {
+    // TODO continue periodic function (see class PlanarNurbsContour)
     srf.deriveAtH(zeta(0),zeta(1),2,hess);
     zetaOld = zeta;
   }

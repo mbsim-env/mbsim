@@ -229,7 +229,7 @@ namespace MBSimIntegrator {
     Vec z = y(0,zSize-1);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throwError("(SEULEXIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(SEULEXIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
       z = z0;
     }
     else
@@ -246,10 +246,10 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != neq)
-        throwError("(SEULEXIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
+        throwError("(SEULEXIntegrator::integrate): size of aTol does not match, must be " + to_string(neq));
     }
     if(rTol.size() != aTol.size())
-      throwError("(SEULEXIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throwError("(SEULEXIntegrator::integrate): size of rTol does not match aTol, must be " + to_string(aTol.size()));
 
     int out = 2; // dense output is performed in plot
 
