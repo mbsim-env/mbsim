@@ -283,11 +283,10 @@ namespace MBSim {
   void NurbsCurve::globalInterpH(const MatVx4& Qw, const Vec& ub, const Vec& Uc, int d, bool updateLater) {
     int i, j;
 
-//    resize(Qw.rows(), d);
     SqrMat A(Qw.rows(), INIT, 0.);
 
     if (Uc.rows() != U.rows())
-      throw runtime_error("(NurbsCurve::globalInterpH: The length of knot vectors are not equal !)");
+      resize(Qw.rows(), d);
 
     U = Uc;
 
