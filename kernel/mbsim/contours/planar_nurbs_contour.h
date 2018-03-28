@@ -34,6 +34,13 @@ namespace MBSim {
    */
   class PlanarNurbsContour : public RigidContour {
     public:
+      enum Interpolation {
+        equallySpaced = 0,
+        chordLength,
+        none,
+        unknown,
+      };
+
       /**
        * \brief constructor
        * \param name of contour
@@ -58,8 +65,10 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
+      void setInterpolation(Interpolation interpolation_) { interpolation = interpolation_; }
       void setControlPoints(const fmatvec::MatVx4 &cp_) { cp = cp_; }
       void setKnotVector(const fmatvec::Vec &knot_) { knot = knot_; }
+      void setDegree(int degree_) { degree = degree_; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (nodes,(const std::vector<double>&),std::vector<double>())(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
@@ -79,8 +88,10 @@ namespace MBSim {
       void updateHessianMatrix(double eta);
       const fmatvec::MatVx4& evalHessianMatrix(double eta){ if(eta!=etaOld) updateHessianMatrix(eta); return hess; }
 
+      Interpolation interpolation{none};
       fmatvec::MatVx4 cp;
       fmatvec::Vec knot;
+      int degree{3};
       bool open{false};
       NurbsCurve crv;
       double etaOld;

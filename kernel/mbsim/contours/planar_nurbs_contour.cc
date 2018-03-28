@@ -55,24 +55,30 @@ namespace MBSim {
 
   void PlanarNurbsContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
-      crv.resize(cp.rows(),knot.size()-cp.rows()-1);
-      crv.setDegree(knot.size()-cp.rows()-1);
-      crv.setKnot(knot);
-      crv.setCtrlPnts(cp);
+      if(interpolation==unknown)
+        throwError("(PlanarNurbsContour::init): interpolation unknown");
+      if(interpolation==none) {
+        degree = knot.size()-cp.rows()-1;
+        crv.resize(cp.rows(),degree);
+        crv.setCtrlPnts(cp);
+        crv.setKnot(knot);
+      }
+      else
+        crv.globalInterpH(cp,degree,NurbsCurve::Method(interpolation));
       crv.deriveAtH(etaOld,2,hess);
       etaNodes.resize(2);
-      etaNodes[0] = knot(crv.degree());
-      etaNodes[1] = knot(knot.size()-crv.degree()-1);
+      etaNodes[0] = crv.knot()(degree);
+      etaNodes[1] = crv.knot()(crv.knot().size()-degree-1);
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
         vector<vector<double> > cp_(cp.rows(),vector<double>(4));
         for(int i=0; i<cp.rows(); i++) {
           for(int j=0; j<4; j++)
-            cp_[i][j] = cp(i,j);
+            cp_[i][j] = crv.ctrlPnts()(i,j);
         }
         static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setControlPoints(cp_);
-        static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setKnotVector(knot);
+        static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setKnotVector(crv.knot());
         static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setNumberOfControlPoints(cp.rows());
       }
     }
@@ -90,17 +96,29 @@ namespace MBSim {
     DOMElement * e;
     //e=E(element)->getFirstElementChildNamed(MBSIM%"nodes");
     //etaNodes=E(e)->getText<Vec>();
+    e=E(element)->getFirstElementChildNamed(MBSIM%"interpolation");
+    if(e) {
+      string interpolationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(interpolationStr=="equallySpaced") interpolation=equallySpaced;
+      else if(interpolationStr=="chordLength") interpolation=chordLength;
+      else if(interpolationStr=="none") interpolation=none;
+      else interpolation=unknown;
+    }
     e=E(element)->getFirstElementChildNamed(MBSIM%"controlPoints");
     MatV pts=E(e)->getText<MatV>();
-    e=E(element)->getFirstElementChildNamed(MBSIM%"knotVector");
-    setKnotVector(E(e)->getText<Vec>());
-    cp.resize(pts.rows());
-    for(int i=0; i<cp.rows(); i++) {
+    e=E(element)->getFirstElementChildNamed(MBSIM%"numberOfControlPoints");
+    int n = E(e)->getText<int>();
+    cp.resize(n);
+    for(int i=0; i<n; i++) {
       for(int j=0; j<std::min(pts.cols(),4); j++)
         cp(i,j) = pts(i,j);
       if(pts.cols()<4)
         cp(i,3) = 1;
     }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"knotVector");
+    if(e) setKnotVector(E(e)->getText<Vec>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"degreee");
+    if(e) setDegree(E(e)->getText<int>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"open");
     if(e) setOpen(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
