@@ -1,5 +1,6 @@
 #include <config.h>
 #include "simulation_classes.h"
+#include "mbsim/utils/utils.h"
 #include "mbsimControl/signal_.h"
 
 using namespace fmatvec;
