@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/contours/planar_nurbs_contour.h"
+#include "mbsim/utils/utils.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -27,9 +28,10 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlanarNurbsContour)
+   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlanarNurbsContour)
 
-  void PlanarNurbsContour::updateHessianMatrix(double eta) {
+  void PlanarNurbsContour::updateHessianMatrix(double eta_) {
+    double eta = open?eta_:mod(eta_-etaNodes[0],etaNodes[1]-etaNodes[0])+etaNodes[0];
     crv.deriveAtH(eta,2,hess);
     etaOld = eta;
   }
