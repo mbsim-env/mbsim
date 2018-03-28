@@ -252,13 +252,40 @@ namespace MBSim {
 
   }
 
+  void NurbsCurve::globalInterpH(const MatVx4& Qw, int d, Method method) {
+    int i,j;
+
+    resize(Qw.rows(), d);
+
+    if(method == chordLength) {
+      chordLengthParamH(Qw,u) ;
+
+      // Setup the Knot Vector for the curve
+      for(i=0; i<=deg; i++)
+        U(i) = 0 ;
+      for(i=P.rows(); i<U.rows(); i++)
+        U(i) = 1.0 ;
+      for(j=1; j<Qw.rows()-deg; j++){
+        double t=0 ;
+        for(i=j; i< j+deg; i++)
+          t += u(i) ;
+        U(j+deg) = t/(double)deg ;
+      }
+    }
+    else if(method == equallySpaced)
+      updateUVecs(0, 1);
+    else
+      throw runtime_error("(NurbsCurve::globalInterpH: method unknown)");
+
+    globalInterpH(Qw,u,U,d);
+  }
+
   void NurbsCurve::globalInterpH(const MatVx4& Qw, const Vec& ub, const Vec& Uc, int d, bool updateLater) {
     int i, j;
 
-    resize(Qw.rows(), d);
+//    resize(Qw.rows(), d);
     SqrMat A(Qw.rows(), INIT, 0.);
 
-//  if(Uc.n() != U.n())  // TODO:: check this!
     if (Uc.rows() != U.rows())
       throw runtime_error("(NurbsCurve::globalInterpH: The length of knot vectors are not equal !)");
 
@@ -441,6 +468,22 @@ namespace MBSim {
         ub(i) = double(i) / double(ub.rows() - 1);
       ub(ub.rows() - 1) = 1.0;
     }
+    return d;
+  }
+
+  double NurbsCurve::chordLengthParamH(const MatVx4& Qw, Vec& ub) {
+    int i;
+    double d = 0.0;
+
+    ub.resize(Qw.rows());
+    ub(0) = 0;
+    for(i=1; i<ub.rows(); i++) {
+      d += nrm2(Qw.row(i)-Qw.row(i-1));
+    }
+    for(i=1; i<ub.rows()-1; i++) {
+      ub(i) = ub(i-1) + nrm2(Qw.row(i)-Qw.row(i-1))/d;
+    }
+    ub(ub.rows()-1) = 1.0; // In case there is some addition round-off
     return d;
   }
 

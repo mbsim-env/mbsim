@@ -37,6 +37,11 @@ namespace MBSim {
    */
   class NurbsCurve {
     public:
+      enum Method {
+        equallySpaced = 0,
+        chordLength,
+      };
+
       /*!
        * \brief standard constructor
        */
@@ -165,7 +170,7 @@ namespace MBSim {
       void globalInterp(const std::vector<fmatvec::Point<3> >& Q, double uMin, double uMax, int d, bool updateLater = false);
       void globalInterp(const fmatvec::MatVx3& Q, double uMin, double uMax, int d, bool updateLater = false);
 
-//        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, int d);
+      void globalInterpH(const fmatvec::MatVx4& Qw, int d, Method method=chordLength);
 //        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, const std::vector<double>& U, int d);
       void globalInterpH(const fmatvec::MatVx4& Qw, const fmatvec::Vec& ub, const fmatvec::Vec& Uc, int d, bool updateLater = false);
 //        void globalInterpClosed(const Vector<fmatvec::Point<3>  >& Qw, int d);
@@ -279,12 +284,13 @@ namespace MBSim {
     protected:
       fmatvec::MatVx4 P; // the vector of control points
       fmatvec::SqrMat inverse; //Inverse of Ansatz-functions in case of only update later (different points, same knot-Vecs and same degree)
-      fmatvec::Vec u;  // the knot vector
+      fmatvec::Vec u;  // the parameteric points
       fmatvec::Vec U;  // the knot vector
       int deg{0};  // the degree of the NURBS curve
 
       void knotAveraging(const std::vector<double>& uk, int deg);
       double chordLengthParam(const fmatvec::MatVx3& Q, fmatvec::Vec& ub);
+      double chordLengthParamH(const fmatvec::MatVx4& Q, fmatvec::Vec& ub);
       void updateUVecs(double uMin, double uMax);
 
       void knotAveragingClosed(const std::vector<double>& uk, int deg);
