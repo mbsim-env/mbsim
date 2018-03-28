@@ -17,10 +17,10 @@ namespace MBSim {
 //  template <class T, int N> class NurbsSurfaceArray ;
 //
 //  template <class T, int N> void gordonSurface(NurbsCurveArray<T,N>& , NurbsCurveArray<T,N>& , const Matrix< Point_nD<T,N> >& , NurbsSurface<T,N>& );
-  int surfMeshParams(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, fmatvec::Vec& uk, fmatvec::Vec& vl);
+  int surfMeshParams(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, fmatvec::VecV& uk, fmatvec::VecV& vl);
 //  template <class T, int N> int surfMeshParamsH(const Matrix< HPoint_nD<T,N> >& , Vector<T>& , Vector<T>& );
 //  template <class T, int N> int surfMeshParamsClosedU(const Matrix< Point_nD<T,N> >& Qw, Vector<T>& uk, Vector<T>& vl, int degU );
-  int surfMeshParamsClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, fmatvec::Vec& uk, fmatvec::Vec& vl, int degU);
+  int surfMeshParamsClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, fmatvec::VecV& uk, fmatvec::VecV& vl, int degU);
 //  template <class T, int N> int surfMeshParamsClosedUH(const Matrix< HPoint_nD<T,N> >& Qw, Vector<T>& uk, Vector<T>& vl, int degU );
 //
 //  template <class T, int N> void globalSurfInterpXY(const Matrix< Point_nD<T,N> >& , int , int , NurbsSurface<T,N>& );
@@ -49,16 +49,16 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      NurbsSurface(int DegU, int DegV, const fmatvec::Vec& Uk, const fmatvec::Vec& Vk, fmatvec::GeneralMatrix<fmatvec::Vec4>& Q) : U(Uk), V(Vk), P(Q), degU(DegU), degV(DegV) { }
+      NurbsSurface(int DegU, int DegV, const fmatvec::VecV& Uk, const fmatvec::VecV& Vk, fmatvec::GeneralMatrix<fmatvec::Vec4>& Q) : U(Uk), V(Vk), P(Q), degU(DegU), degV(DegV) { }
 //  NurbsSurface(int DegU, int DegV, Vector<T>& Uk, Vector<T>& Vk, Matrix< Point_nD<T,N> >& Cp, Matrix<T>& W) ;
       //! Empty desctructor
       virtual ~NurbsSurface() = default;
 
       // Reference to internal data
       //! A reference to the U knot vector
-      const fmatvec::Vec& knotU() const { return U; }
+      const fmatvec::VecV& knotU() const { return U; }
       //! A reference to the V knot vector
-      const fmatvec::Vec& knotV() const { return V; }
+      const fmatvec::VecV& knotV() const { return V; }
       //! Returns the i-th knot from U
       double knotU(int i) const { return U(i); }
       //! Returns the i-th knot from V
@@ -72,8 +72,8 @@ namespace MBSim {
       //! A reference to the degree in V of the surface
       int degreeV() const { return degV; }
 
-      void setKnotU(const fmatvec::Vec& U_) { U = U_; }
-      void setKnotV(const fmatvec::Vec& V_) { V = V_; }
+      void setKnotU(const fmatvec::VecV& U_) { U = U_; }
+      void setKnotV(const fmatvec::VecV& V_) { V = V_; }
       void setCtrlPnts(const fmatvec::GeneralMatrix<fmatvec::Vec4>& P_) { P = P_; }
       void setDegreeU(int degU_) { degU = degU_; }
       void setDegreeV(int degV_) { degV = degV_; }
@@ -101,9 +101,9 @@ namespace MBSim {
       // Surface fitting functions
 
       void globalInterp(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, int DegU, int DegV);
-      void globalInterp(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, const fmatvec::Vec& uk, const fmatvec::Vec& vk, int DegU, int DegV);
+      void globalInterp(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, const fmatvec::VecV& uk, const fmatvec::VecV& vk, int DegU, int DegV);
       void globalInterpClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, int DegU, int DegV);
-      void globalInterpClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, const fmatvec::Vec& uk, const fmatvec::Vec& vk, int DegU, int DegV);
+      void globalInterpClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, const fmatvec::VecV& uk, const fmatvec::VecV& vk, int DegU, int DegV);
 //  void globalInterpClosedU(const Matrix< Point_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
 //  void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q, int pU, int pV);
 //  void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
@@ -235,8 +235,8 @@ namespace MBSim {
 //  NurbsSurface<T,N>& transpose(void) ;
 
     protected:
-      fmatvec::Vec U; //!< the U knot vector
-      fmatvec::Vec V; //!< the V knot vector
+      fmatvec::VecV U; //!< the U knot vector
+      fmatvec::VecV V; //!< the V knot vector
       fmatvec::GeneralMatrix<fmatvec::Vec4> P; //!< The matrix of control points
       int degU{0}; //!< the degree of the surface in U
       int degV{0}; //!< the degree of the surface in V

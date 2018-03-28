@@ -62,8 +62,8 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       void setControlPoints(const fmatvec::GeneralMatrix<fmatvec::Vec4> &cp_) { cp = cp_; }
-      void setEtaKnotVector(const fmatvec::Vec &uKnot_) { uKnot = uKnot_; }
-      void setXiKnotVector(const fmatvec::Vec &vKnot_) { vKnot = vKnot_; }
+      void setEtaKnotVector(const fmatvec::VecV &uKnot_) { uKnot = uKnot_; }
+      void setXiKnotVector(const fmatvec::VecV &vKnot_) { vKnot = vKnot_; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
@@ -84,7 +84,7 @@ namespace MBSim {
       const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(zeta!=zetaOld) updateHessianMatrix(zeta); return hess; }
 
       fmatvec::GeneralMatrix<fmatvec::Vec4> cp;
-      fmatvec::Vec uKnot, vKnot;
+      fmatvec::VecV uKnot, vKnot;
       bool open{false};
       NurbsSurface srf;
       fmatvec::Vec2 zetaOld;

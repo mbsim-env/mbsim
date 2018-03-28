@@ -16,7 +16,7 @@ namespace MBSim {
   }
 
   HPoint<3> NurbsCurve::hpointAt(double u, int span) const {
-    Vec Nb(deg + 1, NONINIT);
+    VecV Nb(deg + 1, NONINIT);
 
     basisFuns(u, span, deg, U, Nb);
 
@@ -61,7 +61,7 @@ namespace MBSim {
   HPoint<3> NurbsCurve::firstD(double u, int span) const {
     int i;
 
-    Vec N(deg, NONINIT);
+    VecV N(deg, NONINIT);
 
     basisFuns(u, span, deg - 1, U, N);
 
@@ -126,7 +126,7 @@ namespace MBSim {
     knotAveraging(uk, deg); // as deg=d, in resize();
 
     // Initialize the basis matrix A
-    Vec N(deg + 1, NONINIT);
+    VecV N(deg + 1, NONINIT);
 
     for (int i = 1; i < Qnew.rows() - 1; i++) {
       int span = findSpan(uk.at(i));
@@ -183,7 +183,7 @@ namespace MBSim {
 //    knotAveraging(u, deg);
 
     // Initialize the basis matrix A
-    Vec N(deg + 1, NONINIT);
+    VecV N(deg + 1, NONINIT);
 
     for (i = 1; i < Q.rows() - 1; i++) {
       int span = findSpan(u(i));
@@ -222,7 +222,7 @@ namespace MBSim {
     updateUVecsClosed(uMin, uMax);
 
 // Initialize the basis matrix A
-    Vec N(d + 1);
+    VecV N(d + 1);
 
     for (i = 0; i < iN; i++) {
       int span = findSpan(u(i));
@@ -280,7 +280,7 @@ namespace MBSim {
     globalInterpH(Qw,u,U,d);
   }
 
-  void NurbsCurve::globalInterpH(const MatVx4& Qw, const Vec& ub, const Vec& Uc, int d, bool updateLater) {
+  void NurbsCurve::globalInterpH(const MatVx4& Qw, const VecV& ub, const VecV& Uc, int d, bool updateLater) {
     int i, j;
 
     SqrMat A(Qw.rows(), INIT, 0.);
@@ -309,7 +309,7 @@ namespace MBSim {
 //        P[i].data[j] = (T)xx(i,j) ;
 //    }
 
-    Vec N(deg + 1, NONINIT);
+    VecV N(deg + 1, NONINIT);
 
     for (i = 1; i < Qw.rows() - 1; i++) {
       int span = findSpan(ub(i));
@@ -350,7 +350,7 @@ namespace MBSim {
    \author  Alejandro Frangi
    \date 13 July, 1998
    */
-  void NurbsCurve::globalInterpClosedH(const MatVx4& Qw, const Vec& ub, const Vec& Uc, int d, bool updateLater) {
+  void NurbsCurve::globalInterpClosedH(const MatVx4& Qw, const VecV& ub, const VecV& Uc, int d, bool updateLater) {
     int i, j;
 
 //  int iN = Qw.rows() - d - 1;
@@ -364,7 +364,7 @@ namespace MBSim {
 
     U = Uc;
     // Initialize the basis matrix A
-    Vec N(d + 1);
+    VecV N(d + 1);
 
     for (i = 0; i < iN; i++) {
       int span = findSpan(ub(i));
@@ -447,7 +447,7 @@ namespace MBSim {
       U(j) = 1.0;
   }
 
-  double NurbsCurve::chordLengthParam(const MatVx3& Q, Vec& ub) {
+  double NurbsCurve::chordLengthParam(const MatVx3& Q, VecV& ub) {
     int i;
     double d = 0;
 
@@ -470,7 +470,7 @@ namespace MBSim {
     return d;
   }
 
-  double NurbsCurve::chordLengthParamH(const MatVx4& Qw, Vec& ub) {
+  double NurbsCurve::chordLengthParamH(const MatVx4& Qw, VecV& ub) {
     int i;
     double d = 0.0;
 
@@ -594,7 +594,7 @@ namespace MBSim {
    \author Philippe Lavoie
    \date 24 January, 1997
    */
-  void knotAveraging(const Vec& uk, int deg, Vec& U) {
+  void knotAveraging(const VecV& uk, int deg, VecV& U) {
     //    U.resize(uk.n()+deg+1) ;
     int j;
     for (j = 1; j < uk.rows() - deg; ++j) {
@@ -621,7 +621,7 @@ namespace MBSim {
    \author Alejandro Frangi
    \date 13 July, 1998
    */
-  void knotAveragingClosed(const Vec& uk, int deg, Vec& U) {
+  void knotAveragingClosed(const VecV& uk, int deg, VecV& U) {
 //    U.resize(uk.n()+deg+1) ;
     int i, j;
     int index;
@@ -649,7 +649,7 @@ namespace MBSim {
 
   }
 
-  void basisFuns(double u, int span, int deg, const Vec & U, Vec& funs) {
+  void basisFuns(double u, int span, int deg, const VecV & U, VecV& funs) {
     auto* left = (double*) alloca(2 * (deg + 1) * sizeof(double));
     double* right = &left[deg + 1];
 
@@ -671,7 +671,7 @@ namespace MBSim {
     }
   }
 
-  void dersBasisFuns(int n, double u, int span, int deg, const Vec & U, Mat & ders) {
+  void dersBasisFuns(int n, double u, int span, int deg, const VecV & U, Mat & ders) {
     auto* left = (double*) alloca(2 * (deg + 1) * sizeof(double));
     double* right = &left[deg + 1];
 
@@ -787,7 +787,7 @@ namespace MBSim {
    \author Philippe Lavoie
    \date 24 January, 1997
    */
-  void binomialCoef(Mat& Bin) {
+  void binomialCoef(MatV& Bin) {
     int n, k;
     // Setup the first line
     Bin(0, 0) = 1.0;

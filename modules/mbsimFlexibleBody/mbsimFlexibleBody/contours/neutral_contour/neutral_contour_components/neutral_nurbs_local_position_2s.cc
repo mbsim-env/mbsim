@@ -44,12 +44,12 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NeutralNurbsLocalPosition2s::surfMeshParamsClosedU(Vec& uk, Vec& vl) {
+  void NeutralNurbsLocalPosition2s::surfMeshParamsClosedU(VecV& uk, VecV& vl) {
     buildNodelist();
     MBSim::surfMeshParamsClosedU(Nodelist, uk, vl, degU);
   }
 
-  void NeutralNurbsLocalPosition2s::surfMeshParams(Vec& uk, Vec& vl) {
+  void NeutralNurbsLocalPosition2s::surfMeshParams(VecV& uk, VecV& vl) {
     buildNodelist();
     MBSim::surfMeshParams(Nodelist, uk, vl);
   }

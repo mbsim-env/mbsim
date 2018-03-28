@@ -116,9 +116,9 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"numberOfXiControlPoints");
     int nv = E(e)->getText<int>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"etaKnotVector");
-    setEtaKnotVector(E(e)->getText<Vec>());
+    setEtaKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"xiKnotVector");
-    setXiKnotVector(E(e)->getText<Vec>());
+    setXiKnotVector(E(e)->getText<VecV>());
     cp.resize(nu,nv);
     for(int i=0; i<nu; i++) {
       for(int j=0; j<nv; j++) {

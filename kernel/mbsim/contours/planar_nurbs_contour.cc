@@ -116,7 +116,7 @@ namespace MBSim {
         cp(i,3) = 1;
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"knotVector");
-    if(e) setKnotVector(E(e)->getText<Vec>());
+    if(e) setKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"degreee");
     if(e) setDegree(E(e)->getText<int>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"open");
