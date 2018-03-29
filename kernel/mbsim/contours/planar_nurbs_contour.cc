@@ -63,8 +63,12 @@ namespace MBSim {
         crv.setCtrlPnts(cp);
         crv.setKnot(knot);
       }
-      else
-        crv.globalInterpH(cp,degree,NurbsCurve::Method(interpolation));
+      else {
+        if(open)
+          crv.globalInterpH(cp,degree,NurbsCurve::Method(interpolation));
+        else
+          crv.globalInterpClosedH(cp,degree,NurbsCurve::Method(interpolation));
+      }
       crv.deriveAtH(etaOld,2,hess);
       etaNodes.resize(2);
       etaNodes[0] = crv.knot()(degree);
@@ -72,14 +76,14 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
-        vector<vector<double> > cp_(cp.rows(),vector<double>(4));
-        for(int i=0; i<cp.rows(); i++) {
+        vector<vector<double> > cp_(crv.ctrlPnts().rows(),vector<double>(4));
+        for(int i=0; i<crv.ctrlPnts().rows(); i++) {
           for(int j=0; j<4; j++)
             cp_[i][j] = crv.ctrlPnts()(i,j);
         }
         static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setControlPoints(cp_);
         static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setKnotVector(crv.knot());
-        static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setNumberOfControlPoints(cp.rows());
+        static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setNumberOfControlPoints(crv.ctrlPnts().rows());
       }
     }
     RigidContour::init(stage, config);

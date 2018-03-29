@@ -171,9 +171,7 @@ namespace MBSim {
       void globalInterp(const fmatvec::MatVx3& Q, double uMin, double uMax, int d, bool updateLater = false);
 
       void globalInterpH(const fmatvec::MatVx4& Qw, int d, Method method=chordLength);
-//        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, const std::vector<double>& U, int d);
       void globalInterpH(const fmatvec::MatVx4& Qw, const fmatvec::VecV& ub, const fmatvec::VecV& Uc, int d, bool updateLater = false);
-//        void globalInterpClosed(const Vector<fmatvec::Point<3>  >& Qw, int d);
       /*!
        * \brief closed interpolation of the given (not yet wrapped) points at the given knot vector "ub" in a degree of "d"
        */
@@ -185,10 +183,8 @@ namespace MBSim {
       void update(const fmatvec::MatVx3& Q);
       void update(const fmatvec::MatVx4& Qw);
 
-//        void globalInterpClosedH(const Vector<fmatvec::HPoint<3>  >& Qw, int d);
-//        void globalInterpClosedH(const Vector<fmatvec::HPoint<3>  >& Qw, const std::vector<double>& U, int d);
+      void globalInterpClosedH(const fmatvec::MatVx4& Qw, int d, Method method=chordLength);
       void globalInterpClosedH(const fmatvec::MatVx4& Qw, const fmatvec::VecV& ub, const fmatvec::VecV& Uc, int d, bool updateLater = false);
-//        void globalInterpClosed(const Vector<fmatvec::Point<3>  >& Qw, const std::vector<double>& ub, const std::vector<double>& Uc, int d);
 //
 //        void globalInterpD(const Vector<fmatvec::Point<3>  >& Q, const Vector<fmatvec::Point<3>  >& D, int d, int unitD, T a = 1.0);
 //
@@ -291,6 +287,7 @@ namespace MBSim {
       void knotAveraging(const std::vector<double>& uk, int deg);
       double chordLengthParam(const fmatvec::MatVx3& Q, fmatvec::VecV& ub);
       double chordLengthParamH(const fmatvec::MatVx4& Q, fmatvec::VecV& ub);
+      double chordLengthParamClosedH(const fmatvec::MatVx4& Q, fmatvec::VecV& ub, int d);
       void updateUVecs(double uMin, double uMax);
 
       void knotAveragingClosed(const std::vector<double>& uk, int deg);
