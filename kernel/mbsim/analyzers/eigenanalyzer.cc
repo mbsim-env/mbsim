@@ -61,6 +61,7 @@ namespace MBSimAnalyzer {
   void Eigenanalyzer::execute() {
     if(task == eigenmodes) computeEigenmodes();
     else if(task == eigenmotion) computeEigenmotion();
+    else throwError("(Eigenanalyzer::init): task unknown");
   }
 
   Vec Eigenanalyzer::getEigenfrequencies() const {
@@ -74,7 +75,7 @@ namespace MBSimAnalyzer {
     if(not(zEq.size()))
       zEq = system->evalz0();
     else if(zEq.size()!=system->getzSize())
-      throwError(string("(Eigenanalyzer::computeEigenvalues): size of z0 does not match, must be ") + toStr(system->getzSize()));
+      throwError(string("(Eigenanalyzer::computeEigenvalues): size of z0 does not match, must be ") + to_string(system->getzSize()));
 
     system->setTime(tStart);
 
@@ -218,6 +219,7 @@ namespace MBSimAnalyzer {
       str=str.substr(1,str.length()-2);
       if(str=="eigenmodes") task=eigenmodes;
       else if(str=="eigenmotion") task=eigenmotion;
+      else task=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"initialDeviation");
     if(e) setInitialDeviation(E(e)->getText<Vec>());

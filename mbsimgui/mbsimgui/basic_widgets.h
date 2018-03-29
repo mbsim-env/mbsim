@@ -24,6 +24,7 @@
 #include "custom_widgets.h"
 #include "namespace.h"
 #include <QLineEdit>
+#include <QTextEdit>
 #include <QSpinBox>
 #include <mbxmlutilshelper/dom.h>
 
@@ -513,6 +514,23 @@ namespace MBSimGUI {
       void removeFeature();
       void updateFeature();
       void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
+  };
+
+  class XMLEditorWidget : public Widget {
+    Q_OBJECT
+
+    public:
+      XMLEditorWidget();
+//      int getValue() override {return value->value();}
+//      void setValue(int val) override {value->setValue(val);}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+
+    protected:
+      QTextEdit *edit;
+//
+//    signals:
+//      void valueChanged(int);
   };
 
 }

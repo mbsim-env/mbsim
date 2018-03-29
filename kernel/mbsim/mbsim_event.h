@@ -78,4 +78,3 @@ namespace MBSim {
 }
 
 #endif /* _MBSIM_EVENT_H */
-

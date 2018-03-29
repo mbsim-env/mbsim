@@ -24,6 +24,7 @@
 #include "mbsimControl/signal_.h"
 #include "mbsim/element.h"
 #include "mbsim/functions/function.h"
+#include "mbsim/utils/utils.h"
 
 namespace MBSimControl {
 

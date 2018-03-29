@@ -42,7 +42,8 @@ namespace MBSimIntegrator {
       enum Formalism {
         ODE=0,
         DAE2,
-        GGL
+        GGL,
+        unknown
       };
 
     private:

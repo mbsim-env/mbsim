@@ -88,7 +88,7 @@ namespace MBSim {
     msg(Debug) << "rFrustumPlane=" << rFrustumPlane << endl;
   }
 
-  void ContactKinematicsPointPlaneWithFrustum::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointPlaneWithFrustum::updateg(SingleContact &contact, int i) {
 
     Vec3 WrOPoint = point->getFrame()->evalPosition();
     Vec3 WrOPlane = plane->getFrame()->evalPosition();
@@ -126,6 +126,7 @@ namespace MBSim {
     msg(Debug) << "AKW=" << AKW << endl;
     msg(Debug) << "KrOPoint=" << trans(KrOPoint) << endl;
 
+    double g;
     Vec3 Kn;
     Vec3 Kt;
     Vec3 Kb("[0; 0; 1]");
@@ -203,15 +204,16 @@ namespace MBSim {
     msg(Debug) << "WrCP=" << trans(WrCP) << endl;
     msg(Debug) << "========================" << endl;
 
-    cFrame[ipoint]->setPosition(WrOPoint);
-    cFrame[iplane]->setPosition(WrCP);
+    contact.getContourFrame(ipoint)->setPosition(WrOPoint);
+    contact.getContourFrame(iplane)->setPosition(WrCP);
 
-    cFrame[iplane]->getOrientation(false).set(0, Wn);
-    cFrame[iplane]->getOrientation(false).set(1, Wt);
-    cFrame[iplane]->getOrientation(false).set(2, -Wb);
-    cFrame[ipoint]->getOrientation(false).set(0, -Wn);
-    cFrame[ipoint]->getOrientation(false).set(1, -Wt);
-    cFrame[ipoint]->getOrientation(false).set(2, -Wb);
+    contact.getContourFrame(iplane)->getOrientation(false).set(0, Wn);
+    contact.getContourFrame(iplane)->getOrientation(false).set(1, Wt);
+    contact.getContourFrame(iplane)->getOrientation(false).set(2, -Wb);
+    contact.getContourFrame(ipoint)->getOrientation(false).set(0, -Wn);
+    contact.getContourFrame(ipoint)->getOrientation(false).set(1, -Wt);
+    contact.getContourFrame(ipoint)->getOrientation(false).set(2, -Wb);
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 }
 

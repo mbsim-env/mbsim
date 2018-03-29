@@ -34,13 +34,13 @@ namespace MBSim {
    */
   class ContactKinematicsCompoundContourCompoundContour : public ContactKinematics {
     public:
+      ContactKinematicsCompoundContourCompoundContour(int maxNumContacts=1) : ContactKinematics(maxNumContacts) { }
+
+      ~ContactKinematicsCompoundContourCompoundContour() override;
+
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override { }
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { }
-
-      ContactKinematics* getContactKinematics(int i=0) const override { return contactKinematics[i]; }
+      void updateg(std::vector<SingleContact> &contact) override;
       /***************************************************/
 
     private:
@@ -59,4 +59,3 @@ namespace MBSim {
 }
 
 #endif /* _CONTACT_KINEMATICS_COMPOUNDCONTOUR_COMPOUNDCONTOUR_H_ */
-

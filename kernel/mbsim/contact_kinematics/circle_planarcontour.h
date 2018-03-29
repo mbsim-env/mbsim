@@ -37,7 +37,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsCirclePlanarContour() :  circle(nullptr), planarcontour(nullptr), func(nullptr) { }
+      ContactKinematicsCirclePlanarContour() = default;
 
       /**
        * \brief destructor
@@ -46,11 +46,12 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override;
+      void updateg(SingleContact &contact, int i=0) override;
+      void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
 
       void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
+      void setInitialGuess(const fmatvec::MatV &zeta0_) override;
 
     private:
       /**
@@ -62,8 +63,8 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      Circle *circle;
-      Contour *planarcontour;
+      Circle *circle{nullptr};
+      Contour *planarcontour{nullptr};
 
       /**
        * \brief root function
@@ -71,9 +72,10 @@ namespace MBSim {
       FuncPairPlanarContourCircle *func;
 
       bool searchAllCP{false};
+
+      std::vector<double> zeta0;
   };
 
 }
 
 #endif
-

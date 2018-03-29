@@ -27,11 +27,10 @@
 
 namespace MBSim {
 
-  class ContactKinematics;
   template <class Sig> class Function;
 
   /** 
-   * \brief analytical description of contours with one contour parameter
+   * \brief analytical description of contours with two contour parameters
    * \author Robert Huber
    * \date 2009-04-20 some comments (Thorsten Schindler)
    * \date 2009-06-04 new file (Thorsten Schindler)
@@ -80,7 +79,7 @@ namespace MBSim {
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]); }
+      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1] or zeta(1) < xiNodes[0] or zeta(1) > xiNodes[xiNodes.size()-1]); }
 
       void setOpen(bool open_=true) { open = open_; }
 
@@ -95,4 +94,3 @@ namespace MBSim {
 }
 
 #endif
-

@@ -44,21 +44,22 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSpherePlate::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsSpherePlate::updateg(SingleContact &contact, int i) {
 
     Vec3 sphereInRect = plate->getFrame()->evalOrientation().T() * (sphere->getFrame()->evalPosition() - plate->getFrame()->evalPosition());
 
+    double g;
     if ((plate->getYLength() / 2. + sphere->getRadius() < fabs(sphereInRect(1))) or (plate->getZLength() / 2. + sphere->getRadius() < fabs(sphereInRect(2)))) {
-      g = 1.;
+      contact.getGeneralizedRelativePosition(false)(0) = 1.;
       return;
     }
 
-    cFrame[iplate]->setOrientation(plate->getFrame()->getOrientation());
-    cFrame[isphere]->getOrientation(false).set(0, -plate->getFrame()->getOrientation().col(0));
-    cFrame[isphere]->getOrientation(false).set(1, -plate->getFrame()->getOrientation().col(1));
-    cFrame[isphere]->getOrientation(false).set(2, plate->getFrame()->getOrientation().col(2));
+    contact.getContourFrame(iplate)->setOrientation(plate->getFrame()->getOrientation());
+    contact.getContourFrame(isphere)->getOrientation(false).set(0, -plate->getFrame()->getOrientation().col(0));
+    contact.getContourFrame(isphere)->getOrientation(false).set(1, -plate->getFrame()->getOrientation().col(1));
+    contact.getContourFrame(isphere)->getOrientation(false).set(2, plate->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cFrame[iplate]->getOrientation(false).col(0);
+    Vec3 Wn = contact.getContourFrame(iplate)->getOrientation(false).col(0);
 
     Vec3 Wd = sphere->getFrame()->getPosition() - plate->getFrame()->getPosition();
 
@@ -66,16 +67,13 @@ namespace MBSim {
 
     //assume that ball is far below rectangel --> no contact
     if(g < -sphere->getRadius()) {
-      g = 1.;
+      contact.getGeneralizedRelativePosition(false)(0) = 1.;
       return;
     }
 
-    cFrame[isphere]->setPosition(sphere->getFrame()->getPosition() - Wn * sphere->getRadius());
-    cFrame[iplate]->setPosition(cFrame[isphere]->getPosition(false) - Wn * g);
+    contact.getContourFrame(isphere)->setPosition(sphere->getFrame()->getPosition() - Wn * sphere->getRadius());
+    contact.getContourFrame(iplate)->setPosition(contact.getContourFrame(isphere)->getPosition(false) - Wn * g);
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
-  void ContactKinematicsSpherePlate::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
-    throw runtime_error("ContactKinematicsSpherePlate::updatewb(): not implemented yet");
-  }
 }
-

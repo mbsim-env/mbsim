@@ -41,45 +41,45 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointLineSegment::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    cFrame[iline]->setOrientation(line->getFrame()->evalOrientation());
-    cFrame[ipoint]->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
-    cFrame[ipoint]->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
-    cFrame[ipoint]->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
+  void ContactKinematicsPointLineSegment::updateg(SingleContact &contact, int i) {
+    contact.getContourFrame(iline)->setOrientation(line->getFrame()->evalOrientation());
+    contact.getContourFrame(ipoint)->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cFrame[iline]->getOrientation(false).col(0);
-    Vec3 Wt = cFrame[iline]->getOrientation(false).col(1);
+    Vec3 Wn = contact.getContourFrame(iline)->getOrientation(false).col(0);
+    Vec3 Wt = contact.getContourFrame(iline)->getOrientation(false).col(1);
 
     Vec3 Wd =  point->getFrame()->evalPosition() - line->getFrame()->evalPosition();
 
+    double g;
     double s = Wt.T()*Wd; 
     if(fabs(s) <= line->getLength()/2) {
       g = Wn.T()*Wd;
       if(g < -line->getThickness())
         g = 1;
       else {
-        cFrame[ipoint]->setPosition(point->getFrame()->getPosition());
-        cFrame[iline]->setPosition(cFrame[ipoint]->getPosition(false) - Wn*g);
+        contact.getContourFrame(ipoint)->setPosition(point->getFrame()->getPosition());
+        contact.getContourFrame(iline)->setPosition(contact.getContourFrame(ipoint)->getPosition(false) - Wn*g);
       }
     }
     else 
       g = 1;
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
-  void ContactKinematicsPointLineSegment::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
-    Vec3 n1 = cFrame[iline]->evalOrientation().col(0);
-    Vec3 u1 = cFrame[iline]->getOrientation().col(1);
-    Vec3 vC1 = cFrame[iline]->evalVelocity();
-    Vec3 vC2 = cFrame[ipoint]->evalVelocity();
-    Vec3 Om1 = cFrame[iline]->evalAngularVelocity();
-    // Vec3 Om2 = cFrame[ipoint]->getAngularVelocity();
+  void ContactKinematicsPointLineSegment::updatewb(SingleContact &contact, int i) {
+    Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);
+    Vec3 u1 = contact.getContourFrame(iline)->getOrientation().col(1);
+    Vec3 vC1 = contact.getContourFrame(iline)->evalVelocity();
+    Vec3 vC2 = contact.getContourFrame(ipoint)->evalVelocity();
+    Vec3 Om1 = contact.getContourFrame(iline)->evalAngularVelocity();
 
     double sd1 = u1.T()*(vC2 - vC1); 
 
-    wb(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
+    contact.getwb(false)(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
 
-    if(wb.size() > 1) 
-      wb(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
+    if(contact.getwb(false).size() > 1)
+      contact.getwb(false)(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
   }
 }
-

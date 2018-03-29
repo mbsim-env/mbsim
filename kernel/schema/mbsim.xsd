@@ -53,7 +53,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
@@ -63,7 +63,7 @@
       <xs:element name="scaleSize" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="referencePoint" minOccurs="0" type="pv:stringFullEval"/>
       <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
@@ -75,7 +75,7 @@
       <xs:element name="nominalLength" type="pv:lengthScalar" minOccurs="0"/>
       <xs:element name="type" minOccurs="0" type="pv:stringFullEval"/>
       <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="minimalColorValue" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="maximalColorValue" type="pv:nounitScalar" minOccurs="0"/>
     </xs:sequence>
@@ -2027,10 +2027,10 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SingleContact" substitutionGroup="ContourLink" type="SingleContactType">
+  <xs:element name="Contact" substitutionGroup="Link" type="ContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Definiert einen Kontakt als Interaktion zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>
+        Definiert einen Kontakt als Interaktion zwischen mehreren Körpern.<br/>
         Bei der Simulation von Mehrkörpersystemen kann es aufgrund der Bewegung der Körper zu Kontakten zwischen einzelnen Körpern, aber auch zwischen einem Körper und der Umwelt kommen. Kommen zwei Körper in Kontakt, bildet sich an den sich berührenden Konturen (siehe <a class="link" href="mbsim:Contour">&lt;Contour&gt;</a>) eine Kontaktfläche aus, in der die Kontaktkräfte zwischen den Kontaktpartnern übertragen werden.<br/>
         Idealisiert wird davon ausgegangen, dass nur punktförmige Kontakte existieren; dies ist für eine Vielzahl von Problemstellungen ausreichend. Bei flächenhaften Kontakten muss die Oberfläche durch eine endliche Anzahl von Punkten diskretisiert werden.<br/>
         Es wird zwischen Kontaktkinematik und -kinetik unterschieden. In der Kontaktkinematik wird die relative Lage und Bewegung von zwei Konturen, also potentielle Kontaktpunkte, Abstand, relative Geschwindigkeiten in Konturnormalenrichtung und in der Tangentialebene der Kontur sowie u.U. auch Beschleunigungsgrößen bestimmt. Sie sind Eingangsgrößen der Kontaktkinetik und bestimmen somit anschließend die Kontaktkräfte über konstitutive Gesetze.
@@ -2038,11 +2038,22 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SingleContactType">
+  <xs:complexType name="ContactType">
     <xs:complexContent>
-      <xs:extension base="ContourLinkType">
+      <xs:extension base="LinkType">
         <xs:sequence>
-          <xs:element name="normalForceLaw">
+          <xs:element name="connect">
+           <xs:annotation>
+             <xs:documentation xml:lang="de" xmlns="">
+               Bindet zwei Konturen an einen Kontakt.
+             </xs:documentation>
+           </xs:annotation>
+             <xs:complexType>
+               <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
+               <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
+             </xs:complexType>
+          </xs:element>
+          <xs:element name="normalForceLaw" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
             </xs:documentation></xs:annotation>
@@ -2084,23 +2095,39 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
+          <xs:element name="searchAllContactPoints" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob initial alle möglichen Kontaktpunkte gesucht werden sollen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownMatrix">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Anfangswerte für Newton-Löser.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="tolerance" minOccurs="0" type="pv:nounitScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für Newton-Löser.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximumNumberOfContacts" minOccurs="0" type="pv:nounitScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Maximale Anzahl an Kontakten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType> 
+  </xs:complexType>
 
-  <xs:element name="Contact" substitutionGroup="Link" type="ContactType">
+  <xs:element name="MaxwellContact" substitutionGroup="Link" type="MaxwellContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Definiert einen Kontakt als Interaktion zwischen mehreren Körpern.<br/>
-        Bei der Simulation von Mehrkörpersystemen kann es aufgrund der Bewegung der Körper zu Kontakten zwischen einzelnen Körpern, aber auch zwischen einem Körper und der Umwelt kommen. Kommen zwei Körper in Kontakt, bildet sich an den sich berührenden Konturen (siehe <a class="link" href="mbsim:Contour">&lt;Contour&gt;</a>) eine Kontaktfläche aus, in der die Kontaktkräfte zwischen den Kontaktpartnern übertragen werden.<br/>
-        Idealisiert wird davon ausgegangen, dass nur punktförmige Kontakte existieren; dies ist für eine Vielzahl von Problemstellungen ausreichend. Bei flächenhaften Kontakten muss die Oberfläche durch eine endliche Anzahl von Punkten diskretisiert werden.<br/>
-        Es wird zwischen Kontaktkinematik und -kinetik unterschieden. In der Kontaktkinematik wird die relative Lage und Bewegung von zwei Konturen, also potentielle Kontaktpunkte, Abstand, relative Geschwindigkeiten in Konturnormalenrichtung und in der Tangentialebene der Kontur sowie u.U. auch Beschleunigungsgrößen bestimmt. Sie sind Eingangsgrößen der Kontaktkinetik und bestimmen somit anschließend die Kontaktkräfte über konstitutive Gesetze.
-        <object class="figure" data="contact.svg">Kinematik einer Kontaktpaarung</object>
+      tbd
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ContactType">
+  <xs:complexType name="MaxwellContactType">
     <xs:complexContent>
       <xs:extension base="LinkType">
         <xs:sequence>
@@ -2173,22 +2200,6 @@
                 Toleranz für Newton-Löser.
             </xs:documentation></xs:annotation>
           </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="MaxwellContact" substitutionGroup="Contact" type="MaxwellContactType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-      tbd
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="MaxwellContactType">
-    <xs:complexContent>
-      <xs:extension base="ContactType">
-        <xs:sequence>
           <xs:element name="InfluenceFunction">
             <xs:complexType>
               <xs:sequence>
@@ -2344,7 +2355,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2414,7 +2425,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2446,7 +2457,7 @@
               <xs:sequence>
                 <xs:element name="length" type="pv:lengthScalar" minOccurs="0"/>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2473,7 +2484,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2511,7 +2522,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2543,7 +2554,7 @@
               <xs:sequence>
                 <xs:element name="length" type="pv:lengthVector" minOccurs="0"/>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2626,7 +2637,7 @@
               <xs:sequence>
                 <xs:element name="size" type="pv:lengthScalar" minOccurs="0"/>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2664,7 +2675,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2796,6 +2807,76 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="PlanarNurbsContour" substitutionGroup="RigidContour" type="PlanarNurbsContourType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Ebene NURBS Kontur.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PlanarNurbsContourType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+        <xs:element name="interpolation" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl der Interpolationsmethode.
+              <ul>
+                <li>equallySpaced: "equally spaced" Interpolation</li>
+                <li>chordLength: "chord length" Interpolation</li>
+                <li>none: keine Interpolation</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="controlPoints" type="pv:nounitMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Kontrollpunkte.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="numberOfControlPoints" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anzahl der Kontrollpunkte.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="knotVector" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knotenvektor.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="degree" type="pv:integerFullEval" minOccurs="0" >
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Polynomgrad.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="open" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="SpatialContour" substitutionGroup="RigidContour" type="SpatialContourType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -2857,7 +2938,207 @@
                 <xs:element name="etaNodes" type="pv:nounitVector" minOccurs="0"/>
                 <xs:element name="xiNodes" type="pv:nounitVector" minOccurs="0"/>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SpatialNurbsContour" substitutionGroup="RigidContour" type="SpatialNurbsContourType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Räumliche NURBS Kontur.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SpatialNurbsContourType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="controlPoints" type="pv:nounitMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Kontrollpunkte.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="numberOfEtaControlPoints" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anzahl der Kontrollpunkte in eta-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="numberOfXiControlPoints" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anzahl der Kontrollpunkte in xi-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="etaKnotVector" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knotenvektor in eta-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="xiKnotVector" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knotenvektor in xi-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="open" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FCLContour" substitutionGroup="RigidContour" type="FCLContourType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        FCL-Kontur.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FCLContourType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="computeLocalAABB" type="pv:booleanFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FCLBox" substitutionGroup="FCLContour" type="FCLBoxType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        FCL-Box.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FCLBoxType">
+    <xs:complexContent>
+      <xs:extension base="FCLContourType">
+        <xs:sequence>
+          <xs:element name="length" type="pv:lengthVector"/>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FCLSphere" substitutionGroup="FCLContour" type="FCLSphereType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        FCL-Sphere.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FCLSphereType">
+    <xs:complexContent>
+      <xs:extension base="FCLContourType">
+        <xs:sequence>
+          <xs:element name="radius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Radius der Kugel.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FCLPlane" substitutionGroup="FCLContour" type="FCLPlaneType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        FCL-Plane.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FCLPlaneType">
+    <xs:complexContent>
+      <xs:extension base="FCLContourType">
+        <xs:sequence>
+          <xs:element name="normal" type="pv:nounitVector"/>
+          <xs:element name="offset" type="pv:lengthScalar"/>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FCLMesh" substitutionGroup="FCLContour" type="FCLMeshType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        FCL-Mesh.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FCLMeshType">
+    <xs:complexContent>
+      <xs:extension base="FCLContourType">
+        <xs:sequence>
+          <xs:element name="vertices" type="pv:lengthMatrix"/>
+          <xs:element name="triangles" type="pv:indexMatrix"/>
+          <xs:element name="collisionStructure" type="pv:stringFullEval" minOccurs="0"/>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -4813,6 +5094,66 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType> 
+
+  <xs:element name="MaxwellContactObserver" substitutionGroup="Observer" type="MaxwellContactObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="MaxwellContactObserverType">
+    <xs:complexContent>
+      <xs:extension base="ObserverType">
+        <xs:sequence>
+          <xs:element name="maxwellContact">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="LinkReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
+                Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
+                Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVFrameParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVNormalForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVTangentialForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="MechanicalConstraintObserver" substitutionGroup="Observer" type="MechanicalConstraintObserverType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">

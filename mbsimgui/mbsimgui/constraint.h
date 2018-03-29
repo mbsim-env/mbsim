@@ -29,6 +29,12 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override { return new ConstraintContextMenu(this); }
   };
 
+  class UnknownConstraint : public Constraint {
+    public:
+      QString getType() const override { return "UnknownConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+  };
+
   class MechanicalConstraint : public Constraint {
   };
 

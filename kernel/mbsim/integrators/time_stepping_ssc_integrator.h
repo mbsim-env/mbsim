@@ -69,7 +69,8 @@ namespace MBSimIntegrator {
       enum Method {
         extrapolation=0,
         embedded,
-        embeddedHigherOrder
+        embeddedHigherOrder,
+        unknownMethod
       };
 
       enum GapControl {
@@ -77,13 +78,15 @@ namespace MBSimIntegrator {
         biggestRoot,
         scoring,
         gapTolerance,
-        smallestRoot
+        smallestRoot,
+        unknownGapControl
       };
 
       enum ErrorTest {
         all=0,
         scale=2,
-        exclude=3
+        exclude=3,
+        unknownErrorTest
       };
 
     protected:

@@ -21,7 +21,6 @@
 #define CIRCLE_FRUSTUM_H_
 
 #include "mbsim/contact_kinematics/contact_kinematics.h"
-#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -32,8 +31,6 @@ namespace MBSim {
    * \brief contact kinematics for unilateral contact between circle and frustum with at most one contact point
    * \author Thorsten Schindler
    * \author Bastian Esefeld
-   * \date 2009-07-13 initial commit kernel_dev
-   * \date 2009-09-02 performance improvement
    *
    * \theoretical background: "Spatial Dynamics of Pushbelt CVTs" (Schindler 2010 p.34 ff)
    */
@@ -54,8 +51,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double& g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec& wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsCircleFrustum::updatewb): not implemented!"); }
+      void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -87,4 +83,3 @@ namespace MBSim {
 }
 
 #endif /* CIRCLE_FRUSTUM_H_ */
-

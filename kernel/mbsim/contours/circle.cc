@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/frames/frame.h"
 #include "mbsim/contours/circle.h"
+#include "mbsim/utils/utils.h"
 
 #include <openmbvcppinterface/frustum.h>
 

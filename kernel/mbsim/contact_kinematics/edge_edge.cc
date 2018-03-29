@@ -33,7 +33,8 @@ namespace MBSim {
     edge1 = static_cast<Edge*>(contour[1]);
   }
 
-  void ContactKinematicsEdgeEdge::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsEdgeEdge::updateg(SingleContact &contact, int i) {
+    double g;
     Vec Wd = edge1->getFrame()->evalPosition() - edge0->getFrame()->evalPosition();
     Vec Wd0 = edge0->getFrame()->evalOrientation().col(1);
     Vec Wd1 = edge1->getFrame()->evalOrientation().col(1);
@@ -54,14 +55,14 @@ namespace MBSim {
         double t1 = t0*trans(Wd1)*Wd0 - trans(Wd1)*Wd;
 
         if(fabs(t1) <= edge1->getLength()/2 and fabs(t0) <= edge0->getLength()/2) {
-          cFrame[iedge0]->setPosition(edge0->getFrame()->getPosition() + t0*Wd0);
-          cFrame[iedge1]->setPosition(edge1->getFrame()->getPosition() + t1*Wd1);
-          cFrame[iedge0]->getOrientation(false).set(0, -Wn);
-          cFrame[iedge1]->getOrientation(false).set(0, -cFrame[iedge0]->getOrientation(false).col(0));
-          cFrame[iedge0]->getOrientation(false).set(1, Wd0);
-          cFrame[iedge1]->getOrientation(false).set(1, -cFrame[iedge0]->getOrientation(false).col(1));
-          cFrame[iedge0]->getOrientation(false).set(2, crossProduct(Wn,Wd0));
-          cFrame[iedge1]->getOrientation(false).set(2, cFrame[iedge0]->getOrientation(false).col(2));
+          contact.getContourFrame(iedge0)->setPosition(edge0->getFrame()->getPosition() + t0*Wd0);
+          contact.getContourFrame(iedge1)->setPosition(edge1->getFrame()->getPosition() + t1*Wd1);
+          contact.getContourFrame(iedge0)->getOrientation(false).set(0, -Wn);
+          contact.getContourFrame(iedge1)->getOrientation(false).set(0, Wn);
+          contact.getContourFrame(iedge0)->getOrientation(false).set(1, Wd0);
+          contact.getContourFrame(iedge1)->getOrientation(false).set(1, -Wd0);
+          contact.getContourFrame(iedge0)->getOrientation(false).set(2, crossProduct(Wn,Wd0));
+          contact.getContourFrame(iedge1)->getOrientation(false).set(2, contact.getContourFrame(iedge0)->getOrientation(false).col(2));
 
           g = -d;
         }
@@ -72,7 +73,7 @@ namespace MBSim {
       g = d;
     else
       g = 1;
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
 }
-

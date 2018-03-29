@@ -44,7 +44,7 @@ namespace MBSimAnalyzer {
 
     public:
 
-      enum Task { frequencyResponse };
+      enum Task { frequencyResponse, unknown };
 
       /**
        * \brief Standard constructor 

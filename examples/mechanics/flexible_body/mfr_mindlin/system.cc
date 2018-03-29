@@ -146,7 +146,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact[k]->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     contact[k]->setTangentialForceLaw(new SpatialCoulombFriction(0.4));
     contact[k]->setTangentialImpactLaw(new SpatialCoulombImpact(0.4));
-    contact[k]->connect(balls[k]->getContour(pointname.str()),disk->getContour("SurfaceContour"), new ContactKinematicsPointNurbsDisk2s());
+    contact[k]->connect(balls[k]->getContour(pointname.str()),disk->getContour("SurfaceContour"));
+    contact[k]->setContactKinematics(new ContactKinematicsPointNurbsDisk2s());
     this->addLink(contact[k]);
 
     ContactObserver *observer = new ContactObserver(contactname.str()+"_Observer");

@@ -127,10 +127,12 @@
             </UnilateralNewtonImpact>
           </normalImpactLaw>
           <initialGuess>
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>pi/2</ele>
-              <ele>0</ele>
-            </xmlVector>
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>pi/2</ele>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
           </initialGuess>
         </Contact>
       </links>

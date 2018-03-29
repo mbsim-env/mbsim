@@ -111,6 +111,9 @@ namespace MBSimIntegrator {
   }
 
   void DASKRIntegrator::integrate() {
+    if(formalism==unknown)
+      throwError("(DASKRIntegrator::integrate): formalism unknown");
+
     delta[0] = &DASKRIntegrator::deltaODE;
     delta[1] = &DASKRIntegrator::deltaDAE1;
     delta[2] = &DASKRIntegrator::deltaDAE2;
@@ -144,7 +147,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throwError("(DASKRIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(DASKRIntegrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()));
       system->setState(z0);
     }
     else
@@ -162,10 +165,10 @@ namespace MBSimIntegrator {
     if(aTol.size()>1) {
       info(1) = 1; // aTol und rTol are vectors
       if(aTol.size() != neq)
-        throwError("(DASKRIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
+        throwError("(DASKRIntegrator::integrate): size of aTol does not match, must be " + to_string(neq));
     }
     if(rTol.size() != aTol.size())
-      throwError("(DASKRIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throwError("(DASKRIntegrator::integrate): size of rTol does not match aTol, must be " + to_string(aTol.size()));
 
     // info(2) = 0; // solution only at tOut, no intermediate-output
     // info(3) = 0; // integration does not stop at tStop (rWork(0))
@@ -314,7 +317,7 @@ namespace MBSimIntegrator {
         for(int i=system->getzSize(); i<neq; i++)
           iWork(40+i) = -1; // algebraic variable
       }
-      else if(idid<0) throwError("Integrator DASKR failed with istate = "+toString(idid));
+      else if(idid<0) throwError("Integrator DASKR failed with istate = "+to_string(idid));
     }
 
     if(plotIntegrationData) integPlot.close();
@@ -350,6 +353,7 @@ namespace MBSimIntegrator {
       else if(formalismStr=="DAE1") formalism=DAE1;
       else if(formalismStr=="DAE2") formalism=DAE2;
       else if(formalismStr=="GGL") formalism=GGL;
+      else formalism=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"excludeAlgebraicVariablesFromErrorTest");
     if(e) setExcludeAlgebraicVariablesFromErrorTest(E(e)->getText<bool>());

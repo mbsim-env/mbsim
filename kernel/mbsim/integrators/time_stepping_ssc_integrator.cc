@@ -65,6 +65,13 @@ namespace MBSimIntegrator {
   }
 
   void TimeSteppingSSCIntegrator::preIntegrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_) {
+    if(method==unknownMethod)
+      throwError("(TimeSteppingSSCIntegrator::integrate): method unknown");
+    if(GapControlStrategy==unknownGapControl)
+      throwError("(TimeSteppingSSCIntegrator::integrate): gap control unknown");
+    if(FlagErrorTest==unknownErrorTest)
+      throwError("(TimeSteppingSSCIntegrator::integrate): error test unknown");
+
     debugInit();
 
     assert(method>=0);
@@ -171,7 +178,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throwError("(TimeSteppingSSCIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(TimeSteppingSSCIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
       zi = z0;
     }
     else
@@ -1454,6 +1461,7 @@ namespace MBSimIntegrator {
       if (methodStr=="extrapolation") setMethod(extrapolation);
       else if (methodStr=="embedded") setMethod(embedded);
       else if (methodStr=="embeddedHigherOrder") setMethod(embeddedHigherOrder);
+      else setMethod(unknownMethod);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSizeControl");
@@ -1494,6 +1502,7 @@ namespace MBSimIntegrator {
       else if (gapControlStr=="scoring") setGapControl(scoring);
       else if (gapControlStr=="gapTolerance") setGapControl(gapTolerance);
       else if (gapControlStr=="smallestRoot") setGapControl(smallestRoot);
+      else setGapControl(unknownGapControl);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"gapTolerance");
@@ -1505,6 +1514,7 @@ namespace MBSimIntegrator {
       if (errorTestStr=="all") setErrorTest(all);
       else if (errorTestStr=="scale") setErrorTest(scale);
       else if (errorTestStr=="exclude") setErrorTest(exclude);
+      else setErrorTest(unknownErrorTest);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumGain");

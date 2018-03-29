@@ -34,10 +34,6 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Cuboid::Cuboid(const string &name, Frame *R) : CompoundContour(name,R) { }
-
-  Cuboid::Cuboid(const string &name, double lx_, double ly_, double lz_, Frame *R) : CompoundContour(name,R), lx(lx_), ly(ly_), lz(lz_) { }
-
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Cuboid)
 
   void Cuboid::init(InitStage stage, const InitConfigSet &config) {
@@ -117,7 +113,7 @@ namespace MBSim {
       point->setFrameOfReference(frame);
       addContour(point);
 
-      double thicknessFactor = 0.5;
+      double thicknessFactor = 0.05;
 
       r(0) = -lx/2.0;
       r(1) = 0;
@@ -324,7 +320,7 @@ namespace MBSim {
       addContour(edge);
     }
     else if (stage == plotting) {
-      if(openMBVRigidBody)
+      if(plotFeature[openMBV] && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(lx,ly,lz);
     }
     CompoundContour::init(stage, config);
@@ -336,13 +332,9 @@ namespace MBSim {
     setLength(E(e)->getText<Vec3>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      DOMElement *d, *t;
-      d=E(e)->getFirstElementChildNamed(MBSIM%"diffuseColor");
-      t=E(e)->getFirstElementChildNamed(MBSIM%"transparency");
-      if( d &&  t) enableOpenMBV(_diffuseColor=E(d)->getText<Vec3>(), _transparency=E(e)->getText<double>());
-      if(!d &&  t) enableOpenMBV(                          _transparency=E(e)->getText<double>());
-      if( d && !t) enableOpenMBV(_diffuseColor=E(d)->getText<Vec3>()                                       );
-      if(!d && !t) enableOpenMBV(                                                                          );
+      OpenMBVCuboid ombv;
+      ombv.initializeUsingXML(e);
+      openMBVRigidBody=ombv.createOpenMBV();
     }
   }
 

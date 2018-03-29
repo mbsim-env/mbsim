@@ -21,7 +21,6 @@
 #define _CONTACT_KINEMATICS_SPHERE_FRUSTUM_H_
 
 #include "contact_kinematics.h"
-#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -31,16 +30,12 @@ namespace MBSim {
   /**
    * \brief pairing sphere to frustum
    * \author Martin Foerg
-   * \date 2009-04-02 some comments (Thorsten Schindler)
-   * \date 2009-07-13 updateg implemented (Bastian Esefeld)
-   * \todo updatewb implementation
    */   
   class ContactKinematicsSphereFrustum : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsSphereFrustum:updatewb): Not implemented!"); }
+      void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
 
     protected:

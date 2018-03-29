@@ -152,7 +152,8 @@ SlidingMass::SlidingMass(const string &projectName) :
     Contact *contact1 = new Contact("FFR_Contact");
     contact1->setNormalForceLaw(new BilateralConstraint);
     contact1->setNormalImpactLaw(new BilateralImpact);
-    contact1->connect(ballContour1, ncc, new ContactKinematicsPointPlanarContour);
+    contact1->connect(ballContour1, ncc);
+    contact1->setContactKinematics(new ContactKinematicsPointPlanarContour);
     contact1->setSearchAllContactPoints(true);
     this->addLink(contact1);
 

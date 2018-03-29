@@ -31,6 +31,12 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override { return new ContourContextMenu(this); }
   };
 
+  class UnknownContour : public Contour {
+    public:
+      QString getType() const override { return "UnknownContour"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+  };
+
   class RigidContour : public Contour {
     public:
       ElementPropertyDialog* createPropertyDialog() override {return new RigidContourPropertyDialog(this);}
@@ -88,6 +94,30 @@ namespace MBSimGUI {
     public:
       QString getType() const override { return "SpatialContour"; }
       ElementPropertyDialog* createPropertyDialog() override {return new SpatialContourPropertyDialog(this);}
+  };
+
+  class FCLBox : public RigidContour {
+    public:
+      QString getType() const override { return "FCLBox"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new FCLBoxPropertyDialog(this);}
+  };
+
+  class FCLSphere : public RigidContour {
+    public:
+      QString getType() const override { return "FCLSphere"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new FCLSpherePropertyDialog(this);}
+  };
+
+  class FCLPlane : public RigidContour {
+    public:
+      QString getType() const override { return "FCLPlane"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new FCLPlanePropertyDialog(this);}
+  };
+
+  class FCLMesh : public RigidContour {
+    public:
+      QString getType() const override { return "FCLMesh"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new FCLMeshPropertyDialog(this);}
   };
 
 }

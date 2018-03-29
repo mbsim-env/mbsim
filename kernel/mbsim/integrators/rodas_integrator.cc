@@ -138,7 +138,7 @@ namespace MBSimIntegrator {
 
       double s1 = clock();
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
-      self->s0 = s1; 
+      self->s0 = s1;
 
       if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
@@ -199,6 +199,9 @@ namespace MBSimIntegrator {
   }
 
   void RODASIntegrator::integrate() {
+    if(formalism==unknown)
+      throwError("(RODASIntegrator::integrate): formalism unknown");
+
     fzdot[0] = &RODASIntegrator::fzdotODE;
     fzdot[1] = &RODASIntegrator::fzdotDAE1;
     mass[0] = &RODASIntegrator::massFull;
@@ -218,7 +221,7 @@ namespace MBSimIntegrator {
     Vec z = y(0,zSize-1);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throwError("(RODASIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(RODASIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
       z = z0;
     }
     else
@@ -235,10 +238,10 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != neq)
-        throwError("(RODASIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
+        throwError("(RODASIntegrator::integrate): size of aTol does not match, must be " + to_string(neq));
     }
     if(rTol.size() != aTol.size())
-      throwError("(RODASIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throwError("(RODASIntegrator::integrate): size of rTol does not match aTol, must be " + to_string(aTol.size()));
 
     int out = 1; // subroutine is available for output
 
@@ -358,6 +361,7 @@ namespace MBSimIntegrator {
       string formalismStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(formalismStr=="ODE") formalism=ODE;
       else if(formalismStr=="DAE1") formalism=DAE1;
+      else formalism=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
     if(e) setReducedForm((E(e)->getText<bool>()));

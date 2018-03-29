@@ -66,19 +66,20 @@ namespace MBSimGUI {
   }
 
   DOMElement* ExtWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele = nullptr;
     if(xmlName!=FQN()) {
       DOMDocument *doc = parent->getOwnerDocument();
       DOMElement *newele = D(doc)->createElement(xmlName);
       if(isActive()) {
-        dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
+        ele = dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
         parent->insertBefore(newele,ref);
       }
     }
     else {
       if(isActive())
-        dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
+        ele = dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
     }
-    return nullptr;
+    return ele;
   }
 
   void ChoiceWidget2::setWidgetFactory(WidgetFactory *factory_) {

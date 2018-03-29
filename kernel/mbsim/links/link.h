@@ -369,6 +369,7 @@ namespace MBSim {
       const fmatvec::Vec& getLa(bool check=true) const;
       fmatvec::Vec& getla(bool check=true);
       fmatvec::Vec& getLa(bool check=true);
+      fmatvec::Vec& getwb(bool check=true);
 
       int getlaInd() const { return laInd; } 
       int getlaSize() const { return laSize; } 
@@ -430,6 +431,8 @@ namespace MBSim {
 
       
       int getcorrSize() const { return corrSize; } 
+
+      bool getUpdaterrel() const { return updrrel; }
 
     protected:
       int ng, ngd, nla;

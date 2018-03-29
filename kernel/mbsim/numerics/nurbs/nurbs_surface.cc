@@ -16,24 +16,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  /*!
-   \brief  Default constructor
-
-   \warning The surface is initialized to invalid values. Use a reset or
-   a read function to set them to correct values.
-   */
-  NurbsSurface::NurbsSurface() :
-      U(1), V(1), P(1, 1) {
-  }
-
-  /*!
-   \brief  the copy constructor
-
-   \param s the NurbsSurface to copy
-   */
-  NurbsSurface::NurbsSurface(const NurbsSurface& nS) :
-      U(nS.U), V(nS.V), P(nS.P), degU(nS.degU), degV(nS.degV) {
-  }
 
   /*!
    \brief NurbsSurface assignment
@@ -88,7 +70,7 @@ namespace MBSim {
 
   void NurbsSurface::globalInterp(const GeneralMatrix<fmatvec::Vec3 >& Q, int DegU, int DegV) {
 
-    Vec vk, uk;
+    VecV vk, uk;
     resize(Q.rows(), Q.cols(), DegU, DegV);
 
     MatVx4 Pts(Q.rows(), NONINIT);
@@ -144,7 +126,7 @@ namespace MBSim {
 
    */
 
-  void NurbsSurface::globalInterp(const GeneralMatrix<fmatvec::Vec3 >& Q, const Vec& uk, const Vec& vk, int DegU, int DegV) {
+  void NurbsSurface::globalInterp(const GeneralMatrix<fmatvec::Vec3 >& Q, const VecV& uk, const VecV& vk, int DegU, int DegV) {
     if (uk.size() != Q.rows())
       throw runtime_error("(NurbsCurve::globalInterpH: In the U direction, the length of lagrange parameters vectors is not equal to the number of the given interpolated points!)");
     if (vk.size() != Q.cols())
@@ -212,7 +194,7 @@ namespace MBSim {
    */
 
   void NurbsSurface::globalInterpClosedU(const GeneralMatrix<fmatvec::Vec3 >& Q, int DegU, int DegV) {
-    Vec vk, uk;
+    VecV vk, uk;
     resize(Q.rows() + DegU, Q.cols(), DegU, DegV); // the U direction is closed interpolation, thus need to plus additional DegU size.
 
     MatVx4 Pts(Q.cols(), NONINIT);
@@ -274,7 +256,7 @@ namespace MBSim {
 
    */
 
-  void NurbsSurface::globalInterpClosedU(const GeneralMatrix<fmatvec::Vec3 >& Q, const Vec& uk, const Vec& vk, int DegU, int DegV) {
+  void NurbsSurface::globalInterpClosedU(const GeneralMatrix<fmatvec::Vec3 >& Q, const VecV& uk, const VecV& vk, int DegU, int DegV) {
     if (uk.size() != Q.rows() + DegU)
       throw runtime_error("(NurbsCurve::globalInterpH: In the U direction, the length of lagrange parameters vectors is not equal to the number of the given interpolated points plus degU!)");
     if (vk.size() != Q.cols())
@@ -580,7 +562,7 @@ namespace MBSim {
 
     deriveAtH(u, v, d, ders);
 
-    Mat Bin(d + 1, d + 1, NONINIT);  // TODO check whether need init.
+    MatV Bin(d + 1, d + 1, NONINIT);  // TODO check whether need init.
     binomialCoef(Bin);
     int i, j;
 
@@ -593,7 +575,7 @@ namespace MBSim {
           pv = pv - Bin(l, j) * ders(0, j)(3) * skl(k, l - j);
         for (i = 1; i <= k; i++) {
           pv = pv - Bin(k, i) * ders(i, 0)(3) * skl(k - i, l);
-          pv2 = Vec("[0; 0; 0]");
+          pv2 = Vec3("[0; 0; 0]");
           for (j = 1; j <= l; j++)
             pv2 = pv2 + Bin(l, j) * ders(i, j)(3) * skl(k - i, l - j);
           pv = pv - Bin(k, i) * pv2;
@@ -694,7 +676,7 @@ namespace MBSim {
   fmatvec::HPoint<3> NurbsSurface::operator()(double u, double v) const {
     int uspan = findSpanU(u);
     int vspan = findSpanV(v);
-    Vec Nu, Nv;
+    VecV Nu, Nv;
 //  Vector< HPoint_nD > temp(degV+1)  ;
     Mat temp(4, degV + 1, NONINIT);
 
@@ -754,7 +736,7 @@ namespace MBSim {
    \date 24 January, 1997
    */
 
-  int surfMeshParams(const GeneralMatrix<fmatvec::Vec3 >& Q, Vec& uk, Vec& vl) {
+  int surfMeshParams(const GeneralMatrix<fmatvec::Vec3 >& Q, VecV& uk, VecV& vl) {
     int n, m, k, l, num;
     double d, total;
     //Vector<T> cds(Q.rows()) ;
@@ -829,7 +811,7 @@ namespace MBSim {
     return 1;
   }
 
-  int surfMeshParamsClosedU(const GeneralMatrix<fmatvec::Vec3 >& Q, Vec& uk, Vec& vl, int degU) {
+  int surfMeshParamsClosedU(const GeneralMatrix<fmatvec::Vec3 >& Q, VecV& uk, VecV& vl, int degU) {
 
     int n, m, k, l, num;
     double d, total;

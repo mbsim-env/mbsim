@@ -50,7 +50,7 @@ namespace MBSimIntegrator {
     zd = self->getSystem()->evalzd();
   }
 
-  void ODEXIntegrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int *ncon, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
+  void ODEXIntegrator::plot(int* nr, double* told, double* t, double* z, int* n, double* con, int *ncon, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
     auto self=*reinterpret_cast<ODEXIntegrator**>(&ipar[0]);
 
     double curTimeAndState = -1;
@@ -105,7 +105,7 @@ namespace MBSimIntegrator {
 
       double s1 = clock();
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
-      self->s0 = s1; 
+      self->s0 = s1;
 
       if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
@@ -178,7 +178,7 @@ namespace MBSimIntegrator {
     Vec z(zSize);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throwError("(ODEXIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(ODEXIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
       z = z0;
     }
     else
@@ -195,10 +195,10 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != zSize)
-        throwError("(ODEXIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+        throwError("(ODEXIntegrator::integrate): size of aTol does not match, must be " + to_string(zSize));
     }
     if(rTol.size() != aTol.size())
-      throwError("(ODEXIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throwError("(ODEXIntegrator::integrate): size of rTol does not match aTol, must be " + to_string(aTol.size()));
 
     int out = 2; // dense output is performed in plot
 

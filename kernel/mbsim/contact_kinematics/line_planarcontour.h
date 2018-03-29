@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2018 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -21,18 +21,15 @@
 #define _CONTACT_KINEMATICS_LINE_PLANAR_CONTOUR_H_
 
 #include "contact_kinematics.h"
-#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
   class Line;
-  class Contour;
   class FuncPairPlanarContourLine;
 
   /**
-   * \brief pairing Line to PlanarContour
+   * \brief pairing line to planar contour
    * \author Martin Foerg
-   * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    */
   class ContactKinematicsLinePlanarContour : public ContactKinematics {
     public:
@@ -48,29 +45,36 @@ namespace MBSim {
       
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsLinePlanarContour::updatewb): Not implemented!"); };
+      void updateg(SingleContact &contact, int i=0) override;
+      void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
+
+      void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
+      void setInitialGuess(const fmatvec::MatV &zeta0_) override;
 
     private:
       /**
        * \brief contour index
        */
-      int iline, icontour;
+      int iline{0};
+      int iplanarcontour{0};
 
       /**
        * \brief contour classes
        */
-      Line *line;
-      Contour *contour1s;
+      Line *line{nullptr};
+      Contour *planarcontour{nullptr};
 
       /**
        * \brief root function
        */
       FuncPairPlanarContourLine *func;
+
+      bool searchAllCP{false};
+
+      std::vector<double> zeta0;
   };
 
 }
 
-#endif /* _CONTACT_KINEMATICS_LINE_CONTOUR1S_H_ */
-
+#endif

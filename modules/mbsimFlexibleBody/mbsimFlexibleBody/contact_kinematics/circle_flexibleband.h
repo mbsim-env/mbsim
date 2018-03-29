@@ -37,9 +37,9 @@ namespace MBSimFlexibleBody {
   class ContactKinematicsCircleFlexibleBand : public MBSim::ContactKinematics {
     public:
       /**
-       * \brief constructor
+       * \brief destructor
        */
-      ContactKinematicsCircleFlexibleBand();
+      ~ContactKinematicsCircleFlexibleBand() override;
 
       /*!
       */
@@ -47,11 +47,8 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<MBSim::Contour*>& contour) override;
-      void updateg(double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame) override;
+      void updateg(std::vector<MBSim::SingleContact> &contact) override;
       /***************************************************/
-
-      ContactKinematics* getContactKinematics(int i=0) const override { return contactKinematics[i]; }
 
     private:
       /** 

@@ -53,6 +53,9 @@ namespace MBSimIntegrator {
   }
 
   void LSODEIntegrator::integrate() {
+    if(method==unknown)
+      throwError("(LSODEIntegrator::integrate): method unknown");
+
     debugInit();
 
     if(odePackInUse)
@@ -71,7 +74,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != zSize)
-        throwError("(LSODEIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(LSODEIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
       system->setState(z0);
     }
     else
@@ -92,7 +95,7 @@ namespace MBSimIntegrator {
       else {
         iTol = 2;
         if(aTol.size() != zSize)
-          throwError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throwError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + to_string(zSize));
       }
     }
     else {
@@ -101,10 +104,10 @@ namespace MBSimIntegrator {
       else {
         iTol = 4;
         if(aTol.size() != zSize)
-          throwError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + toStr(zSize));
+          throwError("(LSODEIntegrator::integrate): size of aTol does not match, must be " + to_string(zSize));
       }
       if(rTol.size() != zSize)
-        throwError("(LSODEIntegrator::integrate): size of rTol does not match, must be " + toStr(zSize));
+        throwError("(LSODEIntegrator::integrate): size of rTol does not match, must be " + to_string(zSize));
     }
 
     int one=1, istate=1;
@@ -163,7 +166,7 @@ namespace MBSimIntegrator {
           istate=1;
         }
       }
-      else if(istate<0) throwError("Integrator LSODE failed with istate = "+toString(istate));
+      else if(istate<0) throwError("Integrator LSODE failed with istate = "+to_string(istate));
     }
 
     if(plotIntegrationData) integPlot.close();
@@ -187,6 +190,7 @@ namespace MBSimIntegrator {
       string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(methodStr=="nonstiff" or methodStr=="Adams") method=nonstiff;
       else if(methodStr=="stiff" or methodStr=="BDF") method=stiff;
+      else method=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());

@@ -21,6 +21,9 @@
 #define _FUNCPAIR_PLANARCONTOUR_LINE_H_
 
 #include <mbsim/functions/contact/distance_function.h>
+#include "mbsim/frames/frame.h"
+#include "mbsim/contours/contour.h"
+#include "mbsim/contours/line.h"
 
 namespace MBSim {
 
@@ -38,27 +41,15 @@ namespace MBSim {
        */
       FuncPairPlanarContourLine(Line* line_, Contour *contour_) : contour(contour_), line(line_) { }
 
-      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      double operator()(const double &s) override {
-        throwError("(FuncPairPlanarContourLine::operator): Not implemented!");
-        //fmatvec::Vec WtC = (contour->computeWt(s)).col(0);
-        //fmatvec::Vec WnL = line->computeWn();
-        //return trans(WtC)*WnL;
-      }
+      double operator()(const double &alpha) override;
 
-      fmatvec::Vec3 evalWrD(const double &s) override {
-        throwError("(FuncPairPlanarContourLine::evalWrD): Not implemented!");
-        //fmatvec::Vec WrOCContour =  contour->getWrOC(s);
-        //fmatvec::Vec Wn = contour->computeWn(s);
-        //double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition());
-        //return Wn*g;
-      }
-
-      double operator[](const double &s) override { return nrm2(evalWrD(s)); }
+      fmatvec::Vec3 evalWrD(const double &alpha) override;
 
     private:
       Contour *contour;
       Line *line;
+
+      fmatvec::Vec2 zeta;
   };
 
 }

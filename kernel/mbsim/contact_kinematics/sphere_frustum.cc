@@ -22,6 +22,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/sphere.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 
 using namespace fmatvec;
@@ -42,8 +43,7 @@ namespace MBSim {
     }
   }
 
-
-  void ContactKinematicsSphereFrustum::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsSphereFrustum::updateg(SingleContact &contact, int i) {
 
     // Bezugspunkt Kugel: Mittelpunkt
     // Bezugspunkt Kegel: Mittelpunkt Grundfläche
@@ -67,7 +67,7 @@ namespace MBSim {
     Vec2 r = frustum->getRadii(); // r(0): Basisradius, r(1): Topradius
     double r_h = r(0) + (r(1)-r(0))/h * loc; // Radius an der Stelle des Kreismittelpunkts
     
-
+    double g;
     if(loc<-sphere->getRadius() || loc>h+sphere->getRadius() || fabs(l)<epsroot) { // TODO! rudimentäre Bestimmung ob Kontakt
       g = 1;
     }
@@ -91,10 +91,10 @@ namespace MBSim {
         }
         
         // System of frustum
-        cFrame[ifrustum]->setPosition(frustum->getFrame()->getPosition() + r(0)*xAchse + loc*yAchse);
-        cFrame[ifrustum]->getOrientation(false).set(0, out*xAchse);
-        cFrame[ifrustum]->getOrientation(false).set(1, out*yAchse);
-        cFrame[ifrustum]->getOrientation(false).set(2, crossProduct(xAchse,yAchse));
+        contact.getContourFrame(ifrustum)->setPosition(frustum->getFrame()->getPosition() + r(0)*xAchse + loc*yAchse);
+        contact.getContourFrame(ifrustum)->getOrientation(false).set(0, out*xAchse);
+        contact.getContourFrame(ifrustum)->getOrientation(false).set(1, out*yAchse);
+        contact.getContourFrame(ifrustum)->getOrientation(false).set(2, crossProduct(xAchse,yAchse));
       }
 
       else {
@@ -121,19 +121,19 @@ namespace MBSim {
         double v12 = out*(v1+v2);
      
         // System of frustum
-        cFrame[ifrustum]->setPosition(frustum->getFrame()->getPosition() + (r(0)*xAchse));
-        cFrame[ifrustum]->setOrientation(AW1 * A);
-        cFrame[ifrustum]->setPosition(cFrame[ifrustum]->getPosition(false) + v12*cFrame[ifrustum]->getOrientation(false).col(1));
+        contact.getContourFrame(ifrustum)->setPosition(frustum->getFrame()->getPosition() + (r(0)*xAchse));
+        contact.getContourFrame(ifrustum)->setOrientation(AW1 * A);
+        contact.getContourFrame(ifrustum)->setPosition(contact.getContourFrame(ifrustum)->getPosition(false) + v12*contact.getContourFrame(ifrustum)->getOrientation(false).col(1));
       }
 
       // System of sphere (position)
-      cFrame[isphere]->setPosition(cFrame[ifrustum]->getPosition(false) + g*cFrame[ifrustum]->getOrientation(false).col(0));
+      contact.getContourFrame(isphere)->setPosition(contact.getContourFrame(ifrustum)->getPosition(false) + g*contact.getContourFrame(ifrustum)->getOrientation(false).col(0));
       // System of sphere (orientation)
-      cFrame[isphere]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
-      cFrame[isphere]->getOrientation(false).set(1, -cFrame[ifrustum]->getOrientation(false).col(1));
-      cFrame[isphere]->getOrientation(false).set(2, crossProduct(cFrame[isphere]->getOrientation(false).col(0),cFrame[isphere]->getOrientation(false).col(1)));
+      contact.getContourFrame(isphere)->getOrientation(false).set(0, -contact.getContourFrame(ifrustum)->getOrientation(false).col(0));
+      contact.getContourFrame(isphere)->getOrientation(false).set(1, -contact.getContourFrame(ifrustum)->getOrientation(false).col(1));
+      contact.getContourFrame(isphere)->getOrientation(false).set(2, crossProduct(contact.getContourFrame(isphere)->getOrientation(false).col(0),contact.getContourFrame(isphere)->getOrientation(false).col(1)));
 
     }
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 }
-

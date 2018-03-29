@@ -21,7 +21,6 @@
 #define _CONTACT_KINEMATICS_CIRCLE_CIRCLE_H_
 
 #include "mbsim/contact_kinematics/contact_kinematics.h"
-#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -30,16 +29,13 @@ namespace MBSim {
   /**
    * \brief pairing outer circle side to outer circle side
    * \author Martin Foerg
-   * \date 2009-04-02 some comments (Thorsten Schindler)
-   * \date 2009-07-13 updateg implemented (Bastian Esefeld)
-   * \todo updatewb implementation
    */
   class ContactKinematicsCircleCircle : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override;
+      void updateg(SingleContact &contact, int i=0) override;
+      void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
     
     private:
@@ -51,10 +47,8 @@ namespace MBSim {
       int icircle0, icircle1;
 
       double rEff0, rEff1;
-
   };
 
 }
 
 #endif
-

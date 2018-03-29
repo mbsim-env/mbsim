@@ -21,6 +21,7 @@
 #define _ROTATION_ABOUT_Z_AXIS_H_
 
 #include "mbsim/functions/function.h"
+#include "mbsim/utils/utils.h"
 
 namespace MBSim {
 

@@ -221,6 +221,7 @@ namespace MBSimGUI {
       void saveSolverAs();
       void saveEmbeddingAs();
       void loadSolver();
+      void viewSource();
 
     private slots:
       void selectElement(const std::string& ID);

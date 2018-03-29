@@ -29,6 +29,8 @@
 #include <openmbvcppinterface/extrusion.h>
 #include <openmbvcppinterface/coilspring.h>
 #include <openmbvcppinterface/indexedfaceset.h>
+#include <openmbvcppinterface/nurbscurve.h>
+#include <openmbvcppinterface/nurbssurface.h>
 
 #include <utility>
 
@@ -173,6 +175,18 @@ namespace MBSim {
     public:
       OpenMBVIndexedFaceSet(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp) { }
       std::shared_ptr<OpenMBV::IndexedFaceSet> createOpenMBV();
+  };
+
+  class OpenMBVNurbsCurve : public OpenMBVDynamicColoredBody {
+    public:
+      OpenMBVNurbsCurve(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp) { }
+      std::shared_ptr<OpenMBV::NurbsCurve> createOpenMBV();
+  };
+
+  class OpenMBVNurbsSurface : public OpenMBVDynamicColoredBody {
+    public:
+      OpenMBVNurbsSurface(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp) { }
+      std::shared_ptr<OpenMBV::NurbsSurface> createOpenMBV();
   };
 
 }

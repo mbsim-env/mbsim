@@ -34,7 +34,15 @@
 
 namespace MBSim {
 
+  /*!
+   * \brief Compute the sign of x
+   */
   double sign(double x);
+
+  /*!
+   * \brief Compute the modulo of x and y
+   */
+  inline double mod(double x, double y) { return x - y * floor (x / y); }
 
   /*!
    * \brief calculates planar angle in [0,2\pi] with respect to Cartesian coordinates of: Arc Tangent (y/x)
@@ -48,13 +56,6 @@ namespace MBSim {
    * \brief calculate a fmatvec::Mat out of a sparse matrix
    */
   fmatvec::Mat cs2Mat(cs* sparseMat);
-
-  template <class T>
-    inline std::string toStr(const T &val) {
-      std::stringstream s;
-      s << std::setprecision(std::numeric_limits<double>::digits10+1) << val;
-      return s.str();
-    }
 
   template <class Arg>
     class ToDouble {

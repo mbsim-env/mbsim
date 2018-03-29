@@ -11,12 +11,13 @@ libutils_la_SOURCES = colors.cc\
                       ansatz_functions.cc\
                       openmbv_utils.cc\
 		      planar_contact_search.cc\
-		      spatial_contact_search.cc
+		      spatial_contact_search.cc\
+		      fcl_utils.cc
 
 utilsincludedir = $(includedir)/mbsim/utils
 
 libutils_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
-libutils_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
+libutils_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(EIGEN3_CFLAGS) $(CCD_CFLAGS) $(FCL_CFLAGS)
 
 utilsinclude_HEADERS = colors.h\
                        eps.h\
@@ -34,7 +35,8 @@ utilsinclude_HEADERS = colors.h\
 		       openmbv_utils.h\
 		       planar_contact_search.h\
 		       spatial_contact_search.h\
-		       index.h
+		       index.h\
+		       fcl_utils.h
 
 noinst_PROGRAMS = cppCasADiToXML
 cppCasADiToXML_SOURCES = cppCasADiToXML.cc

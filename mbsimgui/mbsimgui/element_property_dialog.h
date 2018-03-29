@@ -116,6 +116,16 @@ namespace MBSimGUI {
       ExtWidget *name, *plotFeature;
   };
 
+  class UnknownElementPropertyDialog : public ElementPropertyDialog {
+
+    public:
+      UnknownElementPropertyDialog(Element *element, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *editor;
+  };
+
   class FramePropertyDialog : public ElementPropertyDialog {
 
     public:
@@ -264,6 +274,55 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *etaNodes, *xiNodes, *contourFunction, *open, *visu;
+  };
+
+  class FCLContourPropertyDialog : public RigidContourPropertyDialog {
+    public:
+      FCLContourPropertyDialog(RigidContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *computeLocalAABB;
+  };
+
+  class FCLBoxPropertyDialog : public FCLContourPropertyDialog {
+
+    public:
+      FCLBoxPropertyDialog(RigidContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *length, *visu;
+  };
+
+  class FCLSpherePropertyDialog : public FCLContourPropertyDialog {
+
+    public:
+      FCLSpherePropertyDialog(RigidContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *radius, *visu;
+  };
+
+  class FCLPlanePropertyDialog : public FCLContourPropertyDialog {
+
+    public:
+      FCLPlanePropertyDialog(RigidContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *normal, *offset, *visu;
+  };
+
+  class FCLMeshPropertyDialog : public FCLContourPropertyDialog {
+
+    public:
+      FCLMeshPropertyDialog(RigidContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *vertices, *triangles, *collisionStructure, *visu;
   };
 
   class GroupPropertyDialog : public ElementPropertyDialog {
@@ -609,7 +668,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *searchAllContactPoints, *initialGuess, *tolerance;
+      ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *searchAllContactPoints, *initialGuess, *tolerance, *maxNumContacts;
   };
 
   class ObserverPropertyDialog : public ElementPropertyDialog {

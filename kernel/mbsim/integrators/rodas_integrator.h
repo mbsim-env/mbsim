@@ -34,7 +34,8 @@ namespace MBSimIntegrator {
     public:
       enum Formalism {
         ODE=0,
-        DAE1
+        DAE1,
+        unknown
       };
 
     private:

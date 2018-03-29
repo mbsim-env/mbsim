@@ -21,7 +21,6 @@
 #define _CONTACT_KINIMATICS_CIRCLE_PLANE_H_
 
 #include "contact_kinematics.h"
-#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -31,14 +30,12 @@ namespace MBSim {
   /*! \brief pairing circle outer side to plane
    * \author Martin Foerg
    * \author Thorsten Schindler
-   * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    */
   class ContactKinematicsCirclePlane : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsCirclePlane::updatewb): Not implemented!"); };
+      void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
 
     protected:
@@ -57,4 +54,3 @@ namespace MBSim {
 }
 
 #endif /* _CONTACT_KINEMATICS_CIRCLESOLID_PLANE_H_ */
-

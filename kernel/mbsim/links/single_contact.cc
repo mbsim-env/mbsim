@@ -20,7 +20,6 @@
 #include <config.h> 
 #include <mbsim/links/contact.h>
 #include <mbsim/frames/contour_frame.h>
-#include <mbsim/contours/contour.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/constitutive_laws/friction_force_law.h>
@@ -28,9 +27,7 @@
 #include <mbsim/constitutive_laws/friction_impact_law.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
-#include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
-#include <mbsim/utils/rotarymatrices.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -43,16 +40,9 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SingleContact)
 
-  SingleContact::SingleContact(const string &name) : ContourLink(name) {
-  }
-
   void SingleContact::updatewb() {
-    if(gdActive[normal]) {
       wb -= evalGlobalForceDirection()(RangeV(0,2),RangeV(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
       wb += evalGlobalForceDirection()(RangeV(0,2),RangeV(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
-
-      contactKinematics->updatewb(wb, evalGeneralizedRelativePosition()(0), cFrame);
-    }
   }
 
   void SingleContact::resetUpToDate() {
@@ -117,7 +107,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedNormalForceP() {
-    static_cast<Contact*>(parent)->updateGeneralizedNormalForce();
+    static_cast<Link*>(parent)->updateGeneralizedForces();
   }
 
   void SingleContact::updateGeneralizedTangentialForceM() {
@@ -140,25 +130,12 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedPositions() {
-    updatePositions();
+    if(static_cast<Link*>(parent)->getUpdaterrel())
+      static_cast<Link*>(parent)->updateGeneralizedPositions();
     updrrel = false;
   }
 
   void SingleContact::updateGeneralizedVelocities() {
-    updateVelocities();
-    updvrel = false;
-  }
-
-  void SingleContact::updatePositions() {
-    contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
-    updPos = false;
-  }
-
-  void SingleContact::updatePositions(Frame *frame) {
-    if(updPos) contactKinematics->updateg(getGeneralizedRelativePosition(false)(0), cFrame);
-  }
-
-  void SingleContact::updateVelocities() {
     if ((fcl->isSetValued() and gdActive[normal]) or (not fcl->isSetValued() and fcl->isClosed(evalGeneralizedRelativePosition()(0), 0))) { // TODO: nicer implementation
       Vec3 Wn = cFrame[0]->evalOrientation().col(0);
 
@@ -177,7 +154,35 @@ namespace MBSim {
     }
     else
       vrel.init(0);
-    updVel = false;
+    updvrel = false;
+  }
+
+  void SingleContact::updatePositions(Frame *frame) {
+    if(static_cast<Link*>(parent)->getUpdaterrel())
+      static_cast<Link*>(parent)->updateGeneralizedPositions();
+  }
+
+  void SingleContact::updateVelocities() {
+    throw;
+    if ((fcl->isSetValued() and gdActive[normal]) or (not fcl->isSetValued() and fcl->isClosed(evalGeneralizedRelativePosition()(0), 0))) { // TODO: nicer implementation
+      Vec3 Wn = cFrame[0]->evalOrientation().col(0);
+
+      Vec3 WvD = cFrame[1]->evalVelocity() - cFrame[0]->evalVelocity();
+
+      vrel(0) = Wn.T() * WvD;
+
+      if (getFrictionDirections()) {
+        Mat3xV Wt(getFrictionDirections());
+        Wt.set(0, cFrame[0]->getOrientation().col(1));
+        if (getFrictionDirections() > 1)
+          Wt.set(1, cFrame[0]->getOrientation().col(2));
+
+        vrel.set(RangeV(1,getFrictionDirections()), Wt.T() * WvD);
+      }
+    }
+    else
+      vrel.init(0);
+//    updVel = false;
   }
 
   void SingleContact::updateg() {
@@ -475,14 +480,12 @@ namespace MBSim {
 
   void SingleContact::calcLinkStatusSize() {
     ContourLink::calcLinkStatusSize();
-    //assert(contactKinematics->getNumberOfPotentialContactPoints() == 1); //not necessary anymore as SingleContact has only one contact point
     LinkStatusSize = 1;
     LinkStatus.resize(LinkStatusSize);
   }
 
   void SingleContact::calcLinkStatusRegSize() {
     ContourLink::calcLinkStatusRegSize();
-    //assert(contactKinematics->getNumberOfPotentialContactPoints() == 1); //not necessary anymore as SingleContact has only one contact point
     LinkStatusRegSize = 1;
     LinkStatusReg.resize(LinkStatusRegSize);
   }
@@ -537,26 +540,6 @@ namespace MBSim {
 
       if (getFrictionDirections() == 0)
         gdActive[tangential] = false;
-    }
-    else if(stage==unknownStage) {
-      if (contactKinematics == nullptr) {
-        contactKinematics = contour[0]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
-        if (contactKinematics == nullptr) {
-          contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[1]), typeid(*contour[0]));
-          if (contactKinematics == nullptr) {
-            contactKinematics = contour[0]->findContactPairingWith(typeid(*contour[1]), typeid(*contour[0]));
-            if (contactKinematics == nullptr) {
-              contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
-              if (contactKinematics == nullptr)
-                throwError("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour[0]).name()) + "\" and Contour\"" + boost::core::demangle(typeid(*contour[1]).name()) + "\"!");
-            }
-          }
-        }
-      }
-    }
-    else if(stage==LASTINITSTAGE) {
-      if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
-        throwError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
     }
     ContourLink::init(stage, config);
     if(fcl) fcl->init(stage, config);
@@ -1188,37 +1171,6 @@ namespace MBSim {
       return 0;
   }
 
-  void SingleContact::initializeUsingXML(DOMElement *element) {
-    ContourLink::initializeUsingXML(element);
-    DOMElement *e;
-
-    //Set contact law
-    e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");
-    auto *gfl = ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
-    setNormalForceLaw(gfl);
-
-    //Set impact law (if given)
-    e = E(element)->getFirstElementChildNamed(MBSIM%"normalImpactLaw");
-    if (e) {
-      auto *gifl = ObjectFactory::createAndInit<GeneralizedImpactLaw>(e->getFirstElementChild());
-      setNormalImpactLaw(gifl);
-    }
-
-    //Set friction law (if given)
-    e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialForceLaw");
-    if (e) {
-      auto *ffl = ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild());
-      setTangentialForceLaw(ffl);
-    }
-
-    //Set friction impact law (if given)
-    e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialImpactLaw");
-    if (e) {
-      auto *fil = ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
-      setTangentialImpactLaw(fil);
-    }
-  }
-
   void SingleContact::updatecorr(int j) {
     if (j == 1) { // IG position
       if (gActive) { // Contact was closed
@@ -1274,13 +1226,6 @@ namespace MBSim {
     else if (j == 2) { // IB
       corrSize = gActive * gdActive[normal];
     }
-    //    else if(j==3) { // IG
-    //      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-    //        corrIndk = corrSize;
-    //        corrSizek = gActive[i]*(nla);
-    //        corrSize = corrSizek;
-    //      }
-    //    }
     else if (j == 4) { // IH
       corrSize = gActive * gdActive[normal] * (1 + gdActive[tangential] * getFrictionDirections());
     }

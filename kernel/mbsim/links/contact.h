@@ -51,7 +51,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contact
        */
-      Contact(const std::string &name = "");
+      Contact(const std::string &name = "") : Link(name) { }
 
       /**
        * \brief destructor
@@ -132,7 +132,6 @@ namespace MBSim {
       void calccorrSize(int j) override;
       void setcorrInd(int corrInd_) override;
       void checkRoot() override;
-      virtual void updateGeneralizedNormalForce();
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -149,29 +148,10 @@ namespace MBSim {
       void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
       void setTangentialForceLaw(FrictionForceLaw *fdf_); 
       void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
-      void setContactKinematics(ContactKinematics* ck, size_t index = 0) {
-        assert(index < contactKinematics.size());
-        contactKinematics[index] = ck;
-      }
-      ContactKinematics* getContactKinematics(size_t index = 0) const {
-        assert(index < contactKinematics.size());
-        return contactKinematics[index];
-      }
+      void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
+      ContactKinematics* getContactKinematics() const { return contactKinematics; }
 
-      ContactKinematics* findContactKinematics(const std::string& cKName) const {
-        int pos = find(ckNames.begin(), ckNames.end(), cKName) - ckNames.begin();
-        if (pos < static_cast<int>(ckNames.size())) {
-          return contactKinematics[pos];
-        }
-        throwError("Name of contact Kinematics is not valid");
-        return nullptr;
-      }
-
-      const std::vector<std::vector<SingleContact> > & getSubcontacts() const {
-        return contacts;
-      }
-
-      virtual void setPlotFeatureContactKinematics(std::string cKName, std::size_t pf, bool value);
+      const std::vector<SingleContact>& getSubcontacts() const { return contacts; }
       /***************************************************/
 
       /**
@@ -186,41 +166,41 @@ namespace MBSim {
        * \param name              Name of the contact in the output
        *
        */
-      void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = nullptr, const std::string & name = "");
+      void connect(Contour *contour1, Contour* contour2);
 
-      Contour* getContour(int i, int j=0) { return contour[i][j]; }
+      Contour* getContour(int i) { return contour[i]; }
 
-      SingleContact& getSingleContact(int i, int j=0) { return contacts[i][j]; }
+      SingleContact& getSingleContact(int i) { return contacts[i]; }
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void setSearchAllContactPoints(bool searchAllCP_) { searchAllCP = searchAllCP_; }
-      void setInitialGuess(const fmatvec::VecV &zeta0_) { zeta0 = zeta0_; }
+      void setInitialGuess(const fmatvec::MatV &zeta0_) { zeta0 = zeta0_; }
 
       /**
        * \brief set tolerance for root-finding
        */
       void setTolerance(double tol_) { tol = tol_; }
 
+      /**
+       * \brief set maximum number of contacts
+       */
+      void setMaximumNumberOfContacts(int maxNumContacts_) { maxNumContacts = maxNumContacts_; }
+
+      void updateGeneralizedPositions() override;
+
     protected:
       /**
        * \brief list of the single sub-contact(-points)
        */
-      std::vector<std::vector<SingleContact> > contacts;
+      std::vector<SingleContact> contacts;
 
       /**
-       * \brief list of the single contact kinematics
+       * \brief contact kinematics
        */
-      std::vector<ContactKinematics*> contactKinematics;
+      ContactKinematics* contactKinematics{nullptr};
 
-      std::vector<std::vector<Contour*> > contour;
-
-      /*!
-       * \brief names for the contact kinematics
-       *
-       * \todo: what really is annoying is the fact, that due to the concept of the compound contour the sub contacts can not be build when the contours are connected. Thus it is not possible before the contact kinematics are assigned (what happens in the preInit-stage) that plot featers (and everything else, like names for the plot and so on) can not be set before. Thus this properties have to be saved in a special list in the multiple contact or the things are set later on...
-       */
-      std::vector<std::string> ckNames;
+      std::vector<Contour*> contour{2};
 
       /*!
        * \brief plotFeatures of sub-contacts
@@ -232,37 +212,41 @@ namespace MBSim {
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level
        */
-      GeneralizedForceLaw *fcl;
+      GeneralizedForceLaw *fcl{nullptr};
 
       /**
        * \brief force law defining relation between tangential velocities and tangential forces
        */
-      FrictionForceLaw *fdf;
+      FrictionForceLaw *fdf{nullptr};
 
       /**
        * \brief force law defining relation between penetration velocity and resulting normal impulses
        */
-      GeneralizedImpactLaw *fnil;
+      GeneralizedImpactLaw *fnil{nullptr};
 
       /** 
        * \brief force law defining relation between tangential velocities and forces impulses
        */
-      FrictionImpactLaw *ftil;
+      FrictionImpactLaw *ftil{nullptr};
 
-      bool searchAllCP;
+      bool searchAllCP{false};
 
-      fmatvec::VecV zeta0;
+      fmatvec::MatV zeta0;
 
       /**
        * \brief tolerance for root-finding
        */
-      double tol;
+      double tol{1e-10};
+
+      /**
+       * \brief maximum number of contacts
+       */
+      int maxNumContacts{-1};
 
     private:
       struct saved_references {
-          std::string name1;
-          std::string name2;
-          std::string contourPairingName;
+        std::string name1;
+        std::string name2;
       };
       std::vector<saved_references> saved_ref;
   };

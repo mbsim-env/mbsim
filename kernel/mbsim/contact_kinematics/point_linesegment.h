@@ -30,15 +30,13 @@ namespace MBSim {
   /**
    * \brief pairing point to line segment
    * \author Martin Foerg
-   * \date 2010-05-20 initial commit (Martin Foerg)
-   * \date 2011-01-27 some comments (Thomas Cebulla)
    */
   class ContactKinematicsPointLineSegment : public ContactKinematics {
     public:
       /* INHERITED INTERFACE OF CONTACT_KINEMATICS */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override;
+      void updateg(SingleContact &contact, int i=0) override;
+      void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
 
     private:
@@ -58,4 +56,3 @@ namespace MBSim {
 }
 
 #endif
-

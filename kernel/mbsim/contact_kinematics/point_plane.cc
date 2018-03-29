@@ -43,55 +43,53 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointPlane::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    cFrame[iplane]->setOrientation(plane->getFrame()->evalOrientation()); // data of possible contact point
-    cFrame[ipoint]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
-    cFrame[ipoint]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
-    cFrame[ipoint]->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
+  void ContactKinematicsPointPlane::updateg(SingleContact &contact, int i) {
+    contact.getContourFrame(iplane)->setOrientation(plane->getFrame()->evalOrientation()); // data of possible contact point
+    contact.getContourFrame(ipoint)->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cFrame[iplane]->getOrientation(false).col(0); // normal is first vector of coordinate orientation
+    Vec3 Wn = contact.getContourFrame(iplane)->getOrientation(false).col(0); // normal is first vector of coordinate orientation
 
     Vec3 Wd =  point->getFrame()->evalPosition() - plane->getFrame()->evalPosition();
 
-    g = Wn.T()*Wd; // distance
+    double g = Wn.T()*Wd; // distance
 
-    cFrame[ipoint]->setPosition(point->getFrame()->getPosition()); // possible contact locations
-    cFrame[iplane]->setPosition(cFrame[ipoint]->getPosition(false) - Wn*g);
+    contact.getContourFrame(ipoint)->setPosition(point->getFrame()->getPosition()); // possible contact locations
+    contact.getContourFrame(iplane)->setPosition(contact.getContourFrame(ipoint)->getPosition(false) - Wn*g);
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
-  void ContactKinematicsPointPlane::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
-    if(wb.size()) { // check whether contact is closed
+  void ContactKinematicsPointPlane::updatewb(SingleContact &contact, int i) {
+    Vec3 v1 = contact.getContourFrame(iplane)->evalOrientation().col(2); // second tangential vector in contact
+    Vec3 n1 = contact.getContourFrame(iplane)->getOrientation().col(0); // normal in contact
+    Vec3 u1 = contact.getContourFrame(iplane)->getOrientation().col(1); // first tangential vector in contact
+    Vec3 vC1 = contact.getContourFrame(iplane)->evalVelocity(); // velocity of possible plane contact
+    Vec3 vC2 = contact.getContourFrame(ipoint)->evalVelocity(); // velocity of point
+    Vec3 Om1 = contact.getContourFrame(iplane)->evalAngularVelocity(); // angular velocity of possible plane contact
 
-      Vec3 v1 = cFrame[iplane]->evalOrientation().col(2); // second tangential vector in contact
-      Vec3 n1 = cFrame[iplane]->getOrientation().col(0); // normal in contact
-      Vec3 u1 = cFrame[iplane]->getOrientation().col(1); // first tangential vector in contact
-      Vec3 vC1 = cFrame[iplane]->evalVelocity(); // velocity of possible plane contact
-      Vec3 vC2 = cFrame[ipoint]->evalVelocity(); // velocity of point
-      Vec3 Om1 = cFrame[iplane]->evalAngularVelocity(); // angular velocity of possible plane contact
+    Vec3 &s1 = u1;
+    Vec3 &t1 = v1;
 
-      Vec3 &s1 = u1;
-      Vec3 &t1 = v1;
+    Mat3x2 R1;
+    R1.set(0, s1);
+    R1.set(1, t1);
 
-      Mat3x2 R1;
-      R1.set(0, s1);
-      R1.set(1, t1);
+    SqrMat A(2,NONINIT);
+    A(RangeV(0,0),RangeV(0,1)) = -u1.T()*R1; // first matrix row
+    A(RangeV(1,1),RangeV(0,1)) = -v1.T()*R1; // second matrix row
 
-      SqrMat A(2,NONINIT);
-      A(RangeV(0,0),RangeV(0,1)) = -u1.T()*R1; // first matrix row
-      A(RangeV(1,1),RangeV(0,1)) = -v1.T()*R1; // second matrix row
+    Vec b(2,NONINIT);
+    b(0) = -u1.T()*(vC2-vC1);
+    b(1) = -v1.T()*(vC2-vC1);
+    Vec zetad1 =  slvLU(A,b);
 
-      Vec b(2,NONINIT);
-      b(0) = -u1.T()*(vC2-vC1);
-      b(1) = -v1.T()*(vC2-vC1);
-      Vec zetad1 =  slvLU(A,b);
+    Mat3x3 tOm1 = tilde(Om1); // tilde operator
+    contact.getwb(false)(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1); // acceleration in terms of contour parametrisation
 
-      Mat3x3 tOm1 = tilde(Om1); // tilde operator
-      wb(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1); // acceleration in terms of contour parametrisation
-
-      if(wb.size() > 1) {
-        wb(1) += u1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1);
-        wb(2) += v1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1);
-      }
+    if(contact.getwb(false).size() > 1) {
+      contact.getwb(false)(1) += u1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1);
+      contact.getwb(false)(2) += v1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1);
     }
   }
 

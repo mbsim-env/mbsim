@@ -26,6 +26,12 @@ using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
+
+  ContactKinematicsCompoundContourContour::~ContactKinematicsCompoundContourContour() {
+    for(auto & contactKinematic : contactKinematics)
+      delete contactKinematic;
+  }
+
   void ContactKinematicsCompoundContourContour::assignContours(const vector<Contour*> &contour_) {
 
     if (dynamic_cast<CompoundContour*>(contour_[0])) {
@@ -43,7 +49,7 @@ namespace MBSim {
 
     Contour* c[2];
     c[icontour] = contour;
-    numberOfPotentialContactPoints = 0;
+//    numberOfPotentialContactPoints = 0;
     for (unsigned int i = 0; i < compound->getNumberOfElements(); i++) {
       c[icompound] = compound->getContourElement(i);
       ContactKinematics *tmp = findContactPairingRigidRigid(typeid(*c[0]), typeid(*c[1]));
@@ -52,10 +58,23 @@ namespace MBSim {
       if (tmp) {
         contactKinematics.push_back(tmp);
         tmp->assignContours(c[0], c[1]);
-        numberOfPotentialContactPoints += tmp->getNumberOfPotentialContactPoints();
+//        numberOfPotentialContactPoints += tmp->getNumberOfPotentialContactPoints();
       }
     }
   }
 
-}
+  void ContactKinematicsCompoundContourContour::updateg(vector<SingleContact> &contact) {
+    int k=0;
+    for(size_t i=0; i<contactKinematics.size(); i++) {
+      contactKinematics[i]->updateg(contact[k]);
+      bool collision = contact[k].getGeneralizedRelativePosition(false)(0) <= 0;
+      if(collision) {
+        k++;
+        if(k==maxNumContacts) break;
+      }
+    }
+    for(int i=k; i<maxNumContacts; i++)
+     contact[i].getGeneralizedRelativePosition(false)(0) = 1;
+  }
 
+}

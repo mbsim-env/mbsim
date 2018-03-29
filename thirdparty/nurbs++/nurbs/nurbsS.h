@@ -113,6 +113,7 @@ public:
 
   void globalInterp(const Matrix< Point_nD<T,N> >& Q, int pU, int pV);
   void globalInterpH(const Matrix< HPoint_nD<T,N> >& Q, int pU, int pV);
+  void globalInterpH(const Matrix< HPoint_nD<T,N> >& Q, const Vector<T>& ub, const Vector<T>& Uc, int pU, const Vector<T>& vb, const Vector<T>& Vc, int pV);
   void globalInterpClosedU(const Matrix< Point_nD<T,N> >& Q, int pU, int pV);
   void globalInterpClosedU(const Matrix< Point_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
   void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q, int pU, int pV);

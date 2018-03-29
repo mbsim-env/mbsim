@@ -25,6 +25,7 @@
 #include "mbsim/links/joint.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/constitutive_laws/bilateral_constraint.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/objectfactory.h"
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/frame.h>
@@ -167,7 +168,7 @@ namespace MBSim {
       else if(q0.size() == q.size())
         q = q0;
       else
-        throwError("(JointConstraint::initz): size of q0 does not match, must be " + toStr(q.size()));
+        throwError("(JointConstraint::initz): size of q0 does not match, must be " + to_string(q.size()));
 
       A.resize(nu);
     }

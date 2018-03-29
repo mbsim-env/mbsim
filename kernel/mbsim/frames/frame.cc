@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsim/frames/frame.h"
-#include "mbsim/utils/utils.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/mbsim_event.h"
 #include <openmbvcppinterface/frame.h>

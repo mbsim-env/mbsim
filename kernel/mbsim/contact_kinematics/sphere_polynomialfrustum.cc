@@ -23,6 +23,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "sphere_polynomialfrustum.h"
 #include "mbsim/contours/polynomial_frustum.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace fmatvec;
@@ -82,7 +83,7 @@ namespace MBSim {
 
   }
 
-  void ContactKinematicsSpherePolynomialFrustum::updateg(double & g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsSpherePolynomialFrustum::updateg(SingleContact &contact, int i) {
     /*Geometry*/
     //sphere center in coordinates of frustum
     Vec3 rF = frustum->getFrame()->evalPosition();
@@ -117,25 +118,25 @@ namespace MBSim {
           zeta(1) = phi;
 
           //Orientation
-          cFrame[ifrustum]->getOrientation(false).set(0, frustum->evalWn(zeta));
-          cFrame[ifrustum]->getOrientation(false).set(1, frustum->evalWu(zeta));
-          cFrame[ifrustum]->getOrientation(false).set(2, frustum->evalWv(zeta));
+          contact.getContourFrame(ifrustum)->getOrientation(false).set(0, frustum->evalWn(zeta));
+          contact.getContourFrame(ifrustum)->getOrientation(false).set(1, frustum->evalWu(zeta));
+          contact.getContourFrame(ifrustum)->getOrientation(false).set(2, frustum->evalWv(zeta));
 
-          cFrame[isphere]->getOrientation(false).set(0, - cFrame[ifrustum]->getOrientation(false).col(0));
-          cFrame[isphere]->getOrientation(false).set(1, - cFrame[ifrustum]->getOrientation(false).col(1));
-          cFrame[isphere]->getOrientation(false).set(2, cFrame[ifrustum]->getOrientation(false).col(2));
+          contact.getContourFrame(isphere)->getOrientation(false).set(0, - contact.getContourFrame(ifrustum)->getOrientation(false).col(0));
+          contact.getContourFrame(isphere)->getOrientation(false).set(1, - contact.getContourFrame(ifrustum)->getOrientation(false).col(1));
+          contact.getContourFrame(isphere)->getOrientation(false).set(2, contact.getContourFrame(ifrustum)->getOrientation(false).col(2));
 
           //Position
-          cFrame[ifrustum]->setPosition(frustum->evalPosition(zeta));
-          cFrame[isphere]->setPosition(rS + cFrame[isphere]->getOrientation(false).col(0) * sphere->getRadius());
+          contact.getContourFrame(ifrustum)->setPosition(frustum->evalPosition(zeta));
+          contact.getContourFrame(isphere)->setPosition(rS + contact.getContourFrame(isphere)->getOrientation(false).col(0) * sphere->getRadius());
 
           //Distance
-          g = cFrame[ifrustum]->getOrientation(false).col(0).T() * (cFrame[isphere]->getPosition(false) - cFrame[ifrustum]->getPosition(false));
-
+          contact.getGeneralizedRelativePosition(false)(0)  = contact.getContourFrame(ifrustum)->getOrientation(false).col(0).T() * (contact.getContourFrame(isphere)->getPosition(false) - contact.getContourFrame(ifrustum)->getPosition(false));
           return;
         }
       }
     }
-    g = 1.;
+    contact.getGeneralizedRelativePosition(false)(0) = 1;
   }
-}/* namespace MBSim */
+
+}

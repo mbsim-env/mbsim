@@ -45,54 +45,44 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointSphere::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointSphere::updateg(SingleContact &contact, int i) {
     Vec3 Wd = sphere->getFrame()->evalPosition() - point->getFrame()->evalPosition();
     double l = nrm2(Wd);
     Wd = Wd/l;
-    g = l-sphere->getRadius();
-    Vec3 t_;
-    if(fabs(Wd(0))<epsroot && fabs(Wd(1))<epsroot) {
-      t_(0) = 1.;
-      t_(1) = 0.;
-      t_(2) = 0.;
-    }
-    else {
-      t_(0) = -Wd(1);
-      t_(1) = Wd(0);
-      t_(2) = 0.0;
-    }
-    t_ = t_/nrm2(t_);
-    cFrame[ipoint]->getOrientation(false).set(0, Wd);
-    cFrame[isphere]->getOrientation(false).set(0, -cFrame[ipoint]->getOrientation(false).col(0));
-    cFrame[ipoint]->getOrientation(false).set(1, t_);
-    cFrame[isphere]->getOrientation(false).set(1, -cFrame[ipoint]->getOrientation(false).col(1));
-    cFrame[ipoint]->getOrientation(false).set(2, crossProduct(Wd,t_));
-    cFrame[isphere]->getOrientation(false).set(2, cFrame[ipoint]->getOrientation(false).col(2));
-    cFrame[ipoint]->setPosition(point->getFrame()->getPosition());
-    cFrame[isphere]->setPosition(sphere->getFrame()->getPosition() - sphere->getRadius() * Wd);
+    double g = l-sphere->getRadius();
+    Vec3 t_ = orthonormal(Wd);
+    contact.getContourFrame(ipoint)->getOrientation(false).set(0, Wd);
+    contact.getContourFrame(isphere)->getOrientation(false).set(0, -Wd);
+    contact.getContourFrame(ipoint)->getOrientation(false).set(1, t_);
+    contact.getContourFrame(isphere)->getOrientation(false).set(1, -t_);
+    contact.getContourFrame(ipoint)->getOrientation(false).set(2, crossProduct(Wd,t_));
+    contact.getContourFrame(isphere)->getOrientation(false).set(2, contact.getContourFrame(ipoint)->getOrientation(false).col(2));
+    contact.getContourFrame(ipoint)->setPosition(point->getFrame()->getPosition());
+    contact.getContourFrame(isphere)->setPosition(sphere->getFrame()->getPosition() - sphere->getRadius() * Wd);
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
-  void ContactKinematicsPointSphere::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    const Vec3 n1 = cFrame[ipoint]->evalOrientation().col(0);
-    const Vec3 u1 = cFrame[ipoint]->getOrientation().col(1);
-    const Vec3 v1 = cFrame[ipoint]->getOrientation().col(2);
+  void ContactKinematicsPointSphere::updatewb(SingleContact &contact, int i) {
+    const Vec3 n1 = contact.getContourFrame(ipoint)->evalOrientation().col(0);
+    const Vec3 u1 = contact.getContourFrame(ipoint)->getOrientation().col(1);
+    const Vec3 v1 = contact.getContourFrame(ipoint)->getOrientation().col(2);
     Vec2 zeta1 = computeAnglesOnUnitSphere(point->getFrame()->evalOrientation().T()*n1);
     const Mat3x2 U1 = point->evalWU(zeta1);
     const Mat3x2 V1 = point->evalWV(zeta1);
     const Mat3x2 N1 = point->evalWN(zeta1);
 
-    const Vec3 n2 = cFrame[isphere]->evalOrientation().col(0);
-    const Vec3 u2 = cFrame[isphere]->evalOrientation().col(1);
-    const Vec3 v2 = cFrame[isphere]->getOrientation().col(2);
+    const Vec3 n2 = contact.getContourFrame(isphere)->evalOrientation().col(0);
+    const Vec3 u2 = contact.getContourFrame(isphere)->evalOrientation().col(1);
+    const Vec3 v2 = contact.getContourFrame(isphere)->getOrientation().col(2);
     Vec2 zeta2 = computeAnglesOnUnitSphere(sphere->getFrame()->evalOrientation().T()*n2);
     const Mat3x2 R2 = sphere->evalWR(zeta2);
     const Mat3x2 U2 = sphere->evalWU(zeta2);
     const Mat3x2 V2 = sphere->evalWV(zeta2);
 
-    const Vec3 vC1 = cFrame[ipoint]->evalVelocity();
-    const Vec3 vC2 = cFrame[isphere]->evalVelocity();
-    const Vec3 Om1 = cFrame[ipoint]->evalAngularVelocity();
-    const Vec3 Om2 = cFrame[isphere]->evalAngularVelocity();
+    const Vec3 vC1 = contact.getContourFrame(ipoint)->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(isphere)->evalVelocity();
+    const Vec3 Om1 = contact.getContourFrame(ipoint)->evalAngularVelocity();
+    const Vec3 Om2 = contact.getContourFrame(isphere)->evalAngularVelocity();
 
     SqrMat A(4,NONINIT);
     A(RangeV(0,0),RangeV(0,1)).init(0);// = -u1.T()*R1;
@@ -116,11 +106,11 @@ namespace MBSim {
     const Mat3x3 tOm1 = tilde(Om1);
     const Mat3x3 tOm2 = tilde(Om2);
 
-    wb(0) += ((vC2-vC1).T()*N1/**-n1.T()*tOm1*R1**/)*zetad1+n1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
-    if (wb.size()>1) {
-      wb(1) += ((vC2-vC1).T()*U1/**-u1.T()*tOm1*R1**/)*zetad1+u1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
-      if (wb.size()>2)
-        wb(2) += ((vC2-vC1).T()*V1/**-v1.T()*tOm1*R1**/)*zetad1+v1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+    contact.getwb(false)(0) += ((vC2-vC1).T()*N1/**-n1.T()*tOm1*R1**/)*zetad1+n1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+    if (contact.getwb(false).size()>1) {
+      contact.getwb(false)(1) += ((vC2-vC1).T()*U1/**-u1.T()*tOm1*R1**/)*zetad1+u1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+      if (contact.getwb(false).size()>2)
+        contact.getwb(false)(2) += ((vC2-vC1).T()*V1/**-v1.T()*tOm1*R1**/)*zetad1+v1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
     }
   }
 

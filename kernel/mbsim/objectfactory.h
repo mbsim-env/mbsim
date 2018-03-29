@@ -26,7 +26,6 @@
 #include <functional>
 #include <stdexcept>
 #include <typeinfo>
-#include "mbsim/utils/utils.h"
 #include <mbsim/mbsim_event.h>
 #include <xercesc/dom/DOMAttr.hpp>
 #include <mbxmlutilshelper/utils.h>

@@ -188,7 +188,7 @@ namespace MBSimIntegrator {
 
       double s1 = clock();
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
-      self->s0 = s1; 
+      self->s0 = s1;
 
       if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
@@ -257,6 +257,9 @@ namespace MBSimIntegrator {
   }
 
   void RADAUIntegrator::integrate() {
+    if(formalism==unknown)
+      throwError("(RADAUIntegrator::integrate): formalism unknown");
+
     fzdot[0] = &RADAUIntegrator::fzdotODE;
     fzdot[1] = &RADAUIntegrator::fzdotDAE1;
     fzdot[2] = &RADAUIntegrator::fzdotDAE2;
@@ -274,7 +277,7 @@ namespace MBSimIntegrator {
       throwError("(RADAUIntegrator::integrate): dimension of the system must be at least 1");
 
     if(formalism==DAE3 and system->getgSize()!=system->getgdSize())
-      throwError("(RADAU5Integrator::integrate): size of g (" + toStr(system->getgSize()) + ") must be equal to size of gd (" + toStr(system->getgdSize()) + ") when using the DAE3 formalism");
+      throwError("(RADAU5Integrator::integrate): size of g (" + to_string(system->getgSize()) + ") must be equal to size of gd (" + to_string(system->getgdSize()) + ") when using the DAE3 formalism");
 
     double t = tStart;
 
@@ -282,7 +285,7 @@ namespace MBSimIntegrator {
     Vec z = y(0,zSize-1);
     if(z0.size()) {
       if(z0.size() != zSize)
-        throwError("(RADAUIntegrator::integrate): size of z0 does not match, must be " + toStr(zSize));
+        throwError("(RADAUIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
       z = z0;
     }
     else
@@ -299,10 +302,10 @@ namespace MBSimIntegrator {
     else {
       iTol = 1;
       if(aTol.size() != neq)
-        throwError("(RADAUIntegrator::integrate): size of aTol does not match, must be " + toStr(neq));
+        throwError("(RADAUIntegrator::integrate): size of aTol does not match, must be " + to_string(neq));
     }
     if(rTol.size() != aTol.size())
-      throwError("(RADAUIntegrator::integrate): size of rTol does not match aTol, must be " + toStr(aTol.size()));
+      throwError("(RADAUIntegrator::integrate): size of rTol does not match aTol, must be " + to_string(aTol.size()));
 
     int out = 1; // subroutine is available for output
 
@@ -448,6 +451,7 @@ namespace MBSimIntegrator {
       else if(formalismStr=="DAE2") formalism=DAE2;
       else if(formalismStr=="DAE3") formalism=DAE3;
       else if(formalismStr=="GGL") formalism=GGL;
+      else formalism=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
     if(e) setReducedForm((E(e)->getText<bool>()));

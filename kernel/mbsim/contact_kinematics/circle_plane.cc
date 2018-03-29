@@ -43,14 +43,14 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCirclePlane::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    cFrame[iplane]->setOrientation(plane->getFrame()->evalOrientation());
-    cFrame[icircle]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
-    cFrame[icircle]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
-    cFrame[icircle]->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
+  void ContactKinematicsCirclePlane::updateg(SingleContact &contact, int i) {
+    contact.getContourFrame(iplane)->setOrientation(plane->getFrame()->evalOrientation());
+    contact.getContourFrame(icircle)->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    contact.getContourFrame(icircle)->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
+    contact.getContourFrame(icircle)->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
     Vec3 Wd;
-    Vec3 Wn = cFrame[iplane]->getOrientation(false).col(0);
+    Vec3 Wn = contact.getContourFrame(iplane)->getOrientation(false).col(0);
     Vec3 Wb = circle->getFrame()->evalOrientation().col(2);
     double t_EC = Wn.T()*Wb;
     if(t_EC>0) {
@@ -65,9 +65,10 @@ namespace MBSim {
     else { // exactly one possible contact point
       Wd =  (circle->getFrame()->getPosition() - (circle->getRadius()/z_EC_nrm2)*z_EC) - plane->getFrame()->getPosition();
     }
-    g = Wn.T()*Wd;
-    cFrame[icircle]->setPosition(circle->getFrame()->getPosition() - (circle->getRadius()/z_EC_nrm2)*z_EC);
-    cFrame[iplane]->setPosition(cFrame[icircle]->getPosition(false) - Wn*g);
+    double g = Wn.T()*Wd;
+    contact.getContourFrame(icircle)->setPosition(circle->getFrame()->getPosition() - (circle->getRadius()/z_EC_nrm2)*z_EC);
+    contact.getContourFrame(iplane)->setPosition(contact.getContourFrame(icircle)->getPosition(false) - Wn*g);
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
 }

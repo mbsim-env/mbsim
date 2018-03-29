@@ -2,6 +2,7 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/mbsim_event.h"
+#include "mbsim/links/contact.h"
 #include "mbsim/links/maxwell_contact.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/contours/sphere.h"
@@ -11,6 +12,7 @@
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/observers/contact_observer.h"
+#include "mbsim/observers/maxwell_contact_observer.h"
 
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/arrow.h>
@@ -74,7 +76,8 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   groundBase->addContour(ground);
 
   /* contact */
-  Contact *contact;
+  std::vector<Contact*> contact;
+  MaxwellContact* maxwellContact = 0;
 
   double stiffness = 1e5;
   double damping = 10000;
@@ -83,47 +86,64 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     epsilon = 1;
 
   if(contactlaw == 0) { //Maxwell Contact
-    contact = new MaxwellContact("Contact");
+    maxwellContact = new MaxwellContact("Contact");
     //Normal force
     InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getName(), 1./stiffness);
-    static_cast<MaxwellContact*>(contact)->addContourCoupling(ground, ground, infl);
-    static_cast<MaxwellContact*>(contact)->setDampingCoefficient(damping);
+    maxwellContact->addContourCoupling(ground, ground, infl);
+    maxwellContact->setDampingCoefficient(damping);
 
     //Frictional force
-//    contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-    contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
-    contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+//    contact[0]->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    maxwellContact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    maxwellContact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+    this->addLink(maxwellContact);
   }
   else if(contactlaw == 1) { //Regularized Unilateral Contact
-    contact = new Contact("Contact");
-    //Normal force
-    contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,damping)));
+    for(int k=0; k<nB; k++) {
+      contact.push_back(new Contact("Contact_"+to_string(k)));
+      //Normal force
+      contact[k]->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,damping)));
 
-    //Frictional force
-//    contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-    contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
-    contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+      //Frictional force
+      //    contact[k]->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+      contact[k]->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+      contact[k]->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+      this->addLink(contact[k]);
+    }
   }
   else if (contactlaw == 2) { //Unilateral Constraint Contact
-    contact = new Contact("Contact");
-    //Normal force
-    contact->setNormalForceLaw(new UnilateralConstraint);
-    contact->setNormalImpactLaw(new UnilateralNewtonImpact(0));
+    for(int k=0; k<nB; k++) {
+      contact.push_back(new Contact("Contact_"+to_string(k)));
+      //Normal force
+      contact[k]->setNormalForceLaw(new UnilateralConstraint);
+      contact[k]->setNormalImpactLaw(new UnilateralNewtonImpact(0));
 
-    //Frictional force
-    contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
-    contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+      //Frictional force
+      contact[k]->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+      contact[k]->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+      this->addLink(contact[k]);
+    }
   }
 
-  this->addLink(contact);
+  if(maxwellContact) {
+    //fancy stuff
+    MaxwellContactObserver *observer = new MaxwellContactObserver("Observer");
+    addObserver(observer);
+    observer->setMaxwellContact(maxwellContact);
+    observer->enableOpenMBVContactPoints(0.01);
+    observer->enableOpenMBVNormalForce(_scaleLength=0.001);
+    observer->enableOpenMBVTangentialForce(_scaleLength=0.001);
+  }
 
-  //fancy stuff
-  ContactObserver *observer = new ContactObserver("Observer");
-  addObserver(observer);
-  observer->setContact(contact);
-  observer->enableOpenMBVContactPoints(0.01);
-  observer->enableOpenMBVNormalForce(_scaleLength=0.001);
-  observer->enableOpenMBVTangentialForce(_scaleLength=0.001);
+  for(size_t i=0; i<contact.size(); i++) {
+    //fancy stuff
+    ContactObserver *observer = new ContactObserver("Observer_"+to_string(i));
+    addObserver(observer);
+    observer->setContact(contact[i]);
+    observer->enableOpenMBVContactPoints(0.01);
+    observer->enableOpenMBVNormalForce(_scaleLength=0.001);
+    observer->enableOpenMBVTangentialForce(_scaleLength=0.001);
+  }
 
   // bodies
   for(int k=0; k<nB; k++) {
@@ -160,7 +180,10 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
 
     balls[k]->addContour(spheres[k]);
 
-    contact->connect(groundBase->getContour("Ground"),spheres[k]);
+    if(contactlaw==0)
+      maxwellContact->connect(groundBase->getContour("Ground"),spheres[k]);
+    else
+      contact[k]->connect(groundBase->getContour("Ground"),spheres[k]);
   }
 
   setPlotFeatureRecursive(generalizedPosition, true);

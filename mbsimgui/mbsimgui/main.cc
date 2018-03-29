@@ -77,7 +77,8 @@ int main(int argc, char *argv[]) {
 #ifdef _WIN32
   GetModuleFileName(nullptr, moduleName, sizeof(moduleName));
 #else
-  readlink("/proc/self/exe", moduleName, sizeof(moduleName));
+  size_t s=readlink("/proc/self/exe", moduleName, sizeof(moduleName));
+  moduleName[s]=0; // null terminate
 #endif
   QCoreApplication::setLibraryPaths(QStringList(QFileInfo(moduleName).absolutePath())); // do not load plugins from buildin defaults
   QApplication app(argc, argv);

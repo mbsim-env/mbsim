@@ -31,7 +31,7 @@ namespace MBSim {
 
   class ContactObserver : public Observer {
     protected:
-      std::vector<std::vector<SingleContactObserver> > contactObserver;
+      std::vector<SingleContactObserver> contactObserver;
 
       Contact* link;
       std::string saved_link;

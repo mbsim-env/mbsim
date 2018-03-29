@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/constitutive_laws/planar_coulomb_impact.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
 
 using namespace std;

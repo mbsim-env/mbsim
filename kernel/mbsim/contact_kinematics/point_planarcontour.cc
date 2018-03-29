@@ -49,52 +49,61 @@ namespace MBSim {
     func = new FuncPairPlanarContourPoint(point, planarcontour);
   }
 
-  void ContactKinematicsPointPlanarContour::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    
+  void ContactKinematicsPointPlanarContour::setInitialGuess(const fmatvec::MatV &zeta0_) {
+    if(zeta0_.rows()) {
+      if(zeta0_.rows() != 1 or zeta0_.cols() != 1) throw runtime_error("(ContactKinematicsPointPlanarContour::assignContours): size of zeta0 does not match");
+      zeta0 = zeta0_(0,0);
+    }
+  }
+
+  void ContactKinematicsPointPlanarContour::updateg(SingleContact &contact, int i) {
     PlanarContactSearch search(func);
     search.setTolerance(tol);
     search.setNodes(planarcontour->getEtaNodes());
 
     if(!searchAllCP)
-      search.setInitialValue(cFrame[iplanarcontour]->getEta());
+      search.setInitialValue(zeta0);
     else {
       search.setSearchAll(true);
       searchAllCP=false;
     }
 
-    cFrame[iplanarcontour]->setEta(search.slv());
+    zeta0 = search.slv();
+    contact.getContourFrame(iplanarcontour)->setEta(zeta0);
 
-    cFrame[iplanarcontour]->getOrientation(false).set(0, planarcontour->evalWn(cFrame[iplanarcontour]->getZeta()));
-    cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->evalWu(cFrame[iplanarcontour]->getZeta()));
-    cFrame[iplanarcontour]->getOrientation(false).set(2, planarcontour->evalWv(cFrame[iplanarcontour]->getZeta()));
-    cFrame[ipoint]->getOrientation(false).set(0, -cFrame[iplanarcontour]->getOrientation(false).col(0));
-    cFrame[ipoint]->getOrientation(false).set(1, -cFrame[iplanarcontour]->getOrientation(false).col(1));
-    cFrame[ipoint]->getOrientation(false).set(2, cFrame[iplanarcontour]->getOrientation(false).col(2));
-    cFrame[iplanarcontour]->setPosition(planarcontour->evalPosition(cFrame[iplanarcontour]->getZeta()));
-    cFrame[ipoint]->setPosition(point->getFrame()->evalPosition());
+    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(0, planarcontour->evalWn(contact.getContourFrame(iplanarcontour)->getZeta()));
+    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(1, planarcontour->evalWu(contact.getContourFrame(iplanarcontour)->getZeta()));
+    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(2, planarcontour->evalWv(contact.getContourFrame(iplanarcontour)->getZeta()));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(iplanarcontour)->getOrientation(false).col(0));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(1, -contact.getContourFrame(iplanarcontour)->getOrientation(false).col(1));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(2, contact.getContourFrame(iplanarcontour)->getOrientation(false).col(2));
+    contact.getContourFrame(iplanarcontour)->setPosition(planarcontour->evalPosition(contact.getContourFrame(iplanarcontour)->getZeta()));
+    contact.getContourFrame(ipoint)->setPosition(point->getFrame()->evalPosition());
 
-    if(planarcontour->isZetaOutside(cFrame[iplanarcontour]->getZeta()))
+    double g;
+    if(planarcontour->isZetaOutside(contact.getContourFrame(iplanarcontour)->getZeta()))
       g = 1;
     else
-      g = cFrame[iplanarcontour]->getOrientation(false).col(0).T() * (cFrame[ipoint]->getPosition(false) - cFrame[iplanarcontour]->getPosition(false));
+      g = contact.getContourFrame(iplanarcontour)->getOrientation(false).col(0).T() * (contact.getContourFrame(ipoint)->getPosition(false) - contact.getContourFrame(iplanarcontour)->getPosition(false));
     if(g < -planarcontour->getThickness()) g = 1;
+    contact.getGeneralizedRelativePosition(false)(0) = g;
   }
 
-  void ContactKinematicsPointPlanarContour::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsPointPlanarContour::updatewb(SingleContact &contact, int i) {
 
-    const Vec3 n1 = cFrame[ipoint]->evalOrientation().col(0);
-    const Vec3 u1 = cFrame[ipoint]->getOrientation().col(1);
+    const Vec3 n1 = contact.getContourFrame(ipoint)->evalOrientation().col(0);
+    const Vec3 u1 = contact.getContourFrame(ipoint)->getOrientation().col(1);
     const Vec3 N1 = u1;
 
-    const Vec3 u2 = cFrame[iplanarcontour]->evalOrientation().col(1);
-    const Vec3 v2 = cFrame[iplanarcontour]->getOrientation().col(2);
-    const Vec3 R2 = planarcontour->evalWs(cFrame[iplanarcontour]->getZeta());
-    const Vec3 U2 = planarcontour->evalParDer1Wu(cFrame[iplanarcontour]->getZeta());
+    const Vec3 u2 = contact.getContourFrame(iplanarcontour)->evalOrientation().col(1);
+    const Vec3 v2 = contact.getContourFrame(iplanarcontour)->getOrientation().col(2);
+    const Vec3 R2 = planarcontour->evalWs(contact.getContourFrame(iplanarcontour)->getZeta());
+    const Vec3 U2 = planarcontour->evalParDer1Wu(contact.getContourFrame(iplanarcontour)->getZeta());
 
-    const Vec3 vC1 = cFrame[ipoint]->evalVelocity();
-    const Vec3 vC2 = cFrame[iplanarcontour]->evalVelocity();
-    const Vec3 Om1 = cFrame[ipoint]->evalAngularVelocity();
-    const Vec3 Om2 = cFrame[iplanarcontour]->evalAngularVelocity();
+    const Vec3 vC1 = contact.getContourFrame(ipoint)->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(iplanarcontour)->evalVelocity();
+    const Vec3 Om1 = contact.getContourFrame(ipoint)->evalAngularVelocity();
+    const Vec3 Om2 = contact.getContourFrame(iplanarcontour)->evalAngularVelocity();
 
     SqrMat A(2,NONINIT);
     A(0,0)=0;
@@ -109,10 +118,10 @@ namespace MBSim {
     const Mat3x3 tOm1 = tilde(Om1);
     const Mat3x3 tOm2 = tilde(Om2);
 
-    wb(0) += (vC2-vC1).T()*N1*zetad(0)+n1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
-    if (wb.size()>1) {
+    contact.getwb(false)(0) += (vC2-vC1).T()*N1*zetad(0)+n1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
+    if (contact.getwb(false).size()>1) {
       const Vec3 U1=-n1;
-      wb(1) += (vC2-vC1).T()*U1*zetad(0)+u1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
+      contact.getwb(false)(1) += (vC2-vC1).T()*U1*zetad(0)+u1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
     }
   }
 

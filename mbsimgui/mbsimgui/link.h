@@ -29,6 +29,12 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override { return new LinkContextMenu(this); }
   };
 
+  class UnknownLink : public Link {
+    public:
+      QString getType() const override { return "UnknownLink"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+  };
+
   class MechanicalLink : public Link {
   };
 

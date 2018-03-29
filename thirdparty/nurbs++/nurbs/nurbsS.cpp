@@ -970,6 +970,42 @@ void NurbsSurface<T,N>::globalInterpH(const Matrix< HPoint_nD<T,N> >& Q, int pU,
   }
 }
 
+template <class T, int N>
+void NurbsSurface<T,N>::globalInterpH(const Matrix< HPoint_nD<T,N> >& Q, const Vector<T>& ub, const Vector<T>& Uc, int pU, const Vector<T>& vb, const Vector<T>& Vc, int pV){
+  Vector<T> vk=vb,uk=ub;
+  U = Uc;
+  V = Vc;
+
+  resize(Q.rows(),Q.cols(),pU,pV) ;
+
+//  surfMeshParamsH(Q,uk,vk) ;
+//  knotAveraging(uk,pU,U) ;
+//  knotAveraging(vk,pV,V) ;
+
+  Vector< HPoint_nD<T,N> > Pts(Q.rows()) ;
+  NurbsCurve<T,N> RU, RV ;
+
+  int i,j ;
+
+  for(j=0;j<Q.cols();j++){
+    for(i=0;i<Q.rows();i++)
+      Pts[i] = Q(i,j) ;
+    RU.globalInterpH(Pts,uk,U,pU);
+    for(i=0;i<Q.rows();i++)
+      P(i,j) = RU.ctrlPnts(i) ;
+  }
+
+  Pts.resize(Q.cols()) ;
+  for(i=0;i<Q.rows();i++){
+    for(j=0;j<Q.cols();j++)
+      Pts[j] = P(i,j) ;
+    RV.globalInterpH(Pts,vk,V,pV) ;
+    for(j=0;j<Q.cols();j++)
+      P(i,j) = RV.ctrlPnts(j) ;
+  }
+}
+
+
 /*! 
   \brief generates a surface using global least squares approximation.
 

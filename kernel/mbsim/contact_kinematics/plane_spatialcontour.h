@@ -36,7 +36,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsPlaneSpatialContour()  { }
+      ContactKinematicsPlaneSpatialContour() = default;
 
       /**
        * \brief destructor
@@ -45,12 +45,12 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override;
+      void updateg(SingleContact &contact, int i=0) override;
+      void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
 
       void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
-      void setInitialGuess(const fmatvec::VecV &zeta0_) override { zeta0 = zeta0_; }
+      void setInitialGuess(const fmatvec::MatV &zeta0_) override;
 
    private:
       /**
@@ -68,11 +68,11 @@ namespace MBSim {
       /**
        * \brief root function
        */
-      MBSim::FuncPairSpatialContourPlane *func;
+      FuncPairSpatialContourPlane *func;
 
       bool searchAllCP{false};
 
-      fmatvec::VecV zeta0;
+      std::vector<fmatvec::Vec2> zeta0;
   };
 
 }

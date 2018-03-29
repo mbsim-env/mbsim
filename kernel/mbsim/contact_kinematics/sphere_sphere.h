@@ -21,7 +21,6 @@
 #define _CONTACT_KINEMATICS_SPHERE_SPHERE_H_
 
 #include "contact_kinematics.h"
-#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -30,17 +29,12 @@ namespace MBSim {
   /**
    * \brief pairing sphere to sphere
    * \author Martin Foerg
-   * \date 2009-04-02 some comments (Thorsten Schindler) 
-   * \todo change stage to new interface TODO
    */
   class ContactKinematicsSphereSphere : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsSphereSphere:updatewb): Not implemented!"); }
-      //virtual void stage1(double &g, std::vector<ContourPointData> &cpData);
-      //virtual void stage2(double g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
+      void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
 
     private:
@@ -60,4 +54,3 @@ namespace MBSim {
 }
 
 #endif
-

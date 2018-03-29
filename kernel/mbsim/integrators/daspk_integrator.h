@@ -38,7 +38,8 @@ namespace MBSimIntegrator {
         ODE=0,
         DAE1,
         DAE2,
-        GGL
+        GGL,
+        unknown
       };
 
     private:

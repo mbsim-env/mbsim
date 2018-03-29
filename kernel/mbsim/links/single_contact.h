@@ -47,13 +47,14 @@ namespace MBSim {
   class SingleContact: public ContourLink {
 
     friend class Contact;
+    friend class MaxwellContact;
 
     public:
       /*!
        * \brief constructor
        * \param name of contact
        */      
-      SingleContact(const std::string &name="");
+      SingleContact(const std::string &name="") : ContourLink(name) { }
 
       void resetUpToDate() override;
 
@@ -92,7 +93,6 @@ namespace MBSim {
       void updateGeneralizedForces() override;
       void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
-      void updatePositions() override;
       void updatePositions(Frame *frame) override;
       void updateVelocities() override;
       void updateg() override;
@@ -148,8 +148,6 @@ namespace MBSim {
       void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
       void setTangentialForceLaw(FrictionForceLaw *fdf_);
       void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
-      void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
-      ContactKinematics* getContactKinematics() const { return contactKinematics; }
       /***************************************************/
 
       /**
@@ -157,28 +155,12 @@ namespace MBSim {
        */
       virtual int getFrictionDirections() const;
 
-      /*! connect two contours
-       * \param first contour
-       * \param second contour
-       * \param specify the contact kinematics
-       *
-       * REMARK: The contact frame of the first contour is used to plot the contacts data in
-       */
-//      void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0);
-
-      void initializeUsingXML(xercesc::DOMElement *element) override;
-
       void calccorrSize(int j) override;
       void updatecorr(int j) override;
 
       void checkRoot() override;
 
     protected:
-      /**
-       * \brief used contact kinematics
-       */
-      ContactKinematics *contactKinematics{nullptr};
-
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level
        */

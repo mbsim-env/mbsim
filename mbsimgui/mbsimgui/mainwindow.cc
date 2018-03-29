@@ -2026,6 +2026,16 @@ namespace MBSimGUI {
     solverViewClicked();
   }
 
+  void MainWindow::viewSource() {
+    QModelIndex index = elementView->selectionModel()->currentIndex();
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
+    auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+    if(element) {
+      SourceDialog dialog(element);
+      dialog.exec();
+    }
+  }
+
   void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
     if (event->mimeData()->hasUrls()) {
       event->acceptProposedAction();

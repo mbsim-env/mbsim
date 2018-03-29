@@ -37,10 +37,15 @@ namespace MBSim {
    */
   class NurbsCurve {
     public:
+      enum Method {
+        equallySpaced = 0,
+        chordLength,
+      };
+
       /*!
        * \brief standard constructor
        */
-      NurbsCurve();
+      NurbsCurve() = default;
 //        NurbsCurve(Matrix<T> inverse) {
 //          Inverse = inverse;
 //          Inverse_setted = 1;
@@ -48,38 +53,28 @@ namespace MBSim {
 //        NurbsCurve(const NurbsCurve<T, N>& nurb);
 //        NurbsCurve(const Vector<fmatvec::HPoint<3>  >& P1, const std::vector<double> &U1, int deg = 3);
 //        NurbsCurve(const Vector<fmatvec::Point<3>  >& P1, const std::vector<double> &W, const std::vector<double> &U1, int deg = 3);
-      virtual ~NurbsCurve(); // empty destructor
+      virtual ~NurbsCurve() = default;
 
       // Reference to internal data
       //! a reference to the degree of the curve
-      int degree() const
-      {
-        return deg;
-      }
+      int degree() const { return deg; }
       //! a reference to the vector of control points
-      const fmatvec::MatVx4 & ctrlPnts() const
-      {
-        return P;
-      }
+      const fmatvec::MatVx4 & ctrlPnts() const { return P; }
       //! a reference to one of the control points
-      const fmatvec::Vec4 ctrlPnts(int i) const
-      {
-        return trans(P.row(i));
-      }
+      const fmatvec::Vec4 ctrlPnts(int i) const { return trans(P.row(i)); }
       //! a reference to the vector of knots
-      const fmatvec::Vec& knot() const
-      {
-        return U;
-      }
+      const fmatvec::VecV& knot() const { return U; }
       //! the i-th knot
-      double knot(int i) const
-      {
-        return U(i);
-      }
+      double knot(int i) const { return U(i); }
+      //! a reference to the parametric points
+      const fmatvec::VecV getuVec() const { return u; }
 
-      const fmatvec::Vec getuVec() const {
-        return u;
-      }
+      void setKnot(const fmatvec::VecV& U_) { U = U_; }
+      void setCtrlPnts(const fmatvec::MatVx4& P_) { P = P_; }
+      void setDegree(int deg_) { deg = deg_; }
+      void setu(const fmatvec::VecV& u_) { u = u_; }
+
+      void resize(int n, int Deg);
 
       // basic functions
 
@@ -175,10 +170,8 @@ namespace MBSim {
       void globalInterp(const std::vector<fmatvec::Point<3> >& Q, double uMin, double uMax, int d, bool updateLater = false);
       void globalInterp(const fmatvec::MatVx3& Q, double uMin, double uMax, int d, bool updateLater = false);
 
-//        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, int d);
-//        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, const std::vector<double>& U, int d);
-      void globalInterpH(const fmatvec::MatVx4& Qw, const fmatvec::Vec& ub, const fmatvec::Vec& Uc, int d, bool updateLater = false);
-//        void globalInterpClosed(const Vector<fmatvec::Point<3>  >& Qw, int d);
+      void globalInterpH(const fmatvec::MatVx4& Qw, int d, Method method=chordLength);
+      void globalInterpH(const fmatvec::MatVx4& Qw, const fmatvec::VecV& ub, const fmatvec::VecV& Uc, int d, bool updateLater = false);
       /*!
        * \brief closed interpolation of the given (not yet wrapped) points at the given knot vector "ub" in a degree of "d"
        */
@@ -190,10 +183,8 @@ namespace MBSim {
       void update(const fmatvec::MatVx3& Q);
       void update(const fmatvec::MatVx4& Qw);
 
-//        void globalInterpClosedH(const Vector<fmatvec::HPoint<3>  >& Qw, int d);
-//        void globalInterpClosedH(const Vector<fmatvec::HPoint<3>  >& Qw, const std::vector<double>& U, int d);
-      void globalInterpClosedH(const fmatvec::MatVx4& Qw, const fmatvec::Vec& ub, const fmatvec::Vec& Uc, int d, bool updateLater = false);
-//        void globalInterpClosed(const Vector<fmatvec::Point<3>  >& Qw, const std::vector<double>& ub, const std::vector<double>& Uc, int d);
+      void globalInterpClosedH(const fmatvec::MatVx4& Qw, int d, Method method=chordLength);
+      void globalInterpClosedH(const fmatvec::MatVx4& Qw, const fmatvec::VecV& ub, const fmatvec::VecV& Uc, int d, bool updateLater = false);
 //
 //        void globalInterpD(const Vector<fmatvec::Point<3>  >& Q, const Vector<fmatvec::Point<3>  >& D, int d, int unitD, T a = 1.0);
 //
@@ -289,14 +280,14 @@ namespace MBSim {
     protected:
       fmatvec::MatVx4 P; // the vector of control points
       fmatvec::SqrMat inverse; //Inverse of Ansatz-functions in case of only update later (different points, same knot-Vecs and same degree)
-      fmatvec::Vec u;  // the knot vector
-      fmatvec::Vec U;  // the knot vector
+      fmatvec::VecV u;  // the parameteric points
+      fmatvec::VecV U;  // the knot vector
       int deg{0};  // the degree of the NURBS curve
 
-      void resize(int n, int Deg);
-
       void knotAveraging(const std::vector<double>& uk, int deg);
-      double chordLengthParam(const fmatvec::MatVx3& Q, fmatvec::Vec& ub);
+      double chordLengthParam(const fmatvec::MatVx3& Q, fmatvec::VecV& ub);
+      double chordLengthParamH(const fmatvec::MatVx4& Q, fmatvec::VecV& ub);
+      double chordLengthParamClosedH(const fmatvec::MatVx4& Q, fmatvec::VecV& ub, int d);
       void updateUVecs(double uMin, double uMax);
 
       void knotAveragingClosed(const std::vector<double>& uk, int deg);
@@ -307,11 +298,11 @@ namespace MBSim {
   };
 
   //TODO: put those functions into mother nurbs class (maybe) to make them "func(...) const"
-  void knotAveraging(const fmatvec::Vec& uk, int deg, fmatvec::Vec& U);
-  void knotAveragingClosed(const fmatvec::Vec& uk, int deg, fmatvec::Vec& U);
-  void basisFuns(double u, int span, int deg, const fmatvec::Vec & U, fmatvec::Vec& funs);
-  void dersBasisFuns(int n, double u, int span, int deg, const fmatvec::Vec & U, fmatvec::Mat& ders);
-  void binomialCoef(fmatvec::Mat& Bin);
+  void knotAveraging(const fmatvec::VecV& uk, int deg, fmatvec::VecV& U);
+  void knotAveragingClosed(const fmatvec::VecV& uk, int deg, fmatvec::VecV& U);
+  void basisFuns(double u, int span, int deg, const fmatvec::VecV & U, fmatvec::VecV& funs);
+  void dersBasisFuns(int n, double u, int span, int deg, const fmatvec::VecV & U, fmatvec::Mat& ders);
+  void binomialCoef(fmatvec::MatV& Bin);
 
 }
 #endif

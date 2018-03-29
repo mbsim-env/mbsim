@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsim/contours/planar_contour.h"
 #include "mbsim/functions/function.h"
-#include "mbsim/utils/contact_utils.h"
 
 using namespace std;
 using namespace fmatvec;

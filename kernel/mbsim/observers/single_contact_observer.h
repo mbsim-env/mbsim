@@ -32,6 +32,7 @@ namespace MBSim {
   class SingleContactObserver : public MechanicalLinkObserver {
 
     friend class ContactObserver;
+    friend class MaxwellContactObserver;
 
     protected:
       /**

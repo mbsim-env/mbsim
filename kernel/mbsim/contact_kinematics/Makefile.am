@@ -30,12 +30,13 @@ libcontactkinematics_la_SOURCES = point_line.cc\
 				  edge_edge.cc\
 				  plate_polynomialfrustum.cc\
 				  compoundcontour_contour.cc\
-				  compoundcontour_compoundcontour.cc
+				  compoundcontour_compoundcontour.cc\
+				  fclcontour_fclcontour.cc
 
 contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 
-libcontactkinematics_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-libcontactkinematics_la_LIBADD =  $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
+libcontactkinematics_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(EIGEN3_CFLAGS) $(CCD_CFLAGS) $(FCL_CFLAGS)
+libcontactkinematics_la_LIBADD =  $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 contactkinematicsinclude_HEADERS = contact_kinematics.h\
 				   point_line.h\
@@ -69,4 +70,5 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h\
 				   edge_edge.h\
 				   plate_polynomialfrustum.h\
 				   compoundcontour_contour.h\
-				   compoundcontour_compoundcontour.h
+				   compoundcontour_compoundcontour.h\
+				   fclcontour_fclcontour.h

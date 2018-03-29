@@ -86,6 +86,9 @@ namespace MBSimIntegrator {
   }
 
   void LSODIIntegrator::integrate() {
+    if(formalism==unknown)
+      throwError("(LSODIIntegrator::integrate): formalism unknown");
+
     res[0] = &LSODIIntegrator::resODE;
     res[1] = &LSODIIntegrator::resDAE2;
     res[2] = &LSODIIntegrator::resGGL;
@@ -124,7 +127,7 @@ namespace MBSimIntegrator {
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
-        throwError("(LSODIIntegrator::integrate): size of z0 does not match, must be " + toStr(system->getzSize()));
+        throwError("(LSODIIntegrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()));
       system->setState(z0);
     }
     else
@@ -145,7 +148,7 @@ namespace MBSimIntegrator {
       else {
         iTol = 2;
         if(aTol.size() != N)
-          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + toStr(N));
+          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + to_string(N));
       }
     }
     else {
@@ -154,10 +157,10 @@ namespace MBSimIntegrator {
       else {
         iTol = 4;
         if(aTol.size() != N)
-          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + toStr(N));
+          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + to_string(N));
       }
       if(rTol.size() != N)
-        throwError("(LSODIIntegrator::integrate): size of rTol does not match, must be " + toStr(N));
+        throwError("(LSODIIntegrator::integrate): size of rTol does not match, must be " + to_string(N));
     }
 
     int itask=1, istate=1, iopt=0;
@@ -219,7 +222,7 @@ namespace MBSimIntegrator {
           istate=1;
         }
       }
-      else if(istate<0) throwError("Integrator LSODI failed with istate = "+toString(istate));
+      else if(istate<0) throwError("Integrator LSODI failed with istate = "+to_string(istate));
     }
 
     if(plotIntegrationData) integPlot.close();
@@ -260,6 +263,7 @@ namespace MBSimIntegrator {
       if(formalismStr=="ODE") formalism=ODE;
       else if(formalismStr=="DAE2") formalism=DAE2;
       else if(formalismStr=="GGL") formalism=GGL;
+      else formalism=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(E(e)->getText<double>());

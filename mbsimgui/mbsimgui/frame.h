@@ -33,6 +33,12 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override { return new FrameContextMenu(this); }
   };
 
+  class UnknownFrame : public Frame {
+    public:
+      QString getType() const override { return "UnknownFrame"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+  };
+
   class InternalFrame : public Frame {
     public:
       InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const QString &plotFeatureType_="");

@@ -20,9 +20,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   roomBody->setInertiaTensor(SymMat3(EYE));
   roomBody->setFrameOfReference(getFrameI());
   Room* room = new Room("Raum");
-  room->setXLength(.3); //X
-  room->setYLength(.2); //Y
-  room->setZLength(0.1); //Z
+  room->setLength(0.3,0.1,0.2);
   room->setFrameOfReference(I);
   room->enableOpenMBV(_transparency=0.5);
   roomBody->addContour(room);
@@ -63,9 +61,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  sphere->setRadius(0.01);
 
   Cuboid *cuboid = new Cuboid("Wuerfel");
-  cuboid->setXLength(l);
-  cuboid->setYLength(h);
-  cuboid->setZLength(b);
+  cuboid->setLength(l,h,b);
   cuboid->setFrameOfReference(body->getFrameC());
   body->addContour(cuboid);
 

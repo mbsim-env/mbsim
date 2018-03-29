@@ -253,6 +253,11 @@ namespace MBSimGUI {
       DataPlot *plot;
   };
 
+  class SourceDialog : public QDialog {
+    public:
+      SourceDialog(Element *element, QWidget *parent=0);
+  };
+
 }
 
 #endif

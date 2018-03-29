@@ -21,7 +21,6 @@
 #define _CONTACT_KINEMATICS_POINT_AREA_H_
 
 #include "contact_kinematics.h"
-#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -31,15 +30,12 @@ namespace MBSim {
   /** 
    * \brief pairing point to plate (bounded plane)
    * \author Martin Foerg
-   * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
-   * \todo change stage to new interface TODO
    */
   class ContactKinematicsPointPlate : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) override;
-      void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) override { throw std::runtime_error("(ContactKinematicsPointPlate::updatewb): Not implemented!"); };
+      void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
     
     private:
@@ -59,4 +55,3 @@ namespace MBSim {
 }
 
 #endif /* _CONTACT_KINEMATICS_POINT_AREA_H_ */
-

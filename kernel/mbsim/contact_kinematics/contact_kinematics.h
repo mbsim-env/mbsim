@@ -20,6 +20,7 @@
 #ifndef _CONTACT_KINEMATICS_H_
 #define _CONTACT_KINEMATICS_H_
 
+#include "mbsim/links/single_contact.h"
 #include "fmatvec/fmatvec.h"
 #include "fmatvec/atom.h"
 #include <vector>
@@ -41,7 +42,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematics()  = default;
+      ContactKinematics(int maxNumContacts_=1) : maxNumContacts(maxNumContacts_) { }
 
       /**
        * \brief destructor
@@ -56,22 +57,32 @@ namespace MBSim {
       virtual void assignContours(const std::vector<Contour*> &contour) = 0;
 
       /**
-       * \brief compute normal distance, possible contact point positions and orientation (cf. contact.cc)
-       * \param t      time
-       * \param g      normal distance
-       * \param cFrame contour point Frame
-       * \param index  index of the contact point that should be updated
+       * \brief compute contact kinematics for all contacts
+       * \param contact vector of all contacts
+       * \param i index of the contact point that should be updated
        */
-      virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) = 0;
+      virtual void updateg(std::vector<SingleContact> &contact) { for(int i=0; i<maxNumContacts; i++) updateg(contact[i],i); }
 
       /**
-       * \brief compute acceleration in terms of contour parameters for event driven integration
-       * \param t      time
-       * \param wb acceleration in terms of contour parameters
-       * \param g normal distance
-       * \param cFrame contact point parametrisation
+       * \brief compute contact kinematics for a single contact
+       * \param conctact single contact
+       * \param i index of the contact that should be updated
        */
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) = 0;
+      virtual void updateg(SingleContact &contact, int i=0) { }
+
+      /**
+       * \brief compute contact kinematics on acceleration level for all contacts
+       * \param conctact single contact
+       * \param i index of the contact that should be updated
+       */
+      virtual void updatewb(std::vector<SingleContact> &contact) { for(int i=0; i<maxNumContacts; i++) updatewb(contact[i],i); }
+
+      /**
+       * \brief compute contact kinematics on acceleration level for a single contact
+       * \param conctact single contact
+       * \param i index of the contact that should be updated
+       */
+      virtual void updatewb(SingleContact &contact, int i=0) { throw std::runtime_error("(ContactKinematics:updatewb): Not implemented!"); }
       
       /** 
        * \brief treats ordering of contours
@@ -81,30 +92,37 @@ namespace MBSim {
       void assignContours(Contour *contour1, Contour *contour2) { std::vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c); }
 
       /**
-       * \return number of potential contact points
+       * \return maximum number of contacts
        */
-      int getNumberOfPotentialContactPoints() const { return numberOfPotentialContactPoints; }
-
-      virtual ContactKinematics* getContactKinematics(int i=0) const { return nullptr; }
+      int getMaximumNumberOfContacts() const { return maxNumContacts; }
 
       virtual void setSearchAllContactPoints(bool searchAllCP_=true) { }
-      virtual void setInitialGuess(const fmatvec::VecV &zeta0_) { }
+
+      /**
+       * \brief set initial guess for root-finding
+       */
+      virtual void setInitialGuess(const fmatvec::MatV &zeta0_) { }
 
       /**
        * \brief set tolerance for root-finding
        */
       void setTolerance(double tol_) { tol = tol_; }
 
-    protected:
       /**
-       * \brief number of potential contact points
+       * \brief set maximum number of contacts
        */
-      int numberOfPotentialContactPoints{1};
+      void setMaximumNumberOfContacts(int maxNumContacts_) { maxNumContacts = maxNumContacts_; }
 
+    protected:
       /**
        * \brief tolerance for root-finding
        */
       double tol{1e-10};
+
+      /**
+       * \brief maximum number of contacts
+       */
+      int maxNumContacts{1};
   };
 
 }

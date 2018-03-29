@@ -21,6 +21,7 @@
 #define _CONSTANT_FUNCTION_H_
 
 #include "mbsim/functions/function.h"
+#include "mbsim/utils/utils.h"
 
 namespace MBSim {
 

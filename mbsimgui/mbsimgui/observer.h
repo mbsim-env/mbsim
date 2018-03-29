@@ -29,6 +29,12 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override { return new ObserverContextMenu(this); }
   };
 
+  class UnknownObserver : public Observer {
+    public:
+      QString getType() const override { return "UnknownObserver"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+  };
+
   class KinematicCoordinatesObserver : public Observer {
     public:
       QString getType() const override { return "KinematicCoordinatesObserver"; }

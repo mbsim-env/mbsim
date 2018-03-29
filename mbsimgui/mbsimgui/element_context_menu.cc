@@ -54,6 +54,9 @@ namespace MBSimGUI {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,SIGNAL(triggered()),mw->getElementView(),SLOT(openEditor()));
     QMenu::addAction(action);
+    action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(viewSource()));
+    QMenu::addAction(action);
     if(saveable) {
       addSeparator();
       action=new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
@@ -246,6 +249,18 @@ namespace MBSimGUI {
     action = new QAction("Add spatial contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSpatialContour()));
     addAction(action);
+    action = new QAction("Add fcl box", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFCLBox()));
+    addAction(action);
+    action = new QAction("Add fcl sphere", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFCLSphere()));
+    addAction(action);
+    action = new QAction("Add fcl plane", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFCLPlane()));
+    addAction(action);
+    action = new QAction("Add fcl mesh", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFCLMesh()));
+    addAction(action);
   }
 
   void ContoursContextMenu::paste() {
@@ -294,6 +309,22 @@ namespace MBSimGUI {
 
   void ContoursContextMenu::addSpatialContour() {
     mw->addContour(new SpatialContour, element);
+  }
+
+  void ContoursContextMenu::addFCLBox() {
+    mw->addContour(new FCLBox, element);
+  }
+
+  void ContoursContextMenu::addFCLSphere() {
+    mw->addContour(new FCLSphere, element);
+  }
+
+  void ContoursContextMenu::addFCLPlane() {
+    mw->addContour(new FCLPlane, element);
+  }
+
+  void ContoursContextMenu::addFCLMesh() {
+    mw->addContour(new FCLMesh, element);
   }
 
   GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
