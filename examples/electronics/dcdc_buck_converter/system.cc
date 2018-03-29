@@ -14,9 +14,6 @@ using namespace MBSim;
 extern bool setValued;
 
 using namespace std;
-double mod(double x, double y) {
- return x - y * floor (x / y);
-}
 
 class VoltageSensor : public MBSimControl::Sensor {
   protected:
@@ -30,7 +27,6 @@ class VoltageSensor : public MBSimControl::Sensor {
     }
     int getSignalSize() const { return comp->getGeneralizedForceSize(); }
 };
-
 
 class SwitchSignal : public MBSimControl::Signal {
   protected:
