@@ -47,7 +47,7 @@
           ]
             </controlPoints>
             <numberOfControlPoints>5</numberOfControlPoints>
-            <degree>2</degree>
+            <degree>3</degree>
             <open>true</open>
             <enableOpenMBV/>
           </PlanarNurbsContour>
