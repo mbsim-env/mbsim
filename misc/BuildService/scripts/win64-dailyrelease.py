@@ -28,7 +28,7 @@ os.environ["PLATFORM"]="Windows" # required for source code examples
 os.environ["CXX"]="x86_64-w64-mingw32-g++" # required for source code examples
 os.environ['MBSIM_SWIG']='1'
 
-ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix",
+ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "20", "-j", "2", "--sourceDir", SRCDIR, "--prefix",
   SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "win64-dailyrelease", "--webapp",
   "--enableCleanPrefix", "--passToConfigure", "--with-lowram", "--enable-python", "--enable-shared", "--disable-static", "--build=x86_64-redhat-linux", "--host=x86_64-w64-mingw32",
   "--with-javajniosdir="+SCRIPTDIR+"/buildPreparation/windows",
