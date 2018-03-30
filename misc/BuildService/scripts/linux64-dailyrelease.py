@@ -17,7 +17,7 @@ os.environ["CFLAGS"]="-g -O2 -DNDEBUG"
 os.environ["FFLAGS"]="-g -O2 -DNDEBUG"
 os.environ['MBSIM_SWIG']='1'
 
-ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--webapp",
+ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "20", "-j", "2", "--sourceDir", SRCDIR, "--webapp",
   "--prefix", SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "linux64-dailyrelease",
   "--enableCleanPrefix", "--passToConfigure", "--with-lowram", "--enable-python", "--enable-shared", "--disable-static",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin", "--with-qmake=qmake-qt5",
