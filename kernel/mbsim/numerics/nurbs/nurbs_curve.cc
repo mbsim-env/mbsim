@@ -655,6 +655,42 @@ namespace MBSim {
 
   }
 
+  void updateUVecs(double uMin, double uMax, fmatvec::VecV& u, int deg, fmatvec::VecV& U) {
+    const double stepU = (uMax - uMin) / (u.rows() - 1);
+    u(0) = uMin;
+    for (int i = 1; i < u.rows(); i++) {
+      u(i) = u(i - 1) + stepU;
+    }
+
+    int j;
+    for (j = 0; j < deg + 1; j++) { // the first and last (degV+1)-Values have to be equal
+      U(j) = uMin;
+      U(U.rows() - j - 1) = uMax;
+    }
+
+    for (j = 1; j < u.rows() - deg; ++j) {
+      U(j + deg) = 0.0;
+      for (int i = j; i < j + deg; ++i)
+        U(j + deg) += u(i);
+      U(j + deg) /= deg;
+    }
+  }
+
+  void updateUVecsClosed(double uMin, double uMax, fmatvec::VecV& u, int deg, fmatvec::VecV& U) {
+    const double stepU = (uMax - uMin) / (u.rows() - deg);
+
+    u(0) = 0.;
+    for (int i = 1; i < u.rows(); i++) {
+      u(i) = u(i - 1) + stepU;
+    }
+
+    U(0) = -deg * stepU;
+    for (int i = 1; i < U.rows(); i++) {
+      U(i) = U(i - 1) + stepU;
+    }
+
+  }
+
   void basisFuns(double u, int span, int deg, const VecV & U, VecV& funs) {
     auto* left = (double*) alloca(2 * (deg + 1) * sizeof(double));
     double* right = &left[deg + 1];

@@ -236,6 +236,10 @@ namespace MBSim {
       for (i = 0; i < Q.rows() + degU; i++) // + degU is to get the repeated control points, P has to contains those repeated points for the operator()
         P(i, j) = R.ctrlPnts(i);
     }
+    cout << U << endl;
+    cout << V << endl;
+    cout << uk << endl;
+    cout << vk << endl;
 //   cout << "fmatvec_suface: final control points for U and V direction" << P << endl;
   }
 
@@ -305,7 +309,88 @@ namespace MBSim {
     }
 //   cout << "fmatvec_suface: final control points for U and V direction" << P << endl;
   }
+
+  void NurbsSurface::globalInterpH(const GeneralMatrix<fmatvec::Vec4>& Qw, int pU, int pV, Method method) {
+
+    VecV vk, uk;
+
+    resize(Qw.rows(), Qw.cols(), pU, pV);
+
+    if(method == chordLength) {
+      surfMeshParamsH(Qw,uk,vk);
+      knotAveraging(uk,pU,U);
+      knotAveraging(vk,pV,V);
+    }
+    else if(method == equallySpaced) {
+      uk.resize(Qw.rows(),NONINIT);
+      vk.resize(Qw.rows(),NONINIT);
+      updateUVecs(0,1,uk,pU,U);
+      updateUVecs(0,1,vk,pV,V);
+    }
+
+    MatVx4 Pts(Qw.rows(), NONINIT);
+    NurbsCurve RU, RV;
+
+    for(int j=0; j<Qw.cols(); j++){
+      for(int i=0; i<Qw.rows(); i++)
+        Pts.set(RangeV(i,i), RangeV(0,3), Qw(i,j).T());
+      RU.globalInterpH(Pts,uk,U,pU);
+      for(int i=0; i<Qw.rows(); i++)
+        P(i,j) = RU.ctrlPnts(i);
+    }
+
+    Pts.resize(Qw.cols(), NONINIT) ;
+    for(int i=0; i<Qw.rows(); i++){
+      for(int j=0; j<Qw.cols(); j++)
+        Pts.set(RangeV(j,j), RangeV(0,3), P(i,j).T());
+      RV.globalInterpH(Pts,vk,V,pV) ;
+      for(int j=0;j<Qw.cols();j++)
+        P(i,j) = RV.ctrlPnts(j) ;
+    }
+  }
+
+  void NurbsSurface::globalInterpClosedUH(const GeneralMatrix<fmatvec::Vec4>& Qw, int pU, int pV, Method method) {
+    VecV vk, uk;
+
+    NurbsCurve RU, RV;
+    if(method == chordLength) {
+      RU.resize(Qw.rows(), pU);
+      RV.resize(Qw.cols(), pV);
+      resize(Qw.rows(),Qw.cols(),pU,pV);
+      surfMeshParamsClosedUH(Qw,uk,vk,pU);
+      knotAveragingClosed(uk,pU,U);
+      knotAveraging(vk,pV,V);
+    }
+    else {
+      RU.resize(Qw.rows()+pU, pU);
+      RV.resize(Qw.cols(), pV);
+      resize(Qw.rows()+pU,Qw.cols(),pU,pV);
+      uk.resize(Qw.rows()+pU,NONINIT);
+      vk.resize(Qw.cols(),NONINIT);
+      updateUVecsClosed(0, 1, uk, pU, U);
+      updateUVecs(0, 1, vk, pV, V);
+    }
+
+    MatVx4 Pts(Qw.cols(), NONINIT);
   
+    for(int i=0; i<Qw.rows(); i++) {
+      for(int j=0; j<Qw.cols(); j++)
+        Pts.set(RangeV(j,j), RangeV(0,3), Qw(i,j).T());
+      RV.globalInterpH(Pts,vk,V,pV);
+      for(int j=0; j<Qw.cols(); j++)
+        P(i,j) = RV.ctrlPnts(j);
+    }
+
+    Pts.resize(Qw.rows(), NONINIT);
+    for(int j=0; j<Qw.cols(); j++) {
+      for(int i=0; i<Qw.rows(); i++)
+        Pts.set(RangeV(i,i), RangeV(0,3), P(i,j).T());
+      RU.globalInterpClosedH(Pts,uk,U,pU);
+      for(int i=0; i<uk.size(); i++)
+        P(i,j) = RU.ctrlPnts(i);
+    }
+  }
+
   /*!
    \brief Finds the multiplicity of a knot in the U knot
 
@@ -811,6 +896,75 @@ namespace MBSim {
     return 1;
   }
 
+  int surfMeshParamsH(const GeneralMatrix<fmatvec::Vec4 >& Qw, VecV& uk, VecV& vl) {
+
+    VecV cds(std::max(Qw.rows(),Qw.cols()));
+
+    int n = Qw.rows();
+    int m = Qw.cols();
+    uk.resize(n);
+    vl.resize(m);
+    int num = m;
+
+    // Compute the uk
+//    uk.reset(0);
+
+    for(int l=0; l<m; l++){
+      double total = 0.0;
+      for(int k=1; k<n; k++){
+        cds(k) = nrm2(Qw(k,l)-Qw(k-1,l));
+        total += cds(k);
+      }
+      if(total==0.0)
+        num--;
+      else {
+        double d = 0.0;
+        for(int k=1; k<n; k++){
+          d += cds(k);
+          uk(k) += d/total;
+        }
+      }
+    }
+
+    if(num==0)
+      return 0;
+
+    for(int k=1; k<n-1; k++)
+      uk(k) /= num;
+    uk(n-1) = 1.0;
+
+    // Compute the vl
+//    vl.reset(0);
+    //cds.resize(m); // taking the maximum so this is not needed
+
+    num = n;
+
+    for(int k=0; k<n; k++){
+      double total = 0.0;
+      for(int l=1; l<m; l++){
+        cds(l) = nrm2(Qw(k,l)-Qw(k,l-1));
+        total += cds(l);
+      }
+      if(total==0.0)
+        num--;
+      else {
+        double d = 0.0;
+        for(int l=1; l<m; l++){
+          d += cds(l);
+          vl(l) += d/total;
+        }
+      }
+    }
+
+    if(num==0)
+      return 0;
+
+    for(int l=1; l<m-1; l++)
+      vl(l) /= num;
+    vl(m-1) = 1.0;
+    return 1;
+  }
+
   int surfMeshParamsClosedU(const GeneralMatrix<fmatvec::Vec3 >& Q, VecV& uk, VecV& vl, int degU) {
 
     int n, m, k, l, num;
@@ -884,6 +1038,77 @@ namespace MBSim {
     for (l = 1; l < m - 1; l++)
       vl(l) /= num;
     vl(m - 1) = 1.0;
+
+    return 1;
+  }
+
+  int surfMeshParamsClosedUH(const GeneralMatrix<fmatvec::Vec4 >& Qw, VecV& uk, VecV& vl, int degU) {
+    VecV cds(Qw.rows()); // + degU ?
+
+    int n = Qw.rows();
+    int m = Qw.cols();
+    uk.resize(n);
+    vl.resize(m);
+    int num = m;
+
+    // Compute the uk
+    //uk.reset(0);
+
+    for(int l=0; l<m; l++){
+      double total = 0.0;
+      // Normalization factor
+      for(int k=1; k<=n-degU; k++) {
+        cds(k) = nrm2(Qw(k,l)-Qw(k-1,l));
+        total += cds(k);
+      }
+      for(int k=n-degU+1; k<n; k++)
+        cds(k) = nrm2(Qw(k,l)-Qw(k-1,l));
+      if(total==0.0)
+        num--;
+      else {
+        double d = 0.0;
+        for(int k=1; k<n; k++) {
+          d += cds(k);
+          uk(k) += d/total;
+        }
+      }
+    }
+
+    if(num==0)
+      return 0;
+
+    for(int k=1; k<n; k++)
+      uk(k) /= num;
+
+    // Compute the vl
+    //vl.reset(0);
+    cds.resize(m);
+
+    num = n;
+
+    for(int k=0; k<n; k++) {
+      double total = 0.0;
+      for(int l=1; l<m; l++) {
+        cds(l) = nrm2(Qw(k,l)-Qw(k,l-1));
+        total += cds(l);
+      }
+      if(total==0.0)
+        num--;
+      else {
+        double d = 0.0 ;
+        for(int l=1; l<m; l++) {
+          d += cds(l);
+          vl(l) += d/total;
+        }
+      }
+    }
+
+    if(num==0)
+      return 0;
+
+    for(int l=1; l<m-1; l++)
+      vl(l) /= num;
+    vl(m-1) = 1.0;
 
     return 1;
   }

@@ -65,34 +65,44 @@ namespace MBSim {
 
   void SpatialNurbsContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
-      srf.resize(cp.rows(),cp.cols(),uKnot.size()-cp.rows()-1,vKnot.size()-cp.cols()-1);
-      srf.setDegreeU(uKnot.size()-cp.rows()-1);
-      srf.setDegreeV(vKnot.size()-cp.cols()-1);
-      srf.setKnotU(uKnot);
-      srf.setKnotV(vKnot);
-      srf.setCtrlPnts(cp);
+      if(interpolation==unknown)
+        throwError("(PlanarNurbsContour::init): interpolation unknown");
+      if(interpolation==none) {
+        srf.resize(cp.rows(),cp.cols(),uKnot.size()-cp.rows()-1,vKnot.size()-cp.cols()-1);
+        srf.setDegreeU(uKnot.size()-cp.rows()-1);
+        srf.setDegreeV(vKnot.size()-cp.cols()-1);
+        srf.setKnotU(uKnot);
+        srf.setKnotV(vKnot);
+        srf.setCtrlPnts(cp);
+      }
+      else {
+        if(open)
+          srf.globalInterpH(cp,etaDegree,xiDegree,NurbsSurface::Method(interpolation));
+        else
+          srf.globalInterpClosedUH(cp,etaDegree,xiDegree,NurbsSurface::Method(interpolation));
+      }
       srf.deriveAtH(zetaOld(0),zetaOld(1),2,hess);
       etaNodes.resize(2);
-      etaNodes[0] = uKnot(srf.degreeU());
-      etaNodes[1] = uKnot(uKnot.size()-srf.degreeU()-1);
+      etaNodes[0] = srf.knotU()(srf.degreeU());
+      etaNodes[1] = srf.knotU()(srf.knotU().size()-srf.degreeU()-1);
       xiNodes.resize(2);
-      xiNodes[0] = vKnot(srf.degreeV());
-      xiNodes[1] = vKnot(vKnot.size()-srf.degreeV()-1);
+      xiNodes[0] = srf.knotV()(srf.degreeV());
+      xiNodes[1] = srf.knotV(srf.knotV().size()-srf.degreeV()-1);
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
-        vector<vector<double> > cp_(cp.rows()*cp.cols(),vector<double>(4));
-        for(int i=0; i<cp.rows(); i++) {
-          for(int j=0; j<cp.cols(); j++) {
+        vector<vector<double> > cp_(srf.ctrlPnts().rows()*srf.ctrlPnts().cols(),vector<double>(4));
+        for(int i=0; i<srf.ctrlPnts().rows(); i++) {
+          for(int j=0; j<srf.ctrlPnts().cols(); j++) {
             for(int k=0; k<4; k++)
-              cp_[j*cp.rows()+i][k] = cp(i,j)(k);
+              cp_[j*srf.ctrlPnts().rows()+i][k] = srf.ctrlPnts()(i,j)(k);
           }
         }
         static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setControlPoints(cp_);
-        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setUKnotVector(uKnot);
-        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setVKnotVector(vKnot);
-        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setNumberOfUControlPoints(cp.rows());
-        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setNumberOfVControlPoints(cp.cols());
+        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setUKnotVector(srf.knotU());
+        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setVKnotVector(srf.knotV());
+        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setNumberOfUControlPoints(srf.ctrlPnts().rows());
+        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setNumberOfVControlPoints(srf.ctrlPnts().cols());
       }
     }
     RigidContour::init(stage, config);
@@ -109,6 +119,14 @@ namespace MBSim {
 //    etaNodes=E(e)->getText<Vec>();
 //    e=E(element)->getFirstElementChildNamed(MBSIM%"xiNodes");
 //    xiNodes=E(e)->getText<Vec>();
+    e=E(element)->getFirstElementChildNamed(MBSIM%"interpolation");
+    if(e) {
+      string interpolationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(interpolationStr=="equallySpaced") interpolation=equallySpaced;
+      else if(interpolationStr=="chordLength") interpolation=chordLength;
+      else if(interpolationStr=="none") interpolation=none;
+      else interpolation=unknown;
+    }
     e=E(element)->getFirstElementChildNamed(MBSIM%"controlPoints");
     MatV pts=E(e)->getText<MatV>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"numberOfEtaControlPoints");
@@ -116,9 +134,13 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"numberOfXiControlPoints");
     int nv = E(e)->getText<int>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"etaKnotVector");
-    setEtaKnotVector(E(e)->getText<VecV>());
+    if(e) setEtaKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"xiKnotVector");
-    setXiKnotVector(E(e)->getText<VecV>());
+    if(e) setXiKnotVector(E(e)->getText<VecV>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"etaDegreee");
+    if(e) setEtaDegree(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"xiDegreee");
+    if(e) setXiDegree(E(e)->getText<int>());
     cp.resize(nu,nv);
     for(int i=0; i<nu; i++) {
       for(int j=0; j<nv; j++) {

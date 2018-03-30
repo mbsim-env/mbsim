@@ -300,6 +300,8 @@ namespace MBSim {
   //TODO: put those functions into mother nurbs class (maybe) to make them "func(...) const"
   void knotAveraging(const fmatvec::VecV& uk, int deg, fmatvec::VecV& U);
   void knotAveragingClosed(const fmatvec::VecV& uk, int deg, fmatvec::VecV& U);
+  void updateUVecs(double uMin, double uMax, fmatvec::VecV& u, int deg, fmatvec::VecV& U);
+  void updateUVecsClosed(double uMin, double uMax, fmatvec::VecV& u, int deg, fmatvec::VecV& U);
   void basisFuns(double u, int span, int deg, const fmatvec::VecV & U, fmatvec::VecV& funs);
   void dersBasisFuns(int n, double u, int span, int deg, const fmatvec::VecV & U, fmatvec::Mat& ders);
   void binomialCoef(fmatvec::MatV& Bin);

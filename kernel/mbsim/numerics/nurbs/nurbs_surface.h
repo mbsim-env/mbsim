@@ -18,10 +18,10 @@ namespace MBSim {
 //
 //  template <class T, int N> void gordonSurface(NurbsCurveArray<T,N>& , NurbsCurveArray<T,N>& , const Matrix< Point_nD<T,N> >& , NurbsSurface<T,N>& );
   int surfMeshParams(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, fmatvec::VecV& uk, fmatvec::VecV& vl);
-//  template <class T, int N> int surfMeshParamsH(const Matrix< HPoint_nD<T,N> >& , Vector<T>& , Vector<T>& );
+  int surfMeshParamsH(const fmatvec::GeneralMatrix<fmatvec::Vec4>& Qw, fmatvec::VecV& uk, fmatvec::VecV& vl);
 //  template <class T, int N> int surfMeshParamsClosedU(const Matrix< Point_nD<T,N> >& Qw, Vector<T>& uk, Vector<T>& vl, int degU );
   int surfMeshParamsClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, fmatvec::VecV& uk, fmatvec::VecV& vl, int degU);
-//  template <class T, int N> int surfMeshParamsClosedUH(const Matrix< HPoint_nD<T,N> >& Qw, Vector<T>& uk, Vector<T>& vl, int degU );
+  int surfMeshParamsClosedUH(const fmatvec::GeneralMatrix<fmatvec::Vec4>& Qw, fmatvec::VecV& uk, fmatvec::VecV& vl, int degU);
 //
 //  template <class T, int N> void globalSurfInterpXY(const Matrix< Point_nD<T,N> >& , int , int , NurbsSurface<T,N>& );
 //  template <class T, int N> void globalSurfInterpXY(const Matrix< Point_nD<T,N> >& , int , int , NurbsSurface<T,N>& , const Vector<T>& , const Vector<T>& );
@@ -38,6 +38,11 @@ namespace MBSim {
 //template <class T, int N>
   class NurbsSurface {
     public:
+      enum Method {
+        equallySpaced = 0,
+        chordLength,
+      };
+
       /**
        * \brief default constructor
        */
@@ -99,13 +104,13 @@ namespace MBSim {
       fmatvec::Vec3 normal(double u, double v) const;
 
       // Surface fitting functions
-
       void globalInterp(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, int DegU, int DegV);
       void globalInterp(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, const fmatvec::VecV& uk, const fmatvec::VecV& vk, int DegU, int DegV);
       void globalInterpClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, int DegU, int DegV);
       void globalInterpClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, const fmatvec::VecV& uk, const fmatvec::VecV& vk, int DegU, int DegV);
-//  void globalInterpClosedU(const Matrix< Point_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
-//  void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q, int pU, int pV);
+
+      void globalInterpH(const fmatvec::GeneralMatrix<fmatvec::Vec4>& Q, int DegU, int DegV, Method method=chordLength);
+      void globalInterpClosedUH(const fmatvec::GeneralMatrix<fmatvec::Vec4>& Q, int DegU, int DegV, Method method=chordLength);
 //  void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
 //  void leastSquares(const Matrix< Point_nD<T,N> >& Q, int pU, int pV, int nU, int nV) ;
 //  void leastSquaresClosedU(const Matrix< Point_nD<T,N> >& Q, int pU, int pV, int nU, int nV) ;

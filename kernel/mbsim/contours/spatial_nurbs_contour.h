@@ -34,6 +34,13 @@ namespace MBSim {
    */
   class SpatialNurbsContour : public RigidContour {
     public:
+      enum Interpolation {
+        equallySpaced = 0,
+        chordLength,
+        none,
+        unknown,
+      };
+
       /**
        * \brief constructor
        * \param name of contour
@@ -61,9 +68,12 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
+      void setInterpolation(Interpolation interpolation_) { interpolation = interpolation_; }
       void setControlPoints(const fmatvec::GeneralMatrix<fmatvec::Vec4> &cp_) { cp = cp_; }
       void setEtaKnotVector(const fmatvec::VecV &uKnot_) { uKnot = uKnot_; }
       void setXiKnotVector(const fmatvec::VecV &vKnot_) { vKnot = vKnot_; }
+      void setEtaDegree(int etaDegree_) { etaDegree = etaDegree_; }
+      void setXiDegree(int xiDegree_) { xiDegree = xiDegree_; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
@@ -83,8 +93,10 @@ namespace MBSim {
       void updateHessianMatrix(const fmatvec::Vec2 &zeta);
       const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(zeta!=zetaOld) updateHessianMatrix(zeta); return hess; }
 
+      Interpolation interpolation{none};
       fmatvec::GeneralMatrix<fmatvec::Vec4> cp;
       fmatvec::VecV uKnot, vKnot;
+      int etaDegree{3}, xiDegree{3};
       bool open{false};
       NurbsSurface srf;
       fmatvec::Vec2 zetaOld;

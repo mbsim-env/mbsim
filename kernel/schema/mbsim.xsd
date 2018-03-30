@@ -2818,7 +2818,7 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
-        <xs:element name="interpolation" type="pv:stringFullEval" minOccurs="0">
+          <xs:element name="interpolation" type="pv:stringFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Auswahl der Interpolationsmethode.
               <ul>
@@ -2958,6 +2958,16 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
+          <xs:element name="interpolation" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl der Interpolationsmethode.
+              <ul>
+                <li>equallySpaced: "equally spaced" Interpolation</li>
+                <li>chordLength: "chord length" Interpolation</li>
+                <li>none: keine Interpolation</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="controlPoints" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -2979,19 +2989,29 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="etaKnotVector" type="pv:nounitVector">
+          <xs:element name="etaKnotVector" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Knotenvektor in eta-Richtung.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="xiKnotVector" type="pv:nounitVector">
+          <xs:element name="xiKnotVector" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Knotenvektor in xi-Richtung.
               </xs:documentation>
             </xs:annotation>
+          </xs:element>
+          <xs:element name="etaDegree" type="pv:integerFullEval" minOccurs="0" >
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Polynomgrad in eta-Richtung.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="xiDegree" type="pv:integerFullEval" minOccurs="0" >
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Polynomgrad in xi-Richtung.
+            </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="open" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
