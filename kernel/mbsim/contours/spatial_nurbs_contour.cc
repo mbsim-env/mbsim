@@ -137,9 +137,9 @@ namespace MBSim {
     if(e) setEtaKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"xiKnotVector");
     if(e) setXiKnotVector(E(e)->getText<VecV>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"etaDegreee");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"etaDegree");
     if(e) setEtaDegree(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"xiDegreee");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"xiDegree");
     if(e) setXiDegree(E(e)->getText<int>());
     cp.resize(nu,nv);
     for(int i=0; i<nu; i++) {
