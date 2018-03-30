@@ -105,10 +105,10 @@ def addFileToDist(name, arcname, addDepLibs=True):
         if re.search('ELF [0-9]+-bit LSB', content)!=None:
           try:
             for line in subprocess.check_output(["chrpath", "-l", tmpDir+"/"+basename+".rpath"]).decode('utf-8').splitlines():
-              match=re.search(".* RPATH=(.*)", line)
+              match=re.search(".* (RPATH|RUNPATH)=(.*)", line)
               if match!=None:
                 vnewrpath=[]
-                for p in match.expand("\\1").split(':'):
+                for p in match.expand("\\2").split(':'):
                   if p[0]!='/':
                     vnewrpath.append(p)
                 if subprocess.call(["chrpath", "-r", ":".join(vnewrpath), tmpDir+"/"+basename+".rpath"], stdout=fnull)!=0:
