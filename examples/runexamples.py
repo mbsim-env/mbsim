@@ -769,9 +769,13 @@ def runExample(resultQueue, example):
     resultStr+='<td>'+example[0].replace('/', u'/\u200B')+'</td>'
     if not args.disableRun:
       if executeRet!=0:
-        resultStr+='<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'
+        resultStr+='<td class="'+('danger' if not willFail else 'success')+\
+          '"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+\
+          myurllib.pathname2url(executeFN)+'">'
       else:
-        resultStr+='<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'
+        resultStr+='<td class="'+('success' if not willFail else 'danger')+\
+        '"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+\
+          myurllib.pathname2url(executeFN)+'">'
       if executeRet==subprocessCall.timedOutErrorCode:
         resultStr+='timed out'
       elif executeRet!=0:
