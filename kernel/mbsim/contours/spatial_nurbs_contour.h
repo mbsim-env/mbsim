@@ -85,9 +85,10 @@ namespace MBSim {
 
 //      void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-      bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1] or zeta(1) < xiNodes[0] or zeta(1) > xiNodes[xiNodes.size()-1]); }
+      bool isZetaOutside(const fmatvec::Vec2 &zeta) override;
 
-      void setOpen(bool open_=true) { open = open_; }
+      void setOpenEta(bool openEta_) { openEta = openEta_; }
+      void setOpenXi(bool openXi_) { openXi = openXi_; }
 
     protected:
       void updateHessianMatrix(const fmatvec::Vec2 &zeta);
@@ -97,7 +98,7 @@ namespace MBSim {
       fmatvec::GeneralMatrix<fmatvec::Vec4> cp;
       fmatvec::VecV uKnot, vKnot;
       int etaDegree{3}, xiDegree{3};
-      bool open{false};
+      bool openEta{false}, openXi{false};
       NurbsSurface srf;
       fmatvec::Vec2 zetaOld;
       fmatvec::GeneralMatrix<fmatvec::Vec4> hess;

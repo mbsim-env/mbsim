@@ -31,6 +31,11 @@ namespace MBSim {
 
   void SpatialNurbsContour::updateHessianMatrix(const Vec2 &zeta) {
     // TODO continue periodic function (see class PlanarNurbsContour)
+//    int n = floor((zeta(1)+M_PI/2.)/M_PI);
+//    double eta = zeta(0) + n*M_PI;
+//    int s = (-1)^abs(n);
+//    double t = s*zeta(1)+M_PI/2.;
+//    double xi = (t-M_PI*floor(t/M_PI))-M_PI/2.;
     srf.deriveAtH(zeta(0),zeta(1),2,hess);
     zetaOld = zeta;
   }
@@ -66,7 +71,7 @@ namespace MBSim {
   void SpatialNurbsContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       if(interpolation==unknown)
-        throwError("(PlanarNurbsContour::init): interpolation unknown");
+        throwError("(SpatialNurbsContour::init): interpolation unknown");
       if(interpolation==none) {
         srf.resize(cp.rows(),cp.cols(),uKnot.size()-cp.rows()-1,vKnot.size()-cp.cols()-1);
         srf.setDegreeU(uKnot.size()-cp.rows()-1);
@@ -76,8 +81,11 @@ namespace MBSim {
         srf.setCtrlPnts(cp);
       }
       else {
-        if(open)
+        if(openEta) {
           srf.globalInterpH(cp,etaDegree,xiDegree,NurbsSurface::Method(interpolation));
+          if(not openXi)
+            throwError("(SpatialNurbsContour::init): contour with open eta and closed xi not allowed");
+        }
         else
           srf.globalInterpClosedUH(cp,etaDegree,xiDegree,NurbsSurface::Method(interpolation));
       }
@@ -109,7 +117,7 @@ namespace MBSim {
   }
 
   double SpatialNurbsContour::getCurvature(const Vec2 &zeta) {
-    throw;
+    throwError("(SpatialNurbsContour::getCurvature): not implemented");
   }
 
   void SpatialNurbsContour::initializeUsingXML(DOMElement * element) {
@@ -150,14 +158,24 @@ namespace MBSim {
           cp(i,j)(3) = 1;
       }
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"open");
-    if(e) setOpen(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"openEta");
+    if(e) setOpenEta(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"openXi");
+    if(e) setOpenXi(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVNurbsSurface ombv;
       ombv.initializeUsingXML(e);
       openMBVRigidBody=ombv.createOpenMBV();
     }
+  }
+
+  bool SpatialNurbsContour::isZetaOutside(const fmatvec::Vec2 &zeta) {
+    if(openEta and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]))
+      return true;
+    if(openXi and (zeta(1) < xiNodes[0] or zeta(1) > xiNodes[xiNodes.size()-1]))
+      return true;
+    return false;
   }
 
 }

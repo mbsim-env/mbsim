@@ -68,7 +68,8 @@
             <numberOfXiControlPoints>5</numberOfXiControlPoints>
             <etaDegree>3</etaDegree>
             <xiDegree>3</xiDegree>
-            <open>true</open>
+            <openEta>true</openEta>
+            <openXi>true</openXi>
             <enableOpenMBV/>
           </SpatialNurbsContour>
         </contours><enableOpenMBVFrameC/>

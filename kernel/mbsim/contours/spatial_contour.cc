@@ -128,9 +128,7 @@ namespace MBSim {
   }
 
   double SpatialContour::getCurvature(const Vec2 &zeta) {
-    throw;
-//    const Vec3 rs = funcCrPC->parDer(zeta(0));
-//    return nrm2(crossProduct(rs,funcCrPC->parDerParDer(zeta(0))))/pow(nrm2(rs),3);
+    throwError("(SpatialContour::getCurvature): not implemented");
   }
 
   void SpatialContour::initializeUsingXML(DOMElement * element) {
@@ -142,8 +140,10 @@ namespace MBSim {
     xiNodes=E(e)->getText<Vec>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
     setContourFunction(ObjectFactory::createAndInit<Function<Vec3(Vec2)> >(e->getFirstElementChild()));
-    e=E(element)->getFirstElementChildNamed(MBSIM%"open");
-    if(e) setOpen(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"openEta");
+    if(e) setOpenEta(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"openXi");
+    if(e) setOpenXi(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"etaNodes");
@@ -154,6 +154,14 @@ namespace MBSim {
       ombv.initializeUsingXML(e);
       openMBVRigidBody=ombv.createOpenMBV();
     }
+  }
+
+  bool SpatialContour::isZetaOutside(const fmatvec::Vec2 &zeta) {
+    if(openEta and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]))
+      return true;
+    if(openXi and (zeta(1) < xiNodes[0] or zeta(1) > xiNodes[xiNodes.size()-1]))
+      return true;
+    return false;
   }
 
 }
