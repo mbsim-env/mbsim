@@ -96,7 +96,7 @@ def addFileToDist(name, arcname, addDepLibs=True):
     content=subprocess.check_output(["file", name]).decode('utf-8')
     if re.search('ELF [0-9]+-bit LSB', content)!=None or re.search('PE32\+? executable', content)!=None:
       # binary file
-      # fix rpath (remove all absolute componentes from rpath)
+      # fix rpath (remove all absolute componentes from rpath; delete all RUNPATH)
       basename=os.path.basename(name)
       tmpDir=tempfile.mkdtemp()
       try:
@@ -105,6 +105,13 @@ def addFileToDist(name, arcname, addDepLibs=True):
         if re.search('ELF [0-9]+-bit LSB', content)!=None:
           try:
             for line in subprocess.check_output(["chrpath", "-l", tmpDir+"/"+basename+".rpath"]).decode('utf-8').splitlines():
+              # delete RUNPATH
+              match=re.search(".* RUNPATH=.*", line)
+              if match!=None:
+                if subprocess.call(["chrpath", "-d", tmpDir+"/"+basename+".rpath"], stdout=fnull)!=0:
+                  raise RuntimeError("chrpath -d ... failed")
+                break
+              # remove all abs path from RPATH
               match=re.search(".* RPATH=(.*)", line)
               if match!=None:
                 vnewrpath=[]

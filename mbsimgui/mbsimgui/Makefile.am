@@ -1,5 +1,9 @@
 include $(top_srcdir)/qt.mk
 
+if COND_WIN32
+  MAYBE_WIN32_SRC = mbsimgui.rc
+endif
+
 bin_PROGRAMS = mbsimgui
 
 mbsimguidir = $(includedir)/mbsimgui
@@ -8,7 +12,7 @@ mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS) $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
 
 mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS)
 
-mbsimgui_SOURCES = mainwindow.cc \
+mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   options.cc \
 		   element.cc \
 		   frame.cc \
@@ -65,6 +69,7 @@ nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
 QT_BUILT_SOURCES = mainwindow.moc.cc \
+		   mbsimgui.qrc.cc \
 		   options.moc.cc \
 		   widget.moc.cc \
 		   basic_widgets.moc.cc \
@@ -125,6 +130,9 @@ pluginsplatforms_DATA = @QT_PLUGINS@/platforms/libqxcb.so
 pluginsxcbglintegrationsdir = @bindir@/xcbglintegrations
 pluginsxcbglintegrations_DATA = @QT_PLUGINS@/xcbglintegrations/*qxcb*
 endif
+
+# some dependencies for mbsimgui.qrc.cc
+mbsimgui.qrc.cc: mbsimgui.qrc icons/mbsimgui.svg
 
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org
