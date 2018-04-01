@@ -94,7 +94,7 @@ namespace MBSim {
       int degree{3};
       bool open{false};
       NurbsCurve crv;
-      double etaOld;
+      double etaOld{0};
       fmatvec::MatVx4 hess;
   };
 
