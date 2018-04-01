@@ -33,7 +33,7 @@ namespace MBSim {
   void PlanarNurbsContour::updateHessianMatrix(double eta_) {
     double eta = open?eta_:mod(eta_-etaNodes[0],etaNodes[1]-etaNodes[0])+etaNodes[0];
     crv.deriveAtH(eta,2,hess);
-    etaOld = eta;
+    etaOld = eta_;
   }
 
   Vec3 PlanarNurbsContour::evalKrPS(const Vec2 &zeta) {
