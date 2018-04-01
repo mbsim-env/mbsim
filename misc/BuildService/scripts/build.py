@@ -841,7 +841,7 @@ def configure(tool, mainFD):
   except RuntimeError as ex:
     result=str(ex)
   if not args.disableConfigure:
-    print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if result=="done" else "danger",
+    print('<td data-order="%d" class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%(int(result!="done"), "success" if result=="done" else "danger",
       "ok-sign alert-success" if result=="done" else "exclamation-sign alert-danger"), file=mainFD)
     print('  <a href="'+myurllib.pathname2url(pj(tool, "configure.txt"))+'">'+result+'</a>', file=mainFD)
     if copyConfigLog:
@@ -906,7 +906,7 @@ def make(tool, mainFD):
     result=str(ex)
   makeFD.close()
   if not args.disableMake:
-    print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if result=="done" else "danger",
+    print('<td data-order="%d" class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%(int(result!="done"), "success" if result=="done" else "danger",
       "ok-sign alert-success" if result=="done" else "exclamation-sign alert-danger"), file=mainFD)
     print('  <a href="'+myurllib.pathname2url(pj(tool, "make.txt"))+'">'+result+'</a>', file=mainFD)
     print('</td>', file=mainFD)
@@ -925,13 +925,13 @@ def make(tool, mainFD):
               break
         except:
           pass
-        print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if numErr==0 else "warning",
+        print('<td data-order="%d" class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%(numErr==0, "success" if numErr==0 else "warning",
           "ok-sign alert-success" if numErr==0 else "warning-sign alert-warning"), file=mainFD)
         print('  <a href="%s">%s</a>'%(myurllib.pathname2url(pj(tool, "static-code-analyze", d, "")),
           "passed" if numErr==0 else 'error&nbsp;<span class="badge">%d</span>'%(numErr)), file=mainFD)
         print('</td>', file=mainFD)
       else:
-        print('<td>-</td>', file=mainFD)
+        print('<td data-order="0">-</td>', file=mainFD)
   mainFD.flush()
 
   if result!="done":
@@ -965,7 +965,7 @@ def check(tool, mainFD):
       foundTestSuiteLog=True
   testSuiteLogFD.close()
   if not args.disableMakeCheck:
-    print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if result=="done" else "danger",
+    print('<td data-order="%d" class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%(int(result!="done"), "success" if result=="done" else "danger",
       "ok-sign alert-success" if result=="done" else "exclamation-sign alert-danger"), file=mainFD)
     print('  <a href="'+myurllib.pathname2url(pj(tool, "check.txt"))+'">'+result+'</a>', file=mainFD)
     if foundTestSuiteLog:
@@ -984,7 +984,7 @@ def doc(tool, mainFD, disabled, docDirName):
   if not os.path.isdir(docDirName):
     if docDirName=="doc" and not args.disableDoxygen or \
        docDirName=="xmldoc" and not args.disableXMLDoc:
-      print('<td>not available</td>', file=mainFD)
+      print('<td data-order="1">not available</td>', file=mainFD)
     mainFD.flush()
     return 0, 0
 
@@ -1022,7 +1022,7 @@ def doc(tool, mainFD, disabled, docDirName):
     os.chdir(savedDir)
   if docDirName=="doc" and not args.disableDoxygen or \
      docDirName=="xmldoc" and not args.disableXMLDoc:
-    print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if result=="done" else "danger",
+    print('<td data-order="%d" class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%(int(result!="done"), "success" if result=="done" else "danger",
       "ok-sign alert-success" if result=="done" else "exclamation-sign alert-danger"), file=mainFD)
     print('  <a href="'+myurllib.pathname2url(pj(tool, docDirName+".txt"))+'">'+result+'</a>', file=mainFD)
     print('</td>', file=mainFD)

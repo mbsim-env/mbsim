@@ -789,21 +789,24 @@ def runExample(resultQueue, example):
       resultStr+='<tr class="text-muted">'
     resultStr+='<td>'+example[0].replace('/', u'/\u200B')+'</td>'
     if not args.disableRun:
+      if executeRet==subprocessCall.timedOutErrorCode:
+        text='timed out'
+        order=3
+      elif executeRet!=0:
+        text='failed'
+        order=1 if willFail else 2
+      else:
+        text='passed'
+        order=0
       if executeRet!=0:
-        resultStr+='<td class="'+('danger' if not willFail else 'success')+\
+        resultStr+='<td data-order="%d" class="'%(order)+('danger' if not willFail else 'success')+\
           '"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+\
           myurllib.pathname2url(executeFN)+'">'
       else:
-        resultStr+='<td class="'+('success' if not willFail else 'danger')+\
+        resultStr+='<td data-order="%d" class="'%(order)+('success' if not willFail else 'danger')+\
         '"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+\
           myurllib.pathname2url(executeFN)+'">'
-      if executeRet==subprocessCall.timedOutErrorCode:
-        resultStr+='timed out'
-      elif executeRet!=0:
-        resultStr+='failed'
-      else:
-        resultStr+='passed'
-      resultStr+='</a>'
+      resultStr+=text+'</a>'
       # add all additional output files
       for outfile in outfiles:
         resultStr+='; <a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+outfile+'</a>'
@@ -853,7 +856,8 @@ def runExample(resultQueue, example):
                               outFD, env=denv, maxExecutionTime=1)
         outFD.close()
       # result
-      resultStr+='<td>'+\
+      resultStr+='<td data-order="%03d%d%d%d">'%(abs(ombvRet)+abs(h5pRet)+abs(guiRet),
+                                                 int(len(ombvFiles)>0), int(len(h5pFiles)), int(guiFile!=None))+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_ombv.txt")),
           "visible" if len(ombvFiles)>0 else "hidden", "success" if ombvRet==0 else "danger")+\
           '<img src="%s/html/openmbv.svg" alt="ombv"/></a>'%(buildSystemRootURL)+\
@@ -885,21 +889,21 @@ def runExample(resultQueue, example):
     # print result to resultStr
     if not args.disableCompare:
       if compareRet==-1:
-        resultStr+='<td class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;not run</div>'+\
+        resultStr+='<td data-order="2" class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;not run</div>'+\
                    '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
       elif compareRet==-2:
-        resultStr+='<td class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;no reference</div>'+\
+        resultStr+='<td data-order="1" class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;no reference</div>'+\
                    '<div class="pull-right">[<input class="_EXAMPLE'+\
                    '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
         nrAll=0
         nrFailed=0
       else:
         if nrFailed==0:
-          resultStr+='<td class="success"><div class="pull-left"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
+          resultStr+='<td data-order="0" class="success"><div class="pull-left"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
                      '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
                      '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
         else:
-          resultStr+='<td class="danger"><div class="pull-left"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
+          resultStr+='<td data-order="3" class="danger"><div class="pull-left"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
                      '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
                      '</span></a></div><div class="pull-right">[<input class="_EXAMPLE'+\
                      '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
@@ -916,9 +920,9 @@ def runExample(resultQueue, example):
         if match!=None:
           nrDeprecated=nrDeprecated+1
       if nrDeprecated==0:
-        resultStr+='<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;none</td>'
+        resultStr+='<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;none</td>'
       else:
-        resultStr+='<td class="warning"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'+str(nrDeprecated)+' found</a></td>'
+        resultStr+='<td data-order="1" class="warning"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'+str(nrDeprecated)+' found</a></td>'
 
     # validate XML
     if not args.disableValidate:
@@ -968,10 +972,10 @@ def runExample(resultQueue, example):
 
       failed, total=validateXML(example, False, htmlOutputFD)
       if failed==0:
-        resultStr+='<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">valid <span class="badge">'+\
+        resultStr+='<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">valid <span class="badge">'+\
                    str(total)+'</span></a></td>'
       else:
-        resultStr+='<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">'+\
+        resultStr+='<td data-order="1" class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">'+\
                    'failed <span class="badge">'+str(failed)+'</span> of <span class="badge">'+str(total)+'</span></a></td>'
         runExampleRet=1
       # write footer
@@ -1042,7 +1046,7 @@ def webapp(example):
       gui['file']=[example+'/FMI.mbsimprj.xml']
     else:
       gui['file']=[example+'/FMI_cosim.mbsimprj.xml']
-  return '<td>'+\
+  return '<td data-order="%03d%03d%03d">'%(len(ombv), len(h5p), len(gui))+\
       ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
        myurllibp.urlencode(ombv, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(ombv)>0 else 'hidden')+';">'+\
@@ -1856,9 +1860,9 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         if subprocessCall(exePrefix()+[mbxmlutilsvalidate]+typesValue+[pj(root, filename)],
                           outputFD)!=0:
           nrFailed+=1
-          print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">failed</a></td>', file=htmlOutputFD)
+          print('<td data-order="1" class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">failed</a></td>', file=htmlOutputFD)
         else:
-          print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">passed</a></td>', file=htmlOutputFD)
+          print('<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">passed</a></td>', file=htmlOutputFD)
         print('</tr>', file=htmlOutputFD)
         nrTotal+=1
         outputFD.close()
