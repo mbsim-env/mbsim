@@ -114,6 +114,14 @@
             <restitutionCoefficient>0</restitutionCoefficient>
           </UnilateralNewtonImpact>
         </normalImpactLaw>
+        <initialGuess>
+          <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <row>
+              <ele>0.1</ele>
+              <ele>0</ele>
+            </row>
+          </xmlMatrix>
+        </initialGuess>
       </Contact>
     </links>
     <constraints/>
@@ -153,5 +161,6 @@
     <toleranceForPositionConstraints>1e-5</toleranceForPositionConstraints>
     <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
   </LSODKRIntegrator>
+
 
 </MBSimProject>
