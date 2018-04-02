@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/contours/spatial_nurbs_contour.h"
+#include "mbsim/utils/utils.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -29,15 +30,26 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpatialNurbsContour)
 
-  void SpatialNurbsContour::updateHessianMatrix(const Vec2 &zeta) {
-    // TODO continue periodic function (see class PlanarNurbsContour)
-//    int n = floor((zeta(1)+M_PI/2.)/M_PI);
-//    double eta = zeta(0) + n*M_PI;
-//    int s = (-1)^abs(n);
-//    double t = s*zeta(1)+M_PI/2.;
-//    double xi = (t-M_PI*floor(t/M_PI))-M_PI/2.;
+  void SpatialNurbsContour::updateHessianMatrix(const Vec2 &zeta_) {
+    Vec2 zeta(NONINIT);
+    if(openEta)
+      zeta = zeta_;
+    else if(openXi) {
+      zeta(0) = mod(zeta_(0)-etaNodes[0],etaNodes[1]-etaNodes[0])+etaNodes[0];
+      zeta(1) = zeta_(1);
+    }
+    else {
+      if(mod(zeta_(1)-xiNodes[0],2.*(xiNodes[1]-xiNodes[0]))+xiNodes[0]>xiNodes[1]) {
+        zeta(0) = mod(zeta_(0)+0.5*(etaNodes[1]-etaNodes[0])-etaNodes[0],etaNodes[1]-etaNodes[0])+etaNodes[0];
+        zeta(1) = xiNodes[1]-mod(zeta_(1)-xiNodes[0],xiNodes[1]-xiNodes[0]);
+      }
+      else {
+        zeta(0) = mod(zeta_(0)-etaNodes[0],etaNodes[1]-etaNodes[0])+etaNodes[0];
+        zeta(1) = mod(zeta_(1)-xiNodes[0],xiNodes[1]-xiNodes[0])+xiNodes[0];
+      }
+    }
     srf.deriveAtH(zeta(0),zeta(1),2,hess);
-    zetaOld = zeta;
+    zetaOld = zeta_;
   }
 
   Vec3 SpatialNurbsContour::evalKrPS(const Vec2 &zeta) {
