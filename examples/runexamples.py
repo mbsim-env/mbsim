@@ -856,16 +856,16 @@ def runExample(resultQueue, example):
                               outFD, env=denv, maxExecutionTime=1)
         outFD.close()
       # result
-      resultStr+='<td data-order="%03d%d%d%d">'%(abs(ombvRet)+abs(h5pRet)+abs(guiRet),
-                                                 int(len(ombvFiles)>0), int(len(h5pFiles)), int(guiFile!=None))+\
+      resultStr+='<td data-order="%d%d%d%d">'%(0 if abs(ombvRet)+abs(h5pRet)+abs(guiRet)==0 else (1 if willFail else 2),
+                                               int(len(ombvFiles)>0), int(len(h5pFiles)>0), int(guiFile!=None))+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_ombv.txt")),
-          "visible" if len(ombvFiles)>0 else "hidden", "success" if ombvRet==0 else "danger")+\
+          "visible" if len(ombvFiles)>0 else "hidden", "success" if ombvRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="%s/html/openmbv.svg" alt="ombv"/></a>'%(buildSystemRootURL)+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_h5p.txt")),
-          "visible" if len(h5pFiles)>0 else "hidden", "success" if h5pRet==0 else "danger")+\
+          "visible" if len(h5pFiles)>0 else "hidden", "success" if h5pRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="%s/html/h5plotserie.svg" alt="h5p"/></a>'%(buildSystemRootURL)+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_gui.txt")),
-          "visible" if guiFile!=None else "hidden", "success" if guiRet==0 else "danger")+\
+          "visible" if guiFile!=None else "hidden", "success" if guiRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="%s/html/mbsimgui.svg" alt="gui"/></a>'%(buildSystemRootURL)+\
       '</td>'
       if ombvRet!=0 or h5pRet!=0 or guiRet!=0:
@@ -1005,7 +1005,7 @@ def runExample(resultQueue, example):
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
     resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td>%s</tr>' \
-      %('<td>-</td>'*(6-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
+      %('<td>-</td>'*(7-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
       args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])))
     runExampleRet=1
   finally:
@@ -1978,7 +1978,7 @@ def coverage(mainFD):
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
   print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
         '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%s</span></a></td>'%(covRateStr), file=mainFD)
-  for i in range(0, 6-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
+  for i in range(0, 7-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
     args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])):
     print('<td>-</td>', file=mainFD)
   print('</tr>', file=mainFD); mainFD.flush()
