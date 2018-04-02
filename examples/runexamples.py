@@ -114,6 +114,7 @@ cfgOpts.add_argument("--rtol", default=2e-5, type=float,
   help="Relative tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated [default: %(default)s]")
 cfgOpts.add_argument("--disableRun", action="store_true", help="disable running the example on action 'report'")
 cfgOpts.add_argument("--disableMakeClean", action="store_true", help="disable make clean on action 'report'")
+cfgOpts.add_argument("--checkGUIs", action="store_true", help="Try to check/start the GUIs and exit after a short time.")
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
 cfgOpts.add_argument("--printToConsole", action='store_const', const=sys.stdout, help="print all output also to the console")
@@ -480,6 +481,8 @@ def main():
     print('<th><span class="glyphicon glyphicon-repeat"></span>&nbsp;Run</th>', file=mainFD)
     print('<th><span class="glyphicon glyphicon-time"></span>&nbsp;Time</th>', file=mainFD)
     print('<th><span class="glyphicon glyphicon-time"></span>&nbsp;Ref. Time</th>', file=mainFD)
+  if args.checkGUIs:
+    print('<th><span class="glyphicon glyphicon-modal-window"></span>&nbsp;GUI Test</th>', file=mainFD)
   if not args.disableCompare:
     print('<th><div class="pull-left"><span class="glyphicon glyphicon-search"></span>&nbsp;Ref.</div>'+\
           '<div class="pull-right" style="padding-right:0.75em;">[update]</div></th>', file=mainFD)
@@ -501,27 +504,45 @@ def main():
   if args.coverage!=None:
     coverageBackupRestore('backup')
 
-  if not args.debugDisableMultiprocessing:
-    # init mulitprocessing handling and run in parallel
-    resultQueue = multiprocessing.Manager().Queue()
-    poolResult=multiprocessing.Pool(args.j).map_async(functools.partial(runExample, resultQueue), directories, 1)
-  else: # debugging
-    if sys.version_info[0]==2: # to enable backward compatiblity with python2
-      from Queue import Queue as MyQueue
-    else:
-      from queue import Queue as MyQueue
-    resultQueue = MyQueue()
-    poolResult=MyQueue(); poolResult.put(list(map(functools.partial(runExample, resultQueue), directories)))
+  if args.checkGUIs:
+    # start vnc server on a free display
+    global displayNR
+    displayNR=3
+    while subprocess.call(["vncserver", ":"+str(displayNR)], stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
+      displayNR=displayNR+1
+      if displayNR>100:
+        raise RuntimeError("Cannot find a free DISPLAY for vnc server.")
 
-  # get the queue values = html table row
-  missingDirectories=list(directories)
-  for dummy in directories:
-    result=resultQueue.get()
-    print(result[1], file=mainFD)
-    mainFD.flush()
-    printFinishedMessage(missingDirectories, result)
-  # wait for pool to finish and get result
-  retAll=poolResult.get()
+  try:
+
+    if not args.debugDisableMultiprocessing:
+      # init mulitprocessing handling and run in parallel
+      resultQueue = multiprocessing.Manager().Queue()
+      poolResult=multiprocessing.Pool(args.j).map_async(functools.partial(runExample, resultQueue), directories, 1)
+    else: # debugging
+      if sys.version_info[0]==2: # to enable backward compatiblity with python2
+        from Queue import Queue as MyQueue
+      else:
+        from queue import Queue as MyQueue
+      resultQueue = MyQueue()
+      poolResult=MyQueue(); poolResult.put(list(map(functools.partial(runExample, resultQueue), directories)))
+
+    # get the queue values = html table row
+    missingDirectories=list(directories)
+    for dummy in directories:
+      result=resultQueue.get()
+      print(result[1], file=mainFD)
+      mainFD.flush()
+      printFinishedMessage(missingDirectories, result)
+    # wait for pool to finish and get result
+    retAll=poolResult.get()
+
+  finally:
+    if args.checkGUIs:
+      # kill vnc server
+      if subprocess.call(["vncserver", "-kill", ":"+str(displayNR)], stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
+        print("Cannot close vnc server on :%d but continue."%(displayNR))
+
   # set global result and add failedExamples
   for index in range(len(retAll)):
     willFail=False
@@ -768,21 +789,24 @@ def runExample(resultQueue, example):
       resultStr+='<tr class="text-muted">'
     resultStr+='<td>'+example[0].replace('/', u'/\u200B')+'</td>'
     if not args.disableRun:
+      if executeRet==subprocessCall.timedOutErrorCode:
+        text='timed out'
+        order=3
+      elif executeRet!=0:
+        text='failed'
+        order=1 if willFail else 2
+      else:
+        text='passed'
+        order=0
       if executeRet!=0:
-        resultStr+='<td class="'+('danger' if not willFail else 'success')+\
+        resultStr+='<td data-order="%d" class="'%(order)+('danger' if not willFail else 'success')+\
           '"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+\
           myurllib.pathname2url(executeFN)+'">'
       else:
-        resultStr+='<td class="'+('success' if not willFail else 'danger')+\
+        resultStr+='<td data-order="%d" class="'%(order)+('success' if not willFail else 'danger')+\
         '"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+\
           myurllib.pathname2url(executeFN)+'">'
-      if executeRet==subprocessCall.timedOutErrorCode:
-        resultStr+='timed out'
-      elif executeRet!=0:
-        resultStr+='failed'
-      else:
-        resultStr+='passed'
-      resultStr+='</a>'
+      resultStr+=text+'</a>'
       # add all additional output files
       for outfile in outfiles:
         resultStr+='; <a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+outfile+'</a>'
@@ -798,6 +822,54 @@ def runExample(resultQueue, example):
         resultStr+='<td>%.3f</td>'%refTime
       else:
         resultStr+='<td class="warning">no reference</td>'
+
+    if args.checkGUIs:
+      # get files to load
+      ombvFiles=mainFiles(glob.glob("*.ombv.xml"), ".", ".ombv.xml")
+      h5pFiles=mainFiles(glob.glob("*.mbsim.h5"), ".", ".mbsim.h5")
+      guiFile=None
+      if os.path.exists("MBS.mbsimprj.xml"):
+        guiFile='./MBS.mbsimprj.xml'
+      elif os.path.exists("FMI.mbsimprj.xml"):
+        guiFile='./FMI.mbsimprj.xml'
+      elif os.path.exists("FMI_cosim.mbsimprj.xml"):
+        guiFile='./FMI_cosim.mbsimprj.xml'
+      # run gui tests
+      denv=os.environ
+      denv["DISPLAY"]=":"+str(displayNR)
+      ombvRet=0
+      if len(ombvFiles)>0:
+        outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_ombv.txt"), "w", encoding="utf-8"), args.printToConsole)
+        ombvRet=subprocessCall(exePrefix()+[pj(mbsimBinDir, "openmbv"+args.exeExt), "--autoExit"]+ombvFiles,
+                               outFD, env=denv, maxExecutionTime=1)
+        outFD.close()
+      h5pRet=0
+      if len(h5pFiles)>0:
+        outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_h5p.txt"), "w", encoding="utf-8"), args.printToConsole)
+        h5pRet=subprocessCall(exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles,
+                              outFD, env=denv, maxExecutionTime=1)
+        outFD.close()
+      guiRet=0
+      if guiFile!=None:
+        outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_gui.txt"), "w", encoding="utf-8"), args.printToConsole)
+        guiRet=subprocessCall(exePrefix()+[pj(mbsimBinDir, "mbsimgui"+args.exeExt), "--autoExit"]+[guiFile],
+                              outFD, env=denv, maxExecutionTime=1)
+        outFD.close()
+      # result
+      resultStr+='<td data-order="%03d%d%d%d">'%(abs(ombvRet)+abs(h5pRet)+abs(guiRet),
+                                                 int(len(ombvFiles)>0), int(len(h5pFiles)), int(guiFile!=None))+\
+        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_ombv.txt")),
+          "visible" if len(ombvFiles)>0 else "hidden", "success" if ombvRet==0 else "danger")+\
+          '<img src="%s/html/openmbv.svg" alt="ombv"/></a>'%(buildSystemRootURL)+\
+        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_h5p.txt")),
+          "visible" if len(h5pFiles)>0 else "hidden", "success" if h5pRet==0 else "danger")+\
+          '<img src="%s/html/h5plotserie.svg" alt="h5p"/></a>'%(buildSystemRootURL)+\
+        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_gui.txt")),
+          "visible" if guiFile!=None else "hidden", "success" if guiRet==0 else "danger")+\
+          '<img src="%s/html/mbsimgui.svg" alt="gui"/></a>'%(buildSystemRootURL)+\
+      '</td>'
+      if ombvRet!=0 or h5pRet!=0 or guiRet!=0:
+        runExampleRet=1
 
     compareRet=-1
     compareFN=pj(example[0], "compare.html")
@@ -817,21 +889,21 @@ def runExample(resultQueue, example):
     # print result to resultStr
     if not args.disableCompare:
       if compareRet==-1:
-        resultStr+='<td class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;not run</div>'+\
+        resultStr+='<td data-order="2" class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;not run</div>'+\
                    '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
       elif compareRet==-2:
-        resultStr+='<td class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;no reference</div>'+\
+        resultStr+='<td data-order="1" class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;no reference</div>'+\
                    '<div class="pull-right">[<input class="_EXAMPLE'+\
                    '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
         nrAll=0
         nrFailed=0
       else:
         if nrFailed==0:
-          resultStr+='<td class="success"><div class="pull-left"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
+          resultStr+='<td data-order="0" class="success"><div class="pull-left"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
                      '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
                      '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
         else:
-          resultStr+='<td class="danger"><div class="pull-left"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
+          resultStr+='<td data-order="3" class="danger"><div class="pull-left"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
                      '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
                      '</span></a></div><div class="pull-right">[<input class="_EXAMPLE'+\
                      '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
@@ -848,9 +920,9 @@ def runExample(resultQueue, example):
         if match!=None:
           nrDeprecated=nrDeprecated+1
       if nrDeprecated==0:
-        resultStr+='<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;none</td>'
+        resultStr+='<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;none</td>'
       else:
-        resultStr+='<td class="warning"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'+str(nrDeprecated)+' found</a></td>'
+        resultStr+='<td data-order="1" class="warning"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'+str(nrDeprecated)+' found</a></td>'
 
     # validate XML
     if not args.disableValidate:
@@ -900,10 +972,10 @@ def runExample(resultQueue, example):
 
       failed, total=validateXML(example, False, htmlOutputFD)
       if failed==0:
-        resultStr+='<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">valid <span class="badge">'+\
+        resultStr+='<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">valid <span class="badge">'+\
                    str(total)+'</span></a></td>'
       else:
-        resultStr+='<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">'+\
+        resultStr+='<td data-order="1" class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">'+\
                    'failed <span class="badge">'+str(failed)+'</span> of <span class="badge">'+str(total)+'</span></a></td>'
         runExampleRet=1
       # write footer
@@ -933,7 +1005,7 @@ def runExample(resultQueue, example):
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
     resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td>%s</tr>' \
-      %('<td>-</td>'*(6-sum([args.disableRun, args.disableRun, args.disableRun, args.disableCompare,
+      %('<td>-</td>'*(6-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
       args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])))
     runExampleRet=1
   finally:
@@ -974,7 +1046,7 @@ def webapp(example):
       gui['file']=[example+'/FMI.mbsimprj.xml']
     else:
       gui['file']=[example+'/FMI_cosim.mbsimprj.xml']
-  return '<td>'+\
+  return '<td data-order="%03d%03d%03d">'%(len(ombv), len(h5p), len(gui))+\
       ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
        myurllibp.urlencode(ombv, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(ombv)>0 else 'hidden')+';">'+\
@@ -1788,9 +1860,9 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         if subprocessCall(exePrefix()+[mbxmlutilsvalidate]+typesValue+[pj(root, filename)],
                           outputFD)!=0:
           nrFailed+=1
-          print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">failed</a></td>', file=htmlOutputFD)
+          print('<td data-order="1" class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">failed</a></td>', file=htmlOutputFD)
         else:
-          print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">passed</a></td>', file=htmlOutputFD)
+          print('<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">passed</a></td>', file=htmlOutputFD)
         print('</tr>', file=htmlOutputFD)
         nrTotal+=1
         outputFD.close()
@@ -1906,7 +1978,7 @@ def coverage(mainFD):
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
   print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
         '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%s</span></a></td>'%(covRateStr), file=mainFD)
-  for i in range(0, 6-sum([args.disableRun, args.disableRun, args.disableRun, args.disableCompare,
+  for i in range(0, 6-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
     args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])):
     print('<td>-</td>', file=mainFD)
   print('</tr>', file=mainFD); mainFD.flush()
