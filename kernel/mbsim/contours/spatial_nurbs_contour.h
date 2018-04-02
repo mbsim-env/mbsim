@@ -97,8 +97,10 @@ namespace MBSim {
       Interpolation interpolation{none};
       fmatvec::GeneralMatrix<fmatvec::Vec4> cp;
       fmatvec::VecV uKnot, vKnot;
-      int etaDegree{3}, xiDegree{3};
-      bool openEta{false}, openXi{false};
+      int etaDegree{3};
+      int xiDegree{3};
+      bool openEta{false};
+      bool openXi{false};
       NurbsSurface srf;
       fmatvec::Vec2 zetaOld;
       fmatvec::GeneralMatrix<fmatvec::Vec4> hess;

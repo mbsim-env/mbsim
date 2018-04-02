@@ -86,7 +86,8 @@ namespace MBSim {
 
     protected:
       Function<fmatvec::Vec3(fmatvec::Vec2)> * funcCrPC{nullptr};
-      bool openEta{false}, openXi{false};
+      bool openEta{false};
+      bool openXi{false};
 
       std::vector<double> ombvEtaNodes;
       std::vector<double> ombvXiNodes;
