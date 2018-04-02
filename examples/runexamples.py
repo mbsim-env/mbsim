@@ -840,20 +840,26 @@ def runExample(resultQueue, example):
       ombvRet=0
       if len(ombvFiles)>0:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_ombv.txt"), "w", encoding="utf-8"), args.printToConsole)
-        ombvRet=subprocessCall(exePrefix()+[pj(mbsimBinDir, "openmbv"+args.exeExt), "--autoExit"]+ombvFiles,
-                               outFD, env=denv, maxExecutionTime=1)
+        comm=exePrefix()+[pj(mbsimBinDir, "openmbv"+args.exeExt), "--autoExit"]+ombvFiles
+        print("Starting:\n"+str(comm)+"\n\n", file=outFD)
+        ombvRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+        print("\n\nReturned with "+str(ombvRet), file=outFD)
         outFD.close()
       h5pRet=0
       if len(h5pFiles)>0:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_h5p.txt"), "w", encoding="utf-8"), args.printToConsole)
-        h5pRet=subprocessCall(exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles,
-                              outFD, env=denv, maxExecutionTime=1)
+        comm=exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles
+        print("Starting:\n"+str(comm)+"\n\n", file=outFD)
+        h5pRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+        print("\n\nReturned with "+str(h5pRet), file=outFD)
         outFD.close()
       guiRet=0
       if guiFile!=None:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_gui.txt"), "w", encoding="utf-8"), args.printToConsole)
-        guiRet=subprocessCall(exePrefix()+[pj(mbsimBinDir, "mbsimgui"+args.exeExt), "--autoExit"]+[guiFile],
-                              outFD, env=denv, maxExecutionTime=1)
+        comm=exePrefix()+[pj(mbsimBinDir, "mbsimgui"+args.exeExt), "--autoExit"]+[guiFile]
+        print("Starting:\n"+str(comm)+"\n\n", file=outFD)
+        guiRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+        print("\n\nReturned with "+str(guiRet), file=outFD)
         outFD.close()
       # result
       resultStr+='<td data-order="%03d%d%d%d">'%(abs(ombvRet)+abs(h5pRet)+abs(guiRet),
