@@ -162,10 +162,10 @@ class MultiFile(object):
       if f!=sys.stdout and f!=sys.stderr:
         f.close()
 # kill the called subprocess
-def killSubprocessCall(proc, f, killed):
+def killSubprocessCall(proc, f, killed, timeout):
   killed.set()
   f.write("\n\n\n******************** START: MESSAGE FROM runexamples.py ********************\n")
-  f.write("The maximal execution time (%d min) has reached (option --maxExecutionTime),\n"%(args.maxExecutionTime))
+  f.write("The maximal execution time (%d min) has reached (option --maxExecutionTime),\n"%(timeout))
   f.write("but the program is still running. Terminating the program now.\n")
   f.write("******************** END: MESSAGE FROM runexamples.py **********************\n\n\n\n")
   proc.terminate()
@@ -184,7 +184,7 @@ def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
   guard=None
   killed=threading.Event()
   if maxExecutionTime>0:
-    guard=threading.Timer(maxExecutionTime*60, killSubprocessCall, args=(proc, f, killed))
+    guard=threading.Timer(maxExecutionTime*60, killSubprocessCall, args=(proc, f, killed, maxExecutionTime))
     guard.start()
   # make stdout none blocking
   fd=proc.stdout.fileno()
