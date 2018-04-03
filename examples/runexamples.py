@@ -162,10 +162,10 @@ class MultiFile(object):
       if f!=sys.stdout and f!=sys.stderr:
         f.close()
 # kill the called subprocess
-def killSubprocessCall(proc, f, killed):
+def killSubprocessCall(proc, f, killed, timeout):
   killed.set()
   f.write("\n\n\n******************** START: MESSAGE FROM runexamples.py ********************\n")
-  f.write("The maximal execution time (%d min) has reached (option --maxExecutionTime),\n"%(args.maxExecutionTime))
+  f.write("The maximal execution time (%d min) has reached (option --maxExecutionTime),\n"%(timeout))
   f.write("but the program is still running. Terminating the program now.\n")
   f.write("******************** END: MESSAGE FROM runexamples.py **********************\n\n\n\n")
   proc.terminate()
@@ -184,7 +184,7 @@ def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
   guard=None
   killed=threading.Event()
   if maxExecutionTime>0:
-    guard=threading.Timer(maxExecutionTime*60, killSubprocessCall, args=(proc, f, killed))
+    guard=threading.Timer(maxExecutionTime*60, killSubprocessCall, args=(proc, f, killed, maxExecutionTime))
     guard.start()
   # make stdout none blocking
   fd=proc.stdout.fileno()
@@ -840,32 +840,38 @@ def runExample(resultQueue, example):
       ombvRet=0
       if len(ombvFiles)>0:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_ombv.txt"), "w", encoding="utf-8"), args.printToConsole)
-        ombvRet=subprocessCall(exePrefix()+[pj(mbsimBinDir, "openmbv"+args.exeExt), "--autoExit"]+ombvFiles,
-                               outFD, env=denv, maxExecutionTime=1)
+        comm=exePrefix()+[pj(mbsimBinDir, "openmbv"+args.exeExt), "--autoExit"]+ombvFiles
+        print("Starting:\n"+str(comm)+"\n\n", file=outFD)
+        ombvRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+        print("\n\nReturned with "+str(ombvRet), file=outFD)
         outFD.close()
       h5pRet=0
       if len(h5pFiles)>0:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_h5p.txt"), "w", encoding="utf-8"), args.printToConsole)
-        h5pRet=subprocessCall(exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles,
-                              outFD, env=denv, maxExecutionTime=1)
+        comm=exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles
+        print("Starting:\n"+str(comm)+"\n\n", file=outFD)
+        h5pRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+        print("\n\nReturned with "+str(h5pRet), file=outFD)
         outFD.close()
       guiRet=0
       if guiFile!=None:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_gui.txt"), "w", encoding="utf-8"), args.printToConsole)
-        guiRet=subprocessCall(exePrefix()+[pj(mbsimBinDir, "mbsimgui"+args.exeExt), "--autoExit"]+[guiFile],
-                              outFD, env=denv, maxExecutionTime=1)
+        comm=exePrefix()+[pj(mbsimBinDir, "mbsimgui"+args.exeExt), "--autoExit"]+[guiFile]
+        print("Starting:\n"+str(comm)+"\n\n", file=outFD)
+        guiRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+        print("\n\nReturned with "+str(guiRet), file=outFD)
         outFD.close()
       # result
-      resultStr+='<td data-order="%03d%d%d%d">'%(abs(ombvRet)+abs(h5pRet)+abs(guiRet),
-                                                 int(len(ombvFiles)>0), int(len(h5pFiles)), int(guiFile!=None))+\
+      resultStr+='<td data-order="%d%d%d%d">'%(0 if abs(ombvRet)+abs(h5pRet)+abs(guiRet)==0 else (1 if willFail else 2),
+                                               int(len(ombvFiles)>0), int(len(h5pFiles)>0), int(guiFile!=None))+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_ombv.txt")),
-          "visible" if len(ombvFiles)>0 else "hidden", "success" if ombvRet==0 else "danger")+\
+          "visible" if len(ombvFiles)>0 else "hidden", "success" if ombvRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="%s/html/openmbv.svg" alt="ombv"/></a>'%(buildSystemRootURL)+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_h5p.txt")),
-          "visible" if len(h5pFiles)>0 else "hidden", "success" if h5pRet==0 else "danger")+\
+          "visible" if len(h5pFiles)>0 else "hidden", "success" if h5pRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="%s/html/h5plotserie.svg" alt="h5p"/></a>'%(buildSystemRootURL)+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_gui.txt")),
-          "visible" if guiFile!=None else "hidden", "success" if guiRet==0 else "danger")+\
+          "visible" if guiFile!=None else "hidden", "success" if guiRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="%s/html/mbsimgui.svg" alt="gui"/></a>'%(buildSystemRootURL)+\
       '</td>'
       if ombvRet!=0 or h5pRet!=0 or guiRet!=0:
@@ -1005,7 +1011,7 @@ def runExample(resultQueue, example):
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
     resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td>%s</tr>' \
-      %('<td>-</td>'*(6-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
+      %('<td>-</td>'*(7-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
       args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])))
     runExampleRet=1
   finally:
@@ -1978,7 +1984,7 @@ def coverage(mainFD):
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
   print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
         '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%s</span></a></td>'%(covRateStr), file=mainFD)
-  for i in range(0, 6-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
+  for i in range(0, 7-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
     args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])):
     print('<td>-</td>', file=mainFD)
   print('</tr>', file=mainFD); mainFD.flush()
