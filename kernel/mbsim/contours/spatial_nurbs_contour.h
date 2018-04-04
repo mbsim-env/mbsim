@@ -38,7 +38,7 @@ namespace MBSim {
         equallySpaced = 0,
         chordLength,
         none,
-        unknown,
+        unknown
       };
 
       /**
