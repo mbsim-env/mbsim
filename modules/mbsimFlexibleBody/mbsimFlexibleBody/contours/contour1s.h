@@ -45,8 +45,6 @@ namespace MBSimFlexibleBody {
       void plot() override;
       /***************************************************/
 
-      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override;
-
       void setOpenMBVSpineExtrusion(const std::shared_ptr<OpenMBV::SpineExtrusion> &spineExtrusion) { openMBVSpineExtrusion = spineExtrusion; }
       std::shared_ptr<OpenMBV::SpineExtrusion>& getOpenMBVSpineExtrusion() { return openMBVSpineExtrusion; }
 

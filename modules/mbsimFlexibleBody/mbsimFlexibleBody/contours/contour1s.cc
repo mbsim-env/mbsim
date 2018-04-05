@@ -42,11 +42,6 @@ namespace MBSimFlexibleBody {
     Contour::init(stage, config);
   }
 
-  Vec3 Contour1s::evalKt(const fmatvec::Vec2 &zeta) {
-    static Vec3 Kt("[0;0;1]");
-    return Kt;
-  }
-
   void Contour1s::plot() {
     if(plotFeature[MBSim::openMBV] and openMBVSpineExtrusion) {
 

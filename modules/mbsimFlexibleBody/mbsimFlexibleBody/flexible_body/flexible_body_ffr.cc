@@ -913,8 +913,8 @@ namespace MBSimFlexibleBody {
       for(int i=0; i<nodes.size(); i++)
         ombvNodes[i] = static_cast<Index>(nodes(i))-1;
       ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"indices");
-      Vec indices;
-      if(ee) indices=E(ee)->getText<Vec>();
+      VecVI indices;
+      if(ee) indices=E(ee)->getText<VecVI>();
       ombvIndices.resize(indices.size());
       for(int i=0; i<indices.size(); i++)
         ombvIndices[i] = static_cast<Index>(indices(i))-1;
