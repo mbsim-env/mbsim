@@ -39,54 +39,6 @@ namespace MBSim {
     return 0;
   }
 
-  Vec3 Contour::evalKrPS(const Vec2 &zeta) {
-    throwError("(Contour::evalKrPS): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::evalKs(const Vec2 &zeta) {
-    throwError("(Contour::evalKs): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::evalKt(const Vec2 &zeta) {
-    throwError("(Contour::evalKt): Not implemented.");
-    return 0;
-  }
-  Vec3 Contour::evalParDer1Ks(const Vec2 &zeta) {
-    throwError("(Contour::evalParDer1Ks): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::evalParDer2Ks(const Vec2 &zeta) {
-    throwError("(Contour::evalParDer2Ks): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::evalParDer1Kt(const Vec2 &zeta) {
-    throwError("(Contour::evalParDer1Kt): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::evalParDer2Kt(const Vec2 &zeta) {
-    throwError("(Contour::evalParDer2Kt): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::evalKu(const Vec2 &zeta) {
-    Vec3 Ks=evalKs(zeta);
-    return Ks/nrm2(Ks);
-  }
-
-  Vec3 Contour::evalKv(const Vec2 &zeta) {
-    return crossProduct(evalKn(zeta),evalKu(zeta));;
-  }
-
-  Vec3 Contour::evalKn(const Vec2 &zeta) {
-    Vec3 Kn=crossProduct(evalKs(zeta),evalKt(zeta));
-    return Kn/nrm2(Kn);
-  }
-
   Vec3 Contour::evalWu(const Vec2 &zeta) {
     Vec3 Ws=evalWs(zeta);
     return Ws/nrm2(Ws);
@@ -99,38 +51,6 @@ namespace MBSim {
   Vec3 Contour::evalWn(const Vec2 &zeta) {
     Vec3 Wn=crossProduct(evalWs(zeta),evalWt(zeta));
     return Wn/nrm2(Wn);
-  }
-
-  Vec3 Contour::evalParDer1Ku(const Vec2 &zeta) {
-    Vec3 Ks = evalKs(zeta);
-    Vec3 parDer1Ks = evalParDer1Ks(zeta);
-    return parDer1Ks/nrm2(Ks) - Ks*((Ks.T()*parDer1Ks)/pow(nrm2(Ks),3));
-  }
-
-  Vec3 Contour::evalParDer2Ku(const Vec2 &zeta) {
-    Vec3 Ks = evalKs(zeta);
-    Vec3 parDer2Ks = evalParDer2Ks(zeta);
-    return parDer2Ks/nrm2(Ks) - Ks*((Ks.T()*parDer2Ks)/pow(nrm2(Ks),3));
-  }
-
-  Vec3 Contour::evalParDer1Kv(const Vec2 &zeta) {
-    return crossProduct(evalParDer1Kn(zeta),evalKu(zeta)) + crossProduct(evalKn(zeta),evalParDer1Ku(zeta));
-  }
-
-  Vec3 Contour::evalParDer2Kv(const Vec2 &zeta) {
-    return crossProduct(evalParDer2Kn(zeta),evalKu(zeta)) + crossProduct(evalKn(zeta),evalParDer2Ku(zeta));
-  }
-
-  Vec3 Contour::evalParDer1Kn(const Vec2 &zeta) {
-    Vec3 Ksxt = crossProduct(evalKs(zeta),evalKt(zeta));
-    Vec3 Ksxtd = crossProduct(evalParDer1Ks(zeta),evalKt(zeta)) + crossProduct(evalKs(zeta),evalParDer1Kt(zeta));
-    return Ksxtd/nrm2(Ksxt) - Ksxt*((Ksxt.T()*Ksxtd)/pow(nrm2(Ksxt),3));
-  }
-
-  Vec3 Contour::evalParDer2Kn(const Vec2 &zeta) {
-    Vec3 Ksxt = crossProduct(evalKs(zeta),evalKt(zeta));
-    Vec3 Ksxtd = crossProduct(evalParDer2Ks(zeta),evalKt(zeta)) + crossProduct(evalKs(zeta),evalParDer2Kt(zeta));
-    return Ksxtd/nrm2(Ksxt) - Ksxt*((Ksxt.T()*Ksxtd)/pow(nrm2(Ksxt),3));
   }
 
   Vec3 Contour::evalParDer1Wn(const Vec2 &zeta) {
@@ -160,11 +80,6 @@ namespace MBSim {
 
   Vec3 Contour::evalParDer2Wv(const Vec2 &zeta) {
     throwError("(Contour::evalParDer2Wv): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::evalWrPS(const Vec2 &zeta) {
-    throwError("(Contour::evalWrPS): Not implemented.");
     return 0;
   }
 

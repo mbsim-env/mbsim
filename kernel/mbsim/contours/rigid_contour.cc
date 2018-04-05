@@ -53,6 +53,86 @@ namespace MBSim {
     return frame;
   }
 
+  Vec3 RigidContour::evalKrPS(const Vec2 &zeta) {
+    throwError("(RigidContour::evalKrPS): Not implemented.");
+    return 0;
+  }
+
+  Vec3 RigidContour::evalKs(const Vec2 &zeta) {
+    throwError("(RigidContour::evalKs): Not implemented.");
+    return 0;
+  }
+
+  Vec3 RigidContour::evalKt(const Vec2 &zeta) {
+    throwError("(RigidContour::evalKt): Not implemented.");
+    return 0;
+  }
+  Vec3 RigidContour::evalParDer1Ks(const Vec2 &zeta) {
+    throwError("(RigidContour::evalParDer1Ks): Not implemented.");
+    return 0;
+  }
+
+  Vec3 RigidContour::evalParDer2Ks(const Vec2 &zeta) {
+    throwError("(RigidContour::evalParDer2Ks): Not implemented.");
+    return 0;
+  }
+
+  Vec3 RigidContour::evalParDer1Kt(const Vec2 &zeta) {
+    throwError("(RigidContour::evalParDer1Kt): Not implemented.");
+    return 0;
+  }
+
+  Vec3 RigidContour::evalParDer2Kt(const Vec2 &zeta) {
+    throwError("(RigidContour::evalParDer2Kt): Not implemented.");
+    return 0;
+  }
+
+  Vec3 RigidContour::evalKu(const Vec2 &zeta) {
+    Vec3 Ks=evalKs(zeta);
+    return Ks/nrm2(Ks);
+  }
+
+  Vec3 RigidContour::evalKv(const Vec2 &zeta) {
+    return crossProduct(evalKn(zeta),evalKu(zeta));;
+  }
+
+  Vec3 RigidContour::evalKn(const Vec2 &zeta) {
+    Vec3 Kn=crossProduct(evalKs(zeta),evalKt(zeta));
+    return Kn/nrm2(Kn);
+  }
+
+  Vec3 RigidContour::evalParDer1Ku(const Vec2 &zeta) {
+    Vec3 Ks = evalKs(zeta);
+    Vec3 parDer1Ks = evalParDer1Ks(zeta);
+    return parDer1Ks/nrm2(Ks) - Ks*((Ks.T()*parDer1Ks)/pow(nrm2(Ks),3));
+  }
+
+  Vec3 RigidContour::evalParDer2Ku(const Vec2 &zeta) {
+    Vec3 Ks = evalKs(zeta);
+    Vec3 parDer2Ks = evalParDer2Ks(zeta);
+    return parDer2Ks/nrm2(Ks) - Ks*((Ks.T()*parDer2Ks)/pow(nrm2(Ks),3));
+  }
+
+  Vec3 RigidContour::evalParDer1Kv(const Vec2 &zeta) {
+    return crossProduct(evalParDer1Kn(zeta),evalKu(zeta)) + crossProduct(evalKn(zeta),evalParDer1Ku(zeta));
+  }
+
+  Vec3 RigidContour::evalParDer2Kv(const Vec2 &zeta) {
+    return crossProduct(evalParDer2Kn(zeta),evalKu(zeta)) + crossProduct(evalKn(zeta),evalParDer2Ku(zeta));
+  }
+
+  Vec3 RigidContour::evalParDer1Kn(const Vec2 &zeta) {
+    Vec3 Ksxt = crossProduct(evalKs(zeta),evalKt(zeta));
+    Vec3 Ksxtd = crossProduct(evalParDer1Ks(zeta),evalKt(zeta)) + crossProduct(evalKs(zeta),evalParDer1Kt(zeta));
+    return Ksxtd/nrm2(Ksxt) - Ksxt*((Ksxt.T()*Ksxtd)/pow(nrm2(Ksxt),3));
+  }
+
+  Vec3 RigidContour::evalParDer2Kn(const Vec2 &zeta) {
+    Vec3 Ksxt = crossProduct(evalKs(zeta),evalKt(zeta));
+    Vec3 Ksxtd = crossProduct(evalParDer2Ks(zeta),evalKt(zeta)) + crossProduct(evalKs(zeta),evalParDer2Kt(zeta));
+    return Ksxtd/nrm2(Ksxt) - Ksxt*((Ksxt.T()*Ksxtd)/pow(nrm2(Ksxt),3));
+  }
+
   Vec3 RigidContour::evalPosition(const Vec2 &zeta) {
     return R->evalPosition() + evalWrPS(zeta);
   }

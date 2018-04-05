@@ -56,6 +56,47 @@ namespace MBSim {
       void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 
+      virtual fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKu(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKv(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKn(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Ks(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Ks(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Kt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Kt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Kn(const fmatvec::Vec2 &zeta);
+
+      /**
+       * \return derivative of first tangent
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta);
+
+      /**
+       * \return derivative of first tangent
+       * \param t time
+       * \param cp contour position
+       */
+
+      virtual fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta);
+      /**
+       * \return derivative of second tangent
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta);
+
+      /**
+       * \return derivative second first tangent
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta);
+
       fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta) override;
@@ -63,7 +104,7 @@ namespace MBSim {
       fmatvec::Vec3 evalParDer2Wu(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer1Wv(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer2Wv(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalWrPS(const fmatvec::Vec2 &zeta) override;
+      virtual fmatvec::Vec3 evalWrPS(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override;
 

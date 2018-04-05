@@ -73,23 +73,11 @@ namespace MBSim {
       virtual void sethSize(int size, int i=0) { hSize[i] = size; }
       virtual void sethInd(int ind, int i=0) { hInd[i] = ind; }
 
-      virtual fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalParDer1Ks(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalParDer2Ks(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalParDer1Kt(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalParDer2Kt(const fmatvec::Vec2 &zeta);
-
       /**
        * \return position in world frame
        * \param contour position
        */
       virtual fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta);
-
-      virtual fmatvec::Vec3 evalKu(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalKv(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalKn(const fmatvec::Vec2 &zeta);
 
       /**
        * \return first tangent in world frame
@@ -109,38 +97,6 @@ namespace MBSim {
        * \param contour position
        */
       virtual fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta);
-
-      virtual fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta);
-
-      virtual fmatvec::Vec3 evalParDer2Kn(const fmatvec::Vec2 &zeta);
-
-      /**
-       * \return derivative of first tangent
-       * \param t time
-       * \param cp contour position
-       */
-      virtual fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta);
-
-      /**
-       * \return derivative of first tangent
-       * \param t time
-       * \param cp contour position
-       */
-
-      virtual fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta);
-      /**
-       * \return derivative of second tangent
-       * \param t time
-       * \param cp contour position
-       */
-      virtual fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta);
-
-      /**
-       * \return derivative second first tangent
-       * \param t time
-       * \param cp contour position
-       */
-      virtual fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of normal in world frame
@@ -183,13 +139,6 @@ namespace MBSim {
        * \param cp contour position
        */
       virtual fmatvec::Vec3 evalParDer2Wv(const fmatvec::Vec2 &zeta);
-
-      /**
-       * \return derivative of first tangent in world frame
-       * \param t time
-       * \param cp contour position
-       */
-      virtual fmatvec::Vec3 evalWrPS(const fmatvec::Vec2 &zeta);
 
       /**
        * \return first tangent in world frame
