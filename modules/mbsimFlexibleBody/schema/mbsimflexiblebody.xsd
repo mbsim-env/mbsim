@@ -959,4 +959,98 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="FlexibleSpatialNurbsContour" substitutionGroup="mbsim:Contour" type="FlexibleSpatialNurbsContourType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Räumliche NURBS Kontur.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FlexibleSpatialNurbsContourType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:ContourType">
+        <xs:sequence>
+          <xs:element name="interpolation" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl der Interpolationsmethode.
+              <ul>
+                <li>equallySpaced: "equally spaced" Interpolation</li>
+                <li>chordLength: "chord length" Interpolation</li>
+                <li>none: keine Interpolation</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="indices" type="pv:indexMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Indizes der Kontrollpunkte.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="numberOfEtaControlPoints" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anzahl der Kontrollpunkte in eta-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="numberOfXiControlPoints" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anzahl der Kontrollpunkte in xi-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="etaKnotVector" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knotenvektor in eta-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="xiKnotVector" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knotenvektor in xi-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="etaDegree" type="pv:integerFullEval" minOccurs="0" >
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Polynomgrad in eta-Richtung.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="xiDegree" type="pv:integerFullEval" minOccurs="0" >
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Polynomgrad in xi-Richtung.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="openEta" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur in eta-Richtung offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="openXi" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur in xi-Richtung offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>
