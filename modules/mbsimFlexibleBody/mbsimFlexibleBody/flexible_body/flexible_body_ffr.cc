@@ -289,12 +289,22 @@ namespace MBSimFlexibleBody {
 
       updNodalPos.resize(KrKP.size(),true);
       updNodalVel.resize(KrKP.size(),true);
+      updNodalAcc.resize(KrKP.size(),true);
+      updNodalJac[0].resize(KrKP.size(),true);
+      updNodalJac[1].resize(KrKP.size(),true);
+      updNodalGA.resize(KrKP.size(),true);
       updNodalStress.resize(KrKP.size(),true);
       WrOP.resize(KrKP.size());
       WrRP.resize(KrKP.size());
       disp.resize(KrKP.size());
       Womrel.resize(KrKP.size());
       Wvrel.resize(KrKP.size());
+      Wom.resize(KrKP.size());
+      WvP.resize(KrKP.size());
+      WaP.resize(KrKP.size());
+      Wpsi.resize(KrKP.size());
+      WjP.resize(KrKP.size());
+      WjR.resize(KrKP.size());
       if(not ARP.size())
         ARP.resize(KrKP.size(),SqrMat3(Eye()));
       AWK.resize(ARP.size());
@@ -308,6 +318,11 @@ namespace MBSimFlexibleBody {
       updateLLM_ = &FlexibleBodyFFR::updateLLMNotConst;
     }
     else if(stage==unknownStage) {
+      WJP[0].resize(KrKP.size(),Mat3xV(gethSize(0),NONINIT));
+      WJR[0].resize(KrKP.size(),Mat3xV(gethSize(0),NONINIT));
+      WJP[1].resize(KrKP.size(),Mat3xV(gethSize(1),NONINIT));
+      WJR[1].resize(KrKP.size(),Mat3xV(gethSize(1),NONINIT));
+
       KJ[0].resize(6+ne,hSize[0]);
       KJ[1].resize(6+ne,hSize[1]);
       for(int i=0; i<ne; i++) {
@@ -688,6 +703,10 @@ namespace MBSimFlexibleBody {
     for(unsigned int i=0; i<updNodalPos.size(); i++) {
       updNodalPos[i] = true;
       updNodalVel[i] = true;
+      updNodalAcc[i] = true;
+      updNodalJac[0][i] = true;
+      updNodalJac[1][i] = true;
+      updNodalGA[i] = true;
       updNodalStress[i] = true;
     }
   }
@@ -961,29 +980,18 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::updateVelocities(int i) {
     Womrel[i] = K->evalOrientation()*(Psi[i]*evaluERel());
     Wvrel[i] = K->getOrientation()*(Phi[i]*getuERel());
+    Wom[i] = K->evalAngularVelocity() + Womrel[i];
+    WvP[i] = K->getVelocity() + crossProduct(K->getAngularVelocity(), evalGlobalRelativePosition(i)) + Wvrel[i];
     updNodalVel[i] = false;
   }
 
-  void FlexibleBodyFFR::updatePositions(NodeFrame* frame) {
-    Index i = frame->getNodeNumber();
-    frame->setPosition(evalNodalPosition(i));
-    frame->setOrientation(getNodalOrientation(i));
- }
-
-  void FlexibleBodyFFR::updateVelocities(NodeFrame* frame) {
-    Index i = frame->getNodeNumber();
-    frame->setAngularVelocity(K->evalAngularVelocity() + evalGlobalRelativeAngularVelocity(i));
-    frame->setVelocity(K->getVelocity() + crossProduct(K->getAngularVelocity(), evalGlobalRelativePosition(i)) + getNodalRelativeVelocity(i));
+  void FlexibleBodyFFR::updateAccelerations(int i) {
+    Wpsi[i] = K->evalAngularAcceleration() + crossProduct(K->evalAngularVelocity(),evalGlobalRelativeAngularVelocity(i)) + K->evalOrientation()*(Psi[i]*evaludERel());
+    WaP[i] = K->getAcceleration() + crossProduct(K->getAngularAcceleration(), evalGlobalRelativePosition(i)) + crossProduct(K->getAngularVelocity(), crossProduct(K->getAngularVelocity(), evalGlobalRelativePosition(i))) + 2.*crossProduct(K->getAngularVelocity(), getNodalRelativeVelocity(i)) + K->getOrientation()*(Phi[i]*getudERel());
+    updNodalAcc[i] = false;
   }
 
-  void FlexibleBodyFFR::updateAccelerations(NodeFrame* frame) {
-    Index i = frame->getNodeNumber();
-    frame->setAngularAcceleration(K->evalAngularAcceleration() + crossProduct(K->evalAngularVelocity(),evalGlobalRelativeAngularVelocity(i)) + K->evalOrientation()*(Psi[i]*evaludERel()));
-    frame->setAcceleration(K->getAcceleration() + crossProduct(K->getAngularAcceleration(), evalGlobalRelativePosition(i)) + crossProduct(K->getAngularVelocity(), crossProduct(K->getAngularVelocity(), evalGlobalRelativePosition(i))) + 2.*crossProduct(K->getAngularVelocity(), getNodalRelativeVelocity(i)) + K->getOrientation()*(Phi[i]*getudERel()));
-  }
-
-  void FlexibleBodyFFR::updateJacobians(NodeFrame* frame, int j) {
-    Index i = frame->getNodeNumber();
+  void FlexibleBodyFFR::updateJacobians(int i, int j) {
     Mat3xV Phi_ = Phi[i];
     if(K0F.size() and K0F[i].size()) {
       MatVx3 PhigeoT(ne,NONINIT);
@@ -998,16 +1006,42 @@ namespace MBSimFlexibleBody {
         PsigeoT.set(k,K0M[i][k]*q);
       Psi_ += PsigeoT.T();
     }
-    frame->setJacobianOfRotation(K->getJacobianOfRotation(j));
-    frame->getJacobianOfRotation(j,false).add(RangeV(0,2),RangeV(gethSize(j)-ne,gethSize(j)-1),K->evalOrientation()*Psi_);
-    frame->setJacobianOfTranslation(K->getJacobianOfTranslation(j) - tilde(evalGlobalRelativePosition(i))*K->getJacobianOfRotation(j));
-    frame->getJacobianOfTranslation(j,false).add(RangeV(0,2),RangeV(gethSize(j)-ne,gethSize(j)-1),K->getOrientation()*Phi_);
+    WJR[j][i] = K->getJacobianOfRotation(j);
+    WJR[j][i].add(RangeV(0,2),RangeV(gethSize(j)-ne,gethSize(j)-1),K->evalOrientation()*Psi_);
+    WJP[j][i] = K->getJacobianOfTranslation(j) - tilde(evalGlobalRelativePosition(i))*K->getJacobianOfRotation(j);
+    WJP[j][i].add(RangeV(0,2),RangeV(gethSize(j)-ne,gethSize(j)-1),K->getOrientation()*Phi_);
+    updNodalJac[j][i] = false;
+  }
+
+  void FlexibleBodyFFR::updateGyroscopicAccelerations(int i) {
+    WjR[i] = K->evalGyroscopicAccelerationOfRotation() + crossProduct(K->evalAngularVelocity(),evalGlobalRelativeAngularVelocity(i));
+    WjP[i] = K->getGyroscopicAccelerationOfTranslation() + crossProduct(K->getGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition(i)) + crossProduct(K->getAngularVelocity(),crossProduct(K->getAngularVelocity(),evalGlobalRelativePosition(i))) + 2.*crossProduct(K->getAngularVelocity(),getNodalRelativeVelocity(i));
+    updNodalGA[i] = false;
+  }
+
+  void FlexibleBodyFFR::updatePositions(NodeFrame* frame) {
+    frame->setPosition(evalNodalPosition(frame->getNodeNumber()));
+    frame->setOrientation(getNodalOrientation(frame->getNodeNumber()));
+ }
+
+  void FlexibleBodyFFR::updateVelocities(NodeFrame* frame) {
+    frame->setVelocity(evalNodalVelocity(frame->getNodeNumber()));
+    frame->setAngularVelocity(getNodalAngularVelocity(frame->getNodeNumber()));
+  }
+
+  void FlexibleBodyFFR::updateAccelerations(NodeFrame* frame) {
+    frame->setAcceleration(evalNodalAcceleration(frame->getNodeNumber()));
+    frame->setAngularAcceleration(getNodalAngularAcceleration(frame->getNodeNumber()));
+  }
+
+  void FlexibleBodyFFR::updateJacobians(NodeFrame* frame, int j) {
+    frame->setJacobianOfTranslation(evalNodalJacobianOfTranslation(frame->getNodeNumber(),j));
+    frame->setJacobianOfRotation(getNodalJacobianOfRotation(frame->getNodeNumber(),j));
   }
 
   void FlexibleBodyFFR::updateGyroscopicAccelerations(NodeFrame* frame) {
-    Index i = frame->getNodeNumber();
-    frame->setGyroscopicAccelerationOfRotation(K->evalGyroscopicAccelerationOfRotation() + crossProduct(K->evalAngularVelocity(),evalGlobalRelativeAngularVelocity(i)));
-    frame->setGyroscopicAccelerationOfTranslation(K->getGyroscopicAccelerationOfTranslation() + crossProduct(K->getGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition(i)) + crossProduct(K->getAngularVelocity(),crossProduct(K->getAngularVelocity(),evalGlobalRelativePosition(i))) + 2.*crossProduct(K->getAngularVelocity(),getNodalRelativeVelocity(i)));
+    frame->setGyroscopicAccelerationOfTranslation(evalNodalGyroscopicAccelerationOfTranslation(frame->getNodeNumber()));
+    frame->setGyroscopicAccelerationOfRotation(getNodalGyroscopicAccelerationOfRotation(frame->getNodeNumber()));
   }
 
 }
