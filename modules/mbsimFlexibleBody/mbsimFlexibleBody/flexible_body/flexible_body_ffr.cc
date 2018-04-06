@@ -1006,7 +1006,7 @@ namespace MBSimFlexibleBody {
         PsigeoT.set(k,K0M[i][k]*q);
       Psi_ += PsigeoT.T();
     }
-    WJR[j][i] = K->getJacobianOfRotation(j);
+    WJR[j][i] = K->evalJacobianOfRotation(j);
     WJR[j][i].add(RangeV(0,2),RangeV(gethSize(j)-ne,gethSize(j)-1),K->evalOrientation()*Psi_);
     WJP[j][i] = K->getJacobianOfTranslation(j) - tilde(evalGlobalRelativePosition(i))*K->getJacobianOfRotation(j);
     WJP[j][i].add(RangeV(0,2),RangeV(gethSize(j)-ne,gethSize(j)-1),K->getOrientation()*Phi_);
