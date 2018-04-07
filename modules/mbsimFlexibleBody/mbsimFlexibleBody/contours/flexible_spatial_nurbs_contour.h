@@ -43,13 +43,6 @@ namespace MBSimFlexibleBody {
    */
   class FlexibleSpatialNurbsContour : public MBSim::Contour {
     public:
-      enum Interpolation {
-        equallySpaced = 0,
-        chordLength,
-        none,
-        unknown
-      };
-
       /**
        * \brief constructor 
        * \param name of contour
@@ -90,7 +83,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setInterpolation(Interpolation interpolation_) { interpolation = interpolation_; }
+      void setInterpolation(bool interpolation_) { interpolation = interpolation_; }
       void setIndices(const fmatvec::MatVI &index_) { index = index_; }
       void setEtaKnotVector(const fmatvec::VecV &uKnot_) { uKnot = uKnot_; }
       void setXiKnotVector(const fmatvec::VecV &vKnot_) { vKnot = vKnot_; }
@@ -116,9 +109,9 @@ namespace MBSimFlexibleBody {
       void setOpenEta(bool openEta_) { openEta = openEta_; }
       void setOpenXi(bool openXi_) { openXi = openXi_; }
 
-      void resetUpToDate() override { updSrf = true; updSrfVel = true; updSrfJac = true; updSrfGA = true; }
+      void resetUpToDate() override { updSrfPos = true; updSrfVel = true; updSrfJac = true; updSrfGA = true; }
 
-      void updateSurface();
+      void updateSurfacePositions();
       void updateSurfaceVelocities();
       void updateSurfaceJacobians();
       void updateSurfaceGyroscopicAccelerations();
@@ -128,18 +121,18 @@ namespace MBSimFlexibleBody {
       void updateHessianMatrix(const fmatvec::Vec2 &zeta);
       const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(zeta!=zetaOld) updateHessianMatrix(zeta); return hess; }
 
-      Interpolation interpolation{none};
+      bool interpolation{false};
       fmatvec::MatVI index;
       fmatvec::VecV uKnot, vKnot;
       int etaDegree{3};
       int xiDegree{3};
       bool openEta{false};
       bool openXi{false};
-      MBSim::NurbsSurface srf, srfVel, srfGA;
+      MBSim::NurbsSurface srfPos, srfVel, srfGA;
       std::vector<MBSim::NurbsSurface> srfJac;
       fmatvec::Vec2 zetaOld;
       fmatvec::GeneralMatrix<fmatvec::Vec4> hess, hessTmp;
-      bool updSrf{true};
+      bool updSrfPos{true};
       bool updSrfVel{true};
       bool updSrfJac{true};
       bool updSrfGA{true};

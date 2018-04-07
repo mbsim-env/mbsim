@@ -970,14 +970,9 @@
     <xs:complexContent>
       <xs:extension base="mbsim:ContourType">
         <xs:sequence>
-          <xs:element name="interpolation" type="pv:stringFullEval" minOccurs="0">
+          <xs:element name="interpolation" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Auswahl der Interpolationsmethode.
-              <ul>
-                <li>equallySpaced: "equally spaced" Interpolation</li>
-                <li>chordLength: "chord length" Interpolation</li>
-                <li>none: keine Interpolation</li>
-              </ul>
+              Interpolation der Kontrollpunkte.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="indices" type="pv:indexMatrix">

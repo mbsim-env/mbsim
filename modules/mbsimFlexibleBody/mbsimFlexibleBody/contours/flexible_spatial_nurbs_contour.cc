@@ -35,15 +35,22 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleSpatialNurbsContour)
 
-  void FlexibleSpatialNurbsContour::updateSurface() {
+  void FlexibleSpatialNurbsContour::updateSurfacePositions() {
     GeneralMatrix<Vec4> cp(index.rows(),index.cols());
     for(int i=0; i<index.rows(); i++)
       for(int j=0; j<index.cols(); j++) {
         cp(i,j).set(RangeV(0,2),static_cast<NodeBasedBody*>(parent)->evalNodalPosition(index(i,j)));
         cp(i,j)(3) = 1;
       }
-    srf.setCtrlPnts(cp);
-    updSrf = false;
+    if(not interpolation)
+      srfPos.setCtrlPnts(cp);
+    else {
+      if(openEta)
+        srfPos.globalInterpH(cp,etaDegree,xiDegree,NurbsSurface::Method(NurbsSurface::equallySpaced));
+      else
+        srfPos.globalInterpClosedUH(cp,etaDegree,xiDegree,NurbsSurface::Method(NurbsSurface::equallySpaced));
+    }
+    updSrfPos = false;
   }
 
   void FlexibleSpatialNurbsContour::updateSurfaceVelocities() {
@@ -54,7 +61,14 @@ namespace MBSimFlexibleBody {
         cp(i,j)(3) = 1;
       }
     }
-    srfVel.setCtrlPnts(cp);
+    if(not interpolation)
+      srfVel.setCtrlPnts(cp);
+    else {
+      if(openEta)
+        srfVel.globalInterpH(cp,etaDegree,xiDegree,NurbsSurface::Method(NurbsSurface::equallySpaced));
+      else
+        srfVel.globalInterpClosedUH(cp,etaDegree,xiDegree,NurbsSurface::Method(NurbsSurface::equallySpaced));
+    }
     updSrfVel = false;
   }
 
@@ -67,7 +81,14 @@ namespace MBSimFlexibleBody {
           cp(i,j)(3) = 1;
         }
       }
-      srfJac[k].setCtrlPnts(cp);
+      if(not interpolation)
+        srfJac[k].setCtrlPnts(cp);
+      else {
+        if(openEta)
+          srfJac[k].globalInterpH(cp,etaDegree,xiDegree,NurbsSurface::Method(NurbsSurface::equallySpaced));
+        else
+          srfJac[k].globalInterpClosedUH(cp,etaDegree,xiDegree,NurbsSurface::Method(NurbsSurface::equallySpaced));
+      }
     }
     updSrfJac = false;
   }
@@ -80,7 +101,14 @@ namespace MBSimFlexibleBody {
         cp(i,j)(3) = 1;
       }
     }
-    srfGA.setCtrlPnts(cp);
+    if(not interpolation)
+      srfGA.setCtrlPnts(cp);
+    else {
+      if(openEta)
+        srfGA.globalInterpH(cp,etaDegree,xiDegree,NurbsSurface::Method(NurbsSurface::equallySpaced));
+      else
+        srfGA.globalInterpClosedUH(cp,etaDegree,xiDegree,NurbsSurface::Method(NurbsSurface::equallySpaced));
+    }
     updSrfGA = false;
   }
 
@@ -106,9 +134,9 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleSpatialNurbsContour::updateHessianMatrix(const Vec2 &zeta_) {
-    if(updSrf) updateSurface();
+    if(updSrfPos) updateSurfacePositions();
     Vec2 zeta = continueZeta(zeta_);
-    srf.deriveAtH(zeta(0),zeta(1),2,hess);
+    srfPos.deriveAtH(zeta(0),zeta(1),2,hess);
     zetaOld = zeta_;
   }
 
@@ -206,42 +234,51 @@ namespace MBSimFlexibleBody {
 
   void FlexibleSpatialNurbsContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
-      if(interpolation==unknown)
-        throwError("(FlexibleSpatialNurbsContour::init): interpolation unknown");
-      if(interpolation==none) {
-        srf.resize(index.rows(),index.cols(),uKnot.size()-index.rows()-1,vKnot.size()-index.cols()-1);
-        srf.setDegreeU(uKnot.size()-index.rows()-1);
-        srf.setDegreeV(vKnot.size()-index.cols()-1);
-        srf.setKnotU(uKnot);
-        srf.setKnotV(vKnot);
-//        srf.setCtrlPnts(cp);
+      if(not interpolation) {
+        srfPos.resize(index.rows(),index.cols(),uKnot.size()-index.rows()-1,vKnot.size()-index.cols()-1);
+        srfPos.setDegreeU(uKnot.size()-index.rows()-1);
+        srfPos.setDegreeV(vKnot.size()-index.cols()-1);
+        srfPos.setKnotU(uKnot);
+        srfPos.setKnotV(vKnot);
       }
       else {
-        throwError("(FlexibleSpatialNurbsContour::init): interpolation not implemented");
+        VecV uk(index.rows(),NONINIT), vk(index.cols(),NONINIT), U, V;
         if(openEta) {
-;//          srf.globalInterpH(cp,etaDegree,xiDegree,NurbsSurface::Method(interpolation));
+          srfPos.resize(index.rows(),index.cols(),etaDegree,xiDegree);
+          U.resize(srfPos.knotU().size(),NONINIT);
+          V.resize(srfPos.knotV().size(),NONINIT);
+          updateUVecs(0, 1, uk, etaDegree, U);
+          updateUVecs(0, 1, vk, xiDegree, V);
           if(not openXi)
             throwError("(FlexibleSpatialNurbsContour::init): contour with open eta and closed xi not allowed");
         }
-        else
-;//          srf.globalInterpClosedUH(cp,etaDegree,xiDegree,NurbsSurface::Method(interpolation));
+        else {
+          srfPos.resize(index.rows()+etaDegree,index.cols(),etaDegree,xiDegree);
+          U.resize(srfPos.knotU().size(),NONINIT);
+          V.resize(srfPos.knotV().size(),NONINIT);
+          updateUVecsClosed(0, 1, uk, etaDegree, U);
+          updateUVecs(0, 1, vk, xiDegree, V);
+        }
+        srfPos.setKnotU(U);
+        srfPos.setKnotV(V);
       }
+
       zetaOld.init(-1e10);
       etaNodes.resize(2);
-      etaNodes[0] = srf.knotU()(srf.degreeU());
-      etaNodes[1] = srf.knotU()(srf.knotU().size()-srf.degreeU()-1);
+      etaNodes[0] = srfPos.knotU()(srfPos.degreeU());
+      etaNodes[1] = srfPos.knotU()(srfPos.knotU().size()-srfPos.degreeU()-1);
       xiNodes.resize(2);
-      xiNodes[0] = srf.knotV()(srf.degreeV());
-      xiNodes[1] = srf.knotV(srf.knotV().size()-srf.degreeV()-1);
+      xiNodes[0] = srfPos.knotV()(srfPos.degreeV());
+      xiNodes[1] = srfPos.knotV(srfPos.knotV().size()-srfPos.degreeV()-1);
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] and openMBVNurbsSurface) {
         openMBVNurbsSurface->setName(name);
 
-        openMBVNurbsSurface->setUKnotVector(srf.knotU());
-        openMBVNurbsSurface->setVKnotVector(srf.knotV());
-        openMBVNurbsSurface->setNumberOfUControlPoints(srf.ctrlPnts().rows());
-        openMBVNurbsSurface->setNumberOfVControlPoints(srf.ctrlPnts().cols());
+        openMBVNurbsSurface->setUKnotVector(srfPos.knotU());
+        openMBVNurbsSurface->setVKnotVector(srfPos.knotV());
+        openMBVNurbsSurface->setNumberOfUControlPoints(srfPos.ctrlPnts().rows());
+        openMBVNurbsSurface->setNumberOfVControlPoints(srfPos.ctrlPnts().cols());
 
         parent->getOpenMBVGrp()->addObject(openMBVNurbsSurface);
       }
@@ -281,14 +318,14 @@ namespace MBSimFlexibleBody {
 
   void FlexibleSpatialNurbsContour::plot() {
     if(plotFeature[openMBV] and openMBVNurbsSurface) {
-      if(updSrf) updateSurface();
+      if(updSrfPos) updateSurfacePositions();
       vector<double> data;
       data.push_back(getTime()); //time
       //Control-Point coordinates
-      for(int j=0; j<srf.ctrlPnts().cols(); j++) {
-        for(int i=0; i<srf.ctrlPnts().rows(); i++) {
+      for(int j=0; j<srfPos.ctrlPnts().cols(); j++) {
+        for(int i=0; i<srfPos.ctrlPnts().rows(); i++) {
           for(int k=0; k<4; k++)
-            data.push_back(srf.ctrlPnts()(i,j)(k));
+            data.push_back(srfPos.ctrlPnts()(i,j)(k));
         }
       }
       openMBVNurbsSurface->append(data);
@@ -304,13 +341,14 @@ namespace MBSimFlexibleBody {
 //    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"xiNodes");
 //    xiNodes=E(e)->getText<Vec>();
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"interpolation");
-    if(e) {
-      string interpolationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
-      if(interpolationStr=="equallySpaced") interpolation=equallySpaced;
-      else if(interpolationStr=="chordLength") interpolation=chordLength;
-      else if(interpolationStr=="none") interpolation=none;
-      else interpolation=unknown;
-    }
+    if(e) setInterpolation(E(e)->getText<bool>());
+//    if(e) {
+//      string interpolationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+//      if(interpolationStr=="equallySpaced") interpolation=equallySpaced;
+//      else if(interpolationStr=="chordLength") interpolation=chordLength;
+//      else if(interpolationStr=="none") interpolation=none;
+//      else interpolation=unknown;
+//    }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"indices");
     index = E(e)->getText<MatVI>();
     for(int i=0; i<index.rows(); i++)
