@@ -456,7 +456,7 @@ namespace MBSimGUI {
       actionH5plotserie->setDisabled(true);
       actionEigenanalysis->setDisabled(true);
       actionFrequencyResponse->setDisabled(true);
-      DOMDocument* oldDoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
+      xercesc::DOMDocument* oldDoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
       oldDoc->setDocumentURI(doc->getDocumentURI());//X()%QString("file://"+QDir::currentPath()+"/Project.mbsimprj.xml").toStdString());
       undos.push_back(oldDoc);
       if(undos.size() > maxUndo)
