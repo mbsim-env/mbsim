@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsimFlexibleBody/contours/flexible_spatial_nurbs_contour.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_ffr.h"
+#include "mbsimFlexibleBody/node_based_body.h"
 #include "mbsim/frames/floating_contour_frame.h"
 #include "mbsim/utils/utils.h"
 #include <openmbvcppinterface/dynamicnurbssurface.h>
@@ -39,7 +39,7 @@ namespace MBSimFlexibleBody {
     GeneralMatrix<Vec4> cp(index.rows(),index.cols());
     for(int i=0; i<index.rows(); i++)
       for(int j=0; j<index.cols(); j++) {
-        cp(i,j).set(RangeV(0,2),static_cast<FlexibleBodyFFR*>(parent)->evalNodalPosition(index(i,j)));
+        cp(i,j).set(RangeV(0,2),static_cast<NodeBasedBody*>(parent)->evalNodalPosition(index(i,j)));
         cp(i,j)(3) = 1;
       }
     srf.setCtrlPnts(cp);
@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
     GeneralMatrix<Vec4> cp(index.rows(),index.cols());
     for(int i=0; i<index.rows(); i++) {
       for(int j=0; j<index.cols(); j++) {
-        cp(i,j).set(RangeV(0,2),static_cast<FlexibleBodyFFR*>(parent)->evalNodalVelocity(index(i,j)));
+        cp(i,j).set(RangeV(0,2),static_cast<NodeBasedBody*>(parent)->evalNodalVelocity(index(i,j)));
         cp(i,j)(3) = 1;
       }
     }
@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
     for(size_t k=0; k<srfJac.size(); k++) {
       for(int i=0; i<index.rows(); i++) {
         for(int j=0; j<index.cols(); j++) {
-          cp(i,j).set(RangeV(0,2),static_cast<FlexibleBodyFFR*>(parent)->evalNodalJacobianOfTranslation(index(i,j)).col(k));
+          cp(i,j).set(RangeV(0,2),static_cast<NodeBasedBody*>(parent)->evalNodalJacobianOfTranslation(index(i,j)).col(k));
           cp(i,j)(3) = 1;
         }
       }
@@ -76,7 +76,7 @@ namespace MBSimFlexibleBody {
     GeneralMatrix<Vec4> cp(index.rows(),index.cols());
     for(int i=0; i<index.rows(); i++) {
       for(int j=0; j<index.cols(); j++) {
-        cp(i,j).set(RangeV(0,2),static_cast<FlexibleBodyFFR*>(parent)->evalNodalGyroscopicAccelerationOfTranslation(index(i,j)));
+        cp(i,j).set(RangeV(0,2),static_cast<NodeBasedBody*>(parent)->evalNodalGyroscopicAccelerationOfTranslation(index(i,j)));
         cp(i,j)(3) = 1;
       }
     }

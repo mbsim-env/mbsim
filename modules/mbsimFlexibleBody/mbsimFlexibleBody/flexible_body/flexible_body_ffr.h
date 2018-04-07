@@ -314,13 +314,6 @@ namespace MBSimFlexibleBody {
       const fmatvec::VecV& evalKi() { if(updKJ[0]) updateKJ(0); return Ki; }
       const fmatvec::Vec3& evalGlobalRelativePosition(int i) { if(updNodalPos[i]) updatePositions(i); return WrRP[i]; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity(int i) { if(updNodalVel[i]) updateVelocities(i); return Womrel[i]; }
-      const fmatvec::Vector<fmatvec::Fixed<6>, double>& evalNodalStress(int i) { if(updNodalStress[i]) updateStresses(i); return sigma[i]; }
-      const fmatvec::Vec3& evalNodalDisp(int i) { if(updNodalPos[i]) updatePositions(i); return disp[i]; }
-      const fmatvec::Vec3& evalNodalPosition(int i) { if(updNodalPos[i]) updatePositions(i); return WrOP[i]; }
-      const fmatvec::Vec3& evalNodalVelocity(int i) { if(updNodalVel[i]) updateVelocities(i); return WvP[i]; }
-      const fmatvec::Vec3& evalNodalAcceleration(int i) { if(updNodalAcc[i]) updateAccelerations(i); return WaP[i]; }
-      const fmatvec::Mat3xV& evalNodalJacobianOfTranslation(int i, int j=0) { if(updNodalJac[j][i]) updateJacobians(i,j); return WJP[j][i]; }
-      const fmatvec::Vec3& evalNodalGyroscopicAccelerationOfTranslation(int i) { if(updNodalGA[i]) updateGyroscopicAccelerations(i); return WjP[i]; }
 
       fmatvec::Vec3& getGlobalRelativeVelocity(bool check=true) { assert((not check) or (not updVel)); return WvPKrel; }
       fmatvec::SqrMat3& getRelativeOrientation(bool check=true) { assert((not check) or (not updPos)); return APK; }
@@ -338,19 +331,14 @@ namespace MBSimFlexibleBody {
       fmatvec::VecV& getqdERel(bool check=true) { assert((not check) or (not updqd)); return qdERel; }
       fmatvec::VecV& getudERel(bool check=true) { assert((not check) or (not updud)); return udERel; }
 
-      fmatvec::SqrMat3& getNodalOrientation(int i, bool check=true) { assert((not check) or (not updNodalPos[i])); return AWK[i]; }
       fmatvec::Vec3& getNodalRelativeVelocity(int i, bool check=true) { assert((not check) or (not updNodalVel[i])); return Wvrel[i]; }
-      fmatvec::Vec3& getNodalAngularVelocity(int i, bool check=true) { assert((not check) or (not updNodalVel[i])); return Wom[i]; }
-      fmatvec::Vec3& getNodalAngularAcceleration(int i, bool check=true) { assert((not check) or (not updNodalAcc[i])); return Wpsi[i]; }
-      fmatvec::Mat3xV& getNodalJacobianOfRotation(int i, int j=0, bool check=true) { assert((not check) or (not updNodalJac[j][i])); return WJR[j][i]; }
-      fmatvec::Vec3& getNodalGyroscopicAccelerationOfRotation(int i, bool check=true) { assert((not check) or (not updNodalGA[i])); return WjR[i]; }
 
-      void updateStresses(int i);
-      void updatePositions(int i);
-      void updateVelocities(int i);
-      void updateAccelerations(int i);
-      void updateJacobians(int i, int j=0);
-      void updateGyroscopicAccelerations(int i);
+      void updateStresses(int i) override;
+      void updatePositions(int i) override;
+      void updateVelocities(int i) override;
+      void updateAccelerations(int i) override;
+      void updateJacobians(int i, int j=0) override;
+      void updateGyroscopicAccelerations(int i) override;
 
       void updatePositions(NodeFrame* frame) override;
       void updateVelocities(NodeFrame* frame) override;
@@ -437,14 +425,13 @@ namespace MBSimFlexibleBody {
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double> Oe0;
 
       fmatvec::SqrMat3 Id;
-      std::vector<fmatvec::Vec3> KrKP, WrOP, WrRP, disp, Wvrel, Womrel, WvP, Wom, WaP, Wpsi, WjP, WjR;
-      std::vector<fmatvec::SqrMat3> ARP, AWK;
+      std::vector<fmatvec::Vec3> KrKP, WrRP, Wvrel, Womrel;
+      std::vector<fmatvec::SqrMat3> ARP;
       std::vector<fmatvec::Mat3xV> Phi, Psi;
       std::vector<std::vector<fmatvec::SqrMatV> > K0F, K0M;
-      std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > sigma0, sigma;
+      std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > sigma0;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > sigmahel;
       std::vector<std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > sigmahen;
-      std::vector<fmatvec:: Mat3xV> WJP[2], WJR[2];
 
       // Number of mode shapes 
       int ne{0};
@@ -534,8 +521,6 @@ namespace MBSimFlexibleBody {
       bool translationDependentRotation{false}, constJT{false}, constJR{false}, constjT{false}, constjR{false};
 
       bool updPjb{true}, updGC{true}, updMb{true}, updKJ[2];
-      std::vector<bool> updNodalPos, updNodalVel, updNodalAcc, updNodalGA, updNodalStress;
-      std::vector<bool> updNodalJac[2];
 
       fmatvec::SymMatV M_;
       fmatvec::VecV h_;

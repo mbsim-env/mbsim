@@ -700,15 +700,6 @@ namespace MBSimFlexibleBody {
     updMb = true;
     updKJ[0] = true;
     updKJ[1] = true;
-    for(unsigned int i=0; i<updNodalPos.size(); i++) {
-      updNodalPos[i] = true;
-      updNodalVel[i] = true;
-      updNodalAcc[i] = true;
-      updNodalJac[0][i] = true;
-      updNodalJac[1][i] = true;
-      updNodalGA[i] = true;
-      updNodalStress[i] = true;
-    }
   }
 
   void FlexibleBodyFFR::updateMConst() {

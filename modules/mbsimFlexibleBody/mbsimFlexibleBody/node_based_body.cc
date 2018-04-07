@@ -30,7 +30,42 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  NodeBasedBody::NodeBasedBody(const string &name) : Body(name) { }
+  void NodeBasedBody::resetUpToDate() {
+    Body::resetUpToDate();
+    for(unsigned int i=0; i<updNodalPos.size(); i++) {
+      updNodalPos[i] = true;
+      updNodalVel[i] = true;
+      updNodalAcc[i] = true;
+      updNodalJac[0][i] = true;
+      updNodalJac[1][i] = true;
+      updNodalGA[i] = true;
+      updNodalStress[i] = true;
+    }
+  }
+
+  void NodeBasedBody::updatePositions(int i) {
+    throwError("(NodeBasedBody::updatePositions): Not implemented.");
+  }
+
+  void NodeBasedBody::updateVelocities(int i) {
+    throwError("(NodeBasedBody::updateVelocities): Not implemented.");
+  }
+
+  void NodeBasedBody::updateAccelerations(int i) {
+    throwError("(NodeBasedBody::updateAccelerations): Not implemented.");
+  }
+
+  void NodeBasedBody::updateJacobians(int i, int j) {
+    throwError("(NodeBasedBody::updateJacobians): Not implemented.");
+  }
+
+  void NodeBasedBody::updateGyroscopicAccelerations(int i) {
+    throwError("(NodeBasedBody::updateGyroscopicAccelerations): Not implemented.");
+  }
+
+  void NodeBasedBody::updateStresses(int j) {
+    throwError("(NodeBasedBody::updateStresses): Not implemented.");
+  }
 
   void NodeBasedBody::updatePositions(NodeFrame* frame) {
     throwError("(NodeBasedBody::updatePositions): Not implemented.");
@@ -54,6 +89,12 @@ namespace MBSimFlexibleBody {
 
   void NodeBasedBody::addFrame(NodeFrame *frame) {
     Body::addFrame(frame);
+  }
+
+  void NodeBasedBody::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==preInit) {
+    }
+    Body::init(stage, config);
   }
 
 }
