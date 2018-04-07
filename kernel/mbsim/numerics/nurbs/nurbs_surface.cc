@@ -323,7 +323,7 @@ namespace MBSim {
     }
     else if(method == equallySpaced) {
       uk.resize(Qw.rows(),NONINIT);
-      vk.resize(Qw.rows(),NONINIT);
+      vk.resize(Qw.cols(),NONINIT);
       updateUVecs(0,1,uk,pU,U);
       updateUVecs(0,1,vk,pV,V);
     }
