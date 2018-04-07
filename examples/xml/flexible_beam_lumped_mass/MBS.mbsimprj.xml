@@ -4,7 +4,6 @@
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="modes">2</scalarParameter>
-      <scalarParameter name="updateIntegrals">1</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
@@ -31,9 +30,9 @@
               <fromFile href="mij.dat"/>
             </matrixParameter>
             <scalarParameter name="nf">size(u0,1)</scalarParameter>
-            <scalarParameter name="integrals">if(updateIntegrals)
-
+            <scalarParameter name="integrals">
 id = fopen('data.asc')
+if(id==-1)
 
 nn = size(mij,1);
 nm = size(V,2);
@@ -90,6 +89,7 @@ save -append -text 'data.asc' rPdm
 save -append -text 'data.asc' PPdm
 save -append -text 'data.asc' Ke
 
+else
 fclose(id)
 end
 ret = 0;</scalarParameter>
