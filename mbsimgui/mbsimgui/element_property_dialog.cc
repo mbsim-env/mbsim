@@ -491,6 +491,59 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  PlanarNurbsContourPropertyDialog::PlanarNurbsContourPropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : RigidContourPropertyDialog(contour,parent,f) {
+    addTab("Visualisation",1);
+
+    vector<QString> list;
+    list.emplace_back("\"equallySpaced\"");
+    list.emplace_back("\"chordLength\"");
+    list.emplace_back("\"none\"");
+    interpolation = new ExtWidget("Interpolation",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolation");
+    addToTab("General", interpolation);
+
+    controlPoints = new ExtWidget("Control points",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"controlPoints");
+    addToTab("General", controlPoints);
+
+    numberOfControlPoints = new ExtWidget("Number of control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfControlPoints");
+    addToTab("General", numberOfControlPoints);
+
+    knotVector = new ExtWidget("Knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"knotVector");
+    addToTab("General", knotVector);
+
+    degree = new ExtWidget("Degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"degree");
+    addToTab("General", degree);
+
+    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"open");
+    addToTab("General", open);
+
+    visu = new ExtWidget("Enable openMBV",new PlanarContourMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
+    addToTab("Visualisation", visu);
+  }
+
+  DOMElement* PlanarNurbsContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    interpolation->initializeUsingXML(item->getXMLElement());
+    controlPoints->initializeUsingXML(item->getXMLElement());
+    numberOfControlPoints->initializeUsingXML(item->getXMLElement());
+    knotVector->initializeUsingXML(item->getXMLElement());
+    degree->initializeUsingXML(item->getXMLElement());
+    open->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* PlanarNurbsContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    interpolation->writeXMLFile(item->getXMLElement(),nullptr);
+    controlPoints->writeXMLFile(item->getXMLElement(),nullptr);
+    numberOfControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
+    knotVector->writeXMLFile(item->getXMLElement(),nullptr);
+    degree->writeXMLFile(item->getXMLElement(),nullptr);
+    open->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
   SpatialContourPropertyDialog::SpatialContourPropertyDialog(SpatialContour *contour, QWidget *parent, const Qt::WindowFlags& f) : RigidContourPropertyDialog(contour,parent,f) {
     addTab("Visualisation",1);
 
@@ -503,8 +556,11 @@ namespace MBSimGUI {
     contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(contour),QBoxLayout::TopToBottom,0),false,false,MBSIM%"contourFunction");
     addToTab("General", contourFunction);
 
-    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"open");
-    addToTab("General", open);
+    openEta = new ExtWidget("Open eta",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openEta");
+    addToTab("General", openEta);
+
+    openXi = new ExtWidget("Open xi",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openXi");
+    addToTab("General", openXi);
 
     visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
@@ -515,7 +571,8 @@ namespace MBSimGUI {
     etaNodes->initializeUsingXML(item->getXMLElement());
     xiNodes->initializeUsingXML(item->getXMLElement());
     contourFunction->initializeUsingXML(item->getXMLElement());
-    open->initializeUsingXML(item->getXMLElement());
+    openEta->initializeUsingXML(item->getXMLElement());
+    openXi->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -525,7 +582,150 @@ namespace MBSimGUI {
     etaNodes->writeXMLFile(item->getXMLElement(),nullptr);
     xiNodes->writeXMLFile(item->getXMLElement(),nullptr);
     contourFunction->writeXMLFile(item->getXMLElement(),nullptr);
-    open->writeXMLFile(item->getXMLElement(),nullptr);
+    openEta->writeXMLFile(item->getXMLElement(),nullptr);
+    openXi->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
+  SpatialNurbsContourPropertyDialog::SpatialNurbsContourPropertyDialog(RigidContour *contour, QWidget *parent, const Qt::WindowFlags& f) : RigidContourPropertyDialog(contour,parent,f) {
+    addTab("Visualisation",1);
+
+    vector<QString> list;
+    list.emplace_back("\"equallySpaced\"");
+    list.emplace_back("\"chordLength\"");
+    list.emplace_back("\"none\"");
+    interpolation = new ExtWidget("Interpolation",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolation");
+    addToTab("General", interpolation);
+
+    controlPoints = new ExtWidget("Control points",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"controlPoints");
+    addToTab("General", controlPoints);
+
+    numberOfEtaControlPoints = new ExtWidget("Number of eta control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfEtaControlPoints");
+    addToTab("General", numberOfEtaControlPoints);
+
+    numberOfXiControlPoints = new ExtWidget("Number of xi control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfXiControlPoints");
+    addToTab("General", numberOfXiControlPoints);
+
+    etaKnotVector = new ExtWidget("Eta knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaKnotVector");
+    addToTab("General", etaKnotVector);
+
+    xiKnotVector = new ExtWidget("Xi knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"xiKnotVector");
+    addToTab("General", xiKnotVector);
+
+    etaDegree = new ExtWidget("Eta degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaDegree");
+    addToTab("General", etaDegree);
+
+    xiDegree = new ExtWidget("Xi degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"xiDegree");
+    addToTab("General", xiDegree);
+
+    openEta = new ExtWidget("Open eta",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openEta");
+    addToTab("General", openEta);
+
+    openXi = new ExtWidget("Open xi",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openXi");
+    addToTab("General", openXi);
+
+    visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget("NOTSET"),true,true,MBSIM%"enableOpenMBV");
+    addToTab("Visualisation", visu);
+  }
+
+  DOMElement* SpatialNurbsContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    interpolation->initializeUsingXML(item->getXMLElement());
+    controlPoints->initializeUsingXML(item->getXMLElement());
+    numberOfEtaControlPoints->initializeUsingXML(item->getXMLElement());
+    numberOfXiControlPoints->initializeUsingXML(item->getXMLElement());
+    etaKnotVector->initializeUsingXML(item->getXMLElement());
+    xiKnotVector->initializeUsingXML(item->getXMLElement());
+    etaDegree->initializeUsingXML(item->getXMLElement());
+    xiDegree->initializeUsingXML(item->getXMLElement());
+    openEta->initializeUsingXML(item->getXMLElement());
+    openXi->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* SpatialNurbsContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    interpolation->writeXMLFile(item->getXMLElement(),nullptr);
+    controlPoints->writeXMLFile(item->getXMLElement(),nullptr);
+    numberOfEtaControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
+    numberOfXiControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
+    etaKnotVector->writeXMLFile(item->getXMLElement(),nullptr);
+    xiKnotVector->writeXMLFile(item->getXMLElement(),nullptr);
+    etaDegree->writeXMLFile(item->getXMLElement(),nullptr);
+    xiDegree->writeXMLFile(item->getXMLElement(),nullptr);
+    openEta->writeXMLFile(item->getXMLElement(),nullptr);
+    openXi->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
+  FlexibleSpatialNurbsContourPropertyDialog::FlexibleSpatialNurbsContourPropertyDialog(Contour *contour, QWidget *parent, const Qt::WindowFlags& f) : ContourPropertyDialog(contour,parent,f) {
+    addTab("Visualisation",1);
+
+    interpolation = new ExtWidget("Interpolation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
+    addToTab("General", interpolation);
+
+    indices = new ExtWidget("Indices",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"indices");
+    addToTab("General", indices);
+
+    numberOfEtaControlPoints = new ExtWidget("Number of eta control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfEtaControlPoints");
+    addToTab("General", numberOfEtaControlPoints);
+
+    numberOfXiControlPoints = new ExtWidget("Number of xi control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfXiControlPoints");
+    addToTab("General", numberOfXiControlPoints);
+
+    etaKnotVector = new ExtWidget("Eta knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"etaKnotVector");
+    addToTab("General", etaKnotVector);
+
+    xiKnotVector = new ExtWidget("Xi knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"xiKnotVector");
+    addToTab("General", xiKnotVector);
+
+    etaDegree = new ExtWidget("Eta degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"etaDegree");
+    addToTab("General", etaDegree);
+
+    xiDegree = new ExtWidget("Xi degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"xiDegree");
+    addToTab("General", xiDegree);
+
+    openEta = new ExtWidget("Open eta",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openEta");
+    addToTab("General", openEta);
+
+    openXi = new ExtWidget("Open xi",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openXi");
+    addToTab("General", openXi);
+
+    visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget("NOTSET"),true,true,MBSIMFLEX%"enableOpenMBV");
+    addToTab("Visualisation", visu);
+  }
+
+  DOMElement* FlexibleSpatialNurbsContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    interpolation->initializeUsingXML(item->getXMLElement());
+    indices->initializeUsingXML(item->getXMLElement());
+    numberOfEtaControlPoints->initializeUsingXML(item->getXMLElement());
+    numberOfXiControlPoints->initializeUsingXML(item->getXMLElement());
+    etaKnotVector->initializeUsingXML(item->getXMLElement());
+    xiKnotVector->initializeUsingXML(item->getXMLElement());
+    etaDegree->initializeUsingXML(item->getXMLElement());
+    xiDegree->initializeUsingXML(item->getXMLElement());
+    openEta->initializeUsingXML(item->getXMLElement());
+    openXi->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FlexibleSpatialNurbsContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    interpolation->writeXMLFile(item->getXMLElement(),nullptr);
+    indices->writeXMLFile(item->getXMLElement(),nullptr);
+    numberOfEtaControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
+    numberOfXiControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
+    etaKnotVector->writeXMLFile(item->getXMLElement(),nullptr);
+    xiKnotVector->writeXMLFile(item->getXMLElement(),nullptr);
+    etaDegree->writeXMLFile(item->getXMLElement(),nullptr);
+    xiDegree->writeXMLFile(item->getXMLElement(),nullptr);
+    openEta->writeXMLFile(item->getXMLElement(),nullptr);
+    openXi->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }

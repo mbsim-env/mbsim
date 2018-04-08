@@ -266,6 +266,16 @@ namespace MBSimGUI {
       ExtWidget *nodes, *contourFunction, *open, *visu;
   };
 
+  class PlanarNurbsContourPropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      PlanarNurbsContourPropertyDialog(RigidContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *interpolation, *controlPoints, *numberOfControlPoints, *knotVector, *degree, *open, *visu;
+  };
+
   class SpatialContourPropertyDialog : public RigidContourPropertyDialog {
 
     public:
@@ -273,7 +283,28 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *etaNodes, *xiNodes, *contourFunction, *open, *visu;
+      ExtWidget *etaNodes, *xiNodes, *contourFunction, *openEta, *openXi, *visu;
+  };
+
+  class SpatialNurbsContourPropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      SpatialNurbsContourPropertyDialog(RigidContour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *interpolation, *controlPoints, *numberOfEtaControlPoints, *numberOfXiControlPoints, *etaKnotVector, *xiKnotVector, *etaDegree, *xiDegree, *openEta, *openXi, *visu;
+  };
+
+
+  class FlexibleSpatialNurbsContourPropertyDialog : public ContourPropertyDialog {
+
+    public:
+      FlexibleSpatialNurbsContourPropertyDialog(Contour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *interpolation, *indices, *numberOfEtaControlPoints, *numberOfXiControlPoints, *etaKnotVector, *xiKnotVector, *etaDegree, *xiDegree, *openEta, *openXi, *visu;
   };
 
   class FCLContourPropertyDialog : public RigidContourPropertyDialog {

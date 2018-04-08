@@ -128,7 +128,10 @@ namespace MBSimGUI {
       void addCuboid();
       void addLineSegment();
       void addPlanarContour();
+      void addPlanarNurbsContour();
       void addSpatialContour();
+      void addSpatialNurbsContour();
+      void addFlexibleSpatialNurbsContour();
       void addFCLBox();
       void addFCLSphere();
       void addFCLPlane();

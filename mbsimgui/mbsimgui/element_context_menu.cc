@@ -246,8 +246,17 @@ namespace MBSimGUI {
     action = new QAction("Add planar contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addPlanarContour()));
     addAction(action);
+    action = new QAction("Add planar nurbs contour", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addPlanarNurbsContour()));
+    addAction(action);
     action = new QAction("Add spatial contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSpatialContour()));
+    addAction(action);
+    action = new QAction("Add spatial nurbs contour", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSpatialNurbsContour()));
+    addAction(action);
+    action = new QAction("Add flexible spatial nurbs contour", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialNurbsContour()));
     addAction(action);
     action = new QAction("Add fcl box", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFCLBox()));
@@ -307,8 +316,20 @@ namespace MBSimGUI {
     mw->addContour(new PlanarContour, element);
   }
 
+  void ContoursContextMenu::addPlanarNurbsContour() {
+    mw->addContour(new PlanarNurbsContour, element);
+  }
+
   void ContoursContextMenu::addSpatialContour() {
     mw->addContour(new SpatialContour, element);
+  }
+
+  void ContoursContextMenu::addSpatialNurbsContour() {
+    mw->addContour(new SpatialNurbsContour, element);
+  }
+
+  void ContoursContextMenu::addFlexibleSpatialNurbsContour() {
+    mw->addContour(new FlexibleSpatialNurbsContour, element);
   }
 
   void ContoursContextMenu::addFCLBox() {
