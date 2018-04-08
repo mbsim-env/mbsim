@@ -1,5 +1,29 @@
 #include "system.h"
-#include <mbsim/integrators/integrators.h>
+#include <boost/mpl/set/set30.hpp>
+#include <boost/mpl/for_each.hpp>
+#include <boost/mpl/order.hpp>
+#include <mbsim/integrators/boost_odeint_integrator_predef.h>
+#include <mbsim/integrators/daskr_integrator.h>
+#include <mbsim/integrators/daspk_integrator.h>
+#include <mbsim/integrators/dop853_integrator.h>
+#include <mbsim/integrators/dopri5_integrator.h>
+#include <mbsim/integrators/explicit_euler_integrator.h>
+#include <mbsim/integrators/hets2_integrator.h>
+#include <mbsim/integrators/implicit_euler_integrator.h>
+#include <mbsim/integrators/lsoda_integrator.h>
+#include <mbsim/integrators/lsodar_integrator.h>
+#include <mbsim/integrators/lsode_integrator.h>
+#include <mbsim/integrators/lsodi_integrator.h>
+#include <mbsim/integrators/lsodkr_integrator.h>
+#include <mbsim/integrators/odex_integrator.h>
+#include <mbsim/integrators/radau5_integrator.h>
+#include <mbsim/integrators/radau_integrator.h>
+#include <mbsim/integrators/rksuite_integrator.h>
+#include <mbsim/integrators/rodas_integrator.h>
+#include <mbsim/integrators/seulex_integrator.h>
+#include <mbsim/integrators/theta_time_stepping_integrator.h>
+#include <mbsim/integrators/time_stepping_integrator.h>
+#include <mbsim/integrators/time_stepping_ssc_integrator.h>
 
 using namespace std;
 using namespace MBSim;
@@ -7,17 +31,59 @@ using namespace MBSimIntegrator;
 
 bool rigidContacts;
 
+class Integrate {
+  public:
+    template<typename Int>
+    void operator()(Int& integrator);
+};
+
+// commented out integrators do not work with this example
+typedef boost::mpl::set15<
+  BoostOdeintDOS_RKDOPRI5,
+//  BoostOdeintDOS_BulirschStoer,
+//  BoostOdeintDOS_Rosenbrock4,
+//  DASKRIntegrator,
+  DASPKIntegrator,
+  DOP853Integrator,
+  DOPRI5Integrator,
+  ExplicitEulerIntegrator,
+//  HETS2Integrator,
+  ImplicitEulerIntegrator,
+  LSODAIntegrator,
+//  LSODARIntegrator,
+  LSODEIntegrator,
+  LSODIIntegrator,
+  LSODKRIntegrator,
+  ODEXIntegrator,
+//  RADAU5Integrator,
+//  RADAUIntegrator,
+  RKSuiteIntegrator,
+//  RODASIntegrator,
+//  SEULEXIntegrator,
+  ThetaTimeSteppingIntegrator,
+  TimeSteppingIntegrator,
+  TimeSteppingSSCIntegrator
+> Integrators;
+
 int main (int argc, char* argv[]) {
+  boost::mpl::for_each<Integrators>(Integrate());    
+
+  return 0;
+
+}
+
+
+template<typename Int>
+void Integrate::operator()(Int& integrator) {
+  string typeStr(typeid(Int).name());
+  int order=boost::mpl::order<Integrators,Int>::type::value;
 
   char dummy[10000];
   double tEnd, dt, dtPlot;
-  bool eventDriven;
 
   // Beginn input
   ifstream is("input.asc");
   is >> rigidContacts;
-  is.getline(dummy,10000);
-  is >> eventDriven;
   is.getline(dummy,10000);
   is >> tEnd;
   is.getline(dummy,10000);
@@ -27,43 +93,26 @@ int main (int argc, char* argv[]) {
   is.getline(dummy,10000);
   is.close();
 
-  System *sys = new System("TS");
+  System *sys = new System("TS_"+to_string(order));
 
   sys->initialize();
 
-  Integrator* integrator;
+  sys->setProjectionTolerance(1e-15);
+  sys->setGeneralizedRelativePositionTolerance(1e-6);
+  sys->setGeneralizedRelativeVelocityTolerance(1e-6);
+  sys->setGeneralizedImpulseTolerance(1e-6);
+  sys->setGeneralizedRelativeAccelerationTolerance(1e-8);
+  sys->setGeneralizedForceTolerance(1e-8);
 
-  if(!rigidContacts) {
-    integrator = new LSODEIntegrator;
-  } 
-  else if(eventDriven) { // Event driven time integration
-    sys->setProjectionTolerance(1e-15);
-    sys->setGeneralizedRelativePositionTolerance(1e-6);
-    sys->setGeneralizedRelativeVelocityTolerance(1e-6);
-    sys->setGeneralizedImpulseTolerance(1e-6);
-    sys->setGeneralizedRelativeAccelerationTolerance(1e-8);
-    sys->setGeneralizedForceTolerance(1e-8);
-    integrator = new LSODARIntegrator;
-    static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
-    static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-8);
-  } 
-  else { // time stepping integration
-    sys->setGeneralizedImpulseTolerance(1e-2*dt);
-    sys->setGeneralizedRelativeVelocityTolerance(1e-8);
-    integrator = new TimeSteppingIntegrator;
-    static_cast<TimeSteppingIntegrator*>(integrator)->setStepSize(dt);
-  }
+  cout << "integrate using "<<typeStr<<" = TS_"<<order<<endl;
 
-  integrator->setEndTime(tEnd);
-  integrator->setPlotStepSize(dtPlot);
-  integrator->integrate(*sys);
+  integrator.setEndTime(tEnd);
+  integrator.setPlotStepSize(dtPlot);
+  integrator.setSystem(sys);
+  integrator.integrate();
 
-  cout << "finished"<<endl;
+  cout << endl;
+  cout << "finished using "<<typeStr<<" = TS_"<<order<<endl;
 
-  delete integrator;
   delete sys;
-
-  return 0;
-
 }
-
