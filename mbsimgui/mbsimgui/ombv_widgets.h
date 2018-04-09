@@ -109,7 +109,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *nodes;
+      ExtWidget *nodes, *filled;
   };
 
   class SpatialContourMBSOMBVWidget : public MBSOMBVWidget {

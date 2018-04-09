@@ -68,7 +68,7 @@
           <contours>
             <PlanarContour name="PlanarContour">
               <frameOfReference ref="../Frame[P1]"/>
-              <nodes unit="-">[0:2*pi/71:2*pi]'</nodes>
+              <nodes>[0:2*pi/71:2*pi]'</nodes>
               <contourFunction>
                 <ContinuedFunction>
                   <function>
@@ -91,7 +91,8 @@
                 </ContinuedFunction>
               </contourFunction>
               <enableOpenMBV>
-                <nodes unit="-">[0:0.1:2*pi]'</nodes>
+                <nodes>[0:0.1:2*pi]'</nodes>
+                <filled>true</filled>
                 <transparency unit="-">0.3</transparency>
               </enableOpenMBV>
             </PlanarContour>
@@ -199,5 +200,6 @@
     <toleranceForPositionConstraints>1e-5</toleranceForPositionConstraints>
     <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
   </LSODARIntegrator>
+
 
 </MBSimProject>

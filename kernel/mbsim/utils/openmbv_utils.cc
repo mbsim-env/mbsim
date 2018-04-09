@@ -282,6 +282,12 @@ namespace MBSim {
     object->setMaximalColorValue(maxCol);
   }
 
+  shared_ptr<OpenMBV::IndexedLineSet> OpenMBVIndexedLineSet::createOpenMBV() {
+    shared_ptr<OpenMBV::IndexedLineSet> object = OpenMBV::ObjectFactory::create<OpenMBV::IndexedLineSet>();
+    initializeObject(object);
+    return object;
+  }
+
   shared_ptr<OpenMBV::IndexedFaceSet> OpenMBVIndexedFaceSet::createOpenMBV() {
     shared_ptr<OpenMBV::IndexedFaceSet> object = OpenMBV::ObjectFactory::create<OpenMBV::IndexedFaceSet>();
     initializeObject(object);

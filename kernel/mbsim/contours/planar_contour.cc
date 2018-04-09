@@ -60,18 +60,36 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
-        shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
         if(not(ombvNodes.size())) {
           ombvNodes.resize(101);
           for(int i=0; i<101; i++)
             ombvNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/100.;
         }
-        for (double ombvNode : ombvNodes) {
-          const Vec3 CrPC=(*funcCrPC)(ombvNode);
-          vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), 0));
+        if(ombvFilled) {
+          shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
+          for (double ombvNode : ombvNodes) {
+            const Vec3 CrPC=(*funcCrPC)(ombvNode);
+            vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), 0));
+          }
+          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
+          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
         }
-        static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
-        static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
+        else {
+          vector<vector<double> > vp(ombvNodes.size());
+          for (unsigned int i=0; i<ombvNodes.size(); i++) {
+            const Vec3 CrPC=(*funcCrPC)(ombvNodes[i]);
+            vp[i].push_back(CrPC(0));
+            vp[i].push_back(CrPC(1));
+            vp[i].push_back(0);
+          }
+          vector<int> indices(ombvNodes.size()+(open?0:1)+1);
+          for(unsigned int i=0; i<ombvNodes.size(); i++)
+            indices[i] = i;
+          if(not open) indices[ombvNodes.size()] = 0;
+          indices[indices.size()-1] = -1;
+          static_pointer_cast<OpenMBV::IndexedLineSet>(openMBVRigidBody)->setVertexPositions(vp);
+          static_pointer_cast<OpenMBV::IndexedLineSet>(openMBVRigidBody)->setIndices(indices);
+        }
       }
     }
     RigidContour::init(stage, config);
@@ -103,9 +121,18 @@ namespace MBSim {
     if(e) {
       DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"nodes");
       if(ee) ombvNodes=E(ee)->getText<Vec>();
-      OpenMBVExtrusion ombv;
-      ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV(); 
+      ee=E(e)->getFirstElementChildNamed(MBSIM%"filled");
+      if(ee) ombvFilled=E(ee)->getText<bool>();
+      if(ombvFilled) {
+        OpenMBVExtrusion ombv;
+        ombv.initializeUsingXML(e);
+        openMBVRigidBody=ombv.createOpenMBV();
+      }
+      else {
+        OpenMBVIndexedLineSet ombv;
+        ombv.initializeUsingXML(e);
+        openMBVRigidBody=ombv.createOpenMBV();
+      }
     }
   }
 

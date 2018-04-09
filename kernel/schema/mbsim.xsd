@@ -2797,6 +2797,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="nodes" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="filled" type="pv:booleanFullEval" minOccurs="0"/>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
                 <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>

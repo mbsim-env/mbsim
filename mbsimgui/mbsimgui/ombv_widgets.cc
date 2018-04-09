@@ -193,17 +193,21 @@ namespace MBSimGUI {
   PlanarContourMBSOMBVWidget::PlanarContourMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
     nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nodes");
     layout()->addWidget(nodes);
+    filled = new ExtWidget("Filled",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true,false,MBSIM%"filled");
+    layout()->addWidget(filled);
   }
 
   DOMElement* PlanarContourMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
     nodes->initializeUsingXML(e);
+    filled->initializeUsingXML(e);
     return e;
   }
 
   DOMElement* PlanarContourMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
     nodes->writeXMLFile(e);
+    filled->writeXMLFile(e);
     writeProperties(e);
     return nullptr;
   }
