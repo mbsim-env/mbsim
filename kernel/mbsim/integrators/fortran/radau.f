@@ -770,6 +770,7 @@ C --- THIS PARAMETER HAS TO BE CHANGED IF NUMBER OF STAGES IS >=7
 C *** *** *** *** *** *** ***
 C  INITIALISATIONS
 C *** *** *** *** *** *** ***
+      NEWT=0
 C -------- CHECK THE INDEX OF THE PROBLEM ----- 
       INDEX1=NIND1.NE.0
       INDEX2=NIND2.NE.0
