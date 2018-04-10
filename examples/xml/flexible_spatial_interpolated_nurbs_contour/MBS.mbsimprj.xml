@@ -259,10 +259,11 @@ ret = 0;</scalarParameter>
     </DynamicSystemSolver>
   </Embed>
 
-  <TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <DASKRIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
     <endTime unit="s">5</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
-  </TimeSteppingIntegrator>
+    <formalism>"DAE2"</formalism>
+  </DASKRIntegrator>
 
 </MBSimProject>
