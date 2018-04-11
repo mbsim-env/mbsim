@@ -45,7 +45,7 @@ namespace MBSim {
   }
 
   Vec3 Contour::evalWv(const Vec2 &zeta) {
-    return crossProduct(evalWn(zeta),evalWu(zeta));;
+    return crossProduct(evalWn(zeta),evalWu(zeta));
   }
 
   Vec3 Contour::evalWn(const Vec2 &zeta) {
