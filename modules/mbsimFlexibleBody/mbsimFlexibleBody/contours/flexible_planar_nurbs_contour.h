@@ -17,18 +17,18 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#ifndef _FLEXIBLE_SPATIAL_NURBS_CONTOUR_H_
-#define _FLEXIBLE_SPATIAL_NURBS_CONTOUR_H_
+#ifndef _FLEXIBLE_PLANAR_NURBS_CONTOUR_H_
+#define _FLEXIBLE_PLANAR_NURBS_CONTOUR_H_
 
 #include "mbsim/contours/contour.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
-#include <mbsim/numerics/nurbs/nurbs_surface.h>
+#include <mbsim/numerics/nurbs/nurbs_curve.h>
 
 namespace OpenMBV {
-  class DynamicNurbsSurface;
+  class DynamicNurbsCurve;
 }
 
 namespace MBSim {
@@ -38,21 +38,21 @@ namespace MBSim {
 namespace MBSimFlexibleBody {
 
   /*!  
-   * \brief flexible nurbs surface
+   * \brief flexible nurbs curve
    * \author Martin Foerg
    */
-  class FlexibleSpatialNurbsContour : public MBSim::Contour {
+  class FlexiblePlanarNurbsContour : public MBSim::Contour {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      FlexibleSpatialNurbsContour(const std::string &name="") : MBSim::Contour(name) { }
+      FlexiblePlanarNurbsContour(const std::string &name="") : MBSim::Contour(name) { }
 
       /**
        * \brief destructor
        */
-      ~FlexibleSpatialNurbsContour() override = default;  
+      ~FlexiblePlanarNurbsContour() override = default;  
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
@@ -61,24 +61,14 @@ namespace MBSimFlexibleBody {
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       MBSim::ContourFrame* createContourFrame(const std::string &name="P") override;
       double getCurvature(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalWn_t(const fmatvec::Vec2 &zeta);
+//      fmatvec::Vec3 evalWn_t(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalWs_t(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalWt_t(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalWu_t(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalWv_t(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer1Ws(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalParDer2Ws(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalParDer1Wt(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalParDer2Wt(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalParDer1Wu(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalParDer2Wu(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalParDer1Wv(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalParDer2Wv(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta) override;
 
       void updatePositions(MBSim::ContourFrame *frame) override;
       void updateVelocities(MBSim::ContourFrame *frame) override;
@@ -89,11 +79,9 @@ namespace MBSimFlexibleBody {
 
       /* GETTER / SETTER */
       void setInterpolation(bool interpolation_) { interpolation = interpolation_; }
-      void setIndices(const fmatvec::MatVI &index_) { index = index_; }
-      void setEtaKnotVector(const fmatvec::VecV &uKnot_) { uKnot = uKnot_; }
-      void setXiKnotVector(const fmatvec::VecV &vKnot_) { vKnot = vKnot_; }
-      void setEtaDegree(int etaDegree_) { etaDegree = etaDegree_; }
-      void setXiDegree(int xiDegree_) { xiDegree = xiDegree_; }
+      void setIndices(const fmatvec::VecVI &index_) { index = index_; }
+      void setKnotVector(const fmatvec::VecV &knot_) { knot = knot_; }
+      void setDegree(int degree_) { degree = degree_; }
       /***************************************************/
 
       void plot() override;
@@ -101,7 +89,7 @@ namespace MBSimFlexibleBody {
       MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override { return findContactPairingFlexible(type0, type1); }
 
 //      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-//        OpenMBVNurbsSurface ombv(diffuseColor,transparency);
+//        OpenMBVNurbsCurve ombv(diffuseColor,transparency);
 //        openMBVRigidBody=ombv.createOpenMBV();
 //      }
       
@@ -111,40 +99,37 @@ namespace MBSimFlexibleBody {
 
       bool isZetaOutside(const fmatvec::Vec2 &zeta) override;
 
-      void setOpenEta(bool openEta_) { openEta = openEta_; }
-      void setOpenXi(bool openXi_) { openXi = openXi_; }
+      void setOpen(bool open_) { open = open_; }
 
-      void resetUpToDate() override { updSrfPos = true; updSrfVel = true; updSrfJac = true; updSrfGA = true; }
+      void resetUpToDate() override { updCrvPos = true; updCrvVel = true; updCrvJac = true; updCrvGA = true; }
 
-      void updateSurfacePositions();
-      void updateSurfaceVelocities();
-      void updateSurfaceJacobians();
-      void updateSurfaceGyroscopicAccelerations();
+      void updateCurvePositions();
+      void updateCurveVelocities();
+      void updateCurveJacobians();
+      void updateCurveGyroscopicAccelerations();
 
     protected:
-      fmatvec::Vec2 continueZeta(const fmatvec::Vec2 &zeta_);
-      void updateHessianMatrix(const fmatvec::Vec2 &zeta);
-      void updateHessianMatrix_t(const fmatvec::Vec2 &zeta);
-      const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(updSrfPos or zeta!=zetaOld) updateHessianMatrix(zeta); return hess; }
-      const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix_t(const fmatvec::Vec2 &zeta){ updateHessianMatrix_t(zeta); return hess_t; }
+      double continueEta(double eta_);
+      void updateHessianMatrix(double eta);
+      void updateHessianMatrix_t(double eta);
+      const fmatvec::MatVx4& evalHessianMatrix(double eta){ if(updCrvPos or eta!=etaOld) updateHessianMatrix(eta); return hess; }
+      const fmatvec::MatVx4& evalHessianMatrix_t(double eta){ updateHessianMatrix_t(eta); return hess_t; }
 
       bool interpolation{false};
-      fmatvec::MatVI index;
-      fmatvec::VecV uKnot, vKnot;
-      int etaDegree{3};
-      int xiDegree{3};
-      bool openEta{false};
-      bool openXi{false};
-      MBSim::NurbsSurface srfPos, srfVel, srfGA;
-      std::vector<MBSim::NurbsSurface> srfJac;
-      fmatvec::Vec2 zetaOld;
-      fmatvec::GeneralMatrix<fmatvec::Vec4> hess, hess_t, hessTmp;
-      bool updSrfPos{true};
-      bool updSrfVel{true};
-      bool updSrfJac{true};
-      bool updSrfGA{true};
+      fmatvec::VecVI index;
+      fmatvec::VecV knot;
+      int degree{3};
+      bool open{false};
+      MBSim::NurbsCurve crvPos, crvVel, crvGA;
+      std::vector<MBSim::NurbsCurve> crvJac;
+      double etaOld{-1e10};
+      fmatvec::MatVx4 hess, hess_t, hessTmp;
+      bool updCrvPos{true};
+      bool updCrvVel{true};
+      bool updCrvJac{true};
+      bool updCrvGA{true};
 
-      std::shared_ptr<OpenMBV::DynamicNurbsSurface> openMBVNurbsSurface;
+      std::shared_ptr<OpenMBV::DynamicNurbsCurve> openMBVNurbsCurve;
   };
 
 }

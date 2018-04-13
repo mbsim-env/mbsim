@@ -296,6 +296,15 @@ namespace MBSimGUI {
       ExtWidget *interpolation, *controlPoints, *numberOfEtaControlPoints, *numberOfXiControlPoints, *etaKnotVector, *xiKnotVector, *etaDegree, *xiDegree, *openEta, *openXi, *visu;
   };
 
+  class FlexiblePlanarNurbsContourPropertyDialog : public ContourPropertyDialog {
+
+    public:
+      FlexiblePlanarNurbsContourPropertyDialog(Contour *contour, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *interpolation, *indices, *numberOfControlPoints, *knotVector, *degree, *open, *visu;
+  };
 
   class FlexibleSpatialNurbsContourPropertyDialog : public ContourPropertyDialog {
 

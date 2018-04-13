@@ -122,6 +122,8 @@ namespace MBSimGUI {
       return new SpatialContour;
     else if(E(element)->getTagName()==MBSIM%"SpatialNurbsContour")
       return new SpatialNurbsContour;
+    else if(E(element)->getTagName()==MBSIMFLEX%"FlexiblePlanarNurbsContour")
+      return new FlexiblePlanarNurbsContour;
     else if(E(element)->getTagName()==MBSIMFLEX%"FlexibleSpatialNurbsContour")
       return new FlexibleSpatialNurbsContour;
     else if(E(element)->getTagName()==MBSIM%"FCLBox")

@@ -37,11 +37,12 @@ namespace MBSimFlexibleBody {
 
   void FlexibleSpatialNurbsContour::updateSurfacePositions() {
     GeneralMatrix<Vec4> cp(index.rows(),index.cols());
-    for(int i=0; i<index.rows(); i++)
+    for(int i=0; i<index.rows(); i++) {
       for(int j=0; j<index.cols(); j++) {
         cp(i,j).set(RangeV(0,2),static_cast<NodeBasedBody*>(parent)->evalNodalPosition(index(i,j)));
         cp(i,j)(3) = 1;
       }
+    }
     if(not interpolation)
       srfPos.setCtrlPnts(cp);
     else {
@@ -138,6 +139,36 @@ namespace MBSimFlexibleBody {
     Vec2 zeta = continueZeta(zeta_);
     srfPos.deriveAtH(zeta(0),zeta(1),2,hess);
     zetaOld = zeta_;
+  }
+
+  void FlexibleSpatialNurbsContour::updateHessianMatrix_t(const Vec2 &zeta_) {
+    if(updSrfVel) updateSurfaceVelocities();
+    Vec2 zeta = continueZeta(zeta_);
+    srfVel.deriveAtH(zeta(0),zeta(1),2,hess_t);
+  }
+
+  Vec3 FlexibleSpatialNurbsContour::evalWn_t(const Vec2 &zeta) {
+    Vec3 Wsxt = crossProduct(evalWs(zeta),evalWt(zeta));
+    Vec3 Wsxt_t = crossProduct(evalWs_t(zeta),evalWt(zeta)) + crossProduct(evalWs(zeta),evalWt_t(zeta));
+    return Wsxt_t/nrm2(Wsxt) - Wsxt*((Wsxt.T()*Wsxt_t)/pow(nrm2(Wsxt),3));
+  }
+
+  Vec3 FlexibleSpatialNurbsContour::evalWs_t(const Vec2 &zeta) {
+    return evalHessianMatrix_t(zeta)(1,0)(Range<Fixed<0>,Fixed<2> >());
+  }
+
+  Vec3 FlexibleSpatialNurbsContour::evalWt_t(const Vec2 &zeta) {
+    return evalHessianMatrix_t(zeta)(0,1)(Range<Fixed<0>,Fixed<2> >());
+  }
+
+  Vec3 FlexibleSpatialNurbsContour::evalWu_t(const Vec2 &zeta) {
+    Vec3 Ws = evalWs(zeta);
+    Vec3 Ws_t = evalWs_t(zeta);
+    return Ws_t/nrm2(Ws) - Ws*((Ws.T()*Ws_t)/pow(nrm2(Ws),3));
+  }
+
+  Vec3 FlexibleSpatialNurbsContour::evalWv_t(const Vec2 &zeta) {
+    return crossProduct(evalWn_t(zeta),evalWu(zeta)) + crossProduct(evalWn(zeta),evalWu_t(zeta));
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalPosition(const Vec2 &zeta) {

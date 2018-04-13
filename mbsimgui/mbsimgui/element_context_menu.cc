@@ -255,6 +255,9 @@ namespace MBSimGUI {
     action = new QAction("Add spatial nurbs contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSpatialNurbsContour()));
     addAction(action);
+    action = new QAction("Add flexible planar nurbs contour", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarNurbsContour()));
+    addAction(action);
     action = new QAction("Add flexible spatial nurbs contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialNurbsContour()));
     addAction(action);
@@ -326,6 +329,10 @@ namespace MBSimGUI {
 
   void ContoursContextMenu::addSpatialNurbsContour() {
     mw->addContour(new SpatialNurbsContour, element);
+  }
+
+  void ContoursContextMenu::addFlexiblePlanarNurbsContour() {
+    mw->addContour(new FlexiblePlanarNurbsContour, element);
   }
 
   void ContoursContextMenu::addFlexibleSpatialNurbsContour() {

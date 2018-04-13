@@ -661,6 +661,55 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  FlexiblePlanarNurbsContourPropertyDialog::FlexiblePlanarNurbsContourPropertyDialog(Contour *contour, QWidget *parent, const Qt::WindowFlags& f) : ContourPropertyDialog(contour,parent,f) {
+    addTab("Visualisation",1);
+
+    interpolation = new ExtWidget("Interpolation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
+    addToTab("General", interpolation);
+
+    indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"indices");
+    addToTab("General", indices);
+
+    numberOfControlPoints = new ExtWidget("Number of control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfControlPoints");
+    addToTab("General", numberOfControlPoints);
+
+    knotVector = new ExtWidget("Knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"knotVector");
+    addToTab("General", knotVector);
+
+    degree = new ExtWidget("Degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"degree");
+    addToTab("General", degree);
+
+    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"open");
+    addToTab("General", open);
+
+    visu = new ExtWidget("Enable openMBV",new PlanarContourMBSOMBVWidget("NOTSET"),true,true,MBSIMFLEX%"enableOpenMBV");
+    addToTab("Visualisation", visu);
+  }
+
+  DOMElement* FlexiblePlanarNurbsContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    interpolation->initializeUsingXML(item->getXMLElement());
+    indices->initializeUsingXML(item->getXMLElement());
+    numberOfControlPoints->initializeUsingXML(item->getXMLElement());
+    knotVector->initializeUsingXML(item->getXMLElement());
+    degree->initializeUsingXML(item->getXMLElement());
+    open->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FlexiblePlanarNurbsContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    interpolation->writeXMLFile(item->getXMLElement(),nullptr);
+    indices->writeXMLFile(item->getXMLElement(),nullptr);
+    numberOfControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
+    knotVector->writeXMLFile(item->getXMLElement(),nullptr);
+    degree->writeXMLFile(item->getXMLElement(),nullptr);
+    open->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
   FlexibleSpatialNurbsContourPropertyDialog::FlexibleSpatialNurbsContourPropertyDialog(Contour *contour, QWidget *parent, const Qt::WindowFlags& f) : ContourPropertyDialog(contour,parent,f) {
     addTab("Visualisation",1);
 
