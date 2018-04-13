@@ -176,7 +176,14 @@ ret = 0;</scalarParameter>
               <ele>7</ele>
             </xmlVector>
           </generalizedInitialPosition>
-          <mass unit="kg">100e3</mass>
+          <generalizedInitialVelocity>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>-50</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </generalizedInitialVelocity>
+          <mass unit="kg">5000000</mass>
           <inertiaTensor unit="kg*m^2">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
@@ -206,7 +213,8 @@ ret = 0;</scalarParameter>
             </Point>
           </contours><enableOpenMBVFrameC/>
         </RigidBody>
-      </objects><links>
+      </objects>
+      <links>
         <Contact name="Contact">
           <connect ref1="../Object[Body]/Contour[FlexibleSpatialNurbsContour]" ref2="../Object[RigidBody]/Contour[Point]"/>
           <normalForceLaw>
@@ -259,11 +267,11 @@ ret = 0;</scalarParameter>
     </DynamicSystemSolver>
   </Embed>
 
-  <DASKRIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
     <endTime unit="s">5</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
-    <formalism>"DAE2"</formalism>
-  </DASKRIntegrator>
+    <initialStepSize unit="s">1e-8</initialStepSize>
+  </LSODARIntegrator>
 
 </MBSimProject>
