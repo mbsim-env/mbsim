@@ -15,7 +15,7 @@ SCRIPTDIR=os.path.dirname(os.path.realpath(__file__))
 CURDIR=os.getcwd()
 SRCDIR="/home/mbsim/linux64-dailydebug"
 os.environ["PKG_CONFIG_PATH"]=SRCDIR+"/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi3py-local-linux64/lib/pkgconfig"
-os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib"
+os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib:/home/mbsim/3rdparty/qwt-6.1.3-local-linux64/lib:/home/mbsim/3rdparty/coin-soqt-bb-local-linux64/lib64"
 os.environ["CXXFLAGS"]="-O0 -g"
 os.environ["CFLAGS"]="-O0 -g"
 os.environ["FFLAGS"]="-O0 -g"
@@ -53,11 +53,14 @@ if len(checkedExamples)>0:
     print("pushing references to download dir failed.")
   os.chdir(CURDIR)
 
-  extraBuildArgs=['--forceBuild']
+  extraBuildArgs.append('--forceBuild')
+
+# uncomment this to run static code analyzis
+# extraBuildArgs.append("--staticCodeAnalyzis")
 
 # build and run all examples
 ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun"]+extraBuildArgs+["--rotate", "20", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
-  "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--coverage", "--staticCodeAnalyzis", "--webapp",
+  "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--coverage", "--webapp",
   "--reportOutDir", "/var/www/html/mbsim/linux64-dailydebug/report", "--url",
   "https://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
   "--passToConfigure", "--enable-python", "--enable-debug", "--enable-shared", "--disable-static", "--with-qmake=qmake-qt5",
@@ -69,7 +72,7 @@ ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun"]+extraBuildArgs+[
   "SOQT_LIBS=-L/home/mbsim/3rdparty/coin-soqt-bb-local-linux64/lib64 -lSoQt",
   "SOQT_CFLAGS=-I/home/mbsim/3rdparty/coin-soqt-bb-local-linux64/include",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
-  "--passToRunexamples"])
+  "--passToRunexamples", "--checkGUIs"])
 if ret!=0 and ret!=255:
   print("build.py failed.")
 if ret==255:
