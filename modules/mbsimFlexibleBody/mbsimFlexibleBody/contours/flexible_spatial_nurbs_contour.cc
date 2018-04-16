@@ -237,7 +237,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleSpatialNurbsContour::updateVelocities(ContourFrame *frame) {
     if(updSrfVel) updateSurfaceVelocities();
-    Vec2 zeta = continueZeta(frame->getZeta());
+    Vec2 zeta = continueZeta(frame->evalZeta());
     srfVel.deriveAtH(zeta(0),zeta(1),0,hessTmp);
     frame->setVelocity(hessTmp(0,0)(Range<Fixed<0>,Fixed<2> >()));
   }
@@ -248,7 +248,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleSpatialNurbsContour::updateJacobians(ContourFrame *frame, int j) {
     if(updSrfJac) updateSurfaceJacobians();
-    Vec2 zeta = continueZeta(frame->getZeta());
+    Vec2 zeta = continueZeta(frame->evalZeta());
     frame->getJacobianOfTranslation(j,false).resize(frame->gethSize(j),NONINIT);
     for(int i=0; i<frame->gethSize(j); i++) {
       srfJac[i].deriveAtH(zeta(0),zeta(1),0,hessTmp);
@@ -258,7 +258,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleSpatialNurbsContour::updateGyroscopicAccelerations(ContourFrame *frame) {
     if(updSrfGA) updateSurfaceGyroscopicAccelerations();
-    Vec2 zeta = continueZeta(frame->getZeta());
+    Vec2 zeta = continueZeta(frame->evalZeta());
     srfGA.deriveAtH(zeta(0),zeta(1),0,hessTmp);
     frame->setGyroscopicAccelerationOfTranslation(hessTmp(0,0)(Range<Fixed<0>,Fixed<2> >()));
   }

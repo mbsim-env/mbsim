@@ -219,7 +219,7 @@ namespace MBSimFlexibleBody {
 
   void FlexiblePlanarNurbsContour::updateVelocities(ContourFrame *frame) {
     if(updCrvVel) updateCurveVelocities();
-    double eta = continueEta(frame->getZeta()(0));
+    double eta = continueEta(frame->evalZeta()(0));
     crvVel.deriveAtH(eta,0,hessTmp);
     frame->setVelocity(hessTmp.row(0).T()(Range<Fixed<0>,Fixed<2> >()));
   }
@@ -230,7 +230,7 @@ namespace MBSimFlexibleBody {
 
   void FlexiblePlanarNurbsContour::updateJacobians(ContourFrame *frame, int j) {
     if(updCrvJac) updateCurveJacobians();
-    double eta = continueEta(frame->getZeta()(0));
+    double eta = continueEta(frame->evalZeta()(0));
     frame->getJacobianOfTranslation(j,false).resize(frame->gethSize(j),NONINIT);
     for(int i=0; i<frame->gethSize(j); i++) {
       crvJac[i].deriveAtH(eta,0,hessTmp);
@@ -240,7 +240,7 @@ namespace MBSimFlexibleBody {
 
   void FlexiblePlanarNurbsContour::updateGyroscopicAccelerations(ContourFrame *frame) {
     if(updCrvGA) updateCurveGyroscopicAccelerations();
-    double eta = continueEta(frame->getZeta()(0));
+    double eta = continueEta(frame->evalZeta()(0));
     crvGA.deriveAtH(eta,0,hessTmp);
     frame->setGyroscopicAccelerationOfTranslation(hessTmp.row(0).T()(Range<Fixed<0>,Fixed<2> >()));
   }
