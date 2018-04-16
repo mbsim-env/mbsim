@@ -11,7 +11,7 @@ SCRIPTDIR=os.path.dirname(os.path.realpath(__file__))
 
 
 os.environ["PKG_CONFIG_PATH"]=SRCDIR+"/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi3py-local-linux64/lib/pkgconfig"
-os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib"
+os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib:/home/mbsim/3rdparty/qwt-6.1.3-local-linux64/lib:/home/mbsim/3rdparty/coin-soqt-bb-local-linux64/lib64"
 os.environ["CXXFLAGS"]="-g -O2 -DNDEBUG"
 os.environ["CFLAGS"]="-g -O2 -DNDEBUG"
 os.environ["FFLAGS"]="-g -O2 -DNDEBUG"
@@ -28,6 +28,6 @@ ret=subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistrib
   "COIN_CFLAGS=-I/home/mbsim/3rdparty/coin-soqt-bb-local-linux64/include",
   "SOQT_LIBS=-L/home/mbsim/3rdparty/coin-soqt-bb-local-linux64/lib64 -lSoQt",
   "SOQT_CFLAGS=-I/home/mbsim/3rdparty/coin-soqt-bb-local-linux64/include",
-  "--passToRunexamples", "--disableCompare", "--disableValidate", "--filter", "'basic' in labels"])
+  "--passToRunexamples", "--checkGUIs", "--disableCompare", "--disableValidate", "--filter", "'basic' in labels"])
 if ret!=0 and ret!=255:
   print("linux64-dailyrelease failed.")
