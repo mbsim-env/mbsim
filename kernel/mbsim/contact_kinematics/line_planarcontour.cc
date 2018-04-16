@@ -80,12 +80,12 @@ namespace MBSim {
     contact.getContourFrame(iplanarcontour)->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
     contact.getContourFrame(iplanarcontour)->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
 
-    contact.getContourFrame(iplanarcontour)->setPosition(planarcontour->evalPosition(contact.getContourFrame(iplanarcontour)->getZeta()));
+    contact.getContourFrame(iplanarcontour)->setPosition(planarcontour->evalPosition(contact.getContourFrame(iplanarcontour)->getZeta(false)));
 
     Vec3 Wn = contact.getContourFrame(iline)->getOrientation(false).col(0);
 
     double g;
-    if(planarcontour->isZetaOutside(contact.getContourFrame(iplanarcontour)->getZeta()))
+    if(planarcontour->isZetaOutside(contact.getContourFrame(iplanarcontour)->getZeta(false)))
       g = 1;
     else
       g = Wn.T()*(contact.getContourFrame(iplanarcontour)->getPosition(false) - line->getFrame()->getPosition());

@@ -66,10 +66,10 @@ namespace MBSim {
 
     contact.getContourFrame(iextrusion)->setEta(search.slv());
 
-    contact.getContourFrame(iextrusion)->setPosition(extrusion->evalPosition(contact.getContourFrame(iextrusion)->getZeta()));
-    contact.getContourFrame(iextrusion)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(iextrusion)->getZeta()));
-    contact.getContourFrame(iextrusion)->getOrientation(false).set(1, extrusion->evalWu(contact.getContourFrame(iextrusion)->getZeta()));
-    contact.getContourFrame(iextrusion)->getOrientation(false).set(2, extrusion->evalWv(contact.getContourFrame(iextrusion)->getZeta()));
+    contact.getContourFrame(iextrusion)->setPosition(extrusion->evalPosition(contact.getContourFrame(iextrusion)->getZeta(false)));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(iextrusion)->getZeta(false)));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(1, extrusion->evalWu(contact.getContourFrame(iextrusion)->getZeta(false)));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(2, extrusion->evalWv(contact.getContourFrame(iextrusion)->getZeta(false)));
 
     contact.getContourFrame(ipoint)->setPosition(point->getFrame()->evalPosition()); // position of point
     contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(iextrusion)->getOrientation(false).col(0));
@@ -81,7 +81,7 @@ namespace MBSim {
     contact.getContourFrame(iextrusion)->getPosition(false) += contact.getContourFrame(iextrusion)->getXi() * contact.getContourFrame(iextrusion)->getOrientation(false).col(2);
 
     double g;
-    if(extrusion->isZetaOutside(contact.getContourFrame(iextrusion)->getZeta()))
+    if(extrusion->isZetaOutside(contact.getContourFrame(iextrusion)->getZeta(false)))
       g = 1;
     else
       g = contact.getContourFrame(iextrusion)->getOrientation(false).col(0).T() * Wd;

@@ -29,11 +29,13 @@ namespace MBSim {
     public:
       ContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta_ = fmatvec::Vec2()) : Frame(name), zeta(zeta_) { }
 
-      const fmatvec::Vec2& getZeta() const { return zeta; }
+      const fmatvec::Vec2& evalZeta() { if(updPos) updatePositions(); return zeta; }
+
+      const fmatvec::Vec2& getZeta(bool check=true) {  assert((not check) or (not updPos)); return zeta; }
       void setZeta(const fmatvec::Vec2 &zeta_) { zeta = zeta_; }
 
-      double getEta() const { return zeta(0); }
-      double getXi() const { return zeta(1); }
+      double getEta(bool check=true) {  assert((not check) or (not updPos)); return zeta(0); }
+      double getXi(bool check=true) {  assert((not check) or (not updPos)); return zeta(1); }
       void setEta(double eta) { zeta(0) = eta; }
       void setXi(double xi) { zeta(1) = xi; }
 
