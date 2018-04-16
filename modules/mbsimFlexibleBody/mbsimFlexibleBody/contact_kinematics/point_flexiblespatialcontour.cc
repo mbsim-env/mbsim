@@ -79,19 +79,19 @@ namespace MBSimFlexibleBody {
     zeta0 = search.slv();
     contact.getContourFrame(ispatialcontour)->setZeta(zeta0);
 
-    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(0, spatialcontour->evalWn(contact.getContourFrame(ispatialcontour)->getZeta()));
-    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(1, spatialcontour->evalWu(contact.getContourFrame(ispatialcontour)->getZeta()));
-    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(2, spatialcontour->evalWv(contact.getContourFrame(ispatialcontour)->getZeta()));
+    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(0, spatialcontour->evalWn(contact.getContourFrame(ispatialcontour)->getZeta(false)));
+    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(1, spatialcontour->evalWu(contact.getContourFrame(ispatialcontour)->getZeta(false)));
+    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(2, spatialcontour->evalWv(contact.getContourFrame(ispatialcontour)->getZeta(false)));
 
     contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(ispatialcontour)->getOrientation(false).col(0));
     contact.getContourFrame(ipoint)->getOrientation(false).set(1, -contact.getContourFrame(ispatialcontour)->getOrientation(false).col(1));
     contact.getContourFrame(ipoint)->getOrientation(false).set(2, contact.getContourFrame(ispatialcontour)->getOrientation(false).col(2));
 
-    contact.getContourFrame(ispatialcontour)->setPosition(spatialcontour->evalPosition(contact.getContourFrame(ispatialcontour)->getZeta()));
+    contact.getContourFrame(ispatialcontour)->setPosition(spatialcontour->evalPosition(contact.getContourFrame(ispatialcontour)->getZeta(false)));
     contact.getContourFrame(ipoint)->setPosition(point->getFrame()->evalPosition());
 
     double g;
-    if(spatialcontour->isZetaOutside(contact.getContourFrame(ispatialcontour)->getZeta()))
+    if(spatialcontour->isZetaOutside(contact.getContourFrame(ispatialcontour)->getZeta(false)))
       g = 1;
     else
       g = contact.getContourFrame(ispatialcontour)->getOrientation(false).col(0).T() * (contact.getContourFrame(ipoint)->getPosition(false) - contact.getContourFrame(ispatialcontour)->getPosition(false));
