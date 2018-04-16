@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _FLEXIBLE_SPATIAL_NURBS_CONTOUR_H_
@@ -38,7 +38,7 @@ namespace MBSim {
 namespace MBSimFlexibleBody {
 
   /*!  
-   * \brief flexible nurbs surface
+   * \brief flexible spatial nurbs contour
    * \author Martin Foerg
    */
   class FlexibleSpatialNurbsContour : public MBSim::Contour {

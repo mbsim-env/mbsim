@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #include <config.h>
@@ -295,7 +295,7 @@ namespace MBSimFlexibleBody {
       crvGA.setDegree(knot.size()-index.size()-1);
       crvGA.setKnot(knot);
     }
-    Contour::init(stage, config);
+    FlexiblePlanarContour::init(stage, config);
   }
 
   ContourFrame* FlexiblePlanarNurbsContour::createContourFrame(const string &name) {
@@ -320,11 +320,11 @@ namespace MBSimFlexibleBody {
       }
       openMBVNurbsCurve->append(data);
     }
-    Contour::plot();
+    FlexiblePlanarContour::plot();
   }
 
   void FlexiblePlanarNurbsContour::initializeUsingXML(DOMElement * element) {
-    Contour::initializeUsingXML(element);
+    FlexiblePlanarContour::initializeUsingXML(element);
     DOMElement * e;
 //    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"etaNodes");
 //    etaNodes=E(e)->getText<Vec>();

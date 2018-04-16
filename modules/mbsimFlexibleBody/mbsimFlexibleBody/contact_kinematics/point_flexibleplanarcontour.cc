@@ -39,13 +39,13 @@ namespace MBSimFlexibleBody {
       ipoint = 0;
       iplanarcontour = 1;
       point = static_cast<MBSim::Point*>(contour[0]);
-      planarcontour = static_cast<FlexiblePlanarNurbsContour*>(contour[1]);
+      planarcontour = static_cast<FlexiblePlanarContour*>(contour[1]);
     }
     else {
       ipoint = 1;
       iplanarcontour = 0;
       point = static_cast<MBSim::Point*>(contour[1]);
-      planarcontour = static_cast<FlexiblePlanarNurbsContour*>(contour[0]);
+      planarcontour = static_cast<FlexiblePlanarContour*>(contour[0]);
     }
     func = new MBSim::FuncPairPlanarContourPoint(point, planarcontour);
   }

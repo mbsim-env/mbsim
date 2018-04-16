@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FLEXIBLE_PLANAR_NURBS_CONTOUR_H_
-#define _FLEXIBLE_PLANAR_NURBS_CONTOUR_H_
+#ifndef _FLEXIBLE_PLANAR_NURBS_CONTOUR_FFR_H_
+#define _FLEXIBLE_PLANAR_NURBS_CONTOUR_FFR_H_
 
 #include "mbsimFlexibleBody/contours/flexible_planar_contour.h"
 
@@ -37,21 +37,21 @@ namespace MBSim {
 namespace MBSimFlexibleBody {
 
   /*!  
-   * \brief flexible planar nurbs contour
+   * \brief flexible planar nurbs contour with local interpolation 
    * \author Martin Foerg
    */
-  class FlexiblePlanarNurbsContour : public FlexiblePlanarContour {
+  class FlexiblePlanarNurbsContourFFR : public FlexiblePlanarContour {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      FlexiblePlanarNurbsContour(const std::string &name="") : FlexiblePlanarContour(name) { }
+      FlexiblePlanarNurbsContourFFR(const std::string &name="") : FlexiblePlanarContour(name) { }
 
       /**
        * \brief destructor
        */
-      ~FlexiblePlanarNurbsContour() override = default;  
+      ~FlexiblePlanarNurbsContourFFR() override = default;  
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
@@ -98,33 +98,32 @@ namespace MBSimFlexibleBody {
 
       void setOpen(bool open_) { open = open_; }
 
-      void resetUpToDate() override { updCrvPos = true; updCrvVel = true; updCrvJac = true; updCrvGA = true; }
-
-      void updateCurvePositions();
-      void updateCurveVelocities();
-      void updateCurveJacobians();
-      void updateCurveGyroscopicAccelerations();
+      void resetUpToDate() override { updPos = true; updVel = true; }
 
     protected:
       double continueEta(double eta_);
       void updateHessianMatrix(double eta);
-      void updateHessianMatrix_t(double eta);
-      const fmatvec::MatVx4& evalHessianMatrix(double eta){ if(updCrvPos or eta!=etaOld) updateHessianMatrix(eta); return hess; }
-      const fmatvec::MatVx4& evalHessianMatrix_t(double eta){ updateHessianMatrix_t(eta); return hess_t; }
+      void updateGlobalRelativePosition(double eta);
+      void updateGlobalRelativeVelocity(double eta);
+      const fmatvec::MatVx4& evalHessianMatrixPos(double eta) { if(eta!=etaOld) updateHessianMatrix(eta); return hessPos; }
+      const std::vector<fmatvec::MatVx4>& evalHessianMatrixPhi(double eta) { if(eta!=etaOld) updateHessianMatrix(eta); return hessPhi; }
+      const fmatvec::Vec3& evalGlobalRelativePosition(double eta) { if(updPos) updateGlobalRelativePosition(eta); return WrKP; }
+      const fmatvec::Vec3& evalGlobalRelativeVelocity(double eta) { if(updVel) updateGlobalRelativeVelocity(eta); return Wvrel; }
 
+      MBSim::Frame *R;
       bool interpolation{false};
       fmatvec::VecVI index;
       fmatvec::VecV knot;
       int degree{3};
       bool open{false};
-      MBSim::NurbsCurve crvPos, crvVel, crvGA;
-      std::vector<MBSim::NurbsCurve> crvJac;
+      MBSim::NurbsCurve crvP;
+      std::vector<MBSim::NurbsCurve> crvPhi;
       double etaOld{-1e10};
-      fmatvec::MatVx4 hess, hess_t, hessTmp;
-      bool updCrvPos{true};
-      bool updCrvVel{true};
-      bool updCrvJac{true};
-      bool updCrvGA{true};
+      fmatvec::MatVx4 hess, hessTmp, hessPos;
+      std::vector<fmatvec::MatVx4> hessPhi;
+      fmatvec::Vec3 WrKP, Wvrel;
+      bool updPos{true};
+      bool updVel{true};
 
       std::shared_ptr<OpenMBV::DynamicNurbsCurve> openMBVNurbsCurve;
   };

@@ -29,6 +29,7 @@
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsimFlexibleBody/contours/flexible_planar_nurbs_contour.h"
+#include "mbsimFlexibleBody/contours/flexible_planar_nurbs_contour_ffr.h"
 #include "mbsimFlexibleBody/contours/flexible_spatial_nurbs_contour.h"
 // --- List of contact kinematic implementations - END ---
 
@@ -82,6 +83,8 @@ namespace MBSimFlexibleBody {
 //    else if(contour0==typeid(Circle) && contour1==typeid(NurbsDisk2s))
 //      return new ContactKinematicsCircleNurbsDisk2s;  
 //
+    else if(contour0==typeid(Point) && contour1==typeid(FlexiblePlanarNurbsContourFFR))
+      return new ContactKinematicsPointFlexiblePlanarContour;
     else if(contour0==typeid(Point) && contour1==typeid(FlexiblePlanarNurbsContour))
       return new ContactKinematicsPointFlexiblePlanarContour;
     else if(contour0==typeid(Point) && contour1==typeid(FlexibleSpatialNurbsContour))

@@ -111,6 +111,7 @@ namespace MBSimFlexibleBody {
       /*****************************************************/
 
       /* GETTER / SETTER */
+      int getNumberOfModeShapes() { if(updSize) calcSize(); return ne; }
 
       // NOTE: we can not use a overloaded setTranslation here due to restrictions in XML but define them for convinience in c++
       /*!
@@ -270,6 +271,9 @@ namespace MBSimFlexibleBody {
       void setNodalGeometricStiffnessMatrixDueToMoment(const std::vector<std::vector<fmatvec::SqrMatV> > &K0M) { setNodalGeometricStiffnessMatrixDueToMomentArray(K0M); }
       void setNodalGeometricStiffnessMatrixDueToMomentArray(const std::vector<std::vector<fmatvec::SqrMatV> > &K0M_) { K0M = K0M_; }
       void setNodalGeometricStiffnessMatrixDueToMoment(const fmatvec::MatV &K0M_) { K0M = getCellArray2D<fmatvec::SqrMatV>(K0M_); }
+
+      const fmatvec::Vec3& getNodalRelativePosition(int i) const { return KrKP[i]; }
+      const fmatvec::Mat3xV& getNodalShapeMatrixOfTranslation(int i) const { return Phi[i]; }
 
       using NodeBasedBody::addFrame;
       using NodeBasedBody::addContour;
