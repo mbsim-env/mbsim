@@ -21,7 +21,7 @@
 #include "point_flexiblespatialcontour.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/point.h"
-#include "mbsimFlexibleBody/contours/flexible_spatial_nurbs_contour.h"
+#include "mbsimFlexibleBody/contours/flexible_contour.h"
 #include "mbsim/functions/contact/funcpair_spatialcontour_point.h"
 #include "mbsim/utils/spatial_contact_search.h"
 #include "mbsim/utils/contact_utils.h"
@@ -40,13 +40,13 @@ namespace MBSimFlexibleBody {
       ipoint = 0;
       ispatialcontour = 1;
       point = static_cast<MBSim::Point*>(contour[0]);
-      spatialcontour = static_cast<FlexibleSpatialNurbsContour*>(contour[1]);
+      spatialcontour = static_cast<FlexibleContour*>(contour[1]);
     }
     else {
       ipoint = 1;
       ispatialcontour = 0;
       point = static_cast<MBSim::Point*>(contour[1]);
-      spatialcontour = static_cast<FlexibleSpatialNurbsContour*>(contour[0]);
+      spatialcontour = static_cast<FlexibleContour*>(contour[0]);
     }
     func = new MBSim::FuncPairSpatialContourPoint(point,spatialcontour);
   }

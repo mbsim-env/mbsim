@@ -36,7 +36,6 @@ namespace MBSim {
 
   Vec3 Contour::evalPosition(const Vec2 &zeta) {
     throwError("(Contour::evalPosition): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalWu(const Vec2 &zeta) {
@@ -55,42 +54,34 @@ namespace MBSim {
 
   Vec3 Contour::evalParDer1Wn(const Vec2 &zeta) {
     throwError("(Contour::evalParDer1Wn): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalParDer2Wn(const Vec2 &zeta) {
     throwError("(Contour::evalParDer2Wn): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalParDer1Wu(const Vec2 &zeta) {
     throwError("(Contour::evalParDer1Wu): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalParDer2Wu(const Vec2 &zeta) {
     throwError("(Contour::evalParDer2Wu): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalParDer1Wv(const Vec2 &zeta) {
     throwError("(Contour::evalParDer1Wv): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalParDer2Wv(const Vec2 &zeta) {
     throwError("(Contour::evalParDer2Wv): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalWs(const Vec2 &zeta) {
     throwError("(Contour::evalWs): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalWt(const Vec2 &zeta) {
     throwError("(Contour::evalWt): Not implemented.");
-    return 0;
   }
 
   Mat3x2 Contour::evalWN(const Vec2 &zeta) {
@@ -123,7 +114,6 @@ namespace MBSim {
 
   Vec2 Contour::evalZeta(const Vec3 &WrPS) {
     throwError("(Contour::evalZeta): Not implemented.");
-    return 0;
   }
 
   void Contour::updatePositions(ContourFrame *frame) {

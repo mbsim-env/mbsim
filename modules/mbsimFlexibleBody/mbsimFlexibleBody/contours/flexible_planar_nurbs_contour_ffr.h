@@ -20,7 +20,7 @@
 #ifndef _FLEXIBLE_PLANAR_NURBS_CONTOUR_FFR_H_
 #define _FLEXIBLE_PLANAR_NURBS_CONTOUR_FFR_H_
 
-#include "mbsimFlexibleBody/contours/flexible_planar_contour.h"
+#include "mbsimFlexibleBody/contours/flexible_contour.h"
 
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
@@ -40,13 +40,13 @@ namespace MBSimFlexibleBody {
    * \brief flexible planar nurbs contour with local interpolation 
    * \author Martin Foerg
    */
-  class FlexiblePlanarNurbsContourFFR : public FlexiblePlanarContour {
+  class FlexiblePlanarNurbsContourFFR : public FlexibleContour {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      FlexiblePlanarNurbsContourFFR(const std::string &name="") : FlexiblePlanarContour(name) { }
+      FlexiblePlanarNurbsContourFFR(const std::string &name="") : FlexibleContour(name) { }
 
       /**
        * \brief destructor

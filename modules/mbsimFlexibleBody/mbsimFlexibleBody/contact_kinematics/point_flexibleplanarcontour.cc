@@ -21,7 +21,7 @@
 #include "point_flexibleplanarcontour.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/point.h"
-#include "mbsimFlexibleBody/contours/flexible_planar_nurbs_contour.h"
+#include "mbsimFlexibleBody/contours/flexible_contour.h"
 #include "mbsim/functions/contact/funcpair_planarcontour_point.h"
 #include "mbsim/utils/planar_contact_search.h"
 
@@ -39,13 +39,13 @@ namespace MBSimFlexibleBody {
       ipoint = 0;
       iplanarcontour = 1;
       point = static_cast<MBSim::Point*>(contour[0]);
-      planarcontour = static_cast<FlexiblePlanarContour*>(contour[1]);
+      planarcontour = static_cast<FlexibleContour*>(contour[1]);
     }
     else {
       ipoint = 1;
       iplanarcontour = 0;
       point = static_cast<MBSim::Point*>(contour[1]);
-      planarcontour = static_cast<FlexiblePlanarContour*>(contour[0]);
+      planarcontour = static_cast<FlexibleContour*>(contour[0]);
     }
     func = new MBSim::FuncPairPlanarContourPoint(point, planarcontour);
   }

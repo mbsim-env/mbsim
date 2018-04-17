@@ -214,7 +214,7 @@ namespace MBSimFlexibleBody {
         parent->getOpenMBVGrp()->addObject(openMBVNurbsCurve);
       }
     }
-    FlexiblePlanarContour::init(stage, config);
+    FlexibleContour::init(stage, config);
   }
 
   ContourFrame* FlexiblePlanarNurbsContourFFR::createContourFrame(const string &name) {
@@ -243,11 +243,11 @@ namespace MBSimFlexibleBody {
       }
       openMBVNurbsCurve->append(data);
     }
-    FlexiblePlanarContour::plot();
+    FlexibleContour::plot();
   }
 
   void FlexiblePlanarNurbsContourFFR::initializeUsingXML(DOMElement * element) {
-    FlexiblePlanarContour::initializeUsingXML(element);
+    FlexibleContour::initializeUsingXML(element);
     DOMElement * e;
 //    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"etaNodes");
 //    etaNodes=E(e)->getText<Vec>();

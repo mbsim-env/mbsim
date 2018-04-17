@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FLEXIBLE_PLANAR_CONTOUR_H_
-#define _FLEXIBLE_PLANAR_CONTOUR_H_
+#ifndef _FLEXIBLE_CONTOUR_H_
+#define _FLEXIBLE_CONTOUR_H_
 
 #include "mbsim/contours/contour.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
@@ -33,21 +33,24 @@ namespace MBSimFlexibleBody {
    * \brief flexible planar contour
    * \author Martin Foerg
    */
-  class FlexiblePlanarContour : public MBSim::Contour {
+  class FlexibleContour : public MBSim::Contour {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      FlexiblePlanarContour(const std::string &name="") : MBSim::Contour(name) { }
+      FlexibleContour(const std::string &name="") : MBSim::Contour(name) { }
 
       /**
        * \brief destructor
        */
-      ~FlexiblePlanarContour() override = default;  
+      ~FlexibleContour() override = default;
 
-      virtual fmatvec::Vec3 evalWs_t(const fmatvec::Vec2 &zeta) = 0;
-      virtual fmatvec::Vec3 evalWu_t(const fmatvec::Vec2 &zeta) = 0;
+      virtual fmatvec::Vec3 evalWs_t(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWt_t(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWu_t(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWv_t(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWn_t(const fmatvec::Vec2 &zeta);
 
       MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override { return findContactPairingFlexible(type0, type1); }
   };

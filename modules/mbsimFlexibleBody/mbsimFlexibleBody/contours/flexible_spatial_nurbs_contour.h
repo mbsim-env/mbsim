@@ -20,8 +20,7 @@
 #ifndef _FLEXIBLE_SPATIAL_NURBS_CONTOUR_H_
 #define _FLEXIBLE_SPATIAL_NURBS_CONTOUR_H_
 
-#include "mbsim/contours/contour.h"
-#include "mbsimFlexibleBody/utils/contact_utils.h"
+#include "mbsimFlexibleBody/contours/flexible_contour.h"
 
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
@@ -41,13 +40,13 @@ namespace MBSimFlexibleBody {
    * \brief flexible spatial nurbs contour
    * \author Martin Foerg
    */
-  class FlexibleSpatialNurbsContour : public MBSim::Contour {
+  class FlexibleSpatialNurbsContour : public FlexibleContour {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      FlexibleSpatialNurbsContour(const std::string &name="") : MBSim::Contour(name) { }
+      FlexibleSpatialNurbsContour(const std::string &name="") : FlexibleContour(name) { }
 
       /**
        * \brief destructor

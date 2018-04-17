@@ -295,7 +295,7 @@ namespace MBSimFlexibleBody {
       crvGA.setDegree(knot.size()-index.size()-1);
       crvGA.setKnot(knot);
     }
-    FlexiblePlanarContour::init(stage, config);
+    FlexibleContour::init(stage, config);
   }
 
   ContourFrame* FlexiblePlanarNurbsContour::createContourFrame(const string &name) {
@@ -320,11 +320,11 @@ namespace MBSimFlexibleBody {
       }
       openMBVNurbsCurve->append(data);
     }
-    FlexiblePlanarContour::plot();
+    FlexibleContour::plot();
   }
 
   void FlexiblePlanarNurbsContour::initializeUsingXML(DOMElement * element) {
-    FlexiblePlanarContour::initializeUsingXML(element);
+    FlexibleContour::initializeUsingXML(element);
     DOMElement * e;
 //    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"etaNodes");
 //    etaNodes=E(e)->getText<Vec>();

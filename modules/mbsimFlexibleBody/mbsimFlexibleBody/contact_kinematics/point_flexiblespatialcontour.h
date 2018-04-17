@@ -29,7 +29,7 @@ namespace MBSim {
 
 namespace MBSimFlexibleBody {
 
-  class FlexibleSpatialNurbsContour;
+  class FlexibleContour;
 
   /**
    * \brief pairing point to spatial contour
@@ -67,7 +67,7 @@ namespace MBSimFlexibleBody {
        * \brief contour classes
        */
       MBSim::Point *point{nullptr};
-      FlexibleSpatialNurbsContour *spatialcontour{nullptr};
+      FlexibleContour *spatialcontour{nullptr};
 
       /**
        * \brief root function
