@@ -39,9 +39,8 @@ namespace MBSimFlexibleBody {
     double eta;
     if(open)
       eta = eta_;
-    else if(open) {
+    else
       eta = mod(eta_-etaNodes[0],etaNodes[1]-etaNodes[0])+etaNodes[0];
-    }
     return eta;
   }
 
