@@ -29,7 +29,9 @@ namespace MBSim {
   class FixedContourFrame : public ContourFrame {
 
     public:
-      FixedContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta = fmatvec::Vec2(), Contour *contour_=nullptr) : ContourFrame(name,zeta), contour(contour_) { }
+      FixedContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta = fmatvec::Vec2(), Contour *contour_=nullptr) : ContourFrame(name,zeta), contour(contour_) { updZeta = false; }
+
+      void resetUpToDate() override { Frame::resetUpToDate(); }
 
       void updatePositions() override;
       void updateVelocities() override;

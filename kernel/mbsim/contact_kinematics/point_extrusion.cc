@@ -57,7 +57,7 @@ namespace MBSim {
     search.setNodes(extrusion->getEtaNodes()); // defining search areas for contacts
 
     if (!searchAllCP) { // select start value from last search
-      search.setInitialValue(contact.getContourFrame(iextrusion)->getEta());
+      search.setInitialValue(contact.getContourFrame(iextrusion)->getEta(false));
     }
     else { // define start search with regula falsi
       search.setSearchAll(true);
@@ -78,7 +78,7 @@ namespace MBSim {
 
     Vec3 Wd = contact.getContourFrame(ipoint)->getPosition(false) - contact.getContourFrame(iextrusion)->getPosition(false);
     contact.getContourFrame(iextrusion)->setXi(contact.getContourFrame(iextrusion)->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
-    contact.getContourFrame(iextrusion)->getPosition(false) += contact.getContourFrame(iextrusion)->getXi() * contact.getContourFrame(iextrusion)->getOrientation(false).col(2);
+    contact.getContourFrame(iextrusion)->getPosition(false) += contact.getContourFrame(iextrusion)->getXi(false) * contact.getContourFrame(iextrusion)->getOrientation(false).col(2);
 
     double g;
     if(extrusion->isZetaOutside(contact.getContourFrame(iextrusion)->getZeta(false)))

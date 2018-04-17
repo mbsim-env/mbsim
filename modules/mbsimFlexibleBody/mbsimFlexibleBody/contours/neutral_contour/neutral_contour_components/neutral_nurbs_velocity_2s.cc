@@ -24,7 +24,7 @@ namespace MBSimFlexibleBody {
 
   void NeutralNurbsVelocity2s::update(ContourFrame *frame) {
     if(updSurface) computeCurve(true);
-    frame->setVelocity(surface.pointAt(frame->getEta(),frame->getXi()));
+    frame->setVelocity(surface.pointAt(frame->evalEta(),frame->evalXi()));
   }
 
   void NeutralNurbsVelocity2s::buildNodelist() {
