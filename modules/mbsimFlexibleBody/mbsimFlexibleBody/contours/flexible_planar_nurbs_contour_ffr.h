@@ -116,10 +116,10 @@ namespace MBSimFlexibleBody {
       fmatvec::VecV knot;
       int degree{3};
       bool open{false};
-      MBSim::NurbsCurve crvP;
+      MBSim::NurbsCurve crvPos;
       std::vector<MBSim::NurbsCurve> crvPhi;
       double etaOld{-1e10};
-      fmatvec::MatVx4 hess, hessTmp, hessPos;
+      fmatvec::MatVx4 hessPos;
       std::vector<fmatvec::MatVx4> hessPhi;
       fmatvec::Vec3 WrKP, Wvrel;
       bool updPos{true};
