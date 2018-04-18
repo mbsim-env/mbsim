@@ -44,4 +44,8 @@ namespace MBSimFlexibleBody {
     throwError("(FlexibleContour::evalWn_t): Not implemented.");
   }
 
+  Vec3 FlexibleContour::evalAngularVelocity() {
+    return Vec3();
+  }
+
 }

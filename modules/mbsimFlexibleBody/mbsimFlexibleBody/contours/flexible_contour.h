@@ -52,6 +52,8 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Vec3 evalWv_t(const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 evalWn_t(const fmatvec::Vec2 &zeta);
 
+      virtual fmatvec::Vec3 evalAngularVelocity();
+
       MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override { return findContactPairingFlexible(type0, type1); }
   };
 

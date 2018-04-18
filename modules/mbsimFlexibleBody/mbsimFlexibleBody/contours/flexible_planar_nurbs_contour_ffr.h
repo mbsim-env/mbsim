@@ -60,7 +60,6 @@ namespace MBSimFlexibleBody {
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       MBSim::ContourFrame* createContourFrame(const std::string &name="P") override;
       double getCurvature(const fmatvec::Vec2 &zeta);
-//      fmatvec::Vec3 evalWn_t(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalWs_t(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalWu_t(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) override;
@@ -68,6 +67,16 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer1Ws(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalParDer1Wu(const fmatvec::Vec2 &zeta) override;
+
+      fmatvec::Vec3 evalKs_t(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKu_t(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Ks(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta);
+
+      fmatvec::Vec3 evalAngularVelocity() override;
 
       void updatePositions(MBSim::ContourFrame *frame) override;
       void updateVelocities(MBSim::ContourFrame *frame) override;

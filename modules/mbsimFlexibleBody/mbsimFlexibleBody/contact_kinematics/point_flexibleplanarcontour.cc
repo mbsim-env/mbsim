@@ -103,7 +103,7 @@ namespace MBSimFlexibleBody {
     const Vec3 vC1 = contact.getContourFrame(ipoint)->evalVelocity();
     const Vec3 vC2 = contact.getContourFrame(iplanarcontour)->evalVelocity();
     const Vec3 Om1 = contact.getContourFrame(ipoint)->evalAngularVelocity();
-    const Vec3 Om2 = contact.getContourFrame(iplanarcontour)->evalAngularVelocity();
+    const Vec3 Om2 = planarcontour->evalAngularVelocity();
 
     Vec3 U2_t = planarcontour->evalWu_t(contact.getContourFrame(iplanarcontour)->getZeta());
     Vec3 R2_t = planarcontour->evalWs_t(contact.getContourFrame(iplanarcontour)->getZeta());
