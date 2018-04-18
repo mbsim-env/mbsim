@@ -335,12 +335,12 @@ namespace MBSimFlexibleBody {
       //Control-Point coordinates
       for(int j=0; j<srfPos.ctrlPnts().cols(); j++) {
         for(int i=0; i<srfPos.ctrlPnts().rows(); i++) {
-          for(int k=0; k<3; k++) {
-            double ctrP = srfPos.ctrlPnts()(i,j)(k);
-            for(size_t l=0; l<srfPhi.size(); l++)
-              ctrP += srfPhi[l].ctrlPnts()(i,j)(k)*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(l);
-            data.push_back(ctrP);
-          }
+          Vec3 KrKP = srfPos.ctrlPnts()(i,j)(Range<Fixed<0>,Fixed<2> >());
+          for(size_t k=0; k<srfPhi.size(); k++)
+            KrKP += srfPhi[k].ctrlPnts()(i,j)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(k);
+          Vec3 r = R->evalPosition() + R->evalOrientation()*KrKP;
+          for(int k=0; k<3; k++)
+            data.push_back(r(k));
           data.push_back(1);
         }
       }
