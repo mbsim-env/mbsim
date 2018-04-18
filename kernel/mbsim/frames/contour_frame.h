@@ -29,16 +29,13 @@ namespace MBSim {
     public:
       ContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta_ = fmatvec::Vec2()) : Frame(name), zeta(zeta_) { }
 
-      void resetUpToDate() override { Frame::resetUpToDate(); updZeta = true; }
-
-      virtual void updateZeta() { updatePositions(); updZeta = false; }
-      const fmatvec::Vec2& evalZeta() { if(updZeta) updateZeta(); return zeta; }
-      const fmatvec::Vec2& getZeta(bool check=true) { assert((not check) or (not updZeta)); return zeta; }
+      virtual const fmatvec::Vec2& evalZeta() { if(updPos) updatePositions(); return zeta; }
+      virtual const fmatvec::Vec2& getZeta(bool check=true) { assert((not check) or (not updPos)); return zeta; }
       void setZeta(const fmatvec::Vec2 &zeta_) { zeta = zeta_; }
-      double evalEta() { if(updZeta) updateZeta(); return zeta(0); }
-      double evalXi() { if(updZeta) updateZeta(); return zeta(1); }
-      double getEta(bool check=true) { assert((not check) or (not updZeta)); return zeta(0); }
-      double getXi(bool check=true) { assert((not check) or (not updZeta)); return zeta(1); }
+      virtual double evalEta() { if(updPos) updatePositions(); return zeta(0); }
+      virtual double evalXi() { if(updPos) updatePositions(); return zeta(1); }
+      virtual double getEta(bool check=true) { assert((not check) or (not updPos)); return zeta(0); }
+      virtual double getXi(bool check=true) { assert((not check) or (not updPos)); return zeta(1); }
       void setEta(double eta) { zeta(0) = eta; }
       void setXi(double xi) { zeta(1) = xi; }
 
@@ -49,8 +46,6 @@ namespace MBSim {
        * \brief contour parameters of the frame
        */
       fmatvec::Vec2 zeta;
-
-      bool updZeta{true};
   };
 
 }
