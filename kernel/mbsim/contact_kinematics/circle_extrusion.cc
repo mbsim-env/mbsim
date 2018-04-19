@@ -88,7 +88,8 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleExtrusion::updatewb(SingleContact &contact, int i) {
-    
+    std::runtime_error("(ContactKinematicsCircleExtrusion::updatewb): Not implemented.");
+
     const Vec3 n1 = contact.getContourFrame(icircle)->evalOrientation().col(0);
     const Vec3 u1 = contact.getContourFrame(icircle)->getOrientation().col(1);
     const Vec3 R1 = circle->getRadius()*u1;

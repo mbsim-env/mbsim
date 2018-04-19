@@ -98,7 +98,7 @@ namespace MBSim {
   void ContactKinematicsLinePlanarContour::updatewb(SingleContact &contact, int i) {
     const Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);
     const Vec3 u1 = contact.getContourFrame(iline)->getOrientation().col(1);
-    const Vec3 R1 = u1;
+    const Vec3 &R1 = u1;
     const Vec3 paruPart1 = crossProduct(contact.getContourFrame(iline)->evalAngularVelocity(),u1);
     const Vec3 parnPart1 = crossProduct(contact.getContourFrame(iline)->getAngularVelocity(),n1);
     const Vec3 parWvCParEta1 = crossProduct(contact.getContourFrame(iline)->getAngularVelocity(),R1);

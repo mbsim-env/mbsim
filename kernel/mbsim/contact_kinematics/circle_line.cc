@@ -60,6 +60,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleLine::updatewb(SingleContact &contact, int i) {
+    std::runtime_error("(ContactKinematicsCircleLine::updatewb): Not implemented.");
 
     Vec3 v2 = contact.getContourFrame(icircle)->evalOrientation().col(2);
     Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);
