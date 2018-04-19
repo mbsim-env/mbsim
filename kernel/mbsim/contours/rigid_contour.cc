@@ -162,6 +162,26 @@ namespace MBSim {
     return R->evalOrientation()*evalKt(zeta);
   }
 
+  Vec3 RigidContour::evalParWvCParEta(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWs(zeta));
+  }
+
+  Vec3 RigidContour::evalParWvCParXi(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWt(zeta));
+  }
+
+  Vec3 RigidContour::evalParWnPart(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWn(zeta));
+  }
+
+  Vec3 RigidContour::evalParWuPart(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWu(zeta));
+  }
+
+  Vec3 RigidContour::evalParWvPart(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWv(zeta));
+  }
+
   void RigidContour::plot() {
     if(plotFeature[openMBV] && openMBVRigidBody) {
       vector<double> data;

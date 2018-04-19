@@ -112,6 +112,33 @@ namespace MBSim {
     return WV;
   }
 
+  Vec3 Contour::evalParWvCParEta(const Vec2 &zeta) {
+    throwError("(Contour::evalParWvCParEta): Not implemented.");
+  }
+
+  Vec3 Contour::evalParWvCParXi(const Vec2 &zeta) {
+    throwError("(Contour::evalParWvCParXi): Not implemented.");
+  }
+
+  Mat3x2 Contour::evalParWvCParZeta(const Vec2 &zeta) {
+    Mat3x2 parWvCParZeta(NONINIT);
+    parWvCParZeta.set(0,evalParWvCParEta(zeta));
+    parWvCParZeta.set(1,evalParWvCParXi(zeta));
+    return parWvCParZeta;
+  }
+
+  Vec3 Contour::evalParWnPart(const Vec2 &zeta) {
+    throwError("(Contour::evalParWnPart): Not implemented.");
+  }
+
+  Vec3 Contour::evalParWuPart(const Vec2 &zeta) {
+    throwError("(Contour::evalParWuPart): Not implemented.");
+  }
+
+  Vec3 Contour::evalParWvPart(const Vec2 &zeta) {
+    throwError("(Contour::evalParWvPart): Not implemented.");
+  }
+
   Vec2 Contour::evalZeta(const Vec3 &WrPS) {
     throwError("(Contour::evalZeta): Not implemented.");
   }

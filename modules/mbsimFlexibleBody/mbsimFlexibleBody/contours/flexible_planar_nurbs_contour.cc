@@ -168,49 +168,19 @@ namespace MBSimFlexibleBody {
     return evalHessianMatrix(zeta(0)).row(2).T()(Range<Fixed<0>,Fixed<2> >());
   }
 
-//  Vec3 FlexiblePlanarNurbsContour::evalParDer2Ws(const Vec2 &zeta) {
-//    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2> >());
-//  }
-
-//  Vec3 FlexiblePlanarNurbsContour::evalParDer1Wt(const Vec2 &zeta) {
-//    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2> >());
-//  }
-
-//  Vec3 FlexiblePlanarNurbsContour::evalParDer2Wt(const Vec2 &zeta) {
-//    return evalHessianMatrix(zeta)(0,2)(Range<Fixed<0>,Fixed<2> >());
-//  }
-
   Vec3 FlexiblePlanarNurbsContour::evalParDer1Wu(const Vec2 &zeta) {
     Vec3 Ws = evalWs(zeta);
     Vec3 parDer1Ws = evalParDer1Ws(zeta);
     return parDer1Ws/nrm2(Ws) - Ws*((Ws.T()*parDer1Ws)/pow(nrm2(Ws),3));
   }
 
-//  Vec3 FlexiblePlanarNurbsContour::evalParDer2Wu(const Vec2 &zeta) {
-//    Vec3 Ws = evalWs(zeta);
-//    Vec3 parDer2Ws = evalParDer2Ws(zeta);
-//    return parDer2Ws/nrm2(Ws) - Ws*((Ws.T()*parDer2Ws)/pow(nrm2(Ws),3));
-//  }
-//
-//  Vec3 FlexiblePlanarNurbsContour::evalParDer1Wv(const Vec2 &zeta) {
-//    return crossProduct(evalParDer1Wn(zeta),evalWu(zeta)) + crossProduct(evalWn(zeta),evalParDer1Wu(zeta));
-//  }
-//
-//  Vec3 FlexiblePlanarNurbsContour::evalParDer2Wv(const Vec2 &zeta) {
-//    return crossProduct(evalParDer2Wn(zeta),evalWu(zeta)) + crossProduct(evalWn(zeta),evalParDer2Wu(zeta));
-//  }
+  Vec3 FlexiblePlanarNurbsContour::evalParWvCParEta(const Vec2 &zeta) {
+    return evalWs_t(zeta);
+  }
 
-//  Vec3 FlexiblePlanarNurbsContour::evalParDer1Wn(const Vec2 &zeta) {
-//    Vec3 Wsxt = crossProduct(evalWs(zeta),evalWt(zeta));
-//    Vec3 Wsxtd = crossProduct(evalParDer1Ws(zeta),evalWt(zeta)) + crossProduct(evalWs(zeta),evalParDer1Wt(zeta));
-//    return Wsxtd/nrm2(Wsxt) - Wsxt*((Wsxt.T()*Wsxtd)/pow(nrm2(Wsxt),3));
-//  }
-
-//  Vec3 FlexiblePlanarNurbsContour::evalParDer2Wn(const Vec2 &zeta) {
-//    Vec3 Wsxt = crossProduct(evalWs(zeta),evalWt(zeta));
-//    Vec3 Wsxtd = crossProduct(evalParDer2Ws(zeta),evalWt(zeta)) + crossProduct(evalWs(zeta),evalParDer2Wt(zeta));
-//    return Wsxtd/nrm2(Wsxt) - Wsxt*((Wsxt.T()*Wsxtd)/pow(nrm2(Wsxt),3));
-//  }
+  Vec3 FlexiblePlanarNurbsContour::evalParWuPart(const Vec2 &zeta) {
+    return evalWu_t(zeta);
+  }
 
   void FlexiblePlanarNurbsContour::updatePositions(ContourFrame *frame) {
     throwError("(FlexiblePlanarNurbsContour::updatePositions): not implemented");

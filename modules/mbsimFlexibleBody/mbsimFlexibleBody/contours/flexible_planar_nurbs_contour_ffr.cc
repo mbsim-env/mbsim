@@ -143,8 +143,12 @@ namespace MBSimFlexibleBody {
     return R->getOrientation()*evalParDer1Ku(zeta);
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalAngularVelocity() {
-    return R->evalAngularVelocity();
+  Vec3 FlexiblePlanarNurbsContourFFR::evalParWvCParEta(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWs(zeta)) + evalWs_t(zeta);
+  }
+
+  Vec3 FlexiblePlanarNurbsContourFFR::evalParWuPart(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWu(zeta)) + evalWu_t(zeta);
   }
 
   void FlexiblePlanarNurbsContourFFR::updatePositions(ContourFrame *frame) {
