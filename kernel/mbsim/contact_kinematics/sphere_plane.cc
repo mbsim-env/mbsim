@@ -60,6 +60,8 @@ namespace MBSim {
   }
 
   void ContactKinematicsSpherePlane::updatewb(SingleContact &contact, int i) {
+    std::runtime_error("(ContactKinematicsSpherePlane::updatewb): Not implemented.");
+
     Vec3 n1 = contact.getContourFrame(iplane)->evalOrientation().col(0);
     Vec3 n2 = contact.getContourFrame(isphere)->evalOrientation().col(0);
     Vec3 vC1 = contact.getContourFrame(iplane)->evalVelocity();

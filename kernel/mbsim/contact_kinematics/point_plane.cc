@@ -61,6 +61,8 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointPlane::updatewb(SingleContact &contact, int i) {
+    std::runtime_error("(ContactKinematicsPointPlane::updatewb): Not implemented.");
+
     Vec3 v1 = contact.getContourFrame(iplane)->evalOrientation().col(2); // second tangential vector in contact
     Vec3 n1 = contact.getContourFrame(iplane)->getOrientation().col(0); // normal in contact
     Vec3 u1 = contact.getContourFrame(iplane)->getOrientation().col(1); // first tangential vector in contact
