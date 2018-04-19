@@ -107,7 +107,7 @@ namespace MBSimFlexibleBody {
     int qSize = (static_cast<FlexibleBody1sCosserat*>(parent))->getqSizeFull();
 
     /******************************************************************  Jacobian of Translation  *******************************************************************************/
-    double sGlobal = frame->getEta(); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
+    double sGlobal = frame->evalEta(); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
     double sLocalTrans_bodySpace;
     int currentElementTrans;
     // transform form the contour space(uMin - uMax) to the FlexibleBody1sCosserat space (0 - L)

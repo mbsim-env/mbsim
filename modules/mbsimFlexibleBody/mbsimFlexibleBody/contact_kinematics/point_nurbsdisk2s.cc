@@ -54,13 +54,13 @@ namespace MBSimFlexibleBody {
     contact.getContourFrame(inurbsdisk)->setZeta(nurbsdisk->transformCW(nurbsdisk->evalOrientation().T()*(contact.getContourFrame(ipoint)->getPosition(false) - nurbsdisk->evalPosition()))(0,1)); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
 
     double g;
-    if(nurbsdisk->isZetaOutside(contact.getContourFrame(inurbsdisk)->getZeta()))
+    if(nurbsdisk->isZetaOutside(contact.getContourFrame(inurbsdisk)->getZeta(false)))
       g = 1.;
     else {
-      contact.getContourFrame(inurbsdisk)->setPosition(nurbsdisk->evalPosition(contact.getContourFrame(inurbsdisk)->getZeta()));
-      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(0, nurbsdisk->evalWn(contact.getContourFrame(inurbsdisk)->getZeta()));
-      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(1, nurbsdisk->evalWu(contact.getContourFrame(inurbsdisk)->getZeta()));
-      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(2, nurbsdisk->evalWv(contact.getContourFrame(inurbsdisk)->getZeta()));
+      contact.getContourFrame(inurbsdisk)->setPosition(nurbsdisk->evalPosition(contact.getContourFrame(inurbsdisk)->getZeta(false)));
+      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(0, nurbsdisk->evalWn(contact.getContourFrame(inurbsdisk)->getZeta(false)));
+      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(1, nurbsdisk->evalWu(contact.getContourFrame(inurbsdisk)->getZeta(false)));
+      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(2, nurbsdisk->evalWv(contact.getContourFrame(inurbsdisk)->getZeta(false)));
 
       contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(inurbsdisk)->getOrientation(false).col(0));
       contact.getContourFrame(ipoint)->getOrientation(false).set(1, -contact.getContourFrame(inurbsdisk)->getOrientation(false).col(1));

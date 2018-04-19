@@ -127,7 +127,7 @@ namespace MBSim {
   }
 
   Vec3 RigidContour::evalPosition(const Vec2 &zeta) {
-    return R->evalPosition() + evalWrPS(zeta);
+    return R->evalPosition() + R->evalOrientation()*evalKrPS(zeta);
   }
 
   Vec3 RigidContour::evalParDer1Wn(const Vec2 &zeta) {
@@ -152,10 +152,6 @@ namespace MBSim {
 
   Vec3 RigidContour::evalParDer2Wv(const Vec2 &zeta) {
     return R->evalOrientation()*evalParDer2Kv(zeta);
-  }
-
-  Vec3 RigidContour::evalWrPS(const Vec2 &zeta) {
-    return R->evalOrientation()*evalKrPS(zeta);
   }
 
   Vec3 RigidContour::evalWs(const Vec2 &zeta) {

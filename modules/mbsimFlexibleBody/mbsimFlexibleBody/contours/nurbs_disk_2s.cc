@@ -165,7 +165,7 @@ namespace MBSimFlexibleBody {
 
   void NurbsDisk2s::updateVelocities(ContourFrame *frame) {
     computeSurfaceVelocities();
-    Point3Dd Tmpv = SurfaceVelocities->pointAt(frame->getZeta()(1),frame->getZeta()(0));
+    Point3Dd Tmpv = SurfaceVelocities->pointAt(frame->evalZeta()(1),frame->evalZeta()(0));
     frame->getVelocity(false)(0) = Tmpv.x();
     frame->getVelocity(false)(1) = Tmpv.y();
     frame->getVelocity(false)(2) = Tmpv.z();
@@ -183,7 +183,7 @@ namespace MBSimFlexibleBody {
     frame->getJacobianOfRotation(j,false).resize(nj*nr*3+RefDofs);
 
     for(int k=0; k<nj*nr*3+RefDofs; k++) {
-      Point3Dd TmpPtTrans = SurfaceJacobiansOfTranslation[k].pointAt(frame->getZeta()(1),frame->getZeta()(0));
+      Point3Dd TmpPtTrans = SurfaceJacobiansOfTranslation[k].pointAt(frame->evalZeta()(1),frame->evalZeta()(0));
       Point3Dd TmpPtRot = SurfaceJacobiansOfRotation[k].pointAt(frame->getZeta()(1),frame->getZeta()(0));
 
       frame->getJacobianOfTranslation(j,false)(0,k) = TmpPtTrans.x();

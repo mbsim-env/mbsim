@@ -122,7 +122,7 @@ namespace MBSimFlexibleBody {
     // rotational DOF
     SqrMat3 A = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalA();
     SqrMat3 G_bar = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalG_bar();
-    Vec3 u_bar = NLP->evalLocalPosition(frame->getZeta());
+    Vec3 u_bar = NLP->evalLocalPosition(frame->evalZeta());
     Jacobian_trans.set(RangeV(0, 2), RangeV(3, 5), -A * tilde(u_bar) * G_bar);
 
     // elastic DOF

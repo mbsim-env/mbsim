@@ -120,9 +120,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexiblePlanarNurbsContourFFR::evalWu_t(const Vec2 &zeta) {
-    Vec3 Ws = evalWs(zeta);
-    Vec3 Ws_t = evalWs_t(zeta);
-    return Ws_t/nrm2(Ws) - Ws*((Ws.T()*Ws_t)/pow(nrm2(Ws),3));
+    return R->getOrientation()*evalKu_t(zeta);
   }
 
   Vec3 FlexiblePlanarNurbsContourFFR::evalPosition(const Vec2 &zeta) {

@@ -54,7 +54,7 @@ namespace MBSimFlexibleBody {
     PlanarContactSearch search(func);
 
     if(LOCALSEARCH) { // select start value from last search (local search)
-      search.setInitialValue(contact.getContourFrame(icircle)->getEta());
+      search.setInitialValue(contact.getContourFrame(icircle)->getEta(false));
     }
     else { // define start search with regula falsi (global search)
       search.setSearchAll(true);
@@ -68,22 +68,22 @@ namespace MBSimFlexibleBody {
 
     // point on the circle
     fmatvec::Vec P_circle(3,fmatvec::INIT,0);
-    P_circle(0) = cos(contact.getContourFrame(icircle)->getEta());
-    P_circle(1) = sin(contact.getContourFrame(icircle)->getEta());
+    P_circle(0) = cos(contact.getContourFrame(icircle)->getEta(false));
+    P_circle(1) = sin(contact.getContourFrame(icircle)->getEta(false));
     P_circle = circle->getFrame()->evalPosition() + circle->getRadius() * circle->getFrame()->evalOrientation() * P_circle;
     contact.getContourFrame(icircle)->setPosition(P_circle); // position of the point in world coordinates
 
     contact.getContourFrame(inurbsdisk)->setZeta(nurbsdisk->transformCW(nurbsdisk->evalOrientation().T()*(contact.getContourFrame(icircle)->getPosition(false) - nurbsdisk->evalPosition()))(0,1));
 
     double g;
-    if(nurbsdisk->isZetaOutside(contact.getContourFrame(inurbsdisk)->getZeta()))
+    if(nurbsdisk->isZetaOutside(contact.getContourFrame(inurbsdisk)->getZeta(false)))
       g = 1.;
     else {
 
-      contact.getContourFrame(inurbsdisk)->setPosition(nurbsdisk->evalPosition(contact.getContourFrame(inurbsdisk)->getZeta()));
-      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(0, nurbsdisk->evalWn(contact.getContourFrame(inurbsdisk)->getZeta()));
-      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(1, nurbsdisk->evalWu(contact.getContourFrame(inurbsdisk)->getZeta()));
-      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(2, nurbsdisk->evalWv(contact.getContourFrame(inurbsdisk)->getZeta()));
+      contact.getContourFrame(inurbsdisk)->setPosition(nurbsdisk->evalPosition(contact.getContourFrame(inurbsdisk)->getZeta(false)));
+      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(0, nurbsdisk->evalWn(contact.getContourFrame(inurbsdisk)->getZeta(false)));
+      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(1, nurbsdisk->evalWu(contact.getContourFrame(inurbsdisk)->getZeta(false)));
+      contact.getContourFrame(inurbsdisk)->getOrientation(false).set(2, nurbsdisk->evalWv(contact.getContourFrame(inurbsdisk)->getZeta(false)));
 
       contact.getContourFrame(icircle)->getOrientation(false).set(0, -contact.getContourFrame(inurbsdisk)->getOrientation(false).col(0));
       contact.getContourFrame(icircle)->getOrientation(false).set(1, -contact.getContourFrame(inurbsdisk)->getOrientation(false).col(1));
