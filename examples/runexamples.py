@@ -837,29 +837,39 @@ def runExample(resultQueue, example):
       # run gui tests
       denv=os.environ
       denv["DISPLAY"]=":"+str(displayNR)
+      tries=5 # at least on Windows (wine) the DISPLAY is not found sometimes (unknown why). Hence, try this number of times before reporting an error
       ombvRet=0
       if len(ombvFiles)>0:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_ombv.txt"), "w", encoding="utf-8"), args.printToConsole)
         comm=exePrefix()+[pj(mbsimBinDir, "openmbv"+args.exeExt), "--autoExit"]+ombvFiles
-        print("Starting:\n"+str(comm)+"\n\n", file=outFD)
-        ombvRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
-        print("\n\nReturned with "+str(ombvRet), file=outFD)
+        for t in range(0, tries):
+          print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
+          ombvRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+          print("\n\nReturned with "+str(ombvRet), file=outFD)
+          if ombvRet==0: break
+          time.sleep(2*60) # wait some time, a direct next test will likely also fail (see above)
         outFD.close()
       h5pRet=0
       if len(h5pFiles)>0:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_h5p.txt"), "w", encoding="utf-8"), args.printToConsole)
         comm=exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles
-        print("Starting:\n"+str(comm)+"\n\n", file=outFD)
-        h5pRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
-        print("\n\nReturned with "+str(h5pRet), file=outFD)
+        for t in range(0, tries):
+          print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
+          h5pRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+          print("\n\nReturned with "+str(h5pRet), file=outFD)
+          if h5pRet==0: break
+          time.sleep(2*60) # wait some time, a direct next test will likely also fail (see above)
         outFD.close()
       guiRet=0
       if guiFile!=None:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_gui.txt"), "w", encoding="utf-8"), args.printToConsole)
         comm=exePrefix()+[pj(mbsimBinDir, "mbsimgui"+args.exeExt), "--autoExit"]+[guiFile]
-        print("Starting:\n"+str(comm)+"\n\n", file=outFD)
-        guiRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
-        print("\n\nReturned with "+str(guiRet), file=outFD)
+        for t in range(0, tries):
+          print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
+          guiRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+          print("\n\nReturned with "+str(guiRet), file=outFD)
+          if guiRet==0: break
+          time.sleep(2*60) # wait some time, a direct next test will likely also fail (see above)
         outFD.close()
       # result
       resultStr+='<td data-order="%d%d%d%d">'%(0 if abs(ombvRet)+abs(h5pRet)+abs(guiRet)==0 else (1 if willFail else 2),
