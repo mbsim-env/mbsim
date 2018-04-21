@@ -135,8 +135,8 @@ namespace MBSim {
     Vec b(4,NONINIT);
     b(0) = -u1.T()*(vC2-vC1);
     b(1) = -v1.T()*(vC2-vC1);
-    b(2) = -n1.T()*(paruPart2-paruPart1);
-    b(3) = -n1.T()*(parvPart2-parvPart1);
+    b(2) = -u2.T()*parnPart1-n1.T()*paruPart2;
+    b(3) = -v2.T()*parnPart1-n1.T()*parvPart2;
     Vec zetad =  slvLU(A,b);
     Vec zetad1 = zetad(0,1);
     Vec zetad2 = zetad(2,3);

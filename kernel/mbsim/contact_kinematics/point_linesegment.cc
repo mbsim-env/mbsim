@@ -78,11 +78,11 @@ namespace MBSim {
     const Vec3 vC1 = contact.getContourFrame(iline)->evalVelocity();
     const Vec3 vC2 = contact.getContourFrame(ipoint)->evalVelocity();
 
-    double sd1 = -u1.T()*(vC2-vC1);
+    double sd1 = u1.T()*(vC2-vC1);
 
-    contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParEta1*sd1);
+    contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)-n1.T()*parWvCParEta1*sd1;
     if(contact.getwb(false).size() > 1)
-      contact.getwb(false)(1) += paruPart1.T()*(vC2-vC1)+u1.T()*(parWvCParEta1*sd1);
+      contact.getwb(false)(1) += paruPart1.T()*(vC2-vC1)-u1.T()*parWvCParEta1*sd1;
   }
 
 }

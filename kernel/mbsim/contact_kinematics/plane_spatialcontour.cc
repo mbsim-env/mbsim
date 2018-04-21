@@ -110,6 +110,8 @@ namespace MBSim {
     parWvCParZeta1.set(0,crossProduct(contact.getContourFrame(iplane)->getAngularVelocity(),R1.col(0)));
     parWvCParZeta1.set(1,crossProduct(contact.getContourFrame(iplane)->getAngularVelocity(),R1.col(1)));
 
+    const Vec3 u2 = contact.getContourFrame(ispatialcontour)->evalOrientation().col(1);
+    const Vec3 v2 = contact.getContourFrame(ispatialcontour)->getOrientation().col(2);
     const Mat3x2 R2 = spatialcontour->evalWR(contact.getContourFrame(ispatialcontour)->getZeta());
     const Mat3x2 U2 = spatialcontour->evalWU(contact.getContourFrame(ispatialcontour)->getZeta());
     const Mat3x2 V2 = spatialcontour->evalWV(contact.getContourFrame(ispatialcontour)->getZeta());
@@ -133,17 +135,17 @@ namespace MBSim {
     Vec b(4,NONINIT);
     b(0) = -u1.T()*(vC2-vC1);
     b(1) = -v1.T()*(vC2-vC1);
-    b(2) = -n1.T()*(paruPart2-paruPart1);
-    b(3) = -n1.T()*(parvPart2-parvPart1);
+    b(2) = -u2.T()*parnPart1-n1.T()*paruPart2;
+    b(3) = -v2.T()*parnPart1-n1.T()*parvPart2;
     Vec zetad =  slvLU(A,b);
     Vec zetad1 = zetad(0,1);
     Vec zetad2 = zetad(2,3);
 
-    contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParZeta1*zetad1+parWvCParZeta2*zetad2);
+    contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
     if (contact.getwb(false).size()>1) {
-      contact.getwb(false)(1) += paruPart1.T()*(vC2-vC1)+u1.T()*(parWvCParZeta1*zetad1+parWvCParZeta2*zetad2);
+      contact.getwb(false)(1) += paruPart1.T()*(vC2-vC1)+u1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
       if (contact.getwb(false).size()>2)
-        contact.getwb(false)(2) += parvPart1.T()*(vC2-vC1)+v1.T()*(parWvCParZeta1*zetad1+parWvCParZeta2*zetad2);
+        contact.getwb(false)(2) += parvPart1.T()*(vC2-vC1)+v1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
     }
   }
 

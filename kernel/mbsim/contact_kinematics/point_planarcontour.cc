@@ -113,7 +113,7 @@ namespace MBSim {
     A(1,1)=n1.T()*U2;
     Vec b(2,NONINIT);
     b(0)=-u1.T()*(vC2-vC1);
-    b(1)=-n1.T()*(paruPart2-paruPart1);
+    b(1)=-u2.T()*parnPart1-n1.T()*paruPart2;
     const Vec zetad = slvLU(A,b);
 
     contact.getwb(false)(0) += (N1*zetad(0)+parnPart1).T()*(vC2-vC1)+n1.T()*parWvCParEta2*zetad(1);
