@@ -78,6 +78,32 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 evalParDer2Wv(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWvCParEta(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWvCParXi(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWuPart(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWvPart(const fmatvec::Vec2 &zeta) override;
+
+      fmatvec::Vec3 evalKn_t(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKs_t(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKt_t(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKu_t(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKv_t(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKu(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalKv(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Kn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Ks(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Ks(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Kt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Kt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta);
 
       void updatePositions(MBSim::ContourFrame *frame) override;
       void updateVelocities(MBSim::ContourFrame *frame) override;

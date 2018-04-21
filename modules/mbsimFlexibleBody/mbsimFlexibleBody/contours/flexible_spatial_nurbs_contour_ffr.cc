@@ -65,10 +65,10 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleSpatialNurbsContourFFR::updateGlobalRelativePosition(const Vec2 &zeta) {
-    Vec3 KrKP = evalHessianMatrixPos(zeta)(0,0)(Range<Fixed<0>,Fixed<2> >());
+    Vec3 KrPS = evalHessianMatrixPos(zeta)(0,0)(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<srfPhi.size(); i++)
-      KrKP += hessPhi[i](0,0)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
-    WrKP = R->evalOrientation()*KrKP;
+      KrPS += hessPhi[i](0,0)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
+    WrKP = R->evalOrientation()*KrPS;
     updPos = false;
   }
 
@@ -81,13 +81,13 @@ namespace MBSimFlexibleBody {
     updVel = false;
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalWn_t(const Vec2 &zeta) {
-    Vec3 Wsxt = crossProduct(evalWs(zeta),evalWt(zeta));
-    Vec3 Wsxt_t = crossProduct(evalWs_t(zeta),evalWt(zeta)) + crossProduct(evalWs(zeta),evalWt_t(zeta));
-    return Wsxt_t/nrm2(Wsxt) - Wsxt*((Wsxt.T()*Wsxt_t)/pow(nrm2(Wsxt),3));
+  Vec3 FlexibleSpatialNurbsContourFFR::evalKn_t(const Vec2 &zeta) {
+    Vec3 Ksxt = crossProduct(evalKs(zeta),evalKt(zeta));
+    Vec3 Ksxt_t = crossProduct(evalKs_t(zeta),evalKt(zeta)) + crossProduct(evalKs(zeta),evalKt_t(zeta));
+    return Ksxt_t/nrm2(Ksxt) - Ksxt*((Ksxt.T()*Ksxt_t)/pow(nrm2(Ksxt),3));
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalWs_t(const Vec2 &zeta) {
+  Vec3 FlexibleSpatialNurbsContourFFR::evalKs_t(const Vec2 &zeta) {
     if(zeta!=zetaOld) updateHessianMatrix(zeta);
     Vec3 s_t;
     for(size_t i=0; i<srfPhi.size(); i++)
@@ -95,7 +95,7 @@ namespace MBSimFlexibleBody {
     return s_t;
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalWt_t(const Vec2 &zeta) {
+  Vec3 FlexibleSpatialNurbsContourFFR::evalKt_t(const Vec2 &zeta) {
     if(zeta!=zetaOld) updateHessianMatrix(zeta);
     Vec3 t_t;
     for(size_t i=0; i<srfPhi.size(); i++)
@@ -103,95 +103,197 @@ namespace MBSimFlexibleBody {
     return t_t;
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalWu_t(const Vec2 &zeta) {
-    Vec3 Ws = evalWs(zeta);
-    Vec3 Ws_t = evalWs_t(zeta);
-    return Ws_t/nrm2(Ws) - Ws*((Ws.T()*Ws_t)/pow(nrm2(Ws),3));
+  Vec3 FlexibleSpatialNurbsContourFFR::evalKu_t(const Vec2 &zeta) {
+    Vec3 Ks = evalKs(zeta);
+    Vec3 Ks_t = evalKs_t(zeta);
+    return Ks_t/nrm2(Ks) - Ks*((Ks.T()*Ks_t)/pow(nrm2(Ks),3));
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalWv_t(const Vec2 &zeta) {
-    return crossProduct(evalWn_t(zeta),evalWu(zeta)) + crossProduct(evalWn(zeta),evalWu_t(zeta));
+  Vec3 FlexibleSpatialNurbsContourFFR::evalKv_t(const Vec2 &zeta) {
+    return crossProduct(evalKn_t(zeta),evalKu(zeta)) + crossProduct(evalKn(zeta),evalKu_t(zeta));
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalPosition(const Vec2 &zeta) {
-    Vec3 KrKP = evalHessianMatrixPos(zeta)(0,0)(Range<Fixed<0>,Fixed<2> >());
+  Vec3 FlexibleSpatialNurbsContourFFR::evalKrPS(const Vec2 &zeta) {
+    Vec3 KrPS = evalHessianMatrixPos(zeta)(0,0)(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<srfPhi.size(); i++)
-      KrKP += hessPhi[i](0,0)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
-    return R->evalPosition() + R->evalOrientation()*KrKP;
+      KrPS += hessPhi[i](0,0)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
+    return KrPS;
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalWs(const Vec2 &zeta) {
+  Vec3 FlexibleSpatialNurbsContourFFR::evalKs(const Vec2 &zeta) {
     Vec3 s = evalHessianMatrixPos(zeta)(1,0)(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<srfPhi.size(); i++)
       s += hessPhi[i](1,0)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
     return s;
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalWt(const Vec2 &zeta) {
+  Vec3 FlexibleSpatialNurbsContourFFR::evalKt(const Vec2 &zeta) {
     Vec3 t = evalHessianMatrixPos(zeta)(0,1)(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<srfPhi.size(); i++)
       t += hessPhi[i](0,1)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
     return t;
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Ws(const Vec2 &zeta) {
+  Vec3 FlexibleSpatialNurbsContourFFR::evalKu(const Vec2 &zeta) {
+    Vec3 Ks=evalKs(zeta);
+    return Ks/nrm2(Ks);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalKv(const Vec2 &zeta) {
+    return crossProduct(evalKn(zeta),evalKu(zeta));;
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalKn(const Vec2 &zeta) {
+    Vec3 Kn = crossProduct(evalKs(zeta),evalKt(zeta));
+    return Kn/nrm2(Kn);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Ks(const Vec2 &zeta) {
     Vec3 ds = evalHessianMatrixPos(zeta)(2,0)(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<srfPhi.size(); i++)
       ds += hessPhi[i](2,0)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
     return ds;
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Ws(const Vec2 &zeta) {
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Ks(const Vec2 &zeta) {
     Vec3 ds = evalHessianMatrixPos(zeta)(1,1)(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<srfPhi.size(); i++)
       ds += hessPhi[i](1,1)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
     return ds;
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Wt(const Vec2 &zeta) {
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Kt(const Vec2 &zeta) {
     Vec3 dt = evalHessianMatrixPos(zeta)(1,1)(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<srfPhi.size(); i++)
       dt += hessPhi[i](1,1)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
     return dt;
   }
 
-  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Wt(const Vec2 &zeta) {
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Kt(const Vec2 &zeta) {
     Vec3 dt = evalHessianMatrixPos(zeta)(0,2)(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<srfPhi.size(); i++)
       dt += hessPhi[i](0,2)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
     return dt;
   }
 
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Ku(const Vec2 &zeta) {
+    Vec3 Ks = evalKs(zeta);
+    Vec3 parDer1Ks = evalParDer1Ks(zeta);
+    return parDer1Ks/nrm2(Ks) - Ks*((Ks.T()*parDer1Ks)/pow(nrm2(Ks),3));
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Ku(const Vec2 &zeta) {
+    Vec3 Ks = evalKs(zeta);
+    Vec3 parDer2Ks = evalParDer2Ks(zeta);
+    return parDer2Ks/nrm2(Ks) - Ks*((Ks.T()*parDer2Ks)/pow(nrm2(Ks),3));
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Kv(const Vec2 &zeta) {
+    return crossProduct(evalParDer1Kn(zeta),evalKu(zeta)) + crossProduct(evalKn(zeta),evalParDer1Ku(zeta));
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Kv(const Vec2 &zeta) {
+    return crossProduct(evalParDer2Kn(zeta),evalKu(zeta)) + crossProduct(evalKn(zeta),evalParDer2Ku(zeta));
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Kn(const Vec2 &zeta) {
+    Vec3 Ksxt = crossProduct(evalKs(zeta),evalKt(zeta));
+    Vec3 Ksxtd = crossProduct(evalParDer1Ks(zeta),evalKt(zeta)) + crossProduct(evalKs(zeta),evalParDer1Kt(zeta));
+    return Ksxtd/nrm2(Ksxt) - Ksxt*((Ksxt.T()*Ksxtd)/pow(nrm2(Ksxt),3));
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Kn(const Vec2 &zeta) {
+    Vec3 Ksxt = crossProduct(evalKs(zeta),evalKt(zeta));
+    Vec3 Ksxtd = crossProduct(evalParDer2Ks(zeta),evalKt(zeta)) + crossProduct(evalKs(zeta),evalParDer2Kt(zeta));
+    return Ksxtd/nrm2(Ksxt) - Ksxt*((Ksxt.T()*Ksxtd)/pow(nrm2(Ksxt),3));
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalWn_t(const Vec2 &zeta) {
+    return R->getOrientation()*evalKn_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalWs_t(const Vec2 &zeta) {
+    return R->getOrientation()*evalKs_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalWt_t(const Vec2 &zeta) {
+    return R->getOrientation()*evalKt_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalWu_t(const Vec2 &zeta) {
+    return R->getOrientation()*evalKu_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalWv_t(const Vec2 &zeta) {
+    return R->getOrientation()*evalKv_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalPosition(const Vec2 &zeta) {
+    return R->evalPosition() + R->evalOrientation()*evalKrPS(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalWs(const Vec2 &zeta) {
+    return R->getOrientation()*evalKs(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalWt(const Vec2 &zeta) {
+    return R->getOrientation()*evalKt(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Ws(const Vec2 &zeta) {
+    return R->getOrientation()*evalParDer1Ks(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Ws(const Vec2 &zeta) {
+    return R->getOrientation()*evalParDer2Ks(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Wt(const Vec2 &zeta) {
+    return R->getOrientation()*evalParDer1Kt(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Wt(const Vec2 &zeta) {
+    return R->getOrientation()*evalParDer2Kt(zeta);
+  }
+
   Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Wu(const Vec2 &zeta) {
-    Vec3 Ws = evalWs(zeta);
-    Vec3 parDer1Ws = evalParDer1Ws(zeta);
-    return parDer1Ws/nrm2(Ws) - Ws*((Ws.T()*parDer1Ws)/pow(nrm2(Ws),3));
+    return R->getOrientation()*evalParDer1Ku(zeta);
   }
 
   Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Wu(const Vec2 &zeta) {
-    Vec3 Ws = evalWs(zeta);
-    Vec3 parDer2Ws = evalParDer2Ws(zeta);
-    return parDer2Ws/nrm2(Ws) - Ws*((Ws.T()*parDer2Ws)/pow(nrm2(Ws),3));
+    return R->getOrientation()*evalParDer2Ku(zeta);
   }
 
   Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Wv(const Vec2 &zeta) {
-    return crossProduct(evalParDer1Wn(zeta),evalWu(zeta)) + crossProduct(evalWn(zeta),evalParDer1Wu(zeta));
+    return R->getOrientation()*evalParDer1Kv(zeta);
   }
 
   Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Wv(const Vec2 &zeta) {
-    return crossProduct(evalParDer2Wn(zeta),evalWu(zeta)) + crossProduct(evalWn(zeta),evalParDer2Wu(zeta));
+    return R->getOrientation()*evalParDer2Kv(zeta);
   }
 
   Vec3 FlexibleSpatialNurbsContourFFR::evalParDer1Wn(const Vec2 &zeta) {
-    Vec3 Wsxt = crossProduct(evalWs(zeta),evalWt(zeta));
-    Vec3 Wsxtd = crossProduct(evalParDer1Ws(zeta),evalWt(zeta)) + crossProduct(evalWs(zeta),evalParDer1Wt(zeta));
-    return Wsxtd/nrm2(Wsxt) - Wsxt*((Wsxt.T()*Wsxtd)/pow(nrm2(Wsxt),3));
+    return R->evalOrientation()*evalParDer1Kn(zeta);
   }
 
   Vec3 FlexibleSpatialNurbsContourFFR::evalParDer2Wn(const Vec2 &zeta) {
-    Vec3 Wsxt = crossProduct(evalWs(zeta),evalWt(zeta));
-    Vec3 Wsxtd = crossProduct(evalParDer2Ws(zeta),evalWt(zeta)) + crossProduct(evalWs(zeta),evalParDer2Wt(zeta));
-    return Wsxtd/nrm2(Wsxt) - Wsxt*((Wsxt.T()*Wsxtd)/pow(nrm2(Wsxt),3));
+    return R->evalOrientation()*evalParDer2Kn(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParWvCParEta(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWs(zeta)) + evalWs_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParWvCParXi(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWt(zeta)) + evalWt_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParWuPart(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWu(zeta)) + evalWu_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContourFFR::evalParWvPart(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWv(zeta)) + evalWv_t(zeta);
   }
 
   void FlexibleSpatialNurbsContourFFR::updatePositions(ContourFrame *frame) {

@@ -231,6 +231,22 @@ namespace MBSimFlexibleBody {
     return Wsxtd/nrm2(Wsxt) - Wsxt*((Wsxt.T()*Wsxtd)/pow(nrm2(Wsxt),3));
   }
 
+  Vec3 FlexibleSpatialNurbsContour::evalParWvCParEta(const Vec2 &zeta) {
+    return evalWs_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContour::evalParWvCParXi(const Vec2 &zeta) {
+    return evalWt_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContour::evalParWuPart(const Vec2 &zeta) {
+    return evalWu_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContour::evalParWvPart(const Vec2 &zeta) {
+    return evalWv_t(zeta);
+  }
+
   void FlexibleSpatialNurbsContour::updatePositions(ContourFrame *frame) {
     throwError("(FlexibleSpatialNurbsContour::updatePositions): not implemented");
   }
