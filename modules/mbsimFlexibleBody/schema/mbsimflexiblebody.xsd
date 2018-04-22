@@ -982,13 +982,6 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="numberOfControlPoints" type="pv:integerFullEval">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Anzahl der Kontrollpunkte.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
           <xs:element name="knotVector" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -1047,13 +1040,6 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="numberOfControlPoints" type="pv:integerFullEval">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Anzahl der Kontrollpunkte.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
           <xs:element name="knotVector" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -1109,20 +1095,6 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Indizes der Kontrollpunkte.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="numberOfEtaControlPoints" type="pv:integerFullEval">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Anzahl der Kontrollpunkte in eta-Richtung.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="numberOfXiControlPoints" type="pv:integerFullEval">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Anzahl der Kontrollpunkte in xi-Richtung.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -1198,20 +1170,6 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Indizes der Kontrollpunkte.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="numberOfEtaControlPoints" type="pv:integerFullEval">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Anzahl der Kontrollpunkte in eta-Richtung.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="numberOfXiControlPoints" type="pv:integerFullEval">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Anzahl der Kontrollpunkte in xi-Richtung.
               </xs:documentation>
             </xs:annotation>
           </xs:element>

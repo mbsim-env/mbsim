@@ -472,10 +472,6 @@ namespace MBSimFlexibleBody {
     for(int i=0; i<index.rows(); i++)
       for(int j=0; j<index.cols(); j++)
         index(i,j)--;
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfEtaControlPoints");
-    E(e)->getText<int>();
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfXiControlPoints");
-    E(e)->getText<int>();
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"etaKnotVector");
     if(e) setEtaKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"xiKnotVector");

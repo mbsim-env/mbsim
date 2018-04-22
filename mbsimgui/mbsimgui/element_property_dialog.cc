@@ -670,9 +670,6 @@ namespace MBSimGUI {
     indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"indices");
     addToTab("General", indices);
 
-    numberOfControlPoints = new ExtWidget("Number of control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfControlPoints");
-    addToTab("General", numberOfControlPoints);
-
     knotVector = new ExtWidget("Knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"knotVector");
     addToTab("General", knotVector);
 
@@ -690,7 +687,6 @@ namespace MBSimGUI {
     ContourPropertyDialog::initializeUsingXML(item->getXMLElement());
     interpolation->initializeUsingXML(item->getXMLElement());
     indices->initializeUsingXML(item->getXMLElement());
-    numberOfControlPoints->initializeUsingXML(item->getXMLElement());
     knotVector->initializeUsingXML(item->getXMLElement());
     degree->initializeUsingXML(item->getXMLElement());
     open->initializeUsingXML(item->getXMLElement());
@@ -702,7 +698,6 @@ namespace MBSimGUI {
     ContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
     interpolation->writeXMLFile(item->getXMLElement(),nullptr);
     indices->writeXMLFile(item->getXMLElement(),nullptr);
-    numberOfControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
     knotVector->writeXMLFile(item->getXMLElement(),nullptr);
     degree->writeXMLFile(item->getXMLElement(),nullptr);
     open->writeXMLFile(item->getXMLElement(),nullptr);
@@ -718,12 +713,6 @@ namespace MBSimGUI {
 
     indices = new ExtWidget("Indices",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"indices");
     addToTab("General", indices);
-
-    numberOfEtaControlPoints = new ExtWidget("Number of eta control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfEtaControlPoints");
-    addToTab("General", numberOfEtaControlPoints);
-
-    numberOfXiControlPoints = new ExtWidget("Number of xi control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfXiControlPoints");
-    addToTab("General", numberOfXiControlPoints);
 
     etaKnotVector = new ExtWidget("Eta knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"etaKnotVector");
     addToTab("General", etaKnotVector);
@@ -751,8 +740,6 @@ namespace MBSimGUI {
     ContourPropertyDialog::initializeUsingXML(item->getXMLElement());
     interpolation->initializeUsingXML(item->getXMLElement());
     indices->initializeUsingXML(item->getXMLElement());
-    numberOfEtaControlPoints->initializeUsingXML(item->getXMLElement());
-    numberOfXiControlPoints->initializeUsingXML(item->getXMLElement());
     etaKnotVector->initializeUsingXML(item->getXMLElement());
     xiKnotVector->initializeUsingXML(item->getXMLElement());
     etaDegree->initializeUsingXML(item->getXMLElement());
@@ -767,8 +754,6 @@ namespace MBSimGUI {
     ContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
     interpolation->writeXMLFile(item->getXMLElement(),nullptr);
     indices->writeXMLFile(item->getXMLElement(),nullptr);
-    numberOfEtaControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
-    numberOfXiControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
     etaKnotVector->writeXMLFile(item->getXMLElement(),nullptr);
     xiKnotVector->writeXMLFile(item->getXMLElement(),nullptr);
     etaDegree->writeXMLFile(item->getXMLElement(),nullptr);

@@ -312,8 +312,6 @@ namespace MBSimFlexibleBody {
     index = E(e)->getText<VecVI>();
     for(int i=0; i<index.size(); i++)
       index(i)--;
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfControlPoints");
-    E(e)->getText<int>();
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"knotVector");
     if(e) setKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"degree");
