@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
     Vec3 KrPS = evalHessianMatrixPos(eta).row(0).T()(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<crvPhi.size(); i++)
       KrPS += hessPhi[i].row(0).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
-    WrKP = R->evalOrientation()*KrPS;
+    WrPS = R->evalOrientation()*KrPS;
     updPos = false;
   }
 

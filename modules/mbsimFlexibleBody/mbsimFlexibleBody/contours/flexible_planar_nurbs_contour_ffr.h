@@ -116,7 +116,7 @@ namespace MBSimFlexibleBody {
       void updateGlobalRelativeVelocity(double eta);
       const fmatvec::MatVx4& evalHessianMatrixPos(double eta) { if(eta!=etaOld) updateHessianMatrix(eta); return hessPos; }
       const std::vector<fmatvec::MatVx4>& evalHessianMatrixPhi(double eta) { if(eta!=etaOld) updateHessianMatrix(eta); return hessPhi; }
-      const fmatvec::Vec3& evalGlobalRelativePosition(double eta) { if(updPos) updateGlobalRelativePosition(eta); return WrKP; }
+      const fmatvec::Vec3& evalGlobalRelativePosition(double eta) { if(updPos) updateGlobalRelativePosition(eta); return WrPS; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity(double eta) { if(updVel) updateGlobalRelativeVelocity(eta); return Wvrel; }
 
       MBSim::Frame *R;
@@ -130,7 +130,7 @@ namespace MBSimFlexibleBody {
       double etaOld{-1e10};
       fmatvec::MatVx4 hessPos;
       std::vector<fmatvec::MatVx4> hessPhi;
-      fmatvec::Vec3 WrKP, Wvrel;
+      fmatvec::Vec3 WrPS, Wvrel;
       bool updPos{true};
       bool updVel{true};
 
