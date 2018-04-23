@@ -111,7 +111,7 @@ namespace MBSimFlexibleBody {
       double continueEta(double eta_);
       void updateHessianMatrix(double eta);
       void updateHessianMatrix_t(double eta);
-      const fmatvec::MatVx4& evalHessianMatrix(double eta){ if(updCrvPos or eta!=etaOld) updateHessianMatrix(eta); return hess; }
+      const fmatvec::MatVx4& evalHessianMatrix(double eta){ if(updCrvPos or fabs(eta-etaOld)>1e-13) updateHessianMatrix(eta); return hess; }
       const fmatvec::MatVx4& evalHessianMatrix_t(double eta){ updateHessianMatrix_t(eta); return hess_t; }
 
       bool interpolation{false};

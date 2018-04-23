@@ -92,7 +92,7 @@ namespace MBSim {
 
     protected:
       void updateHessianMatrix(const fmatvec::Vec2 &zeta);
-      const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(zeta!=zetaOld) updateHessianMatrix(zeta); return hess; }
+      const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(fabs(zeta(0)-zetaOld(0))>1e-13 or fabs(zeta(1)-zetaOld(1))>1e-13) updateHessianMatrix(zeta); return hess; }
 
       Interpolation interpolation{none};
       fmatvec::GeneralMatrix<fmatvec::Vec4> cp;

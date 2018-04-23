@@ -73,7 +73,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleSpatialNurbsContourFFR::updateGlobalRelativeVelocity(const Vec2 &zeta) {
-    if(zeta!=zetaOld) updateHessianMatrix(zeta);
+    if(fabs(zeta(0)-zetaOld(0))>1e-13 or fabs(zeta(1)-zetaOld(1))>1e-13) updateHessianMatrix(zeta);
     Vec3 Kvrel;
     for(size_t i=0; i<srfPhi.size(); i++)
       Kvrel += hessPhi[i](0,0)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqdERel()(i);
@@ -88,7 +88,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleSpatialNurbsContourFFR::evalKs_t(const Vec2 &zeta) {
-    if(zeta!=zetaOld) updateHessianMatrix(zeta);
+    if(fabs(zeta(0)-zetaOld(0))>1e-13 or fabs(zeta(1)-zetaOld(1))>1e-13) updateHessianMatrix(zeta);
     Vec3 s_t;
     for(size_t i=0; i<srfPhi.size(); i++)
       s_t += hessPhi[i](1,0)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqdERel()(i);
@@ -96,7 +96,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleSpatialNurbsContourFFR::evalKt_t(const Vec2 &zeta) {
-    if(zeta!=zetaOld) updateHessianMatrix(zeta);
+    if(fabs(zeta(0)-zetaOld(0))>1e-13 or fabs(zeta(1)-zetaOld(1))>1e-13) updateHessianMatrix(zeta);
     Vec3 t_t;
     for(size_t i=0; i<srfPhi.size(); i++)
       t_t += hessPhi[i](0,1)(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqdERel()(i);
@@ -309,7 +309,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleSpatialNurbsContourFFR::updateJacobians(ContourFrame *frame, int j) {
-    if(frame->evalZeta()!=zetaOld) updateHessianMatrix(frame->evalZeta());
+    if(fabs(frame->evalZeta()(0)-zetaOld(0))>1e-13 or fabs(frame->evalZeta()(1)-zetaOld(1))>1e-13) updateHessianMatrix(frame->evalZeta());
     Mat3xV Phi(srfPhi.size(),NONINIT);
     for(size_t i=0; i<srfPhi.size(); i++)
       Phi.set(i,hessPhi[i](0,0)(Range<Fixed<0>,Fixed<2> >()));

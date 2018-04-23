@@ -128,7 +128,7 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec2 continueZeta(const fmatvec::Vec2 &zeta_);
       void updateHessianMatrix(const fmatvec::Vec2 &zeta);
       void updateHessianMatrix_t(const fmatvec::Vec2 &zeta);
-      const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(updSrfPos or zeta!=zetaOld) updateHessianMatrix(zeta); return hess; }
+      const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(updSrfPos or fabs(zeta(0)-zetaOld(0))>1e-13 or fabs(zeta(1)-zetaOld(1))>1e-13) updateHessianMatrix(zeta); return hess; }
       const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix_t(const fmatvec::Vec2 &zeta){ updateHessianMatrix_t(zeta); return hess_t; }
 
       bool interpolation{false};
