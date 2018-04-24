@@ -131,6 +131,15 @@ void DDASKR(void(*)(double*,double*,double*,double*,double*,int*,double*,int*),i
             double*,int*,double*,double*,int*,double*,double*),
             void(*)(int*,double*,double*,double*,int*,double*,double*,int*),int*,int*);
 
+#define PHEM56 FC_FUNC(phem56,PHEM56)
+void PHEM56(int*,int*,int*,int*,void(*)(int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,
+          double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*),
+          double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,int*,
+          void(*)(int*,int*,int*,int*,int*,int*,double*,double*,double*,double*,double*,double*,int*),int*,double*,int*,int*,int*,int*);
+
+#define POL4 FC_FUNC(pol4,POL4)
+double POL4(int*,int*,int*,int*,int*,int*,double*,double*);
+
 // END: Define as extern "C" if using a C++ compiler
 #ifdef __cplusplus
 }

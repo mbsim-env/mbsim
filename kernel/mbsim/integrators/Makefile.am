@@ -14,6 +14,7 @@ libintegrators_la_SOURCES = integrator.cc\
 			    radau_integrator.cc \
 			    rodas_integrator.cc \
 			    seulex_integrator.cc \
+			    phem56_integrator.cc \
 			    daspk_integrator.cc \
 			    daskr_integrator.cc \
 			    quasi_static_integrator.cc \
@@ -36,7 +37,10 @@ libintegrators_la_SOURCES = integrator.cc\
 			    fortran/dc_lapack.f\
 			    fortran/rksuite.f\
 			    fortran/ddaspk.f\
-			    fortran/ddaskr.f
+			    fortran/ddaskr.f\
+			    fortran/decsol.f\
+			    fortran/linsp.f\
+			    fortran/phem56.f
 
 libintegrators_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 libintegrators_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
@@ -60,6 +64,7 @@ integratorsinclude_HEADERS = integrator.h \
 			     radau_integrator.h \
 			     rodas_integrator.h \
 			     seulex_integrator.h \
+			     phem56_integrator.h \
 			     daspk_integrator.h \
 			     daskr_integrator.h \
 			     quasi_static_integrator.h \
