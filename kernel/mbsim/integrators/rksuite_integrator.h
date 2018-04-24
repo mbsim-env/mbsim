@@ -24,9 +24,10 @@
 
 namespace MBSimIntegrator {
 
-  /** \brief ODE-Integrator RKSuite.
-    Integrator for ODEs.
-    This integrator uses rksuite from http://www.netlib.org . */
+  /** \brief ODE-Integrator RKSuite
+   *
+   * This integrator uses RKSUITE (http://www.netlib.org/ode/rksuite).
+   */
   class RKSuiteIntegrator : public Integrator {
     public:
       enum Method {
