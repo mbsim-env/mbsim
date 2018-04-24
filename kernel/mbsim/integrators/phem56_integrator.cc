@@ -397,43 +397,6 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-//  void PHEM56Integrator::calcSize() {
-//    if(formalism==DAE1 or formalism==DAE2)
-//      neq = system->getzSize()+system->getlaSize();
-//    else if(formalism==DAE3)
-//      neq = system->getzSize()+system->getgSize();
-//    else if(formalism==GGL)
-//      neq = system->getzSize()+system->getgdSize()+system->getgSize();
-//    else
-//      neq = system->getzSize();
-//  }
-//
-//  void PHEM56Integrator::reinit() {
-//    work(20,work.size()-1).init(0);
-//    if(formalism==DAE1)
-//      iWork(4) = system->getzSize() + system->getlaSize();
-//    else if(formalism==DAE2) {
-//      iWork(4) = system->getzSize();
-//      iWork(5) = system->getgdSize();
-//    }
-//    else if(formalism==DAE3) {
-//      iWork(4) = system->getzSize();
-//      iWork(6) = system->getgSize();
-//    }
-//    else if(formalism==GGL) {
-//      iWork(4) = system->getzSize();
-//      iWork(5) = system->getgdSize() + system->getgSize();
-//    }
-//    if(reduced) {
-//      iWork(8) = system->getqSize();
-//      iWork(9) = system->getqSize();
-//      mlJac = neq - system->getqSize(); // jacobian is a reduced matrix
-//    }
-//    else
-//      mlJac = neq; // jacobian is a full matrix
-//    muJac = mlJac; // need not to be defined if mlJac = neq
-//  }
-
   void PHEM56Integrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
