@@ -27,9 +27,8 @@
 
 namespace MBSimIntegrator {
 
-  /** \brief ODE-Integrator DOP853.
+  /** \brief ODE-Integrator DOP853
   */
-
   class DOP853Integrator : public Integrator {
 
     private:

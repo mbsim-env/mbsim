@@ -29,7 +29,6 @@ namespace MBSimIntegrator {
 
   /** \brief ODE-Integrator ODEX
   */
-
   class ODEXIntegrator : public Integrator {
 
     private:

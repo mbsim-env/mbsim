@@ -27,9 +27,8 @@
 
 namespace MBSimIntegrator {
 
-  /** \brief ODE-Integrator DOPRI5.
+  /** \brief ODE-Integrator DOPRI5
   */
-
   class DOPRI5Integrator : public Integrator {
 
     private:
