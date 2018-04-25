@@ -63,7 +63,7 @@ namespace MBSimIntegrator {
       self->getSystem()->setStepSize(1);
       qd = self->getSystem()->evaldq();;
       self->getSystem()->setStepSize(0);
-      if(self->mode==1 or self->mode==3) {
+      if(self->generalVMatrix) {
         Mat FL(*nv,*nl, fl);
         FL = -self->getSystem()->evalV();
       }
@@ -111,7 +111,7 @@ namespace MBSimIntegrator {
       h = self->getSystem()->evalh();
       Mat M(*lrda,*nv, am);
       M(RangeV(0,*nv-1),RangeV(0,*nv-1)) = self->getSystem()->evalM();
-      if(self->mode==1 or self->mode==3) {
+      if(self->generalVMatrix) {
         Mat FL(*nv,*nl, fl);
         FL = -self->getSystem()->evalV();
       }
@@ -131,7 +131,7 @@ namespace MBSimIntegrator {
       self->getSystem()->setStepSize(1);
       qd = self->getSystem()->evaldq();;
       self->getSystem()->setStepSize(0);
-      if(self->mode==1 or self->mode==3) {
+      if(self->generalVMatrix) {
         Mat FL(*nv,*nl, fl);
         FL = -self->getSystem()->evalV();
       }
@@ -143,7 +143,7 @@ namespace MBSimIntegrator {
       M(RangeV(0,*nv-1),RangeV(0,*nv-1)) = self->getSystem()->evalM();
       Mat GQ(*nl,*nv, gp);
       GQ = -self->getSystem()->evalW().T();
-      if(self->mode==1 or self->mode==3) {
+      if(self->generalVMatrix) {
         Mat FL(*nv,*nl, fl);
         FL = -self->getSystem()->evalV();
       }
@@ -283,6 +283,9 @@ namespace MBSimIntegrator {
   }
 
   void PHEM56Integrator::integrate() {
+    if(linearAlgebra==unknown)
+      throwError("(PHEM56Integrator::integrate): linear algebra unknown");
+
     debugInit();
 
     int nq[1+sizeof(void*)/sizeof(int)+1];
@@ -315,7 +318,7 @@ namespace MBSimIntegrator {
     system->computeInitialCondition();
     system->calcgdSize(3); // IH
     system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
-    if(initialProjection or projectEveryStep) {
+    if(initialProjection or numberOfStepsBetweenProjections) {
       system->calcgSize(2); // IB
       system->updategRef(system->getgParent()(0,system->getgSize()-1));
     }
@@ -350,8 +353,9 @@ namespace MBSimIntegrator {
     rwk(4) = dtMax; // maximum step size
     iwk(10) = maxSteps; // step limit
     iwk(11) = initialProjection; // initial projection
-    iwk(12) = projectEveryStep; // project every step
-    iwk(13) = mode; // linear algebra
+    iwk(12) = numberOfStepsBetweenProjections; // number of steps between projection
+    iwk(13) = 2*linearAlgebra + generalVMatrix; // mode
+    iwk(14) = projectOntoIndex1ConstraintManifold; // project onto index 1 constraint manifold
 
     PHEM56Integrator *self=this;
     memcpy(&nq[1], &self, sizeof(void*));
@@ -414,12 +418,21 @@ namespace MBSimIntegrator {
     if(e) setMaximumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"mode");
-    if(e) setMode(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"linearAlgebra");
+    if(e) {
+      string linearAlgebraStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(linearAlgebraStr=="DEC") linearAlgebra=DEC;
+      else if(linearAlgebraStr=="DGETRF") linearAlgebra=DGETRF;
+      else linearAlgebra=unknown;
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"generalVMatrix");
+    if(e) setGeneralVMatrix(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialProjection");
     if(e) setInitialProjection(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"projectEveryStep");
-    if(e) setProjectEveryStep(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"numberOfStepsBetweenProjections");
+    if(e) setNumberOfStepsBetweenProjections(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"projectOntoIndex1ConstraintManifold");
+    if(e) setProjectOntoIndex1ConstraintManifold(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
     if(e) setPlotOnRoot(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");

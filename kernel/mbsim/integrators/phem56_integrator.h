@@ -32,6 +32,14 @@ namespace MBSimIntegrator {
 
   class PHEM56Integrator : public Integrator {
 
+    public:
+
+      enum LinearAlgebra {
+        DEC=0,
+        DGETRF,
+        unknown
+      };
+
     private:
 
       static void fprob(int* ifcn, int* nq, int* nv, int* nu, int* nl, int* nzg, int* nzf, int* lrda, int* nblk, int* nmrc, int* npgp, int* npfl, int* indgr, int* indgc, int* indflr, int* indflc,  double* t, double* p, double* v, double* u, double* xl, double* g, double* gp, double* f, double* gpp, double* gt, double* fl, double* qdot, double* udot, double* am);
@@ -45,12 +53,16 @@ namespace MBSimIntegrator {
       double s0; 
       double time{0};
 
-      /** mode */
-      int mode{1};
+      /** linear algebra */
+      LinearAlgebra linearAlgebra{DGETRF};
+      /** general V */
+      bool generalVMatrix{true};
       /** initial projection */
       bool initialProjection{false};
-      /** project every step */
-      bool projectEveryStep{false};
+      /** number of steps between projections */
+      int numberOfStepsBetweenProjections{0};
+      /** project onto index 1 constraint manifold */
+      bool projectOntoIndex1ConstraintManifold{false};
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
       /** Relative Toleranz */
@@ -83,9 +95,11 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
-      void setMode(int mode_) { mode = mode_; }
+      void setLinearAlgebra(LinearAlgebra linearAlgebra_) { linearAlgebra = linearAlgebra_; }
+      void setGeneralVMatrix(bool generalVMatrix_) { generalVMatrix = generalVMatrix_; }
       void setInitialProjection(bool initialProjection_) { initialProjection = initialProjection_; }
-      void setProjectEveryStep(bool projectEveryStep_) { projectEveryStep = projectEveryStep_; }
+      void setNumberOfStepsBetweenProjections(int numberOfStepsBetweenProjections_) { numberOfStepsBetweenProjections = numberOfStepsBetweenProjections_; }
+      void setProjectOntoIndex1ConstraintManifold(bool projectOntoIndex1ConstraintManifold_) { projectOntoIndex1ConstraintManifold = projectOntoIndex1ConstraintManifold_; }
       void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
       void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
       void setPlotOnRoot(bool b) { plotOnRoot = b; }

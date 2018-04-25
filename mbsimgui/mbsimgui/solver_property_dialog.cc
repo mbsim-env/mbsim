@@ -582,6 +582,24 @@ namespace MBSimGUI {
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
 
+    vector<QString> list;
+    list.emplace_back("\"DEC\"");
+    list.emplace_back("\"DGETRF\"");
+    linearAlgebra = new ExtWidget("Linear algebra",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"linearAlgebra");
+    addToTab("Extra", linearAlgebra);
+
+    generalVMatrix = new ExtWidget("General V matrix",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"generalVMatrix");
+    addToTab("Extra", generalVMatrix);
+
+    initialProjection = new ExtWidget("Initial projection",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialProjection");
+    addToTab("Extra", initialProjection);
+
+    numberOfStepsBetweenProjections = new ExtWidget("Number of steps between projections",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"numberOfStepsBetweenProjections");
+    addToTab("Extra", numberOfStepsBetweenProjections);
+
+    projectOntoIndex1ConstraintManifold = new ExtWidget("Project onto index 1 constraint manifold",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"projectOntoIndex1ConstraintManifold");
+    addToTab("Extra", projectOntoIndex1ConstraintManifold);
+
     plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
     addToTab("Extra", plotOnRoot);
 
@@ -599,6 +617,11 @@ namespace MBSimGUI {
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
+    linearAlgebra->initializeUsingXML(item->getXMLElement());
+    generalVMatrix->initializeUsingXML(item->getXMLElement());
+    initialProjection->initializeUsingXML(item->getXMLElement());
+    numberOfStepsBetweenProjections->initializeUsingXML(item->getXMLElement());
+    projectOntoIndex1ConstraintManifold->initializeUsingXML(item->getXMLElement());
     plotOnRoot->initializeUsingXML(item->getXMLElement());
     gMax->initializeUsingXML(item->getXMLElement());
     gdMax->initializeUsingXML(item->getXMLElement());
@@ -612,6 +635,11 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
+    linearAlgebra->writeXMLFile(item->getXMLElement());
+    generalVMatrix->writeXMLFile(item->getXMLElement());
+    initialProjection->writeXMLFile(item->getXMLElement());
+    numberOfStepsBetweenProjections->writeXMLFile(item->getXMLElement());
+    projectOntoIndex1ConstraintManifold->writeXMLFile(item->getXMLElement());
     plotOnRoot->writeXMLFile(item->getXMLElement());
     gMax->writeXMLFile(item->getXMLElement());
     gdMax->writeXMLFile(item->getXMLElement());

@@ -658,6 +658,35 @@
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="linearAlgebra" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl der linearen Algebra.
+              <ul>
+                <li>DEC: Interne Routine</li>
+                <li>DGETRF: LAPACK-Routine</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="generalVMatrix" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Gibt an, ob eine allgemeine V-Matrix vorliegt, z.B. im Fall von Trockenreibung.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialProjection" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Gibt an, ob zu Beginn der Integration eine Projektion auf die Index-3-Nebenbedingungen (Nebenbedingungen auf Lageebene) durchgeführt werden soll.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="numberOfStepsBetweenProjections" type="pv:integerFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Gibt an, nach wievielen Schritten die nächste Projektion auf die Index-3-Nebenbedingungen (Nebenbedingungen auf Lageebene) durchgeführt werden soll. Bei Angabe von 0 wird keine Projektion durchgeführt.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="projectOntoIndex1ConstraintManifold" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Gibt an, ob eine Projektion auf die Index-1-Nebenbedingungen (Nebenbedingungen auf Beschleunigungsebene) durchgeführt werden soll.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="plotOnRoot" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Gibt an, ob eine Plot-Ausgabe geschrieben werden soll, wenn eine Indikatorfunktion einen Nulldurchgang hat.
