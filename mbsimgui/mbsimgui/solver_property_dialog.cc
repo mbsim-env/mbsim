@@ -124,6 +124,9 @@ namespace MBSimGUI {
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
 
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
+    addToTab("Extra", plotOnRoot);
+
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
 
@@ -138,6 +141,7 @@ namespace MBSimGUI {
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
     gMax->initializeUsingXML(item->getXMLElement());
     gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -150,6 +154,7 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
     gMax->writeXMLFile(item->getXMLElement());
     gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
@@ -174,6 +179,9 @@ namespace MBSimGUI {
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
 
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
+    addToTab("Extra", plotOnRoot);
+
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
 
@@ -188,6 +196,7 @@ namespace MBSimGUI {
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
     gMax->initializeUsingXML(item->getXMLElement());
     gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -200,6 +209,7 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
     gMax->writeXMLFile(item->getXMLElement());
     gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
@@ -224,6 +234,9 @@ namespace MBSimGUI {
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
 
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
+    addToTab("Extra", plotOnRoot);
+
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
 
@@ -238,6 +251,7 @@ namespace MBSimGUI {
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
     gMax->initializeUsingXML(item->getXMLElement());
     gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -250,6 +264,7 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
     gMax->writeXMLFile(item->getXMLElement());
     gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
@@ -287,6 +302,9 @@ namespace MBSimGUI {
     reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
     addToTab("Extra", reducedForm);
 
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
+    addToTab("Extra", plotOnRoot);
+
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
 
@@ -303,6 +321,7 @@ namespace MBSimGUI {
     maxSteps->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
     gMax->initializeUsingXML(item->getXMLElement());
     gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -317,6 +336,7 @@ namespace MBSimGUI {
     maxSteps->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
     gMax->writeXMLFile(item->getXMLElement());
     gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
@@ -354,6 +374,9 @@ namespace MBSimGUI {
     reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
     addToTab("Extra", reducedForm);
 
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
+    addToTab("Extra", plotOnRoot);
+
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
 
@@ -370,6 +393,7 @@ namespace MBSimGUI {
     maxSteps->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
     gMax->initializeUsingXML(item->getXMLElement());
     gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -384,6 +408,7 @@ namespace MBSimGUI {
     maxSteps->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
     gMax->writeXMLFile(item->getXMLElement());
     gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
@@ -421,6 +446,9 @@ namespace MBSimGUI {
     autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"autonomousSystem");
     addToTab("Extra", autonomousSystem);
 
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
+    addToTab("Extra", plotOnRoot);
+
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
 
@@ -438,6 +466,7 @@ namespace MBSimGUI {
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
     autonomousSystem->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
     gMax->initializeUsingXML(item->getXMLElement());
     gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -453,6 +482,7 @@ namespace MBSimGUI {
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
     autonomousSystem->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
     gMax->writeXMLFile(item->getXMLElement());
     gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
@@ -490,6 +520,9 @@ namespace MBSimGUI {
     autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"autonomousSystem");
     addToTab("Extra", autonomousSystem);
 
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
+    addToTab("Extra", plotOnRoot);
+
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
 
@@ -507,6 +540,7 @@ namespace MBSimGUI {
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
     autonomousSystem->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
     gMax->initializeUsingXML(item->getXMLElement());
     gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -522,6 +556,63 @@ namespace MBSimGUI {
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
     autonomousSystem->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
+  PHEM56IntegratorPropertyDialog::PHEM56IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+    addTab("Tolerances");
+    addTab("Step size");
+    addTab("Extra");
+
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", absTol);
+
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", relTol);
+
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
+    addToTab("Step size", initialStepSize);
+
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
+    addToTab("Step size", maximumStepSize);
+
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
+    addToTab("Step size", maxSteps);
+
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
+    addToTab("Extra", plotOnRoot);
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
+  }
+
+  DOMElement* PHEM56IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximumStepSize->initializeUsingXML(item->getXMLElement());
+    maxSteps->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* PHEM56IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximumStepSize->writeXMLFile(item->getXMLElement());
+    maxSteps->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
     gMax->writeXMLFile(item->getXMLElement());
     gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
@@ -927,6 +1018,9 @@ namespace MBSimGUI {
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"formalism");
     addToTab("General", formalism);
 
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
+    addToTab("Extra", plotOnRoot);
+
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
 
@@ -941,6 +1035,7 @@ namespace MBSimGUI {
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
     gMax->initializeUsingXML(item->getXMLElement());
     gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -953,6 +1048,7 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
     gMax->writeXMLFile(item->getXMLElement());
     gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;

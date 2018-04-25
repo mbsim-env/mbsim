@@ -318,6 +318,8 @@ namespace MBSimGUI {
       return new RODASIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"SEULEXIntegrator")
       return new SEULEXIntegrator;
+    else if(E(element)->getTagName()==MBSIMINT%"PHEM56Integrator")
+      return new PHEM56Integrator;
     else if(E(element)->getTagName()==MBSIMINT%"LSODEIntegrator")
       return new LSODEIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"LSODAIntegrator")

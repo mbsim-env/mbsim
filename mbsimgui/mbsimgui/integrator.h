@@ -79,6 +79,12 @@ namespace MBSimGUI {
       IntegratorPropertyDialog* createPropertyDialog() override { return new SEULEXIntegratorPropertyDialog(this); }
   };
 
+  class PHEM56Integrator : public Integrator {
+    public:
+      QString getType() const override { return "PHEM56Integrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() override { return new PHEM56IntegratorPropertyDialog(this); }
+  };
+
   class LSODEIntegrator : public Integrator {
     public:
       QString getType() const override { return "LSODEIntegrator"; }
