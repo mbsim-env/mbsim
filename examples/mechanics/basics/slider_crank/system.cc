@@ -62,6 +62,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // contact parameters
   double epsN = 0.4;
+  double gdLim = 0;
   double mu = 0.01;
 
   // initial conditions
@@ -102,8 +103,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->addFrame(new FixedRelativeFrame("P2",rod_KrCP2,SqrMat(3,EYE)));
   rod->setMass(mass_rod);
   rod->setInertiaTensor(inertia_rod);
-  rod->setGeneralizedInitialPosition(q_rod);
-  rod->setGeneralizedInitialVelocity(v_rod);
+  rod->setGeneralizedInitialPosition(q_rod-q_crank);
+  rod->setGeneralizedInitialVelocity(v_rod-v_crank);
   this->addObject(rod);
 
   RigidBody *piston = new RigidBody("Piston");
@@ -112,9 +113,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   piston->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   piston->setMass(mass_piston);
   piston->setInertiaTensor(inertia_piston);
-  piston->setGeneralizedInitialPosition(q_piston);
-  piston->setGeneralizedInitialVelocity(v_piston);
+  piston->setGeneralizedInitialPosition(q_piston-q_rod);
+  piston->setGeneralizedInitialVelocity(v_piston-v_rod);
   this->addObject(piston);
+  piston->getFrameC()->setPlotFeature(position, true);
   //------------------------------------------------------------------------------
 
   // contours
@@ -177,34 +179,42 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // contacts
   Contact *contact_point_piston_1_top = new Contact("Contact_Point_Piston_1_Top");
   contact_point_piston_1_top->connect(point_piston_1,top);
-  contact_point_piston_1_top->setTangentialForceLaw(new PlanarCoulombFriction(mu)); // mu1
-  contact_point_piston_1_top->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
+  if(mu) {
+    contact_point_piston_1_top->setTangentialForceLaw(new PlanarCoulombFriction(mu)); // mu1
+    contact_point_piston_1_top->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
+  }
   contact_point_piston_1_top->setNormalForceLaw(new UnilateralConstraint());
-  contact_point_piston_1_top->setNormalImpactLaw(new UnilateralNewtonImpact(epsN)); // epsN1
+  contact_point_piston_1_top->setNormalImpactLaw(new UnilateralNewtonImpact(epsN,gdLim)); // epsN1
   this->addLink(contact_point_piston_1_top);
 
   Contact *contact_point_piston_2_top = new Contact("Contact_Point_Piston_2_Top");
   contact_point_piston_2_top->connect(point_piston_2,top);
-  contact_point_piston_2_top->setTangentialForceLaw(new PlanarCoulombFriction(0.01)); // mu2
-  contact_point_piston_2_top->setTangentialImpactLaw(new PlanarCoulombImpact(0.01));
+  if(mu) {
+    contact_point_piston_2_top->setTangentialForceLaw(new PlanarCoulombFriction(mu)); // mu2
+    contact_point_piston_2_top->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
+  }
   contact_point_piston_2_top->setNormalForceLaw(new UnilateralConstraint());
-  contact_point_piston_2_top->setNormalImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN2
+  contact_point_piston_2_top->setNormalImpactLaw(new UnilateralNewtonImpact(epsN,gdLim)); // epsN2
   this->addLink(contact_point_piston_2_top);
 
   Contact *contact_point_piston_3_bottom = new Contact("Contact_Point_Piston_3_Bottom");
   contact_point_piston_3_bottom->connect(point_piston_3,bottom);
-  contact_point_piston_3_bottom->setTangentialForceLaw(new PlanarCoulombFriction(0.01)); // mu3
-  contact_point_piston_3_bottom->setTangentialImpactLaw(new PlanarCoulombImpact(0.01));
+  if(mu) {
+    contact_point_piston_3_bottom->setTangentialForceLaw(new PlanarCoulombFriction(mu)); // mu3
+    contact_point_piston_3_bottom->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
+  }
   contact_point_piston_3_bottom->setNormalForceLaw(new UnilateralConstraint());
-  contact_point_piston_3_bottom->setNormalImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN3
+  contact_point_piston_3_bottom->setNormalImpactLaw(new UnilateralNewtonImpact(epsN,gdLim)); // epsN3
   this->addLink(contact_point_piston_3_bottom);
   
   Contact *contact_point_piston_4_bottom = new Contact("Contact_Point_Piston_4_Bottom");
   contact_point_piston_4_bottom->connect(point_piston_4,bottom);
-  contact_point_piston_4_bottom->setTangentialForceLaw(new PlanarCoulombFriction(0.01)); // mu4
-  contact_point_piston_4_bottom->setTangentialImpactLaw(new PlanarCoulombImpact(0.01));
+  if(mu) {
+    contact_point_piston_4_bottom->setTangentialForceLaw(new PlanarCoulombFriction(mu)); // mu4
+    contact_point_piston_4_bottom->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
+  }
   contact_point_piston_4_bottom->setNormalForceLaw(new UnilateralConstraint());
-  contact_point_piston_4_bottom->setNormalImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN4
+  contact_point_piston_4_bottom->setNormalImpactLaw(new UnilateralNewtonImpact(epsN,gdLim)); // epsN4
   this->addLink(contact_point_piston_4_bottom);
   //---------------------------------------------------------------------------
 
