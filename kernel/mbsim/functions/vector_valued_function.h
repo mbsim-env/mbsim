@@ -37,7 +37,7 @@ namespace MBSim {
           (*it)->setParent(this);
       }
       ~VectorValuedFunction() override {
-        for (unsigned int i=1; i<component.size(); i++)
+        for (unsigned int i=0; i<component.size(); i++)
           delete component[i];
       }
       void addComponent(Function<double(double)> *function) {
@@ -92,7 +92,7 @@ namespace MBSim {
           (*it)->setParent(this);
       }
       ~VectorValuedFunction() override {
-        for (unsigned int i=1; i<component.size(); i++)
+        for (unsigned int i=0; i<component.size(); i++)
           delete component[i];
       }
       void addComponent(Function<double(Arg)> *function) {
