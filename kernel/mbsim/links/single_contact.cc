@@ -1072,7 +1072,7 @@ namespace MBSim {
     }
     else if (j == 3) { // formerly checkActivegdn() (new gap velocities)
       if (gActive) { // contact is closed
-        if (evalgdnN() <= gdTol) { // contact stays closed // TODO bilateral contact
+        if (fcl->remainsClosed(evalgdnN(), gdTol)) { // contact stays closed
           gdActive[normal] = true;
           gddActive[normal] = true;
           if (getFrictionDirections()) {
