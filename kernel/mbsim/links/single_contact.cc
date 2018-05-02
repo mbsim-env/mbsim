@@ -136,24 +136,20 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedVelocities() {
-    if ((fcl->isSetValued() and gdActive[normal]) or (not fcl->isSetValued() and fcl->isClosed(evalGeneralizedRelativePosition()(0), 0))) { // TODO: nicer implementation
-      Vec3 Wn = cFrame[0]->evalOrientation().col(0);
+    Vec3 Wn = cFrame[0]->evalOrientation().col(0);
 
-      Vec3 WvD = cFrame[1]->evalVelocity() - cFrame[0]->evalVelocity();
+    Vec3 WvD = cFrame[1]->evalVelocity() - cFrame[0]->evalVelocity();
 
-      vrel(0) = Wn.T() * WvD;
+    vrel(0) = Wn.T() * WvD;
 
-      if (getFrictionDirections()) {
-        Mat3xV Wt(getFrictionDirections());
-        Wt.set(0, cFrame[0]->getOrientation().col(1));
-        if (getFrictionDirections() > 1)
-          Wt.set(1, cFrame[0]->getOrientation().col(2));
+    if (getFrictionDirections()) {
+      Mat3xV Wt(getFrictionDirections());
+      Wt.set(0, cFrame[0]->getOrientation().col(1));
+      if (getFrictionDirections() > 1)
+        Wt.set(1, cFrame[0]->getOrientation().col(2));
 
-        vrel.set(RangeV(1,getFrictionDirections()), Wt.T() * WvD);
-      }
+      vrel.set(RangeV(1,getFrictionDirections()), Wt.T() * WvD);
     }
-    else
-      vrel.init(0);
     updvrel = false;
   }
 
