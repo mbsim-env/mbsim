@@ -148,7 +148,7 @@ namespace MBSimIntegrator {
         // update until the Jacobian matrices, especially also the active set
         if(impact) {
           u_1 = u_n + (slvLLFac(LLM_1,h_1) + slvLLFac(LLM_2,h_2))*dt*0.5;
-          system->evalgd();
+          system->evalgd(); // TODO this equals W_2.T()*u_1, should be W_2.T()*u_n
           system->getbi(false) << W_2.T()*u_1;
           system->setUpdatebi(false);
 
