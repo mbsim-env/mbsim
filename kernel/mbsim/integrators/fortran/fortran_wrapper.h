@@ -12,6 +12,9 @@ void DLSODE(void(*)(int*,double*,double*,double*),int*,double*,double*,
             double*,int*,double*,double*,int*,int*,int*,double*,int*,
             int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),int*);
 
+#define DINTDY FC_FUNC(mbsim_dintdy,MBSIM_DINTDY)
+void DINTDY(double*,int*,double*,int*,double*,int*);
+
 #define DLSODA FC_FUNC(dlsoda,DLSODA)
 void DLSODA(void(*)(int*,double*,double*,double*),int*,double*,double*,
             double*,int*,double*,double*,int*,int*,int*,double*,int*,
