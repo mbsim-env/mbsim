@@ -154,7 +154,7 @@ namespace MBSim {
   }
   void DynamicSystem::updatewb() {
 
-    for (auto & i : linkSetValued)
+    for (auto & i : linkSetValuedActive)
       (*i).updatewb();
   }
 
@@ -166,13 +166,13 @@ namespace MBSim {
 
   void DynamicSystem::updateV(int j) {
 
-    for (auto & i : linkSetValued)
+    for (auto & i : linkSetValuedActive)
       (*i).updateV(j);
   }
 
   void DynamicSystem::updateg() {
 
-    for (auto & i : linkSetValued)
+    for (auto & i : linkSetValuedActive)
       i->updateg();
   }
 
