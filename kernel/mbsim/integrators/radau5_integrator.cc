@@ -219,8 +219,6 @@ namespace MBSimIntegrator {
         self->getSystem()->resetUpToDate();
         self->getSystem()->plot();
       }
-      self->getSystem()->resetUpToDate();
-      self->svLast=self->getSystem()->evalsv();
       *irtrn = -1;
     }
     else {
@@ -268,7 +266,6 @@ namespace MBSimIntegrator {
 
     debugInit();
 
-    int zSize = system->getzSize();
     calcSize();
 
     if(not neq)
@@ -280,10 +277,10 @@ namespace MBSimIntegrator {
     double t = tStart;
 
     Vec y(neq);
-    Vec z = y(0,zSize-1);
+    Vec z = y(0,system->getzSize()-1);
     if(z0.size()) {
-      if(z0.size() != zSize)
-        throwError("(RADAU5Integrator::integrate): size of z0 does not match, must be " + to_string(zSize));
+      if(z0.size() != system->getzSize())
+        throwError("(RADAU5Integrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()));
       z = z0;
     }
     else
@@ -367,6 +364,8 @@ namespace MBSimIntegrator {
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
       if(shift) {
+        system->resetUpToDate();
+        svLast = system->evalsv();
         dt = dt0;
         calcSize();
         reinit();
@@ -375,7 +374,7 @@ namespace MBSimIntegrator {
       t = system->getTime();
       z = system->getState();
       if(formalism)
-        y(zSize,neq-1).init(0);
+        y(system->getzSize(),neq-1).init(0);
     }
 
     if(plotIntegrationData) integPlot.close();

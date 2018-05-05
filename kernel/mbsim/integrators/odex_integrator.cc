@@ -128,8 +128,6 @@ namespace MBSimIntegrator {
         self->getSystem()->resetUpToDate();
         self->getSystem()->plot();
       }
-      self->getSystem()->resetUpToDate();
-      self->svLast=self->getSystem()->evalsv();
       *irtrn = -1;
     }
     else {
@@ -238,7 +236,11 @@ namespace MBSimIntegrator {
       ODEX(&zSize,fzdot,&t,z(),&tEnd, &dt,rTol(),aTol(),&iTol,plot,&out,
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
-      if(shift) dt = dt0;
+      if(shift) {
+        system->resetUpToDate();
+        svLast = system->evalsv();
+        dt = dt0;
+      }
       t = system->getTime();
       z = system->getState();
     }

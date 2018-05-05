@@ -128,8 +128,6 @@ namespace MBSimIntegrator {
         self->getSystem()->resetUpToDate();
         self->getSystem()->plot();
       }
-      self->getSystem()->resetUpToDate();
-      self->svLast=self->getSystem()->evalsv();
       *irtrn = -1;
     }
     else {
@@ -237,7 +235,11 @@ namespace MBSimIntegrator {
       DOPRI5(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
-      if(shift) work(6) = dt0;
+      if(shift) {
+        system->resetUpToDate();
+        svLast = system->evalsv();
+        work(6) = dt0;
+      }
       t = system->getTime();
       z = system->getState();
     }
