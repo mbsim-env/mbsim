@@ -50,6 +50,10 @@ namespace MBSimIntegrator {
       static void deltaDAE2(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
       static void deltaGGL(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
 
+      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
+
+      void calcSize();
+
       /** maximal step size */
       double dtMax{0};
       /** Absolute Toleranz */
@@ -63,10 +67,17 @@ namespace MBSimIntegrator {
       /** exclude algebraic variables from error test **/
       bool excludeAlgebraicVariables{true};
 
+      bool plotOnRoot{false};
+
        /** tolerance for position constraints */
       double gMax{-1};
       /** tolerance for velocity constraints */
       double gdMax{-1};
+
+      fmatvec::Vec svLast;
+      bool shift{false};
+
+      int neq;
 
     public:
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
@@ -77,6 +88,8 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
       void setExcludeAlgebraicVariablesFromErrorTest(bool excludeAlgebraicVariables_) { excludeAlgebraicVariables = excludeAlgebraicVariables_; }
+
+      void setPlotOnRoot(bool b) { plotOnRoot = b; }
 
       void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
       void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }

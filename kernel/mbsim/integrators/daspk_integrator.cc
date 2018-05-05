@@ -86,9 +86,25 @@ namespace MBSimIntegrator {
     self->getSystem()->resetUpToDate();
     self->getSystem()->setUpdatela(false);
     delta(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
-    delta(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getlaSize(),ipar[0]-1);
     delta(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1) = self->system->evalgd();
     delta(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1) = self->system->evalg();
+    if(self->system->getgSize() != self->system->getgdSize()) {
+      self->system->calclaSize(5);
+      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
+      self->system->setUpdateW(false);
+      delta(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1);
+      self->system->calclaSize(3);
+      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
+    }
+    else
+      delta(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1);
+  }
+
+  bool DASPKIntegrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
+    for(int i=0; i<svStepEnd.size(); i++)
+      if(svLast(i)*svStepEnd(i)<0)
+        return true;
+    return false;
   }
 
   void DASPKIntegrator::integrate() {
@@ -102,13 +118,7 @@ namespace MBSimIntegrator {
 
     debugInit();
 
-    int neq;
-    if(formalism==DAE1 or formalism==DAE2)
-      neq = system->getzSize()+system->getgdSize();
-    else if(formalism==GGL)
-      neq = system->getzSize()+system->getgdSize()+system->getgSize();
-    else
-      neq = system->getzSize();
+    calcSize();
 
     if(not neq)
       throwError("(DASPKIntegrator::integrate): dimension of the system must be at least 1");
@@ -151,7 +161,7 @@ namespace MBSimIntegrator {
     if(rTol.size() != aTol.size())
       throwError("(DASPKIntegrator::integrate): size of rTol does not match aTol, must be " + to_string(aTol.size()));
 
-    // info(2) = 0; // solution only at tOut, no intermediate-output
+    info(2) = 1; // solution only at tOut, no intermediate-output
     // info(3) = 0; // integration does not stop at tStop (rWork(0))
     // info(4) = 0; // jacobian is computed internally
     // info(5) = 0; // jacobian is a full matrix
@@ -170,7 +180,6 @@ namespace MBSimIntegrator {
 
     double rPar;
     int iPar[1+sizeof(void*)/sizeof(int)+1];
-    iPar[0] = neq;
     DASPKIntegrator *self=this;
     memcpy(&iPar[1], &self, sizeof(void*));
 
@@ -179,6 +188,25 @@ namespace MBSimIntegrator {
     VecInt iWork(liWork);
     Vec work(lWork);
 
+    int idid;
+
+    system->setTime(t);
+    system->resetUpToDate();
+    system->computeInitialCondition();
+    if(formalism>1) { // DAE2 or GGL
+      system->calcgdSize(3); // IH
+      system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
+      if(formalism==GGL) { // GGL
+        system->calcgSize(2); // IB
+        system->updategRef(system->getgParent()(0,system->getgSize()-1));
+      }
+    }
+    system->plot();
+    yd(0,system->getzSize()-1) = system->evalzd();
+    svLast = system->evalsv();
+
+    calcSize();
+    iPar[0] = neq;
     work(1) = dtMax; // maximum stepsize
     work(2) = dt0; // initial stepsize
     if(info(15)) {
@@ -188,16 +216,10 @@ namespace MBSimIntegrator {
         iWork(40+i) = -1; // algebraic variable
     }
 
-    int idid;
-
-    system->setTime(t);
-    system->resetUpToDate();
-    system->plot();
-    yd(0,system->getzSize()-1) = system->evalzd();
-
     double s0 = clock();
     double time = 0;
     int integrationSteps = 0;
+    int lphi = excludeAlgebraicVariables?50+4*neq:50+3*neq;
 
     ofstream integPlot;
     if(plotIntegrationData) {
@@ -207,36 +229,132 @@ namespace MBSimIntegrator {
       integPlot << "#1 calculation time [s]:" << endl;
     }
 
-    while(t<tEnd) {
-      DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tPlot,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,&rPar,iPar,nullptr,nullptr);
-      if(idid==3 or idid==2) {
-        system->setTime(t);
-        system->resetUpToDate();
-        system->setzd(yd(0,system->getzSize()-1));
-        system->setUpdatezd(false);
-        if(formalism) system->setUpdatela(false);
-        system->plot();
-        if(msgAct(Status))
-          msg(Status) << "   t = " <<  t << ",\tdt = "<< work(6) << flush;
-        double s1 = clock();
-        time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1;
-        if(plotIntegrationData) integPlot<< t << " " << work(6) << " " << time << endl;
-        tPlot = min(tEnd,tPlot + dtPlot);
-
-        // check drift
-        if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
-          system->projectGeneralizedPositions(3);
-          system->projectGeneralizedVelocities(3);
-          system->resetUpToDate();
-          yd(0,system->getzSize()-1) = system->evalzd();
-          info(0)=0;
+    while(t<tEnd-epsroot) {
+      DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tEnd,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,&rPar,iPar,nullptr,nullptr);
+      if(idid==1) {
+        double curTimeAndState = -1;
+        double tRoot = t;
+        // root-finding
+        if(getSystem()->getsvSize()) {
+          getSystem()->setTime(t);
+          curTimeAndState = t;
+          getSystem()->resetUpToDate();
+          shift = signChangedWRTsvLast(getSystem()->evalsv());
+          // if a root exists in the current step ...
+          double dt = work(6);
+          if(shift) {
+            // ... search the first root and set step.second to this time
+            while(dt>1e-10) {
+              dt/=2;
+              double tCheck = tRoot-dt;
+              curTimeAndState = tCheck;
+              DDATRP(&t, &tCheck, system->getState()(), yd(), &neq, &iWork(7), &work(lphi), &work(38));
+              getSystem()->setTime(tCheck);
+              getSystem()->resetUpToDate();
+              if(signChangedWRTsvLast(getSystem()->evalsv()))
+                tRoot = tCheck;
+            }
+            if(curTimeAndState != tRoot) {
+              curTimeAndState = tRoot;
+              DDATRP(&t, &tRoot, system->getState()(), yd(), &neq, &iWork(7), &work(lphi), &work(38));
+              getSystem()->setTime(tRoot);
+            }
+            getSystem()->resetUpToDate();
+            auto &sv = getSystem()->evalsv();
+            auto &jsv = getSystem()->getjsv();
+            for(int i=0; i<sv.size(); ++i)
+              jsv(i)=svLast(i)*sv(i)<0;
+          }
         }
-        else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
-          system->projectGeneralizedVelocities(3);
+        while(tRoot >= tPlot and tPlot<=tEnd) {
+          if(curTimeAndState != tPlot) {
+            curTimeAndState = tPlot;
+            DDATRP(&t, &tPlot, system->getState()(), yd(), &neq, &iWork(7), &work(lphi), &work(38));
+            getSystem()->setTime(tPlot);
+          }
+          getSystem()->resetUpToDate();
+          system->setzd(yd(0,system->getzSize()-1));
+          system->setUpdatezd(false);
+          if(formalism) system->setUpdatela(false);
+          getSystem()->plot();
+          if(msgAct(Status))
+            msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< work(6) << flush;
+
+          double s1 = clock();
+          time += (s1-s0)/CLOCKS_PER_SEC;
+          s0 = s1;
+
+          if(plotIntegrationData) integPlot<< tPlot << " " << work(6) << " " << time << endl;
+          tPlot += dtPlot;
+        }
+
+        if(shift) {
+          // shift the system
+          if(curTimeAndState != tRoot) {
+            DDATRP(&t, &tRoot, system->getState()(), yd(), &neq, &iWork(7), &work(lphi), &work(38));
+            getSystem()->setTime(tRoot);
+          }
+          if(plotOnRoot) {
+            system->resetUpToDate();
+//            system->setzd(yd(0,system->getzSize()-1));
+//            system->setUpdatezd(false);
+//            if(formalism) system->setUpdatela(false);
+            system->plot();
+//            system->plotAtSpecialEvent();
+          }
+          getSystem()->resetUpToDate();
+          getSystem()->shift();
+          if(formalism>1) { // DAE2 or GGL
+            system->calcgdSize(3); // IH
+            system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
+            if(formalism==GGL) { // GGL
+              system->calcgSize(2); // IB
+              system->updategRef(system->getgParent()(0,system->getgSize()-1));
+            }
+          }
+          if(plotOnRoot) {
+            getSystem()->resetUpToDate();
+            getSystem()->plot();
+          }
+          info(0) = 0;
+        }
+        else {
+          // check drift
+          bool projVel = true;
+          if(gMax>=0) {
+            getSystem()->setTime(t);
+            getSystem()->resetUpToDate();
+            if(getSystem()->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+              getSystem()->projectGeneralizedPositions(3);
+              getSystem()->projectGeneralizedVelocities(3);
+              projVel = false;
+              info(0) = 0;
+            }
+          }
+          if(gdMax>=0 and projVel) {
+            getSystem()->setTime(t);
+            getSystem()->resetUpToDate();
+            if(getSystem()->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+              getSystem()->projectGeneralizedVelocities(3);
+              info(0) = 0;
+            }
+          }
+        }
+        if(info(0)==0) {
+          t = system->getTime();
           system->resetUpToDate();
           yd(0,system->getzSize()-1) = system->evalzd();
-          info(0)=0;
+          if(shift) {
+            svLast = system->evalsv();
+            calcSize();
+            lphi = excludeAlgebraicVariables?50+4*neq:50+3*neq;
+            iPar[0] = neq;
+            work(2) = dt0;
+            if(info(15)) {
+              for(int i=system->getzSize(); i<neq; i++)
+                iWork(40+i) = -1; // algebraic variable
+            }
+          }
         }
       }
       else if(idid<0) throwError("Integrator DASPK failed with istate = "+to_string(idid));
@@ -251,6 +369,15 @@ namespace MBSimIntegrator {
       integSum << "Integration steps: " << integrationSteps << endl;
       integSum.close();
     }
+  }
+
+  void DASPKIntegrator::calcSize() {
+    if(formalism==DAE1 or formalism==DAE2)
+      neq = system->getzSize()+system->getlaSize();
+    else if(formalism==GGL)
+      neq = system->getzSize()+system->getgdSize()+system->getgSize();
+    else
+      neq = system->getzSize();
   }
 
   void DASPKIntegrator::initializeUsingXML(DOMElement *element) {
@@ -279,6 +406,8 @@ namespace MBSimIntegrator {
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"excludeAlgebraicVariablesFromErrorTest");
     if(e) setExcludeAlgebraicVariablesFromErrorTest(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
+    if(e) setPlotOnRoot(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
