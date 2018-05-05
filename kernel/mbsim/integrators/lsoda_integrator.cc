@@ -50,6 +50,13 @@ namespace MBSimIntegrator {
     zd = self->getSystem()->evalzd();
   }
 
+  bool LSODAIntegrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
+    for(int i=0; i<svStepEnd.size(); i++)
+      if(svLast(i)*svStepEnd(i)<0)
+        return true;
+    return false;
+  }
+
   void LSODAIntegrator::integrate() {
     debugInit();
 
@@ -105,7 +112,7 @@ namespace MBSimIntegrator {
         throwError("(LSODAIntegrator::integrate): size of rTol does not match, must be " + to_string(zSize));
     }
 
-    int one=1, two=2, istate=1;
+    int itask=2, iopt=1, jt=2, istate=1;
     int lrWork = 2*(22+9*zSize+zSize*zSize);
     Vec rWork(lrWork);
     rWork(4) = dt0;
@@ -118,7 +125,9 @@ namespace MBSimIntegrator {
     system->setTime(t);
 //    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();
+    system->computeInitialCondition();
     system->plot();
+    svLast = system->evalsv();
 
     double s0 = clock();
     double time = 0;
@@ -132,31 +141,120 @@ namespace MBSimIntegrator {
       integPlot << "#1 calculation time [s]:" << endl;
     }
 
-    while(t<tEnd-epsroot) {
-      DLSODA(fzdot, neq, system->getState()(), &t, &tPlot, &iTol, rTol(), aTol(), &one,
-          &istate, &one, rWork(), &lrWork, iWork(), &liWork, NULL, &two);
-      if(istate==2 or istate==1) {
-        system->setTime(t);
-//        system->setState(z); Not needed as the integrator uses the state of the system
-        system->resetUpToDate();
-        system->plot();
-        if(msgAct(Status))
-          msg(Status) << "   t = " <<  t << ",\tdt = "<< rWork(10) << flush;
-        double s1 = clock();
-        time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1;
-        if(plotIntegrationData) integPlot<< t << " " << rWork(10) << " " << time << endl;
-        tPlot = min(tEnd, tPlot+dtPlot);
+    int zero = 0;
+    int iflag;
 
-        // check drift
-        if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
-          system->projectGeneralizedPositions(3);
-          system->projectGeneralizedVelocities(3);
+    while(t<tEnd-epsroot) {
+      DLSODA(fzdot, neq, system->getState()(), &t, &tEnd, &iTol, rTol(), aTol(),
+          &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, nullptr, &jt);
+      if(istate==2 or istate==1) {
+        double curTimeAndState = -1;
+        double tRoot = t;
+        // root-finding
+        if(getSystem()->getsvSize()) {
+          getSystem()->setTime(t);
+          curTimeAndState = t;
+//          getSystem()->setState(z);
+          getSystem()->resetUpToDate();
+          shift = signChangedWRTsvLast(getSystem()->evalsv());
+          // if a root exists in the current step ...
+          double dt = rWork(10);
+          if(shift) {
+            // ... search the first root and set step.second to this time
+            while(dt>1e-10) {
+              dt/=2;
+              double tCheck = tRoot-dt;
+              curTimeAndState = tCheck;
+              DINTDY (&tCheck, &zero, &rWork(20), neq, system->getState()(), &iflag);
+              getSystem()->setTime(tCheck);
+//              getSystem()->setState(zWant);
+              getSystem()->resetUpToDate();
+              if(signChangedWRTsvLast(getSystem()->evalsv()))
+                tRoot = tCheck;
+            }
+            if(curTimeAndState != tRoot) {
+              curTimeAndState = tRoot;
+              DINTDY (&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+              getSystem()->setTime(tRoot);
+//              getSystem()->setState(zWant);
+            }
+            getSystem()->resetUpToDate();
+            auto &sv = getSystem()->evalsv();
+            auto &jsv = getSystem()->getjsv();
+            for(int i=0; i<sv.size(); ++i)
+              jsv(i)=svLast(i)*sv(i)<0;
+          }
+        }
+
+        while(tRoot >= tPlot and tPlot<=tEnd) {
+          if(curTimeAndState != tPlot) {
+            curTimeAndState = tPlot;
+            DINTDY (&tPlot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+            getSystem()->setTime(tPlot);
+//            getSystem()->setState(zWant);
+          }
+          getSystem()->resetUpToDate();
+          getSystem()->plot();
+          if(msgAct(Status))
+            msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< rWork(10) << flush;
+
+          double s1 = clock();
+          time += (s1-s0)/CLOCKS_PER_SEC;
+          s0 = s1;
+
+          if(plotIntegrationData) integPlot<< tPlot << " " << rWork(10) << " " << time << endl;
+          tPlot += dtPlot;
+        }
+
+        if(shift) {
+          // shift the system
+          if(curTimeAndState != tRoot) {
+            DINTDY (&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+            getSystem()->setTime(tRoot);
+//            getSystem()->setState(zWant);
+          }
+          if(plotOnRoot) {
+            getSystem()->resetUpToDate();
+            getSystem()->plot();
+          }
+          getSystem()->resetUpToDate();
+          getSystem()->shift();
+          if(plotOnRoot) {
+            getSystem()->resetUpToDate();
+            getSystem()->plot();
+          }
           istate=1;
         }
-        else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
-          system->projectGeneralizedVelocities(3);
-          istate=1;
+        else {
+          // check drift
+          bool projVel = true;
+          if(gMax>=0) {
+            getSystem()->setTime(t);
+//            getSystem()->setState(z);
+            getSystem()->resetUpToDate();
+            if(getSystem()->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+              getSystem()->projectGeneralizedPositions(3);
+              getSystem()->projectGeneralizedVelocities(3);
+              projVel = false;
+              istate=1;
+            }
+          }
+          if(gdMax>=0 and projVel) {
+            getSystem()->setTime(t);
+//            getSystem()->setState(z);
+            getSystem()->resetUpToDate();
+            if(getSystem()->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+              getSystem()->projectGeneralizedVelocities(3);
+              istate=1;
+            }
+          }
+        }
+        if(istate==1) {
+          if(shift) {
+            system->resetUpToDate();
+            svLast = system->evalsv();
+          }
+          t = system->getTime();
         }
       }
       else if(istate<0) throwError("Integrator LSODA failed with istate = "+to_string(istate));

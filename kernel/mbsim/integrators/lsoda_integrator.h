@@ -43,6 +43,8 @@ namespace MBSimIntegrator {
 
       static void fzdot(int* neq, double* t, double* z_, double* zd_);
 
+      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
+
       /** maximal step size */
       double dtMax{0};
       /** minimal step size */
@@ -56,10 +58,15 @@ namespace MBSimIntegrator {
       /**  maximum number of steps allowed during one call to the solver. (default 10000) */
       int maxSteps{10000};
 
+      bool plotOnRoot{false};
+
        /** tolerance for position constraints */
       double gMax{-1};
       /** tolerance for velocity constraints */
       double gdMax{-1};
+
+      fmatvec::Vec svLast;
+      bool shift{false};
 
     public:
 
