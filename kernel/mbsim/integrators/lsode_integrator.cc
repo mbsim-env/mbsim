@@ -153,7 +153,7 @@ namespace MBSimIntegrator {
 
     while(t<tEnd-epsroot) {
       DLSODE(fzdot, neq, system->getState()(), &t, &tEnd, &iTol, rTol(), aTol(),
-          &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, 0, &MF);
+          &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, nullptr, &MF);
       if(istate==2 or istate==1) {
         double curTimeAndState = -1;
         double tRoot = t;
@@ -172,7 +172,7 @@ namespace MBSimIntegrator {
               dt/=2;
               double tCheck = tRoot-dt;
               curTimeAndState = tCheck;
-              DINTDY (&tCheck, &zero, &rWork(20), neq, system->getState()(), &iflag);
+              DINTDY(&tCheck, &zero, &rWork(20), neq, system->getState()(), &iflag);
               getSystem()->setTime(tCheck);
 //              getSystem()->setState(zWant);
               getSystem()->resetUpToDate();
@@ -181,7 +181,7 @@ namespace MBSimIntegrator {
             }
             if(curTimeAndState != tRoot) {
               curTimeAndState = tRoot;
-              DINTDY (&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+              DINTDY(&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
               getSystem()->setTime(tRoot);
 //              getSystem()->setState(zWant);
             }
@@ -196,7 +196,7 @@ namespace MBSimIntegrator {
         while(tRoot >= tPlot and tPlot<=tEnd) {
           if(curTimeAndState != tPlot) {
             curTimeAndState = tPlot;
-            DINTDY (&tPlot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+            DINTDY(&tPlot, &zero, &rWork(20), neq, system->getState()(), &iflag);
             getSystem()->setTime(tPlot);
 //            getSystem()->setState(zWant);
           }
@@ -216,7 +216,7 @@ namespace MBSimIntegrator {
         if(shift) {
           // shift the system
           if(curTimeAndState != tRoot) {
-            DINTDY (&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+            DINTDY(&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
             getSystem()->setTime(tRoot);
 //            getSystem()->setState(zWant);
           }
@@ -230,8 +230,6 @@ namespace MBSimIntegrator {
             getSystem()->resetUpToDate();
             getSystem()->plot();
           }
-          getSystem()->resetUpToDate();
-          svLast=getSystem()->evalsv();
           istate=1;
         }
         else {
@@ -258,7 +256,13 @@ namespace MBSimIntegrator {
             }
           }
         }
-        if(istate==1) t = system->getTime();
+        if(istate==1) {
+          if(shift) {
+            system->resetUpToDate();
+            svLast = system->evalsv();
+          }
+          t = system->getTime();
+        }
       }
       else if(istate<0) throwError("Integrator LSODE failed with istate = "+to_string(istate));
     }
