@@ -126,6 +126,9 @@ void DDASPK(void(*)(double*,double*,double*,double*,double*,int*,double*,int*),i
             void(*)(int*,double*,double*,double*,double*,double*,double*,double*,
             double*,int*,double*,double*,int*,double*,double*));
 
+#define DDATRP FC_FUNC(ddatrp,DDATRP)
+void DDATRP(double*,double*,double*,double*,int*,int*,double*,double*);
+
 #define DDASKR FC_FUNC(ddaskr,DDASKR)
 void DDASKR(void(*)(double*,double*,double*,double*,double*,int*,double*,int*),int*,double*,
             double*,double*,double*,int*,double*,double*,int*,double*,int*,
