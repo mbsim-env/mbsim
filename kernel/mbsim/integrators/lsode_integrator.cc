@@ -306,7 +306,9 @@ namespace MBSimIntegrator {
     if(e) setMinimumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
-   e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
+    if(e) setPlotOnRoot(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
     if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());

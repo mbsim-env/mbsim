@@ -79,6 +79,8 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
 
+      void setPlotOnRoot(bool b) { plotOnRoot = b; }
+
       void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
       void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
