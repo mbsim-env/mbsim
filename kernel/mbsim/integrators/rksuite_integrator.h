@@ -37,12 +37,6 @@ namespace MBSimIntegrator {
         unknownMethod
       };
 
-      enum Task {
-        usual=0,
-        complex,
-        unknownTask
-      };
-
       /**
        * \brief destructor
        */
@@ -54,7 +48,6 @@ namespace MBSimIntegrator {
 
       /* GETTER / SETTER */
       void setMethod(Method method_) { method = method_; }
-      void setTask(Task task_) { task = task_; }
       void setRelativeTolerance(double rTol_) { rTol = rTol_; }
       void setThreshold(const fmatvec::Vec &thres_) { thres = thres_; }
       void setThreshold(double thres_) { thres = fmatvec::Vec(1,fmatvec::INIT,thres_); }
@@ -83,8 +76,6 @@ namespace MBSimIntegrator {
 
       /** method */
       Method method{RK45};
-      /** task */
-      Task task{complex};
       /** threshold */
       fmatvec::Vec thres;
       /** relative tolerance */
