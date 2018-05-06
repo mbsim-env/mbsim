@@ -50,7 +50,7 @@ namespace MBSimIntegrator {
     Vec delta(ipar[0], delta_);
     self->getSystem()->setTime(*t);
     self->getSystem()->resetUpToDate();
-    delta = zd - self->system->evalzd();
+    delta = self->system->evalzd() - zd;
   }
 
   void DASPKIntegrator::deltaDAE1(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar) {
