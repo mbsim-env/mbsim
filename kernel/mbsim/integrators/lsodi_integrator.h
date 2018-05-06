@@ -54,6 +54,10 @@ namespace MBSimIntegrator {
       static void resGGL(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires);
       static void adda(int *neq, double* t, double* y_, int* ml, int* mu, double* P, int* nrowp);
 
+      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
+
+      void calcSize();
+
       /** maximal step size */
       double dtMax{0};
       /** minimal step size */
@@ -69,10 +73,17 @@ namespace MBSimIntegrator {
       /** formalism **/
       Formalism formalism{DAE2};
 
+      bool plotOnRoot{false};
+
        /** tolerance for position constraints */
       double gMax{-1};
       /** tolerance for velocity constraints */
       double gdMax{-1};
+
+      fmatvec::Vec svLast;
+      bool shift{false};
+
+      int N;
 
     public:
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
@@ -84,6 +95,8 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
+
+      void setPlotOnRoot(bool b) { plotOnRoot = b; }
 
       void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
       void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }

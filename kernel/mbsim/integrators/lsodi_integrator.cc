@@ -74,15 +74,31 @@ namespace MBSimIntegrator {
     self->getSystem()->resetUpToDate();
     self->getSystem()->setUpdatela(false);
     res(0,self->system->getzSize()-1) = self->system->evalzd() - yd(0,self->system->getzSize()-1);
-    res(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getlaSize(),neq[0]-1);
     res(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1) = self->system->evalgd();
     res(self->system->getzSize()+self->system->getgdSize(),neq[0]-1) = self->system->evalg();
+    if(self->system->getgSize() != self->system->getgdSize()) {
+      self->system->calclaSize(5);
+      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
+      self->system->setUpdateW(false);
+      res(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getgdSize(),neq[0]-1);
+      self->system->calclaSize(3);
+      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
+    }
+    else
+      res(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getgdSize(),neq[0]-1);
   }
 
   void LSODIIntegrator::adda(int *neq, double *t, double *y_, int *ml, int *mu, double *P_, int *nrowp) {
     auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
     SqrMat P(*nrowp, P_);
     for(int i=0; i<self->system->getzSize(); i++) P(i,i) += 1;
+  }
+
+  bool LSODIIntegrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
+    for(int i=0; i<svStepEnd.size(); i++)
+      if(svLast(i)*svStepEnd(i)<0)
+        return true;
+    return false;
   }
 
   void LSODIIntegrator::integrate() {
@@ -99,13 +115,7 @@ namespace MBSimIntegrator {
       throwError("Only one integration with LSODARIntegrator, LSODKRIntegrator and LSODEIntegrator at a time is possible.");
     odePackInUse = true;
 
-    int N;
-    if(formalism==DAE2)
-      N = system->getzSize()+system->getgdSize();
-    else if(formalism==GGL)
-      N = system->getzSize()+system->getgdSize()+system->getgSize();
-    else
-      N = system->getzSize();
+    calcSize();
 
     if(not N)
       throwError("(LSODIIntegrator::integrate): dimension of the system must be at least 1");
@@ -163,7 +173,7 @@ namespace MBSimIntegrator {
         throwError("(LSODIIntegrator::integrate): size of rTol does not match, must be " + to_string(N));
     }
 
-    int itask=1, istate=1, iopt=0;
+    int itask=2, iopt=1, istate=1;
     int lrWork = 2*(22+9*N+N*N);
     Vec rWork(lrWork);
     rWork(4) = dt0;
@@ -175,8 +185,21 @@ namespace MBSimIntegrator {
 
     system->setTime(t);
     system->resetUpToDate();
+    system->computeInitialCondition();
+    if(formalism>0) { // DAE2 or GGL
+      system->calcgdSize(3); // IH
+      system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
+      if(formalism==GGL) { // GGL
+        system->calcgSize(2); // IB
+        system->updategRef(system->getgParent()(0,system->getgSize()-1));
+      }
+    }
     system->plot();
     yd(0,system->getzSize()-1) = system->evalzd();
+    svLast = system->evalsv();
+
+    calcSize();
+    neq[0] = N;
 
     double s0 = clock();
     double time = 0;
@@ -192,34 +215,130 @@ namespace MBSimIntegrator {
 
     int MF = 22;
 
+    int zero = 0;
+    int iflag;
+
     while(t<tEnd-epsroot) {
       DLSODI(*res[formalism], adda, 0, neq, system->getzParent()(), yd(), &t, &tPlot, &iTol, rTol(), aTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
       if(istate==2 or istate==1) {
-        system->setTime(t);
-        system->resetUpToDate();
-        if(formalism) system->setUpdatela(false);
-        system->plot();
-        if(msgAct(Status))
-          msg(Status) << "   t = " <<  t << ",\tdt = "<< rWork(10) << flush;
-        double s1 = clock();
-        time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1;
-        if(plotIntegrationData) integPlot<< t << " " << rWork(10) << " " << time << endl;
-        tPlot = min(tEnd, tPlot+dtPlot);
+        double curTimeAndState = -1;
+        double tRoot = t;
+        // root-finding
+        if(getSystem()->getsvSize()) {
+          getSystem()->setTime(t);
+          curTimeAndState = t;
+          getSystem()->resetUpToDate();
+          shift = signChangedWRTsvLast(getSystem()->evalsv());
+          // if a root exists in the current step ...
+          double dt = rWork(10);
+          if(shift) {
+            // ... search the first root and set step.second to this time
+            while(dt>1e-10) {
+              dt/=2;
+              double tCheck = tRoot-dt;
+              curTimeAndState = tCheck;
+              DINTDY(&tCheck, &zero, &rWork(20), neq, system->getState()(), &iflag);
+              getSystem()->setTime(tCheck);
+              getSystem()->resetUpToDate();
+              if(signChangedWRTsvLast(getSystem()->evalsv()))
+                tRoot = tCheck;
+            }
+            if(curTimeAndState != tRoot) {
+              curTimeAndState = tRoot;
+              DINTDY(&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+              getSystem()->setTime(tRoot);
+            }
+            getSystem()->resetUpToDate();
+            auto &sv = getSystem()->evalsv();
+            auto &jsv = getSystem()->getjsv();
+            for(int i=0; i<sv.size(); ++i)
+              jsv(i)=svLast(i)*sv(i)<0;
+          }
+        }
+        while(tRoot >= tPlot and tPlot<=tEnd) {
+          if(curTimeAndState != tPlot) {
+            curTimeAndState = tPlot;
+            DINTDY(&tPlot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+            getSystem()->setTime(tPlot);
+          }
+          getSystem()->resetUpToDate();
+          system->setzd(yd(0,system->getzSize()-1));
+          system->setUpdatezd(false);
+          if(formalism) system->setUpdatela(false);
+          getSystem()->plot();
+          if(msgAct(Status))
+            msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< rWork(10) << flush;
 
-        // check drift
-        if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
-          system->projectGeneralizedPositions(3);
-          system->projectGeneralizedVelocities(3);
-          system->resetUpToDate();
-          yd(0,system->getzSize()-1) = system->evalzd();
+          double s1 = clock();
+          time += (s1-s0)/CLOCKS_PER_SEC;
+          s0 = s1;
+
+          if(plotIntegrationData) integPlot<< tPlot << " " << rWork(10) << " " << time << endl;
+          tPlot += dtPlot;
+        }
+
+        if(shift) {
+          // shift the system
+          if(curTimeAndState != tRoot) {
+            DINTDY(&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+            getSystem()->setTime(tRoot);
+          }
+          if(plotOnRoot) {
+            system->resetUpToDate();
+//            system->setzd(yd(0,system->getzSize()-1));
+//            system->setUpdatezd(false);
+//            if(formalism) system->setUpdatela(false);
+            system->plot();
+//            system->plotAtSpecialEvent();
+          }
+          getSystem()->resetUpToDate();
+          getSystem()->shift();
+          if(formalism>0) { // DAE2 or GGL
+            system->calcgdSize(3); // IH
+            system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
+            if(formalism==GGL) { // GGL
+              system->calcgSize(2); // IB
+              system->updategRef(system->getgParent()(0,system->getgSize()-1));
+            }
+          }
+          if(plotOnRoot) {
+            getSystem()->resetUpToDate();
+            getSystem()->plot();
+          }
           istate=1;
         }
-        else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
-          system->projectGeneralizedVelocities(3);
+        else {
+          // check drift
+          bool projVel = true;
+          if(gMax>=0) {
+            getSystem()->setTime(t);
+            getSystem()->resetUpToDate();
+            if(getSystem()->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+              getSystem()->projectGeneralizedPositions(3);
+              getSystem()->projectGeneralizedVelocities(3);
+              projVel = false;
+              istate=1;
+            }
+          }
+          if(gdMax>=0 and projVel) {
+            getSystem()->setTime(t);
+            getSystem()->resetUpToDate();
+            if(getSystem()->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+              getSystem()->projectGeneralizedVelocities(3);
+              istate=1;
+            }
+          }
+        }
+        if(istate==1) {
+          t = system->getTime();
           system->resetUpToDate();
           yd(0,system->getzSize()-1) = system->evalzd();
-          istate=1;
+          if(shift) {
+            svLast = system->evalsv();
+            calcSize();
+            neq[0] = N;
+            rWork(4) = dt0;
+          }
         }
       }
       else if(istate<0) throwError("Integrator LSODI failed with istate = "+to_string(istate));
@@ -236,6 +355,15 @@ namespace MBSimIntegrator {
     }
 
     odePackInUse = false;
+  }
+
+  void LSODIIntegrator::calcSize() {
+    if(formalism==DAE2)
+      N = system->getzSize()+system->getlaSize();
+    else if(formalism==GGL)
+      N = system->getzSize()+system->getgdSize()+system->getgSize();
+    else
+      N = system->getzSize();
   }
 
   void LSODIIntegrator::initializeUsingXML(DOMElement *element) {
