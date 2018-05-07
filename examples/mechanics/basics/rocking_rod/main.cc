@@ -21,6 +21,7 @@
 #include <mbsim/integrators/rksuite_integrator.h>
 #include <mbsim/integrators/rodas_integrator.h>
 #include <mbsim/integrators/seulex_integrator.h>
+#include <mbsim/integrators/phem56_integrator.h>
 #include <mbsim/integrators/theta_time_stepping_integrator.h>
 #include <mbsim/integrators/time_stepping_integrator.h>
 #include <mbsim/integrators/time_stepping_ssc_integrator.h>
@@ -35,29 +36,49 @@ class Integrate {
   public:
     template<typename Int>
     void operator()(Int& integrator);
+    template<typename Int>
+    void setDefaults(Int& integrator) { }
+    void setDefaults(RADAU5Integrator& integrator) {
+      integrator.setAbsoluteTolerance(1e-8);
+      integrator.setRelativeTolerance(1e-8);
+    }
+    void setDefaults(RADAUIntegrator& integrator) {
+      integrator.setAbsoluteTolerance(1e-8);
+      integrator.setRelativeTolerance(1e-8);
+    }
+    void setDefaults(RODASIntegrator& integrator) {
+      integrator.setInitialStepSize(1e-8);
+    }
+    void setDefaults(SEULEXIntegrator& integrator) {
+      integrator.setAbsoluteTolerance(1e-8);
+      integrator.setRelativeTolerance(1e-8);
+    }
+    void setDefaults(BoostOdeintDOS_Rosenbrock4& integrator) {
+      integrator.setAbsoluteTolerance(1e-8);
+      integrator.setRelativeTolerance(1e-8);
+    }
 };
 
-// commented out integrators do not work with this example using default
-// settings
-typedef boost::mpl::set12<
+typedef boost::mpl::set20<
    BoostOdeintDOS_RKDOPRI5,
-//   BoostOdeintDOS_BulirschStoer,
-//   BoostOdeintDOS_Rosenbrock4,
+   BoostOdeintDOS_BulirschStoer,
+   BoostOdeintDOS_Rosenbrock4,
    DASPKIntegrator,
    DOP853Integrator,
    DOPRI5Integrator,
-//   ExplicitEulerIntegrator,
-//   ImplicitEulerIntegrator,
+//   ExplicitEulerIntegrator, does not yet support non-smooth systems
+//   ImplicitEulerIntegrator, does not yet support non-smooth systems
    HETS2Integrator,
    LSODAIntegrator,
    LSODEIntegrator,
-//   LSODIIntegrator,
+   LSODIIntegrator,
    ODEXIntegrator,
-//   RADAU5Integrator,
-//   RADAUIntegrator,
+   RADAU5Integrator,
+   RADAUIntegrator,
    RKSuiteIntegrator,
-//   RODASIntegrator,
-//   SEULEXIntegrator,
+   RODASIntegrator,
+   SEULEXIntegrator,
+   PHEM56Integrator,
    ThetaTimeSteppingIntegrator,
    TimeSteppingIntegrator,
    TimeSteppingSSCIntegrator
@@ -104,6 +125,7 @@ void Integrate::operator()(Int& integrator) {
 
   cout << "integrate using "<<typeStr<<" = TS_"<<order<<endl;
 
+  setDefaults(integrator);
   integrator.setEndTime(tEnd);
   integrator.setPlotStepSize(dtPlot);
   integrator.setSystem(sys);
