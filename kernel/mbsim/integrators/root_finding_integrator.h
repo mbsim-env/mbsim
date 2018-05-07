@@ -53,7 +53,7 @@ namespace MBSimIntegrator {
     public:
 
       //! Define the root-finding accuracy
-      void setRootFindingAccuracy(bool dtRoot_) { dtRoot = dtRoot_; }
+      void setRootFindingAccuracy(double dtRoot_) { dtRoot = dtRoot_; }
 
       //! Define wether to trigger a plot before and after each found root.
       void setPlotOnRoot(bool b) { plotOnRoot = b; }

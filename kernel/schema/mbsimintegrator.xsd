@@ -75,7 +75,7 @@
                 Toleranz für Bindungsgleichungen auf Geschwindigkeitsebene.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="rootFindingAccuracy" type="pv:unknownScalar" minOccurs="0">
+          <xs:element name="rootFindingAccuracy" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Genauigkeit der Schaltpunktsuche.
             </xs:documentation></xs:annotation>
