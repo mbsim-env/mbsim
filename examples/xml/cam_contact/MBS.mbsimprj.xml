@@ -68,7 +68,7 @@
           <contours>
             <PlanarContour name="PlanarContour">
               <frameOfReference ref="../Frame[P1]"/>
-              <nodes>[0:2*pi/71:2*pi]'</nodes>
+              <nodes unit="-">[0,2*pi]'</nodes>
               <contourFunction>
                 <ContinuedFunction>
                   <function>
@@ -91,7 +91,7 @@
                 </ContinuedFunction>
               </contourFunction>
               <enableOpenMBV>
-                <nodes>[0:0.1:2*pi]'</nodes>
+                <nodes unit="-">[0:0.1:2*pi]'</nodes>
                 <filled>true</filled>
                 <transparency unit="-">0.3</transparency>
               </enableOpenMBV>
@@ -154,7 +154,13 @@
               <restitutionCoefficient unit="-">0</restitutionCoefficient>
             </UnilateralNewtonImpact>
           </normalImpactLaw>
-          <searchAllContactPoints>1</searchAllContactPoints>
+          <initialGuess>
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>pi/2</ele>
+              </row>
+            </xmlMatrix>
+          </initialGuess>
         </Contact>
       </links>
       <constraints/>
@@ -189,17 +195,15 @@
     </DynamicSystemSolver>
   </Embed>
 
-  <LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <LSODAIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
     <endTime unit="s">2</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
-    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
-    <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
-    <initialStepSize unit="s">1e-10</initialStepSize>
-    <maximumStepSize unit="s">1e-3</maximumStepSize>
     <toleranceForPositionConstraints>1e-5</toleranceForPositionConstraints>
     <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
-  </LSODARIntegrator>
-
+    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
+    <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
+    <maximumStepSize unit="s">1e-2</maximumStepSize>
+  </LSODAIntegrator>
 
 </MBSimProject>

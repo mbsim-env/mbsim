@@ -85,6 +85,7 @@
           <frames/>
           <contours>
             <SpatialContour name="SpatialContour3">
+              <thickness unit="m">1</thickness>
               <etaNodes unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0</ele>
@@ -162,15 +163,15 @@
     </DynamicSystemSolver>
   </Embed>
 
-  <LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <LSODAIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1.5</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
-    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
-    <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
-    <initialStepSize unit="s">1e-8</initialStepSize>
     <toleranceForPositionConstraints>1e-5</toleranceForPositionConstraints>
     <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
-  </LSODARIntegrator>
+    <absoluteToleranceScalar>1e-7</absoluteToleranceScalar>
+    <relativeToleranceScalar unit="-">1e-7</relativeToleranceScalar>
+    <initialStepSize unit="s">1e-8</initialStepSize>
+  </LSODAIntegrator>
 
 </MBSimProject>

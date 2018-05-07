@@ -37,32 +37,30 @@ class Integrate {
     void operator()(Int& integrator);
 };
 
-// commented out integrators do not work with this example
-typedef boost::mpl::set15<
-  BoostOdeintDOS_RKDOPRI5,
-//  BoostOdeintDOS_BulirschStoer,
-//  BoostOdeintDOS_Rosenbrock4,
-//  DASKRIntegrator,
-  DASPKIntegrator,
-  DOP853Integrator,
-  DOPRI5Integrator,
-  ExplicitEulerIntegrator,
-//  HETS2Integrator,
-  ImplicitEulerIntegrator,
-  LSODAIntegrator,
-//  LSODARIntegrator,
-  LSODEIntegrator,
-  LSODIIntegrator,
-  LSODKRIntegrator,
-  ODEXIntegrator,
-//  RADAU5Integrator,
-//  RADAUIntegrator,
-  RKSuiteIntegrator,
-//  RODASIntegrator,
-//  SEULEXIntegrator,
-  ThetaTimeSteppingIntegrator,
-  TimeSteppingIntegrator,
-  TimeSteppingSSCIntegrator
+// commented out integrators do not work with this example using default
+// settings
+typedef boost::mpl::set12<
+   BoostOdeintDOS_RKDOPRI5,
+//   BoostOdeintDOS_BulirschStoer,
+//   BoostOdeintDOS_Rosenbrock4,
+   DASPKIntegrator,
+   DOP853Integrator,
+   DOPRI5Integrator,
+//   ExplicitEulerIntegrator,
+//   ImplicitEulerIntegrator,
+   HETS2Integrator,
+   LSODAIntegrator,
+   LSODEIntegrator,
+//   LSODIIntegrator,
+   ODEXIntegrator,
+//   RADAU5Integrator,
+//   RADAUIntegrator,
+   RKSuiteIntegrator,
+//   RODASIntegrator,
+//   SEULEXIntegrator,
+   ThetaTimeSteppingIntegrator,
+   TimeSteppingIntegrator,
+   TimeSteppingSSCIntegrator
 > Integrators;
 
 int main (int argc, char* argv[]) {
@@ -71,7 +69,6 @@ int main (int argc, char* argv[]) {
   return 0;
 
 }
-
 
 template<typename Int>
 void Integrate::operator()(Int& integrator) {
@@ -96,6 +93,7 @@ void Integrate::operator()(Int& integrator) {
   System *sys = new System("TS_"+to_string(order));
 
   sys->initialize();
+  sys->setMessageStreamActive(fmatvec::Atom::Debug,true);
 
   sys->setProjectionTolerance(1e-15);
   sys->setGeneralizedRelativePositionTolerance(1e-6);

@@ -20,8 +20,7 @@ int main (int argc, char* argv[]) {
     sys->setGeneralizedRelativeAccelerationTolerance(1e-8);
     sys->initialize();
 
-    LSODARIntegrator integrator;
-    integrator.setPlotOnRoot(false);
+    LSODEIntegrator integrator;
     integrator.setInitialStepSize(1e-8);
 
     integrator.setEndTime(0.5);
