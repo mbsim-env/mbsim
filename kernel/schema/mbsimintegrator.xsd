@@ -954,6 +954,11 @@
               </ul>
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="excludeAlgebraicVariablesFromErrorTest" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Algebraische Variablen vom Fehlertest ausschließen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

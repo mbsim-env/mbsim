@@ -70,6 +70,8 @@ namespace MBSimIntegrator {
       int maxSteps{10000};
       /** formalism **/
       Formalism formalism{DAE2};
+      /** exclude algebraic variables from error test **/
+      bool excludeAlgebraicVariables{true};
 
       int N;
 
@@ -83,6 +85,7 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
+      void setExcludeAlgebraicVariablesFromErrorTest(bool excludeAlgebraicVariables_) { excludeAlgebraicVariables = excludeAlgebraicVariables_; }
 
       using Integrator::integrate;
       void integrate();

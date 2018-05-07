@@ -139,6 +139,12 @@ namespace MBSimIntegrator {
     double t = tStart;
     double tPlot = min(tEnd, t+dtPlot);
 
+    if(excludeAlgebraicVariables) {
+      if(aTol.size() == 0)
+        aTol.resize(N,INIT,1e-6);
+      else if(aTol.size() == 1)
+        aTol.resize(N,INIT,aTol(0));
+    }
     if(aTol.size() == 0)
       aTol.resize(1,INIT,1e-6);
     if(rTol.size() == 0)
@@ -165,6 +171,8 @@ namespace MBSimIntegrator {
       if(rTol.size() != N)
         throwError("(LSODIIntegrator::integrate): size of rTol does not match, must be " + to_string(N));
     }
+
+    if(excludeAlgebraicVariables) aTol(system->getzSize(),N-1).init(1e15);
 
     int itask=2, iopt=1, istate=1;
     int lrWork = 2*(22+9*N+N*N);
@@ -386,6 +394,8 @@ namespace MBSimIntegrator {
       else if(formalismStr=="GGL") formalism=GGL;
       else formalism=unknown;
     }
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"excludeAlgebraicVariablesFromErrorTest");
+    if(e) setExcludeAlgebraicVariablesFromErrorTest(E(e)->getText<bool>());
   }
 
 }
