@@ -174,7 +174,7 @@ namespace MBSimIntegrator {
           }
         }
 
-        while(tRoot >= tPlot and tPlot<=tEnd) {
+        while(tRoot>=tPlot and tPlot<=tEnd+epsroot) {
           if(curTimeAndState != tPlot) {
             curTimeAndState = tPlot;
             DINTDY (&tPlot, &zero, &rWork(20), neq, system->getState()(), &iflag);
@@ -258,7 +258,7 @@ namespace MBSimIntegrator {
   }
 
   void LSODAIntegrator::initializeUsingXML(DOMElement *element) {
-    Integrator::initializeUsingXML(element);
+    RootFindingIntegrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());

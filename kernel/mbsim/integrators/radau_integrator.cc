@@ -419,7 +419,7 @@ namespace MBSimIntegrator {
   }
 
   void RADAUIntegrator::initializeUsingXML(DOMElement *element) {
-    Integrator::initializeUsingXML(element);
+    RootFindingIntegrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());

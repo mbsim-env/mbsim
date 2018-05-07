@@ -448,7 +448,7 @@ namespace MBSimIntegrator {
 
   template<typename DOS>
   void BoostOdeintDOS<DOS>::initializeUsingXML(xercesc::DOMElement *element) {
-    Integrator::initializeUsingXML(element);
+    RootFindingIntegrator::initializeUsingXML(element);
     xercesc::DOMElement *e;
 
     InitializeUsingXMLControlled<isControlled, decltype(this)>::call(this, element);

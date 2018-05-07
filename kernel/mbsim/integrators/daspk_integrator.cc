@@ -259,7 +259,7 @@ namespace MBSimIntegrator {
               jsv(i)=svLast(i)*sv(i)<0;
           }
         }
-        while(tRoot >= tPlot and tPlot<=tEnd) {
+        while(tRoot>=tPlot and tPlot<=tEnd+epsroot) {
           if(curTimeAndState != tPlot) {
             curTimeAndState = tPlot;
             DDATRP(&t, &tPlot, system->getState()(), yd(), &neq, &iWork(7), &work(lphi), &work(38));
@@ -374,7 +374,7 @@ namespace MBSimIntegrator {
   }
 
   void DASPKIntegrator::initializeUsingXML(DOMElement *element) {
-    Integrator::initializeUsingXML(element);
+    RootFindingIntegrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());

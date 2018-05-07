@@ -268,7 +268,7 @@ namespace MBSimIntegrator {
   }
 
   void RKSuiteIntegrator::initializeUsingXML(DOMElement *element) {
-    Integrator::initializeUsingXML(element);
+    RootFindingIntegrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
     if(e) {
