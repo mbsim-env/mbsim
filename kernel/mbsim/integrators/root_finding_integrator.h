@@ -64,6 +64,12 @@ namespace MBSimIntegrator {
       //! Set the maximum allowed velocity drift.
       void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
+      //! Get the maximum allowed position drift.
+      double getToleranceForPositionConstraints() { return gMax; }
+
+      //! Get the maximum allowed velocity drift.
+      double getToleranceForVelocityConstraints() { return gdMax; }
+
       virtual void initializeUsingXML(xercesc::DOMElement *element);
   };
 

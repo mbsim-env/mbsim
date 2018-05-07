@@ -79,18 +79,12 @@ namespace MBSimIntegrator {
       /** reduced form **/
       bool reduced{false};
 
-      fmatvec::Vec svLast;
-      bool shift{false};
-
       int neq, mlJac, muJac;
       fmatvec::VecInt iWork;
       fmatvec::Vec work;
 
     public:
       ~RADAUIntegrator() override = default;
-
-      double getToleranceForPositionConstraints() { return gMax; }
-      double getToleranceForVelocityConstraints() { return gdMax; }
 
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
       void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }

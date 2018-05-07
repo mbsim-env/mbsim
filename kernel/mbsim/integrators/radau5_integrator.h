@@ -86,9 +86,6 @@ namespace MBSimIntegrator {
     public:
       ~RADAU5Integrator() override = default;
 
-      double getToleranceForPositionConstraints() { return gMax; }
-      double getToleranceForVelocityConstraints() { return gdMax; }
-
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
       void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
       void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol = rTol_; }

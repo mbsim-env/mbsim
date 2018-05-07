@@ -91,8 +91,6 @@ namespace MBSimIntegrator {
 
       const fmatvec::Vec& getAbsoluteTolerance() const { return aTol; }
       const fmatvec::Vec& getRelativeTolerance() const { return rTol; }
-      double getToleranceForPositionConstraints() { return gMax; }
-      double getToleranceForVelocityConstraints() { return gdMax; }
 
       using Integrator::integrate;
       void integrate() override;
