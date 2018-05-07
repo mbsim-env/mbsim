@@ -23,20 +23,18 @@
 #ifndef _DOPRI5_INTEGRATOR_H_
 #define _DOPRI5_INTEGRATOR_H_
 
-#include "integrator.h"
+#include "root_finding_integrator.h"
 
 namespace MBSimIntegrator {
 
   /** \brief ODE-Integrator DOPRI5
   */
-  class DOPRI5Integrator : public Integrator {
+  class DOPRI5Integrator : public RootFindingIntegrator {
 
     private:
 
       static void fzdot(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t,double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn);
-
-      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
 
       double tPlot{0};
       double dtOut{0};
@@ -54,16 +52,6 @@ namespace MBSimIntegrator {
       int maxSteps{2000000000};
       /** maximale step size */
       double dtMax{0};
-
-      bool plotOnRoot{false};
-
-       /** tolerance for position constraints */
-      double gMax{-1};
-      /** tolerance for velocity constraints */
-      double gdMax{-1};
-
-      fmatvec::Vec svLast;
-      bool shift{false};
 
     public:
 
@@ -85,11 +73,6 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
-
-      void setPlotOnRoot(bool b) { plotOnRoot = b; }
-
-      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
-      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
       void integrate() override;

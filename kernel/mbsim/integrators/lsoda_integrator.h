@@ -23,7 +23,7 @@
 #ifndef _LSODA_INTEGRATOR_H_
 #define _LSODA_INTEGRATOR_H_
 
-#include "integrator.h"
+#include "root_finding_integrator.h"
 
 namespace MBSimIntegrator {
 
@@ -37,13 +37,11 @@ namespace MBSimIntegrator {
    * nonstiff systems of first-order ODE's.
    * This integrator uses ODEPACK (http://www.netlib.org/odepack).
    */
-  class LSODAIntegrator : public Integrator {
+  class LSODAIntegrator : public RootFindingIntegrator {
 
     private:
 
       static void fzdot(int* neq, double* t, double* z_, double* zd_);
-
-      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
 
       /** maximal step size */
       double dtMax{0};
@@ -58,16 +56,6 @@ namespace MBSimIntegrator {
       /**  maximum number of steps allowed during one call to the solver. (default 10000) */
       int maxSteps{10000};
 
-      bool plotOnRoot{false};
-
-       /** tolerance for position constraints */
-      double gMax{-1};
-      /** tolerance for velocity constraints */
-      double gdMax{-1};
-
-      fmatvec::Vec svLast;
-      bool shift{false};
-
     public:
 
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
@@ -78,11 +66,6 @@ namespace MBSimIntegrator {
       void setRelativeTolerance(double rTol_) { rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
-
-      void setPlotOnRoot(bool b) { plotOnRoot = b; }
-
-      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
-      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
       void integrate();

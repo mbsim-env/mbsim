@@ -100,13 +100,6 @@ namespace MBSimIntegrator {
       delta(0,self->system->getqSize()-1) += self->system->evalW()*y(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1);
   }
 
-  bool DASPKIntegrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
-    for(int i=0; i<svStepEnd.size(); i++)
-      if(svLast(i)*svStepEnd(i)<0)
-        return true;
-    return false;
-  }
-
   void DASPKIntegrator::integrate() {
     if(formalism==unknown)
       throwError("(DASPKIntegrator::integrate): formalism unknown");
@@ -244,7 +237,7 @@ namespace MBSimIntegrator {
           double dt = work(6);
           if(shift) {
             // ... search the first root and set step.second to this time
-            while(dt>1e-10) {
+            while(dt>dtRoot) {
               dt/=2;
               double tCheck = tRoot-dt;
               curTimeAndState = tCheck;
@@ -406,12 +399,6 @@ namespace MBSimIntegrator {
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"excludeAlgebraicVariablesFromErrorTest");
     if(e) setExcludeAlgebraicVariablesFromErrorTest(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
-    if(e) setPlotOnRoot(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
-    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
-    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
 }

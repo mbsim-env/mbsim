@@ -23,14 +23,14 @@
 #ifndef _PHEM56_INTEGRATOR_H_
 #define _PHEM56_INTEGRATOR_H_
 
-#include "integrator.h"
+#include "root_finding_integrator.h"
 
 namespace MBSimIntegrator {
 
   /** \brief DAE-Integrator PHEM56
   */
 
-  class PHEM56Integrator : public Integrator {
+  class PHEM56Integrator : public RootFindingIntegrator {
 
     public:
 
@@ -44,8 +44,6 @@ namespace MBSimIntegrator {
 
       static void fprob(int* ifcn, int* nq, int* nv, int* nu, int* nl, int* nzg, int* nzf, int* lrda, int* nblk, int* nmrc, int* npgp, int* npfl, int* indgr, int* indgc, int* indflr, int* indflc,  double* t, double* p, double* v, double* u, double* xl, double* g, double* gp, double* f, double* gpp, double* gt, double* fl, double* qdot, double* udot, double* am);
       static void solout(int* nr, int* nq, int* nv, int* nu, int* nl, int* lrdo, double* q, double* v, double* u, double* a, double* rlam, double* dowk, int* irtrn);
-
-      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
 
       double tPlot{0};
       double dtOut{0};
@@ -74,16 +72,6 @@ namespace MBSimIntegrator {
       /** maximale step size */
       double dtMax{0};
 
-      bool plotOnRoot{false};
-
-       /** tolerance for position constraints */
-      double gMax{-1};
-      /** tolerance for velocity constraints */
-      double gdMax{-1};
-
-      fmatvec::Vec svLast;
-      bool shift{false};
-
     public:
 
       ~PHEM56Integrator() override = default;
@@ -100,9 +88,6 @@ namespace MBSimIntegrator {
       void setInitialProjection(bool initialProjection_) { initialProjection = initialProjection_; }
       void setNumberOfStepsBetweenProjections(int numberOfStepsBetweenProjections_) { numberOfStepsBetweenProjections = numberOfStepsBetweenProjections_; }
       void setProjectOntoIndex1ConstraintManifold(bool projectOntoIndex1ConstraintManifold_) { projectOntoIndex1ConstraintManifold = projectOntoIndex1ConstraintManifold_; }
-      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
-      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
-      void setPlotOnRoot(bool b) { plotOnRoot = b; }
 
       const fmatvec::Vec& getAbsoluteTolerance() const { return aTol; }
       const fmatvec::Vec& getRelativeTolerance() const { return rTol; }

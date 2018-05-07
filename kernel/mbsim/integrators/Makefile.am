@@ -1,5 +1,6 @@
 noinst_LTLIBRARIES = libintegrators.la
 libintegrators_la_SOURCES = integrator.cc\
+			    root_finding_integrator.cc \
 			    lsode_integrator.cc \
 			    lsoda_integrator.cc \
 			    lsodar_integrator.cc \
@@ -48,6 +49,7 @@ libintegrators_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 integratorsincludedir = $(includedir)/mbsim/integrators
 
 integratorsinclude_HEADERS = integrator.h \
+			     root_finding_integrator.h \
 			     integrators.h \
 			     lsode_integrator.h \
 			     lsoda_integrator.h \

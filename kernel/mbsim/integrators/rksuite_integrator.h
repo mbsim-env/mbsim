@@ -20,7 +20,7 @@
 #ifndef _RKSUITE_INTEGRATOR_H_
 #define _RKSUITE_INTEGRATOR_H_
 
-#include "integrator.h"
+#include "root_finding_integrator.h"
 
 namespace MBSimIntegrator {
 
@@ -28,7 +28,7 @@ namespace MBSimIntegrator {
    *
    * This integrator uses RKSUITE (http://www.netlib.org/ode/rksuite).
    */
-  class RKSuiteIntegrator : public Integrator {
+  class RKSuiteIntegrator : public RootFindingIntegrator {
     public:
       enum Method {
         RK23=1,
@@ -52,11 +52,6 @@ namespace MBSimIntegrator {
       void setThreshold(const fmatvec::Vec &thres_) { thres = thres_; }
       void setThreshold(double thres_) { thres = fmatvec::Vec(1,fmatvec::INIT,thres_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
-
-      void setPlotOnRoot(bool b) { plotOnRoot = b; }
-
-      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
-      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF INTEGRATOR */
@@ -69,8 +64,6 @@ namespace MBSimIntegrator {
 
       static void fzdot(double* t, double* z_, double* zd_);
 
-      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
-
       int zSize;
       static RKSuiteIntegrator *selfStatic;
 
@@ -82,16 +75,6 @@ namespace MBSimIntegrator {
       double rTol{1e-6};
       /** initial step size */
       double dt0{0};
-
-      bool plotOnRoot{false};
-
-       /** tolerance for position constraints */
-      double gMax{-1};
-      /** tolerance for velocity constraints */
-      double gdMax{-1};
-
-      fmatvec::Vec svLast;
-      bool shift{false};
 
       int lenwrk, messages{0}, integrationSteps{0}, lenint;
       double t{0}, tPlot{0}, s0{0}, time{0};

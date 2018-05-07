@@ -172,7 +172,7 @@ namespace MBSimIntegrator {
         if(self->shift) {
           // ... search the first root and set step.second to this time
           double dt = t-told;
-          while(dt>1e-10) {
+          while(dt>self->dtRoot) {
             dt/=2;
             double tCheck = tRoot-dt;
             self->getSystem()->setTime(tCheck);
@@ -273,13 +273,6 @@ namespace MBSimIntegrator {
         }
       }
     }
-  }
-
-  bool PHEM56Integrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
-    for(int i=0; i<svStepEnd.size(); i++)
-      if(svLast(i)*svStepEnd(i)<0)
-        return true;
-    return false;
   }
 
   void PHEM56Integrator::integrate() {
@@ -433,12 +426,6 @@ namespace MBSimIntegrator {
     if(e) setNumberOfStepsBetweenProjections(E(e)->getText<int>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"projectOntoIndex1ConstraintManifold");
     if(e) setProjectOntoIndex1ConstraintManifold(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
-    if(e) setPlotOnRoot(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
-    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
-    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
 }

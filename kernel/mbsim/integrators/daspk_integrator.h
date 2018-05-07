@@ -23,7 +23,7 @@
 #ifndef _DASPK_INTEGRATOR_H_
 #define _DASPK_INTEGRATOR_H_
 
-#include "integrator.h"
+#include "root_finding_integrator.h"
 
 namespace MBSimIntegrator {
 
@@ -31,7 +31,7 @@ namespace MBSimIntegrator {
    *
    * This integrator uses DASPK (http://www.netlib.org/ode).
    */
-  class DASPKIntegrator : public Integrator {
+  class DASPKIntegrator : public RootFindingIntegrator {
 
     public:
       enum Formalism {
@@ -50,8 +50,6 @@ namespace MBSimIntegrator {
       static void deltaDAE2(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
       static void deltaGGL(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
 
-      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
-
       void calcSize();
 
       /** maximal step size */
@@ -67,16 +65,6 @@ namespace MBSimIntegrator {
       /** exclude algebraic variables from error test **/
       bool excludeAlgebraicVariables{true};
 
-      bool plotOnRoot{false};
-
-       /** tolerance for position constraints */
-      double gMax{-1};
-      /** tolerance for velocity constraints */
-      double gdMax{-1};
-
-      fmatvec::Vec svLast;
-      bool shift{false};
-
       int neq;
 
     public:
@@ -88,11 +76,6 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
       void setExcludeAlgebraicVariablesFromErrorTest(bool excludeAlgebraicVariables_) { excludeAlgebraicVariables = excludeAlgebraicVariables_; }
-
-      void setPlotOnRoot(bool b) { plotOnRoot = b; }
-
-      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
-      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
       void integrate();

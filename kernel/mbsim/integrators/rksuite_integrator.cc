@@ -108,13 +108,6 @@ namespace MBSimIntegrator {
     time = 0;
   }
 
-  bool RKSuiteIntegrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
-    for(int i=0; i<svStepEnd.size(); i++)
-      if(svLast(i)*svStepEnd(i)<0)
-        return true;
-    return false;
-  }
-
   void RKSuiteIntegrator::subIntegrate(double tStop) {
 
     int result=0, errass=0;
@@ -148,7 +141,7 @@ namespace MBSimIntegrator {
           double dt = dtLast;
           if(shift) {
             // ... search the first root and set step.second to this time
-            while(dt>1e-10) {
+            while(dt>dtRoot) {
               dt/=2;
               double tCheck = tRoot-dt;
               curTimeAndState = tCheck;
@@ -293,12 +286,6 @@ namespace MBSimIntegrator {
     if(e) setThreshold(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepsize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
-    if(e) setPlotOnRoot(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
-    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
-    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
   void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {

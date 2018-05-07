@@ -23,13 +23,13 @@
 #ifndef _RADAU_INTEGRATOR_H_
 #define _RADAU_INTEGRATOR_H_
 
-#include "integrator.h"
+#include "root_finding_integrator.h"
 
 namespace MBSimIntegrator {
 
   /** \brief DAE-Integrator RADAU
   */
-  class RADAUIntegrator : public Integrator {
+  class RADAUIntegrator : public RootFindingIntegrator {
 
     public:
       enum Formalism {
@@ -55,8 +55,6 @@ namespace MBSimIntegrator {
       static void massReduced(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t, double* y, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
 
-      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
-
       void calcSize();
       void reinit();
 
@@ -81,13 +79,6 @@ namespace MBSimIntegrator {
       /** reduced form **/
       bool reduced{false};
 
-      bool plotOnRoot{false};
-
-       /** tolerance for position constraints */
-      double gMax{-1};
-      /** tolerance for velocity constraints */
-      double gdMax{-1};
-
       fmatvec::Vec svLast;
       bool shift{false};
 
@@ -110,11 +101,6 @@ namespace MBSimIntegrator {
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
       void setReducedForm(bool reduced_) { reduced = reduced_; }
-
-      void setPlotOnRoot(bool b) { plotOnRoot = b; }
-
-      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
-      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
       void integrate() override;

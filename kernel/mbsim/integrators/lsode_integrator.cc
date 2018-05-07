@@ -47,16 +47,8 @@ namespace MBSimIntegrator {
     auto self=*reinterpret_cast<LSODEIntegrator**>(&neq[1]);
     Vec zd(neq[0], zd_);
     self->getSystem()->setTime(*t);
-//    self->getSystem()->setState(Vec(neq[0], z_)); Not needed as the integrator uses the state of the system
     self->getSystem()->resetUpToDate();
     zd = self->getSystem()->evalzd();
-  }
-
-  bool LSODEIntegrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
-    for(int i=0; i<svStepEnd.size(); i++)
-      if(svLast(i)*svStepEnd(i)<0)
-        return true;
-    return false;
   }
 
   void LSODEIntegrator::integrate() {
@@ -128,7 +120,6 @@ namespace MBSimIntegrator {
     iWork(5) = maxSteps;
 
     system->setTime(t);
-//    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();
     system->computeInitialCondition();
     system->plot();
@@ -161,20 +152,18 @@ namespace MBSimIntegrator {
         if(getSystem()->getsvSize()) {
           getSystem()->setTime(t);
           curTimeAndState = t;
-//          getSystem()->setState(z);
           getSystem()->resetUpToDate();
           shift = signChangedWRTsvLast(getSystem()->evalsv());
           // if a root exists in the current step ...
           double dt = rWork(10);
           if(shift) {
             // ... search the first root and set step.second to this time
-            while(dt>1e-10) {
+            while(dt>dtRoot) {
               dt/=2;
               double tCheck = tRoot-dt;
               curTimeAndState = tCheck;
               DINTDY(&tCheck, &zero, &rWork(20), neq, system->getState()(), &iflag);
               getSystem()->setTime(tCheck);
-//              getSystem()->setState(zWant);
               getSystem()->resetUpToDate();
               if(signChangedWRTsvLast(getSystem()->evalsv()))
                 tRoot = tCheck;
@@ -183,7 +172,6 @@ namespace MBSimIntegrator {
               curTimeAndState = tRoot;
               DINTDY(&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
               getSystem()->setTime(tRoot);
-//              getSystem()->setState(zWant);
             }
             getSystem()->resetUpToDate();
             auto &sv = getSystem()->evalsv();
@@ -198,7 +186,6 @@ namespace MBSimIntegrator {
             curTimeAndState = tPlot;
             DINTDY(&tPlot, &zero, &rWork(20), neq, system->getState()(), &iflag);
             getSystem()->setTime(tPlot);
-//            getSystem()->setState(zWant);
           }
           getSystem()->resetUpToDate();
           getSystem()->plot();
@@ -218,7 +205,6 @@ namespace MBSimIntegrator {
           if(curTimeAndState != tRoot) {
             DINTDY(&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
             getSystem()->setTime(tRoot);
-//            getSystem()->setState(zWant);
           }
           if(plotOnRoot) {
             getSystem()->resetUpToDate();
@@ -237,7 +223,6 @@ namespace MBSimIntegrator {
           bool projVel = true;
           if(gMax>=0) {
             getSystem()->setTime(t);
-//            getSystem()->setState(z);
             getSystem()->resetUpToDate();
             if(getSystem()->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
               getSystem()->projectGeneralizedPositions(3);
@@ -248,7 +233,6 @@ namespace MBSimIntegrator {
           }
           if(gdMax>=0 and projVel) {
             getSystem()->setTime(t);
-//            getSystem()->setState(z);
             getSystem()->resetUpToDate();
             if(getSystem()->velocityDriftCompensationNeeded(gdMax)) { // project velicities
               getSystem()->projectGeneralizedVelocities(3);
@@ -306,12 +290,6 @@ namespace MBSimIntegrator {
     if(e) setMinimumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
-    if(e) setPlotOnRoot(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
-    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
-    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
 }

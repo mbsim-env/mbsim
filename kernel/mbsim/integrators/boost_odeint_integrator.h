@@ -18,7 +18,7 @@
 #ifndef _BOOST_ODEINT_INTEGRATOR_H_
 #define _BOOST_ODEINT_INTEGRATOR_H_
 
-#include "integrator.h"
+#include "root_finding_integrator.h"
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
 #include <boost/numeric/odeint/util/is_resizeable.hpp>
@@ -100,7 +100,7 @@ namespace MBSimIntegrator {
   //! - DOS(double aTol, double rTol, double dtMax) must be a valid constructor
   //! - DOS(double aTol, double rTol) must be a valid constructor (just required to support boost version < 1.60, may be removed later)
   template<typename DOS>
-  class BoostOdeintDOS : public Integrator {
+  class BoostOdeintDOS : public RootFindingIntegrator {
     protected:
       // flag if the underlaying stepper is controlled
       static constexpr bool isControlled{std::is_base_of<boost::numeric::odeint::controlled_stepper_tag,
@@ -131,20 +131,8 @@ namespace MBSimIntegrator {
       template<typename H=DOS, typename=EnableIfControlled<H>>
       void setMaximumStepSize(double dtMax_) { dtMax=dtMax_; }
 
-      //! Define wether to trigger a plot before and after each found root.
-      void setPlotOnRoot(double plotOnRoot_) { plotOnRoot=plotOnRoot_; }
-
-      //! Set the maximum allowed position drift.
-      void setToleranceForPositionConstraints(double gMax_) {gMax = gMax_;}
-
-      //! Set the maximum allowed velocity drift.
-      void setToleranceForVelocityConstraints(double gdMax_) {gdMax = gdMax_;}
-
       void initializeUsingXML(xercesc::DOMElement *element) override;
     protected:
-      // Helper function to check if svLast and svStepEnd has a sign change in any element.
-      inline bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
-
       // boost odeint style member function calculating zd
       void zd(const typename DOS::state_type &z, typename DOS::state_type &zd, const double t);
       // boost odeint style member function calculating the jacobian
@@ -171,13 +159,9 @@ namespace MBSimIntegrator {
       double aTol{1e-6};
       double rTol{1e-6};
       double dtMax{0.1};
-      bool plotOnRoot{false};
-      double gMax{-1};
-      double gdMax{-1};
 
       // internal variables
       double tPlot;
-      fmatvec::Vec svLast;
       typename DOS::state_type zTemp;
 
       // internal variables required for the numerical jacobian calculation
@@ -299,12 +283,12 @@ namespace MBSimIntegrator {
       BoostOdeintHelper::assign(system->getState(), dos->current_state());
       system->resetUpToDate();
       nrSVs++;
-      auto shift=signChangedWRTsvLast(system->evalsv());
+      shift=signChangedWRTsvLast(system->evalsv());
       // if a root exists in the current step ...
       if(shift) {
         // ... search the first root and set step.second to this time
         double dt=step.second-step.first;
-        while(dt>1e-10) {
+        while(dt>dtRoot) {
           dt/=2;
           double tRoot=step.second-dt;
           dos->calc_state(tRoot, zTemp);
@@ -420,14 +404,6 @@ namespace MBSimIntegrator {
     msg(Info)<<"nrDriftCorr = "<<nrDriftCorr<<std::endl;
   }
 
-  template<typename DOS>
-  bool BoostOdeintDOS<DOS>::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
-    for(int i=0; i<svStepEnd.size(); i++)
-      if(svLast(i)*svStepEnd(i)<0)
-        return true;
-    return false;
-  }
-
   namespace {
     // declaration
     template<bool, typename Self>
@@ -479,15 +455,6 @@ namespace MBSimIntegrator {
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if(e) setInitialStepSize(MBXMLUtils::E(e)->getText<double>());
-
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
-    if(e) setPlotOnRoot(MBXMLUtils::E(e)->getText<bool>());
-
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
-    if(e) setToleranceForPositionConstraints(MBXMLUtils::E(e)->getText<double>());
-
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
-    if(e) setToleranceForVelocityConstraints(MBXMLUtils::E(e)->getText<double>());
   }
 
 }
