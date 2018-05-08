@@ -318,13 +318,12 @@
     </DynamicSystemSolver>
   </Embed>
 
-  <DASKRIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <DASPKIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
     <endTime unit="s">2.0</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
     <initialStepSize unit="s">1e-8</initialStepSize>
     <formalism>'GGL'</formalism>
-    <plotOnRoot>false</plotOnRoot>
-  </DASKRIntegrator>
+  </DASPKIntegrator>
 
 </MBSimProject>

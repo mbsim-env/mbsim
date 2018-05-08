@@ -15,9 +15,7 @@ int main (int argc, char* argv[])
   bool eventDriven = false;
 
   if(eventDriven) { // Event driven time integration
-    LSODARIntegrator integrator;
-    integrator.setInitialStepSize(1e-13);
-    integrator.setPlotOnRoot(false);
+    LSODEIntegrator integrator;
     integrator.setPlotStepSize(1e-2);
     integrator.setEndTime(2);
     double tol = 1e-4;

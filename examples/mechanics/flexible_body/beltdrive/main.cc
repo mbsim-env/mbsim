@@ -39,10 +39,10 @@ int main (int argc, char* argv[]) {
 //              static_cast<ThetaTimeSteppingIntegrator*>(integrator)->setTheta(1.0);
             }
             break;
-            //LSODARIntegrator integrator;
+            //LSODEIntegrator integrator;
     case 2: {
-              integrator = new LSODARIntegrator();
-              //static_cast<LSODARIntegrator*>(integrator)->setStepSize(5.0e-4);
+              integrator = new LSODEIntegrator();
+              //static_cast<LSODEIntegrator*>(integrator)->setStepSize(5.0e-4);
             }
             break;
   }

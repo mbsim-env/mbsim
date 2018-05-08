@@ -3,7 +3,6 @@
 #include <boost/mpl/for_each.hpp>
 #include <boost/mpl/order.hpp>
 #include <mbsim/integrators/boost_odeint_integrator_predef.h>
-#include <mbsim/integrators/daskr_integrator.h>
 #include <mbsim/integrators/daspk_integrator.h>
 #include <mbsim/integrators/dop853_integrator.h>
 #include <mbsim/integrators/dopri5_integrator.h>
@@ -11,10 +10,8 @@
 #include <mbsim/integrators/hets2_integrator.h>
 #include <mbsim/integrators/implicit_euler_integrator.h>
 #include <mbsim/integrators/lsoda_integrator.h>
-#include <mbsim/integrators/lsodar_integrator.h>
 #include <mbsim/integrators/lsode_integrator.h>
 #include <mbsim/integrators/lsodi_integrator.h>
-#include <mbsim/integrators/lsodkr_integrator.h>
 #include <mbsim/integrators/odex_integrator.h>
 #include <mbsim/integrators/radau5_integrator.h>
 #include <mbsim/integrators/radau_integrator.h>

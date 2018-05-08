@@ -324,16 +324,10 @@ namespace MBSimGUI {
       return new LSODEIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"LSODAIntegrator")
       return new LSODAIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"LSODARIntegrator")
-      return new LSODARIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"LSODKRIntegrator")
-      return new LSODKRIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"LSODIIntegrator")
       return new LSODIIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"DASPKIntegrator")
       return new DASPKIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"DASKRIntegrator")
-      return new DASKRIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"TimeSteppingIntegrator")
       return new TimeSteppingIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"ThetaTimeSteppingIntegrator")

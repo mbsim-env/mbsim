@@ -12,28 +12,10 @@ void DLSODE(void(*)(int*,double*,double*,double*),int*,double*,double*,
             double*,int*,double*,double*,int*,int*,int*,double*,int*,
             int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),int*);
 
-#define DINTDY FC_FUNC(mbsim_dintdy,MBSIM_DINTDY)
-void DINTDY(double*,int*,double*,int*,double*,int*);
-
 #define DLSODA FC_FUNC(dlsoda,DLSODA)
 void DLSODA(void(*)(int*,double*,double*,double*),int*,double*,double*,
             double*,int*,double*,double*,int*,int*,int*,double*,int*,
             int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),int*);
-
-#define DLSODAR FC_FUNC(dlsodar,DLSODAR)
-void DLSODAR(void(*)(int*,double*,double*,double*),int*,double*,double*,
-            double*,int*,double*,double*,int*,int*,int*,double*,int*,
-            int*,int*,void(*)(int*,double*,double*,int*,int*,double*,int*),
-            int*,void(*)(int*,double*,double*,int*,double*),int*,int*);
-
-#define DLSODKR FC_FUNC(dlsodkr,DLSODKR)
-void DLSODKR(void(*)(int*,double*,double*,double*),int*,double*,double*,
-             double*,int*,double*,double*,int*,int*,int*,double*,int*,
-             int*,int*,void(*)(void(*)(int*,double*,double*,double*),int*,
-             double*,double*,double*,double*,double*,double*,double*,int*,
-             double*,int*,int*),void(*)(int*,double*,double*,double*,double*,
-             double*,double*,int*,double*,int*,int*),int*,
-             void(*)(int*,double*,double*,int*,double*),int*,int*);
 
 #define DLSODI FC_FUNC(dlsodi,DLSODI)
 void DLSODI(void(*)(int*,double*,double*,double*,double*,int*),
@@ -42,15 +24,16 @@ void DLSODI(void(*)(int*,double*,double*,double*,double*,int*),
             double*,double*,double*,double*,int*,double*,double*,int*,
             int*,int*,double*,int*,int*,int*,int*);
 
+#define DINTDY FC_FUNC(mbsim_dintdy,MBSIM_DINTDY)
+void DINTDY(double*,int*,double*,int*,double*,int*);
+
 #define SETUP FC_FUNC(setup,SETUP)
 void SETUP(int*,double*,double*,double*,double*,double*,int*,char*,int*,
            double*,double*,int*,int*);
 
-#define UT FC_FUNC(ut,UT)
-void UT(void(*)(double*,double*,double*),double*,double*,double*,double*,
-        double*,double*,int*,double*);
 #define CT FC_FUNC(ct,CT)
 void CT(void(*)(double*,double*,double*),double*,double*,double*,double*,int*,double*);
+
 #define INTRP FC_FUNC(intrp,INTRP)
 void INTRP(double*,char*,int*,double*,double*,void(*)(double*,double*,double*),double*,double*,int*);
 
@@ -128,14 +111,6 @@ void DDASPK(void(*)(double*,double*,double*,double*,double*,int*,double*,int*),i
 
 #define DDATRP FC_FUNC(ddatrp,DDATRP)
 void DDATRP(double*,double*,double*,double*,int*,int*,double*,double*);
-
-#define DDASKR FC_FUNC(ddaskr,DDASKR)
-void DDASKR(void(*)(double*,double*,double*,double*,double*,int*,double*,int*),int*,double*,
-            double*,double*,double*,int*,double*,double*,int*,double*,int*,
-            int*,int*,double*,int*,void(*)(double*,double*,double*,double*,double*,double*,int*),
-            void(*)(int*,double*,double*,double*,double*,double*,double*,double*,
-            double*,int*,double*,double*,int*,double*,double*),
-            void(*)(int*,double*,double*,double*,int*,double*,double*,int*),int*,int*);
 
 #define PHEM56 FC_FUNC(phem56,PHEM56)
 void PHEM56(int*,int*,int*,int*,void(*)(int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,

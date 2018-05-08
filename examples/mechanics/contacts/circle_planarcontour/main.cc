@@ -28,12 +28,13 @@ int main (int argc, char* argv[]) {
     sys->setGeneralizedImpulseTolerance(1e-6);
     sys->setGeneralizedRelativeAccelerationTolerance(1e-8);
     sys->setGeneralizedForceTolerance(1e-8);
-    integrator = new LSODARIntegrator;
-    static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
-    static_cast<LSODARIntegrator*>(integrator)->setMaximumStepSize(1e-3);
-    static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-10);
-    static_cast<LSODARIntegrator*>(integrator)->setToleranceForPositionConstraints(1e-5);
-    static_cast<LSODARIntegrator*>(integrator)->setToleranceForVelocityConstraints(1e-5);
+    integrator = new LSODEIntegrator;
+    static_cast<LSODEIntegrator*>(integrator)->setMaximumStepSize(1e-2);
+    static_cast<LSODEIntegrator*>(integrator)->setInitialStepSize(1e-10);
+    static_cast<LSODEIntegrator*>(integrator)->setAbsoluteTolerance(1e-7);
+    static_cast<LSODEIntegrator*>(integrator)->setRelativeTolerance(1e-7);
+    static_cast<LSODEIntegrator*>(integrator)->setToleranceForPositionConstraints(1e-5);
+    static_cast<LSODEIntegrator*>(integrator)->setToleranceForVelocityConstraints(1e-5);
   }
   else { // time stepping integration
     double dt = 1e-4;
@@ -51,7 +52,7 @@ int main (int argc, char* argv[]) {
   start=clock();
   integrator->integrate(*sys);
   end=clock();
-  cout << "Integration Time TimeStepping: " << double(end - start)/CLOCKS_PER_SEC << " s." << endl;
+  cout << "Integration time: " << double(end - start)/CLOCKS_PER_SEC << " s." << endl;
 
   delete sys;
   delete integrator;

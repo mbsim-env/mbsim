@@ -161,26 +161,6 @@ namespace MBSimGUI {
       ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps, *gMax, *gdMax;
   };
 
-  class LSODARIntegratorPropertyDialog : public IntegratorPropertyDialog {
-
-    public:
-      LSODARIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps, *plotOnRoot, *gMax, *gdMax;
-  };
-
-  class LSODKRIntegratorPropertyDialog : public IntegratorPropertyDialog {
-
-    public:
-      LSODKRIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      ExtWidget *method, *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps, *plotOnRoot, *gMax, *gdMax;
-  };
-
   class LSODIIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
@@ -199,16 +179,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *formalism, *gMax, *gdMax;
-  };
-
-  class DASKRIntegratorPropertyDialog : public IntegratorPropertyDialog {
-
-    public:
-      DASKRIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *formalism, *plotOnRoot, *gMax, *gdMax;
   };
 
   class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {

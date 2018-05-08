@@ -97,18 +97,6 @@ namespace MBSimGUI {
       IntegratorPropertyDialog* createPropertyDialog() override { return new LSODAIntegratorPropertyDialog(this); }
   };
 
-  class LSODARIntegrator : public Integrator {
-    public:
-      QString getType() const override { return "LSODARIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new LSODARIntegratorPropertyDialog(this); }
-  };
-
-  class LSODKRIntegrator : public Integrator {
-    public:
-      QString getType() const override { return "LSODKRIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new LSODKRIntegratorPropertyDialog(this); }
-  };
-
   class LSODIIntegrator : public Integrator {
     public:
       QString getType() const override { return "LSODIIntegrator"; }
@@ -119,12 +107,6 @@ namespace MBSimGUI {
     public:
       QString getType() const override { return "DASPKIntegrator"; }
       IntegratorPropertyDialog* createPropertyDialog() override { return new DASPKIntegratorPropertyDialog(this); }
-  };
-
-  class DASKRIntegrator : public Integrator {
-    public:
-      QString getType() const override { return "DASKRIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new DASKRIntegratorPropertyDialog(this); }
   };
 
   class TimeSteppingIntegrator : public Integrator {

@@ -29,7 +29,7 @@ int main (int argc, char* argv[]) {
 //              static_cast<ThetaTimeSteppingIntegrator*>(integrator)->setStepSize(5.0e-4);
             }
             break;
-            //LSODARIntegrator integrator;
+            //LSODEIntegrator integrator;
   }
 
   //integrator.setTheta(0.5);

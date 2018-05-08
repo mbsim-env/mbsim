@@ -55,6 +55,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   camContour->setContourFunction(funcCamContour);
   camContour->setFrameOfReference(cam->getFrame("P"));
   camContour->setNodes(searchpoints);
+  camContour->setThickness(1);
   cam->addContour(camContour);
   camContour->enableOpenMBV();
 
