@@ -137,7 +137,7 @@ namespace MBSimIntegrator {
       system->evalz0();
 
     double t = tStart;
-    double tPlot = min(tEnd, t+dtPlot);
+    double tPlot = t + dtPlot;
 
     if(excludeAlgebraicVariables) {
       if(aTol.size() == 0)

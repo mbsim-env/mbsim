@@ -117,7 +117,7 @@ namespace MBSimIntegrator {
       throwError("(DASPKIntegrator::integrate): dimension of the system must be at least 1");
 
     double t = tStart;
-    double tPlot = min(tEnd,t + dtPlot);
+    double tPlot = t + dtPlot;
 
     // Enlarge workspace for state vector so that the integrator can use it (avoids copying of state vector)
     system->resizezParent(neq);

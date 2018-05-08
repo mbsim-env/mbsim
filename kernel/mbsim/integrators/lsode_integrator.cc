@@ -80,7 +80,7 @@ namespace MBSimIntegrator {
       system->evalz0();
 
     double t = tStart;
-    double tPlot = min(tEnd, t+dtPlot);
+    double tPlot = t + dtPlot;
 
     if(aTol.size() == 0)
       aTol.resize(1,INIT,1e-6);
