@@ -106,11 +106,6 @@ namespace MBSimIntegrator {
        */
       double s0{0.}, time{0.};
 
-      /**
-       * \brief file stream for integration information
-       */
-      std::ofstream integPlot;
-
       fmatvec::Vec bc;
   };
 

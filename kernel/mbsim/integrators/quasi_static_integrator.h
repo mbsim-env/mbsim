@@ -196,14 +196,8 @@ namespace MBSimIntegrator {
        * \brief state, position, velocity, order coordinate of dynamical system
        */
       fmatvec::Vec z, q, u, x;
-
-      /**
-       * \brief file stream for integration information
-       */
-      std::ofstream integPlot;
   };
 
 }
 
 #endif /* _QUASI_STATIC_INTEGRATOR_H_ */
-

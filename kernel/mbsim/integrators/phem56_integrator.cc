@@ -25,7 +25,6 @@
 #include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
 #include "phem56_integrator.h"
-#include <fstream>
 #include <ctime>
 
 #ifndef NO_ISO_14882
@@ -216,7 +215,6 @@ namespace MBSimIntegrator {
         self->time += (s1-self->s0)/CLOCKS_PER_SEC;
         self->s0 = s1; 
 
-        if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << t-told << " " << self->time << endl;
         self->tPlot += self->dtOut;
       }
 
@@ -360,10 +358,6 @@ namespace MBSimIntegrator {
     tPlot = t + dtPlot;
     dtOut = dtPlot;
 
-    if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-
-    cout.setf(ios::scientific, ios::floatfield);
-
     s0 = clock();
 
     while(t<tEnd-epsroot) {
@@ -378,20 +372,6 @@ namespace MBSimIntegrator {
       t = system->getTime();
       z = system->getState();
     }
-
-    if(plotIntegrationData) integPlot.close();
-
-    if(writeIntegrationSummary) {
-      ofstream integSum((name + ".sum").c_str());
-      integSum.precision(8);
-      integSum << "Integration time: " << time << endl;
-      integSum << "Simulation time: " << t << endl;
-      //integSum << "Integration steps: " << integrationSteps << endl;
-      integSum.close();
-    }
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
   }
 
   void PHEM56Integrator::initializeUsingXML(DOMElement *element) {

@@ -54,7 +54,6 @@ namespace MBSimIntegrator {
 
       double tPlot{0};
       double dtOut{0};
-      std::ofstream integPlot;
       double s0; 
       double time{0}; 
 

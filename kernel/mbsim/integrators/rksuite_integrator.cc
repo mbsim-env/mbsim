@@ -100,9 +100,6 @@ namespace MBSimIntegrator {
     svLast = system->evalsv();
 
     tPlot = t + dtPlot;
-    if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-
-    integrationSteps = 0;
 
     s0 = clock();
     time = 0;
@@ -182,7 +179,6 @@ namespace MBSimIntegrator {
           time += (s1-s0)/CLOCKS_PER_SEC;
           s0 = s1;
 
-          if(plotIntegrationData) integPlot<< tPlot << " " << dtLast << " " << time << endl;
           tPlot += dtPlot;
         }
 
@@ -232,9 +228,6 @@ namespace MBSimIntegrator {
           }
         }
         if(restart) {
-//          cout << "t = " << t << endl;
-          cout << "tSys = " << system->getTime() << endl;
-//          cout << "tStop = " << tStop << endl;
           t = system->getTime();
           z = system->getState();
           SETUP(&zSize, &t, z(), &tStop, &rTol, thres(), &method_, &taskStr,
@@ -249,15 +242,6 @@ namespace MBSimIntegrator {
   }
 
   void RKSuiteIntegrator::postIntegrate() {
-    if(plotIntegrationData) integPlot.close();
-
-    if(writeIntegrationSummary) {
-      ofstream integSum((name + ".sum").c_str());
-      integSum << "Integration time: " << time << endl;
-      integSum << "Integration steps: " << integrationSteps << endl;
-      integSum.close();
-    }
-
     selfStatic = nullptr;
   }
 

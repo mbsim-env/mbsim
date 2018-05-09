@@ -26,7 +26,6 @@
 #include "fortran/fortran_wrapper.h"
 #include "radau5_integrator.h"
 #include <ctime>
-#include <fstream>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -190,7 +189,6 @@ namespace MBSimIntegrator {
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
       self->s0 = s1;
 
-      if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
     }
 
@@ -338,14 +336,6 @@ namespace MBSimIntegrator {
     calcSize();
     reinit();
 
-    if(plotIntegrationData) {
-      integPlot.open((name + ".plt").c_str());
-
-      integPlot << "#1 t [s]:" << endl;
-      integPlot << "#1 dt [s]:" << endl;
-      integPlot << "#1 calculation time [s]:" << endl;
-    }
-
     s0 = clock();
 
     while(t<tEnd-epsroot) {
@@ -368,15 +358,6 @@ namespace MBSimIntegrator {
       z = system->getState();
       if(formalism)
         y(system->getzSize(),neq-1).init(0);
-    }
-
-    if(plotIntegrationData) integPlot.close();
-
-    if(writeIntegrationSummary) {
-      ofstream integSum((name + ".sum").c_str());
-      integSum << "Integration time: " << time << endl;
-      //integSum << "Integration steps: " << integrationSteps << endl;
-      integSum.close();
     }
   }
 

@@ -25,7 +25,6 @@
 #include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
 #include "daspk_integrator.h"
-#include <fstream>
 #include <time.h>
 
 #ifndef NO_ISO_14882
@@ -211,16 +210,7 @@ namespace MBSimIntegrator {
 
     double s0 = clock();
     double time = 0;
-    int integrationSteps = 0;
     int lphi = excludeAlgebraicVariables?50+4*neq:50+3*neq;
-
-    ofstream integPlot;
-    if(plotIntegrationData) {
-      integPlot.open((name + ".plt").c_str());
-      integPlot << "#1 t [s]:" << endl;
-      integPlot << "#1 dt [s]:" << endl;
-      integPlot << "#1 calculation time [s]:" << endl;
-    }
 
     while(t<tEnd-epsroot) {
       DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tEnd,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,&rPar,iPar,nullptr,nullptr);
@@ -277,7 +267,6 @@ namespace MBSimIntegrator {
           time += (s1-s0)/CLOCKS_PER_SEC;
           s0 = s1;
 
-          if(plotIntegrationData) integPlot<< tPlot << " " << work(6) << " " << time << endl;
           tPlot += dtPlot;
         }
 
@@ -351,16 +340,6 @@ namespace MBSimIntegrator {
         }
       }
       else if(idid<0) throwError("Integrator DASPK failed with istate = "+to_string(idid));
-    }
-
-    if(plotIntegrationData) integPlot.close();
-
-    if(writeIntegrationSummary) {
-      ofstream integSum((name + ".sum").c_str());
-      integSum << "Integration time: " << time << endl;
-      integSum << "Simulation time: " << t << endl;
-      integSum << "Integration steps: " << integrationSteps << endl;
-      integSum.close();
     }
   }
 

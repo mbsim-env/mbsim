@@ -50,7 +50,6 @@ namespace MBSimIntegrator {
       system->evalz0();
 
     tPlot = 0.;
-    if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
     
     stepPlot =(int) (dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
@@ -72,7 +71,6 @@ namespace MBSimIntegrator {
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;
-        if(plotIntegrationData) integPlot<< system->getTime() << " " << dt << " " << time << endl;
         if(msgAct(Status)) msg(Status) << "   t = " << system->getTime() << ",\tdt = "<< dt << flush;
         tPlot += dtPlot;
       }
@@ -84,14 +82,6 @@ namespace MBSimIntegrator {
   }
 
   void ExplicitEulerIntegrator::postIntegrate() {
-    if(plotIntegrationData) integPlot.close();
-
-    if(writeIntegrationSummary) {
-      ofstream integSum((name + ".sum").c_str());
-      integSum << "Integration time: " << time << endl;
-      integSum << "Integration steps: " << integrationSteps << endl;
-      integSum.close();
-    }
   }
 
   void ExplicitEulerIntegrator::integrate() {

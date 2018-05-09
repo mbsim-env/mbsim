@@ -165,17 +165,6 @@ namespace MBSimIntegrator {
     if (dtPlot<=0) FlagPlotEveryStep = true;
     else FlagPlotEveryStep = false;
 
-    if(plotIntegrationData) {
-      integPlot.open((name + ".plt").c_str());
-      integPlot << "#1 t [s]:" << endl; 
-      integPlot << "#2 dt [s]:" << endl;
-      integPlot << "#3 order :" << endl; 
-      integPlot << "#4 iter  :" << endl;      
-      integPlot << "#5 laSize:" << endl;
-      integPlot << "#6 active contacts: " << endl;
-      integPlot << "#7 calculation time [s]:" << endl;
-    }
-
     if(z0.size()) {
       if(z0.size() != zSize)
         throwError("(TimeSteppingSSCIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
@@ -894,53 +883,12 @@ namespace MBSimIntegrator {
       }
     }
 
-    if(plotIntegrationData) {
-      time += Timer.stop();
-      integPlot<< t << " " << dtOld << " " <<order << " " << iter << " " << sysT1->getlaSize()  << " "<<AnzahlAktiverKontakte<<" "<<time  <<endl;
-    }
     if (msgAct(Status) and (not FlagOutputOnlyAtTPlot or (FlagOutputOnlyAtTPlot and FlagtPlot) ))
         msg(Status) << "   t = " << t << ",\tdt = " << dtOld << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << ",\torder = " << order << flush;
   }
 
   void TimeSteppingSSCIntegrator::postIntegrate() {           // system: only dummy!
     time += Timer.stop();
-    if(plotIntegrationData) integPlot.close();
-    if(writeIntegrationSummary) {
-      int maxStepsPerThread = singleStepsT1;
-      if (maxStepsPerThread<singleStepsT2) maxStepsPerThread = singleStepsT2;
-      if (maxStepsPerThread<singleStepsT3) maxStepsPerThread = singleStepsT3;
-      ofstream integSum((name + ".sum").c_str());
-      integSum << "Integration time:   " << time << endl;
-      integSum << "Integration steps:  " << integrationSteps << endl;
-      integSum << "Evaluations MBS:    " << (singleStepsT1+singleStepsT2+singleStepsT3)<<"   (max/Thread: "<<maxStepsPerThread<<")"<<endl;
-      integSum << "Steps with events: " << integrationStepswithChange<< endl;
-      if (maxOrder>=2) {
-        integSum<<"Integration steps order 1: "<<integrationStepsOrder1<<endl;
-        integSum<<"Integration steps order "<<maxOrder<<": "<<integrationStepsOrder2<<endl;
-      }
-      if (FlagSSC){
-        integSum << "Refused steps: " << refusedSteps << endl;
-        integSum << "Refused steps with events: " << refusedStepsWithImpact << endl;
-        integSum << "Maximum step size: " << maxdtUsed << endl;
-        integSum << "Minimum step size: " << mindtUsed << endl;
-        integSum << "Average step size: " << (t-tStart)/integrationSteps << endl;
-      }
-      if (FlagGapControl) {
-        if (GapControlStrategy>0) {
-          integSum << "Steps accepted after GapControl  :"<<stepsOkAfterGapControl<<endl;
-          integSum << "Steps refused after GapControl   :"<<stepsRefusedAfterGapControl<<endl;
-          integSum << "No impact after GapControl alert :"<<wrongAlertGapControl<<endl;
-        }
-        integSum << "Average Penetration  (arithm.)     :"<<Penetration/PenetrationCounter<<endl;
-        integSum << "Average Penetration  (geom.)       :"<<exp(PenetrationLog/PenetrationCounter)<<endl;
-        integSum << "PenetrationCounter "<<PenetrationCounter<<endl;
-        integSum << "Penetration Min    "<<PenetrationMin<<endl;
-        integSum << "Penetration Max    "<<PenetrationMax<<endl;
-      }
-      integSum << "Maximum number of iterations: " << maxIterUsed << endl;
-      integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
-      integSum.close();
-    }   
     int maxStepsPerThread = singleStepsT1;
     if (maxStepsPerThread<singleStepsT2) maxStepsPerThread = singleStepsT2;
     if (maxStepsPerThread<singleStepsT3) maxStepsPerThread = singleStepsT3;
@@ -1273,12 +1221,6 @@ namespace MBSimIntegrator {
         PenetrationCounter+=1.0;
         if(gUniActive(i)>PenetrationMin) PenetrationMin=gUniActive(i);
         if(gUniActive(i)<PenetrationMax) PenetrationMax=gUniActive(i);
-      }
-    }
-    if (testOK && plotIntegrationData) {
-      AnzahlAktiverKontakte=0;
-      for(int i=0; i<LSe.size();i++) {
-        if(LSe(i)>=2) AnzahlAktiverKontakte++;
       }
     }
     return testOK;

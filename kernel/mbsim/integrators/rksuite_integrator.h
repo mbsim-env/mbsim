@@ -81,8 +81,6 @@ namespace MBSimIntegrator {
       double *work{nullptr};
       double *workint{nullptr};
       fmatvec::Vec z, zd, zMax, zWant, zdWant;
-
-      std::ofstream integPlot;
   };
 
 }

@@ -56,7 +56,6 @@ namespace MBSimIntegrator {
       int iter, step, integrationSteps;
       double s0, time;
       int stepPlot;
-      std::ofstream integPlot;
   };
 
 }

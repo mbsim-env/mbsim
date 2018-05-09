@@ -25,7 +25,6 @@
 #include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
 #include "lsodi_integrator.h"
-#include <fstream>
 #include <time.h>
 
 #ifndef NO_ISO_14882
@@ -204,15 +203,6 @@ namespace MBSimIntegrator {
 
     double s0 = clock();
     double time = 0;
-    int integrationSteps = 0;
-
-    ofstream integPlot;
-    if(plotIntegrationData) {
-      integPlot.open((name + ".plt").c_str());
-      integPlot << "#1 t [s]:" << endl;
-      integPlot << "#1 dt [s]:" << endl;
-      integPlot << "#1 calculation time [s]:" << endl;
-    }
 
     int MF = 22;
 
@@ -274,7 +264,6 @@ namespace MBSimIntegrator {
           time += (s1-s0)/CLOCKS_PER_SEC;
           s0 = s1;
 
-          if(plotIntegrationData) integPlot<< tPlot << " " << rWork(10) << " " << time << endl;
           tPlot += dtPlot;
         }
 
@@ -343,16 +332,6 @@ namespace MBSimIntegrator {
         }
       }
       else if(istate<0) throwError("Integrator LSODI failed with istate = "+to_string(istate));
-    }
-
-    if(plotIntegrationData) integPlot.close();
-
-    if(writeIntegrationSummary) {
-      ofstream integSum((name + ".sum").c_str());
-      integSum << "Integration time: " << time << endl;
-      integSum << "Simulation time: " << t << endl;
-      integSum << "Integration steps: " << integrationSteps << endl;
-      integSum.close();
     }
 
     odePackInUse = false;

@@ -140,8 +140,6 @@ namespace MBSimIntegrator {
       double maxGainSSC{2.2};
       /** safety factor for stepsize estimation: dt = dt_estimate * safetyFactorSSC (]0;1]; default 0.6)*/
       double safetyFactorSSC{0.7};
-      /** filestream for integrator info at each step */
-      std::ofstream integPlot;
       /** Flag: write output info to cout only for plot-time-instances (default false)*/
       bool FlagOutputOnlyAtTPlot{false};
       /** every successful integration step is ploted (set dtPlot=0 to activate FlagPlotEveryStep) (default false)*/

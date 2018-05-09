@@ -25,7 +25,6 @@
 #include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
 #include "dopri5_integrator.h"
-#include <fstream>
 #include <ctime>
 
 #ifndef NO_ISO_14882
@@ -107,7 +106,6 @@ namespace MBSimIntegrator {
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
       self->s0 = s1;
 
-      if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
     }
 
@@ -220,8 +218,6 @@ namespace MBSimIntegrator {
     system->plot();
     svLast = system->evalsv();
 
-    if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-
     s0 = clock();
 
     while(t<tEnd-epsroot) {
@@ -235,17 +231,6 @@ namespace MBSimIntegrator {
       }
       t = system->getTime();
       z = system->getState();
-    }
-
-    if(plotIntegrationData) integPlot.close();
-
-    if(writeIntegrationSummary) {
-      ofstream integSum((name + ".sum").c_str());
-      integSum.precision(8);
-      integSum << "Integration time: " << time << endl;
-      integSum << "Simulation time: " << t << endl;
-      //integSum << "Integration steps: " << integrationSteps << endl;
-      integSum.close();
     }
   }
 

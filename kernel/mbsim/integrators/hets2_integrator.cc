@@ -20,18 +20,11 @@
 #include <config.h>
 #include "hets2_integrator.h"
 #include <mbsim/dynamic_system_solver.h>
-
 #include <ctime>
-#include <boost/iostreams/tee.hpp>
-#include <boost/iostreams/stream.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
 #endif
-
-namespace bio = boost::iostreams;
-using bio::tee_device;
-using bio::stream;
 
 using namespace fmatvec;
 using namespace MBSim;
@@ -61,12 +54,6 @@ namespace MBSimIntegrator {
     system->setUseOldla(false);
     system->setGeneralizedForceTolerance(1e-10/dt); // adaptation from impulse
     system->setGeneralizedRelativeAccelerationTolerance(1e-10/dt); // as we use local velocities to express accelerations within solveConstraints
-
-    // prepare plotting
-    if(plotIntegrationData) {
-      integPlot.open((name + ".plt").c_str());
-      integPlot << "time" << " " << "time step-size" << " " <<  "constraint iterations" << " " << "calculation time" << " " << "size of constraint system" << endl;
-    }
 
     assert(fabs(((int) (dtPlot/dt + 0.5))*dt - dtPlot) < dt*dt);
 
@@ -102,7 +89,6 @@ namespace MBSimIntegrator {
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        if(plotIntegrationData) integPlot << system->getTime() << " " << dtInfo << " " <<  system->getIterC() << " " << time << " "<< system->getlaSize() << endl;
         if(msgAct(Status)) msg(Status) << "   t = " << system->getTime() << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << system->getIterC() << flush;
         tPlot += dtPlot;
       }
@@ -176,27 +162,16 @@ namespace MBSimIntegrator {
   }
 
   void HETS2Integrator::postIntegrate() {
-    if(plotIntegrationData) integPlot.close();
-
-    if(writeIntegrationSummary) {
-      typedef tee_device<ostream, ofstream> TeeDevice;
-      typedef stream<TeeDevice> TeeStream;
-      ofstream integSum((name + ".sum").c_str());
-      TeeDevice hets2_tee(msg(Info), integSum);
-      TeeStream hets2_split(hets2_tee);
-
-      hets2_split << endl << endl << "******************************" << endl;
-      hets2_split << "INTEGRATION SUMMARY: " << endl;
-      hets2_split << "End time [s]: " << tEnd << endl;
-      hets2_split << "Integration time [s]: " << time << endl;
-      hets2_split << "Integration steps: " << integrationSteps << endl;
-      hets2_split << "Fraction of impulsive integration steps: " << double(integrationStepsImpact)/integrationSteps << endl;
-      hets2_split << "Maximum number of iterations: " << maxIter << endl;
-      hets2_split << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
-      hets2_split << "******************************" << endl;
-      hets2_split.flush();
-      hets2_split.close();
-    }
+    msg(Info) << endl << endl << "******************************" << endl;
+    msg(Info) << "INTEGRATION SUMMARY: " << endl;
+    msg(Info) << "End time [s]: " << tEnd << endl;
+    msg(Info) << "Integration time [s]: " << time << endl;
+    msg(Info) << "Integration steps: " << integrationSteps << endl;
+    msg(Info) << "Fraction of impulsive integration steps: " << double(integrationStepsImpact)/integrationSteps << endl;
+    msg(Info) << "Maximum number of iterations: " << maxIter << endl;
+    msg(Info) << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
+    msg(Info) << "******************************" << endl;
+    msg(Info).flush();
   }
 
   void HETS2Integrator::integrate() {
