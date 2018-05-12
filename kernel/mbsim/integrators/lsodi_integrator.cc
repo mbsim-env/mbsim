@@ -141,8 +141,10 @@ namespace MBSimIntegrator {
     if(excludeAlgebraicVariables) {
       if(aTol.size() == 0)
         aTol.resize(N,INIT,1e-6);
-      else if(aTol.size() == 1)
-        aTol.resize(N,INIT,aTol(0));
+      else if(aTol.size() == 1) {
+        double aTol_ = aTol(0);
+        aTol.resize(N,INIT,aTol_);
+      }
     }
     if(aTol.size() == 0)
       aTol.resize(1,INIT,1e-6);
