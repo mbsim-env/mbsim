@@ -1265,6 +1265,20 @@ namespace MBSim {
       (*i).setGeneralizedImpulseTolerance(tol);
   }
 
+  void DynamicSystem::setGeneralizedRelativePositionCorrectionValue(double corr) {
+    for (auto & i : dynamicsystem)
+      (*i).setGeneralizedRelativePositionCorrectionValue(corr);
+    for (auto & i : link)
+      (*i).setGeneralizedRelativePositionCorrectionValue(corr);
+  }
+
+  void DynamicSystem::setGeneralizedRelativeVelocityCorrectionValue(double corr) {
+    for (auto & i : dynamicsystem)
+      (*i).setGeneralizedRelativeVelocityCorrectionValue(corr);
+    for (auto & i : link)
+      (*i).setGeneralizedRelativeVelocityCorrectionValue(corr);
+  }
+
   void DynamicSystem::setrMax(double rMax) {
     for (auto & i : dynamicsystem)
       (*i).setrMax(rMax);

@@ -679,6 +679,10 @@
           </xs:element>
           <xs:element name="generalizedImpulseTolerance" type="pv:nounitScalar" minOccurs="0">
           </xs:element>
+          <xs:element name="generalizedRelativePositionCorrectionValue" type="pv:nounitScalar" minOccurs="0">
+          </xs:element>
+          <xs:element name="generalizedRelativeVelocityCorrectionValue" type="pv:nounitScalar" minOccurs="0">
+          </xs:element>
           <xs:element name="inverseKinetics" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Definiert, ob Gelenkreaktionen berechnet werden sollen.

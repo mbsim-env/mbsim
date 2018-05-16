@@ -328,6 +328,8 @@ namespace MBSim {
       virtual void setGeneralizedRelativePositionTolerance(double tol) { gTol = tol; }
       virtual void setGeneralizedRelativeVelocityTolerance(double tol) { gdTol = tol; }
       virtual void setGeneralizedRelativeAccelerationTolerance(double tol) { gddTol = tol; }
+      virtual void setGeneralizedRelativePositionCorrectionValue(double corr) { gCorr = corr; }
+      virtual void setGeneralizedRelativeVelocityCorrectionValue(double corr) { gdCorr = corr; }
       virtual void setrMax(double rMax_) { rMax = rMax_; }
       virtual void setLinkStatusInd(int LinkStatusInd_) { LinkStatusInd = LinkStatusInd_; };
       virtual void setLinkStatusRegInd(int LinkStatusRegInd_) { LinkStatusRegInd = LinkStatusRegInd_; };
@@ -497,7 +499,7 @@ namespace MBSim {
        int LinkStatusRegSize, LinkStatusRegInd; 
 
       /**
-       * \brief relative distance, relative velocity, contact force parameters
+       * \brief relative position, relative velocity, contact force and impact parameters
        */
       fmatvec::Vec g, gd, la, La;
       
@@ -532,9 +534,14 @@ namespace MBSim {
       fmatvec::RangeV Ig, Ila;
       
       /**
-       * \brief tolerance for relative velocity, relative acceleration, force and impact  
+       * \brief tolerance for relative position, relative velocity, relative acceleration, force and impact
        */
       double gTol, gdTol, gddTol, laTol, LaTol;
+
+      /**
+       * \brief correction factor for relative position and relative velocity
+       */
+      double gCorr, gdCorr;
       
       /**
        * \brief attribute to save contact force parameter of previous time step

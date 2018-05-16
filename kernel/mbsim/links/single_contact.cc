@@ -1169,7 +1169,7 @@ namespace MBSim {
         if (gdActive[normal])
           corr(0) = 0; // Contact stays closed, regular projection
         else
-          corr(0) = 1e-14; // Contact opens, projection to positive normal distance
+          corr(0) = gCorr; // Contact opens, projection to positive normal distance
       }
     }
     else if (j == 2) {
@@ -1177,7 +1177,7 @@ namespace MBSim {
         if (gddActive[normal])
           corr(0) = 0; // Contact stays closed, regular projection
         else
-          corr(0) = 1e-14; // Contact opens, projection to positive normal distance
+          corr(0) = gCorr; // Contact opens, projection to positive normal distance
       }
     }
     else if (j == 4) {
@@ -1189,7 +1189,7 @@ namespace MBSim {
         if (gddActive[normal])
           corr(0) = 0; // Contact stays closed, regular projection
         else
-          corr(0) = 1e-16; // Contact opens, projection to positive normal distance
+          corr(0) = gdCorr; // Contact opens, projection to positive normal velocity
         if (getFrictionDirections()) {
           if (gdActive[tangential]) { // Contact was sticking
             if (gddActive[tangential]) {
@@ -1198,9 +1198,9 @@ namespace MBSim {
                 corr(2) = 0; // Contact stays sticking, regular projection
             }
             else {
-              corr(1) = gddT(0) > 0 ? 1e-16 : -1e-16; // Contact slides, projection to positive normal velocity
+              corr(1) = gddT(0) > 0 ? gdCorr : -gdCorr; // Contact slides, projection to valid tangential velocity
               if (getFrictionDirections() > 1)
-                corr(2) = gddT(1) > 0 ? 1e-16 : -1e-16; // Contact slides, projection to positive normal velocity
+                corr(2) = gddT(1) > 0 ? gdCorr : -gdCorr; // Contact slides, projection to valid tangential velocity
             }
           }
         }

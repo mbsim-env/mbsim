@@ -961,20 +961,26 @@ namespace MBSimGUI {
     projection = new ExtWidget("Projection tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");
     addToTab("Solver parameters", projection);
 
-    g = new ExtWidget("Generalized relative position tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionTolerance");
-    addToTab("Solver parameters", g);
+    gTol = new ExtWidget("Generalized relative position tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionTolerance");
+    addToTab("Solver parameters", gTol);
 
-    gd = new ExtWidget("Generalized relative velocity tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityTolerance");
-    addToTab("Solver parameters", gd);
+    gdTol = new ExtWidget("Generalized relative velocity tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityTolerance");
+    addToTab("Solver parameters", gdTol);
 
-    gdd = new ExtWidget("Generalized relative acceleration tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeAccelerationTolerance");
-    addToTab("Solver parameters", gdd);
+    gddTol = new ExtWidget("Generalized relative acceleration tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeAccelerationTolerance");
+    addToTab("Solver parameters", gddTol);
 
-    la = new ExtWidget("Generalized force tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedForceTolerance");
-    addToTab("Solver parameters", la);
+    laTol = new ExtWidget("Generalized force tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedForceTolerance");
+    addToTab("Solver parameters", laTol);
 
-    La = new ExtWidget("Generalized impulse tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedImpulseTolerance");
-    addToTab("Solver parameters", La);
+    LaTol = new ExtWidget("Generalized impulse tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedImpulseTolerance");
+    addToTab("Solver parameters", LaTol);
+
+    gCorr = new ExtWidget("Generalized relative position correction value",new ChoiceWidget2(new ScalarWidgetFactory("1e-14"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionCorrectionValue");
+    addToTab("Solver parameters", gCorr);
+
+    gdCorr = new ExtWidget("Generalized relative velocity correction value",new ChoiceWidget2(new ScalarWidgetFactory("1e-16"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityCorrectionValue");
+    addToTab("Solver parameters", gdCorr);
 
     inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inverseKinetics");
     addToTab("Extra", inverseKinetics);
@@ -995,11 +1001,13 @@ namespace MBSimGUI {
     numericalJacobian->initializeUsingXML(item->getXMLElement());
     linearAlgebra->initializeUsingXML(item->getXMLElement());
     projection->initializeUsingXML(item->getXMLElement());
-    g->initializeUsingXML(item->getXMLElement());
-    gd->initializeUsingXML(item->getXMLElement());
-    gdd->initializeUsingXML(item->getXMLElement());
-    la->initializeUsingXML(item->getXMLElement());
-    La->initializeUsingXML(item->getXMLElement());
+    gTol->initializeUsingXML(item->getXMLElement());
+    gdTol->initializeUsingXML(item->getXMLElement());
+    gddTol->initializeUsingXML(item->getXMLElement());
+    laTol->initializeUsingXML(item->getXMLElement());
+    LaTol->initializeUsingXML(item->getXMLElement());
+    gCorr->initializeUsingXML(item->getXMLElement());
+    gdCorr->initializeUsingXML(item->getXMLElement());
     inverseKinetics->initializeUsingXML(item->getXMLElement());
     initialProjection->initializeUsingXML(item->getXMLElement());
     useConstraintSolverForPlot->initializeUsingXML(item->getXMLElement());
@@ -1015,11 +1023,13 @@ namespace MBSimGUI {
     numericalJacobian->writeXMLFile(item->getXMLElement());
     linearAlgebra->writeXMLFile(item->getXMLElement());
     projection->writeXMLFile(item->getXMLElement());
-    g->writeXMLFile(item->getXMLElement());
-    gd->writeXMLFile(item->getXMLElement());
-    gdd->writeXMLFile(item->getXMLElement());
-    la->writeXMLFile(item->getXMLElement());
-    La->writeXMLFile(item->getXMLElement());
+    gTol->writeXMLFile(item->getXMLElement());
+    gdTol->writeXMLFile(item->getXMLElement());
+    gddTol->writeXMLFile(item->getXMLElement());
+    laTol->writeXMLFile(item->getXMLElement());
+    LaTol->writeXMLFile(item->getXMLElement());
+    gCorr->writeXMLFile(item->getXMLElement());
+    gdCorr->writeXMLFile(item->getXMLElement());
     inverseKinetics->writeXMLFile(item->getXMLElement());
     initialProjection->writeXMLFile(item->getXMLElement());
     useConstraintSolverForPlot->writeXMLFile(item->getXMLElement());

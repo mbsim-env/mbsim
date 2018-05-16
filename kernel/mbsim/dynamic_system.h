@@ -627,7 +627,7 @@ namespace MBSim {
       void checkActiveReg(int j);
 
       /**
-       * \param tolerance for relative velocity
+       * \param tolerance for relative position
        */
       virtual void setGeneralizedRelativePositionTolerance(double tol);
 
@@ -650,6 +650,15 @@ namespace MBSim {
        * \param tolerance for impact
        */
       virtual void setGeneralizedImpulseTolerance(double tol);
+
+      /** \param correction value for relative position
+       */
+      virtual void setGeneralizedRelativePositionCorrectionValue(double corr);
+
+      /**
+       * \param correction value for relative velocity
+       */
+      virtual void setGeneralizedRelativeVelocityCorrectionValue(double corr);
 
       /**
        * \param maximum relaxation factor for contact equations
