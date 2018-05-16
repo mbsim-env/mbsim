@@ -222,13 +222,8 @@ namespace MBSim {
     if (gActive) {
       sv(0) = evalgddN() - gddTol;
       if (gdActive[tangential]) {
-        if (getFrictionDirections()) {
+        if (getFrictionDirections())
           sv(1) = nrm2(gddT) - gddTol;
-          if (sv(1) > 0) {
-            gddNBuf = gddN;
-            gddTBuf = gddT;
-          }
-        }
       }
       else if(fdf and fdf->isSetValued()) {
         if (getFrictionDirections() == 1)
@@ -527,8 +522,6 @@ namespace MBSim {
       gddT.resize(getFrictionDirections());
       gdnN.resize(1);
       gdnT.resize(getFrictionDirections());
-      gddNBuf.resize(1);
-      gddTBuf.resize(getFrictionDirections());
 
       if (getFrictionDirections() == 0)
         gdActive[tangential] = false;
@@ -1181,10 +1174,6 @@ namespace MBSim {
       }
     }
     else if (j == 4) {
-      if (rootID == 1) {
-        gddN = gddNBuf;
-        gddT = gddTBuf;
-      }
       if (gActive && gdActive[normal]) { // Contact was closed
         if (gddActive[normal])
           corr(0) = 0; // Contact stays closed, regular projection
