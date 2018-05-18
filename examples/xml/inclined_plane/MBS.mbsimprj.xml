@@ -244,16 +244,13 @@
     </DynamicSystemSolver>
   </Embed>
 
-  <LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <LSODAIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
     <endTime unit="s">9.5</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
     <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
     <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
-    <initialStepSize unit="s">1e-8</initialStepSize>
     <maximumStepSize unit="s">1e-2</maximumStepSize>
-    <minimumStepSize unit="s">0</minimumStepSize>
-    <plotOnRoot>0</plotOnRoot>
-  </LSODARIntegrator>
+  </LSODAIntegrator>
 
 </MBSimProject>

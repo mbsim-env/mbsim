@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
 
     contact.getContourFrame(inode)->setEta(node);
 
-    contact.getContourFrame(inode)->setPosition(extrusion->evalPosition(contact.getContourFrame(inode)->getZeta()));
+    contact.getContourFrame(inode)->setPosition(extrusion->evalPosition(contact.getContourFrame(inode)->getZeta(false)));
 
     const Vec3 WrD = contact.getContourFrame(inode)->getPosition(false) - circle->getFrame()->evalPosition();
     
@@ -78,10 +78,10 @@ namespace MBSimFlexibleBody {
     contact.getContourFrame(icircle)->setPosition(circle->getFrame()->getPosition() + contact.getContourFrame(icircle)->getOrientation(false).col(0)*circle->getRadius());
 
     contact.getContourFrame(inode)->setXi(contact.getContourFrame(inode)->getOrientation(false).col(2).T() * WrD); // get contact parameter of second tangential direction
-    contact.getContourFrame(inode)->getPosition(false) += contact.getContourFrame(inode)->getXi() * contact.getContourFrame(inode)->getOrientation(false).col(2);
+    contact.getContourFrame(inode)->getPosition(false) += contact.getContourFrame(inode)->getXi(false) * contact.getContourFrame(inode)->getOrientation(false).col(2);
 
     double g;
-    if(extrusion->isZetaOutside(contact.getContourFrame(inode)->getZeta()))
+    if(extrusion->isZetaOutside(contact.getContourFrame(inode)->getZeta(false)))
       g = 1;
     else
       g = contact.getContourFrame(inode)->getOrientation(false).col(0).T() * (contact.getContourFrame(icircle)->getPosition(false) - contact.getContourFrame(inode)->getPosition(false));
@@ -128,22 +128,22 @@ namespace MBSimFlexibleBody {
 
       contact.getContourFrame(inode)->setEta(result(0,0));
 
-      contact.getContourFrame(inode)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(inode)->getZeta()));
-      contact.getContourFrame(inode)->getOrientation(false).set(1, extrusion->evalWu(contact.getContourFrame(inode)->getZeta()));
-      contact.getContourFrame(inode)->getOrientation(false).set(2, extrusion->evalWv(contact.getContourFrame(inode)->getZeta()));
+      contact.getContourFrame(inode)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(inode)->getZeta(false)));
+      contact.getContourFrame(inode)->getOrientation(false).set(1, extrusion->evalWu(contact.getContourFrame(inode)->getZeta(false)));
+      contact.getContourFrame(inode)->getOrientation(false).set(2, extrusion->evalWv(contact.getContourFrame(inode)->getZeta(false)));
       contact.getContourFrame(icircle)->getOrientation(false).set(0, -contact.getContourFrame(inode)->getOrientation(false).col(0));
       contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
       contact.getContourFrame(icircle)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(2),contact.getContourFrame(icircle)->getOrientation(false).col(0)));
 
-      contact.getContourFrame(inode)->setPosition(extrusion->evalPosition(contact.getContourFrame(inode)->getZeta()));
+      contact.getContourFrame(inode)->setPosition(extrusion->evalPosition(contact.getContourFrame(inode)->getZeta(false)));
       contact.getContourFrame(icircle)->setPosition(circle->getFrame()->evalPosition()+circle->getRadius()*contact.getContourFrame(icircle)->getOrientation(false).col(0));
 
       Vec Wd = circle->getFrame()->evalPosition() - contact.getContourFrame(inode)->getPosition(false);
       contact.getContourFrame(inode)->setXi(contact.getContourFrame(inode)->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
-      contact.getContourFrame(inode)->getPosition(false) += contact.getContourFrame(inode)->getXi() * contact.getContourFrame(inode)->getOrientation(false).col(2);
+      contact.getContourFrame(inode)->getPosition(false) += contact.getContourFrame(inode)->getXi(false) * contact.getContourFrame(inode)->getOrientation(false).col(2);
 
       double g;
-      if(extrusion->isZetaOutside(contact.getContourFrame(inode)->getZeta()))
+      if(extrusion->isZetaOutside(contact.getContourFrame(inode)->getZeta(false)))
         g = 1;
       else
         g = contact.getContourFrame(inode)->getOrientation(false).col(0).T() * (contact.getContourFrame(icircle)->getPosition(false) - contact.getContourFrame(inode)->getPosition(false));

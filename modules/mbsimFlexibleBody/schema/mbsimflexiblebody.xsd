@@ -982,10 +982,61 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="numberOfControlPoints" type="pv:integerFullEval">
+          <xs:element name="knotVector" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Anzahl der Kontrollpunkte.
+                Knotenvektor.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="degree" type="pv:integerFullEval" minOccurs="0" >
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Polynomgrad.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="open" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FlexiblePlanarNurbsContourFFR" substitutionGroup="mbsim:Contour" type="FlexiblePlanarNurbsContourFFRType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Räumliche NURBS Kontur.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FlexiblePlanarNurbsContourFFRType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:ContourType">
+        <xs:sequence>
+          <xs:element name="interpolation" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Interpolation der Kontrollpunkte.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="indices" type="pv:indexVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Indizes der Kontrollpunkte.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -1047,17 +1098,78 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="numberOfEtaControlPoints" type="pv:integerFullEval">
+          <xs:element name="etaKnotVector" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Anzahl der Kontrollpunkte in eta-Richtung.
+                Knotenvektor in eta-Richtung.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="numberOfXiControlPoints" type="pv:integerFullEval">
+          <xs:element name="xiKnotVector" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Anzahl der Kontrollpunkte in xi-Richtung.
+                Knotenvektor in xi-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="etaDegree" type="pv:integerFullEval" minOccurs="0" >
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Polynomgrad in eta-Richtung.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="xiDegree" type="pv:integerFullEval" minOccurs="0" >
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Polynomgrad in xi-Richtung.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="openEta" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur in eta-Richtung offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="openXi" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur in xi-Richtung offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FlexibleSpatialNurbsContourFFR" substitutionGroup="mbsim:Contour" type="FlexibleSpatialNurbsContourFFRType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Räumliche NURBS Kontur.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FlexibleSpatialNurbsContourFFRType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:ContourType">
+        <xs:sequence>
+          <xs:element name="interpolation" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Interpolation der Kontrollpunkte.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="indices" type="pv:indexMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Indizes der Kontrollpunkte.
               </xs:documentation>
             </xs:annotation>
           </xs:element>

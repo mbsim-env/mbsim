@@ -91,10 +91,6 @@ namespace MBSimIntegrator {
 
       /** tolerance for position constraints */
       double gMax{-1};
-      /**
-       * \brief file stream for integration information
-       */
-      std::ofstream integPlot;
   };
 
 }

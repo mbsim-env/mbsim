@@ -243,11 +243,6 @@ namespace MBSim {
        */
       fmatvec::Vec gddN, gddT;
 
-      /*!
-       * \brief gap acceleration buffer
-       */
-      fmatvec::Vec gddNBuf, gddTBuf;
-
       double lambdaN;
       fmatvec::VecV lambdaT;
 

@@ -3,7 +3,6 @@
 #include <boost/mpl/for_each.hpp>
 #include <boost/mpl/order.hpp>
 #include <mbsim/integrators/boost_odeint_integrator_predef.h>
-#include <mbsim/integrators/daskr_integrator.h>
 #include <mbsim/integrators/daspk_integrator.h>
 #include <mbsim/integrators/dop853_integrator.h>
 #include <mbsim/integrators/dopri5_integrator.h>
@@ -11,16 +10,15 @@
 #include <mbsim/integrators/hets2_integrator.h>
 #include <mbsim/integrators/implicit_euler_integrator.h>
 #include <mbsim/integrators/lsoda_integrator.h>
-#include <mbsim/integrators/lsodar_integrator.h>
 #include <mbsim/integrators/lsode_integrator.h>
 #include <mbsim/integrators/lsodi_integrator.h>
-#include <mbsim/integrators/lsodkr_integrator.h>
 #include <mbsim/integrators/odex_integrator.h>
 #include <mbsim/integrators/radau5_integrator.h>
 #include <mbsim/integrators/radau_integrator.h>
 #include <mbsim/integrators/rksuite_integrator.h>
 #include <mbsim/integrators/rodas_integrator.h>
 #include <mbsim/integrators/seulex_integrator.h>
+#include <mbsim/integrators/phem56_integrator.h>
 #include <mbsim/integrators/theta_time_stepping_integrator.h>
 #include <mbsim/integrators/time_stepping_integrator.h>
 #include <mbsim/integrators/time_stepping_ssc_integrator.h>
@@ -35,34 +33,52 @@ class Integrate {
   public:
     template<typename Int>
     void operator()(Int& integrator);
+    template<typename Int>
+    void setDefaults(Int& integrator) { }
+    void setDefaults(RADAU5Integrator& integrator) {
+      integrator.setAbsoluteTolerance(1e-8);
+      integrator.setRelativeTolerance(1e-8);
+    }
+    void setDefaults(RADAUIntegrator& integrator) {
+      integrator.setAbsoluteTolerance(1e-8);
+      integrator.setRelativeTolerance(1e-8);
+    }
+    void setDefaults(RODASIntegrator& integrator) {
+      integrator.setInitialStepSize(1e-8);
+    }
+    void setDefaults(SEULEXIntegrator& integrator) {
+      integrator.setAbsoluteTolerance(1e-8);
+      integrator.setRelativeTolerance(1e-8);
+    }
+    void setDefaults(BoostOdeintDOS_Rosenbrock4& integrator) {
+      integrator.setAbsoluteTolerance(1e-8);
+      integrator.setRelativeTolerance(1e-8);
+    }
 };
 
-// commented out integrators do not work with this example
-typedef boost::mpl::set15<
-  BoostOdeintDOS_RKDOPRI5,
-//  BoostOdeintDOS_BulirschStoer,
-//  BoostOdeintDOS_Rosenbrock4,
-//  DASKRIntegrator,
-  DASPKIntegrator,
-  DOP853Integrator,
-  DOPRI5Integrator,
-  ExplicitEulerIntegrator,
-//  HETS2Integrator,
-  ImplicitEulerIntegrator,
-  LSODAIntegrator,
-//  LSODARIntegrator,
-  LSODEIntegrator,
-  LSODIIntegrator,
-  LSODKRIntegrator,
-  ODEXIntegrator,
-//  RADAU5Integrator,
-//  RADAUIntegrator,
-  RKSuiteIntegrator,
-//  RODASIntegrator,
-//  SEULEXIntegrator,
-  ThetaTimeSteppingIntegrator,
-  TimeSteppingIntegrator,
-  TimeSteppingSSCIntegrator
+typedef boost::mpl::set20<
+   BoostOdeintDOS_RKDOPRI5,
+   BoostOdeintDOS_BulirschStoer,
+   BoostOdeintDOS_Rosenbrock4,
+   DASPKIntegrator,
+   DOP853Integrator,
+   DOPRI5Integrator,
+//   ExplicitEulerIntegrator, does not yet support non-smooth systems
+//   ImplicitEulerIntegrator, does not yet support non-smooth systems
+   HETS2Integrator,
+   LSODAIntegrator,
+   LSODEIntegrator,
+   LSODIIntegrator,
+   ODEXIntegrator,
+   RADAU5Integrator,
+   RADAUIntegrator,
+   RKSuiteIntegrator,
+   RODASIntegrator,
+   SEULEXIntegrator,
+   PHEM56Integrator,
+   ThetaTimeSteppingIntegrator,
+   TimeSteppingIntegrator,
+   TimeSteppingSSCIntegrator
 > Integrators;
 
 int main (int argc, char* argv[]) {
@@ -71,7 +87,6 @@ int main (int argc, char* argv[]) {
   return 0;
 
 }
-
 
 template<typename Int>
 void Integrate::operator()(Int& integrator) {
@@ -96,6 +111,7 @@ void Integrate::operator()(Int& integrator) {
   System *sys = new System("TS_"+to_string(order));
 
   sys->initialize();
+  sys->setMessageStreamActive(fmatvec::Atom::Debug,true);
 
   sys->setProjectionTolerance(1e-15);
   sys->setGeneralizedRelativePositionTolerance(1e-6);
@@ -106,6 +122,7 @@ void Integrate::operator()(Int& integrator) {
 
   cout << "integrate using "<<typeStr<<" = TS_"<<order<<endl;
 
+  setDefaults(integrator);
   integrator.setEndTime(tEnd);
   integrator.setPlotStepSize(dtPlot);
   integrator.setSystem(sys);

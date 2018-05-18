@@ -23,13 +23,13 @@
 #ifndef _SEULEX_INTEGRATOR_H_
 #define _SEULEX_INTEGRATOR_H_
 
-#include "integrator.h"
+#include "root_finding_integrator.h"
 
 namespace MBSimIntegrator {
 
   /** \brief DAE-Integrator SEULEX
   */
-  class SEULEXIntegrator : public Integrator {
+  class SEULEXIntegrator : public RootFindingIntegrator {
 
     public:
       enum Formalism {
@@ -49,14 +49,11 @@ namespace MBSimIntegrator {
       static void massReduced(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* x, double *y, double *rc, int* lrc, int* ic, int* lic, int* n, double* rpar, int* ipar, int* irtrn);
 
-      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
-
       void calcSize();
       void reinit();
 
       double tPlot{0};
       double dtOut{0};
-      std::ofstream integPlot;
       double s0; 
       double time{0}; 
 
@@ -77,25 +74,12 @@ namespace MBSimIntegrator {
       /** autonomous system **/
       bool autonom{false};
 
-      bool plotOnRoot{false};
-
-       /** tolerance for position constraints */
-      double gMax{-1};
-      /** tolerance for velocity constraints */
-      double gdMax{-1};
-
-      fmatvec::Vec svLast;
-      bool shift{false};
-
       int neq, mlJac, muJac;
       fmatvec::VecInt iWork;
       fmatvec::Vec work;
 
     public:
       ~SEULEXIntegrator() override = default;
-
-      double getToleranceForPositionConstraints() { return gMax; }
-      double getToleranceForVelocityConstraints() { return gdMax; }
 
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
       void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
@@ -107,11 +91,6 @@ namespace MBSimIntegrator {
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
       void setReducedForm(bool reduced_) { reduced = reduced_; }
       void setAutonomousSystem(bool autonom_) { autonom = autonom_; }
-
-      void setPlotOnRoot(bool b) { plotOnRoot = b; }
-
-      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
-      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
 
       using Integrator::integrate;
       void integrate() override;

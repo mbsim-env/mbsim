@@ -62,7 +62,6 @@ namespace MBSimGUI {
   IntegratorPropertyDialog::IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : SolverPropertyDialog(solver,parent,f) {
     addTab("General");
     addTab("Initial conditions");
-    addTab("Output");
 
     startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMINT%"startTime");
     addToTab("General", startTime);
@@ -75,12 +74,6 @@ namespace MBSimGUI {
 
     initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialState");
     addToTab("Initial conditions", initialState);
-
-    plotIntegrationData = new ExtWidget("Plot integration data",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotIntegrationData");
-    addToTab("Output", plotIntegrationData);
-
-    writeIntegrationSummary = new ExtWidget("Write integration summary",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"writeIntegrationSummary");
-    addToTab("Output", writeIntegrationSummary);
   }
 
   DOMElement* IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -89,8 +82,6 @@ namespace MBSimGUI {
     endTime->initializeUsingXML(item->getXMLElement());
     plotStepSize->initializeUsingXML(item->getXMLElement());
     initialState->initializeUsingXML(item->getXMLElement());
-    plotIntegrationData->initializeUsingXML(item->getXMLElement());
-    writeIntegrationSummary->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -100,13 +91,45 @@ namespace MBSimGUI {
     endTime->writeXMLFile(item->getXMLElement());
     plotStepSize->writeXMLFile(item->getXMLElement());
     initialState->writeXMLFile(item->getXMLElement());
-    plotIntegrationData->writeXMLFile(item->getXMLElement());
-    writeIntegrationSummary->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
+  RootFindingIntegratorPropertyDialog::RootFindingIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
     addTab("Tolerances");
+    addTab("Root-finding");
+
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
+    addToTab("Tolerances", gMax);
+
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
+    addToTab("Tolerances", gdMax);
+
+    dtRoot = new ExtWidget("Root finding accuracy",new ChoiceWidget2(new ScalarWidgetFactory("1e-10",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"rootFindingAccuracy");
+    addToTab("Root-finding", dtRoot);
+
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
+    addToTab("Root-finding", plotOnRoot);
+  }
+
+  DOMElement* RootFindingIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    gMax->initializeUsingXML(item->getXMLElement());
+    gdMax->initializeUsingXML(item->getXMLElement());
+    dtRoot->initializeUsingXML(item->getXMLElement());
+    plotOnRoot->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RootFindingIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    gMax->writeXMLFile(item->getXMLElement());
+    gdMax->writeXMLFile(item->getXMLElement());
+    dtRoot->writeXMLFile(item->getXMLElement());
+    plotOnRoot->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
+  DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
@@ -123,40 +146,29 @@ namespace MBSimGUI {
 
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* DOPRI5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* DOPRI5IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  DOP853IntegratorPropertyDialog::DOP853IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  DOP853IntegratorPropertyDialog::DOP853IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
@@ -173,40 +185,29 @@ namespace MBSimGUI {
 
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* DOP853IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* DOP853IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  ODEXIntegratorPropertyDialog::ODEXIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  ODEXIntegratorPropertyDialog::ODEXIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
@@ -223,40 +224,29 @@ namespace MBSimGUI {
 
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* ODEXIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ODEXIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
     addTab("Extra");
 
@@ -286,16 +276,10 @@ namespace MBSimGUI {
 
     reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
     addToTab("Extra", reducedForm);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* RADAU5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
@@ -303,13 +287,11 @@ namespace MBSimGUI {
     maxSteps->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RADAU5IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
@@ -317,13 +299,10 @@ namespace MBSimGUI {
     maxSteps->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  RADAUIntegratorPropertyDialog::RADAUIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  RADAUIntegratorPropertyDialog::RADAUIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
     addTab("Extra");
 
@@ -353,16 +332,10 @@ namespace MBSimGUI {
 
     reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"reducedForm");
     addToTab("Extra", reducedForm);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* RADAUIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
@@ -370,13 +343,11 @@ namespace MBSimGUI {
     maxSteps->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RADAUIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
@@ -384,13 +355,10 @@ namespace MBSimGUI {
     maxSteps->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  RODASIntegratorPropertyDialog::RODASIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  RODASIntegratorPropertyDialog::RODASIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
     addTab("Extra");
 
@@ -420,16 +388,10 @@ namespace MBSimGUI {
 
     autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"autonomousSystem");
     addToTab("Extra", autonomousSystem);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* RODASIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
@@ -438,13 +400,11 @@ namespace MBSimGUI {
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
     autonomousSystem->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RODASIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
@@ -453,13 +413,10 @@ namespace MBSimGUI {
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
     autonomousSystem->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  SEULEXIntegratorPropertyDialog::SEULEXIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  SEULEXIntegratorPropertyDialog::SEULEXIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
     addTab("Extra");
 
@@ -489,16 +446,10 @@ namespace MBSimGUI {
 
     autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"autonomousSystem");
     addToTab("Extra", autonomousSystem);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* SEULEXIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
@@ -507,13 +458,11 @@ namespace MBSimGUI {
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
     autonomousSystem->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* SEULEXIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
@@ -522,15 +471,79 @@ namespace MBSimGUI {
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
     autonomousSystem->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  PHEM56IntegratorPropertyDialog::PHEM56IntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
     addTab("Extra");
+
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", absTol);
+
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    addToTab("Tolerances", relTol);
+
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
+    addToTab("Step size", initialStepSize);
+
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
+    addToTab("Step size", maximumStepSize);
+
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
+    addToTab("Step size", maxSteps);
+
+    vector<QString> list;
+    list.emplace_back("\"DEC\"");
+    list.emplace_back("\"DGETRF\"");
+    linearAlgebra = new ExtWidget("Linear algebra",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"linearAlgebra");
+    addToTab("Extra", linearAlgebra);
+
+    generalVMatrix = new ExtWidget("General V matrix",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"generalVMatrix");
+    addToTab("Extra", generalVMatrix);
+
+    initialProjection = new ExtWidget("Initial projection",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialProjection");
+    addToTab("Extra", initialProjection);
+
+    numberOfStepsBetweenProjections = new ExtWidget("Number of steps between projections",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"numberOfStepsBetweenProjections");
+    addToTab("Extra", numberOfStepsBetweenProjections);
+
+    projectOntoIndex1ConstraintManifold = new ExtWidget("Project onto index 1 constraint manifold",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"projectOntoIndex1ConstraintManifold");
+    addToTab("Extra", projectOntoIndex1ConstraintManifold);
+  }
+
+  DOMElement* PHEM56IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    absTol->initializeUsingXML(item->getXMLElement());
+    relTol->initializeUsingXML(item->getXMLElement());
+    initialStepSize->initializeUsingXML(item->getXMLElement());
+    maximumStepSize->initializeUsingXML(item->getXMLElement());
+    maxSteps->initializeUsingXML(item->getXMLElement());
+    linearAlgebra->initializeUsingXML(item->getXMLElement());
+    generalVMatrix->initializeUsingXML(item->getXMLElement());
+    initialProjection->initializeUsingXML(item->getXMLElement());
+    numberOfStepsBetweenProjections->initializeUsingXML(item->getXMLElement());
+    projectOntoIndex1ConstraintManifold->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* PHEM56IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    absTol->writeXMLFile(item->getXMLElement());
+    relTol->writeXMLFile(item->getXMLElement());
+    initialStepSize->writeXMLFile(item->getXMLElement());
+    maximumStepSize->writeXMLFile(item->getXMLElement());
+    maxSteps->writeXMLFile(item->getXMLElement());
+    linearAlgebra->writeXMLFile(item->getXMLElement());
+    generalVMatrix->writeXMLFile(item->getXMLElement());
+    initialProjection->writeXMLFile(item->getXMLElement());
+    numberOfStepsBetweenProjections->writeXMLFile(item->getXMLElement());
+    projectOntoIndex1ConstraintManifold->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
+  LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
+    addTab("Step size");
 
     vector<QString> list;
     list.emplace_back("\"nonstiff\"");
@@ -557,16 +570,10 @@ namespace MBSimGUI {
 
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* LSODEIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     method->initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
@@ -574,13 +581,11 @@ namespace MBSimGUI {
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     minimumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* LSODEIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     method->writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
@@ -588,15 +593,11 @@ namespace MBSimGUI {
     maximumStepSize->writeXMLFile(item->getXMLElement());
     minimumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  LSODAIntegratorPropertyDialog::LSODAIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  LSODAIntegratorPropertyDialog::LSODAIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
-    addTab("Extra");
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -615,176 +616,32 @@ namespace MBSimGUI {
 
     maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
     addToTab("Step size", maxSteps);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* LSODAIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     minimumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* LSODAIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     minimumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  LSODARIntegratorPropertyDialog::LSODARIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  LSODIIntegratorPropertyDialog::LSODIIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
-    addTab("Extra");
-
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", absTol);
-
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", relTol);
-
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
-    addToTab("Step size", initialStepSize);
-
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
-    addToTab("Step size", maximumStepSize);
-
-    minimumStepSize = new ExtWidget("Minimum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"minimumStepSize");
-    addToTab("Step size", minimumStepSize);
-
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
-    addToTab("Step size", maxSteps);
-
-    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
-    addToTab("Extra", plotOnRoot);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
-  }
-
-  DOMElement* LSODARIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
-    absTol->initializeUsingXML(item->getXMLElement());
-    relTol->initializeUsingXML(item->getXMLElement());
-    initialStepSize->initializeUsingXML(item->getXMLElement());
-    maximumStepSize->initializeUsingXML(item->getXMLElement());
-    minimumStepSize->initializeUsingXML(item->getXMLElement());
-    maxSteps->initializeUsingXML(item->getXMLElement());
-    plotOnRoot->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
-    return parent;
-  }
-
-  DOMElement* LSODARIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
-    absTol->writeXMLFile(item->getXMLElement());
-    relTol->writeXMLFile(item->getXMLElement());
-    initialStepSize->writeXMLFile(item->getXMLElement());
-    maximumStepSize->writeXMLFile(item->getXMLElement());
-    minimumStepSize->writeXMLFile(item->getXMLElement());
-    maxSteps->writeXMLFile(item->getXMLElement());
-    plotOnRoot->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
-    return nullptr;
-  }
-
-  LSODKRIntegratorPropertyDialog::LSODKRIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
-    addTab("Step size");
-    addTab("Extra");
-
-    vector<QString> list;
-    list.emplace_back("\"nonstiff\"");
-    list.emplace_back("\"Adams\"");
-    list.emplace_back("\"stiff\"");
-    list.emplace_back("\"BDF\"");
-    method = new ExtWidget("Method",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"method");
-    addToTab("General", method);
-
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", absTol);
-
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", relTol);
-
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
-    addToTab("Step size", initialStepSize);
-
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
-    addToTab("Step size", maximumStepSize);
-
-    minimumStepSize = new ExtWidget("Minimum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"minimumStepSize");
-    addToTab("Step size", minimumStepSize);
-
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"stepLimit");
-    addToTab("Step size", maxSteps);
-
-    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
-    addToTab("Extra", plotOnRoot);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
-  }
-
-  DOMElement* LSODKRIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
-    method->initializeUsingXML(item->getXMLElement());
-    absTol->initializeUsingXML(item->getXMLElement());
-    relTol->initializeUsingXML(item->getXMLElement());
-    initialStepSize->initializeUsingXML(item->getXMLElement());
-    maximumStepSize->initializeUsingXML(item->getXMLElement());
-    minimumStepSize->initializeUsingXML(item->getXMLElement());
-    maxSteps->initializeUsingXML(item->getXMLElement());
-    plotOnRoot->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
-    return parent;
-  }
-
-  DOMElement* LSODKRIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
-    method->writeXMLFile(item->getXMLElement());
-    absTol->writeXMLFile(item->getXMLElement());
-    relTol->writeXMLFile(item->getXMLElement());
-    initialStepSize->writeXMLFile(item->getXMLElement());
-    maximumStepSize->writeXMLFile(item->getXMLElement());
-    minimumStepSize->writeXMLFile(item->getXMLElement());
-    maxSteps->writeXMLFile(item->getXMLElement());
-    plotOnRoot->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
-    return nullptr;
-  }
-
-  LSODIIntegratorPropertyDialog::LSODIIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
-    addTab("Step size");
-    addTab("Extra");
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -810,16 +667,10 @@ namespace MBSimGUI {
     list.emplace_back("\"GGL\"");
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"formalism");
     addToTab("General", formalism);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* LSODIIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
@@ -827,13 +678,11 @@ namespace MBSimGUI {
     minimumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* LSODIIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
@@ -841,15 +690,11 @@ namespace MBSimGUI {
     minimumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  DASPKIntegratorPropertyDialog::DASPKIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  DASPKIntegratorPropertyDialog::DASPKIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
-    addTab("Extra");
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -870,91 +715,25 @@ namespace MBSimGUI {
     list.emplace_back("\"GGL\"");
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"formalism");
     addToTab("General", formalism);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* DASPKIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* DASPKIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
-    return nullptr;
-  }
-
-  DASKRIntegratorPropertyDialog::DASKRIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
-    addTab("Step size");
-    addTab("Extra");
-
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", absTol);
-
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", relTol);
-
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
-    addToTab("Step size", initialStepSize);
-
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
-    addToTab("Step size", maximumStepSize);
-
-    vector<QString> list;
-    list.emplace_back("\"ODE\"");
-    list.emplace_back("\"DAE1\"");
-    list.emplace_back("\"DAE2\"");
-    list.emplace_back("\"GGL\"");
-    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMINT%"formalism");
-    addToTab("General", formalism);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
-  }
-
-  DOMElement* DASKRIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
-    absTol->initializeUsingXML(item->getXMLElement());
-    relTol->initializeUsingXML(item->getXMLElement());
-    initialStepSize->initializeUsingXML(item->getXMLElement());
-    maximumStepSize->initializeUsingXML(item->getXMLElement());
-    formalism->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
-    return parent;
-  }
-
-  DOMElement* DASKRIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
-    absTol->writeXMLFile(item->getXMLElement());
-    relTol->writeXMLFile(item->getXMLElement());
-    initialStepSize->writeXMLFile(item->getXMLElement());
-    maximumStepSize->writeXMLFile(item->getXMLElement());
-    formalism->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -1176,10 +955,8 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RKSuiteIntegratorPropertyDialog::RKSuiteIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  RKSuiteIntegratorPropertyDialog::RKSuiteIntegratorPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
-    addTab("Extra");
 
     vector<QString> list;
     list.emplace_back("\"RK23\"");
@@ -1202,47 +979,30 @@ namespace MBSimGUI {
 
     initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"initialStepSize");
     addToTab("Step size", initialStepSize);
-
-    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
-    addToTab("Extra", plotOnRoot);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* RKSuiteIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     method->initializeUsingXML(item->getXMLElement());
     task->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     threshold->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
-    plotOnRoot->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RKSuiteIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     method->writeXMLFile(item->getXMLElement());
     task->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     threshold->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
-    plotOnRoot->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
-  BoostOdeintDOSPropertyDialog::BoostOdeintDOSPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : IntegratorPropertyDialog(solver,parent,f) {
-    addTab("Tolerances");
+  BoostOdeintDOSPropertyDialog::BoostOdeintDOSPropertyDialog(Solver *solver, QWidget *parent, const Qt::WindowFlags& f) : RootFindingIntegratorPropertyDialog(solver,parent,f) {
     addTab("Step size");
-    addTab("Extra");
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6",vector<QStringList>(2),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"absoluteToleranceScalar");
     addToTab("Tolerances", absTol);
@@ -1255,38 +1015,23 @@ namespace MBSimGUI {
 
     maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
-
-    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"plotOnRoot");
-    addToTab("Extra", plotOnRoot);
-
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForPositionConstraints");
-    addToTab("Tolerances", gMax);
-
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIMINT%"toleranceForVelocityConstraints");
-    addToTab("Tolerances", gdMax);
   }
 
   DOMElement* BoostOdeintDOSPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    IntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     absTol->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
-    plotOnRoot->initializeUsingXML(item->getXMLElement());
-    gMax->initializeUsingXML(item->getXMLElement());
-    gdMax->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* BoostOdeintDOSPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    IntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     absTol->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
-    plotOnRoot->writeXMLFile(item->getXMLElement());
-    gMax->writeXMLFile(item->getXMLElement());
-    gdMax->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 

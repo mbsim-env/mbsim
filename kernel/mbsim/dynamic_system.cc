@@ -154,7 +154,7 @@ namespace MBSim {
   }
   void DynamicSystem::updatewb() {
 
-    for (auto & i : linkSetValued)
+    for (auto & i : linkSetValuedActive)
       (*i).updatewb();
   }
 
@@ -166,13 +166,13 @@ namespace MBSim {
 
   void DynamicSystem::updateV(int j) {
 
-    for (auto & i : linkSetValued)
+    for (auto & i : linkSetValuedActive)
       (*i).updateV(j);
   }
 
   void DynamicSystem::updateg() {
 
-    for (auto & i : linkSetValued)
+    for (auto & i : linkSetValuedActive)
       i->updateg();
   }
 
@@ -1263,6 +1263,20 @@ namespace MBSim {
       (*i).setGeneralizedImpulseTolerance(tol);
     for (auto & i : link)
       (*i).setGeneralizedImpulseTolerance(tol);
+  }
+
+  void DynamicSystem::setGeneralizedRelativePositionCorrectionValue(double corr) {
+    for (auto & i : dynamicsystem)
+      (*i).setGeneralizedRelativePositionCorrectionValue(corr);
+    for (auto & i : link)
+      (*i).setGeneralizedRelativePositionCorrectionValue(corr);
+  }
+
+  void DynamicSystem::setGeneralizedRelativeVelocityCorrectionValue(double corr) {
+    for (auto & i : dynamicsystem)
+      (*i).setGeneralizedRelativeVelocityCorrectionValue(corr);
+    for (auto & i : link)
+      (*i).setGeneralizedRelativeVelocityCorrectionValue(corr);
   }
 
   void DynamicSystem::setrMax(double rMax) {

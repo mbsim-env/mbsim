@@ -57,7 +57,7 @@ namespace MBSim {
     search.setNodes(extrusion->getEtaNodes());
 
     if(searchAllCP==false)
-      search.setInitialValue(contact.getContourFrame(iextrusion)->getEta());
+      search.setInitialValue(contact.getContourFrame(iextrusion)->getEta(false));
     else { 
       search.setSearchAll(true);
       searchAllCP=false;
@@ -65,21 +65,21 @@ namespace MBSim {
 
     contact.getContourFrame(iextrusion)->setEta(search.slv());
 
-    contact.getContourFrame(iextrusion)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(iextrusion)->getZeta()));
-    contact.getContourFrame(iextrusion)->getOrientation(false).set(1, extrusion->evalWu(contact.getContourFrame(iextrusion)->getZeta()));
-    contact.getContourFrame(iextrusion)->getOrientation(false).set(2, extrusion->evalWv(contact.getContourFrame(iextrusion)->getZeta()));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(iextrusion)->getZeta(false)));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(1, extrusion->evalWu(contact.getContourFrame(iextrusion)->getZeta(false)));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(2, extrusion->evalWv(contact.getContourFrame(iextrusion)->getZeta(false)));
     contact.getContourFrame(icircle)->getOrientation(false).set(0, -contact.getContourFrame(iextrusion)->getOrientation(false).col(0));
     contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
     contact.getContourFrame(icircle)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(2),contact.getContourFrame(icircle)->getOrientation(false).col(0)));
-    contact.getContourFrame(iextrusion)->setPosition(extrusion->evalPosition(contact.getContourFrame(iextrusion)->getZeta()));
+    contact.getContourFrame(iextrusion)->setPosition(extrusion->evalPosition(contact.getContourFrame(iextrusion)->getZeta(false)));
     contact.getContourFrame(icircle)->setPosition(circle->getFrame()->evalPosition()+circle->getRadius()*contact.getContourFrame(icircle)->getOrientation(false).col(0));
 
     Vec3 Wd = contact.getContourFrame(icircle)->getPosition(false) - contact.getContourFrame(iextrusion)->getPosition(false);
     contact.getContourFrame(iextrusion)->setXi(contact.getContourFrame(iextrusion)->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
-    contact.getContourFrame(iextrusion)->getPosition(false) += contact.getContourFrame(iextrusion)->getXi() * contact.getContourFrame(iextrusion)->getOrientation(false).col(2);
+    contact.getContourFrame(iextrusion)->getPosition(false) += contact.getContourFrame(iextrusion)->getXi(false) * contact.getContourFrame(iextrusion)->getOrientation(false).col(2);
 
     double g;
-    if(extrusion->isZetaOutside(contact.getContourFrame(iextrusion)->getZeta()))
+    if(extrusion->isZetaOutside(contact.getContourFrame(iextrusion)->getZeta(false)))
       g = 1;
     else
       g = contact.getContourFrame(iextrusion)->getOrientation(false).col(0).T() * (contact.getContourFrame(icircle)->getPosition(false) - contact.getContourFrame(iextrusion)->getPosition(false));
@@ -88,7 +88,8 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleExtrusion::updatewb(SingleContact &contact, int i) {
-    
+    std::runtime_error("(ContactKinematicsCircleExtrusion::updatewb): Not implemented.");
+
     const Vec3 n1 = contact.getContourFrame(icircle)->evalOrientation().col(0);
     const Vec3 u1 = contact.getContourFrame(icircle)->getOrientation().col(1);
     const Vec3 R1 = circle->getRadius()*u1;

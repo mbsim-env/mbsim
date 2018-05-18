@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #include <config.h>
@@ -231,13 +231,29 @@ namespace MBSimFlexibleBody {
     return Wsxtd/nrm2(Wsxt) - Wsxt*((Wsxt.T()*Wsxtd)/pow(nrm2(Wsxt),3));
   }
 
+  Vec3 FlexibleSpatialNurbsContour::evalParWvCParEta(const Vec2 &zeta) {
+    return evalWs_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContour::evalParWvCParXi(const Vec2 &zeta) {
+    return evalWt_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContour::evalParWuPart(const Vec2 &zeta) {
+    return evalWu_t(zeta);
+  }
+
+  Vec3 FlexibleSpatialNurbsContour::evalParWvPart(const Vec2 &zeta) {
+    return evalWv_t(zeta);
+  }
+
   void FlexibleSpatialNurbsContour::updatePositions(ContourFrame *frame) {
     throwError("(FlexibleSpatialNurbsContour::updatePositions): not implemented");
   }
 
   void FlexibleSpatialNurbsContour::updateVelocities(ContourFrame *frame) {
     if(updSrfVel) updateSurfaceVelocities();
-    Vec2 zeta = continueZeta(frame->getZeta());
+    Vec2 zeta = continueZeta(frame->evalZeta());
     srfVel.deriveAtH(zeta(0),zeta(1),0,hessTmp);
     frame->setVelocity(hessTmp(0,0)(Range<Fixed<0>,Fixed<2> >()));
   }
@@ -248,7 +264,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleSpatialNurbsContour::updateJacobians(ContourFrame *frame, int j) {
     if(updSrfJac) updateSurfaceJacobians();
-    Vec2 zeta = continueZeta(frame->getZeta());
+    Vec2 zeta = continueZeta(frame->evalZeta());
     frame->getJacobianOfTranslation(j,false).resize(frame->gethSize(j),NONINIT);
     for(int i=0; i<frame->gethSize(j); i++) {
       srfJac[i].deriveAtH(zeta(0),zeta(1),0,hessTmp);
@@ -258,7 +274,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleSpatialNurbsContour::updateGyroscopicAccelerations(ContourFrame *frame) {
     if(updSrfGA) updateSurfaceGyroscopicAccelerations();
-    Vec2 zeta = continueZeta(frame->getZeta());
+    Vec2 zeta = continueZeta(frame->evalZeta());
     srfGA.deriveAtH(zeta(0),zeta(1),0,hessTmp);
     frame->setGyroscopicAccelerationOfTranslation(hessTmp(0,0)(Range<Fixed<0>,Fixed<2> >()));
   }
@@ -334,7 +350,7 @@ namespace MBSimFlexibleBody {
       srfGA.setKnotU(uKnot);
       srfGA.setKnotV(vKnot);
     }
-    Contour::init(stage, config);
+    FlexibleContour::init(stage, config);
   }
 
   ContourFrame* FlexibleSpatialNurbsContour::createContourFrame(const string &name) {
@@ -361,11 +377,11 @@ namespace MBSimFlexibleBody {
       }
       openMBVNurbsSurface->append(data);
     }
-    Contour::plot();
+    FlexibleContour::plot();
   }
 
   void FlexibleSpatialNurbsContour::initializeUsingXML(DOMElement * element) {
-    Contour::initializeUsingXML(element);
+    FlexibleContour::initializeUsingXML(element);
     DOMElement * e;
 //    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"etaNodes");
 //    etaNodes=E(e)->getText<Vec>();
@@ -385,10 +401,6 @@ namespace MBSimFlexibleBody {
     for(int i=0; i<index.rows(); i++)
       for(int j=0; j<index.cols(); j++)
         index(i,j)--;
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfEtaControlPoints");
-    E(e)->getText<int>();
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfXiControlPoints");
-    E(e)->getText<int>();
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"etaKnotVector");
     if(e) setEtaKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"xiKnotVector");

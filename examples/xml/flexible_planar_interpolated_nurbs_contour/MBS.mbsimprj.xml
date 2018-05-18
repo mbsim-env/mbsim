@@ -281,7 +281,6 @@
               <thickness xmlns="http://www.mbsim-env.de/MBSim" unit="m">1</thickness>
               <interpolation>true</interpolation>
               <indices>[4:-1:1]'</indices>
-              <numberOfControlPoints>4</numberOfControlPoints>
               <degree>3</degree>
               <open>true</open>
               <enableOpenMBV/>

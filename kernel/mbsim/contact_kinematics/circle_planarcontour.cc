@@ -75,17 +75,17 @@ namespace MBSim {
     zeta0[i] = search.slv();
     contact.getContourFrame(iplanarcontour)->setEta(zeta0[i]);
 
-    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(0, planarcontour->evalWn(contact.getContourFrame(iplanarcontour)->getZeta()));
-    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(1, planarcontour->evalWu(contact.getContourFrame(iplanarcontour)->getZeta()));
-    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(2, planarcontour->evalWv(contact.getContourFrame(iplanarcontour)->getZeta()));
+    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(0, planarcontour->evalWn(contact.getContourFrame(iplanarcontour)->getZeta(false)));
+    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(1, planarcontour->evalWu(contact.getContourFrame(iplanarcontour)->getZeta(false)));
+    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(2, planarcontour->evalWv(contact.getContourFrame(iplanarcontour)->getZeta(false)));
     contact.getContourFrame(icircle)->getOrientation(false).set(0, -contact.getContourFrame(iplanarcontour)->getOrientation(false).col(0));
     contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
     contact.getContourFrame(icircle)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(2),contact.getContourFrame(icircle)->getOrientation(false).col(0)));
-    contact.getContourFrame(iplanarcontour)->setPosition(planarcontour->evalPosition(contact.getContourFrame(iplanarcontour)->getZeta()));
+    contact.getContourFrame(iplanarcontour)->setPosition(planarcontour->evalPosition(contact.getContourFrame(iplanarcontour)->getZeta(false)));
     contact.getContourFrame(icircle)->setPosition(circle->getFrame()->evalPosition()+circle->getRadius()*contact.getContourFrame(icircle)->getOrientation(false).col(0));
 
     double g;
-    if(planarcontour->isZetaOutside(contact.getContourFrame(iplanarcontour)->getZeta()))
+    if(planarcontour->isZetaOutside(contact.getContourFrame(iplanarcontour)->getZeta(false)))
       g = 1;
     else
       g = contact.getContourFrame(iplanarcontour)->getOrientation(false).col(0).T() * (contact.getContourFrame(icircle)->getPosition(false) - contact.getContourFrame(iplanarcontour)->getPosition(false));
@@ -99,16 +99,18 @@ namespace MBSim {
     const Vec3 u1 = contact.getContourFrame(icircle)->getOrientation().col(1);
     const Vec3 R1 = circle->getRadius()*u1;
     const Vec3 N1 = u1;
+    const Vec3 paruPart1 = crossProduct(contact.getContourFrame(icircle)->evalAngularVelocity(),u1);
+    const Vec3 parnPart1 = crossProduct(contact.getContourFrame(icircle)->getAngularVelocity(),n1);
+    const Vec3 parWvCParEta1 = crossProduct(contact.getContourFrame(icircle)->getAngularVelocity(),R1);
 
     const Vec3 u2 = contact.getContourFrame(iplanarcontour)->evalOrientation().col(1);
-    const Vec3 v2 = contact.getContourFrame(iplanarcontour)->getOrientation().col(2);
     const Vec3 R2 = planarcontour->evalWs(contact.getContourFrame(iplanarcontour)->getZeta());
     const Vec3 U2 = planarcontour->evalParDer1Wu(contact.getContourFrame(iplanarcontour)->getZeta());
+    const Vec3 paruPart2 = planarcontour->evalParWuPart(contact.getContourFrame(iplanarcontour)->getZeta());
+    const Vec3 parWvCParEta2 = planarcontour->evalParWvCParEta(contact.getContourFrame(iplanarcontour)->getZeta());
 
     const Vec3 vC1 = contact.getContourFrame(icircle)->evalVelocity();
     const Vec3 vC2 = contact.getContourFrame(iplanarcontour)->evalVelocity();
-    const Vec3 Om1 = contact.getContourFrame(icircle)->evalAngularVelocity();
-    const Vec3 Om2 = contact.getContourFrame(iplanarcontour)->evalAngularVelocity();
 
     SqrMat A(2,NONINIT);
     A(0,0)=-u1.T()*R1;
@@ -117,16 +119,13 @@ namespace MBSim {
     A(1,1)=n1.T()*U2;
     Vec b(2,NONINIT);
     b(0)=-u1.T()*(vC2-vC1);
-    b(1)=-v2.T()*(Om2-Om1);
+    b(1)=-u2.T()*parnPart1-n1.T()*paruPart2;
     const Vec zetad = slvLU(A,b);
 
-    const Mat3x3 tOm1 = tilde(Om1);
-    const Mat3x3 tOm2 = tilde(Om2);
-    
-    contact.getwb(false)(0) += ((vC2-vC1).T()*N1-n1.T()*tOm1*R1)*zetad(0)+n1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
+    contact.getwb(false)(0) += (N1*zetad(0)+parnPart1).T()*(vC2-vC1)+n1.T()*(parWvCParEta2*zetad(1)-parWvCParEta1*zetad(0));
     if (contact.getwb(false).size()>1) {
       const Vec3 U1=-n1;
-      contact.getwb(false)(1) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad(0)+u1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
+      contact.getwb(false)(1) += (U1*zetad(0)+paruPart1).T()*(vC2-vC1)+u1.T()*(parWvCParEta2*zetad(1)+parWvCParEta1*zetad(0));
     }
   }
 

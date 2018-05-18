@@ -36,7 +36,6 @@ namespace MBSim {
 
   Vec3 Contour::evalPosition(const Vec2 &zeta) {
     throwError("(Contour::evalPosition): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalWu(const Vec2 &zeta) {
@@ -55,42 +54,34 @@ namespace MBSim {
 
   Vec3 Contour::evalParDer1Wn(const Vec2 &zeta) {
     throwError("(Contour::evalParDer1Wn): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalParDer2Wn(const Vec2 &zeta) {
     throwError("(Contour::evalParDer2Wn): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalParDer1Wu(const Vec2 &zeta) {
     throwError("(Contour::evalParDer1Wu): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalParDer2Wu(const Vec2 &zeta) {
     throwError("(Contour::evalParDer2Wu): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalParDer1Wv(const Vec2 &zeta) {
     throwError("(Contour::evalParDer1Wv): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalParDer2Wv(const Vec2 &zeta) {
     throwError("(Contour::evalParDer2Wv): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalWs(const Vec2 &zeta) {
     throwError("(Contour::evalWs): Not implemented.");
-    return 0;
   }
 
   Vec3 Contour::evalWt(const Vec2 &zeta) {
     throwError("(Contour::evalWt): Not implemented.");
-    return 0;
   }
 
   Mat3x2 Contour::evalWN(const Vec2 &zeta) {
@@ -121,9 +112,35 @@ namespace MBSim {
     return WV;
   }
 
+  Vec3 Contour::evalParWvCParEta(const Vec2 &zeta) {
+    throwError("(Contour::evalParWvCParEta): Not implemented.");
+  }
+
+  Vec3 Contour::evalParWvCParXi(const Vec2 &zeta) {
+    throwError("(Contour::evalParWvCParXi): Not implemented.");
+  }
+
+  Mat3x2 Contour::evalParWvCParZeta(const Vec2 &zeta) {
+    Mat3x2 parWvCParZeta(NONINIT);
+    parWvCParZeta.set(0,evalParWvCParEta(zeta));
+    parWvCParZeta.set(1,evalParWvCParXi(zeta));
+    return parWvCParZeta;
+  }
+
+  Vec3 Contour::evalParWnPart(const Vec2 &zeta) {
+    throwError("(Contour::evalParWnPart): Not implemented.");
+  }
+
+  Vec3 Contour::evalParWuPart(const Vec2 &zeta) {
+    throwError("(Contour::evalParWuPart): Not implemented.");
+  }
+
+  Vec3 Contour::evalParWvPart(const Vec2 &zeta) {
+    throwError("(Contour::evalParWvPart): Not implemented.");
+  }
+
   Vec2 Contour::evalZeta(const Vec3 &WrPS) {
     throwError("(Contour::evalZeta): Not implemented.");
-    return 0;
   }
 
   void Contour::updatePositions(ContourFrame *frame) {

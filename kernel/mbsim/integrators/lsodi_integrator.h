@@ -23,7 +23,7 @@
 #ifndef _LSODI_INTEGRATOR_H_
 #define _LSODI_INTEGRATOR_H_
 
-#include "integrator.h"
+#include "root_finding_integrator.h"
 
 namespace MBSimIntegrator {
 
@@ -36,7 +36,7 @@ namespace MBSimIntegrator {
    * of index 2.
    * This integrator uses ODEPACK (http://www.netlib.org/odepack).
    */
-  class LSODIIntegrator : public Integrator {
+  class LSODIIntegrator : public RootFindingIntegrator {
 
     public:
       enum Formalism {
@@ -54,6 +54,8 @@ namespace MBSimIntegrator {
       static void resGGL(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires);
       static void adda(int *neq, double* t, double* y_, int* ml, int* mu, double* P, int* nrowp);
 
+      void calcSize();
+
       /** maximal step size */
       double dtMax{0};
       /** minimal step size */
@@ -68,11 +70,10 @@ namespace MBSimIntegrator {
       int maxSteps{10000};
       /** formalism **/
       Formalism formalism{DAE2};
+      /** exclude algebraic variables from error test **/
+      bool excludeAlgebraicVariables{true};
 
-       /** tolerance for position constraints */
-      double gMax{-1};
-      /** tolerance for velocity constraints */
-      double gdMax{-1};
+      int N;
 
     public:
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
@@ -84,9 +85,7 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
-
-      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
-      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
+      void setExcludeAlgebraicVariablesFromErrorTest(bool excludeAlgebraicVariables_) { excludeAlgebraicVariables = excludeAlgebraicVariables_; }
 
       using Integrator::integrate;
       void integrate();

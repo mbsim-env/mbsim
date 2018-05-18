@@ -162,6 +162,18 @@ namespace MBSim {
 
       virtual fmatvec::Mat3x2 evalWV(const fmatvec::Vec2 &zeta);
 
+      virtual fmatvec::Vec3 evalParWvCParEta(const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Vec3 evalParWvCParXi(const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Mat3x2 evalParWvCParZeta(const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Vec3 evalParWnPart(const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Vec3 evalParWuPart(const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Vec3 evalParWvPart(const fmatvec::Vec2 &zeta);
+
       virtual fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPS);
 
       virtual void updatePositions(ContourFrame *frame);

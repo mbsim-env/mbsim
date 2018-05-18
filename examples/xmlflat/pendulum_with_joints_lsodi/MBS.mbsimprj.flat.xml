@@ -137,7 +137,7 @@
     <startTime>0</startTime>
     <endTime>10.1</endTime>
     <plotStepSize>1e-2</plotStepSize>
-    <absoluteTolerance>[1e-06; 1e-06; 1e-06; 1e-06; 1e-06; 1e-06; 1e-06; 1e-06; 1e-06; 1e-06; 1e-06; 1e-06; 1e15; 1e15; 1e15; 1e15; 1e15; 1e15; 1e15; 1e15]</absoluteTolerance>
+    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
     <relativeToleranceScalar>1e-6</relativeToleranceScalar>
     <initialStepSize>0</initialStepSize>
     <maximumStepSize>1e-1</maximumStepSize>

@@ -86,7 +86,7 @@ namespace MBSim {
 
     protected:
       void updateHessianMatrix(double eta);
-      const fmatvec::MatVx4& evalHessianMatrix(double eta){ if(eta!=etaOld) updateHessianMatrix(eta); return hess; }
+      const fmatvec::MatVx4& evalHessianMatrix(double eta){ if(fabs(eta-etaOld)>1e-13) updateHessianMatrix(eta); return hess; }
 
       Interpolation interpolation{none};
       fmatvec::MatVx4 cp;

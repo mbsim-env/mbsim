@@ -62,13 +62,11 @@ namespace MBSimGUI {
     type.emplace_back("RADAU integrator");
     type.emplace_back("RODAS integrator");
     type.emplace_back("SEULEX integrator");
+    type.emplace_back("PHEM56 integrator");
     type.emplace_back("LSODE integrator");
     type.emplace_back("LSODA integrator");
-    type.emplace_back("LSODAR integrator");
-    type.emplace_back("LSODKR integrator");
     type.emplace_back("LSODI integrator");
     type.emplace_back("DASPK integrator");
-    type.emplace_back("DASKR integrator");
     type.emplace_back("Time stepping integrator");
     type.emplace_back("Theta time stepping integrator");
     type.emplace_back("Time stepping SSC integrator");
@@ -139,42 +137,38 @@ namespace MBSimGUI {
     else if(i==6)
       return new SEULEXIntegrator;
     else if(i==7)
-      return new LSODEIntegrator;
+      return new PHEM56Integrator;
     else if(i==8)
-      return new LSODAIntegrator;
+      return new LSODEIntegrator;
     else if(i==9)
-      return new LSODARIntegrator;
+      return new LSODAIntegrator;
     else if(i==10)
-      return new LSODKRIntegrator;
-    else if(i==11)
       return new LSODIIntegrator;
-    else if(i==12)
+    else if(i==11)
       return new DASPKIntegrator;
-    else if(i==13)
-      return new DASKRIntegrator;
-    else if(i==14)
+    else if(i==12)
       return new TimeSteppingIntegrator;
-    else if(i==15)
+    else if(i==13)
       return new ThetaTimeSteppingIntegrator;
-    else if(i==16)
+    else if(i==14)
       return new TimeSteppingSSCIntegrator;
-    else if(i==17)
+    else if(i==15)
       return new HETS2Integrator;
-    else if(i==18)
+    else if(i==16)
       return new ExplicitEulerIntegrator;
-    else if(i==19)
+    else if(i==17)
       return new ImplicitEulerIntegrator;
-    else if(i==20)
+    else if(i==18)
       return new RKSuiteIntegrator;
-    else if(i==21)
+    else if(i==19)
       return new BoostOdeintDOS_RKDOPRI5;
-    else if(i==22)
+    else if(i==20)
       return new BoostOdeintDOS_BulirschStoer;
-    else if(i==23)
+    else if(i==21)
       return new BoostOdeintDOS_Rosenbrock4;
-    else if(i==24)
+    else if(i==22)
       return new Eigenanalyzer;
-    else if(i==25)
+    else if(i==23)
       return new HarmonicResponseAnalyzer;
     return nullptr;
   }
@@ -194,44 +188,40 @@ namespace MBSimGUI {
       i=5;
     else if(dynamic_cast<SEULEXIntegrator*>(solver))
       i=6;
-    else if(dynamic_cast<LSODEIntegrator*>(solver))
+    else if(dynamic_cast<PHEM56Integrator*>(solver))
       i=7;
-    else if(dynamic_cast<LSODAIntegrator*>(solver))
+    else if(dynamic_cast<LSODEIntegrator*>(solver))
       i=8;
-    else if(dynamic_cast<LSODARIntegrator*>(solver))
+    else if(dynamic_cast<LSODAIntegrator*>(solver))
       i=9;
-    else if(dynamic_cast<LSODKRIntegrator*>(solver))
-      i=10;
     else if(dynamic_cast<LSODIIntegrator*>(solver))
-      i=11;
+      i=10;
     else if(dynamic_cast<DASPKIntegrator*>(solver))
-      i=12;
-    else if(dynamic_cast<DASKRIntegrator*>(solver))
-      i=13;
+      i=11;
     else if(dynamic_cast<TimeSteppingIntegrator*>(solver))
-      i=14;
+      i=12;
     else if(dynamic_cast<ThetaTimeSteppingIntegrator*>(solver))
-      i=15;
+      i=13;
     else if(dynamic_cast<TimeSteppingSSCIntegrator*>(solver))
-      i=16;
+      i=14;
     else if(dynamic_cast<HETS2Integrator*>(solver))
-      i=17;
+      i=15;
     else if(dynamic_cast<ExplicitEulerIntegrator*>(solver))
-      i=18;
+      i=16;
     else if(dynamic_cast<ImplicitEulerIntegrator*>(solver))
-      i=19;
+      i=17;
     else if(dynamic_cast<RKSuiteIntegrator*>(solver))
-      i=20;
+      i=18;
     else if(dynamic_cast<BoostOdeintDOS_RKDOPRI5*>(solver))
-      i=21;
+      i=19;
     else if(dynamic_cast<BoostOdeintDOS_BulirschStoer*>(solver))
-      i=22;
+      i=20;
     else if(dynamic_cast<BoostOdeintDOS_Rosenbrock4*>(solver))
-      i=23;
+      i=21;
     else if(dynamic_cast<Eigenanalyzer*>(solver))
-      i=24;
+      i=22;
     else if(dynamic_cast<HarmonicResponseAnalyzer*>(solver))
-      i=25;
+      i=23;
     updateText();
   }
 

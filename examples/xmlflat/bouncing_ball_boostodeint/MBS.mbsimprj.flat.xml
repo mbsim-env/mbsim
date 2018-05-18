@@ -111,8 +111,8 @@
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">0.01</plotStepSize>
-    <maximumStepSize unit="s">0.01</maximumStepSize>
     <plotOnRoot>true</plotOnRoot>
+    <maximumStepSize unit="s">0.01</maximumStepSize>
   </BoostOdeintDOS_Rosenbrock4>
 
 </MBSimProject>

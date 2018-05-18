@@ -104,9 +104,13 @@ namespace MBSim {
       fmatvec::Vec3 evalParDer2Wu(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer1Wv(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer2Wv(const fmatvec::Vec2 &zeta) override;
-      virtual fmatvec::Vec3 evalWrPS(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWvCParEta(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParWvCParXi(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParWnPart(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWuPart(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWvPart(const fmatvec::Vec2 &zeta) override;
 
       /**
        * \brief contact search for RigidContours
@@ -135,5 +139,4 @@ namespace MBSim {
 
 }
 
-#endif /* _CONTOUR_H_ */
-
+#endif

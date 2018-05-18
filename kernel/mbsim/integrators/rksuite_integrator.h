@@ -20,26 +20,21 @@
 #ifndef _RKSUITE_INTEGRATOR_H_
 #define _RKSUITE_INTEGRATOR_H_
 
-#include "integrator.h"
+#include "root_finding_integrator.h"
 
 namespace MBSimIntegrator {
 
-  /** \brief ODE-Integrator RKSuite.
-    Integrator for ODEs.
-    This integrator uses rksuite from http://www.netlib.org . */
-  class RKSuiteIntegrator : public Integrator {
+  /** \brief ODE-Integrator RKSuite
+   *
+   * This integrator uses RKSUITE (http://www.netlib.org/ode/rksuite).
+   */
+  class RKSuiteIntegrator : public RootFindingIntegrator {
     public:
       enum Method {
         RK23=1,
         RK45,
         RK78,
         unknownMethod
-      };
-
-      enum Task {
-        usual=0,
-        complex,
-        unknownTask
       };
 
       /**
@@ -53,16 +48,10 @@ namespace MBSimIntegrator {
 
       /* GETTER / SETTER */
       void setMethod(Method method_) { method = method_; }
-      void setTask(Task task_) { task = task_; }
       void setRelativeTolerance(double rTol_) { rTol = rTol_; }
       void setThreshold(const fmatvec::Vec &thres_) { thres = thres_; }
       void setThreshold(double thres_) { thres = fmatvec::Vec(1,fmatvec::INIT,thres_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
-
-      void setPlotOnRoot(bool b) { plotOnRoot = b; }
-
-      void setToleranceForPositionConstraints(double gMax_) { gMax = gMax_; }
-      void setToleranceForVelocityConstraints(double gdMax_) { gdMax = gdMax_; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF INTEGRATOR */
@@ -75,15 +64,11 @@ namespace MBSimIntegrator {
 
       static void fzdot(double* t, double* z_, double* zd_);
 
-      bool signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const;
-
       int zSize;
       static RKSuiteIntegrator *selfStatic;
 
       /** method */
       Method method{RK45};
-      /** task */
-      Task task{complex};
       /** threshold */
       fmatvec::Vec thres;
       /** relative tolerance */
@@ -91,23 +76,11 @@ namespace MBSimIntegrator {
       /** initial step size */
       double dt0{0};
 
-      bool plotOnRoot{false};
-
-       /** tolerance for position constraints */
-      double gMax{-1};
-      /** tolerance for velocity constraints */
-      double gdMax{-1};
-
-      fmatvec::Vec svLast;
-      bool shift{false};
-
       int lenwrk, messages{0}, integrationSteps{0}, lenint;
       double t{0}, tPlot{0}, s0{0}, time{0};
       double *work{nullptr};
       double *workint{nullptr};
       fmatvec::Vec z, zd, zMax, zWant, zdWant;
-
-      std::ofstream integPlot;
   };
 
 }

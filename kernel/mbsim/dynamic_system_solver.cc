@@ -1406,6 +1406,12 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedImpulseTolerance");
     if (e)
       setGeneralizedImpulseTolerance(E(e)->getText<double>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedRelativePositionCorrectionValue");
+    if (e)
+      setGeneralizedRelativePositionCorrectionValue(E(e)->getText<double>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedRelativeVelocityCorrectionValue");
+    if (e)
+      setGeneralizedRelativeVelocityCorrectionValue(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"inverseKinetics");
     if (e)
       setInverseKinetics(E(e)->getText<bool>());

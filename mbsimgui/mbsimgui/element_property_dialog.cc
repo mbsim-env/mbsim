@@ -670,9 +670,6 @@ namespace MBSimGUI {
     indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"indices");
     addToTab("General", indices);
 
-    numberOfControlPoints = new ExtWidget("Number of control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfControlPoints");
-    addToTab("General", numberOfControlPoints);
-
     knotVector = new ExtWidget("Knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"knotVector");
     addToTab("General", knotVector);
 
@@ -690,7 +687,6 @@ namespace MBSimGUI {
     ContourPropertyDialog::initializeUsingXML(item->getXMLElement());
     interpolation->initializeUsingXML(item->getXMLElement());
     indices->initializeUsingXML(item->getXMLElement());
-    numberOfControlPoints->initializeUsingXML(item->getXMLElement());
     knotVector->initializeUsingXML(item->getXMLElement());
     degree->initializeUsingXML(item->getXMLElement());
     open->initializeUsingXML(item->getXMLElement());
@@ -702,7 +698,6 @@ namespace MBSimGUI {
     ContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
     interpolation->writeXMLFile(item->getXMLElement(),nullptr);
     indices->writeXMLFile(item->getXMLElement(),nullptr);
-    numberOfControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
     knotVector->writeXMLFile(item->getXMLElement(),nullptr);
     degree->writeXMLFile(item->getXMLElement(),nullptr);
     open->writeXMLFile(item->getXMLElement(),nullptr);
@@ -718,12 +713,6 @@ namespace MBSimGUI {
 
     indices = new ExtWidget("Indices",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"indices");
     addToTab("General", indices);
-
-    numberOfEtaControlPoints = new ExtWidget("Number of eta control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfEtaControlPoints");
-    addToTab("General", numberOfEtaControlPoints);
-
-    numberOfXiControlPoints = new ExtWidget("Number of xi control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfXiControlPoints");
-    addToTab("General", numberOfXiControlPoints);
 
     etaKnotVector = new ExtWidget("Eta knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"etaKnotVector");
     addToTab("General", etaKnotVector);
@@ -751,8 +740,6 @@ namespace MBSimGUI {
     ContourPropertyDialog::initializeUsingXML(item->getXMLElement());
     interpolation->initializeUsingXML(item->getXMLElement());
     indices->initializeUsingXML(item->getXMLElement());
-    numberOfEtaControlPoints->initializeUsingXML(item->getXMLElement());
-    numberOfXiControlPoints->initializeUsingXML(item->getXMLElement());
     etaKnotVector->initializeUsingXML(item->getXMLElement());
     xiKnotVector->initializeUsingXML(item->getXMLElement());
     etaDegree->initializeUsingXML(item->getXMLElement());
@@ -767,8 +754,6 @@ namespace MBSimGUI {
     ContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
     interpolation->writeXMLFile(item->getXMLElement(),nullptr);
     indices->writeXMLFile(item->getXMLElement(),nullptr);
-    numberOfEtaControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
-    numberOfXiControlPoints->writeXMLFile(item->getXMLElement(),nullptr);
     etaKnotVector->writeXMLFile(item->getXMLElement(),nullptr);
     xiKnotVector->writeXMLFile(item->getXMLElement(),nullptr);
     etaDegree->writeXMLFile(item->getXMLElement(),nullptr);
@@ -976,20 +961,26 @@ namespace MBSimGUI {
     projection = new ExtWidget("Projection tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");
     addToTab("Solver parameters", projection);
 
-    g = new ExtWidget("Generalized relative position tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionTolerance");
-    addToTab("Solver parameters", g);
+    gTol = new ExtWidget("Generalized relative position tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionTolerance");
+    addToTab("Solver parameters", gTol);
 
-    gd = new ExtWidget("Generalized relative velocity tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityTolerance");
-    addToTab("Solver parameters", gd);
+    gdTol = new ExtWidget("Generalized relative velocity tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityTolerance");
+    addToTab("Solver parameters", gdTol);
 
-    gdd = new ExtWidget("Generalized relative acceleration tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeAccelerationTolerance");
-    addToTab("Solver parameters", gdd);
+    gddTol = new ExtWidget("Generalized relative acceleration tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeAccelerationTolerance");
+    addToTab("Solver parameters", gddTol);
 
-    la = new ExtWidget("Generalized force tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedForceTolerance");
-    addToTab("Solver parameters", la);
+    laTol = new ExtWidget("Generalized force tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedForceTolerance");
+    addToTab("Solver parameters", laTol);
 
-    La = new ExtWidget("Generalized impulse tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedImpulseTolerance");
-    addToTab("Solver parameters", La);
+    LaTol = new ExtWidget("Generalized impulse tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedImpulseTolerance");
+    addToTab("Solver parameters", LaTol);
+
+    gCorr = new ExtWidget("Generalized relative position correction value",new ChoiceWidget2(new ScalarWidgetFactory("1e-14"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionCorrectionValue");
+    addToTab("Solver parameters", gCorr);
+
+    gdCorr = new ExtWidget("Generalized relative velocity correction value",new ChoiceWidget2(new ScalarWidgetFactory("1e-16"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityCorrectionValue");
+    addToTab("Solver parameters", gdCorr);
 
     inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inverseKinetics");
     addToTab("Extra", inverseKinetics);
@@ -1010,11 +1001,13 @@ namespace MBSimGUI {
     numericalJacobian->initializeUsingXML(item->getXMLElement());
     linearAlgebra->initializeUsingXML(item->getXMLElement());
     projection->initializeUsingXML(item->getXMLElement());
-    g->initializeUsingXML(item->getXMLElement());
-    gd->initializeUsingXML(item->getXMLElement());
-    gdd->initializeUsingXML(item->getXMLElement());
-    la->initializeUsingXML(item->getXMLElement());
-    La->initializeUsingXML(item->getXMLElement());
+    gTol->initializeUsingXML(item->getXMLElement());
+    gdTol->initializeUsingXML(item->getXMLElement());
+    gddTol->initializeUsingXML(item->getXMLElement());
+    laTol->initializeUsingXML(item->getXMLElement());
+    LaTol->initializeUsingXML(item->getXMLElement());
+    gCorr->initializeUsingXML(item->getXMLElement());
+    gdCorr->initializeUsingXML(item->getXMLElement());
     inverseKinetics->initializeUsingXML(item->getXMLElement());
     initialProjection->initializeUsingXML(item->getXMLElement());
     useConstraintSolverForPlot->initializeUsingXML(item->getXMLElement());
@@ -1030,11 +1023,13 @@ namespace MBSimGUI {
     numericalJacobian->writeXMLFile(item->getXMLElement());
     linearAlgebra->writeXMLFile(item->getXMLElement());
     projection->writeXMLFile(item->getXMLElement());
-    g->writeXMLFile(item->getXMLElement());
-    gd->writeXMLFile(item->getXMLElement());
-    gdd->writeXMLFile(item->getXMLElement());
-    la->writeXMLFile(item->getXMLElement());
-    La->writeXMLFile(item->getXMLElement());
+    gTol->writeXMLFile(item->getXMLElement());
+    gdTol->writeXMLFile(item->getXMLElement());
+    gddTol->writeXMLFile(item->getXMLElement());
+    laTol->writeXMLFile(item->getXMLElement());
+    LaTol->writeXMLFile(item->getXMLElement());
+    gCorr->writeXMLFile(item->getXMLElement());
+    gdCorr->writeXMLFile(item->getXMLElement());
     inverseKinetics->writeXMLFile(item->getXMLElement());
     initialProjection->writeXMLFile(item->getXMLElement());
     useConstraintSolverForPlot->writeXMLFile(item->getXMLElement());

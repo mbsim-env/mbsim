@@ -26,7 +26,6 @@
 #include "fortran/fortran_wrapper.h"
 #include "radau_integrator.h"
 #include <ctime>
-#include <fstream>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -144,7 +143,7 @@ namespace MBSimIntegrator {
       if(self->shift) {
         // ... search the first root and set step.second to this time
         double dt = *t-*told;
-        while(dt>1e-10) {
+        while(dt>self->dtRoot) {
           dt/=2;
           double tCheck = tRoot-dt;
           self->getSystem()->setTime(tCheck);
@@ -190,7 +189,6 @@ namespace MBSimIntegrator {
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
       self->s0 = s1;
 
-      if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
     }
 
@@ -219,8 +217,6 @@ namespace MBSimIntegrator {
         self->getSystem()->resetUpToDate();
         self->getSystem()->plot();
       }
-      self->getSystem()->resetUpToDate();
-      self->svLast=self->getSystem()->evalsv();
       *irtrn = -1;
     }
     else {
@@ -249,13 +245,6 @@ namespace MBSimIntegrator {
     }
   }
 
-  bool RADAUIntegrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
-    for(int i=0; i<svStepEnd.size(); i++)
-      if(svLast(i)*svStepEnd(i)<0)
-        return true;
-    return false;
-  }
-
   void RADAUIntegrator::integrate() {
     if(formalism==unknown)
       throwError("(RADAUIntegrator::integrate): formalism unknown");
@@ -270,7 +259,6 @@ namespace MBSimIntegrator {
 
     debugInit();
 
-    int zSize = system->getzSize();
     calcSize();
 
     if(not neq)
@@ -282,10 +270,10 @@ namespace MBSimIntegrator {
     double t = tStart;
 
     Vec y(neq);
-    Vec z = y(0,zSize-1);
+    Vec z = y(0,system->getzSize()-1);
     if(z0.size()) {
-      if(z0.size() != zSize)
-        throwError("(RADAUIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
+      if(z0.size() != system->getzSize())
+        throwError("(RADAUIntegrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()));
       z = z0;
     }
     else
@@ -349,14 +337,6 @@ namespace MBSimIntegrator {
     calcSize();
     reinit();
 
-    if(plotIntegrationData) {
-      integPlot.open((name + ".plt").c_str());
-
-      integPlot << "#1 t [s]:" << endl;
-      integPlot << "#1 dt [s]:" << endl;
-      integPlot << "#1 calculation time [s]:" << endl;
-    }
-
     s0 = clock();
 
     while(t<tEnd-epsroot) {
@@ -368,6 +348,8 @@ namespace MBSimIntegrator {
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
       if(shift) {
+        system->resetUpToDate();
+        svLast = system->evalsv();
         dt = dt0;
         calcSize();
         reinit();
@@ -376,16 +358,7 @@ namespace MBSimIntegrator {
       t = system->getTime();
       z = system->getState();
       if(formalism)
-        y(zSize,neq-1).init(0);
-    }
-
-    if(plotIntegrationData) integPlot.close();
-
-    if(writeIntegrationSummary) {
-      ofstream integSum((name + ".sum").c_str());
-      integSum << "Integration time: " << time << endl;
-      //integSum << "Integration steps: " << integrationSteps << endl;
-      integSum.close();
+        y(system->getzSize(),neq-1).init(0);
     }
   }
 
@@ -427,7 +400,7 @@ namespace MBSimIntegrator {
   }
 
   void RADAUIntegrator::initializeUsingXML(DOMElement *element) {
-    Integrator::initializeUsingXML(element);
+    RootFindingIntegrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
@@ -455,12 +428,6 @@ namespace MBSimIntegrator {
     }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
     if(e) setReducedForm((E(e)->getText<bool>()));
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
-    if(e) setPlotOnRoot(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
-    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
-    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
 }

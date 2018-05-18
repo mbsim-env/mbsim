@@ -33,6 +33,7 @@
         <frames/>
         <contours>
           <PlanarNurbsContour name="PlanarNurbsContour" xmlns="http://www.mbsim-env.de/MBSim">
+            <thickness unit="m">1</thickness>
             <controlPoints>
     [
    10.00000    4.50000    0.00000
@@ -132,12 +133,11 @@
     <generalizedImpulseTolerance>1e-6</generalizedImpulseTolerance>
   </DynamicSystemSolver>
 
-  <LSODKRIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
     <endTime unit="s">2</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
-  </LSODKRIntegrator>
-
-
+    <initialStepSize>1e-8</initialStepSize>
+  </LSODEIntegrator>
 
 </MBSimProject>

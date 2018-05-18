@@ -20,8 +20,6 @@
 #ifndef _INTEGRATORS_H_
 #define _INTEGRATORS_H_
 
-#include "lsodar_integrator.h"
-#include "lsodkr_integrator.h"
 #include "lsode_integrator.h"
 #include "rksuite_integrator.h"
 #include "dopri5_integrator.h"

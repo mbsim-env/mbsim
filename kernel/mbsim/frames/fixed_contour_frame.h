@@ -31,6 +31,13 @@ namespace MBSim {
     public:
       FixedContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta = fmatvec::Vec2(), Contour *contour_=nullptr) : ContourFrame(name,zeta), contour(contour_) { }
 
+      const fmatvec::Vec2& evalZeta() override { return zeta; }
+      const fmatvec::Vec2& getZeta(bool check=true) override { return zeta; }
+      double evalEta() override { return zeta(0); }
+      double evalXi() override { return zeta(1); }
+      double getEta(bool check=true) override { return zeta(0); }
+      double getXi(bool check=true) override { return zeta(1); }
+
       void updatePositions() override;
       void updateVelocities() override;
       void updateAccelerations() override;

@@ -184,13 +184,14 @@
     </DynamicSystemSolver>
   </Embed>
 
-  <LSODKRIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
     <endTime unit="s">6</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
-    <initialStepSize unit="s">1e-8</initialStepSize>
     <toleranceForPositionConstraints>1e-6</toleranceForPositionConstraints>
     <toleranceForVelocityConstraints>1e-6</toleranceForVelocityConstraints>
-  </LSODKRIntegrator>
+    <absoluteToleranceScalar>1e-8</absoluteToleranceScalar>
+    <relativeToleranceScalar>1e-8</relativeToleranceScalar>
+  </LSODEIntegrator>
 
 </MBSimProject>

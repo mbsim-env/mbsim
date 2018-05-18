@@ -30,8 +30,6 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  Integrator::Integrator() :  name("Integrator") {}
-
   void Integrator::initializeUsingXML(DOMElement *element) {
     Solver::initializeUsingXML(element);
     DOMElement *e;
@@ -43,10 +41,6 @@ namespace MBSimIntegrator {
     setPlotStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialState");
     if(e) setInitialState(E(e)->getText<fmatvec::Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotIntegrationData");
-    if(e) setPlotIntegrationData(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"writeIntegrationSummary");
-    if(e) setWriteIntegrationSummary(E(e)->getText<bool>());
   }
 
   // This function is called first by each implementation of Integrator::integrate.

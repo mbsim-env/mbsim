@@ -14,14 +14,13 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _FLEXIBLE_PLANAR_NURBS_CONTOUR_H_
 #define _FLEXIBLE_PLANAR_NURBS_CONTOUR_H_
 
-#include "mbsim/contours/contour.h"
-#include "mbsimFlexibleBody/utils/contact_utils.h"
+#include "mbsimFlexibleBody/contours/flexible_contour.h"
 
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
@@ -38,16 +37,16 @@ namespace MBSim {
 namespace MBSimFlexibleBody {
 
   /*!  
-   * \brief flexible nurbs curve
+   * \brief flexible planar nurbs contour
    * \author Martin Foerg
    */
-  class FlexiblePlanarNurbsContour : public MBSim::Contour {
+  class FlexiblePlanarNurbsContour : public FlexibleContour {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      FlexiblePlanarNurbsContour(const std::string &name="") : MBSim::Contour(name) { }
+      FlexiblePlanarNurbsContour(const std::string &name="") : FlexibleContour(name) { }
 
       /**
        * \brief destructor
@@ -69,6 +68,8 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer1Ws(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalParDer1Wu(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWvCParEta(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWuPart(const fmatvec::Vec2 &zeta) override;
 
       void updatePositions(MBSim::ContourFrame *frame) override;
       void updateVelocities(MBSim::ContourFrame *frame) override;
@@ -85,8 +86,6 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       void plot() override;
-
-      MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override { return findContactPairingFlexible(type0, type1); }
 
 //      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
 //        OpenMBVNurbsCurve ombv(diffuseColor,transparency);
@@ -112,7 +111,7 @@ namespace MBSimFlexibleBody {
       double continueEta(double eta_);
       void updateHessianMatrix(double eta);
       void updateHessianMatrix_t(double eta);
-      const fmatvec::MatVx4& evalHessianMatrix(double eta){ if(updCrvPos or eta!=etaOld) updateHessianMatrix(eta); return hess; }
+      const fmatvec::MatVx4& evalHessianMatrix(double eta){ if(updCrvPos or fabs(eta-etaOld)>1e-13) updateHessianMatrix(eta); return hess; }
       const fmatvec::MatVx4& evalHessianMatrix_t(double eta){ updateHessianMatrix_t(eta); return hess_t; }
 
       bool interpolation{false};

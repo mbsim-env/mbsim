@@ -55,36 +55,29 @@ namespace MBSim {
 
   Vec3 RigidContour::evalKrPS(const Vec2 &zeta) {
     throwError("(RigidContour::evalKrPS): Not implemented.");
-    return 0;
   }
 
   Vec3 RigidContour::evalKs(const Vec2 &zeta) {
     throwError("(RigidContour::evalKs): Not implemented.");
-    return 0;
   }
 
   Vec3 RigidContour::evalKt(const Vec2 &zeta) {
     throwError("(RigidContour::evalKt): Not implemented.");
-    return 0;
   }
   Vec3 RigidContour::evalParDer1Ks(const Vec2 &zeta) {
     throwError("(RigidContour::evalParDer1Ks): Not implemented.");
-    return 0;
   }
 
   Vec3 RigidContour::evalParDer2Ks(const Vec2 &zeta) {
     throwError("(RigidContour::evalParDer2Ks): Not implemented.");
-    return 0;
   }
 
   Vec3 RigidContour::evalParDer1Kt(const Vec2 &zeta) {
     throwError("(RigidContour::evalParDer1Kt): Not implemented.");
-    return 0;
   }
 
   Vec3 RigidContour::evalParDer2Kt(const Vec2 &zeta) {
     throwError("(RigidContour::evalParDer2Kt): Not implemented.");
-    return 0;
   }
 
   Vec3 RigidContour::evalKu(const Vec2 &zeta) {
@@ -134,7 +127,7 @@ namespace MBSim {
   }
 
   Vec3 RigidContour::evalPosition(const Vec2 &zeta) {
-    return R->evalPosition() + evalWrPS(zeta);
+    return R->evalPosition() + R->evalOrientation()*evalKrPS(zeta);
   }
 
   Vec3 RigidContour::evalParDer1Wn(const Vec2 &zeta) {
@@ -161,16 +154,32 @@ namespace MBSim {
     return R->evalOrientation()*evalParDer2Kv(zeta);
   }
 
-  Vec3 RigidContour::evalWrPS(const Vec2 &zeta) {
-    return R->evalOrientation()*evalKrPS(zeta);
-  }
-
   Vec3 RigidContour::evalWs(const Vec2 &zeta) {
     return R->evalOrientation()*evalKs(zeta);
   }
 
   Vec3 RigidContour::evalWt(const Vec2 &zeta) {
     return R->evalOrientation()*evalKt(zeta);
+  }
+
+  Vec3 RigidContour::evalParWvCParEta(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWs(zeta));
+  }
+
+  Vec3 RigidContour::evalParWvCParXi(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWt(zeta));
+  }
+
+  Vec3 RigidContour::evalParWnPart(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWn(zeta));
+  }
+
+  Vec3 RigidContour::evalParWuPart(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWu(zeta));
+  }
+
+  Vec3 RigidContour::evalParWvPart(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWv(zeta));
   }
 
   void RigidContour::plot() {

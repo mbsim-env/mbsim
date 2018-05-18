@@ -26,7 +26,6 @@
 #include <mbsim/mbsim_event.h>
 #include <mbsim/solver.h>
 #include <string>
-#include <iostream>
 
 namespace MBSimIntegrator {
 
@@ -42,7 +41,7 @@ namespace MBSimIntegrator {
       /**
        * \brief constructor 
        */
-      Integrator();
+      Integrator() : name("Integrator") { }
       
       /**
        * \brief destructor
@@ -89,10 +88,6 @@ namespace MBSimIntegrator {
        */
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void setPlotIntegrationData(bool plotIntegrationData_) { plotIntegrationData = plotIntegrationData_; }
-
-      void setWriteIntegrationSummary(bool writeIntegrationSummary_) { writeIntegrationSummary = writeIntegrationSummary_; }
-
     protected:
       /**
        * \brief start, end, plot time
@@ -108,16 +103,6 @@ namespace MBSimIntegrator {
        * \brief name of integrator
        */
       std::string name;
-
-      /**
-       * \brief plot integration data
-       */
-      bool plotIntegrationData{false};
-
-      /**
-       * \brief write integration summary
-       */
-      bool writeIntegrationSummary{false};
   };
 
 }

@@ -69,17 +69,20 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointLineSegment::updatewb(SingleContact &contact, int i) {
-    Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);
-    Vec3 u1 = contact.getContourFrame(iline)->getOrientation().col(1);
-    Vec3 vC1 = contact.getContourFrame(iline)->evalVelocity();
-    Vec3 vC2 = contact.getContourFrame(ipoint)->evalVelocity();
-    Vec3 Om1 = contact.getContourFrame(iline)->evalAngularVelocity();
+    const Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);
+    const Vec3 u1 = contact.getContourFrame(iline)->getOrientation().col(1);
+    const Vec3 &R1 = u1;
+    const Vec3 paruPart1 = crossProduct(contact.getContourFrame(iline)->evalAngularVelocity(),u1);
+    const Vec3 parnPart1 = crossProduct(contact.getContourFrame(iline)->getAngularVelocity(),n1);
+    const Vec3 parWvCParEta1 = crossProduct(contact.getContourFrame(iline)->getAngularVelocity(),R1);
+    const Vec3 vC1 = contact.getContourFrame(iline)->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(ipoint)->evalVelocity();
 
-    double sd1 = u1.T()*(vC2 - vC1); 
+    double sd1 = u1.T()*(vC2-vC1);
 
-    contact.getwb(false)(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
-
+    contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)-n1.T()*parWvCParEta1*sd1;
     if(contact.getwb(false).size() > 1)
-      contact.getwb(false)(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
+      contact.getwb(false)(1) += paruPart1.T()*(vC2-vC1)-u1.T()*parWvCParEta1*sd1;
   }
+
 }

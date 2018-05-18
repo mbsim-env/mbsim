@@ -43,11 +43,12 @@ int main (int argc, char* argv[]) {
     sys->setGeneralizedImpulseTolerance(1e-6);
     sys->setGeneralizedForceTolerance(1e-8);
     sys->setGeneralizedRelativeAccelerationTolerance(1e-8);
-    integrator = new LSODKRIntegrator;
-    static_cast<LSODKRIntegrator*>(integrator)->setPlotOnRoot(false);
-    static_cast<LSODKRIntegrator*>(integrator)->setInitialStepSize(1e-8);
-    static_cast<LSODKRIntegrator*>(integrator)->setToleranceForPositionConstraints(1e-5);
-    static_cast<LSODKRIntegrator*>(integrator)->setToleranceForVelocityConstraints(1e-5);
+    integrator = new LSODEIntegrator;
+    static_cast<LSODEIntegrator*>(integrator)->setInitialStepSize(1e-8);
+    static_cast<LSODEIntegrator*>(integrator)->setAbsoluteTolerance(1e-7);
+    static_cast<LSODEIntegrator*>(integrator)->setRelativeTolerance(1e-7);
+    static_cast<LSODEIntegrator*>(integrator)->setToleranceForPositionConstraints(1e-5);
+    static_cast<LSODEIntegrator*>(integrator)->setToleranceForVelocityConstraints(1e-5);
   } 
   else { // time stepping integration
     sys->setGeneralizedImpulseTolerance(1e-2*dt);

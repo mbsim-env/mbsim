@@ -73,6 +73,8 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleLineSegment::updatewb(SingleContact &contact, int i) {
+    std::runtime_error("(ContactKinematicsCircleLineSegment::updatewb): Not implemented.");
+
     const Vec3 WC=circle->getFrame()->evalPosition();
     const Vec3 WL=linesegment->getFrame()->evalPosition();
     const Vec3 WLdir=linesegment->getFrame()->getOrientation().col(1);

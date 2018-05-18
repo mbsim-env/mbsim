@@ -7,5 +7,4 @@
   <relativeToleranceScalar>1e-6</relativeToleranceScalar>
   <initialStepSize>1e-6</initialStepSize>
   <maximumStepSize>1e-2</maximumStepSize>
-  <plotOnRoot>false</plotOnRoot>
 </BoostOdeintDOS_BulirschStoer>

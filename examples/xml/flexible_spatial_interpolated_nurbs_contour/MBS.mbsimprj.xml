@@ -158,8 +158,6 @@ ret = 0;</scalarParameter>
    116    54   230    76   143
    ]
                 </indices>
-                <numberOfEtaControlPoints>5</numberOfEtaControlPoints>
-                <numberOfXiControlPoints>5</numberOfXiControlPoints>
                 <etaDegree>3</etaDegree>
                 <xiDegree>3</xiDegree>
                 <openEta>true</openEta>

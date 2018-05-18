@@ -50,9 +50,7 @@ int main (int argc, char* argv[]) {
     integrator = new RADAU5Integrator;
   } 
   else if(eventDriven) { // Event driven time integration
-    integrator = new LSODARIntegrator;
-    static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
-    static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-13);
+    integrator = new LSODEIntegrator;
   } 
   else { // time stepping integration
     sys->setGeneralizedImpulseTolerance(1e-2*dt);

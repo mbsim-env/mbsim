@@ -40,28 +40,28 @@ namespace MBSimFlexibleBody {
 
   void FloatingRelativeFlexibleContourFrame::updatePositions() {
     parent->updatePositions(this);
-    static_cast<ContourFrame*>(R)->setZeta(getZeta());
+    static_cast<ContourFrame*>(R)->setZeta(getZeta(false));
     WrRP = getPosition(false) - R->evalPosition();
     updPos = false;
   }
 
   void FloatingRelativeFlexibleContourFrame::updateVelocities() {
-    static_cast<ContourFrame*>(R)->setZeta(getZeta());
+    static_cast<ContourFrame*>(R)->setZeta(evalZeta());
     FloatingRelativeContourFrame::updateVelocities();
   }
 
   void FloatingRelativeFlexibleContourFrame::updateAccelerations() {
-    static_cast<ContourFrame*>(R)->setZeta(getZeta());
+    static_cast<ContourFrame*>(R)->setZeta(evalZeta());
     FloatingRelativeContourFrame::updateAccelerations();
   }
 
   void FloatingRelativeFlexibleContourFrame::updateJacobians(int j) {
-    static_cast<ContourFrame*>(R)->setZeta(getZeta());
+    static_cast<ContourFrame*>(R)->setZeta(evalZeta());
     FloatingRelativeContourFrame::updateJacobians(j);
   }
 
   void FloatingRelativeFlexibleContourFrame::updateGyroscopicAccelerations() {
-    static_cast<ContourFrame*>(R)->setZeta(getZeta());
+    static_cast<ContourFrame*>(R)->setZeta(evalZeta());
     FloatingRelativeContourFrame::updateGyroscopicAccelerations();
   }
 

@@ -25,7 +25,6 @@
 #include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
 #include "dopri5_integrator.h"
-#include <fstream>
 #include <ctime>
 
 #ifndef NO_ISO_14882
@@ -66,7 +65,7 @@ namespace MBSimIntegrator {
       if(self->shift) {
         // ... search the first root and set step.second to this time
         double dt = *t-*told;
-        while(dt>1e-10) {
+        while(dt>self->dtRoot) {
           dt/=2;
           double tCheck = tRoot-dt;
           self->getSystem()->setTime(tCheck);
@@ -107,7 +106,6 @@ namespace MBSimIntegrator {
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
       self->s0 = s1;
 
-      if(self->plotIntegrationData) self->integPlot<< self->tPlot << " " << *t-*told << " " << self->time << endl;
       self->tPlot += self->dtOut;
     }
 
@@ -128,8 +126,6 @@ namespace MBSimIntegrator {
         self->getSystem()->resetUpToDate();
         self->getSystem()->plot();
       }
-      self->getSystem()->resetUpToDate();
-      self->svLast=self->getSystem()->evalsv();
       *irtrn = -1;
     }
     else {
@@ -156,13 +152,6 @@ namespace MBSimIntegrator {
         }
       }
     }
-  }
-
-  bool DOPRI5Integrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
-    for(int i=0; i<svStepEnd.size(); i++)
-      if(svLast(i)*svStepEnd(i)<0)
-        return true;
-    return false;
   }
 
   void DOPRI5Integrator::integrate() {
@@ -229,33 +218,24 @@ namespace MBSimIntegrator {
     system->plot();
     svLast = system->evalsv();
 
-    if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
-
     s0 = clock();
 
     while(t<tEnd-epsroot) {
       DOPRI5(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
 
-      if(shift) work(6) = dt0;
+      if(shift) {
+        system->resetUpToDate();
+        svLast = system->evalsv();
+        work(6) = dt0;
+      }
       t = system->getTime();
       z = system->getState();
-    }
-
-    if(plotIntegrationData) integPlot.close();
-
-    if(writeIntegrationSummary) {
-      ofstream integSum((name + ".sum").c_str());
-      integSum.precision(8);
-      integSum << "Integration time: " << time << endl;
-      integSum << "Simulation time: " << t << endl;
-      //integSum << "Integration steps: " << integrationSteps << endl;
-      integSum.close();
     }
   }
 
   void DOPRI5Integrator::initializeUsingXML(DOMElement *element) {
-    Integrator::initializeUsingXML(element);
+    RootFindingIntegrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
@@ -271,12 +251,6 @@ namespace MBSimIntegrator {
     if(e) setMaximumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
-    if(e) setPlotOnRoot(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
-    if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
-    if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
   }
 
 }

@@ -303,7 +303,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *interpolation, *indices, *numberOfControlPoints, *knotVector, *degree, *open, *visu;
+      ExtWidget *interpolation, *indices, *knotVector, *degree, *open, *visu;
   };
 
   class FlexibleSpatialNurbsContourPropertyDialog : public ContourPropertyDialog {
@@ -313,7 +313,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *interpolation, *indices, *numberOfEtaControlPoints, *numberOfXiControlPoints, *etaKnotVector, *xiKnotVector, *etaDegree, *xiDegree, *openEta, *openXi, *visu;
+      ExtWidget *interpolation, *indices, *etaKnotVector, *xiKnotVector, *etaDegree, *xiDegree, *openEta, *openXi, *visu;
   };
 
   class FCLContourPropertyDialog : public RigidContourPropertyDialog {
@@ -377,7 +377,7 @@ namespace MBSimGUI {
 
   class DynamicSystemSolverPropertyDialog : public GroupPropertyDialog {
     protected:
-      ExtWidget *environment, *constraintSolver, *impactSolver, *maxIter, *numericalJacobian, *linearAlgebra, *projection, *g, *gd, *gdd, *la, *La, *inverseKinetics, *initialProjection, *useConstraintSolverForPlot;
+      ExtWidget *environment, *constraintSolver, *impactSolver, *maxIter, *numericalJacobian, *linearAlgebra, *projection, *gTol, *gdTol, *gddTol, *laTol, *LaTol, *gCorr, *gdCorr, *inverseKinetics, *initialProjection, *useConstraintSolverForPlot;
 
     public:
       DynamicSystemSolverPropertyDialog(DynamicSystemSolver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);

@@ -22,18 +22,11 @@
 #include "quasi_static_integrator.h"
 #include <mbsim/utils/nonlinear_algebra.h>
 #include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
-
 #include <ctime>
-#include <boost/iostreams/tee.hpp>
-#include <boost/iostreams/stream.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
 #endif
-
-namespace bio = boost::iostreams;
-using bio::tee_device;
-using bio::stream;
 
 using namespace fmatvec;
 using namespace MBSim;
@@ -74,8 +67,6 @@ namespace MBSimIntegrator {
     }
     else
       z = system->evalz0();
-
-    if(plotIntegrationData) integPlot.open((name + ".plt").c_str());
 
     stepPlot = (int) (dtPlot / dt + 0.5);
     if (fabs(stepPlot * dt - dtPlot) > dt * dt) {
@@ -169,7 +160,6 @@ namespace MBSimIntegrator {
         double s1 = clock();
         time += (s1 - s0) / CLOCKS_PER_SEC;
         s0 = s1;
-        if(plotIntegrationData) integPlot << t << " " << dt << " " << iter << " " << time << " " << system->getlaSize() << endl;
         if (msgAct(Status))
           msg(Status) << "   t = " << t << ",\tdt = " << dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << flush;
         tPlot += dtPlot;
@@ -184,27 +174,15 @@ namespace MBSimIntegrator {
   }
 
   void QuasiStaticIntegrator::postIntegrate() {
-    if(plotIntegrationData) integPlot.close();
-
-    if(writeIntegrationSummary) {
-      typedef tee_device<ostream, ofstream> TeeDevice;
-      typedef stream<TeeDevice> TeeStream;
-      ofstream integSum;
-      integSum.open((name + ".sum").c_str());
-      TeeDevice ts_tee(msg(Info), integSum);
-      TeeStream ts_split(ts_tee);
-
-      ts_split << endl << endl << "******************************" << endl;
-      ts_split << "INTEGRATION SUMMARY: " << endl;
-      ts_split << "End time [s]: " << tEnd << endl;
-      ts_split << "Integration time [s]: " << time << endl;
-      ts_split << "Integration steps: " << integrationSteps << endl;
-      ts_split << "Maximum number of iterations: " << maxIter << endl;
-      ts_split << "Average number of iterations: " << double(sumIter) / integrationSteps << endl;
-      ts_split << "******************************" << endl;
-      ts_split.flush();
-      ts_split.close();
-    }
+    msg(Info) << endl << endl << "******************************" << endl;
+    msg(Info) << "INTEGRATION SUMMARY: " << endl;
+    msg(Info) << "End time [s]: " << tEnd << endl;
+    msg(Info) << "Integration time [s]: " << time << endl;
+    msg(Info) << "Integration steps: " << integrationSteps << endl;
+    msg(Info) << "Maximum number of iterations: " << maxIter << endl;
+    msg(Info) << "Average number of iterations: " << double(sumIter) / integrationSteps << endl;
+    msg(Info) << "******************************" << endl;
+    msg(Info).flush();
   }
 
   void QuasiStaticIntegrator::integrate() {

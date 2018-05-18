@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+<LSODAIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
   <startTime>0</startTime>
   <endTime>4</endTime>
   <plotStepSize>1e-3</plotStepSize>
@@ -8,5 +8,4 @@
   <initialStepSize>1e-6</initialStepSize>
   <maximumStepSize>1e-2</maximumStepSize>
   <minimumStepSize>1e-6</minimumStepSize>
-  <plotOnRoot>false</plotOnRoot>
-</LSODARIntegrator>
+</LSODAIntegrator>

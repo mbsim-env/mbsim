@@ -80,12 +80,12 @@ namespace MBSim {
     contact.getContourFrame(iplanarcontour)->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
     contact.getContourFrame(iplanarcontour)->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
 
-    contact.getContourFrame(iplanarcontour)->setPosition(planarcontour->evalPosition(contact.getContourFrame(iplanarcontour)->getZeta()));
+    contact.getContourFrame(iplanarcontour)->setPosition(planarcontour->evalPosition(contact.getContourFrame(iplanarcontour)->getZeta(false)));
 
     Vec3 Wn = contact.getContourFrame(iline)->getOrientation(false).col(0);
 
     double g;
-    if(planarcontour->isZetaOutside(contact.getContourFrame(iplanarcontour)->getZeta()))
+    if(planarcontour->isZetaOutside(contact.getContourFrame(iplanarcontour)->getZeta(false)))
       g = 1;
     else
       g = Wn.T()*(contact.getContourFrame(iplanarcontour)->getPosition(false) - line->getFrame()->getPosition());
@@ -98,34 +98,34 @@ namespace MBSim {
   void ContactKinematicsLinePlanarContour::updatewb(SingleContact &contact, int i) {
     const Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);
     const Vec3 u1 = contact.getContourFrame(iline)->getOrientation().col(1);
-    const Vec3 R1 = u1;
+    const Vec3 &R1 = u1;
+    const Vec3 paruPart1 = crossProduct(contact.getContourFrame(iline)->evalAngularVelocity(),u1);
+    const Vec3 parnPart1 = crossProduct(contact.getContourFrame(iline)->getAngularVelocity(),n1);
+    const Vec3 parWvCParEta1 = crossProduct(contact.getContourFrame(iline)->getAngularVelocity(),R1);
 
-    const Vec3 v2 = planarcontour->evalWv(contact.getContourFrame(iplanarcontour)->getZeta());
+    const Vec3 u2 = contact.getContourFrame(iplanarcontour)->evalOrientation().col(1);
     const Vec3 R2 = planarcontour->evalWs(contact.getContourFrame(iplanarcontour)->getZeta());
     const Vec3 U2 = planarcontour->evalParDer1Wu(contact.getContourFrame(iplanarcontour)->getZeta());
+    const Vec3 paruPart2 = planarcontour->evalParWuPart(contact.getContourFrame(iplanarcontour)->getZeta());
+    const Vec3 parWvCParEta2 = planarcontour->evalParWvCParEta(contact.getContourFrame(iplanarcontour)->getZeta());
 
     const Vec3 vC1 = contact.getContourFrame(iline)->evalVelocity();
     const Vec3 vC2 = contact.getContourFrame(iplanarcontour)->evalVelocity();
-    const Vec3 Om1 = contact.getContourFrame(iline)->evalAngularVelocity();
-    const Vec3 Om2 = contact.getContourFrame(iplanarcontour)->evalAngularVelocity();
 
     SqrMat A(2,NONINIT);
     A(0,0) = -u1.T()*R1;
     A(0,1) = u1.T()*R2;
-    A(1,0) = 0; // = u2.T()*N1;
+    A(1,0) = 0;
     A(1,1) = n1.T()*U2;
 
     Vec b(2,NONINIT);
     b(0) = -u1.T()*(vC2-vC1);
-    b(1) = -v2.T()*(Om2-Om1);
+    b(1) = -u2.T()*parnPart1-n1.T()*paruPart2;
     Vec zetad =  slvLU(A,b);
 
-    const Mat3x3 tOm1 = tilde(Om1);
-    const Mat3x3 tOm2 = tilde(Om2);
-
-    contact.getwb(false)(0) += (/**(vC2-vC1).T()*N1**/-n1.T()*tOm1*R1)*zetad(0)+n1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
+    contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParEta2*zetad(1)-parWvCParEta1*zetad(0));
     if (contact.getwb(false).size()>1)
-      contact.getwb(false)(1) += (/**(vC2-vC1).T()*U1**/-u1.T()*tOm1*R1)*zetad(0)+u1.T()*(tOm2*R2*zetad(1)-tOm1*(vC2-vC1));
+      contact.getwb(false)(1) += paruPart1.T()*(vC2-vC1)+u1.T()*(parWvCParEta2*zetad(1)-parWvCParEta1*zetad(0));
   }
 
 }

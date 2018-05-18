@@ -14,14 +14,13 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _FLEXIBLE_SPATIAL_NURBS_CONTOUR_H_
 #define _FLEXIBLE_SPATIAL_NURBS_CONTOUR_H_
 
-#include "mbsim/contours/contour.h"
-#include "mbsimFlexibleBody/utils/contact_utils.h"
+#include "mbsimFlexibleBody/contours/flexible_contour.h"
 
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
@@ -38,16 +37,16 @@ namespace MBSim {
 namespace MBSimFlexibleBody {
 
   /*!  
-   * \brief flexible nurbs surface
+   * \brief flexible spatial nurbs contour
    * \author Martin Foerg
    */
-  class FlexibleSpatialNurbsContour : public MBSim::Contour {
+  class FlexibleSpatialNurbsContour : public FlexibleContour {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      FlexibleSpatialNurbsContour(const std::string &name="") : MBSim::Contour(name) { }
+      FlexibleSpatialNurbsContour(const std::string &name="") : FlexibleContour(name) { }
 
       /**
        * \brief destructor
@@ -79,6 +78,10 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 evalParDer2Wv(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWvCParEta(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWvCParXi(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWuPart(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWvPart(const fmatvec::Vec2 &zeta) override;
 
       void updatePositions(MBSim::ContourFrame *frame) override;
       void updateVelocities(MBSim::ContourFrame *frame) override;
@@ -125,7 +128,7 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec2 continueZeta(const fmatvec::Vec2 &zeta_);
       void updateHessianMatrix(const fmatvec::Vec2 &zeta);
       void updateHessianMatrix_t(const fmatvec::Vec2 &zeta);
-      const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(updSrfPos or zeta!=zetaOld) updateHessianMatrix(zeta); return hess; }
+      const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(updSrfPos or fabs(zeta(0)-zetaOld(0))>1e-13 or fabs(zeta(1)-zetaOld(1))>1e-13) updateHessianMatrix(zeta); return hess; }
       const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix_t(const fmatvec::Vec2 &zeta){ updateHessianMatrix_t(zeta); return hess_t; }
 
       bool interpolation{false};

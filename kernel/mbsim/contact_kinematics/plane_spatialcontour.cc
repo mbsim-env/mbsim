@@ -83,12 +83,12 @@ namespace MBSim {
     contact.getContourFrame(ispatialcontour)->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
     contact.getContourFrame(ispatialcontour)->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
-    contact.getContourFrame(ispatialcontour)->setPosition(spatialcontour->evalPosition(contact.getContourFrame(ispatialcontour)->getZeta()));
+    contact.getContourFrame(ispatialcontour)->setPosition(spatialcontour->evalPosition(contact.getContourFrame(ispatialcontour)->getZeta(false)));
 
     Vec3 Wn = contact.getContourFrame(iplane)->getOrientation(false).col(0);
 
     double g;
-    if(spatialcontour->isZetaOutside(contact.getContourFrame(ispatialcontour)->getZeta()))
+    if(spatialcontour->isZetaOutside(contact.getContourFrame(ispatialcontour)->getZeta(false)))
       g = 1;
     else
       g = Wn.T()*(contact.getContourFrame(ispatialcontour)->getPosition(false) - plane->getFrame()->getPosition());
@@ -103,45 +103,49 @@ namespace MBSim {
     const Vec3 u1 = contact.getContourFrame(iplane)->getOrientation().col(1);
     const Vec3 v1 = contact.getContourFrame(iplane)->getOrientation().col(2);
     const Mat3x2 R1 = plane->evalWR(Vec2(NONINIT));
+    const Vec3 paruPart1 = crossProduct(contact.getContourFrame(iplane)->evalAngularVelocity(),u1);
+    const Vec3 parvPart1 = crossProduct(contact.getContourFrame(iplane)->getAngularVelocity(),v1);
+    const Vec3 parnPart1 = crossProduct(contact.getContourFrame(iplane)->getAngularVelocity(),n1);
+    Mat3x2 parWvCParZeta1(NONINIT);
+    parWvCParZeta1.set(0,crossProduct(contact.getContourFrame(iplane)->getAngularVelocity(),R1.col(0)));
+    parWvCParZeta1.set(1,crossProduct(contact.getContourFrame(iplane)->getAngularVelocity(),R1.col(1)));
 
-    const Vec3 u2 = spatialcontour->evalWu(contact.getContourFrame(ispatialcontour)->getZeta());
-    const Vec3 v2 = spatialcontour->evalWv(contact.getContourFrame(ispatialcontour)->getZeta());
+    const Vec3 u2 = contact.getContourFrame(ispatialcontour)->evalOrientation().col(1);
+    const Vec3 v2 = contact.getContourFrame(ispatialcontour)->getOrientation().col(2);
     const Mat3x2 R2 = spatialcontour->evalWR(contact.getContourFrame(ispatialcontour)->getZeta());
     const Mat3x2 U2 = spatialcontour->evalWU(contact.getContourFrame(ispatialcontour)->getZeta());
     const Mat3x2 V2 = spatialcontour->evalWV(contact.getContourFrame(ispatialcontour)->getZeta());
+    const Vec3 paruPart2 = spatialcontour->evalParWuPart(contact.getContourFrame(ispatialcontour)->getZeta());
+    const Vec3 parvPart2 = spatialcontour->evalParWvPart(contact.getContourFrame(ispatialcontour)->getZeta());
+    const Mat3x2 parWvCParZeta2 = spatialcontour->evalParWvCParZeta(contact.getContourFrame(ispatialcontour)->getZeta());
 
     const Vec3 vC1 = contact.getContourFrame(iplane)->evalVelocity();
     const Vec3 vC2 = contact.getContourFrame(ispatialcontour)->evalVelocity();
-    const Vec3 Om1 = contact.getContourFrame(iplane)->evalAngularVelocity();
-    const Vec3 Om2 = contact.getContourFrame(ispatialcontour)->evalAngularVelocity();
 
     SqrMat A(4,NONINIT);
     A(RangeV(0,0),RangeV(0,1)) = -u1.T()*R1;
     A(RangeV(0,0),RangeV(2,3)) = u1.T()*R2;
     A(RangeV(1,1),RangeV(0,1)) = -v1.T()*R1;
     A(RangeV(1,1),RangeV(2,3)) = v1.T()*R2;
-    A(RangeV(2,2),RangeV(0,1)).init(0); // = u2.T()*N1;
+    A(RangeV(2,2),RangeV(0,1)).init(0);
     A(RangeV(2,2),RangeV(2,3)) = n1.T()*U2;
-    A(RangeV(3,3),RangeV(0,1)).init(0); // = v2.T()*N1;
+    A(RangeV(3,3),RangeV(0,1)).init(0);
     A(RangeV(3,3),RangeV(2,3)) = n1.T()*V2;
 
     Vec b(4,NONINIT);
     b(0) = -u1.T()*(vC2-vC1);
     b(1) = -v1.T()*(vC2-vC1);
-    b(2) = -v2.T()*(Om2-Om1);
-    b(3) = u2.T()*(Om2-Om1);
+    b(2) = -u2.T()*parnPart1-n1.T()*paruPart2;
+    b(3) = -v2.T()*parnPart1-n1.T()*parvPart2;
     Vec zetad =  slvLU(A,b);
     Vec zetad1 = zetad(0,1);
     Vec zetad2 = zetad(2,3);
 
-    const Mat3x3 tOm1 = tilde(Om1);
-    const Mat3x3 tOm2 = tilde(Om2);
-
-    contact.getwb(false)(0) += (/**(vC2-vC1).T()*N1**/-n1.T()*tOm1*R1)*zetad1+n1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+    contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
     if (contact.getwb(false).size()>1) {
-      contact.getwb(false)(1) += (/**(vC2-vC1).T()*U1**/-u1.T()*tOm1*R1)*zetad1+u1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+      contact.getwb(false)(1) += paruPart1.T()*(vC2-vC1)+u1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
       if (contact.getwb(false).size()>2)
-        contact.getwb(false)(2) += (/**(vC2-vC1).T()*V1**/-v1.T()*tOm1*R1)*zetad1+v1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+        contact.getwb(false)(2) += parvPart1.T()*(vC2-vC1)+v1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
     }
   }
 

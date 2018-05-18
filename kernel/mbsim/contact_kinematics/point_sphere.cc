@@ -63,6 +63,8 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointSphere::updatewb(SingleContact &contact, int i) {
+    std::runtime_error("(ContactKinematicsPointSphere::updatewb): Not implemented.");
+
     const Vec3 n1 = contact.getContourFrame(ipoint)->evalOrientation().col(0);
     const Vec3 u1 = contact.getContourFrame(ipoint)->getOrientation().col(1);
     const Vec3 v1 = contact.getContourFrame(ipoint)->getOrientation().col(2);
