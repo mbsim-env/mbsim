@@ -313,9 +313,9 @@ namespace MBSimGUI {
     crossSectionRadius->writeXMLFile(e);
     nominalLength->writeXMLFile(e);
     type->writeXMLFile(e);
+    writeProperties(e);
     minCol->writeXMLFile(e);
     maxCol->writeXMLFile(e);
-    writeProperties(e);
     return e;
   }
 
