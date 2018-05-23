@@ -134,8 +134,8 @@
             </matrixParameter>
           </Parameter>
           <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR2">
-          <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="derivativeOfGeneralizedPosition">true</plotFeature>
-          <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="generalizedAcceleration">true</plotFeature>
+            <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="derivativeOfGeneralizedPosition">true</plotFeature>
+            <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="generalizedAcceleration">true</plotFeature>
             <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
             <mass unit="kg">load('data.bin','m').m</mass>
             <positionIntegral>load('data.bin','rdm').rdm</positionIntegral>
@@ -165,13 +165,13 @@
               </row>
             </shapeFunctionShapeFunctionIntegralArray>
             <stiffnessMatrix>load('data.bin','Ke').Ke</stiffnessMatrix>
-            <proportionalDamping unit="-">
+            <proportionalDamping>
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>0</ele>
                 <ele>0.0001</ele>
               </xmlVector>
             </proportionalDamping>
-            <nodalRelativePosition unit="m">
+            <nodalRelativePosition>
               u0'(:)
             </nodalRelativePosition>
             <nodalShapeMatrixOfTranslation>
@@ -201,7 +201,8 @@
               <indices>
                 <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="indices.dat"/>
               </indices>
-              <minimalColorValue>1e4</minimalColorValue>
+              <colorEntity>"xxStress"</colorEntity>
+              <minimalColorValue>-1e6</minimalColorValue>
               <maximalColorValue>1e6</maximalColorValue>
             </enableOpenMBV>
             <enableOpenMBVFrameK>

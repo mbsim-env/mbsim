@@ -67,6 +67,19 @@ namespace MBSimFlexibleBody {
     updateJacobians_[1] = &FlexibleBodyFFR::updateJacobians1;
     updateKJ_[0] = &FlexibleBodyFFR::updateKJ0;
     updateKJ_[1] = &FlexibleBodyFFR::updateKJ1;
+
+    evalOMBVColorEntity[0] = &FlexibleBodyFFR::evalNone;
+    evalOMBVColorEntity[1] = &FlexibleBodyFFR::evalXDisplacement;
+    evalOMBVColorEntity[2] = &FlexibleBodyFFR::evalYDisplacement;
+    evalOMBVColorEntity[3] = &FlexibleBodyFFR::evalZDisplacement;
+    evalOMBVColorEntity[4] = &FlexibleBodyFFR::evalTotalDisplacement;
+    evalOMBVColorEntity[5] = &FlexibleBodyFFR::evalXXStress;
+    evalOMBVColorEntity[6] = &FlexibleBodyFFR::evalYYStress;
+    evalOMBVColorEntity[7] = &FlexibleBodyFFR::evalZZStress;
+    evalOMBVColorEntity[8] = &FlexibleBodyFFR::evalXYStress;
+    evalOMBVColorEntity[9] = &FlexibleBodyFFR::evalYZStress;
+    evalOMBVColorEntity[10] = &FlexibleBodyFFR::evalZXStress;
+    evalOMBVColorEntity[11] = &FlexibleBodyFFR::evalEquivalentStress;
   }
 
   FlexibleBodyFFR::~FlexibleBodyFFR() {
@@ -262,6 +275,9 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
+      if(ombvColorEntity==unknown)
+        throwError("(FlexibleBodyFFR::init): ombv color entity unknown");
+
       for(auto & k : contour) {
         auto *contour_ = dynamic_cast<RigidContour*>(k);
         if(contour_ and not(contour_->getFrameOfReference()))
@@ -449,11 +465,9 @@ namespace MBSimFlexibleBody {
       data.push_back(getTime());
       for(int ombvNode : ombvNodes) {
         const Vec3 &WrOP = evalNodalPosition(ombvNode);
-        const Vector<Fixed<6>, double> &sigma = evalNodalStress(ombvNode);
         for(int j=0; j<3; j++)
           data.push_back(WrOP(j));
-        //data.push_back(nrm2(disp[ombvNodes[i]]));
-        data.push_back(fabs(sigma(0)));
+        data.push_back((this->*evalOMBVColorEntity[ombvColorEntity])(ombvNode));
       }
       dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->append(data);
     }
@@ -928,6 +942,23 @@ namespace MBSimFlexibleBody {
       ombvIndices.resize(indices.size());
       for(int i=0; i<indices.size(); i++)
         ombvIndices[i] = static_cast<Index>(indices(i))-1;
+      ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"colorEntity");
+      if(ee) {
+        string colorEntityStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
+        if(colorEntityStr=="none") ombvColorEntity=none;
+        else if(colorEntityStr=="xDisplacement") ombvColorEntity=xDisplacement;
+        else if(colorEntityStr=="yDisplacement") ombvColorEntity=yDisplacement;
+        else if(colorEntityStr=="zDisplacement") ombvColorEntity=zDisplacement;
+        else if(colorEntityStr=="totalDisplacement") ombvColorEntity=totalDisplacement;
+        else if(colorEntityStr=="xxStress") ombvColorEntity=xxStress;
+        else if(colorEntityStr=="yyStress") ombvColorEntity=yyStress;
+        else if(colorEntityStr=="zzStress") ombvColorEntity=zzStress;
+        else if(colorEntityStr=="xyStress") ombvColorEntity=xyStress;
+        else if(colorEntityStr=="yzStress") ombvColorEntity=yzStress;
+        else if(colorEntityStr=="zxStress") ombvColorEntity=zxStress;
+        else if(colorEntityStr=="equivalentStress") ombvColorEntity=equivalentStress;
+        else ombvColorEntity=unknown;
+      }
       OpenMBVDynamicIndexedFaceSet ombv;
       ombv.initializeUsingXML(e);
       openMBVBody=ombv.createOpenMBV();
@@ -1033,6 +1064,11 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::updateGyroscopicAccelerations(NodeFrame* frame) {
     frame->setGyroscopicAccelerationOfTranslation(evalNodalGyroscopicAccelerationOfTranslation(frame->getNodeNumber()));
     frame->setGyroscopicAccelerationOfRotation(getNodalGyroscopicAccelerationOfRotation(frame->getNodeNumber()));
+  }
+
+  double FlexibleBodyFFR::evalEquivalentStress(int i) {
+    const Vector<Fixed<6>,double> &s = evalNodalStress(i);
+    return sqrt(0.5*(pow(s(0)-s(1),2)+pow(s(1)-s(2),2)+pow(s(2)-s(0),2))+3*(pow(s(3),2)+pow(s(4),2)+pow(s(5),2)));
   }
 
 }

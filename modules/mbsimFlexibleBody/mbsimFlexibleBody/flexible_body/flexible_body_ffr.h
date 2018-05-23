@@ -64,6 +64,22 @@ namespace MBSimFlexibleBody {
   class FlexibleBodyFFR : public NodeBasedBody {
     public:
 
+      enum OMBVColorEntity {
+        none=0,
+        xDisplacement,
+        yDisplacement,
+        zDisplacement,
+        totalDisplacement,
+        xxStress,
+        yyStress,
+        zzStress,
+        xyStress,
+        yzStress,
+        zxStress,
+        equivalentStress,
+        unknown
+      };
+
       FlexibleBodyFFR(const std::string &name=""); 
       /**
        * \brief destructor
@@ -538,6 +554,20 @@ namespace MBSimFlexibleBody {
 
     private:
       std::vector<MBSim::Index> ombvNodes, ombvIndices;
+      OMBVColorEntity ombvColorEntity{none};
+      double (FlexibleBodyFFR::*evalOMBVColorEntity[12])(int i);
+      double evalNone(int i) { return 0; }
+      double evalXDisplacement(int i) { return evalNodalDisplacement(i)(0); }
+      double evalYDisplacement(int i) { return evalNodalDisplacement(i)(1); }
+      double evalZDisplacement(int i) { return evalNodalDisplacement(i)(2); }
+      double evalTotalDisplacement(int i) { return fmatvec::nrm2(evalNodalDisplacement(i)); }
+      double evalXXStress(int i) { return evalNodalStress(i)(0); }
+      double evalYYStress(int i) { return evalNodalStress(i)(1); }
+      double evalZZStress(int i) { return evalNodalStress(i)(2); }
+      double evalXYStress(int i) { return evalNodalStress(i)(3); }
+      double evalYZStress(int i) { return evalNodalStress(i)(4); }
+      double evalZXStress(int i) { return evalNodalStress(i)(5); }
+      double evalEquivalentStress(int i);
   };
 
 }

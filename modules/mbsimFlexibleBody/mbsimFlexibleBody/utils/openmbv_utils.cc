@@ -34,6 +34,10 @@ namespace MBSimFlexibleBody {
   void OpenMBVDynamicIndexedFaceSet::initializeUsingXML(DOMElement *e) {
     OpenMBVBody::initializeUsingXML(e);
     DOMElement *ee;
+    ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"diffuseColor");
+    if(ee) dc = E(ee)->getText<Vec>(3);
+    ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"transparency");
+    if(ee) tp = E(ee)->getText<double>();
     ee = E(e)->getFirstElementChildNamed(MBSIMFLEX%"minimalColorValue");
     if(ee) minCol = E(ee)->getText<double>();
     ee = E(e)->getFirstElementChildNamed(MBSIMFLEX%"maximalColorValue");
@@ -42,6 +46,8 @@ namespace MBSimFlexibleBody {
 
   void OpenMBVDynamicIndexedFaceSet::initializeObject(const shared_ptr<OpenMBV::DynamicIndexedFaceSet> &object) {
     OpenMBVBody::initializeObject(object);
+    object->setDiffuseColor(dc(0),dc(1),dc(2));
+    object->setTransparency(tp);
     object->setMinimalColorValue(minCol);
     object->setMaximalColorValue(maxCol);
   }

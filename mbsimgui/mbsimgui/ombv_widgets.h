@@ -62,7 +62,7 @@ namespace MBSimGUI {
   class MBSOMBVWidget : public OMBVObjectWidget {
 
     public:
-      MBSOMBVWidget(const QString &name, MBXMLUtils::FQN xmlName_="");
+      MBSOMBVWidget(const QString &name, const MBXMLUtils::FQN &xmlName_="", const MBXMLUtils::NamespaceURI &url=MBSIM);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       virtual xercesc::DOMElement* initXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr);
@@ -256,7 +256,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *minCol, *maxCol, *nodes, *indices;
+      ExtWidget *minCol, *maxCol, *nodes, *indices, *colorEntity;
   };
 
 }

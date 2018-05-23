@@ -47,7 +47,7 @@ namespace MBSimFlexibleBody {
       const fmatvec::Vec3& evalNodalAcceleration(int i) { if(updNodalAcc[i]) updateAccelerations(i); return WaP[i]; }
       const fmatvec::Mat3xV& evalNodalJacobianOfTranslation(int i, int j=0) { if(updNodalJac[j][i]) updateJacobians(i,j); return WJP[j][i]; }
       const fmatvec::Vec3& evalNodalGyroscopicAccelerationOfTranslation(int i) { if(updNodalGA[i]) updateGyroscopicAccelerations(i); return WjP[i]; }
-      const fmatvec::Vec3& evalNodalDisp(int i) { if(updNodalPos[i]) updatePositions(i); return disp[i]; }
+      const fmatvec::Vec3& evalNodalDisplacement(int i) { if(updNodalPos[i]) updatePositions(i); return disp[i]; }
       const fmatvec::Vector<fmatvec::Fixed<6>, double>& evalNodalStress(int i) { if(updNodalStress[i]) updateStresses(i); return sigma[i]; }
       fmatvec::SqrMat3& getNodalOrientation(int i, bool check=true) { assert((not check) or (not updNodalPos[i])); return AWK[i]; }
       fmatvec::Vec3& getNodalAngularVelocity(int i, bool check=true) { assert((not check) or (not updNodalVel[i])); return Wom[i]; }

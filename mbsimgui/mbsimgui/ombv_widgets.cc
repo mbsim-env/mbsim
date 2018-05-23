@@ -91,15 +91,15 @@ namespace MBSimGUI {
     return newele;
   }
 
-  MBSOMBVWidget::MBSOMBVWidget(const QString &name, FQN xmlName_) : OMBVObjectWidget(name), xmlName(std::move(xmlName_)) {
+  MBSOMBVWidget::MBSOMBVWidget(const QString &name, const FQN &xmlName_, const NamespaceURI &url) : OMBVObjectWidget(name), xmlName(std::move(xmlName_)) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true,false,MBSIM%"diffuseColor");
+    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true,false,url%"diffuseColor");
     layout->addWidget(diffuseColor);
 
-    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"transparency");
+    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,url%"transparency");
     layout->addWidget(transparency);
   }
 
@@ -583,11 +583,26 @@ namespace MBSimGUI {
     return e;
   }
 
-  FlexibleBodyFFRMBSOMBVWidget::FlexibleBodyFFRMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
+  FlexibleBodyFFRMBSOMBVWidget::FlexibleBodyFFRMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name,"",MBSIMFLEX) {
     nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodes");
     layout()->addWidget(nodes);
     indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"indices");
     layout()->addWidget(indices);
+    vector<QString> list;
+    list.emplace_back("\"none\"");
+    list.emplace_back("\"xDisplacement\"");
+    list.emplace_back("\"yDisplacement\"");
+    list.emplace_back("\"zDisplacement\"");
+    list.emplace_back("\"totalDisplacement\"");
+    list.emplace_back("\"xxStress\"");
+    list.emplace_back("\"yyStress\"");
+    list.emplace_back("\"zzStress\"");
+    list.emplace_back("\"xyStress\"");
+    list.emplace_back("\"yzStress\"");
+    list.emplace_back("\"zxStress\"");
+    list.emplace_back("\"equivalentStress\"");
+    colorEntity = new ExtWidget("Color entity",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"colorEntity");
+    layout()->addWidget(colorEntity);
     minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"minimalColorValue");
     layout()->addWidget(minCol);
     maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"maximalColorValue");
@@ -598,6 +613,7 @@ namespace MBSimGUI {
     DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
     nodes->initializeUsingXML(e);
     indices->initializeUsingXML(e);
+    colorEntity->initializeUsingXML(e);
     minCol->initializeUsingXML(e);
     maxCol->initializeUsingXML(e);
     return e;
@@ -607,9 +623,10 @@ namespace MBSimGUI {
     DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
     nodes->writeXMLFile(e);
     indices->writeXMLFile(e);
+    colorEntity->writeXMLFile(e);
+    writeProperties(e);
     minCol->writeXMLFile(e);
     maxCol->writeXMLFile(e);
-    writeProperties(e);
     return nullptr;
   }
 

@@ -909,6 +909,27 @@
               <xs:sequence>
                 <xs:element name="nodes" type="pv:indexVector" minOccurs="0"/>
                 <xs:element name="indices" type="pv:indexVector" minOccurs="0"/>
+                <xs:element name="colorEntity" type="pv:stringFullEval" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Auswahl der Farbdarstellung.
+                    <ul>
+                      <li>none: keine</li>
+                      <li>xDisplacement: Verschiebung in x-Richtung</li>
+                      <li>yDisplacement: Verschiebung in y-Richtung</li>
+                      <li>zDisplacement: Verschiebung in z-Richtung</li>
+                      <li>totalDisplacement: Gesamtverschiebung</li>
+                      <li>xxStress: Normalspannung xx</li>
+                      <li>yyStress: Normalspannung yy</li>
+                      <li>zzStress: Normalspannung zz</li>
+                      <li>xyStress: Schubspannung xy</li>
+                      <li>yzStress: Schubspannung yz</li>
+                      <li>zxStress: Schubspannung zx</li>
+                      <li>equivalentStress: Vergleichsspannung</li>
+                    </ul>
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
                 <xs:element name="minimalColorValue" type="pv:nounitScalar" minOccurs="0"/>
                 <xs:element name="maximalColorValue" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
