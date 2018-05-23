@@ -41,7 +41,7 @@ namespace MBSimGUI {
     DOMNode *e = element->getFirstChild();
     while(e) {
       DOMNode *en=e->getNextSibling();
-      if((e != frames) and (e != contours) and (E(e)->getTagName() != MBSIM%"enableOpenMBVFrameK") and (E(e)->getTagName() != MBSIM%"plotFeatureFrameK"))
+      if((e != frames) and (e != contours) and (E(e)->getTagName() != MBSIMFLEX%"enableOpenMBVFrameK") and (E(e)->getTagName() != MBSIMFLEX%"plotFeatureFrameK"))
         element->removeChild(e);
       e = en;
     }
