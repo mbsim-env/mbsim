@@ -86,13 +86,12 @@ namespace MBSimGUI {
   }
 
   void OctaveParser::parse() {
-    const int n = 10000;
-    char str[n];
+    string str;
     streampos pos;
     do {
       pos = is.tellg();
-      is.getline(str,n);
-    } while(string(str).find("name")==string::npos);
+      getline(is,str);
+    } while(str.find("name")==string::npos);
     is.seekg(pos);
     OctaveElement* el = parseElement();
     while(el) {
@@ -109,12 +108,10 @@ namespace MBSimGUI {
 
   string OctaveParser::readType() {
     string buf;
-    const int n = 10000;
-    char str[n];
     is >> buf >> buf >> buf;
     string name = buf;
-    is.getline(str,n); 
-    name += str; 
+    getline(is,buf);
+    name += buf;
     return name;
   }
 
