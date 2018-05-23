@@ -595,6 +595,10 @@ def main():
   if nrFailed>0:
     print("\nERROR: %d of %d build parts failed!!!!!"%(nrFailed, nrRun));
 
+  # dump the repo state (commitid) to a file
+  with codecs.open(pj(args.reportOutDir, "repoState.json"), "w", encoding="utf-8") as f:
+    json.dump(commitidfull, f, indent=2)
+
   if nrFailed>0:
     return 1 # build failed
   if abs(runExamplesErrorCode)>0:
@@ -706,10 +710,6 @@ def repoUpdate(mainFD, currentID):
 
   print('</tbody></table>', file=mainFD)
   mainFD.flush()
-
-  # dump the repo state (commitid) to a file
-  with codecs.open(pj(args.reportOutDir, "repoState.json"), "w", encoding="utf-8") as f:
-    json.dump(commitidfull, f, indent=2)
 
   if not args.disableUpdate:
     if ret>0:

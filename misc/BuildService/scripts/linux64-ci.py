@@ -80,7 +80,7 @@ while True:
   else:
     break
 
-ret=subprocess.call([scriptdir+"/build.py", "--buildSystemRun", "--rotate", "20", "-j", "2", "--fmatvecBranch", fmatvecBranch,
+ret=subprocess.call([scriptdir+"/build.py", "--forceBuild", "--buildSystemRun", "--rotate", "20", "-j", "2", "--fmatvecBranch", fmatvecBranch,
   "--hdf5serieBranch", hdf5serieBranch, "--openmbvBranch", openmbvBranch, "--mbsimBranch", mbsimBranch, "--enableCleanPrefix",
   "--disableConfigure", "--disableMakeClean", "--disableDoxygen", "--disableXMLDoc", "--sourceDir", SRCDIR, "--webapp",
   "--prefix", SRCDIR+"/local", "--reportOutDir", "/var/www/html/mbsim/linux64-ci/report",
