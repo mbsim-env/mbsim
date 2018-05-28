@@ -284,6 +284,21 @@ namespace MBSimFlexibleBody {
           contour_->setFrameOfReference(K);
       }
 
+      if(not rPdm.size())
+        rPdm.resize(3);
+      else if(rPdm.size()!=3)
+        throwError("(FlexibleBodyFFR::init): size of positionShapeFunctionIntegralArray does not match, is " + to_string(rPdm.size()) + " must be " + to_string(3));
+      if(not PPdm.size())
+        PPdm.resize(3,vector<SqrMatV>(3));
+      else if(PPdm.size()!=3)
+        throwError("(FlexibleBodyFFR::init): first size of shapeFunctionShapeFunctionIntegralArray does not match, is " + to_string(PPdm.size()) + " must be " + to_string(3));
+      else if(PPdm[0].size()!=3)
+        throwError("(FlexibleBodyFFR::init): second size of shapeFunctionShapeFunctionIntegralArray does not match, is " + to_string(PPdm[0].size()) + " must be " + to_string(3));
+      if(rPdm[0].cols()!=Pdm.cols())
+        throwError("(FlexibleBodyFFR::init): number of columns in element of positionShapeFunctionIntegralArray does not match, is " + to_string(rPdm[0].cols()) + " must be " + to_string(Pdm.cols()));
+      if(PPdm[0][0].cols()!=Pdm.cols())
+        throwError("(FlexibleBodyFFR::init): number of columns in element of shapeFunctionShapeFunctionIntegralArray does not match, is " + to_string(PPdm[0][0].cols()) + " must be " + to_string(Pdm.cols()));
+
       PJT[0].resize(getGeneralizedVelocitySize());
       PJR[0].resize(nu);
 
