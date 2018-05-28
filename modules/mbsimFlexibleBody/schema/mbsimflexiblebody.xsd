@@ -344,14 +344,14 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="shapeFunctionIntegral" type="pv:unknownMatrix">
+          <xs:element name="shapeFunctionIntegral" type="pv:unknownMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Integral der Matrix der Ansatzfunktionen über die Masse, <object class="inlineeqn">\int \boldsymbol{\Phi}\,\mathrm{d}m</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:choice>
+          <xs:choice minOccurs="0">
             <xs:element name="positionShapeFunctionIntegralArray">
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="">
@@ -372,7 +372,7 @@
               </xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:choice>
+          <xs:choice minOccurs="0">
             <xs:element name="shapeFunctionShapeFunctionIntegralArray">
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="">
@@ -399,7 +399,7 @@
               </xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:element name="stiffnessMatrix" type="pv:unknownMatrix">
+          <xs:element name="stiffnessMatrix" type="pv:unknownMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Steifigkeistmatrix.

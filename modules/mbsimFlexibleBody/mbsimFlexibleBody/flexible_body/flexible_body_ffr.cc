@@ -769,24 +769,24 @@ namespace MBSimFlexibleBody {
     setPositionPositionIntegral(E(e)->getText<SymMat3>());
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionIntegral");
-    setShapeFunctionIntegral(E(e)->getText<Mat3xV>());
+    if(e) setShapeFunctionIntegral(E(e)->getText<Mat3xV>());
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"positionShapeFunctionIntegralArray");
     if(e) setPositionShapeFunctionIntegral(getCellArray1D<Mat3xV>(e));
     else {
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"positionShapeFunctionIntegral");
-      setPositionShapeFunctionIntegral(E(e)->getText<Mat>());
+      if(e) setPositionShapeFunctionIntegral(E(e)->getText<Mat>());
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionShapeFunctionIntegralArray");
     if(e) setShapeFunctionShapeFunctionIntegral(getCellArray2D<SqrMatV>(e));
     else {
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral");
-      setShapeFunctionShapeFunctionIntegral(E(e)->getText<Mat>());
+      if(e) setShapeFunctionShapeFunctionIntegral(E(e)->getText<Mat>());
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stiffnessMatrix");
-    setStiffnessMatrix(E(e)->getText<SymMat>());
+    if(e) setStiffnessMatrix(E(e)->getText<SymMat>());
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"dampingMatrix");
     if(e) setDampingMatrix(E(e)->getText<SymMat>());
