@@ -25,8 +25,8 @@ class MyPos : public MBSim::Function<Vec3(VecV)> {
     }
     Mat3xV parDerDirDer(const VecV &qd, const VecV &q) {
       Mat3xV Jd(1);
-      Jd(0,0) = -cos(q(0))*qd(0)*qd(0);
-      Jd(1,0) = -sin(q(0))*qd(0)*qd(0);
+      Jd(0,0) = -cos(q(0))*qd(0);
+      Jd(1,0) = -sin(q(0))*qd(0);
       return Jd;
     }
 };
