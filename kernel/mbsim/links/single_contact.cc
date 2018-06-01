@@ -41,8 +41,8 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SingleContact)
 
   void SingleContact::updatewb() {
-      wb -= evalGlobalForceDirection()(RangeV(0,2),RangeV(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
-      wb += evalGlobalForceDirection()(RangeV(0,2),RangeV(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
+      wb -= evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
+      wb += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
   }
 
   void SingleContact::resetUpToDate() {
@@ -209,7 +209,7 @@ namespace MBSim {
 
   void SingleContact::updateV(int j) {
     if (getFrictionDirections() and fdf->isSetValued() and gdActive[normal] and not gdActive[tangential]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
-      Mat3xV RF = evalGlobalForceDirection()(RangeV(0,2),RangeV(1, getFrictionDirections()));
+      Mat3xV RF = evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(1, getFrictionDirections()));
       V[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * RF * fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())));
       V[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * RF * fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())));
     }
