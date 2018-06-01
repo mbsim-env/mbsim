@@ -154,6 +154,7 @@ namespace MBSimGUI {
       const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
       Project* getProject() { return project; }
       QTime& getStatusTime() { return statusTime; }
+      xercesc::DOMDocument* getDocument() { return doc; }
 
     public slots:
       void elementViewClicked();
