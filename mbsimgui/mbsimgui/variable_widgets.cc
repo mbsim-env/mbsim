@@ -1357,7 +1357,7 @@ namespace MBSimGUI {
 
   void FromFileWidget::selectFile() {
     QString file = getFile();
-    file=QFileDialog::getOpenFileName(nullptr, "ASCII files", file, "all files (*.*)");
+    file=QFileDialog::getOpenFileName(nullptr, "ASCII files", path->isChecked()?file:QFileInfo(QUrl(QString::fromStdString(X()%mw->getDocument()->getDocumentURI())).toLocalFile()).absolutePath()+"/"+file, "all files (*.*)");
     if(not file.isEmpty()) {
       QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%mw->getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
       if(path->isChecked())

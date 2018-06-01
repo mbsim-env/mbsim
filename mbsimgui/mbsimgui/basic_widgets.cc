@@ -650,7 +650,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FileWidget::FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_, bool quote_) : description(description_), extensions(extensions_), mode(mode_), quote(quote_) {
+  FileWidget::FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_, bool quote_, bool absPath) : description(description_), extensions(extensions_), mode(mode_), quote(quote_) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -661,10 +661,12 @@ namespace MBSimGUI {
     layout->addWidget(button);
     connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
     path = new QCheckBox;
-    layout->addWidget(new QLabel("Absolute"));
-    layout->addWidget(path);
     setFile(file);
-    connect(path,SIGNAL(stateChanged(int)),this,SLOT(changePath(int)));
+    if(absPath) {
+      layout->addWidget(new QLabel("Absolute"));
+      layout->addWidget(path);
+      connect(path,SIGNAL(stateChanged(int)),this,SLOT(changePath(int)));
+    }
   }
 
   void FileWidget::setFile(const QString &str) {
@@ -677,11 +679,11 @@ namespace MBSimGUI {
     QString file = getFile();
     if(quote) file = file.mid(1,file.length()-2);
     if(mode==0) 
-      file = QFileDialog::getOpenFileName(nullptr, description, file, extensions);
+      file = QFileDialog::getOpenFileName(nullptr, description, path->isChecked()?file:QFileInfo(QUrl(QString::fromStdString(X()%mw->getDocument()->getDocumentURI())).toLocalFile()).absolutePath()+"/"+file, extensions);
     else if(mode==1)
-      file = QFileDialog::getSaveFileName(nullptr, description, file, extensions);
+      file = QFileDialog::getSaveFileName(nullptr, description, path->isChecked()?file:QFileInfo(QUrl(QString::fromStdString(X()%mw->getDocument()->getDocumentURI())).toLocalFile()).absolutePath()+"/"+file, extensions);
     else
-      file = QFileDialog::getExistingDirectory ( nullptr, description, file);
+      file = QFileDialog::getExistingDirectory(nullptr, description, path->isChecked()?file:QFileInfo(QUrl(QString::fromStdString(X()%mw->getDocument()->getDocumentURI())).toLocalFile()).absolutePath()+"/"+file);
     if(not file.isEmpty()) {
       QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%mw->getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
       if(path->isChecked())
