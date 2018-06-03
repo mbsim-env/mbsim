@@ -1357,13 +1357,12 @@ namespace MBSimGUI {
 
   void FromFileWidget::selectFile() {
     QString file = getFile();
-    file=QFileDialog::getOpenFileName(nullptr, "ASCII files", path->isChecked()?file:QFileInfo(QUrl(QString::fromStdString(X()%mw->getDocument()->getDocumentURI())).toLocalFile()).absolutePath()+"/"+file, "all files (*.*)");
+    file=QFileDialog::getOpenFileName(nullptr, "ASCII files", path->isChecked()?file:mw->getProjectPath()+"/"+file, "all files (*.*)");
     if(not file.isEmpty()) {
-      QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%mw->getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
       if(path->isChecked())
-        setFile(dir.absoluteFilePath(file));
+        setFile(QDir(mw->getProjectPath()).absoluteFilePath(file));
       else
-        setFile(dir.relativeFilePath(file));
+        setFile(QDir(mw->getProjectPath()).relativeFilePath(file));
     }
   }
 
@@ -1372,7 +1371,7 @@ namespace MBSimGUI {
   }
 
   vector<vector<QString> > FromFileWidget::getEvalMat() const {
-    string file = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue((path->isChecked()?getFile():QFileInfo(QUrl(QString::fromStdString(X()%mw->getDocument()->getDocumentURI())).toLocalFile()).absolutePath()+"/"+getFile()).toStdString(),nullptr,false));
+    string file = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue((path->isChecked()?getFile():mw->getProjectPath()+"/"+getFile()).toStdString(),nullptr,false));
     QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue("ret=load(" + file + ")")));
     str = removeWhiteSpace(str);
     return strToMat((str));
@@ -1397,8 +1396,7 @@ namespace MBSimGUI {
   }
 
   void FromFileWidget::changePath(int i) {
-    QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%mw->getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
-    relativeFilePath->setText(i?dir.absoluteFilePath(getFile()):dir.relativeFilePath(getFile()));
+    relativeFilePath->setText(i?QDir(mw->getProjectPath()).absoluteFilePath(getFile()):QDir(mw->getProjectPath()).relativeFilePath(getFile()));
   }
 
   BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,0) {
