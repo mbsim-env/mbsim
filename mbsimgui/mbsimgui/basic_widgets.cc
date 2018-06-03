@@ -679,17 +679,16 @@ namespace MBSimGUI {
     QString file = getFile();
     if(quote) file = file.mid(1,file.length()-2);
     if(mode==0) 
-      file = QFileDialog::getOpenFileName(nullptr, description, path->isChecked()?file:QFileInfo(QUrl(QString::fromStdString(X()%mw->getDocument()->getDocumentURI())).toLocalFile()).absolutePath()+"/"+file, extensions);
+      file = QFileDialog::getOpenFileName(nullptr, description, path->isChecked()?file:mw->getProjectPath()+"/"+file, extensions);
     else if(mode==1)
-      file = QFileDialog::getSaveFileName(nullptr, description, path->isChecked()?file:QFileInfo(QUrl(QString::fromStdString(X()%mw->getDocument()->getDocumentURI())).toLocalFile()).absolutePath()+"/"+file, extensions);
+      file = QFileDialog::getSaveFileName(nullptr, description, path->isChecked()?file:mw->getProjectPath()+"/"+file, extensions);
     else
-      file = QFileDialog::getExistingDirectory(nullptr, description, path->isChecked()?file:QFileInfo(QUrl(QString::fromStdString(X()%mw->getDocument()->getDocumentURI())).toLocalFile()).absolutePath()+"/"+file);
+      file = QFileDialog::getExistingDirectory(nullptr, description, path->isChecked()?file:mw->getProjectPath()+"/"+file);
     if(not file.isEmpty()) {
-      QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%mw->getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
       if(path->isChecked())
-        filePath->setText(quote?("\""+dir.absoluteFilePath(file)+"\""):dir.absoluteFilePath(file));
+        filePath->setText(quote?("\""+QDir(mw->getProjectPath()).absoluteFilePath(file)+"\""):QDir(mw->getProjectPath()).absoluteFilePath(file));
       else
-        filePath->setText(quote?("\""+dir.relativeFilePath(file)+"\""):dir.relativeFilePath(file));
+        filePath->setText(quote?("\""+QDir(mw->getProjectPath()).relativeFilePath(file)+"\""):QDir(mw->getProjectPath()).relativeFilePath(file));
     }
   }
 
@@ -713,11 +712,10 @@ namespace MBSimGUI {
 
   void FileWidget::changePath(int i) {
     QString file = quote?getFile().mid(1,getFile().length()-2):getFile();
-    QDir dir(QFileInfo(QFileInfo(QUrl(QString::fromStdString(X()%mw->getProject()->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile())).absolutePath());
     if(i)
-      filePath->setText(quote?("\""+dir.absoluteFilePath(file)+"\""):dir.absoluteFilePath(file));
+      filePath->setText(quote?("\""+QDir(mw->getProjectPath()).absoluteFilePath(file)+"\""):QDir(mw->getProjectPath()).absoluteFilePath(file));
     else
-      filePath->setText(quote?("\""+dir.relativeFilePath(file)+"\""):dir.relativeFilePath(file));
+      filePath->setText(quote?("\""+QDir(mw->getProjectPath()).relativeFilePath(file)+"\""):QDir(mw->getProjectPath()).relativeFilePath(file));
   }
 
   SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
