@@ -35,12 +35,12 @@ namespace MBSimGUI {
     auto *layout = new QGridLayout;
     setLayout(layout);
     tabWidget = new QTabWidget(this);
-    layout->addWidget(tabWidget,0,0,1,2);
+    layout->addWidget(tabWidget,0,0,1,3);
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel | QDialogButtonBox::Help);
     connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
-    layout->addWidget(buttonBox,1,1);
+    layout->addWidget(buttonBox,1,2);
     buttonResize = new QPushButton(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DialogResetButton)), "Resize");
-    layout->addWidget(buttonResize,1,0);
+    layout->addWidget(buttonResize,1,1);
     setWindowTitle(QString("Properties"));
 
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(updateWidget()));

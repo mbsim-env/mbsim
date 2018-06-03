@@ -42,6 +42,7 @@ namespace MBSimGUI {
   class Contour;
   class Signal;
   class DataPlot;
+  class ImportWidget;
 
   class ElementItem : public QTreeWidgetItem {
     private:
@@ -256,6 +257,17 @@ namespace MBSimGUI {
   class SourceDialog : public QDialog {
     public:
       SourceDialog(Element *element, QWidget *parent=0);
+  };
+
+  class ImportDialog : public QDialog {
+    Q_OBJECT
+    public:
+      ImportDialog(QWidget *parent=0);
+      ImportWidget *getImportWidget() { return import; }
+    private:
+      ImportWidget *import;
+    private slots:
+      void checkFile();
   };
 
 }

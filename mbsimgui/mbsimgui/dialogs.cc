@@ -27,6 +27,7 @@
 #include "constraint.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
+#include "import_widgets.h"
 #include "mainwindow.h"
 #include "octave_utils.h"
 #include "data_plot.h"
@@ -38,6 +39,8 @@
 #include <QComboBox>
 #include <QSpinBox>
 #include <QWebView>
+#include <QMessageBox>
+#include <QFileInfo>
 #include <qwt_plot.h>
 #include <boost/math/constants/constants.hpp>
 
@@ -48,7 +51,6 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  //EvalDialog::EvalDialog(VariableWidget *var_) : var(var_) {
   EvalDialog::EvalDialog(const vector<vector<QString> > &var_) {
     var.resize(var_.size());
     for(int i=0; i<var_.size(); i++) {
@@ -724,6 +726,27 @@ namespace MBSimGUI {
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox);
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+  }
+
+  ImportDialog::ImportDialog(QWidget *parent) : QDialog(parent) {
+    setWindowTitle(QString("Import dialog"));
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    import = new ImportWidget;
+    layout->addWidget(import);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    layout->addWidget(buttonBox);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(checkFile()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  }
+
+  void ImportDialog::checkFile() {
+    if(not QFileInfo(mw->getProjectPath()+"/"+import->getResultFile()).isFile())
+      QMessageBox::warning(nullptr, "Import error", "File does not exist.");
+    else
+      accept();
   }
 
 }

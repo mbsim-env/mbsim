@@ -343,6 +343,23 @@ namespace MBSimGUI {
       return A;
     }
 
+  template<class T>
+  inline std::vector<QString> VecToQvector(const T &x) {
+    std::vector<QString> y(x.size());
+    for(int i=0; i<x.size(); i++)
+      y[i] = QString::number(x.e(i));
+    return y;
+  }
+
+  template<class T>
+  inline std::vector<std::vector<QString>> MatToQvector(const T &A) {
+    std::vector<std::vector<QString>> B(A.rows(),std::vector<QString>(A.cols()));
+    for(int i=0; i<A.rows(); i++)
+      for(int j=0; j<A.cols(); j++)
+        B[i][j] = QString::number(A.e(i,j));
+    return B;
+  }
+
   inline QStringList noUnitUnits() {
     QStringList units;
     units << "" << "-" << "%";

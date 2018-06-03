@@ -48,9 +48,13 @@
 #include "connection.h"
 #include <QPushButton>
 #include <QDialogButtonBox>
+#include <QFileInfo>
 #include <utility>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include "mainwindow.h"
+#include "import.h"
+#include "import_widgets.h"
+#include "dialogs.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -1197,24 +1201,22 @@ namespace MBSimGUI {
     mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"mass");
     addToTab("General",mass);
 
-    pdm = new ExtWidget("Position integral",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"positionIntegral");
-    addToTab("General", pdm);
+    rdm = new ExtWidget("Position integral",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"positionIntegral");
+    addToTab("General", rdm);
 
-    ppdm = new ExtWidget("Position position integral",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"positionPositionIntegral");
-    addToTab("General",ppdm);
+    rrdm = new ExtWidget("Position position integral",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"positionPositionIntegral");
+    addToTab("General",rrdm);
 
-    Pdm = new ExtWidget("Shape function integral",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"shapeFunctionIntegral");
+    Pdm = new ExtWidget("Shape function integral",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"shapeFunctionIntegral");
     addToTab("General",Pdm);
 
-    //rPdm = new ExtWidget("Position shape function integral",new OneDimMatArrayWidget());
-    rPdm = new ExtWidget("Position shape function integral",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"positionShapeFunctionIntegral",3,3,1),QBoxLayout::TopToBottom,3),false,false,"");
+    rPdm = new ExtWidget("Position shape function integral",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"positionShapeFunctionIntegral",3,3,1),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("General",rPdm);
 
-    //PPdm = new ExtWidget("Shape function shape function integral",new TwoDimMatArrayWidget(3,1,1));
-    PPdm = new ExtWidget("Shape function shape function integral",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral",3,1,1),QBoxLayout::TopToBottom,3),false,false,"");
+    PPdm = new ExtWidget("Shape function shape function integral",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral",3,1,1),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("General",PPdm);
 
-    Ke = new ExtWidget("Stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getMat<QString>(1,1,"0")),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"stiffnessMatrix");
+    Ke = new ExtWidget("Stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getMat<QString>(1,1,"0")),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"stiffnessMatrix");
     addToTab("General",Ke);
 
     De = new ExtWidget("Damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getMat<QString>(1,1,"0")),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"dampingMatrix");
@@ -1223,11 +1225,9 @@ namespace MBSimGUI {
     beta = new ExtWidget("Proportional damping",new ChoiceWidget2(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
 
-    //Knl1 = new ExtWidget("Nonlinear stiffness matrix of first order",new OneDimMatArrayWidget(1,1,1),true);
     Knl1 = new ExtWidget("Nonlinear stiffness matrix of first order",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrder"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",Knl1);
 
-//    Knl2 = new ExtWidget("Nonlinear stiffness matrix of second order",new TwoDimMatArrayWidget(1,1,1),true);
     Knl2 = new ExtWidget("Nonlinear stiffness matrix of second order",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrder"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",Knl2);
 
@@ -1237,35 +1237,27 @@ namespace MBSimGUI {
     ksigma1 = new ExtWidget("Nonlinear initial stress integral",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nonlinearInitialStressIntegral");
     addToTab("General", ksigma1);
 
-    //K0t = new ExtWidget("Geometric stiffness matrix due to acceleration",new OneDimMatArrayWidget(3,1,1),true);
     K0t = new ExtWidget("Geometric stiffness matrix due to acceleration",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAcceleration"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",K0t);
 
-    //K0r = new ExtWidget("Geometric stiffness matrix due to angular acceleration",new OneDimMatArrayWidget(3,1,1),true);
     K0r = new ExtWidget("Geometric stiffness matrix due to angular acceleration",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",K0r);
 
-    //K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new OneDimMatArrayWidget(3,1,1),true);
     K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",K0om);
 
-    //r = new ExtWidget("Relative nodal position",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
     r = new ExtWidget("Nodal relative position",new ChoiceWidget2(new OneDimVecArrayWidgetFactory(MBSIMFLEX%"nodalRelativePosition",1,3,true),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", r);
 
-    //A = new ExtWidget("Relative nodal orientation",new ChoiceWidget2(new MatWidgetFactory(3,3,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
     A = new ExtWidget("Nodal relative orientation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalRelativeOrientation"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", A);
 
-    //Phi = new ExtWidget("Shape matrix of translation",new ChoiceWidget2(new MatWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
     Phi = new ExtWidget("Nodal shape matrix of translation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalShapeMatrixOfTranslation"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", Phi);
 
-    //Psi = new ExtWidget("Shape matrix of rotation",new ChoiceWidget2(new MatWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
     Psi = new ExtWidget("Nodal shape matrix of rotation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalShapeMatrixOfRotation"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", Psi);
 
-    //sigmahel = new ExtWidget("Stress matrix",new ChoiceWidget2(new MatWidgetFactory(6,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
     sigmahel = new ExtWidget("Nodal stress matrix",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalStressMatrix"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", sigmahel);
 
@@ -1297,6 +1289,10 @@ namespace MBSimGUI {
 
     ombvEditor = new ExtWidget("Enable openMBV",new FlexibleBodyFFRMBSOMBVWidget("NOTSET"),true,false,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualisation", ombvEditor);
+
+    QPushButton *import = new QPushButton("Import");
+    static_cast<QGridLayout*>(QWidget::layout())->addWidget(import,1,0);
+    connect(import,SIGNAL(clicked()),this,SLOT(import()));
 
     connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 //    connect(Knl1,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
@@ -1442,8 +1438,8 @@ namespace MBSimGUI {
   DOMElement* FlexibleBodyFFRPropertyDialog::initializeUsingXML(DOMElement *parent) {
     BodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     mass->initializeUsingXML(item->getXMLElement());
-    pdm->initializeUsingXML(item->getXMLElement());
-    ppdm->initializeUsingXML(item->getXMLElement());
+    rdm->initializeUsingXML(item->getXMLElement());
+    rrdm->initializeUsingXML(item->getXMLElement());
     Pdm->initializeUsingXML(item->getXMLElement());
     rPdm->initializeUsingXML(item->getXMLElement());
     PPdm->initializeUsingXML(item->getXMLElement());
@@ -1477,8 +1473,8 @@ namespace MBSimGUI {
   DOMElement* FlexibleBodyFFRPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     BodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     mass->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    pdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    ppdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    rdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    rrdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     Pdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rPdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     PPdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
@@ -1508,6 +1504,144 @@ namespace MBSimGUI {
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombvEditor->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
+  }
+
+  void FlexibleBodyFFRPropertyDialog::import() {
+    ImportDialog dialog;
+    int status = dialog.exec();
+    if(not status) return;
+    ImportWidget *importWidget = dialog.getImportWidget();
+    QString dir = mw->getProjectPath()+"/";
+    ImportFEMData import((dir+importWidget->getResultFile().remove("."+QFileInfo(importWidget->getResultFile()).suffix())).toStdString());
+    import.read();
+    if(importWidget->getMassChecked()) {
+      static_cast<ChoiceWidget2*>(mass->getWidget())->setIndex(0);
+      static_cast<ScalarWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(mass->getWidget())->getWidget())->getWidget())->setValue(QString::number(import.getm()));
+    }
+    if(importWidget->getrdmChecked()) {
+      static_cast<ChoiceWidget2*>(rdm->getWidget())->setIndex(0);
+      static_cast<BasicVecWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(rdm->getWidget())->getWidget())->getWidget())->setVec(VecToQvector<fmatvec::Vec3>(import.getrdm()));
+    }
+    if(importWidget->getrrdmChecked()) {
+      static_cast<ChoiceWidget2*>(rrdm->getWidget())->setIndex(0);
+      static_cast<BasicMatWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(rrdm->getWidget())->getWidget())->getWidget())->setMat(MatToQvector<fmatvec::SymMat3>(import.getrrdm()));
+    }
+    if(importWidget->getPdmChecked()) {
+      Pdm->setActive(true);
+      if(importWidget->getFilePdmChecked()) {
+        static_cast<ChoiceWidget2*>(Pdm->getWidget())->setIndex(1);
+        dump((dir+importWidget->getFilenamePdm()).toStdString().c_str(),import.getPdm());
+        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePdm());
+      }
+      else {
+        static_cast<ChoiceWidget2*>(Pdm->getWidget())->setIndex(2);
+        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getPdm())));
+      }
+    }
+    if(importWidget->getrPdmChecked()) {
+      rPdm->setActive(true);
+      static_cast<ChoiceWidget2*>(rPdm->getWidget())->setIndex(1);
+      if(importWidget->getFilerPdmChecked()) {
+        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->setIndex(1);
+        dump((dir+importWidget->getFilenamerPdm()).toStdString().c_str(),import.getrPdm());
+        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamerPdm());
+      }
+      else {
+        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->setIndex(2);
+        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getrPdm())));
+      }
+    }
+    if(importWidget->getPPdmChecked()) {
+      PPdm->setActive(true);
+      static_cast<ChoiceWidget2*>(PPdm->getWidget())->setIndex(1);
+      if(importWidget->getFilePPdmChecked()) {
+        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->setIndex(1);
+        dump((dir+importWidget->getFilenamePPdm()).toStdString().c_str(),import.getPPdm());
+        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePPdm());
+      }
+      else {
+        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->setIndex(2);
+        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getPPdm())));
+      }
+    }
+    if(importWidget->getKeChecked()) {
+      Ke->setActive(true);
+      if(importWidget->getFileKeChecked()) {
+        static_cast<ChoiceWidget2*>(Ke->getWidget())->setIndex(1);
+        dump((dir+importWidget->getFilenameKe()).toStdString().c_str(),import.getKe());
+        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Ke->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameKe());
+      }
+      else {
+        static_cast<ChoiceWidget2*>(Ke->getWidget())->setIndex(2);
+        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Ke->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getKe())));
+      }
+    }
+    if(importWidget->getu0Checked()) {
+      r->setActive(true);
+      static_cast<ChoiceWidget2*>(r->getWidget())->setIndex(1);
+      if(importWidget->getFileu0Checked()) {
+        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->setIndex(1);
+        dump((dir+importWidget->getFilenameu0()).toStdString().c_str(),import.getu0());
+        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameu0());
+      }
+      else {
+        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->setIndex(2);
+        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getu0())));
+      }
+    }
+    if(importWidget->getPhiChecked()) {
+      Phi->setActive(true);
+      static_cast<ChoiceWidget2*>(Phi->getWidget())->setIndex(1);
+      if(importWidget->getFilePhiChecked()) {
+        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->setIndex(1);
+        dump((dir+importWidget->getFilenamePhi()).toStdString().c_str(),import.getPhi());
+        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePhi());
+      }
+      else {
+        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->setIndex(2);
+        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getPhi())));
+      }
+    }
+    if(importWidget->getSrChecked()) {
+      sigmahel->setActive(true);
+      static_cast<ChoiceWidget2*>(sigmahel->getWidget())->setIndex(1);
+      if(importWidget->getFileSrChecked()) {
+        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->setIndex(1);
+        dump((dir+importWidget->getFilenameSr()).toStdString().c_str(),import.getSr());
+        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameSr());
+      }
+      else {
+        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->setIndex(2);
+        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getSr())));
+      }
+    }
+    if(importWidget->getNodesChecked() and importWidget->getIndicesChecked()) {
+      ombvEditor->setActive(true);
+      if(importWidget->getNodesChecked()) {
+        static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getNodes()->setActive(true);
+        if(importWidget->getFileNodesChecked()) {
+          static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getNodes()->getWidget())->setIndex(1);
+          dump((dir+importWidget->getFilenameNodes()).toStdString().c_str(),import.getNodes());
+          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getNodes()->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameNodes());
+        }
+        else {
+          static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getNodes()->getWidget())->setIndex(2);
+          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getNodes()->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getNodes())));
+        }
+      }
+      if(importWidget->getIndicesChecked()) {
+        static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getIndices()->setActive(true);
+        if(importWidget->getFileIndicesChecked()) {
+          static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getIndices()->getWidget())->setIndex(1);
+          dump((dir+importWidget->getFilenameIndices()).toStdString().c_str(),import.getIndices());
+          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getIndices()->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameIndices());
+        }
+        else {
+          static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getIndices()->getWidget())->setIndex(2);
+          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getIndices()->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getIndices())));
+        }
+      }
+    }
   }
 
   ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, const Qt::WindowFlags& f) : ElementPropertyDialog(constraint,parent,f) {

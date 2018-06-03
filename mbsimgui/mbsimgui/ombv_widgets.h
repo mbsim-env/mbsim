@@ -255,6 +255,8 @@ namespace MBSimGUI {
       FlexibleBodyFFRMBSOMBVWidget(const QString &name="NOTSET");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      ExtWidget* getNodes() { return nodes; }
+      ExtWidget* getIndices() { return indices; }
     protected:
       ExtWidget *minCol, *maxCol, *nodes, *indices, *colorEntity;
   };

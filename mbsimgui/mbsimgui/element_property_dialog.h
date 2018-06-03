@@ -101,6 +101,7 @@ namespace MBSimGUI {
   class ExternSignalSource;
   class ExternSignalSink;
   class ExtWidget;
+  class ImportWidget;
 
   class ElementPropertyDialog : public EmbedItemPropertyDialog {
 
@@ -422,6 +423,7 @@ namespace MBSimGUI {
   };
 
   class FlexibleBodyFFRPropertyDialog : public BodyPropertyDialog {
+    Q_OBJECT
 
     public:
       FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body_, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
@@ -432,9 +434,12 @@ namespace MBSimGUI {
       int getqRelSize() const;
       int getuRelSize() const;
     protected:
-      ExtWidget *mass, *pdm, *ppdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor;
+      ExtWidget *mass, *rdm, *rrdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor;
       FlexibleBodyFFR *body;
+      ImportWidget *importWidget;
       void updateWidget() override;
+    protected slots:
+      void import();
   };
 
   class ConstraintPropertyDialog : public ElementPropertyDialog {
