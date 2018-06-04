@@ -6,6 +6,30 @@
 #define AMULT PHEM56_AMULT
 #define ACOPY PHEM56_ACOPY
 #define GPM2 PHEM56_GPM2
+C     Copyright (c) 2004, Ernst Hairer
+C     
+C     Redistribution and use in source and binary forms, with or without 
+C     modification, are permitted provided that the following conditions are 
+C     met:
+C     
+C     - Redistributions of source code must retain the above copyright 
+C     notice, this list of conditions and the following disclaimer.
+C     
+C     - Redistributions in binary form must reproduce the above copyright 
+C     notice, this list of conditions and the following disclaimer in the 
+C     documentation and/or other materials provided with the distribution.
+C     
+C     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS 
+C     IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED 
+C     TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A 
+C     PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR 
+C     CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+C     EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+C     PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+C     PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+C     LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+C     NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+C     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 C**********************************************************
       SUBROUTINE PHEM56(NQ,NV,NU,NL,FPROB, 
      &                T,Q,V,U,A,RLAM,TEND,H,
