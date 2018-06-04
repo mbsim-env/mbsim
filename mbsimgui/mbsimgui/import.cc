@@ -41,10 +41,13 @@ namespace MBSimGUI {
   }
 
   void ImportFEMData::read() {
-    string str;
-    double d;
+    if(not isRes.is_open()) throw runtime_error("Result file does not exist.");
+    if(not isStiff.is_open()) throw runtime_error("Stiffness matrix file does not exist.");
+    if(not isMass.is_open()) throw runtime_error("Mass matrix file does not exist.");
+    if(not isDof.is_open()) throw runtime_error("DOF file does not exist.");
 
     // count nodes
+    string str;
     for(int i=0; i<12; i++)
       getline(isRes,str);
     isRes >> str >> nn;
@@ -52,6 +55,7 @@ namespace MBSimGUI {
     // read nodes
     getline(isRes,str);
     u0.resize(3*nn,NONINIT);
+    double d;
     for(int i=0; i<nn; i++)
       isRes >> d >> d >> u0.e(3*i) >> u0.e(3*i+1) >> u0.e(3*i+2);
 

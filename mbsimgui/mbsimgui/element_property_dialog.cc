@@ -49,6 +49,7 @@
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QFileInfo>
+#include <QMessageBox>
 #include <utility>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include "mainwindow.h"
@@ -1194,7 +1195,7 @@ namespace MBSimGUI {
     u0->resize_(size,1);
   }
 
-  FlexibleBodyFFRPropertyDialog::FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body_, QWidget *parent, const Qt::WindowFlags& f) : BodyPropertyDialog(body_,parent,f), body(body_) {
+  FlexibleBodyFFRPropertyDialog::FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body, QWidget *parent, const Qt::WindowFlags& f) : BodyPropertyDialog(body,parent,f) {
     addTab("Visualisation",3);
     addTab("Nodal data");
 
@@ -1296,6 +1297,10 @@ namespace MBSimGUI {
 
     connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 //    connect(Knl1,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+  }
+
+  FlexibleBodyFFRPropertyDialog::~FlexibleBodyFFRPropertyDialog() {
+    delete dialog;
   }
 
   void FlexibleBodyFFRPropertyDialog::updateWidget() {
@@ -1507,13 +1512,19 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyFFRPropertyDialog::import() {
-    ImportDialog dialog;
-    int status = dialog.exec();
+    if(not dialog) dialog = new ImportDialog;
+    int status = dialog->exec();
     if(not status) return;
-    ImportWidget *importWidget = dialog.getImportWidget();
+    ImportWidget *importWidget = dialog->getImportWidget();
     QString dir = mw->getProjectPath()+"/";
     ImportFEMData import((dir+importWidget->getResultFile().remove("."+QFileInfo(importWidget->getResultFile()).suffix())).toStdString());
-    import.read();
+    try {
+      import.read();
+    }
+    catch(exception &err) {
+      QMessageBox::warning(nullptr, "Import error", QString::fromStdString(err.what()));
+      return;
+    }
     if(importWidget->getMassChecked()) {
       static_cast<ChoiceWidget2*>(mass->getWidget())->setIndex(0);
       static_cast<ScalarWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(mass->getWidget())->getWidget())->getWidget())->setValue(QString::number(import.getm()));
