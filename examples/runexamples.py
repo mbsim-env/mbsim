@@ -1820,32 +1820,34 @@ def copyAndSHA1AndAppendIndex(src, dst):
 def pushReference():
   loopOverReferenceFiles("Pushing reference to download dir", "reference", args.pushDIR, copyAndSHA1AndAppendIndex)
 
-def downloadFileIfDifferent(src):
-  remoteSHA1Url=args.updateURL+"/"+myurllib.pathname2url(src+".sha1")
-  remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
-  try:
-    localSHA1=hashlib.sha1(codecs.open(src, "rb").read()).hexdigest()
-  except IOError: 
-    localSHA1=""
-  if remoteSHA1!=localSHA1:
-    remoteUrl=args.updateURL+"/"+myurllib.pathname2url(src)
-    print("  Download "+remoteUrl)
-    if not os.path.isdir(os.path.dirname(src)): os.makedirs(os.path.dirname(src))
-    codecs.open(src, "wb").write(myurllib.urlopen(remoteUrl).read())
 def updateReference():
+  import requests
+  def downloadFileIfDifferent(s, src):
+    remoteSHA1Url=args.updateURL+"/"+myurllib.pathname2url(src+".sha1")
+    remoteSHA1=s.get(remoteSHA1Url).content.decode('utf-8')
+    try:
+      localSHA1=hashlib.sha1(codecs.open(src, "rb").read()).hexdigest()
+    except IOError: 
+      localSHA1=""
+    if remoteSHA1!=localSHA1:
+      remoteUrl=args.updateURL+"/"+myurllib.pathname2url(src)
+      print("  Download "+remoteUrl)
+      if not os.path.isdir(os.path.dirname(src)): os.makedirs(os.path.dirname(src))
+      codecs.open(src, "wb").write(s.get(remoteUrl).content)
   curNumber=0
   lenDirs=len(directories)
+  s=requests.Session()
   for example in directories:
     # print message
     curNumber+=1
     print("%s: Example %03d/%03d; %5.1f%%; %s"%("Update reference", curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
     # loop over all file in src/index.txt
     indexUrl=args.updateURL+"/"+myurllib.pathname2url(pj(example[0], "reference", "index.txt"))
-    try:
-      for fileName in myurllib.urlopen(indexUrl).read().decode("utf-8").rstrip(":").split(":"):
-        downloadFileIfDifferent(pj(example[0], "reference", fileName))
-    except (IOError):
-      pass
+    res=s.get(indexUrl)
+    if res.status_code==404:
+      continue
+    for fileName in res.content.decode("utf-8").rstrip(":").split(":"):
+      downloadFileIfDifferent(s, pj(example[0], "reference", fileName))
 
 
 
