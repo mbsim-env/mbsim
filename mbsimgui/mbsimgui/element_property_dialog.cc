@@ -1518,6 +1518,8 @@ namespace MBSimGUI {
     ImportWidget *importWidget = dialog->getImportWidget();
     QString dir = mw->getProjectPath()+"/";
     ImportFEMData import((dir+importWidget->getResultFile().remove("."+QFileInfo(importWidget->getResultFile()).suffix())).toStdString());
+    if(importWidget->getNumberOfModesChecked())
+      import.setNumberOfModes(importWidget->getNumberOfModes());
     try {
       import.read();
     }
@@ -1537,55 +1539,91 @@ namespace MBSimGUI {
       static_cast<ChoiceWidget2*>(rrdm->getWidget())->setIndex(0);
       static_cast<BasicMatWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(rrdm->getWidget())->getWidget())->getWidget())->setMat(MatToQvector<fmatvec::SymMat3>(import.getrrdm()));
     }
-    if(importWidget->getPdmChecked()) {
-      Pdm->setActive(true);
-      if(importWidget->getFilePdmChecked()) {
-        static_cast<ChoiceWidget2*>(Pdm->getWidget())->setIndex(1);
-        dump((dir+importWidget->getFilenamePdm()).toStdString().c_str(),import.getPdm());
-        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePdm());
+    if(importWidget->getNumberOfModes()) {
+      if(importWidget->getPdmChecked()) {
+        Pdm->setActive(true);
+        if(importWidget->getFilePdmChecked()) {
+          static_cast<ChoiceWidget2*>(Pdm->getWidget())->setIndex(1);
+          dump((dir+importWidget->getFilenamePdm()).toStdString().c_str(),import.getPdm());
+          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePdm());
+        }
+        else {
+          static_cast<ChoiceWidget2*>(Pdm->getWidget())->setIndex(2);
+          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getPdm())));
+        }
       }
-      else {
-        static_cast<ChoiceWidget2*>(Pdm->getWidget())->setIndex(2);
-        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getPdm())));
+      if(importWidget->getrPdmChecked()) {
+        rPdm->setActive(true);
+        static_cast<ChoiceWidget2*>(rPdm->getWidget())->setIndex(1);
+        if(importWidget->getFilerPdmChecked()) {
+          static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->setIndex(1);
+          dump((dir+importWidget->getFilenamerPdm()).toStdString().c_str(),import.getrPdm());
+          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamerPdm());
+        }
+        else {
+          static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->setIndex(2);
+          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getrPdm())));
+        }
+      }
+      if(importWidget->getPPdmChecked()) {
+        PPdm->setActive(true);
+        static_cast<ChoiceWidget2*>(PPdm->getWidget())->setIndex(1);
+        if(importWidget->getFilePPdmChecked()) {
+          static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->setIndex(1);
+          dump((dir+importWidget->getFilenamePPdm()).toStdString().c_str(),import.getPPdm());
+          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePPdm());
+        }
+        else {
+          static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->setIndex(2);
+          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getPPdm())));
+        }
+      }
+      if(importWidget->getKeChecked()) {
+        Ke->setActive(true);
+        if(importWidget->getFileKeChecked()) {
+          static_cast<ChoiceWidget2*>(Ke->getWidget())->setIndex(1);
+          dump((dir+importWidget->getFilenameKe()).toStdString().c_str(),import.getKe());
+          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Ke->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameKe());
+        }
+        else {
+          static_cast<ChoiceWidget2*>(Ke->getWidget())->setIndex(2);
+          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Ke->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getKe())));
+        }
+      }
+      if(importWidget->getPhiChecked()) {
+        Phi->setActive(true);
+        static_cast<ChoiceWidget2*>(Phi->getWidget())->setIndex(1);
+        if(importWidget->getFilePhiChecked()) {
+          static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->setIndex(1);
+          dump((dir+importWidget->getFilenamePhi()).toStdString().c_str(),import.getPhi());
+          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePhi());
+        }
+        else {
+          static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->setIndex(2);
+          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getPhi())));
+        }
+      }
+      if(importWidget->getSrChecked()) {
+        sigmahel->setActive(true);
+        static_cast<ChoiceWidget2*>(sigmahel->getWidget())->setIndex(1);
+        if(importWidget->getFileSrChecked()) {
+          static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->setIndex(1);
+          dump((dir+importWidget->getFilenameSr()).toStdString().c_str(),import.getSr());
+          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameSr());
+        }
+        else {
+          static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->setIndex(2);
+          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getSr())));
+        }
       }
     }
-    if(importWidget->getrPdmChecked()) {
-      rPdm->setActive(true);
-      static_cast<ChoiceWidget2*>(rPdm->getWidget())->setIndex(1);
-      if(importWidget->getFilerPdmChecked()) {
-        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->setIndex(1);
-        dump((dir+importWidget->getFilenamerPdm()).toStdString().c_str(),import.getrPdm());
-        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamerPdm());
-      }
-      else {
-        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->setIndex(2);
-        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getrPdm())));
-      }
-    }
-    if(importWidget->getPPdmChecked()) {
-      PPdm->setActive(true);
-      static_cast<ChoiceWidget2*>(PPdm->getWidget())->setIndex(1);
-      if(importWidget->getFilePPdmChecked()) {
-        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->setIndex(1);
-        dump((dir+importWidget->getFilenamePPdm()).toStdString().c_str(),import.getPPdm());
-        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePPdm());
-      }
-      else {
-        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->setIndex(2);
-        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getPPdm())));
-      }
-    }
-    if(importWidget->getKeChecked()) {
-      Ke->setActive(true);
-      if(importWidget->getFileKeChecked()) {
-        static_cast<ChoiceWidget2*>(Ke->getWidget())->setIndex(1);
-        dump((dir+importWidget->getFilenameKe()).toStdString().c_str(),import.getKe());
-        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Ke->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameKe());
-      }
-      else {
-        static_cast<ChoiceWidget2*>(Ke->getWidget())->setIndex(2);
-        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Ke->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getKe())));
-      }
+    else {
+      Pdm->setActive(false);
+      rPdm->setActive(false);
+      PPdm->setActive(false);
+      Ke->setActive(false);
+      Phi->setActive(false);
+      sigmahel->setActive(false);
     }
     if(importWidget->getu0Checked()) {
       r->setActive(true);
@@ -1598,32 +1636,6 @@ namespace MBSimGUI {
       else {
         static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->setIndex(2);
         static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getu0())));
-      }
-    }
-    if(importWidget->getPhiChecked()) {
-      Phi->setActive(true);
-      static_cast<ChoiceWidget2*>(Phi->getWidget())->setIndex(1);
-      if(importWidget->getFilePhiChecked()) {
-        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->setIndex(1);
-        dump((dir+importWidget->getFilenamePhi()).toStdString().c_str(),import.getPhi());
-        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePhi());
-      }
-      else {
-        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->setIndex(2);
-        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getPhi())));
-      }
-    }
-    if(importWidget->getSrChecked()) {
-      sigmahel->setActive(true);
-      static_cast<ChoiceWidget2*>(sigmahel->getWidget())->setIndex(1);
-      if(importWidget->getFileSrChecked()) {
-        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->setIndex(1);
-        dump((dir+importWidget->getFilenameSr()).toStdString().c_str(),import.getSr());
-        static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameSr());
-      }
-      else {
-        static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->setIndex(2);
-        static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getSr())));
       }
     }
     if(importWidget->getNodesChecked() and importWidget->getIndicesChecked()) {

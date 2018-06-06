@@ -26,10 +26,10 @@ namespace MBSimGUI {
 
   class ImportFEMData {
     public:
-      ImportFEMData(const std::string &jobname);
-      ~ImportFEMData();
+      ImportFEMData(const std::string &jobname_) : jobname(jobname_) { }
       void read();
-      int getnn() const { return nn; }
+      void setNumberOfModes(int nm_) { nm = nm_; }
+      int getNumberOfModes() const { return nm; }
       double getm() const { return m(0); }
       const fmatvec::Vec3& getrdm() const { return rdm; }
       const fmatvec::SymMat3& getrrdm() const { return rrdm; }
@@ -43,8 +43,8 @@ namespace MBSimGUI {
       fmatvec::Vector<fmatvec::Var,int> getNodes() const { return nodes; }
       fmatvec::Vector<fmatvec::Var,int> getIndices() const { return indices; }
     private:
-      std::ifstream isRes, isStiff, isMass, isDof;
-      int nn{0}, ne{0}, nm{6};
+      std::string jobname;
+      int nn{0}, ne{0}, nm{1000};
       fmatvec::VecV u0, mij, m;
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,int> eles;
       fmatvec::MatV Phi, Sr, rPdm, PPdm;

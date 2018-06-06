@@ -26,28 +26,31 @@ using namespace fmatvec;
 
 namespace MBSimGUI {
 
-  ImportFEMData::ImportFEMData(const string &jobname) {
-    isRes.open(jobname+".frd");
-    isStiff.open(jobname+".sti");
-    isMass.open(jobname+".mas");
-    isDof.open(jobname+".dof");
-  }
-
-  ImportFEMData::~ImportFEMData() {
-    isRes.close();
-    isStiff.close();
-    isMass.close();
-    isDof.close();
-  }
-
   void ImportFEMData::read() {
+    ifstream isRes(jobname+".frd");
     if(not isRes.is_open()) throw runtime_error("Result file does not exist.");
+    ifstream isStiff(jobname+".sti");
     if(not isStiff.is_open()) throw runtime_error("Stiffness matrix file does not exist.");
+    ifstream isMass(jobname+".mas");
     if(not isMass.is_open()) throw runtime_error("Mass matrix file does not exist.");
+    ifstream isDof(jobname+".dof");
     if(not isDof.is_open()) throw runtime_error("DOF file does not exist.");
 
-    // count nodes
+    // count modes
+    int nmodes = 0;
     string str;
+    while(true) {
+      getline(isRes,str);
+      if(str.length()>68 and str.substr(63,5)=="MODAL")
+        nmodes++;
+      if(isRes.eof()) break;
+    }
+    nmodes /= 2;
+    nm = min(max(nm,0),nmodes);
+    isRes.clear();
+    isRes.seekg(ios_base::beg);
+
+    // count nodes
     for(int i=0; i<12; i++)
       getline(isRes,str);
     isRes >> str >> nn;
@@ -216,6 +219,10 @@ namespace MBSimGUI {
       indices(j++) = -1;
     }
 
+    isRes.close();
+    isStiff.close();
+    isMass.close();
+    isDof.close();
   }
 
 }

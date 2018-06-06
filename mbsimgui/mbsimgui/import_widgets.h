@@ -45,6 +45,7 @@ namespace MBSimGUI {
       bool getSrChecked() { return labelSr->isChecked(); }
       bool getNodesChecked() { return labelNodes->isChecked(); }
       bool getIndicesChecked() { return labelIndices->isChecked(); }
+      bool getNumberOfModesChecked() { return labelnm->isChecked(); }
 
       bool getFilerrdmChecked() { return checkrrdm->isChecked(); }
       bool getFilePdmChecked() { return checkPdm->isChecked(); }
@@ -56,6 +57,7 @@ namespace MBSimGUI {
       bool getFileSrChecked() { return checkSr->isChecked(); }
       bool getFileNodesChecked() { return checkNodes->isChecked(); }
       bool getFileIndicesChecked() { return checkIndices->isChecked(); }
+      int getNumberOfModes() { return nm->value(); }
 
       QString getFilenamerdm() { return filerdm->getFile(); }
       QString getFilenamerrdm() { return filerrdm->getFile(); }
@@ -71,7 +73,8 @@ namespace MBSimGUI {
       QString getResultFile() { return resultFile->getFile(); }
 
     private:
-      QCheckBox *labelMass, *labelrdm, *labelrrdm, *labelPdm, *labelrPdm, *labelPPdm, *labelKe, *labelu0, *labelPhi, *labelSr, *labelNodes, *labelIndices, *checkrdm, *checkrrdm, *checkPdm, *checkrPdm, *checkPPdm, *checkKe, *checku0, *checkPhi, *checkSr, *checkNodes, *checkIndices;
+      CustomSpinBox *nm;
+      QCheckBox *labelnm, *labelMass, *labelrdm, *labelrrdm, *labelPdm, *labelrPdm, *labelPPdm, *labelKe, *labelu0, *labelPhi, *labelSr, *labelNodes, *labelIndices, *checkrdm, *checkrrdm, *checkPdm, *checkrPdm, *checkPPdm, *checkKe, *checku0, *checkPhi, *checkSr, *checkNodes, *checkIndices;
       FileWidget *filerdm, *filerrdm, *filePdm, *filerPdm, *filePPdm, *fileKe, *fileu0, *filePhi, *fileSr, *fileNodes, *fileIndices, *resultFile;
     private slots:
       void updatePdm();

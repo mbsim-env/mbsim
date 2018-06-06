@@ -24,6 +24,7 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QLabel>
+#include <QDir>
 
 using namespace std;
 
@@ -54,7 +55,12 @@ namespace MBSimGUI {
     prglayout->setMargin(0);
     groupBox->setLayout(prglayout);
 
-    resultFile = new FileWidget("","Choose CalculiX result file","**.frd",0,false,false);
+    QDir dir;
+    QString name;
+    QStringList list = dir.entryList(QStringList("*.frd"));
+    if(list.size())
+      name = list[0];
+    resultFile = new FileWidget(name,"Choose CalculiX result file","**.frd",0,false,false);
     prglayout->addWidget(resultFile);
 
     groupBox = new QGroupBox("Import");
@@ -175,6 +181,14 @@ namespace MBSimGUI {
     connect(labelIndices,SIGNAL(toggled(bool)),this,SLOT(updateIndices()));
     connect(checkIndices,SIGNAL(toggled(bool)),this,SLOT(updateIndices()));
 
+//    QLabel *labelnm = new QLabel("Number of modes");
+    labelnm = new QCheckBox("Number of modes");
+    layout->addWidget(labelnm,12,0);
+    nm = new CustomSpinBox;
+    nm->setValue(6);
+    layout->addWidget(nm,12,1);
+    nm->setEnabled(false);
+    connect(labelnm,SIGNAL(toggled(bool)),nm,SLOT(setEnabled(bool)));
   }
 
   void ImportWidget::updatePdm() {
