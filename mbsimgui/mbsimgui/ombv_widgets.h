@@ -139,7 +139,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *minCol, *maxCol;
+      ExtWidget *colorRepresentation, *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *minCol, *maxCol;
   };
 
   class FrameMBSOMBVWidget : public MBSOMBVWidget {
@@ -258,7 +258,7 @@ namespace MBSimGUI {
       ExtWidget* getNodes() { return nodes; }
       ExtWidget* getIndices() { return indices; }
     protected:
-      ExtWidget *minCol, *maxCol, *nodes, *indices, *colorEntity;
+      ExtWidget *minCol, *maxCol, *nodes, *indices, *colorRepresentation;
   };
 
 }

@@ -269,6 +269,15 @@ namespace MBSimGUI {
   }
 
   CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
+    vector<QString> list;
+    list.emplace_back("\"none\"");
+    list.emplace_back("\"deflection\"");
+    list.emplace_back("\"tensileForce\"");
+    list.emplace_back("\"compressiveForce\"");
+    list.emplace_back("\"absoluteForce\"");
+    colorRepresentation = new ExtWidget("Color entity",new TextChoiceWidget(list,0,true),true,false,MBSIM%"colorRepresentation");
+    layout()->addWidget(colorRepresentation);
+
     numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numberOfCoils");
     layout()->addWidget(numberOfCoils);
 
@@ -281,7 +290,7 @@ namespace MBSimGUI {
     nominalLength = new ExtWidget("Nominal length",new ChoiceWidget2(new ScalarWidgetFactory("-1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nominalLength");
     layout()->addWidget(nominalLength);
 
-    vector<QString> list;
+    list.clear();
     list.emplace_back("\"tube\"");
     list.emplace_back("\"scaledTube\"");
     list.emplace_back("\"polyline\"");
@@ -296,6 +305,7 @@ namespace MBSimGUI {
 
   DOMElement* CoilSpringMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
+    colorRepresentation->initializeUsingXML(e);
     numberOfCoils->initializeUsingXML(e);
     springRadius->initializeUsingXML(e);
     crossSectionRadius->initializeUsingXML(e);
@@ -308,6 +318,7 @@ namespace MBSimGUI {
 
   DOMElement* CoilSpringMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
+    colorRepresentation->writeXMLFile(e);
     numberOfCoils->writeXMLFile(e);
     springRadius->writeXMLFile(e);
     crossSectionRadius->writeXMLFile(e);
@@ -601,8 +612,8 @@ namespace MBSimGUI {
     list.emplace_back("\"yzStress\"");
     list.emplace_back("\"zxStress\"");
     list.emplace_back("\"equivalentStress\"");
-    colorEntity = new ExtWidget("Color entity",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"colorEntity");
-    layout()->addWidget(colorEntity);
+    colorRepresentation = new ExtWidget("Color entity",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"colorRepresentation");
+    layout()->addWidget(colorRepresentation);
     minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"minimalColorValue");
     layout()->addWidget(minCol);
     maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"maximalColorValue");
@@ -613,7 +624,7 @@ namespace MBSimGUI {
     DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
     nodes->initializeUsingXML(e);
     indices->initializeUsingXML(e);
-    colorEntity->initializeUsingXML(e);
+    colorRepresentation->initializeUsingXML(e);
     minCol->initializeUsingXML(e);
     maxCol->initializeUsingXML(e);
     return e;
@@ -623,7 +634,7 @@ namespace MBSimGUI {
     DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
     nodes->writeXMLFile(e);
     indices->writeXMLFile(e);
-    colorEntity->writeXMLFile(e);
+    colorRepresentation->writeXMLFile(e);
     writeProperties(e);
     minCol->writeXMLFile(e);
     maxCol->writeXMLFile(e);
