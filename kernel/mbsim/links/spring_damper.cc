@@ -39,6 +39,11 @@ namespace MBSim {
 
   SpringDamper::SpringDamper(const string &name) : FixedFrameLink(name), func(NULL), l0(0) {
     nF = 1;
+    evalOMBVColorRepresentation[0] = &SpringDamper::evalNone;
+    evalOMBVColorRepresentation[1] = &SpringDamper::evalDeflection;
+    evalOMBVColorRepresentation[2] = &SpringDamper::evalTensileForce;
+    evalOMBVColorRepresentation[3] = &SpringDamper::evalCompressiveForce;
+    evalOMBVColorRepresentation[4] = &SpringDamper::evalAbsoluteForce;
   }
 
   SpringDamper::~SpringDamper() {
@@ -53,8 +58,12 @@ namespace MBSim {
   }
 
   void SpringDamper::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==plotting) {
-      if(plotFeature[plotRecursive] and plotFeature[deflection])
+    if(stage==preInit) {
+      if(ombvColorRepresentation==unknown)
+        throwError("(SpringDamper::init): ombv color representation unknown");
+    }
+    else if(stage==plotting) {
+      if(plotFeature[plotRecursive] and plotFeature[MBSim::deflection])
           plotColumns.push_back("deflection");
       if(plotFeature[openMBV] and coilspringOpenMBV) {
         coilspringOpenMBV->setName(name);
@@ -66,7 +75,7 @@ namespace MBSim {
   }
 
   void SpringDamper::plot() {
-    if(plotFeature[plotRecursive] and plotFeature[deflection])
+    if(plotFeature[plotRecursive] and plotFeature[MBSim::deflection])
       plotVector.push_back(evalGeneralizedRelativePosition()(0)-l0);
     if(plotFeature[openMBV] and coilspringOpenMBV) {
       Vec3 WrOToPoint;
@@ -82,7 +91,7 @@ namespace MBSim {
       data.push_back(WrOToPoint(0));
       data.push_back(WrOToPoint(1));
       data.push_back(WrOToPoint(2));
-      data.push_back(fabs(evalGeneralizedForce()(0)));
+      data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])());
       coilspringOpenMBV->append(data);
     }
     FixedFrameLink::plot();
@@ -98,6 +107,16 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVCoilSpring ombv;
+      DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"colorRepresentation");
+      if(ee) {
+        string colorRepresentationStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
+        if(colorRepresentationStr=="none") ombvColorRepresentation=none;
+        else if(colorRepresentationStr=="deflection") ombvColorRepresentation=deflection;
+        else if(colorRepresentationStr=="tensileForce") ombvColorRepresentation=tensileForce;
+        else if(colorRepresentationStr=="compressiveForce") ombvColorRepresentation=compressiveForce;
+        else if(colorRepresentationStr=="absoluteForce") ombvColorRepresentation=absoluteForce;
+        else ombvColorRepresentation=unknown;
+      }
       ombv.initializeUsingXML(e);
       coilspringOpenMBV=ombv.createOpenMBV();
     }

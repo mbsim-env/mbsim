@@ -35,6 +35,11 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DirectionalSpringDamper)
 
   DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : FloatingFrameLink(name), func(nullptr) {
+    evalOMBVColorRepresentation[0] = &DirectionalSpringDamper::evalNone;
+    evalOMBVColorRepresentation[1] = &DirectionalSpringDamper::evalDeflection;
+    evalOMBVColorRepresentation[2] = &DirectionalSpringDamper::evalTensileForce;
+    evalOMBVColorRepresentation[3] = &DirectionalSpringDamper::evalCompressiveForce;
+    evalOMBVColorRepresentation[4] = &DirectionalSpringDamper::evalAbsoluteForce;
   }
 
   DirectionalSpringDamper::~DirectionalSpringDamper() {
@@ -62,7 +67,11 @@ namespace MBSim {
   }
 
   void DirectionalSpringDamper::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==plotting) {
+    if(stage==preInit) {
+      if(ombvColorRepresentation==unknown)
+        throwError("(DirectionalSpringDamper::init): ombv color representation unknown");
+    }
+    else if(stage==plotting) {
       if(plotFeature[openMBV]) {
         if(coilspringOpenMBV) {
           coilspringOpenMBV->setName(name);
@@ -90,7 +99,7 @@ namespace MBSim {
         data.push_back(WrOToPoint(0));
         data.push_back(WrOToPoint(1));
         data.push_back(WrOToPoint(2));
-        data.push_back(fabs(evalGeneralizedForce()(0)));
+        data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])());
         coilspringOpenMBV->append(data);
       }
     }
@@ -109,6 +118,16 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVCoilSpring ombv;
+      DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"colorRepresentation");
+      if(ee) {
+        string colorRepresentationStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
+        if(colorRepresentationStr=="none") ombvColorRepresentation=none;
+        else if(colorRepresentationStr=="deflection") ombvColorRepresentation=deflection;
+        else if(colorRepresentationStr=="tensileForce") ombvColorRepresentation=tensileForce;
+        else if(colorRepresentationStr=="compressiveForce") ombvColorRepresentation=compressiveForce;
+        else if(colorRepresentationStr=="absoluteForce") ombvColorRepresentation=absoluteForce;
+        else ombvColorRepresentation=unknown;
+      }
       ombv.initializeUsingXML(e);
       coilspringOpenMBV=ombv.createOpenMBV();
     }

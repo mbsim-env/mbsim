@@ -32,11 +32,28 @@ namespace MBSim {
    * distance and relative velocity between the two frames.
    */
   class DirectionalSpringDamper : public FloatingFrameLink {
+    public:
+      enum OMBVColorRepresentation {
+        none=0,
+        deflection,
+        tensileForce,
+        compressiveForce,
+        absoluteForce,
+        unknown
+      };
+
     protected:
       double dist;
       Function<double(double,double)> *func;
       double l0{0};
       std::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
+      OMBVColorRepresentation ombvColorRepresentation{none};
+      double (DirectionalSpringDamper::*evalOMBVColorRepresentation[5])();
+      double evalNone() { return 0; }
+      double evalDeflection() { return evalGeneralizedRelativePosition()(0)-l0; }
+      double evalTensileForce() { return -evalGeneralizedForce()(0); }
+      double evalCompressiveForce() { return evalGeneralizedForce()(0); }
+      double evalAbsoluteForce() { return fabs(evalGeneralizedForce()(0)); }
     public:
       DirectionalSpringDamper(const std::string &name="");
       ~DirectionalSpringDamper() override;
@@ -75,8 +92,9 @@ namespace MBSim {
       void plot() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(minimalColorValue,(double),0)(maximalColorValue,(double),1))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (colorRepresentation,(OMBVColorRepresentation),none)(numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(minimalColorValue,(double),0)(maximalColorValue,(double),1))) {
         OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,diffuseColor,transparency,minimalColorValue,maximalColorValue);
+        ombvColorRepresentation = colorRepresentation;
         coilspringOpenMBV=ombv.createOpenMBV();
       }
   };
