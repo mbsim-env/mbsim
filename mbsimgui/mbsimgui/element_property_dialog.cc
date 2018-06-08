@@ -1517,11 +1517,11 @@ namespace MBSimGUI {
     if(not status) return;
     ImportWidget *importWidget = dialog->getImportWidget();
     QString dir = mw->getProjectPath()+"/";
-    ImportFEMData import((dir+importWidget->getResultFile().remove("."+QFileInfo(importWidget->getResultFile()).suffix())).toStdString());
+    ImportFEMData import;
     if(importWidget->getNumberOfModesChecked())
       import.setNumberOfModes(importWidget->getNumberOfModes());
     try {
-      import.read();
+      import.read((dir+importWidget->getResultFile().remove("."+QFileInfo(importWidget->getResultFile()).suffix())).toStdString());
     }
     catch(exception &err) {
       QMessageBox::warning(nullptr, "Import error", QString::fromStdString(err.what()));

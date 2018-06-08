@@ -26,8 +26,15 @@ namespace MBSimGUI {
 
   class ImportFEMData {
     public:
-      ImportFEMData(const std::string &jobname_) : jobname(jobname_) { }
-      void read();
+      void readDisplacements();
+      void readStresses();
+      void readNodes();
+      void readElements();
+      void readModes();
+      void readDOF();
+      void readStiffMatrix();
+      void readMassMatrix();
+      void read(const std::string &jobname);
       void setNumberOfModes(int nm_) { nm = nm_; }
       int getNumberOfModes() const { return nm; }
       double getm() const { return m(0); }
@@ -43,7 +50,7 @@ namespace MBSimGUI {
       fmatvec::Vector<fmatvec::Var,int> getNodes() const { return nodes; }
       fmatvec::Vector<fmatvec::Var,int> getIndices() const { return indices; }
     private:
-      std::string jobname;
+      std::ifstream isRes, isStiff, isMass, isDOF;
       int nn{0}, ne{0}, nm{1000};
       fmatvec::VecV u0, mij, m;
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,int> eles;
@@ -54,6 +61,8 @@ namespace MBSimGUI {
       fmatvec::SymMat3 rrdm;
       fmatvec::Mat3xV Pdm;
       fmatvec::Vector<fmatvec::Var,int> nodes, indices;
+      std::vector<fmatvec::VecV> disp;
+      std::vector<fmatvec::VecV> stress;
   };
 
 }

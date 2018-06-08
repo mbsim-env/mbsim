@@ -26,100 +26,161 @@ using namespace fmatvec;
 
 namespace MBSimGUI {
 
-  void ImportFEMData::read() {
-    ifstream isRes(jobname+".frd");
-    if(not isRes.is_open()) throw runtime_error("Result file does not exist.");
-    ifstream isStiff(jobname+".sti");
-    if(not isStiff.is_open()) throw runtime_error("Stiffness matrix file does not exist.");
-    ifstream isMass(jobname+".mas");
-    if(not isMass.is_open()) throw runtime_error("Mass matrix file does not exist.");
-    ifstream isDof(jobname+".dof");
-    if(not isDof.is_open()) throw runtime_error("DOF file does not exist.");
-
-    // count modes
-    int nmodes = 0;
+  void ImportFEMData::readDisplacements() {
+    VecV dispi(3*nn,NONINIT);
+    double d;
     string str;
-    while(true) {
+    for(int i=0; i<5; i++)
       getline(isRes,str);
-      if(str.length()>68 and str.substr(63,5)=="MODAL")
-        nmodes++;
-      if(isRes.eof()) break;
+    for(int i=0; i<nn; i++) {
+      isRes >> d >> d;
+      for(int k=0; k<3; k++)
+        isRes >> dispi.e(3*i+k);
     }
-    nmodes /= 2;
-    nm = min(max(nm,0),nmodes);
-    isRes.clear();
-    isRes.seekg(ios_base::beg);
+    disp.push_back(dispi);
+  }
 
-    // count nodes
-    for(int i=0; i<12; i++)
+  void ImportFEMData::readStresses() {
+    VecV stressi(6*nn,NONINIT);
+    double d;
+    string str;
+    for(int i=0; i<7; i++)
       getline(isRes,str);
-    isRes >> str >> nn;
+    for(int i=0; i<nn; i++) {
+      isRes >> d >> d;
+      for(int k=0; k<6; k++)
+        isRes >> stressi.e(6*i+k);
+    }
+    stress.push_back(stressi);
+  }
 
-    // read nodes
-    getline(isRes,str);
+  void ImportFEMData::readNodes() {
+    string str;
+    while(isRes) {
+      getline(isRes,str);
+      if(str.length()>6 and str.substr(4,2)=="2C")
+        break;
+    }
+    stringstream s(str);
+    s >> str >> nn;
     u0.resize(3*nn,NONINIT);
     double d;
-    for(int i=0; i<nn; i++)
-      isRes >> d >> d >> u0.e(3*i) >> u0.e(3*i+1) >> u0.e(3*i+2);
+    for(int i=0; i<nn; i++) {
+      isRes >> d >> d;
+      for(int k=0; k<3; k++)
+        isRes >> u0.e(3*i+k);
+    }
+  }
 
-    // count elements
-    for(int i=0; i<2; i++)
+  void ImportFEMData::readElements() {
+    string str;
+    while(isRes) {
       getline(isRes,str);
-    isRes >> str >> ne;
-
-    // read elements
+      if(str.length()>6 and str.substr(4,2)=="3C")
+        break;
+    }
+    stringstream s(str);
+    s >> str >> ne;
     eles.resize(ne,20,NONINIT);
+    double d;
+    int type, nn;
     for(int i=0; i<ne; i++) {
-      for(int j=0; j<2; j++)
-        getline(isRes,str);
-      isRes >> d;
-      for(int j=0; j<10; j++)
-        isRes >> eles.e(i,j);
-      isRes >> d;
-      for(int j=10; j<20; j++)
-        isRes >> eles.e(i,j);
-    }
-
-    // read modes and stresses
-    Phi.resize(3*nn,nm,NONINIT);
-    Sr.resize(6*nn,nm,NONINIT);
-    for(int j=0; j<nm; j++) {
-      for(int i=0; i<14; i++)
-        getline(isRes,str);
-      for(int i=0; i<nn; i++) {
-        isRes >> d >> d;
-        for(int k=0; k<3; k++)
-          isRes >> Phi.e(3*i+k,j);
+      isRes >> str >> str >> type;
+      if(type==4)
+        nn = 20;
+      else
+        throw runtime_error("Unknown element type.");
+      getline(isRes,str);
+      for(int j=0; j<nn;) {
+        isRes >> d;
+        if(d>0) {
+          eles.e(i,j) = d;
+          j++;
+        }
       }
-      for(int i=0; i<16; i++)
-        getline(isRes,str);
-      for(int i=0; i<nn; i++) {
-        isRes >> d >> d;
-        for(int k=0; k<6; k++)
-          isRes >> Sr.e(6*i+k,j);
+      getline(isRes,str);
+    }
+  }
+
+  void ImportFEMData::readModes() {
+    string str;
+    int i, nn_;
+    while(isRes) {
+      getline(isRes,str);
+      if(str.length()>6 and str.substr(2,4)=="100C") {
+//        cout << str[57] << endl;
+        stringstream s(str);
+        s >> str >> str >> str >> nn_;
+        if(nn != nn_) throw runtime_error("Number of nodes does not match.");
+        isRes >> i >> str;
+        if(str=="DISP")
+          readDisplacements();
+        else if(str=="STRESS")
+          readStresses();
       }
     }
+    nm = min(max(nm,0),int(disp.size()));
+  }
 
+  void ImportFEMData::readDOF() {
     // read dof table
+    double d;
     while(true) {
-      isDof >> d;
-      if(isDof.eof()) break;
+      isDOF >> d;
+      if(isDOF.eof()) break;
       dof.push_back(make_pair(int(d)-1,int(d*10)-int(d)*10-1));
     }
+  }
 
-    // read mass and stiffness matrix
-    M.resize(dof.size());
+  void ImportFEMData::readStiffMatrix() {
+    // read stiffness matrix
     K.resize(dof.size());
     int i, j;
+    double d;
+    while(true) {
+      isStiff >> i >> j >> d;
+      if(isStiff.eof()) break;
+      K.e(i-1,j-1) = d;
+    }
+  }
+
+  void ImportFEMData::readMassMatrix() {
+    // read mass matrix
+    M.resize(dof.size());
+    int i, j;
+    double d;
     while(true) {
       isMass >> i >> j >> d;
       if(isMass.eof()) break;
       M.e(i-1,j-1) = d;
     }
-    while(true) {
-      isStiff >> i >> j >> d;
-      if(isStiff.eof()) break;
-      K.e(i-1,j-1) = d;
+  }
+
+  void ImportFEMData::read(const string &jobname) {
+    isRes.open(jobname+".frd");
+    isStiff.open(jobname+".sti");
+    isMass.open(jobname+".mas");
+    isDOF.open(jobname+".dof");
+    if(not isRes.is_open()) throw runtime_error("Result file does not exist.");
+    if(not isStiff.is_open()) throw runtime_error("Stiffness matrix file does not exist.");
+    if(not isMass.is_open()) throw runtime_error("Mass matrix file does not exist.");
+    if(not isDOF.is_open()) throw runtime_error("DOF file does not exist.");
+
+    readNodes();
+    readElements();
+    readModes();
+    readDOF();
+    readMassMatrix();
+    readStiffMatrix();
+
+    // set modes and stresses
+    Phi.resize(3*nn,nm,NONINIT);
+    Sr.resize(6*nn,nm,NONINIT);
+    for(int j=0; j<Phi.cols(); j++) {
+      for(int i=0; i<Phi.rows(); i++)
+        Phi.e(i,j) = disp[j].e(i);
+      for(int i=0; i<Sr.rows(); i++)
+        Sr.e(i,j) = stress[j].e(i);
     }
 
     // compute mass and lumped mass matrix
@@ -185,7 +246,7 @@ namespace MBSimGUI {
     for(int i=0; i<nn; i++)
       nodes(i) = i+1;
     indices.resize(5*6*ne,NONINIT);
-    j = 0;
+    int j = 0;
     for(size_t i=0; i<eles.rows(); i++) {
       indices(j++) = eles(i,3);
       indices(j++) = eles(i,2);
@@ -222,7 +283,7 @@ namespace MBSimGUI {
     isRes.close();
     isStiff.close();
     isMass.close();
-    isDof.close();
+    isDOF.close();
   }
 
 }
