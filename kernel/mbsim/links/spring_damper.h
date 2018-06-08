@@ -49,7 +49,9 @@ namespace MBSim {
       double l0;
       std::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
       OMBVColorRepresentation ombvColorRepresentation{none};
+#ifndef SWIG
       double (SpringDamper::*evalOMBVColorRepresentation[5])();
+#endif
       double evalNone() { return 0; }
       double evalDeflection() { return evalGeneralizedRelativePosition()(0)-l0; }
       double evalTensileForce() { return -evalGeneralizedForce()(0); }
