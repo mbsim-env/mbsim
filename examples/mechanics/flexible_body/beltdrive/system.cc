@@ -494,7 +494,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
        spring->setForceFunction(new LinearSpringDamperForce(cSpring,dSpring));
        spring->setUnloadedLength(l0Spring);
        spring->connect(disk->getFrame("C"),this->getFrame("BS"));
-       spring->enableOpenMBV(_springRadius=0.1*radiiDisks(i),_crossSectionRadius=0.005*radiiDisks(i),_numberOfCoils=nWindings);
+       spring->enableOpenMBV(_colorRepresentation=SpringDamper::absoluteForce,_springRadius=0.1*radiiDisks(i),_crossSectionRadius=0.005*radiiDisks(i),_numberOfCoils=nWindings);
     }
   }
 

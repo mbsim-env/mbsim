@@ -291,6 +291,7 @@
           </forceFunction>
           <unloadedLength unit="m">l01</unloadedLength>
           <enableOpenMBV>
+            <colorRepresentation>"absoluteForce"</colorRepresentation>
             <numberOfCoils unit="-">5</numberOfCoils>
             <springRadius unit="cm">5</springRadius>
           </enableOpenMBV>
@@ -305,6 +306,7 @@
           </forceFunction>
           <unloadedLength unit="m">l02</unloadedLength>
           <enableOpenMBV>
+            <colorRepresentation>"absoluteForce"</colorRepresentation>
             <numberOfCoils unit="-">5</numberOfCoils>
             <springRadius unit="cm">5</springRadius>
           </enableOpenMBV>

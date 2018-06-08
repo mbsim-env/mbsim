@@ -201,7 +201,7 @@
               <indices>
                 <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="indices.dat"/>
               </indices>
-              <colorEntity>"xxStress"</colorEntity>
+              <colorRepresentation>"xxStress"</colorRepresentation>
               <minimalColorValue>-1e6</minimalColorValue>
               <maximalColorValue>1e6</maximalColorValue>
             </enableOpenMBV>

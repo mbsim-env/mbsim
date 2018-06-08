@@ -114,7 +114,8 @@
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
                 <enableOpenMBV>
-                  <numberOfCoils>5</numberOfCoils>
+                   <colorRepresentation>"absoluteForce"</colorRepresentation>
+                   <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
                 </enableOpenMBV>
@@ -129,6 +130,7 @@
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
                 <enableOpenMBV>
+                  <colorRepresentation>"absoluteForce"</colorRepresentation>
                   <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
@@ -269,6 +271,7 @@
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
                 <enableOpenMBV>
+                  <colorRepresentation>"absoluteForce"</colorRepresentation>
                   <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
@@ -284,6 +287,7 @@
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
                 <enableOpenMBV>
+                  <colorRepresentation>"absoluteForce"</colorRepresentation>
                   <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
