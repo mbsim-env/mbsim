@@ -68,18 +68,18 @@ namespace MBSimFlexibleBody {
     updateKJ_[0] = &FlexibleBodyFFR::updateKJ0;
     updateKJ_[1] = &FlexibleBodyFFR::updateKJ1;
 
-    evalOMBVColorEntity[0] = &FlexibleBodyFFR::evalNone;
-    evalOMBVColorEntity[1] = &FlexibleBodyFFR::evalXDisplacement;
-    evalOMBVColorEntity[2] = &FlexibleBodyFFR::evalYDisplacement;
-    evalOMBVColorEntity[3] = &FlexibleBodyFFR::evalZDisplacement;
-    evalOMBVColorEntity[4] = &FlexibleBodyFFR::evalTotalDisplacement;
-    evalOMBVColorEntity[5] = &FlexibleBodyFFR::evalXXStress;
-    evalOMBVColorEntity[6] = &FlexibleBodyFFR::evalYYStress;
-    evalOMBVColorEntity[7] = &FlexibleBodyFFR::evalZZStress;
-    evalOMBVColorEntity[8] = &FlexibleBodyFFR::evalXYStress;
-    evalOMBVColorEntity[9] = &FlexibleBodyFFR::evalYZStress;
-    evalOMBVColorEntity[10] = &FlexibleBodyFFR::evalZXStress;
-    evalOMBVColorEntity[11] = &FlexibleBodyFFR::evalEquivalentStress;
+    evalOMBVColorRepresentation[0] = &FlexibleBodyFFR::evalNone;
+    evalOMBVColorRepresentation[1] = &FlexibleBodyFFR::evalXDisplacement;
+    evalOMBVColorRepresentation[2] = &FlexibleBodyFFR::evalYDisplacement;
+    evalOMBVColorRepresentation[3] = &FlexibleBodyFFR::evalZDisplacement;
+    evalOMBVColorRepresentation[4] = &FlexibleBodyFFR::evalTotalDisplacement;
+    evalOMBVColorRepresentation[5] = &FlexibleBodyFFR::evalXXStress;
+    evalOMBVColorRepresentation[6] = &FlexibleBodyFFR::evalYYStress;
+    evalOMBVColorRepresentation[7] = &FlexibleBodyFFR::evalZZStress;
+    evalOMBVColorRepresentation[8] = &FlexibleBodyFFR::evalXYStress;
+    evalOMBVColorRepresentation[9] = &FlexibleBodyFFR::evalYZStress;
+    evalOMBVColorRepresentation[10] = &FlexibleBodyFFR::evalZXStress;
+    evalOMBVColorRepresentation[11] = &FlexibleBodyFFR::evalEquivalentStress;
   }
 
   FlexibleBodyFFR::~FlexibleBodyFFR() {
@@ -275,7 +275,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      if(ombvColorEntity==unknown)
+      if(ombvColorRepresentation==unknown)
         throwError("(FlexibleBodyFFR::init): ombv color entity unknown");
 
       for(auto & k : contour) {
@@ -482,7 +482,7 @@ namespace MBSimFlexibleBody {
         const Vec3 &WrOP = evalNodalPosition(ombvNode);
         for(int j=0; j<3; j++)
           data.push_back(WrOP(j));
-        data.push_back((this->*evalOMBVColorEntity[ombvColorEntity])(ombvNode));
+        data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])(ombvNode));
       }
       dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->append(data);
     }
@@ -957,22 +957,22 @@ namespace MBSimFlexibleBody {
       ombvIndices.resize(indices.size());
       for(int i=0; i<indices.size(); i++)
         ombvIndices[i] = static_cast<Index>(indices(i))-1;
-      ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"colorEntity");
+      ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"colorRepresentation");
       if(ee) {
-        string colorEntityStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-        if(colorEntityStr=="none") ombvColorEntity=none;
-        else if(colorEntityStr=="xDisplacement") ombvColorEntity=xDisplacement;
-        else if(colorEntityStr=="yDisplacement") ombvColorEntity=yDisplacement;
-        else if(colorEntityStr=="zDisplacement") ombvColorEntity=zDisplacement;
-        else if(colorEntityStr=="totalDisplacement") ombvColorEntity=totalDisplacement;
-        else if(colorEntityStr=="xxStress") ombvColorEntity=xxStress;
-        else if(colorEntityStr=="yyStress") ombvColorEntity=yyStress;
-        else if(colorEntityStr=="zzStress") ombvColorEntity=zzStress;
-        else if(colorEntityStr=="xyStress") ombvColorEntity=xyStress;
-        else if(colorEntityStr=="yzStress") ombvColorEntity=yzStress;
-        else if(colorEntityStr=="zxStress") ombvColorEntity=zxStress;
-        else if(colorEntityStr=="equivalentStress") ombvColorEntity=equivalentStress;
-        else ombvColorEntity=unknown;
+        string colorRepresentationStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
+        if(colorRepresentationStr=="none") ombvColorRepresentation=none;
+        else if(colorRepresentationStr=="xDisplacement") ombvColorRepresentation=xDisplacement;
+        else if(colorRepresentationStr=="yDisplacement") ombvColorRepresentation=yDisplacement;
+        else if(colorRepresentationStr=="zDisplacement") ombvColorRepresentation=zDisplacement;
+        else if(colorRepresentationStr=="totalDisplacement") ombvColorRepresentation=totalDisplacement;
+        else if(colorRepresentationStr=="xxStress") ombvColorRepresentation=xxStress;
+        else if(colorRepresentationStr=="yyStress") ombvColorRepresentation=yyStress;
+        else if(colorRepresentationStr=="zzStress") ombvColorRepresentation=zzStress;
+        else if(colorRepresentationStr=="xyStress") ombvColorRepresentation=xyStress;
+        else if(colorRepresentationStr=="yzStress") ombvColorRepresentation=yzStress;
+        else if(colorRepresentationStr=="zxStress") ombvColorRepresentation=zxStress;
+        else if(colorRepresentationStr=="equivalentStress") ombvColorRepresentation=equivalentStress;
+        else ombvColorRepresentation=unknown;
       }
       OpenMBVDynamicIndexedFaceSet ombv;
       ombv.initializeUsingXML(e);

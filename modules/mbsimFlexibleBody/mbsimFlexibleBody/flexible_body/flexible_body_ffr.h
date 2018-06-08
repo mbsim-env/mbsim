@@ -64,7 +64,7 @@ namespace MBSimFlexibleBody {
   class FlexibleBodyFFR : public NodeBasedBody {
     public:
 
-      enum OMBVColorEntity {
+      enum OMBVColorRepresentation {
         none=0,
         xDisplacement,
         yDisplacement,
@@ -294,7 +294,7 @@ namespace MBSimFlexibleBody {
       using NodeBasedBody::addFrame;
       using NodeBasedBody::addContour;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<MBSim::Index>&),std::vector<MBSim::Index>())(indices,(const std::vector<MBSim::Index>&),std::vector<MBSim::Index>())(minimalColorValue,(double),0)(maximalColorValue,(double),0))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<MBSim::Index>&),std::vector<MBSim::Index>())(indices,(const std::vector<MBSim::Index>&),std::vector<MBSim::Index>())(colorRepresentation,(OMBVColorRepresentation),none)(minimalColorValue,(double),0)(maximalColorValue,(double),0))) {
         OpenMBVDynamicIndexedFaceSet ombv(minimalColorValue,maximalColorValue);
         openMBVBody=ombv.createOpenMBV();
         ombvNodes = nodes;
@@ -550,8 +550,8 @@ namespace MBSimFlexibleBody {
 
     private:
       std::vector<MBSim::Index> ombvNodes, ombvIndices;
-      OMBVColorEntity ombvColorEntity{none};
-      double (FlexibleBodyFFR::*evalOMBVColorEntity[12])(int i);
+      OMBVColorRepresentation ombvColorRepresentation{none};
+      double (FlexibleBodyFFR::*evalOMBVColorRepresentation[12])(int i);
       double evalNone(int i) { return 0; }
       double evalXDisplacement(int i) { return evalNodalDisplacement(i)(0); }
       double evalYDisplacement(int i) { return evalNodalDisplacement(i)(1); }

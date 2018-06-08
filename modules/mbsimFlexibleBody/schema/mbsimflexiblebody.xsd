@@ -909,7 +909,7 @@
               <xs:sequence>
                 <xs:element name="nodes" type="pv:indexVector" minOccurs="0"/>
                 <xs:element name="indices" type="pv:indexVector" minOccurs="0"/>
-                <xs:element name="colorEntity" type="pv:stringFullEval" minOccurs="0">
+                <xs:element name="colorRepresentation" type="pv:stringFullEval" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                     Auswahl der Farbdarstellung.
                     <ul>
