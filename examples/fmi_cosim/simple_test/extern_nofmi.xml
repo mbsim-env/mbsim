@@ -9,6 +9,7 @@
   </forceFunction>
   <unloadedLength>0</unloadedLength>
   <enableOpenMBV>
+    <colorRepresentation>"absoluteForce"</colorRepresentation>
     <numberOfCoils>20</numberOfCoils>
     <springRadius>0.03</springRadius>
     <type>'polyline'</type>
