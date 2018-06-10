@@ -275,7 +275,7 @@ namespace MBSimGUI {
     list.emplace_back("\"tensileForce\"");
     list.emplace_back("\"compressiveForce\"");
     list.emplace_back("\"absoluteForce\"");
-    colorRepresentation = new ExtWidget("Color entity",new TextChoiceWidget(list,0,true),true,false,MBSIM%"colorRepresentation");
+    colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(list,0,true),true,false,MBSIM%"colorRepresentation");
     layout()->addWidget(colorRepresentation);
 
     numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numberOfCoils");
@@ -612,7 +612,7 @@ namespace MBSimGUI {
     list.emplace_back("\"yzStress\"");
     list.emplace_back("\"zxStress\"");
     list.emplace_back("\"equivalentStress\"");
-    colorRepresentation = new ExtWidget("Color entity",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"colorRepresentation");
+    colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"colorRepresentation");
     layout()->addWidget(colorRepresentation);
     minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"minimalColorValue");
     layout()->addWidget(minCol);
