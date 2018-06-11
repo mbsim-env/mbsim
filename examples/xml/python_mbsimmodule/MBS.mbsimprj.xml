@@ -148,6 +148,7 @@
           </forceFunction>
           <unloadedLength>0</unloadedLength>
           <enableOpenMBV>
+            <colorRepresentation>"absoluteForce"</colorRepresentation>
             <numberOfCoils>5</numberOfCoils>
             <springRadius>.03</springRadius>
             <crossSectionRadius>.01</crossSectionRadius>
@@ -181,6 +182,7 @@
           </forceFunction>
           <unloadedLength>0</unloadedLength>
           <enableOpenMBV>
+            <colorRepresentation>"absoluteForce"</colorRepresentation>
             <numberOfCoils>5</numberOfCoils>
             <springRadius>.03</springRadius>
             <crossSectionRadius>.01</crossSectionRadius>
