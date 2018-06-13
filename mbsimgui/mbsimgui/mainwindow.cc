@@ -1651,12 +1651,19 @@ namespace MBSimGUI {
     setProjectChanged(true);
     auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
-    model->removeRows(0,parent->getNumberOfParameters(),index);
     int n = parent->getNumberOfParameters();
-    for(int i=0; i<n; i++)
-      parent->removeParameter(parent->getParameter(i));
-    parent->getEmbedXMLElement()->removeAttribute(X()%"parameterHref");
+    for(int i=n-1; i>=0; i--) {
+      auto *parameter = parent->getParameter(i);
+        parameterBuffer.first = NULL;
+      DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
+      if(ps and X()%ps->getNodeName()=="#text")
+        parameter->getXMLElement()->getParentNode()->removeChild(ps);
+      parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
+      parent->removeParameter(parameter);
+    }
     parent->maybeRemoveEmbedXMLElement();
+    model->removeRows(0,n,index);
+    mbsimxml(1);
   }
 
   void MainWindow::loadFrame(Element *parent, Element *element, bool embed) {
