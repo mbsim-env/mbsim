@@ -392,11 +392,11 @@ namespace MBSimGUI {
       ObjectPropertyDialog(Object *object, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-      virtual void resizeGeneralizedPosition() {}
-      virtual void resizeGeneralizedVelocity() {}
+      virtual void resizeGeneralizedPosition() { }
+      virtual void resizeGeneralizedVelocity() { }
     protected:
       ExtWidget *q0, *u0, *R;
-      void updateWidget() override {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
+      void updateWidget() override { resizeGeneralizedPosition(); resizeGeneralizedVelocity(); }
   };
 
   class BodyPropertyDialog : public ObjectPropertyDialog {

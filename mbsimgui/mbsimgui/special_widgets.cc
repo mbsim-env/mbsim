@@ -67,6 +67,10 @@ namespace MBSimGUI {
 //      for(int i=0; i<min((int)buf.size(),size); i++)
 //        box[i]->setText(buf[i]);
     }
+    else {
+      for(auto & i : ele)
+        i->resize_(m,1);
+    }
   }
 
   void OneDimVecArrayWidget::resize_(int m, int n) {
@@ -130,6 +134,10 @@ namespace MBSimGUI {
         layout()->addWidget(ele[i]);
       }
     }
+    else {
+      for(auto & i : ele)
+        i->resize_(m,n);
+    }
   }
 
   void OneDimMatArrayWidget::resize_(int m, int n) {
@@ -181,7 +189,7 @@ namespace MBSimGUI {
   void TwoDimMatArrayWidget::resize_(int rsize, int csize, int m, int n) {
     if(ele.size()!=rsize or ele[0].size()!=csize) {
       for(auto & i : ele) {
-        for(unsigned int j=0; j<ele.size(); j++) {
+        for(int j=0; j<i.size(); j++) {
           layout()->removeWidget(i[j]);
           delete i[j];
         }
@@ -195,6 +203,11 @@ namespace MBSimGUI {
           layout()->addWidget(ele[i][j]);
         }
       }
+    }
+    else {
+      for(auto & i : ele)
+        for(int j=0; j<i.size(); j++)
+          i[j]->resize_(m,n);
     }
   }
 

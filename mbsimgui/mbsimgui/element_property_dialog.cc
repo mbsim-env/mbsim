@@ -1186,9 +1186,7 @@ namespace MBSimGUI {
   void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
     int size =  body->isConstrained() ? 0 : getqRelSize();
     q0->resize_(size,1);
-    //translation->resize_(3,1);
-    //rotation->resize_(3,1);
-    }
+  }
 
   void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
     int size =  body->isConstrained() ? 0 : getuRelSize();
@@ -1304,6 +1302,7 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyFFRPropertyDialog::updateWidget() {
+    BodyPropertyDialog::updateWidget();
     int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
     if(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getIndex()==0)
       rPdm->resize_(3,size);
@@ -1405,7 +1404,7 @@ namespace MBSimGUI {
   }
 
   int FlexibleBodyFFRPropertyDialog::getqRelSize() const {
-    int nqT=0, nqR=0;
+    int nqT=0, nqR=0, nqE=0;
     if(translation->isActive()) {
       auto *trans = static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(translation->getWidget())->getWidget());
       if(static_cast<ChoiceWidget2*>(translation->getWidget())->getIndex()==1)
@@ -1420,7 +1419,9 @@ namespace MBSimGUI {
       else
         nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
     }
-    int nq = nqT + nqR;
+    if(Pdm->isActive())
+      nqE = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
+    int nq = nqT + nqR + nqE;
     return nq;
   }
 
@@ -1431,9 +1432,7 @@ namespace MBSimGUI {
   void FlexibleBodyFFRPropertyDialog::resizeGeneralizedPosition() {
     int size =  getqRelSize();
     q0->resize_(size,1);
-//    translation->resize_(3,1);
-//    rotation->resize_(3,1);
-    }
+  }
 
   void FlexibleBodyFFRPropertyDialog::resizeGeneralizedVelocity() {
     int size =  getuRelSize();
