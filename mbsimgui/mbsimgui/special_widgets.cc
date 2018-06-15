@@ -31,17 +31,19 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  OneDimVecArrayWidget::OneDimVecArrayWidget(int size, int m_, bool var) : m(m_) {
+  OneDimVecArrayWidget::OneDimVecArrayWidget(int size, int m_, bool var) : sizeCombo(nullptr), m(m_) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     if(var) {
       sizeCombo = new CustomSpinBox;
       sizeCombo->setValue(size);
+      sizeCombo->setRange(size,100);
       layout->addWidget(sizeCombo);
       connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
     }
-    else
+//    else
+//      if(size) resize_(size,m,1);
       if(size) resize_(size,m,1);
   }
 
@@ -51,6 +53,9 @@ namespace MBSimGUI {
   }
 
   void OneDimVecArrayWidget::resize_(int size, int m, int n) {
+    sizeCombo->blockSignals(true);
+    sizeCombo->setValue(size);
+    sizeCombo->blockSignals(false);
     if(ele.size()!=size) {
 //      vector<QString> buf(box.size());
       for(auto & i : ele) {
@@ -81,7 +86,12 @@ namespace MBSimGUI {
   DOMElement* OneDimVecArrayWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=element;
     e=e->getFirstElementChild();
-    if(ele.empty()) {
+    if(sizeCombo) {
+      for(auto & i : ele) {
+        layout()->removeWidget(i);
+        delete i;
+      }
+      ele.clear();
       int i=0;
       while(e) {
         QString name = QString("ele")+QString::number(i+1);
@@ -91,6 +101,9 @@ namespace MBSimGUI {
         e=e->getNextElementSibling();
         i++;
       }
+      sizeCombo->blockSignals(true);
+      sizeCombo->setValue(ele.size());
+      sizeCombo->blockSignals(false);
     }
     else {
       for(auto & i : ele) {
@@ -121,10 +134,8 @@ namespace MBSimGUI {
 
   void OneDimMatArrayWidget::resize_(int size, int m, int n) {
     if(ele.size()!=size) {
-//      vector<QString> buf(box.size());
       for(auto & i : ele) {
         layout()->removeWidget(i);
-//        buf[i] = box[i]->text();
         delete i;
       }
       ele.resize(size);
@@ -276,7 +287,7 @@ namespace MBSimGUI {
     if(i==0)
       return new OneDimVecArrayWidget(size,m,var);
     if(i==1)
-      return var?new ChoiceWidget2(new VecSizeVarWidgetFactory(size*m,3),QBoxLayout::RightToLeft,5):new ChoiceWidget2(new VecWidgetFactory(size*m),QBoxLayout::RightToLeft,5);
+      return var?new ChoiceWidget2(new VecSizeVarWidgetFactory(size*m,m,100*m,m),QBoxLayout::RightToLeft,5):new ChoiceWidget2(new VecWidgetFactory(size*m),QBoxLayout::RightToLeft,5);
     return nullptr;
   }
 

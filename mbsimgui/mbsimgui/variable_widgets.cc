@@ -1447,7 +1447,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, int singleStep_, vector<QStringList> unit_, vector<int> defaultUnit_, bool transpose_, bool table_, bool eval_, QString defaultValue_) : m(m_), singleStep(singleStep_), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), transpose(transpose_), table(table_), eval(eval_), defaultValue(defaultValue_) {
+  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, int mMin_, int mMax_, int singleStep_, vector<QStringList> unit_, vector<int> defaultUnit_, bool transpose_, bool table_, bool eval_, QString defaultValue_) : m(m_), mMin(mMin_), mMax(mMax_), singleStep(singleStep_), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), transpose(transpose_), table(table_), eval(eval_), defaultValue(defaultValue_) {
     name[0] = table?"Table":"Vector";
     name[1] = "File";
     name[2] = "Editor";
@@ -1455,7 +1455,7 @@ namespace MBSimGUI {
 
   QWidget* VecSizeVarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new VecSizeVarWidget(m,1,100,singleStep,transpose,table,defaultValue), unit[0], defaultUnit[0], eval);
+      return new PhysicalVariableWidget(new VecSizeVarWidget(m,mMin,mMax,singleStep,transpose,table,defaultValue), unit[0], defaultUnit[0], eval);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1], eval);
     if(i==2)

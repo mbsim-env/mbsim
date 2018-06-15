@@ -142,7 +142,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    a = new ExtWidget("Coefficients",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,1,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"coefficients");
+    a = new ExtWidget("Coefficients",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"coefficients");
     layout->addWidget(a);
   }
 
@@ -382,7 +382,7 @@ namespace MBSimGUI {
     if(fixedSize)
       f = new ExtWidget("Function",new ChoiceWidget2(new VecWidgetFactory(m,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
     else
-      f = new ExtWidget("Function",new ChoiceWidget2(new VecSizeVarWidgetFactory(m,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
+      f = new ExtWidget("Function",new ChoiceWidget2(new VecSizeVarWidgetFactory(m,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
     layout->addWidget(f,var.size(),0,1,2);
   }
 
