@@ -57,20 +57,19 @@ namespace MBSimGUI {
     sizeCombo->setValue(size);
     sizeCombo->blockSignals(false);
     if(ele.size()!=size) {
-//      vector<QString> buf(box.size());
-      for(auto & i : ele) {
-        layout()->removeWidget(i);
-//        buf[i] = box[i]->text();
-        delete i;
+      int oldSize = ele.size();
+      for(size_t i=size; i<oldSize; i++) {
+        layout()->removeWidget(ele[i]);
+        delete ele[i];
       }
       ele.resize(size);
-      for(int i=0; i<size; i++) {
+      for(int i=0; i<std::min(oldSize,size); i++)
+        ele[i]->resize_(m,1);
+      for(int i=oldSize; i<size; i++) {
         QString name = QString("ele")+QString::number(i+1);
         ele[i] = new ExtWidget(name,new ChoiceWidget2(new VecWidgetFactory(m),QBoxLayout::RightToLeft,5),false,false);
         layout()->addWidget(ele[i]);
       }
-//      for(int i=0; i<min((int)buf.size(),size); i++)
-//        box[i]->setText(buf[i]);
     }
     else {
       for(auto & i : ele)
@@ -134,12 +133,15 @@ namespace MBSimGUI {
 
   void OneDimMatArrayWidget::resize_(int size, int m, int n) {
     if(ele.size()!=size) {
-      for(auto & i : ele) {
-        layout()->removeWidget(i);
-        delete i;
+      int oldSize = ele.size();
+      for(size_t i=size; i<oldSize; i++) {
+        layout()->removeWidget(ele[i]);
+        delete ele[i];
       }
       ele.resize(size);
-      for(int i=0; i<size; i++) {
+      for(int i=0; i<std::min(oldSize,size); i++)
+        ele[i]->resize_(m,n);
+      for(int i=oldSize; i<size; i++) {
         QString name = QString("ele")+QString::number(i+1);
         ele[i] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n),QBoxLayout::RightToLeft,5),false,false);
         layout()->addWidget(ele[i]);
@@ -199,16 +201,21 @@ namespace MBSimGUI {
 
   void TwoDimMatArrayWidget::resize_(int rsize, int csize, int m, int n) {
     if(ele.size()!=rsize or ele[0].size()!=csize) {
-      for(auto & i : ele) {
-        for(int j=0; j<i.size(); j++) {
-          layout()->removeWidget(i[j]);
-          delete i[j];
+      int oldrSize = ele.size();
+      int oldcSize = oldrSize?ele[0].size():0;
+      for(size_t i=rsize; i<oldrSize; i++) {
+        for(size_t j=csize; j<oldcSize; j++) {
+          layout()->removeWidget(ele[i][j]);
+          delete ele[i][j];
         }
       }
-      ele.resize(rsize);
-      for(int i=0; i<rsize; i++) {
-        ele[i].resize(csize);
-        for(int j=0; j<csize; j++) {
+      ele.resize(rsize,vector<ExtWidget*>(csize));
+      for(int i=0; i<std::min(oldrSize,rsize); i++) {
+        for(int j=0; j<std::min(oldcSize,csize); j++)
+          ele[i][j]->resize_(m,n);
+      }
+      for(int i=oldrSize; i<rsize; i++) {
+        for(int j=oldcSize; j<csize; j++) {
           QString name = QString("ele")+QString::number(i+1)+QString::number(j+1);
           ele[i][j] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n),QBoxLayout::RightToLeft,5),false,false);
           layout()->addWidget(ele[i][j]);
