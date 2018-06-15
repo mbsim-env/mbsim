@@ -392,6 +392,8 @@ namespace MBSimGUI {
     layout->addWidget(label);
     ratio = new QLineEdit;
     layout->addWidget(ratio);
+
+    updateWidget();
   }
 
   void GearInputReferenceWidget::updateWidget() {
