@@ -37,11 +37,9 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_zxz_transformed_mapping.h"
 #include "mbsimFlexibleBody/namespace.h"
 #include "mbsimFlexibleBody/utils/openmbv_utils.h"
-#include <openmbvcppinterface/rigidbody.h>
-#include <openmbvcppinterface/invisiblebody.h>
+#include <openmbvcppinterface/flexiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
 #include <openmbvcppinterface/group.h>
-#include <openmbvcppinterface/dynamicindexedfaceset.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -453,10 +451,14 @@ namespace MBSimFlexibleBody {
       T.init(Eye());
     }
     else if(stage==plotting) {
-      if(plotFeature[ref(openMBV)] and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
-        dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
-        if(ombvIndices.size())
-          dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
+      if(plotFeature[ref(openMBV)] and openMBVBody) {
+        if(not ombvNodes.size()) {
+          ombvNodes.resize(KrKP.size());
+          for(size_t i=0; i<ombvNodes.size(); i++)
+            ombvNodes[i] = i;
+        }
+        if(not dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->getNumberOfVertexPositions())
+          dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
       }
     }
     NodeBasedBody::init(stage, config);
@@ -475,7 +477,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::plot() {
-    if(plotFeature[ref(openMBV)] and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
+    if(plotFeature[ref(openMBV)] and openMBVBody) {
       vector<double> data;
       data.push_back(getTime());
       for(int ombvNode : ombvNodes) {
@@ -484,7 +486,7 @@ namespace MBSimFlexibleBody {
           data.push_back(WrOP(j));
         data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])(ombvNode));
       }
-      dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->append(data);
+      dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->append(data);
     }
     NodeBasedBody::plot();
   }
@@ -739,6 +741,10 @@ namespace MBSimFlexibleBody {
     M += JTMJ(evalMb(),evalKJ());
   }
 
+  void FlexibleBodyFFR::setOpenMBVFlexibleBody(const shared_ptr<OpenMBV::FlexibleBody> &body) {
+    openMBVBody=body;
+  }
+
   void FlexibleBodyFFR::initializeUsingXML(DOMElement *element) {
     NodeBasedBody::initializeUsingXML(element);
 
@@ -943,40 +949,37 @@ namespace MBSimFlexibleBody {
     e=E(element)->getFirstElementChildNamed(MBSIM%"bodyFixedRepresentationOfAngularVelocity");
     if(e) bodyFixedRepresentationOfAngularVelocity = E(e)->getText<bool>();
 
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVFlexibleBody");
     if(e) {
-      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"nodes");
+      openMBVBody=OpenMBV::ObjectFactory::create<OpenMBV::FlexibleBody>(e->getFirstElementChild());
+      openMBVBody->initializeUsingXML(e->getFirstElementChild());
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVNodes");
+    if(e) {
       Vec nodes;
-      if(ee) nodes=E(ee)->getText<Vec>();
+      nodes=E(e)->getText<Vec>();
       ombvNodes.resize(nodes.size());
       for(int i=0; i<nodes.size(); i++)
         ombvNodes[i] = static_cast<Index>(nodes(i))-1;
-      ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"indices");
-      VecVI indices;
-      if(ee) indices=E(ee)->getText<VecVI>();
-      ombvIndices.resize(indices.size());
-      for(int i=0; i<indices.size(); i++)
-        ombvIndices[i] = static_cast<Index>(indices(i))-1;
-      ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"colorRepresentation");
-      if(ee) {
-        string colorRepresentationStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-        if(colorRepresentationStr=="none") ombvColorRepresentation=none;
-        else if(colorRepresentationStr=="xDisplacement") ombvColorRepresentation=xDisplacement;
-        else if(colorRepresentationStr=="yDisplacement") ombvColorRepresentation=yDisplacement;
-        else if(colorRepresentationStr=="zDisplacement") ombvColorRepresentation=zDisplacement;
-        else if(colorRepresentationStr=="totalDisplacement") ombvColorRepresentation=totalDisplacement;
-        else if(colorRepresentationStr=="xxStress") ombvColorRepresentation=xxStress;
-        else if(colorRepresentationStr=="yyStress") ombvColorRepresentation=yyStress;
-        else if(colorRepresentationStr=="zzStress") ombvColorRepresentation=zzStress;
-        else if(colorRepresentationStr=="xyStress") ombvColorRepresentation=xyStress;
-        else if(colorRepresentationStr=="yzStress") ombvColorRepresentation=yzStress;
-        else if(colorRepresentationStr=="zxStress") ombvColorRepresentation=zxStress;
-        else if(colorRepresentationStr=="equivalentStress") ombvColorRepresentation=equivalentStress;
-        else ombvColorRepresentation=unknown;
-      }
-      OpenMBVDynamicIndexedFaceSet ombv;
-      ombv.initializeUsingXML(e);
-      openMBVBody=ombv.createOpenMBV();
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVColorRepresentation");
+    if(e) {
+      string colorRepresentationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(colorRepresentationStr=="none") ombvColorRepresentation=none;
+      else if(colorRepresentationStr=="xDisplacement") ombvColorRepresentation=xDisplacement;
+      else if(colorRepresentationStr=="yDisplacement") ombvColorRepresentation=yDisplacement;
+      else if(colorRepresentationStr=="zDisplacement") ombvColorRepresentation=zDisplacement;
+      else if(colorRepresentationStr=="totalDisplacement") ombvColorRepresentation=totalDisplacement;
+      else if(colorRepresentationStr=="xxStress") ombvColorRepresentation=xxStress;
+      else if(colorRepresentationStr=="yyStress") ombvColorRepresentation=yyStress;
+      else if(colorRepresentationStr=="zzStress") ombvColorRepresentation=zzStress;
+      else if(colorRepresentationStr=="xyStress") ombvColorRepresentation=xyStress;
+      else if(colorRepresentationStr=="yzStress") ombvColorRepresentation=yzStress;
+      else if(colorRepresentationStr=="zxStress") ombvColorRepresentation=zxStress;
+      else if(colorRepresentationStr=="equivalentStress") ombvColorRepresentation=equivalentStress;
+      else ombvColorRepresentation=unknown;
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");

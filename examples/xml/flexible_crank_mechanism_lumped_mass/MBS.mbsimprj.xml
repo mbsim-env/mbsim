@@ -194,17 +194,19 @@
               </NodeFrame>
             </frames>
             <contours/>
-            <enableOpenMBV>
-              <nodes>
-                <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="nodes.dat"/>
-              </nodes>
-              <indices>
-                <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="indices.dat"/>
-              </indices>
-              <colorRepresentation>"xxStress"</colorRepresentation>
-              <minimalColorValue>-1e6</minimalColorValue>
-              <maximalColorValue>1e6</maximalColorValue>
-            </enableOpenMBV>
+            <openMBVFlexibleBody>
+              <DynamicIndexedFaceSet xmlns="http://www.mbsim-env.de/OpenMBV" name="FaceSet">
+                <minimalColorValue>-1e6</minimalColorValue>
+                <maximalColorValue>1e6</maximalColorValue>
+                <indices>
+                  <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="indices.dat"/>
+                </indices>
+              </DynamicIndexedFaceSet>
+            </openMBVFlexibleBody>
+            <openMBVNodes>
+              <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="nodes.dat"/>
+            </openMBVNodes>
+            <openMBVColorRepresentation>"xxStress"</openMBVColorRepresentation>
             <enableOpenMBVFrameK>
               <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
             </enableOpenMBVFrameK>

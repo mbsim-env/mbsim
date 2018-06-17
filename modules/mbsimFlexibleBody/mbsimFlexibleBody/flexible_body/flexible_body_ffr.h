@@ -25,11 +25,13 @@
 #include "mbsim/functions/state_dependent_function.h"
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/index.h"
-#include "mbsimFlexibleBody/utils/openmbv_utils.h"
+
+namespace OpenMBV {
+  class FlexibleBody;
+}
 
 namespace MBSim {
   class Frame;
-  BOOST_PARAMETER_NAME(indices)
 }
 
 namespace MBSimFlexibleBody {
@@ -294,12 +296,9 @@ namespace MBSimFlexibleBody {
       using NodeBasedBody::addFrame;
       using NodeBasedBody::addContour;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<MBSim::Index>&),std::vector<MBSim::Index>())(indices,(const std::vector<MBSim::Index>&),std::vector<MBSim::Index>())(colorRepresentation,(OMBVColorRepresentation),none)(minimalColorValue,(double),0)(maximalColorValue,(double),0))) {
-        OpenMBVDynamicIndexedFaceSet ombv(minimalColorValue,maximalColorValue);
-        openMBVBody=ombv.createOpenMBV();
-        ombvNodes = nodes;
-        ombvIndices = indices;
-      }
+      void setOpenMBVFlexibleBody(const std::shared_ptr<OpenMBV::FlexibleBody> &body);
+      void setOpenMBVNodes(const std::vector<MBSim::Index> &ombvNodes_) { ombvNodes = ombvNodes_; }
+      void setOpenMBVColorRepresentation(OMBVColorRepresentation ombvColorRepresentation_) { ombvColorRepresentation = ombvColorRepresentation_; }
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
@@ -549,7 +548,7 @@ namespace MBSimFlexibleBody {
       bool bodyFixedRepresentationOfAngularVelocity{false};
 
     private:
-      std::vector<MBSim::Index> ombvNodes, ombvIndices;
+      std::vector<MBSim::Index> ombvNodes;
       OMBVColorRepresentation ombvColorRepresentation{none};
       double (FlexibleBodyFFR::*evalOMBVColorRepresentation[12])(int i);
       double evalNone(int i) { return 0; }
