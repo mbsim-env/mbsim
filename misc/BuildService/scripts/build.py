@@ -819,6 +819,7 @@ def configure(tool, mainFD):
         raise RuntimeError("autoreconf failed")
       # configure
       os.chdir(savedDir)
+      if not os.path.exists(pj(args.sourceDir, buildTool(tool))): os.makedirs(pj(args.sourceDir, buildTool(tool)))
       os.chdir(pj(args.sourceDir, buildTool(tool)))
       copyConfigLog=True
       print("\n\nRUNNING configure\n", file=configureFD); configureFD.flush()

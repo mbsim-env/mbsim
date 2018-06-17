@@ -51,6 +51,7 @@ dnl    fi
 dnl    test $mkoctfile = "no" && AC_MSG_ERROR([mkoctfile not found])
 dnl    AC_SUBST([MKOCTFILE],[$mkoctfile])
     AS_ECHO("==== create interface_messages.cc ====")
+    mkdir -p ./mbsimInterface
     sed -e '/#define\ _SI_/!d; s/#define\ //g; s/\ .*//g; s/^.*$/case \0:\n  rIS << "\0";\n  break;/g' $srcdir/mbsimInterface/interface_messages.h > ./mbsimInterface/interface_messages.cc
     AS_ECHO("==== create interface_messages.m ====")
     echo "clear('IPC');" > ./mbsimInterface/interface_messages.m
