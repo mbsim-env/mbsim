@@ -36,7 +36,6 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed_mapping.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zxz_transformed_mapping.h"
 #include "mbsimFlexibleBody/namespace.h"
-#include "mbsimFlexibleBody/utils/openmbv_utils.h"
 #include <openmbvcppinterface/flexiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
 #include <openmbvcppinterface/group.h>
