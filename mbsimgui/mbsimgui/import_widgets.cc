@@ -159,6 +159,16 @@ namespace MBSimGUI {
     connect(labelSr,SIGNAL(toggled(bool)),this,SLOT(updateSr()));
     connect(checkSr,SIGNAL(toggled(bool)),this,SLOT(updateSr()));
 
+    labelVisu = new QCheckBox("Visualisation");
+    labelVisu->setChecked(true);
+    layout->addWidget(labelVisu,13,0);
+    choiceVisu = new CustomComboBox;
+//    choiceVisu->addItem("Lines");
+    choiceVisu->addItem("Faces");
+    choiceVisu->setCurrentIndex(0);
+    layout->addWidget(choiceVisu,13,1);
+    connect(labelVisu,SIGNAL(toggled(bool)),choiceVisu,SLOT(setEnabled(bool)));
+
     labelNodes = new QCheckBox("Nodes");
     labelNodes->setChecked(true);
     layout->addWidget(labelNodes,10,0);
@@ -235,4 +245,5 @@ namespace MBSimGUI {
     checkIndices->setEnabled(labelIndices->isChecked());
     fileIndices->setEnabled(labelIndices->isChecked() and checkIndices->isChecked());
   }
+
 }

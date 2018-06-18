@@ -1660,10 +1660,11 @@ namespace MBSimGUI {
         static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getu0())));
       }
     }
-    if(importWidget->getNodesChecked() and importWidget->getIndicesChecked()) {
+    if(importWidget->getVisuChecked()) {
       ombv->setActive(true);
-      static_cast<ChoiceWidget2*>(ombv->getWidget())->setIndex(1);
-      DynamicIndexedFaceSetWidget *body = static_cast<DynamicIndexedFaceSetWidget*>(static_cast<ChoiceWidget2*>(ombv->getWidget())->getWidget());
+      static_cast<ChoiceWidget2*>(ombv->getWidget())->setIndex(importWidget->getVisu()+1);
+    }
+    if(importWidget->getVisuChecked() and importWidget->getNodesChecked()) {
       if(importWidget->getNodesChecked()) {
         ombvNodes->setActive(true);
         if(importWidget->getFileNodesChecked()) {
@@ -1676,6 +1677,9 @@ namespace MBSimGUI {
           static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(ombvNodes->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getNodes())));
         }
       }
+    }
+    if(importWidget->getVisuChecked() and importWidget->getIndicesChecked()) {
+      DynamicIndexedFaceSetWidget *body = static_cast<DynamicIndexedFaceSetWidget*>(static_cast<ChoiceWidget2*>(ombv->getWidget())->getWidget());
       if(importWidget->getIndicesChecked()) {
         if(importWidget->getFileIndicesChecked()) {
           static_cast<ChoiceWidget2*>(body->getIndices()->getWidget())->setIndex(1);
