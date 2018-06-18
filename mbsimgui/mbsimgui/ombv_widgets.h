@@ -47,6 +47,19 @@ namespace MBSimGUI {
       int count{1};
   };
 
+  class OMBVFlexibleBodyWidgetFactory : public WidgetFactory {
+    public:
+      OMBVFlexibleBodyWidgetFactory();
+      QWidget* createWidget(int i=0) override;
+      QString getName(int i=0) const override { return name[i]; }
+      int getSize() const override { return name.size(); }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
+    protected:
+      std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
+      int count{1};
+  };
+
   class OMBVObjectWidget : public Widget {
 
     public:
@@ -249,16 +262,37 @@ namespace MBSimGUI {
       ExtWidget *bodies;
   };
 
-  class FlexibleBodyFFRMBSOMBVWidget : public MBSOMBVWidget {
+  class OMBVFlexibleBodyWidget : public OMBVObjectWidget {
 
     public:
-      FlexibleBodyFFRMBSOMBVWidget(const QString &name="NOTSET");
+      OMBVFlexibleBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-      ExtWidget* getNodes() { return nodes; }
+    protected:
+      QVBoxLayout *layout;
+      ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency, *numvp;
+  };
+
+  class DynamicIndexedLineSetWidget : public OMBVFlexibleBodyWidget {
+
+    public:
+      DynamicIndexedLineSetWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       ExtWidget* getIndices() { return indices; }
     protected:
-      ExtWidget *minCol, *maxCol, *nodes, *indices, *colorRepresentation;
+      ExtWidget *indices;
+  };
+
+  class DynamicIndexedFaceSetWidget : public OMBVFlexibleBodyWidget {
+
+    public:
+      DynamicIndexedFaceSetWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      ExtWidget* getIndices() { return indices; }
+    protected:
+      ExtWidget *indices;
   };
 
 }

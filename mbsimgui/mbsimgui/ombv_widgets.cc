@@ -74,6 +74,21 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  OMBVFlexibleBodyWidgetFactory::OMBVFlexibleBodyWidgetFactory()  {
+    name.emplace_back("DynamicIndexedLineSet");
+    name.emplace_back("DynamicIndexedFaceSet");
+    xmlName.push_back(OPENMBV%"DynamicIndexedLineSet");
+    xmlName.push_back(OPENMBV%"DynamicIndexedFaceSet");
+  }
+
+  QWidget* OMBVFlexibleBodyWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new DynamicIndexedLineSetWidget("DynamicIndexedLineSet"+toQStr(count++),OPENMBV%"DynamicIndexedLineSet");
+    if(i==1)
+      return new DynamicIndexedFaceSetWidget("DynamicIndexedFaceSet"+toQStr(count++),OPENMBV%"DynamicIndexedFaceSet");
+    return nullptr;
+  }
+
   DOMElement* OMBVObjectWidget::initializeUsingXML(DOMElement *element) {
     return element;
   }
@@ -594,51 +609,82 @@ namespace MBSimGUI {
     return e;
   }
 
-  FlexibleBodyFFRMBSOMBVWidget::FlexibleBodyFFRMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name,"",MBSIMFLEX) {
-    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodes");
-    layout()->addWidget(nodes);
-    indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"indices");
-    layout()->addWidget(indices);
-    vector<QString> list;
-    list.emplace_back("\"none\"");
-    list.emplace_back("\"xDisplacement\"");
-    list.emplace_back("\"yDisplacement\"");
-    list.emplace_back("\"zDisplacement\"");
-    list.emplace_back("\"totalDisplacement\"");
-    list.emplace_back("\"xxStress\"");
-    list.emplace_back("\"yyStress\"");
-    list.emplace_back("\"zzStress\"");
-    list.emplace_back("\"xyStress\"");
-    list.emplace_back("\"yzStress\"");
-    list.emplace_back("\"zxStress\"");
-    list.emplace_back("\"equivalentStress\"");
-    colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"colorRepresentation");
-    layout()->addWidget(colorRepresentation);
-    minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"minimalColorValue");
-    layout()->addWidget(minCol);
-    maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"maximalColorValue");
-    layout()->addWidget(maxCol);
+  OMBVFlexibleBodyWidget::OMBVFlexibleBodyWidget(const QString &name, const FQN &xmlName) : OMBVObjectWidget(name,xmlName) {
+    layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    minimalColorValue = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"minimalColorValue");
+    layout->addWidget(minimalColorValue);
+
+    maximalColorValue = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"maximalColorValue");
+    layout->addWidget(maximalColorValue);
+
+    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true,false,OPENMBV%"diffuseColor");
+    layout->addWidget(diffuseColor);
+
+    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,true,OPENMBV%"transparency");
+    layout->addWidget(transparency);
+
+    numvp = new ExtWidget("Number of vertex positions",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"numberOfVertexPositions");
+    layout->addWidget(numvp);
+
   }
 
-  DOMElement* FlexibleBodyFFRMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
-    nodes->initializeUsingXML(e);
-    indices->initializeUsingXML(e);
-    colorRepresentation->initializeUsingXML(e);
-    minCol->initializeUsingXML(e);
-    maxCol->initializeUsingXML(e);
+  DOMElement* OMBVFlexibleBodyWidget::initializeUsingXML(DOMElement *element) {
+    OMBVObjectWidget::initializeUsingXML(element);
+    minimalColorValue->initializeUsingXML(element);
+    maximalColorValue->initializeUsingXML(element);
+    diffuseColor->initializeUsingXML(element);
+    transparency->initializeUsingXML(element);
+    numvp->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* OMBVFlexibleBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVObjectWidget::writeXMLFile(parent);
+    minimalColorValue->writeXMLFile(e);
+    maximalColorValue->writeXMLFile(e);
+    diffuseColor->writeXMLFile(e);
+    transparency->writeXMLFile(e);
+    numvp->writeXMLFile(e);
     return e;
   }
 
-  DOMElement* FlexibleBodyFFRMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
-    nodes->writeXMLFile(e);
+  DynamicIndexedLineSetWidget::DynamicIndexedLineSetWidget(const QString &name, const FQN &xmlName) : OMBVFlexibleBodyWidget(name,xmlName) {
+
+    indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"indices");
+    layout->addWidget(indices);
+  }
+
+  DOMElement* DynamicIndexedLineSetWidget::initializeUsingXML(DOMElement *element) {
+    OMBVFlexibleBodyWidget::initializeUsingXML(element);
+    indices->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* DynamicIndexedLineSetWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVFlexibleBodyWidget::writeXMLFile(parent);
     indices->writeXMLFile(e);
-    colorRepresentation->writeXMLFile(e);
-    writeProperties(e);
-    minCol->writeXMLFile(e);
-    maxCol->writeXMLFile(e);
-    return nullptr;
+    return e;
+  }
+
+  DynamicIndexedFaceSetWidget::DynamicIndexedFaceSetWidget(const QString &name, const FQN &xmlName) : OMBVFlexibleBodyWidget(name,xmlName) {
+
+    indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"indices");
+    layout->addWidget(indices);
+  }
+
+  DOMElement* DynamicIndexedFaceSetWidget::initializeUsingXML(DOMElement *element) {
+    OMBVFlexibleBodyWidget::initializeUsingXML(element);
+    indices->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* DynamicIndexedFaceSetWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVFlexibleBodyWidget::writeXMLFile(parent);
+    indices->writeXMLFile(e);
+    return e;
   }
 
 }

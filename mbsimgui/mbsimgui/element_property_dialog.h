@@ -410,7 +410,7 @@ namespace MBSimGUI {
   class RigidBodyPropertyDialog : public BodyPropertyDialog {
 
     public:
-      RigidBodyPropertyDialog(RigidBody *body_, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      RigidBodyPropertyDialog(RigidBody *body, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       void resizeGeneralizedPosition() override;
@@ -419,7 +419,6 @@ namespace MBSimGUI {
       int getuRelSize() const; 
     protected:
       ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *bodyFixedRepresentationOfAngularVelocity, *ombv, *ombvFrameRef, *weightArrow, *jointForceArrow, *jointMomentArrow;
-      RigidBody *body;
   };
 
   class FlexibleBodyFFRPropertyDialog : public BodyPropertyDialog {
@@ -435,7 +434,7 @@ namespace MBSimGUI {
       int getqRelSize() const;
       int getuRelSize() const;
     protected:
-      ExtWidget *mass, *rdm, *rrdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor;
+      ExtWidget *mass, *rdm, *rrdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombv, *ombvNodes, *ombvColorRepresentation;
       ImportDialog *dialog{0};
       void updateWidget() override;
     protected slots:

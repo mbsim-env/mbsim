@@ -1087,7 +1087,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, const Qt::WindowFlags& f) : BodyPropertyDialog(body_,parent,f), body(body_) {
+  RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body, QWidget *parent, const Qt::WindowFlags& f) : BodyPropertyDialog(body,parent,f) {
     addTab("Visualisation",3);
 
     K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,nullptr),true,false,MBSIM%"frameForKinematics");
@@ -1119,10 +1119,10 @@ namespace MBSimGUI {
     bodyFixedRepresentationOfAngularVelocity = new ExtWidget("Body-fixed representation of angular velocity",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"bodyFixedRepresentationOfAngularVelocity");
     addToTab("Kinematics", bodyFixedRepresentationOfAngularVelocity);
 
-    ombv = new ExtWidget("Body",new ChoiceWidget2(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIM%"openMBVRigidBody");
+    ombv = new ExtWidget("OpenMBV Body",new ChoiceWidget2(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIM%"openMBVRigidBody");
     addToTab("Visualisation", ombv);
 
-    ombvFrameRef=new ExtWidget("Frame of reference",new LocalFrameOfReferenceWidget(body),true,false,MBSIM%"openMBVFrameOfReference");
+    ombvFrameRef=new ExtWidget("OpenMBV frame of reference",new LocalFrameOfReferenceWidget(body),true,false,MBSIM%"openMBVFrameOfReference");
     addToTab("Visualisation", ombvFrameRef);
   }
 
@@ -1184,12 +1184,12 @@ namespace MBSimGUI {
   }
 
   void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
-    int size =  body->isConstrained() ? 0 : getqRelSize();
+    int size =  static_cast<RigidBody*>(item)->isConstrained() ? 0 : getqRelSize();
     q0->resize_(size,1);
   }
 
   void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
-    int size =  body->isConstrained() ? 0 : getuRelSize();
+    int size =  static_cast<RigidBody*>(item)->isConstrained() ? 0 : getuRelSize();
     u0->resize_(size,1);
   }
 
@@ -1286,8 +1286,27 @@ namespace MBSimGUI {
     coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"coordinateTransformationForRotation");
     addToTab("Kinematics", coordinateTransformationForRotation);
 
-    ombvEditor = new ExtWidget("Enable openMBV",new FlexibleBodyFFRMBSOMBVWidget("NOTSET"),true,false,MBSIMFLEX%"enableOpenMBV");
-    addToTab("Visualisation", ombvEditor);
+    ombv = new ExtWidget("OpenMBV Body",new ChoiceWidget2(new OMBVFlexibleBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIMFLEX%"openMBVFlexibleBody");
+    addToTab("Visualisation", ombv);
+
+    ombvNodes = new ExtWidget("OpenMBV nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openMBVNodes");
+    addToTab("Visualisation", ombvNodes);
+
+    vector<QString> list;
+    list.emplace_back("\"none\"");
+    list.emplace_back("\"xDisplacement\"");
+    list.emplace_back("\"yDisplacement\"");
+    list.emplace_back("\"zDisplacement\"");
+    list.emplace_back("\"totalDisplacement\"");
+    list.emplace_back("\"xxStress\"");
+    list.emplace_back("\"yyStress\"");
+    list.emplace_back("\"zzStress\"");
+    list.emplace_back("\"xyStress\"");
+    list.emplace_back("\"yzStress\"");
+    list.emplace_back("\"zxStress\"");
+    list.emplace_back("\"equivalentStress\"");
+    ombvColorRepresentation = new ExtWidget("OpenMBV color representation",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"openMBVColorRepresentation");
+    addToTab("Visualisation", ombvColorRepresentation);
 
     QPushButton *import = new QPushButton("Import");
     static_cast<QGridLayout*>(QWidget::layout())->addWidget(import,1,0);
@@ -1470,7 +1489,9 @@ namespace MBSimGUI {
     rotation->initializeUsingXML(item->getXMLElement());
     translationDependentRotation->initializeUsingXML(item->getXMLElement());
     coordinateTransformationForRotation->initializeUsingXML(item->getXMLElement());
-    ombvEditor->initializeUsingXML(item->getXMLElement());
+    ombv->initializeUsingXML(item->getXMLElement());
+    ombvNodes->initializeUsingXML(item->getXMLElement());
+    ombvColorRepresentation->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1506,7 +1527,9 @@ namespace MBSimGUI {
     translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     coordinateTransformationForRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
-    ombvEditor->writeXMLFile(item->getXMLElement(),ele);
+    ombv->writeXMLFile(item->getXMLElement(),ele);
+    ombvNodes->writeXMLFile(item->getXMLElement(),ele);
+    ombvColorRepresentation->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
   }
 
@@ -1638,29 +1661,30 @@ namespace MBSimGUI {
       }
     }
     if(importWidget->getNodesChecked() and importWidget->getIndicesChecked()) {
-      ombvEditor->setActive(true);
+      ombv->setActive(true);
+      static_cast<ChoiceWidget2*>(ombv->getWidget())->setIndex(1);
+      DynamicIndexedFaceSetWidget *body = static_cast<DynamicIndexedFaceSetWidget*>(static_cast<ChoiceWidget2*>(ombv->getWidget())->getWidget());
       if(importWidget->getNodesChecked()) {
-        static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getNodes()->setActive(true);
+        ombvNodes->setActive(true);
         if(importWidget->getFileNodesChecked()) {
-          static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getNodes()->getWidget())->setIndex(1);
+          static_cast<ChoiceWidget2*>(ombvNodes->getWidget())->setIndex(1);
           dump((dir+importWidget->getFilenameNodes()).toStdString().c_str(),import.getNodes());
-          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getNodes()->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameNodes());
+          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(ombvNodes->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameNodes());
         }
         else {
-          static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getNodes()->getWidget())->setIndex(2);
-          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getNodes()->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getNodes())));
+          static_cast<ChoiceWidget2*>(ombvNodes->getWidget())->setIndex(2);
+          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(ombvNodes->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getNodes())));
         }
       }
       if(importWidget->getIndicesChecked()) {
-        static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getIndices()->setActive(true);
         if(importWidget->getFileIndicesChecked()) {
-          static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getIndices()->getWidget())->setIndex(1);
+          static_cast<ChoiceWidget2*>(body->getIndices()->getWidget())->setIndex(1);
           dump((dir+importWidget->getFilenameIndices()).toStdString().c_str(),import.getIndices());
-          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getIndices()->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameIndices());
+          static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(body->getIndices()->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameIndices());
         }
         else {
-          static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getIndices()->getWidget())->setIndex(2);
-          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(ombvEditor->getWidget())->getIndices()->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getIndices())));
+          static_cast<ChoiceWidget2*>(body->getIndices()->getWidget())->setIndex(2);
+          static_cast<ExpressionWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(body->getIndices()->getWidget())->getWidget())->getWidget())->setValue(QString::fromStdString(toString(import.getIndices())));
         }
       }
     }
