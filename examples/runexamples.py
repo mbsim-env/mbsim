@@ -1935,14 +1935,14 @@ def coverage(mainFD):
   ret=ret+abs(subprocess.call(["lcov", "-a", pj(args.reportOutDir, "coverage", "cov.trace.base"), "-a", pj(args.reportOutDir, "coverage", "cov.trace.test"), "-o", pj(args.reportOutDir, "coverage", "cov.trace.total")], stdout=lcovFD, stderr=lcovFD))
   # run lcov: remove counters
   ret=ret+abs(subprocess.call(["lcov", "-r", pj(args.reportOutDir, "coverage", "cov.trace.total"),
-    "mbsim*/kernel/swig/*", "openmbv*/openmbvcppinterface/swig/java/*", # SWIG generated
-    "openmbv*/openmbvcppinterface/swig/octave/*", "openmbv*/openmbvcppinterface/swig/python/*", # SWIG generated
-    "openmbv*/mbxmlutils/mbxmlutils/swigpyrun.h", "openmbv*/mbxmlutils/mbxmlutils/casadi_oct_swig_octave.cc", # SWIG generated
-    "mbsim/thirdparty/nurbs++/*", "include/nurbs++/*", "include/casadi/*", "mbsim/kernel/mbsim/numerics/csparse.*", # 3rd party
-    "mbsim/examples/*", # mbsim examples
+    "*/mbsim*/kernel/swig/*", "*/openmbv*/openmbvcppinterface/swig/java/*", # SWIG generated
+    "*/openmbv*/openmbvcppinterface/swig/octave/*", "*/openmbv*/openmbvcppinterface/swig/python/*", # SWIG generated
+    "*/openmbv*/mbxmlutils/mbxmlutils/swigpyrun.h", "*/openmbv*/mbxmlutils/mbxmlutils/casadi_oct_swig_octave.cc", # SWIG generated
+    "*/mbsim*/thirdparty/nurbs++/*/*", "*/include/nurbs++/*", "*/include/casadi/*", "*/mbsim*/kernel/mbsim/numerics/csparse.*", # 3rd party
+    "*/mbsim*/examples/*", # mbsim examples
     "*.moc.cc", "*.qrc.cc", # mbsim generated
-    "hdf5serie/h5plotserie/h5plotserie/*", "openmbv/openmbv/openmbv/*", "mbsim/mbsimgui/mbsimgui/*", # GUI (untested)
-    "mbsim/modules/mbsimInterface/mbsimInterface/*", # other untested features
+    "*/hdf5serie*/h5plotserie/h5plotserie/*", "*/openmbv*/openmbv/openmbv/*", "*/mbsim*/mbsimgui/mbsimgui/*", # GUI (untested)
+    "*/mbsim*/modules/mbsimInterface/mbsimInterface/*", # other untested features
     "-o", pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
 
   # collect all header files in repos and hash it
