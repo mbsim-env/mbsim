@@ -26,6 +26,8 @@
 #include <mbsim/utils/openmbv_utils.h>
 #include <mbsim/numerics/nurbs/nurbs_surface.h>
 
+#include <openmbvcppinterface/dynamicnurbssurface.h>
+
 namespace OpenMBV {
   class DynamicNurbsSurface;
 }
@@ -125,10 +127,11 @@ namespace MBSimFlexibleBody {
 
       MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override { return findContactPairingFlexible(type0, type1); }
 
-//      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-//        OpenMBVNurbsSurface ombv(diffuseColor,transparency);
-//        openMBVRigidBody=ombv.createOpenMBV();
-//      }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        openMBVNurbsSurface = OpenMBV::ObjectFactory::create<OpenMBV::DynamicNurbsSurface>();
+        openMBVNurbsSurface->setDiffuseColor(diffuseColor);
+        openMBVNurbsSurface->setTransparency(transparency);
+      }
       
       void initializeUsingXML(xercesc::DOMElement *element) override;
 

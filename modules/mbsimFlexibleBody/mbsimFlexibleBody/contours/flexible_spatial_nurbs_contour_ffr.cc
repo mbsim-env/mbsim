@@ -22,7 +22,6 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_ffr.h"
 #include "mbsim/frames/floating_contour_frame.h"
 #include "mbsim/utils/utils.h"
-#include <openmbvcppinterface/dynamicnurbssurface.h>
 #include <openmbvcppinterface/group.h>
 
 using namespace std;
@@ -487,9 +486,10 @@ namespace MBSimFlexibleBody {
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       openMBVNurbsSurface = OpenMBV::ObjectFactory::create<OpenMBV::DynamicNurbsSurface>();
-//      OpenMBVNurbsSurface ombv;
-//      ombv.initializeUsingXML(e);
-//      openMBVRigidBody=ombv.createOpenMBV();
+      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"diffuseColor");
+      if(ee) openMBVNurbsSurface->setDiffuseColor(E(ee)->getText<Vec>(3));
+      ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"transparency");
+      if(ee) openMBVNurbsSurface->setTransparency(E(ee)->getText<double>());
     }
   }
 

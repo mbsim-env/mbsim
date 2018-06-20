@@ -321,9 +321,10 @@ namespace MBSimFlexibleBody {
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       openMBVNurbsCurve = OpenMBV::ObjectFactory::create<OpenMBV::DynamicNurbsCurve>();
-//      OpenMBVNurbsCurve ombv;
-//      ombv.initializeUsingXML(e);
-//      openMBVRigidBody=ombv.createOpenMBV();
+      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"diffuseColor");
+      if(ee) openMBVNurbsCurve->setDiffuseColor(E(ee)->getText<Vec>(3));
+      ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"transparency");
+      if(ee) openMBVNurbsCurve->setTransparency(E(ee)->getText<double>());
     }
   }
 
