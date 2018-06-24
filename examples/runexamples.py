@@ -508,7 +508,7 @@ def main():
     # start vnc server on a free display
     global displayNR
     displayNR=3
-    while subprocess.call(["vncserver", ":"+str(displayNR)], stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
+    while subprocess.call(["vncserver", ":"+str(displayNR), "-SecurityTypes", "None"], stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
       displayNR=displayNR+1
       if displayNR>100:
         raise RuntimeError("Cannot find a free DISPLAY for vnc server.")
@@ -697,7 +697,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
     ppxml=os.path.isfile(pj(root, "MBS.mbsimprj.xml")) 
     flatxml=os.path.isfile(pj(root, "MBS.mbsimprj.flat.xml"))
     xml=ppxml or flatxml
-    src=os.path.isfile(pj(root, "Makefile"))
+    src=os.path.isfile(pj(root, "Makefile")) or os.path.isfile(pj(root, "Makefile_FMI")) or os.path.isfile(pj(root, "Makefile_FMI_cosim"))
     fmi=os.path.isfile(pj(root, "FMI.mbsimprj.xml")) or os.path.isfile(pj(root, "Makefile_FMI")) or \
         os.path.isfile(pj(root, "FMI_cosim.mbsimprj.xml")) or os.path.isfile(pj(root, "Makefile_FMI_cosim"))
     # skip none examples directires
@@ -712,7 +712,9 @@ def addExamplesByFilter(baseDir, directoriesSet):
       labels=['nightly'] # nightly is the default label if no labels file exist
     # check for MBSim modules in src examples
     if src:
-      filecont=codecs.open(pj(root, "Makefile"), "r", encoding="utf-8").read()
+      makefile="Makefile" if os.path.isfile(pj(root, "Makefile")) else \
+               ("Makefile_FMI" if os.path.isfile(pj(root, "Makefile_FMI")) else "Makefile_FMI_cosim")
+      filecont=codecs.open(pj(root, makefile), "r", encoding="utf-8").read()
       for m in mbsimModules:
         if re.search("\\b"+m+"\\b", filecont): labels.append(m)
     # check for MBSim modules in xml and flatxml examples
