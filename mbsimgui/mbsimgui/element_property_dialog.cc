@@ -2536,10 +2536,10 @@ namespace MBSimGUI {
     link = new ExtWidget("Mechanical link",new LinkOfReferenceWidget(observer,nullptr),false,false,MBSIM%"mechanicalLink");
     addToTab("General", link);
 
-    forceArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
+    forceArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET",false,true),true,false,MBSIM%"enableOpenMBVForce");
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("Enable openMBV moment",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
+    momentArrow = new ExtWidget("Enable openMBV moment",new ArrowMBSOMBVWidget("NOTSET",false,true),true,false,MBSIM%"enableOpenMBVMoment");
     addToTab("Visualisation",momentArrow);
   }
 
@@ -2566,10 +2566,10 @@ namespace MBSimGUI {
     constraint = new ExtWidget("Mechanical constraint",new ConstraintOfReferenceWidget(observer,nullptr),false,false,MBSIM%"mechanicalConstraint");
     addToTab("General", constraint);
 
-    forceArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
+    forceArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET",false,true),true,false,MBSIM%"enableOpenMBVForce");
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("Enable openMBV moment",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
+    momentArrow = new ExtWidget("Enable openMBV moment",new ArrowMBSOMBVWidget("NOTSET",false,true),true,false,MBSIM%"enableOpenMBVMoment");
     addToTab("Visualisation",momentArrow);
   }
 
@@ -2596,19 +2596,19 @@ namespace MBSimGUI {
     link = new ExtWidget("Mechanical link",new LinkOfReferenceWidget(observer,nullptr),false,false,MBSIM%"contact");
     addToTab("General", link);
 
-    forceArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVForce");
+    forceArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET",false,true),true,false,MBSIM%"enableOpenMBVForce");
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVMoment");
+    momentArrow = new ExtWidget("Enable openMBV force",new ArrowMBSOMBVWidget("NOTSET",false,true),true,false,MBSIM%"enableOpenMBVMoment");
     addToTab("Visualisation",momentArrow);
 
     contactPoints = new ExtWidget("Enable openMBV contact points",new FrameMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVContactPoints");
     addToTab("Visualisation",contactPoints);
 
-    normalForceArrow = new ExtWidget("Enable openMBV normal force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVNormalForce");
+    normalForceArrow = new ExtWidget("Enable openMBV normal force",new ArrowMBSOMBVWidget("NOTSET",false,true),true,false,MBSIM%"enableOpenMBVNormalForce");
     addToTab("Visualisation",normalForceArrow);
 
-    frictionArrow = new ExtWidget("Enable openMBV tangential force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVTangentialForce");
+    frictionArrow = new ExtWidget("Enable openMBV tangential force",new ArrowMBSOMBVWidget("NOTSET",false,true),true,false,MBSIM%"enableOpenMBVTangentialForce");
     addToTab("Visualisation",frictionArrow);
   }
 
@@ -2692,10 +2692,10 @@ namespace MBSimGUI {
     weight = new ExtWidget("Enable openMBV weight",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVWeight");
     addToTab("Visualisation",weight);
 
-    jointForce = new ExtWidget("Enable openMBV joint force",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVJointForce");
+    jointForce = new ExtWidget("Enable openMBV joint force",new ArrowMBSOMBVWidget("NOTSET",false,true),true,false,MBSIM%"enableOpenMBVJointForce");
     addToTab("Visualisation",jointForce);
 
-    jointMoment = new ExtWidget("Enable openMBV joint moment",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVJointMoment");
+    jointMoment = new ExtWidget("Enable openMBV joint moment",new ArrowMBSOMBVWidget("NOTSET",false,true),true,false,MBSIM%"enableOpenMBVJointMoment");
     addToTab("Visualisation",jointMoment);
 
     axisOfRotation = new ExtWidget("Enable openMBV axis of rotation",new ArrowMBSOMBVWidget("NOTSET"),true,false,MBSIM%"enableOpenMBVAxisOfRotation");

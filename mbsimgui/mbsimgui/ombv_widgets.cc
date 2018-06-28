@@ -249,7 +249,8 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const QString &name, bool fromPoint) : MBSOMBVWidget(name) {
+  ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const QString &name, bool fromPoint, bool sideOfInteraction_) : MBSOMBVWidget(name), sideOfInteraction(nullptr) {
+
     scaleLength = new ExtWidget("Scale length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleLength");
     layout()->addWidget(scaleLength);
 
@@ -264,6 +265,16 @@ namespace MBSimGUI {
     if(fromPoint)
       referencePoint->setChecked(true);
     layout()->addWidget(referencePoint);
+
+    if(sideOfInteraction_) {
+      vector<QString> list;
+      list.emplace_back("\"action\"");
+      list.emplace_back("\"reaction\"");
+      list.emplace_back("\"both\"");
+      sideOfInteraction = new ExtWidget("Side of interaction",new TextChoiceWidget(list,fromPoint?1:0,true),true,false,MBSIM%"sideOfInteraction");
+      layout()->addWidget(sideOfInteraction);
+    }
+
   }
 
   DOMElement* ArrowMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
@@ -271,6 +282,7 @@ namespace MBSimGUI {
     scaleLength->initializeUsingXML(e);
     scaleSize->initializeUsingXML(e);
     referencePoint->initializeUsingXML(e);
+    if(sideOfInteraction) sideOfInteraction->initializeUsingXML(e);
     return element;
   }
 
@@ -280,18 +292,11 @@ namespace MBSimGUI {
     scaleSize->writeXMLFile(e);
     referencePoint->writeXMLFile(e);
     writeProperties(e);
+    if(sideOfInteraction) sideOfInteraction->writeXMLFile(e);
     return e;
   }
 
   CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
-    vector<QString> list;
-    list.emplace_back("\"none\"");
-    list.emplace_back("\"deflection\"");
-    list.emplace_back("\"tensileForce\"");
-    list.emplace_back("\"compressiveForce\"");
-    list.emplace_back("\"absoluteForce\"");
-    colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(list,0,true),true,false,MBSIM%"colorRepresentation");
-    layout()->addWidget(colorRepresentation);
 
     numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numberOfCoils");
     layout()->addWidget(numberOfCoils);
@@ -305,7 +310,7 @@ namespace MBSimGUI {
     nominalLength = new ExtWidget("Nominal length",new ChoiceWidget2(new ScalarWidgetFactory("-1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nominalLength");
     layout()->addWidget(nominalLength);
 
-    list.clear();
+    vector<QString> list;
     list.emplace_back("\"tube\"");
     list.emplace_back("\"scaledTube\"");
     list.emplace_back("\"polyline\"");
@@ -316,11 +321,19 @@ namespace MBSimGUI {
     layout()->addWidget(minCol);
     maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximalColorValue");
     layout()->addWidget(maxCol);
+
+    list.clear();
+    list.emplace_back("\"none\"");
+    list.emplace_back("\"deflection\"");
+    list.emplace_back("\"tensileForce\"");
+    list.emplace_back("\"compressiveForce\"");
+    list.emplace_back("\"absoluteForce\"");
+    colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(list,0,true),true,false,MBSIM%"colorRepresentation");
+    layout()->addWidget(colorRepresentation);
   }
 
   DOMElement* CoilSpringMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
-    colorRepresentation->initializeUsingXML(e);
     numberOfCoils->initializeUsingXML(e);
     springRadius->initializeUsingXML(e);
     crossSectionRadius->initializeUsingXML(e);
@@ -328,12 +341,12 @@ namespace MBSimGUI {
     type->initializeUsingXML(e);
     minCol->initializeUsingXML(e);
     maxCol->initializeUsingXML(e);
+    colorRepresentation->initializeUsingXML(e);
     return element;
   }
 
   DOMElement* CoilSpringMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
-    colorRepresentation->writeXMLFile(e);
     numberOfCoils->writeXMLFile(e);
     springRadius->writeXMLFile(e);
     crossSectionRadius->writeXMLFile(e);
@@ -342,6 +355,7 @@ namespace MBSimGUI {
     writeProperties(e);
     minCol->writeXMLFile(e);
     maxCol->writeXMLFile(e);
+    colorRepresentation->writeXMLFile(e);
     return e;
   }
 

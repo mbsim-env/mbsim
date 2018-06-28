@@ -138,11 +138,11 @@ namespace MBSimGUI {
   class ArrowMBSOMBVWidget : public MBSOMBVWidget {
 
     public:
-      ArrowMBSOMBVWidget(const QString &name="NOTSET", bool fromPoint=false);
+      ArrowMBSOMBVWidget(const QString &name="NOTSET", bool fromPoint=false, bool sideOfInteraction=false);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *scaleLength, *scaleSize, *referencePoint;
+      ExtWidget *sideOfInteraction, *scaleLength, *scaleSize, *referencePoint;
   };
 
   class CoilSpringMBSOMBVWidget : public MBSOMBVWidget {
