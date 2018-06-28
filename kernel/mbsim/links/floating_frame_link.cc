@@ -127,8 +127,8 @@ namespace MBSim {
     else if(stage==unknownStage) {
       refFrame = refFrameID ? frame[1] : frame[0];
       C.setFrameOfReference(frame[0]);
-      P[0] = frame[0];
-      P[1] = &C;
+      P[0] = &C;
+      P[1] = frame[1];
     }
     FrameLink::init(stage, config);
   }

@@ -36,8 +36,8 @@ namespace MBSim {
     RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      h[j][i]>>hParent(I);
-      h[j][body.size()+i]>>hParent(K);
+      h[j][i]>>hParent(K);
+      h[j][body.size()+i]>>hParent(I);
     }
   } 
 
@@ -45,8 +45,8 @@ namespace MBSim {
     RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      r[j][i]>>rParent(I);
-      r[j][body.size()+i]>>rParent(K);
+      r[j][i]>>rParent(K);
+      r[j][body.size()+i]>>rParent(I);
     }
   } 
 
@@ -55,8 +55,8 @@ namespace MBSim {
     RangeV J = RangeV(laInd,laInd+laSize-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      W[j][i]>>WParent(I,J);
-      W[j][body.size()+i]>>WParent(K,J);
+      W[j][i]>>WParent(K,J);
+      W[j][body.size()+i]>>WParent(I,J);
     }
   } 
 
@@ -65,17 +65,19 @@ namespace MBSim {
     RangeV J = RangeV(laInd,laInd+laSize-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      V[j][i]>>VParent(I,J);
-      V[j][body.size()+i]>>VParent(K,J);
+      V[j][i]>>VParent(K,J);
+      V[j][body.size()+i]>>VParent(I,J);
     }
   } 
 
-  void RigidBodyLink::updatePositions() {
-    for(unsigned i=0; i<body.size(); i++) {
-      C[i].setPosition(body[i]->getFrameForKinematics()->evalPosition());
-      C[i].setOrientation(support->evalOrientation());
+  void RigidBodyLink::updatePositions(Frame *frame_) {
+    for(size_t i=0; i<body.size(); i++) {
+      if(&C[i]==frame_) {
+        frame_->setPosition(body[i]->getFrameForKinematics()->evalPosition());
+        frame_->setOrientation(support->evalOrientation());
+        break;
+      }
     }
-    updPos = false;
   }
 
   void RigidBodyLink::updateGeneralizedPositions() {
@@ -101,21 +103,27 @@ namespace MBSim {
   }
 
   void RigidBodyLink::updateForce() {
-    for(unsigned i=0; i<body.size(); i++)
-      F[i] = evalGlobalForceDirection(i)*evalGeneralizedForce()(iF)*ratio[i];
+    for(unsigned i=0; i<body.size(); i++) {
+      F[body.size()+i] = evalGlobalForceDirection(i)*evalGeneralizedForce()(iF)*ratio[i];
+      F[i] = -F[body.size()+i];
+    }
     updF = false;
   }
 
   void RigidBodyLink::updateMoment() {
-    for(unsigned i=0; i<body.size(); i++)
-      M[i] = evalGlobalMomentDirection(i)*evalGeneralizedForce()(iM)*ratio[i];
+    for(unsigned i=0; i<body.size(); i++) {
+      M[body.size()+i] = evalGlobalMomentDirection(i)*evalGeneralizedForce()(iM)*ratio[i];
+      M[i] = -M[body.size()+i];
+    }
     updM = false;
   }
 
   void RigidBodyLink::updateR() {
     for(unsigned i=0; i<body.size(); i++) {
-      RF[i].set(RangeV(0,2), iF, evalGlobalForceDirection(i)*ratio[i]);
-      RM[i].set(RangeV(0,2), iM, getGlobalMomentDirection(i)*ratio[i]);
+      RF[body.size()+i].set(RangeV(0,2), iF, evalGlobalForceDirection(i)*ratio[i]);
+      RM[body.size()+i].set(RangeV(0,2), iM, getGlobalMomentDirection(i)*ratio[i]);
+      RF[i] = -RF[body.size()+i];
+      RM[i] = -RM[body.size()+i];
     }
     updRMV = false;
   }
@@ -123,24 +131,23 @@ namespace MBSim {
   void RigidBodyLink::updateh(int j) {
     if(j==0) {
       for(unsigned i=0; i<body.size(); i++)
-        h[j][i]+=body[i]->evalJRel(j).T()*evalGeneralizedForce()*ratio[i];
+        h[j][body.size()+i] += body[i]->evalJRel(j).T()*evalGeneralizedForce()*ratio[i];
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        h[j][i]+=body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalForce(i)  + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalMoment(i);
-        h[j][body.size()+i]-=C[i].evalJacobianOfTranslation(j).T()*evalForce(i) + C[i].evalJacobianOfRotation(j).T()*evalMoment(i);
+        h[j][i] += C[i].evalJacobianOfTranslation(j).T()*evalForce(i) + C[i].evalJacobianOfRotation(j).T()*evalMoment(i);
+        h[j][body.size()+i] += body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalForce(body.size()+i)  + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalMoment(body.size()+i);
       }
     }
   }
 
   void RigidBodyLink::updateW(int j) {
     if(j==0) {
-      for(unsigned i=0; i<body.size(); i++)  {
-        W[j][i]+=body[i]->evalJRel(j).T()*ratio[i];
-      }
+      for(unsigned i=0; i<body.size(); i++)
+        W[j][body.size()+i] += body[i]->evalJRel(j).T()*ratio[i];
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        W[j][i]+=body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalRF(i) + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalRM(i);
-        W[j][body.size()+i]-=C[i].evalJacobianOfTranslation(j).T()*evalRF(i) + C[i].evalJacobianOfRotation(j).T()*evalRM(i);
+        W[j][i] += C[i].evalJacobianOfTranslation(j).T()*evalRF(i) + C[i].evalJacobianOfRotation(j).T()*evalRM(i);
+        W[j][body.size()+i] += body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalRF(body.size()+i) + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalRM(body.size()+i);
       }
     }
   }
@@ -175,13 +182,13 @@ namespace MBSim {
         support = body[0]->getFrameOfReference();
       iF = RangeV(0, body[0]->getGeneralizedVelocitySize()-1);
       iM = RangeV(0, body[0]->getGeneralizedVelocitySize()-1);
-      P.resize(body.size());
-      F.resize(body.size());
-      M.resize(body.size());
-      DF.resize(body.size(),Mat3xV(iF.size()));
-      DM.resize(body.size(),Mat3xV(iM.size()));
-      RF.resize(body.size(),Mat3xV(getGeneralizedRelativeVelocitySize()));
-      RM.resize(body.size(),Mat3xV(ngd));
+      P.resize(2*body.size());
+      F.resize(2*body.size());
+      M.resize(2*body.size());
+      DF.resize(2*body.size(),Mat3xV(iF.size()));
+      DM.resize(2*body.size(),Mat3xV(iM.size()));
+      RF.resize(2*body.size(),Mat3xV(getGeneralizedRelativeVelocitySize()));
+      RM.resize(2*body.size(),Mat3xV(ngd));
       if(isSetValued()) {
         g.resize(ng);
         gd.resize(ngd);
@@ -203,8 +210,10 @@ namespace MBSim {
       }
     }
     else if(stage==unknownStage) {
-      for(unsigned int i=0; i<body.size(); i++)
-        P[i] = body[i]->getFrameForKinematics();
+      for(unsigned int i=0; i<body.size(); i++) {
+        P[i] = &C[i];
+        P[i+body.size()] = body[i]->getFrameForKinematics();
+      }
     }
     MechanicalLink::init(stage, config);
   }
