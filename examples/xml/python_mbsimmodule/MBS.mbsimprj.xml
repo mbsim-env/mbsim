@@ -148,11 +148,11 @@
           </forceFunction>
           <unloadedLength>0</unloadedLength>
           <enableOpenMBV>
-            <colorRepresentation>"absoluteForce"</colorRepresentation>
             <numberOfCoils>5</numberOfCoils>
             <springRadius>.03</springRadius>
             <crossSectionRadius>.01</crossSectionRadius>
             <type>'polyline'</type>
+            <colorRepresentation>"absoluteForce"</colorRepresentation>
           </enableOpenMBV>
         </SpringDamper>
         <PySpringDamperXMLInit name="Spring1" xmlns="http://mypytest">
@@ -182,11 +182,11 @@
           </forceFunction>
           <unloadedLength>0</unloadedLength>
           <enableOpenMBV>
-            <colorRepresentation>"absoluteForce"</colorRepresentation>
             <numberOfCoils>5</numberOfCoils>
             <springRadius>.03</springRadius>
             <crossSectionRadius>.01</crossSectionRadius>
             <type>'polyline'</type>
+            <colorRepresentation>"absoluteForce"</colorRepresentation>
           </enableOpenMBV>
         </SpringDamper>
       </links>

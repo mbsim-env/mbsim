@@ -185,12 +185,12 @@
       </forceFunction>
       <unloadedLength>hpcInitialHeight-pistonSpringF0/pistonSpringStiffness</unloadedLength>
       <enableOpenMBV>
-        <colorRepresentation>"absoluteForce"</colorRepresentation>
         <!--<minimalColorValue>-10</minimalColorValue>
         <maximalColorValue>10</maximalColorValue>-->
         <numberOfCoils>5</numberOfCoils>
         <springRadius>.003</springRadius>
         <crossSectionRadius>.0002</crossSectionRadius>
+        <colorRepresentation>"absoluteForce"</colorRepresentation>
       </enableOpenMBV>
     </SpringDamper>
     <!--

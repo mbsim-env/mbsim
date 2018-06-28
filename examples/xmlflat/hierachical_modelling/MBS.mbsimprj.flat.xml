@@ -114,10 +114,10 @@
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
                 <enableOpenMBV>
-                   <colorRepresentation>"absoluteForce"</colorRepresentation>
-                   <numberOfCoils>5</numberOfCoils>
+                  <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
+                  <colorRepresentation>"absoluteForce"</colorRepresentation>
                 </enableOpenMBV>
               </SpringDamper>
               <SpringDamper name="Feder2">
@@ -130,10 +130,10 @@
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
                 <enableOpenMBV>
-                  <colorRepresentation>"absoluteForce"</colorRepresentation>
                   <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
+                  <colorRepresentation>"absoluteForce"</colorRepresentation>
                 </enableOpenMBV>
               </SpringDamper>
             </links>
@@ -271,10 +271,10 @@
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
                 <enableOpenMBV>
-                  <colorRepresentation>"absoluteForce"</colorRepresentation>
                   <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
+                  <colorRepresentation>"absoluteForce"</colorRepresentation>
                 </enableOpenMBV>
               </SpringDamper>
               <SpringDamper name="Feder2">
@@ -287,10 +287,10 @@
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
                 <enableOpenMBV>
-                  <colorRepresentation>"absoluteForce"</colorRepresentation>
                   <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
+                  <colorRepresentation>"absoluteForce"</colorRepresentation>
                 </enableOpenMBV>
               </SpringDamper>
             </links>
