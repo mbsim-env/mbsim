@@ -49,7 +49,7 @@ namespace MBSim {
        */
       std::shared_ptr<OpenMBV::Frame> openMBVContactFrame;
 
-      SideOfInteraction sideOfForceInteraction, sideOfMomentInteraction, sideOfContactInteraction{action}, sideOfFrictionInteraction{action};
+      SideOfInteraction sideOfForceInteraction{action}, sideOfMomentInteraction{action}, sideOfContactInteraction{action}, sideOfFrictionInteraction{action};
 
       std::shared_ptr<OpenMBVArrow> ombvForce, ombvMoment, ombvContact, ombvFriction;
 
