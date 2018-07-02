@@ -684,7 +684,7 @@ namespace MBSimGUI {
     open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"open");
     addToTab("General", open);
 
-    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget(vector<QString>(),MBSIMFLEX),true,true,MBSIMFLEX%"enableOpenMBV");
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget(MBSIMFLEX),true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualisation", visu);
   }
 
@@ -737,7 +737,7 @@ namespace MBSimGUI {
     openXi = new ExtWidget("Open xi",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openXi");
     addToTab("General", openXi);
 
-    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget(vector<QString>(),MBSIMFLEX),true,true,MBSIMFLEX%"enableOpenMBV");
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget(MBSIMFLEX),true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualisation", visu);
   }
 
@@ -2038,7 +2038,10 @@ namespace MBSimGUI {
     momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentFunction");
     addToTab("Kinetics",momentFunction);
 
-    arrow = new ExtWidget("Enable openMBV",new ArrowMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
+    vector<QString> cRL;
+    cRL.emplace_back("\"none\"");
+    cRL.emplace_back("\"absoluteValue\"");
+    arrow = new ExtWidget("Enable openMBV",new ArrowMBSOMBVWidget(cRL),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation",arrow);
 
     connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
@@ -2086,7 +2089,13 @@ namespace MBSimGUI {
     unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedLength");
     addToTab("General",unloadedLength);
 
-    coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
+    vector<QString> cRL;
+    cRL.emplace_back("\"none\"");
+    cRL.emplace_back("\"deflection\"");
+    cRL.emplace_back("\"tensileForce\"");
+    cRL.emplace_back("\"compressiveForce\"");
+    cRL.emplace_back("\"absoluteForce\"");
+    coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget(cRL),true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", coilSpring);
   }
 

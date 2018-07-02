@@ -36,6 +36,12 @@ namespace MBSim {
    */
   class KineticExcitation : public FloatingFrameLink {
     public:
+      enum OMBVColorRepresentation {
+        none=0,
+        absoluteValue,
+        unknown
+      };
+
       /**
        * \brief constructor
        * \param name of link machanics
@@ -88,9 +94,8 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-     BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,minimalColorValue,maximalColorValue,diffuseColor,transparency);
-        openMBVArrow=ombv.createOpenMBV(); 
+     BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(colorRepresentation,(OMBVColorRepresentation),none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        ombvArrow = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency));
       }
 
     protected:
@@ -99,7 +104,16 @@ namespace MBSim {
        */
       Function<fmatvec::VecV(double)> *F, *M;
 
-      std::shared_ptr<OpenMBV::Arrow> openMBVArrow, openMBVForce, openMBVMoment;
+      std::shared_ptr<OpenMBVArrow> ombvArrow;
+      std::shared_ptr<OpenMBV::Arrow> openMBVForce, openMBVMoment;
+
+#ifndef SWIG
+      double (KineticExcitation::*evalOMBVForceColorRepresentation[2])();
+      double (KineticExcitation::*evalOMBVMomentColorRepresentation[2])();
+#endif
+      double evalNone() { return 1; }
+      double evalAboluteForceValue() { return nrm2(evalForce()); }
+      double evalAboluteMomentValue() { return nrm2(evalMoment()); }
 
     private:
       std::string saved_ref;
@@ -108,4 +122,3 @@ namespace MBSim {
 }
 
 #endif /* _KINETICEXCITATION_H_ */
-

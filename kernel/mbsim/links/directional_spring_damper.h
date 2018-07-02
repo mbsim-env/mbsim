@@ -46,8 +46,8 @@ namespace MBSim {
       double dist;
       Function<double(double,double)> *func;
       double l0{0};
+      std::shared_ptr<OpenMBVCoilSpring> ombvCoilSpring;
       std::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
-      OMBVColorRepresentation ombvColorRepresentation{none};
 #ifndef SWIG
       double (DirectionalSpringDamper::*evalOMBVColorRepresentation[5])();
 #endif
@@ -94,10 +94,8 @@ namespace MBSim {
       void plot() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(colorRepresentation,(OMBVColorRepresentation),none))) {
-        OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,minimalColorValue,maximalColorValue,diffuseColor,transparency);
-        ombvColorRepresentation = colorRepresentation;
-        coilspringOpenMBV=ombv.createOpenMBV();
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(colorRepresentation,(OMBVColorRepresentation),none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        ombvCoilSpring = std::shared_ptr<OpenMBVCoilSpring>(new OpenMBVCoilSpring(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency));
       }
   };
 

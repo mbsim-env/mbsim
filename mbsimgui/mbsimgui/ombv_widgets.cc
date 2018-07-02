@@ -89,12 +89,12 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  MBSOMBVColoreBodyWidget::MBSOMBVColoreBodyWidget(const vector<QString> &c, const NamespaceURI &url) : MBSOMBVWidget(url) {
+  MBSOMBVColoreBodyWidget::MBSOMBVColoreBodyWidget(const NamespaceURI &url) : MBSOMBVWidget(url) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    diffuseColor = new ExtWidget("Diffuse color",c.size()?new ColorWidget(c):new ColorWidget(),true,c.size(),url%"diffuseColor");
+    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget(),true,false,url%"diffuseColor");
     layout->addWidget(diffuseColor);
 
     transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,url%"transparency");
@@ -113,7 +113,10 @@ namespace MBSimGUI {
     return static_cast<DOMElement*>(parent);
   }
 
-  MBSOMBVDynamicColoreBodyWidget::MBSOMBVDynamicColoreBodyWidget(const vector<QString> &c, const NamespaceURI &url) : MBSOMBVColoreBodyWidget(c,url) {
+  MBSOMBVDynamicColoreBodyWidget::MBSOMBVDynamicColoreBodyWidget(const vector<QString> &cRL, const NamespaceURI &url) : MBSOMBVColoreBodyWidget(url) {
+
+    colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(cRL,0,true),true,false,url%"colorRepresentation");
+    layout()->addWidget(colorRepresentation);
 
     minimalColorValue = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimalColorValue");
     layout()->addWidget(minimalColorValue);
@@ -124,6 +127,7 @@ namespace MBSimGUI {
 
   DOMElement* MBSOMBVDynamicColoreBodyWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    colorRepresentation->initializeUsingXML(e);
     minimalColorValue->initializeUsingXML(e);
     maximalColorValue->initializeUsingXML(e);
     return e;
@@ -131,6 +135,7 @@ namespace MBSimGUI {
 
   DOMElement* MBSOMBVDynamicColoreBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    colorRepresentation->writeXMLFile(e);
     minimalColorValue->writeXMLFile(e);
     maximalColorValue->writeXMLFile(e);
     return e;
@@ -229,7 +234,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const vector<QString> &c) : MBSOMBVDynamicColoreBodyWidget(c) {
+  ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const vector<QString> &cRL) : MBSOMBVDynamicColoreBodyWidget(cRL) {
 
     scaleLength = new ExtWidget("Scale length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,url%"scaleLength");
     layout()->addWidget(scaleLength);
@@ -296,7 +301,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget() {
+  CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const vector<QString> &cRL) : MBSOMBVDynamicColoreBodyWidget(cRL) {
 
     numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,url%"numberOfCoils");
     layout()->addWidget(numberOfCoils);
@@ -316,15 +321,6 @@ namespace MBSimGUI {
     list.emplace_back("\"polyline\"");
     type = new ExtWidget("Type",new TextChoiceWidget(list,0,true),true,false,url%"type");
     layout()->addWidget(type);
-
-    list.clear();
-    list.emplace_back("\"none\"");
-    list.emplace_back("\"deflection\"");
-    list.emplace_back("\"tensileForce\"");
-    list.emplace_back("\"compressiveForce\"");
-    list.emplace_back("\"absoluteForce\"");
-    colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(list,0,true),true,false,url%"colorRepresentation");
-    layout()->addWidget(colorRepresentation);
   }
 
   DOMElement* CoilSpringMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
@@ -334,7 +330,6 @@ namespace MBSimGUI {
     crossSectionRadius->initializeUsingXML(e);
     nominalLength->initializeUsingXML(e);
     type->initializeUsingXML(e);
-    colorRepresentation->initializeUsingXML(e);
     return element;
   }
 
@@ -345,7 +340,6 @@ namespace MBSimGUI {
     crossSectionRadius->writeXMLFile(e);
     nominalLength->writeXMLFile(e);
     type->writeXMLFile(e);
-    colorRepresentation->writeXMLFile(e);
     return e;
   }
 

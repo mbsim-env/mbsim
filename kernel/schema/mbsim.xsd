@@ -47,6 +47,7 @@
   <xs:group name="OpenMBVDynamicColoredBodyParameters">
     <xs:sequence>
       <xs:group ref="OpenMBVColoredBodyParameters"/>
+      <xs:element name="colorRepresentation" type="pv:stringFullEval" minOccurs="0"/>
       <xs:element name="minimalColorValue" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="maximalColorValue" type="pv:nounitScalar" minOccurs="0"/>
     </xs:sequence>
@@ -1627,6 +1628,14 @@
             </xs:element>
           </xs:sequence>
           <xs:element name="enableOpenMBV" minOccurs="0">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird die kinetische Anregung durch einen Pfeil in OpenMBV visualisiert.
+              Auswahl der Farbdarstellung:
+              <ul>
+                <li>none: keine</li>
+                <li>absoluteValue: Absolutwert der Kraft oder des Moments</li>
+              </ul>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType> 
@@ -1672,23 +1681,19 @@
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
+              Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
+              Auswahl der Farbdarstellung:
+              <ul>
+                <li>none: keine</li>
+                <li>deflection: Federweg</li>
+                <li>tensileForce: Zugkraft</li>
+                <li>compressiveForce: Druckkraft</li>
+                <li>absoluteForce: Absolute Kraft</li>
+              </ul>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:group ref="OpenMBVCoilSpringParameters"/>
-                <xs:element name="colorRepresentation" type="pv:stringFullEval" minOccurs="0">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                    Auswahl der Farbdarstellung.
-                    <ul>
-                      <li>none: keine</li>
-                      <li>deflection: Federweg</li>
-                      <li>tensileForce: Zugkraft</li>
-                      <li>compressiveForce: Druckkraft</li>
-                      <li>absoluteForce: Absolute Kraft</li>
-                    </ul>
-                  </xs:documentation></xs:annotation>
-                </xs:element>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -1741,23 +1746,19 @@
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
+              Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
+              Auswahl der Farbdarstellung:
+              <ul>
+                <li>none: keine</li>
+                <li>deflection: Federweg</li>
+                <li>tensileForce: Zugkraft</li>
+                <li>compressiveForce: Druckkraft</li>
+                <li>absoluteForce: Absolute Kraft</li>
+              </ul>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:group ref="OpenMBVCoilSpringParameters"/>
-                <xs:element name="colorRepresentation" type="pv:stringFullEval" minOccurs="0">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                    Auswahl der Farbdarstellung.
-                    <ul>
-                      <li>none: keine</li>
-                      <li>deflection: Federweg</li>
-                      <li>tensileForce: Zugkraft</li>
-                      <li>compressiveForce: Druckkraft</li>
-                      <li>absoluteForce: Absolute Kraft</li>
-                    </ul>
-                  </xs:documentation></xs:annotation>
-                </xs:element>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>

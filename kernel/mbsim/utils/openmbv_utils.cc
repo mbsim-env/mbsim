@@ -58,6 +58,15 @@ namespace MBSim {
   void OpenMBVDynamicColoredBody::initializeUsingXML(DOMElement *e) {
     OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee;
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"colorRepresentation");
+    if(ee) {
+      string str=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
+      unsigned int i;
+      for(i=0; i<cRL.size(); i++) {
+        if(str==cRL[i]) break;
+      }
+      cR=i;
+    }
     ee=E(e)->getFirstElementChildNamed(MBSIM%"minimalColorValue");
     if(ee) minCol = E(ee)->getText<double>();
     ee=E(e)->getFirstElementChildNamed(MBSIM%"maximalColorValue");
@@ -78,23 +87,21 @@ namespace MBSim {
     if(ee) sS = E(ee)->getText<double>();
     ee = E(e)->getFirstElementChildNamed(MBSIM%"type");
     if(ee) {
-      cout << "found type " << endl;
       string t=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
       if(t=="line")            type=OpenMBV::Arrow::line;
-      if(t=="fromHead")        type=OpenMBV::Arrow::fromHead;
-      if(t=="toHead")          type=OpenMBV::Arrow::toHead;
-      if(t=="bothHeads")       type=OpenMBV::Arrow::bothHeads;
-      if(t=="fromDoubleHead")  type=OpenMBV::Arrow::fromDoubleHead;
-      if(t=="toDoubleHead")    type=OpenMBV::Arrow::toDoubleHead;
-      if(t=="bothDoubleHeads") type=OpenMBV::Arrow::bothDoubleHeads;
-      cout << "type = " << int(type) << endl;
+      else if(t=="fromHead")        type=OpenMBV::Arrow::fromHead;
+      else if(t=="toHead")          type=OpenMBV::Arrow::toHead;
+      else if(t=="bothHeads")       type=OpenMBV::Arrow::bothHeads;
+      else if(t=="fromDoubleHead")  type=OpenMBV::Arrow::fromDoubleHead;
+      else if(t=="toDoubleHead")    type=OpenMBV::Arrow::toDoubleHead;
+      else if(t=="bothDoubleHeads") type=OpenMBV::Arrow::bothDoubleHeads;
     }
     ee = E(e)->getFirstElementChildNamed(MBSIM%"referencePoint");
     if(ee) {
       string rP=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
       if(rP=="toPoint")   refPoint=OpenMBV::Arrow::toPoint;
-      if(rP=="fromPoint") refPoint=OpenMBV::Arrow::fromPoint;
-      if(rP=="midPoint")  refPoint=OpenMBV::Arrow::midPoint;
+      else if(rP=="fromPoint") refPoint=OpenMBV::Arrow::fromPoint;
+      else if(rP=="midPoint")  refPoint=OpenMBV::Arrow::midPoint;
     }
   }
 
@@ -109,7 +116,6 @@ namespace MBSim {
     object->setDiameter(0.25*sS);
     object->setHeadDiameter(0.5*sS);
     object->setHeadLength(0.75*sS);
-      cout << "type = " << int(type) << endl;
     object->setType(type);
     object->setReferencePoint(refPoint);
     object->setScaleLength(sL);
@@ -284,8 +290,8 @@ namespace MBSim {
     if(ee) {
       string typeStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
       if(typeStr=="tube") type=OpenMBV::CoilSpring::tube;
-      if(typeStr=="scaledTube") type=OpenMBV::CoilSpring::scaledTube;
-      if(typeStr=="polyline") type=OpenMBV::CoilSpring::polyline;
+      else if(typeStr=="scaledTube") type=OpenMBV::CoilSpring::scaledTube;
+      else if(typeStr=="polyline") type=OpenMBV::CoilSpring::polyline;
     }
   }
 

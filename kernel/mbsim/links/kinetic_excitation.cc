@@ -34,6 +34,10 @@ namespace MBSim {
 
   KineticExcitation::KineticExcitation(const string &name) : FloatingFrameLink(name), F(nullptr), M(nullptr) {
     refFrameID = 1;
+    evalOMBVForceColorRepresentation[0] = &KineticExcitation::evalNone;
+    evalOMBVForceColorRepresentation[1] = &KineticExcitation::evalAboluteForceValue;
+    evalOMBVMomentColorRepresentation[0] = &KineticExcitation::evalNone;
+    evalOMBVMomentColorRepresentation[1] = &KineticExcitation::evalAboluteMomentValue;
   }
 
   KineticExcitation::~KineticExcitation() {
@@ -47,14 +51,16 @@ namespace MBSim {
       if(frame[0]==nullptr) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
     }
     else if(stage==plotting) {
-      if(plotFeature[openMBV] and openMBVArrow) {
+      if(plotFeature[openMBV] and ombvArrow) {
+        if(ombvArrow->getColorRepresentation()>1)
+          throwError("(KineticExcitation::init): ombv color representation unknown");
         if(forceDir.cols()) {
-          openMBVForce=OpenMBV::ObjectFactory::create(openMBVArrow);
+          openMBVForce=ombvArrow->createOpenMBV();
           openMBVForce->setName(name+"_Force");
           parent->getOpenMBVGrp()->addObject(openMBVForce);
         }
         if(momentDir.cols()) {
-          openMBVMoment=OpenMBV::ObjectFactory::create(openMBVArrow);
+          openMBVMoment=ombvArrow->createOpenMBV();
           openMBVMoment->setName(name+"_Moment");
           parent->getOpenMBVGrp()->addObject(openMBVMoment);
         }
@@ -120,7 +126,7 @@ namespace MBSim {
         data.push_back(WF(0));
         data.push_back(WF(1));
         data.push_back(WF(2));
-        data.push_back(nrm2(WF));
+        data.push_back((this->*evalOMBVForceColorRepresentation[ombvArrow->getColorRepresentation()])());
         openMBVForce->append(data);
       }
       if(openMBVMoment) {
@@ -134,7 +140,7 @@ namespace MBSim {
         data.push_back(WM(0));
         data.push_back(WM(1));
         data.push_back(WM(2));
-        data.push_back(nrm2(WM));
+        data.push_back((this->*evalOMBVMomentColorRepresentation[ombvArrow->getColorRepresentation()])());
         openMBVMoment->append(data);
       }
     }
@@ -153,9 +159,12 @@ namespace MBSim {
     if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      OpenMBVArrow ombv(1,1,F?OpenMBV::Arrow::toHead:OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,0,1,"[-1;1;1]",0);
-      ombv.initializeUsingXML(e);
-      openMBVArrow=ombv.createOpenMBV();
+      ombvArrow = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,F?OpenMBV::Arrow::toHead:OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
+      vector<string> cRL(2);
+      cRL[0]="none";
+      cRL[1]="absoluteValue";
+      ombvArrow->setColorRepresentationList(cRL);
+      ombvArrow->initializeUsingXML(e);
     }
   }
 

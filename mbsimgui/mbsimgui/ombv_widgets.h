@@ -71,7 +71,7 @@ namespace MBSimGUI {
   class MBSOMBVColoreBodyWidget : public MBSOMBVWidget {
 
     public:
-      MBSOMBVColoreBodyWidget(const std::vector<QString> &c=std::vector<QString>(), const MBXMLUtils::NamespaceURI &url_=MBSIM);
+      MBSOMBVColoreBodyWidget(const MBXMLUtils::NamespaceURI &url_=MBSIM);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -81,11 +81,11 @@ namespace MBSimGUI {
   class MBSOMBVDynamicColoreBodyWidget : public MBSOMBVColoreBodyWidget {
 
     public:
-      MBSOMBVDynamicColoreBodyWidget(const std::vector<QString> &c=std::vector<QString>(), const MBXMLUtils::NamespaceURI &url_=MBSIM);
+      MBSOMBVDynamicColoreBodyWidget(const std::vector<QString> &cRL=std::vector<QString>(1,"\"none\""), const MBXMLUtils::NamespaceURI &url_=MBSIM);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *minimalColorValue, *maximalColorValue;
+      ExtWidget *colorRepresentation, *minimalColorValue, *maximalColorValue;
   };
 
   class PointMBSOMBVWidget : public MBSOMBVColoreBodyWidget {
@@ -141,7 +141,7 @@ namespace MBSimGUI {
   class ArrowMBSOMBVWidget : public MBSOMBVDynamicColoreBodyWidget {
 
     public:
-      ArrowMBSOMBVWidget(const std::vector<QString> &c=std::vector<QString>());
+      ArrowMBSOMBVWidget(const std::vector<QString> &cRL=std::vector<QString>(1,"\"none\""));
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -161,7 +161,7 @@ namespace MBSimGUI {
   class CoilSpringMBSOMBVWidget : public MBSOMBVDynamicColoreBodyWidget {
 
     public:
-      CoilSpringMBSOMBVWidget();
+      CoilSpringMBSOMBVWidget(const std::vector<QString> &cRL=std::vector<QString>(1,"\"none\""));
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:

@@ -58,14 +58,13 @@ namespace MBSim {
   }
 
   void SpringDamper::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==preInit) {
-      if(ombvColorRepresentation==unknown)
-        throwError("(SpringDamper::init): ombv color representation unknown");
-    }
-    else if(stage==plotting) {
+    if(stage==plotting) {
       if(plotFeature[plotRecursive] and plotFeature[MBSim::deflection])
           plotColumns.push_back("deflection");
-      if(plotFeature[openMBV] and coilspringOpenMBV) {
+      if(plotFeature[openMBV] and ombvCoilSpring) {
+        if(ombvCoilSpring->getColorRepresentation()>4)
+          throwError("(SpringDamper::init): ombv color representation unknown");
+        coilspringOpenMBV=ombvCoilSpring->createOpenMBV();
         coilspringOpenMBV->setName(name);
         parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
       }
@@ -91,7 +90,7 @@ namespace MBSim {
       data.push_back(WrOToPoint(0));
       data.push_back(WrOToPoint(1));
       data.push_back(WrOToPoint(2));
-      data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])());
+      data.push_back((this->*evalOMBVColorRepresentation[ombvCoilSpring->getColorRepresentation()])());
       coilspringOpenMBV->append(data);
     }
     FixedFrameLink::plot();
@@ -106,19 +105,15 @@ namespace MBSim {
     l0 = E(e)->getText<double>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"colorRepresentation");
-      if(ee) {
-        string colorRepresentationStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-        if(colorRepresentationStr=="none") ombvColorRepresentation=none;
-        else if(colorRepresentationStr=="deflection") ombvColorRepresentation=deflection;
-        else if(colorRepresentationStr=="tensileForce") ombvColorRepresentation=tensileForce;
-        else if(colorRepresentationStr=="compressiveForce") ombvColorRepresentation=compressiveForce;
-        else if(colorRepresentationStr=="absoluteForce") ombvColorRepresentation=absoluteForce;
-        else ombvColorRepresentation=unknown;
-      }
-      OpenMBVCoilSpring ombv;
-      ombv.initializeUsingXML(e);
-      coilspringOpenMBV=ombv.createOpenMBV();
+      ombvCoilSpring = shared_ptr<OpenMBVCoilSpring>(new OpenMBVCoilSpring);
+      vector<string> cRL(5);
+      cRL[0]="none";
+      cRL[1]="deflection";
+      cRL[2]="tensileForce";
+      cRL[3]="compressiveForce";
+      cRL[4]="absoluteForce";
+      ombvCoilSpring->setColorRepresentationList(cRL);
+      ombvCoilSpring->initializeUsingXML(e);
     }
   }
 

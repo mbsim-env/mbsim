@@ -64,12 +64,12 @@ namespace MBSim {
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
         sideOfForceInteraction = sideOfInteraction;
-        ombvForce = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,minimalColorValue,maximalColorValue,diffuseColor,transparency));
+        ombvForce = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,0,minimalColorValue,maximalColorValue,diffuseColor,transparency));
       }
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
         sideOfMomentInteraction = sideOfInteraction;
-        ombvMoment = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toDoubleHead,referencePoint,minimalColorValue,maximalColorValue,diffuseColor,transparency));
+        ombvMoment = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toDoubleHead,referencePoint,0,minimalColorValue,maximalColorValue,diffuseColor,transparency));
       }
 
       /** 
@@ -90,7 +90,7 @@ namespace MBSim {
        */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVNormalForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
         sideOfContactInteraction = sideOfInteraction;
-        ombvContact = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,minimalColorValue,maximalColorValue,diffuseColor,transparency));
+        ombvContact = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,0,minimalColorValue,maximalColorValue,diffuseColor,transparency));
       }
 
       /** 
@@ -102,7 +102,7 @@ namespace MBSim {
        */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVTangentialForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
         sideOfFrictionInteraction = sideOfInteraction;
-        ombvFriction = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,minimalColorValue,maximalColorValue,diffuseColor,transparency));
+        ombvFriction = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,0,minimalColorValue,maximalColorValue,diffuseColor,transparency));
       }
   };
 

@@ -303,7 +303,7 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAxisOfRotation");
     if(e) {
-      OpenMBVArrow ombv(1,1,OpenMBV::Arrow::line,OpenMBV::Arrow::midPoint,0,1,"[0.5;1;1]",0);
+      OpenMBVArrow ombv(1,1,OpenMBV::Arrow::line,OpenMBV::Arrow::midPoint);
       ombv.initializeUsingXML(e);
       openMBVAxisOfRotation=ombv.createOpenMBV();
     }
