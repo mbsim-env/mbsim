@@ -89,6 +89,290 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  MBSOMBVColoreBodyWidget::MBSOMBVColoreBodyWidget(const vector<QString> &c, const NamespaceURI &url) : MBSOMBVWidget(url) {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    diffuseColor = new ExtWidget("Diffuse color",c.size()?new ColorWidget(c):new ColorWidget(),true,c.size(),url%"diffuseColor");
+    layout->addWidget(diffuseColor);
+
+    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,url%"transparency");
+    layout->addWidget(transparency);
+  }
+
+  DOMElement* MBSOMBVColoreBodyWidget::initializeUsingXML(DOMElement *e) {
+    diffuseColor->initializeUsingXML(e);
+    transparency->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* MBSOMBVColoreBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    diffuseColor->writeXMLFile(parent);
+    transparency->writeXMLFile(parent);
+    return static_cast<DOMElement*>(parent);
+  }
+
+  MBSOMBVDynamicColoreBodyWidget::MBSOMBVDynamicColoreBodyWidget(const vector<QString> &c, const NamespaceURI &url) : MBSOMBVColoreBodyWidget(c,url) {
+
+    minimalColorValue = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimalColorValue");
+    layout()->addWidget(minimalColorValue);
+
+    maximalColorValue = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximalColorValue");
+    layout()->addWidget(maximalColorValue);
+  }
+
+  DOMElement* MBSOMBVDynamicColoreBodyWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    minimalColorValue->initializeUsingXML(e);
+    maximalColorValue->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* MBSOMBVDynamicColoreBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    minimalColorValue->writeXMLFile(e);
+    maximalColorValue->writeXMLFile(e);
+    return e;
+  }
+
+  PointMBSOMBVWidget::PointMBSOMBVWidget() {
+    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("0.001",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"size");
+    layout()->addWidget(size);
+  }
+
+  DOMElement* PointMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    size->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* PointMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    size->writeXMLFile(e);
+    return nullptr;
+  }
+
+  LineMBSOMBVWidget::LineMBSOMBVWidget() {
+    length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"length");
+    layout()->addWidget(length);
+  }
+
+  DOMElement* LineMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    length->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* LineMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    length->writeXMLFile(e);
+    return nullptr;
+  }
+
+  PlaneMBSOMBVWidget::PlaneMBSOMBVWidget() {
+    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(getScalars<QString>(2,"1"),vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"length");
+    layout()->addWidget(length);
+  }
+
+  DOMElement* PlaneMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    length->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* PlaneMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    length->writeXMLFile(e);
+    return nullptr;
+  }
+
+  PlanarContourMBSOMBVWidget::PlanarContourMBSOMBVWidget() {
+    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,url%"nodes");
+    layout()->addWidget(nodes);
+    filled = new ExtWidget("Filled",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true,false,url%"filled");
+    layout()->addWidget(filled);
+  }
+
+  DOMElement* PlanarContourMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    nodes->initializeUsingXML(e);
+    filled->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* PlanarContourMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    nodes->writeXMLFile(e);
+    filled->writeXMLFile(e);
+    return nullptr;
+  }
+
+  SpatialContourMBSOMBVWidget::SpatialContourMBSOMBVWidget() {
+    etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,url%"etaNodes");
+    layout()->addWidget(etaNodes);
+    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,url%"xiNodes");
+    layout()->addWidget(xiNodes);
+  }
+
+  DOMElement* SpatialContourMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    etaNodes->initializeUsingXML(e);
+    xiNodes->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* SpatialContourMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    etaNodes->writeXMLFile(e);
+    xiNodes->writeXMLFile(e);
+    return nullptr;
+  }
+
+  ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const vector<QString> &c) : MBSOMBVDynamicColoreBodyWidget(c) {
+
+    scaleLength = new ExtWidget("Scale length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,url%"scaleLength");
+    layout()->addWidget(scaleLength);
+
+    scaleSize = new ExtWidget("Scale size",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,url%"scaleSize");
+    layout()->addWidget(scaleSize);
+
+    vector<QString> list;
+    list.emplace_back("\"line\"");
+    list.emplace_back("\"fromHead\"");
+    list.emplace_back("\"toHead\"");
+    list.emplace_back("\"bothHead\"");
+    list.emplace_back("\"fromDoubleHead\"");
+    list.emplace_back("\"toDoubleHead\"");
+    list.emplace_back("\"bothDoubleHead\"");
+    type = new ExtWidget("Type",new TextChoiceWidget(list,2,true),true,false,url%"type");
+    layout()->addWidget(type);
+
+    list.clear();
+    list.emplace_back("\"toPoint\"");
+    list.emplace_back("\"fromPoint\"");
+    list.emplace_back("\"midPoint\"");
+    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,0,true),true,false,url%"referencePoint");
+    layout()->addWidget(referencePoint);
+  }
+
+  DOMElement* ArrowMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVDynamicColoreBodyWidget::initializeUsingXML(element);
+    scaleLength->initializeUsingXML(e);
+    scaleSize->initializeUsingXML(e);
+    type->initializeUsingXML(e);
+    referencePoint->initializeUsingXML(e);
+    return element;
+  }
+
+  DOMElement* ArrowMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVDynamicColoreBodyWidget::writeXMLFile(parent);
+    scaleLength->writeXMLFile(e);
+    scaleSize->writeXMLFile(e);
+    type->writeXMLFile(e);
+    referencePoint->writeXMLFile(e);
+    return e;
+  }
+
+  InteractionArrowMBSOMBVWidget::InteractionArrowMBSOMBVWidget() {
+
+    vector<QString> list;
+    list.emplace_back("\"action\"");
+    list.emplace_back("\"reaction\"");
+    list.emplace_back("\"both\"");
+    sideOfInteraction = new ExtWidget("Side of interaction",new TextChoiceWidget(list,0,true),true,false,url%"sideOfInteraction");
+    layout()->addWidget(sideOfInteraction);
+  }
+
+  DOMElement* InteractionArrowMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=ArrowMBSOMBVWidget::initializeUsingXML(element);
+    sideOfInteraction->initializeUsingXML(e);
+    return element;
+  }
+
+  DOMElement* InteractionArrowMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=ArrowMBSOMBVWidget::writeXMLFile(parent);
+    sideOfInteraction->writeXMLFile(e);
+    return e;
+  }
+
+  CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget() {
+
+    numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,url%"numberOfCoils");
+    layout()->addWidget(numberOfCoils);
+
+    springRadius = new ExtWidget("Spring radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"springRadius");
+    layout()->addWidget(springRadius);
+
+    crossSectionRadius = new ExtWidget("Cross section radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"crossSectionRadius");
+    layout()->addWidget(crossSectionRadius);
+
+    nominalLength = new ExtWidget("Nominal length",new ChoiceWidget2(new ScalarWidgetFactory("-1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"nominalLength");
+    layout()->addWidget(nominalLength);
+
+    vector<QString> list;
+    list.emplace_back("\"tube\"");
+    list.emplace_back("\"scaledTube\"");
+    list.emplace_back("\"polyline\"");
+    type = new ExtWidget("Type",new TextChoiceWidget(list,0,true),true,false,url%"type");
+    layout()->addWidget(type);
+
+    list.clear();
+    list.emplace_back("\"none\"");
+    list.emplace_back("\"deflection\"");
+    list.emplace_back("\"tensileForce\"");
+    list.emplace_back("\"compressiveForce\"");
+    list.emplace_back("\"absoluteForce\"");
+    colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(list,0,true),true,false,url%"colorRepresentation");
+    layout()->addWidget(colorRepresentation);
+  }
+
+  DOMElement* CoilSpringMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVDynamicColoreBodyWidget::initializeUsingXML(element);
+    numberOfCoils->initializeUsingXML(e);
+    springRadius->initializeUsingXML(e);
+    crossSectionRadius->initializeUsingXML(e);
+    nominalLength->initializeUsingXML(e);
+    type->initializeUsingXML(e);
+    colorRepresentation->initializeUsingXML(e);
+    return element;
+  }
+
+  DOMElement* CoilSpringMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVDynamicColoreBodyWidget::writeXMLFile(parent);
+    numberOfCoils->writeXMLFile(e);
+    springRadius->writeXMLFile(e);
+    crossSectionRadius->writeXMLFile(e);
+    nominalLength->writeXMLFile(e);
+    type->writeXMLFile(e);
+    colorRepresentation->writeXMLFile(e);
+    return e;
+  }
+
+  FrameMBSOMBVWidget::FrameMBSOMBVWidget() {
+    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"size");
+    size->setToolTip("Set the size of the frame");
+    layout()->addWidget(size);
+
+    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,url%"offset");
+    offset->setToolTip("Set the offset of the frame");
+    layout()->addWidget(offset);
+  }
+
+  DOMElement* FrameMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    size->initializeUsingXML(element);
+    offset->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FrameMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    size->writeXMLFile(e);
+    offset->writeXMLFile(e);
+    return nullptr;
+  }
+
   DOMElement* OMBVObjectWidget::initializeUsingXML(DOMElement *element) {
     return element;
   }
@@ -104,283 +388,6 @@ namespace MBSimGUI {
     else
       newele = (DOMElement*)parent;
     return newele;
-  }
-
-  MBSOMBVWidget::MBSOMBVWidget(const QString &name, const FQN &xmlName_, const NamespaceURI &url) : OMBVObjectWidget(name), xmlName(std::move(xmlName_)) {
-    auto *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true,false,url%"diffuseColor");
-    layout->addWidget(diffuseColor);
-
-    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,url%"transparency");
-    layout->addWidget(transparency);
-  }
-
-  DOMElement* MBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
-    if(e) {
-      diffuseColor->initializeUsingXML(e);
-      transparency->initializeUsingXML(e);
-    }
-    return e;
-  }
-
-  DOMElement* MBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=initXMLFile(parent,ref);
-    writeProperties(e);
-    return e;
-  }
-
-  DOMElement* MBSOMBVWidget::initXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *newele;
-    if(xmlName!=FQN()) {
-    DOMDocument *doc = parent->getOwnerDocument();
-    newele=D(doc)->createElement(xmlName);
-    parent->insertBefore(newele,ref);
-    }
-    else
-      newele = (DOMElement*)parent;
-    return newele;
-  }
-
-  DOMElement* MBSOMBVWidget::writeProperties(DOMElement *e) {
-    diffuseColor->writeXMLFile(e);
-    transparency->writeXMLFile(e);
-    return e;
-  }
-
-  PointMBSOMBVWidget::PointMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
-    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("0.001",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
-    layout()->addWidget(size);
-  }
-
-  DOMElement* PointMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
-    size->initializeUsingXML(e);
-    return e;
-  }
-
-  DOMElement* PointMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
-    size->writeXMLFile(e);
-    writeProperties(e);
-    return nullptr;
-  }
-
-  LineMBSOMBVWidget::LineMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
-    length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"length");
-    layout()->addWidget(length);
-  }
-
-  DOMElement* LineMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
-    length->initializeUsingXML(e);
-    return e;
-  }
-
-  DOMElement* LineMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
-    length->writeXMLFile(e);
-    writeProperties(e);
-    return nullptr;
-  }
-
-  PlaneMBSOMBVWidget::PlaneMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
-    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(getScalars<QString>(2,"1"),vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"length");
-    layout()->addWidget(length);
-  }
-
-  DOMElement* PlaneMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
-    length->initializeUsingXML(e);
-    return e;
-  }
-
-  DOMElement* PlaneMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
-    length->writeXMLFile(e);
-    writeProperties(e);
-    return nullptr;
-  }
-
-  PlanarContourMBSOMBVWidget::PlanarContourMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
-    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nodes");
-    layout()->addWidget(nodes);
-    filled = new ExtWidget("Filled",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true,false,MBSIM%"filled");
-    layout()->addWidget(filled);
-  }
-
-  DOMElement* PlanarContourMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
-    nodes->initializeUsingXML(e);
-    filled->initializeUsingXML(e);
-    return e;
-  }
-
-  DOMElement* PlanarContourMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
-    nodes->writeXMLFile(e);
-    filled->writeXMLFile(e);
-    writeProperties(e);
-    return nullptr;
-  }
-
-  SpatialContourMBSOMBVWidget::SpatialContourMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
-    etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaNodes");
-    layout()->addWidget(etaNodes);
-    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"xiNodes");
-    layout()->addWidget(xiNodes);
-  }
-
-  DOMElement* SpatialContourMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
-    etaNodes->initializeUsingXML(e);
-    xiNodes->initializeUsingXML(e);
-    return e;
-  }
-
-  DOMElement* SpatialContourMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
-    etaNodes->writeXMLFile(e);
-    xiNodes->writeXMLFile(e);
-    writeProperties(e);
-    return nullptr;
-  }
-
-  ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const QString &name, bool fromPoint, bool sideOfInteraction_) : MBSOMBVWidget(name), sideOfInteraction(nullptr) {
-
-    scaleLength = new ExtWidget("Scale length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleLength");
-    layout()->addWidget(scaleLength);
-
-    scaleSize = new ExtWidget("Scale size",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleSize");
-    layout()->addWidget(scaleSize);
-
-    vector<QString> list;
-    list.emplace_back("\"toPoint\"");
-    list.emplace_back("\"fromPoint\"");
-    list.emplace_back("\"midPoint\"");
-    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,fromPoint?1:0,true),true,false,MBSIM%"referencePoint");
-    if(fromPoint)
-      referencePoint->setChecked(true);
-    layout()->addWidget(referencePoint);
-
-    if(sideOfInteraction_) {
-      vector<QString> list;
-      list.emplace_back("\"action\"");
-      list.emplace_back("\"reaction\"");
-      list.emplace_back("\"both\"");
-      sideOfInteraction = new ExtWidget("Side of interaction",new TextChoiceWidget(list,fromPoint?1:0,true),true,false,MBSIM%"sideOfInteraction");
-      layout()->addWidget(sideOfInteraction);
-    }
-
-  }
-
-  DOMElement* ArrowMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
-    scaleLength->initializeUsingXML(e);
-    scaleSize->initializeUsingXML(e);
-    referencePoint->initializeUsingXML(e);
-    if(sideOfInteraction) sideOfInteraction->initializeUsingXML(e);
-    return element;
-  }
-
-  DOMElement* ArrowMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
-    scaleLength->writeXMLFile(e);
-    scaleSize->writeXMLFile(e);
-    referencePoint->writeXMLFile(e);
-    writeProperties(e);
-    if(sideOfInteraction) sideOfInteraction->writeXMLFile(e);
-    return e;
-  }
-
-  CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
-
-    numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numberOfCoils");
-    layout()->addWidget(numberOfCoils);
-
-    springRadius = new ExtWidget("Spring radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"springRadius");
-    layout()->addWidget(springRadius);
-
-    crossSectionRadius = new ExtWidget("Cross section radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"crossSectionRadius");
-    layout()->addWidget(crossSectionRadius);
-
-    nominalLength = new ExtWidget("Nominal length",new ChoiceWidget2(new ScalarWidgetFactory("-1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nominalLength");
-    layout()->addWidget(nominalLength);
-
-    vector<QString> list;
-    list.emplace_back("\"tube\"");
-    list.emplace_back("\"scaledTube\"");
-    list.emplace_back("\"polyline\"");
-    type = new ExtWidget("Type",new TextChoiceWidget(list,0,true),true,false,MBSIM%"type");
-    layout()->addWidget(type);
-
-    minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimalColorValue");
-    layout()->addWidget(minCol);
-    maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximalColorValue");
-    layout()->addWidget(maxCol);
-
-    list.clear();
-    list.emplace_back("\"none\"");
-    list.emplace_back("\"deflection\"");
-    list.emplace_back("\"tensileForce\"");
-    list.emplace_back("\"compressiveForce\"");
-    list.emplace_back("\"absoluteForce\"");
-    colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(list,0,true),true,false,MBSIM%"colorRepresentation");
-    layout()->addWidget(colorRepresentation);
-  }
-
-  DOMElement* CoilSpringMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=MBSOMBVWidget::initializeUsingXML(element);
-    numberOfCoils->initializeUsingXML(e);
-    springRadius->initializeUsingXML(e);
-    crossSectionRadius->initializeUsingXML(e);
-    nominalLength->initializeUsingXML(e);
-    type->initializeUsingXML(e);
-    minCol->initializeUsingXML(e);
-    maxCol->initializeUsingXML(e);
-    colorRepresentation->initializeUsingXML(e);
-    return element;
-  }
-
-  DOMElement* CoilSpringMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=MBSOMBVWidget::initXMLFile(parent);
-    numberOfCoils->writeXMLFile(e);
-    springRadius->writeXMLFile(e);
-    crossSectionRadius->writeXMLFile(e);
-    nominalLength->writeXMLFile(e);
-    type->writeXMLFile(e);
-    writeProperties(e);
-    minCol->writeXMLFile(e);
-    maxCol->writeXMLFile(e);
-    colorRepresentation->writeXMLFile(e);
-    return e;
-  }
-
-  FrameMBSOMBVWidget::FrameMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name,"") {
-    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
-    size->setToolTip("Set the size of the frame");
-    layout()->addWidget(size);
-
-    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
-    offset->setToolTip("Set the offset of the frame");
-    layout()->addWidget(offset);
-  }
-
-  DOMElement* FrameMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    size->initializeUsingXML(element);
-    offset->initializeUsingXML(element);
-    transparency->initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* FrameMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    size->writeXMLFile(parent);
-    offset->writeXMLFile(parent);
-    transparency->writeXMLFile(parent);
-    return nullptr;
   }
 
   OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &name, const FQN &xmlName) : OMBVObjectWidget(name,xmlName) {

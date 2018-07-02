@@ -37,8 +37,24 @@
 
   <xs:import namespace="http://www.mbsim-env.de/OpenMBV"/>
 
+  <xs:group name="OpenMBVColoredBodyParameters">
+    <xs:sequence>
+      <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="OpenMBVDynamicColoredBodyParameters">
+    <xs:sequence>
+      <xs:group ref="OpenMBVColoredBodyParameters"/>
+      <xs:element name="minimalColorValue" type="pv:nounitScalar" minOccurs="0"/>
+      <xs:element name="maximalColorValue" type="pv:nounitScalar" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
   <xs:group name="OpenMBVFrameParameters">
     <xs:sequence>
+      <xs:group ref="OpenMBVColoredBodyParameters"/>
       <xs:element name="size" type="pv:lengthScalar" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="">
@@ -53,17 +69,16 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
   <xs:group name="OpenMBVArrowParameters">
     <xs:sequence>
+      <xs:group ref="OpenMBVDynamicColoredBodyParameters"/>
       <xs:element name="scaleLength" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="scaleSize" type="pv:nounitScalar" minOccurs="0"/>
-      <xs:element name="referencePoint" minOccurs="0" type="pv:stringFullEval"/>
-      <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+      <xs:element name="type" type="pv:stringFullEval" minOccurs="0"/>
+      <xs:element name="referencePoint" type="pv:stringFullEval" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
@@ -85,15 +100,12 @@
 
   <xs:group name="OpenMBVCoilSpringParameters">
     <xs:sequence>
+      <xs:group ref="OpenMBVDynamicColoredBodyParameters"/>
       <xs:element name="numberOfCoils" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="springRadius" type="pv:lengthScalar" minOccurs="0"/>
       <xs:element name="crossSectionRadius" type="pv:lengthScalar" minOccurs="0"/>
       <xs:element name="nominalLength" type="pv:lengthScalar" minOccurs="0"/>
-      <xs:element name="type" minOccurs="0" type="pv:stringFullEval"/>
-      <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-      <xs:element name="minimalColorValue" type="pv:nounitScalar" minOccurs="0"/>
-      <xs:element name="maximalColorValue" type="pv:nounitScalar" minOccurs="0"/>
+      <xs:element name="type" type="pv:stringFullEval" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
@@ -2401,10 +2413,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2471,10 +2480,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2503,9 +2509,8 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
+                <xs:group ref="OpenMBVColoredBodyParameters"/>
                 <xs:element name="length" type="pv:lengthScalar" minOccurs="0"/>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2530,10 +2535,7 @@
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2568,10 +2570,7 @@
           <xs:element name="length" type="pv:lengthVector"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2600,9 +2599,8 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
+                <xs:group ref="OpenMBVColoredBodyParameters"/>
                 <xs:element name="length" type="pv:lengthVector" minOccurs="0"/>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2683,9 +2681,8 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
+                <xs:group ref="OpenMBVColoredBodyParameters"/>
                 <xs:element name="size" type="pv:lengthScalar" minOccurs="0"/>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2721,10 +2718,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2844,10 +2838,9 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
+                <xs:group ref="OpenMBVColoredBodyParameters"/>
                 <xs:element name="nodes" type="pv:nounitVector" minOccurs="0"/>
                 <xs:element name="filled" type="pv:booleanFullEval" minOccurs="0"/>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2915,10 +2908,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2989,10 +2979,9 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
+                <xs:group ref="OpenMBVColoredBodyParameters"/>
                 <xs:element name="etaNodes" type="pv:nounitVector" minOccurs="0"/>
                 <xs:element name="xiNodes" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -3084,10 +3073,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -3126,10 +3112,7 @@
           <xs:element name="length" type="pv:lengthVector"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -3162,10 +3145,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -3188,10 +3168,7 @@
           <xs:element name="offset" type="pv:lengthScalar"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -3215,10 +3192,7 @@
           <xs:element name="collisionStructure" type="pv:stringFullEval" minOccurs="0"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

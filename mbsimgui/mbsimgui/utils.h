@@ -430,10 +430,17 @@ namespace MBSimGUI {
 
   QString removeWhiteSpace(const QString &str);
 
-  //template<class T> 
-  //T max(T x1, T x2) {
-  //  return x1>=x2?x1:x2;
-  //}
+  inline std::vector<QString> getBlueColor() {
+    std::vector<QString> c(3);
+    c[0] = "0.666667"; c[1] = "1"; c[2] = "1";
+    return c;
+  }
+
+  inline std::vector<QString> getGreenColor() {
+    std::vector<QString> c(3);
+    c[0] = "0.5"; c[1] = "1"; c[2] = "1";
+    return c;
+  }
 
 }
 

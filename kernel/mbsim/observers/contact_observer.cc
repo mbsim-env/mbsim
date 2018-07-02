@@ -118,7 +118,7 @@ namespace MBSim {
         else if(sideOfInteractionStr=="both") sideOfForceInteraction=both;
         else sideOfForceInteraction=unknown;
       }
-      ombvForce = shared_ptr<OpenMBVArrow>(new OpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1));
+      ombvForce = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvForce->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
@@ -131,7 +131,7 @@ namespace MBSim {
         else if(sideOfInteractionStr=="both") sideOfMomentInteraction=both;
         else sideOfMomentInteraction=unknown;
       }
-      ombvMoment = shared_ptr<OpenMBVArrow>(new OpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1));
+      ombvMoment = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
       ombvMoment->initializeUsingXML(e);
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
@@ -150,7 +150,7 @@ namespace MBSim {
         else if(sideOfInteractionStr=="both") sideOfContactInteraction=both;
         else sideOfContactInteraction=unknown;
       }
-      ombvContact = shared_ptr<OpenMBVArrow>(new OpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1));
+      ombvContact = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvContact->initializeUsingXML(e);
     }
 
@@ -164,7 +164,7 @@ namespace MBSim {
         else if(sideOfInteractionStr=="both") sideOfFrictionInteraction=both;
         else sideOfFrictionInteraction=unknown;
       }
-      ombvFriction = shared_ptr<OpenMBVArrow>(new OpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1));
+      ombvFriction = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvFriction->initializeUsingXML(e);
     }
   }

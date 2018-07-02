@@ -18,8 +18,8 @@
       <Plane name="Plane">
         <frameOfReference ref="../Frame[Os]"/>
         <enableOpenMBV>
-          <length>[0.2;0.2]</length>
           <transparency>0.5</transparency>
+          <length>[0.2;0.2]</length>
         </enableOpenMBV>
      </Plane>
     </contours>

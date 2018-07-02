@@ -938,14 +938,12 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ColorWidget::ColorWidget() {
+  ColorWidget::ColorWidget(const vector<QString> &c) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<QString> vec(3);
-    vec[0] = "0.666667"; vec[1] = "1"; vec[2] = "1";
-    color = new ExtWidget("HSV",new ChoiceWidget2(new VecWidgetFactory(vec),QBoxLayout::RightToLeft,5),false,false,"");
+    color = new ExtWidget("HSV",new ChoiceWidget2(new VecWidgetFactory(c),QBoxLayout::RightToLeft,5),false,false,"");
     layout->addWidget(color);
 
     button = new QPushButton(tr("Select"));

@@ -60,109 +60,134 @@ namespace MBSimGUI {
       int count{1};
   };
 
-  class OMBVObjectWidget : public Widget {
+  class MBSOMBVWidget : public Widget {
 
     public:
-      OMBVObjectWidget(const QString &name_="NOTSET", MBXMLUtils::FQN xmlName_="") : name(name_), xmlName(std::move(xmlName_)) {}
-      void setName(const QString &name_) {name = name_;}
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      MBSOMBVWidget(const MBXMLUtils::NamespaceURI &url_=MBSIM) : url(url_) { }
     protected:
-      QString name;
-      MBXMLUtils::FQN xmlName;
+      MBXMLUtils::NamespaceURI url;
   };
 
-  class MBSOMBVWidget : public OMBVObjectWidget {
+  class MBSOMBVColoreBodyWidget : public MBSOMBVWidget {
 
     public:
-      MBSOMBVWidget(const QString &name, const MBXMLUtils::FQN &xmlName_="", const MBXMLUtils::NamespaceURI &url=MBSIM);
+      MBSOMBVColoreBodyWidget(const std::vector<QString> &c=std::vector<QString>(), const MBXMLUtils::NamespaceURI &url_=MBSIM);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-      virtual xercesc::DOMElement* initXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr);
-      virtual xercesc::DOMElement* writeProperties(xercesc::DOMElement *e);
     protected:
       ExtWidget *diffuseColor, *transparency;
-      MBXMLUtils::FQN xmlName;
   };
 
-  class PointMBSOMBVWidget : public MBSOMBVWidget {
+  class MBSOMBVDynamicColoreBodyWidget : public MBSOMBVColoreBodyWidget {
 
     public:
-      PointMBSOMBVWidget(const QString &name="NOTSET");
+      MBSOMBVDynamicColoreBodyWidget(const std::vector<QString> &c=std::vector<QString>(), const MBXMLUtils::NamespaceURI &url_=MBSIM);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *minimalColorValue, *maximalColorValue;
+  };
+
+  class PointMBSOMBVWidget : public MBSOMBVColoreBodyWidget {
+
+    public:
+      PointMBSOMBVWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *size;
   };
 
-  class LineMBSOMBVWidget : public MBSOMBVWidget {
+  class LineMBSOMBVWidget : public MBSOMBVColoreBodyWidget {
 
     public:
-      LineMBSOMBVWidget(const QString &name="NOTSET");
+      LineMBSOMBVWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *length;
   };
 
-  class PlaneMBSOMBVWidget : public MBSOMBVWidget {
+  class PlaneMBSOMBVWidget : public MBSOMBVColoreBodyWidget {
 
     public:
-      PlaneMBSOMBVWidget(const QString &name="NOTSET");
+      PlaneMBSOMBVWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *length;
   };
 
-  class PlanarContourMBSOMBVWidget : public MBSOMBVWidget {
+  class PlanarContourMBSOMBVWidget : public MBSOMBVColoreBodyWidget {
 
     public:
-      PlanarContourMBSOMBVWidget(const QString &name="NOTSET");
+      PlanarContourMBSOMBVWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *nodes, *filled;
   };
 
-  class SpatialContourMBSOMBVWidget : public MBSOMBVWidget {
+  class SpatialContourMBSOMBVWidget : public MBSOMBVColoreBodyWidget {
 
     public:
-      SpatialContourMBSOMBVWidget(const QString &name="NOTSET");
+      SpatialContourMBSOMBVWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *etaNodes, *xiNodes;
   };
 
-  class ArrowMBSOMBVWidget : public MBSOMBVWidget {
+  class ArrowMBSOMBVWidget : public MBSOMBVDynamicColoreBodyWidget {
 
     public:
-      ArrowMBSOMBVWidget(const QString &name="NOTSET", bool fromPoint=false, bool sideOfInteraction=false);
+      ArrowMBSOMBVWidget(const std::vector<QString> &c=std::vector<QString>());
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *sideOfInteraction, *scaleLength, *scaleSize, *referencePoint;
+      ExtWidget *scaleLength, *scaleSize, *type, *referencePoint;
   };
 
-  class CoilSpringMBSOMBVWidget : public MBSOMBVWidget {
+  class InteractionArrowMBSOMBVWidget : public ArrowMBSOMBVWidget {
 
     public:
-      CoilSpringMBSOMBVWidget(const QString &name="NOTSET");
+      InteractionArrowMBSOMBVWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *colorRepresentation, *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *minCol, *maxCol;
+      ExtWidget *sideOfInteraction;
   };
 
-  class FrameMBSOMBVWidget : public MBSOMBVWidget {
+  class CoilSpringMBSOMBVWidget : public MBSOMBVDynamicColoreBodyWidget {
 
     public:
-      FrameMBSOMBVWidget(const QString &name="NOTSET");
+      CoilSpringMBSOMBVWidget();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *colorRepresentation, *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength;
+  };
+
+  class FrameMBSOMBVWidget : public MBSOMBVColoreBodyWidget {
+
+    public:
+      FrameMBSOMBVWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *size, *offset;
+  };
+
+  class OMBVObjectWidget : public Widget {
+
+    public:
+      OMBVObjectWidget(const QString &name_="NOTSET", MBXMLUtils::FQN xmlName_="") : name(name_), xmlName(std::move(xmlName_)) { }
+      void setName(const QString &name_) {name = name_;}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      QString name;
+      MBXMLUtils::FQN xmlName;
   };
 
   class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {

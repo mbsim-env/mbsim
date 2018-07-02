@@ -22,6 +22,7 @@
 
 #include "extended_widgets.h"
 #include "custom_widgets.h"
+#include "utils.h"
 #include "namespace.h"
 #include <QLineEdit>
 #include <QTextEdit>
@@ -478,7 +479,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ColorWidget();
+      ColorWidget(const std::vector<QString> &c=getBlueColor());
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 

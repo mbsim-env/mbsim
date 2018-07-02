@@ -254,8 +254,8 @@
         </TabularFunction>
       </momentFunction>
       <enableOpenMBV>
-          <scaleLength>.1</scaleLength>
           <diffuseColor>[0.6666;1;0]</diffuseColor>
+          <scaleLength>.1</scaleLength>
       </enableOpenMBV>
     </KineticExcitation>
     <Joint xmlns="http://www.mbsim-env.de/MBSim" name="Friction_Crank_Rocker">
@@ -306,15 +306,15 @@
     <MechanicalLinkObserver name="MechanicalLinkObserver1">
       <mechanicalLink ref="../Link[Friction_Crank_Rocker]"/>
       <enableOpenMBVMoment>
-        <scaleLength>.1</scaleLength>
         <diffuseColor>[0.6666;1;0]</diffuseColor>
+        <scaleLength>.1</scaleLength>
       </enableOpenMBVMoment>
     </MechanicalLinkObserver>
     <MechanicalLinkObserver name="MechanicalLinkObserver2">
       <mechanicalLink ref="../Link[Friction_Rocker_Piston]"/>
       <enableOpenMBVMoment>
-        <scaleLength>.1</scaleLength>
         <diffuseColor>[0.6666;1;0]</diffuseColor>
+        <scaleLength>.1</scaleLength>
       </enableOpenMBVMoment>
     </MechanicalLinkObserver>
   </observers>

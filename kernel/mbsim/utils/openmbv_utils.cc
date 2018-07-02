@@ -40,7 +40,7 @@ namespace MBSim {
     object->setID(id);
   }
 
-  void OpenMBVDynamicColoredBody::initializeUsingXML(DOMElement *e) {
+  void OpenMBVColoredBody::initializeUsingXML(DOMElement *e) {
     OpenMBVBody::initializeUsingXML(e);
     DOMElement *ee;
     ee=E(e)->getFirstElementChildNamed(MBSIM%"diffuseColor");
@@ -49,10 +49,25 @@ namespace MBSim {
     if(ee) tp = E(ee)->getText<double>();
   }
 
-  void OpenMBVDynamicColoredBody::initializeObject(const shared_ptr<OpenMBV::DynamicColoredBody> &object) {
+  void OpenMBVColoredBody::initializeObject(const shared_ptr<OpenMBV::DynamicColoredBody> &object) {
     OpenMBVBody::initializeObject(object);
     object->setDiffuseColor(dc(0),dc(1),dc(2));
     object->setTransparency(tp);
+  }
+
+  void OpenMBVDynamicColoredBody::initializeUsingXML(DOMElement *e) {
+    OpenMBVColoredBody::initializeUsingXML(e);
+    DOMElement *ee;
+    ee=E(e)->getFirstElementChildNamed(MBSIM%"minimalColorValue");
+    if(ee) minCol = E(ee)->getText<double>();
+    ee=E(e)->getFirstElementChildNamed(MBSIM%"maximalColorValue");
+    if(ee) maxCol = E(ee)->getText<double>();
+  }
+
+  void OpenMBVDynamicColoredBody::initializeObject(const shared_ptr<OpenMBV::DynamicColoredBody> &object) {
+    OpenMBVColoredBody::initializeObject(object);
+    object->setMinimalColorValue(minCol);
+    object->setMaximalColorValue(maxCol);
   }
 
   void OpenMBVArrow::initializeUsingXML(DOMElement *e) {
@@ -61,6 +76,19 @@ namespace MBSim {
     if(ee) sL = E(ee)->getText<double>();
     ee = E(e)->getFirstElementChildNamed(MBSIM%"scaleSize");
     if(ee) sS = E(ee)->getText<double>();
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"type");
+    if(ee) {
+      cout << "found type " << endl;
+      string t=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
+      if(t=="line")            type=OpenMBV::Arrow::line;
+      if(t=="fromHead")        type=OpenMBV::Arrow::fromHead;
+      if(t=="toHead")          type=OpenMBV::Arrow::toHead;
+      if(t=="bothHeads")       type=OpenMBV::Arrow::bothHeads;
+      if(t=="fromDoubleHead")  type=OpenMBV::Arrow::fromDoubleHead;
+      if(t=="toDoubleHead")    type=OpenMBV::Arrow::toDoubleHead;
+      if(t=="bothDoubleHeads") type=OpenMBV::Arrow::bothDoubleHeads;
+      cout << "type = " << int(type) << endl;
+    }
     ee = E(e)->getFirstElementChildNamed(MBSIM%"referencePoint");
     if(ee) {
       string rP=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
@@ -81,13 +109,14 @@ namespace MBSim {
     object->setDiameter(0.25*sS);
     object->setHeadDiameter(0.5*sS);
     object->setHeadLength(0.75*sS);
+      cout << "type = " << int(type) << endl;
     object->setType(type);
     object->setReferencePoint(refPoint);
     object->setScaleLength(sL);
   }
 
   void OpenMBVFrame::initializeUsingXML(DOMElement *e) {
-    OpenMBVDynamicColoredBody::initializeUsingXML(e);
+    OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIM%"size");
     if(ee) size = E(ee)->getText<double>();
     ee = E(e)->getFirstElementChildNamed(MBSIM%"offset");
@@ -101,13 +130,13 @@ namespace MBSim {
   }
 
   void OpenMBVFrame::initializeObject(const shared_ptr<OpenMBV::Frame> &object) {
-    OpenMBVDynamicColoredBody::initializeObject(object);
+    OpenMBVColoredBody::initializeObject(object);
     object->setSize(size);
     object->setOffset(offset);
   }
 
   void OpenMBVSphere::initializeUsingXML(DOMElement *e) {
-    OpenMBVDynamicColoredBody::initializeUsingXML(e);
+    OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee;
     ee = E(e)->getFirstElementChildNamed(MBSIM%xml);
     if(ee) r = E(ee)->getText<double>();
@@ -120,12 +149,12 @@ namespace MBSim {
   }
 
   void OpenMBVSphere::initializeObject(const shared_ptr<OpenMBV::Sphere> &object) {
-    OpenMBVDynamicColoredBody::initializeObject(object);
+    OpenMBVColoredBody::initializeObject(object);
     object->setRadius(r);
   }
 
   void OpenMBVLine::initializeUsingXML(DOMElement *e) {
-    OpenMBVDynamicColoredBody::initializeUsingXML(e);
+    OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee;
     ee = E(e)->getFirstElementChildNamed(MBSIM%"length");
     if(ee) l = E(ee)->getText<double>();
@@ -138,12 +167,12 @@ namespace MBSim {
   }
 
   void OpenMBVLine::initializeObject(const shared_ptr<OpenMBV::Cuboid> &object) {
-    OpenMBVDynamicColoredBody::initializeObject(object);
+    OpenMBVColoredBody::initializeObject(object);
     object->setLength(0,l,0);
   }
 
   void OpenMBVPlane::initializeUsingXML(DOMElement *e) {
-    OpenMBVDynamicColoredBody::initializeUsingXML(e);
+    OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee;
     ee = E(e)->getFirstElementChildNamed(MBSIM%"length");
     if(ee) l = E(ee)->getText<Vec>(2);
@@ -156,12 +185,12 @@ namespace MBSim {
   }
 
   void OpenMBVPlane::initializeObject(const shared_ptr<OpenMBV::Cuboid> &object) {
-    OpenMBVDynamicColoredBody::initializeObject(object);
+    OpenMBVColoredBody::initializeObject(object);
     object->setLength(0,l(0),l(1));
   }
 
   void OpenMBVCuboid::initializeUsingXML(DOMElement *e) {
-    OpenMBVDynamicColoredBody::initializeUsingXML(e);
+    OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee;
     ee = E(e)->getFirstElementChildNamed(MBSIM%"length");
     if(ee) l = E(ee)->getText<Vec>(3);
@@ -174,12 +203,12 @@ namespace MBSim {
   }
 
   void OpenMBVCuboid::initializeObject(const shared_ptr<OpenMBV::Cuboid> &object) {
-    OpenMBVDynamicColoredBody::initializeObject(object);
+    OpenMBVColoredBody::initializeObject(object);
     object->setLength(l(0),l(1),l(2));
   }
 
   void OpenMBVCircle::initializeUsingXML(DOMElement *e) {
-    OpenMBVDynamicColoredBody::initializeUsingXML(e);
+    OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee;
     ee = E(e)->getFirstElementChildNamed(MBSIM%"radius");
     if(ee) r = E(ee)->getText<double>();
@@ -192,14 +221,14 @@ namespace MBSim {
   }
 
   void OpenMBVCircle::initializeObject(const shared_ptr<OpenMBV::Frustum> &object) {
-    OpenMBVDynamicColoredBody::initializeObject(object);
+    OpenMBVColoredBody::initializeObject(object);
     object->setTopRadius(r);
     object->setBaseRadius(r);
     object->setHeight(0);
   }
 
   void OpenMBVFrustum::initializeUsingXML(DOMElement *e) {
-    OpenMBVDynamicColoredBody::initializeUsingXML(e);
+    OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee;
     ee = E(e)->getFirstElementChildNamed(MBSIM%"topRadius");
     if(ee) t = E(ee)->getText<double>();
@@ -216,14 +245,14 @@ namespace MBSim {
   }
 
   void OpenMBVFrustum::initializeObject(const shared_ptr<OpenMBV::Frustum> &object) {
-    OpenMBVDynamicColoredBody::initializeObject(object);
+    OpenMBVColoredBody::initializeObject(object);
     object->setTopRadius(t);
     object->setBaseRadius(b);
     object->setHeight(h);
   }
 
   void OpenMBVExtrusion::initializeUsingXML(DOMElement *e) {
-    OpenMBVDynamicColoredBody::initializeUsingXML(e);
+    OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIM%"height");
     if(ee) h = E(ee)->getText<double>();
   }
@@ -235,7 +264,7 @@ namespace MBSim {
   }
 
   void OpenMBVExtrusion::initializeObject(const shared_ptr<OpenMBV::Extrusion> &object) {
-    OpenMBVDynamicColoredBody::initializeObject(object);
+    OpenMBVColoredBody::initializeObject(object);
     object->setHeight(h);
   }
 
@@ -247,10 +276,10 @@ namespace MBSim {
     if(ee) r = E(ee)->getText<double>();
     ee = E(e)->getFirstElementChildNamed(MBSIM%"crossSectionRadius");
     if(ee) cr = E(ee)->getText<double>();
-    ee = E(e)->getFirstElementChildNamed(MBSIM%"nominalLength");
-    if(ee) l = E(ee)->getText<double>();
     ee = E(e)->getFirstElementChildNamed(MBSIM%"scaleFactor");
     if(ee) sf = E(ee)->getText<double>();
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"nominalLength");
+    if(ee) l = E(ee)->getText<double>();
     ee = E(e)->getFirstElementChildNamed(MBSIM%"type");
     if(ee) {
       string typeStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
@@ -258,10 +287,6 @@ namespace MBSim {
       if(typeStr=="scaledTube") type=OpenMBV::CoilSpring::scaledTube;
       if(typeStr=="polyline") type=OpenMBV::CoilSpring::polyline;
     }
-    ee = E(e)->getFirstElementChildNamed(MBSIM%"minimalColorValue");
-    if(ee) minCol = E(ee)->getText<double>();
-    ee = E(e)->getFirstElementChildNamed(MBSIM%"maximalColorValue");
-    if(ee) maxCol = E(ee)->getText<double>();
   }
 
   shared_ptr<OpenMBV::CoilSpring> OpenMBVCoilSpring::createOpenMBV() {
@@ -278,8 +303,6 @@ namespace MBSim {
     object->setNumberOfCoils(n);
     object->setNominalLength(l);
     object->setType(type);
-    object->setMinimalColorValue(minCol);
-    object->setMaximalColorValue(maxCol);
   }
 
   shared_ptr<OpenMBV::IndexedLineSet> OpenMBVIndexedLineSet::createOpenMBV() {

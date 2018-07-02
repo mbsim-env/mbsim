@@ -56,7 +56,6 @@ namespace MBSim {
         if(momentDir.cols()) {
           openMBVMoment=OpenMBV::ObjectFactory::create(openMBVArrow);
           openMBVMoment->setName(name+"_Moment");
-          openMBVMoment->setType(OpenMBV::Arrow::toDoubleHead);
           parent->getOpenMBVGrp()->addObject(openMBVMoment);
         }
       }
@@ -154,9 +153,9 @@ namespace MBSim {
     if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-        OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-        ombv.initializeUsingXML(e);
-        openMBVArrow=ombv.createOpenMBV(); 
+      OpenMBVArrow ombv(1,1,F?OpenMBV::Arrow::toHead:OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,0,1,"[-1;1;1]",0);
+      ombv.initializeUsingXML(e);
+      openMBVArrow=ombv.createOpenMBV();
     }
   }
 

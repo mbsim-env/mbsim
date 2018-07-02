@@ -91,9 +91,9 @@
                 </ContinuedFunction>
               </contourFunction>
               <enableOpenMBV>
+                <transparency unit="-">0.3</transparency>
                 <nodes unit="-">[0:0.1:2*pi]'</nodes>
                 <filled>true</filled>
-                <transparency unit="-">0.3</transparency>
               </enableOpenMBV>
             </PlanarContour>
           </contours>

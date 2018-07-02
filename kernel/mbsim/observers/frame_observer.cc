@@ -87,7 +87,7 @@ namespace MBSim {
         data.push_back(r(0));
         data.push_back(r(1));
         data.push_back(r(2));
-        data.push_back(0.5);
+        data.push_back(nrm2(r));
         openMBVPosition->append(data);
         //          plotVector.push_back(nrm2(r));
       }
@@ -102,7 +102,7 @@ namespace MBSim {
         data.push_back(v(0));
         data.push_back(v(1));
         data.push_back(v(2));
-        data.push_back(0.5);
+        data.push_back(nrm2(v));
         openMBVVelocity->append(data);
         //          plotVector.push_back(nrm2(v));
       }
@@ -117,7 +117,7 @@ namespace MBSim {
         data.push_back(om(0));
         data.push_back(om(1));
         data.push_back(om(2));
-        data.push_back(0.5);
+        data.push_back(nrm2(om));
         openMBVAngularVelocity->append(data);
         //          plotVector.push_back(nrm2(om));
       }
@@ -132,7 +132,7 @@ namespace MBSim {
         data.push_back(a(0));
         data.push_back(a(1));
         data.push_back(a(2));
-        data.push_back(0.5);
+        data.push_back(nrm2(a));
         openMBVAcceleration->append(data);
         //          plotVector.push_back(nrm2(a));
       }
@@ -147,7 +147,7 @@ namespace MBSim {
         data.push_back(psi(0));
         data.push_back(psi(1));
         data.push_back(psi(2));
-        data.push_back(0.5);
+        data.push_back(nrm2(psi));
         openMBVAngularAcceleration->append(data);
         //          plotVector.push_back(nrm2(psi));
       }
@@ -173,7 +173,7 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularVelocity");
     if(e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
+      OpenMBVArrow ombv(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint);
       ombv.initializeUsingXML(e);
       openMBVAngularVelocity=ombv.createOpenMBV();
     }
@@ -185,7 +185,7 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularAcceleration");
     if(e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
+      OpenMBVArrow ombv(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint);
       ombv.initializeUsingXML(e);
       openMBVAngularAcceleration=ombv.createOpenMBV();
     }

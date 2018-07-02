@@ -95,7 +95,7 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(colorRepresentation,(OMBVColorRepresentation),none))) {
-        OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,diffuseColor,transparency,minimalColorValue,maximalColorValue);
+        OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,minimalColorValue,maximalColorValue,diffuseColor,transparency);
         ombvColorRepresentation = colorRepresentation;
         coilspringOpenMBV=ombv.createOpenMBV();
       }
