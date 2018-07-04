@@ -165,7 +165,7 @@ namespace MBSimHydraulics {
 
         addLink(new colorLink("BallColorLink", ballVisu, line));
 
-        spring->enableOpenMBV(_colorRepresentation=DirectionalSpringDamper::absoluteForce,_numberOfCoils=5, _springRadius=rBall/2., _crossSectionRadius=.05*hMax);
+        spring->enableOpenMBV(_colorRepresentation=OpenMBVCoilSpring::absoluteForce,_numberOfCoils=5, _springRadius=rBall/2., _crossSectionRadius=.05*hMax);
         // MISSING: spring->init(...) must be called somewere!!!???
       }
       if (openMBVArrows) {
