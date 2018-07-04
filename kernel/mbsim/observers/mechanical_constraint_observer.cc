@@ -35,6 +35,10 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, MechanicalConstraintObserver)
 
   MechanicalConstraintObserver::MechanicalConstraintObserver(const std::string &name) : Observer(name), constraint(nullptr) {
+    evalOMBVForceColorRepresentation[0] = &MechanicalConstraintObserver::evalNone;
+    evalOMBVForceColorRepresentation[1] = &MechanicalConstraintObserver::evalAbsoluteForce;
+    evalOMBVMomentColorRepresentation[0] = &MechanicalConstraintObserver::evalNone;
+    evalOMBVMomentColorRepresentation[1] = &MechanicalConstraintObserver::evalAbsoluteMoment;
   }
 
   void MechanicalConstraintObserver::init(InitStage stage, const InitConfigSet &config) {
@@ -44,9 +48,9 @@ namespace MBSim {
       Observer::init(stage, config);
     }
     else if(stage==preInit) {
-      if(sideOfForceInteraction==unknown)
+      if(sideOfForceInteraction==unknownSideOfInteraction)
         throwError("(MechanicalConstraintObserver::init): side of force interaction unknown");
-      if(sideOfMomentInteraction==unknown)
+      if(sideOfMomentInteraction==unknownSideOfInteraction)
         throwError("(MechanicalConstraintObserver::init): side of moment interaction unknown");
       Observer::init(stage, config);
     }
@@ -98,7 +102,7 @@ namespace MBSim {
         data.push_back(WF(0));
         data.push_back(WF(1));
         data.push_back(WF(2));
-        data.push_back(nrm2(WF));
+        data.push_back((this->*evalOMBVForceColorRepresentation[ombvForce->getColorRepresentation()])());
         openMBVForce[i]->append(data);
       }
       off = sideOfMomentInteraction==action?constraint->getMechanicalLink()->getNumberOfLinks()/2:0;
@@ -113,7 +117,7 @@ namespace MBSim {
         data.push_back(WM(0));
         data.push_back(WM(1));
         data.push_back(WM(2));
-        data.push_back(nrm2(WM));
+        data.push_back((this->*evalOMBVMomentColorRepresentation[ombvMoment->getColorRepresentation()])());
         openMBVMoment[i]->append(data);
       }
     }
@@ -133,7 +137,7 @@ namespace MBSim {
         if(sideOfInteractionStr=="action") sideOfForceInteraction=action;
         else if(sideOfInteractionStr=="reaction") sideOfForceInteraction=reaction;
         else if(sideOfInteractionStr=="both") sideOfForceInteraction=both;
-        else sideOfForceInteraction=unknown;
+        else sideOfForceInteraction=unknownSideOfInteraction;
       }
       ombvForce = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvForce->initializeUsingXML(e);
@@ -146,11 +150,19 @@ namespace MBSim {
         if(sideOfInteractionStr=="action") sideOfMomentInteraction=action;
         else if(sideOfInteractionStr=="reaction") sideOfMomentInteraction=reaction;
         else if(sideOfInteractionStr=="both") sideOfMomentInteraction=both;
-        else sideOfMomentInteraction=unknown;
+        else sideOfMomentInteraction=unknownSideOfInteraction;
       }
       ombvMoment = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
       ombvMoment->initializeUsingXML(e);
     }
+  }
+
+  double MechanicalConstraintObserver::evalAbsoluteForce() {
+    return nrm2(constraint->getMechanicalLink()->evalForce());
+  }
+
+  double MechanicalConstraintObserver::evalAbsoluteMoment() {
+    return nrm2(constraint->getMechanicalLink()->evalMoment());
   }
 
 }

@@ -32,9 +32,19 @@ namespace MBSim {
   class KinematicCoordinatesObserver : public Observer {
     private:
       Frame *frame, *frameOfReference;
+      std::shared_ptr<OpenMBVArrow> ombvPositionArrow, ombvVelocityArrow, ombvAccelerationArrow;
       std::shared_ptr<OpenMBV::Group> openMBVPosGrp, openMBVVelGrp, openMBVAccGrp;
       std::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAcceleration, openMBVXPosition, openMBVYPosition, openMBVZPosition, openMBVXVelocity, openMBVYVelocity, openMBVZVelocity, openMBVXAcceleration, openMBVYAcceleration, openMBVZAcceleration;
       std::string saved_frame, saved_frameOfReference;
+#ifndef SWIG
+      double (KinematicCoordinatesObserver::*evalOMBVPositionColorRepresentation[2])();
+      double (KinematicCoordinatesObserver::*evalOMBVVelocityColorRepresentation[2])();
+      double (KinematicCoordinatesObserver::*evalOMBVAccelerationColorRepresentation[2])();
+#endif
+      double evalNone() { return 0.5; }
+      double evalAbsolutePosition();
+      double evalAbsoluteVelocitiy();
+      double evalAbsoluteAcceleration();
 
     public:
       KinematicCoordinatesObserver(const std::string &name="");
@@ -46,19 +56,15 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void plot() override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVPosition, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,0,minimalColorValue,maximalColorValue,diffuseColor,transparency);
-        openMBVPosition=ombv.createOpenMBV();
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVPosition, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(colorRepresentation,(OpenMBVArrow::OMBVColorRepresentation),OpenMBVArrow::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        ombvPositionArrow = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency));
       }
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVVelocity, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,0,minimalColorValue,maximalColorValue,diffuseColor,transparency);
-        openMBVVelocity=ombv.createOpenMBV();
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVVelocity, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(colorRepresentation,(OpenMBVArrow::OMBVColorRepresentation),OpenMBVArrow::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        ombvVelocityArrow = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency));
       }
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAcceleration, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,0,minimalColorValue,maximalColorValue,diffuseColor,transparency);
-        openMBVAcceleration=ombv.createOpenMBV();
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAcceleration, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(colorRepresentation,(OpenMBVArrow::OMBVColorRepresentation),OpenMBVArrow::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        ombvAccelerationArrow = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency));
       }
-
   };
 
 }

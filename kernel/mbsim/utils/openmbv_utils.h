@@ -59,6 +59,11 @@ namespace MBSim {
   };
 
   class OpenMBVDynamicColoredBody : public OpenMBVColoredBody {
+    public:
+      enum OMBVColorRepresentation {
+        none=0,
+        absoluteValue
+      };
     protected:
       unsigned int cR;
       double minCol, maxCol;
@@ -66,7 +71,6 @@ namespace MBSim {
     public:
       OpenMBVDynamicColoredBody(unsigned cR_=0, double minCol_=0, double maxCol_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVColoredBody(dc,tp), cR(cR_), minCol(minCol_), maxCol(maxCol_), cRL(1,"none") { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void setColorRepresentationList(const std::vector<std::string> cRL_) { cRL = cRL_; }
       unsigned int getColorRepresentation() const { return cR; }
     protected:
       void initializeObject(const std::shared_ptr<OpenMBV::DynamicColoredBody> &object);
@@ -78,7 +82,7 @@ namespace MBSim {
       OpenMBV::Arrow::Type type;
       OpenMBV::Arrow::ReferencePoint refPoint;
     public:
-      OpenMBVArrow(double sL_=1, double sS_=1, const OpenMBV::Arrow::Type &type_=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint_=OpenMBV::Arrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp), sL(sL_), sS(sS_), type(type_), refPoint(refPoint_) { }
+      OpenMBVArrow(double sL_=1, double sS_=1, const OpenMBV::Arrow::Type &type_=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint_=OpenMBV::Arrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::Arrow> createOpenMBV();
     protected:
@@ -175,11 +179,19 @@ namespace MBSim {
   };
 
   class OpenMBVCoilSpring : public OpenMBVDynamicColoredBody {
+    public:
+      enum OMBVColorRepresentation {
+        none=0,
+        deflection,
+        tensileForce,
+        compressiveForce,
+        absoluteForce
+      };
     protected:
       double r, cr, sf, n, l;
       OpenMBV::CoilSpring::Type type;
     public:
-      OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBV::CoilSpring::Type type_=OpenMBV::CoilSpring::tube, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), type(type_) { }
+      OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBV::CoilSpring::Type type_=OpenMBV::CoilSpring::tube, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::CoilSpring> createOpenMBV();
     protected:

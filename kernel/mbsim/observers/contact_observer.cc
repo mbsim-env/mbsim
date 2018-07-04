@@ -44,14 +44,6 @@ namespace MBSim {
       Observer::init(stage, config);
     }
     else if(stage==preInit) {
-      if(sideOfForceInteraction==unknown)
-        throwError("(ContactObserver::init): side of force interaction unknown");
-      if(sideOfMomentInteraction==unknown)
-        throwError("(ContactObserver::init): side of moment interaction unknown");
-      if(sideOfContactInteraction==unknown)
-        throwError("(ContactObserver::init): side of normal force interaction unknown");
-      if(sideOfFrictionInteraction==unknown)
-        throwError("(ContactObserver::init): side of tangential force interaction unknown");
       Observer::init(stage, config);
       contactObserver.resize(static_cast<Contact*>(link)->getSubcontacts().size());
       for (unsigned int i=0; i<contactObserver.size(); i++) {
@@ -116,7 +108,7 @@ namespace MBSim {
         if(sideOfInteractionStr=="action") sideOfForceInteraction=action;
         else if(sideOfInteractionStr=="reaction") sideOfForceInteraction=reaction;
         else if(sideOfInteractionStr=="both") sideOfForceInteraction=both;
-        else sideOfForceInteraction=unknown;
+        else sideOfForceInteraction=unknownSideOfInteraction;
       }
       ombvForce = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvForce->initializeUsingXML(e);
@@ -129,7 +121,7 @@ namespace MBSim {
         if(sideOfInteractionStr=="action") sideOfMomentInteraction=action;
         else if(sideOfInteractionStr=="reaction") sideOfMomentInteraction=reaction;
         else if(sideOfInteractionStr=="both") sideOfMomentInteraction=both;
-        else sideOfMomentInteraction=unknown;
+        else sideOfMomentInteraction=unknownSideOfInteraction;
       }
       ombvMoment = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
       ombvMoment->initializeUsingXML(e);
@@ -148,7 +140,7 @@ namespace MBSim {
         if(sideOfInteractionStr=="action") sideOfContactInteraction=action;
         else if(sideOfInteractionStr=="reaction") sideOfContactInteraction=reaction;
         else if(sideOfInteractionStr=="both") sideOfContactInteraction=both;
-        else sideOfContactInteraction=unknown;
+        else sideOfContactInteraction=unknownSideOfInteraction;
       }
       ombvContact = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvContact->initializeUsingXML(e);
@@ -162,7 +154,7 @@ namespace MBSim {
         if(sideOfInteractionStr=="action") sideOfFrictionInteraction=action;
         else if(sideOfInteractionStr=="reaction") sideOfFrictionInteraction=reaction;
         else if(sideOfInteractionStr=="both") sideOfFrictionInteraction=both;
-        else sideOfFrictionInteraction=unknown;
+        else sideOfFrictionInteraction=unknownSideOfInteraction;
       }
       ombvFriction = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvFriction->initializeUsingXML(e);

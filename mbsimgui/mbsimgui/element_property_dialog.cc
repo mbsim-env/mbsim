@@ -2038,10 +2038,7 @@ namespace MBSimGUI {
     momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentFunction");
     addToTab("Kinetics",momentFunction);
 
-    vector<QString> cRL;
-    cRL.emplace_back("\"none\"");
-    cRL.emplace_back("\"absoluteValue\"");
-    arrow = new ExtWidget("Enable openMBV",new ArrowMBSOMBVWidget(cRL),true,true,MBSIM%"enableOpenMBV");
+    arrow = new ExtWidget("Enable openMBV",new ArrowMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation",arrow);
 
     connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
@@ -2089,13 +2086,7 @@ namespace MBSimGUI {
     unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedLength");
     addToTab("General",unloadedLength);
 
-    vector<QString> cRL;
-    cRL.emplace_back("\"none\"");
-    cRL.emplace_back("\"deflection\"");
-    cRL.emplace_back("\"tensileForce\"");
-    cRL.emplace_back("\"compressiveForce\"");
-    cRL.emplace_back("\"absoluteForce\"");
-    coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget(cRL),true,true,MBSIM%"enableOpenMBV");
+    coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", coilSpring);
   }
 
@@ -2653,7 +2644,7 @@ namespace MBSimGUI {
     position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVPosition");
     addToTab("Visualisation",position);
 
-    velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget(getGreenColor()),true,false,MBSIM%"enableOpenMBVVelocity");
+    velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVVelocity");
     addToTab("Visualisation",velocity);
 
     angularVelocity = new ExtWidget("Enable openMBV angular velocity",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAngularVelocity");

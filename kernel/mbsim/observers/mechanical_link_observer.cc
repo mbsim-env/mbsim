@@ -33,6 +33,10 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, MechanicalLinkObserver)
 
   MechanicalLinkObserver::MechanicalLinkObserver(const std::string &name) : Observer(name), link(nullptr) {
+    evalOMBVForceColorRepresentation[0] = &MechanicalLinkObserver::evalNone;
+    evalOMBVForceColorRepresentation[1] = &MechanicalLinkObserver::evalAbsoluteForce;
+    evalOMBVMomentColorRepresentation[0] = &MechanicalLinkObserver::evalNone;
+    evalOMBVMomentColorRepresentation[1] = &MechanicalLinkObserver::evalAbsoluteMoment;
   }
 
   void MechanicalLinkObserver::init(InitStage stage, const InitConfigSet &config) {
@@ -42,9 +46,9 @@ namespace MBSim {
       Observer::init(stage, config);
     }
     else if(stage==preInit) {
-      if(sideOfForceInteraction==unknown)
+      if(sideOfForceInteraction==unknownSideOfInteraction)
         throwError("(MechanicalLinkObserver::init): side of force interaction unknown");
-      if(sideOfMomentInteraction==unknown)
+      if(sideOfMomentInteraction==unknownSideOfInteraction)
         throwError("(MechanicalLinkObserver::init): side of moment interaction unknown");
       Observer::init(stage, config);
     }
@@ -54,6 +58,8 @@ namespace MBSim {
 //      if(openMBVForce) plotColumns.push_back("Force");
 //      if(openMBVMoment) plotColumns.push_back("Moment");
         if(ombvForce) {
+          if(ombvForce->getColorRepresentation()>1)
+            throwError("(MechanicalLinkObserver::init): ombv color representation unknown");
           openMBVForce.resize(sideOfForceInteraction==both?link->getNumberOfLinks():link->getNumberOfLinks()/2);
           for(size_t i=0; i<openMBVForce.size(); i++) {
             openMBVForce[i]=ombvForce->createOpenMBV();
@@ -63,6 +69,8 @@ namespace MBSim {
           }
         }
         if(ombvMoment) {
+          if(ombvMoment->getColorRepresentation()>1)
+            throwError("(MechanicalLinkObserver::init): ombv color representation unknown");
           openMBVMoment.resize(sideOfMomentInteraction==both?link->getNumberOfLinks():link->getNumberOfLinks()/2);
           for(size_t i=0; i<openMBVMoment.size(); i++) {
             openMBVMoment[i]=ombvMoment->createOpenMBV();
@@ -91,7 +99,7 @@ namespace MBSim {
         data.push_back(WF(0));
         data.push_back(WF(1));
         data.push_back(WF(2));
-        data.push_back(nrm2(WF));
+        data.push_back((this->*evalOMBVForceColorRepresentation[ombvForce->getColorRepresentation()])());
         openMBVForce[i]->append(data);
       }
       off = sideOfMomentInteraction==action?link->getNumberOfLinks()/2:0;
@@ -106,7 +114,7 @@ namespace MBSim {
         data.push_back(WM(0));
         data.push_back(WM(1));
         data.push_back(WM(2));
-        data.push_back(nrm2(WM));
+        data.push_back((this->*evalOMBVMomentColorRepresentation[ombvMoment->getColorRepresentation()])());
         openMBVMoment[i]->append(data);
       }
     }
@@ -117,12 +125,6 @@ namespace MBSim {
     Observer::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"mechanicalLink");
     saved_link=E(e)->getAttribute("ref");
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"crossSectionIDs");
-//    if(e) {
-//      vector<int> ids1based=E(e)->getText<vector<int>>();
-//      crossSectionIDs.resize(ids1based.size());
-//      transform(ids1based.begin(), ids1based.end(), crossSectionIDs.begin(), [](int a){ return a-1; });
-//    }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(e) {
       DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"sideOfInteraction");
@@ -131,7 +133,7 @@ namespace MBSim {
         if(sideOfInteractionStr=="action") sideOfForceInteraction=action;
         else if(sideOfInteractionStr=="reaction") sideOfForceInteraction=reaction;
         else if(sideOfInteractionStr=="both") sideOfForceInteraction=both;
-        else sideOfForceInteraction=unknown;
+        else sideOfForceInteraction=unknownSideOfInteraction;
       }
       ombvForce = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvForce->initializeUsingXML(e);
@@ -144,11 +146,19 @@ namespace MBSim {
         if(sideOfInteractionStr=="action") sideOfMomentInteraction=action;
         else if(sideOfInteractionStr=="reaction") sideOfMomentInteraction=reaction;
         else if(sideOfInteractionStr=="both") sideOfMomentInteraction=both;
-        else sideOfMomentInteraction=unknown;
+        else sideOfMomentInteraction=unknownSideOfInteraction;
       }
       ombvMoment = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
       ombvMoment->initializeUsingXML(e);
     }
+  }
+
+  double MechanicalLinkObserver::evalAbsoluteForce() {
+    return nrm2(link->evalForce());
+  }
+
+  double MechanicalLinkObserver::evalAbsoluteMoment() {
+    return nrm2(link->evalMoment());
   }
 
 }

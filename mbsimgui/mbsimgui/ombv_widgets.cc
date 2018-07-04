@@ -261,6 +261,13 @@ namespace MBSimGUI {
     layout()->addWidget(referencePoint);
   }
 
+  vector<QString> ArrowMBSOMBVWidget::getColorRepresentation() {
+    vector<QString> cRL;
+    cRL.emplace_back("\"none\"");
+    cRL.emplace_back("\"absoluteValue\"");
+    return cRL;
+  }
+
   DOMElement* ArrowMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=MBSOMBVDynamicColoreBodyWidget::initializeUsingXML(element);
     scaleLength->initializeUsingXML(e);
@@ -279,7 +286,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  InteractionArrowMBSOMBVWidget::InteractionArrowMBSOMBVWidget() {
+  InteractionArrowMBSOMBVWidget::InteractionArrowMBSOMBVWidget(const vector<QString> &cRL) : ArrowMBSOMBVWidget(cRL) {
 
     vector<QString> list;
     list.emplace_back("\"action\"");
@@ -301,7 +308,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const vector<QString> &cRL) : MBSOMBVDynamicColoreBodyWidget(cRL) {
+  CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const std::vector<QString> &cRL) : MBSOMBVDynamicColoreBodyWidget(cRL) {
 
     numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,url%"numberOfCoils");
     layout()->addWidget(numberOfCoils);
@@ -321,6 +328,16 @@ namespace MBSimGUI {
     list.emplace_back("\"polyline\"");
     type = new ExtWidget("Type",new TextChoiceWidget(list,0,true),true,false,url%"type");
     layout()->addWidget(type);
+  }
+
+  vector<QString> CoilSpringMBSOMBVWidget::getColorRepresentation() {
+    vector<QString> cRL;
+    cRL.emplace_back("\"none\"");
+    cRL.emplace_back("\"deflection\"");
+    cRL.emplace_back("\"tensileForce\"");
+    cRL.emplace_back("\"compressiveForce\"");
+    cRL.emplace_back("\"absoluteForce\"");
+    return cRL;
   }
 
   DOMElement* CoilSpringMBSOMBVWidget::initializeUsingXML(DOMElement *element) {

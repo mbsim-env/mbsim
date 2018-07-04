@@ -74,9 +74,16 @@ namespace MBSim {
   }
 
   void OpenMBVDynamicColoredBody::initializeObject(const shared_ptr<OpenMBV::DynamicColoredBody> &object) {
+    if(cR>=cRL.size()) throw runtime_error("(OpenMBVDynamicColoredBody::init): color representation unknown");
     OpenMBVColoredBody::initializeObject(object);
     object->setMinimalColorValue(minCol);
     object->setMaximalColorValue(maxCol);
+  }
+
+  OpenMBVArrow::OpenMBVArrow(double sL_, double sS_, const OpenMBV::Arrow::Type &type_, const OpenMBV::Arrow::ReferencePoint &refPoint_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp), sL(sL_), sS(sS_), type(type_), refPoint(refPoint_) {
+    cRL.resize(2);
+    cRL[0]="none";
+    cRL[1]="absoluteValue";
   }
 
   void OpenMBVArrow::initializeUsingXML(DOMElement *e) {
@@ -272,6 +279,15 @@ namespace MBSim {
   void OpenMBVExtrusion::initializeObject(const shared_ptr<OpenMBV::Extrusion> &object) {
     OpenMBVColoredBody::initializeObject(object);
     object->setHeight(h);
+  }
+
+  OpenMBVCoilSpring::OpenMBVCoilSpring(double r_, double cr_, double sf_, double n_, double l_, OpenMBV::CoilSpring::Type type_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), type(type_) {
+    cRL.resize(5);
+    cRL[0]="none";
+    cRL[1]="deflection";
+    cRL[2]="tensileForce";
+    cRL[3]="compressiveForce";
+    cRL[4]="absoluteForce";
   }
 
   void OpenMBVCoilSpring::initializeUsingXML(DOMElement *e) {

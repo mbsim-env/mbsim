@@ -69,8 +69,6 @@ namespace MBSim {
   void DirectionalSpringDamper::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[openMBV] and ombvCoilSpring) {
-        if(ombvCoilSpring->getColorRepresentation()>4)
-          throwError("(SpringDamper::init): ombv color representation unknown");
         coilspringOpenMBV=ombvCoilSpring->createOpenMBV();
         coilspringOpenMBV->setName(name);
         parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
@@ -115,13 +113,6 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       ombvCoilSpring = shared_ptr<OpenMBVCoilSpring>(new OpenMBVCoilSpring);
-      vector<string> cRL(5);
-      cRL[0]="none";
-      cRL[1]="deflection";
-      cRL[2]="tensileForce";
-      cRL[3]="compressiveForce";
-      cRL[4]="absoluteForce";
-      ombvCoilSpring->setColorRepresentationList(cRL);
       ombvCoilSpring->initializeUsingXML(e);
     }
   }

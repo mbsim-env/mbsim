@@ -58,7 +58,8 @@ namespace MBSim {
     else if(stage==plotting) {
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
-        if(FWeight) {
+        if(ombvWeight) {
+          FWeight=ombvWeight->createOpenMBV();
           FWeight->setName("Weight");
           getOpenMBVGrp()->addObject(FWeight);
         }
@@ -79,22 +80,27 @@ namespace MBSim {
           }
         }
         if(openMBVAxisOfRotation) {
+          openMBVAxisOfRotation=ombvAxisOfRotation->createOpenMBV();
           openMBVAxisOfRotation->setName("AxisOfRotation");
           getOpenMBVGrp()->addObject(openMBVAxisOfRotation);
         }
         if(openMBVMomentum) {
+          openMBVMomentum=ombvMomentum->createOpenMBV();
           openMBVMomentum->setName("Momentum");
           getOpenMBVGrp()->addObject(openMBVMomentum);
         }
         if(openMBVAngularMomentum) {
+          openMBVAngularMomentum=ombvAngularMomentum->createOpenMBV();
           openMBVAngularMomentum->setName("AngularMomentum");
           getOpenMBVGrp()->addObject(openMBVAngularMomentum);
         }
         if(openMBVDerivativeOfMomentum) {
+          openMBVDerivativeOfMomentum=ombvDerivativeOfMomentum->createOpenMBV();
           openMBVDerivativeOfMomentum->setName("DerivativeOfMomentum");
           getOpenMBVGrp()->addObject(openMBVDerivativeOfMomentum);
         }
         if(openMBVDerivativeOfAngularMomentum) {
+          openMBVDerivativeOfAngularMomentum=ombvDerivativeOfAngularMomentum->createOpenMBV();
           openMBVDerivativeOfAngularMomentum->setName("DerivativeOfAngularMomentum");
           getOpenMBVGrp()->addObject(openMBVDerivativeOfAngularMomentum);
         }
@@ -127,7 +133,7 @@ namespace MBSim {
         data.push_back(G(0));
         data.push_back(G(1));
         data.push_back(G(2));
-        data.push_back(1.0);
+        data.push_back(ombvWeight->getColorRepresentation()?nrm2(G):1.0);
         FWeight->append(data);
       }
       int off = sideOfForceInteraction==action?1:0;
@@ -142,7 +148,7 @@ namespace MBSim {
         data.push_back(F(0));
         data.push_back(F(1));
         data.push_back(F(2));
-        data.push_back(nrm2(F));
+        data.push_back(ombvForce->getColorRepresentation()?nrm2(F):1.0);
         FArrow[i]->append(data);
       }
       off = sideOfMomentInteraction==action?1:0;
@@ -157,7 +163,7 @@ namespace MBSim {
         data.push_back(M(0));
         data.push_back(M(1));
         data.push_back(M(2));
-        data.push_back(nrm2(M));
+        data.push_back(ombvMoment->getColorRepresentation()?nrm2(M):1.0);
         MArrow[i]->append(data);
       }
       if(openMBVAxisOfRotation) {
@@ -187,7 +193,7 @@ namespace MBSim {
         data.push_back(dir(0));
         data.push_back(dir(1));
         data.push_back(dir(2));
-        data.push_back(0.5);
+        data.push_back(ombvAxisOfRotation->getColorRepresentation()?nrm2(dir):0.5);
         openMBVAxisOfRotation->append(data);
         //          plotVector.push_back(nrm2(dir));
       }
@@ -201,7 +207,7 @@ namespace MBSim {
         data.push_back(p(0));
         data.push_back(p(1));
         data.push_back(p(2));
-        data.push_back(1.0);
+        data.push_back(ombvMomentum->getColorRepresentation()?nrm2(p):1);
         openMBVMomentum->append(data);
       }
       if(openMBVAngularMomentum) {
@@ -219,7 +225,7 @@ namespace MBSim {
         data.push_back(L(0));
         data.push_back(L(1));
         data.push_back(L(2));
-        data.push_back(1.0);
+        data.push_back(ombvAngularMomentum->getColorRepresentation()?nrm2(L):1);
         openMBVAngularMomentum->append(data);
       }
       if(openMBVDerivativeOfMomentum) {
@@ -232,7 +238,7 @@ namespace MBSim {
         data.push_back(pd(0));
         data.push_back(pd(1));
         data.push_back(pd(2));
-        data.push_back(1.0);
+        data.push_back(ombvDerivativeOfMomentum->getColorRepresentation()?nrm2(pd):1);
         openMBVDerivativeOfMomentum->append(data);
       }
       if(openMBVDerivativeOfAngularMomentum) {
@@ -250,7 +256,7 @@ namespace MBSim {
         data.push_back(Ld(0));
         data.push_back(Ld(1));
         data.push_back(Ld(2));
-        data.push_back(1.0);
+        data.push_back(ombvDerivativeOfAngularMomentum->getColorRepresentation()?nrm2(Ld):1);
         openMBVDerivativeOfAngularMomentum->append(data);
       }
     }
@@ -268,9 +274,8 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(e) {
-      OpenMBVArrow ombv(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint);
-      ombv.initializeUsingXML(e);
-      FWeight=ombv.createOpenMBV();
+      ombvWeight = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvWeight->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointForce");
@@ -303,37 +308,32 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAxisOfRotation");
     if(e) {
-      OpenMBVArrow ombv(1,1,OpenMBV::Arrow::line,OpenMBV::Arrow::midPoint);
-      ombv.initializeUsingXML(e);
-      openMBVAxisOfRotation=ombv.createOpenMBV();
+      ombvAxisOfRotation = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::line,OpenMBV::Arrow::midPoint));
+      ombvAxisOfRotation->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMomentum");
     if(e) {
-      OpenMBVArrow ombv(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint);
-      ombv.initializeUsingXML(e);
-      openMBVMomentum=ombv.createOpenMBV();
+      ombvMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvMomentum->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularMomentum");
     if(e) {
-      OpenMBVArrow ombv(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint);
-      ombv.initializeUsingXML(e);
-      openMBVAngularMomentum=ombv.createOpenMBV();
+      ombvAngularMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
+      ombvAngularMomentum->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivatveOfMomentum");
     if(e) {
-      OpenMBVArrow ombv(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint);
-      ombv.initializeUsingXML(e);
-      openMBVDerivativeOfMomentum=ombv.createOpenMBV();
+      ombvDerivativeOfMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvDerivativeOfMomentum->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivativeOfAngularMomentum");
     if(e) {
-      OpenMBVArrow ombv(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint);
-      ombv.initializeUsingXML(e);
-      openMBVDerivativeOfAngularMomentum=ombv.createOpenMBV();
+      ombvDerivativeOfAngularMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
+      ombvDerivativeOfAngularMomentum->initializeUsingXML(e);
     }
   }
 

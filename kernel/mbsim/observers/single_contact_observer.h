@@ -48,6 +48,14 @@ namespace MBSim {
        */
       std::vector<std::shared_ptr<OpenMBV::Arrow>> contactArrow, frictionArrow;
 
+#ifndef SWIG
+      double (SingleContactObserver::*evalOMBVNormalForceColorRepresentation[2])();
+      double (SingleContactObserver::*evalOMBVTangentialForceColorRepresentation[2])();
+#endif
+      double evalNone() { return 1; }
+      double evalAbsoluteNormalForce();
+      double evalAbsoluteTangentialForce();
+
     public:
       SingleContactObserver(const std::string &name="");
 

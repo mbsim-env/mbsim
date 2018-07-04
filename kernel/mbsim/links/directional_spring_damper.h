@@ -32,16 +32,6 @@ namespace MBSim {
    * distance and relative velocity between the two frames.
    */
   class DirectionalSpringDamper : public FloatingFrameLink {
-    public:
-      enum OMBVColorRepresentation {
-        none=0,
-        deflection,
-        tensileForce,
-        compressiveForce,
-        absoluteForce,
-        unknown
-      };
-
     protected:
       double dist;
       Function<double(double,double)> *func;
@@ -94,7 +84,7 @@ namespace MBSim {
       void plot() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(colorRepresentation,(OMBVColorRepresentation),none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(colorRepresentation,(OpenMBVCoilSpring::OMBVColorRepresentation),OpenMBVCoilSpring::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         ombvCoilSpring = std::shared_ptr<OpenMBVCoilSpring>(new OpenMBVCoilSpring(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency));
       }
   };

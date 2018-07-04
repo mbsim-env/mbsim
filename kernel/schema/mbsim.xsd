@@ -100,6 +100,16 @@
   </xs:group>
 
   <xs:group name="OpenMBVCoilSpringParameters">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Auswahl der Farbdarstellung:
+      <ul>
+        <li>none: keine</li>
+        <li>deflection: Federweg</li>
+        <li>tensileForce: Zugkraft</li>
+        <li>compressiveForce: Druckkraft</li>
+        <li>absoluteForce: Absolute Kraft</li>
+      </ul>
+    </xs:documentation></xs:annotation>
     <xs:sequence>
       <xs:group ref="OpenMBVDynamicColoredBodyParameters"/>
       <xs:element name="numberOfCoils" type="pv:nounitScalar" minOccurs="0"/>
@@ -1682,14 +1692,6 @@
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
-              Auswahl der Farbdarstellung:
-              <ul>
-                <li>none: keine</li>
-                <li>deflection: Federweg</li>
-                <li>tensileForce: Zugkraft</li>
-                <li>compressiveForce: Druckkraft</li>
-                <li>absoluteForce: Absolute Kraft</li>
-              </ul>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -1747,14 +1749,6 @@
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
-              Auswahl der Farbdarstellung:
-              <ul>
-                <li>none: keine</li>
-                <li>deflection: Federweg</li>
-                <li>tensileForce: Zugkraft</li>
-                <li>compressiveForce: Druckkraft</li>
-                <li>absoluteForce: Absolute Kraft</li>
-              </ul>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>

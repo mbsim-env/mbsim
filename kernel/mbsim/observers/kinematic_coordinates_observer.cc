@@ -35,6 +35,12 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, KinematicCoordinatesObserver)
 
   KinematicCoordinatesObserver::KinematicCoordinatesObserver(const std::string &name) : Observer(name), frame(nullptr), frameOfReference(nullptr) {
+    evalOMBVPositionColorRepresentation[0] = &KinematicCoordinatesObserver::evalNone;
+    evalOMBVPositionColorRepresentation[1] = &KinematicCoordinatesObserver::evalAbsolutePosition;
+    evalOMBVVelocityColorRepresentation[0] = &KinematicCoordinatesObserver::evalNone;
+    evalOMBVVelocityColorRepresentation[1] = &KinematicCoordinatesObserver::evalAbsoluteVelocitiy;
+    evalOMBVAccelerationColorRepresentation[0] = &KinematicCoordinatesObserver::evalNone;
+    evalOMBVAccelerationColorRepresentation[1] = &KinematicCoordinatesObserver::evalAbsoluteAcceleration;
   }
 
   void KinematicCoordinatesObserver::init(InitStage stage, const InitConfigSet &config) {
@@ -68,20 +74,21 @@ namespace MBSim {
 //      }
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
-        if(openMBVPosition) {
+        if(ombvPositionArrow) {
           openMBVPosGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVPosGrp->setName("Position_Group");
           openMBVPosGrp->setExpand(false);
           getOpenMBVGrp()->addObject(openMBVPosGrp);
+          openMBVPosition=ombvPositionArrow->createOpenMBV();
           openMBVPosition->setName("Position");
           openMBVPosGrp->addObject(openMBVPosition);
-          openMBVXPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
-          openMBVYPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
-          openMBVZPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
+          openMBVXPosition=ombvPositionArrow->createOpenMBV();
           openMBVXPosition->setName("XPosition");
           openMBVPosGrp->addObject(openMBVXPosition);
+          openMBVYPosition=ombvPositionArrow->createOpenMBV();
           openMBVYPosition->setName("YPosition");
           openMBVPosGrp->addObject(openMBVYPosition);
+          openMBVZPosition=ombvPositionArrow->createOpenMBV();
           openMBVZPosition->setName("ZPosition");
           openMBVPosGrp->addObject(openMBVZPosition);
         }
@@ -90,15 +97,16 @@ namespace MBSim {
           openMBVVelGrp->setName("Velocity_Group");
           openMBVVelGrp->setExpand(false);
           getOpenMBVGrp()->addObject(openMBVVelGrp);
+          openMBVVelocity=ombvVelocityArrow->createOpenMBV();
           openMBVVelocity->setName("Velocity");
           openMBVVelGrp->addObject(openMBVVelocity);
-          openMBVXVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
-          openMBVYVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
-          openMBVZVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
+          openMBVXVelocity=ombvVelocityArrow->createOpenMBV();
           openMBVXVelocity->setName("XVelocity");
           openMBVVelGrp->addObject(openMBVXVelocity);
+          openMBVYVelocity=ombvVelocityArrow->createOpenMBV();
           openMBVYVelocity->setName("YVelocity");
           openMBVVelGrp->addObject(openMBVYVelocity);
+          openMBVZVelocity=ombvVelocityArrow->createOpenMBV();
           openMBVZVelocity->setName("ZVelocity");
           openMBVVelGrp->addObject(openMBVZVelocity);
         }
@@ -107,15 +115,16 @@ namespace MBSim {
           openMBVAccGrp->setName("Acceleration_Group");
           openMBVAccGrp->setExpand(false);
           getOpenMBVGrp()->addObject(openMBVAccGrp);
+          openMBVAcceleration=ombvAccelerationArrow->createOpenMBV();
           openMBVAcceleration->setName("Acceleration");
           openMBVAccGrp->addObject(openMBVAcceleration);
-          openMBVXAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
-          openMBVYAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
-          openMBVZAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
+          openMBVXAcceleration=ombvAccelerationArrow->createOpenMBV();
           openMBVXAcceleration->setName("XAcceleration");
           openMBVAccGrp->addObject(openMBVXAcceleration);
+          openMBVYAcceleration=ombvAccelerationArrow->createOpenMBV();
           openMBVYAcceleration->setName("YAcceleration");
           openMBVAccGrp->addObject(openMBVYAcceleration);
+          openMBVZAcceleration=ombvAccelerationArrow->createOpenMBV();
           openMBVZAcceleration->setName("ZAcceleration");
           openMBVAccGrp->addObject(openMBVZAcceleration);
         }
@@ -134,6 +143,9 @@ namespace MBSim {
       Vec3 ex = A.col(0);
       Vec3 ey = A.col(1);
       Vec3 ez = A.col(2);
+      double cr = (this->*evalOMBVPositionColorRepresentation[ombvPositionArrow->getColorRepresentation()])();
+      double cv = (this->*evalOMBVVelocityColorRepresentation[ombvVelocityArrow->getColorRepresentation()])();
+      double ca = (this->*evalOMBVAccelerationColorRepresentation[ombvAccelerationArrow->getColorRepresentation()])();
 
       if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
         vector<double> data;
@@ -144,7 +156,7 @@ namespace MBSim {
         data.push_back(r(0));
         data.push_back(r(1));
         data.push_back(r(2));
-        data.push_back(0.5);
+        data.push_back(cr);
         openMBVPosition->append(data);
         //plotVector.push_back(nrm2(r));
         data.clear();
@@ -156,7 +168,7 @@ namespace MBSim {
         data.push_back(rx(0));
         data.push_back(rx(1));
         data.push_back(rx(2));
-        data.push_back(0.5);
+        data.push_back(cr);
         openMBVXPosition->append(data);
         data.clear();
         Vec3 ry =  (r.T()*ey)*ey;
@@ -167,7 +179,7 @@ namespace MBSim {
         data.push_back(ry(0));
         data.push_back(ry(1));
         data.push_back(ry(2));
-        data.push_back(0.5);
+        data.push_back(cr);
         openMBVYPosition->append(data);
         data.clear();
         Vec3 rz =  (r.T()*ez)*ez;
@@ -178,7 +190,7 @@ namespace MBSim {
         data.push_back(rz(0));
         data.push_back(rz(1));
         data.push_back(rz(2));
-        data.push_back(0.5);
+        data.push_back(cr);
         openMBVZPosition->append(data);
         //plotVector.push_back(r(0));
         //plotVector.push_back(r(1));
@@ -194,7 +206,7 @@ namespace MBSim {
         data.push_back(v(0));
         data.push_back(v(1));
         data.push_back(v(2));
-        data.push_back(0.5);
+        data.push_back(cv);
         openMBVVelocity->append(data);
         //plotVector.push_back(nrm2(v));
         data.clear();
@@ -206,7 +218,7 @@ namespace MBSim {
         data.push_back(vx(0));
         data.push_back(vx(1));
         data.push_back(vx(2));
-        data.push_back(0.5);
+        data.push_back(cv);
         openMBVXVelocity->append(data);
         data.clear();
         Vec3 vy =  (v.T()*ey)*ey;
@@ -217,7 +229,7 @@ namespace MBSim {
         data.push_back(vy(0));
         data.push_back(vy(1));
         data.push_back(vy(2));
-        data.push_back(0.5);
+        data.push_back(cv);
         openMBVYVelocity->append(data);
         data.clear();
         Vec3 vz =  (v.T()*ez)*ez;
@@ -228,7 +240,7 @@ namespace MBSim {
         data.push_back(vz(0));
         data.push_back(vz(1));
         data.push_back(vz(2));
-        data.push_back(0.5);
+        data.push_back(cv);
         openMBVZVelocity->append(data);
         //plotVector.push_back(v(0));
         //plotVector.push_back(v(1));
@@ -244,7 +256,7 @@ namespace MBSim {
         data.push_back(a(0));
         data.push_back(a(1));
         data.push_back(a(2));
-        data.push_back(0.5);
+        data.push_back(ca);
         openMBVAcceleration->append(data);
         //plotVector.push_back(nrm2(a));
         data.clear();
@@ -256,7 +268,7 @@ namespace MBSim {
         data.push_back(ax(0));
         data.push_back(ax(1));
         data.push_back(ax(2));
-        data.push_back(0.5);
+        data.push_back(ca);
         openMBVXAcceleration->append(data);
         data.clear();
         Vec3 ay =  (a.T()*ey)*ey;
@@ -267,7 +279,7 @@ namespace MBSim {
         data.push_back(ay(0));
         data.push_back(ay(1));
         data.push_back(ay(2));
-        data.push_back(0.5);
+        data.push_back(ca);
         openMBVYAcceleration->append(data);
         data.clear();
         Vec3 az =  (a.T()*ez)*ez;
@@ -278,7 +290,7 @@ namespace MBSim {
         data.push_back(az(0));
         data.push_back(az(1));
         data.push_back(az(2));
-        data.push_back(0.5);
+        data.push_back(ca);
         openMBVZAcceleration->append(data);
         //plotVector.push_back(a(0));
         //plotVector.push_back(a(1));
@@ -296,22 +308,31 @@ namespace MBSim {
     if(e) saved_frameOfReference=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(e) {
-        OpenMBVArrow ombv;
-        ombv.initializeUsingXML(e);
-        openMBVPosition=ombv.createOpenMBV();
+      ombvPositionArrow = shared_ptr<OpenMBVArrow>(new OpenMBVArrow);
+      ombvPositionArrow->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
     if(e) {
-        OpenMBVArrow ombv;
-        ombv.initializeUsingXML(e);
-        openMBVVelocity=ombv.createOpenMBV();
+      ombvVelocityArrow = shared_ptr<OpenMBVArrow>(new OpenMBVArrow);
+      ombvVelocityArrow->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
     if(e) {
-        OpenMBVArrow ombv;
-        ombv.initializeUsingXML(e);
-        openMBVAcceleration=ombv.createOpenMBV();
+      ombvAccelerationArrow = shared_ptr<OpenMBVArrow>(new OpenMBVArrow);
+      ombvAccelerationArrow->initializeUsingXML(e);
     }
+  }
+
+  double KinematicCoordinatesObserver::evalAbsolutePosition() {
+    return nrm2(frame->evalPosition());
+  }
+
+  double KinematicCoordinatesObserver::evalAbsoluteVelocitiy() {
+    return nrm2(frame->evalVelocity());
+  }
+
+  double KinematicCoordinatesObserver::evalAbsoluteAcceleration() {
+    return nrm2(frame->evalAcceleration());
   }
 
 }
