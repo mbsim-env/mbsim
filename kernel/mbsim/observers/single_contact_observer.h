@@ -39,9 +39,8 @@ namespace MBSim {
        */
       std::vector<std::shared_ptr<OpenMBV::Frame> > openMBVContactFrame;
 
-      SideOfInteraction sideOfContactInteraction{action}, sideOfFrictionInteraction{action};
-
-      std::shared_ptr<OpenMBVArrow> ombvContact, ombvFriction;
+      std::shared_ptr<OpenMBVInteractionArrow> ombvContact;
+      std::shared_ptr<OpenMBVFrictionArrow> ombvFriction;
 
       /**
        * \brief pointer to memory of normal and friction forces to draw
@@ -50,11 +49,12 @@ namespace MBSim {
 
 #ifndef SWIG
       double (SingleContactObserver::*evalOMBVNormalForceColorRepresentation[2])();
-      double (SingleContactObserver::*evalOMBVTangentialForceColorRepresentation[2])();
+      double (SingleContactObserver::*evalOMBVTangentialForceColorRepresentation[3])();
 #endif
       double evalNone() { return 1; }
       double evalAbsoluteNormalForce();
       double evalAbsoluteTangentialForce();
+      double evalStickSlip();
 
     public:
       SingleContactObserver(const std::string &name="");
@@ -67,9 +67,9 @@ namespace MBSim {
         openMBVContactFrame[1]=OpenMBV::ObjectFactory::create(openMBVContactFrame[0]);
       }
 
-      void setOMBVNormalForce(const std::shared_ptr<OpenMBVArrow> &arrow) { ombvContact=arrow; }
+      void setOMBVNormalForce(const std::shared_ptr<OpenMBVInteractionArrow> &arrow) { ombvContact=arrow; }
 
-      void setOMBVTangentialForce(const std::shared_ptr<OpenMBVArrow> &arrow) { ombvFriction=arrow; }
+      void setOMBVTangentialForce(const std::shared_ptr<OpenMBVFrictionArrow> &arrow) { ombvFriction=arrow; }
   };
 
 }  

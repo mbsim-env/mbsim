@@ -159,6 +159,13 @@ namespace MBSimGUI {
       ExtWidget *sideOfInteraction;
   };
 
+  class FrictionArrowMBSOMBVWidget : public InteractionArrowMBSOMBVWidget {
+
+    public:
+      FrictionArrowMBSOMBVWidget(const std::vector<QString> &cRL=getColorRepresentation()) : InteractionArrowMBSOMBVWidget(cRL) { }
+      static std::vector<QString> getColorRepresentation();
+  };
+
   class CoilSpringMBSOMBVWidget : public MBSOMBVDynamicColoreBodyWidget {
 
     public:

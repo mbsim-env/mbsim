@@ -59,11 +59,6 @@ namespace MBSim {
   };
 
   class OpenMBVDynamicColoredBody : public OpenMBVColoredBody {
-    public:
-      enum OMBVColorRepresentation {
-        none=0,
-        absoluteValue
-      };
     protected:
       unsigned int cR;
       double minCol, maxCol;
@@ -77,6 +72,11 @@ namespace MBSim {
   };
 
   class OpenMBVArrow : public OpenMBVDynamicColoredBody {
+    public:
+      enum ColorRepresentation {
+        none=0,
+        absoluteValue
+      };
     protected:
       double sL, sS;
       OpenMBV::Arrow::Type type;
@@ -87,6 +87,34 @@ namespace MBSim {
       std::shared_ptr<OpenMBV::Arrow> createOpenMBV();
     protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Arrow> &object);
+  };
+
+  class OpenMBVInteractionArrow : public OpenMBVArrow {
+    public:
+      enum SideOfInteraction {
+        action=0,
+        reaction,
+        both
+      };
+    protected:
+      unsigned int sI;
+    public:
+      OpenMBVInteractionArrow(unsigned int sI_=0, double sL=1, double sS=1, const OpenMBV::Arrow::Type &type=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint=OpenMBV::Arrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
+      void initializeUsingXML(xercesc::DOMElement *element);
+      unsigned int getSideOfInteraction() const { return sI; }
+    protected:
+      void initializeObject(const std::shared_ptr<OpenMBV::Arrow> &object);
+  };
+
+  class OpenMBVFrictionArrow : public OpenMBVInteractionArrow {
+    public:
+      enum ColorRepresentation {
+        none=0,
+        absoluteValue,
+        stickSlip
+      };
+    public:
+      OpenMBVFrictionArrow(unsigned int sI=0, double sL=1, double sS=1, const OpenMBV::Arrow::Type &type=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint=OpenMBV::Arrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
   };
 
   class OpenMBVFrame : public OpenMBVColoredBody {
@@ -180,7 +208,7 @@ namespace MBSim {
 
   class OpenMBVCoilSpring : public OpenMBVDynamicColoredBody {
     public:
-      enum OMBVColorRepresentation {
+      enum ColorRepresentation {
         none=0,
         deflection,
         tensileForce,

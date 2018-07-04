@@ -308,6 +308,14 @@ namespace MBSimGUI {
     return e;
   }
 
+  vector<QString> FrictionArrowMBSOMBVWidget::getColorRepresentation() {
+    vector<QString> cRL;
+    cRL.emplace_back("\"none\"");
+    cRL.emplace_back("\"absoluteValue\"");
+    cRL.emplace_back("\"stickSlip\"");
+    return cRL;
+  }
+
   CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const std::vector<QString> &cRL) : MBSOMBVDynamicColoreBodyWidget(cRL) {
 
     numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,url%"numberOfCoils");

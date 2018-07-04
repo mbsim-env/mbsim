@@ -47,20 +47,13 @@ namespace MBSim {
         setMechanicalConstraint(getByPath<MechanicalConstraint>(saved_constraint));
       Observer::init(stage, config);
     }
-    else if(stage==preInit) {
-      if(sideOfForceInteraction==unknownSideOfInteraction)
-        throwError("(MechanicalConstraintObserver::init): side of force interaction unknown");
-      if(sideOfMomentInteraction==unknownSideOfInteraction)
-        throwError("(MechanicalConstraintObserver::init): side of moment interaction unknown");
-      Observer::init(stage, config);
-    }
     else if(stage==plotting) {
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
         //      if(openMBVForce) plotColumns.push_back("Force");
         //      if(openMBVMoment) plotColumns.push_back("Moment");
         if(ombvForce) {
-          openMBVForce.resize(sideOfForceInteraction==both?constraint->getMechanicalLink()->getNumberOfLinks():constraint->getMechanicalLink()->getNumberOfLinks()/2);
+          openMBVForce.resize(ombvForce->getSideOfInteraction()==2?constraint->getMechanicalLink()->getNumberOfLinks():constraint->getMechanicalLink()->getNumberOfLinks()/2);
           for(size_t i=0; i<openMBVForce.size(); i++) {
             openMBVForce[i]=ombvForce->createOpenMBV();
             //openMBVForce[i]->setName(string("Force")+(i<size_t(constraint->getMechanicalLink()->getNumberOfLinks()/2)?"R":"A")+to_string(i%size_t(constraint->getMechanicalLink()->getNumberOfLinks()/2)));
@@ -69,7 +62,7 @@ namespace MBSim {
           }
         }
         if(ombvMoment) {
-          openMBVMoment.resize(sideOfMomentInteraction==both?constraint->getMechanicalLink()->getNumberOfLinks():constraint->getMechanicalLink()->getNumberOfLinks()/2);
+          openMBVMoment.resize(ombvMoment->getSideOfInteraction()==2?constraint->getMechanicalLink()->getNumberOfLinks():constraint->getMechanicalLink()->getNumberOfLinks()/2);
           for(size_t i=0; i<openMBVMoment.size(); i++) {
             openMBVMoment[i]=ombvMoment->createOpenMBV();
             //openMBVMoment[i]->setName(string("Moment")+(i<size_t(constraint->getMechanicalLink()->getNumberOfLinks()/2)?"R":"A")+to_string(i%size_t(constraint->getMechanicalLink()->getNumberOfLinks()/2)));
@@ -90,35 +83,39 @@ namespace MBSim {
 
   void MechanicalConstraintObserver::plot() {
     if(plotFeature[openMBV]) {
-      int off = sideOfForceInteraction==action?constraint->getMechanicalLink()->getNumberOfLinks()/2:0;
-      for(size_t i=0; i<openMBVForce.size(); i++) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint=constraint->getMechanicalLink()->getPointOfApplication(off+i)->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 WF = constraint->getMechanicalLink()->evalForce(off+i);
-        data.push_back(WF(0));
-        data.push_back(WF(1));
-        data.push_back(WF(2));
-        data.push_back((this->*evalOMBVForceColorRepresentation[ombvForce->getColorRepresentation()])());
-        openMBVForce[i]->append(data);
+      if(ombvForce) {
+        int off = ombvForce->getSideOfInteraction()==0?constraint->getMechanicalLink()->getNumberOfLinks()/2:0;
+        for(size_t i=0; i<openMBVForce.size(); i++) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint=constraint->getMechanicalLink()->getPointOfApplication(off+i)->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 WF = constraint->getMechanicalLink()->evalForce(off+i);
+          data.push_back(WF(0));
+          data.push_back(WF(1));
+          data.push_back(WF(2));
+          data.push_back((this->*evalOMBVForceColorRepresentation[ombvForce->getColorRepresentation()])());
+          openMBVForce[i]->append(data);
+        }
       }
-      off = sideOfMomentInteraction==action?constraint->getMechanicalLink()->getNumberOfLinks()/2:0;
-      for(size_t i=0; i<openMBVMoment.size(); i++) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint=constraint->getMechanicalLink()->getPointOfApplication(off+i)->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 WM = constraint->getMechanicalLink()->evalMoment(off+i);
-        data.push_back(WM(0));
-        data.push_back(WM(1));
-        data.push_back(WM(2));
-        data.push_back((this->*evalOMBVMomentColorRepresentation[ombvMoment->getColorRepresentation()])());
-        openMBVMoment[i]->append(data);
+      if(ombvMoment) {
+        int off = ombvMoment->getSideOfInteraction()==0?constraint->getMechanicalLink()->getNumberOfLinks()/2:0;
+        for(size_t i=0; i<openMBVMoment.size(); i++) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint=constraint->getMechanicalLink()->getPointOfApplication(off+i)->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 WM = constraint->getMechanicalLink()->evalMoment(off+i);
+          data.push_back(WM(0));
+          data.push_back(WM(1));
+          data.push_back(WM(2));
+          data.push_back((this->*evalOMBVMomentColorRepresentation[ombvMoment->getColorRepresentation()])());
+          openMBVMoment[i]->append(data);
+        }
       }
     }
 
@@ -131,28 +128,12 @@ namespace MBSim {
     saved_constraint=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(e) {
-      DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"sideOfInteraction");
-      if(ee) {
-        string sideOfInteractionStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-        if(sideOfInteractionStr=="action") sideOfForceInteraction=action;
-        else if(sideOfInteractionStr=="reaction") sideOfForceInteraction=reaction;
-        else if(sideOfInteractionStr=="both") sideOfForceInteraction=both;
-        else sideOfForceInteraction=unknownSideOfInteraction;
-      }
-      ombvForce = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvForce = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvForce->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if(e) {
-      DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"sideOfInteraction");
-      if(ee) {
-        string sideOfInteractionStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-        if(sideOfInteractionStr=="action") sideOfMomentInteraction=action;
-        else if(sideOfInteractionStr=="reaction") sideOfMomentInteraction=reaction;
-        else if(sideOfInteractionStr=="both") sideOfMomentInteraction=both;
-        else sideOfMomentInteraction=unknownSideOfInteraction;
-      }
-      ombvMoment = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
+      ombvMoment = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
       ombvMoment->initializeUsingXML(e);
     }
   }

@@ -49,42 +49,42 @@ namespace MBSim {
     else if(stage==plotting) {
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
-        if(openMBVPosition) {
+        if(ombvPosition) {
           openMBVPosition=ombvPosition->createOpenMBV();
           openMBVPosition->setName("Position");
           getOpenMBVGrp()->addObject(openMBVPosition);
         }
-        if(openMBVVelocity) {
+        if(ombvVelocity) {
           openMBVVelocity=ombvVelocity->createOpenMBV();
           openMBVVelocity->setName("Velocity");
           getOpenMBVGrp()->addObject(openMBVVelocity);
         }
-        if(openMBVAcceleration) {
+        if(ombvAcceleration) {
           openMBVAcceleration=ombvAcceleration->createOpenMBV();
           openMBVAcceleration->setName("Acceleration");
           getOpenMBVGrp()->addObject(openMBVAcceleration);
         }
-        if(openMBVWeight) {
+        if(ombvWeight) {
           openMBVWeight=ombvWeight->createOpenMBV();
           openMBVWeight->setName("Weight");
           getOpenMBVGrp()->addObject(openMBVWeight);
         }
-        if(openMBVMomentum) {
+        if(ombvMomentum) {
           openMBVMomentum=ombvMomentum->createOpenMBV();
           openMBVMomentum->setName("Momentum");
           getOpenMBVGrp()->addObject(openMBVMomentum);
         }
-        if(openMBVAngularMomentum) {
+        if(ombvAngularMomentum) {
           openMBVAngularMomentum=ombvAngularMomentum->createOpenMBV();
           openMBVAngularMomentum->setName("AngularMomentum");
           getOpenMBVGrp()->addObject(openMBVAngularMomentum);
         }
-        if(openMBVDerivativeOfMomentum) {
+        if(ombvDerivativeOfMomentum) {
           openMBVDerivativeOfMomentum=ombvDerivativeOfMomentum->createOpenMBV();
           openMBVDerivativeOfMomentum->setName("DerivativeOfMomentum");
           getOpenMBVGrp()->addObject(openMBVDerivativeOfMomentum);
         }
-        if(openMBVDerivativeOfAngularMomentum) {
+        if(ombvDerivativeOfAngularMomentum) {
           openMBVDerivativeOfAngularMomentum=ombvDerivativeOfAngularMomentum->createOpenMBV();
           openMBVDerivativeOfAngularMomentum->setName("DerivativeOfAngularMomentum");
           getOpenMBVGrp()->addObject(openMBVDerivativeOfAngularMomentum);

@@ -128,6 +128,33 @@ namespace MBSim {
     object->setScaleLength(sL);
   }
 
+  OpenMBVInteractionArrow::OpenMBVInteractionArrow(unsigned int sI_, double sL, double sS, const OpenMBV::Arrow::Type &type, const OpenMBV::Arrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVArrow(sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp), sI(sI_) {
+  }
+
+  void OpenMBVInteractionArrow::initializeUsingXML(DOMElement *e) {
+    OpenMBVArrow::initializeUsingXML(e);
+    DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIM%"sideOfInteraction");
+    if(ee) {
+      string t=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
+      if(t=="action")        sI=action;
+      else if(t=="reaction") sI=reaction;
+      else if(t=="both")     sI=both;
+      else                   sI=3;
+    }
+  }
+
+  void OpenMBVInteractionArrow::initializeObject(const shared_ptr<OpenMBV::Arrow> &object) {
+    if(sI>=3) throw runtime_error("(OpenMBVInteractionArrow::init): side of interaction unknown");
+    OpenMBVArrow::initializeObject(object);
+  }
+
+  OpenMBVFrictionArrow::OpenMBVFrictionArrow(unsigned int sI, double sL, double sS, const OpenMBV::Arrow::Type &type, const OpenMBV::Arrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVInteractionArrow(sI,sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp) {
+    cRL.resize(3);
+    cRL[0]="none";
+    cRL[1]="absoluteValue";
+    cRL[2]="stickSlip";
+  }
+
   void OpenMBVFrame::initializeUsingXML(DOMElement *e) {
     OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIM%"size");

@@ -56,24 +56,16 @@ namespace MBSim {
           contactObserver[i][j].plotFeature = plotFeature;
           contactObserver[i][j].plotFeatureForChildren = plotFeatureForChildren;
           //Set OpenMBV-Properties to single contacts
-          if(ombvForce) {
+          if(ombvForce)
             contactObserver[i][j].setOMBVForce(ombvForce);
-            contactObserver[i][j].sideOfForceInteraction=SingleContactObserver::SideOfInteraction(sideOfForceInteraction);
-          }
-          if(ombvMoment) {
+          if(ombvMoment)
             contactObserver[i][j].setOMBVMoment(ombvMoment);
-            contactObserver[i][j].sideOfMomentInteraction=SingleContactObserver::SideOfInteraction(sideOfMomentInteraction);
-          }
           if(openMBVContactFrame)
             contactObserver[i][j].setOpenMBVContactPoints((i==0)?openMBVContactFrame:OpenMBV::ObjectFactory::create(openMBVContactFrame));
-          if(ombvContact) {
+          if(ombvContact)
             contactObserver[i][j].setOMBVNormalForce(ombvContact);
-            contactObserver[i][j].sideOfContactInteraction=SingleContactObserver::SideOfInteraction(sideOfContactInteraction);
-          }
-          if(ombvFriction) {
+          if(ombvFriction)
             contactObserver[i][j].setOMBVTangentialForce(ombvFriction);
-            contactObserver[i][j].sideOfFrictionInteraction=SingleContactObserver::SideOfInteraction(sideOfFrictionInteraction);
-          }
           contactObserver[i][j].init(stage, config);
         }
       }
@@ -110,28 +102,12 @@ namespace MBSim {
     saved_link=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(e) {
-      DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"sideOfInteraction");
-      if(ee) {
-        string sideOfInteractionStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-        if(sideOfInteractionStr=="action") sideOfForceInteraction=action;
-        else if(sideOfInteractionStr=="reaction") sideOfForceInteraction=reaction;
-        else if(sideOfInteractionStr=="both") sideOfForceInteraction=both;
-        else sideOfForceInteraction=unknownSideOfInteraction;;
-      }
-      ombvForce = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvForce = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvForce->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if(e) {
-      DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"sideOfInteraction");
-      if(ee) {
-        string sideOfInteractionStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-        if(sideOfInteractionStr=="action") sideOfMomentInteraction=action;
-        else if(sideOfInteractionStr=="reaction") sideOfMomentInteraction=reaction;
-        else if(sideOfInteractionStr=="both") sideOfMomentInteraction=both;
-        else sideOfMomentInteraction=unknownSideOfInteraction;
-      }
-      ombvMoment = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
+      ombvMoment = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
       ombvMoment->initializeUsingXML(e);
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
@@ -142,29 +118,13 @@ namespace MBSim {
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");
     if (e) {
-      DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"sideOfInteraction");
-      if(ee) {
-        string sideOfInteractionStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-        if(sideOfInteractionStr=="action") sideOfForceInteraction=action;
-        else if(sideOfInteractionStr=="reaction") sideOfForceInteraction=reaction;
-        else if(sideOfInteractionStr=="both") sideOfForceInteraction=both;
-        else sideOfForceInteraction=unknownSideOfInteraction;
-      }
-      ombvContact = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvContact = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvContact->initializeUsingXML(e);
     }
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVTangentialForce");
     if (e) {
-      DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"sideOfInteraction");
-      if(ee) {
-        string sideOfInteractionStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-        if(sideOfInteractionStr=="action") sideOfForceInteraction=action;
-        else if(sideOfInteractionStr=="reaction") sideOfForceInteraction=reaction;
-        else if(sideOfInteractionStr=="both") sideOfForceInteraction=both;
-        else sideOfForceInteraction=unknownSideOfInteraction;
-      }
-      ombvFriction = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvFriction = shared_ptr<OpenMBVFrictionArrow>(new OpenMBVFrictionArrow(0,1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvFriction->initializeUsingXML(e);
     }
   }

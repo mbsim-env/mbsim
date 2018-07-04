@@ -2608,7 +2608,7 @@ namespace MBSimGUI {
     normalForceArrow = new ExtWidget("Enable openMBV normal force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVNormalForce");
     addToTab("Visualisation",normalForceArrow);
 
-    frictionArrow = new ExtWidget("Enable openMBV tangential force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVTangentialForce");
+    frictionArrow = new ExtWidget("Enable openMBV tangential force",new FrictionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVTangentialForce");
     addToTab("Visualisation",frictionArrow);
   }
 

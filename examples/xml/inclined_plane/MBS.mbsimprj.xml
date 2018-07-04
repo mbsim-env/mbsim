@@ -221,9 +221,11 @@
         <ContactObserver name="ContactObserver1">
           <contact ref="../Link[Contact]"/>
           <enableOpenMBVNormalForce>
+            <colorRepresentation>"absoluteValue"</colorRepresentation>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVNormalForce>
           <enableOpenMBVTangentialForce>
+            <colorRepresentation>"stickSlip"</colorRepresentation>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVTangentialForce>
         </ContactObserver>

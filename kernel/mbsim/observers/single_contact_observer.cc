@@ -36,20 +36,14 @@ namespace MBSim {
 
   SingleContactObserver::SingleContactObserver(const std::string &name) : MechanicalLinkObserver(name), openMBVContactFrame(2) {
     evalOMBVNormalForceColorRepresentation[0] = &SingleContactObserver::evalNone;
-    evalOMBVNormalForceColorRepresentation[1] = &SingleContactObserver::evalAbsoluteForce;
+    evalOMBVNormalForceColorRepresentation[1] = &SingleContactObserver::evalAbsoluteNormalForce;
     evalOMBVTangentialForceColorRepresentation[0] = &SingleContactObserver::evalNone;
-    evalOMBVTangentialForceColorRepresentation[1] = &SingleContactObserver::evalAbsoluteForce;
+    evalOMBVTangentialForceColorRepresentation[1] = &SingleContactObserver::evalAbsoluteTangentialForce;
+    evalOMBVTangentialForceColorRepresentation[2] = &SingleContactObserver::evalStickSlip;
   }
 
   void SingleContactObserver::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==preInit) {
-      if(sideOfForceInteraction==unknownSideOfInteraction)
-        throwError("(SingleContactObserver::init): side of normal force interaction unknown");
-      if(sideOfMomentInteraction==unknownSideOfInteraction)
-        throwError("(SingleContactObserver::init): side of tangential force interaction unknown");
-      MechanicalLinkObserver::init(stage, config);
-    }
-    else if(stage==plotting) {
+    if(stage==plotting) {
       MechanicalLinkObserver::init(stage, config);
       if (plotFeature[openMBV]) {
         if(openMBVContactFrame[0]) {
@@ -60,9 +54,7 @@ namespace MBSim {
         }
         // arrows
         if(ombvContact) {
-          if(ombvContact->getColorRepresentation()>1)
-            throwError("(SingleContactObserver::init): ombv color representation unknown");
-          contactArrow.resize(sideOfContactInteraction==both?2:1);
+          contactArrow.resize(ombvContact->getSideOfInteraction()==2?2:1);
           for(size_t i=0; i<contactArrow.size(); i++) {
             contactArrow[i]=ombvContact->createOpenMBV();
             contactArrow[i]->setName(string("NormalForce_")+(contactArrow.size()>1?to_string(i):string("B")));
@@ -70,9 +62,7 @@ namespace MBSim {
           }
         }
         if(ombvFriction && static_cast<SingleContact*>(link)->getFrictionDirections() > 0) { // friction force
-          if(ombvFriction->getColorRepresentation()>1)
-            throwError("(SingleContactObserver::init): ombv color representation unknown");
-          frictionArrow.resize(sideOfFrictionInteraction==both?2:1);
+          frictionArrow.resize(ombvFriction->getSideOfInteraction()==2?2:1);
           for(size_t i=0; i<frictionArrow.size(); i++) {
             frictionArrow[i]=ombvFriction->createOpenMBV();
             frictionArrow[i]->setName(string("FrictionForce_")+(frictionArrow.size()>1?to_string(i):string("B")));
@@ -104,37 +94,41 @@ namespace MBSim {
         }
       }
       // arrows
-      int off = sideOfContactInteraction==action?1:0;
-      for(size_t i=0; i<contactArrow.size(); i++) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(off+i)->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 F = ((off+i)==1?1.:-1.)*static_cast<SingleContact*>(link)->evalGlobalForceDirection().col(0)*static_cast<SingleContact*>(link)->evalGeneralizedNormalForce();
-        data.push_back(F(0));
-        data.push_back(F(1));
-        data.push_back(F(2));
-        data.push_back((this->*evalOMBVNormalForceColorRepresentation[ombvContact->getColorRepresentation()])());
-        contactArrow[i]->append(data);
+      if(ombvContact) {
+        int off = ombvContact->getSideOfInteraction()==0?1:0;
+        for(size_t i=0; i<contactArrow.size(); i++) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(off+i)->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 F = ((off+i)==1?1.:-1.)*static_cast<SingleContact*>(link)->evalGlobalForceDirection().col(0)*static_cast<SingleContact*>(link)->evalGeneralizedNormalForce();
+          data.push_back(F(0));
+          data.push_back(F(1));
+          data.push_back(F(2));
+          data.push_back((this->*evalOMBVNormalForceColorRepresentation[ombvContact->getColorRepresentation()])());
+          contactArrow[i]->append(data);
+        }
       }
-      off = sideOfFrictionInteraction==action?1:0;
-      for(size_t i=0; i<frictionArrow.size(); i++) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(off+i)->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 F = ((off+i)==1?1.:-1.)*static_cast<SingleContact*>(link)->evalGlobalForceDirection()(RangeV(0,2),RangeV(1, static_cast<SingleContact*>(link)->getFrictionDirections()))*static_cast<SingleContact*>(link)->evalGeneralizedTangentialForce();
-        data.push_back(F(0));
-        data.push_back(F(1));
-        data.push_back(F(2));
-        // TODO fdf->isSticking(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())), gdTol)
-//        data.push_back(static_cast<SingleContact*>(link)->isSticking() ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
-        data.push_back((this->*evalOMBVTangentialForceColorRepresentation[ombvFriction->getColorRepresentation()])());
-        frictionArrow[i]->append(data);
+      if(ombvFriction) {
+        int off = ombvFriction->getSideOfInteraction()==0?1:0;
+        for(size_t i=0; i<frictionArrow.size(); i++) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(off+i)->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 F = ((off+i)==1?1.:-1.)*static_cast<SingleContact*>(link)->evalGlobalForceDirection()(RangeV(0,2),RangeV(1, static_cast<SingleContact*>(link)->getFrictionDirections()))*static_cast<SingleContact*>(link)->evalGeneralizedTangentialForce();
+          data.push_back(F(0));
+          data.push_back(F(1));
+          data.push_back(F(2));
+          // TODO fdf->isSticking(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())), gdTol)
+          //        data.push_back(static_cast<SingleContact*>(link)->isSticking() ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
+          data.push_back((this->*evalOMBVTangentialForceColorRepresentation[ombvFriction->getColorRepresentation()])());
+          frictionArrow[i]->append(data);
+        }
       }
     }
     MechanicalLinkObserver::plot();
@@ -148,4 +142,7 @@ namespace MBSim {
     return nrm2(static_cast<SingleContact*>(link)->evalGlobalForceDirection()(RangeV(0,2),RangeV(1, static_cast<SingleContact*>(link)->getFrictionDirections()))*static_cast<SingleContact*>(link)->evalGeneralizedTangentialForce());
   }
 
+  double SingleContactObserver::evalStickSlip() {
+    return static_cast<SingleContact*>(link)->isSticking() ? 1 : 0.5; // draw in green if slipping and draw in red if sticking
+  }
 }

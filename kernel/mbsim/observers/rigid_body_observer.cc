@@ -48,13 +48,6 @@ namespace MBSim {
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       Observer::init(stage, config);
     }
-    else if(stage==preInit) {
-      if(sideOfForceInteraction==unknown)
-        throwError("(RigidBodyObserver::init): side of force interaction unknown");
-      if(sideOfMomentInteraction==unknown)
-        throwError("(RigidBodyObserver::init): side of moment interaction unknown");
-      Observer::init(stage, config);
-    }
     else if(stage==plotting) {
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
@@ -64,7 +57,7 @@ namespace MBSim {
           getOpenMBVGrp()->addObject(FWeight);
         }
         if(ombvForce) {
-          FArrow.resize(sideOfForceInteraction==both?2:1);
+          FArrow.resize(ombvForce->getSideOfInteraction()==2?2:1);
           for(size_t i=0; i<FArrow.size(); i++) {
             FArrow[i]=ombvForce->createOpenMBV();
             FArrow[i]->setName(string("JointForce")+(FArrow.size()>1?to_string(i):string("")));
@@ -72,34 +65,34 @@ namespace MBSim {
           }
         }
         if(ombvMoment) {
-          MArrow.resize(sideOfMomentInteraction==both?2:1);
+          MArrow.resize(ombvMoment->getSideOfInteraction()==2?2:1);
           for(size_t i=0; i<MArrow.size(); i++) {
             MArrow[i]=ombvMoment->createOpenMBV();
             MArrow[i]->setName(string("JointMoment")+(MArrow.size()>1?to_string(i):string("")));
             getOpenMBVGrp()->addObject(MArrow[i]);
           }
         }
-        if(openMBVAxisOfRotation) {
+        if(ombvAxisOfRotation) {
           openMBVAxisOfRotation=ombvAxisOfRotation->createOpenMBV();
           openMBVAxisOfRotation->setName("AxisOfRotation");
           getOpenMBVGrp()->addObject(openMBVAxisOfRotation);
         }
-        if(openMBVMomentum) {
+        if(ombvMomentum) {
           openMBVMomentum=ombvMomentum->createOpenMBV();
           openMBVMomentum->setName("Momentum");
           getOpenMBVGrp()->addObject(openMBVMomentum);
         }
-        if(openMBVAngularMomentum) {
+        if(ombvAngularMomentum) {
           openMBVAngularMomentum=ombvAngularMomentum->createOpenMBV();
           openMBVAngularMomentum->setName("AngularMomentum");
           getOpenMBVGrp()->addObject(openMBVAngularMomentum);
         }
-        if(openMBVDerivativeOfMomentum) {
+        if(ombvDerivativeOfMomentum) {
           openMBVDerivativeOfMomentum=ombvDerivativeOfMomentum->createOpenMBV();
           openMBVDerivativeOfMomentum->setName("DerivativeOfMomentum");
           getOpenMBVGrp()->addObject(openMBVDerivativeOfMomentum);
         }
-        if(openMBVDerivativeOfAngularMomentum) {
+        if(ombvDerivativeOfAngularMomentum) {
           openMBVDerivativeOfAngularMomentum=ombvDerivativeOfAngularMomentum->createOpenMBV();
           openMBVDerivativeOfAngularMomentum->setName("DerivativeOfAngularMomentum");
           getOpenMBVGrp()->addObject(openMBVDerivativeOfAngularMomentum);
@@ -136,35 +129,39 @@ namespace MBSim {
         data.push_back(ombvWeight->getColorRepresentation()?nrm2(G):1.0);
         FWeight->append(data);
       }
-      int off = sideOfForceInteraction==action?1:0;
-      for(size_t i=0; i<FArrow.size(); i++) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint=body->getJoint()->getPointOfApplication(off+i)->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 F = body->getJoint()->evalForce(off+i);
-        data.push_back(F(0));
-        data.push_back(F(1));
-        data.push_back(F(2));
-        data.push_back(ombvForce->getColorRepresentation()?nrm2(F):1.0);
-        FArrow[i]->append(data);
+      if(ombvForce) {
+        int off = ombvForce->getSideOfInteraction()==0?1:0;
+        for(size_t i=0; i<FArrow.size(); i++) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint=body->getJoint()->getPointOfApplication(off+i)->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 F = body->getJoint()->evalForce(off+i);
+          data.push_back(F(0));
+          data.push_back(F(1));
+          data.push_back(F(2));
+          data.push_back(ombvForce->getColorRepresentation()?nrm2(F):1.0);
+          FArrow[i]->append(data);
+        }
       }
-      off = sideOfMomentInteraction==action?1:0;
-      for(size_t i=0; i<MArrow.size(); i++) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint=body->getJoint()->getPointOfApplication(off+i)->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 M = body->getJoint()->evalMoment(off+i);
-        data.push_back(M(0));
-        data.push_back(M(1));
-        data.push_back(M(2));
-        data.push_back(ombvMoment->getColorRepresentation()?nrm2(M):1.0);
-        MArrow[i]->append(data);
+      if(ombvMoment) {
+        int off = ombvMoment->getSideOfInteraction()==0?1:0;
+        for(size_t i=0; i<MArrow.size(); i++) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint=body->getJoint()->getPointOfApplication(off+i)->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 M = body->getJoint()->evalMoment(off+i);
+          data.push_back(M(0));
+          data.push_back(M(1));
+          data.push_back(M(2));
+          data.push_back(ombvMoment->getColorRepresentation()?nrm2(M):1.0);
+          MArrow[i]->append(data);
+        }
       }
       if(openMBVAxisOfRotation) {
         vector<double> data;
@@ -280,29 +277,13 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointForce");
     if(e) {
-      DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"sideOfInteraction");
-      if(ee) {
-        string sideOfInteractionStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-        if(sideOfInteractionStr=="action") sideOfForceInteraction=action;
-        else if(sideOfInteractionStr=="reaction") sideOfForceInteraction=reaction;
-        else if(sideOfInteractionStr=="both") sideOfForceInteraction=both;
-        else sideOfForceInteraction=unknown;
-      }
-      ombvForce = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvForce = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
       ombvForce->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointMoment");
     if(e) {
-      DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"sideOfInteraction");
-      if(ee) {
-        string sideOfInteractionStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-        if(sideOfInteractionStr=="action") sideOfMomentInteraction=action;
-        else if(sideOfInteractionStr=="reaction") sideOfMomentInteraction=reaction;
-        else if(sideOfInteractionStr=="both") sideOfMomentInteraction=both;
-        else sideOfMomentInteraction=unknown;
-      }
-      ombvMoment = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
+      ombvMoment = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
       ombvMoment->initializeUsingXML(e);
     }
 
