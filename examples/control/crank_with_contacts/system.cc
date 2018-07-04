@@ -424,7 +424,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVBlock->setLength(Laenge_Block,Breite_Block,Dicke_Block);
   Block->setOpenMBVRigidBody(openMBVBlock);
 
-  spring1->enableOpenMBV(_colorRepresentation=SpringDamper::absoluteForce,_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
+  spring1->enableOpenMBV(_colorRepresentation=OpenMBVCoilSpring::absoluteForce,_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 
   setPlotFeatureRecursive(generalizedPosition, true);
   setPlotFeatureRecursive(generalizedVelocity, true);

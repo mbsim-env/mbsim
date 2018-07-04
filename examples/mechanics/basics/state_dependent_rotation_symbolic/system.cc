@@ -82,8 +82,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addObserver(observer);
   observer->setRigidBody(body);
   observer->enableOpenMBVWeight();
-  observer->enableOpenMBVJointForce();
-  observer->enableOpenMBVJointMoment();
+  observer->enableOpenMBVJointForce(_colorRepresentation=OpenMBVArrow::absoluteValue);
+  observer->enableOpenMBVJointMoment(_colorRepresentation=OpenMBVArrow::absoluteValue);
 
   setPlotFeatureRecursive(generalizedPosition, true);
   setPlotFeatureRecursive(generalizedVelocity, true);

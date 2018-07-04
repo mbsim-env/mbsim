@@ -74,8 +74,8 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   ContactObserver *observer = new ContactObserver("Observer");
   addObserver(observer);
   observer->setContact(cr);
-  observer->enableOpenMBVNormalForce();
-  observer->enableOpenMBVTangentialForce();
+  observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue);
+  observer->enableOpenMBVTangentialForce(_colorRepresentation=OpenMBVFrictionArrow::stickSlip);
 
   setPlotFeatureRecursive(generalizedPosition, true);
   setPlotFeatureRecursive(generalizedVelocity, true);

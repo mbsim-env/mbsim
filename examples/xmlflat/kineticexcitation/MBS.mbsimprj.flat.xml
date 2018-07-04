@@ -81,6 +81,7 @@
           </ConstantFunction>
         </momentFunction>
         <enableOpenMBV>
+          <colorRepresentation>'absoluteValue'</colorRepresentation>
           <scaleLength>0.05</scaleLength>
         </enableOpenMBV>
       </KineticExcitation>

@@ -122,9 +122,11 @@
           <size>0.0025</size>
         </enableOpenMBVContactPoints>
         <enableOpenMBVNormalForce>
+          <colorRepresentation>'absoluteValue'</colorRepresentation>
           <scaleLength>0.4</scaleLength>
         </enableOpenMBVNormalForce>
         <enableOpenMBVTangentialForce>
+          <colorRepresentation>'stickSlip'</colorRepresentation>
           <scaleLength>0.4</scaleLength>
         </enableOpenMBVTangentialForce>
       </ContactObserver>
@@ -134,9 +136,11 @@
           <size>0.0025</size>
         </enableOpenMBVContactPoints>
         <enableOpenMBVNormalForce>
+          <colorRepresentation>'absoluteValue'</colorRepresentation>
           <scaleLength>0.4</scaleLength>
         </enableOpenMBVNormalForce>
         <enableOpenMBVTangentialForce>
+          <colorRepresentation>'stickSlip'</colorRepresentation>
           <scaleLength>0.4</scaleLength>
         </enableOpenMBVTangentialForce>
       </ContactObserver>

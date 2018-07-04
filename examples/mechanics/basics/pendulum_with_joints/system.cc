@@ -121,12 +121,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   MechanicalLinkObserver *observer = new MechanicalLinkObserver("Observer1");
   addObserver(observer);
   observer->setMechanicalLink(joint1);
-  observer->enableOpenMBVForce(_scaleLength=0.02);
+  observer->enableOpenMBVForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=0.02);
 
   observer = new MechanicalLinkObserver("Observer2");
   addObserver(observer);
   observer->setMechanicalLink(joint2);
-  observer->enableOpenMBVForce(_scaleLength=0.02);
+  observer->enableOpenMBVForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=0.02);
 
   body1->setPlotFeature(generalizedPosition, true);
   body1->setPlotFeature(generalizedVelocity, true);

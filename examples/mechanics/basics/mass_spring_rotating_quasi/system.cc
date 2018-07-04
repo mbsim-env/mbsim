@@ -142,7 +142,7 @@ System::System(const string &projectName) :
   mass1->addContour(sphere1);
 
   // visualisation
-  spring1->enableOpenMBV(_colorRepresentation=SpringDamper::absoluteForce,_springRadius = 0.002, _crossSectionRadius = 0.01, _numberOfCoils = 5);
+  spring1->enableOpenMBV(_colorRepresentation=OpenMBVCoilSpring::absoluteForce,_springRadius = 0.002, _crossSectionRadius = 0.01, _numberOfCoils = 5);
 
   setPlotFeatureRecursive(generalizedPosition, true);
   setPlotFeatureRecursive(generalizedVelocity, true);

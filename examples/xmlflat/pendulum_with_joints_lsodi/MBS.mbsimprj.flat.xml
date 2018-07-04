@@ -117,12 +117,14 @@
       <MechanicalLinkObserver name="MechanicalLinkObserver1">
         <mechanicalLink ref="../Link[Gelenk1]"/>
         <enableOpenMBVForce>
+          <colorRepresentation>'absoluteValue'</colorRepresentation>
           <scaleLength>0.02</scaleLength>
         </enableOpenMBVForce>
       </MechanicalLinkObserver>
       <MechanicalLinkObserver name="MechanicalLinkObserver2">
         <mechanicalLink ref="../Link[Gelenk2]"/>
         <enableOpenMBVForce>
+          <colorRepresentation>'absoluteValue'</colorRepresentation>
           <scaleLength>0.02</scaleLength>
         </enableOpenMBVForce>
       </MechanicalLinkObserver>

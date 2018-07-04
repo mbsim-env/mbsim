@@ -158,11 +158,11 @@ System::System(unsigned int type, double dDisk) : Group("System"+toString(int(ty
   k3Visu->setDiffuseColor(120./360.,1,1);
   k3->setOpenMBVRigidBody(k3Visu);
 
-  sp01->enableOpenMBV(_colorRepresentation=SpringDamper::absoluteForce,_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
+  sp01->enableOpenMBV(_colorRepresentation=OpenMBVCoilSpring::absoluteForce,_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
 
-  sp12->enableOpenMBV(_colorRepresentation=SpringDamper::absoluteForce,_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
+  sp12->enableOpenMBV(_colorRepresentation=OpenMBVCoilSpring::absoluteForce,_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
 
-  sp23->enableOpenMBV(_colorRepresentation=SpringDamper::absoluteForce,_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
+  sp23->enableOpenMBV(_colorRepresentation=OpenMBVCoilSpring::absoluteForce,_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
 
   setPlotFeatureRecursive(generalizedPosition, true);
   setPlotFeatureRecursive(generalizedVelocity, true);
