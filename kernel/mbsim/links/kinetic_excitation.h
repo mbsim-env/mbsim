@@ -28,8 +28,6 @@
 
 namespace MBSim {
 
-  BOOST_PARAMETER_NAME(sideOfInteraction)
-
   /**
    * \brief kinetic excitations given by time dependent functions
    * \author Markus Friedrich

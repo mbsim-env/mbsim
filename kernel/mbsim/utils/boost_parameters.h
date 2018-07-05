@@ -55,6 +55,7 @@ namespace MBSim {
   BOOST_PARAMETER_NAME(maximalColorValue)
   BOOST_PARAMETER_NAME(filled)
   BOOST_PARAMETER_NAME(colorRepresentation)
+  BOOST_PARAMETER_NAME(sideOfInteraction)
 
 }
 

@@ -28,8 +28,6 @@
 
 namespace MBSim {
 
-  BOOST_PARAMETER_NAME(sideOfInteraction)
-
   class MechanicalLink;
 
   class MechanicalLinkObserver : public Observer {

@@ -27,8 +27,6 @@
 
 namespace MBSim {
 
-  BOOST_PARAMETER_NAME(sideOfInteraction)
-
   class MechanicalConstraint;
 
   class MechanicalConstraintObserver : public Observer {
