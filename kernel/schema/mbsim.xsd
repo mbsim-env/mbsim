@@ -1647,7 +1647,7 @@
               </ul>
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 

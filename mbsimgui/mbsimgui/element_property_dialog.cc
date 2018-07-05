@@ -2038,7 +2038,7 @@ namespace MBSimGUI {
     momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentFunction");
     addToTab("Kinetics",momentFunction);
 
-    arrow = new ExtWidget("Enable openMBV",new ArrowMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
+    arrow = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation",arrow);
 
     connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));

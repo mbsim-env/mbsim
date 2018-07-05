@@ -312,7 +312,7 @@ namespace MBSimGUI {
     vector<QString> cRL;
     cRL.emplace_back("\"none\"");
     cRL.emplace_back("\"absoluteValue\"");
-    cRL.emplace_back("\"stickSlip\"");
+    cRL.emplace_back("\"stickslip\"");
     return cRL;
   }
 
