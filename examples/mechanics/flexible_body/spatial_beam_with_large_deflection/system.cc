@@ -125,7 +125,7 @@ System::System(const string &projectName) :
   ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
   addObserver(observer);
   observer->setContact(contact);
-  observer->enableOpenMBVNormalForce();
+  observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue);
   observer->enableOpenMBVTangentialForce();
   observer->enableOpenMBVContactPoints(0.1);
 

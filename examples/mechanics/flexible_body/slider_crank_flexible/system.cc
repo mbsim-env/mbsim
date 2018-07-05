@@ -254,7 +254,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
     addObserver(observer);
     observer->setContact(contactCrankRod);
     observer->enableOpenMBVContactPoints(1e-5);
-    observer->enableOpenMBVNormalForce();
+    observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue);
   }
 
   Joint *joint_rod_piston = new Joint("Joint_Rod_Piston");

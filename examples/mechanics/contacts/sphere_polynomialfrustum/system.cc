@@ -107,8 +107,8 @@ System::System(const string &projectName) :
     addObserver(observer);
     observer->setContact(contact);
     observer->enableOpenMBVContactPoints();
-    observer->enableOpenMBVNormalForce();
-    observer->enableOpenMBVTangentialForce();
+    observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue);
+    observer->enableOpenMBVTangentialForce(_colorRepresentation=OpenMBVFrictionArrow::stickslip);
   }
 
   setPlotFeatureRecursive(generalizedPosition, true);

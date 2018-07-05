@@ -158,8 +158,8 @@ System::System(const string &projectName) :
   ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
   addObserver(observer);
   observer->setContact(contact);
-  observer->enableOpenMBVNormalForce(0.00001);
-  observer->enableOpenMBVTangentialForce(0.00001);
+  observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=0.00001);
+  observer->enableOpenMBVTangentialForce(_scaleLength=0.00001);
   observer->enableOpenMBVContactPoints(0.01);
 
   this->addLink(contact);

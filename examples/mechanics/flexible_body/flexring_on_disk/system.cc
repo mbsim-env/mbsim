@@ -168,7 +168,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     ContactObserver *observer = new ContactObserver(name.str()+"_Observer");
     addObserver(observer);
     observer->setContact(contact);
-    observer->enableOpenMBVNormalForce(_scaleLength=0.01);
+    observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=0.01);
     observer->enableOpenMBVTangentialForce(_scaleLength=0.01);
     observer->enableOpenMBVContactPoints(0.001,true);
   }

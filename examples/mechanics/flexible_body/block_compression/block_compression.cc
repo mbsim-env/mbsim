@@ -295,7 +295,7 @@ void BlockCompression::addContacts() {
   ContactObserver *observer = new ContactObserver("BottomContactsObserver_"+to_string(i));
   addObserver(observer);
   observer->setContact(BlBlBottom);
-  observer->enableOpenMBVNormalForce(1e-3);
+  observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=1e-3);
 
   Contact * BlBlTop = new Contact("TopContacts_"+to_string(i));
   BlBlTop->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlBlTop, 0.)));
@@ -303,7 +303,7 @@ void BlockCompression::addContacts() {
   observer = new ContactObserver("TopContactsObserver_"+to_string(i));
   addObserver(observer);
   observer->setContact(BlBlTop);
-  observer->enableOpenMBVNormalForce(1e-3);
+  observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=1e-3);
 
     /*(Inter-)Contact between Blocks*/
     BlBlBottom->connect(blocks[i]->bottom, blocks[i - 1]->back);
@@ -316,7 +316,7 @@ void BlockCompression::addContacts() {
   ContactObserver *observer = new ContactObserver("BlockRodContactsObserverBottom_"+to_string(i));
   addObserver(observer);
   observer->setContact(BlRodBottom);
-  observer->enableOpenMBVNormalForce(1e-3);
+  observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=1e-3);
 
   Contact * BlRodTop = new Contact("BlockRodContactsTop_"+to_string(i));
   BlRodTop->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlRod, 0.)));
@@ -324,7 +324,7 @@ void BlockCompression::addContacts() {
   observer = new ContactObserver("BlockRodContactsObserverTop_"+to_string(i));
   addObserver(observer);
   observer->setContact(BlRodTop);
-  observer->enableOpenMBVNormalForce(1e-3);
+  observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=1e-3);
 
     /*Contact between block and rod*/
     BlRodBottom->connect(blocks[i]->saddle, rod->getContour("Bottom"));

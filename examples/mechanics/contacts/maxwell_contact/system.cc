@@ -258,8 +258,8 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     addObserver(observer);
     observer->setMaxwellContact(maxwellContact);
     observer->enableOpenMBVContactPoints(1.,false);
-    observer->enableOpenMBVNormalForce(_scaleLength=0.00001);
-    observer->enableOpenMBVTangentialForce(_scaleLength=0.001);
+    observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=0.00001);
+    observer->enableOpenMBVTangentialForce(_colorRepresentation=OpenMBVFrictionArrow::stickslip,_scaleLength=0.001);
   }
 
   for(size_t i=0; i<contact.size(); i++) {
@@ -268,8 +268,8 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     addObserver(observer);
     observer->setContact(contact[i]);
     observer->enableOpenMBVContactPoints(1.,false);
-    observer->enableOpenMBVNormalForce(_scaleLength=0.00001);
-    observer->enableOpenMBVTangentialForce(_scaleLength=0.001);
+    observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=0.00001);
+    observer->enableOpenMBVTangentialForce(_colorRepresentation=OpenMBVFrictionArrow::stickslip,_scaleLength=0.001);
   }
 
   //fancy stuff

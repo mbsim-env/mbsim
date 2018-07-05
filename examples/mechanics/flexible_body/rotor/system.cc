@@ -200,14 +200,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   bantrieb->setMomentFunction(new StepFunction<VecV(double)>(0.05,0.,AntriebsmomentLagerB));
   bantrieb->setMomentDirection("[1;0;0]");
   bantrieb->connect(welle->getFrame("Ende"));
-  bantrieb->enableOpenMBV(0.001);
+  bantrieb->enableOpenMBV(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=0.001);
   this->addLink(bantrieb);
 
   KineticExcitation *bSchlag = new KineticExcitation("Lager_B_Schlag");
   bSchlag->setMomentFunction(new ConstantFunction<VecV(double)>(SchlagLagerB));
   bSchlag->setMomentDirection("[0;0;-1]");
   bSchlag->connect(welle->getFrame("Ende"));
-  bSchlag->enableOpenMBV(0.001);
+  bSchlag->enableOpenMBV(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=0.001);
   this->addLink(bSchlag);
 
   /* Verbindung Schwungrad - Welle */

@@ -126,8 +126,8 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   addObserver(observer);
   observer->setContact(contact);
   observer->enableOpenMBVContactPoints(1e-2);
-  observer->enableOpenMBVNormalForce(1e-2);
-  observer->enableOpenMBVTangentialForce(1e-2);
+  observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=1e-2);
+  observer->enableOpenMBVTangentialForce(_colorRepresentation=OpenMBVFrictionArrow::stickslip,_scaleLength=1e-2);
 
 //  rod->addFrame(new FixedContourFrame("RJ"));
   rod->addFrame(new Frame1s("RJ"));
