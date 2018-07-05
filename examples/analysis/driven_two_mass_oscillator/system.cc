@@ -156,7 +156,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ke->connect(box2->getFrameC());
   ke->setForceDirection("[0;1;0]");
   ke->setForceFunction(new SinusoidalFunction<VecV(double)>(10,f));
-  ke->enableOpenMBV();
+  ke->enableOpenMBV(_colorRepresentation=OpenMBVArrow::absoluteValue);
 
   // ----------------------- Visualization in OpenMBV --------------------
   std::shared_ptr<OpenMBV::Cube> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
@@ -171,8 +171,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cuboid->setTransparency(0.7);
   box2->setOpenMBVRigidBody(cuboid);
 
-  spring1->enableOpenMBV(_colorRepresentation=SpringDamper::absoluteForce,_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
+  spring1->enableOpenMBV(_colorRepresentation=OpenMBVCoilSpring::absoluteForce,_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 
-  spring2->enableOpenMBV(_colorRepresentation=SpringDamper::absoluteForce,_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
+  spring2->enableOpenMBV(_colorRepresentation=OpenMBVCoilSpring::absoluteForce,_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 
 }
