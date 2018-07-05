@@ -107,12 +107,14 @@
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVWeight>
             <enableOpenMBVJointForce>
+              <colorRepresentation>'absoluteValue'</colorRepresentation>
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVJointForce>
         </RigidBodyObserver>
         <MechanicalConstraintObserver name="MechanicalConstraintObserver1">
             <mechanicalConstraint ref="../Constraint[KinematicConstraint2]" />
             <enableOpenMBVForce>
+              <colorRepresentation>'absoluteValue'</colorRepresentation>
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVForce>
         </MechanicalConstraintObserver>

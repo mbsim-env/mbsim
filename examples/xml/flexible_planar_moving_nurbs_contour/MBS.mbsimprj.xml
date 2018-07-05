@@ -391,6 +391,7 @@
             </VectorValuedFunction>
           </forceFunction>
           <enableOpenMBV>
+            <colorRepresentation>'absoluteValue'</colorRepresentation>
             <scaleLength>1e-5</scaleLength>
           </enableOpenMBV>
         </KineticExcitation>
@@ -425,6 +426,7 @@
             </VectorValuedFunction>
           </forceFunction>
           <enableOpenMBV>
+            <colorRepresentation>'absoluteValue'</colorRepresentation>
             <scaleLength>1e-5</scaleLength>
           </enableOpenMBV>
         </KineticExcitation>

@@ -126,7 +126,7 @@
           <scaleLength>0.4</scaleLength>
         </enableOpenMBVNormalForce>
         <enableOpenMBVTangentialForce>
-          <colorRepresentation>'stickSlip'</colorRepresentation>
+          <colorRepresentation>'stickslip'</colorRepresentation>
           <scaleLength>0.4</scaleLength>
         </enableOpenMBVTangentialForce>
       </ContactObserver>
@@ -140,7 +140,7 @@
           <scaleLength>0.4</scaleLength>
         </enableOpenMBVNormalForce>
         <enableOpenMBVTangentialForce>
-          <colorRepresentation>'stickSlip'</colorRepresentation>
+          <colorRepresentation>'stickslip'</colorRepresentation>
           <scaleLength>0.4</scaleLength>
         </enableOpenMBVTangentialForce>
       </ContactObserver>

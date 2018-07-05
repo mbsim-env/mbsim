@@ -127,11 +127,11 @@
       </forceFunction>
       <unloadedLength>l02</unloadedLength>
       <enableOpenMBV>
-          <numberOfCoils>5</numberOfCoils>
-          <springRadius>0.1</springRadius>
-          <crossSectionRadius>0.01</crossSectionRadius>
-          <type>'polyline'</type>
-          <colorRepresentation>"absoluteForce"</colorRepresentation>
+        <colorRepresentation>"absoluteForce"</colorRepresentation>
+        <numberOfCoils>5</numberOfCoils>
+        <springRadius>0.1</springRadius>
+        <crossSectionRadius>0.01</crossSectionRadius>
+        <type>'polyline'</type>
       </enableOpenMBV>
     </SpringDamper>
   </links>
@@ -140,6 +140,7 @@
     <MechanicalLinkObserver name="Observer">
       <mechanicalLink ref="../Link[Feder1]"/>
       <enableOpenMBVForce>
+        <colorRepresentation>"absoluteValue"</colorRepresentation>
         <scaleLength>0.005</scaleLength>
       </enableOpenMBVForce>
     </MechanicalLinkObserver>

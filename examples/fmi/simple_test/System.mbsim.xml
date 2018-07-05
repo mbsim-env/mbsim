@@ -64,6 +64,7 @@
       <contact ref="../Link[Contact]"/>
       <enableOpenMBVContactPoints/>
       <enableOpenMBVNormalForce>
+        <colorRepresentation>"absoluteValue"</colorRepresentation>
         <scaleLength>0.3</scaleLength>
         <scaleSize>0.15</scaleSize>
       </enableOpenMBVNormalForce>

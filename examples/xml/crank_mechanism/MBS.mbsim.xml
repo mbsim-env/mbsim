@@ -229,6 +229,7 @@
         <size>fSize/4.</size>
       </enableOpenMBVContactPoints> <!-- optional -->
       <enableOpenMBVNormalForce> <!-- optional -->
+        <colorRepresentation>'absoluteValue'</colorRepresentation>
         <scaleLength>.01</scaleLength>
       </enableOpenMBVNormalForce>
       <enableOpenMBVTangentialForce> <!-- optional -->

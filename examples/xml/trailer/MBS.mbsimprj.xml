@@ -386,9 +386,9 @@
           </forceFunction>
             <unloadedLength>l0</unloadedLength>
             <enableOpenMBV>
+              <colorRepresentation>"absoluteForce"</colorRepresentation>
               <numberOfCoils unit="-">5</numberOfCoils>
               <springRadius unit="dm">1</springRadius>
-              <colorRepresentation>"absoluteForce"</colorRepresentation>
           </enableOpenMBV>
         </SpringDamper>
           <SpringDamper name="SpringDamper2">
@@ -401,8 +401,8 @@
           </forceFunction>
             <unloadedLength>l0R</unloadedLength>
             <enableOpenMBV>
-              <springRadius unit="m">0.05</springRadius>
               <colorRepresentation>"absoluteForce"</colorRepresentation>
+              <springRadius unit="m">0.05</springRadius>
           </enableOpenMBV>
         </SpringDamper>
       </links>

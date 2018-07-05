@@ -163,8 +163,12 @@
         <enableOpenMBVContactPoints>
           <size unit="dm">1</size>
         </enableOpenMBVContactPoints>
-        <enableOpenMBVNormalForce/>
-        <enableOpenMBVTangentialForce/>
+        <enableOpenMBVNormalForce>
+          <colorRepresentation>'absoluteValue'</colorRepresentation>
+        </enableOpenMBVNormalForce>
+        <enableOpenMBVTangentialForce>
+         <colorRepresentation>'stickslip'</colorRepresentation>
+       </enableOpenMBVTangentialForce>
       </ContactObserver>
     </observers>
     <enableOpenMBVFrameI>

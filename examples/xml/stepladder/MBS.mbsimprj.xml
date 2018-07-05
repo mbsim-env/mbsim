@@ -300,27 +300,33 @@
         <ContactObserver name="ContactObserver1">
           <contact ref="../Link[Contact1]"/>
           <enableOpenMBVNormalForce>
+            <colorRepresentation>"absoluteValue"</colorRepresentation>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVNormalForce>
           <enableOpenMBVTangentialForce>
+            <colorRepresentation>"stickslip"</colorRepresentation>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVTangentialForce>
         </ContactObserver>
         <ContactObserver name="ContactObserver2">
           <contact ref="../Link[Contact2]"/>
           <enableOpenMBVNormalForce>
+            <colorRepresentation>"absoluteValue"</colorRepresentation>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVNormalForce>
           <enableOpenMBVTangentialForce>
+            <colorRepresentation>"stickslip"</colorRepresentation>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVTangentialForce>
         </ContactObserver>
         <ContactObserver name="ContactObserver3">
           <contact ref="../Link[Contact3]"/>
           <enableOpenMBVNormalForce>
+            <colorRepresentation>"absoluteValue"</colorRepresentation>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVNormalForce>
           <enableOpenMBVTangentialForce>
+            <colorRepresentation>"stickslip"</colorRepresentation>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVTangentialForce>
         </ContactObserver>

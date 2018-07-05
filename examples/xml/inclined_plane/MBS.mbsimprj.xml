@@ -225,7 +225,7 @@
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVNormalForce>
           <enableOpenMBVTangentialForce>
-            <colorRepresentation>"stickSlip"</colorRepresentation>
+            <colorRepresentation>"stickslip"</colorRepresentation>
             <scaleLength unit="-">0.1</scaleLength>
           </enableOpenMBVTangentialForce>
         </ContactObserver>

@@ -188,6 +188,7 @@
         </TabularFunction>
       </forceFunction>
       <enableOpenMBV>
+        <colorRepresentation>"absoluteValue"</colorRepresentation>
         <scaleLength>1.</scaleLength>
       </enableOpenMBV>
     </KineticExcitation>

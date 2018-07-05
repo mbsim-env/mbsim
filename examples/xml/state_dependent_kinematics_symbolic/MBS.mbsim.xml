@@ -101,9 +101,11 @@
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVWeight>
            <enableOpenMBVJointForce>
+              <colorRepresentation>"absoluteValue"</colorRepresentation>
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVJointForce>
            <enableOpenMBVJointMoment>
+              <colorRepresentation>"absoluteValue"</colorRepresentation>
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVJointMoment>
         </RigidBodyObserver>

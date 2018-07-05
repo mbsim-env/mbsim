@@ -126,7 +126,9 @@
         <enableOpenMBVContactPoints>
           <size unit="dm">1</size>
         </enableOpenMBVContactPoints>
-        <enableOpenMBVNormalForce/>
+        <enableOpenMBVNormalForce>
+          <colorRepresentation>"absoluteValue"</colorRepresentation>
+        </enableOpenMBVNormalForce>
         <enableOpenMBVTangentialForce/>
       </ContactObserver>
     </observers>

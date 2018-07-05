@@ -167,6 +167,7 @@ ret = 0;</scalarParameter>
             </ConstantFunction>
           </forceFunction>
           <enableOpenMBV>
+            <colorRepresentation>'absoluteValue'</colorRepresentation>
             <scaleLength unit="-">1e-6</scaleLength>
           </enableOpenMBV>
         </KineticExcitation>

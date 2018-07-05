@@ -200,12 +200,12 @@
       </forceFunction>
       <unloadedLength unit="cm">6</unloadedLength>
       <enableOpenMBV>
+        <colorRepresentation>"absoluteForce"</colorRepresentation>
 <!--        <minimalColorValue>-88</minimalColorValue>
         <maximalColorValue>-92</maximalColorValue> -->
         <numberOfCoils>11</numberOfCoils>
         <springRadius>.00525</springRadius>
         <crossSectionRadius>.0006</crossSectionRadius>
-        <colorRepresentation>"absoluteForce"</colorRepresentation>
       </enableOpenMBV>
     </SpringDamper>
     <h:EnvironmentNodeMec name="EnvironmentPressure">

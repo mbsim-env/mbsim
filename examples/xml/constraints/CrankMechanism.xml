@@ -254,7 +254,7 @@
         </TabularFunction>
       </momentFunction>
       <enableOpenMBV>
-          <diffuseColor>[0.6666;1;0]</diffuseColor>
+          <colorRepresentation>'absoluteValue'</colorRepresentation>
           <scaleLength>.1</scaleLength>
       </enableOpenMBV>
     </KineticExcitation>
@@ -306,14 +306,14 @@
     <MechanicalLinkObserver name="MechanicalLinkObserver1">
       <mechanicalLink ref="../Link[Friction_Crank_Rocker]"/>
       <enableOpenMBVMoment>
-        <diffuseColor>[0.6666;1;0]</diffuseColor>
+        <colorRepresentation>'absoluteValue'</colorRepresentation>
         <scaleLength>.1</scaleLength>
       </enableOpenMBVMoment>
     </MechanicalLinkObserver>
     <MechanicalLinkObserver name="MechanicalLinkObserver2">
       <mechanicalLink ref="../Link[Friction_Rocker_Piston]"/>
       <enableOpenMBVMoment>
-        <diffuseColor>[0.6666;1;0]</diffuseColor>
+        <colorRepresentation>'absoluteValue'</colorRepresentation>
         <scaleLength>.1</scaleLength>
       </enableOpenMBVMoment>
     </MechanicalLinkObserver>

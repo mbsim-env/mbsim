@@ -94,6 +94,7 @@
         <size>0.1</size>
       </enableOpenMBVContactPoints>
       <enableOpenMBVNormalForce>
+        <colorRepresentation>"absoluteValue"</colorRepresentation>
         <scaleLength>.01</scaleLength>
       </enableOpenMBVNormalForce>
     </MaxwellContactObserver>
