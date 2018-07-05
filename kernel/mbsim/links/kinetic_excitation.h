@@ -28,6 +28,8 @@
 
 namespace MBSim {
 
+  BOOST_PARAMETER_NAME(sideOfInteraction)
+
   /**
    * \brief kinetic excitations given by time dependent functions
    * \author Markus Friedrich
@@ -88,8 +90,8 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-     BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(colorRepresentation,(OpenMBVArrow::ColorRepresentation),OpenMBVArrow::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        ombvArrow = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency));
+     BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (sideOfInteraction,(OpenMBVInteractionArrow::SideOfInteraction),OpenMBVInteractionArrow::action)(scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(colorRepresentation,(OpenMBVArrow::ColorRepresentation),OpenMBVArrow::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        ombvArrow = std::shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(sideOfInteraction,scaleLength,scaleSize,OpenMBV::Arrow::toHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency));
       }
 
     protected:
@@ -98,8 +100,8 @@ namespace MBSim {
        */
       Function<fmatvec::VecV(double)> *F, *M;
 
-      std::shared_ptr<OpenMBVArrow> ombvArrow;
-      std::shared_ptr<OpenMBV::Arrow> openMBVForce, openMBVMoment;
+      std::shared_ptr<OpenMBVInteractionArrow> ombvArrow;
+      std::vector<std::shared_ptr<OpenMBV::Arrow>> openMBVForce, openMBVMoment;
 
 #ifndef SWIG
       double (KineticExcitation::*evalOMBVForceColorRepresentation[2])();

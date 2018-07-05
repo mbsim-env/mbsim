@@ -53,14 +53,20 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[openMBV] and ombvArrow) {
         if(forceDir.cols()) {
-          openMBVForce=ombvArrow->createOpenMBV();
-          openMBVForce->setName(name+"_Force");
-          parent->getOpenMBVGrp()->addObject(openMBVForce);
+          openMBVForce.resize(ombvArrow->getSideOfInteraction()==2?getNumberOfLinks():getNumberOfLinks()/2);
+          for(size_t i=0; i<openMBVForce.size(); i++) {
+            openMBVForce[i]=ombvArrow->createOpenMBV();
+            openMBVForce[i]->setName(name+"_Force"+(openMBVForce.size()>1?to_string(i):string("")));
+            parent->getOpenMBVGrp()->addObject(openMBVForce[i]);
+          }
         }
         if(momentDir.cols()) {
-          openMBVMoment=ombvArrow->createOpenMBV();
-          openMBVMoment->setName(name+"_Moment");
-          parent->getOpenMBVGrp()->addObject(openMBVMoment);
+          openMBVMoment.resize(ombvArrow->getSideOfInteraction()==2?getNumberOfLinks():getNumberOfLinks()/2);
+          for(size_t i=0; i<openMBVMoment.size(); i++) {
+            openMBVMoment[i]=ombvArrow->createOpenMBV();
+            openMBVMoment[i]->setName(name+"_Moment"+(openMBVMoment.size()>1?to_string(i):string("")));
+            parent->getOpenMBVGrp()->addObject(openMBVMoment[i]);
+          }
         }
       }
     }
@@ -113,33 +119,39 @@ namespace MBSim {
 
   void KineticExcitation::plot() {
     if(plotFeature[openMBV]) {
-      if(openMBVForce) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint=P[1]->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 WF = evalForce();
-        data.push_back(WF(0));
-        data.push_back(WF(1));
-        data.push_back(WF(2));
-        data.push_back((this->*evalOMBVForceColorRepresentation[ombvArrow->getColorRepresentation()])());
-        openMBVForce->append(data);
+      if(openMBVForce.size()) {
+        int off = ombvArrow->getSideOfInteraction()==0?getNumberOfLinks()/2:0;
+        for(size_t i=0; i<openMBVForce.size(); i++) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint=getPointOfApplication(off+i)->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 WF = evalForce(off+i);
+          data.push_back(WF(0));
+          data.push_back(WF(1));
+          data.push_back(WF(2));
+          data.push_back((this->*evalOMBVForceColorRepresentation[ombvArrow->getColorRepresentation()])());
+          openMBVForce[i]->append(data);
+        }
       }
-      if(openMBVMoment) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint=P[1]->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 WM = evalMoment();
-        data.push_back(WM(0));
-        data.push_back(WM(1));
-        data.push_back(WM(2));
-        data.push_back((this->*evalOMBVMomentColorRepresentation[ombvArrow->getColorRepresentation()])());
-        openMBVMoment->append(data);
+      if(openMBVMoment.size()) {
+        int off = ombvArrow->getSideOfInteraction()==0?getNumberOfLinks()/2:0;
+        for(size_t i=0; i<openMBVMoment.size(); i++) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint=getPointOfApplication(off+i)->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 WM = evalMoment(off+i);
+          data.push_back(WM(0));
+          data.push_back(WM(1));
+          data.push_back(WM(2));
+          data.push_back((this->*evalOMBVMomentColorRepresentation[ombvArrow->getColorRepresentation()])());
+          openMBVMoment[i]->append(data);
+        }
       }
     }
     FloatingFrameLink::plot();
@@ -157,7 +169,7 @@ namespace MBSim {
     if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      ombvArrow = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,F?OpenMBV::Arrow::toHead:OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
+      ombvArrow = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,F?OpenMBV::Arrow::toHead:OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
       ombvArrow->initializeUsingXML(e);
     }
   }
