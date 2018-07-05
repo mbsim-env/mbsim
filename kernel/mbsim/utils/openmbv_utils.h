@@ -111,7 +111,7 @@ namespace MBSim {
       enum ColorRepresentation {
         none=0,
         absoluteValue,
-        stickSlip
+        stickslip
       };
     public:
       OpenMBVFrictionArrow(unsigned int sI=0, double sL=1, double sS=1, const OpenMBV::Arrow::Type &type=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint=OpenMBV::Arrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);

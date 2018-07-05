@@ -152,7 +152,7 @@ namespace MBSim {
     cRL.resize(3);
     cRL[0]="none";
     cRL[1]="absoluteValue";
-    cRL[2]="stickSlip";
+    cRL[2]="stickslip";
   }
 
   void OpenMBVFrame::initializeUsingXML(DOMElement *e) {
