@@ -169,7 +169,7 @@ namespace MBSim {
     if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      ombvArrow = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,F?OpenMBV::Arrow::toHead:OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
+      ombvArrow = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,F?OpenMBVArrow::toHead:OpenMBVArrow::toDoubleHead,OpenMBVArrow::toPoint));
       ombvArrow->initializeUsingXML(e);
     }
   }

@@ -271,49 +271,49 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(e) {
-      ombvWeight = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvWeight = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
       ombvWeight->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointForce");
     if(e) {
-      ombvForce = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvForce = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
       ombvForce->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointMoment");
     if(e) {
-      ombvMoment = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
+      ombvMoment = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toDoubleHead,OpenMBVArrow::toPoint));
       ombvMoment->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAxisOfRotation");
     if(e) {
-      ombvAxisOfRotation = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::line,OpenMBV::Arrow::midPoint));
+      ombvAxisOfRotation = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBVArrow::line,OpenMBVArrow::midPoint));
       ombvAxisOfRotation->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMomentum");
     if(e) {
-      ombvMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
       ombvMomentum->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularMomentum");
     if(e) {
-      ombvAngularMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
+      ombvAngularMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBVArrow::toDoubleHead,OpenMBVArrow::toPoint));
       ombvAngularMomentum->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivatveOfMomentum");
     if(e) {
-      ombvDerivativeOfMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint));
+      ombvDerivativeOfMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
       ombvDerivativeOfMomentum->initializeUsingXML(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivativeOfAngularMomentum");
     if(e) {
-      ombvDerivativeOfAngularMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint));
+      ombvDerivativeOfAngularMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBVArrow::toDoubleHead,OpenMBVArrow::toPoint));
       ombvDerivativeOfAngularMomentum->initializeUsingXML(e);
     }
   }

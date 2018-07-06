@@ -80,7 +80,7 @@ namespace MBSim {
     object->setMaximalColorValue(maxCol);
   }
 
-  OpenMBVArrow::OpenMBVArrow(double sL_, double sS_, const OpenMBV::Arrow::Type &type_, const OpenMBV::Arrow::ReferencePoint &refPoint_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp), sL(sL_), sS(sS_), type(type_), refPoint(refPoint_) {
+  OpenMBVArrow::OpenMBVArrow(double sL_, double sS_, const OpenMBVArrow::Type &type_, const OpenMBVArrow::ReferencePoint &refPoint_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp), sL(sL_), sS(sS_), type(type_), refPoint(refPoint_) {
     cRL.resize(2);
     cRL[0]="none";
     cRL[1]="absoluteValue";
@@ -95,20 +95,20 @@ namespace MBSim {
     ee = E(e)->getFirstElementChildNamed(MBSIM%"type");
     if(ee) {
       string t=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-      if(t=="line")            type=OpenMBV::Arrow::line;
-      else if(t=="fromHead")        type=OpenMBV::Arrow::fromHead;
-      else if(t=="toHead")          type=OpenMBV::Arrow::toHead;
-      else if(t=="bothHeads")       type=OpenMBV::Arrow::bothHeads;
-      else if(t=="fromDoubleHead")  type=OpenMBV::Arrow::fromDoubleHead;
-      else if(t=="toDoubleHead")    type=OpenMBV::Arrow::toDoubleHead;
-      else if(t=="bothDoubleHeads") type=OpenMBV::Arrow::bothDoubleHeads;
+      if(t=="line")            type=OpenMBVArrow::line;
+      else if(t=="fromHead")        type=OpenMBVArrow::fromHead;
+      else if(t=="toHead")          type=OpenMBVArrow::toHead;
+      else if(t=="bothHeads")       type=OpenMBVArrow::bothHeads;
+      else if(t=="fromDoubleHead")  type=OpenMBVArrow::fromDoubleHead;
+      else if(t=="toDoubleHead")    type=OpenMBVArrow::toDoubleHead;
+      else if(t=="bothDoubleHeads") type=OpenMBVArrow::bothDoubleHeads;
     }
     ee = E(e)->getFirstElementChildNamed(MBSIM%"referencePoint");
     if(ee) {
       string rP=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-      if(rP=="toPoint")   refPoint=OpenMBV::Arrow::toPoint;
-      else if(rP=="fromPoint") refPoint=OpenMBV::Arrow::fromPoint;
-      else if(rP=="midPoint")  refPoint=OpenMBV::Arrow::midPoint;
+      if(rP=="toPoint")   refPoint=OpenMBVArrow::toPoint;
+      else if(rP=="fromPoint") refPoint=OpenMBVArrow::fromPoint;
+      else if(rP=="midPoint")  refPoint=OpenMBVArrow::midPoint;
     }
   }
 
@@ -123,12 +123,12 @@ namespace MBSim {
     object->setDiameter(0.25*sS);
     object->setHeadDiameter(0.5*sS);
     object->setHeadLength(0.75*sS);
-    object->setType(type);
-    object->setReferencePoint(refPoint);
+    object->setType(OpenMBV::Arrow::Type(type));
+    object->setReferencePoint(OpenMBV::Arrow::ReferencePoint(refPoint));
     object->setScaleLength(sL);
   }
 
-  OpenMBVInteractionArrow::OpenMBVInteractionArrow(unsigned int sI_, double sL, double sS, const OpenMBV::Arrow::Type &type, const OpenMBV::Arrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVArrow(sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp), sI(sI_) {
+  OpenMBVInteractionArrow::OpenMBVInteractionArrow(unsigned int sI_, double sL, double sS, const OpenMBVArrow::Type &type, const OpenMBVArrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVArrow(sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp), sI(sI_) {
   }
 
   void OpenMBVInteractionArrow::initializeUsingXML(DOMElement *e) {
@@ -148,7 +148,7 @@ namespace MBSim {
     OpenMBVArrow::initializeObject(object);
   }
 
-  OpenMBVFrictionArrow::OpenMBVFrictionArrow(unsigned int sI, double sL, double sS, const OpenMBV::Arrow::Type &type, const OpenMBV::Arrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVInteractionArrow(sI,sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp) {
+  OpenMBVFrictionArrow::OpenMBVFrictionArrow(unsigned int sI, double sL, double sS, const OpenMBVArrow::Type &type, const OpenMBVArrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVInteractionArrow(sI,sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp) {
     cRL.resize(3);
     cRL[0]="none";
     cRL[1]="absoluteValue";
@@ -308,7 +308,7 @@ namespace MBSim {
     object->setHeight(h);
   }
 
-  OpenMBVCoilSpring::OpenMBVCoilSpring(double r_, double cr_, double sf_, double n_, double l_, OpenMBV::CoilSpring::Type type_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), type(type_) {
+  OpenMBVCoilSpring::OpenMBVCoilSpring(double r_, double cr_, double sf_, double n_, double l_, OpenMBVCoilSpring::Type type_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), type(type_) {
     cRL.resize(5);
     cRL[0]="none";
     cRL[1]="deflection";
@@ -332,9 +332,9 @@ namespace MBSim {
     ee = E(e)->getFirstElementChildNamed(MBSIM%"type");
     if(ee) {
       string typeStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
-      if(typeStr=="tube") type=OpenMBV::CoilSpring::tube;
-      else if(typeStr=="scaledTube") type=OpenMBV::CoilSpring::scaledTube;
-      else if(typeStr=="polyline") type=OpenMBV::CoilSpring::polyline;
+      if(typeStr=="tube") type=OpenMBVCoilSpring::tube;
+      else if(typeStr=="scaledTube") type=OpenMBVCoilSpring::scaledTube;
+      else if(typeStr=="polyline") type=OpenMBVCoilSpring::polyline;
     }
   }
 
@@ -351,7 +351,7 @@ namespace MBSim {
     object->setScaleFactor(sf);
     object->setNumberOfCoils(n);
     object->setNominalLength(l);
-    object->setType(type);
+    object->setType(OpenMBV::CoilSpring::Type(type));
   }
 
   shared_ptr<OpenMBV::IndexedLineSet> OpenMBVIndexedLineSet::createOpenMBV() {

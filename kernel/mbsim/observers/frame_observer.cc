@@ -186,7 +186,7 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularVelocity");
     if(e) {
-      ombvAngularVelocityArrow = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint));
+      ombvAngularVelocityArrow = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBVArrow::toDoubleHead,OpenMBVArrow::fromPoint));
       ombvAngularVelocityArrow->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
@@ -196,7 +196,7 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularAcceleration");
     if(e) {
-      ombvAngularAccelerationArrow = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint));
+      ombvAngularAccelerationArrow = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBVArrow::toDoubleHead,OpenMBVArrow::fromPoint));
       ombvAngularAccelerationArrow->initializeUsingXML(e);
     }
   }

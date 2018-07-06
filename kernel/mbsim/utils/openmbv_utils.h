@@ -73,16 +73,30 @@ namespace MBSim {
 
   class OpenMBVArrow : public OpenMBVDynamicColoredBody {
     public:
+      enum Type {
+        line,
+        fromHead,
+        toHead,
+        bothHeads,
+        fromDoubleHead,
+        toDoubleHead,
+        bothDoubleHeads
+      };
+      enum ReferencePoint {
+        toPoint,
+        fromPoint,
+        midPoint
+      };
       enum ColorRepresentation {
         none=0,
         absoluteValue
       };
     protected:
       double sL, sS;
-      OpenMBV::Arrow::Type type;
-      OpenMBV::Arrow::ReferencePoint refPoint;
+      OpenMBVArrow::Type type;
+      OpenMBVArrow::ReferencePoint refPoint;
     public:
-      OpenMBVArrow(double sL_=1, double sS_=1, const OpenMBV::Arrow::Type &type_=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint_=OpenMBV::Arrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
+      OpenMBVArrow(double sL_=1, double sS_=1, const OpenMBVArrow::Type &type_=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint_=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::Arrow> createOpenMBV();
     protected:
@@ -99,7 +113,7 @@ namespace MBSim {
     protected:
       unsigned int sI;
     public:
-      OpenMBVInteractionArrow(unsigned int sI_=0, double sL=1, double sS=1, const OpenMBV::Arrow::Type &type=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint=OpenMBV::Arrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
+      OpenMBVInteractionArrow(unsigned int sI_=0, double sL=1, double sS=1, const OpenMBVArrow::Type &type=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
       void initializeUsingXML(xercesc::DOMElement *element);
       unsigned int getSideOfInteraction() const { return sI; }
     protected:
@@ -114,7 +128,7 @@ namespace MBSim {
         stickslip
       };
     public:
-      OpenMBVFrictionArrow(unsigned int sI=0, double sL=1, double sS=1, const OpenMBV::Arrow::Type &type=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint=OpenMBV::Arrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
+      OpenMBVFrictionArrow(unsigned int sI=0, double sL=1, double sS=1, const OpenMBVArrow::Type &type=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
   };
 
   class OpenMBVFrame : public OpenMBVColoredBody {
@@ -208,6 +222,11 @@ namespace MBSim {
 
   class OpenMBVCoilSpring : public OpenMBVDynamicColoredBody {
     public:
+      enum Type {
+        tube,
+        scaledTube,
+        polyline
+      };
       enum ColorRepresentation {
         none=0,
         deflection,
@@ -217,9 +236,9 @@ namespace MBSim {
       };
     protected:
       double r, cr, sf, n, l;
-      OpenMBV::CoilSpring::Type type;
+      OpenMBVCoilSpring::Type type;
     public:
-      OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBV::CoilSpring::Type type_=OpenMBV::CoilSpring::tube, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
+      OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBVCoilSpring::Type type_=OpenMBVCoilSpring::tube, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0);
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::CoilSpring> createOpenMBV();
     protected:
