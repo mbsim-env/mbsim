@@ -332,6 +332,12 @@ def main():
   mbsimXMLSchemas=subprocess.check_output(exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyListSchemas"]).\
     decode("utf-8").split()
 
+  # check args.directories
+  for d in args.directories:
+    if not os.path.isdir(d):
+      print("The positional argument (directory) "+d+" does not exist.")
+      exit(1)
+
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
     dirs=[os.curdir]
