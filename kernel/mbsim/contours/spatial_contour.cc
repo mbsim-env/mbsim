@@ -77,6 +77,8 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
+        vector<double> ombvEtaNodes = ombv->getEtaNodes();
+        vector<double> ombvXiNodes = ombv->getXiNodes();
         if(not(ombvEtaNodes.size())) {
           ombvEtaNodes.resize(51);
           for(unsigned int i=0; i<ombvEtaNodes.size(); i++)
@@ -146,13 +148,9 @@ namespace MBSim {
     if(e) setOpenXi(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"etaNodes");
-      if(ee) ombvEtaNodes=E(ee)->getText<Vec>();
-      ee=E(e)->getFirstElementChildNamed(MBSIM%"xiNodes");
-      if(ee) ombvXiNodes=E(ee)->getText<Vec>();
-      OpenMBVIndexedFaceSet ombv;
-      ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV();
+      ombv = shared_ptr<OpenMBVSpatialContour>(new OpenMBVSpatialContour);
+      ombv->initializeUsingXML(e);
+      openMBVRigidBody=ombv->createOpenMBV();
     }
   }
 

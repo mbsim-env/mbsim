@@ -66,16 +66,8 @@ namespace MBSim {
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (nodes,(const std::vector<double>&),std::vector<double>())(filled,(bool),0)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        if(filled) {
-          OpenMBVExtrusion ombv(1,diffuseColor,transparency);
-          openMBVRigidBody=ombv.createOpenMBV();
-          ombvNodes = nodes;
-        }
-        else {
-          OpenMBVIndexedLineSet ombv(diffuseColor,transparency);
-          openMBVRigidBody=ombv.createOpenMBV();
-          ombvNodes = nodes;
-        }
+        ombv = std::shared_ptr<OpenMBVPlanarContour>(new OpenMBVPlanarContour(nodes,filled,diffuseColor,transparency));
+        openMBVRigidBody=ombv->createOpenMBV();
       }
       
       void initializeUsingXML(xercesc::DOMElement *element) override;
@@ -89,9 +81,7 @@ namespace MBSim {
     protected:
       Function<fmatvec::Vec3(double)> * funcCrPC{nullptr};
       bool open{false};
-
-      std::vector<double> ombvNodes;
-      bool ombvFilled{false};
+      std::shared_ptr<OpenMBVPlanarContour> ombv;
   };
 
 }

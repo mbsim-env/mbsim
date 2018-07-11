@@ -22,9 +22,6 @@
 #include "mbsim/links/dual_rigid_body_link.h"
 #include "mbsim/functions/function.h"
 
-#include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
-
 namespace MBSim {
 
   class GeneralizedSpringDamper : public DualRigidBodyLink {

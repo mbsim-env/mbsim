@@ -378,4 +378,36 @@ namespace MBSim {
     return object;
   }
 
+  shared_ptr<OpenMBV::RigidBody> OpenMBVPlanarContour::createOpenMBV() {
+    shared_ptr<OpenMBV::RigidBody> object;
+    if(filled)
+      object = OpenMBV::ObjectFactory::create<OpenMBV::Extrusion>();
+    else
+      object = OpenMBV::ObjectFactory::create<OpenMBV::IndexedLineSet>();
+    initializeObject(object);
+    return object;
+  }
+
+  void OpenMBVPlanarContour::initializeUsingXML(DOMElement *e) {
+    OpenMBVColoredBody::initializeUsingXML(e);
+    DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"nodes");
+    if(ee) nodes=E(ee)->getText<Vec>();
+    ee=E(e)->getFirstElementChildNamed(MBSIM%"filled");
+    if(ee) filled=E(ee)->getText<bool>();
+  }
+
+  shared_ptr<OpenMBV::RigidBody> OpenMBVSpatialContour::createOpenMBV() {
+    shared_ptr<OpenMBV::IndexedFaceSet> object = OpenMBV::ObjectFactory::create<OpenMBV::IndexedFaceSet>();
+    initializeObject(object);
+    return object;
+  }
+
+  void OpenMBVSpatialContour::initializeUsingXML(DOMElement *e) {
+    OpenMBVColoredBody::initializeUsingXML(e);
+    DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"etaNodes");
+    if(ee) etaNodes=E(ee)->getText<Vec>();
+    ee=E(e)->getFirstElementChildNamed(MBSIM%"xiNodes");
+    if(ee) xiNodes=E(ee)->getText<Vec>();
+  }
+
 }

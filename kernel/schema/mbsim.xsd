@@ -74,6 +74,14 @@
   </xs:group>
 
   <xs:group name="OpenMBVArrowParameters">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Darstellung eines Vektorpfeils.
+      Auswahl der Farbdarstellung:
+      <ul>
+        <li>none: keine</li>
+        <li>absoluteValue: Absolutwert des Vektors</li>
+      </ul>
+    </xs:documentation></xs:annotation>
     <xs:sequence>
       <xs:group ref="OpenMBVDynamicColoredBodyParameters"/>
       <xs:element name="scaleLength" type="pv:nounitScalar" minOccurs="0"/>
@@ -101,6 +109,7 @@
 
   <xs:group name="OpenMBVCoilSpringParameters">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Darstellung einer Spiralfeder.
       Auswahl der Farbdarstellung:
       <ul>
         <li>none: keine</li>
@@ -117,6 +126,28 @@
       <xs:element name="crossSectionRadius" type="pv:lengthScalar" minOccurs="0"/>
       <xs:element name="nominalLength" type="pv:lengthScalar" minOccurs="0"/>
       <xs:element name="type" type="pv:stringFullEval" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="OpenMBVPlanarContourParameters">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Darstellung einer ebenen Kontur.
+    </xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:group ref="OpenMBVColoredBodyParameters"/>
+      <xs:element name="nodes" type="pv:nounitVector" minOccurs="0"/>
+      <xs:element name="filled" type="pv:booleanFullEval" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="OpenMBVSpatialContourParameters">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Darstellung einer räumlichen Kontur.
+    </xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:group ref="OpenMBVColoredBodyParameters"/>
+      <xs:element name="etaNodes" type="pv:nounitVector" minOccurs="0"/>
+      <xs:element name="xiNodes" type="pv:nounitVector" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
@@ -1640,11 +1671,6 @@
           <xs:element name="enableOpenMBV" minOccurs="0">  
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Wenn angegeben, wird die kinetische Anregung durch einen Pfeil in OpenMBV visualisiert.
-              Auswahl der Farbdarstellung:
-              <ul>
-                <li>none: keine</li>
-                <li>absoluteValue: Absolutwert der Kraft oder des Moments</li>
-              </ul>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:group ref="OpenMBVInteractionArrowParameters"/>
@@ -2832,11 +2858,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:group ref="OpenMBVColoredBodyParameters"/>
-                <xs:element name="nodes" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="filled" type="pv:booleanFullEval" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVPlanarContourParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2973,11 +2995,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:group ref="OpenMBVColoredBodyParameters"/>
-                <xs:element name="etaNodes" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="xiNodes" type="pv:nounitVector" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVSpatialContourParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

@@ -60,12 +60,13 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
+        vector<double> ombvNodes = ombv->getNodes();
         if(not(ombvNodes.size())) {
           ombvNodes.resize(101);
           for(int i=0; i<101; i++)
             ombvNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/100.;
         }
-        if(ombvFilled) {
+        if(ombv->getFilled()) {
           shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
           for (double ombvNode : ombvNodes) {
             const Vec3 CrPC=(*funcCrPC)(ombvNode);
@@ -119,20 +120,9 @@ namespace MBSim {
     if(e) setOpen(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"nodes");
-      if(ee) ombvNodes=E(ee)->getText<Vec>();
-      ee=E(e)->getFirstElementChildNamed(MBSIM%"filled");
-      if(ee) ombvFilled=E(ee)->getText<bool>();
-      if(ombvFilled) {
-        OpenMBVExtrusion ombv;
-        ombv.initializeUsingXML(e);
-        openMBVRigidBody=ombv.createOpenMBV();
-      }
-      else {
-        OpenMBVIndexedLineSet ombv;
-        ombv.initializeUsingXML(e);
-        openMBVRigidBody=ombv.createOpenMBV();
-      }
+      ombv = shared_ptr<OpenMBVPlanarContour>(new OpenMBVPlanarContour);
+      ombv->initializeUsingXML(e);
+      openMBVRigidBody=ombv->createOpenMBV();
     }
   }
 

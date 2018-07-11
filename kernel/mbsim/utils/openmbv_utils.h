@@ -269,6 +269,29 @@ namespace MBSim {
       std::shared_ptr<OpenMBV::NurbsSurface> createOpenMBV();
   };
 
+  class OpenMBVPlanarContour : public OpenMBVColoredBody {
+    protected:
+      std::vector<double> nodes;
+      bool filled;
+    public:
+      OpenMBVPlanarContour(const std::vector<double> &nodes_=std::vector<double>(), bool filled_=false, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVColoredBody(dc,tp), nodes(nodes_), filled(filled_) { }
+      std::shared_ptr<OpenMBV::RigidBody> createOpenMBV();
+      void initializeUsingXML(xercesc::DOMElement *element);
+      const std::vector<double>& getNodes() const { return nodes; }
+      bool getFilled() const { return filled; }
+  };
+
+  class OpenMBVSpatialContour : public OpenMBVColoredBody {
+    protected:
+      std::vector<double> etaNodes, xiNodes;
+    public:
+      OpenMBVSpatialContour(const std::vector<double> &etaNodes_=std::vector<double>(), const std::vector<double> &xiNodes_=std::vector<double>(), const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVColoredBody(dc,tp), etaNodes(etaNodes_), xiNodes(xiNodes_) { }
+      std::shared_ptr<OpenMBV::RigidBody> createOpenMBV();
+      void initializeUsingXML(xercesc::DOMElement *element);
+      const std::vector<double>& getEtaNodes() const { return etaNodes; }
+      const std::vector<double>& getXiNodes() const { return xiNodes; }
+  };
+
 }
 
 #endif

@@ -22,9 +22,6 @@
 
 #include "mbsim/links/rigid_body_link.h"
 
-#include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
-
 namespace MBSim {
 
   class DualRigidBodyLink : public RigidBodyLink {
