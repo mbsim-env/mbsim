@@ -135,10 +135,6 @@ namespace MBSim {
   void SpatialNurbsContour::initializeUsingXML(DOMElement * element) {
     RigidContour::initializeUsingXML(element);
     DOMElement * e;
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"etaNodes");
-//    etaNodes=E(e)->getText<Vec>();
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"xiNodes");
-//    xiNodes=E(e)->getText<Vec>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"interpolation");
     if(e) {
       string interpolationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);

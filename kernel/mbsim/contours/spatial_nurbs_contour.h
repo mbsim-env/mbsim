@@ -83,8 +83,6 @@ namespace MBSim {
       
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-//      void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
-
       bool isZetaOutside(const fmatvec::Vec2 &zeta) override;
 
       void setOpenEta(bool openEta_) { openEta = openEta_; }

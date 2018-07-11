@@ -107,6 +107,36 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:group name="OpenMBVPointParameters">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Darstellung eines Punktes.
+    </xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:group ref="OpenMBVColoredBodyParameters"/>
+      <xs:element name="size" type="pv:lengthScalar" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="OpenMBVLineParameters">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Darstellung einer Linie.
+    </xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:group ref="OpenMBVColoredBodyParameters"/>
+      <xs:element name="length" type="pv:lengthScalar" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="OpenMBVPlaneParameters">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Darstellung einer Ebene.
+    </xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:group ref="OpenMBVColoredBodyParameters"/>
+      <xs:element name="length" type="pv:lengthVector" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
   <xs:group name="OpenMBVCoilSpringParameters">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
       Darstellung einer Spiralfeder.
@@ -2529,10 +2559,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:group ref="OpenMBVColoredBodyParameters"/>
-                <xs:element name="length" type="pv:lengthScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVLineParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2619,10 +2646,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:group ref="OpenMBVColoredBodyParameters"/>
-                <xs:element name="length" type="pv:lengthVector" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVPlaneParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2701,10 +2725,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:group ref="OpenMBVColoredBodyParameters"/>
-                <xs:element name="size" type="pv:lengthScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="OpenMBVPointParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

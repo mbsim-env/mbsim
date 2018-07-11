@@ -98,8 +98,6 @@ namespace MBSim {
   void PlanarNurbsContour::initializeUsingXML(DOMElement * element) {
     RigidContour::initializeUsingXML(element);
     DOMElement * e;
-    //e=E(element)->getFirstElementChildNamed(MBSIM%"nodes");
-    //etaNodes=E(e)->getText<Vec>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"interpolation");
     if(e) {
       string interpolationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
