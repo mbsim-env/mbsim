@@ -106,7 +106,6 @@ namespace MBSim {
     l0 = E(e)->getText<double>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      OpenMBVCoilSpring ombv;
       DOMElement* ee=E(e)->getFirstElementChildNamed(MBSIM%"colorRepresentation");
       if(ee) {
         string colorRepresentationStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
@@ -117,6 +116,7 @@ namespace MBSim {
         else if(colorRepresentationStr=="absoluteForce") ombvColorRepresentation=absoluteForce;
         else ombvColorRepresentation=unknown;
       }
+      OpenMBVCoilSpring ombv;
       ombv.initializeUsingXML(e);
       coilspringOpenMBV=ombv.createOpenMBV();
     }

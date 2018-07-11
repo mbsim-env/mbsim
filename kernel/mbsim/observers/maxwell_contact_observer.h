@@ -30,6 +30,14 @@ namespace MBSim {
   class MaxwellContact;
 
   class MaxwellContactObserver : public Observer {
+    public:
+      enum SideOfInteraction {
+        action=0,
+        reaction,
+        both,
+        unknown
+      };
+
     protected:
       std::vector<std::vector<SingleContactObserver> > contactObserver;
 
@@ -41,10 +49,9 @@ namespace MBSim {
        */
       std::shared_ptr<OpenMBV::Frame> openMBVContactFrame;
 
-      /**
-       * \brief pointer to memory of normal and friction forces to draw
-       */
-      std::shared_ptr<OpenMBV::Arrow> openMBVForce, openMBVMoment, contactArrow, frictionArrow;
+      SideOfInteraction sideOfForceInteraction{action}, sideOfMomentInteraction{action}, sideOfContactInteraction{action}, sideOfFrictionInteraction{action};
+
+      std::shared_ptr<OpenMBVArrow> ombvForce, ombvMoment, ombvContact, ombvFriction;
 
     public:
       MaxwellContactObserver(const std::string &name="");
@@ -55,14 +62,14 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void setDynamicSystemSolver(DynamicSystemSolver *sys) override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        openMBVForce=ombv.createOpenMBV();
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
+        sideOfForceInteraction = sideOfInteraction;
+        ombvForce = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize));
       }
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        openMBVMoment=ombv.createOpenMBV();
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
+        sideOfMomentInteraction = sideOfInteraction;
+        ombvMoment = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize));
       }
 
       /** 
@@ -81,9 +88,9 @@ namespace MBSim {
        * This vector is the force which is applied on the second contour.
        * The reactio (not drawn) is applied on the first contour.
        */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVNormalForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        contactArrow=ombv.createOpenMBV(); 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVNormalForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
+        sideOfContactInteraction = sideOfInteraction;
+        ombvContact = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize));
       }
 
       /** 
@@ -93,9 +100,9 @@ namespace MBSim {
        * If using a set-valued friction law, then the arrow is drawn in green if the contact
        * is in slip and in red, if the contact is in stick.
        */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVTangentialForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        frictionArrow=ombv.createOpenMBV(); 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVTangentialForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
+        sideOfFrictionInteraction = sideOfInteraction;
+        ombvFriction = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize));
       }
   };
 

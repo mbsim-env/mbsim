@@ -151,7 +151,7 @@ namespace MBSim {
     if(stage==preInit) {
       // Note we explicity make this check here to check exceptions in init
       if(SThetaS(0,0)<0 || SThetaS(1,1)<0 || SThetaS(2,2)<0)
-        throwError("The diagonal elements of the inertia tensor must be none negative.");
+        throwError("The diagonal elements of the inertia tensor must be nonnegative.");
 
       for(unsigned int k=1; k<frame.size(); k++) {
         if(not(static_cast<FixedRelativeFrame*>(frame[k])->getFrameOfReference()))
@@ -545,7 +545,7 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"mass");
     setMass(E(e)->getText<double>());
     // Note we explicity make this check here to check exceptions in initializeUsingXML
-    if(getMass()<=0) throw DOMEvalException("Mass must be positive", e);
+    if(getMass()<0) throw DOMEvalException("Mass must be nonnegative", e);
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"inertiaTensor");
     setInertiaTensor(E(e)->getText<SymMat3>());

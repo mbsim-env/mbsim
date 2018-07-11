@@ -488,7 +488,7 @@ namespace MBSimGUI {
     action = new QAction("Add generalized friction", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedFriction()));
     addAction(action);
-    action = new QAction("Add gear", this);
+    action = new QAction("Add generalized gear", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGear()));
     addAction(action);
     action = new QAction("Add generalized elastic connection", this);

@@ -52,7 +52,7 @@ namespace MBSim {
 
     contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(icircle)->getOrientation(false).col(0));
     contact.getContourFrame(ipoint)->getOrientation(false).set(1, -contact.getContourFrame(icircle)->getOrientation(false).col(1));
-    contact.getContourFrame(ipoint)->getOrientation(false).set(2, contact.getContourFrame(icircle)->getOrientation().col(2));
+    contact.getContourFrame(ipoint)->getOrientation(false).set(2, contact.getContourFrame(icircle)->getOrientation(false).col(2));
     
     contact.getContourFrame(icircle)->setPosition(circle->getFrame()->getPosition() + contact.getContourFrame(icircle)->getOrientation(false).col(0)*circle->getRadius());
     contact.getContourFrame(ipoint)->setPosition(point->getFrame()->getPosition());

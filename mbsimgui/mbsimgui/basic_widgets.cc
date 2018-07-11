@@ -391,6 +391,7 @@ namespace MBSimGUI {
     QLabel *label = new QLabel("Ratio");
     layout->addWidget(label);
     ratio = new QLineEdit;
+    ratio->setPlaceholderText("0");
     layout->addWidget(ratio);
 
     updateWidget();

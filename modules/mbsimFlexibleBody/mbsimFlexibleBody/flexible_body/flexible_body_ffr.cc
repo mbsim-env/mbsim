@@ -956,11 +956,9 @@ namespace MBSimFlexibleBody {
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVNodes");
     if(e) {
-      Vec nodes;
-      nodes=E(e)->getText<Vec>();
-      ombvNodes.resize(nodes.size());
-      for(int i=0; i<nodes.size(); i++)
-        ombvNodes[i] = static_cast<Index>(nodes(i))-1;
+      vector<int> nodes1based=E(e)->getText<vector<int>>();
+      ombvNodes.resize(nodes1based.size());
+      transform(nodes1based.begin(), nodes1based.end(), ombvNodes.begin(), [](int a){ return a-1; });
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVColorRepresentation");

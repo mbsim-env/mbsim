@@ -50,7 +50,7 @@ namespace MBSim {
       void updateW(int i=0) override;
       void updateg() override;
       void updategd() override;
-      void updatePositions() override;
+      void updatePositions(Frame *frame) override;
       void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
       void updateForce() override;

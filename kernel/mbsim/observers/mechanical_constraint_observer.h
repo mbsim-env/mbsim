@@ -27,14 +27,25 @@
 
 namespace MBSim {
 
+  BOOST_PARAMETER_NAME(sideOfInteraction)
+
   class MechanicalConstraint;
 
   class MechanicalConstraintObserver : public Observer {
+    public:
+      enum SideOfInteraction {
+        action=0,
+        reaction,
+        both,
+        unknown
+      };
+
     protected:
       MechanicalConstraint* constraint;
+      SideOfInteraction sideOfForceInteraction{action}, sideOfMomentInteraction{action};
       std::string saved_constraint;
-      std::shared_ptr<OpenMBV::Group> openMBVForceGrp;
-      std::shared_ptr<OpenMBV::Arrow> openMBVForce, openMBVMoment;
+      std::shared_ptr<OpenMBVArrow> ombvForce, ombvMoment;
+      std::vector<std::shared_ptr<OpenMBV::Arrow>> openMBVForce, openMBVMoment;
 
     public:
       MechanicalConstraintObserver(const std::string &name="");
@@ -44,13 +55,13 @@ namespace MBSim {
       void plot() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        openMBVForce=ombv.createOpenMBV(); 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
+        sideOfForceInteraction = sideOfInteraction;
+        ombvForce = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize));
       }
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
-        openMBVMoment=ombv.createOpenMBV(); 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
+        sideOfMomentInteraction = sideOfInteraction;
+        ombvMoment = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize));
       }
   };
 

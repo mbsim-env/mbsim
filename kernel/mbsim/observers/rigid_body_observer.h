@@ -27,13 +27,26 @@
 
 namespace MBSim {
 
+  BOOST_PARAMETER_NAME(sideOfInteraction)
+
   class RigidBody;
 
   class RigidBodyObserver: public Observer {
+    public:
+      enum SideOfInteraction {
+        action=0,
+        reaction,
+        both,
+        unknown
+      };
+
     private:
       RigidBody* body;
+      SideOfInteraction sideOfForceInteraction{action}, sideOfMomentInteraction{action};
       Frame *frameOfReference;
-      std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow, openMBVAxisOfRotation, openMBVMomentum, openMBVAngularMomentum, openMBVDerivativeOfMomentum, openMBVDerivativeOfAngularMomentum;
+      std::shared_ptr<OpenMBVArrow> ombvForce, ombvMoment;
+      std::vector<std::shared_ptr<OpenMBV::Arrow>> FArrow, MArrow;
+      std::shared_ptr<OpenMBV::Arrow> FWeight, openMBVAxisOfRotation, openMBVMomentum, openMBVAngularMomentum, openMBVDerivativeOfMomentum, openMBVDerivativeOfAngularMomentum;
       std::string saved_body;
       std::string saved_frameOfReference;
 
@@ -53,15 +66,15 @@ namespace MBSim {
       }
 
       /** \brief Visualize the joint force */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVJointForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        FArrow=ombv.createOpenMBV();
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVJointForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
+        sideOfForceInteraction = sideOfInteraction;
+        ombvForce = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize));
       }
 
       /** \brief Visualize the joint moment */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVJointMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        MArrow=ombv.createOpenMBV();
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVJointMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(sideOfInteraction,(SideOfInteraction),action))) {
+        sideOfMomentInteraction = sideOfInteraction;
+        ombvMoment = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize));
       }
 
       /** \brief Visualize the center of rotation */

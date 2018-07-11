@@ -67,6 +67,22 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:group name="OpenMBVInteractionArrowParameters">
+    <xs:sequence>
+      <xs:group ref="OpenMBVArrowParameters"/>
+      <xs:element name="sideOfInteraction" type="pv:stringFullEval" minOccurs="0">
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+          Auswahl des Schnittufers, an dem die Schnittreaktionen angezeigt werden sollen.
+          <ul>
+            <li>action: actio Schnittufer</li>
+            <li>reaction: reactio Schnittufer</li>
+            <li>both: beide Schnittufer</li>
+          </ul>
+        </xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+
   <xs:group name="OpenMBVCoilSpringParameters">
     <xs:sequence>
       <xs:element name="numberOfCoils" type="pv:nounitScalar" minOccurs="0"/>
@@ -1648,6 +1664,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
+                <xs:group ref="OpenMBVCoilSpringParameters"/>
                 <xs:element name="colorRepresentation" type="pv:stringFullEval" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                     Auswahl der Farbdarstellung.
@@ -1660,7 +1677,6 @@
                     </ul>
                   </xs:documentation></xs:annotation>
                 </xs:element>
-                <xs:group ref="OpenMBVCoilSpringParameters"/>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -1717,6 +1733,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
+                <xs:group ref="OpenMBVCoilSpringParameters"/>
                 <xs:element name="colorRepresentation" type="pv:stringFullEval" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                     Auswahl der Farbdarstellung.
@@ -1729,7 +1746,6 @@
                     </ul>
                   </xs:documentation></xs:annotation>
                 </xs:element>
-                <xs:group ref="OpenMBVCoilSpringParameters"/>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -5085,12 +5101,12 @@
           </xs:element>
           <xs:element name="enableOpenMBVForce" minOccurs="0">  
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBVMoment" minOccurs="0">  
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
@@ -5119,12 +5135,12 @@
           </xs:element>
           <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType>
           </xs:element>
           <xs:element name="enableOpenMBVMoment" minOccurs="0">
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType>
           </xs:element>
           <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
@@ -5142,7 +5158,7 @@
                 Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBVTangentialForce" minOccurs="0">
@@ -5150,7 +5166,7 @@
                 Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
@@ -5239,12 +5255,12 @@
           </xs:element>
           <xs:element name="enableOpenMBVForce" minOccurs="0">  
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBVMoment" minOccurs="0">  
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
@@ -5294,7 +5310,7 @@
               Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBVJointMoment" minOccurs="0">
@@ -5302,7 +5318,7 @@
               Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBVAxisOfRotation" minOccurs="0">

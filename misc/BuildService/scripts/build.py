@@ -670,6 +670,12 @@ def repoUpdate(mainFD, currentID):
     # update
     repoUpdFD=codecs.open(pj(args.reportOutDir, "repo-update-"+repo+".txt"), "w", encoding="utf-8")
     retlocal=0
+
+    # workaround for a git bug when using with an unknown user (fixed with git >= 2.6)
+    env=os.environ
+    env["GIT_COMMITTER_NAME"]="dummy"
+    env["GIT_COMMITTER_EMAIL"]="dummy"
+
     if not args.disableUpdate:
       # write repUpd output to report dir
       print('Fetch remote repository '+repo+":", file=repoUpdFD)
