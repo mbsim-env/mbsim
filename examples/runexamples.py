@@ -1901,7 +1901,7 @@ def writeAtomFeed(currentID, nrFailed, nrTotal):
   if args.buildSystemRun==None:
     return
   # load the add feed module
-  sys.path.append(args.buildSystemRun)
+  sys.path.append(args.buildSystemRun+"/../buildSystem/scripts")
   import buildSystemState
   # add a new feed if examples have failed
   buildSystemState.update(args.buildType+"-examples", "Examples Failed: "+args.buildType,
@@ -1993,7 +1993,7 @@ def coverage(mainFD):
   # update build state (only if --buildSystemRun is used)
   if args.buildSystemRun!=None:
     # load and add module
-    sys.path.append(args.buildSystemRun)
+    sys.path.append(args.buildSystemRun+"/../buildSystem/scripts")
     import buildSystemState
     buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", covRateStr,
       "#d9534f" if ret!=0 or covRate<70 else ("#f0ad4e" if covRate<90 else "#5cb85c"))
