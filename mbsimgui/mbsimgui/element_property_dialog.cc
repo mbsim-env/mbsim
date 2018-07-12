@@ -309,7 +309,7 @@ namespace MBSimGUI {
   PointPropertyDialog::PointPropertyDialog(Point *point, QWidget *parent, const Qt::WindowFlags& f) : RigidContourPropertyDialog(point,parent,f) {
     addTab("Visualisation",1);
 
-    visu = new ExtWidget("Enable openMBV",new PointMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
   }
 

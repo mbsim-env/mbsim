@@ -28,6 +28,7 @@
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/extrusion.h>
 #include <openmbvcppinterface/coilspring.h>
+#include <openmbvcppinterface/pointset.h>
 #include <openmbvcppinterface/indexedlineset.h>
 #include <openmbvcppinterface/indexedfaceset.h>
 #include <openmbvcppinterface/nurbscurve.h>
@@ -142,12 +143,19 @@ namespace MBSim {
       void initializeObject(const std::shared_ptr<OpenMBV::Frame> &object);
   };
 
+  class OpenMBVPoint : public OpenMBVColoredBody {
+    public:
+      OpenMBVPoint(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVColoredBody(dc,tp) { }
+      std::shared_ptr<OpenMBV::PointSet> createOpenMBV();
+    protected:
+      void initializeObject(const std::shared_ptr<OpenMBV::PointSet> &object);
+  };
+
   class OpenMBVSphere : public OpenMBVColoredBody {
     protected:
       double r;
-      std::string xml;
     public:
-      OpenMBVSphere(double r_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, std::string xml_="radius") : OpenMBVColoredBody(dc,tp), r(r_), xml(std::move(xml_)) { }
+      OpenMBVSphere(double r_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVColoredBody(dc,tp), r(r_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::Sphere> createOpenMBV();
     protected:
@@ -160,9 +168,9 @@ namespace MBSim {
     public:
       OpenMBVLine(double l_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVColoredBody(dc,tp), l(l_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      std::shared_ptr<OpenMBV::Cuboid> createOpenMBV();
+      std::shared_ptr<OpenMBV::IndexedLineSet> createOpenMBV();
     protected:
-      void initializeObject(const std::shared_ptr<OpenMBV::Cuboid> &object);
+      void initializeObject(const std::shared_ptr<OpenMBV::IndexedLineSet> &object);
   };
 
   class OpenMBVPlane : public OpenMBVColoredBody {

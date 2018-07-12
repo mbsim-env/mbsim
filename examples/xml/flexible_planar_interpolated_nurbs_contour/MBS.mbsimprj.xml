@@ -326,9 +326,7 @@
           <frames/>
           <contours>
             <Point name="Point">
-              <enableOpenMBV>
-                <size unit="m">0.01</size>
-              </enableOpenMBV>
+              <enableOpenMBV/>
             </Point>
           </contours>
           <enableOpenMBVFrameC>

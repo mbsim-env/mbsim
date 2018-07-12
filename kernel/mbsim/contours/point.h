@@ -60,7 +60,7 @@ namespace MBSim {
       /**********************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),0.001)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-        OpenMBVSphere ombv(size,diffuseColor,transparency);
+        OpenMBVPoint ombv(diffuseColor,transparency);
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
       

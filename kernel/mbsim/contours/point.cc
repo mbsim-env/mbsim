@@ -90,7 +90,7 @@ namespace MBSim {
     RigidContour::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      OpenMBVSphere ombv(0.001,"[-1;1;1]",0,"size");
+      OpenMBVPoint ombv("[-1;1;1]",0);
       ombv.initializeUsingXML(e);
       openMBVRigidBody=ombv.createOpenMBV(); 
     }

@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/element.h"
 #include "mbsim/utils/openmbv_utils.h"
+#include "mbsim/utils/index.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
@@ -175,10 +176,25 @@ namespace MBSim {
     object->setOffset(offset);
   }
 
+  shared_ptr<OpenMBV::PointSet> OpenMBVPoint::createOpenMBV() {
+    shared_ptr<OpenMBV::PointSet> object = OpenMBV::ObjectFactory::create<OpenMBV::PointSet>();
+    initializeObject(object);
+    return object;
+  }
+
+  void OpenMBVPoint::initializeObject(const shared_ptr<OpenMBV::PointSet> &object) {
+    OpenMBVColoredBody::initializeObject(object);
+    vector<vector<double>> pos(1,vector<double>(3));
+    pos[0][0] = 0;
+    pos[0][1] = 0;
+    pos[0][2] = 0;
+    object->setVertexPositions(pos);
+  }
+
   void OpenMBVSphere::initializeUsingXML(DOMElement *e) {
     OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee;
-    ee = E(e)->getFirstElementChildNamed(MBSIM%xml);
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"radius");
     if(ee) r = E(ee)->getText<double>();
   }
 
@@ -200,15 +216,26 @@ namespace MBSim {
     if(ee) l = E(ee)->getText<double>();
   }
 
-  shared_ptr<OpenMBV::Cuboid> OpenMBVLine::createOpenMBV() {
-    shared_ptr<OpenMBV::Cuboid> object = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  shared_ptr<OpenMBV::IndexedLineSet> OpenMBVLine::createOpenMBV() {
+    shared_ptr<OpenMBV::IndexedLineSet> object = OpenMBV::ObjectFactory::create<OpenMBV::IndexedLineSet>();
     initializeObject(object);
     return object;
   }
 
-  void OpenMBVLine::initializeObject(const shared_ptr<OpenMBV::Cuboid> &object) {
+  void OpenMBVLine::initializeObject(const shared_ptr<OpenMBV::IndexedLineSet> &object) {
     OpenMBVColoredBody::initializeObject(object);
-    object->setLength(0,l,0);
+    vector<vector<double>> pos(2,vector<double>(3));
+    pos[0][0] = 0;
+    pos[0][1] = -l/2;
+    pos[0][2] = 0;
+    pos[1][0] = 0;
+    pos[1][1] = l/2;
+    pos[1][2] = 0;
+    object->setVertexPositions(pos);
+    vector<Index> indices(2);
+    indices[0] = 0;
+    indices[1] = 1;
+    object->setIndices(indices);
   }
 
   void OpenMBVPlane::initializeUsingXML(DOMElement *e) {

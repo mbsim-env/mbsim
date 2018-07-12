@@ -86,7 +86,6 @@
           <Point name="Point">
             <enableOpenMBV>
               <transparency unit="-">0.5</transparency>
-              <size unit="m">0.1</size>
             </enableOpenMBV>
           </Point>
         </contours><enableOpenMBVFrameC>

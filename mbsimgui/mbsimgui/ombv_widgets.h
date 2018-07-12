@@ -88,16 +88,6 @@ namespace MBSimGUI {
       ExtWidget *colorRepresentation, *minimalColorValue, *maximalColorValue;
   };
 
-  class PointMBSOMBVWidget : public MBSOMBVColoreBodyWidget {
-
-    public:
-      PointMBSOMBVWidget();
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      ExtWidget *size;
-  };
-
   class LineMBSOMBVWidget : public MBSOMBVColoreBodyWidget {
 
     public:

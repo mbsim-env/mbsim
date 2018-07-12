@@ -141,23 +141,6 @@ namespace MBSimGUI {
     return e;
   }
 
-  PointMBSOMBVWidget::PointMBSOMBVWidget() {
-    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("0.001",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"size");
-    layout()->addWidget(size);
-  }
-
-  DOMElement* PointMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=MBSOMBVColoreBodyWidget::initializeUsingXML(element);
-    size->initializeUsingXML(e);
-    return e;
-  }
-
-  DOMElement* PointMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
-    size->writeXMLFile(e);
-    return nullptr;
-  }
-
   LineMBSOMBVWidget::LineMBSOMBVWidget() {
     length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"length");
     layout()->addWidget(length);
