@@ -51,9 +51,9 @@ namespace MBSim {
   class OpenMBVColoredBody : public OpenMBVBody {
     protected:
       fmatvec::Vec3 dc;
-      double tp;
+      double tp, ps, lw;
     public:
-      OpenMBVColoredBody(const fmatvec::Vec3 &dc_="[-1;1;1]", double tp_=0) : dc(dc_), tp(tp_) { }
+      OpenMBVColoredBody(const fmatvec::Vec3 &dc_="[-1;1;1]", double tp_=0, double ps_=0, double lw_=0) : dc(dc_), tp(tp_), ps(ps_), lw(lw_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
     protected:
       void initializeObject(const std::shared_ptr<OpenMBV::DynamicColoredBody> &object);

@@ -41,6 +41,8 @@
     <xs:sequence>
       <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
       <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+      <xs:element name="pointSize" type="pv:lengthScalar" minOccurs="0"/>
+      <xs:element name="lineWidth" type="pv:lengthScalar" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 

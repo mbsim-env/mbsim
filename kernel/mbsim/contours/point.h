@@ -59,7 +59,7 @@ namespace MBSim {
       fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPS) override { return fmatvec::Vec2(fmatvec::INIT,0.); }
       /**********************************/
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),0.001)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVPoint ombv(diffuseColor,transparency);
         openMBVRigidBody=ombv.createOpenMBV(); 
       }

@@ -48,12 +48,18 @@ namespace MBSim {
     if(ee) dc = E(ee)->getText<Vec>(3);
     ee=E(e)->getFirstElementChildNamed(MBSIM%"transparency");
     if(ee) tp = E(ee)->getText<double>();
+    ee=E(e)->getFirstElementChildNamed(MBSIM%"pointSize");
+    if(ee) ps = E(ee)->getText<double>();
+    ee=E(e)->getFirstElementChildNamed(MBSIM%"lineWidth");
+    if(ee) lw = E(ee)->getText<double>();
   }
 
   void OpenMBVColoredBody::initializeObject(const shared_ptr<OpenMBV::DynamicColoredBody> &object) {
     OpenMBVBody::initializeObject(object);
     object->setDiffuseColor(dc(0),dc(1),dc(2));
     object->setTransparency(tp);
+    object->setPointSize(ps);
+    object->setLineWidth(lw);
   }
 
   void OpenMBVDynamicColoredBody::initializeUsingXML(DOMElement *e) {
