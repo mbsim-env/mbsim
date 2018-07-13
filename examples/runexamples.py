@@ -139,7 +139,7 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
   help="disable the -j option and run always in a single process/thread")
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
-debugOpts.add_argument("--buildSystemRun", default=None, type=str, help="Run in build system mode: generate build system state; The dir to the scripts of the build system must be passed.")
+debugOpts.add_argument("--buildSystemRun", default=None, type=str, help="Run in build system mode: generate build system state; The dir to buildSystemState.py must be passed.")
 debugOpts.add_argument("--webapp", action="store_true", help="Add buttons for mbsimwebapp.")
 
 # parse command line options
@@ -1901,7 +1901,7 @@ def writeAtomFeed(currentID, nrFailed, nrTotal):
   if args.buildSystemRun==None:
     return
   # load the add feed module
-  sys.path.append(args.buildSystemRun+"/../buildSystem/scripts")
+  sys.path.append(args.buildSystemRun)
   import buildSystemState
   # add a new feed if examples have failed
   buildSystemState.update(args.buildType+"-examples", "Examples Failed: "+args.buildType,
@@ -1993,7 +1993,7 @@ def coverage(mainFD):
   # update build state (only if --buildSystemRun is used)
   if args.buildSystemRun!=None:
     # load and add module
-    sys.path.append(args.buildSystemRun+"/../buildSystem/scripts")
+    sys.path.append(args.buildSystemRun)
     import buildSystemState
     buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", covRateStr,
       "#d9534f" if ret!=0 or covRate<70 else ("#f0ad4e" if covRate<90 else "#5cb85c"))
