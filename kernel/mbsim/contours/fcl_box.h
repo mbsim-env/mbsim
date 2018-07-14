@@ -50,8 +50,8 @@ namespace MBSim {
       void setLength(double lx_, double ly_, double lz_) { lx = lx_; ly = ly_; lz = lz_; }
       /***************************************************/
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-        OpenMBVCuboid ombv(fmatvec::Vec3(),diffuseColor,transparency);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
+        OpenMBVCuboid ombv(fmatvec::Vec3(),diffuseColor,transparency,pointSize,lineWidth);
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
 

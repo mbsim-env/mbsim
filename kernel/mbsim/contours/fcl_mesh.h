@@ -67,8 +67,8 @@ namespace MBSim {
       void setCollisionStructure(CollisionStructure collisionStructure_) { collisionStructure = collisionStructure_; }
       /***************************************************/
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVIndexedFaceSet ombv(diffuseColor,transparency);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
+        OpenMBVIndexedFaceSet ombv(diffuseColor,transparency,pointSize,lineWidth);
         openMBVRigidBody=ombv.createOpenMBV();
       }
 

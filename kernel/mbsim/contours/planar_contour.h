@@ -65,8 +65,8 @@ namespace MBSim {
       Function<fmatvec::Vec3(double)>* getContourFunction() { return funcCrPC; }
       /***************************************************/
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (nodes,(const std::vector<double>&),std::vector<double>())(filled,(bool),0)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        ombv = std::shared_ptr<OpenMBVPlanarContour>(new OpenMBVPlanarContour(nodes,filled,diffuseColor,transparency));
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (nodes,(const std::vector<double>&),std::vector<double>())(filled,(bool),0)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
+        ombv = std::shared_ptr<OpenMBVPlanarContour>(new OpenMBVPlanarContour(nodes,filled,diffuseColor,transparency,pointSize,lineWidth));
         openMBVRigidBody=ombv->createOpenMBV();
       }
       

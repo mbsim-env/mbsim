@@ -87,7 +87,7 @@ namespace MBSim {
     object->setMaximalColorValue(maxCol);
   }
 
-  OpenMBVArrow::OpenMBVArrow(double sL_, double sS_, const OpenMBVArrow::Type &type_, const OpenMBVArrow::ReferencePoint &refPoint_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp), sL(sL_), sS(sS_), type(type_), refPoint(refPoint_) {
+  OpenMBVArrow::OpenMBVArrow(double sL_, double sS_, const OpenMBVArrow::Type &type_, const OpenMBVArrow::ReferencePoint &refPoint_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp,ps,lw), sL(sL_), sS(sS_), type(type_), refPoint(refPoint_) {
     cRL.resize(2);
     cRL[0]="none";
     cRL[1]="absoluteValue";
@@ -135,7 +135,7 @@ namespace MBSim {
     object->setScaleLength(sL);
   }
 
-  OpenMBVInteractionArrow::OpenMBVInteractionArrow(unsigned int sI_, double sL, double sS, const OpenMBVArrow::Type &type, const OpenMBVArrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVArrow(sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp), sI(sI_) {
+  OpenMBVInteractionArrow::OpenMBVInteractionArrow(unsigned int sI_, double sL, double sS, const OpenMBVArrow::Type &type, const OpenMBVArrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw) : OpenMBVArrow(sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp,ps,lw), sI(sI_) {
   }
 
   void OpenMBVInteractionArrow::initializeUsingXML(DOMElement *e) {
@@ -155,7 +155,7 @@ namespace MBSim {
     OpenMBVArrow::initializeObject(object);
   }
 
-  OpenMBVFrictionArrow::OpenMBVFrictionArrow(unsigned int sI, double sL, double sS, const OpenMBVArrow::Type &type, const OpenMBVArrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVInteractionArrow(sI,sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp) {
+  OpenMBVFrictionArrow::OpenMBVFrictionArrow(unsigned int sI, double sL, double sS, const OpenMBVArrow::Type &type, const OpenMBVArrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw) : OpenMBVInteractionArrow(sI,sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp,ps,lw) {
     cRL.resize(3);
     cRL[0]="none";
     cRL[1]="absoluteValue";
@@ -341,7 +341,7 @@ namespace MBSim {
     object->setHeight(h);
   }
 
-  OpenMBVCoilSpring::OpenMBVCoilSpring(double r_, double cr_, double sf_, double n_, double l_, OpenMBVCoilSpring::Type type_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), type(type_) {
+  OpenMBVCoilSpring::OpenMBVCoilSpring(double r_, double cr_, double sf_, double n_, double l_, OpenMBVCoilSpring::Type type_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp,ps,lw), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), type(type_) {
     cRL.resize(5);
     cRL[0]="none";
     cRL[1]="deflection";
