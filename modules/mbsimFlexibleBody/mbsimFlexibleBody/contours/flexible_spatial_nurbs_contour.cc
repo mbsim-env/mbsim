@@ -414,11 +414,9 @@ namespace MBSimFlexibleBody {
     if(e) setOpenXi(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
-      openMBVNurbsSurface = OpenMBV::ObjectFactory::create<OpenMBV::DynamicNurbsSurface>();
-      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"diffuseColor");
-      if(ee) openMBVNurbsSurface->setDiffuseColor(E(ee)->getText<Vec>(3));
-      ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"transparency");
-      if(ee) openMBVNurbsSurface->setTransparency(E(ee)->getText<double>());
+      OpenMBVDynamicNurbsSurface ombv;
+      ombv.initializeUsingXML(e);
+      openMBVNurbsSurface=ombv.createOpenMBV();
     }
   }
 

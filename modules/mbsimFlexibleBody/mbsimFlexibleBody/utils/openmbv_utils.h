@@ -21,8 +21,22 @@
 #define _MBSIMFLEX_OPENMBV_UTILS_H_
 
 #include <mbsim/utils/openmbv_utils.h>
+#include <openmbvcppinterface/dynamicnurbscurve.h>
+#include <openmbvcppinterface/dynamicnurbssurface.h>
 
 namespace MBSimFlexibleBody {
+
+  class OpenMBVDynamicNurbsCurve : public MBSim::OpenMBVColoredBody {
+    public:
+      OpenMBVDynamicNurbsCurve(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : MBSim::OpenMBVColoredBody(dc,tp,ps,lw) { }
+      std::shared_ptr<OpenMBV::DynamicNurbsCurve> createOpenMBV();
+  };
+
+  class OpenMBVDynamicNurbsSurface : public MBSim::OpenMBVColoredBody {
+    public:
+      OpenMBVDynamicNurbsSurface(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : MBSim::OpenMBVColoredBody(dc,tp,ps,lw) { }
+      std::shared_ptr<OpenMBV::DynamicNurbsSurface> createOpenMBV();
+  };
 
 }
 

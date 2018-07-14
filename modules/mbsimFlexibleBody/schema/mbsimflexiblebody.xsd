@@ -943,22 +943,6 @@
               <xs:group ref="mbsim:OpenMBVFrameParameters"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="enableOpenMBVJointForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="mbsim:OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVJointMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="mbsim:OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
           <xs:element name="plotFeatureFrameK" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -1025,10 +1009,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="mbsim:OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1083,10 +1064,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="mbsim:OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1158,10 +1136,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="mbsim:OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1233,10 +1208,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
-              </xs:sequence>
+              <xs:group ref="mbsim:OpenMBVColoredBodyParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

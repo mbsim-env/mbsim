@@ -31,5 +31,17 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
+  shared_ptr<OpenMBV::DynamicNurbsCurve> OpenMBVDynamicNurbsCurve::createOpenMBV() {
+    shared_ptr<OpenMBV::DynamicNurbsCurve> object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicNurbsCurve>();
+    initializeObject(object);
+    return object;
+  }
+
+  shared_ptr<OpenMBV::DynamicNurbsSurface> OpenMBVDynamicNurbsSurface::createOpenMBV() {
+    shared_ptr<OpenMBV::DynamicNurbsSurface> object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicNurbsSurface>();
+    initializeObject(object);
+    return object;
+  }
+
 }
 

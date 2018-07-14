@@ -23,10 +23,8 @@
 #include "mbsimFlexibleBody/contours/flexible_contour.h"
 
 #include "mbsim/utils/boost_parameters.h"
-#include <mbsim/utils/openmbv_utils.h>
+#include <mbsimFlexibleBody/utils/openmbv_utils.h>
 #include <mbsim/numerics/nurbs/nurbs_curve.h>
-
-#include <openmbvcppinterface/dynamicnurbscurve.h>
 
 namespace OpenMBV {
   class DynamicNurbsCurve;
@@ -96,15 +94,12 @@ namespace MBSimFlexibleBody {
 
       void plot() override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        openMBVNurbsCurve = OpenMBV::ObjectFactory::create<OpenMBV::DynamicNurbsCurve>();
-        openMBVNurbsCurve->setDiffuseColor(diffuseColor);
-        openMBVNurbsCurve->setTransparency(transparency);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<double>&),std::vector<double>())(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
+        OpenMBVDynamicNurbsCurve ombv(diffuseColor,transparency,pointSize,lineWidth);
+        openMBVNurbsCurve=ombv.createOpenMBV();
       }
       
       void initializeUsingXML(xercesc::DOMElement *element) override;
-
-//      void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
       bool isZetaOutside(const fmatvec::Vec2 &zeta) override;
 
