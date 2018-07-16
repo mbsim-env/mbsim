@@ -39,7 +39,6 @@ else:
 
 # global variables
 scriptDir=os.path.dirname(os.path.realpath(__file__))
-buildSystemRootURL="https://www.mbsim-env.de/mbsim"
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
 mbxmlutilsvalidate=None
@@ -283,7 +282,7 @@ def main():
     argparser.print_usage()
     print("error: unknown argument --action "+args.action+" (see -h)")
     return 1
-  args.updateURL=buildSystemRootURL+"/linux64-dailydebug/references" # default value
+  args.updateURL="https://www.mbsim-env.de/mbsim/linux64-dailydebug/references" # default value
   args.pushDIR=None # no default value (use /var/www/html/mbsim-env/MBSimDailyBuild/references for the build system)
   if args.action.startswith("updateReference="):
     if os.path.isdir(args.action[16:]):
@@ -414,7 +413,7 @@ def main():
       if($(location).attr('href').search("/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current")>=0 &&
           $("#FINISHED").length>0) {
         // load mbsimBuildServiceClient.js
-        $.getScript("%s/html/mbsimBuildServiceClient.js", function() {
+        $.getScript("/mbsim/html/mbsimBuildServiceClient.js", function() {
           // show reference update and status
           $("#UPDATEREFERENCES").css("display", "block");
           $("#STATUSPANEL").css("display", "block");
@@ -448,7 +447,7 @@ def main():
           }
       }
     });
-  </script>'''%(args.buildType, buildSystemRootURL), file=mainFD)
+  </script>'''%(args.buildType), file=mainFD)
 
   print('<h1>MBSim runexamples Results: <small>%s</small></h1>'%(args.buildType), file=mainFD)
   print('<dl class="dl-horizontal">', file=mainFD)
@@ -605,9 +604,9 @@ def main():
 </div>
 <hr/>
 <span class="pull-left small">
-  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
-  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
-  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
+  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
+  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
+  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
 </span>
 <span class="pull-right small">
   Generated on %s by runexamples.py
@@ -884,13 +883,13 @@ def runExample(resultQueue, example):
                                                int(len(ombvFiles)>0), int(len(h5pFiles)>0), int(guiFile!=None))+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_ombv.txt")),
           "visible" if len(ombvFiles)>0 else "hidden", "success" if ombvRet==0 else ("danger" if not willFail else "warning"))+\
-          '<img src="%s/html/openmbv.svg" alt="ombv"/></a>'%(buildSystemRootURL)+\
+          '<img src="/mbsim/html/openmbv.svg" alt="ombv"/></a>'+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_h5p.txt")),
           "visible" if len(h5pFiles)>0 else "hidden", "success" if h5pRet==0 else ("danger" if not willFail else "warning"))+\
-          '<img src="%s/html/h5plotserie.svg" alt="h5p"/></a>'%(buildSystemRootURL)+\
+          '<img src="/mbsim/html/h5plotserie.svg" alt="h5p"/></a>'+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_gui.txt")),
           "visible" if guiFile!=None else "hidden", "success" if guiRet==0 else ("danger" if not willFail else "warning"))+\
-          '<img src="%s/html/mbsimgui.svg" alt="gui"/></a>'%(buildSystemRootURL)+\
+          '<img src="/mbsim/html/mbsimgui.svg" alt="gui"/></a>'+\
       '</td>'
       if ombvRet!=0 or h5pRet!=0 or guiRet!=0:
         runExampleRet=1
@@ -1006,9 +1005,9 @@ def runExample(resultQueue, example):
       print('</tbody></table>', file=htmlOutputFD)
       print('<hr/>',  file=htmlOutputFD)
       print('<span class="pull-left small">',  file=htmlOutputFD)
-      print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /',  file=htmlOutputFD)
-      print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /',  file=htmlOutputFD)
-      print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>',  file=htmlOutputFD)
+      print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /',  file=htmlOutputFD)
+      print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /',  file=htmlOutputFD)
+      print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
       print('<span class="pull-right small">',  file=htmlOutputFD)
       print('  Generated on %s by runexamples.py'%(str(timeID)), file=htmlOutputFD)
@@ -1071,18 +1070,18 @@ def webapp(example):
     else:
       gui['file']=[example+'/FMI_cosim.mbsimprj.xml']
   return '<td data-order="%03d%03d%03d">'%(len(ombv), len(h5p), len(gui))+\
-      ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
+      ('<button disabled="disabled" type="button" onclick="location.href=\'/mbsim/html/noVNC/mbsimwebapp.html?'+\
        myurllibp.urlencode(ombv, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(ombv)>0 else 'hidden')+';">'+\
-       '<img src="%s/html/openmbv.svg" alt="ombv"/></button>'%(buildSystemRootURL)+'&nbsp;')+\
-      ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
+       '<img src="/mbsim/html/openmbv.svg" alt="ombv"/></button>&nbsp;')+\
+      ('<button disabled="disabled" type="button" onclick="location.href=\'/mbsim/html/noVNC/mbsimwebapp.html?'+\
        myurllibp.urlencode(h5p, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(h5p)>0 else 'hidden')+';">'+\
-       '<img src="%s/html/h5plotserie.svg" alt="h5p"/></button>'%(buildSystemRootURL)+'&nbsp;')+\
-      ('<button disabled="disabled" type="button" onclick="location.href=\''+buildSystemRootURL+'/html/noVNC/mbsimwebapp.html?'+\
+       '<img src="/mbsim/html/h5plotserie.svg" alt="h5p"/></button>&nbsp;')+\
+      ('<button disabled="disabled" type="button" onclick="location.href=\'/mbsim/html/noVNC/mbsimwebapp.html?'+\
        myurllibp.urlencode(gui, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(gui)>0 else 'hidden')+';">'+\
-       '<img src="%s/html/mbsimgui.svg" alt="gui"/></button>'%(buildSystemRootURL)+'&nbsp;')+\
+       '<img src="/mbsim/html/mbsimgui.svg" alt="gui"/></button>&nbsp;')+\
     '</td>'
 
 # if args.exeEXt is set we must prefix every command with wine
@@ -1398,9 +1397,9 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<p><object data="plot.svg" type="image/svg+xml"> </object></p>', file=diffHTMLPlotFD)
   print('<hr/>', file=diffHTMLPlotFD)
   print('<span class="pull-left small">', file=diffHTMLPlotFD)
-  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=diffHTMLPlotFD)
-  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=diffHTMLPlotFD)
-  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=diffHTMLPlotFD)
+  print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=diffHTMLPlotFD)
+  print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=diffHTMLPlotFD)
+  print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
   print('<span class="pull-right small">', file=diffHTMLPlotFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=diffHTMLPlotFD)
@@ -1782,9 +1781,9 @@ def compareExample(example, compareFN):
   print('</tbody></table>', file=compareFD)
   print('<hr/>', file=compareFD)
   print('<span class="pull-left small">', file=compareFD)
-  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=compareFD)
-  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=compareFD)
-  print('  <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=compareFD)
+  print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=compareFD)
+  print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=compareFD)
+  print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=compareFD)
   print('</span>', file=compareFD)
   print('<span class="pull-right small">', file=compareFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=compareFD)
