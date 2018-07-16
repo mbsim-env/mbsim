@@ -139,7 +139,7 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
   help="disable the -j option and run always in a single process/thread")
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
-debugOpts.add_argument("--buildSystemRun", default=None, type=str, help="Run in build system mode: generate build system state; The dir to the scripts of the build system must be passed.")
+debugOpts.add_argument("--buildSystemRun", default=None, type=str, help="Run in build system mode: generate build system state; The dir to buildSystemState.py must be passed.")
 debugOpts.add_argument("--webapp", action="store_true", help="Add buttons for mbsimwebapp.")
 
 # parse command line options
@@ -331,6 +331,12 @@ def main():
   # create mbsimxml schema
   mbsimXMLSchemas=subprocess.check_output(exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyListSchemas"]).\
     decode("utf-8").split()
+
+  # check args.directories
+  for d in args.directories:
+    if not os.path.isdir(d):
+      print("The positional argument (directory) "+d+" does not exist.")
+      exit(1)
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
