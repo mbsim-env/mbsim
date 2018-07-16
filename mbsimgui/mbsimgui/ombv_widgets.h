@@ -63,25 +63,23 @@ namespace MBSimGUI {
   class MBSOMBVWidget : public Widget {
 
     public:
-      MBSOMBVWidget(const MBXMLUtils::NamespaceURI &url_=MBSIM) : url(url_) { }
-    protected:
-      MBXMLUtils::NamespaceURI url;
+      MBSOMBVWidget() { }
   };
 
   class MBSOMBVColoreBodyWidget : public MBSOMBVWidget {
 
     public:
-      MBSOMBVColoreBodyWidget(const MBXMLUtils::NamespaceURI &url_=MBSIM);
+      MBSOMBVColoreBodyWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *diffuseColor, *transparency;
+      ExtWidget *diffuseColor, *transparency, *pointSize, *lineWidth;
   };
 
   class MBSOMBVDynamicColoreBodyWidget : public MBSOMBVColoreBodyWidget {
 
     public:
-      MBSOMBVDynamicColoreBodyWidget(const std::vector<QString> &cRL=std::vector<QString>(1,"\"none\""), const MBXMLUtils::NamespaceURI &url_=MBSIM);
+      MBSOMBVDynamicColoreBodyWidget(const std::vector<QString> &cRL=std::vector<QString>(1,"\"none\""));
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:

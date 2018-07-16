@@ -684,7 +684,7 @@ namespace MBSimGUI {
     open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"open");
     addToTab("General", open);
 
-    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget(MBSIMFLEX),true,true,MBSIMFLEX%"enableOpenMBV");
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualisation", visu);
   }
 
@@ -737,7 +737,7 @@ namespace MBSimGUI {
     openXi = new ExtWidget("Open xi",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openXi");
     addToTab("General", openXi);
 
-    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget(MBSIMFLEX),true,true,MBSIMFLEX%"enableOpenMBV");
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualisation", visu);
   }
 

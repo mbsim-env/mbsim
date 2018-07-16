@@ -89,33 +89,43 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  MBSOMBVColoreBodyWidget::MBSOMBVColoreBodyWidget(const NamespaceURI &url) : MBSOMBVWidget(url) {
+  MBSOMBVColoreBodyWidget::MBSOMBVColoreBodyWidget() {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget(),true,false,url%"diffuseColor");
+    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget(),true,false,MBSIM%"diffuseColor");
     layout->addWidget(diffuseColor);
 
-    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,url%"transparency");
+    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"transparency");
     layout->addWidget(transparency);
+
+    pointSize = new ExtWidget("Point size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pointSize");
+    layout->addWidget(pointSize);
+
+    lineWidth = new ExtWidget("Line width",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"lineWidth");
+    layout->addWidget(lineWidth);
   }
 
   DOMElement* MBSOMBVColoreBodyWidget::initializeUsingXML(DOMElement *e) {
     diffuseColor->initializeUsingXML(e);
     transparency->initializeUsingXML(e);
+    pointSize->initializeUsingXML(e);
+    lineWidth->initializeUsingXML(e);
     return e;
   }
 
   DOMElement* MBSOMBVColoreBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     diffuseColor->writeXMLFile(parent);
     transparency->writeXMLFile(parent);
+    pointSize->writeXMLFile(parent);
+    lineWidth->writeXMLFile(parent);
     return static_cast<DOMElement*>(parent);
   }
 
-  MBSOMBVDynamicColoreBodyWidget::MBSOMBVDynamicColoreBodyWidget(const vector<QString> &cRL, const NamespaceURI &url) : MBSOMBVColoreBodyWidget(url) {
+  MBSOMBVDynamicColoreBodyWidget::MBSOMBVDynamicColoreBodyWidget(const vector<QString> &cRL) {
 
-    colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(cRL,0,true),true,false,url%"colorRepresentation");
+    colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(cRL,0,true),true,false,MBSIM%"colorRepresentation");
     layout()->addWidget(colorRepresentation);
 
     minimalColorValue = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimalColorValue");
@@ -142,7 +152,7 @@ namespace MBSimGUI {
   }
 
   LineMBSOMBVWidget::LineMBSOMBVWidget() {
-    length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"length");
+    length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"length");
     layout()->addWidget(length);
   }
 
@@ -159,7 +169,7 @@ namespace MBSimGUI {
   }
 
   PlaneMBSOMBVWidget::PlaneMBSOMBVWidget() {
-    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(getScalars<QString>(2,"1"),vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"length");
+    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(getScalars<QString>(2,"1"),vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"length");
     layout()->addWidget(length);
   }
 
@@ -176,9 +186,9 @@ namespace MBSimGUI {
   }
 
   PlanarContourMBSOMBVWidget::PlanarContourMBSOMBVWidget() {
-    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,url%"nodes");
+    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nodes");
     layout()->addWidget(nodes);
-    filled = new ExtWidget("Filled",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true,false,url%"filled");
+    filled = new ExtWidget("Filled",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true,false,MBSIM%"filled");
     layout()->addWidget(filled);
   }
 
@@ -197,9 +207,9 @@ namespace MBSimGUI {
   }
 
   SpatialContourMBSOMBVWidget::SpatialContourMBSOMBVWidget() {
-    etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,url%"etaNodes");
+    etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaNodes");
     layout()->addWidget(etaNodes);
-    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,url%"xiNodes");
+    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"xiNodes");
     layout()->addWidget(xiNodes);
   }
 
@@ -219,10 +229,10 @@ namespace MBSimGUI {
 
   ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const vector<QString> &cRL) : MBSOMBVDynamicColoreBodyWidget(cRL) {
 
-    scaleLength = new ExtWidget("Scale length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,url%"scaleLength");
+    scaleLength = new ExtWidget("Scale length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleLength");
     layout()->addWidget(scaleLength);
 
-    scaleSize = new ExtWidget("Scale size",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,url%"scaleSize");
+    scaleSize = new ExtWidget("Scale size",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleSize");
     layout()->addWidget(scaleSize);
 
     vector<QString> list;
@@ -233,14 +243,14 @@ namespace MBSimGUI {
     list.emplace_back("\"fromDoubleHead\"");
     list.emplace_back("\"toDoubleHead\"");
     list.emplace_back("\"bothDoubleHead\"");
-    type = new ExtWidget("Type",new TextChoiceWidget(list,2,true),true,false,url%"type");
+    type = new ExtWidget("Type",new TextChoiceWidget(list,2,true),true,false,MBSIM%"type");
     layout()->addWidget(type);
 
     list.clear();
     list.emplace_back("\"toPoint\"");
     list.emplace_back("\"fromPoint\"");
     list.emplace_back("\"midPoint\"");
-    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,0,true),true,false,url%"referencePoint");
+    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,0,true),true,false,MBSIM%"referencePoint");
     layout()->addWidget(referencePoint);
   }
 
@@ -275,7 +285,7 @@ namespace MBSimGUI {
     list.emplace_back("\"action\"");
     list.emplace_back("\"reaction\"");
     list.emplace_back("\"both\"");
-    sideOfInteraction = new ExtWidget("Side of interaction",new TextChoiceWidget(list,0,true),true,false,url%"sideOfInteraction");
+    sideOfInteraction = new ExtWidget("Side of interaction",new TextChoiceWidget(list,0,true),true,false,MBSIM%"sideOfInteraction");
     layout()->addWidget(sideOfInteraction);
   }
 
@@ -301,23 +311,23 @@ namespace MBSimGUI {
 
   CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const std::vector<QString> &cRL) : MBSOMBVDynamicColoreBodyWidget(cRL) {
 
-    numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,url%"numberOfCoils");
+    numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numberOfCoils");
     layout()->addWidget(numberOfCoils);
 
-    springRadius = new ExtWidget("Spring radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"springRadius");
+    springRadius = new ExtWidget("Spring radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"springRadius");
     layout()->addWidget(springRadius);
 
-    crossSectionRadius = new ExtWidget("Cross section radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"crossSectionRadius");
+    crossSectionRadius = new ExtWidget("Cross section radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"crossSectionRadius");
     layout()->addWidget(crossSectionRadius);
 
-    nominalLength = new ExtWidget("Nominal length",new ChoiceWidget2(new ScalarWidgetFactory("-1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"nominalLength");
+    nominalLength = new ExtWidget("Nominal length",new ChoiceWidget2(new ScalarWidgetFactory("-1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nominalLength");
     layout()->addWidget(nominalLength);
 
     vector<QString> list;
     list.emplace_back("\"tube\"");
     list.emplace_back("\"scaledTube\"");
     list.emplace_back("\"polyline\"");
-    type = new ExtWidget("Type",new TextChoiceWidget(list,0,true),true,false,url%"type");
+    type = new ExtWidget("Type",new TextChoiceWidget(list,0,true),true,false,MBSIM%"type");
     layout()->addWidget(type);
   }
 
@@ -352,11 +362,11 @@ namespace MBSimGUI {
   }
 
   FrameMBSOMBVWidget::FrameMBSOMBVWidget() {
-    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,url%"size");
+    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
     size->setToolTip("Set the size of the frame");
     layout()->addWidget(size);
 
-    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,url%"offset");
+    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
     offset->setToolTip("Set the offset of the frame");
     layout()->addWidget(offset);
   }
