@@ -385,6 +385,7 @@ def main():
   </head>
   <body style="margin:0.5em">
   <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
+  <script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>
   <script type="text/javascript">
     $(document).ready(function() {
       // init table
@@ -964,6 +965,7 @@ def runExample(resultQueue, example):
       print('</head>', file=htmlOutputFD)
       print('<body style="margin:0.5em">', file=htmlOutputFD)
       print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=htmlOutputFD)
+      print('<script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>', file=htmlOutputFD)
       print('<script type="text/javascript">', file=htmlOutputFD)
       print('  $(document).ready(function() {', file=htmlOutputFD)
       print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=htmlOutputFD)
@@ -1365,6 +1367,8 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
   print('<body style="margin:0.5em">', file=diffHTMLPlotFD)
+  print('<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>', file=diffHTMLPlotFD)
+  print('<script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>', file=diffHTMLPlotFD)
   print('<h1>Difference Plot: <small>%s</small></h1>'%(args.buildType), file=diffHTMLPlotFD)
   print('<dl class="dl-horizontal">', file=diffHTMLPlotFD)
   print('<dt>Example:</dt><dd>'+example.replace('/', u'/\u200B')+'</dd>', file=diffHTMLPlotFD)
@@ -1631,6 +1635,7 @@ def compareExample(example, compareFN):
   print('</head>', file=compareFD)
   print('<body style="margin:0.5em">', file=compareFD)
   print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=compareFD)
+  print('<script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>', file=compareFD)
   print('''<script type="text/javascript">
     $(document).ready(function() {
       $('#SortThisTable').dataTable({

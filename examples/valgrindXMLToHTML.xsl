@@ -52,6 +52,7 @@
         </script>
       </head>
       <body style="margin:0.5em">
+        <script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>
         <h1>Valgrind Report: <xsl:value-of select="tool/text()"/></h1>
         <h2>Call Information</h2>
         <dl class="dl-horizontal">
