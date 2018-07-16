@@ -285,6 +285,7 @@ namespace MBSimFlexibleBody {
       for(int i=0; i<crvPos.ctrlPnts().rows(); i++) {
         for(int j=0; j<4; j++)
           data.push_back(crvPos.ctrlPnts()(i,j));
+        data.push_back(0);
       }
       openMBVNurbsCurve->append(data);
     }

@@ -372,6 +372,7 @@ namespace MBSimFlexibleBody {
         for(int i=0; i<srfPos.ctrlPnts().rows(); i++) {
           for(int k=0; k<4; k++)
             data.push_back(srfPos.ctrlPnts()(i,j)(k));
+          data.push_back(0);
         }
       }
       openMBVNurbsSurface->append(data);

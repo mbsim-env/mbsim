@@ -87,7 +87,7 @@ namespace MBSimFlexibleBody {
 
       void plot() override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<double>&),std::vector<double>())(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         OpenMBVDynamicNurbsCurve ombv(diffuseColor,transparency,pointSize,lineWidth);
         openMBVNurbsCurve=ombv.createOpenMBV();
       }

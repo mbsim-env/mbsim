@@ -251,13 +251,14 @@ namespace MBSimFlexibleBody {
       data.push_back(getTime()); //time
       //Control-Point coordinates
       for(int i=0; i<crvPos.ctrlPnts().rows(); i++) {
-          Vec3 KrPS = crvPos.ctrlPnts().row(i).T()(Range<Fixed<0>,Fixed<2> >());
-          for(size_t k=0; k<crvPhi.size(); k++)
-            KrPS += crvPhi[k].ctrlPnts().row(i).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(k);
-          Vec3 r = R->evalPosition() + R->evalOrientation()*KrPS;
-          for(int j=0; j<3; j++)
-            data.push_back(r(j));
-          data.push_back(1);
+        Vec3 KrPS = crvPos.ctrlPnts().row(i).T()(Range<Fixed<0>,Fixed<2> >());
+        for(size_t k=0; k<crvPhi.size(); k++)
+          KrPS += crvPhi[k].ctrlPnts().row(i).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(k);
+        Vec3 r = R->evalPosition() + R->evalOrientation()*KrPS;
+        for(int j=0; j<3; j++)
+          data.push_back(r(j));
+        data.push_back(1);
+        data.push_back(0);
       }
       openMBVNurbsCurve->append(data);
     }

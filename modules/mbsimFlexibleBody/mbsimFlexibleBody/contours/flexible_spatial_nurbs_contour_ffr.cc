@@ -443,6 +443,7 @@ namespace MBSimFlexibleBody {
           for(int k=0; k<3; k++)
             data.push_back(r(k));
           data.push_back(1);
+          data.push_back(0);
         }
       }
       openMBVNurbsSurface->append(data);
