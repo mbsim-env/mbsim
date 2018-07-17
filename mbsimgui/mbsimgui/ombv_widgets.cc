@@ -433,8 +433,10 @@ namespace MBSimGUI {
 
   DOMElement* OMBVBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=OMBVObjectWidget::writeXMLFile(parent);
-    E(e)->setAttribute("pointSize", static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(pointSize->getWidget())->getWidget())->getValue().toStdString());
-    E(e)->setAttribute("lineWidth", static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(lineWidth->getWidget())->getWidget())->getValue().toStdString());
+    if(pointSize->isActive())
+      E(e)->setAttribute("pointSize", static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(pointSize->getWidget())->getWidget())->getValue().toStdString());
+    if(lineWidth->isActive())
+      E(e)->setAttribute("lineWidth", static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(lineWidth->getWidget())->getWidget())->getValue().toStdString());
     return e;
   }
 
