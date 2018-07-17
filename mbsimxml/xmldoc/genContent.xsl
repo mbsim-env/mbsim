@@ -55,6 +55,7 @@
       </script>
     </head>
     <body style="margin:0.5em">
+    <script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>
     <div class="page-header">
       <h1>MBSimXML - Main MBSim XML Documentation</h1>
     </div>
@@ -103,9 +104,9 @@
     </ul>
     <hr/>
     <span class="pull-left small">
-      <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
-      <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
-      <a href="https://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
+      <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
+      <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
+      <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
     </span>
     <span class="pull-right small">
       Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by MBSimXML<xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
