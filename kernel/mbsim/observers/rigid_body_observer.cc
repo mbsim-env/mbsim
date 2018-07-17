@@ -190,7 +190,7 @@ namespace MBSim {
         data.push_back(dir(0));
         data.push_back(dir(1));
         data.push_back(dir(2));
-        data.push_back(ombvAxisOfRotation->getColorRepresentation()?nrm2(dir):0.5);
+        data.push_back(ombvAxisOfRotation->getColorRepresentation()?nrm2(dir):0);
         openMBVAxisOfRotation->append(data);
         //          plotVector.push_back(nrm2(dir));
       }
