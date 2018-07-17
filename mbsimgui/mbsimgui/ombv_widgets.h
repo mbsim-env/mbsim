@@ -187,14 +187,24 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
   };
 
-  class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
+  class OMBVBodyWidget : public OMBVObjectWidget {
+
+    public:
+      OMBVBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      QVBoxLayout *layout;
+      ExtWidget *pointSize, *lineWidth;
+  };
+
+  class OMBVDynamicColoredObjectWidget : public OMBVBodyWidget {
 
     public:
       OMBVDynamicColoredObjectWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      QVBoxLayout *layout;
       ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency;
   };
 
@@ -284,15 +294,20 @@ namespace MBSimGUI {
       ExtWidget *bodies;
   };
 
-  class OMBVFlexibleBodyWidget : public OMBVObjectWidget {
+  class OMBVFlexibleBodyWidget : public OMBVDynamicColoredObjectWidget {
 
     public:
       OMBVFlexibleBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      QVBoxLayout *layout;
-      ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency, *numvp;
+      ExtWidget *numvp;
+  };
+
+  class DynamicPointSetWidget : public OMBVFlexibleBodyWidget {
+
+    public:
+      DynamicPointSetWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="") : OMBVFlexibleBodyWidget(name,xmlName) { }
   };
 
   class DynamicIndexedLineSetWidget : public OMBVFlexibleBodyWidget {

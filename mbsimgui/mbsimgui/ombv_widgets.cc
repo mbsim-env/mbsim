@@ -75,16 +75,20 @@ namespace MBSimGUI {
   }
 
   OMBVFlexibleBodyWidgetFactory::OMBVFlexibleBodyWidgetFactory()  {
+    name.emplace_back("DynamicPointSet");
     name.emplace_back("DynamicIndexedLineSet");
     name.emplace_back("DynamicIndexedFaceSet");
+    xmlName.push_back(OPENMBV%"DynamicPointSet");
     xmlName.push_back(OPENMBV%"DynamicIndexedLineSet");
     xmlName.push_back(OPENMBV%"DynamicIndexedFaceSet");
   }
 
   QWidget* OMBVFlexibleBodyWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new DynamicIndexedLineSetWidget("DynamicIndexedLineSet"+toQStr(count++),OPENMBV%"DynamicIndexedLineSet");
+      return new DynamicPointSetWidget("DynamicPointSet"+toQStr(count++),OPENMBV%"DynamicPointSet");
     if(i==1)
+      return new DynamicIndexedLineSetWidget("DynamicIndexedLineSet"+toQStr(count++),OPENMBV%"DynamicIndexedLineSet");
+    if(i==2)
       return new DynamicIndexedFaceSetWidget("DynamicIndexedFaceSet"+toQStr(count++),OPENMBV%"DynamicIndexedFaceSet");
     return nullptr;
   }
@@ -402,10 +406,39 @@ namespace MBSimGUI {
     return newele;
   }
 
-  OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &name, const FQN &xmlName) : OMBVObjectWidget(name,xmlName) {
+  OMBVBodyWidget::OMBVBodyWidget(const QString &name, const FQN &xmlName) : OMBVObjectWidget(name,xmlName) {
     layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
+
+    pointSize = new ExtWidget("Point size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"pointSize");
+    layout->addWidget(pointSize);
+
+    lineWidth = new ExtWidget("Line width",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"lineWidth");
+    layout->addWidget(lineWidth);
+  }
+
+  DOMElement* OMBVBodyWidget::initializeUsingXML(DOMElement *element) {
+    OMBVObjectWidget::initializeUsingXML(element);
+    if(E(element)->hasAttribute("pointSize")) {
+      pointSize->setActive(true);
+      static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(pointSize->getWidget())->getWidget())->setValue(QString::fromStdString(E(element)->getAttribute("pointSize")));
+    }
+    if(E(element)->hasAttribute("lineWidth")) {
+      lineWidth->setActive(true);
+      static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(lineWidth->getWidget())->getWidget())->setValue(QString::fromStdString(E(element)->getAttribute("lineWidth")));
+    }
+    return element;
+  }
+
+  DOMElement* OMBVBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVObjectWidget::writeXMLFile(parent);
+    E(e)->setAttribute("pointSize", static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(pointSize->getWidget())->getWidget())->getValue().toStdString());
+    E(e)->setAttribute("lineWidth", static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(lineWidth->getWidget())->getWidget())->getValue().toStdString());
+    return e;
+  }
+
+  OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &name, const FQN &xmlName) : OMBVBodyWidget(name,xmlName) {
 
     minimalColorValue = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"minimalColorValue");
     layout->addWidget(minimalColorValue);
@@ -421,7 +454,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* OMBVDynamicColoredObjectWidget::initializeUsingXML(DOMElement *element) {
-    OMBVObjectWidget::initializeUsingXML(element);
+    OMBVBodyWidget::initializeUsingXML(element);
     minimalColorValue->initializeUsingXML(element);
     maximalColorValue->initializeUsingXML(element);
     diffuseColor->initializeUsingXML(element);
@@ -430,7 +463,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* OMBVDynamicColoredObjectWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=OMBVObjectWidget::writeXMLFile(parent);
+    DOMElement *e=OMBVBodyWidget::writeXMLFile(parent);
     minimalColorValue->writeXMLFile(e);
     maximalColorValue->writeXMLFile(e);
     diffuseColor->writeXMLFile(e);
@@ -642,22 +675,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  OMBVFlexibleBodyWidget::OMBVFlexibleBodyWidget(const QString &name, const FQN &xmlName) : OMBVObjectWidget(name,xmlName) {
-    layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    minimalColorValue = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"minimalColorValue");
-    layout->addWidget(minimalColorValue);
-
-    maximalColorValue = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"maximalColorValue");
-    layout->addWidget(maximalColorValue);
-
-    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true,false,OPENMBV%"diffuseColor");
-    layout->addWidget(diffuseColor);
-
-    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,true,OPENMBV%"transparency");
-    layout->addWidget(transparency);
+  OMBVFlexibleBodyWidget::OMBVFlexibleBodyWidget(const QString &name, const FQN &xmlName) : OMBVDynamicColoredObjectWidget(name,xmlName) {
 
     numvp = new ExtWidget("Number of vertex positions",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"numberOfVertexPositions");
     layout->addWidget(numvp);
@@ -665,21 +683,13 @@ namespace MBSimGUI {
   }
 
   DOMElement* OMBVFlexibleBodyWidget::initializeUsingXML(DOMElement *element) {
-    OMBVObjectWidget::initializeUsingXML(element);
-    minimalColorValue->initializeUsingXML(element);
-    maximalColorValue->initializeUsingXML(element);
-    diffuseColor->initializeUsingXML(element);
-    transparency->initializeUsingXML(element);
+    OMBVDynamicColoredObjectWidget::initializeUsingXML(element);
     numvp->initializeUsingXML(element);
     return element;
   }
 
   DOMElement* OMBVFlexibleBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=OMBVObjectWidget::writeXMLFile(parent);
-    minimalColorValue->writeXMLFile(e);
-    maximalColorValue->writeXMLFile(e);
-    diffuseColor->writeXMLFile(e);
-    transparency->writeXMLFile(e);
+    DOMElement *e=OMBVDynamicColoredObjectWidget::writeXMLFile(parent);
     numvp->writeXMLFile(e);
     return e;
   }
