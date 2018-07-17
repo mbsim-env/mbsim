@@ -283,7 +283,16 @@
               <indices>[4:-1:1]'</indices>
               <degree>3</degree>
               <open>true</open>
-              <enableOpenMBV/>
+              <enableOpenMBV>
+                <diffuseColor xmlns="http://www.mbsim-env.de/MBSim">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>0.148361</ele>
+                    <ele>0.686503</ele>
+                    <ele>0.988235</ele>
+                  </xmlVector>
+                </diffuseColor>
+                <lineWidth xmlns="http://www.mbsim-env.de/MBSim">3</lineWidth>
+              </enableOpenMBV>
             </FlexiblePlanarNurbsContour>
           </contours>
         </FlexibleBodyFFR>
@@ -326,7 +335,9 @@
           <frames/>
           <contours>
             <Point name="Point">
-              <enableOpenMBV/>
+              <enableOpenMBV>
+                <pointSize>5</pointSize>
+              </enableOpenMBV>
             </Point>
           </contours>
           <enableOpenMBVFrameC>
@@ -416,5 +427,6 @@
     <endTime unit="s">0.1</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </DOPRI5Integrator>
+
 
 </MBSimProject>
