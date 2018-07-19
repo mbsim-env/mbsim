@@ -137,14 +137,6 @@ ret = 0;</scalarParameter>
               V(:,1:modes)
             </nodalShapeMatrixOfTranslation>
             <frames>
-              <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="nf" counterName="n">
-                <Parameter/>
-                <NodeFrame xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="P{n}">
-                  <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                  </enableOpenMBV>
-                  <nodeNumber unit="-">n</nodeNumber>
-                </NodeFrame>
-              </Embed>
             </frames><contours>
               <FlexibleSpatialNurbsContour name="FlexibleSpatialNurbsContour" xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
                 <thickness xmlns="http://www.mbsim-env.de/MBSim" unit="m">1</thickness>
@@ -164,7 +156,12 @@ ret = 0;</scalarParameter>
                 <openXi>true</openXi>
                 <enableOpenMBV/>
               </FlexibleSpatialNurbsContour>
-            </contours></FlexibleBodyFFR>
+            </contours><openMBVFlexibleBody>
+              <DynamicPointSet xmlns="http://www.mbsim-env.de/OpenMBV" name="DynamicPointSet2" pointSize="3">
+                <transparency unit="-">0.3</transparency>
+              </DynamicPointSet>
+            </openMBVFlexibleBody>
+          </FlexibleBodyFFR>
         </Embed>
         <RigidBody name="RigidBody">
           <generalizedInitialPosition>
