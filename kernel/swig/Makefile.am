@@ -1,8 +1,16 @@
 SUBDIRS = .swig_prepare . check
 
 if COND_LOWRAM
+# do not run in parallel to minimize memory usage
 .NOTPARALLEL:
+# do compile with -O0 to minimiz memory usage
+CPPFLAGS:=$(filter-out -O0 -O1 -O2 -O3,$(CPPFLAGS))
+CPPFLAGS+=-O0
 endif
+
+# no coverage analysis on files in this directory
+CPPFLAGS:=$(filter-out --coverage,$(CPPFLAGS))
+LDFLAGS:=$(filter-out --coverage -lgcov,$(LDFLAGS))
 
 # Note: wee install the resulting python file in $prefix/bin since this is the only place where Windows searches dependent libraries
 swigbindir = $(bindir)
