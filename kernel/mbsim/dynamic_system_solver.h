@@ -465,6 +465,9 @@ namespace MBSim {
 
       void setInitialProjection(bool initialProjection_) { initialProjection = initialProjection_; }
 
+      void setUseConstraintSolverForSmoothMotion(bool useConstraintSolverForSmoothMotion_) { useConstraintSolverForSmoothMotion = useConstraintSolverForSmoothMotion_; }
+      bool getUseConstraintSolverForSmoothMotion() const { return useConstraintSolverForSmoothMotion; }
+
       void setUseConstraintSolverForPlot(bool useConstraintSolverForPlot_) { useConstraintSolverForPlot = useConstraintSolverForPlot_; }
       bool getUseConstraintSolverForPlot() const { return useConstraintSolverForPlot; }
 
@@ -798,6 +801,7 @@ namespace MBSim {
       bool alwaysConsiderContact;
       bool inverseKinetics;
       bool initialProjection;
+      bool useConstraintSolverForSmoothMotion;
       bool useConstraintSolverForPlot;
 
       fmatvec::Vec corrParent;
