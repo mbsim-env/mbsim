@@ -5,7 +5,7 @@ libnurbs_la_SOURCES = nurbs_curve.cc\
 
 nurbsincludedir = $(includedir)/mbsim/numerics/nurbs
 
-INCLUDES = $(FMATVEC_CFLAGS)
+AM_CPPFLAGS = $(FMATVEC_CFLAGS)
 LDADD = $(FMATVEC_LIBS)
 
 libnurbs_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)

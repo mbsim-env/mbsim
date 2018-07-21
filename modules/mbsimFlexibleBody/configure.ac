@@ -11,6 +11,10 @@ LT_INIT([win32-dll])
 : ${FCFLAGS=""}
 : ${FFLAGS=""}
 
+AC_CHECK_FUNCS([pow])
+AC_C_INLINE
+AC_TYPE_SIZE_T
+
 AC_PROG_CXX
 AC_PROG_F77
 AC_PROG_CXXCPP
@@ -58,7 +62,7 @@ CPPFLAGS="$CPPFLAGS -pedantic -Wall -Wno-unknown-pragmas -Wno-long-long -Wfloat-
 AC_MSG_CHECKING([for -Wno-strict-overflow compiler flag])
 CPPFLAGS_OLD=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS -Wno-strict-overflow"
-AC_COMPILE_IFELSE([int main() {}], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); CPPFLAGS=$CPPFLAGS_OLD])
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); CPPFLAGS=$CPPFLAGS_OLD])
 
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])

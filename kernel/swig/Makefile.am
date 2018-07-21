@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = -Wno-portability
+
 SUBDIRS = .swig_prepare . check
 
 if COND_LOWRAM

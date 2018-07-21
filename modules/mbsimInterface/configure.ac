@@ -2,16 +2,18 @@ dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.57])
 AC_INIT([mbsimInterface],[1.0.0],[markus.ms.schneider@gmail.com])
 AC_CONFIG_HEADER(config.h)
+AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimInterface/Makefile.am])
 LT_INIT([win32-dll])
-
-AC_CANONICAL_SYSTEM
 
 : ${CFLAGS=""}
 : ${CXXFLAGS=""}
 : ${FCFLAGS=""}
 : ${FFLAGS=""}
+
+AC_CHECK_FUNCS([socket])
+AC_TYPE_SIZE_T
 
 AC_PROG_CXX
 AC_PROG_F77
@@ -87,7 +89,7 @@ fi
 AC_MSG_CHECKING([for -Wno-strict-overflow compiler flag])
 CPPFLAGS_OLD=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS -Wno-strict-overflow"
-AC_COMPILE_IFELSE([int main() {}], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); CPPFLAGS=$CPPFLAGS_OLD])
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); CPPFLAGS=$CPPFLAGS_OLD])
 
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
