@@ -7,7 +7,9 @@ if COND_LOWRAM
 endif
 
 MBSIM_PARTS_LA = \
+  __mbsim_part050.la \
   __mbsim_part100.la \
+  __mbsim_part125.la \
   __mbsim_part150.la \
   __mbsim_part200.la \
   __mbsim_part250.la \

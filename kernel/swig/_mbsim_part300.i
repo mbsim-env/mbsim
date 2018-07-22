@@ -6,7 +6,10 @@
 %import fmatvec.i
 %include "mbsim_include.i"
 %import mbsim.i
+%import _mbsim_part050.i
 %import _mbsim_part100.i
+%import _mbsim_part125.i
+%import _mbsim_part150.i
 %import _mbsim_part200.i
 %import _mbsim_part250.i
 
@@ -78,6 +81,24 @@ namespace MBSim {
   class Sphere;
   class StandardDampingFunction;
   class FuncPairPlanarContourPoint;
+  class Contact;
+  class ContourLink;
+  class DirectionalSpringDamper;
+  class DualRigidBodyLink;
+  class FixedFrameLink;
+  class FloatingFrameLink;
+  class GeneralizedAccelerationExcitation;
+  class GeneralizedFriction;
+  class GeneralizedKinematicExcitation;
+  class GeneralizedPositionExcitation;
+  class GeneralizedSpringDamper;
+  class GeneralizedVelocityExcitation;
+  class InverseKineticsJoint;
+  class IsotropicRotationalSpringDamper;
+  class Joint;
+  class KineticExcitation;
+  class RigidBodyLink;
+  class SpringDamper;
 }
 #include "mbsim/constitutive_laws/friction_force_law.h"
 #include "mbsim/constitutive_laws/planar_coulomb_friction.h"

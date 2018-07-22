@@ -6,7 +6,10 @@
 %import fmatvec.i
 %include "mbsim_include.i"
 %import mbsim.i
+%import _mbsim_part050.i
 %import _mbsim_part100.i
+%import _mbsim_part125.i
+%import _mbsim_part150.i
 %import _mbsim_part200.i
 %import _mbsim_part250.i
 %import _mbsim_part300.i
@@ -62,6 +65,23 @@ namespace MBSim {
   class SpatialStribeckImpact;
   class UnilateralConstraint;
   class UnilateralNewtonImpact;
+  class Contact;
+  class DirectionalSpringDamper;
+  class DualRigidBodyLink;
+  class FixedFrameLink;
+  class FloatingFrameLink;
+  class GeneralizedAccelerationExcitation;
+  class GeneralizedFriction;
+  class GeneralizedKinematicExcitation;
+  class GeneralizedPositionExcitation;
+  class GeneralizedSpringDamper;
+  class GeneralizedVelocityExcitation;
+  class InverseKineticsJoint;
+  class IsotropicRotationalSpringDamper;
+  class Joint;
+  class KineticExcitation;
+  class RigidBodyLink;
+  class SpringDamper;
 }
 #include "mbsim/contact_kinematics/contact_kinematics.h"
 #include "mbsim/contact_kinematics/circle_circle.h"

@@ -6,6 +6,7 @@
 %import fmatvec.i
 %include "mbsim_include.i"
 %import mbsim.i
+%import _mbsim_part050.i
 %import _mbsim_part100.i
 
 // includes needed in the generated swig c++ code

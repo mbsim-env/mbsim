@@ -202,7 +202,9 @@ std::string _getPyScriptProcessingInstruction(xercesc::DOMElement *e, const std:
 %pythoncode %{
 
 # initialization
+from _mbsim_part050 import *
 from _mbsim_part100 import *
+from _mbsim_part125 import *
 from _mbsim_part150 import *
 from _mbsim_part200 import *
 from _mbsim_part250 import *
