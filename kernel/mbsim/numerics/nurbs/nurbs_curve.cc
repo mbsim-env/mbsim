@@ -5,6 +5,7 @@
 #include <mbsim/mbsim_event.h>
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 using namespace fmatvec;
@@ -692,7 +693,7 @@ namespace MBSim {
   }
 
   void basisFuns(double u, int span, int deg, const VecV & U, VecV& funs) {
-    auto* left = (double*) alloca(2 * (deg + 1) * sizeof(double));
+    vector<double> left(2 * (deg + 1));
     double* right = &left[deg + 1];
 
     double temp, saved;
@@ -714,7 +715,7 @@ namespace MBSim {
   }
 
   void dersBasisFuns(int n, double u, int span, int deg, const VecV & U, Mat & ders) {
-    auto* left = (double*) alloca(2 * (deg + 1) * sizeof(double));
+    vector<double> left(2 * (deg + 1));
     double* right = &left[deg + 1];
 
     SqrMat ndu(deg + 1);

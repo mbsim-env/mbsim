@@ -14,9 +14,9 @@ LT_INIT([win32-dll])
 AC_CHECK_FUNCS([floor])
 AC_CHECK_FUNCS([gettimeofday])
 AC_CHECK_HEADERS([limits.h])
-AC_FUNC_ALLOCA
-AC_FUNC_MALLOC
-AC_FUNC_REALLOC
+# AC_FUNC_ALLOCA cannot be added due to Windows build
+# AC_FUNC_MALLOC cannot be added due to Windows build
+# AC_FUNC_REALLOC cannot be added due to Windows build
 
 AC_PROG_CXX
 AC_PROG_FC
