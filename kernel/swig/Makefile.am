@@ -88,7 +88,7 @@ install-exec-hook: fmatvec.py mbsim.py $(addsuffix .py,$(MBSIM_PARTS))
 	$(INSTALL_DATA) fmatvec.py $(swigbindir)/fmatvec.py
 	$(INSTALL_DATA) mbsim.py $(swigbindir)/mbsim.py
 	for F in $(MBSIM_PARTS); do \
-	  $(INSTALL_DATA) $$F.py $(swigbindir)/$$F.py; \
+	  $(INSTALL_DATA) $$F.py $(swigbindir)/$$F.py || exit 1; \
 	done
 uninstall-local:
 	rm -f $(swigbindir)/fmatvec.py $(swigbindir)/mbsim.py

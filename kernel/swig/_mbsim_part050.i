@@ -1,5 +1,5 @@
 // wrap MBSim with directors (and all protected class data)
-%module(directors="1", allprotected="1") _mbsim_part100
+%module(directors="1", allprotected="1") _mbsim_part050
 
 
 // include the general mbsim SWIG configuration (used by all MBSim modules)
