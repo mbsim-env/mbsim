@@ -11,6 +11,13 @@ LT_INIT([win32-dll])
 : ${FCFLAGS=""}
 : ${FFLAGS=""}
 
+AC_CHECK_FUNCS([floor])
+AC_CHECK_FUNCS([gettimeofday])
+AC_CHECK_HEADERS([limits.h])
+# AC_FUNC_ALLOCA cannot be added due to Windows build
+# AC_FUNC_MALLOC cannot be added due to Windows build
+# AC_FUNC_REALLOC cannot be added due to Windows build
+
 AC_PROG_CXX
 AC_PROG_FC
 AC_PROG_F77
@@ -94,13 +101,13 @@ AC_SUBST([BOOST_SYSTEM_LIB])
 
 dnl Check for ANSI C Signal Handling
 AC_SUBST([DEFINES])
-AC_MSG_CHECKING([for ANSI c signal SIGINT]); AC_COMPILE_IFELSE([
+AC_MSG_CHECKING([for ANSI c signal SIGINT]); AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #include <signal.h>
 int main() {
   signal(SIGINT, 0);
   return 0;
 }
-], [AC_MSG_RESULT([yes]); DEFINES="$DEFINES -DHAVE_ANSICSIGNAL"; AC_DEFINE([HAVE_ANSICSIGNAL],[],[Use ANSI C Signal Handling])],
+])], [AC_MSG_RESULT([yes]); DEFINES="$DEFINES -DHAVE_ANSICSIGNAL"; AC_DEFINE([HAVE_ANSICSIGNAL],[],[Use ANSI C Signal Handling])],
    [AC_MSG_RESULT([no])])
 
 dnl Check for MinGW

@@ -10,6 +10,7 @@
 
 #include <mbsim/mbsim_event.h>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 using namespace fmatvec;
@@ -564,8 +565,8 @@ namespace MBSim {
 //template <class T, int nD>
 //void NurbsSurface<T,nD>::basisFunsU(T u, int span, Vector<T>& N) const {
 //  //Vector<T> left(degU+1), right(degU+1) ;
-//  T* left = (T*) alloca((degU+1)*sizeof(T)) ;
-//  T* right = (T*) alloca((degU+1)*sizeof(T)) ;
+//  vector<T> left(degU+1) ;
+//  vector<T> right(degU+1) ;
 //  T temp,saved ;
 //
 //
@@ -599,8 +600,8 @@ namespace MBSim {
 //template <class T, int nD>
 //void NurbsSurface<T,nD>::basisFunsV(T v, int span, Vector<T>& N) const {
 //  //Vector<T> left(degV+1), right(degV+1) ;
-//  T* left = (T*) alloca((degV+1)*sizeof(T)) ;
-//  T* right = (T*) alloca((degV+1)*sizeof(T)) ;
+//  vector<T> left(degV+1) ;
+//  vector<T> right(degV+1) ;
 //  T temp,saved ;
 //
 //
@@ -825,7 +826,7 @@ namespace MBSim {
     int n, m, k, l, num;
     double d, total;
     //Vector<T> cds(Q.rows()) ;
-    auto* cds = new double[ (Q.rows() >= Q.cols()) ? Q.rows():Q.cols()]; // alloca might not have enough space
+    vector<double> cds((Q.rows() >= Q.cols()) ? Q.rows():Q.cols());
 
     n = Q.rows();
     m = Q.cols();
@@ -854,7 +855,6 @@ namespace MBSim {
     }
 
     if (num == 0) {
-      delete[] cds;
       return 0;
     }
     for (k = 1; k < n - 1; k++)
@@ -884,8 +884,6 @@ namespace MBSim {
         }
       }
     }
-
-    delete[] cds;
 
     if (num == 0)
       return 0;

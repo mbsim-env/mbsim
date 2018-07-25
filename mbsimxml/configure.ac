@@ -9,6 +9,11 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 
+AC_CHECK_FUNCS([strtol])
+AC_CHECK_HEADER_STDBOOL
+AC_TYPE_PID_T
+AC_TYPE_SIZE_T
+
 # enable C++11
 CXXFLAGS="$CXXFLAGS -std=c++11"
 
@@ -45,14 +50,14 @@ AC_ARG_WITH([boost-chrono-lib],
 AC_SUBST([BOOST_CHRONO_LIB])
 
 AC_MSG_CHECKING([for WEXITSTATUS])
-AC_COMPILE_IFELSE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #include <stdlib.h>
 int main() {
   int j=1;
   int i=WEXITSTATUS(j);
   return 0;
 }
-], [AC_MSG_RESULT([yes]); CPPFLAGS="$CPPFLAGS -DHAVE_WEXITSTATUS"], [AC_MSG_RESULT([no])])
+])], [AC_MSG_RESULT([yes]); CPPFLAGS="$CPPFLAGS -DHAVE_WEXITSTATUS"], [AC_MSG_RESULT([no])])
 
 dnl Check for xslt
 AC_ARG_WITH([xalan],

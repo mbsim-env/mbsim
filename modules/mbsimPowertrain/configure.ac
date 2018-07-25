@@ -11,6 +11,8 @@ LT_INIT([win32-dll])
 : ${FCFLAGS=""}
 : ${FFLAGS=""}
 
+AC_CHECK_FUNCS([pow])
+
 AC_PROG_CXX
 AC_PROG_F77
 AC_PROG_CXXCPP
