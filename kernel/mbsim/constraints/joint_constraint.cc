@@ -152,17 +152,6 @@ namespace MBSim {
       JT.resize(3,nu);
       JR.resize(3,nu);
 
-      Js.resize(3 - forceDir.cols());
-      if (forceDir.cols() == 2)
-        Js.set(0, crossProduct(forceDir.col(0), forceDir.col(1)));
-      else if (forceDir.cols() == 3)
-        ;
-      else if (forceDir.cols() == 0)
-        Js = SqrMat(3, EYE);
-      else { // define a coordinate system in the plane perpendicular to the force direction
-        Js.set(0, computeTangential(forceDir.col(0)));
-        Js.set(1, crossProduct(forceDir.col(0), Js.col(0)));
-      }
       if(q0() == nullptr)
         q.init(0);
       else if(q0.size() == q.size())
@@ -263,8 +252,6 @@ namespace MBSim {
       }
       Vec3 WvP0P1 = frame2->evalVelocity() - C.evalVelocity();
       Vec3 WomK0K1 = frame2->getAngularVelocity() - C.getAngularVelocity();
-      Mat3xV WJs = refFrame->evalOrientation() * Js;
-      VecV sdT = WJs.T() * WvP0P1;
 
       Mat B(nu,nh);
       Mat JT0(3,nh);
@@ -280,7 +267,7 @@ namespace MBSim {
       B(iF,RangeV(0,nh-1)) = -(evalGlobalForceDirection().T()*JT0);
       B(iM,RangeV(0,nh-1)) = -(getGlobalMomentDirection().T()*JR0);
       Vec b(nu);
-      b(iF) = evalGlobalForceDirection().T()*(frame2->evalGyroscopicAccelerationOfTranslation()-C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), WvP0P1 + WJs * sdT));
+      b(iF) = evalGlobalForceDirection().T()*(frame2->evalGyroscopicAccelerationOfTranslation()-C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), 2.0*WvP0P1));
       b(iM) = getGlobalMomentDirection().T()*(frame2->getGyroscopicAccelerationOfRotation()-C.getGyroscopicAccelerationOfRotation()-crossProduct(C.getAngularVelocity(), WomK0K1));
 
       Mat J = slvLU(evalA(),B);

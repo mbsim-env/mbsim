@@ -108,11 +108,6 @@ namespace MBSim {
 
     protected:
       /**
-       * \brief translational JACOBIAN (not empty for e.g. prismatic joints)
-       */
-      fmatvec::Mat3xV JT;
-
-      /**
        * constitutive law on acceleration level for forces and torques (f?-force-law)
        */
       GeneralizedForceLaw *ffl{nullptr};

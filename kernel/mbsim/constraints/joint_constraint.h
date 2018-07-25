@@ -110,7 +110,6 @@ namespace MBSim {
       int nh{0};
       fmatvec::Vec q, q0;
       fmatvec::Mat JT, JR;
-      fmatvec::Mat3xV Js;
       fmatvec::SqrMat A;
 
       bool updDF{true};

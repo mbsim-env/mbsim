@@ -47,10 +47,7 @@ namespace MBSim {
   }
 
   void Joint::updatewb() {
-    Mat3xV WJT = refFrame->evalOrientation() * JT;
-    VecV sdT = WJT.T() * evalGlobalRelativeVelocity();
-
-    wb(0, forceDir.cols() - 1) += evalGlobalForceDirection().T() * (frame[1]->evalGyroscopicAccelerationOfTranslation() - C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeVelocity() + WJT * sdT));
+    wb(0, forceDir.cols() - 1) += evalGlobalForceDirection().T() * (frame[1]->evalGyroscopicAccelerationOfTranslation() - C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), 2.0*evalGlobalRelativeVelocity()));
     wb(forceDir.cols(), momentDir.cols() + forceDir.cols() - 1) += evalGlobalMomentDirection().T() * (frame[1]->evalGyroscopicAccelerationOfRotation() - C.evalGyroscopicAccelerationOfRotation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeAngularVelocity()));
   }
 
@@ -141,17 +138,6 @@ namespace MBSim {
       else if(momentDir.cols()>0)
         throwError("No moment law is given!");
 
-      JT.resize(3 - forceDir.cols());
-      if (forceDir.cols() == 2)
-        JT.set(0, crossProduct(forceDir.col(0), forceDir.col(1)));
-      else if (forceDir.cols() == 3)
-        ;
-      else if (forceDir.cols() == 0)
-        JT = SqrMat(3, EYE);
-      else { // define a coordinate system in the plane perpendicular to the force direction
-        JT.set(0, computeTangential(forceDir.col(0)));
-        JT.set(1, crossProduct(forceDir.col(0), JT.col(0)));
-      }
       if(not ffl)
         updatelaF_ = &Joint::updatelaF0;
       else if(ffl->isSetValued())
