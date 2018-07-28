@@ -124,7 +124,7 @@ namespace MBSimGUI {
     }
   }
 
-  BasicElementBrowser::BasicElementBrowser(TreeItemData* selection_, const QString &name) : selection(selection_) {
+  BasicElementBrowser::BasicElementBrowser(TreeItemData* selection_, const QString &name, int treeIndex_) : selection(selection_), treeIndex(treeIndex_) {
     auto* mainLayout=new QGridLayout;
     setLayout(mainLayout);
     eleList = new QTreeView;
@@ -151,8 +151,9 @@ namespace MBSimGUI {
   void BasicElementBrowser::showEvent(QShowEvent *event) {
     QDialog::showEvent(event);
     oldID = mw->getHighlightedObject();
-    QModelIndex index = findTreeItemData(eleList->model()->index(0,0),selection);
-    eleList->setCurrentIndex(index.isValid()?index:mw->getElementView()->selectionModel()->currentIndex());
+    QModelIndex index1 = findTreeItemData(eleList->model()->index(0,0),selection);
+    QModelIndex index2 = mw->getElementView()->selectionModel()->currentIndex().parent().sibling(treeIndex,0);
+    eleList->setCurrentIndex(index1.isValid()?index1:index2);
   }
 
   void BasicElementBrowser::hideEvent(QHideEvent *event) {

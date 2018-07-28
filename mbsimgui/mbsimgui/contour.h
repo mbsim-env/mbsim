@@ -26,6 +26,7 @@ namespace MBSimGUI {
 
   class Contour : public Element {
     public:
+      static inline int getTreeIndex() { return 1; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new ContourPropertyDialog(this);}
       QMenu* createContextMenu() override { return new ContourContextMenu(this); }
