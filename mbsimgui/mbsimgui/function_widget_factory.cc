@@ -24,6 +24,7 @@
 #include "extended_widgets.h"
 #include "variable_widgets.h"
 #include "basic_widgets.h"
+#include "rigid_body.h"
 #include "function.h"
 #include <iostream>
 
@@ -450,15 +451,6 @@ namespace MBSimGUI {
       return new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(parent,var),QBoxLayout::TopToBottom,0);
     }
     return nullptr;
-  }
-
-  ConnectRigidBodiesWidgetFactory::ConnectRigidBodiesWidgetFactory(Element *parent_) : parent(parent_) {
-    name.emplace_back("1 rigid body");
-    name.emplace_back("2 rigid bodies");
-  }
-
-  QWidget* ConnectRigidBodiesWidgetFactory::createWidget(int i) {
-    return new ConnectRigidBodiesWidget(i+1,parent);
   }
 
   SpringDamperWidgetFactory::SpringDamperWidgetFactory(Element *parent_, bool varSize_) : parent(parent_), varSize(varSize_) {

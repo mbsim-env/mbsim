@@ -33,14 +33,8 @@ class QWebView;
 
 namespace MBSimGUI {
 
+  class TreeItemData;
   class Element;
-  class Object;
-  class Link;
-  class Constraint;
-  class RigidBody;
-  class Frame;
-  class Contour;
-  class Signal;
   class DataPlot;
   class ImportWidget;
 
@@ -48,7 +42,7 @@ namespace MBSimGUI {
     private:
       Element* element;
     public:
-      ElementItem(Element *element_) : element(element_) {}
+      ElementItem(Element *element_) : element(element_) { }
       Element* getElement() const {return element;}
   };
 
@@ -67,155 +61,33 @@ namespace MBSimGUI {
       void updateWidget();
   };
 
-  class ObjectBrowser : public QDialog {
+  class BasicElementBrowser : public QDialog {
     Q_OBJECT
 
     public:
-      ObjectBrowser(Element* element_, Object* object, QWidget *parentObject_);
-      ~ObjectBrowser() override = default;
-      QTreeWidget* getObjectList() const {return objectList;}
-      void updateWidget(Object *sel);
+      BasicElementBrowser(TreeItemData* selection_, const QString &name);
+      ~BasicElementBrowser() override = default;
+      void setSelection(TreeItemData *selection_) { selection = selection_; }
+      virtual Element* getSelection() const { return nullptr; }
     protected:
       QPushButton *okButton;
-      QTreeWidget *objectList;
-      Object *selection;
-      ElementItem *savedItem;
-      Element* element;
+      QTreeView *eleList;
+      TreeItemData *selection;
       QString oldID;
-      void mbs2ObjectTree(Element* ele, QTreeWidgetItem* parentItem);
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
-      protected slots:
-        void checkForObject(QTreeWidgetItem* item_,int);
+      virtual bool checkForElement(TreeItemData *element) { return false; }
+    protected slots:
+      void selectionChanged(const QModelIndex &current);
   };
 
-  class LinkBrowser : public QDialog {
-    Q_OBJECT
-
+  template <class T>
+  class ElementBrowser : public BasicElementBrowser {
     public:
-      LinkBrowser(Element* element_, Link* link, QWidget *parentLink_);
-      ~LinkBrowser() override = default;
-      QTreeWidget* getLinkList() const {return linkList;}
-      void updateWidget(Link *sel);
+      ElementBrowser(Element* selection, const QString &name="Element") : BasicElementBrowser(selection,name) { }
+      Element* getSelection() const override { return dynamic_cast<T*>(selection); }
     protected:
-      QPushButton *okButton;
-      QTreeWidget *linkList;
-      Link *selection;
-      ElementItem *savedItem;
-      Element* element;
-      QString oldID;
-      void mbs2LinkTree(Element* ele, QTreeWidgetItem* parentItem);
-      void showEvent(QShowEvent *event) override;
-      void hideEvent(QHideEvent *event) override;
-      protected slots:
-        void checkForLink(QTreeWidgetItem* item_,int);
-  };
-
-  class ConstraintBrowser : public QDialog {
-    Q_OBJECT
-
-    public:
-      ConstraintBrowser(Element* element_, Constraint* constraint, QWidget *parentConstraint_);
-      ~ConstraintBrowser() override = default;
-      QTreeWidget* getConstraintList() const {return constraintList;}
-      void updateWidget(Constraint *sel);
-    protected:
-      QPushButton *okButton;
-      QTreeWidget *constraintList;
-      Constraint *selection;
-      ElementItem *savedItem;
-      Element* element;
-      QString oldID;
-      void mbs2ConstraintTree(Element* ele, QTreeWidgetItem* parentItem);
-      void showEvent(QShowEvent *event) override;
-      void hideEvent(QHideEvent *event) override;
-      protected slots:
-        void checkForConstraint(QTreeWidgetItem* item_,int);
-  };
-
-  class RigidBodyBrowser : public QDialog {
-    Q_OBJECT
-
-    public:
-      RigidBodyBrowser(Element* element_, RigidBody* rigidBody, QWidget *parentObject_);
-      ~RigidBodyBrowser() override = default;
-      QTreeWidget* getRigidBodyList() const {return rigidBodyList;}
-      void updateWidget(RigidBody *sel);
-    protected:
-      QPushButton *okButton;
-      QTreeWidget *rigidBodyList;
-      RigidBody *selection;
-      ElementItem *savedItem;
-      Element* element;
-      QString oldID;
-      void mbs2RigidBodyTree(Element* ele, QTreeWidgetItem* parentItem);
-      void showEvent(QShowEvent *event) override;
-      void hideEvent(QHideEvent *event) override;
-      protected slots:
-        void checkForRigidBody(QTreeWidgetItem* item_,int);
-  };
-
-  class FrameBrowser : public QDialog {
-    Q_OBJECT
-
-    public:
-      FrameBrowser(Element* element_, Frame* frame, QWidget *parentObject_);
-      ~FrameBrowser() override = default;
-      QTreeWidget* getFrameList() const {return frameList;}
-      void updateWidget(Frame *sel);
-    protected:
-      QPushButton *okButton;
-      QTreeWidget *frameList;
-      Frame *selection;
-      ElementItem *savedItem;
-      Element* element;
-      QString oldID;
-      void mbs2FrameTree(Element* ele, QTreeWidgetItem* parentItem);
-      void showEvent(QShowEvent *event) override;
-      void hideEvent(QHideEvent *event) override;
-      protected slots:
-        void checkForFrame(QTreeWidgetItem* item_,int);
-  };
-
-  class ContourBrowser : public QDialog {
-    Q_OBJECT
-
-    public:
-      ContourBrowser(Element* element_, Contour* contour, QWidget *parentObject_);
-      ~ContourBrowser() override = default;
-      QTreeWidget* getContourList() const {return contourList;}
-      void updateWidget(Contour *sel);
-    protected:
-      QPushButton *okButton;
-      QTreeWidget *contourList;
-      Contour *selection;
-      ElementItem *savedItem;
-      Element* element;
-      QString oldID;
-      void mbs2ContourTree(Element* ele, QTreeWidgetItem* parentItem);
-      void showEvent(QShowEvent *event) override;
-      void hideEvent(QHideEvent *event) override;
-      protected slots:
-        void checkForContour(QTreeWidgetItem* item_,int);
-  };
-
-  class SignalBrowser : public QDialog {
-    Q_OBJECT
-
-    public:
-      SignalBrowser(Element* element_, Signal* signal, QWidget *parentSignal_);
-      ~SignalBrowser() override = default;
-      QTreeWidget* getSignalList() const {return signalList;}
-      void updateWidget(Signal *sel);
-    protected:
-      QPushButton *okButton;
-      QTreeWidget *signalList;
-      Signal *selection;
-      ElementItem *savedItem;
-      Element* element;
-      void mbs2SignalTree(Element* ele, QTreeWidgetItem* parentItem);
-      protected slots:
-        void checkForSignal(QTreeWidgetItem* item_,int);
+      bool checkForElement(TreeItemData *element) override { return dynamic_cast<T*>(element); }
   };
 
   class SaveDialog : public QDialog {
