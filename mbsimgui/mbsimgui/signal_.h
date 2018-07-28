@@ -26,6 +26,7 @@ namespace MBSimGUI {
 
   class Signal : public Link {
     public:
+      QString getType() const override { return "Signal"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMCONTROL; }
   };
 

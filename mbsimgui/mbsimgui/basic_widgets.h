@@ -140,7 +140,7 @@ namespace MBSimGUI {
   class ElementOfReferenceWidget : public BasicElementOfReferenceWidget {
 
     public:
-      ElementOfReferenceWidget(Element* element, Element* selectedElement, const QString &name="Element", bool addRatio=false) : BasicElementOfReferenceWidget(element,selectedElement,new ElementBrowser<T>(selectedElement,name),addRatio) {
+      ElementOfReferenceWidget(Element* element, Element* selectedElement, bool addRatio=false) : BasicElementOfReferenceWidget(element,selectedElement,new ElementBrowser<T>(selectedElement),addRatio) {
       }
     protected:
       Element* findElement(const QString &str) override { return element->getByPath<T>(str); }
@@ -264,7 +264,7 @@ namespace MBSimGUI {
   template <class T>
   class ConnectElementsWidget : public BasicConnectElementsWidget {
     public:
-      ConnectElementsWidget(int n, Element *element, const QString &name="Element") : BasicConnectElementsWidget(create(n,element),name) { }
+      ConnectElementsWidget(int n, Element *element) : BasicConnectElementsWidget(create(n,element),T().getType()) { }
     protected:
       std::vector<BasicElementOfReferenceWidget*> create(int n, Element *element) {
         std::vector<BasicElementOfReferenceWidget*> widget(n);
@@ -335,13 +335,12 @@ namespace MBSimGUI {
   template <class T>
   class ElementOfReferenceWidgetFactory : public WidgetFactory {
     public:
-      ElementOfReferenceWidgetFactory(MBXMLUtils::FQN xmlName_, Element* element_, const QString &name_="Element", bool addRatio_=false) : xmlName(std::move(xmlName_)), element(element_), name(name_), addRatio(addRatio_) { }
-      QWidget* createWidget(int i=0) override { return new ElementOfReferenceWidget<T>(element,nullptr,name,addRatio); }
+      ElementOfReferenceWidgetFactory(MBXMLUtils::FQN xmlName_, Element* element_, bool addRatio_=false) : xmlName(std::move(xmlName_)), element(element_), addRatio(addRatio_) { }
+      QWidget* createWidget(int i=0) override { return new ElementOfReferenceWidget<T>(element,nullptr,addRatio); }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName; }
     protected:
       MBXMLUtils::FQN xmlName;
       Element *element;
-      QString name;
       bool addRatio;
   };
 

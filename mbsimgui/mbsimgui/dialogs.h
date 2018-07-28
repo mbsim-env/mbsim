@@ -84,7 +84,7 @@ namespace MBSimGUI {
   template <class T>
   class ElementBrowser : public BasicElementBrowser {
     public:
-      ElementBrowser(Element* selection, const QString &name="Element") : BasicElementBrowser(selection,name) { }
+      ElementBrowser(Element* selection) : BasicElementBrowser(selection,T().getType()) { }
       Element* getSelection() const override { return dynamic_cast<T*>(selection); }
     protected:
       bool checkForElement(TreeItemData *element) override { return dynamic_cast<T*>(element); }

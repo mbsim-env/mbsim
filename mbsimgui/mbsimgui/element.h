@@ -49,6 +49,7 @@ namespace MBSimGUI {
       bool config{false};
     public:
       Element() :  ID(QString::number(IDcounter++)) { }
+      QString getType() const override { return "Element"; }
       QString getXMLPath(Element *ref=nullptr, bool rel=false);
       virtual xercesc::DOMElement* getXMLFrames() { return nullptr; }
       virtual xercesc::DOMElement* getXMLContours() { return nullptr; }

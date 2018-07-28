@@ -924,7 +924,7 @@ namespace MBSimGUI {
     setLayout(layout);
     dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
     dummy->setParent(element);
-    sRef = new ExtWidget("Return signal",new ElementOfReferenceWidget<Signal>(dummy,nullptr,"Signal"),false,false,MBSIMCONTROL%"returnSignal");
+    sRef = new ExtWidget("Return signal",new ElementOfReferenceWidget<Signal>(dummy,nullptr),false,false,MBSIMCONTROL%"returnSignal");
     layout->addWidget(sRef);
   }
   
