@@ -1020,14 +1020,14 @@ namespace MBSimGUI {
   ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, const Qt::WindowFlags& f) : ElementPropertyDialog(object,parent,f) {
     addTab("Initial conditions",1);
 
-    q0 = new ExtWidget("Generalized initial position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialPosition");
+    q0 = new ExtWidget("Generalized initial position",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialPosition");
     addToTab("Initial conditions", q0);
 
-    u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
+    u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
     addToTab("Initial conditions", u0);
 
-    connect(q0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(u0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+//    connect(q0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+//    connect(u0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
   }
 
   DOMElement* ObjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1039,8 +1039,8 @@ namespace MBSimGUI {
 
   DOMElement* ObjectPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ElementPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
-    if(q0->isActive() and static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(q0->getWidget())->getWidget())->rows()) q0->writeXMLFile(item->getXMLElement(),ref);
-    if(u0->isActive() and static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(u0->getWidget())->getWidget())->rows()) u0->writeXMLFile(item->getXMLElement(),ref);
+    q0->writeXMLFile(item->getXMLElement(),ref);
+    u0->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -1138,18 +1138,18 @@ namespace MBSimGUI {
   int RigidBodyPropertyDialog::getqRelSize() const {
     int nqT=0, nqR=0;
     if(translation->isActive()) {
-      auto *trans = static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(translation->getWidget())->getWidget());
-      if(static_cast<ChoiceWidget2*>(translation->getWidget())->getIndex()==1)
-        nqT = 0;
-      else
-        nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
+      if(static_cast<ChoiceWidget2*>(translation->getWidget())->getIndex()!=1) {
+        auto *trans = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(translation->getWidget())->getWidget())->getWidget());
+        if(trans)
+          nqT = trans->getArg1Size();
+      }
     }
     if(rotation->isActive()) {
-      auto *rot = static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rotation->getWidget())->getWidget());
-      if(static_cast<ChoiceWidget2*>(rotation->getWidget())->getIndex()==1)
-        nqR = 0;
-      else
-        nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
+      if(static_cast<ChoiceWidget2*>(rotation->getWidget())->getIndex()!=1) {
+        auto *rot = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rotation->getWidget())->getWidget())->getWidget());
+        if(rot)
+          nqR = rot->getArg1Size();
+      }
     }
     int nq = nqT + nqR;
     return nq;
