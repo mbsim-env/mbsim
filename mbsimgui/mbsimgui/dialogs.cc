@@ -260,7 +260,7 @@ namespace MBSimGUI {
       table->selectRow(0);
       plot = new DataPlot(m,A,"Mode", "Eigenmode", "DOF", "-", this);
       plot->setSymbol(QwtSymbol::Diamond,10);
-      plot->setAxisScale(QwtPlot::xBottom,1-0.1,A.size()+0.1,1);
+      plot->setAxisScale(QwtPlot::xBottom,1-0.1,n+0.1,1);
       plot->setAxisScale(QwtPlot::yLeft,-1.1,1.1);
       plot->replot();
       layout->addWidget(plot,0,1);
