@@ -115,9 +115,9 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      BasicElementOfReferenceWidget(Element* element_, Element* selectedElement_, BasicElementBrowser *eleBrowser_, bool addRatio);
+      BasicElementOfReferenceWidget(Element* element_, Element* selectedElement, BasicElementBrowser *eleBrowser_, bool addRatio);
 
-      void setDefaultElement(const QString &def_);
+      void setDefaultElement(const QString &def) { ele->setPlaceholderText(def); }
       void setElement(const QString &str);
       QString getElement() const;
       void setRatio(const QString &str) { ratio->setText(str=="0"?"":str); }
@@ -128,9 +128,8 @@ namespace MBSimGUI {
     protected:
       virtual Element* findElement(const QString &str) { return nullptr; }
       QLineEdit *ele, *ratio;
-      Element *element, *selectedElement;
+      Element *element;
       BasicElementBrowser *eleBrowser;
-      QString def;
 
     public slots:
       void setElement();

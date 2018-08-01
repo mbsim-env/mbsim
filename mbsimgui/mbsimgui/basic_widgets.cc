@@ -206,7 +206,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  BasicElementOfReferenceWidget::BasicElementOfReferenceWidget(Element *element_, Element* selectedElement_, BasicElementBrowser *eleBrowser_, bool addRatio) : ratio(nullptr), element(element_), selectedElement(selectedElement_), eleBrowser(eleBrowser_) {
+  BasicElementOfReferenceWidget::BasicElementOfReferenceWidget(Element *element_, Element* selectedElement, BasicElementBrowser *eleBrowser_, bool addRatio) : ratio(nullptr), element(element_), eleBrowser(eleBrowser_) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -230,26 +230,20 @@ namespace MBSimGUI {
     }
   }
 
-  void BasicElementOfReferenceWidget::setDefaultElement(const QString &def_) {
-    def = def_;
-    ele->setPlaceholderText(def);
-  }
-
   void BasicElementOfReferenceWidget::setElement() {
-    selectedElement = eleBrowser->getSelection();
+    Element *selectedElement = eleBrowser->getSelection();
     ele->setText(selectedElement?selectedElement->getXMLPath(element,true):"");
   }
 
   void BasicElementOfReferenceWidget::setElement(const QString &str) {
-    if(str!=def) {
-      selectedElement = findElement(str);
-      eleBrowser->setSelection(selectedElement);
+    if(str!=ele->placeholderText()) {
+      eleBrowser->setSelection(findElement(str));
       ele->setText(str);
     }
   }
 
   QString BasicElementOfReferenceWidget::getElement() const {
-    return ele->text().isEmpty()?def:ele->text();
+    return ele->text().isEmpty()?ele->placeholderText():ele->text();
   }
 
   DOMElement* BasicElementOfReferenceWidget::initializeUsingXML(DOMElement *element) {
