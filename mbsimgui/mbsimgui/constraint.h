@@ -27,7 +27,6 @@ namespace MBSimGUI {
   class Constraint : public Element {
     public:
       QString getType() const override { return "Constraint"; }
-      static inline int getTreeIndex() { return 5; }
       QMenu* createContextMenu() override { return new ConstraintContextMenu(this); }
   };
 

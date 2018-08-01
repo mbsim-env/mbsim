@@ -65,7 +65,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      BasicElementBrowser(TreeItemData* selection_, const QString &name, int treeIndex_=0);
+      BasicElementBrowser(TreeItemData* selection_, const QString &name);
       ~BasicElementBrowser() override = default;
       void setSelection(TreeItemData *selection_) { selection = selection_; }
       virtual Element* getSelection() const { return nullptr; }
@@ -73,7 +73,6 @@ namespace MBSimGUI {
       QPushButton *okButton;
       QTreeView *eleList;
       TreeItemData *selection;
-      int treeIndex;
       QString oldID;
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
@@ -85,7 +84,7 @@ namespace MBSimGUI {
   template <class T>
   class ElementBrowser : public BasicElementBrowser {
     public:
-      ElementBrowser(Element* selection) : BasicElementBrowser(selection,T().getType(),T::getTreeIndex()) { }
+      ElementBrowser(Element* selection) : BasicElementBrowser(selection,T().getType()) { }
       Element* getSelection() const override { return dynamic_cast<T*>(selection); }
     protected:
       bool checkForElement(TreeItemData *element) override { return dynamic_cast<T*>(element); }

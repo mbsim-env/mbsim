@@ -439,10 +439,10 @@ namespace MBSimGUI {
       string xmlName = "ref";
       if(widget.size()>1)
         xmlName += toStr(int(i+1));
-      if(!E(element)->hasAttribute(xmlName))
-        return nullptr;
       if(E(element)->hasAttribute(xmlName))
         widget[i]->setElement(QString::fromStdString(E(element)->getAttribute(xmlName)));
+      else if(def.isEmpty())
+        return nullptr;
     }
     return element;
   }

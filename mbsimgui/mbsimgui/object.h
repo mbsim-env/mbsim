@@ -26,7 +26,6 @@ namespace MBSimGUI {
 
   class Object : public Element {
     public:
-      static inline int getTreeIndex() { return 3; }
       ElementPropertyDialog* createPropertyDialog() override { return new ObjectPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ObjectContextMenu(this); }
   };

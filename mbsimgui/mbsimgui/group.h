@@ -46,7 +46,6 @@ namespace MBSimGUI {
       Group();
       ~Group() override;
       QString getType() const override { return "Group"; }
-      static inline int getTreeIndex() { return 2; }
       void createXMLConstraints();
       void createXMLObservers();
       xercesc::DOMElement* getXMLFrames() override { return frames; }

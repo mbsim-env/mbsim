@@ -29,7 +29,6 @@ namespace MBSimGUI {
   class Frame : public Element {
     public:
       QString getType() const override { return "Frame"; }
-      static inline int getTreeIndex() { return 0; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override { return new FramePropertyDialog(this); }
       QMenu* createContextMenu() override { return new FrameContextMenu(this); }
