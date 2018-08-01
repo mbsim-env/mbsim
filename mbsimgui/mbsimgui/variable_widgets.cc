@@ -387,10 +387,12 @@ namespace MBSimGUI {
   }
 
   void VecSizeVarWidget::resize_(int size) {
-    widget->resize_(size,1);
-    sizeCombo->blockSignals(true);
-    sizeCombo->setValue(size);
-    sizeCombo->blockSignals(false);
+    if(size>=minSize and size<=maxSize) {
+      widget->resize_(size,1);
+      sizeCombo->blockSignals(true);
+      sizeCombo->setValue(size);
+      sizeCombo->blockSignals(false);
+    }
   }
 
   void VecSizeVarWidget::currentIndexChanged(int size) {
