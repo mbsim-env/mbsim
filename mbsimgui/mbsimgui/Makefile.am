@@ -31,6 +31,7 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   embeditemdata.cc \
 		   treeitem.cc \
 		   treemodel.cc \
+		   unknown_widget.cc \
 		   basic_widgets.cc \
 		   variable_widgets.cc \
 		   function_widget.cc \
