@@ -319,17 +319,14 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      XMLEditorWidget();
-//      int getValue() override {return value->value();}
-//      void setValue(int val) override {value->setValue(val);}
+      XMLEditorWidget(const QString &text="");
+      QString getText() { return edit->toPlainText(); }
+      void setText(const QString &text) { edit->setPlainText(text); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QTextEdit *edit;
-//
-//    signals:
-//      void valueChanged(int);
   };
 
   template <class T>

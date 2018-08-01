@@ -676,12 +676,13 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  XMLEditorWidget::XMLEditorWidget() {
+  XMLEditorWidget::XMLEditorWidget(const QString &text) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     edit = new QTextEdit;
+    setText(text);
     layout->addWidget(edit);
   }
 
