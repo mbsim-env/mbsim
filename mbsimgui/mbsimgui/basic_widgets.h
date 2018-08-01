@@ -118,8 +118,8 @@ namespace MBSimGUI {
       BasicElementOfReferenceWidget(Element* element_, Element* selectedElement, BasicElementBrowser *eleBrowser_, bool addRatio);
 
       void setDefaultElement(const QString &def) { ele->setPlaceholderText(def); }
-      void setElement(const QString &str);
-      QString getElement() const;
+      void setElement(const QString &str) { if(str!=ele->placeholderText()) ele->setText(str); }
+      QString getElement() const { return ele->text().isEmpty()?ele->placeholderText():ele->text(); }
       void setRatio(const QString &str) { ratio->setText(str=="0"?"":str); }
       QString getRatio() const {return ratio->text().isEmpty()?"0":ratio->text();}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -133,6 +133,7 @@ namespace MBSimGUI {
 
     public slots:
       void setElement();
+      void showBrowser();
   };
 
   template <class T>

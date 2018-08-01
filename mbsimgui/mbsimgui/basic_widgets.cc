@@ -213,12 +213,12 @@ namespace MBSimGUI {
 
     ele = new QLineEdit;
     if(selectedElement)
-      ele->setText(selectedElement->getXMLPath(element,true));
+      setElement(selectedElement->getXMLPath(element,true));
     layout->addWidget(ele);
 
     QPushButton *button = new QPushButton(tr("Browse"));
     connect(eleBrowser,SIGNAL(accepted()),this,SLOT(setElement()));
-    connect(button,SIGNAL(clicked(bool)),eleBrowser,SLOT(show()));
+    connect(button,SIGNAL(clicked(bool)),this,SLOT(showBrowser()));
     layout->addWidget(button);
 
     if(addRatio) {
@@ -235,15 +235,9 @@ namespace MBSimGUI {
     ele->setText(selectedElement?selectedElement->getXMLPath(element,true):"");
   }
 
-  void BasicElementOfReferenceWidget::setElement(const QString &str) {
-    if(str!=ele->placeholderText()) {
-      eleBrowser->setSelection(findElement(str));
-      ele->setText(str);
-    }
-  }
-
-  QString BasicElementOfReferenceWidget::getElement() const {
-    return ele->text().isEmpty()?ele->placeholderText():ele->text();
+  void BasicElementOfReferenceWidget::showBrowser() {
+    eleBrowser->setSelection(findElement(ele->text()));
+    eleBrowser->show();
   }
 
   DOMElement* BasicElementOfReferenceWidget::initializeUsingXML(DOMElement *element) {
