@@ -1,0 +1,50 @@
+\NeedsTeXFormat{LaTeX2e}
+\documentclass[fontsize=11pt,DIV=default]{scrartcl}
+
+\usepackage[english,english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{bookman}
+\usepackage{graphicx,graphics}
+\usepackage{amsmath,amssymb}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{macros}
+
+\graphicspath{{Figures/}}
+
+\setcounter{tocdepth}{2}
+
+\newcommand{\MBSim}{\href{https://github.com/mbsim-env/mbsim/}{\textsf{MBSim}}}
+\newcommand{\OpenMBV}{\href{https://github.com/mbsim-env/openmbv/}{\textsf{OpenMBV}}}
+\newcommand{\FMatVec}{\href{https://github.com/mbsim-env/fmatvec/}{\textsf{FMatVec}}}
+\newcommand{\HDFSerie}{\href{https://github.com/mbsim-env/hdf5serie/}{\textsf{HDF5Serie}}}
+\newcommand{\HDF}{\href{http://www.hdfgroup.org/HDF5/}{\textsf{HDF5}}}
+
+% document
+\begin{document}
+\title{\MBSim{} - A Kind (Of) Introduction}
+\author{by \MBSim{} Development Team}
+\date{10.06.2015}
+\maketitle
+
+\begin{abstract}
+\MBSim{} is a tool for the simulation of multibody systems. This manual gives an overview, explains the installation process and introduces easy examples.
+\end{abstract}
+
+\cleardoublepage
+
+\tableofcontents
+
+\include{basics}
+\include{install}
+\include{components}
+\include{examples}
+
+\appendix
+\include{appendix}
+
+\bibliographystyle{plain}
+\bibliography{Literatur}
+
+\end{document}
