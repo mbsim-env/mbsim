@@ -140,6 +140,7 @@ debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--buildSystemRun", default=None, type=str, help="Run in build system mode: generate build system state; The dir to buildSystemState.py must be passed.")
 debugOpts.add_argument("--webapp", action="store_true", help="Add buttons for mbsimwebapp.")
+debugOpts.add_argument("--stateDir", default="/var/www/html/mbsim/buildsystemstate", type=str, help='www state directory for --buildSystemRun')
 
 # parse command line options
 args = argparser.parse_args()
@@ -1271,6 +1272,7 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
       d.attrs.create("Column Label", dtype=h5py.special_dtype(vlen=bytes), data=header) # create Column Label attr with header
       f.close() # close h5 file
     except:
+      print(traceback.format_exc(), file=executeFD)
       print("Failed.\n", file=executeFD)
     else:
       print("Done.\n", file=executeFD)
@@ -1282,6 +1284,7 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
     print("Unzip mbsim.fmu for mbsimTestFMU:\n", file=executeFD)
     zipfile.ZipFile("mbsim.fmu").extractall("tmp_mbsimTestFMU")
   except:
+    print(traceback.format_exc(), file=executeFD)
     print("Failed.\n", file=executeFD)
   else:
     print("Done.\n", file=executeFD)
@@ -1908,7 +1911,7 @@ def writeAtomFeed(currentID, nrFailed, nrTotal):
   sys.path.append(args.buildSystemRun)
   import buildSystemState
   # add a new feed if examples have failed
-  buildSystemState.update(args.buildType+"-examples", "Examples Failed: "+args.buildType,
+  buildSystemState.update(args.stateDir, args.buildType+"-examples", "Examples Failed: "+args.buildType,
     "%d of %d examples failed."%(nrFailed, nrTotal),
     "%s/result_%010d/index.html"%(args.url, currentID),
     nrFailed, nrTotal)
@@ -1999,7 +2002,7 @@ def coverage(mainFD):
     # load and add module
     sys.path.append(args.buildSystemRun)
     import buildSystemState
-    buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", covRateStr,
+    buildSystemState.createStateSVGFile(args.stateDir+"/"+args.buildType+"-coverage.svg", covRateStr,
       "#d9534f" if ret!=0 or covRate<70 else ("#f0ad4e" if covRate<90 else "#5cb85c"))
 
   if ret==0:
