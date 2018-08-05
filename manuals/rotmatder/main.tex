@@ -1,0 +1,66 @@
+\documentclass{report}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[a4paper]{geometry}
+
+\newcommand{\bs}[1]{\boldsymbol #1}
+
+\begin{document}
+
+We have a rotation matrix $\bs{R}_{12}$ and want the angular velocity $_1\bs{\omega}_{12}$. Starting from
+\begin{equation}
+\bs{R}_{12}=\bs{R}_{12}(\bs{q},t),\quad,\bs{q}\in\mathbb{R}^{n_q}
+\end{equation}
+we build the total derivative
+\begin{equation}
+\dot{\bs{R}}_{12}=\sum_{i=1}^{n_q} \frac{\partial \bs{R}_{12}}{\partial q_i}\dot{q}_i + \frac{\partial \bs{R}_{12}}{\partial t}
+\end{equation}
+Multiply from right with $\bs{R}_{12}^T$
+\begin{equation}
+\dot{\bs{R}}_{12}\bs{R}_{12}^T=\sum_{i=1}^{n_q} \frac{\partial \bs{R}_{12}}{\partial q_i}\bs{R}_{12}^T\cdot\dot{q}_i + \frac{\partial \bs{R}_{12}}{\partial t}\bs{R}_{12}^T
+\end{equation}
+Apply the inverse tilde operator, which transforms a skew symmetric matrix to a vector. This inverse tilde operator is distributive and linear.
+\begin{equation}
+\widetilde{\left(\dot{\bs{R}}_{12}\bs{R}_{12}^T\right)}=\sum_{i=1}^{n_q} \widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial q_i}\bs{R}_{12}^T\right)}\cdot\dot{q}_i + \widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial t}\bs{R}_{12}^T\right)}
+\end{equation}
+Rewrite it in matrix notation
+\begin{equation}
+\widetilde{\left(\dot{\bs{R}}_{12}\bs{R}_{12}^T\right)}=\left[\widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial q_1}\bs{R}_{12}^T\right)},\widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial q_2}\bs{R}_{12}^T\right)},\dots\right]\dot{\bs{q}} + \widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial t}\bs{R}_{12}^T\right)}
+\end{equation}
+and apply some substitutions
+\begin{equation}
+\underbrace{\widetilde{\left(\dot{\bs{R}}_{12}\bs{R}_{12}^T\right)}}_{_1\bs{\omega}_{12}}=\underbrace{\left[\widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial q_1}\bs{R}_{12}^T\right)},\widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial q_2}\bs{R}_{12}^T\right)},\dots\right]}_{_1\bs{J}_R}\dot{\bs{q}} + \underbrace{\widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial t}\bs{R}_{12}^T\right)}}_{_1\bs{j}_R}
+\end{equation}
+\begin{equation}
+_1\bs{\omega}_{12}=_1\bs{J}_R\cdot \dot{\bs{q}} + _1\bs{j}_R
+\end{equation}
+Hence if we define the partial derivative operator of an rotation matrix $\bs{R}_{12}$ with respect to a scalar $x$ or a vector $\bs{x}$ formally as
+\begin{equation}
+\text{parder}_x(\bs{R}_{12}):=\widetilde{\left(\frac{\partial\bs{R}_{12}}{\partial x}\bs{R}_{12}^T\right)}
+\end{equation}
+\begin{equation}
+\text{parder}_{\bs{x}}(\bs{R}_{12}):=\left[\widetilde{\left(\frac{\partial\bs{R}_{12}}{\partial x_1}\bs{R}_{12}^T\right)},\widetilde{\left(\frac{\partial\bs{R}_{12}}{\partial x_2}\bs{R}_{12}^T\right)},\dots\right]
+\end{equation}
+than the rotation is fully equal to the translation and using the new fmatvec Function concept yields the following:
+\begin{equation}
+\bs{R}_{12}=\texttt{(*rotFunc)}(\bs{q},t)\quad\in\mathbb{R}^{3\times 3}
+\end{equation}
+\begin{equation}
+_1\bs{J}_R=\texttt{rotFunc->parDer1}(\bs{q},t)\quad\in\mathbb{R}^{3\times n_q}
+\end{equation}
+\begin{equation}
+_1\bs{j}_R=\texttt{rotFunc->parDer2}(\bs{q},t)\quad\in\mathbb{R}^3
+\end{equation}
+Just analog to the translations
+\begin{equation}
+_1\bs{r}=\texttt{(*transFunc)}(\bs{q},t)\quad\in\mathbb{R}^3
+\end{equation}
+\begin{equation}
+_1\bs{J}_T=\texttt{transFunc->parDer1}(\bs{q},t)\quad\in\mathbb{R}^{3\times n_q}
+\end{equation}
+\begin{equation}
+_1\bs{j}_T=\texttt{transFunc->parDer2}(\bs{q},t)\quad\in\mathbb{R}^3
+\end{equation}
+
+\end{document}

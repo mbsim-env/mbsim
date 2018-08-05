@@ -1,4 +1,6 @@
 examples/**/.err.MBS.mbsim*.xml
+examples/**/.err.FMI_cosim.mbsim*.xml
+examples/**/.err.FMI.mbsim*.xml
 kernel/INSTALL
 kernel/compile
 kernel/Makefile.in
