@@ -1401,18 +1401,18 @@ namespace MBSimGUI {
   int FlexibleBodyFFRPropertyDialog::getqRelSize() const {
     int nqT=0, nqR=0, nqE=0;
     if(translation->isActive()) {
-      auto *trans = static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(translation->getWidget())->getWidget());
-      if(static_cast<ChoiceWidget2*>(translation->getWidget())->getIndex()==1)
-        nqT = 0;
-      else
-        nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
+      if(static_cast<ChoiceWidget2*>(translation->getWidget())->getIndex()!=1) {
+        auto *trans = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(translation->getWidget())->getWidget())->getWidget());
+        if(trans)
+          nqT = trans->getArg1Size();
+      }
     }
     if(rotation->isActive()) {
-      auto *rot = static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rotation->getWidget())->getWidget());
-      if(static_cast<ChoiceWidget2*>(rotation->getWidget())->getIndex()==1)
-        nqR = 0;
-      else
-        nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
+      if(static_cast<ChoiceWidget2*>(rotation->getWidget())->getIndex()!=1) {
+        auto *rot = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rotation->getWidget())->getWidget())->getWidget());
+        if(rot)
+          nqR = rot->getArg1Size();
+      }
     }
     if(Pdm->isActive())
       nqE = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
