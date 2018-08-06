@@ -65,14 +65,14 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      BasicElementBrowser(TreeItemData* selection_, const QString &name);
+      BasicElementBrowser(Element* selection_, const QString &name);
       ~BasicElementBrowser() override = default;
-      void setSelection(TreeItemData *selection_) { selection = selection_; }
+      void setSelection(Element *selection_) { selection = selection_; }
       virtual Element* getSelection() const { return nullptr; }
     protected:
       QPushButton *okButton;
       QTreeView *eleList;
-      TreeItemData *selection;
+      Element *selection;
       QString oldID;
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
