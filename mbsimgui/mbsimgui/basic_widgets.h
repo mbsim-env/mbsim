@@ -20,9 +20,11 @@
 #ifndef _BASIC_WIDGETS_H_
 #define _BASIC_WIDGETS_H_
 
+#include "element.h"
 #include "extended_widgets.h"
 #include "custom_widgets.h"
 #include "utils.h"
+#include "dialogs.h"
 #include "namespace.h"
 #include <QLineEdit>
 #include <QTextEdit>
@@ -37,22 +39,10 @@ class QTreeWidgetItem;
  
 namespace MBSimGUI {
 
-  class Element;
-  class Object;
-  class Link;
-  class Constraint;
   class RigidBody;
   class Frame;
   class Contour;
   class Parameter;
-  class Signal;
-  class FrameBrowser;
-  class ContourBrowser;
-  class RigidBodyBrowser;
-  class ObjectBrowser;
-  class LinkBrowser;
-  class ConstraintBrowser;
-  class SignalBrowser;
   class ExtWidget;
 
   class LocalFrameComboBox : public CustomComboBox {
@@ -121,202 +111,39 @@ namespace MBSimGUI {
       void setFrame(const QString &str);
   };
 
-  class FrameOfReferenceWidget : public Widget {
+  class BasicElementOfReferenceWidget : public Widget {
     Q_OBJECT
 
     public:
-      FrameOfReferenceWidget(Element* element_, Frame* selectedFrame_);
+      BasicElementOfReferenceWidget(Element* element_, Element* selectedElement, BasicElementBrowser *eleBrowser_, bool addRatio);
 
-      void updateWidget() override;
-      void setFrame(const QString &str);
-      void setDefaultFrame(const QString &def_);
-      QString getFrame() const;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-
-    protected:
-      QLineEdit *frame;
-      Element* element;
-      FrameBrowser *frameBrowser;
-      Frame *selectedFrame;
-      QString def;
-
-    public slots:
-      void setFrame(); 
-  };
-
-  class ContourOfReferenceWidget : public Widget {
-    Q_OBJECT
-
-    public:
-      ContourOfReferenceWidget(Element* element_, Contour* selectedContour_);
-
-      void updateWidget() override;
-      void setContour(const QString &str);
-      QString getContour() const;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-
-    protected:
-      QLineEdit *contour;
-      Element* element;
-      ContourBrowser *contourBrowser;
-      Contour *selectedContour;
-
-    public slots:
-      void setContour();
-  };
-
-  class RigidBodyOfReferenceWidget : public Widget {
-    Q_OBJECT
-
-    public:
-      RigidBodyOfReferenceWidget(Element* element_, RigidBody* selectedBody_);
-
-      void updateWidget() override;
-      void setBody(const QString &str);
-      QString getBody() const;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-
-    protected:
-      QLineEdit* body;
-      Element* element;
-      RigidBodyBrowser* bodyBrowser;
-      RigidBody* selectedBody;
-
-    public slots:
-      void setBody();
-
-    signals:
-      void bodyChanged();
-  };
-
-  class GearInputReferenceWidget : public Widget {
-    Q_OBJECT
-
-    public:
-      GearInputReferenceWidget(Element* element_, RigidBody* selectedBody_);
-
-      void updateWidget() override;
-      void setBody(const QString &str);
-      QString getBody() const;
+      void setDefaultElement(const QString &def) { ele->setPlaceholderText(def); }
+      void setElement(const QString &str) { if(str!=ele->placeholderText()) ele->setText(str); }
+      QString getElement() const { return ele->text().isEmpty()?ele->placeholderText():ele->text(); }
+      void setRatio(const QString &str) { ratio->setText(str=="0"?"":str); }
       QString getRatio() const {return ratio->text().isEmpty()?"0":ratio->text();}
-      void setRatio(const QString &str) {ratio->setText(str=="0"?"":str);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
-      QLineEdit* body, *ratio;
-      Element* element;
-      RigidBodyBrowser* bodyBrowser;
-      RigidBody* selectedBody;
+      virtual Element* findElement(const QString &str) { return nullptr; }
+      QLineEdit *ele, *ratio;
+      Element *element;
+      BasicElementBrowser *eleBrowser;
 
     public slots:
-      void setBody();
-
-    signals:
-      void bodyChanged();
+      void setElement();
+      void showBrowser();
   };
 
-  class ObjectOfReferenceWidget : public Widget {
-    Q_OBJECT
+  template <class T>
+  class ElementOfReferenceWidget : public BasicElementOfReferenceWidget {
 
     public:
-      ObjectOfReferenceWidget(Element* element_, Object* selectedObject_);
-
-      void updateWidget() override;
-      void setObject(const QString &str);
-      QString getObject() const;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-
+      ElementOfReferenceWidget(Element* element, Element* selectedElement, bool addRatio=false) : BasicElementOfReferenceWidget(element,selectedElement,new ElementBrowser<T>(selectedElement),addRatio) {
+      }
     protected:
-      QLineEdit* object;
-      Element* element;
-      ObjectBrowser* objectBrowser;
-      Object* selectedObject;
-
-    public slots:
-      void setObject();
-
-    signals:
-      void objectChanged();
-  };
-
-  class LinkOfReferenceWidget : public Widget {
-    Q_OBJECT
-
-    public:
-      LinkOfReferenceWidget(Element* element_, Link* selectedLink_);
-
-      void updateWidget() override;
-      void setLink(const QString &str);
-      QString getLink() const;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-
-    protected:
-      QLineEdit* link;
-      Element* element;
-      LinkBrowser* linkBrowser;
-      Link* selectedLink;
-
-    public slots:
-      void setLink();
-
-    signals:
-      void linkChanged();
-  };
-
-  class ConstraintOfReferenceWidget : public Widget {
-    Q_OBJECT
-
-    public:
-      ConstraintOfReferenceWidget(Element* element_, Constraint* selectedConstraint_);
-
-      void updateWidget() override;
-      void setConstraint(const QString &str);
-      QString getConstraint() const;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-
-    protected:
-      QLineEdit* constraint;
-      Element* element;
-      ConstraintBrowser* constraintBrowser;
-      Constraint* selectedConstraint;
-
-    public slots:
-      void setConstraint();
-
-    signals:
-      void constraintChanged();
-  };
-
-  class SignalOfReferenceWidget : public Widget {
-    Q_OBJECT
-
-    public:
-      SignalOfReferenceWidget(Element* element_, Signal* selectedSignal_);
-
-      void updateWidget() override;
-      void setSignal(const QString &str);
-      QString getSignal() const;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-
-    protected:
-      QLineEdit* signal;
-      Element* element;
-      SignalBrowser* signalBrowser;
-      Signal* selectedSignal;
-
-    public slots:
-      void setSignal();
-
-    signals:
-      void signalChanged();
+      Element* findElement(const QString &str) override { return element->getByPath<T>(str); }
   };
 
   class FileWidget : public Widget {
@@ -419,61 +246,32 @@ namespace MBSimGUI {
       QComboBox *text;
   };
 
-  class ConnectFramesWidget : public Widget {
+  class BasicConnectElementsWidget : public Widget {
 
     public:
-      ConnectFramesWidget(int n, Element* element_);
+      BasicConnectElementsWidget(const std::vector<BasicElementOfReferenceWidget*> widget_, const QString &name);
 
-      void setDefaultFrame(const QString &def_) { def = def_; widget[0]->setDefaultFrame(def); }
+      void setDefaultElement(const QString &def_) { def = def_; widget[0]->setDefaultElement(def); }
       void updateWidget() override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
-      std::vector<FrameOfReferenceWidget*> widget;
+      std::vector<BasicElementOfReferenceWidget*> widget;
       QString def;
-      Element* element;
   };
 
-  class ConnectContoursWidget : public Widget {
-
+  template <class T>
+  class ConnectElementsWidget : public BasicConnectElementsWidget {
     public:
-      ConnectContoursWidget(int n, Element* element_);
-
-      void updateWidget() override;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-
+      ConnectElementsWidget(int n, Element *element) : BasicConnectElementsWidget(create(n,element),T().getType()) { }
     protected:
-      std::vector<ContourOfReferenceWidget*> widget;
-      Element* element;
+      std::vector<BasicElementOfReferenceWidget*> create(int n, Element *element) {
+        std::vector<BasicElementOfReferenceWidget*> widget(n);
+        for(int i=0; i<n; i++) widget[i] = new ElementOfReferenceWidget<T>(element,nullptr);
+        return widget;
+      }
   };
-
-  class ConnectRigidBodiesWidget : public Widget {
-
-    public:
-      ConnectRigidBodiesWidget(int n, Element* element_);
-
-      void updateWidget() override;
-      RigidBodyOfReferenceWidget* getWidget(int i) { return widget[i]; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-
-    protected:
-      std::vector<RigidBodyOfReferenceWidget*> widget;
-      Element* element;
-  };
-
-//  class SignalReferenceWidget : public Widget {
-//
-//    public:
-//    SignalReferenceWidget(Element* element);
-//    SignalOfReferenceWidget* getSignalOfReferenceWidget() {return refSignal;}
-//    void updateWidget() {refSignal->updateWidget();}
-//    protected:
-//    SignalOfReferenceWidget* refSignal;
-//    ExtWidget *factor;
-//  };
 
   class ColorWidget : public Widget {
     Q_OBJECT
@@ -521,17 +319,26 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      XMLEditorWidget();
-//      int getValue() override {return value->value();}
-//      void setValue(int val) override {value->setValue(val);}
+      XMLEditorWidget(const QString &text="");
+      QString getText() { return edit->toPlainText(); }
+      void setText(const QString &text) { edit->setPlainText(text); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QTextEdit *edit;
-//
-//    signals:
-//      void valueChanged(int);
+  };
+
+  template <class T>
+  class ElementOfReferenceWidgetFactory : public WidgetFactory {
+    public:
+      ElementOfReferenceWidgetFactory(MBXMLUtils::FQN xmlName_, Element* element_, bool addRatio_=false) : xmlName(std::move(xmlName_)), element(element_), addRatio(addRatio_) { }
+      QWidget* createWidget(int i=0) override { return new ElementOfReferenceWidget<T>(element,nullptr,addRatio); }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName; }
+    protected:
+      MBXMLUtils::FQN xmlName;
+      Element *element;
+      bool addRatio;
   };
 
 }

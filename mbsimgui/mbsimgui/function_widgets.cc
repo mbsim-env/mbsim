@@ -26,6 +26,7 @@
 #include "function.h"
 #include "function_widget_factory.h"
 #include "mainwindow.h"
+#include "signal_.h"
 #include <mbxmlutils/eval.h>
 #include <fmatvec/toString.h>
 #include <boost/lexical_cast.hpp>
@@ -923,7 +924,7 @@ namespace MBSimGUI {
     setLayout(layout);
     dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
     dummy->setParent(element);
-    sRef = new ExtWidget("Return signal",new SignalOfReferenceWidget(dummy,nullptr),false,false,MBSIMCONTROL%"returnSignal");
+    sRef = new ExtWidget("Return signal",new ElementOfReferenceWidget<Signal>(dummy,nullptr),false,false,MBSIMCONTROL%"returnSignal");
     layout->addWidget(sRef);
   }
   

@@ -206,450 +206,49 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {
+  BasicElementOfReferenceWidget::BasicElementOfReferenceWidget(Element *element_, Element* selectedElement, BasicElementBrowser *eleBrowser_, bool addRatio) : ratio(nullptr), element(element_), eleBrowser(eleBrowser_) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    frame = new QLineEdit;
-    if(selectedFrame)
-      frame->setText(selectedFrame->getXMLPath(element,true));
-    frameBrowser = new FrameBrowser(element->getRoot(),selectedFrame,this);
-    connect(frameBrowser,SIGNAL(accepted()),this,SLOT(setFrame()));
-    layout->addWidget(frame);
+    ele = new QLineEdit;
+    if(selectedElement)
+      setElement(selectedElement->getXMLPath(element,true));
+    layout->addWidget(ele);
+
     QPushButton *button = new QPushButton(tr("Browse"));
-    connect(button,SIGNAL(clicked(bool)),frameBrowser,SLOT(show()));
+    connect(eleBrowser,SIGNAL(accepted()),this,SLOT(setElement()));
+    connect(button,SIGNAL(clicked(bool)),this,SLOT(showBrowser()));
     layout->addWidget(button);
-    updateWidget();
-  }
 
-  void FrameOfReferenceWidget::setDefaultFrame(const QString &def_) {
-    def = def_;
-    frame->setPlaceholderText(def);
-  }
-
-  void FrameOfReferenceWidget::updateWidget() {
-    frameBrowser->updateWidget(selectedFrame);
-    if(selectedFrame) {
-      setFrame();
+    if(addRatio) {
+      QLabel *label = new QLabel("Ratio");
+      layout->addWidget(label);
+      ratio = new QLineEdit;
+      ratio->setPlaceholderText("0");
+      layout->addWidget(ratio);
     }
   }
 
-  void FrameOfReferenceWidget::setFrame() { 
-    if(frameBrowser->getFrameList()->currentItem())
-      selectedFrame = (Frame*)static_cast<ElementItem*>(frameBrowser->getFrameList()->currentItem())->getElement();
-    else
-      selectedFrame = nullptr;
-    frame->setText(selectedFrame?selectedFrame->getXMLPath(element,true):"");
+  void BasicElementOfReferenceWidget::setElement() {
+    Element *selectedElement = eleBrowser->getSelection();
+    ele->setText(selectedElement?selectedElement->getXMLPath(element,true):"");
   }
 
-  void FrameOfReferenceWidget::setFrame(const QString &str) {
-    if(str!=def) {
-      selectedFrame = element->getByPath<Frame>(str);
-      frameBrowser->updateWidget(selectedFrame);
-      frame->setText(str);
-    }
+  void BasicElementOfReferenceWidget::showBrowser() {
+    eleBrowser->setSelection(findElement(ele->text()));
+    eleBrowser->show();
   }
 
-  QString FrameOfReferenceWidget::getFrame() const {
-    return frame->text().isEmpty()?def:frame->text();
-  }
-
-  DOMElement* FrameOfReferenceWidget::initializeUsingXML(DOMElement *element) {
-    setFrame(QString::fromStdString(E(element)->getAttribute("ref")));
+  DOMElement* BasicElementOfReferenceWidget::initializeUsingXML(DOMElement *element) {
+    setElement(QString::fromStdString(E(element)->getAttribute("ref")));
+    if(ratio) setRatio(QString::fromStdString(E(element)->getAttribute("ratio")));
     return element;
   }
 
-  DOMElement* FrameOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getFrame().toStdString());
-    return nullptr;
-  }
-
-  ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_) {
-    auto *layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    contour = new QLineEdit;
-    if(selectedContour)
-      contour->setText(selectedContour->getXMLPath(element,true));
-    contourBrowser = new ContourBrowser(element->getRoot(),selectedContour,this);
-    connect(contourBrowser,SIGNAL(accepted()),this,SLOT(setContour()));
-    layout->addWidget(contour);
-    QPushButton *button = new QPushButton(tr("Browse"));
-    connect(button,SIGNAL(clicked(bool)),contourBrowser,SLOT(show()));
-    layout->addWidget(button);
-    updateWidget();
-  }
-
-  void ContourOfReferenceWidget::updateWidget() {
-    contourBrowser->updateWidget(selectedContour);
-    if(selectedContour) {
-      setContour();
-    }
-  }
-
-  void ContourOfReferenceWidget::setContour() { 
-    if(contourBrowser->getContourList()->currentItem())
-      selectedContour = (Contour*)static_cast<ElementItem*>(contourBrowser->getContourList()->currentItem())->getElement();
-    else
-      selectedContour = nullptr;
-    contour->setText(selectedContour?selectedContour->getXMLPath(element,true):"");
-  }
-
-  void ContourOfReferenceWidget::setContour(const QString &str) {
-    selectedContour = element->getByPath<Contour>(str);
-    contourBrowser->updateWidget(selectedContour);
-    contour->setText(str);
-  }
-
-  QString ContourOfReferenceWidget::getContour() const {
-    return contour->text();
-  }
-
-  DOMElement* ContourOfReferenceWidget::initializeUsingXML(DOMElement *element) {
-    setContour(QString::fromStdString(E(element)->getAttribute("ref")));
-    return element;
-  }
-
-  DOMElement* ContourOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getContour().toStdString());
-    return nullptr;
-  }
-
-  RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_) {
-    auto *layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    body = new QLineEdit;
-    if(selectedBody)
-      body->setText(selectedBody->getXMLPath(element,true));
-    bodyBrowser = new RigidBodyBrowser(element->getRoot(),nullptr,this);
-    connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
-    layout->addWidget(body);
-    QPushButton *button = new QPushButton(tr("Browse"));
-    connect(button,SIGNAL(clicked(bool)),bodyBrowser,SLOT(show()));
-    layout->addWidget(button);
-    updateWidget();
-  }
-
-  void RigidBodyOfReferenceWidget::updateWidget() {
-    bodyBrowser->updateWidget(selectedBody); 
-    if(selectedBody) {
-      setBody();
-    }
-  }
-
-  void RigidBodyOfReferenceWidget::setBody() {
-    if(bodyBrowser->getRigidBodyList()->currentItem())
-      selectedBody = static_cast<RigidBody*>(static_cast<ElementItem*>(bodyBrowser->getRigidBodyList()->currentItem())->getElement());
-    else
-      selectedBody = nullptr;
-    body->setText(selectedBody?selectedBody->getXMLPath(element,true):"");
-    emit bodyChanged();
-    emit Widget::updateWidget();
-  }
-
-  void RigidBodyOfReferenceWidget::setBody(const QString &str) {
-    selectedBody = element->getByPath<RigidBody>(str);
-    bodyBrowser->updateWidget(selectedBody);
-    body->setText(str);
-    emit bodyChanged();
-    emit Widget::updateWidget();
-  }
-
-  QString RigidBodyOfReferenceWidget::getBody() const {
-    return body->text();
-  }
-
-  DOMElement* RigidBodyOfReferenceWidget::initializeUsingXML(DOMElement *element) {
-    setBody(QString::fromStdString(E(element)->getAttribute("ref")));
-    return element;
-  }
-
-  DOMElement* RigidBodyOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getBody().toStdString());
-    return nullptr;
-  }
-
-  GearInputReferenceWidget::GearInputReferenceWidget(Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_) {
-    auto *layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    body = new QLineEdit;
-    if(selectedBody)
-      body->setText(selectedBody->getXMLPath(element,true));
-    bodyBrowser = new RigidBodyBrowser(element->getRoot(),nullptr,this);
-    connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
-    layout->addWidget(body);
-    QPushButton *button = new QPushButton(tr("Browse"));
-    connect(button,SIGNAL(clicked(bool)),bodyBrowser,SLOT(show()));
-    layout->addWidget(button);
-
-    QLabel *label = new QLabel("Ratio");
-    layout->addWidget(label);
-    ratio = new QLineEdit;
-    ratio->setPlaceholderText("0");
-    layout->addWidget(ratio);
-
-    updateWidget();
-  }
-
-  void GearInputReferenceWidget::updateWidget() {
-    bodyBrowser->updateWidget(selectedBody);
-    if(selectedBody) {
-      setBody();
-    }
-  }
-
-  void GearInputReferenceWidget::setBody() {
-    if(bodyBrowser->getRigidBodyList()->currentItem())
-      selectedBody = static_cast<RigidBody*>(static_cast<ElementItem*>(bodyBrowser->getRigidBodyList()->currentItem())->getElement());
-    else
-      selectedBody = nullptr;
-    body->setText(selectedBody?selectedBody->getXMLPath(element,true):"");
-    emit bodyChanged();
-  }
-
-  void GearInputReferenceWidget::setBody(const QString &str) {
-    selectedBody = element->getByPath<RigidBody>(str);
-    bodyBrowser->updateWidget(selectedBody);
-    body->setText(str);
-    emit bodyChanged();
-//    emit Widget::updateWidget();
-  }
-
-  QString GearInputReferenceWidget::getBody() const {
-    return body->text();
-  }
-
-  DOMElement* GearInputReferenceWidget::initializeUsingXML(DOMElement *element) {
-    setBody(QString::fromStdString(E(element)->getAttribute("ref")));
-    setRatio(QString::fromStdString(E(element)->getAttribute("ratio")));
-    return element;
-  }
-
-  DOMElement* GearInputReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getBody().toStdString());
-    E(static_cast<DOMElement*>(parent))->setAttribute("ratio", getRatio().toStdString());
-    return nullptr;
-  }
-
-  ObjectOfReferenceWidget::ObjectOfReferenceWidget(Element *element_, Object* selectedObject_) : element(element_), selectedObject(selectedObject_) {
-    auto *layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    object = new QLineEdit;
-    if(selectedObject)
-      object->setText(selectedObject->getXMLPath(element,true));
-    objectBrowser = new ObjectBrowser(element->getRoot(),nullptr,this);
-    connect(objectBrowser,SIGNAL(accepted()),this,SLOT(setObject()));
-    layout->addWidget(object);
-    QPushButton *button = new QPushButton(tr("Browse"));
-    connect(button,SIGNAL(clicked(bool)),objectBrowser,SLOT(show()));
-    layout->addWidget(button);
-    updateWidget();
-  }
-
-  void ObjectOfReferenceWidget::updateWidget() {
-    objectBrowser->updateWidget(selectedObject); 
-    if(selectedObject) {
-      setObject();
-    }
-  }
-
-  void ObjectOfReferenceWidget::setObject() {
-    if(objectBrowser->getObjectList()->currentItem())
-      selectedObject = static_cast<Object*>(static_cast<ElementItem*>(objectBrowser->getObjectList()->currentItem())->getElement());
-    else
-      selectedObject = nullptr;
-    object->setText(selectedObject?selectedObject->getXMLPath(element,true):"");
-    emit objectChanged();
-  }
-
-  void ObjectOfReferenceWidget::setObject(const QString &str) {
-    selectedObject = element->getByPath<Object>(str);
-    objectBrowser->updateWidget(selectedObject);
-    object->setText(str);
-    emit objectChanged();
-  }
-
-  QString ObjectOfReferenceWidget::getObject() const {
-    return object->text();
-  }
-
-  DOMElement* ObjectOfReferenceWidget::initializeUsingXML(DOMElement *element) {
-    setObject(QString::fromStdString(E(element)->getAttribute("ref")));
-    return element;
-  }
-
-  DOMElement* ObjectOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getObject().toStdString());
-    return nullptr;
-  }
-
-  LinkOfReferenceWidget::LinkOfReferenceWidget(Element *element_, Link* selectedLink_) : element(element_), selectedLink(selectedLink_) {
-    auto *layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    link = new QLineEdit;
-    if(selectedLink)
-      link->setText(selectedLink->getXMLPath(element,true));
-    linkBrowser = new LinkBrowser(element->getRoot(),nullptr,this);
-    connect(linkBrowser,SIGNAL(accepted()),this,SLOT(setLink()));
-    layout->addWidget(link);
-    QPushButton *button = new QPushButton(tr("Browse"));
-    connect(button,SIGNAL(clicked(bool)),linkBrowser,SLOT(show()));
-    layout->addWidget(button);
-    updateWidget();
-  }
-
-  void LinkOfReferenceWidget::updateWidget() {
-    linkBrowser->updateWidget(selectedLink); 
-    if(selectedLink) {
-      setLink();
-    }
-  }
-
-  void LinkOfReferenceWidget::setLink() {
-    if(linkBrowser->getLinkList()->currentItem())
-      selectedLink = static_cast<Link*>(static_cast<ElementItem*>(linkBrowser->getLinkList()->currentItem())->getElement());
-    else
-      selectedLink = nullptr;
-    link->setText(selectedLink?selectedLink->getXMLPath(element,true):"");
-    emit linkChanged();
-  }
-
-  void LinkOfReferenceWidget::setLink(const QString &str) {
-    selectedLink = element->getByPath<Link>(str);
-    linkBrowser->updateWidget(selectedLink);
-    link->setText(str);
-    emit linkChanged();
-  }
-
-  QString LinkOfReferenceWidget::getLink() const {
-    return link->text();
-  }
-
-  DOMElement* LinkOfReferenceWidget::initializeUsingXML(DOMElement *element) {
-    setLink(QString::fromStdString(E(element)->getAttribute("ref")));
-    return element;
-  }
-
-  DOMElement* LinkOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getLink().toStdString());
-    return nullptr;
-  }
-
-  ConstraintOfReferenceWidget::ConstraintOfReferenceWidget(Element *element_, Constraint* selectedConstraint_) : element(element_), selectedConstraint(selectedConstraint_) {
-    auto *layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    constraint = new QLineEdit;
-    if(selectedConstraint)
-      constraint->setText(selectedConstraint->getXMLPath(element,true));
-    constraintBrowser = new ConstraintBrowser(element->getRoot(),nullptr,this);
-    connect(constraintBrowser,SIGNAL(accepted()),this,SLOT(setConstraint()));
-    layout->addWidget(constraint);
-    QPushButton *button = new QPushButton(tr("Browse"));
-    connect(button,SIGNAL(clicked(bool)),constraintBrowser,SLOT(show()));
-    layout->addWidget(button);
-    updateWidget();
-  }
-
-  void ConstraintOfReferenceWidget::updateWidget() {
-    constraintBrowser->updateWidget(selectedConstraint);
-    if(selectedConstraint) {
-      setConstraint();
-    }
-  }
-
-  void ConstraintOfReferenceWidget::setConstraint() {
-    if(constraintBrowser->getConstraintList()->currentItem())
-      selectedConstraint = static_cast<Constraint*>(static_cast<ElementItem*>(constraintBrowser->getConstraintList()->currentItem())->getElement());
-    else
-      selectedConstraint = nullptr;
-    constraint->setText(selectedConstraint?selectedConstraint->getXMLPath(element,true):"");
-    emit constraintChanged();
-  }
-
-  void ConstraintOfReferenceWidget::setConstraint(const QString &str) {
-    selectedConstraint = element->getByPath<Constraint>(str);
-    constraintBrowser->updateWidget(selectedConstraint);
-    constraint->setText(str);
-    emit constraintChanged();
-  }
-
-  QString ConstraintOfReferenceWidget::getConstraint() const {
-    return constraint->text();
-  }
-
-  DOMElement* ConstraintOfReferenceWidget::initializeUsingXML(DOMElement *element) {
-    setConstraint(QString::fromStdString(E(element)->getAttribute("ref")));
-    return element;
-  }
-
-  DOMElement* ConstraintOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getConstraint().toStdString());
-    return nullptr;
-  }
-
-  SignalOfReferenceWidget::SignalOfReferenceWidget(Element *element_, Signal* selectedSignal_) : element(element_), selectedSignal(selectedSignal_) {
-    auto *layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    signal = new QLineEdit;
-    if(selectedSignal)
-      signal->setText(selectedSignal->getXMLPath(element,true));
-    signalBrowser = new SignalBrowser(element->getRoot(),nullptr,this);
-    connect(signalBrowser,SIGNAL(accepted()),this,SLOT(setSignal()));
-    layout->addWidget(signal);
-    QPushButton *button = new QPushButton(tr("Browse"));
-    connect(button,SIGNAL(clicked(bool)),signalBrowser,SLOT(show()));
-    layout->addWidget(button);
-    updateWidget();
-  }
-
-  void SignalOfReferenceWidget::updateWidget() {
-    signalBrowser->updateWidget(selectedSignal); 
-    if(selectedSignal) {
-      setSignal();
-    }
-  }
-
-  void SignalOfReferenceWidget::setSignal() {
-    if(signalBrowser->getSignalList()->currentItem())
-      selectedSignal = static_cast<Signal*>(static_cast<ElementItem*>(signalBrowser->getSignalList()->currentItem())->getElement());
-    else
-      selectedSignal = nullptr;
-    signal->setText(selectedSignal?selectedSignal->getXMLPath(element,true):"");
-    emit signalChanged();
-  }
-
-  void SignalOfReferenceWidget::setSignal(const QString &str) {
-    selectedSignal = element->getByPath<Signal>(str);
-    signalBrowser->updateWidget(selectedSignal);
-    signal->setText(str);
-    emit signalChanged();
-  }
-
-  QString SignalOfReferenceWidget::getSignal() const {
-    return signal->text();
-  }
-
-  DOMElement* SignalOfReferenceWidget::initializeUsingXML(DOMElement *element) {
-    setSignal(QString::fromStdString(E(element)->getAttribute("ref")));
-    return element;
-  }
-
-  DOMElement* SignalOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getSignal().toStdString());
+  DOMElement* BasicElementOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getElement().toStdString());
+    if(ratio) E(static_cast<DOMElement*>(parent))->setAttribute("ratio", getRatio().toStdString());
     return nullptr;
   }
 
@@ -803,137 +402,46 @@ namespace MBSimGUI {
     layout->addWidget(text);
   }
 
-  ConnectFramesWidget::ConnectFramesWidget(int n, Element *element_) : element(element_) {
+  BasicConnectElementsWidget::BasicConnectElementsWidget(const vector<BasicElementOfReferenceWidget*> widget_, const QString &name) : widget(widget_) {
 
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    for(int i=0; i<n; i++) {
-      QString subname = "Frame";
-      if(n>1) {
-        subname += QString::number(i+1);
-        //layout->addWidget(new QLabel(QString("Frame") + QString::number(i+1) +":"));
-      }
-      widget.push_back(new FrameOfReferenceWidget(element,nullptr));
+    for(size_t i=0; i<widget.size(); i++) {
+      QString subname = name;
+      if(widget.size()>1)
+        subname += QString(" ")+QString::number(i+1);
       QWidget *subwidget = new ExtWidget(subname,widget[i]);
       layout->addWidget(subwidget);
     }
   }
 
-  void ConnectFramesWidget::updateWidget() {
+  void BasicConnectElementsWidget::updateWidget() {
     for(auto & i : widget)
       i->updateWidget();
   }
 
-  DOMElement* ConnectFramesWidget::initializeUsingXML(DOMElement *element) {
+  DOMElement* BasicConnectElementsWidget::initializeUsingXML(DOMElement *element) {
     for(unsigned int i=0; i<widget.size(); i++) {
       string xmlName = "ref";
       if(widget.size()>1)
         xmlName += toStr(int(i+1));
       if(E(element)->hasAttribute(xmlName))
-        widget[i]->setFrame(QString::fromStdString(E(element)->getAttribute(xmlName)));
-    }
-    return element;
-  }
-
-  DOMElement* ConnectFramesWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    for(unsigned int i=0; i<widget.size(); i++) {
-      string xmlName = "ref";
-      if(widget.size()>1)
-        xmlName += toStr(int(i+1));
-      if(i>0 or widget[i]->getFrame()!=def)
-        E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getFrame().toStdString());
-    }
-    return nullptr;
-  }
-
-  ConnectContoursWidget::ConnectContoursWidget(int n, Element *element_) : element(element_) {
-
-    auto *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    for(int i=0; i<n; i++) {
-      QString subname = "Contour";
-      if(n>1) {
-        subname += QString::number(i+1);
-        //layout->addWidget(new QLabel(QString("Contour") + QString::number(i+1) +":"));
-      }
-      widget.push_back(new ContourOfReferenceWidget(element,nullptr));
-      QWidget *subwidget = new ExtWidget(subname,widget[i]);
-      layout->addWidget(subwidget);
-    }
-  }
-
-  void ConnectContoursWidget::updateWidget() {
-    for(auto & i : widget)
-      i->updateWidget();
-  }
-
-  DOMElement* ConnectContoursWidget::initializeUsingXML(DOMElement *element) {
-    for(unsigned int i=0; i<widget.size(); i++) {
-      string xmlName = "ref";
-      if(widget.size()>1)
-        xmlName += toStr(int(i+1));
-      if(E(element)->hasAttribute(xmlName))
-        widget[i]->setContour(QString::fromStdString(E(element)->getAttribute(xmlName)));
-    }
-    return element;
-  }
-
-  DOMElement* ConnectContoursWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    for(unsigned int i=0; i<widget.size(); i++) {
-      string xmlName = "ref";
-      if(widget.size()>1)
-        xmlName += toStr(int(i+1));
-      E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getContour().toStdString());
-    }
-    return nullptr;
-  }
-
-  ConnectRigidBodiesWidget::ConnectRigidBodiesWidget(int n, Element *element_) : element(element_) {
-
-    auto *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    for(int i=0; i<n; i++) {
-      QString subname = "Frame";
-      if(n>1) {
-        subname += QString::number(i+1);
-        //layout->addWidget(new QLabel(QString("Frame") + QString::number(i+1) +":"));
-      }
-      widget.push_back(new RigidBodyOfReferenceWidget(element,nullptr));
-      QWidget *subwidget = new ExtWidget(subname,widget[i]);
-      layout->addWidget(subwidget);
-    }
-  }
-
-  void ConnectRigidBodiesWidget::updateWidget() {
-    for(auto & i : widget)
-      i->updateWidget();
-  }
-
-  DOMElement* ConnectRigidBodiesWidget::initializeUsingXML(DOMElement *element) {
-    for(unsigned int i=0; i<widget.size(); i++) {
-      string xmlName = "ref";
-      if(widget.size()>1)
-        xmlName += toStr(int(i+1));
-      if(!E(element)->hasAttribute(xmlName))
+        widget[i]->setElement(QString::fromStdString(E(element)->getAttribute(xmlName)));
+      else if(def.isEmpty())
         return nullptr;
-      if(E(element)->hasAttribute(xmlName))
-        widget[i]->setBody(QString::fromStdString(E(element)->getAttribute(xmlName)));
     }
     return element;
   }
 
-  DOMElement* ConnectRigidBodiesWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* BasicConnectElementsWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     for(unsigned int i=0; i<widget.size(); i++) {
       string xmlName = "ref";
       if(widget.size()>1)
         xmlName += toStr(int(i+1));
-      E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getBody().toStdString());
+      if(i>0 or widget[i]->getElement()!=def)
+        E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getElement().toStdString());
     }
     return nullptr;
   }
@@ -1168,12 +676,13 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  XMLEditorWidget::XMLEditorWidget() {
+  XMLEditorWidget::XMLEditorWidget(const QString &text) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     edit = new QTextEdit;
+    setText(text);
     layout->addWidget(edit);
   }
 

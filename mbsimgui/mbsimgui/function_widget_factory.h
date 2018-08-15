@@ -216,17 +216,6 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> xmlName;
   };
 
-  class ConnectRigidBodiesWidgetFactory : public WidgetFactory {
-    public:
-      ConnectRigidBodiesWidgetFactory(Element *parent_);
-      QWidget* createWidget(int i=0) override;
-      QString getName(int i=0) const override { return name[i]; }
-      int getSize() const override { return name.size(); }
-    protected:
-      Element *parent;
-      std::vector<QString> name;
-  };
-
   class SpringDamperWidgetFactory : public WidgetFactory {
     public:
       SpringDamperWidgetFactory(Element *parent_, bool varSize_=false);

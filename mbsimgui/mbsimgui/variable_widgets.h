@@ -147,6 +147,7 @@ namespace MBSimGUI {
       std::vector<QString> getVec() const override {return widget->getVec();}
       void setVec(const std::vector<QString> &x) override;
       void resize_(int size);
+      void resize_(int rows, int cols) override { resize_(rows); }
       int size() const {return sizeCombo->value();}
       int rows() const override { return size(); }
       int cols() const override { return 1; }

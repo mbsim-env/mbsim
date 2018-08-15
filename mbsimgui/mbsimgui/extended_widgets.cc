@@ -22,6 +22,7 @@
 #include "variable_widgets.h"
 #include "dialogs.h"
 #include "custom_widgets.h"
+#include "unknown_widget.h"
 #include <QLabel>
 #include <QListWidget>
 #include <QStackedWidget>
@@ -82,16 +83,6 @@ namespace MBSimGUI {
     return ele;
   }
 
-  void ChoiceWidget2::setWidgetFactory(WidgetFactory *factory_) {
-    factory = factory_;
-    comboBox->blockSignals(true);
-    comboBox->clear();
-    for(int i=0; i<factory->getSize(); i++)
-      comboBox->addItem(factory->getName(i));
-    comboBox->blockSignals(false);
-    //defineWidget(0);
-  }
-
   ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir, int mode_) : widget(nullptr), factory(factory_), mode(mode_) {
     layout = new QBoxLayout(dir);
     layout->setMargin(0);
@@ -102,15 +93,22 @@ namespace MBSimGUI {
       comboBox->addItem(factory->getName(i));
     layout->addWidget(comboBox);
     defineWidget(0);
-//    connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SIGNAL(widgetChanged()));
     connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
-//    connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateWidget()));
+  }
+
+  void ChoiceWidget2::setWidgetFactory(WidgetFactory *factory_) {
+    factory = factory_;
+    comboBox->blockSignals(true);
+    comboBox->clear();
+    for(int i=0; i<factory->getSize(); i++)
+      comboBox->addItem(factory->getName(i));
+    comboBox->blockSignals(false);
   }
 
   void ChoiceWidget2::defineWidget(int index) {
     layout->removeWidget(widget);
     delete widget;
-    widget = factory->createWidget(index);
+    widget = (index!=-1)?factory->createWidget(index):new UnknownWidget;
     layout->addWidget(widget);
     emit widgetChanged();
     connect(widget,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
@@ -118,17 +116,22 @@ namespace MBSimGUI {
 
   DOMElement* ChoiceWidget2::initializeUsingXML(DOMElement *element) {
     if (mode<=1) {
-      for(int i=0; i<factory->getSize(); i++) {
-        DOMElement *e=(mode==0)?element->getFirstElementChild():element;
-        if(e and E(e)->getTagName()==factory->getXMLName(i)) {
-          blockSignals(true);
-          defineWidget(i);
-          blockSignals(false);
-          comboBox->blockSignals(true);
-          comboBox->setCurrentIndex(i);
-          comboBox->blockSignals(false);
-          return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
+      DOMElement *e=(mode==0)?element->getFirstElementChild():element;
+      if(e) {
+        int k = -1;
+        for(int i=0; i<factory->getSize(); i++) {
+          if(E(e)->getTagName()==factory->getXMLName(i)) {
+            k = i;
+            break;
+          }
         }
+        blockSignals(true);
+        defineWidget(k);
+        blockSignals(false);
+        comboBox->blockSignals(true);
+        comboBox->setCurrentIndex(k);
+        comboBox->blockSignals(false);
+        return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
       }
       return nullptr;
     }

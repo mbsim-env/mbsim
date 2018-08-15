@@ -17,41 +17,24 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _LINK__H_
-#define _LINK__H_
+#ifndef _UNKNOWN_WIDGET_H_
+#define _UNKNOWN_WIDGET_H_
 
-#include "element.h"
+#include "widget.h"
 
 namespace MBSimGUI {
 
-  class Link : public Element {
+  class ExtWidget;
+
+  class UnknownWidget : public Widget {
     public:
-      QString getType() const override { return "Link"; }
-      QMenu* createContextMenu() override { return new LinkContextMenu(this); }
-  };
-
-  class UnknownLink : public Link {
-    public:
-      QString getType() const override { return "UnknownLink"; }
-      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
-  };
-
-  class MechanicalLink : public Link {
-  };
-
-  class FrameLink : public MechanicalLink {
-  };
-
-  class FixedFrameLink : public FrameLink {
-  };
-
-  class FloatingFrameLink : public FrameLink {
-  };
-
-  class RigidBodyLink : public MechanicalLink {
-  };
-
-  class DualRigidBodyLink : public RigidBodyLink {
+      UnknownWidget();
+      virtual QString getType() const { return "UnknownWidget"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      MBXMLUtils::FQN tagName;
+      ExtWidget *editor;
   };
 
 }

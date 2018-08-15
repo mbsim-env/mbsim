@@ -26,6 +26,7 @@ namespace MBSimGUI {
 
   class Observer : public Element {
     public:
+      QString getType() const override { return "Observer"; }
       QMenu* createContextMenu() override { return new ObserverContextMenu(this); }
   };
 
