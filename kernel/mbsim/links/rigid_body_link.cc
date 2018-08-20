@@ -135,7 +135,7 @@ namespace MBSim {
     } else {
       for(unsigned i=0; i<body.size(); i++) {
         h[j][i] += C[i].evalJacobianOfTranslation(j).T()*evalForce(i) + C[i].evalJacobianOfRotation(j).T()*evalMoment(i);
-        h[j][body.size()+i] += body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalForce(body.size()+i)  + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalMoment(body.size()+i);
+        h[j][body.size()+i] += body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalForce(body.size()+i) + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalMoment(body.size()+i);
       }
     }
   }
