@@ -86,16 +86,21 @@ namespace MBSimGUI {
     if(name)
       E(embedNode->getLastElementChild())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     if(count) {
-      if(count->isActive())
+      if(count->isActive()) {
         E(embedNode)->setAttribute("count",static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue().toStdString());
-      else
-        E(embedNode)->removeAttribute("count");
-    }
-    if(counterName) {
-      if(counterName->isActive())
+        if(not(counterName->isActive())) {
+          E(embedNode)->setAttribute("counterName","n");
+        }
+      }
+      else if(counterName->isActive()) {
         E(embedNode)->setAttribute("counterName",static_cast<TextWidget*>(counterName->getWidget())->getText().toStdString());
-      else
+        if(not(count->isActive()))
+          E(embedNode)->setAttribute("count","1");
+      }
+      else {
+        E(embedNode)->removeAttribute("count");
         E(embedNode)->removeAttribute("counterName");
+      }
     }
     item->maybeRemoveEmbedXMLElement();
     return nullptr;
