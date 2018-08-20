@@ -30,14 +30,22 @@ namespace MBSim {
   class GeneralizedFriction : public DualRigidBodyLink {
     protected:
       FrictionForceLaw *func;
-      Function<double(double)> *laN{0};
+      Function<double(double)> *laN{nullptr};
+      unsigned int gdActive{1}, gddActive{1};
+      fmatvec::Vec gdn, gdd;
+      int rootID{0};
     public:
-      GeneralizedFriction(const std::string &name="") : DualRigidBodyLink(name), func(nullptr) { }
+      GeneralizedFriction(const std::string &name="") : DualRigidBodyLink(name), func(nullptr), gdn(1), gdd(1) { }
       ~GeneralizedFriction() override;
       void updateGeneralizedForces() override;
+      void updateh(int i=0) override;
+      void updateW(int i=0) override;
+      const double& evalgdn();
+      const double& evalgdd();
 
       bool isActive() const override { return true; }
       bool gActiveChanged() override { return false; }
+      bool isSetValued() const override;
       bool isSingleValued() const override { return true; }
       void init(InitStage stage, const InitConfigSet &config) override;
 
@@ -46,6 +54,19 @@ namespace MBSim {
         laN = laN_; 
         laN->setParent(this);
       }
+
+      void updateg() override { }
+      void updateStopVector() override;
+      void calclaSize(int j) override;
+      void calcgSize(int j) override;
+      void calcgdSize(int j) override;
+      void calcrFactorSize(int j) override;
+      void calcsvSize() override;
+      void checkActive(int j) override;
+      void checkRoot() override;
+      void updaterFactors() override;
+      void solveConstraintsFixpointSingle() override;
+      void checkConstraintsForTermination() override;
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
   };
