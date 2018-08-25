@@ -187,6 +187,11 @@ namespace MBSim {
       i->updateStopVector();
   }
 
+  void DynamicSystem::updateStopVectorParameters() {
+    for (auto & i : linkSetValued)
+      i->updateStopVectorParameters();
+  }
+
   void DynamicSystem::updateLinkStatus() {
     for (auto & i : linkSetValued)
       i->updateLinkStatus();

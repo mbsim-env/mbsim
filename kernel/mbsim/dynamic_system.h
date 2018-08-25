@@ -82,6 +82,7 @@ namespace MBSim {
       virtual void updateg();
       virtual void updategd();
       virtual void updateStopVector();
+      virtual void updateStopVectorParameters();
       virtual void updateLinkStatus();
       virtual void updateLinkStatusReg();
       virtual void updateWInverseKinetics();

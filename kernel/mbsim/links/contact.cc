@@ -89,6 +89,11 @@ namespace MBSim {
       iter->updateStopVector();
   }
 
+  void Contact::updateStopVectorParameters() {
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->updateStopVectorParameters();
+  }
+
   void Contact::updateJacobians(int j) {
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updateJacobians(j);

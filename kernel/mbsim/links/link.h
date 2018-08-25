@@ -65,6 +65,7 @@ namespace MBSim {
       virtual void updateV(int i=0) { }
       virtual void updateh(int i=0) { }
       virtual void updateStopVector() { }
+      virtual void updateStopVectorParameters() { }
       virtual void updateLinkStatus() { }
       virtual void updateLinkStatusReg() { }
       virtual void updateJacobians(int j=0) { }

@@ -158,29 +158,6 @@ namespace MBSim {
       static_cast<Link*>(parent)->updateGeneralizedPositions();
   }
 
-  void SingleContact::updateVelocities() {
-    throw;
-    if ((fcl->isSetValued() and gdActive[normal]) or (not fcl->isSetValued() and fcl->isClosed(evalGeneralizedRelativePosition()(0), 0))) { // TODO: nicer implementation
-      Vec3 Wn = cFrame[0]->evalOrientation().col(0);
-
-      Vec3 WvD = cFrame[1]->evalVelocity() - cFrame[0]->evalVelocity();
-
-      vrel(0) = Wn.T() * WvD;
-
-      if (getFrictionDirections()) {
-        Mat3xV Wt(getFrictionDirections());
-        Wt.set(0, cFrame[0]->getOrientation().col(1));
-        if (getFrictionDirections() > 1)
-          Wt.set(1, cFrame[0]->getOrientation().col(2));
-
-        vrel.set(RangeV(1,getFrictionDirections()), Wt.T() * WvD);
-      }
-    }
-    else
-      vrel.init(0);
-//    updVel = false;
-  }
-
   void SingleContact::updateg() {
     g = evalGeneralizedRelativePosition()(RangeV(0,gSize-1));
   }
@@ -209,9 +186,10 @@ namespace MBSim {
 
   void SingleContact::updateV(int j) {
     if (getFrictionDirections() and fdf->isSetValued() and gdActive[normal] and not gdActive[tangential]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
-      Mat3xV RF = evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(1, getFrictionDirections()));
-      V[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * RF * fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())));
-      V[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * RF * fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())));
+      Vec3 F = evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(1, getFrictionDirections())) * fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())));
+      if(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())).T()*gdTDir<0) F*=-1.0;
+      V[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * F;
+      V[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * F;
     }
   }
 
@@ -225,19 +203,21 @@ namespace MBSim {
         if (getFrictionDirections())
           sv(1) = nrm2(gddT) - gddTol;
       }
-      else if(fdf and fdf->isSetValued()) {
-        if (getFrictionDirections() == 1)
-          sv(1) = evalGeneralizedRelativeVelocity()(1);
-        else {
-          sv(1) = evalGeneralizedRelativeVelocity()(1) + evalGeneralizedRelativeVelocity()(2); // TODO: is there a better concept?
-        }
-      }
+      else if(fdf and fdf->isSetValued())
+        sv(1) = evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())).T()*gdTDir;
     }
     else {
       int i=0;
       if(fcl->isSetValued()) sv(i++) = evalGeneralizedRelativePosition()(0);
       if (fdf and fdf->isSetValued())
         sv(i) = 1;
+    }
+  }
+
+  void SingleContact::updateStopVectorParameters() {
+    if(gdActive[normal] and not gdActive[tangential]) {
+      Vec gdT = evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections()));
+      gdTDir = gdT/nrm2(gdT);
     }
   }
 
@@ -525,6 +505,8 @@ namespace MBSim {
 
       if (getFrictionDirections() == 0)
         gdActive[tangential] = false;
+
+      gdTDir.resize(getFrictionDirections());
     }
     ContourLink::init(stage, config);
     if(fcl) fcl->init(stage, config);
@@ -1051,9 +1033,12 @@ namespace MBSim {
     }
     else if (j == 2) { // formerly checkActivegd()
       gdActive[normal] = gActive ? (fcl->remainsClosed(evalGeneralizedRelativeVelocity()(0), gdTol) ? 1 : 0) : 0;
-      gdActive[tangential] = getFrictionDirections() && gdActive[normal] ? (fdf->isSticking(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())), gdTol) ? 1 : 0) : 0;
+      Vec gdT = evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections()));
+      gdActive[tangential] = getFrictionDirections() && gdActive[normal] ? (fdf->isSticking(gdT, gdTol) ? 1 : 0) : 0;
       gddActive[normal] = gdActive[normal];
       gddActive[tangential] = gdActive[tangential];
+      if(not gdActive[tangential])
+        gdTDir = gdT/nrm2(gdT);
     }
     else if (j == 3) { // formerly checkActivegdn() (new gap velocities)
       if (gActive) { // contact is closed
@@ -1068,6 +1053,7 @@ namespace MBSim {
             else {
               gdActive[tangential] = false;
               gddActive[tangential] = false;
+              gdTDir = gdnT/nrm2(gdnT);
             }
           }
         }
@@ -1088,8 +1074,10 @@ namespace MBSim {
               if (gdActive[tangential]) {
                 if (nrm2(gddT) <= gddTol)
                   gddActive[tangential] = true;
-                else
+                else {
                   gddActive[tangential] = false;
+                  gdTDir = gddT/nrm2(gddT);
+                }
               }
             }
           }
@@ -1142,6 +1130,7 @@ namespace MBSim {
       if (getFrictionDirections()) {
         if (jsv(1) && rootID == 1) { // stick-slip transition
           gddActive[tangential] = false;
+          gdTDir = gddT/nrm2(gddT);
         }
       }
     }
@@ -1229,7 +1218,7 @@ namespace MBSim {
         else {
           if (getFrictionDirections() == 1)
             rootID = 2; // contact was sliding -> sticking
-          else if (nrm2(evalGeneralizedRelativeVelocity()((RangeV(1,getFrictionDirections())))) <= gdTol)
+          else
             rootID = 2; // contact was sliding -> sticking
         }
       }

@@ -94,12 +94,12 @@ namespace MBSim {
       void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
       void updatePositions(Frame *frame) override;
-      void updateVelocities() override;
       void updateg() override;
       void updategd() override;
       void updateh(int i=0) override;
       void updateW(int i=0) override;
       void updateStopVector() override;
+      void updateStopVectorParameters() override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
@@ -247,6 +247,8 @@ namespace MBSim {
       fmatvec::VecV lambdaT;
 
       bool updlaN{true}, updlaT{true};
+
+      fmatvec::Vec gdTDir;
 
       /**
        * \brief type of detected root

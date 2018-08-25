@@ -66,6 +66,7 @@ namespace MBSim {
       void updateg() override;
       void updategd() override;
       void updateStopVector() override;
+      void updateStopVectorParameters() override;
       void updateJacobians(int j = 0) override;
       /***************************************************/
 
