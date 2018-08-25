@@ -29,13 +29,14 @@ namespace MBSim {
 
   class GeneralizedFriction : public DualRigidBodyLink {
     protected:
-      FrictionForceLaw *func;
+      FrictionForceLaw *func{nullptr};
       Function<double(double)> *laN{nullptr};
-      unsigned int gdActive{1}, gddActive{1};
+      unsigned int gdActive{1};
+      unsigned int gddActive{1};
       fmatvec::Vec gdn, gdd;
       int rootID{0};
     public:
-      GeneralizedFriction(const std::string &name="") : DualRigidBodyLink(name), func(nullptr), gdn(1), gdd(1) { }
+      GeneralizedFriction(const std::string &name="") : DualRigidBodyLink(name), gdn(1), gdd(1) { }
       ~GeneralizedFriction() override;
       void updateGeneralizedForces() override;
       void updateh(int i=0) override;
