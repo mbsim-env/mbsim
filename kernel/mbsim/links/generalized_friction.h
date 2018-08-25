@@ -34,6 +34,7 @@ namespace MBSim {
       unsigned int gdActive{1};
       unsigned int gddActive{1};
       fmatvec::Vec gdn, gdd;
+      int gdDir;
       int rootID{0};
     public:
       GeneralizedFriction(const std::string &name="") : DualRigidBodyLink(name), gdn(1), gdd(1) { }

@@ -45,8 +45,11 @@ namespace MBSim {
     if(isSetValued()) {
       if(gdActive)
         lambda = la;
-      else
-        lambda = func->dlaTdlaN(evalGeneralizedRelativeVelocity())*(*laN)(getTime());
+      else {
+        Vec gd = evalGeneralizedRelativeVelocity();
+        lambda = func->dlaTdlaN(gd)*(*laN)(getTime());
+        if(gd(0)*gdDir<0) lambda*=-1.0;
+      }
     }
     else
       lambda = (*func)(evalGeneralizedRelativeVelocity(),(*laN)(getTime()));
@@ -159,8 +162,11 @@ namespace MBSim {
     if (j == 1)
       gdActive = 1;
     else if (j == 2) {
-      gdActive = func->isSticking(evalGeneralizedRelativeVelocity(), gdTol) ? 1 : 0;
+      Vec gd = evalGeneralizedRelativeVelocity();
+      gdActive = func->isSticking(gd, gdTol) ? 1 : 0;
       gddActive = gdActive;
+      if(not gdActive)
+        gdDir = gd(0)>0?1:-1;
     }
     else if (j == 3) {
       if (fabs(evalgdn()) <= gdTol) {
@@ -170,14 +176,17 @@ namespace MBSim {
       else {
         gdActive = false;
         gddActive = false;
+        gdDir = gdn(0)>0?1:-1;
       }
     }
     else if (j == 4) {
       if (gdActive) {
         if (fabs(evalgdd()) <= gddTol)
           gddActive = true;
-        else
+        else {
           gddActive = false;
+          gdDir = gdd(0)>0?1:-1;
+        }
       }
     }
     else if (j == 5) {
@@ -201,6 +210,7 @@ namespace MBSim {
     else if (j == 8) {
       if (jsv(0) && rootID == 1) { // stick-slip transition
         gddActive = false;
+        gdDir = gdd(0)>0?1:-1;
       }
     }
     else
