@@ -1037,7 +1037,7 @@ namespace MBSim {
       gdActive[tangential] = getFrictionDirections() && gdActive[normal] ? (fdf->isSticking(gdT, gdTol) ? 1 : 0) : 0;
       gddActive[normal] = gdActive[normal];
       gddActive[tangential] = gdActive[tangential];
-      if(not gdActive[tangential])
+      if(gdActive[normal] and not gdActive[tangential])
         gdTDir = gdT/nrm2(gdT);
     }
     else if (j == 3) { // formerly checkActivegdn() (new gap velocities)
