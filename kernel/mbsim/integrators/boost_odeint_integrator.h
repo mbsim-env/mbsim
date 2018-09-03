@@ -374,6 +374,7 @@ namespace MBSimIntegrator {
             BoostOdeintHelper::assign(zTemp, system->getState());
             dos->initialize(zTemp, step.second, dos->current_time_step());
           }
+          system->updateStopVectorParameters();
         }
       }
       else {
@@ -387,6 +388,7 @@ namespace MBSimIntegrator {
         system->setTime(tSamplePoint);
         BoostOdeintHelper::assign(system->getState(), zTemp);
         dos->initialize(zTemp, tSamplePoint, dos->current_time_step());
+        system->updateStopVectorParameters();
       }
     }
   }

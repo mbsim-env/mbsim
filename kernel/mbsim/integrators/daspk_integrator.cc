@@ -321,6 +321,7 @@ namespace MBSimIntegrator {
               info(0) = 0;
             }
           }
+          getSystem()->updateStopVectorParameters();
         }
         if(info(0)==0) {
           t = system->getTime();

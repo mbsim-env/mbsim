@@ -192,6 +192,7 @@ namespace MBSimIntegrator {
           *irtrn=-1;
         }
       }
+      self->getSystem()->updateStopVectorParameters();
     }
   }
 

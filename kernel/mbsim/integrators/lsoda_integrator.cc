@@ -221,6 +221,7 @@ namespace MBSimIntegrator {
               istate=1;
             }
           }
+          getSystem()->updateStopVectorParameters();
         }
         if(istate==1) {
           if(shift) {
