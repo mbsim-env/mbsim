@@ -138,7 +138,7 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
   help="disable the -j option and run always in a single process/thread")
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
-debugOpts.add_argument("--buildSystemRun", default=False, type=bool, help="Run in build system mode: generate build system state.")
+debugOpts.add_argument("--buildSystemRun", action="store_true", help="Run in build system mode: generate build system state.")
 debugOpts.add_argument("--webapp", action="store_true", help="Add buttons for mbsimwebapp.")
 
 # parse command line options
