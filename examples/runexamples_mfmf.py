@@ -1907,7 +1907,7 @@ def writeAtomFeed(currentID, nrFailed, nrTotal):
   if not args.buildSystemRun:
     return
   # load the add feed module
-  sys.path.append("/mbsim-build/build/docker/autobuildImage")
+  sys.path.append("/context")
   import buildSystemState
   # add a new feed if examples have failed
   buildSystemState.update(args.buildType+"-examples", "Examples Failed: "+args.buildType,
@@ -1999,7 +1999,7 @@ def coverage(mainFD):
   # update build state (only if --buildSystemRun is used)
   if args.buildSystemRun:
     # load and add module
-    sys.path.append("/mbsim-build/build/docker/autobuildImage")
+    sys.path.append("/context")
     import buildSystemState
     buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-coverage.svg", covRateStr,
       "#d9534f" if ret!=0 or covRate<70 else ("#f0ad4e" if covRate<90 else "#5cb85c"))
