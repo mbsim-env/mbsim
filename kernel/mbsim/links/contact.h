@@ -118,6 +118,8 @@ namespace MBSim {
       void setGeneralizedRelativePositionTolerance(double tol) override;
       void setGeneralizedRelativeVelocityTolerance(double tol) override;
       void setGeneralizedRelativeAccelerationTolerance(double tol) override;
+      void setGeneralizedRelativePositionCorrectionValue(double corr) override;
+      void setGeneralizedRelativeVelocityCorrectionValue(double corr) override;
       void setrMax(double rMax_) override;
       void setLinkStatusInd(int LinkStatusInd_) override;
       void setLinkStatusRegInd(int LinkStatusRegInd_) override;

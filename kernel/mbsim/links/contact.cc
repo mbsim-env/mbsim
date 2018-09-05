@@ -293,6 +293,8 @@ namespace MBSim {
         contacts[k].setGeneralizedRelativeAccelerationTolerance(gddTol);
         contacts[k].setGeneralizedForceTolerance(laTol);
         contacts[k].setGeneralizedImpulseTolerance(LaTol);
+        contacts[k].setGeneralizedRelativePositionCorrectionValue(gCorr);
+        contacts[k].setGeneralizedRelativeVelocityCorrectionValue(gdCorr);
         contacts[k].setrMax(rMax);
       }
 
@@ -592,6 +594,18 @@ namespace MBSim {
     Link::setGeneralizedRelativeAccelerationTolerance(tol);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->setGeneralizedRelativeAccelerationTolerance(tol);
+  }
+
+  void Contact::setGeneralizedRelativePositionCorrectionValue(double tol) {
+    Link::setGeneralizedRelativePositionCorrectionValue(tol);
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->setGeneralizedRelativePositionCorrectionValue(tol);
+  }
+
+  void Contact::setGeneralizedRelativeVelocityCorrectionValue(double tol) {
+    Link::setGeneralizedRelativeVelocityCorrectionValue(tol);
+    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      iter->setGeneralizedRelativeVelocityCorrectionValue(tol);
   }
 
   void Contact::setrMax(double rMax_) {
