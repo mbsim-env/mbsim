@@ -217,6 +217,35 @@ namespace MBSim {
       throwError("Internal error");
   }
 
+  void GeneralizedFriction::updatecorr(int j) {
+    if (j <= 2) { // IG position
+    }
+    else if (j == 4) {
+      if (gdActive) { // Contact was sticking
+        if (gddActive) {
+          corr(0) = 0; // Contact stays sticking, regular projection
+        }
+        else {
+          corr(0) = gdd(0) > 0 ? gdCorr : -gdCorr; // Contact slides, projection to valid tangential velocity
+        }
+      }
+    }
+    else
+      throwError("Internal error");
+  }
+
+  void GeneralizedFriction::calccorrSize(int j) {
+    DualRigidBodyLink::calccorrSize(j);
+    if (j <= 2) { // IG
+      corrSize = 0;
+    }
+    else if (j == 4) { // IH
+      corrSize = gdActive;
+    }
+    else
+      throwError("Internal error");
+  }
+
   void GeneralizedFriction::checkRoot() {
     rootID = 0;
     if (jsv(0)) {

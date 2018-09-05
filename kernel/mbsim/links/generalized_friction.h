@@ -65,6 +65,8 @@ namespace MBSim {
       void calcrFactorSize(int j) override;
       void calcsvSize() override;
       void checkActive(int j) override;
+      void calccorrSize(int j) override;
+      void updatecorr(int j) override;
       void checkRoot() override;
       void updaterFactors() override;
       void solveConstraintsFixpointSingle() override;
