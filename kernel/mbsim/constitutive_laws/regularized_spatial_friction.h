@@ -29,7 +29,7 @@ namespace MBSim {
       RegularizedSpatialFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=nullptr) : FrictionForceLaw(frictionForceFunc_) { }
       ~RegularizedSpatialFriction() override = default;
       int getFrictionDirections() override { return 2; }
-      bool isSticking(const fmatvec::Vec& s, double sTol) override { return nrm2(s(0,1)) <= sTol; }
+      bool isSticking(const fmatvec::Vec& s, double sTol) override { return nrm2(s) <= sTol; }
       bool isSetValued() const override { return false; }
       void initializeUsingXML(xercesc::DOMElement *element) override;
   };

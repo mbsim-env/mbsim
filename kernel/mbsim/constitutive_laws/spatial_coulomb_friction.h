@@ -48,7 +48,7 @@ namespace MBSim {
       bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double laTol, double gdTol) override;
       fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd) override;
       int getFrictionDirections() override { return 2; }
-      bool isSticking(const fmatvec::Vec& s, double sTol) override { return nrm2(s(0,1)) <= sTol; }
+      bool isSticking(const fmatvec::Vec& s, double sTol) override { return nrm2(s) <= sTol; }
       double getFrictionCoefficient(double gd) override { return mu; }
       bool isSetValued() const override { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) override;

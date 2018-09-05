@@ -1046,7 +1046,7 @@ namespace MBSim {
           gdActive[normal] = true;
           gddActive[normal] = true;
           if (getFrictionDirections()) {
-            if (nrm2(gdnT) <= gdTol) {
+            if (fdf->isSticking(gdnT,gdTol)) {
               gdActive[tangential] = true;
               gddActive[tangential] = true;
             }
@@ -1068,11 +1068,11 @@ namespace MBSim {
     else if (j == 4) { // formerly checkActivegdd()
       if (gActive) {
         if (gdActive[normal]) {
-          if (evalgddN() <= gddTol) { // contact stays closed on velocity level
+          if (fcl->remainsClosed(evalgddN(),gddTol)) { // contact stays closed on velocity level
             gddActive[normal] = true;
             if (getFrictionDirections()) {
               if (gdActive[tangential]) {
-                if (nrm2(gddT) <= gddTol)
+                if (fdf->isSticking(gddT,gddTol))
                   gddActive[tangential] = true;
                 else {
                   gddActive[tangential] = false;
