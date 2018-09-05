@@ -43,7 +43,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       bool isClosed(double g, double gTol) override { return g<=gTol; }
-      bool remainsClosed(double s, double sTol) override { return s<=sTol; }
       bool isSetValued() const override { return false; }
       /***************************************************/
 

@@ -43,7 +43,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       bool isClosed(double g, double gTol) override { return g<=gTol; }
-      bool remainsClosed(double gd, double gdTol) override { return gd<=gdTol; }
       double project(double la, double gdn, double r, double laMin=0) override;
       fmatvec::Vec diff(double la, double gdn, double r, double laMin=0) override;
       double solve(double G, double gdn) override;

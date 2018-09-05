@@ -1032,7 +1032,7 @@ namespace MBSim {
       gdActive[tangential] = gdActive[normal];
     }
     else if (j == 2) { // formerly checkActivegd()
-      gdActive[normal] = gActive ? (fcl->remainsClosed(evalGeneralizedRelativeVelocity()(0), gdTol) ? 1 : 0) : 0;
+      gdActive[normal] = gActive ? (fcl->isClosed(evalGeneralizedRelativeVelocity()(0), gdTol) ? 1 : 0) : 0;
       Vec gdT = evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections()));
       gdActive[tangential] = getFrictionDirections() && gdActive[normal] ? (fdf->isSticking(gdT, gdTol) ? 1 : 0) : 0;
       gddActive[normal] = gdActive[normal];
@@ -1042,7 +1042,7 @@ namespace MBSim {
     }
     else if (j == 3) { // formerly checkActivegdn() (new gap velocities)
       if (gActive) { // contact is closed
-        if (fcl->remainsClosed(evalgdnN(), gdTol)) { // contact stays closed
+        if (fcl->isClosed(evalgdnN(), gdTol)) { // contact stays closed
           gdActive[normal] = true;
           gddActive[normal] = true;
           if (getFrictionDirections()) {
@@ -1068,7 +1068,7 @@ namespace MBSim {
     else if (j == 4) { // formerly checkActivegdd()
       if (gActive) {
         if (gdActive[normal]) {
-          if (fcl->remainsClosed(evalgddN(),gddTol)) { // contact stays closed on velocity level
+          if (fcl->isClosed(evalgddN(),gddTol)) { // contact stays closed on velocity level
             gddActive[normal] = true;
             if (getFrictionDirections()) {
               if (gdActive[tangential]) {

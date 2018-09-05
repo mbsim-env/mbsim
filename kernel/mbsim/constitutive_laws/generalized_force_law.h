@@ -59,7 +59,6 @@ namespace MBSim {
        * \return flag, if force law is active
        */
       virtual bool isClosed(double g, double gTol) { return true; }
-      virtual bool remainsClosed(double s, double sTol) { return true; }
 
       /**
        * \brief prox function evaluation

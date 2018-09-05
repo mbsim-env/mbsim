@@ -50,8 +50,6 @@ namespace MBSim {
       bool isFulfilled(double la,  double gdn, double tolla, double gdTol, double laMin=0) override;
       bool isSetValued() const override { return true; }
       /***************************************************/
-
-      bool remainsClosed(double s, double sTol) override { return true; }
   };
 
 }
