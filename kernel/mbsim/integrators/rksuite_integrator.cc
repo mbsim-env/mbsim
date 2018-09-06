@@ -98,6 +98,7 @@ namespace MBSimIntegrator {
     system->computeInitialCondition();
     system->plot();
     svLast = system->evalsv();
+    z = system->getState(); // needed, as computeInitialCondition may change the state
 
     tPlot = t + dtPlot;
 

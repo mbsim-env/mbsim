@@ -51,6 +51,12 @@ namespace MBSimIntegrator {
     else
       system->evalz0();
 
+    // Perform a projection of generalized positions at time t=0
+    if(system->getInitialProjection()) {
+      evaluateStage();
+      system->projectGeneralizedPositions(3,true);
+    }
+
     system->setUseOldla(false);
     system->setGeneralizedForceTolerance(1e-10/dt); // adaptation from impulse
     system->setGeneralizedRelativeAccelerationTolerance(1e-10/dt); // as we use local velocities to express accelerations within solveConstraints

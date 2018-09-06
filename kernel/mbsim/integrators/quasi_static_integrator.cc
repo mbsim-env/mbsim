@@ -68,6 +68,12 @@ namespace MBSimIntegrator {
     else
       z = system->evalz0();
 
+    // Perform a projection of generalized positions and velocities at time t=0
+    if(system->getInitialProjection()) {
+      system->projectGeneralizedPositions(2,true);
+      system->projectGeneralizedVelocities(2);
+    }
+
     stepPlot = (int) (dtPlot / dt + 0.5);
     if (fabs(stepPlot * dt - dtPlot) > dt * dt) {
       msg(Warn) << "Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;

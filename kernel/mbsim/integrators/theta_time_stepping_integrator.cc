@@ -54,6 +54,13 @@ namespace MBSimIntegrator {
     else
       system->evalz0();
 
+    // Perform a projection of generalized positions at time t=0
+    if(system->getInitialProjection()) {
+      system->checkActive(1);
+      if (system->gActiveChanged()) resize();
+      system->projectGeneralizedPositions(3,true);
+    }
+
     stepPlot = (int) (dtPlot/dt + 0.5);
     if(fabs(stepPlot*dt - dtPlot) > dt*dt) {
       msg(Warn) << "Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;

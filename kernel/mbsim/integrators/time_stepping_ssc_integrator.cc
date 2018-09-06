@@ -173,6 +173,13 @@ namespace MBSimIntegrator {
     else
       zi = sysT1->evalz0();
 
+    // Perform a projection of generalized positions at time t=0
+    if(sysT1->getInitialProjection()) {
+      sysT1->checkActive(1);
+      if (sysT1->gActiveChanged()) resize(sysT1);
+      sysT1->projectGeneralizedPositions(3,true);
+    }
+
     sysT1->setTime(t);
     sysT1->setState(zi);
     sysT1->resetUpToDate();

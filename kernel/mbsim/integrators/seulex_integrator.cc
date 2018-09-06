@@ -279,6 +279,7 @@ namespace MBSimIntegrator {
     }
     system->plot();
     svLast = system->evalsv();
+    z = system->getState(); // needed, as computeInitialCondition may change the state
 
     calcSize();
     reinit();

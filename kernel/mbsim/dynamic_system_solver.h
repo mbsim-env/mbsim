@@ -464,6 +464,7 @@ namespace MBSim {
       bool getInverseKinetics() const { return inverseKinetics; }
 
       void setInitialProjection(bool initialProjection_) { initialProjection = initialProjection_; }
+      bool getInitialProjection() const { return initialProjection; }
 
       void setUseConstraintSolverForSmoothMotion(bool useConstraintSolverForSmoothMotion_) { useConstraintSolverForSmoothMotion = useConstraintSolverForSmoothMotion_; }
       bool getUseConstraintSolverForSmoothMotion() const { return useConstraintSolverForSmoothMotion; }

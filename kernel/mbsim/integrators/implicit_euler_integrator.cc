@@ -74,6 +74,12 @@ namespace MBSimIntegrator {
     else
       system->evalz0();
 
+    // Perform a projection of generalized positions and velocities at time t=0
+    if(system->getInitialProjection()) {
+      system->projectGeneralizedPositions(2,true);
+      system->projectGeneralizedVelocities(2);
+    }
+
     tPlot = 0.;
     
     stepPlot =(int) (dtPlot/dt + 0.5);

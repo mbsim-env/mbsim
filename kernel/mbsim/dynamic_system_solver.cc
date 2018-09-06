@@ -59,7 +59,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -850,19 +850,34 @@ namespace MBSim {
 
   void DynamicSystemSolver::computeInitialCondition() {
     resetUpToDate();
-    updateg();
     checkActive(1);
-    updategd();
     checkActive(2);
     calclaSize(3);
     calcrFactorSize(3);
     updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)), 0);
     updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)), 0);
-    updateWRef(WParent[1](RangeV(0, getuSize(1) - 1), RangeV(0, getlaSize() - 1)), 1);
-    updateVRef(VParent[1](RangeV(0, getuSize(1) - 1), RangeV(0, getlaSize() - 1)), 1);
     updatelaRef(laParent(0, laSize - 1));
     updatewbRef(wbParent(0, laSize - 1));
     updaterFactorRef(rFactorParent(0, rFactorSize - 1));
+    if (laSize) {
+      checkActive(4);
+      // Perform a projection of generalized positions and velocities at time t=0
+      if(initialProjection) {
+        projectGeneralizedPositions(2,true);
+        projectGeneralizedVelocities(2);
+      }
+    }
+    checkActive(5); // final update von gActive, ...
+    calclaSize(3); // IH
+    calcrFactorSize(3); // IH
+    updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
+    updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
+    updatelaRef(laParent(0, laSize - 1));
+    updatewbRef(wbParent(0, laSize - 1));
+    updaterFactorRef(rFactorParent(0, rFactorSize - 1));
+
+    updateWRef(WParent[1](RangeV(0, getuSize(1) - 1), RangeV(0, getlaSize() - 1)), 1);
+    updateVRef(VParent[1](RangeV(0, getuSize(1) - 1), RangeV(0, getlaSize() - 1)), 1);
   }
 
   int DynamicSystemSolver::solveConstraintsLinearEquations() {
@@ -1619,11 +1634,6 @@ namespace MBSim {
 
   const Vec& DynamicSystemSolver::evalz0() {
     initz();
-    // Perform a projection of generalized positions and velocities at time t=0
-    if(initialProjection) {
-      projectGeneralizedPositions(1, true);
-      projectGeneralizedVelocities(1);
-    }
     return z;
   }
 
