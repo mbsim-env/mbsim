@@ -490,6 +490,8 @@ namespace MBSimFMI {
       // get current stop vector with is now also the last stop vector
       svLast=dss->evalsv();
     }
+    else
+      dss->updateStopVectorParameters();
 
     // ***** time event (currently only for plotting) *****
 
