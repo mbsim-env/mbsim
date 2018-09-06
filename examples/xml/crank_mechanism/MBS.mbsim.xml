@@ -242,5 +242,6 @@
       <accelerationOfGravity>[0 0 g]'</accelerationOfGravity>
     </MBSimEnvironment>
   </environments>
+  <initialProjection>false</initialProjection>
 </DynamicSystemSolver>
 

@@ -54,5 +54,6 @@
   <generalizedRelativeAccelerationTolerance>eps*10</generalizedRelativeAccelerationTolerance>
   <generalizedForceTolerance>eps*10</generalizedForceTolerance>
   <generalizedImpulseTolerance>eps*10</generalizedImpulseTolerance>
+  <initialProjection>false</initialProjection>
 </DynamicSystemSolver>
 
