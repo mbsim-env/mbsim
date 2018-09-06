@@ -57,6 +57,7 @@ System::System(unsigned int type, double dDisk) : Group("System"+toString(int(ty
   k2->addFrame(new FixedRelativeFrame("fK3", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
   k2->addFrame(new FixedRelativeFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
   k2->addFrame(new FixedRelativeFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k2->addFrame(new FixedRelativeFrame("fJoint", .5*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
 
   RigidBody *k3 = new RigidBody("K3");
   k3->setFrameForKinematics(k3->getFrame("C"));
@@ -65,6 +66,7 @@ System::System(unsigned int type, double dDisk) : Group("System"+toString(int(ty
   k3->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   k3->addFrame(new FixedRelativeFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
   k3->addFrame(new FixedRelativeFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k3->addFrame(new FixedRelativeFrame("fJoint", -.5*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
 
   // parametrisation of relative kinematics
   if(type==1) { // K2 child of K1, K3 child of K2
@@ -116,7 +118,7 @@ System::System(unsigned int type, double dDisk) : Group("System"+toString(int(ty
   j23 = new Joint("xxxJ23");
   j23->setForceDirection(Mat("[0;1;0]"));
   j23->setForceLaw(new BilateralConstraint());
-  j23->connect(k2->getFrame("fTop"), k3->getFrame("fBottom"));
+  j23->connect(k2->getFrame("fJoint"), k3->getFrame("fJoint"));
   addLink(j23);
 
   KineticExcitation *a = new KineticExcitation("Anregung");
