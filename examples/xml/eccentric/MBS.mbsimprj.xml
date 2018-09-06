@@ -336,7 +336,6 @@
           </accelerationOfGravity>
         </MBSimEnvironment>
       </environments>
-      <initialProjection>1</initialProjection>
     </DynamicSystemSolver>
   </Embed>
 
