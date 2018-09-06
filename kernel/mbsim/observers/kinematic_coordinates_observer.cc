@@ -143,9 +143,6 @@ namespace MBSim {
       Vec3 ex = A.col(0);
       Vec3 ey = A.col(1);
       Vec3 ez = A.col(2);
-      double cr = (this->*evalOMBVPositionColorRepresentation[ombvPositionArrow->getColorRepresentation()])();
-      double cv = (this->*evalOMBVVelocityColorRepresentation[ombvVelocityArrow->getColorRepresentation()])();
-      double ca = (this->*evalOMBVAccelerationColorRepresentation[ombvAccelerationArrow->getColorRepresentation()])();
 
       if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
         vector<double> data;
@@ -156,6 +153,7 @@ namespace MBSim {
         data.push_back(r(0));
         data.push_back(r(1));
         data.push_back(r(2));
+        double cr = (this->*evalOMBVPositionColorRepresentation[ombvPositionArrow->getColorRepresentation()])();
         data.push_back(cr);
         openMBVPosition->append(data);
         //plotVector.push_back(nrm2(r));
@@ -206,6 +204,7 @@ namespace MBSim {
         data.push_back(v(0));
         data.push_back(v(1));
         data.push_back(v(2));
+        double cv = (this->*evalOMBVVelocityColorRepresentation[ombvVelocityArrow->getColorRepresentation()])();
         data.push_back(cv);
         openMBVVelocity->append(data);
         //plotVector.push_back(nrm2(v));
@@ -256,6 +255,7 @@ namespace MBSim {
         data.push_back(a(0));
         data.push_back(a(1));
         data.push_back(a(2));
+        double ca = (this->*evalOMBVAccelerationColorRepresentation[ombvAccelerationArrow->getColorRepresentation()])();
         data.push_back(ca);
         openMBVAcceleration->append(data);
         //plotVector.push_back(nrm2(a));
