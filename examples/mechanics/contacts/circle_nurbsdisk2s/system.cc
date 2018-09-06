@@ -176,7 +176,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // bearing
   Joint *joint = new Joint("Clamping");
   joint->setForceDirection(Mat("[0;0;1]"));
-  joint->connect(nurbsdisk->getFrame("COG"),this->getFrame("I"));
+  joint->connect(nurbsdisk->getFrame("COG"),this->getFrame("D"));
   joint->setForceLaw(new BilateralConstraint());
   this->addLink(joint);
 

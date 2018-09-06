@@ -54,6 +54,7 @@ int main (int argc, char* argv[]) {
     sys = new System(nameReducedSystem);
     sys->readz0("z0.h5");
     sys->reduce(nameFullSystem + ".mbsim.h5");
+    sys->setInitialProjection(false);
     sys->setMaximumIterations(100000);
     sys->setStopIfNoConvergence(true,true);
     sys->initialize();

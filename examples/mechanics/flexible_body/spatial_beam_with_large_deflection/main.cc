@@ -10,6 +10,7 @@ int main (int argc, char* argv[]) {
   System *sys = new System("MBS");
 
   sys->setStopIfNoConvergence(true,true);
+  sys->setInitialProjection(false);
   sys->initialize();
 
   TimeSteppingIntegrator integrator;

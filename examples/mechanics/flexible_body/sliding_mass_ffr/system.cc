@@ -82,7 +82,7 @@ SlidingMass::SlidingMass(const string &projectName) :
 
     // Fix the beam at its FFR
     Joint * fix = new Joint("FFRFix");
-    fix->connect(getFrameI(), beam->getFloatingFrameOfReference());
+    fix->connect(ffrRef, beam->getFloatingFrameOfReference());
     fix->setForceDirection(Mat3x3(EYE));
     fix->setMomentDirection(Mat3x3(EYE));
     fix->setForceLaw(new BilateralConstraint);

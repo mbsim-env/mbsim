@@ -157,6 +157,7 @@ System::System(const string &projectName) :
   rodInfo->setParent(this);
   rodInfo->initInfo();
 
+  Vec r0(3);
   for (unsigned int i = 0; i < balls.size(); i++) {
     Vec q0(3,INIT,0.);
     double xL = i*rodInfo->getLength()/balls.size(); // TODO
@@ -167,6 +168,7 @@ System::System(const string &projectName) :
     Vec3 r = P.evalPosition();
     q0(0) = r(0);
     q0(1) = r(1);
+    if(i==0) r0 = r;
 
     SqrMat3 A = P.evalOrientation();
     q0(2) = -AIK2Cardan(A)(2) + 0.5 * M_PI;
@@ -176,7 +178,7 @@ System::System(const string &projectName) :
   delete rodInfo;
 
   // inertial ball constraint
-  this->addFrame(new FixedRelativeFrame("BearingFrame", l0 / (2 * M_PI) * Vec("[0;1;0]"), SqrMat(3, EYE), this->getFrame("I")));
+  this->addFrame(new FixedRelativeFrame("BearingFrame", r0, SqrMat(3, EYE), this->getFrame("I")));
   Joint *joint = new Joint("BearingJoint");
   joint->setForceDirection(Mat("[1,0;0,1;0,0]"));
   joint->setForceLaw(new BilateralConstraint);
