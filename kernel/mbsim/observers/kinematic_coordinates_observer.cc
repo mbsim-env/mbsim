@@ -92,7 +92,7 @@ namespace MBSim {
           openMBVZPosition->setName("ZPosition");
           openMBVPosGrp->addObject(openMBVZPosition);
         }
-        if(openMBVVelocity) {
+        if(ombvVelocityArrow) {
           openMBVVelGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVVelGrp->setName("Velocity_Group");
           openMBVVelGrp->setExpand(false);
@@ -110,7 +110,7 @@ namespace MBSim {
           openMBVZVelocity->setName("ZVelocity");
           openMBVVelGrp->addObject(openMBVZVelocity);
         }
-        if(openMBVAcceleration) {
+        if(ombvAccelerationArrow) {
           openMBVAccGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVAccGrp->setName("Acceleration_Group");
           openMBVAccGrp->setExpand(false);
