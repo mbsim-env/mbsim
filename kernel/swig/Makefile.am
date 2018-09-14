@@ -54,9 +54,9 @@ swig-unwrapped-start:
 	@sed -nre "3,\$$s/(.*)/WRAPPED_CLASS(\1)/p" swig-$*.stdout | sed -re "s/<\(/</g;s/\)>/>/g;s/<p\./</g;s/,p\./,/g" | grep -v ".*(.*(" > swig.wrapped_classes || (echo ERROR; exit 0)
 	@$(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -DSHOW_UNWRAPPED_CLASSES=swig.wrapped_classes -python -MD -Werror -builtin -c++ -o dummy.cpp -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/$*.i 2>&1 | sed -nre "s/.*: Warning 901: //p" | sort | uniq || (echo ERROR; exit 0)
 
--include fmatvec_swig_python.d
--include mbsim_swig_python.d
-$(foreach PART,$(MBSIM_PARTS),$(eval -include $(PART)_swig_python.d))
+-include $(builddir)/_fmatvec_swig_python.d
+-include $(builddir)/_mbsim_swig_python.d
+$(foreach PART,$(MBSIM_PARTS),$(eval -include $(builddir)/_$(PART)_swig_python.d))
 
 %.py: _%_swig_python.cc
 	test ! -f $@ && (rm -f $< && $(MAKE) $(AM_MAKEFLAGS) $<) || :

@@ -8,7 +8,7 @@ CLEANFILES = mymod_swig_python.cc mymod.py mymod_swig_python.d
 mymod_swig_python.cc: $(srcdir)/mymod.i
 	rm -f mymod_swig_python.cc
 	test -z "$(MBSIM_SWIG)" && echo "" > $@ || $(swig) -python -MP -MD -Werror -c++ -o mymod_swig_python.cc $(DEPS_CFLAGS) -I$(srcdir)/.. $(srcdir)/mymod.i
--include mymod_swig_python.d
+-include $(builddir)/mymod_swig_python.d
 mymod.py: mymod_swig_python.cc
 	test ! -f $@ && (rm -f mymod_swig_python.cc && $(MAKE) $(AM_MAKEFLAGS) mymod_swig_python.cc) || :
 
