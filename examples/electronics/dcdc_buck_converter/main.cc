@@ -11,6 +11,7 @@ int main (int argc, char* argv[])
 {
   // Einzelne Bausteine des MKS erschaffen
   System *sys = new System("TS");
+  sys->setInitialProjection(false);
   sys->setConstraintSolver(DynamicSystemSolver::GaussSeidel);
   sys->setImpactSolver(DynamicSystemSolver::GaussSeidel);
 
