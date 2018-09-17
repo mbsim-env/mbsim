@@ -1026,8 +1026,8 @@ namespace MBSimGUI {
     u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
     addToTab("Initial conditions", u0);
 
-//    connect(q0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-//    connect(u0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(q0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(u0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
   }
 
   DOMElement* ObjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
