@@ -1024,7 +1024,7 @@ namespace MBSimGUI {
       xmlHelpDialog->setWindowTitle("MBSimGUI - MBSim XML Documentation");
     }
     if(url.isEmpty())
-      xmlHelpDialog->load(QUrl(((MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string()+"/http___www_mbsim-env_de_MBSim/index.html").c_str()));
+      xmlHelpDialog->load(QUrl(("file://"+(MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string()+"/http___www_mbsim-env_de_MBSim/index.html").c_str()));
     else
       xmlHelpDialog->load(QUrl(url));
     xmlHelpDialog->show();
