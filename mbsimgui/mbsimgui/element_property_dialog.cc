@@ -114,7 +114,7 @@ namespace MBSimGUI {
 
   void ElementPropertyDialog::showXMLHelp() {
     // generate url for current element
-    string url=(MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string();
+    string url="file://"+(MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string();
     string ns=getElement()->getNameSpace().getNamespaceURI();
     replace(ns.begin(), ns.end(), ':', '_');
     replace(ns.begin(), ns.end(), '.', '_');
