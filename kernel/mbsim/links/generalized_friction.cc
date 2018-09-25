@@ -44,7 +44,7 @@ namespace MBSim {
   void GeneralizedFriction::updateGeneralizedForces() {
     if(isSetValued()) {
       if(gdActive)
-        lambda = la;
+        lambda = evalla();
       else {
         Vec gd = evalGeneralizedRelativeVelocity();
         lambda = func->dlaTdlaN(gd)*(*laN)(getTime());
