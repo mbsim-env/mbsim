@@ -26,10 +26,12 @@ namespace MBSim {
 
   class RigidBody;
   class FrictionForceLaw;
+  class FrictionImpactLaw;
 
   class GeneralizedFriction : public DualRigidBodyLink {
     protected:
-      FrictionForceLaw *func{nullptr};
+      FrictionForceLaw *laT{nullptr};
+      FrictionImpactLaw *LaT{nullptr};
       Function<double(double)> *laN{nullptr};
       unsigned int gdActive{1};
       unsigned int gddActive{1};
@@ -51,7 +53,8 @@ namespace MBSim {
       bool isSingleValued() const override { return true; }
       void init(InitStage stage, const InitConfigSet &config) override;
 
-      void setGeneralizedFrictionForceLaw(FrictionForceLaw *func_);
+      void setGeneralizedFrictionForceLaw(FrictionForceLaw *laT_);
+      void setGeneralizedFrictionImpactLaw(FrictionImpactLaw *LaT_);
       void setGeneralizedNormalForceFunction(Function<double(double)> *laN_) { 
         laN = laN_; 
         laN->setParent(this);
@@ -70,7 +73,9 @@ namespace MBSim {
       void checkRoot() override;
       void updaterFactors() override;
       void solveConstraintsFixpointSingle() override;
+      void solveImpactsFixpointSingle() override;
       void checkConstraintsForTermination() override;
+      void checkImpactsForTermination() override;
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
   };
@@ -78,4 +83,3 @@ namespace MBSim {
 }
 
 #endif 
-

@@ -148,6 +148,11 @@
               <frictionCoefficient>mu</frictionCoefficient>
             </PlanarCoulombFriction>
           </generalizedFrictionForceLaw>
+          <generalizedFrictionImpactLaw>
+            <PlanarCoulombImpact>
+              <frictionCoefficient>0.3</frictionCoefficient>
+            </PlanarCoulombImpact>
+          </generalizedFrictionImpactLaw>
           <generalizedNormalForceFunction>
             <PiecewiseDefinedFunction>
               <limitedFunctions>

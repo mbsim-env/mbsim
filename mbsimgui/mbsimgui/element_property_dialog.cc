@@ -2247,24 +2247,29 @@ namespace MBSimGUI {
 
   GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(DualRigidBodyLink *friction, QWidget *parent, const Qt::WindowFlags& f) : DualRigidBodyLinkPropertyDialog(friction,parent,f) {
 
-    function = new ExtWidget("Generalized friction force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionForceLaw");
-    addToTab("Kinetics", function);
+    frictionForceLaw = new ExtWidget("Generalized friction force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedFrictionForceLaw");
+    addToTab("Kinetics", frictionForceLaw);
 
-    normalForce = new ExtWidget("Generalized normal force function",new ChoiceWidget2(new FunctionWidgetFactory2(friction),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedNormalForceFunction");
-    addToTab("Kinetics",normalForce);
+    frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
+    addToTab("Kinetics", frictionImpactLaw);
+
+    normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget2(new FunctionWidgetFactory2(friction),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
+    addToTab("Kinetics",normalForceFunction);
   }
 
   DOMElement* GeneralizedFrictionPropertyDialog::initializeUsingXML(DOMElement *parent) {
     DualRigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
-    function->initializeUsingXML(item->getXMLElement());
-    normalForce->initializeUsingXML(item->getXMLElement());
+    frictionForceLaw->initializeUsingXML(item->getXMLElement());
+    frictionImpactLaw->initializeUsingXML(item->getXMLElement());
+    normalForceFunction->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* GeneralizedFrictionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DualRigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
-    function->writeXMLFile(item->getXMLElement(),ref);
-    normalForce->writeXMLFile(item->getXMLElement(),ref);
+    frictionForceLaw->writeXMLFile(item->getXMLElement(),ref);
+    frictionImpactLaw->writeXMLFile(item->getXMLElement(),ref);
+    normalForceFunction->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 

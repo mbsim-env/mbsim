@@ -1898,6 +1898,16 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
+          <xs:element name="generalizedFrictionImpactLaw" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="FrictionImpactLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="generalizedNormalForceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd

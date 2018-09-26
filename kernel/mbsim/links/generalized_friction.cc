@@ -21,6 +21,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/objects/rigid_body.h"
 #include <mbsim/constitutive_laws/friction_force_law.h>
+#include <mbsim/constitutive_laws/friction_impact_law.h>
 #include <mbsim/dynamic_system_solver.h>
 
 using namespace std;
@@ -33,12 +34,13 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedFriction)
 
   GeneralizedFriction::~GeneralizedFriction() {
-    delete func;
+    delete laT;
+    delete LaT;
     delete laN;
   }
 
   bool GeneralizedFriction::isSetValued() const {
-    return func->isSetValued();
+    return laT->isSetValued();
   }
 
   void GeneralizedFriction::updateGeneralizedForces() {
@@ -47,12 +49,12 @@ namespace MBSim {
         lambda = evalla();
       else {
         Vec gd = evalGeneralizedRelativeVelocity();
-        lambda = func->dlaTdlaN(gd)*(*laN)(getTime());
+        lambda = laT->dlaTdlaN(gd)*(*laN)(getTime());
         if(gd(0)*gdDir<0) lambda*=-1.0;
       }
     }
     else
-      lambda = (*func)(evalGeneralizedRelativeVelocity(),(*laN)(getTime()));
+      lambda = (*laT)(evalGeneralizedRelativeVelocity(),(*laN)(getTime()));
     updla = false;
   }
 
@@ -77,18 +79,28 @@ namespace MBSim {
   }
 
   void GeneralizedFriction::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==unknownStage) {
+    if(stage==preInit) {
+      if(laT->isSetValued() and not LaT)
+        throwError("Friction impact law must be defined!");
+    }
+    else if(stage==unknownStage) {
       if(body[0]->getGeneralizedVelocitySize()!=1)
         throwError("rigid bodies must have 1 dof!");
     }
     DualRigidBodyLink::init(stage, config);
-    func->init(stage, config);
+    laT->init(stage, config);
+    if(LaT) LaT->init(stage, config);
     laN->init(stage, config);
   }
 
-  void GeneralizedFriction::setGeneralizedFrictionForceLaw(FrictionForceLaw *func_) { 
-    func = func_; 
-    func->setParent(this);
+  void GeneralizedFriction::setGeneralizedFrictionForceLaw(FrictionForceLaw *laT_) {
+    laT = laT_;
+    laT->setParent(this);
+  }
+
+  void GeneralizedFriction::setGeneralizedFrictionImpactLaw(FrictionImpactLaw *LaT_) {
+    LaT = LaT_;
+    LaT->setParent(this);
   }
 
   void GeneralizedFriction::updateStopVector() {
@@ -101,19 +113,19 @@ namespace MBSim {
   void GeneralizedFriction::calclaSize(int j) {
     DualRigidBodyLink::calclaSize(j);
     if (j <= 2) { // IA
-      if (func->isSetValued())
+      if (laT->isSetValued())
         laSize = 1;
       else
         laSize = 0;
     }
     else if (j == 3) { // IB
-      if (func->isSetValued() and gdActive)
+      if (laT->isSetValued() and gdActive)
         laSize = 1;
       else
         laSize = 0;
     }
     else if (j <= 5) { // IG
-      if (func->isSetValued())
+      if (laT->isSetValued())
         laSize = 1;
       else
         laSize = 0;
@@ -130,13 +142,13 @@ namespace MBSim {
   void GeneralizedFriction::calcgdSize(int j) {
     DualRigidBodyLink::calcgdSize(j);
     if (j <= 2) { // all contacts
-      if (func->isSetValued())
+      if (laT->isSetValued())
         gdSize = 1;
       else
         gdSize = 0;
     }
     else if (j == 3) { // sticking contacts
-      if (func->isSetValued() and gdActive)
+      if (laT->isSetValued() and gdActive)
         gdSize = 1;
       else
         gdSize = 0;
@@ -155,7 +167,7 @@ namespace MBSim {
 
   void GeneralizedFriction::calcsvSize() {
     DualRigidBodyLink::calcsvSize();
-    svSize = func->isSetValued() ? 1 : 0;
+    svSize = laT->isSetValued() ? 1 : 0;
   }
 
   void GeneralizedFriction::checkActive(int j) {
@@ -163,7 +175,7 @@ namespace MBSim {
       gdActive = 1;
     else if (j == 2) {
       Vec gd = evalGeneralizedRelativeVelocity();
-      gdActive = func->isSticking(gd, gdTol) ? 1 : 0;
+      gdActive = laT->isSticking(gd, gdTol) ? 1 : 0;
       gddActive = gdActive;
       if(not gdActive)
         gdDir = gd(0)>0?1:-1;
@@ -292,7 +304,24 @@ namespace MBSim {
       for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
         gdd(0) += a[j] * laMBS(ja[j]);
 
-      la = func->project(la, gdd, (*laN)(getTime()), rFactor(0));
+      la = laT->project(la, gdd, (*laN)(getTime()), rFactor(0));
+    }
+  }
+
+  void GeneralizedFriction::solveImpactsFixpointSingle() {
+    if (gdActive) {
+
+      const double *a = ds->evalGs()();
+      const int *ia = ds->getGs().Ip();
+      const int *ja = ds->getGs().Jp();
+      const Vec &LaMBS = ds->getLa(false);
+      const Vec &b = ds->evalbi();
+
+      gdn(0) = b(laInd);
+      for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
+        gdn(0) += a[j] * LaMBS(ja[j]);
+
+      La = LaT->project(La, gdn, gd, (*laN)(getTime())*getStepSize(), rFactor(0));
     }
   }
 
@@ -309,7 +338,27 @@ namespace MBSim {
       for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
         gdd(0) += a[j] * laMBS(ja[j]);
 
-      if (!func->isFulfilled(la, gdd, (*laN)(getTime()), laTol, gddTol)) {
+      if (!laT->isFulfilled(la, gdd, (*laN)(getTime()), laTol, gddTol)) {
+        ds->setTermination(false);
+        return;
+      }
+    }
+  }
+
+  void GeneralizedFriction::checkImpactsForTermination() {
+    if (gdActive) {
+
+      const double *a = ds->evalGs()();
+      const int *ia = ds->getGs().Ip();
+      const int *ja = ds->getGs().Jp();
+      const Vec &LaMBS = ds->getLa(false);
+      const Vec &b = ds->evalbi();
+
+      gdn(0) = b(laInd);
+      for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
+        gdn(0) += a[j] * LaMBS(ja[j]);
+
+      if (!LaT->isFulfilled(La, gdn, gd, (*laN)(getTime())*getStepSize(), LaTol, gdTol)) {
         ds->setTermination(false);
         return;
       }
@@ -320,6 +369,8 @@ namespace MBSim {
     DualRigidBodyLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedFrictionForceLaw");
     setGeneralizedFrictionForceLaw(ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedFrictionImpactLaw");
+    if(e) setGeneralizedFrictionImpactLaw(ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedNormalForceFunction");
     setGeneralizedNormalForceFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
   }
