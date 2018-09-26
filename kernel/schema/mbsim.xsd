@@ -2171,7 +2171,7 @@
                <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
              </xs:complexType>
           </xs:element>
-          <xs:element name="normalForceLaw" minOccurs="0">
+          <xs:element name="normalForceLaw">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
             </xs:documentation></xs:annotation>

@@ -2361,7 +2361,7 @@ namespace MBSimGUI {
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
 
-    contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalForceLaw");
+    contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"normalForceLaw");
     addToTab("Kinetics", contactForceLaw);
 
     contactImpactLaw = new ExtWidget("Normal impact law",new ChoiceWidget2(new GeneralizedImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalImpactLaw");

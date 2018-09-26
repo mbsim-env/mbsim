@@ -258,6 +258,10 @@ namespace MBSim {
     }
     else if (stage == preInit) {
       Link::init(stage, config);
+      if(fcl->isSetValued() and not fnil)
+        throwError("Normal impact law must be defined!");
+      if(fdf and fdf->isSetValued() and not ftil)
+        throwError("Tangential impact law must be defined!");
       if (contactKinematics == 0) {
         contactKinematics = contour[0]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
         if (contactKinematics == 0) {
@@ -322,21 +326,21 @@ namespace MBSim {
         iter->init(stage, config);
     }
     //Don't call init()-routines for "sub"-contacts with stage "LASTINITSTAGE" as here is checked if contactKinematics has more than one possible contact point, which is only possible in multi-contact
-    if(fcl) fcl->init(stage, config);
+    fcl->init(stage, config);
     if(fdf) fdf->init(stage, config);
     if(fnil) fnil->init(stage, config);
     if(ftil) ftil->init(stage, config);
   }
 
   bool Contact::isSetValued() const {
-    bool flag = fcl and fcl->isSetValued();
+    bool flag = fcl->isSetValued();
     if (fdf)
       flag |= fdf->isSetValued();
     return flag;
   }
 
   bool Contact::isSingleValued() const {
-    if (fcl and fcl->isSetValued()) {
+    if (fcl->isSetValued()) {
       if (fdf) {
         return not fdf->isSetValued();
       }
@@ -637,10 +641,8 @@ namespace MBSim {
 
     //Set contact law
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");
-    if(e) {
-      GeneralizedForceLaw *gfl = ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
-      setNormalForceLaw(gfl);
-    }
+    GeneralizedForceLaw *gfl = ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
+    setNormalForceLaw(gfl);
 
     //Get Impact law
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalImpactLaw");
