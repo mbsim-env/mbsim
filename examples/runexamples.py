@@ -692,7 +692,7 @@ def sortDirectories(directoriesSet, dirs):
 
 
 # the labels: returns all labels defined in the labels file and append the special labels detected automatically
-def getLabels(directory)
+def getLabels(directory):
   labels=[]
   if os.path.isfile(pj(directory, "labels")):
     labels=codecs.open(pj(directory, "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
@@ -716,6 +716,7 @@ def getLabels(directory)
         filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
         for m in mbsimModules:
           if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): labels.append(m)
+  return labels
 
 
 
