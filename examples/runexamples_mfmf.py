@@ -690,6 +690,35 @@ def sortDirectories(directoriesSet, dirs):
 
 
 
+# the labels: returns all labels defined in the labels file and append the special labels detected automatically
+def getLabels(directory):
+  labels=[]
+  if os.path.isfile(pj(directory, "labels")):
+    labels=codecs.open(pj(directory, "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
+  else:
+    labels=['nightly'] # nightly is the default label if no labels file exist
+  # check for MBSim modules in src examples
+  src=os.path.isfile(pj(directory, "Makefile")) or os.path.isfile(pj(directory, "Makefile_FMI")) or os.path.isfile(pj(directory, "Makefile_FMI_cosim"))
+  if src:
+    makefile="Makefile" if os.path.isfile(pj(directory, "Makefile")) else \
+             ("Makefile_FMI" if os.path.isfile(pj(directory, "Makefile_FMI")) else "Makefile_FMI_cosim")
+    filecont=codecs.open(pj(directory, makefile), "r", encoding="utf-8").read()
+    for m in mbsimModules:
+      if re.search("\\b"+m+"\\b", filecont): labels.append(m)
+  # check for MBSim modules in xml and flatxml examples
+  else:
+    for filedir, _, filenames in os.walk(directory):
+      if "tmp_fmuCheck" in filedir.split('/') or "tmp_mbsimTestFMU" in filedir.split('/'): # skip temp fmu directories
+        continue
+      for filename in fnmatch.filter(filenames, "*.xml"):
+        if filename[0:4]==".pp.": continue # skip generated .pp.* files
+        filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
+        for m in mbsimModules:
+          if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): labels.append(m)
+  return labels
+
+
+
 # handle the --filter option: add/remove to directoriesSet
 def addExamplesByFilter(baseDir, directoriesSet):
   if baseDir[0]!="^": # add dir
@@ -711,28 +740,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
       continue
     dirs=[]
 
-    labels=[]
-    if os.path.isfile(pj(root, "labels")):
-      labels=codecs.open(pj(root, "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
-    else:
-      labels=['nightly'] # nightly is the default label if no labels file exist
-    # check for MBSim modules in src examples
-    if src:
-      makefile="Makefile" if os.path.isfile(pj(root, "Makefile")) else \
-               ("Makefile_FMI" if os.path.isfile(pj(root, "Makefile_FMI")) else "Makefile_FMI_cosim")
-      filecont=codecs.open(pj(root, makefile), "r", encoding="utf-8").read()
-      for m in mbsimModules:
-        if re.search("\\b"+m+"\\b", filecont): labels.append(m)
-    # check for MBSim modules in xml and flatxml examples
-    else:
-      for filedir, _, filenames in os.walk(root):
-        if "tmp_fmuCheck" in filedir.split('/') or "tmp_mbsimTestFMU" in filedir.split('/'): # skip temp fmu directories
-          continue
-        for filename in fnmatch.filter(filenames, "*.xml"):
-          if filename[0:4]==".pp.": continue # skip generated .pp.* files
-          filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
-          for m in mbsimModules:
-            if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): labels.append(m)
+    labels=getLabels(root)
     # evaluate filter
     try:
       filterResult=eval(args.filter,
@@ -1225,9 +1233,12 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
   # use option --nocompress, just to speed up mbsimCreateFMU
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
+  labels=getLabels(os.getcwd())
   cosimArg=[]
   if cosim: cosimArg=['--cosim']
-  comm=exePrefix()+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress']+cosimArg+[fmiInputFile]
+  noparamArg=[]
+  if "noparam" in labels: noparamArg=['--noparam']
+  comm=exePrefix()+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress']+cosimArg+noparamArg+[fmiInputFile]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   executeFD.flush()
