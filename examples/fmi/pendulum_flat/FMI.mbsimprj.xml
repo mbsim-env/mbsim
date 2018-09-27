@@ -68,7 +68,7 @@
 
   <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
-    <endTime unit="s">10</endTime>
+    <endTime unit="s">0.7</endTime><!-- use a smaller end time since fmuCheck cannot handle roots propably -->
     <plotStepSize unit="s">1e-2</plotStepSize>
     <toleranceForPositionConstraints>1e-6</toleranceForPositionConstraints>
     <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
