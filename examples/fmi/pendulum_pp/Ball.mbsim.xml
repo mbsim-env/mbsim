@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="Ball">
+
+  <frameOfReference ref="../Frame[QB]"/>
+
+  <frames>
+    <FixedRelativeFrame name="Plane">
+      <relativeOrientation>rotateAboutZ(pi/2)</relativeOrientation>
+    </FixedRelativeFrame>
+  </frames>
+
+  <contours>
+    <Plane name="Plane">
+      <frameOfReference ref="../Frame[Plane]"/>
+      <enableOpenMBV>
+        <length>[0.5;1]</length>
+      </enableOpenMBV>
+    </Plane>
+  </contours>
+
+  <groups/>
+
+  <objects>
+    <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Ball">
+      <generalizedInitialPosition>[0;0.15;0.4]</generalizedInitialPosition>
+      <generalizedInitialVelocity>[0;0;-1]</generalizedInitialVelocity>
+      <mass unit="kg">1</mass>
+      <inertiaTensor unit="kg*m^2">[0.01, 0, 0; 0, 0.01, 0; 0, 0, 0.01]</inertiaTensor>
+      <stateDependentTranslation>
+        <TranslationAlongAxesXYZ/>
+      </stateDependentTranslation>
+      <frames/>
+      <contours>
+        <Sphere name="Ball">
+          <radius>0.1</radius>
+          <enableOpenMBV/>
+        </Sphere>
+      </contours>
+    </RigidBody>
+  </objects>
+
+  <links>
+    <Contact xmlns="http://www.mbsim-env.de/MBSim" name="BallPlane">
+      <connect ref2="../Object[Ball]/Contour[Ball]" ref1="../Contour[Plane]"/>
+      <normalForceLaw>
+        <UnilateralConstraint/>
+      </normalForceLaw>
+      <normalImpactLaw>
+        <UnilateralNewtonImpact>
+          <restitutionCoefficient unit="-">0.0</restitutionCoefficient>
+        </UnilateralNewtonImpact>
+      </normalImpactLaw>
+    </Contact>
+  </links>
+
+  <constraints/>
+
+  <observers>
+    <ContactObserver name="BallPlane">
+      <contact ref="../Link[BallPlane]"/>
+      <enableOpenMBVContactPoints>
+        <size>0.015</size>
+        <offset>0</offset>
+      </enableOpenMBVContactPoints>
+      <enableOpenMBVNormalForce>
+        <transparency>0.5</transparency>
+        <scaleLength>0.005</scaleLength>
+        <scaleSize>0.075</scaleSize>
+      </enableOpenMBVNormalForce>
+    </ContactObserver>
+  </observers>
+
+</Group>
