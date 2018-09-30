@@ -36,9 +36,6 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Joint)
 
-  Joint::Joint(const string &name) : FloatingFrameLink(name) {
-  }
-
   Joint::~Joint() {
     delete ffl;
     delete fml;
@@ -46,9 +43,19 @@ namespace MBSim {
     delete fiml;
   }
 
+  void Joint::updateg() {
+    if(IFM.size()) g(IFM) = evalGeneralizedRelativePosition()(iF);
+    if(IMM.size()) g(IMM) = evalGeneralizedRelativePosition()(iM);;
+  }
+
+  void Joint::updategd() {
+    if(IFM.size()) gd(IFM) = evalGeneralizedRelativeVelocity()(iF);
+    if(IMM.size()) gd(IMM) = evalGeneralizedRelativeVelocity()(iM);
+  }
+
   void Joint::updatewb() {
-    wb(0, forceDir.cols() - 1) += evalGlobalForceDirection().T() * (frame[1]->evalGyroscopicAccelerationOfTranslation() - C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), 2.0*evalGlobalRelativeVelocity()));
-    wb(forceDir.cols(), momentDir.cols() + forceDir.cols() - 1) += evalGlobalMomentDirection().T() * (frame[1]->evalGyroscopicAccelerationOfRotation() - C.evalGyroscopicAccelerationOfRotation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeAngularVelocity()));
+    if(IFM.size()) wb(IFM) += evalGlobalForceDirection().T() * (frame[1]->evalGyroscopicAccelerationOfTranslation() - C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), 2.0*evalGlobalRelativeVelocity()));
+    if(IMM.size()) wb(IMM) += evalGlobalMomentDirection().T() * (frame[1]->evalGyroscopicAccelerationOfRotation() - C.evalGyroscopicAccelerationOfRotation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeAngularVelocity()));
   }
 
   void Joint::updatexd() {
@@ -57,7 +64,7 @@ namespace MBSim {
   }
 
   void Joint::updatelaFM() {
-    for (int i = 0; i < forceDir.cols(); i++)
+    for (int i = 0; i < IFM.size(); i++)
       lambdaF(i) = evalla()(i);
   }
 
@@ -67,7 +74,7 @@ namespace MBSim {
   }
 
   void Joint::updatelaMM() {
-    for (int i = forceDir.cols(), j=0; i < forceDir.cols() + momentDir.cols(); i++, j++)
+    for (int i = IFM.size(), j=0; i < laSize; i++, j++)
       lambdaM(j) = evalla()(i);
   }
 
@@ -77,27 +84,72 @@ namespace MBSim {
   }
 
   void Joint::updateh(int j) {
-    Vec3 F = (ffl and not ffl->isSetValued())?evalGlobalForceDirection()*evallaF():Vec3();
-    Vec3 M = (fml and not fml->isSetValued())?evalGlobalMomentDirection()*evallaM():Vec3();
+    Vec3 F = IFM.size()?Vec3():evalGlobalForceDirection()*evallaF();
+    Vec3 M = IMM.size()?Vec3():evalGlobalMomentDirection()*evallaM();
 
     h[j][0] -= C.evalJacobianOfTranslation(j).T() * F + C.evalJacobianOfRotation(j).T() * M;
     h[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * F + frame[1]->evalJacobianOfRotation(j).T() * M;
   }
 
   void Joint::updateW(int j) {
-    int nF = (ffl and ffl->isSetValued())?forceDir.cols():0;
-    int nM = (fml and fml->isSetValued())?momentDir.cols():0;
-    Mat3xV RF(nF+nM);
-    Mat3xV RM(RF.cols());
-    RF.set(RangeV(0,2), RangeV(0,nF-1), evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,nF-1)));
-    RM.set(RangeV(0,2), RangeV(nF,nF+nM-1), evalGlobalMomentDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,nM-1)));
+    if(IFM.size()) RF.set(RangeV(0,2), RangeV(IFM), evalGlobalForceDirection());
+    if(IMM.size()) RM.set(RangeV(0,2), RangeV(IMM), evalGlobalMomentDirection());
 
     W[j][0] -= C.evalJacobianOfTranslation(j).T() * RF + C.evalJacobianOfRotation(j).T() * RM;
     W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * RF + frame[1]->evalJacobianOfRotation(j).T() * RM;
   }
 
+  void Joint::calclaSize(int j) {
+    laSize = IFM.size() + IMM.size();
+  }
+
+  void Joint::calcgSize(int j) {
+    gSize = IFM.size() + IMM.size();
+  }
+
+  void Joint::calcgdSize(int j) {
+    gdSize = IFM.size() + IMM.size();
+  }
+
+  void Joint::calcrFactorSize(int j) {
+    rFactorSize = IFM.size() + IMM.size();
+  }
+
+  void Joint::calccorrSize(int j) {
+    corrSize = IFM.size() + IMM.size();
+  }
+
   void Joint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
+      if (ffl) {
+        if(ffl->isSetValued()) {
+          fifl = new BilateralImpact;
+          fifl->setParent(this);
+          updatelaF_ = &Joint::updatelaFM;
+          IFM = RangeV(0,forceDir.cols()-1);
+        }
+        else
+          updatelaF_ = &Joint::updatelaFS;
+      }
+      else {
+        if(forceDir.cols()>0) throwError("No force law is given!");
+        updatelaF_ = &Joint::updatelaF0;
+      }
+      if (fml) {
+        if(fml->isSetValued()) {
+          fiml = new BilateralImpact;
+          fiml->setParent(this);
+          updatelaM_ = &Joint::updatelaMM;
+          IMM = RangeV(IFM.size(),IFM.size()+momentDir.cols()-1);
+        }
+        else
+          updatelaM_ = &Joint::updatelaMS;
+      }
+      else {
+        if(momentDir.cols()>0) throwError("No moment law is given!");
+        updatelaM_ = &Joint::updatelaM0;
+      }
+
       if(momentDir.cols()==2) {
         if(fabs(momentDir(2,0))<=macheps and fabs(momentDir(2,1))<=macheps)
           iR = 2;
@@ -124,32 +176,8 @@ namespace MBSim {
     else if (stage == unknownStage) {
       gdd.resize(gdSize);
       gdn.resize(gdSize);
-
-      if (ffl) {
-        fifl = new BilateralImpact;
-        fifl->setParent(this);
-      }
-      else if(forceDir.cols()>0)
-        throwError("No force law is given!");
-      if (fml) {
-        fiml = new BilateralImpact;
-        fiml->setParent(this);
-      }
-      else if(momentDir.cols()>0)
-        throwError("No moment law is given!");
-
-      if(not ffl)
-        updatelaF_ = &Joint::updatelaF0;
-      else if(ffl->isSetValued())
-        updatelaF_ = &Joint::updatelaFM;
-      else
-        updatelaF_ = &Joint::updatelaFS;
-      if(not fml)
-        updatelaM_ = &Joint::updatelaM0;
-      else if(fml->isSetValued())
-        updatelaM_ = &Joint::updatelaMM;
-      else
-        updatelaM_ = &Joint::updatelaMS;
+      RF.resize(laSize);
+      RM.resize(laSize);
     }
     FloatingFrameLink::init(stage, config);
     if(ffl) ffl->init(stage, config);
@@ -159,25 +187,11 @@ namespace MBSim {
   }
 
   bool Joint::isSetValued() const {
-    bool flag = false;
-    if (ffl)
-      flag |= ffl->isSetValued();
-    if (fml)
-      flag |= fml->isSetValued();
-
-    return flag;
+    return ((ffl and ffl->isSetValued()) or (fml and fml->isSetValued()));
   }
 
   bool Joint::isSingleValued() const {
-    bool flag = false;
-    if (ffl)
-      if (not ffl->isSetValued())
-        flag = true;
-    if (fml)
-      if (not fml->isSetValued())
-        flag = true;
-
-    return flag;
+    return ((ffl and not ffl->isSetValued()) or (fml and not fml->isSetValued()));
   }
 
   void Joint::solveImpactsFixpointSingle() {
@@ -188,14 +202,14 @@ namespace MBSim {
     const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
-    for (int i = 0; i < forceDir.cols(); i++) {
+    for (int i = 0; i < IFM.size(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdn(i) += a[j] * LaMBS(ja[j]);
 
       La(i) = fifl->project(La(i), gdn(i), gd(i), rFactor(i));
     }
-    for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+    for (int i = IFM.size(); i < laSize; i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdn(i) += a[j] * LaMBS(ja[j]);
@@ -212,14 +226,14 @@ namespace MBSim {
     const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
-    for (int i = 0; i < forceDir.cols(); i++) {
+    for (int i = 0; i < IFM.size(); i++) {
       gdd(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdd(i) += a[j] * laMBS(ja[j]);
 
       la(i) = ffl->project(la(i), gdd(i), rFactor(i));
     }
-    for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+    for (int i = IFM.size(); i < laSize; i++) {
       gdd(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdd(i) += a[j] * laMBS(ja[j]);
@@ -236,14 +250,14 @@ namespace MBSim {
     const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
-    for (int i = 0; i < forceDir.cols(); i++) {
+    for (int i = 0; i < IFM.size(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i] + 1; j < ia[laInd + 1 + i]; j++)
         gdn(i) += a[j] * LaMBS(ja[j]);
 
       La(i) = fifl->solve(a[ia[laInd + i]], gdn(i), gd(i));
     }
-    for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+    for (int i = IFM.size(); i < laSize; i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i] + 1; j < ia[laInd + 1 + i]; j++)
         gdn(i) += a[j] * LaMBS(ja[j]);
@@ -260,14 +274,14 @@ namespace MBSim {
     const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
-    for (int i = 0; i < forceDir.cols(); i++) {
+    for (int i = 0; i < IFM.size(); i++) {
       gdd(i) = b(laInd + i);
       for (int j = ia[laInd + i] + 1; j < ia[laInd + 1 + i]; j++)
         gdd(i) += a[j] * laMBS(ja[j]);
 
       la(i) = ffl->solve(a[ia[laInd + i]], gdd(i));
     }
-    for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+    for (int i = IFM.size(); i < laSize; i++) {
       gdd(i) = b(laInd + i);
       for (int j = ia[laInd + i] + 1; j < ia[laInd + 1 + i]; j++)
         gdd(i) += a[j] * laMBS(ja[j]);
@@ -284,14 +298,14 @@ namespace MBSim {
     const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
-    for (int i = 0; i < forceDir.cols(); i++) {
+    for (int i = 0; i < IFM.size(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdn(i) += a[j] * LaMBS(ja[j]);
 
       res(i) = La(i) - fifl->project(La(i), gdn(i), gd(i), rFactor(i));
     }
-    for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+    for (int i = IFM.size(); i < laSize; i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdn(i) += a[j] * LaMBS(ja[j]);
@@ -308,14 +322,14 @@ namespace MBSim {
     const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
-    for (int i = 0; i < forceDir.cols(); i++) {
+    for (int i = 0; i < IFM.size(); i++) {
       gdd(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdd(i) += a[j] * laMBS(ja[j]);
 
       res(i) = la(i) - ffl->project(la(i), gdd(i), rFactor(i));
     }
-    for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+    for (int i = IFM.size(); i < laSize; i++) {
       gdd(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdd(i) += a[j] * laMBS(ja[j]);
@@ -328,7 +342,7 @@ namespace MBSim {
 
     const SqrMat G = ds->evalG();
 
-    for (int i = 0; i < forceDir.cols(); i++) {
+    for (int i = 0; i < IFM.size(); i++) {
       RowVec jp1 = ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
@@ -339,7 +353,7 @@ namespace MBSim {
         jp1(j) -= diff(1) * G(laInd + i, j);
     }
 
-    for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+    for (int i = IFM.size(); i < laSize; i++) {
 
       RowVec jp1 = ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
@@ -356,7 +370,7 @@ namespace MBSim {
 
     const SqrMat G = ds->evalG();
 
-    for (int i = 0; i < forceDir.cols(); i++) {
+    for (int i = 0; i < IFM.size(); i++) {
       RowVec jp1 = ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
@@ -367,7 +381,7 @@ namespace MBSim {
         jp1(j) -= diff(1) * G(laInd + i, j);
     }
 
-    for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+    for (int i = IFM.size(); i < laSize; i++) {
       RowVec jp1 = ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
@@ -410,7 +424,7 @@ namespace MBSim {
     const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
-    for (int i = 0; i < forceDir.cols(); i++) {
+    for (int i = 0; i < IFM.size(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdn(i) += a[j] * LaMBS(ja[j]);
@@ -420,7 +434,7 @@ namespace MBSim {
         return;
       }
     }
-    for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+    for (int i = IFM.size(); i < laSize; i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdn(i) += a[j] * LaMBS(ja[j]);
@@ -440,7 +454,7 @@ namespace MBSim {
     const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
-    for (int i = 0; i < forceDir.cols(); i++) {
+    for (int i = 0; i < IFM.size(); i++) {
       gdd(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdd(i) += a[j] * laMBS(ja[j]);
@@ -450,7 +464,7 @@ namespace MBSim {
         return;
       }
     }
-    for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+    for (int i = IFM.size(); i < laSize; i++) {
       gdd(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdd(i) += a[j] * laMBS(ja[j]);
@@ -513,9 +527,6 @@ namespace MBSim {
     if(e) setMomentLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
     if(e) setIntegrateGeneralizedRelativeVelocityOfRotation(E(e)->getText<bool>());
-  }
-
-  InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), body(nullptr) {
   }
 
   void InverseKineticsJoint::calcbSize() {

@@ -45,7 +45,7 @@ namespace MBSim {
        * \brief constructor
        * \param name
        */
-      Joint(const std::string &name = "");
+      Joint(const std::string &name = "") : FloatingFrameLink(name), IFM(0,-1), IMM(0,-1) { }
 
       /**
        * \brief destructor
@@ -64,9 +64,16 @@ namespace MBSim {
       void (Joint::*updatelaM_)();
       void updateh(int i=0) override;
       void updateW(int i=0) override;
+      void updateg() override;
+      void updategd() override;
       void updatewb() override;
       void updatexd() override;
 
+      void calclaSize(int j) override;
+      void calcgSize(int j) override;
+      void calcgdSize(int j) override;
+      void calcrFactorSize(int j) override;
+      void calccorrSize(int j) override;
       void calcxSize() override { if(integrateGeneralizedRelativeVelocityOfRotation) xSize = momentDir.cols(); }
       void init(InitStage stage, const InitConfigSet &config) override;
 
@@ -137,23 +144,24 @@ namespace MBSim {
       size_t iR{2};
 
       bool integrateGeneralizedRelativeVelocityOfRotation{false};
+
+      fmatvec::Mat3xV RF, RM;
+      fmatvec::RangeV IFM, IMM;
   };
 
   class InverseKineticsJoint : public Joint {
     friend class RigidBody;
     friend class JointConstraint;
     public:
-      InverseKineticsJoint(const std::string &name);
+      InverseKineticsJoint(const std::string &name) : Joint(name) { }
       void updateb() override;
       void calcbSize() override;
-      void setBody(Body* body_) {
-        body = body_;
-      }
+      void setBody(Body* body_) { body = body_; }
       void init(InitStage stage, const InitConfigSet &config) override;
       bool isSetValued() const override { return true; }
 
     protected:
-      Body* body;
+      Body* body{nullptr};
   };
 
 }

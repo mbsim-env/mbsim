@@ -44,27 +44,22 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::calclaSize(int j) {
-    FrameLink::calclaSize(j);
     laSize = forceDir.cols() + momentDir.cols();
   }
 
   void FloatingFrameLink::calcgSize(int j) {
-    FrameLink::calcgSize(j);
     gSize = forceDir.cols() + momentDir.cols();
   }
 
   void FloatingFrameLink::calcgdSize(int j) {
-    FrameLink::calcgdSize(j);
     gdSize = forceDir.cols() + momentDir.cols();
   }
 
   void FloatingFrameLink::calcrFactorSize(int j) {
-    FrameLink::calcrFactorSize(j);
     rFactorSize = isSetValued() ? forceDir.cols() + momentDir.cols() : 0;
   }
 
   void FloatingFrameLink::calccorrSize(int j) {
-    FrameLink::calccorrSize(j);
     corrSize = forceDir.cols() + momentDir.cols();
   }
 
