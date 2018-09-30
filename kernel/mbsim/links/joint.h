@@ -45,7 +45,7 @@ namespace MBSim {
        * \brief constructor
        * \param name
        */
-      Joint(const std::string &name = "") : FloatingFrameLink(name), IFM(0,-1), IMM(0,-1) { }
+      Joint(const std::string &name = "") : FloatingFrameLink(name), iFM(0,-1), iMM(0,-1) { }
 
       /**
        * \brief destructor
@@ -146,7 +146,7 @@ namespace MBSim {
       bool integrateGeneralizedRelativeVelocityOfRotation{false};
 
       fmatvec::Mat3xV RF, RM;
-      fmatvec::RangeV IFM, IMM;
+      fmatvec::RangeV iFM, iMM;
   };
 
   class InverseKineticsJoint : public Joint {
