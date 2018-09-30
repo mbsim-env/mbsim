@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+
+  <scalarParameter name="N" unit="-">4</scalarParameter>
+
+  <scalarParameter name="L" unit="-">1</scalarParameter>
+
+  <scalarParameter name="grpLoc" unit="-">0</scalarParameter>
+
+</Parameter>

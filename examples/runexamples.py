@@ -37,6 +37,15 @@ else:
   import urllib.request as myurllib
   import urllib.parse as myurllibp
 
+# MISSING a temporary hack to detect if we are running on the current build system 
+# or the experimental docker build.
+if os.path.isdir("/home/mbsim/build/buildSystem/scripts"):
+  buildSystemScriptDir="/home/mbsim/build/buildSystem/scripts"
+  buildSystemStateDir="/var/www/html/mbsim/buildsystemstate"
+else:
+  buildSystemScriptDir="/context"
+  buildSystemStateDir="/mbsim-state"
+
 # global variables
 scriptDir=os.path.dirname(os.path.realpath(__file__))
 mbsimBinDir=None
@@ -138,9 +147,8 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
   help="disable the -j option and run always in a single process/thread")
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
-debugOpts.add_argument("--buildSystemRun", default=None, type=str, help="Run in build system mode: generate build system state; The dir to buildSystemState.py must be passed.")
+debugOpts.add_argument("--buildSystemRun", action="store_true", help="Run in build system mode: generate build system state.")
 debugOpts.add_argument("--webapp", action="store_true", help="Add buttons for mbsimwebapp.")
-debugOpts.add_argument("--stateDir", default="/var/www/html/mbsim/buildsystemstate", type=str, help='www state directory for --buildSystemRun')
 
 # parse command line options
 args = argparser.parse_args()
@@ -493,7 +501,7 @@ def main():
   if not args.disableCompare:
     print('<th><div class="pull-left"><span class="glyphicon glyphicon-search"></span>&nbsp;Ref.</div>'+\
           '<div class="pull-right" style="padding-right:0.75em;">[update]</div></th>', file=mainFD)
-  if not args.disableRun and args.buildSystemRun!=None and args.webapp:
+  if not args.disableRun and args.buildSystemRun and args.webapp:
     print('<th><span class="glyphicon glyphicon-picture"></span>&nbsp;Webapp</th>', file=mainFD)
   if not args.disableRun:
     print('<th><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Depr.</th>', file=mainFD)
@@ -691,6 +699,35 @@ def sortDirectories(directoriesSet, dirs):
 
 
 
+# the labels: returns all labels defined in the labels file and append the special labels detected automatically
+def getLabels(directory):
+  labels=[]
+  if os.path.isfile(pj(directory, "labels")):
+    labels=codecs.open(pj(directory, "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
+  else:
+    labels=['nightly'] # nightly is the default label if no labels file exist
+  # check for MBSim modules in src examples
+  src=os.path.isfile(pj(directory, "Makefile")) or os.path.isfile(pj(directory, "Makefile_FMI")) or os.path.isfile(pj(directory, "Makefile_FMI_cosim"))
+  if src:
+    makefile="Makefile" if os.path.isfile(pj(directory, "Makefile")) else \
+             ("Makefile_FMI" if os.path.isfile(pj(directory, "Makefile_FMI")) else "Makefile_FMI_cosim")
+    filecont=codecs.open(pj(directory, makefile), "r", encoding="utf-8").read()
+    for m in mbsimModules:
+      if re.search("\\b"+m+"\\b", filecont): labels.append(m)
+  # check for MBSim modules in xml and flatxml examples
+  else:
+    for filedir, _, filenames in os.walk(directory):
+      if "tmp_fmuCheck" in filedir.split('/') or "tmp_mbsimTestFMU" in filedir.split('/'): # skip temp fmu directories
+        continue
+      for filename in fnmatch.filter(filenames, "*.xml"):
+        if filename[0:4]==".pp.": continue # skip generated .pp.* files
+        filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
+        for m in mbsimModules:
+          if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): labels.append(m)
+  return labels
+
+
+
 # handle the --filter option: add/remove to directoriesSet
 def addExamplesByFilter(baseDir, directoriesSet):
   if baseDir[0]!="^": # add dir
@@ -712,28 +749,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
       continue
     dirs=[]
 
-    labels=[]
-    if os.path.isfile(pj(root, "labels")):
-      labels=codecs.open(pj(root, "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
-    else:
-      labels=['nightly'] # nightly is the default label if no labels file exist
-    # check for MBSim modules in src examples
-    if src:
-      makefile="Makefile" if os.path.isfile(pj(root, "Makefile")) else \
-               ("Makefile_FMI" if os.path.isfile(pj(root, "Makefile_FMI")) else "Makefile_FMI_cosim")
-      filecont=codecs.open(pj(root, makefile), "r", encoding="utf-8").read()
-      for m in mbsimModules:
-        if re.search("\\b"+m+"\\b", filecont): labels.append(m)
-    # check for MBSim modules in xml and flatxml examples
-    else:
-      for filedir, _, filenames in os.walk(root):
-        if "tmp_fmuCheck" in filedir.split('/') or "tmp_mbsimTestFMU" in filedir.split('/'): # skip temp fmu directories
-          continue
-        for filename in fnmatch.filter(filenames, "*.xml"):
-          if filename[0:4]==".pp.": continue # skip generated .pp.* files
-          filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
-          for m in mbsimModules:
-            if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): labels.append(m)
+    labels=getLabels(root)
     # evaluate filter
     try:
       filterResult=eval(args.filter,
@@ -934,7 +950,7 @@ def runExample(resultQueue, example):
                      '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
 
     # check for deprecated features
-    if not args.disableRun and args.buildSystemRun!=None and args.webapp:
+    if not args.disableRun and args.buildSystemRun and args.webapp:
       resultStr+=webapp(example[0])
 
     # check for deprecated features
@@ -1032,7 +1048,7 @@ def runExample(resultQueue, example):
     fatalScriptErrorFD.close()
     resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td>%s</tr>' \
       %('<td>-</td>'*(7-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
-      args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])))
+      args.disableRun or (not args.buildSystemRun) or not args.webapp, args.disableRun, args.disableValidate])))
     runExampleRet=1
   finally:
     os.chdir(savedDir)
@@ -1226,9 +1242,12 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
   # use option --nocompress, just to speed up mbsimCreateFMU
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
+  labels=getLabels(os.getcwd())
   cosimArg=[]
   if cosim: cosimArg=['--cosim']
-  comm=exePrefix()+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress']+cosimArg+[fmiInputFile]
+  noparamArg=[]
+  if "noparam" in labels: noparamArg=['--noparam']
+  comm=exePrefix()+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress']+cosimArg+noparamArg+[fmiInputFile]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   executeFD.flush()
@@ -1905,13 +1924,13 @@ def validateXML(example, consoleOutput, htmlOutputFD):
 
 def writeAtomFeed(currentID, nrFailed, nrTotal):
   # do not write a feed if --buildSystemRun is not used
-  if args.buildSystemRun==None:
+  if not args.buildSystemRun:
     return
   # load the add feed module
-  sys.path.append(args.buildSystemRun)
+  sys.path.append(buildSystemScriptDir)
   import buildSystemState
   # add a new feed if examples have failed
-  buildSystemState.update(args.stateDir, args.buildType+"-examples", "Examples Failed: "+args.buildType,
+  buildSystemState.update(args.buildType+"-examples", "Examples Failed: "+args.buildType,
     "%d of %d examples failed."%(nrFailed, nrTotal),
     "%s/result_%010d/index.html"%(args.url, currentID),
     nrFailed, nrTotal)
@@ -1998,11 +2017,11 @@ def coverage(mainFD):
       covRate=int(float(m.group(1))+0.5)
   covRateStr=str(covRate)+"%" if ret==0 else "ERR"
   # update build state (only if --buildSystemRun is used)
-  if args.buildSystemRun!=None:
+  if args.buildSystemRun:
     # load and add module
-    sys.path.append(args.buildSystemRun)
+    sys.path.append(buildSystemScriptDir)
     import buildSystemState
-    buildSystemState.createStateSVGFile(args.stateDir+"/"+args.buildType+"-coverage.svg", covRateStr,
+    buildSystemState.createStateSVGFile(buildSystemStateDir+"/"+args.buildType+"-coverage.svg", covRateStr,
       "#d9534f" if ret!=0 or covRate<70 else ("#f0ad4e" if covRate<90 else "#5cb85c"))
 
   if ret==0:
@@ -2012,7 +2031,7 @@ def coverage(mainFD):
   print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
         '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%s</span></a></td>'%(covRateStr), file=mainFD)
   for i in range(0, 7-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
-    args.disableRun or args.buildSystemRun==None or not args.webapp, args.disableRun, args.disableValidate])):
+    args.disableRun or (not args.buildSystemRun) or not args.webapp, args.disableRun, args.disableValidate])):
     print('<td>-</td>', file=mainFD)
   print('</tr>', file=mainFD); mainFD.flush()
   return 1 if ret!=0 else 0

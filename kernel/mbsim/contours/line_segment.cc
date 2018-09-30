@@ -43,7 +43,13 @@ namespace MBSim {
   void LineSegment::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody)
-        static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(0,length,0);
+      {
+        auto ils=static_pointer_cast<OpenMBV::IndexedLineSet>(openMBVRigidBody);
+        auto pos=ils->getVertexPositions();
+        pos[0][1] = -length/2;
+        pos[1][1] = length/2;
+        ils->setVertexPositions(pos);
+      }
     }
     RigidContour::init(stage, config);
   }

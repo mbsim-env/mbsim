@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="Group{grpID}" xmlns:mc="http://www.mbsim-env.de/MBSimControl">
+
+  <frameOfReference ref="../Frame[QP{grpID-1}]"/>
+
+  <frames>
+    <FixedRelativeFrame name="Stop">
+      <enableOpenMBV>
+        <?OPENMBV_ID 38?>
+        <size unit="m">0.05</size>
+      </enableOpenMBV>
+      <relativePosition unit="m">
+        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <ele>-0.15</ele>
+          <ele>-0.5</ele>
+          <ele>0</ele>
+        </xmlVector>
+      </relativePosition>
+    </FixedRelativeFrame>
+  </frames>
+
+  <contours/>
+
+  <groups/>
+
+  <objects>
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="N" counterName="n">
+      <Parameter/>
+      <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="ChainLink_{n}">
+        <generalizedInitialPosition>1/N</generalizedInitialPosition>
+        <frameOfReference ref="{if n==1, ret='../Frame[I]'; else ret=['../Object[ChainLink_' char(48+n-1) ']/Frame[bottom]']; end}"/>
+        <frameForKinematics ref="Frame[top]"/>
+        <mass unit="kg">1</mass>
+        <inertiaTensor unit="kg*m^2">
+          <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <row>
+              <ele>0.01</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0.01</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>0.01</ele>
+            </row>
+          </xmlMatrix>
+        </inertiaTensor>
+        <stateDependentRotation>
+          <RotationAboutZAxis/>
+        </stateDependentRotation>
+        <frames>
+          <FixedRelativeFrame name="top">
+            <plotFeature value="position">true</plotFeature>
+            <plotFeature value="velocity">true</plotFeature>
+            <enableOpenMBV>
+              <?OPENMBV_ID 43?>
+              <size unit="m">0.02</size>
+            </enableOpenMBV>
+            <relativePosition unit="m">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>0</ele>
+                <ele>L/N/2</ele>
+                <ele>0</ele>
+              </xmlVector>
+            </relativePosition>
+          </FixedRelativeFrame>
+          <FixedRelativeFrame name="bottom">
+            <plotFeature value="position">true</plotFeature>
+            <plotFeature value="velocity">true</plotFeature>
+            <enableOpenMBV>
+              <?OPENMBV_ID 44?>
+              <size unit="m">0.02</size>
+            </enableOpenMBV>
+            <relativePosition unit="m">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>0</ele>
+                <ele>-L/N/2</ele>
+                <ele>0</ele>
+              </xmlVector>
+            </relativePosition>
+          </FixedRelativeFrame>
+          <FixedRelativeFrame name="leftContour">
+            <relativePosition unit="m">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>-0.005</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </xmlVector>
+            </relativePosition>
+            <relativeOrientation>rotateAboutY(pi)</relativeOrientation>
+          </FixedRelativeFrame>
+        </frames>
+        <contours>
+          <LineSegment name="left">
+            <frameOfReference ref="../Frame[leftContour]"/>
+            <length unit="m">L/N</length>
+            <enableOpenMBV>
+              <?OPENMBV_ID 46?>
+            </enableOpenMBV>
+          </LineSegment>
+        </contours>
+        <openMBVRigidBody>
+          <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
+            <?OPENMBV_ID 39?>
+            <diffuseColor unit="-">[(n-1)/(N-1);1;1]</diffuseColor>
+            <transparency unit="-">0.5</transparency>
+            <initialTranslation unit="m">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </xmlVector>
+            </initialTranslation>
+            <initialRotation unit="rad">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </xmlVector>
+            </initialRotation>
+            <scaleFactor unit="-">1</scaleFactor>
+            <length unit="m">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>0.01</ele>
+                <ele>L/N</ele>
+                <ele>0.01</ele>
+              </xmlVector>
+            </length>
+          </Cuboid>
+        </openMBVRigidBody>
+      </RigidBody>
+    </Embed>
+    <RigidBody name="Stop">
+      <frameOfReference ref="../Frame[Stop]"/>
+      <mass unit="kg">1</mass>
+      <inertiaTensor unit="kg*m^2">
+        <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <row>
+            <ele>0.01</ele>
+            <ele>0</ele>
+            <ele>0</ele>
+          </row>
+          <row>
+            <ele>0</ele>
+            <ele>0.01</ele>
+            <ele>0</ele>
+          </row>
+          <row>
+            <ele>0</ele>
+            <ele>0</ele>
+            <ele>0.01</ele>
+          </row>
+        </xmlMatrix>
+      </inertiaTensor>
+      <frames/>
+      <contours>
+        <Circle name="stop">
+          <radius unit="m">0.25</radius>
+          <solid>true</solid>
+          <enableOpenMBV/>
+        </Circle>
+      </contours>
+    </RigidBody>
+  </objects>
+
+  <links>
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="N" counterName="n">
+      <Parameter/>
+      <Contact xmlns="http://www.mbsim-env.de/MBSim" name="ChainLink_Contact_left_{n}">
+        <connect ref1="../Object[Stop]/Contour[stop]" ref2="../Object[ChainLink_{n}]/Contour[left]"/>
+        <normalForceLaw>
+          <UnilateralConstraint/>
+        </normalForceLaw>
+        <normalImpactLaw>
+          <UnilateralNewtonImpact>
+            <restitutionCoefficient unit="-">0.5</restitutionCoefficient>
+          </UnilateralNewtonImpact>
+        </normalImpactLaw>
+      </Contact>
+    </Embed>
+    <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="positionFull">
+      <frame ref="../Object[ChainLink_{N}]/Frame[bottom]"/>
+    </PositionSensor>
+    <Demultiplexer name="position" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[positionFull]"/>
+      <indices>[1;2]</indices>
+    </Demultiplexer>
+    <VelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="velocityFull">
+      <frame ref="../Object[ChainLink_{N}]/Frame[bottom]"/>
+    </VelocitySensor>
+    <Demultiplexer name="velocity" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[velocityFull]"/>
+      <indices>[1;2]</indices>
+    </Demultiplexer>
+    <KineticExcitation name="force">
+      <connect ref1="/Frame[I]" ref2="../Object[ChainLink_{N}]/Frame[bottom]"/>
+      <frameOfReferenceID>1</frameOfReferenceID>
+      <forceDirection unit="-">[1,0;0,1;0,0]</forceDirection>
+      <forceFunction>
+        <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+          <returnSignal ref="../../Link[forceInput]"/>
+        </SignalFunction>
+      </forceFunction>
+      <enableOpenMBV>
+        <scaleLength>0.01</scaleLength>
+        <scaleSize>0.04</scaleSize>
+      </enableOpenMBV>
+    </KineticExcitation>
+    <ExternSignalSource xmlns="http://www.mbsim-env.de/MBSimControl" name="forceInput">
+      <m:plotFeature value="signal" xmlns:m="http://www.mbsim-env.de/MBSim">true</m:plotFeature>
+      <sourceSize>2</sourceSize>
+    </ExternSignalSource>
+    <ExternSignalSink xmlns="http://www.mbsim-env.de/MBSimControl" name="positionOutput">
+      <plotFeature value="mc:signal" xmlns="http://www.mbsim-env.de/MBSim">true</plotFeature>
+      <inputSignal ref="../Link[position]"/>
+    </ExternSignalSink>
+    <ExternSignalSink xmlns="http://www.mbsim-env.de/MBSimControl" name="velocityOutput">
+      <plotFeature value="mc:signal" xmlns="http://www.mbsim-env.de/MBSim">true</plotFeature>
+      <inputSignal ref="../Link[velocity]"/>
+    </ExternSignalSink>
+  </links>
+
+  <constraints/>
+
+  <observers>
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="N" counterName="n">
+      <ContactObserver name="ChainLink_Contact_left_{n}" xmlns="http://www.mbsim-env.de/MBSim">
+        <contact ref="../Link[ChainLink_Contact_left_{n}]"/>
+        <enableOpenMBVContactPoints>
+          <size>0.015</size>
+          <offset>0</offset>
+        </enableOpenMBVContactPoints>
+        <enableOpenMBVNormalForce>
+          <transparency>0.5</transparency>
+          <scaleLength>0.005</scaleLength>
+          <scaleSize>0.075</scaleSize>
+        </enableOpenMBVNormalForce>
+      </ContactObserver>
+    </Embed>
+  </observers>
+
+  <enableOpenMBVFrameI>
+    <?OPENMBV_ID 37?>
+    <size unit="m">0.05</size>
+    <offset unit="-">0.5</offset>
+  </enableOpenMBVFrameI>
+
+</Group>
