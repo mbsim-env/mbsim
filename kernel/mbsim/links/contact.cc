@@ -337,7 +337,7 @@ namespace MBSim {
   }
 
   bool Contact::isSingleValued() const {
-    return (not(fcl and fcl->isSetValued()) and fdf);
+    return not(fcl and fcl->isSetValued());
   }
 
   void Contact::updateLinkStatus() {
