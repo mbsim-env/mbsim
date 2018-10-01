@@ -333,20 +333,11 @@ namespace MBSim {
   }
 
   bool Contact::isSetValued() const {
-    bool flag = fcl->isSetValued();
-    if (fdf)
-      flag |= fdf->isSetValued();
-    return flag;
+    return ((fcl and fcl->isSetValued()) or (fdf and fdf->isSetValued()));
   }
 
   bool Contact::isSingleValued() const {
-    if (fcl->isSetValued()) {
-      if (fdf) {
-        return not fdf->isSetValued();
-      }
-      return false;
-    }
-    return true;
+    return (not(fcl and fcl->isSetValued()) and fdf);
   }
 
   void Contact::updateLinkStatus() {

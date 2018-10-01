@@ -246,6 +246,8 @@ namespace MBSim {
       double lambdaN;
       fmatvec::VecV lambdaT;
 
+      int iN{0};
+
       bool updlaN{true}, updlaT{true};
 
       fmatvec::Vec gdTDir;
