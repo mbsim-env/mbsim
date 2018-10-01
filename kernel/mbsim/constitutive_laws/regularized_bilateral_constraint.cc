@@ -30,12 +30,4 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RegularizedBilateralConstraint)
 
-  void RegularizedBilateralConstraint::initializeUsingXML(DOMElement *element) {
-    GeneralizedForceLaw::initializeUsingXML(element);
-    DOMElement *e;
-    e = E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
-    auto *f = ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
-    setForceFunction(f);
-  }
-
 }

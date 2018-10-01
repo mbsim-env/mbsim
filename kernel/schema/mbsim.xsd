@@ -3313,12 +3313,12 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="RegularizedBilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="RegularizedBilateralConstraintType">
+  <xs:element name="RegularizedConstraint" substitutionGroup="GeneralizedForceLaw" type="RegularizedConstraintType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Konstitutives Gesetz zur Beschreibung einer regularisierten zweiseitigen Bindung. 
+        Konstitutives Gesetz zur Beschreibung einer regularisierten Bindung.
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="RegularizedBilateralConstraintType">
+  <xs:complexType name="RegularizedConstraintType">
     <xs:complexContent>
       <xs:extension base="GeneralizedForceLawType">
         <xs:sequence>
@@ -3337,27 +3337,25 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="RegularizedUnilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="RegularizedUnilateralConstraintType">
+  <xs:element name="RegularizedBilateralConstraint" substitutionGroup="RegularizedConstraint" type="RegularizedBilateralConstraintType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Konstitutives Gesetz zur Beschreibung einer regularisierten zweiseitigen Bindung.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RegularizedBilateralConstraintType">
+    <xs:complexContent>
+      <xs:extension base="RegularizedConstraintType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RegularizedUnilateralConstraint" substitutionGroup="RegularizedConstraint" type="RegularizedUnilateralConstraintType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Konstitutives Gesetz zur Beschreibung einer regularisierten einseitigen Bindung. 
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="RegularizedUnilateralConstraintType">
     <xs:complexContent>
-      <xs:extension base="GeneralizedForceLawType">
-        <xs:sequence>
-          <xs:element name="forceFunction">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Konstitutive zweiparametrige Funktion <object class="inlineeqn">\lambda=\lambda\left(g,\dot{g}\right)</object> zur Auswertung der Reaktion basierend auf relativer Distanz <object class="inlineeqn">g</object> und Geschwindigkeit <object class="inlineeqn">\dot{g}</object>.  
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType> 
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
+      <xs:extension base="RegularizedConstraintType"/>
     </xs:complexContent>
   </xs:complexType>   
 
@@ -3368,12 +3366,12 @@
   </xs:element>
   <xs:complexType name="FrictionForceLawType"/>
 
-  <xs:element name="RegularizedPlanarFriction" substitutionGroup="FrictionForceLaw" type="RegularizedPlanarFrictionType">
+  <xs:element name="RegularizedFriction" substitutionGroup="FrictionForceLaw" type="RegularizedFrictionType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Definiert beliebige ebene regularisierte und damit funktionale Reibgesetze. 
+        Definiert beliebige regularisierte und damit funktionale Reibgesetze.
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="RegularizedPlanarFrictionType">
+  <xs:complexType name="RegularizedFrictionType">
     <xs:complexContent>
       <xs:extension base="FrictionForceLawType">
         <xs:sequence>
@@ -3392,27 +3390,25 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="RegularizedSpatialFriction" substitutionGroup="FrictionForceLaw" type="RegularizedSpatialFrictionType">
+  <xs:element name="RegularizedPlanarFriction" substitutionGroup="RegularizedFriction" type="RegularizedPlanarFrictionType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Definiert beliebige ebene regularisierte und damit funktionale Reibgesetze.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RegularizedPlanarFrictionType">
+    <xs:complexContent>
+      <xs:extension base="RegularizedFrictionType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RegularizedSpatialFriction" substitutionGroup="RegularizedFriction" type="RegularizedSpatialFrictionType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert beliebige räumliche regularisierte und damit funktionale Reibgesetze. 
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="RegularizedSpatialFrictionType">
     <xs:complexContent>
-      <xs:extension base="FrictionForceLawType">
-        <xs:sequence>
-          <xs:element name="frictionForceFunction">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Reibgesetze der Form <object class="inlineeqn">\boldsymbol{F}_R=\boldsymbol{F}_R\left(\dot{\boldsymbol{g}}_T,\left\|\boldsymbol{F}_N\right\|\right)</object> basierend auf tangentialer relativer Geschwindigkeit und Betrag der Normalkraft
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType> 
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
+      <xs:extension base="RegularizedFrictionType"/>
     </xs:complexContent>
   </xs:complexType>   
 

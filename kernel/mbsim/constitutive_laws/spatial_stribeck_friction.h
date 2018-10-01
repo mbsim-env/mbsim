@@ -57,7 +57,6 @@ namespace MBSim {
       fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd) override;
       int getFrictionDirections() override { return 2; }
       bool isSticking(const fmatvec::Vec& s, double sTol) override { return nrm2(s) <= sTol; }
-      double getFrictionCoefficient(double gd) override { return (*fmu)(gd); }
       bool isSetValued() const override { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/

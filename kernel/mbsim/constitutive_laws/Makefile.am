@@ -3,16 +3,14 @@ SUBDIRS = .
 noinst_LTLIBRARIES = libconstitutivelaws.la
 libconstitutivelaws_la_SOURCES = bilateral_constraint.cc\
 				 bilateral_impact.cc\
-				 friction_force_law.cc\
-				 friction_impact_law.cc\
-				 generalized_force_law.cc\
-				 generalized_impact_law.cc\
 				 maxwell_unilateral_constraint.cc\
 				 planar_coulomb_friction.cc\
 				 planar_coulomb_impact.cc\
 				 planar_stribeck_friction.cc\
 				 planar_stribeck_impact.cc\
+				 regularized_constraint.cc\
 				 regularized_bilateral_constraint.cc\
+				 regularized_friction.cc\
 				 regularized_planar_friction.cc\
 				 regularized_spatial_friction.cc\
 				 regularized_unilateral_constraint.cc\
@@ -38,7 +36,9 @@ constitutivelawsinclude_HEADERS = bilateral_constraint.h\
 				  planar_coulomb_impact.h\
 				  planar_stribeck_friction.h\
 				  planar_stribeck_impact.h\
+				  regularized_constraint.h\
 				  regularized_bilateral_constraint.h\
+				  regularized_friction.h\
 				  regularized_planar_friction.h\
 				  regularized_spatial_friction.h\
 				  regularized_unilateral_constraint.h\

@@ -20,7 +20,7 @@
 #ifndef _REGULARIZED_UNILATERAL_CONSTRAINT_H_
 #define _REGULARIZED_UNILATERAL_CONSTRAINT_H_
 
-#include <mbsim/constitutive_laws/generalized_force_law.h>
+#include <mbsim/constitutive_laws/regularized_constraint.h>
 
 namespace MBSim {
 
@@ -29,12 +29,12 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class RegularizedUnilateralConstraint : public GeneralizedForceLaw {
+  class RegularizedUnilateralConstraint : public RegularizedConstraint {
     public:
       /**
        * \brief constructor
        */
-      RegularizedUnilateralConstraint(Function<double(double,double)> *forceFunc_=nullptr) : GeneralizedForceLaw(forceFunc_) { }
+      RegularizedUnilateralConstraint(Function<double(double,double)> *forceFunc_=nullptr) : RegularizedConstraint(forceFunc_) { }
 
       /**
        * \brief destructor
@@ -43,10 +43,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       bool isClosed(double g, double gTol) override { return g<=gTol; }
-      bool isSetValued() const override { return false; }
       /***************************************************/
-
-      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }

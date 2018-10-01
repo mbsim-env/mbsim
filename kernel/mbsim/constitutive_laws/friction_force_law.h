@@ -34,53 +34,26 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      FrictionForceLaw(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=nullptr) : Element(uniqueDummyName(this)), frictionForceFunc(frictionForceFunc_) {
-        if(frictionForceFunc)
-          frictionForceFunc->setParent(this);
+      FrictionForceLaw() : Element(uniqueDummyName(this)) {
         plotFeature[plotRecursive]=false;
       }
 
       /**
        * \brief destructor
        */
-      ~FrictionForceLaw() override { delete frictionForceFunc; frictionForceFunc = nullptr; };
-
-      void init(Element::InitStage stage, const InitConfigSet &config) override {
-        Element::init(stage, config);
-        if(frictionForceFunc)
-          frictionForceFunc->init(stage, config);
-      }
+      ~FrictionForceLaw() override = default;
 
       /* INTERFACE FOR DERIVED CLASSES */
-      virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) { return fmatvec::Vec(2); }
-      virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) { return fmatvec::Mat(2,2); }
-      virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) { return fmatvec::Vec(2); }
+      virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) { throwError("(FrictionForceLaw::project): Not implemented."); }
+      virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) { throwError("(FrictionForceLaw::diff): Not implemented."); }
+      virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) { throwError("(FrictionForceLaw::solve): Not implemented."); }
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd) { return true; }
-      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd) {
-        throwError("(FrictionForceLaw::dlaTdlaN): Not implemented.");
-        return 0;
-      }
+      virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { throwError("(FrictionForceLaw::operator()): Not implemented."); }
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd) { throwError("(FrictionForceLaw::dlaTdlaN): Not implemented."); }
       virtual int getFrictionDirections() = 0;
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) = 0;
-      virtual double getFrictionCoefficient(double gd) { return 0; }
       virtual bool isSetValued() const = 0;
-      void initializeUsingXML(xercesc::DOMElement *element) override {}
       /***************************************************/
-      
-      fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { assert(frictionForceFunc); return (*frictionForceFunc)(gd,laN); }
-
-      /** \brief Set the friction force function for use in regularisized constitutive friction laws
-       * The first input parameter to the friction force function is gd.
-       * The second input parameter to the friction force function is laN.
-       * The return value is the force vector.
-       */
-      void setFrictionForceFunction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) { 
-        frictionForceFunc=frictionForceFunc_; 
-        frictionForceFunc->setParent(this);
-      }
-
-    protected:
-      Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc;
   };
 
 }

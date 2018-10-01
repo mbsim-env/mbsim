@@ -40,6 +40,17 @@ namespace MBSim {
     return la;
   }
 
+  Vec LinearRegularizedCoulombFriction::parDer2(const Vec &gd, const double& laN) {
+    int nFric = gd.size();
+    Vec la(nFric, NONINIT);
+    double normgd = nrm2(gd(0, nFric - 1));
+    if (normgd < gdLim)
+      la(0, nFric - 1) = gd(0, nFric - 1) * (-mu / gdLim);
+    else
+      la(0, nFric - 1) = gd(0, nFric - 1) * (-mu / normgd);
+    return la;
+  }
+
   void LinearRegularizedCoulombFriction::initializeUsingXML(DOMElement *element) {
     Function<Vec(Vec,double)>::initializeUsingXML(element);
     DOMElement *e;

@@ -20,18 +20,16 @@
 #ifndef _REGULARIZED_PLANAR_FRICTION_H_
 #define _REGULARIZED_PLANAR_FRICTION_H_
 
-#include <mbsim/constitutive_laws/friction_force_law.h>
+#include <mbsim/constitutive_laws/regularized_friction.h>
 
 namespace MBSim {
 
-  class RegularizedPlanarFriction : public FrictionForceLaw {
+  class RegularizedPlanarFriction : public RegularizedFriction {
     public:
-      RegularizedPlanarFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=nullptr) : FrictionForceLaw(frictionForceFunc_) { }
+      RegularizedPlanarFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=nullptr) : RegularizedFriction(frictionForceFunc_) { }
       ~RegularizedPlanarFriction() override = default;
       int getFrictionDirections() override { return 1; }
       bool isSticking(const fmatvec::Vec& s, double sTol) override { return fabs(s(0)) <= sTol; }
-      bool isSetValued() const override { return false; }
-      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }

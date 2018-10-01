@@ -30,12 +30,4 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RegularizedPlanarFriction)
 
-  void RegularizedPlanarFriction::initializeUsingXML(DOMElement *element) {
-    FrictionForceLaw::initializeUsingXML(element);
-    DOMElement *e;
-    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionForceFunction");
-    auto *f = ObjectFactory::createAndInit<Function<Vec(Vec,double)> >(e->getFirstElementChild());
-    setFrictionForceFunction(f);
-  }
-
 }

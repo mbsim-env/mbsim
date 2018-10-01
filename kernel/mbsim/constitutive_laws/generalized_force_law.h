@@ -34,22 +34,14 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      GeneralizedForceLaw(Function<double(double,double)> *forceFunc_=nullptr) : Element(uniqueDummyName(this)), forceFunc(forceFunc_) { 
-        if(forceFunc)
-          forceFunc->setParent(this);
+      GeneralizedForceLaw() : Element(uniqueDummyName(this)) {
         plotFeature[plotRecursive]=false;
       }
 
       /**
        * \brief destructor
        */
-      ~GeneralizedForceLaw() override { delete forceFunc; forceFunc = nullptr; };
-
-      void init(Element::InitStage stage, const InitConfigSet &config) override {
-        Element::init(stage, config);
-        if(forceFunc)
-          forceFunc->init(stage, config);
-      }
+      ~GeneralizedForceLaw() override = default;
 
       /* INTERFACE FOR DERIVED CLASSES */
       /**
@@ -68,9 +60,10 @@ namespace MBSim {
        * \param minimal threshold for kinetic variable
        * \return result of prox function evaluation
        */
-      virtual double project(double la, double gdn, double r, double laMin=0) { return 0; }
-      virtual fmatvec::Vec diff(double la, double gdn, double r, double laMin=0) { return fmatvec::Vec(2, fmatvec::INIT, 0); }
-      virtual double solve(double G, double gdn) { return 0; }
+      virtual double project(double la, double gdn, double r, double laMin=0) { throwError("(GeneralizedForceLaw::project): Not implemented."); }
+      virtual fmatvec::Vec diff(double la, double gdn, double r, double laMin=0) { throwError("(GeneralizedForceLaw::diff): Not implemented."); }
+      virtual double solve(double G, double gdn) { throwError("(GeneralizedForceLaw::solve): Not implemented."); }
+      virtual double operator()(double g, double gd) { throwError("(GeneralizedForceLaw::operator()): Not implemented."); }
 
       /**
        * \param contact force parameter
@@ -85,38 +78,6 @@ namespace MBSim {
        * \return flag if the force law is setvalued
        */
       virtual bool isSetValued() const = 0;
-
-      /**
-       * \brief initialize the force law using XML
-       * \param XML element
-       */
-      void initializeUsingXML(xercesc::DOMElement *element) override {}
-      /***************************************************/
-      
-      /**
-       * \brief
-       *
-       * \param g          distance of the contact points
-       * \param gd         relative velocity in normal direction of contact points
-       * \param additional ??
-       */
-      double operator()(double g, double gd) { assert(forceFunc); return (*forceFunc)(g,gd); }
-
-      /** \brief Set the force function for use in regularisized constitutive laws
-       * The first input parameter to the force function is g.
-       * The second input parameter to the force function is gd.
-       * The return value is the force.
-       */
-      void setForceFunction(Function<double(double,double)> *forceFunc_) { 
-        forceFunc=forceFunc_; 
-        forceFunc->setParent(this);
-      }
-
-    protected:
-      /*!
-       * \brief force function for a regularized contact law
-       */
-      Function<double(double,double)> *forceFunc;
   };
 
 }

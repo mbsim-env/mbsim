@@ -20,18 +20,16 @@
 #ifndef _REGULARIZED_SPATIAL_FRICTION_H_
 #define _REGULARIZED_SPATIAL_FRICTION_H_
 
-#include <mbsim/constitutive_laws/friction_force_law.h>
+#include <mbsim/constitutive_laws/regularized_friction.h>
 
 namespace MBSim {
 
-  class RegularizedSpatialFriction : public FrictionForceLaw {
+  class RegularizedSpatialFriction : public RegularizedFriction {
     public:
-      RegularizedSpatialFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=nullptr) : FrictionForceLaw(frictionForceFunc_) { }
+      RegularizedSpatialFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=nullptr) : RegularizedFriction(frictionForceFunc_) { }
       ~RegularizedSpatialFriction() override = default;
       int getFrictionDirections() override { return 2; }
       bool isSticking(const fmatvec::Vec& s, double sTol) override { return nrm2(s) <= sTol; }
-      bool isSetValued() const override { return false; }
-      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }
