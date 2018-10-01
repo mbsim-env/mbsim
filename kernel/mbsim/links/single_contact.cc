@@ -18,7 +18,7 @@
  */
 
 #include <config.h> 
-#include <mbsim/links/contact.h>
+#include <mbsim/links/single_contact.h>
 #include <mbsim/frames/contour_frame.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/constitutive_laws/generalized_force_law.h>
@@ -35,14 +35,10 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSim {
-  extern double tP;
-  extern bool gflag;
-
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SingleContact)
 
   void SingleContact::updatewb() {
-      wb -= evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
-      wb += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
+    wb -= evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
+    wb += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
   }
 
   void SingleContact::resetUpToDate() {
@@ -52,7 +48,7 @@ namespace MBSim {
   }
 
   bool SingleContact::isSticking() const { 
-    return fdf->isSetValued() and laT.size();
+    return laT.size();
   }
 
   const double& SingleContact::evallaN() {
@@ -113,8 +109,11 @@ namespace MBSim {
   void SingleContact::updateGeneralizedTangentialForceM() {
     if(gdActive[tangential])
       lambdaT = evallaT();
-    else if(gdActive[normal])
-      lambdaT = fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections()))) * evalGeneralizedNormalForce();
+    else if(gdActive[normal]) {
+      Vec gdT = evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections()));
+      lambdaT = fdf->dlaTdlaN(gdT) * evalGeneralizedNormalForce();
+      if(gdT.T()*gdTDir<0) lambdaT *= -1.0;
+    }
     else
       lambdaT.init(0);
   }
@@ -186,8 +185,9 @@ namespace MBSim {
 
   void SingleContact::updateV(int j) {
     if (getFrictionDirections() and fdf->isSetValued() and gdActive[normal] and not gdActive[tangential]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
-      Vec3 F = evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(1, getFrictionDirections())) * fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())));
-      if(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())).T()*gdTDir<0) F*=-1.0;
+      Vec gdT = evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections()));
+      Vec3 F = evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(1, getFrictionDirections())) * fdf->dlaTdlaN(gdT);
+      if(gdT.T()*gdTDir<0) F*=-1.0;
       V[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * F;
       V[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * F;
     }
