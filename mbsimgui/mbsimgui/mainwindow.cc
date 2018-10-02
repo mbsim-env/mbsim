@@ -109,7 +109,7 @@ namespace MBSimGUI {
 #endif
     bfs::create_directories(uniqueTempDir);
 
-    QString program = (MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str();
+    QString program = QString::fromStdString((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string());
     QStringList arguments;
     arguments << "--onlyListSchemas";
     process.start(program,arguments);
@@ -130,7 +130,7 @@ namespace MBSimGUI {
 
     // initialize streams
     auto f=[this](const string &s){
-      echoView->addOutputText(s.c_str());
+      echoView->addOutputText(QString::fromStdString(s));
     };
     debugStreamFlag=std::make_shared<bool>(false);
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
@@ -149,7 +149,7 @@ namespace MBSimGUI {
         if(getStatusTime().elapsed()<250) return;
         getStatusTime().restart();
         // print to status bar
-        statusBar()->showMessage(s.c_str());
+        statusBar()->showMessage(QString::fromStdString(s));
       }));
 
     initInlineOpenMBV();
@@ -434,7 +434,6 @@ namespace MBSimGUI {
     std::list<string> arg;
     arg.emplace_back("--wst");
     arg.push_back((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
-    arg.emplace_back("/home/foerg/tmp/openmbv");
     inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
 
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
@@ -944,7 +943,7 @@ namespace MBSimGUI {
 
     arg.append(projectFile);
     process.setWorkingDirectory(uniqueTempDir_);
-    process.start((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
+    process.start(QString::fromStdString((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string()), arg);
   }
 
   void MainWindow::simulate() {
@@ -965,7 +964,7 @@ namespace MBSimGUI {
       QStringList arg;
       arg.append("--autoreload");
       arg.append(name);
-      QProcess::startDetached((MBXMLUtils::getInstallPath()/"bin"/"openmbv").string().c_str(), arg);
+      QProcess::startDetached(QString::fromStdString((MBXMLUtils::getInstallPath()/"bin"/"openmbv").string()), arg);
     }
   }
 
@@ -974,7 +973,7 @@ namespace MBSimGUI {
     if(QFile::exists(name)) {
       QStringList arg;
       arg.append(name);
-      QProcess::startDetached((MBXMLUtils::getInstallPath()/"bin"/"h5plotserie").string().c_str(), arg);
+      QProcess::startDetached(QString::fromStdString((MBXMLUtils::getInstallPath()/"bin"/"h5plotserie").string()), arg);
     }
   }
 
@@ -1006,7 +1005,7 @@ namespace MBSimGUI {
     arg.append(projectFile);
     echoView->clearOutput();
     process.setWorkingDirectory(uniqueTempDir_);
-    process.start((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
+    process.start(QString::fromStdString((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string()), arg);
   }
 
   void MainWindow::selectElement(const string& ID) {
@@ -1026,7 +1025,7 @@ namespace MBSimGUI {
       xmlHelpDialog->setWindowTitle("MBSimGUI - MBSim XML Documentation");
     }
     if(url.isEmpty())
-      xmlHelpDialog->load(QUrl(("file://"+(MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string()+"/http___www_mbsim-env_de_MBSim/index.html").c_str()));
+      xmlHelpDialog->load(QUrl::fromLocalFile(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSim"/"index.html").string())));
     else
       xmlHelpDialog->load(QUrl(url));
     xmlHelpDialog->show();
@@ -2154,7 +2153,7 @@ namespace MBSimGUI {
     s.resize(s.length()-1);
     auto i=s.rfind('\n');
     i = i==string::npos ? 0 : i+1;
-    statusBar()->showMessage(s.substr(i).c_str());
+    statusBar()->showMessage(QString::fromStdString(s.substr(i)));
   }
 
   QString MainWindow::getProjectPath() const {
