@@ -232,13 +232,6 @@ namespace MBSim {
       virtual bool isSingleValued() const { return false; }
 
       /**
-       * \return updateh is needed if set valued force law is not active?
-       *
-       * \todo: is this used anyhow?
-       */
-      virtual bool hasSmoothPart() const { return false; }
-
-      /**
        * \return are link equations active?
        */
       virtual bool isActive() const = 0;

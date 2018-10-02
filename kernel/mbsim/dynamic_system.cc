@@ -691,10 +691,6 @@ namespace MBSim {
 
     for (auto & i : linkSingleValued)
       (*i).updatehRef(hParent, j);
-
-    for (auto & i : linkSetValued)
-      if ((*i).hasSmoothPart())
-        (*i).updatehRef(hParent, j);
   }
 
   void DynamicSystem::updaterRef(const Vec &rParent, int j) {

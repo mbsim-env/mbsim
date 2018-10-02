@@ -44,14 +44,12 @@ namespace MBSimHydraulics {
       void calcSize() override { nla = 1; updSize = false; }
       void plot() override;
 
-      bool hasSmoothPart() const override {return (bilateral || (unilateral && (fabs(dpMin)>1e-6))); }
-
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       // ================================
       // Methods from init-Process
       // ================================
-      bool isSetValued() const override {return (unilateral || bilateral); }
-      bool isSingleValued() const override { return not isSetValued(); }
+      bool isSetValued() const override {return (unilateral or bilateral); }
+      bool isSingleValued() const override { return (not isSetValued()) or (bilateral or (unilateral and (fabs(dpMin)>1e-6))); }
       void calcgdSize(int j) override {gdSize=active?1:0; }
       void calcsvSize() override {svSize=isSetValued()?1:0; }
       void updatehRef(const fmatvec::Vec& hRef, int i=0) override;

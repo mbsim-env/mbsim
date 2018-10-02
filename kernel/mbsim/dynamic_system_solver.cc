@@ -220,7 +220,7 @@ namespace MBSim {
       }
 
       for (unsigned int i = 0; i < link.size(); i++) {
-        if (link[i]->isSingleValued() or (link[i]->isSetValued() and link[i]->hasSmoothPart())) {
+        if (link[i]->isSingleValued()) {
           int level = link[i]->computeLevel();
           for(int j=linkOrdered.size(); j<=level; j++) {
             vector<Link*> vec;

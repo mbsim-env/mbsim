@@ -222,7 +222,7 @@ namespace MBSimHydraulics {
       void setCavitationPressure(double pCav_) {pCav=pCav_; }
 
       bool isSetValued() const override {return true; }
-      bool hasSmoothPart() const override {return true; }
+      bool isSingleValued() const override {return true; }
       bool isActive() const override {return active; }
 
       void calcxSize() override {xSize=1; }
