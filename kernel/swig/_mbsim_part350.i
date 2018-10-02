@@ -50,7 +50,9 @@ namespace MBSim {
   class PlanarCoulombImpact;
   class PlanarStribeckFriction;
   class PlanarStribeckImpact;
+  class RegularizedConstraint;
   class RegularizedBilateralConstraint;
+  class RegularizedFriction;
   class RegularizedPlanarFriction;
   class RegularizedSpatialFriction;
   class RegularizedUnilateralConstraint;
