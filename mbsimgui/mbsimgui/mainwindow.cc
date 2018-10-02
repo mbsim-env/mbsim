@@ -457,7 +457,7 @@ namespace MBSimGUI {
       actionEigenanalysis->setDisabled(true);
       actionFrequencyResponse->setDisabled(true);
       xercesc::DOMDocument* oldDoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
-      oldDoc->setDocumentURI(doc->getDocumentURI());//X()%QString("file://"+QDir::currentPath()+"/Project.mbsimprj.xml").toStdString());
+      oldDoc->setDocumentURI(doc->getDocumentURI());
       undos.push_back(oldDoc);
       if(undos.size() > maxUndo)
         undos.pop_front();
@@ -629,7 +629,7 @@ namespace MBSimGUI {
       delete project;
 
       doc = impl->createDocument();
-      doc->setDocumentURI(X()%QString("file://"+QDir::currentPath()+"/Project.mbsimprj.xml").toStdString());
+      doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsimprj.xml").toString().toStdString());
 
       project = new Project;
       project->createXMLElement(doc);
@@ -697,7 +697,7 @@ namespace MBSimGUI {
     QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", getProjectPath()+"/"+project->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
     if(not(file.isEmpty())) {
       file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
-      doc->setDocumentURI(X()%QString("file://"+file).toStdString());
+      doc->setDocumentURI(X()%QUrl::fromLocalFile(file).toString().toStdString());
       projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       setWindowTitle(projectFile+"[*]");
@@ -2156,7 +2156,7 @@ namespace MBSimGUI {
   }
 
   QString MainWindow::getProjectPath() const {
-    return QFileInfo(QUrl(QString::fromStdString(X()%doc->getDocumentURI())).toLocalFile()).absolutePath();
+    return QUrl(QString::fromStdString(X()%doc->getDocumentURI())).toLocalFile();
   }
 
 }
