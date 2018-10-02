@@ -108,9 +108,8 @@ namespace MBSim {
     for (auto & i : object)
       i->updateh(k);
 
-    for(auto & i : linkOrdered)
-      for(unsigned int j=0; j<i.size(); j++)
-	i[j]->updateh(k);
+    for(auto & i : linkSingleValued)
+	i->updateh(k);
   }
 
   void DynamicSystem::updatedq() {

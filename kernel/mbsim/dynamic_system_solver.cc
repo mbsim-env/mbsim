@@ -210,26 +210,6 @@ namespace MBSim {
       for (unsigned int i = 0; i < bufGraph.size(); i++)
         addGroup(bufGraph[i]);
 
-      for (unsigned int i = 0; i < eleList.size(); i++) {
-        int level = eleList[i]->computeLevel();
-        for(int j=elementOrdered.size(); j<=level; j++) {
-          vector<Element*> vec;
-          elementOrdered.push_back(vec);
-        }
-        elementOrdered[level].push_back(eleList[i]);
-      }
-
-      for (unsigned int i = 0; i < link.size(); i++) {
-        if (link[i]->isSingleValued()) {
-          int level = link[i]->computeLevel();
-          for(int j=linkOrdered.size(); j<=level; j++) {
-            vector<Link*> vec;
-            linkOrdered.push_back(vec);
-          }
-          linkOrdered[level].push_back(link[i]);
-        }
-      }
-
       calcqSize();
       setqInd(0);
       for(int i=0; i<2; i++) {
@@ -278,23 +258,6 @@ namespace MBSim {
         if (dynamic_cast<Graph*>(dynamicsystem[i]))
           static_cast<Graph*>(dynamicsystem[i])->printGraph();
 
-      if(msgAct(Debug)) {
-        msg(Debug) << "Content of element graph "<< name << ":" << endl;
-        for(unsigned int i=0; i<elementOrdered.size(); i++) {
-          msg(Debug) << "  Elements in level "<< i << ":"<< endl;
-          for(unsigned int j=0; j<elementOrdered[i].size(); j++)
-            msg(Debug) << "    "<< elementOrdered[i][j]->getName() << " " << elementOrdered[i][j]->getPath()
-                       << " " << boost::core::demangle(typeid(*elementOrdered[i][j]).name())<<endl;
-        }
-
-        msg(Debug) << "Content of link graph "<< name << ":" << endl;
-        for(unsigned int i=0; i<linkOrdered.size(); i++) {
-          msg(Debug) << "  Elements in level "<< i << ":"<< endl;
-          for(unsigned int j=0; j<linkOrdered[i].size(); j++)
-            msg(Debug) << "    "<< linkOrdered[i][j]->getName() << " " << linkOrdered[i][j]->getPath() << " "
-                       << boost::core::demangle(typeid(*linkOrdered[i][j]).name())<<endl;
-        }
-      }
       setDynamicSystemSolver(this);
 
       MParent.resize(getuSize(0));

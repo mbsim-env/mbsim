@@ -782,8 +782,6 @@ namespace MBSim {
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> inverseKineticsLink;
       std::vector<Observer*> observer;
-      std::vector< std::vector<Element*> > elementOrdered;
-      std::vector< std::vector<Link*> > linkOrdered;
       std::vector<Constraint*> constraint;
 
       /** 
