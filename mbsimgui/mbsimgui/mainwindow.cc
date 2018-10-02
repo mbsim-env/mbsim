@@ -442,6 +442,8 @@ namespace MBSimGUI {
   }
 
   MainWindow::~MainWindow() {
+    centralWidget()->layout()->removeWidget(inlineOpenMBVMW);
+    delete inlineOpenMBVMW;
     // use nothrow boost::filesystem functions to avoid exceptions in this dtor
     boost::system::error_code ec;
     bfs::remove_all(uniqueTempDir, ec);
