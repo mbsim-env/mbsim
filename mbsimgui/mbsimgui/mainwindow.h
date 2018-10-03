@@ -161,7 +161,7 @@ namespace MBSimGUI {
       void embeddingViewClicked();
       void solverViewClicked();
       void projectViewClicked();
-      void newProject(bool ask=true);
+      void newProject();
       void loadProject();
       bool saveProjectAs();
       bool saveProject(const QString &fileName="", bool processDocument=true, bool modifyStatus=true);

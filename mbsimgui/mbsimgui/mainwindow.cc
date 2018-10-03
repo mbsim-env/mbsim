@@ -361,7 +361,7 @@ namespace MBSimGUI {
     if(projectFile.size())
       loadProject(QDir::current().absoluteFilePath(projectFile));
     else
-      newProject(false);
+      newProject();
 
     setAcceptDrops(true);
 
@@ -602,7 +602,7 @@ namespace MBSimGUI {
     embeddingView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
   }
 
-  void MainWindow::newProject(bool ask) {
+  void MainWindow::newProject() {
     if(maybeSave()) {
       undos.clear();
       elementBuffer.first = NULL;
