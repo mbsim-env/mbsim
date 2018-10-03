@@ -649,7 +649,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadProject(const QString &file) {
-    if(not(file.isEmpty())) {
+    if(QFile::exists(file)) {
       undos.clear();
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
@@ -683,6 +683,8 @@ namespace MBSimGUI {
       rebuildTree();
       mbsimxml(1);
     }
+    else
+      QMessageBox::warning(nullptr, "Project load", "Project file does not exist.");
   }
 
   void MainWindow::loadProject() {
