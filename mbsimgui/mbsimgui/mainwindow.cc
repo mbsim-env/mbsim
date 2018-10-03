@@ -691,7 +691,8 @@ namespace MBSimGUI {
       QString file=QFileDialog::getOpenFileName(nullptr, "XML project files", getProjectPath(), "XML files (*.mbsimprj.xml)");
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-      loadProject(file);
+      if(not file.isEmpty())
+        loadProject(file);
     }
   }
 
