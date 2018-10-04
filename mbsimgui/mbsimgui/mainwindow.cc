@@ -697,7 +697,7 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProjectAs() {
-    QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", getProjectPath()+"/"+project->getName()+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
+    QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", getProjectPath(), "XML files (*.mbsimprj.xml)");
     if(not(file.isEmpty())) {
       file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
       doc->setDocumentURI(X()%QUrl::fromLocalFile(file).toString().toStdString());
