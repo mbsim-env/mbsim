@@ -664,6 +664,7 @@ namespace MBSimGUI {
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
       actionSaveProject->setDisabled(false);
+      projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       std::string message;
       try { 
@@ -678,7 +679,7 @@ namespace MBSimGUI {
         message = "Unknown exception.";
         return;
       }
-      setWindowTitle(QDir::current().relativeFilePath(file)+"[*]");
+      setWindowTitle(projectFile+"[*]");
       rebuildTree();
       mbsimxml(1);
     }
