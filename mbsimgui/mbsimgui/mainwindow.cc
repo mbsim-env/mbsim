@@ -906,6 +906,7 @@ namespace MBSimGUI {
       fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Validate "<<D(doc)->getDocumentFilename().string()<<endl;
       D(doc)->validate();
       root = doc->getDocumentElement();
+      vector<boost::filesystem::path> dependencies;
       shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
       Preprocess::preprocess(parser, eval, dependencies, root);
     }
