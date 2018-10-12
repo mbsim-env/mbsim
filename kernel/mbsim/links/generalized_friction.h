@@ -24,7 +24,6 @@
 
 namespace MBSim {
 
-  class RigidBody;
   class FrictionForceLaw;
   class FrictionImpactLaw;
 
