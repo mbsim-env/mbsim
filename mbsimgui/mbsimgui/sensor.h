@@ -80,6 +80,27 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new FunctionSensorPropertyDialog(this);}
   };
 
+  class LinkSensor : public Sensor {
+    public:
+      QString getType() const override { return "LinkSensor"; }
+  };
+
+  class GeneralizedRelativePositionSensor : public LinkSensor {
+    public:
+      QString getType() const override { return "GeneralizedRelativePositionSensor"; }
+
+  };
+
+  class GeneralizedRelativeVelocitySensor : public LinkSensor {
+    public:
+      QString getType() const override { return "GeneralizedRelativeVelocitySensor"; }
+  };
+
+  class GeneralizedForceSensor : public LinkSensor {
+    public:
+      QString getType() const override { return "GeneralizedForceSensor"; }
+  };
+
 }
 
 #endif

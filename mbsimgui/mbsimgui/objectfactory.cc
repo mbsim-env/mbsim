@@ -236,6 +236,12 @@ namespace MBSimGUI {
       return new ExternSignalSource;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")
       return new ExternSignalSink;
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativePositionSensor")
+      return new GeneralizedRelativePositionSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativeVelocitySensor")
+      return new GeneralizedRelativeVelocitySensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedForceSensor")
+      return new GeneralizedForceSensor;
     else
       return new UnknownLink;
     return nullptr;
