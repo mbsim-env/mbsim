@@ -462,6 +462,72 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="ContactSensor" abstract="true" substitutionGroup="Sensor" type="ContactSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen von Daten eines Contacts.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ContactSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="contact">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Pfad des Contacts
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:ContactReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="singleContactNumber" type="pv:indexFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedRelativeContactPositionSensor" substitutionGroup="ContactSensor" type="GeneralizedRelativeContactPositionSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen des generalisierten, relativen Abstands eines Contacts.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedRelativeContactPositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="ContactSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedRelativeContactVelocitySensor" substitutionGroup="ContactSensor" type="GeneralizedRelativeContactVelocitySensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der generalisierten, relativen Geschwindigkeit eines Contacts.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedRelativeContactVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="ContactSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedContactForceSensor" substitutionGroup="ContactSensor" type="GeneralizedContactForceSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der generalisierten Kraft eines Contacts.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedContactForceSensorType">
+    <xs:complexContent>
+      <xs:extension base="ContactSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Multiplexer" substitutionGroup="Signal" type="MultiplexerType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">

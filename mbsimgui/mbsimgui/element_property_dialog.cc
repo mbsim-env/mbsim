@@ -2811,10 +2811,21 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedPositionSensorPropertyDialog::GeneralizedPositionSensorPropertyDialog(GeneralizedPositionSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : ObjectSensorPropertyDialog(sensor,parent,f) {
+  LinkSensorPropertyDialog::LinkSensorPropertyDialog(LinkSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : SensorPropertyDialog(sensor,parent,f) {
+    link = new ExtWidget("Link of reference",new ElementOfReferenceWidget<Link>(sensor,nullptr),false,false,MBSIMCONTROL%"link");
+    addToTab("General", link);
   }
 
-  GeneralizedVelocitySensorPropertyDialog::GeneralizedVelocitySensorPropertyDialog(GeneralizedVelocitySensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : ObjectSensorPropertyDialog(sensor,parent,f) {
+  DOMElement* LinkSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    link->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* LinkSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    link->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
   }
 
   FrameSensorPropertyDialog::FrameSensorPropertyDialog(FrameSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : SensorPropertyDialog(sensor,parent,f) {
@@ -2834,18 +2845,6 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  PositionSensorPropertyDialog::PositionSensorPropertyDialog(PositionSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : FrameSensorPropertyDialog(sensor,parent,f) {
-  }
-
-  OrientationSensorPropertyDialog::OrientationSensorPropertyDialog(OrientationSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : FrameSensorPropertyDialog(sensor,parent,f) {
-  }
-
-  VelocitySensorPropertyDialog::VelocitySensorPropertyDialog(VelocitySensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : FrameSensorPropertyDialog(sensor,parent,f) {
-  }
-
-  AngularVelocitySensorPropertyDialog::AngularVelocitySensorPropertyDialog(AngularVelocitySensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : FrameSensorPropertyDialog(sensor,parent,f) {
-  }
-
   FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : SensorPropertyDialog(sensor,parent,f) {
     function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(sensor,false),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
@@ -2862,6 +2861,24 @@ namespace MBSimGUI {
     function->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
+
+  ContactSensorPropertyDialog::ContactSensorPropertyDialog(ContactSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : SensorPropertyDialog(sensor,parent,f) {
+    contact = new ExtWidget("Contact of reference",new ElementOfReferenceWidget<Contact>(sensor,nullptr),false,false,MBSIMCONTROL%"contact");
+    addToTab("General", contact);
+  }
+
+  DOMElement* ContactSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    contact->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ContactSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    contact->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
 
   MultiplexerPropertyDialog::MultiplexerPropertyDialog(Multiplexer *signal, QWidget * parent, const Qt::WindowFlags& f) : SignalPropertyDialog(signal,parent,f) {
     inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal),"Signal",0,2),false,false,"");

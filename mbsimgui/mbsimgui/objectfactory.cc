@@ -214,6 +214,12 @@ namespace MBSimGUI {
       return new GeneralizedPositionSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")
       return new GeneralizedVelocitySensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativePositionSensor")
+      return new GeneralizedRelativePositionSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativeVelocitySensor")
+      return new GeneralizedRelativeVelocitySensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedForceSensor")
+      return new GeneralizedForceSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"PositionSensor")
       return new PositionSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"OrientationSensor")
@@ -224,6 +230,12 @@ namespace MBSimGUI {
       return new AngularVelocitySensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"FunctionSensor")
       return new FunctionSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativeContactPositionSensor")
+      return new GeneralizedRelativeContactPositionSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativeContactVelocitySensor")
+      return new GeneralizedRelativeContactVelocitySensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedContactForceSensor")
+      return new GeneralizedContactForceSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"Multiplexer")
       return new Multiplexer;
     if(E(element)->getTagName()==MBSIMCONTROL%"Demultiplexer")
@@ -236,12 +248,6 @@ namespace MBSimGUI {
       return new ExternSignalSource;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")
       return new ExternSignalSink;
-    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativePositionSensor")
-      return new GeneralizedRelativePositionSensor;
-    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativeVelocitySensor")
-      return new GeneralizedRelativeVelocitySensor;
-    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedForceSensor")
-      return new GeneralizedForceSensor;
     else
       return new UnknownLink;
     return nullptr;

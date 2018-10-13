@@ -797,6 +797,15 @@ namespace MBSimGUI {
     action = new QAction("Add generalized force sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedForceSensor()));
     addAction(action);
+    action = new QAction("Add generalized relative contact position sensor", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedRelativeContactPositionSensor()));
+    addAction(action);
+    action = new QAction("Add generalized relative contact velocity sensor", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedRelativeContactVelocitySensor()));
+    addAction(action);
+    action = new QAction("Add generalized contact force sensor", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedContactForceSensor()));
+    addAction(action);
   }
 
   void SensorsContextMenu::addGeneralizedPositionSensor() {
@@ -837,6 +846,18 @@ namespace MBSimGUI {
 
   void SensorsContextMenu::addGeneralizedForceSensor() {
     mw->addLink(new GeneralizedForceSensor, element);
+  }
+
+  void SensorsContextMenu::addGeneralizedRelativeContactPositionSensor() {
+    mw->addLink(new GeneralizedRelativeContactPositionSensor, element);
+  }
+
+  void SensorsContextMenu::addGeneralizedRelativeContactVelocitySensor() {
+    mw->addLink(new GeneralizedRelativeContactVelocitySensor, element);
+  }
+
+  void SensorsContextMenu::addGeneralizedContactForceSensor() {
+    mw->addLink(new GeneralizedContactForceSensor, element);
   }
 
 }
