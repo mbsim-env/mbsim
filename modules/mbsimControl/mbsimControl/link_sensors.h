@@ -34,12 +34,12 @@ namespace MBSimControl {
    */
   class LinkSensor : public Sensor {
     public:
-      LinkSensor(const std::string &name) : Sensor(name), link(nullptr) { }
+      LinkSensor(const std::string &name) : Sensor(name) { }
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
-      void setLink(MBSim::Link * link_) { link=link_; }
+      void setLink(MBSim::Link * link_) { link = link_; }
     protected:
-      MBSim::Link * link;
+      MBSim::Link *link{nullptr};
       std::string linkString;
   };
 
@@ -49,18 +49,29 @@ namespace MBSimControl {
    */
   class GeneralizedRelativePositionSensor : public LinkSensor {
     public:
-      GeneralizedRelativePositionSensor(const std::string &name="") : LinkSensor(name) {}
+      GeneralizedRelativePositionSensor(const std::string &name="") : LinkSensor(name) { }
       int getSignalSize() const override;
       void updateSignal() override;
   };
 
   /*!
-   * \brief AbsoluteVelocitySensor
+   * \brief GeneralizedRelativeVelocitySensor
    * \author Markus Schneider
    */
   class GeneralizedRelativeVelocitySensor : public LinkSensor {
     public:
-      GeneralizedRelativeVelocitySensor(const std::string &name="") : LinkSensor(name) {}
+      GeneralizedRelativeVelocitySensor(const std::string &name="") : LinkSensor(name) { }
+      int getSignalSize() const override;
+      void updateSignal() override;
+  };
+
+  /*!
+   * \brief GeneralizedForceSensor
+   * \author Martin Foerg
+   */
+  class GeneralizedForceSensor : public LinkSensor {
+    public:
+      GeneralizedForceSensor(const std::string &name="") : LinkSensor(name) { }
       int getSignalSize() const override;
       void updateSignal() override;
   };

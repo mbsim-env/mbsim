@@ -426,7 +426,7 @@
   <xs:element name="GeneralizedRelativePositionSensor" substitutionGroup="LinkSensor" type="GeneralizedRelativePositionSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen des relativen Abstands g eines Links.
+        Sensor zum Auslesen des generalisierten, relativen Abstands eines Links.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -436,14 +436,27 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="LinkVelocitySensor" substitutionGroup="LinkSensor" type="LinkVelocitySensorType">
+  <xs:element name="GeneralizedRelativeVelocitySensor" substitutionGroup="LinkSensor" type="GeneralizedRelativeVelocitySensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen von gd eines Links.
+        Sensor zum Auslesen der generalisierten, relativen Geschwindigkeit eines Links.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="LinkVelocitySensorType">
+  <xs:complexType name="GeneralizedRelativeVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="LinkSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedForceSensor" substitutionGroup="LinkSensor" type="GeneralizedForceSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der generealisierten Kraft eines Links.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedForceSensorType">
     <xs:complexContent>
       <xs:extension base="LinkSensorType"/>
     </xs:complexContent>

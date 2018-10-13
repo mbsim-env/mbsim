@@ -68,4 +68,15 @@ namespace MBSimControl {
     upds = false;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedForceSensor)
+
+  int GeneralizedForceSensor::getSignalSize() const {
+    return link->getGeneralizedForceSize();
+  }
+
+  void GeneralizedForceSensor::updateSignal() {
+    s = link->evalGeneralizedForce();
+    upds = false;
+  }
+
 }
