@@ -115,6 +115,9 @@ namespace MBSimGUI {
   class UnknownGroup : public Group {
     public:
       QString getType() const override { return "UnknownGroup"; }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override { return Element::processIDAndHref(element); }
+      xercesc::DOMElement* processHref(xercesc::DOMElement* element) override { return Element::processHref(element); }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override { return Element::initializeUsingXML(element); }
       ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
   };
 
