@@ -790,7 +790,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveDataAs() {
-    QString dir = QFileDialog::getExistingDirectory (nullptr, "Export simulation data", ".");
+    QString dir = QFileDialog::getExistingDirectory (nullptr, "Export simulation data", getProjectPath());
     if(dir != "") {
       QDir directory(dir);
       QMessageBox::StandardButton ret = QMessageBox::Ok;
@@ -810,7 +810,7 @@ namespace MBSimGUI {
   void MainWindow::saveMBSimH5DataAs() {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(nullptr, "Export MBSim H5 file", QString("./")+model->getItem(index)->getItemData()->getName()+".mbsim.h5", "H5 files (*.mbsim.h5)");
+    QString file=QFileDialog::getSaveFileName(nullptr, "Export MBSim H5 file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".mbsim.h5"), "H5 files (*.mbsim.h5)");
     if(file!="") {
       saveMBSimH5Data(file);
     }
@@ -823,7 +823,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveOpenMBVDataAs() {
-    QString dir = QFileDialog::getExistingDirectory (nullptr, "Export OpenMBV data", ".");
+    QString dir = QFileDialog::getExistingDirectory (nullptr, "Export OpenMBV data", getProjectPath());
     if(dir != "") {
       QDir directory(dir);
       QMessageBox::StandardButton ret = QMessageBox::Ok;
@@ -849,7 +849,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveStateVectorAs() {
-    QString file=QFileDialog::getSaveFileName(nullptr, "Export state vector file", "./statevector.asc", "ASCII files (*.asc)");
+    QString file=QFileDialog::getSaveFileName(nullptr, "Export state vector file", getProjectDir().absoluteFilePath("statevector.asc"), "ASCII files (*.asc)");
     if(file!="") {
       saveStateVector(file);
     }
@@ -864,7 +864,7 @@ namespace MBSimGUI {
   void MainWindow::saveEigenanalysisAs() {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(nullptr, "Export eigenanalysis file", QString("./")+model->getItem(index)->getItemData()->getName()+".eigenanalysis.mat", "mat files (*.eigenanalysis.mat)");
+    QString file=QFileDialog::getSaveFileName(nullptr, "Export eigenanalysis file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".eigenanalysis.mat"), "mat files (*.eigenanalysis.mat)");
     if(file!="") {
       saveEigenanalysis(file);
     }
