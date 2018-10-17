@@ -26,7 +26,9 @@
 #include "mainwindow.h"
 #include <QFileInfo>
 #include <QDir>
+#include <QUrl>
 #include <xercesc/dom/DOMDocument.hpp>
+#include <mbxmlutils/eval.h>
 
 namespace MBSimGUI {
 
@@ -39,16 +41,25 @@ namespace MBSimGUI {
       public:
         static T* create(xercesc::DOMElement *element);
 
-        static T* createAndInit(xercesc::DOMElement *ele1) {
+        static T* createAndInit(xercesc::DOMElement *ele1, EmbedItemData* item=nullptr) {
           T *object;
           std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
             bool embededParam = false;
             xercesc::DOMElement *ele2 = nullptr;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-              QString fileName = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"));
-              QFileInfo fileInfo(MBXMLUtils::E(ele1)->convertPath(fileName.toStdString()).string().c_str());
-              xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
+              mw->updateParameters(item,false);
+              std::string evaltmp;
+              try{
+                evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("parameterHref"),ele1,false));
+              }
+              catch(MBXMLUtils::DOMEvalException e) {
+                std::cout << e.getMessage() << std::endl;
+              }
+              catch(...) {
+                std::cout << "Unknwon error" << std::endl;
+              }
+              xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
               MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
               param = Parameter::initializeParametersUsingXML(doc->getDocumentElement());
               embededParam = true;
@@ -63,18 +74,27 @@ namespace MBSimGUI {
               ele2 = ele1->getFirstElementChild();
             bool embeded = false;
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
-              QString fileName = QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"));
-              QFileInfo fileInfo(MBXMLUtils::E(ele1)->convertPath(fileName.toStdString()).string().c_str());
-              xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%fileInfo.canonicalFilePath().toStdString());
+              if(not embededParam) mw->updateParameters(item,false);
+              std::string evaltmp;
+              try{
+                evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));
+              }
+              catch(MBXMLUtils::DOMEvalException e) {
+                std::cout << e.getMessage() << std::endl;
+              }
+              catch(...) {
+                std::cout << "Unknwon error" << std::endl;
+              }
+              xercesc::DOMDocument *doc = parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
               MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
               ele2 = doc->getDocumentElement();
               embeded = true;
             }
             object=create(ele2);
             if(object) {
-              object->initializeUsingXML(ele2);
               for(auto & i : param)
                 object->addParameter(i);
+              object->initializeUsingXML(ele2);
             }
             object->setEmbedXMLElement(ele1);
             if(embededParam) object->setEmbededParameters(embededParam);

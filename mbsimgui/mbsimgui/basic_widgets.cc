@@ -281,16 +281,16 @@ namespace MBSimGUI {
     QString file = getFile();
     if(quote) file = file.mid(1,file.length()-2);
     if(mode==0) 
-      file = QFileDialog::getOpenFileName(nullptr, description, path->isChecked()?file:mw->getProjectPath()+"/"+file, extensions);
+      file = QFileDialog::getOpenFileName(nullptr, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), extensions);
     else if(mode==1)
-      file = QFileDialog::getSaveFileName(nullptr, description, path->isChecked()?file:mw->getProjectPath()+"/"+file, extensions);
+      file = QFileDialog::getSaveFileName(nullptr, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), extensions);
     else
-      file = QFileDialog::getExistingDirectory(nullptr, description, path->isChecked()?file:mw->getProjectPath()+"/"+file);
+      file = QFileDialog::getExistingDirectory(nullptr, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file));
     if(not file.isEmpty()) {
       if(path->isChecked())
-        filePath->setText(quote?("\""+QDir(mw->getProjectPath()).absoluteFilePath(file)+"\""):QDir(mw->getProjectPath()).absoluteFilePath(file));
+        filePath->setText(quote?("\""+mw->getProjectDir().absoluteFilePath(file)+"\""):mw->getProjectDir().absoluteFilePath(file));
       else
-        filePath->setText(quote?("\""+QDir(mw->getProjectPath()).relativeFilePath(file)+"\""):QDir(mw->getProjectPath()).relativeFilePath(file));
+        filePath->setText(quote?("\""+mw->getProjectDir().relativeFilePath(file)+"\""):mw->getProjectDir().relativeFilePath(file));
     }
   }
 
@@ -315,9 +315,9 @@ namespace MBSimGUI {
   void FileWidget::changePath(int i) {
     QString file = quote?getFile().mid(1,getFile().length()-2):getFile();
     if(i)
-      filePath->setText(quote?("\""+QDir(mw->getProjectPath()).absoluteFilePath(file)+"\""):QDir(mw->getProjectPath()).absoluteFilePath(file));
+      filePath->setText(quote?("\""+mw->getProjectDir().absoluteFilePath(file)+"\""):mw->getProjectDir().absoluteFilePath(file));
     else
-      filePath->setText(quote?("\""+QDir(mw->getProjectPath()).relativeFilePath(file)+"\""):QDir(mw->getProjectPath()).relativeFilePath(file));
+      filePath->setText(quote?("\""+mw->getProjectDir().relativeFilePath(file)+"\""):mw->getProjectDir().relativeFilePath(file));
   }
 
   SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {

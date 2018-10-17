@@ -305,7 +305,7 @@ namespace MBSimGUI {
     DOMElement *ELE=frames->getFirstElementChild();
     Frame *f;
     while(ELE) {
-      f = Embed<Frame>::createAndInit(ELE);
+      f = Embed<Frame>::createAndInit(ELE,this);
       if(f) addFrame(f);
       ELE=ELE->getNextElementSibling();
     }
@@ -314,7 +314,7 @@ namespace MBSimGUI {
     ELE=contours->getFirstElementChild();
     Contour *c;
     while(ELE) {
-      c = Embed<Contour>::createAndInit(ELE);
+      c = Embed<Contour>::createAndInit(ELE,this);
       if(c) addContour(c);
       ELE=ELE->getNextElementSibling();
     }
@@ -323,7 +323,7 @@ namespace MBSimGUI {
     ELE=groups->getFirstElementChild();
     Group *g;
     while(ELE) {
-      g = Embed<Group>::createAndInit(ELE);
+      g = Embed<Group>::createAndInit(ELE,this);
       if(g) addGroup(g);
       ELE=ELE->getNextElementSibling();
     }
@@ -332,7 +332,7 @@ namespace MBSimGUI {
     ELE=objects->getFirstElementChild();
     Object *o;
     while(ELE) {
-      o = Embed<Object>::createAndInit(ELE);
+      o = Embed<Object>::createAndInit(ELE,this);
       if(o) addObject(o);
       ELE=ELE->getNextElementSibling();
     }
@@ -341,7 +341,7 @@ namespace MBSimGUI {
     ELE=links->getFirstElementChild();
     Link *l;
     while(ELE) {
-      l = Embed<Link>::createAndInit(ELE);
+      l = Embed<Link>::createAndInit(ELE,this);
       if(l) addLink(l);
       ELE=ELE->getNextElementSibling();
     }
@@ -350,7 +350,7 @@ namespace MBSimGUI {
     ELE=constraints->getFirstElementChild();
     Constraint *constraint;
     while(ELE) {
-      constraint = Embed<Constraint>::createAndInit(ELE);
+      constraint = Embed<Constraint>::createAndInit(ELE,this);
       if(constraint) addConstraint(constraint);
       ELE=ELE->getNextElementSibling();
     }
@@ -359,7 +359,7 @@ namespace MBSimGUI {
     ELE=observers->getFirstElementChild();
     Observer *obsrv;
     while(ELE) {
-      obsrv = Embed<Observer>::createAndInit(ELE);
+      obsrv = Embed<Observer>::createAndInit(ELE,this);
       if(obsrv) addObserver(obsrv);
       ELE=ELE->getNextElementSibling();
     }

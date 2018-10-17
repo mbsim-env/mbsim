@@ -1514,12 +1514,12 @@ namespace MBSimGUI {
     int status = dialog->exec();
     if(not status) return;
     ImportWidget *importWidget = dialog->getImportWidget();
-    QString dir = mw->getProjectPath()+"/";
+    QDir dir = mw->getProjectDir();
     ImportFEMData import;
     if(importWidget->getNumberOfModesChecked())
       import.setNumberOfModes(importWidget->getNumberOfModes());
     try {
-      import.read((dir+importWidget->getResultFile().remove("."+QFileInfo(importWidget->getResultFile()).suffix())).toStdString());
+      import.read((dir.absoluteFilePath(importWidget->getResultFile()).remove("."+QFileInfo(importWidget->getResultFile()).suffix())).toStdString());
     }
     catch(exception &err) {
       QMessageBox::warning(nullptr, "Import error", QString::fromStdString(err.what()));
@@ -1542,7 +1542,7 @@ namespace MBSimGUI {
         Pdm->setActive(true);
         if(importWidget->getFilePdmChecked()) {
           static_cast<ChoiceWidget2*>(Pdm->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenamePdm()).toStdString().c_str(),import.getPdm());
+          dump((dir.absoluteFilePath(importWidget->getFilenamePdm())).toStdString().c_str(),import.getPdm());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePdm());
         }
         else {
@@ -1555,7 +1555,7 @@ namespace MBSimGUI {
         static_cast<ChoiceWidget2*>(rPdm->getWidget())->setIndex(1);
         if(importWidget->getFilerPdmChecked()) {
           static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenamerPdm()).toStdString().c_str(),import.getrPdm());
+          dump((dir.absoluteFilePath(importWidget->getFilenamerPdm())).toStdString().c_str(),import.getrPdm());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamerPdm());
         }
         else {
@@ -1568,7 +1568,7 @@ namespace MBSimGUI {
         static_cast<ChoiceWidget2*>(PPdm->getWidget())->setIndex(1);
         if(importWidget->getFilePPdmChecked()) {
           static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenamePPdm()).toStdString().c_str(),import.getPPdm());
+          dump((dir.absoluteFilePath(importWidget->getFilenamePPdm())).toStdString().c_str(),import.getPPdm());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePPdm());
         }
         else {
@@ -1580,7 +1580,7 @@ namespace MBSimGUI {
         Ke->setActive(true);
         if(importWidget->getFileKeChecked()) {
           static_cast<ChoiceWidget2*>(Ke->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenameKe()).toStdString().c_str(),import.getKe());
+          dump((dir.absoluteFilePath(importWidget->getFilenameKe())).toStdString().c_str(),import.getKe());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Ke->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameKe());
         }
         else {
@@ -1593,7 +1593,7 @@ namespace MBSimGUI {
         static_cast<ChoiceWidget2*>(Phi->getWidget())->setIndex(1);
         if(importWidget->getFilePhiChecked()) {
           static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenamePhi()).toStdString().c_str(),import.getPhi());
+          dump((dir.absoluteFilePath(importWidget->getFilenamePhi())).toStdString().c_str(),import.getPhi());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePhi());
         }
         else {
@@ -1606,7 +1606,7 @@ namespace MBSimGUI {
         static_cast<ChoiceWidget2*>(sigmahel->getWidget())->setIndex(1);
         if(importWidget->getFileSrChecked()) {
           static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenameSr()).toStdString().c_str(),import.getSr());
+          dump((dir.absoluteFilePath(importWidget->getFilenameSr())).toStdString().c_str(),import.getSr());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameSr());
         }
         else {
@@ -1628,7 +1628,7 @@ namespace MBSimGUI {
       static_cast<ChoiceWidget2*>(r->getWidget())->setIndex(1);
       if(importWidget->getFileu0Checked()) {
         static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->setIndex(1);
-        dump((dir+importWidget->getFilenameu0()).toStdString().c_str(),import.getu0());
+        dump((dir.absoluteFilePath(importWidget->getFilenameu0())).toStdString().c_str(),import.getu0());
         static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameu0());
       }
       else {
@@ -1645,7 +1645,7 @@ namespace MBSimGUI {
         ombvNodes->setActive(true);
         if(importWidget->getFileNodesChecked()) {
           static_cast<ChoiceWidget2*>(ombvNodes->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenameNodes()).toStdString().c_str(),import.getNodes());
+          dump((dir.absoluteFilePath(importWidget->getFilenameNodes())).toStdString().c_str(),import.getNodes());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(ombvNodes->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameNodes());
         }
         else {
@@ -1659,7 +1659,7 @@ namespace MBSimGUI {
       if(importWidget->getIndicesChecked()) {
         if(importWidget->getFileIndicesChecked()) {
           static_cast<ChoiceWidget2*>(body->getIndices()->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenameIndices()).toStdString().c_str(),import.getIndices());
+          dump((dir.absoluteFilePath(importWidget->getFilenameIndices())).toStdString().c_str(),import.getIndices());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(body->getIndices()->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameIndices());
         }
         else {
