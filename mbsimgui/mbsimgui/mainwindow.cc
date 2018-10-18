@@ -768,7 +768,7 @@ namespace MBSimGUI {
         ele0->insertBefore(node,nullptr);
       }
     }
-    for(size_t j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
+    for(int j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
       DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
       ele0->insertBefore(node,nullptr);
     }
