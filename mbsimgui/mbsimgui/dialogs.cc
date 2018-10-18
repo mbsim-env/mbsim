@@ -338,7 +338,7 @@ namespace MBSimGUI {
   }
 
   void ImportDialog::checkFile() {
-    if(not QFileInfo(mw->getProjectPath()+"/"+import->getResultFile()).isFile())
+    if(not QFileInfo(mw->getProjectDir().absoluteFilePath(import->getResultFile())).isFile())
       QMessageBox::warning(nullptr, "Import error", "File does not exist.");
     else
       accept();

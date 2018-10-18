@@ -1359,12 +1359,12 @@ namespace MBSimGUI {
 
   void FromFileWidget::selectFile() {
     QString file = getFile();
-    file=QFileDialog::getOpenFileName(nullptr, "ASCII files", path->isChecked()?file:mw->getProjectPath()+"/"+file, "all files (*.*)");
+    file=QFileDialog::getOpenFileName(nullptr, "ASCII files", path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), "all files (*.*)");
     if(not file.isEmpty()) {
       if(path->isChecked())
-        setFile(QDir(mw->getProjectPath()).absoluteFilePath(file));
+        setFile(mw->getProjectDir().absoluteFilePath(file));
       else
-        setFile(QDir(mw->getProjectPath()).relativeFilePath(file));
+        setFile(mw->getProjectDir().relativeFilePath(file));
     }
   }
 
@@ -1373,7 +1373,8 @@ namespace MBSimGUI {
   }
 
   vector<vector<QString> > FromFileWidget::getEvalMat() const {
-    string file = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue((path->isChecked()?getFile():mw->getProjectPath()+"/"+getFile()).toStdString(),mw->getProject()->getXMLElement(),false));
+    string file =
+      mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue((path->isChecked()?getFile():mw->getProjectDir().absoluteFilePath(getFile())).toStdString(),mw->getProject()->getXMLElement(),false));
     QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue("ret=load(" + file + ")",mw->getProject()->getXMLElement())));
     str = removeWhiteSpace(str);
     return strToMat((str));
@@ -1398,7 +1399,7 @@ namespace MBSimGUI {
   }
 
   void FromFileWidget::changePath(int i) {
-    relativeFilePath->setText(i?QDir(mw->getProjectPath()).absoluteFilePath(getFile()):QDir(mw->getProjectPath()).relativeFilePath(getFile()));
+    relativeFilePath->setText(i?mw->getProjectDir().absoluteFilePath(getFile()):mw->getProjectDir().relativeFilePath(getFile()));
   }
 
   BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,0) {

@@ -92,12 +92,12 @@ namespace MBSimGUI {
           E(embedNode)->setAttribute("counterName","n");
         }
       }
-      else if(counterName->isActive()) {
+      if(counterName->isActive()) {
         E(embedNode)->setAttribute("counterName",static_cast<TextWidget*>(counterName->getWidget())->getText().toStdString());
         if(not(count->isActive()))
           E(embedNode)->setAttribute("count","1");
       }
-      else {
+      if((not count->isActive()) and (not counterName->isActive())) {
         E(embedNode)->removeAttribute("count");
         E(embedNode)->removeAttribute("counterName");
       }

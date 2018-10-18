@@ -1514,12 +1514,12 @@ namespace MBSimGUI {
     int status = dialog->exec();
     if(not status) return;
     ImportWidget *importWidget = dialog->getImportWidget();
-    QString dir = mw->getProjectPath()+"/";
+    QDir dir = mw->getProjectDir();
     ImportFEMData import;
     if(importWidget->getNumberOfModesChecked())
       import.setNumberOfModes(importWidget->getNumberOfModes());
     try {
-      import.read((dir+importWidget->getResultFile().remove("."+QFileInfo(importWidget->getResultFile()).suffix())).toStdString());
+      import.read((dir.absoluteFilePath(importWidget->getResultFile()).remove("."+QFileInfo(importWidget->getResultFile()).suffix())).toStdString());
     }
     catch(exception &err) {
       QMessageBox::warning(nullptr, "Import error", QString::fromStdString(err.what()));
@@ -1542,7 +1542,7 @@ namespace MBSimGUI {
         Pdm->setActive(true);
         if(importWidget->getFilePdmChecked()) {
           static_cast<ChoiceWidget2*>(Pdm->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenamePdm()).toStdString().c_str(),import.getPdm());
+          dump((dir.absoluteFilePath(importWidget->getFilenamePdm())).toStdString().c_str(),import.getPdm());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePdm());
         }
         else {
@@ -1555,7 +1555,7 @@ namespace MBSimGUI {
         static_cast<ChoiceWidget2*>(rPdm->getWidget())->setIndex(1);
         if(importWidget->getFilerPdmChecked()) {
           static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenamerPdm()).toStdString().c_str(),import.getrPdm());
+          dump((dir.absoluteFilePath(importWidget->getFilenamerPdm())).toStdString().c_str(),import.getrPdm());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamerPdm());
         }
         else {
@@ -1568,7 +1568,7 @@ namespace MBSimGUI {
         static_cast<ChoiceWidget2*>(PPdm->getWidget())->setIndex(1);
         if(importWidget->getFilePPdmChecked()) {
           static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenamePPdm()).toStdString().c_str(),import.getPPdm());
+          dump((dir.absoluteFilePath(importWidget->getFilenamePPdm())).toStdString().c_str(),import.getPPdm());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePPdm());
         }
         else {
@@ -1580,7 +1580,7 @@ namespace MBSimGUI {
         Ke->setActive(true);
         if(importWidget->getFileKeChecked()) {
           static_cast<ChoiceWidget2*>(Ke->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenameKe()).toStdString().c_str(),import.getKe());
+          dump((dir.absoluteFilePath(importWidget->getFilenameKe())).toStdString().c_str(),import.getKe());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Ke->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameKe());
         }
         else {
@@ -1593,7 +1593,7 @@ namespace MBSimGUI {
         static_cast<ChoiceWidget2*>(Phi->getWidget())->setIndex(1);
         if(importWidget->getFilePhiChecked()) {
           static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenamePhi()).toStdString().c_str(),import.getPhi());
+          dump((dir.absoluteFilePath(importWidget->getFilenamePhi())).toStdString().c_str(),import.getPhi());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenamePhi());
         }
         else {
@@ -1606,7 +1606,7 @@ namespace MBSimGUI {
         static_cast<ChoiceWidget2*>(sigmahel->getWidget())->setIndex(1);
         if(importWidget->getFileSrChecked()) {
           static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenameSr()).toStdString().c_str(),import.getSr());
+          dump((dir.absoluteFilePath(importWidget->getFilenameSr())).toStdString().c_str(),import.getSr());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameSr());
         }
         else {
@@ -1628,7 +1628,7 @@ namespace MBSimGUI {
       static_cast<ChoiceWidget2*>(r->getWidget())->setIndex(1);
       if(importWidget->getFileu0Checked()) {
         static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->setIndex(1);
-        dump((dir+importWidget->getFilenameu0()).toStdString().c_str(),import.getu0());
+        dump((dir.absoluteFilePath(importWidget->getFilenameu0())).toStdString().c_str(),import.getu0());
         static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameu0());
       }
       else {
@@ -1645,7 +1645,7 @@ namespace MBSimGUI {
         ombvNodes->setActive(true);
         if(importWidget->getFileNodesChecked()) {
           static_cast<ChoiceWidget2*>(ombvNodes->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenameNodes()).toStdString().c_str(),import.getNodes());
+          dump((dir.absoluteFilePath(importWidget->getFilenameNodes())).toStdString().c_str(),import.getNodes());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(ombvNodes->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameNodes());
         }
         else {
@@ -1659,7 +1659,7 @@ namespace MBSimGUI {
       if(importWidget->getIndicesChecked()) {
         if(importWidget->getFileIndicesChecked()) {
           static_cast<ChoiceWidget2*>(body->getIndices()->getWidget())->setIndex(1);
-          dump((dir+importWidget->getFilenameIndices()).toStdString().c_str(),import.getIndices());
+          dump((dir.absoluteFilePath(importWidget->getFilenameIndices())).toStdString().c_str(),import.getIndices());
           static_cast<FromFileWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(body->getIndices()->getWidget())->getWidget())->getWidget())->setFile(importWidget->getFilenameIndices());
         }
         else {
@@ -2811,10 +2811,21 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedPositionSensorPropertyDialog::GeneralizedPositionSensorPropertyDialog(GeneralizedPositionSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : ObjectSensorPropertyDialog(sensor,parent,f) {
+  LinkSensorPropertyDialog::LinkSensorPropertyDialog(LinkSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : SensorPropertyDialog(sensor,parent,f) {
+    link = new ExtWidget("Link of reference",new ElementOfReferenceWidget<Link>(sensor,nullptr),false,false,MBSIMCONTROL%"link");
+    addToTab("General", link);
   }
 
-  GeneralizedVelocitySensorPropertyDialog::GeneralizedVelocitySensorPropertyDialog(GeneralizedVelocitySensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : ObjectSensorPropertyDialog(sensor,parent,f) {
+  DOMElement* LinkSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    link->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* LinkSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    link->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
   }
 
   FrameSensorPropertyDialog::FrameSensorPropertyDialog(FrameSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : SensorPropertyDialog(sensor,parent,f) {
@@ -2834,18 +2845,6 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  PositionSensorPropertyDialog::PositionSensorPropertyDialog(PositionSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : FrameSensorPropertyDialog(sensor,parent,f) {
-  }
-
-  OrientationSensorPropertyDialog::OrientationSensorPropertyDialog(OrientationSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : FrameSensorPropertyDialog(sensor,parent,f) {
-  }
-
-  VelocitySensorPropertyDialog::VelocitySensorPropertyDialog(VelocitySensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : FrameSensorPropertyDialog(sensor,parent,f) {
-  }
-
-  AngularVelocitySensorPropertyDialog::AngularVelocitySensorPropertyDialog(AngularVelocitySensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : FrameSensorPropertyDialog(sensor,parent,f) {
-  }
-
   FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : SensorPropertyDialog(sensor,parent,f) {
     function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(sensor,false),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
@@ -2862,6 +2861,24 @@ namespace MBSimGUI {
     function->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
+
+  ContactSensorPropertyDialog::ContactSensorPropertyDialog(ContactSensor *sensor, QWidget * parent, const Qt::WindowFlags& f) : SensorPropertyDialog(sensor,parent,f) {
+    contact = new ExtWidget("Contact of reference",new ElementOfReferenceWidget<Contact>(sensor,nullptr),false,false,MBSIMCONTROL%"contact");
+    addToTab("General", contact);
+  }
+
+  DOMElement* ContactSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    contact->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ContactSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    contact->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
 
   MultiplexerPropertyDialog::MultiplexerPropertyDialog(Multiplexer *signal, QWidget * parent, const Qt::WindowFlags& f) : SignalPropertyDialog(signal,parent,f) {
     inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal),"Signal",0,2),false,false,"");

@@ -107,7 +107,7 @@ namespace MBSimGUI {
     e=frames->getFirstElementChild();
     Frame *f;
     while(e) {
-      f = Embed<Frame>::createAndInit(e);
+      f = Embed<Frame>::createAndInit(e,this);
       if(f) addFrame(f);
       e=e->getNextElementSibling();
     }
@@ -116,7 +116,7 @@ namespace MBSimGUI {
     e=contours->getFirstElementChild();
     Contour *c;
     while(e) {
-      c = Embed<Contour>::createAndInit(e);
+      c = Embed<Contour>::createAndInit(e,this);
       if(c) addContour(c);
       e=e->getNextElementSibling();
     }

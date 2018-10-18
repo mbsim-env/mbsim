@@ -34,14 +34,14 @@
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
       <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
       <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
-      <style type="text/css">
+      <style>
         *._element { font-family:monospace; font-weight:bold; }
         *._type { font-family:monospace; }
         ul._content { padding-left:3ex; list-style-type:none; }
         *._displaynone { display:none; }
         *._linkpointer { cursor:pointer; }
       </style>
-      <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
+      <script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
       <script type="text/javascript">
         <![CDATA[
         $(document).ready(function() {
@@ -55,7 +55,7 @@
       </script>
     </head>
     <body style="margin:0.5em">
-    <script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>
+    <script src="/mbsim/html/cookiewarning.js"> </script>
     <div class="page-header">
       <h1>MBSimXML - Main MBSim XML Documentation</h1>
     </div>

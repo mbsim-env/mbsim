@@ -66,9 +66,9 @@ namespace MBSimGUI {
     DOMElement *ele = element->getFirstElementChild();
     if(E(ele)->getTagName()==PV%"evaluator")
       ele = ele->getNextElementSibling();
-    setDynamicSystemSolver(Embed<DynamicSystemSolver>::createAndInit(ele));
+    setDynamicSystemSolver(Embed<DynamicSystemSolver>::createAndInit(ele,this));
     ele = ele->getNextElementSibling();
-    setSolver(Embed<Solver>::createAndInit(ele));
+    setSolver(Embed<Solver>::createAndInit(ele,this));
   }
 
   DOMElement* Project::processIDAndHref(DOMElement *element) {

@@ -16,8 +16,8 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
         <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
         <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
-        <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
-        <script type="text/javascript">
+        <script src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
+        <script>
           $(document).ready(function() {
             // initialize the error table
             $("#ErrorTable").dataTable({
@@ -52,7 +52,7 @@
         </script>
       </head>
       <body style="margin:0.5em">
-        <script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>
+        <script src="/mbsim/html/cookiewarning.js"> </script>
         <h1>Valgrind Report: <xsl:value-of select="tool/text()"/></h1>
         <h2>Call Information</h2>
         <dl class="dl-horizontal">
@@ -82,7 +82,7 @@
         <table id="ErrorTable" class="table table-bordered">
           <thead><tr><th>Error Type</th><th>Error Details</th></tr></thead>
           <tbody>
-            <script type="text/javascript">
+            <script>
               var ErrorTable_data=[
                 <xsl:apply-templates select="error"/>
               ];
