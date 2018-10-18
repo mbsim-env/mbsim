@@ -47,6 +47,7 @@ namespace MBSimGUI {
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
             bool embededParam = false;
             xercesc::DOMElement *ele2 = nullptr;
+
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               mw->updateParameters(item,false);
               std::string evaltmp;
@@ -92,13 +93,13 @@ namespace MBSimGUI {
             }
             object=create(ele2);
             if(object) {
+              object->setEmbedXMLElement(ele1);
+              if(embededParam) object->setEmbededParameters(embededParam);
+              if(embeded) object->setEmbeded(embeded);
               for(auto & i : param)
                 object->addParameter(i);
               object->initializeUsingXML(ele2);
             }
-            object->setEmbedXMLElement(ele1);
-            if(embededParam) object->setEmbededParameters(embededParam);
-            if(embeded) object->setEmbeded(embeded);
           }
           else {
             object=create(ele1);
