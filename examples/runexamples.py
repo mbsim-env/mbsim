@@ -393,9 +393,9 @@ def main():
     <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
   </head>
   <body style="margin:0.5em">
-  <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
-  <script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>
-  <script type="text/javascript">
+  <script src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
+  <script src="/mbsim/html/cookiewarning.js"> </script>
+  <script>
     $(document).ready(function() {
       // init table
       $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ],
@@ -450,9 +450,9 @@ def main():
         var c=document.cookie.split(';');
         for(var i=0; i<c.length; i++)
           if(c[i].split('=')[0].trim()=="mbsimenvsessionid_js") {
-            $("#SortThisTable").DataTable().$("._WEBAPP").each(function() {
-              $(this).prop("disabled", false);
-            });
+        $("#SortThisTable").DataTable().$("._WEBAPP").each(function() {
+          $(this).prop("disabled", false);
+        });
             break;
           }
       }
@@ -981,9 +981,9 @@ def runExample(resultQueue, example):
       print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
       print('<body style="margin:0.5em">', file=htmlOutputFD)
-      print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=htmlOutputFD)
-      print('<script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>', file=htmlOutputFD)
-      print('<script type="text/javascript">', file=htmlOutputFD)
+      print('<script src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=htmlOutputFD)
+      print('<script src="/mbsim/html/cookiewarning.js"> </script>', file=htmlOutputFD)
+      print('<script>', file=htmlOutputFD)
       print('  $(document).ready(function() {', file=htmlOutputFD)
       print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=htmlOutputFD)
       print('  } );', file=htmlOutputFD)
@@ -1389,8 +1389,8 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
   print('<body style="margin:0.5em">', file=diffHTMLPlotFD)
-  print('<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>', file=diffHTMLPlotFD)
-  print('<script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>', file=diffHTMLPlotFD)
+  print('<script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>', file=diffHTMLPlotFD)
+  print('<script src="/mbsim/html/cookiewarning.js"> </script>', file=diffHTMLPlotFD)
   print('<h1>Difference Plot: <small>%s</small></h1>'%(args.buildType), file=diffHTMLPlotFD)
   print('<dl class="dl-horizontal">', file=diffHTMLPlotFD)
   print('<dt>Example:</dt><dd>'+example.replace('/', u'/\u200B')+'</dd>', file=diffHTMLPlotFD)
@@ -1656,9 +1656,9 @@ def compareExample(example, compareFN):
   print('  <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>', file=compareFD)
   print('</head>', file=compareFD)
   print('<body style="margin:0.5em">', file=compareFD)
-  print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=compareFD)
-  print('<script type="text/javascript" src="/mbsim/html/cookiewarning.js"> </script>', file=compareFD)
-  print('''<script type="text/javascript">
+  print('<script src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=compareFD)
+  print('<script src="/mbsim/html/cookiewarning.js"> </script>', file=compareFD)
+  print('''<script>
     $(document).ready(function() {
       $('#SortThisTable').dataTable({
         'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ],
@@ -1789,7 +1789,7 @@ def compareExample(example, compareFN):
       nrFailed[0]+=1
 
   # all table data is now collected in data: print it now as javascript code using by DataTables in the browser
-  print('<script type="text/javascript">', file=compareFD)
+  print('<script>', file=compareFD)
   print('var SortThisTable_data=[', file=compareFD)
   for row in data:
     print('{', end="", file=compareFD)
