@@ -408,10 +408,10 @@ namespace MBSimGUI {
     for(size_t i=0; i<argname.size(); i++) {
       string str = "arg"+toStr(int(i+1));
       if(E(element)->hasAttribute(str))
-        static_cast<TextWidget*>(argname[i]->getWidget())->setText(QString::fromStdString(E(element)->getAttribute(str.c_str())));
+        static_cast<TextWidget*>(argname[i]->getWidget())->setText(QString::fromStdString(E(element)->getAttribute(str)));
       str = "arg"+toStr(int(i+1))+"Dim";
       if(E(element)->hasAttribute(str))
-        static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->setValue(boost::lexical_cast<int>(E(element)->getAttribute(str.c_str())));
+        static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->setValue(boost::lexical_cast<int>(E(element)->getAttribute(str)));
     }
     return element;
   }

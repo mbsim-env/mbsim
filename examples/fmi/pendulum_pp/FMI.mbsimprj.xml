@@ -1,82 +1,84 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
-  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" parameterHref="parameter.xml">
-    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBSIM">
-      <frames>
-        <FixedRelativeFrame name="QB">
-          <relativePosition>[-1;-0.25;0]</relativePosition>
-          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
-        </FixedRelativeFrame>
-        <FixedRelativeFrame name="QP0">
-          <relativePosition>[-1.25*L*0;-1.25*L*0;0.5]</relativePosition>
-          <relativeOrientation>rotateAboutX(pi*0)*rotateAboutZ(pi/2*0)</relativeOrientation>
-        </FixedRelativeFrame>
-        <FixedRelativeFrame name="QP1">
-          <relativePosition>[-1.25*L*1;-1.25*L*1;0.5]</relativePosition>
-          <relativeOrientation>rotateAboutX(pi*1)*rotateAboutZ(pi/2*1)</relativeOrientation>
-        </FixedRelativeFrame>
-      </frames>
-      <contours/>
-      <groups>
-        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="Ball.mbsim.xml"/>
-        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="Pendulum.mbsim.xml">
-          <Parameter>
-            <scalarParameter name="grpID" unit="-">1</scalarParameter>
-          </Parameter>
-        </Embed>
-        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="Pendulum.mbsim.xml">
-          <Parameter>
-            <scalarParameter name="grpID" unit="-">2</scalarParameter>
-          </Parameter>
-        </Embed>
-      </groups>
-      <objects/>
-      <links>
-        <SpringDamper name="SpringDamper1">
-          <connect ref1="../Group[Group1]/Object[ChainLink_{N}]/Frame[bottom]" ref2="../Group[Group2]/Object[ChainLink_{N}]/Frame[bottom]"/>
-          <forceFunction>
-            <LinearSpringDamperForce>
-              <stiffnessCoefficient unit="N/m">50</stiffnessCoefficient>
-              <dampingCoefficient unit="N*s/m">5</dampingCoefficient>
-            </LinearSpringDamperForce>
-          </forceFunction>
-          <unloadedLength unit="m">0</unloadedLength>
-          <enableOpenMBV>
-            <?OPENMBV_ID 70?>
-            <numberOfCoils unit="-">10</numberOfCoils>
-            <springRadius unit="m">0.03</springRadius>
-            <type>"polyline"</type>
-          </enableOpenMBV>
-        </SpringDamper>
-      </links>
-      <constraints/>
-      <observers/>
-      <environments>
-        <MBSimEnvironment>
-          <accelerationOfGravity unit="m/s^2">
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>0</ele>
-              <ele>-9.81</ele>
-              <ele>0</ele>
-            </xmlVector>
-          </accelerationOfGravity>
-        </MBSimEnvironment>
-      </environments>
-    </DynamicSystemSolver>
-  </Embed>
-
-  <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSimIntegrator">
-    <startTime unit="s">0</startTime>
-    <endTime unit="s">0.7</endTime><!-- use a smaller end time since fmuCheck cannot handle roots propably -->
-    <plotStepSize unit="s">1e-2</plotStepSize>
-    <toleranceForPositionConstraints>1e-6</toleranceForPositionConstraints>
-    <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
-    <plotOnRoot>false</plotOnRoot>
-    <absoluteToleranceScalar>1e-5</absoluteToleranceScalar>
-    <relativeToleranceScalar unit="-">1e-5</relativeToleranceScalar>
-    <initialStepSize unit="s">1e-6</initialStepSize>
-    <maximumStepSize unit="s">1e-2</maximumStepSize>
-  </BoostOdeintDOS_RKDOPRI5>
-
-</MBSimProject>
+<pv:Embed xmlns="http://www.mbsim-env.de/MBSimXML" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" parameterHref="parameter.xml">
+  <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+  
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBSIM">
+        <frames>
+          <FixedRelativeFrame name="QB">
+            <relativePosition>[-1;-0.25;0]</relativePosition>
+            <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          </FixedRelativeFrame>
+          <FixedRelativeFrame name="QP0">
+            <relativePosition>[-1.25*L*0;-1.25*L*0;0.5]</relativePosition>
+            <relativeOrientation>rotateAboutX(pi*0)*rotateAboutZ(pi/2*0)</relativeOrientation>
+          </FixedRelativeFrame>
+          <FixedRelativeFrame name="QP1">
+            <relativePosition>[-1.25*L*1;-1.25*L*1;0.5]</relativePosition>
+            <relativeOrientation>rotateAboutX(pi*1)*rotateAboutZ(pi/2*1)</relativeOrientation>
+          </FixedRelativeFrame>
+        </frames>
+        <contours/>
+        <groups>
+          <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="Ball.mbsim.xml"/>
+          <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="Pendulum.mbsim.xml">
+            <Parameter>
+              <scalarParameter name="grpID" unit="-">1</scalarParameter>
+            </Parameter>
+          </Embed>
+          <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="Pendulum.mbsim.xml">
+            <Parameter>
+              <scalarParameter name="grpID" unit="-">2</scalarParameter>
+            </Parameter>
+          </Embed>
+        </groups>
+        <objects/>
+        <links>
+          <SpringDamper name="SpringDamper1">
+            <connect ref1="../Group[Group1]/Object[ChainLink_{N}]/Frame[bottom]" ref2="../Group[Group2]/Object[ChainLink_{N}]/Frame[bottom]"/>
+            <forceFunction>
+              <LinearSpringDamperForce>
+                <stiffnessCoefficient unit="N/m">50</stiffnessCoefficient>
+                <dampingCoefficient unit="N*s/m">5</dampingCoefficient>
+              </LinearSpringDamperForce>
+            </forceFunction>
+            <unloadedLength unit="m">0</unloadedLength>
+            <enableOpenMBV>
+              <?OPENMBV_ID 70?>
+              <numberOfCoils unit="-">10</numberOfCoils>
+              <springRadius unit="m">0.03</springRadius>
+              <type>"polyline"</type>
+            </enableOpenMBV>
+          </SpringDamper>
+        </links>
+        <constraints/>
+        <observers/>
+        <environments>
+          <MBSimEnvironment>
+            <accelerationOfGravity unit="m/s^2">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>0</ele>
+                <ele>-9.81</ele>
+                <ele>0</ele>
+              </xmlVector>
+            </accelerationOfGravity>
+          </MBSimEnvironment>
+        </environments>
+      </DynamicSystemSolver>
+    </Embed>
+  
+    <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+      <startTime unit="s">0</startTime>
+      <endTime unit="s">0.7</endTime><!-- use a smaller end time since fmuCheck cannot handle roots propably -->
+      <plotStepSize unit="s">1e-2</plotStepSize>
+      <toleranceForPositionConstraints>1e-6</toleranceForPositionConstraints>
+      <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
+      <plotOnRoot>false</plotOnRoot>
+      <absoluteToleranceScalar>1e-5</absoluteToleranceScalar>
+      <relativeToleranceScalar unit="-">1e-5</relativeToleranceScalar>
+      <initialStepSize unit="s">1e-6</initialStepSize>
+      <maximumStepSize unit="s">1e-2</maximumStepSize>
+    </BoostOdeintDOS_RKDOPRI5>
+  
+  </MBSimProject>
+</pv:Embed>

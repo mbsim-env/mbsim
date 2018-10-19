@@ -6,9 +6,9 @@
 
 namespace MBSimFMI {
 
-//! Convert the XPathParamSet xpathParam to a vector of VariableStore.
-void convertXPathParamSetToVariable(const std::shared_ptr<MBXMLUtils::Preprocess::XPathParamSet> &xpathParam,
-                                    std::vector<std::shared_ptr<Variable> > &fmiParam, const std::shared_ptr<MBXMLUtils::Eval> &eval);
+//! Convert the ParamSet param to a vector of VariableStore.
+void convertParamSetToVariable(const std::shared_ptr<MBXMLUtils::Preprocess::ParamSet> &param,
+                               std::vector<std::shared_ptr<Variable> > &fmiParam, const std::shared_ptr<MBXMLUtils::Eval> &eval);
 
 }
 

@@ -17,8 +17,8 @@ using namespace MBXMLUtils;
 using namespace boost::filesystem;
 
 namespace {
-  void convertVariableToXPathParamSet(size_t startIndex, const vector<std::shared_ptr<MBSimFMI::Variable> > &var,
-                                      std::shared_ptr<Preprocess::XPathParamSet> &param, const shared_ptr<Eval> &eval);
+  void convertVariableToParamSet(size_t startIndex, const vector<std::shared_ptr<MBSimFMI::Variable> > &var,
+                                 std::shared_ptr<Preprocess::ParamSet> &param, const shared_ptr<Eval> &eval);
 }
 
 namespace MBSimFMI {
@@ -49,9 +49,14 @@ namespace MBSimFMI {
     // create a clean evaluator (get the evaluator name first form the dom)
     string evalName="octave"; // default evaluator
     xercesc::DOMElement *evaluator;
-    if(E(ele)->getTagName()==PV%"Embed")
-      // if the root element IS A Embed than the <evaluator> element is the first child of the first child of the root element
-      evaluator=E(ele->getFirstElementChild())->getFirstElementChildNamed(PV%"evaluator");
+    if(E(ele)->getTagName()==PV%"Embed") {
+      // if the root element IS A Embed than the <evaluator> element is the first child of the
+      // first (none pv:Parameter) child of the root element
+      auto r=ele->getFirstElementChild();
+      if(E(r)->getTagName()==PV%"Parameter")
+        r=r->getNextElementSibling();
+      evaluator=E(r)->getFirstElementChildNamed(PV%"evaluator");
+    }
     else
       // if the root element IS NOT A Embed than the <evaluator> element is the first child root element
       evaluator=E(ele)->getFirstElementChildNamed(PV%"evaluator");
@@ -60,8 +65,8 @@ namespace MBSimFMI {
     shared_ptr<Eval> eval=Eval::createEvaluator(evalName);
 
     // set param according data in var
-    std::shared_ptr<Preprocess::XPathParamSet> param=std::make_shared<Preprocess::XPathParamSet>();
-    convertVariableToXPathParamSet(varSim.size(), var, param, eval);
+    std::shared_ptr<Preprocess::ParamSet> param=std::make_shared<Preprocess::ParamSet>();
+    convertVariableToParamSet(varSim.size(), var, param, eval);
 
     // preprocess XML file
     vector<path> dependencies;
@@ -71,7 +76,7 @@ namespace MBSimFMI {
     // convert the parameter set from the mbxmlutils preprocessor to a "Variable" vector
     msg(Debug)<<"Convert XML parameters to FMI parameters."<<endl;
     vector<std::shared_ptr<Variable> > xmlParam;
-    convertXPathParamSetToVariable(param, xmlParam, eval);
+    convertParamSetToVariable(param, xmlParam, eval);
     // build a set of all Parameter's in var
     set<string> useParam;
     for(auto & it : var)
@@ -129,18 +134,17 @@ namespace {
     return boost::lexical_cast<size_t>(name.substr(0, name.size()-1));
   }
 
-  void convertVariableToXPathParamSet(size_t startIndex, const vector<std::shared_ptr<MBSimFMI::Variable> > &var,
-                                      std::shared_ptr<Preprocess::XPathParamSet> &param, const shared_ptr<Eval> &eval) {
-    Preprocess::ParamSet &p=param->insert(make_pair(
-      "/{"+MBSIMXML.getNamespaceURI()+"}MBSimProject[1]/{"+MBSIM.getNamespaceURI()+"}DynamicSystemSolver[1]",
-      Preprocess::ParamSet())).first->second;
+  void convertVariableToParamSet(size_t startIndex, const vector<std::shared_ptr<MBSimFMI::Variable> > &var,
+                                 std::shared_ptr<Preprocess::ParamSet> &param, const shared_ptr<Eval> &eval) {
     for(auto it=var.begin()+startIndex; it!=var.end(); ++it) {
       // skip all but parameters
       if((*it)->getType()!=MBSimFMI::Parameter)
         continue;
       // handle string parameters (can only be scalars)
-      if((*it)->getDatatypeChar()=='s')
-        p.emplace_back((*it)->getName(), eval->create((*it)->getValue(string())));
+      if((*it)->getDatatypeChar()=='s') {
+        if(!param->emplace((*it)->getName(), eval->create((*it)->getValue(string()))).second)
+          throw runtime_error("Cannot add parameter. A parameter with the same name already exists.");
+      }
       // handle none string parameters (can be scalar, vector or matrix)
       else {
         // get name and type (scalar, vector or matrix)
@@ -181,7 +185,8 @@ namespace {
           default:
             throw runtime_error("Internal error: Unknwon type.");
         }
-        p.emplace_back(name, value);
+        if(!param->emplace(name, value).second)
+          throw runtime_error("Cannot add parameter. A parameter with the same name already exists.");
       }
     }
   }

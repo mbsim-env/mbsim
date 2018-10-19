@@ -132,9 +132,14 @@ int main(int argc, char *argv[]) {
 
       // create a clean evaluator (get the evaluator name first form the dom)
       DOMElement *evaluator;
-      if(E(modelEle)->getTagName()==PV%"Embed")
-        // if the root element IS A Embed than the <evaluator> element is the first child of the first child of the root element
-        evaluator=E(modelEle->getFirstElementChild())->getFirstElementChildNamed(PV%"evaluator");
+      if(E(modelEle)->getTagName()==PV%"Embed") {
+        // if the root element IS A Embed than the <evaluator> element is the first child of the
+        // first (none pv:Parameter) child of the root element
+        auto r=modelEle->getFirstElementChild();
+        if(E(r)->getTagName()==PV%"Parameter")
+          r=r->getNextElementSibling();
+        evaluator=E(r)->getFirstElementChildNamed(PV%"evaluator");
+      }
       else
         // if the root element IS NOT A Embed than the <evaluator> element is the first child root element
         evaluator=E(modelEle)->getFirstElementChildNamed(PV%"evaluator");
@@ -144,11 +149,11 @@ int main(int argc, char *argv[]) {
 
       // preprocess XML file
       cout<<"Preprocess XML project file."<<endl;
-      std::shared_ptr<Preprocess::XPathParamSet> param=std::make_shared<Preprocess::XPathParamSet>();
+      std::shared_ptr<Preprocess::ParamSet> param=std::make_shared<Preprocess::ParamSet>();
       Preprocess::preprocess(parser, eval, dependencies, modelEle, param);
 
       // convert the parameter list from the mbxmlutils preprocessor to a Variable vector
-      convertXPathParamSetToVariable(param, xmlParam, eval);
+      convertParamSetToVariable(param, xmlParam, eval);
       // remove all variables which are not in useParam
       vector<std::shared_ptr<Variable> > xmlParam2;
       for(auto & it : xmlParam) {
@@ -157,7 +162,7 @@ int main(int argc, char *argv[]) {
         if(pos!=string::npos)
           name=name.substr(0, pos);
         if(!noParam && (useParam.size()==0 || useParam.find(name)!=useParam.end())) {
-          cout<<"Using DynamicSystemSolver parameter '"<<name<<"'."<<endl;
+          cout<<"Using MBSimProject parameter '"<<name<<"'."<<endl;
           xmlParam2.push_back(it);
         }
       }
