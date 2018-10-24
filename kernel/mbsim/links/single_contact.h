@@ -24,7 +24,6 @@
 
 namespace MBSim {
 
-  class ContactKinematics;
   class GeneralizedForceLaw;
   class GeneralizedImpactLaw;
   class FrictionForceLaw;

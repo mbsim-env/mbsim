@@ -25,11 +25,7 @@
 #include <mbsim/constitutive_laws/generalized_impact_law.h>
 #include <mbsim/constitutive_laws/friction_impact_law.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
-#include <mbsim/utils/contact_utils.h>
 #include <mbsim/objectfactory.h>
-#include <mbsim/utils/eps.h>
-#include <mbsim/utils/rotarymatrices.h>
-#include <algorithm>
 
 using namespace std;
 using namespace fmatvec;
