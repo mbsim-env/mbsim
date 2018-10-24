@@ -750,27 +750,29 @@ namespace MBSimGUI {
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,nullptr);
 
-    if(item->getXMLElement()) {
-      QString counterName = item->getEmbedXMLElement()?QString::fromStdString(E(item->getEmbedXMLElement())->getAttribute("counterName")):"";
-      if(not(counterName.isEmpty())) {
-        DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
-        E(ele1)->setAttribute("name", counterName.toStdString());
-        DOMText *text = doc->createTextNode(X()%"1");
-        ele1->insertBefore(text,nullptr);
-        ele0->insertBefore(ele1,nullptr);
+    if(item) {
+      if(item->getXMLElement()) {
+        QString counterName = item->getEmbedXMLElement()?QString::fromStdString(E(item->getEmbedXMLElement())->getAttribute("counterName")):"";
+        if(not(counterName.isEmpty())) {
+          DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
+          E(ele1)->setAttribute("name", counterName.toStdString());
+          DOMText *text = doc->createTextNode(X()%"1");
+          ele1->insertBefore(text,nullptr);
+          ele0->insertBefore(ele1,nullptr);
+        }
       }
-    }
 
-    vector<EmbedItemData*> parents = item->getEmbedItemParents();
-    for(auto & parent : parents) {
-      for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
-        DOMNode *node = doc->importNode(parent->getParameter(j)->getXMLElement(),true);
+      vector<EmbedItemData*> parents = item->getEmbedItemParents();
+      for(auto & parent : parents) {
+        for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
+          DOMNode *node = doc->importNode(parent->getParameter(j)->getXMLElement(),true);
+          ele0->insertBefore(node,nullptr);
+        }
+      }
+      for(int j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
+        DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
         ele0->insertBefore(node,nullptr);
       }
-    }
-    for(int j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
-      DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
-      ele0->insertBefore(node,nullptr);
     }
 
     string message;
