@@ -833,8 +833,12 @@ def runExample(resultQueue, example):
           myurllib.pathname2url(executeFN)+'">'
       resultStr+=text+'</a>'
       # add all additional output files
-      for outfile in outfiles:
-        resultStr+='; <a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+outfile+'</a>'
+      if len(outfiles)>0:
+         resultStr+=' <span class="dropdown"><button class="btn btn-default btn-xs" data-toggle="dropdown">more <span class="caret"></span>'+\
+                    '</button><div class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;">'
+         for outfile in outfiles:
+            resultStr+='<a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+os.path.splitext(outfile)[0]+'</a><br/>'
+         resultStr+='</div></span>'
       resultStr+='</td>'
     if not args.disableRun:
       # if not reference time or time is nearly equal refTime => display time in black color
