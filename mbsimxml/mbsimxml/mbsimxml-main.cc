@@ -37,20 +37,13 @@ int runProgram(const vector<string> &arg) {
 
   pid_t child;
   int spawnRet;
-  // Use posix_spawn from a older glibc implementation to allow binary distributions to run on older systems
-  #if defined(__GNUC__) // GNU compiler
-    #if !defined(__LP64__) // 32 bit
-      __asm__(".symver posix_spawn, posix_spawn@GLIBC_2.2");
-    #else // 64 bit
-      __asm__(".symver posix_spawn, posix_spawn@GLIBC_2.2.5");
-    #endif
-  #endif
   spawnRet=posix_spawn(&child, argv[0], nullptr, nullptr, argv, environ);
   delete[]argv;
   if(spawnRet!=0)
     throw runtime_error("Unable to spawn process.");
   int status;
-  waitpid(child, &status, 0);
+  if(waitpid(child, &status, 0)==-1)
+    throw runtime_error("Waiting for the spawned process failed.");
   if(WIFEXITED(status))
     return WEXITSTATUS(status);
   else
