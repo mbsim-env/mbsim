@@ -869,19 +869,21 @@ def runExample(resultQueue, example):
       # run gui tests
       denv=os.environ
       denv["DISPLAY"]=":"+str(displayNR)
-      tries=5 # at least on Windows (wine) the DISPLAY is not found sometimes (unknown why). Hence, try this number of times before reporting an error
+      denv["COIN_FULL_INDIRECT_RENDERING"]="1"
+      denv["LIBGL_ALWAYS_INDIRECT"]="1"
+      tries=5 if exePrefix()==["wine"] else 1 # at least on Windows (wine) the DISPLAY is not found sometimes (unknown why). Hence, try this number of times before reporting an error
       ombvRet=0
       if len(ombvFiles)>0:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_ombv.txt"), "w", encoding="utf-8"), args.printToConsole)
         comm=prefixSimulation(example, 'openmbv')+exePrefix()+[pj(mbsimBinDir, "openmbv"+args.exeExt), "--autoExit"]+ombvFiles
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          ombvRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(1 if args.checkGUIs else 3))]
+          ombvRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(5 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
           outfiles1=getOutFilesAndAdaptRet(example, ombvRet)
           ombvRet=ombvRet[0]
           print("\n\nReturned with "+str(ombvRet), file=outFD)
           if ombvRet==0: break
-          time.sleep(2*60) # wait some time, a direct next test will likely also fail (see above)
+          if t+1<tries: time.sleep(60) # wait some time, a direct next test will likely also fail (see above)
         outFD.close()
       h5pRet=0
       if len(h5pFiles)>0:
@@ -889,12 +891,12 @@ def runExample(resultQueue, example):
         comm=prefixSimulation(example, 'h5plotserie')+exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          h5pRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(1 if args.checkGUIs else 3))]
+          h5pRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(5 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
           outfiles2=getOutFilesAndAdaptRet(example, h5pRet)
           h5pRet=h5pRet[0]
           print("\n\nReturned with "+str(h5pRet), file=outFD)
           if h5pRet==0: break
-          time.sleep(2*60) # wait some time, a direct next test will likely also fail (see above)
+          if t+1<tries: time.sleep(60) # wait some time, a direct next test will likely also fail (see above)
         outFD.close()
       guiRet=0
       if guiFile!=None:
@@ -902,12 +904,12 @@ def runExample(resultQueue, example):
         comm=prefixSimulation(example, 'mbsimgui')+exePrefix()+[pj(mbsimBinDir, "mbsimgui"+args.exeExt), "--autoExit"]+[guiFile]
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          guiRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(1 if args.checkGUIs else 3))]
+          guiRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(5 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
           outfiles3=getOutFilesAndAdaptRet(example, guiRet)
           guiRet=guiRet[0]
           print("\n\nReturned with "+str(guiRet), file=outFD)
           if guiRet==0: break
-          time.sleep(2*60) # wait some time, a direct next test will likely also fail (see above)
+          if t+1<tries: time.sleep(60) # wait some time, a direct next test will likely also fail (see above)
         outFD.close()
       outfiles=outfiles1+outfiles2+outfiles3
       # result
