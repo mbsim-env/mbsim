@@ -164,6 +164,8 @@ namespace MBSimGUI {
     layout->addWidget(labelVisu,13,0);
     choiceVisu = new CustomComboBox;
 //    choiceVisu->addItem("Lines");
+    choiceVisu->addItem("Points");
+    choiceVisu->addItem("Lines");
     choiceVisu->addItem("Faces");
     choiceVisu->setCurrentIndex(0);
     layout->addWidget(choiceVisu,13,1);

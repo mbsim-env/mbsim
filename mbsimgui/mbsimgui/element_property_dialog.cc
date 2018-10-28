@@ -1638,7 +1638,7 @@ namespace MBSimGUI {
     }
     if(importWidget->getVisuChecked()) {
       ombv->setActive(true);
-      static_cast<ChoiceWidget2*>(ombv->getWidget())->setIndex(importWidget->getVisu()+1);
+      static_cast<ChoiceWidget2*>(ombv->getWidget())->setIndex(importWidget->getVisu());
     }
     if(importWidget->getVisuChecked() and importWidget->getNodesChecked()) {
       if(importWidget->getNodesChecked()) {
