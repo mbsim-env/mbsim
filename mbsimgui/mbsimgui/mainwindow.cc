@@ -441,6 +441,7 @@ namespace MBSimGUI {
   }
 
   MainWindow::~MainWindow() {
+    process.waitForFinished(-1);
     centralWidget()->layout()->removeWidget(inlineOpenMBVMW);
     delete inlineOpenMBVMW;
     // use nothrow boost::filesystem functions to avoid exceptions in this dtor

@@ -833,8 +833,12 @@ def runExample(resultQueue, example):
           myurllib.pathname2url(executeFN)+'">'
       resultStr+=text+'</a>'
       # add all additional output files
-      for outfile in outfiles:
-        resultStr+='; <a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+outfile+'</a>'
+      if len(outfiles)>0:
+         resultStr+=' <span class="dropdown"><button class="btn btn-default btn-xs" data-toggle="dropdown">more <span class="caret"></span>'+\
+                    '</button><div class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;">'
+         for outfile in outfiles:
+            resultStr+='<a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+os.path.splitext(outfile)[0]+'</a><br/>'
+         resultStr+='</div></span>'
       resultStr+='</td>'
     if not args.disableRun:
       # if not reference time or time is nearly equal refTime => display time in black color
@@ -849,6 +853,9 @@ def runExample(resultQueue, example):
         resultStr+='<td class="warning">no reference</td>'
 
     if args.checkGUIs:
+      outfiles1=[]
+      outfiles2=[]
+      outfiles3=[]
       # get files to load
       ombvFiles=mainFiles(glob.glob("*.ombv.xml"), ".", ".ombv.xml")
       h5pFiles=mainFiles(glob.glob("*.mbsim.h5"), ".", ".mbsim.h5")
@@ -862,40 +869,49 @@ def runExample(resultQueue, example):
       # run gui tests
       denv=os.environ
       denv["DISPLAY"]=":"+str(displayNR)
-      tries=5 # at least on Windows (wine) the DISPLAY is not found sometimes (unknown why). Hence, try this number of times before reporting an error
+      denv["COIN_FULL_INDIRECT_RENDERING"]="1"
+      denv["LIBGL_ALWAYS_INDIRECT"]="1"
+      tries=5 if exePrefix()==["wine"] else 1 # at least on Windows (wine) the DISPLAY is not found sometimes (unknown why). Hence, try this number of times before reporting an error
       ombvRet=0
       if len(ombvFiles)>0:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_ombv.txt"), "w", encoding="utf-8"), args.printToConsole)
-        comm=exePrefix()+[pj(mbsimBinDir, "openmbv"+args.exeExt), "--autoExit"]+ombvFiles
+        comm=prefixSimulation(example, 'openmbv')+exePrefix()+[pj(mbsimBinDir, "openmbv"+args.exeExt), "--autoExit"]+ombvFiles
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          ombvRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+          ombvRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(5 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
+          outfiles1=getOutFilesAndAdaptRet(example, ombvRet)
+          ombvRet=ombvRet[0]
           print("\n\nReturned with "+str(ombvRet), file=outFD)
           if ombvRet==0: break
-          time.sleep(2*60) # wait some time, a direct next test will likely also fail (see above)
+          if t+1<tries: time.sleep(60) # wait some time, a direct next test will likely also fail (see above)
         outFD.close()
       h5pRet=0
       if len(h5pFiles)>0:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_h5p.txt"), "w", encoding="utf-8"), args.printToConsole)
-        comm=exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles
+        comm=prefixSimulation(example, 'h5plotserie')+exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          h5pRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+          h5pRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(5 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
+          outfiles2=getOutFilesAndAdaptRet(example, h5pRet)
+          h5pRet=h5pRet[0]
           print("\n\nReturned with "+str(h5pRet), file=outFD)
           if h5pRet==0: break
-          time.sleep(2*60) # wait some time, a direct next test will likely also fail (see above)
+          if t+1<tries: time.sleep(60) # wait some time, a direct next test will likely also fail (see above)
         outFD.close()
       guiRet=0
       if guiFile!=None:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_gui.txt"), "w", encoding="utf-8"), args.printToConsole)
-        comm=exePrefix()+[pj(mbsimBinDir, "mbsimgui"+args.exeExt), "--autoExit"]+[guiFile]
+        comm=prefixSimulation(example, 'mbsimgui')+exePrefix()+[pj(mbsimBinDir, "mbsimgui"+args.exeExt), "--autoExit"]+[guiFile]
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          guiRet=subprocessCall(comm, outFD, env=denv, maxExecutionTime=1)
+          guiRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(5 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
+          outfiles3=getOutFilesAndAdaptRet(example, guiRet)
+          guiRet=guiRet[0]
           print("\n\nReturned with "+str(guiRet), file=outFD)
           if guiRet==0: break
-          time.sleep(2*60) # wait some time, a direct next test will likely also fail (see above)
+          if t+1<tries: time.sleep(60) # wait some time, a direct next test will likely also fail (see above)
         outFD.close()
+      outfiles=outfiles1+outfiles2+outfiles3
       # result
       resultStr+='<td data-order="%d%d%d%d">'%(0 if abs(ombvRet)+abs(h5pRet)+abs(guiRet)==0 else (1 if willFail else 2),
                                                int(len(ombvFiles)>0), int(len(h5pFiles)>0), int(guiFile!=None))+\
@@ -907,8 +923,15 @@ def runExample(resultQueue, example):
           '<img src="/mbsim/html/h5plotserie.svg" alt="h5p"/></a>'+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_gui.txt")),
           "visible" if guiFile!=None else "hidden", "success" if guiRet==0 else ("danger" if not willFail else "warning"))+\
-          '<img src="/mbsim/html/mbsimgui.svg" alt="gui"/></a>'+\
-      '</td>'
+          '<img src="/mbsim/html/mbsimgui.svg" alt="gui"/></a>'
+      # add all additional output files
+      if len(outfiles)>0:
+         resultStr+=' <span class="dropdown"><button class="btn btn-default btn-xs" data-toggle="dropdown">more <span class="caret"></span>'+\
+                    '</button><div class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;">'
+         for outfile in outfiles:
+            resultStr+='<a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+os.path.splitext(outfile)[0]+'</a><br/>'
+         resultStr+='</div></span>'
+      resultStr+='</td>'
       if ombvRet!=0 or h5pRet!=0 or guiRet!=0:
         runExampleRet=1
 
@@ -1184,7 +1207,7 @@ def executeSrcExample(executeFD, example):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  ret=[abs(subprocessCall(prefixSimulation(example, 'src')+exePrefix()+[pj(os.curdir, "main"+args.exeExt)], executeFD,
+  ret=[abs(subprocessCall(prefixSimulation(example, 'source')+exePrefix()+[pj(os.curdir, "main"+args.exeExt)], executeFD,
                           env=mainEnv, maxExecutionTime=args.maxExecutionTime))]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -1208,7 +1231,7 @@ def executeXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=[abs(subprocessCall(prefixSimulation(example, 'xml')+exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
+  ret=[abs(subprocessCall(prefixSimulation(example, 'mbsimxml')+exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
                           [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime))]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -1225,7 +1248,7 @@ def executeFlatXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=[abs(subprocessCall(prefixSimulation(example, 'fxml')+exePrefix()+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
+  ret=[abs(subprocessCall(prefixSimulation(example, 'mbsimflatxml')+exePrefix()+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
                           executeFD, maxExecutionTime=args.maxExecutionTime))]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -1251,7 +1274,7 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   executeFD.flush()
-  ret1=[abs(subprocessCall(prefixSimulation(example, 'fmucre')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/2))]
+  ret1=[abs(subprocessCall(prefixSimulation(example, 'mbsimCreateFMU')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/2))]
   outFiles1=getOutFilesAndAdaptRet(example, ret1)
 
   ### run using fmuChecker
@@ -1273,7 +1296,7 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
-  ret2=[abs(subprocessCall(prefixSimulation(example, 'fmuchk')+comm, executeFD, maxExecutionTime=args.maxExecutionTime))]
+  ret2=[abs(subprocessCall(prefixSimulation(example, 'fmuCheck')+comm, executeFD, maxExecutionTime=args.maxExecutionTime))]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles2=getOutFilesAndAdaptRet(example, ret2)
@@ -1315,7 +1338,7 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
   comm=exePrefix()+[pj(mbsimBinDir, "mbsimTestFMU"+args.exeExt)]+cosimArg+["tmp_mbsimTestFMU"]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
-  ret3=[abs(subprocessCall(prefixSimulation(example, 'fmutst')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/3))]
+  ret3=[abs(subprocessCall(prefixSimulation(example, 'mbsimTestFMU')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/3))]
   outFiles3=getOutFilesAndAdaptRet(example, ret3)
 
   # return
