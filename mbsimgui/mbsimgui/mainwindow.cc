@@ -76,11 +76,6 @@ namespace bfs=boost::filesystem;
 
 namespace MBSimGUI {
 
-  DOMImplementation *impl=DOMImplementation::getImplementation();
-  DOMLSParser *parser=impl->createLSParser(DOMImplementation::MODE_SYNCHRONOUS, nullptr);
-  DOMLSSerializer *serializer=impl->createLSSerializer();
-  DOMLSSerializer *basicSerializer=impl->createLSSerializer();
-
   bool currentTask;
 
   MainWindow *mw;
@@ -90,6 +85,11 @@ namespace MBSimGUI {
   WebDialog* MainWindow::xmlHelpDialog = nullptr;
 
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), autoSave(false), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
+
+    impl=DOMImplementation::getImplementation();
+    parser=impl->createLSParser(DOMImplementation::MODE_SYNCHRONOUS, nullptr);
+    serializer=impl->createLSSerializer();
+    basicSerializer=impl->createLSSerializer();
 
     // use html output of MBXMLUtils
     static string HTMLOUTPUT="MBXMLUTILS_ERROROUTPUT=HTMLXPATH";
@@ -120,7 +120,7 @@ namespace MBSimGUI {
       if(!line.at(i).isEmpty())
         schemas.insert(line.at(i).toStdString());
 
-    parser=DOMParser::create(schemas);
+    mbxmlparser=DOMParser::create(schemas);
 
     projectView = new ProjectView;
     elementView = new ElementView;
@@ -448,6 +448,9 @@ namespace MBSimGUI {
     bfs::remove_all(uniqueTempDir, ec);
     bfs::remove("./.Project.mbsimprj.xml", ec);
     delete project;
+    parser->release();
+    serializer->release();
+    basicSerializer->release();
   }
 
   void MainWindow::setProjectChanged(bool changed) { 
@@ -668,7 +671,7 @@ namespace MBSimGUI {
       setCurrentProjectFile(file);
       std::string message;
       try { 
-        doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        doc = parser->parseURI(X()%file.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
       }
       catch(const std::exception &ex) {
@@ -745,7 +748,7 @@ namespace MBSimGUI {
 
   // update model parameters including additional paramters from paramList
   void MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
-    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
+    shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(this->doc->getDocumentURI());
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     doc->insertBefore(ele0,nullptr);
@@ -882,7 +885,7 @@ namespace MBSimGUI {
 
     currentTask = task;
 
-    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
+    shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(this->doc->getDocumentURI());
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
@@ -910,7 +913,7 @@ namespace MBSimGUI {
       root = doc->getDocumentElement();
       vector<boost::filesystem::path> dependencies;
       shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
-      Preprocess::preprocess(parser, eval, dependencies, root);
+      Preprocess::preprocess(mbxmlparser, eval, dependencies, root);
     }
     catch(exception &ex) {
       errorText = ex.what();
@@ -1624,7 +1627,7 @@ namespace MBSimGUI {
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
         DOMElement *ele = embed?doc->getDocumentElement()->getFirstElementChild():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true))->getFirstElementChild();
         while(ele) {
@@ -1694,7 +1697,7 @@ namespace MBSimGUI {
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1742,7 +1745,7 @@ namespace MBSimGUI {
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1790,7 +1793,7 @@ namespace MBSimGUI {
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1838,7 +1841,7 @@ namespace MBSimGUI {
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1886,7 +1889,7 @@ namespace MBSimGUI {
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1934,7 +1937,7 @@ namespace MBSimGUI {
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -1982,7 +1985,7 @@ namespace MBSimGUI {
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
@@ -2017,7 +2020,7 @@ namespace MBSimGUI {
     if(not file.isEmpty()) {
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-      xercesc::DOMDocument *doc = MBSimGUI::parser->parseURI(X()%file.toStdString());
+      xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
       DOMParser::handleCDATA(doc->getDocumentElement());
       ele = static_cast<DOMElement*>(project->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
     }

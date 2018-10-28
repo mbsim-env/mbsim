@@ -48,9 +48,6 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   extern MainWindow *mw;
-  extern DOMImplementation *impl;
-  extern DOMLSParser *parser;
-  extern DOMLSSerializer *serializer;
 
   LocalFrameComboBox::LocalFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
     connect(this,SIGNAL(highlighted(const QString&)),this,SLOT(highlightObject(const QString&)));
@@ -687,17 +684,17 @@ namespace MBSimGUI {
   }
 
   DOMElement* XMLEditorWidget::initializeUsingXML(DOMElement *element) {
-    string text = X()%serializer->writeToString(element);
+    string text = X()%mw->serializer->writeToString(element);
     edit->setText(QString::fromStdString(text));
     return element;
   }
 
   DOMElement* XMLEditorWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMLSInput *source = impl->createLSInput();
+    DOMLSInput *source = mw->impl->createLSInput();
     X x;
     source->setStringData(x%edit->toPlainText().toStdString());
     try {
-      return static_cast<xercesc::DOMElement*>(parser->parseWithContext(source, parent, DOMLSParser::ACTION_REPLACE));
+      return static_cast<xercesc::DOMElement*>(mw->parser->parseWithContext(source, parent, DOMLSParser::ACTION_REPLACE));
     }
     catch(DOMLSException &ex) {
       cout << X()%ex.msg << endl;

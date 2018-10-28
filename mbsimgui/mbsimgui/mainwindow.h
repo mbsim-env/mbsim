@@ -45,6 +45,9 @@ namespace MBXMLUtils {
 }
 
 namespace XERCES_CPP_NAMESPACE {
+  class DOMImplementation;
+  class DOMLSParser;
+  class DOMLSSerializer;
   class DOMDocument;
   class DOMElement;
 }
@@ -122,8 +125,12 @@ namespace MBSimGUI {
     public:
       MainWindow(QStringList &arg);
       ~MainWindow() override;
-      std::shared_ptr<MBXMLUtils::DOMParser> parser;
+      std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparser;
       std::shared_ptr<MBXMLUtils::Eval> eval;
+      xercesc::DOMImplementation *impl;
+      xercesc::DOMLSParser *parser;
+      xercesc::DOMLSSerializer *serializer;
+      xercesc::DOMLSSerializer *basicSerializer;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
       void addParameter(Parameter *parameter, EmbedItemData *parent);
