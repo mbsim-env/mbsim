@@ -57,7 +57,7 @@ namespace MBSimGUI {
 
   class ProjectMouseEvent : public QObject {
     public:
-      ProjectMouseEvent(ProjectView* view_) : view(view_) { }
+      ProjectMouseEvent(ProjectView* view_) : QObject(view_), view(view_) { }
     protected:
       ProjectView *view;
       ProjectPropertyDialog *editor;

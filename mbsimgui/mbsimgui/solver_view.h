@@ -61,7 +61,7 @@ namespace MBSimGUI {
 
   class SolverMouseEvent : public QObject {
     public:
-      SolverMouseEvent(SolverView* view_) : view(view_) { }
+      SolverMouseEvent(SolverView* view_) : QObject(view_), view(view_) { }
     protected:
       SolverView *view;
       SolverPropertyDialog *editor;
