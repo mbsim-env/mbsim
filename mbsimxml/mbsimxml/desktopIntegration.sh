@@ -17,6 +17,8 @@ done
 mkdir -p $HOME/.config
 echo "" >> $HOME/.config/mimeapps.list
 for F in $FREEDESKTOPORGDIR/mimeapps-*.list; do
+  grep -v "^application/vnd\.mbsim-env\." $HOME/.config/mimeapps.list > $HOME/.config/mimeapps.list_removed
+  mv -f $HOME/.config/mimeapps.list_removed $HOME/.config/mimeapps.list
   cat $F >> $HOME/.config/mimeapps.list
 done
 
