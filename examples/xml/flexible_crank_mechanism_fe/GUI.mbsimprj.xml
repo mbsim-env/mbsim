@@ -244,13 +244,13 @@ ret = 0;
             <positionIntegral>load('data.asc','rdm').rdm</positionIntegral>
             <positionPositionIntegral unit="kg*m^2">load('data.asc','rrdm').rrdm</positionPositionIntegral>
             <shapeFunctionIntegral>load('data.asc','Pdm').Pdm</shapeFunctionIntegral>
-            <positionShapeFunctionIntegral>
+            <positionShapeFunctionIntegralArray>
               <ele>load('data.asc','rPdm').rPdm{1}
 </ele>
               <ele>load('data.asc','rPdm').rPdm{2}</ele>
               <ele>load('data.asc','rPdm').rPdm{3}</ele>
-            </positionShapeFunctionIntegral>
-            <shapeFunctionShapeFunctionIntegral>
+            </positionShapeFunctionIntegralArray>
+            <shapeFunctionShapeFunctionIntegralArray>
               <row>
                 <ele>load('data.asc','PPdm').PPdm{1,1}</ele>
                 <ele>load('data.asc','PPdm').PPdm{1,2}</ele>
@@ -266,9 +266,9 @@ ret = 0;
                 <ele>load('data.asc','PPdm').PPdm{3,2}</ele>
                 <ele>load('data.asc','PPdm').PPdm{3,3}</ele>
               </row>
-            </shapeFunctionShapeFunctionIntegral>
+            </shapeFunctionShapeFunctionIntegralArray>
             <stiffnessMatrix>load('data.asc','Ke').Ke</stiffnessMatrix>
-            <nodalRelativePosition>
+            <nodalRelativePositionArray>
               <ele unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>l2</ele>
@@ -276,10 +276,10 @@ ret = 0;
                   <ele>0</ele>
                 </xmlVector>
               </ele>
-            </nodalRelativePosition>
-            <nodalShapeMatrixOfTranslation>
+            </nodalRelativePositionArray>
+            <nodalShapeMatrixOfTranslationArray>
               <ele>zeros(3,2*n)</ele>
-            </nodalShapeMatrixOfTranslation>
+            </nodalShapeMatrixOfTranslationArray>
             <stateDependentRotation>
               <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
             </stateDependentRotation>
