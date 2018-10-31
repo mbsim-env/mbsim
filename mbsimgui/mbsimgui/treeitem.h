@@ -32,38 +32,32 @@ namespace MBSimGUI {
   class TreeItem {
     public:
 
-      TreeItem(TreeItemData *itemData = nullptr, TreeItem *parent = nullptr, int ID_ = 1,
-          const QBrush &brush=QApplication::palette().brush(QPalette::Active, QPalette::Text)) :
-          itemData(itemData), parentItem(parent), ID(ID_), foreground(brush) {
+      TreeItem(TreeItemData *itemData = nullptr, TreeItem *parent = nullptr, int ID_ = 1, const QBrush &brush=QApplication::palette().brush(QPalette::Active, QPalette::Text)) : itemData(itemData), parentItem(parent), ID(ID_), foreground(brush) {
         getData_[0] = &TreeItem::getData0;
         getData_[1] = &TreeItem::getData1;
         getData_[2] = &TreeItem::getData2;
       }
       ~TreeItem();
 
-      TreeItem *child(int number) {return childItems.value(number);}
-      int childCount() const {return childItems.count();}
+      TreeItem *child(int number) { return childItems.value(number); }
+      int childCount() const { return childItems.count(); }
 
-      TreeItem *parent() {return parentItem;}
+      TreeItem *parent() { return parentItem; }
       bool insertChildren(TreeItem *item, int count);
       bool insertChildren(TreeItem *item, int index, int count);
       bool removeChildren(int position, int count);
       int childNumber() const;
-      void setItemData(TreeItemData *data_) {
-        itemData = data_;
-      }
-      TreeItemData* getItemData() const {return itemData;}
-      QVariant getData0() const {return itemData->getName();}
-      QVariant getData1() const {return itemData->getValue();}
-      QVariant getData2() const {return itemData->getType();}
+      void setItemData(TreeItemData *data_) { itemData = data_; }
+      TreeItemData* getItemData() const { return itemData; }
+      QVariant getData0() const { return itemData->getName(); }
+      QVariant getData1() const { return itemData->getValue(); }
+      QVariant getData2() const { return itemData->getType(); }
       QVariant (TreeItem::*getData_[3])() const;
-      QVariant getData(int column) const {return (this->*getData_[column])();}
-      int getID() const {return ID;}
+      QVariant getData(int column) const { return (this->*getData_[column])(); }
+      int getID() const { return ID; }
       QBrush getForeground() { return foreground; }
       void setForeground(const QBrush &brush) { foreground=brush; }
-      bool getEnabled() {
-        return foreground==QApplication::palette().brush(QPalette::Active, QPalette::Text);
-      }
+      bool getEnabled() { return foreground==QApplication::palette().brush(QPalette::Active, QPalette::Text); }
 
     protected:
       QList<TreeItem*> childItems;
