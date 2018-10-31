@@ -200,6 +200,8 @@ namespace MBSimGUI {
       return new ElasticJoint;
     if(E(element)->getTagName()==MBSIM%"Contact")
       return new Contact;
+    if(E(element)->getTagName()==MBSIM%"DiskContact")
+      return new DiskContact;
     if(E(element)->getTagName()==MBSIM%"GeneralizedSpringDamper")
       return new GeneralizedSpringDamper;
     if(E(element)->getTagName()==MBSIM%"GeneralizedElasticConnection")

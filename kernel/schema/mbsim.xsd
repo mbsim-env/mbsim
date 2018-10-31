@@ -2233,7 +2233,7 @@
                 Maximale Anzahl an Kontakten.
             </xs:documentation></xs:annotation>
           </xs:element>
-        </xs:sequence> 
+        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -2322,6 +2322,72 @@
             <xs:complexType>
               <xs:sequence>
                <xs:element ref="InfluenceFunction" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="DiskContact" substitutionGroup="FixedFrameLink" type="DiskContactType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Definiert einen Scheibenkontakt.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="DiskContactType">
+    <xs:complexContent>
+      <xs:extension base="FixedFrameLinkType">
+        <xs:sequence>
+          <xs:element name="outerDiskRadius" type="pv:lengthScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert den äußeren Scheibenradius
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="innerDiskRadius" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert den inneren Scheibenradius
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="normalForceLaw">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="GeneralizedForceLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="normalImpactLaw" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Geschwindigkeitsebene in Konturnormalenrichtung (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="GeneralizedImpactLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="tangentialForceLaw">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="FrictionForceLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="tangentialImpactLaw" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="FrictionImpactLaw"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>

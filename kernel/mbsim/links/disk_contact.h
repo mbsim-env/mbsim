@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2014 MBSim Development Team
+/* Copyright (C) 2004-2018 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -17,10 +17,10 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _SINGLE_CONTACT_H_
-#define _SINGLE_CONTACT_H_
+#ifndef _DISK_CONTACT_H_
+#define _DISK_CONTACT_H_
 
-#include <mbsim/links/contour_link.h>
+#include <mbsim/links/fixed_frame_link.h>
 
 namespace MBSim {
 
@@ -29,31 +29,17 @@ namespace MBSim {
   class FrictionForceLaw;
   class FrictionImpactLaw;
 
-  /*! \brief class for contacts
+  /*! \brief class for disk contacts
    * \author Martin Foerg
-   * \date 2009-04-02 some comments (Thorsten Schindler)
-   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
-   * \date 2009-08-03 contacts can now visualize their ContactPointFrames (Markus Schneider)
-   * \date 2010-07-06 added LinkStatus and LinearImpactEstimation for timestepper ssc (Robert Huber)
-   * \date 2012-05-08 added LinkStatusReg for AutoTimeSteppingSSCIntegrator (Jan Clauberg)
-   * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
-   *
-   * basic class for contacts between contours, mainly implementing geometrical informations of contact-pairings
-   * 
-   * Remarks:
-   * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class SingleContact: public ContourLink {
-
-    friend class Contact;
-    friend class MaxwellContact;
+  class DiskContact: public FixedFrameLink {
 
     public:
       /*!
        * \brief constructor
        * \param name of contact
        */      
-      SingleContact(const std::string &name="") : ContourLink(name) { }
+      DiskContact(const std::string &name="") : FixedFrameLink(name) { nF = 1; nM = 1; }
 
       void resetUpToDate() override;
 
@@ -79,20 +65,19 @@ namespace MBSim {
       /* INHERITED INTERFACE OF LINKINTERFACE */
       void updatewb() override;
       void updateV(int i=0) override;
+      void updateForceDirections() override; 
       void updateGeneralizedNormalForce() { (this->*updateGeneralizedNormalForce_)(); updlaN = false; }
       void updateGeneralizedTangentialForce() { (this->*updateGeneralizedTangentialForce_)(); updlaT = false; }
       void updateGeneralizedNormalForceS();
       void updateGeneralizedNormalForceM();
-      void updateGeneralizedNormalForceP();
       void updateGeneralizedTangentialForceS();
       void updateGeneralizedTangentialForceM();
-      void updateGeneralizedTangentialForce0() { }
-      void (SingleContact::*updateGeneralizedNormalForce_)();
-      void (SingleContact::*updateGeneralizedTangentialForce_)();
+      void (DiskContact::*updateGeneralizedNormalForce_)();
+      void (DiskContact::*updateGeneralizedTangentialForce_)();
       void updateGeneralizedForces() override;
       void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
-      void updatePositions(Frame *frame) override;
+//      void updatePositions(Frame *frame) override;
       void updateg() override;
       void updategd() override;
       void updateh(int i=0) override;
@@ -147,19 +132,33 @@ namespace MBSim {
       void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
       void setTangentialForceLaw(FrictionForceLaw *fdf_);
       void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
+      void setOuterDiskRadius(double rO_) { rO = rO_; }
+      void setInnerDiskRadius(double rI_) { rI = rI_; }
       /***************************************************/
-
-      /**
-       * \return number of considered friction directions
-       */
-      virtual int getFrictionDirections() const;
 
       void calccorrSize(int j) override;
       void updatecorr(int j) override;
 
       void checkRoot() override;
 
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+
     protected:
+      /**
+       * \brief outer disk radius
+       */
+      double rO{1};
+
+      /**
+       * \brief inner disk radius
+       */
+      double rI{0};
+
+      /**
+       * \brief effective radius
+       */
+      double rE;
+
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level
        */
@@ -249,7 +248,7 @@ namespace MBSim {
 
       bool updlaN{true}, updlaT{true};
 
-      fmatvec::Vec gdTDir;
+      int gdTDir;
 
       /**
        * \brief type of detected root
@@ -263,4 +262,4 @@ namespace MBSim {
 
 }
 
-#endif /* _SINGLE_CONTACT_H_ */
+#endif

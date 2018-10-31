@@ -195,6 +195,7 @@ namespace MBSimGUI {
       void addJoint();
       void addElasticJoint();
       void addContact();
+      void addDiskContact();
       void addSignal();
       void addGeneralizedFriction();
       void addGeneralizedGear();
