@@ -2414,6 +2414,49 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  DiskContactPropertyDialog::DiskContactPropertyDialog(FixedFrameLink *contact, QWidget *parent, const Qt::WindowFlags& f) : FixedFrameLinkPropertyDialog(contact,parent,f) {
+
+    outerDiskRadius = new ExtWidget("Outer disk radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"outerDiskRadius");
+    addToTab("General", outerDiskRadius);
+
+    innerDiskRadius = new ExtWidget("Inner disk radius",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"innerDiskRadius");
+    addToTab("General", innerDiskRadius);
+
+    contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"normalForceLaw");
+    addToTab("Kinetics", contactForceLaw);
+
+    contactImpactLaw = new ExtWidget("Normal impact law",new ChoiceWidget2(new GeneralizedImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalImpactLaw");
+    addToTab("Kinetics", contactImpactLaw);
+
+    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"tangentialForceLaw");
+    addToTab("Kinetics", frictionForceLaw);
+
+    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
+    addToTab("Kinetics", frictionImpactLaw);
+  }
+
+  DOMElement* DiskContactPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FixedFrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    outerDiskRadius->initializeUsingXML(item->getXMLElement());
+    innerDiskRadius->initializeUsingXML(item->getXMLElement());
+    contactForceLaw->initializeUsingXML(item->getXMLElement());
+    contactImpactLaw->initializeUsingXML(item->getXMLElement());
+    frictionForceLaw->initializeUsingXML(item->getXMLElement());
+    frictionImpactLaw->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DiskContactPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FixedFrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    outerDiskRadius->writeXMLFile(item->getXMLElement(),ref);
+    innerDiskRadius->writeXMLFile(item->getXMLElement(),ref);
+    contactForceLaw->writeXMLFile(item->getXMLElement(),ref);
+    contactImpactLaw->writeXMLFile(item->getXMLElement(),ref);
+    frictionForceLaw->writeXMLFile(item->getXMLElement(),ref);
+    frictionImpactLaw->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   ObserverPropertyDialog::ObserverPropertyDialog(Observer *observer, QWidget * parent, const Qt::WindowFlags& f) : ElementPropertyDialog(observer,parent,f) {
   }
 

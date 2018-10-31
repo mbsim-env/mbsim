@@ -273,12 +273,12 @@ namespace MBSimGUI {
     connect(actionKill,SIGNAL(triggered()),this,SLOT(kill()));
     toolBar->addAction(actionKill);
 
-    elementView->setModel(new ElementTreeModel);
+    elementView->setModel(new ElementTreeModel(this));
     elementView->setColumnWidth(0,250);
     elementView->setColumnWidth(1,200);
     elementView->hideColumn(1);
 
-    embeddingView->setModel(new EmbeddingTreeModel);
+    embeddingView->setModel(new EmbeddingTreeModel(this));
     embeddingView->setColumnWidth(0,150);
     embeddingView->setColumnWidth(1,200);
 

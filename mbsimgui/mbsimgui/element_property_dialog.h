@@ -711,6 +711,16 @@ namespace MBSimGUI {
       ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *searchAllContactPoints, *initialGuess, *tolerance, *maxNumContacts;
   };
 
+  class DiskContactPropertyDialog : public FixedFrameLinkPropertyDialog {
+
+    public:
+      DiskContactPropertyDialog(FixedFrameLink *contact, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *outerDiskRadius, *innerDiskRadius, *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw;
+  };
+
   class ObserverPropertyDialog : public ElementPropertyDialog {
 
     public:

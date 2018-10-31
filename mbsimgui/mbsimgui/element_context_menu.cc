@@ -480,6 +480,9 @@ namespace MBSimGUI {
     action = new QAction("Add contact", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
     addAction(action);
+    action = new QAction("Add disk contact", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addDiskContact()));
+    addAction(action);
     QMenu *menu = new SignalsContextMenu(element, "Add signal");
     addMenu(menu);
     action = new QAction("Add generalized spring damper", this);
@@ -537,6 +540,10 @@ namespace MBSimGUI {
 
   void LinksContextMenu::addContact() {
     mw->addLink(new Contact, element);
+  }
+
+  void LinksContextMenu::addDiskContact() {
+    mw->addLink(new DiskContact, element);
   }
 
   void LinksContextMenu::addSignal() {

@@ -35,10 +35,8 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent) {
-  }
-
   TreeModel::~TreeModel() {
+    delete rootItem->getItemData();
     delete rootItem;
   }
 
