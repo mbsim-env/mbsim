@@ -37,17 +37,6 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DiskContact)
 
-  void DiskContact::updatewb() {
-    if(fcl->isSetValued()) {
-      wb(0) -= evalGlobalForceDirection().col(0).T() * frame[0]->evalGyroscopicAccelerationOfTranslation();
-      wb(0) += evalGlobalForceDirection().col(0).T() * frame[1]->evalGyroscopicAccelerationOfTranslation();
-    }
-    if(fdf->isSetValued() and gdActive[tangential]) {
-      wb(iN) -= (evalGlobalMomentDirection().col(0).T() * frame[0]->evalGyroscopicAccelerationOfRotation())*rE;
-      wb(iN) += (evalGlobalMomentDirection().col(0).T() * frame[1]->evalGyroscopicAccelerationOfRotation())*rE;
-    }
-  }
-
   void DiskContact::resetUpToDate() {
     FixedFrameLink::resetUpToDate();
     updlaN = true;
@@ -96,6 +85,18 @@ namespace MBSim {
   const Vec& DiskContact::evalgddT() {
     if(ds->getUpdatela()) ds->updatela();
     return gddT;
+  }
+
+  void DiskContact::updateForce() {
+    F[1] = evalGlobalForceDirection().col(0)*evalGeneralizedForce()(0);
+    F[0] = -F[1];
+    updF = false;
+  }
+
+  void DiskContact::updateMoment() {
+    M[1] = evalGlobalMomentDirection().col(0)*rE*evalGeneralizedForce()(1);
+    M[0] = -M[1];
+    updM = false;
   }
 
   void DiskContact::updateForceDirections() {
@@ -151,11 +152,6 @@ namespace MBSim {
     updvrel = false;
   }
 
-//  void DiskContact::updatePositions(Frame *frame) {
-//    if(static_cast<Link*>(parent)->getUpdaterrel())
-//      static_cast<Link*>(parent)->updateGeneralizedPositions();
-//  }
-
   void DiskContact::updateg() {
     g = evalGeneralizedRelativePosition()(RangeV(0,gSize-1));
   }
@@ -191,6 +187,17 @@ namespace MBSim {
       if(gdT(0)*gdTDir<0) M*=-1.0;
       V[j][0] -= frame[0]->evalJacobianOfRotation(j).T() * M;
       V[j][1] += frame[1]->evalJacobianOfRotation(j).T() * M;
+    }
+  }
+
+  void DiskContact::updatewb() {
+    if(fcl->isSetValued()) {
+      wb(0) -= evalGlobalForceDirection().col(0).T() * frame[0]->evalGyroscopicAccelerationOfTranslation();
+      wb(0) += evalGlobalForceDirection().col(0).T() * frame[1]->evalGyroscopicAccelerationOfTranslation();
+    }
+    if(fdf->isSetValued() and gdActive[tangential]) {
+      wb(iN) -= (evalGlobalMomentDirection().col(0).T() * frame[0]->evalGyroscopicAccelerationOfRotation())*rE;
+      wb(iN) += (evalGlobalMomentDirection().col(0).T() * frame[1]->evalGyroscopicAccelerationOfRotation())*rE;
     }
   }
 

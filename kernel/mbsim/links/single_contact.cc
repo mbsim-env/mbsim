@@ -33,11 +33,6 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  void SingleContact::updatewb() {
-    wb -= evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
-    wb += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
-  }
-
   void SingleContact::resetUpToDate() {
     ContourLink::resetUpToDate();
     updlaN = true;
@@ -183,6 +178,11 @@ namespace MBSim {
       V[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * F;
       V[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * F;
     }
+  }
+
+  void SingleContact::updatewb() {
+    wb -= evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
+    wb += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
   }
 
   void SingleContact::updateStopVector() {

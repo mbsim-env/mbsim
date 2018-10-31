@@ -77,8 +77,6 @@ namespace MBSim {
       const fmatvec::Vec& evalgddT();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      void updatewb() override;
-      void updateV(int i=0) override;
       void updateGeneralizedNormalForce() { (this->*updateGeneralizedNormalForce_)(); updlaN = false; }
       void updateGeneralizedTangentialForce() { (this->*updateGeneralizedTangentialForce_)(); updlaT = false; }
       void updateGeneralizedNormalForceS();
@@ -97,6 +95,8 @@ namespace MBSim {
       void updategd() override;
       void updateh(int i=0) override;
       void updateW(int i=0) override;
+      void updateV(int i=0) override;
+      void updatewb() override;
       void updateStopVector() override;
       void updateStopVectorParameters() override;
       /***************************************************/
