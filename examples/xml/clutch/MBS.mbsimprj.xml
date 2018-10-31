@@ -3,7 +3,7 @@
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
-      <scalarParameter name="mu">0.1</scalarParameter>
+      <scalarParameter name="mu">1/3</scalarParameter>
       <scalarParameter name="N0">100</scalarParameter>
       <scalarParameter name="t0">3</scalarParameter>
       <scalarParameter name="rho">1000</scalarParameter>
@@ -255,7 +255,7 @@
         </KineticExcitation>
         <DiskContact name="DiskContact">
           <connect ref1="../Object[RigidBody1]/Frame[P]" ref2="../Object[RigidBody2]/Frame[P]"/>
-          <outerDiskRadius unit="m">1</outerDiskRadius>
+          <outerDiskRadius unit="m">r</outerDiskRadius>
           <normalForceLaw>
             <UnilateralConstraint/>
           </normalForceLaw>
