@@ -48,7 +48,7 @@ namespace MBSim {
 
   void GeneralizedGear::updateGeneralizedForces() {
     if(isSetValued())
-      lambda = la;
+      lambda = evalla();
     else
       lambda(0) = (*fl)(evalGeneralizedRelativePosition()(0),evalGeneralizedRelativeVelocity()(0));
     updla = false;

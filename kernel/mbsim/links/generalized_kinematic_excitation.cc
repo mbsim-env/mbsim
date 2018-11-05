@@ -62,7 +62,7 @@ namespace MBSim {
 
   void GeneralizedKinematicExcitation::updateGeneralizedForces() {
     if(isSetValued())
-      lambda = la;
+      lambda = evalla();
     else
       for(int i=0; i<lambda.size(); i++)
         lambda(i) = (*fl)(evalGeneralizedRelativePosition()(i),evalGeneralizedRelativeVelocity()(i));
