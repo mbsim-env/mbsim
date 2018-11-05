@@ -19,13 +19,12 @@
 
 #include <config.h> 
 #include <mbsim/links/disk_contact.h>
-#include <mbsim/frames/contour_frame.h>
+#include <mbsim/frames/frame.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/constitutive_laws/friction_force_law.h>
 #include <mbsim/constitutive_laws/generalized_impact_law.h>
 #include <mbsim/constitutive_laws/friction_impact_law.h>
-#include <mbsim/utils/contact_utils.h>
 #include <mbsim/objectfactory.h>
 
 using namespace std;
