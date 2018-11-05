@@ -9,4 +9,4 @@ SEP=":"
 test "_@HOST_OS@" == "_mingw32" && SEP=";"
 
 export PYTHONPATH=.${SEP}..${SEP}@abs_builddir@/.libs${SEP}@abs_builddir@/../.libs
-@XC_EXEC_PREFIX@ @PYTHON_BIN@ @srcdir@/fmatvec_main.py
+@XC_EXEC_PREFIX@ @PYTHON_BIN@ $(@XC_PATH_CONVERT@ @abs_srcdir@/fmatvec_main.py)
