@@ -36,6 +36,13 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DiskContact)
 
+  DiskContact::~DiskContact() {
+    delete fcl;
+    delete fdf;
+    delete fnil;
+    delete ftil;
+  }
+
   void DiskContact::resetUpToDate() {
     FixedFrameLink::resetUpToDate();
     updlaN = true;

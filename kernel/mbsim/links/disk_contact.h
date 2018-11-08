@@ -41,6 +41,8 @@ namespace MBSim {
        */      
       DiskContact(const std::string &name="") : FixedFrameLink(name) { nF = 1; nM = 1; }
 
+      ~DiskContact();
+
       void resetUpToDate() override;
 
       bool isSticking() const;
