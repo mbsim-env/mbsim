@@ -123,9 +123,12 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([cannot generate documentation. 'doxygen' required.])
 fi
 
+XC_PATH_CONVERT=echo
 if test "$cross_compiling" == "yes"; then
   AC_SUBST([XC_EXEC_PREFIX],[wine])
+  XC_PATH_CONVERT="winepath -w"
 fi
+AC_SUBST([XC_PATH_CONVERT])
 
 dnl Check for SWIG
 AC_ARG_WITH([swigpath], [  --with-swigpath=PATH  The path to the swig program.],
