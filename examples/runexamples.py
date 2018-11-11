@@ -878,7 +878,7 @@ def runExample(resultQueue, example):
         comm=prefixSimulation(example, 'openmbv')+exePrefix()+[pj(mbsimBinDir, "openmbv"+args.exeExt), "--autoExit"]+ombvFiles
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          ombvRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(5 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
+          ombvRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(8 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
           outfiles1=getOutFilesAndAdaptRet(example, ombvRet)
           ombvRet=ombvRet[0]
           print("\n\nReturned with "+str(ombvRet), file=outFD)
@@ -891,7 +891,7 @@ def runExample(resultQueue, example):
         comm=prefixSimulation(example, 'h5plotserie')+exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          h5pRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(5 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
+          h5pRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(8 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
           outfiles2=getOutFilesAndAdaptRet(example, h5pRet)
           h5pRet=h5pRet[0]
           print("\n\nReturned with "+str(h5pRet), file=outFD)
@@ -904,7 +904,7 @@ def runExample(resultQueue, example):
         comm=prefixSimulation(example, 'mbsimgui')+exePrefix()+[pj(mbsimBinDir, "mbsimgui"+args.exeExt), "--autoExit"]+[guiFile]
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          guiRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(5 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
+          guiRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(8 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
           outfiles3=getOutFilesAndAdaptRet(example, guiRet)
           guiRet=guiRet[0]
           print("\n\nReturned with "+str(guiRet), file=outFD)
