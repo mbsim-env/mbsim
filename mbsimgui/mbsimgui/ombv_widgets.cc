@@ -44,6 +44,7 @@ namespace MBSimGUI {
     name.emplace_back("IvBody");
     name.emplace_back("CompoundRigidBody");
     name.emplace_back("InvisibleBody");
+    name.emplace_back("GearWheel");
     xmlName.push_back(OPENMBV%"Cube");
     xmlName.push_back(OPENMBV%"Cuboid");
     xmlName.push_back(OPENMBV%"Frustum");
@@ -52,6 +53,7 @@ namespace MBSimGUI {
     xmlName.push_back(OPENMBV%"IvBody");
     xmlName.push_back(OPENMBV%"CompoundRigidBody");
     xmlName.push_back(OPENMBV%"InvisibleBody");
+    xmlName.push_back(OPENMBV%"GearWheel");
   }
 
   QWidget* OMBVRigidBodyWidgetFactory::createWidget(int i) {
@@ -71,6 +73,8 @@ namespace MBSimGUI {
       return new CompoundRigidBodyWidget("CompoundRigidBody"+toQStr(count++),OPENMBV%"CompoundRigidBody");
     if(i==7)
       return new InvisibleBodyWidget("InvisibleBody"+toQStr(count++),OPENMBV%"InvisibleBody");
+    if(i==8)
+      return new GearWheelWidget("GearWheel"+toQStr(count++),OPENMBV%"GearWheel");
     return nullptr;
   }
 
@@ -729,6 +733,39 @@ namespace MBSimGUI {
   DOMElement* DynamicIndexedFaceSetWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=OMBVFlexibleBodyWidget::writeXMLFile(parent);
     indices->writeXMLFile(e);
+    return e;
+  }
+
+  GearWheelWidget::GearWheelWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
+
+    numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget2(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"numberOfTeeth");
+    layout->addWidget(numberOfTeeth);
+
+    width = new ExtWidget("Width",new ChoiceWidget2(new ScalarWidgetFactory("5e-2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"width");
+    layout->addWidget(width);
+
+    module = new ExtWidget("Module",new ChoiceWidget2(new ScalarWidgetFactory("16e-3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"module");
+    layout->addWidget(module);
+
+    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget2(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"pressureAngle");
+    layout->addWidget(pressureAngle);
+  }
+
+  DOMElement* GearWheelWidget::initializeUsingXML(DOMElement *element) {
+    OMBVRigidBodyWidget::initializeUsingXML(element);
+    numberOfTeeth->initializeUsingXML(element);
+    width->initializeUsingXML(element);
+    module->initializeUsingXML(element);
+    pressureAngle->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* GearWheelWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
+    numberOfTeeth->writeXMLFile(e);
+    width->writeXMLFile(e);
+    module->writeXMLFile(e);
+    pressureAngle->writeXMLFile(e);
     return e;
   }
 
