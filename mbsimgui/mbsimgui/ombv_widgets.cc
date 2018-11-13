@@ -744,6 +744,9 @@ namespace MBSimGUI {
     width = new ExtWidget("Width",new ChoiceWidget2(new ScalarWidgetFactory("5e-2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"width");
     layout->addWidget(width);
 
+    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"helixAngle");
+    layout->addWidget(helixAngle);
+
     module = new ExtWidget("Module",new ChoiceWidget2(new ScalarWidgetFactory("16e-3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"module");
     layout->addWidget(module);
 
@@ -755,6 +758,7 @@ namespace MBSimGUI {
     OMBVRigidBodyWidget::initializeUsingXML(element);
     numberOfTeeth->initializeUsingXML(element);
     width->initializeUsingXML(element);
+    helixAngle->initializeUsingXML(element);
     module->initializeUsingXML(element);
     pressureAngle->initializeUsingXML(element);
     return element;
@@ -764,6 +768,7 @@ namespace MBSimGUI {
     DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
     numberOfTeeth->writeXMLFile(e);
     width->writeXMLFile(e);
+    helixAngle->writeXMLFile(e);
     module->writeXMLFile(e);
     pressureAngle->writeXMLFile(e);
     return e;
