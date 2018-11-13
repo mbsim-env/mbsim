@@ -744,16 +744,16 @@ namespace MBSimGUI {
     width = new ExtWidget("Width",new ChoiceWidget2(new ScalarWidgetFactory("5e-2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"width");
     layout->addWidget(width);
 
-    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"helixAngle");
+    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"helixAngle");
     layout->addWidget(helixAngle);
 
-    pitchAngle = new ExtWidget("Pitch angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"pitchAngle");
+    pitchAngle = new ExtWidget("Pitch angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"pitchAngle");
     layout->addWidget(pitchAngle);
 
-    module = new ExtWidget("Module",new ChoiceWidget2(new ScalarWidgetFactory("16e-3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"module");
+    module = new ExtWidget("Module",new ChoiceWidget2(new ScalarWidgetFactory("16e-3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"module");
     layout->addWidget(module);
 
-    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget2(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"pressureAngle");
+    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget2(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"pressureAngle");
     layout->addWidget(pressureAngle);
   }
 
