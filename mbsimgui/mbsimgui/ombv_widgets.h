@@ -339,7 +339,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *numberOfTeeth, *width, *helixAngle, *module, *pressureAngle;
+      ExtWidget *numberOfTeeth, *width, *helixAngle, *pitchAngle, *module, *pressureAngle;
   };
 
 }

@@ -747,6 +747,9 @@ namespace MBSimGUI {
     helixAngle = new ExtWidget("Helix angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"helixAngle");
     layout->addWidget(helixAngle);
 
+    pitchAngle = new ExtWidget("Pitch angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"pitchAngle");
+    layout->addWidget(pitchAngle);
+
     module = new ExtWidget("Module",new ChoiceWidget2(new ScalarWidgetFactory("16e-3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"module");
     layout->addWidget(module);
 
@@ -759,6 +762,7 @@ namespace MBSimGUI {
     numberOfTeeth->initializeUsingXML(element);
     width->initializeUsingXML(element);
     helixAngle->initializeUsingXML(element);
+    pitchAngle->initializeUsingXML(element);
     module->initializeUsingXML(element);
     pressureAngle->initializeUsingXML(element);
     return element;
@@ -769,6 +773,7 @@ namespace MBSimGUI {
     numberOfTeeth->writeXMLFile(e);
     width->writeXMLFile(e);
     helixAngle->writeXMLFile(e);
+    pitchAngle->writeXMLFile(e);
     module->writeXMLFile(e);
     pressureAngle->writeXMLFile(e);
     return e;
