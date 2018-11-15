@@ -1166,8 +1166,10 @@ def getOutFilesAndAdaptRet(example, ret):
       i=i+1
       htmlFile=re.sub('^valgrind\.[0-9]+\.', 'valgrind.%d.'%(i), htmlFile) # use small numbers for pid
       outFiles.append(htmlFile)
-      subprocess.check_call(['Xalan', '-o', pj(args.reportOutDir, example[0], htmlFile), xmlFile,
-                            pj(scriptDir, 'valgrindXMLToHTML.xsl')])
+      # xalan has bugs regarding entity resolver, which lead to unquoted <, > in valgrind suppression output
+      # hence, we use xsltproc here
+      subprocess.check_call(['xsltproc', '--output', pj(args.reportOutDir, example[0], htmlFile),
+                            pj(scriptDir, 'valgrindXMLToHTML.xsl'), xmlFile])
       os.remove(xmlFile)
     return outFiles
   return []
