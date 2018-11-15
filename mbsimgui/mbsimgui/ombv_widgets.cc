@@ -755,6 +755,9 @@ namespace MBSimGUI {
 
     pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget2(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"pressureAngle");
     layout->addWidget(pressureAngle);
+
+    backlash = new ExtWidget("Backlash",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"backlash");
+    layout->addWidget(backlash);
   }
 
   DOMElement* GearWheelWidget::initializeUsingXML(DOMElement *element) {
@@ -765,6 +768,7 @@ namespace MBSimGUI {
     pitchAngle->initializeUsingXML(element);
     module->initializeUsingXML(element);
     pressureAngle->initializeUsingXML(element);
+    backlash->initializeUsingXML(element);
     return element;
   }
 
@@ -776,6 +780,7 @@ namespace MBSimGUI {
     pitchAngle->writeXMLFile(e);
     module->writeXMLFile(e);
     pressureAngle->writeXMLFile(e);
+    backlash->writeXMLFile(e);
     return e;
   }
 
