@@ -33,8 +33,6 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSim {
-  extern double tP;
-  extern bool gflag;
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Contact)
 
