@@ -468,11 +468,11 @@ def main():
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
   print('</code></div></dd>', file=mainFD)
   global timeID
-  timeID=datetime.datetime.now()
+  timeID=datetime.datetime.utcnow()
   timeID=datetime.datetime(timeID.year, timeID.month, timeID.day, timeID.hour, timeID.minute, timeID.second)
   if args.timeID!="":
-    timeID=datetime.datetime.strptime(args.timeID, "%Y-%m-%dT%H:%M:%S")
-  print('  <dt>Time ID</dt><dd>'+str(timeID)+'</dd>', file=mainFD)
+    timeID=datetime.datetime.strptime(args.timeID, "%Y-%m-%dT%H:%M:%S+00:00")
+  print('  <dt>Time ID</dt><dd class="DATETIME">'+timeID.isoformat()+'+00:00</dd>', file=mainFD)
   print('  <dt>End time</dt><dd><!--S_ENDTIME--><span class="text-danger"><b>still running or aborted</b></span><!--E_ENDTIME--></dd>', file=mainFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   navA=""
@@ -619,19 +619,19 @@ def main():
   <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
 </span>
 <span class="pull-right small">
-  Generated on %s by runexamples.py
+  Generated on <span class="DATETIME">%s</span> by runexamples.py
   <a href="/">Home</a>
 </span>
 <span id="FINISHED" style="display:none"> </span>
 </body>
-</html>'''%(str(timeID)), file=mainFD)
+</html>'''%(timeID.isoformat()+"+00:00"), file=mainFD)
 
   mainFD.close()
   # replace end time in index.html
   for line in fileinput.FileInput(pj(args.reportOutDir, "index.html"),inplace=1):
     endTime=datetime.datetime.now()
     endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
-    line=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', str(endTime), line)
+    line=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', '<span class="DATETIME">'+endTime.isoformat()+"+00:00</span>", line)
     print(line, end="")
 
   # write RSS feed
@@ -1014,7 +1014,7 @@ def runExample(resultQueue, example):
       print('<h1>Validate XML Files: <small>%s</small></h1>'%(args.buildType), file=htmlOutputFD)
       print('<dl class="dl-horizontal">', file=htmlOutputFD)
       print('<dt>Example:</dt><dd>'+example[0].replace('/', u'/\u200B')+'</dd>', file=htmlOutputFD)
-      print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=htmlOutputFD)
+      print('<dt>Time ID:</dt><dd class="DATETIME">'+(timeID.isoformat()+"+00:00")+'</dd>', file=htmlOutputFD)
       currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
       parDirs="/".join(list(map(lambda x: "..", range(0, example[0].count(os.sep)+1))))
       navA=""
@@ -1052,7 +1052,7 @@ def runExample(resultQueue, example):
       print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
       print('<span class="pull-right small">',  file=htmlOutputFD)
-      print('  Generated on %s by runexamples.py'%(str(timeID)), file=htmlOutputFD)
+      print('  Generated on <span class="DATETIME">%s</span> by runexamples.py'%(timeID.isoformat()+"+00:00"), file=htmlOutputFD)
       print('  <a href="/">Home</a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
       print('</body>', file=htmlOutputFD)
@@ -1422,7 +1422,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<dt>File:</dt><dd>'+filename+'</dd>', file=diffHTMLPlotFD)
   print('<dt>Dataset:</dt><dd>'+datasetName+'</dd>', file=diffHTMLPlotFD)
   print('<dt>Label:</dt><dd>'+label+' (column %d)</dd>'%(column), file=diffHTMLPlotFD)
-  print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=diffHTMLPlotFD)
+  print('<dt>Time ID:</dt><dd class="DATETIME">'+timeID.isoformat()+'+00:00</dd>', file=diffHTMLPlotFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   parDirs="/".join(list(map(lambda x: "..", range(0, pj(example, filename, datasetName, str(column)).count(os.sep)+1))))
   navA=""
@@ -1453,7 +1453,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
   print('<span class="pull-right small">', file=diffHTMLPlotFD)
-  print('  Generated on %s by runexamples.py'%(str(timeID)), file=diffHTMLPlotFD)
+  print('  Generated on <span class="DATETIME">%s</span> by runexamples.py'%(timeID.isoformat()+"+00:00"), file=diffHTMLPlotFD)
   print('  <a href="/">Home</a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
   print('</body>', file=diffHTMLPlotFD)
@@ -1727,7 +1727,7 @@ def compareExample(example, compareFN):
   print('<h1>Compare Results: <small>%s</small></h1>'%(args.buildType), file=compareFD)
   print('<dl class="dl-horizontal">', file=compareFD)
   print('<dt>Example:</dt><dd>'+example.replace('/', u'/\u200B')+'</dd>', file=compareFD)
-  print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=compareFD)
+  print('<dt>Time ID:</dt><dd class="DATETIME">'+timeID.isoformat()+'+00:00</dd>', file=compareFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   parDirs="/".join(list(map(lambda x: "..", range(0, example.count(os.sep)+1))))
   navA=""
@@ -1838,7 +1838,7 @@ def compareExample(example, compareFN):
   print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=compareFD)
   print('</span>', file=compareFD)
   print('<span class="pull-right small">', file=compareFD)
-  print('  Generated on %s by runexamples.py'%(str(timeID)), file=compareFD)
+  print('  Generated on <span class="DATETIME">%s</span> by runexamples.py'%(timeID.isoformat()+"+00:00"), file=compareFD)
   print('  <a href="/">Home</a>', file=compareFD)
   print('</span>', file=compareFD)
   print('</body>', file=compareFD)

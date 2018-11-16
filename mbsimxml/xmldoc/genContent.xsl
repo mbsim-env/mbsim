@@ -109,7 +109,7 @@
       <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
     </span>
     <span class="pull-right small">
-      Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by MBSimXML<xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
+      Generated on <span class="DATETIME"><xsl:value-of select="$DATETIME"/></span> for MBSimXML by MBSimXML<xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
       <a href="/">Home</a>
     </span>
     </body></html>
