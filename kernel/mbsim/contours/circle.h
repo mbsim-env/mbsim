@@ -92,4 +92,3 @@ namespace MBSim {
 }
 
 #endif /* CIRCLE_H_ */
-
