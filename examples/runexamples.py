@@ -394,9 +394,14 @@ def main():
   </head>
   <body style="margin:0.5em">
   <script src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"> </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.23/moment-timezone-with-data-2012-2022.min.js"> </script>
   <script src="/mbsim/html/cookiewarning.js"> </script>
   <script>
     $(document).ready(function() {
+      $('.DATETIME').each(function() {
+        $(this).text(moment($(this).text()).tz(moment.tz.guess()).format("ddd, YYYY-MM-DD - HH:mm:ss z"));
+      }); 
       // init table
       $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ],
                                      'pageLength': 25, 'aaSorting': [], stateSave: true});
@@ -471,8 +476,8 @@ def main():
   timeID=datetime.datetime.utcnow()
   timeID=datetime.datetime(timeID.year, timeID.month, timeID.day, timeID.hour, timeID.minute, timeID.second)
   if args.timeID!="":
-    timeID=datetime.datetime.strptime(args.timeID, "%Y-%m-%dT%H:%M:%S+00:00")
-  print('  <dt>Time ID</dt><dd class="DATETIME">'+timeID.isoformat()+'+00:00</dd>', file=mainFD)
+    timeID=datetime.datetime.strptime(args.timeID, "%Y-%m-%dT%H:%M:%SZ")
+  print('  <dt>Time ID</dt><dd class="DATETIME">'+timeID.isoformat()+'Z</dd>', file=mainFD)
   print('  <dt>End time</dt><dd><!--S_ENDTIME--><span class="text-danger"><b>still running or aborted</b></span><!--E_ENDTIME--></dd>', file=mainFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   navA=""
@@ -624,14 +629,14 @@ def main():
 </span>
 <span id="FINISHED" style="display:none"> </span>
 </body>
-</html>'''%(timeID.isoformat()+"+00:00"), file=mainFD)
+</html>'''%(timeID.isoformat()+"Z"), file=mainFD)
 
   mainFD.close()
   # replace end time in index.html
   for line in fileinput.FileInput(pj(args.reportOutDir, "index.html"),inplace=1):
     endTime=datetime.datetime.now()
     endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
-    line=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', '<span class="DATETIME">'+endTime.isoformat()+"+00:00</span>", line)
+    line=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', '<span class="DATETIME">'+endTime.isoformat()+"Z</span>", line)
     print(line, end="")
 
   # write RSS feed
@@ -1005,16 +1010,21 @@ def runExample(resultQueue, example):
       print('</head>', file=htmlOutputFD)
       print('<body style="margin:0.5em">', file=htmlOutputFD)
       print('<script src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=htmlOutputFD)
+      print('<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"> </script>', file=htmlOutputFD)
+      print('<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.23/moment-timezone-with-data-2012-2022.min.js"> </script>', file=htmlOutputFD)
       print('<script src="/mbsim/html/cookiewarning.js"> </script>', file=htmlOutputFD)
       print('<script>', file=htmlOutputFD)
       print('  $(document).ready(function() {', file=htmlOutputFD)
+      print("    $('.DATETIME').each(function() {", file=htmlOutputFD)
+      print('      $(this).text(moment($(this).text()).tz(moment.tz.guess()).format("ddd, YYYY-MM-DD - HH:mm:ss z"));', file=htmlOutputFD)
+      print('    }); ', file=htmlOutputFD)
       print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=htmlOutputFD)
       print('  } );', file=htmlOutputFD)
       print('</script>', file=htmlOutputFD)
       print('<h1>Validate XML Files: <small>%s</small></h1>'%(args.buildType), file=htmlOutputFD)
       print('<dl class="dl-horizontal">', file=htmlOutputFD)
       print('<dt>Example:</dt><dd>'+example[0].replace('/', u'/\u200B')+'</dd>', file=htmlOutputFD)
-      print('<dt>Time ID:</dt><dd class="DATETIME">'+(timeID.isoformat()+"+00:00")+'</dd>', file=htmlOutputFD)
+      print('<dt>Time ID:</dt><dd class="DATETIME">'+(timeID.isoformat()+"Z")+'</dd>', file=htmlOutputFD)
       currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
       parDirs="/".join(list(map(lambda x: "..", range(0, example[0].count(os.sep)+1))))
       navA=""
@@ -1052,7 +1062,7 @@ def runExample(resultQueue, example):
       print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
       print('<span class="pull-right small">',  file=htmlOutputFD)
-      print('  Generated on <span class="DATETIME">%s</span> by runexamples.py'%(timeID.isoformat()+"+00:00"), file=htmlOutputFD)
+      print('  Generated on <span class="DATETIME">%s</span> by runexamples.py'%(timeID.isoformat()+"Z"), file=htmlOutputFD)
       print('  <a href="/">Home</a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
       print('</body>', file=htmlOutputFD)
@@ -1415,14 +1425,21 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('</head>', file=diffHTMLPlotFD)
   print('<body style="margin:0.5em">', file=diffHTMLPlotFD)
   print('<script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>', file=diffHTMLPlotFD)
+  print('<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"> </script>', file=diffHTMLPlotFD)
+  print('<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.23/moment-timezone-with-data-2012-2022.min.js"> </script>', file=diffHTMLPlotFD)
   print('<script src="/mbsim/html/cookiewarning.js"> </script>', file=diffHTMLPlotFD)
+  print('$(document).ready(function() {', file=diffHTMLPlotFD)
+  print("  $('.DATETIME').each(function() {", file=diffHTMLPlotFD)
+  print('    $(this).text(moment($(this).text()).tz(moment.tz.guess()).format("ddd, YYYY-MM-DD - HH:mm:ss z"));', file=diffHTMLPlotFD)
+  print('  }); ', file=diffHTMLPlotFD)
+  print('});', file=diffHTMLPlotFD)
   print('<h1>Difference Plot: <small>%s</small></h1>'%(args.buildType), file=diffHTMLPlotFD)
   print('<dl class="dl-horizontal">', file=diffHTMLPlotFD)
   print('<dt>Example:</dt><dd>'+example.replace('/', u'/\u200B')+'</dd>', file=diffHTMLPlotFD)
   print('<dt>File:</dt><dd>'+filename+'</dd>', file=diffHTMLPlotFD)
   print('<dt>Dataset:</dt><dd>'+datasetName+'</dd>', file=diffHTMLPlotFD)
   print('<dt>Label:</dt><dd>'+label+' (column %d)</dd>'%(column), file=diffHTMLPlotFD)
-  print('<dt>Time ID:</dt><dd class="DATETIME">'+timeID.isoformat()+'+00:00</dd>', file=diffHTMLPlotFD)
+  print('<dt>Time ID:</dt><dd class="DATETIME">'+timeID.isoformat()+'Z</dd>', file=diffHTMLPlotFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   parDirs="/".join(list(map(lambda x: "..", range(0, pj(example, filename, datasetName, str(column)).count(os.sep)+1))))
   navA=""
@@ -1453,7 +1470,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
   print('<span class="pull-right small">', file=diffHTMLPlotFD)
-  print('  Generated on <span class="DATETIME">%s</span> by runexamples.py'%(timeID.isoformat()+"+00:00"), file=diffHTMLPlotFD)
+  print('  Generated on <span class="DATETIME">%s</span> by runexamples.py'%(timeID.isoformat()+"Z"), file=diffHTMLPlotFD)
   print('  <a href="/">Home</a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
   print('</body>', file=diffHTMLPlotFD)
@@ -1682,9 +1699,14 @@ def compareExample(example, compareFN):
   print('</head>', file=compareFD)
   print('<body style="margin:0.5em">', file=compareFD)
   print('<script src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=compareFD)
+  print('<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"> </script>', file=compareFD)
+  print('<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.23/moment-timezone-with-data-2012-2022.min.js"> </script>', file=compareFD)
   print('<script src="/mbsim/html/cookiewarning.js"> </script>', file=compareFD)
   print('''<script>
     $(document).ready(function() {
+      $('.DATETIME').each(function() {
+        $(this).text(moment($(this).text()).tz(moment.tz.guess()).format("ddd, YYYY-MM-DD - HH:mm:ss z"));
+      }); 
       $('#SortThisTable').dataTable({
         'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ],
         'pageLength': 25,
@@ -1727,7 +1749,7 @@ def compareExample(example, compareFN):
   print('<h1>Compare Results: <small>%s</small></h1>'%(args.buildType), file=compareFD)
   print('<dl class="dl-horizontal">', file=compareFD)
   print('<dt>Example:</dt><dd>'+example.replace('/', u'/\u200B')+'</dd>', file=compareFD)
-  print('<dt>Time ID:</dt><dd class="DATETIME">'+timeID.isoformat()+'+00:00</dd>', file=compareFD)
+  print('<dt>Time ID:</dt><dd class="DATETIME">'+timeID.isoformat()+'Z</dd>', file=compareFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   parDirs="/".join(list(map(lambda x: "..", range(0, example.count(os.sep)+1))))
   navA=""
@@ -1838,7 +1860,7 @@ def compareExample(example, compareFN):
   print('  <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=compareFD)
   print('</span>', file=compareFD)
   print('<span class="pull-right small">', file=compareFD)
-  print('  Generated on <span class="DATETIME">%s</span> by runexamples.py'%(timeID.isoformat()+"+00:00"), file=compareFD)
+  print('  Generated on <span class="DATETIME">%s</span> by runexamples.py'%(timeID.isoformat()+"Z"), file=compareFD)
   print('  <a href="/">Home</a>', file=compareFD)
   print('</span>', file=compareFD)
   print('</body>', file=compareFD)
