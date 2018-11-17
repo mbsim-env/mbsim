@@ -3225,6 +3225,81 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="GearWheel" substitutionGroup="RigidContour" type="GearWheelType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Kontur einer Scheibe.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GearWheelType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="numberOfTeeth" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Anzahl der Zähne des Zahnrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="width" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Breite des Zahnrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="helixAngle" type="pv:angleScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Schrägungswinkel des Zahnrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="pitchAngle" type="pv:angleScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Kegelwinkel des Zahnrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="module" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Modul des Zahnrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="pressureAngle" type="pv:angleScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert Normeingriffswinkel des Zahnrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="backlash" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert das Zahnspiel des Zahnrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="FCLContour" substitutionGroup="RigidContour" type="FCLContourType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">

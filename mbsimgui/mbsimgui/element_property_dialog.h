@@ -303,6 +303,16 @@ namespace MBSimGUI {
       ExtWidget *outerRadius, *innerRadius, *width, *visu;
   };
 
+  class GearWheelPropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      GearWheelPropertyDialog(RigidContour *gearWheel, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *numberOfTeeth, *width, *helixAngle, *pitchAngle, *module, *pressureAngle, *backlash, *visu;
+  };
+
   class FlexiblePlanarNurbsContourPropertyDialog : public ContourPropertyDialog {
 
     public:
