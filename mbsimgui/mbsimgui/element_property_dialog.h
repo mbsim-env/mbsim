@@ -293,6 +293,16 @@ namespace MBSimGUI {
       ExtWidget *interpolation, *controlPoints, *numberOfEtaControlPoints, *numberOfXiControlPoints, *etaKnotVector, *xiKnotVector, *etaDegree, *xiDegree, *openEta, *openXi, *visu;
   };
 
+  class DiskPropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      DiskPropertyDialog(RigidContour *disk, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *outerRadius, *innerRadius, *width, *visu;
+  };
+
   class FlexiblePlanarNurbsContourPropertyDialog : public ContourPropertyDialog {
 
     public:
@@ -711,14 +721,14 @@ namespace MBSimGUI {
       ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *searchAllContactPoints, *initialGuess, *tolerance, *maxNumContacts;
   };
 
-  class DiskContactPropertyDialog : public FixedFrameLinkPropertyDialog {
+  class DiskContactPropertyDialog : public LinkPropertyDialog {
 
     public:
-      DiskContactPropertyDialog(FixedFrameLink *contact, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      DiskContactPropertyDialog(Link *contact, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *outerDiskRadius, *innerDiskRadius, *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw;
+      ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections;
   };
 
   class ObserverPropertyDialog : public ElementPropertyDialog {

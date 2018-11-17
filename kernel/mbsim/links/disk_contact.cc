@@ -19,7 +19,8 @@
 
 #include <config.h> 
 #include <mbsim/links/disk_contact.h>
-#include <mbsim/frames/frame.h>
+#include <mbsim/contours/disk.h>
+#include <mbsim/frames/contour_frame.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/constitutive_laws/friction_force_law.h>
@@ -44,7 +45,7 @@ namespace MBSim {
   }
 
   void DiskContact::resetUpToDate() {
-    FixedFrameLink::resetUpToDate();
+    ContourLink::resetUpToDate();
     updlaN = true;
     updlaT = true;
   }
@@ -106,8 +107,8 @@ namespace MBSim {
   }
 
   void DiskContact::updateForceDirections() {
-    DF.set(0,frame[0]->evalOrientation().col(2));
-    DM.set(0,frame[0]->getOrientation().col(2));
+    DF.set(0,cFrame[0]->evalOrientation().col(2));
+    DM.set(0,cFrame[0]->getOrientation().col(2));
     updDF = false;
   }
 
@@ -144,15 +145,25 @@ namespace MBSim {
     updla = false;
   }
 
+  void DiskContact::updatePositions(Frame *frame) {
+    if(updrrel)
+      updateGeneralizedPositions();
+  }
+
   void DiskContact::updateGeneralizedPositions() {
-    Vec3 WrD = frame[1]->evalPosition() - frame[0]->evalPosition();
-    rrel(0) = evalGlobalForceDirection().col(0).T() * WrD;
+    for(int i=0; i<2; i++) {
+      Disk *disk = static_cast<Disk*>(contour[i]);
+      cFrame[i]->setOrientation(disk->getFrame()->evalOrientation());
+      cFrame[i]->setPosition(disk->getFrame()->getPosition()+(disk->getWidth()/2)*disk->getFrame()->getOrientation().col(2));
+    }
+    Vec3 WrD = cFrame[1]->getPosition(false) - cFrame[0]->getPosition(false);
+    rrel(0) = cFrame[0]->getOrientation(false).col(2).T() * WrD;
     updrrel = false;
   }
 
   void DiskContact::updateGeneralizedVelocities() {
-    Vec3 WvD = frame[1]->evalVelocity() - frame[0]->evalVelocity();
-    Vec3 WomD = frame[1]->getAngularVelocity() - frame[0]->getAngularVelocity();
+    Vec3 WvD = cFrame[1]->evalVelocity() - cFrame[0]->evalVelocity();
+    Vec3 WomD = cFrame[1]->getAngularVelocity() - cFrame[0]->getAngularVelocity();
     vrel(0) = evalGlobalForceDirection().col(0).T() * WvD;
     vrel(1) = (evalGlobalMomentDirection().col(0).T() * WomD) * rE;
     updvrel = false;
@@ -173,8 +184,8 @@ namespace MBSim {
     if(not(fdf->isSetValued() and gdActive[tangential]))
       M = evalGlobalMomentDirection().col(0)*rE*evalGeneralizedTangentialForce();
 
-    h[j][0] -= frame[0]->evalJacobianOfTranslation(j).T() * F + frame[0]->evalJacobianOfRotation(j).T() * M;
-    h[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * F + frame[1]->evalJacobianOfRotation(j).T() * M;
+    h[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * F + cFrame[0]->evalJacobianOfRotation(j).T() * M;
+    h[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * F + cFrame[1]->evalJacobianOfRotation(j).T() * M;
   }
 
   void DiskContact::updateW(int j) {
@@ -182,8 +193,8 @@ namespace MBSim {
     if(fcl->isSetValued()) RF.set(0, evalGlobalForceDirection().col(0));
     if(fdf->isSetValued() and laSize>1) RM.set(iN, evalGlobalMomentDirection().col(0)*rE);
 
-    W[j][0] -= frame[0]->evalJacobianOfTranslation(j).T() * RF + frame[0]->evalJacobianOfRotation(j).T() * RM;
-    W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * RF + frame[1]->evalJacobianOfRotation(j).T() * RM;
+    W[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * RF + cFrame[0]->evalJacobianOfRotation(j).T() * RM;
+    W[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * RF + cFrame[1]->evalJacobianOfRotation(j).T() * RM;
   }
 
   void DiskContact::updateV(int j) {
@@ -191,19 +202,19 @@ namespace MBSim {
       Vec gdT = evalGeneralizedRelativeVelocity()(RangeV(1,1));
       Vec3 M = evalGlobalMomentDirection().col(0) * rE * fdf->dlaTdlaN(gdT);
       if(gdT(0)*gdTDir<0) M*=-1.0;
-      V[j][0] -= frame[0]->evalJacobianOfRotation(j).T() * M;
-      V[j][1] += frame[1]->evalJacobianOfRotation(j).T() * M;
+      V[j][0] -= cFrame[0]->evalJacobianOfRotation(j).T() * M;
+      V[j][1] += cFrame[1]->evalJacobianOfRotation(j).T() * M;
     }
   }
 
   void DiskContact::updatewb() {
     if(fcl->isSetValued()) {
-      wb(0) -= evalGlobalForceDirection().col(0).T() * frame[0]->evalGyroscopicAccelerationOfTranslation();
-      wb(0) += evalGlobalForceDirection().col(0).T() * frame[1]->evalGyroscopicAccelerationOfTranslation();
+      wb(0) -= evalGlobalForceDirection().col(0).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
+      wb(0) += evalGlobalForceDirection().col(0).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
     }
     if(fdf->isSetValued() and gdActive[tangential]) {
-      wb(iN) -= (evalGlobalMomentDirection().col(0).T() * frame[0]->evalGyroscopicAccelerationOfRotation())*rE;
-      wb(iN) += (evalGlobalMomentDirection().col(0).T() * frame[1]->evalGyroscopicAccelerationOfRotation())*rE;
+      wb(iN) -= (evalGlobalMomentDirection().col(0).T() * cFrame[0]->evalGyroscopicAccelerationOfRotation())*rE;
+      wb(iN) += (evalGlobalMomentDirection().col(0).T() * cFrame[1]->evalGyroscopicAccelerationOfRotation())*rE;
     }
   }
 
@@ -235,7 +246,7 @@ namespace MBSim {
   }
 
   void DiskContact::updatelaRef(const Vec& laParent) {
-    FixedFrameLink::updatelaRef(laParent);
+    ContourLink::updatelaRef(laParent);
     if (laSize) {
       if (fcl->isSetValued())
         laN >> la(0, 0);
@@ -245,7 +256,7 @@ namespace MBSim {
   }
 
   void DiskContact::updateLaRef(const Vec& LaParent) {
-    FixedFrameLink::updateLaRef(LaParent);
+    ContourLink::updateLaRef(LaParent);
     if (laSize) {
       if (fcl->isSetValued())
         LaN >> La(0, 0);
@@ -255,7 +266,7 @@ namespace MBSim {
   }
 
   void DiskContact::updategdRef(const Vec& gdParent) {
-    FixedFrameLink::updategdRef(gdParent);
+    ContourLink::updategdRef(gdParent);
     if (gdSize) {
       if (fcl->isSetValued())
         gdN >> gd(0, 0);
@@ -272,7 +283,7 @@ namespace MBSim {
   }
 
   void DiskContact::calclaSize(int j) {
-    FixedFrameLink::calclaSize(j);
+    ContourLink::calclaSize(j);
     if (j == 0) { // IA
       //Add 1 to lambda size if normal force law is setValued
       laSize = iN;
@@ -329,7 +340,7 @@ namespace MBSim {
   }
 
   void DiskContact::calcgSize(int j) {
-    FixedFrameLink::calcgSize(j);
+    ContourLink::calcgSize(j);
     if (j == 0) // IA
       gSize = iN;
     else if (j == 1) // IG
@@ -342,7 +353,7 @@ namespace MBSim {
 
   void DiskContact::calcgdSize(int j) {
     // TODO: avoid code duplication for maintenance
-    FixedFrameLink::calcgdSize(j);
+    ContourLink::calcgdSize(j);
     if (j == 0) { // all contacts
       // add 1 to gdSize if normal force law is setValued
       gdSize = iN;
@@ -390,7 +401,7 @@ namespace MBSim {
   }
 
   void DiskContact::calcrFactorSize(int j) {
-    FixedFrameLink::calcrFactorSize(j);
+    ContourLink::calcrFactorSize(j);
     if (j == 0) { // IA
       rFactorSize = iN;
       if(fdf->isSetValued())
@@ -417,7 +428,7 @@ namespace MBSim {
   }
 
   void DiskContact::calcsvSize() {
-    FixedFrameLink::calcsvSize();
+    ContourLink::calcsvSize();
 
     //Add length due to normal direction
     svSize = iN;
@@ -428,13 +439,13 @@ namespace MBSim {
   }
 
   void DiskContact::calcLinkStatusSize() {
-    FixedFrameLink::calcLinkStatusSize();
+    ContourLink::calcLinkStatusSize();
     LinkStatusSize = 1;
     LinkStatus.resize(LinkStatusSize);
   }
 
   void DiskContact::calcLinkStatusRegSize() {
-    FixedFrameLink::calcLinkStatusRegSize();
+    ContourLink::calcLinkStatusRegSize();
     LinkStatusRegSize = 1;
     LinkStatusReg.resize(LinkStatusRegSize);
   }
@@ -444,6 +455,8 @@ namespace MBSim {
       if(fdf->getFrictionDirections()>1)
         throwError("Spatial friction for disk contacts not yet implemented!");
 
+      double rO = min(static_cast<Disk*>(contour[0])->getOuterRadius(),static_cast<Disk*>(contour[1])->getOuterRadius());
+      double rI = max(static_cast<Disk*>(contour[0])->getInnerRadius(),static_cast<Disk*>(contour[1])->getInnerRadius());
       rE = 2./3.*(pow(rO,3)-pow(rI,3))/(pow(rO,2)-pow(rI,2));
       gActive = 1;
       gActive0 = 1;
@@ -477,7 +490,7 @@ namespace MBSim {
       gdnN.resize(1);
       gdnT.resize(1);
     }
-    FixedFrameLink::init(stage, config);
+    ContourLink::init(stage, config);
     fcl->init(stage, config);
     fdf->init(stage, config);
     if(fnil) fnil->init(stage, config);
@@ -1058,7 +1071,7 @@ namespace MBSim {
   }
 
   void DiskContact::calccorrSize(int j) {
-    FixedFrameLink::calccorrSize(j);
+    ContourLink::calccorrSize(j);
     if (j == 1) // IG
       corrSize = iN * gActive;
     else if (j == 2) // IB
@@ -1101,7 +1114,7 @@ namespace MBSim {
     }
     else {
       // TODO check if already computed
-      Vec3 WvD = frame[1]->evalVelocity() - frame[0]->evalVelocity();
+      Vec3 WvD = cFrame[1]->evalVelocity() - cFrame[0]->evalVelocity();
       gdInActive_(*IndInActive_) = evalGlobalForceDirection().col(0).T() * WvD;
       gInActive_(*IndInActive_) = evalGeneralizedRelativePosition()(0);
       (*IndInActive_)++;
@@ -1116,14 +1129,8 @@ namespace MBSim {
   }
 
   void DiskContact::initializeUsingXML(DOMElement *element) {
-    FixedFrameLink::initializeUsingXML(element);
+    ContourLink::initializeUsingXML(element);
     DOMElement *e;
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"outerDiskRadius");
-    setOuterDiskRadius(E(e)->getText<double>());
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"innerDiskRadius");
-    if(e) setInnerDiskRadius(E(e)->getText<double>());
 
     //Set contact law
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");

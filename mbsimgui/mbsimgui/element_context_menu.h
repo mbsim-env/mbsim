@@ -131,6 +131,7 @@ namespace MBSimGUI {
       void addPlanarNurbsContour();
       void addSpatialContour();
       void addSpatialNurbsContour();
+      void addDisk();
       void addFlexiblePlanarNurbsContour();
       void addFlexiblePlanarNurbsContourFFR();
       void addFlexibleSpatialNurbsContour();

@@ -20,7 +20,7 @@
 #ifndef _DISK_CONTACT_H_
 #define _DISK_CONTACT_H_
 
-#include <mbsim/links/fixed_frame_link.h>
+#include <mbsim/links/contour_link.h>
 
 namespace MBSim {
 
@@ -32,14 +32,14 @@ namespace MBSim {
   /*! \brief class for disk contacts
    * \author Martin Foerg
    */
-  class DiskContact: public FixedFrameLink {
+  class DiskContact: public ContourLink {
 
     public:
       /*!
        * \brief constructor
        * \param name of contact
        */      
-      DiskContact(const std::string &name="") : FixedFrameLink(name) { nF = 1; nM = 1; }
+      DiskContact(const std::string &name="") : ContourLink(name) { }
 
       ~DiskContact();
 
@@ -77,6 +77,7 @@ namespace MBSim {
       void (DiskContact::*updateGeneralizedNormalForce_)();
       void (DiskContact::*updateGeneralizedTangentialForce_)();
       void updateGeneralizedForces() override;
+      void updatePositions(Frame *frame) override;
       void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
       void updateg() override;
@@ -135,8 +136,6 @@ namespace MBSim {
       void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
       void setTangentialForceLaw(FrictionForceLaw *fdf_);
       void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
-      void setOuterDiskRadius(double rO_) { rO = rO_; }
-      void setInnerDiskRadius(double rI_) { rI = rI_; }
       /***************************************************/
 
       void calccorrSize(int j) override;
@@ -147,16 +146,6 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
-      /**
-       * \brief outer disk radius
-       */
-      double rO{1};
-
-      /**
-       * \brief inner disk radius
-       */
-      double rI{0};
-
       /**
        * \brief effective radius
        */
