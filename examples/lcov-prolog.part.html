@@ -7,8 +7,8 @@
   <link rel="stylesheet" type="text/css" href="@basedir@gcov.css">
   <link rel="shortcut icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
   <link rel="icon" href="/mbsim/html/mbsimenv.ico" type="image/x-icon"/>
+  <!-- use style from bootstrap for the navbar. We cannot include bootstrap.css here since it changes the look of other lcov output -->
   <style>
-    <!-- use style from bootstrap for the navbar. We cannot include bootstrap.css here since it changes the look of other lcov output -->
     .navbar {
       font-family: sans-serif;
       font-size: 80%;
@@ -56,7 +56,6 @@
       -webkit-user-select: none;
          -moz-user-select: none;
           -ms-user-select: none;
-              user-select: none;
       background-image: none;
       border: 1px solid transparent;
       border-radius: 4px;
@@ -78,4 +77,13 @@
 
 <body>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.23/moment-timezone-with-data-2012-2022.min.js"> </script>
 <script src="/mbsim/html/cookiewarning.js"> </script>
+<script>
+  $(document).ready(function() {
+    $("td:contains('Date:')" ).next().each(function() {
+      $(this).text(moment.tz($(this).text(), "UTC").tz(moment.tz.guess()).format("ddd, YYYY-MM-DD - HH:mm:ss z"));
+    });
+  });
+</script>

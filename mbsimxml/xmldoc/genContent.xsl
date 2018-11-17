@@ -42,9 +42,14 @@
         *._linkpointer { cursor:pointer; }
       </style>
       <script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"> </script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.23/moment-timezone-with-data-2012-2022.min.js"> </script>
       <script type="text/javascript">
         <![CDATA[
         $(document).ready(function() {
+          $('.DATETIME').each(function() {
+            $(this).text(moment($(this).text()).tz(moment.tz.guess()).format("ddd, YYYY-MM-DD - HH:mm:ss z"));
+          }); 
           $("._expandcollapsecontent").click(function() {
             $($(this).parent().children("ul")[0]).toggleClass("_displaynone");
             $(this).toggleClass("glyphicon-expand");
@@ -109,7 +114,7 @@
       <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
     </span>
     <span class="pull-right small">
-      Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by MBSimXML<xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
+      Generated on <span class="DATETIME"><xsl:value-of select="$DATETIME"/></span> for MBSimXML by MBSimXML<xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
       <a href="/">Home</a>
     </span>
     </body></html>
