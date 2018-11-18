@@ -42,6 +42,7 @@
 #include <mbsim/contours/sphere.h>
 #include <mbsim/contours/planar_nurbs_contour.h>
 #include <mbsim/contours/spatial_nurbs_contour.h>
+#include <mbsim/contours/gear_wheel.h>
 #ifdef HAVE_FCL
 #include <mbsim/contours/fcl_box.h>
 #include <mbsim/contours/fcl_sphere.h>
@@ -81,6 +82,7 @@
 #include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/point_spatialcontour.h>
 #include <mbsim/contact_kinematics/plane_spatialcontour.h>
+#include <mbsim/contact_kinematics/gearwheel_gearwheel.h>
 #ifdef HAVE_FCL
 #include <mbsim/contact_kinematics/fclcontour_fclcontour.h>
 #endif
@@ -226,6 +228,9 @@ namespace MBSim {
 
     else if ( contour0==typeid(Point) && contour1==typeid(SpatialNurbsContour) )
       return new ContactKinematicsPointSpatialContour;
+
+    else if ( contour0==typeid(GearWheel) && contour1==typeid(GearWheel) )
+      return new ContactKinematicsGearWheelGearWheel;
 
 #ifdef HAVE_FCL
     else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLBox) )
