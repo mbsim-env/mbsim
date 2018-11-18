@@ -335,10 +335,11 @@ def main():
   # get schema files
   schemaDir=pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"])
   global ombvSchema, mbsimXMLSchemas
-  ombvSchema =pj(schemaDir, "http___www_mbsim-env_de_OpenMBV", "openmbv.xsd")
   # create mbsimxml schema
   mbsimXMLSchemas=subprocess.check_output(exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyListSchemas"]).\
     decode("utf-8").split()
+  ombvSchemaRE=re.compile(".http___www_mbsim-env_de_OpenMBV.openmbv.xsd$")
+  ombvSchema=filter(lambda x: ombvSchemaRE.search(x)!=None, mbsimXMLSchemas)[0]
 
   # check args.directories
   for d in args.directories:
