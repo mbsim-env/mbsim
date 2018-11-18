@@ -8,7 +8,7 @@
       <scalarParameter name="z1">15</scalarParameter>
       <scalarParameter name="z2">18</scalarParameter>
       <scalarParameter name="be">0</scalarParameter>
-      <scalarParameter name="a0">m*(z1+z2)/2*1.01</scalarParameter>
+      <scalarParameter name="a0">m*(z1+z2)/2</scalarParameter>
       <scalarParameter name="mass">3</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
@@ -26,7 +26,7 @@
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
-              <ele>a0</ele>
+              <ele>1.01*a0</ele>
               <ele>0</ele>
             </xmlVector>
           </relativePosition>
