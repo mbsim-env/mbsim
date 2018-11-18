@@ -255,6 +255,12 @@ namespace MBSimGUI {
     action = new QAction("Add spatial nurbs contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSpatialNurbsContour()));
     addAction(action);
+    action = new QAction("Add disk", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addDisk()));
+    addAction(action);
+    action = new QAction("Add gear wheel", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGearWheel()));
+    addAction(action);
     action = new QAction("Add flexible planar nurbs contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarNurbsContour()));
     addAction(action);
@@ -335,6 +341,14 @@ namespace MBSimGUI {
 
   void ContoursContextMenu::addSpatialNurbsContour() {
     mw->addContour(new SpatialNurbsContour, element);
+  }
+
+  void ContoursContextMenu::addDisk() {
+    mw->addContour(new Disk, element);
+  }
+
+  void ContoursContextMenu::addGearWheel() {
+    mw->addContour(new GearWheel, element);
   }
 
   void ContoursContextMenu::addFlexiblePlanarNurbsContour() {

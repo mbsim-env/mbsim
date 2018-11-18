@@ -25,7 +25,7 @@
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
               <ele>0</ele>
-              <ele>d</ele>
+              <ele>2*d</ele>
             </xmlVector>
           </relativePosition>
         </FixedRelativeFrame>
@@ -72,31 +72,13 @@
             </FixedRelativeFrame>
           </frames>
           <contours>
-          </contours><openMBVRigidBody>
-            <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="Frustum2">
-              <transparency unit="-">0.3</transparency>
-              <initialTranslation unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>d/2</ele>
-                </xmlVector>
-              </initialTranslation>
-              <initialRotation unit="rad">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialRotation>
-              <scaleFactor unit="-">1</scaleFactor>
-              <baseRadius unit="m">r</baseRadius>
-              <topRadius unit="m">r</topRadius>
-              <height unit="m">d</height>
-              <innerBaseRadius unit="m">0</innerBaseRadius>
-              <innerTopRadius unit="m">0</innerTopRadius>
-            </Frustum>
-          </openMBVRigidBody>
+            <Disk name="Disk">
+              <frameOfReference ref="../Frame[P]"/>
+              <outerRadius unit="m">r</outerRadius>
+              <width unit="m">d</width>
+              <enableOpenMBV/>
+            </Disk>
+          </contours>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
           </enableOpenMBVFrameC>
@@ -147,41 +129,19 @@
                   <ele>-d/2</ele>
                 </xmlVector>
               </relativePosition>
+              <relativeOrientation>
+                <aboutY xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">180</aboutY>
+              </relativeOrientation>
             </FixedRelativeFrame>
           </frames>
-          <contours/>
-          <openMBVRigidBody>
-            <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="Frustum2">
-              <diffuseColor>
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0.851444</ele>
-                  <ele>0.265888</ele>
-                  <ele>0.678431</ele>
-                </xmlVector>
-              </diffuseColor>
-              <transparency unit="-">0.3</transparency>
-              <initialTranslation unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>d/2</ele>
-                </xmlVector>
-              </initialTranslation>
-              <initialRotation unit="rad">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialRotation>
-              <scaleFactor unit="-">1</scaleFactor>
-              <baseRadius unit="m">r</baseRadius>
-              <topRadius unit="m">r</topRadius>
-              <height unit="m">d</height>
-              <innerBaseRadius unit="m">0</innerBaseRadius>
-              <innerTopRadius unit="m">0</innerTopRadius>
-            </Frustum>
-          </openMBVRigidBody>
+          <contours>
+            <Disk name="Disk">
+              <frameOfReference ref="../Frame[P]"/>
+              <outerRadius unit="m">r</outerRadius>
+              <width unit="m">d</width>
+              <enableOpenMBV/>
+            </Disk>
+          </contours>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
           </enableOpenMBVFrameC>
@@ -254,8 +214,7 @@
           </enableOpenMBV>
         </KineticExcitation>
         <DiskContact name="DiskContact">
-          <connect ref1="../Object[RigidBody1]/Frame[P]" ref2="../Object[RigidBody2]/Frame[P]"/>
-          <outerDiskRadius unit="m">r</outerDiskRadius>
+          <connect ref1="../Object[RigidBody1]/Contour[Disk]" ref2="../Object[RigidBody2]/Contour[Disk]"/>
           <normalForceLaw>
             <UnilateralConstraint/>
           </normalForceLaw>

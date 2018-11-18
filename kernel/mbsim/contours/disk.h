@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2018 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef CIRCLE_H_
-#define CIRCLE_H_
+#ifndef DISK_H_
+#define DISK_H_
 
 #include "mbsim/contours/rigid_contour.h"
 
@@ -28,41 +28,30 @@
 namespace MBSim {
 
   /**
-   * \brief circular contour with contact possibility from outside and inside and binormal in direction of the third column of the contour reference frame
-   * \author Thorsten Schindler
-   * \date 2009-07-13 initial commit (Thorsten Schindler)
-   * \date 2009-12-21 adaptations concerning HollowCircle and SolidCircle
+   * \brief disk contour
+   * \author Martin Förg
    */
-  class Circle : public RigidContour {
+  class Disk : public RigidContour {
     public:
 
-      Circle(const std::string& name="", double r_=1., bool solid_=true, Frame *R=nullptr) : RigidContour(name,R), r(r_), solid(solid_) { }
+      Disk(const std::string& name="", Frame *R=nullptr) : RigidContour(name,R) { }
 
       /*!
        * \brief destructor
        */
-      ~Circle() override = default;
+      ~Disk() override = default;
 
       /* INHERITED INTERFACE OF ELEMENT */
       void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 
-      /* INHERITED INTERFACE OF CONTOUR */
-      fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override { return Kt; }
-      fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec2 evalZeta(const fmatvec::Vec3& WrPoint) override;
-      /***************************************************/
-
       /* GETTER / SETTER */
-      void setRadius(double r_) { r = r_; }
-      double getRadius() const { return r; }
-      double getSign() const { return sign; }
-      double getCurvature(const fmatvec::Vec2 &zeta) { return sign/r; }
-
-      void setSolid(bool solid_=true) { solid = solid_; }
-      bool getSolid() const { return solid; }
+      void setOuterRadius(double rO_) { rO = rO_; }
+      double getOuterRadius() const { return rO; }
+      void setInnerRadius(double rI_) { rI = rI_; }
+      double getInnerRadius() const { return rI; }
+      void setWidth(double w_) { w = w_; }
+      double getWidth() const { return w; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
@@ -73,22 +62,11 @@ namespace MBSim {
     void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
-      /** 
-       * \brief radius
-       */
-      double r;
-
-      double sign;
-
-    private:
-      /** 
-       * \brief contact on outer surface?
-       */
-      bool solid;
-
-      fmatvec::Vec3 Kt;
+      double rO{1};
+      double rI{0};
+      double w{0.1};
   };
 
 }
 
-#endif /* CIRCLE_H_ */
+#endif

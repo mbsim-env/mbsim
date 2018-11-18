@@ -39,21 +39,21 @@ namespace MBSimGUI {
     name.emplace_back("Cube");
     name.emplace_back("Cuboid");
     name.emplace_back("Frustum");
-    name.emplace_back("Extrusion");
     name.emplace_back("Sphere");
+    name.emplace_back("Extrusion");
+    name.emplace_back("GearWheel");
     name.emplace_back("IvBody");
     name.emplace_back("CompoundRigidBody");
     name.emplace_back("InvisibleBody");
-    name.emplace_back("GearWheel");
     xmlName.push_back(OPENMBV%"Cube");
     xmlName.push_back(OPENMBV%"Cuboid");
     xmlName.push_back(OPENMBV%"Frustum");
-    xmlName.push_back(OPENMBV%"Extrusion");
     xmlName.push_back(OPENMBV%"Sphere");
+    xmlName.push_back(OPENMBV%"Extrusion");
+    xmlName.push_back(OPENMBV%"GearWheel");
     xmlName.push_back(OPENMBV%"IvBody");
     xmlName.push_back(OPENMBV%"CompoundRigidBody");
     xmlName.push_back(OPENMBV%"InvisibleBody");
-    xmlName.push_back(OPENMBV%"GearWheel");
   }
 
   QWidget* OMBVRigidBodyWidgetFactory::createWidget(int i) {
@@ -64,17 +64,17 @@ namespace MBSimGUI {
     if(i==2)
       return new FrustumWidget("Frustum"+toQStr(count++),OPENMBV%"Frustum");
     if(i==3)
-      return new ExtrusionWidget("Extrusion"+toQStr(count++),OPENMBV%"Extrusion");
-    if(i==4)
       return new SphereWidget("Sphere"+toQStr(count++),OPENMBV%"Sphere");
+    if(i==4)
+      return new ExtrusionWidget("Extrusion"+toQStr(count++),OPENMBV%"Extrusion");
     if(i==5)
-      return new IvBodyWidget("IvBody"+toQStr(count++),OPENMBV%"IvBody");
-    if(i==6)
-      return new CompoundRigidBodyWidget("CompoundRigidBody"+toQStr(count++),OPENMBV%"CompoundRigidBody");
-    if(i==7)
-      return new InvisibleBodyWidget("InvisibleBody"+toQStr(count++),OPENMBV%"InvisibleBody");
-    if(i==8)
       return new GearWheelWidget("GearWheel"+toQStr(count++),OPENMBV%"GearWheel");
+    if(i==6)
+      return new IvBodyWidget("IvBody"+toQStr(count++),OPENMBV%"IvBody");
+    if(i==7)
+      return new CompoundRigidBodyWidget("CompoundRigidBody"+toQStr(count++),OPENMBV%"CompoundRigidBody");
+    if(i==8)
+      return new InvisibleBodyWidget("InvisibleBody"+toQStr(count++),OPENMBV%"InvisibleBody");
     return nullptr;
   }
 

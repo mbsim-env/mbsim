@@ -29,6 +29,7 @@ libcontactkinematics_la_SOURCES = point_line.cc\
 				  plane_spatialcontour.cc\
 				  edge_edge.cc\
 				  plate_polynomialfrustum.cc\
+				  gearwheel_gearwheel.cc\
 				  compoundcontour_contour.cc\
 				  compoundcontour_compoundcontour.cc\
 				  fclcontour_fclcontour.cc
@@ -69,6 +70,7 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h\
 				   plane_spatialcontour.h\
 				   edge_edge.h\
 				   plate_polynomialfrustum.h\
+                                   gearwheel_gearwheel.h\
 				   compoundcontour_contour.h\
 				   compoundcontour_compoundcontour.h\
 				   fclcontour_fclcontour.h
