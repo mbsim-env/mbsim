@@ -893,7 +893,7 @@ def runExample(resultQueue, example):
       h5pRet=0
       if len(h5pFiles)>0:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_h5p.txt"), "w", encoding="utf-8"), args.printToConsole)
-        comm=prefixSimulation(example, 'h5plotserie')+exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles
+        comm=prefixSimulation(example, 'h5plotserie')+exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+h5pFiles
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
           h5pRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(8 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
