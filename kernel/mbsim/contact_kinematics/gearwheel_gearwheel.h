@@ -64,6 +64,7 @@ namespace MBSim {
       int side{-1};
       int k[2][2]{{0,0},{0,0}};
       double be[2][2], ga[2];
+      std::map<SingleContact*,int> cmap;
 
       /**
        * \brief contour classes

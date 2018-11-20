@@ -48,6 +48,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsGearWheelGearWheel::updateg(SingleContact &contact, int i) {
+    cmap[&contact] = i;
     int signi = i?-1:1;
     Vec3 rS1S2 = gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition();
     a = nrm2(rS1S2);
@@ -113,11 +114,12 @@ namespace MBSim {
     contact.getGeneralizedRelativePosition(false)(0) = n1.T()*(contact.getContourFrame(igearwheel[1])->getPosition(false) - contact.getContourFrame(igearwheel[0])->getPosition(false));
   }
 
-  void ContactKinematicsGearWheelGearWheel::updatewb(SingleContact &contact, int i) {
+  void ContactKinematicsGearWheelGearWheel::updatewb(SingleContact &contact, int i_) {
+    int i = cmap[&contact];
+    int signi = i?-1:1;
     const Vec3 n1 = contact.getContourFrame(igearwheel[0])->evalOrientation().col(0);
 //    const Vec3 vC1 = contact.getContourFrame(igearwheel[0])->evalVelocity();
 //    const Vec3 vC2 = contact.getContourFrame(igearwheel[1])->evalVelocity();
-    int signi = i?-1:1;
     Vec3 rS1S2 = gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition();
     Vec3 vS1S2 = gearwheel[1]->getFrame()->evalVelocity() - gearwheel[0]->getFrame()->evalVelocity();
     double ad = (vS1S2.T()*rS1S2)/a;
@@ -126,7 +128,7 @@ namespace MBSim {
 
     Vec3 vrel[2];
     for(int j=0; j<2; j++) {
-      deld[j] = gearwheel[j]->getFrame()->getAngularVelocity().T()*gearwheel[j]->getFrame()->getOrientation().col(2);
+      deld[j] = signi*(gearwheel[j]->getFrame()->getAngularVelocity().T()*gearwheel[j]->getFrame()->getOrientation().col(2));
       bed[j] = deld[j] + ald;
       vrel[j](0) = signi*rb[j]*(cos(be[i][j])*bed[j] + sin(be[i][j])*bed[j]*be[i][j] - cos(be[i][j])*bed[j]);
       vrel[j](1) = rb[j]*(-sin(be[i][j])*bed[j] + cos(be[i][j])*bed[j]*be[i][j] + sin(be[i][j])*bed[j]);
