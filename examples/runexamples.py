@@ -335,10 +335,11 @@ def main():
   # get schema files
   schemaDir=pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"])
   global ombvSchema, mbsimXMLSchemas
-  ombvSchema =pj(schemaDir, "http___www_mbsim-env_de_OpenMBV", "openmbv.xsd")
   # create mbsimxml schema
   mbsimXMLSchemas=subprocess.check_output(exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyListSchemas"]).\
     decode("utf-8").split()
+  ombvSchemaRE=re.compile(".http___www_mbsim-env_de_OpenMBV.openmbv.xsd$")
+  ombvSchema=filter(lambda x: ombvSchemaRE.search(x)!=None, mbsimXMLSchemas)[0]
 
   # check args.directories
   for d in args.directories:
@@ -893,7 +894,7 @@ def runExample(resultQueue, example):
       h5pRet=0
       if len(h5pFiles)>0:
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_h5p.txt"), "w", encoding="utf-8"), args.printToConsole)
-        comm=prefixSimulation(example, 'h5plotserie')+exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+ombvFiles
+        comm=prefixSimulation(example, 'h5plotserie')+exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+h5pFiles
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
           h5pRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(8 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
