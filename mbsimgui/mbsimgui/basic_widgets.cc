@@ -271,7 +271,7 @@ namespace MBSimGUI {
   void FileWidget::setFile(const QString &str) {
     filePath->setText(str);
     QString file = quote?str.mid(1,str.length()-2):str;
-    path->setChecked(file[0]=='/'?1:0);
+    path->setChecked(QDir::isAbsolutePath(file));
   }
 
   void FileWidget::selectFile() {
