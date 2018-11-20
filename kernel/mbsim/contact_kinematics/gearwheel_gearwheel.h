@@ -45,7 +45,7 @@ namespace MBSim {
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
       void updateg(SingleContact &contact, int i=0) override;
-//      void updatewb(SingleContact &contact, int i=0) override;
+      void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
 
     private:
@@ -54,14 +54,16 @@ namespace MBSim {
        */
       int igearwheel[2];
       double m;
-      double al0;
+      double al0, al;
       int z[2];
       double d0[2];
       double db[2];
       double rb[2];
       double sb[2];
-      double a0;
+      double a0, a;
       int side{-1};
+      int k[2][2]{{0,0},{0,0}};
+      double be[2][2], ga[2];
 
       /**
        * \brief contour classes
