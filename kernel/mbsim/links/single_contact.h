@@ -146,6 +146,7 @@ namespace MBSim {
       GeneralizedForceLaw * getNormalForceLaw() const { return fcl; }
       void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
       void setTangentialForceLaw(FrictionForceLaw *fdf_);
+      FrictionForceLaw * getTangentialForceLaw() const { return fdf; }
       void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
       /***************************************************/
 
@@ -158,6 +159,11 @@ namespace MBSim {
       void updatecorr(int j) override;
 
       void checkRoot() override;
+
+      bool isNormalForceLawSetValued() const;
+      bool isTangentialForceLawSetValued() const;
+      bool isNormalForceLawSetValuedAndActive() const { return isNormalForceLawSetValued() and gdActive[normal]; }
+      bool isTangentialForceLawSetValuedAndActive() const { return isTangentialForceLawSetValued() and gdActive[tangential]; }
 
     protected:
       /**
@@ -244,8 +250,6 @@ namespace MBSim {
 
       double lambdaN;
       fmatvec::VecV lambdaT;
-
-      int iN{0};
 
       bool updlaN{true}, updlaT{true};
 

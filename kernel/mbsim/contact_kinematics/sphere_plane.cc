@@ -102,10 +102,14 @@ namespace MBSim {
 
     Mat3x3 tOm1 = tilde(Om1);
     Mat3x3 tOm2 = tilde(Om2);
-    contact.getwb(false)(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
 
-    if(contact.getwb(false).size() > 1) contact.getwb(false)(1) += u1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
-    if(contact.getwb(false).size() > 2) contact.getwb(false)(2) += v1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    if(contact.isNormalForceLawSetValued())
+      contact.getwb(false)(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    if(contact.isTangentialForceLawSetValuedAndActive()) {
+      contact.getwb(false)(contact.isNormalForceLawSetValued()) += u1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+      if(contact.getFrictionDirections()>1)
+        contact.getwb(false)(contact.isNormalForceLawSetValued()+1) += v1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    }
   }
 
 }

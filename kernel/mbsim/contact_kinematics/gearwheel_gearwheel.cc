@@ -132,9 +132,10 @@ namespace MBSim {
       vrel[j](1) = rb[j]*(-sin(be[i][j])*bed[j] + cos(be[i][j])*bed[j]*be[i][j] + sin(be[i][j])*bed[j]);
       vrel[j] = gearwheel[j]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[j]+k[i][j]*2*M_PI/z[j])*vrel[j];
     }
-    contact.getwb(false)(0) += /*parnPart1.T()*(vC2-vC1)+*/n1.T()*(crossProduct(contact.getContourFrame(igearwheel[1])->evalAngularVelocity(),vrel[1])-crossProduct(contact.getContourFrame(igearwheel[0])->evalAngularVelocity(),vrel[0]));
-//    if (contact.getwb(false).size()>1)
-//      contact.getwb(false)(1) +=
+    if(contact.isNormalForceLawSetValued())
+      contact.getwb(false)(0) += /*parnPart1.T()*(vC2-vC1)+*/n1.T()*(crossProduct(contact.getContourFrame(igearwheel[1])->evalAngularVelocity(),vrel[1])-crossProduct(contact.getContourFrame(igearwheel[0])->evalAngularVelocity(),vrel[0]));
+    if(contact.isTangentialForceLawSetValuedAndActive())
+      throw runtime_error("Tangential force law must be single valued for gear wheel to gear wheel contacts");
   }
 
 }
