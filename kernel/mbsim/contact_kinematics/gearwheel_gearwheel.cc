@@ -48,7 +48,6 @@ namespace MBSim {
   }
 
   void ContactKinematicsGearWheelGearWheel::updateg(SingleContact &contact, int i) {
-    cmap[&contact] = i;
     int signi = i?-1:1;
     Vec3 rS1S2 = gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition();
     a = nrm2(rS1S2);
@@ -114,8 +113,7 @@ namespace MBSim {
     contact.getGeneralizedRelativePosition(false)(0) = n1.T()*(contact.getContourFrame(igearwheel[1])->getPosition(false) - contact.getContourFrame(igearwheel[0])->getPosition(false));
   }
 
-  void ContactKinematicsGearWheelGearWheel::updatewb(SingleContact &contact, int i_) {
-    int i = cmap[&contact];
+  void ContactKinematicsGearWheelGearWheel::updatewb(SingleContact &contact, int i) {
     int signi = i?-1:1;
     const Vec3 n1 = contact.getContourFrame(igearwheel[0])->evalOrientation().col(0);
 //    const Vec3 vC1 = contact.getContourFrame(igearwheel[0])->evalVelocity();
