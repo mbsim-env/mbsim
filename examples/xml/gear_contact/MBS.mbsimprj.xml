@@ -10,6 +10,7 @@
       <scalarParameter name="be">0</scalarParameter>
       <scalarParameter name="a0">m*(z1+z2)/2</scalarParameter>
       <scalarParameter name="mass">3</scalarParameter>
+      <scalarParameter name="mu">0.05</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
@@ -176,6 +177,15 @@
               <restitutionCoefficient>0</restitutionCoefficient>
             </UnilateralNewtonImpact>
           </normalImpactLaw>
+          <tangentialForceLaw>
+            <RegularizedPlanarFriction>
+              <frictionForceFunction>
+                <LinearRegularizedCoulombFriction>
+                  <frictionCoefficient>mu</frictionCoefficient>
+                </LinearRegularizedCoulombFriction>
+              </frictionForceFunction>
+            </RegularizedPlanarFriction>
+          </tangentialForceLaw>
         </Contact>
       </links>
       <constraints/>
