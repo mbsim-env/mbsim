@@ -45,10 +45,10 @@ namespace MBSim {
   }
 
   void Contact::updatewb() {
-    for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      if(iter->gdActive[SingleContact::normal]) {
-        iter->updatewb();
-        contactKinematics->updatewb(*iter);
+    for (size_t i=0; i<contacts.size(); i++) {
+      if(contacts[i].gdActive[SingleContact::normal]) {
+        contacts[i].updatewb();
+        contactKinematics->updatewb(contacts[i],i);
       }
     }
   }

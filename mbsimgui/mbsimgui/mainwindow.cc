@@ -603,7 +603,6 @@ namespace MBSimGUI {
     emodel->removeRow(index.row(), index.parent());
     emodel->createEmbeddingItem(projectView->getProject());
     embeddingView->expandAll();
-    embeddingView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
   }
 
   void MainWindow::newProject() {

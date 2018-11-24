@@ -876,7 +876,7 @@ namespace MBSimGUI {
     gd = new ExtWidget("Marginal velocity",new ChoiceWidget2(new ScalarWidgetFactory("0.01",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"marginalVelocity");
     layout->addWidget(gd);
 
-    mu = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"frictionCoefficient");
+    mu = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(mu);
   }
 
@@ -901,7 +901,7 @@ namespace MBSimGUI {
     gd = new ExtWidget("Marginal velocity",new ChoiceWidget2(new ScalarWidgetFactory("0.01",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"marginalVelocity");
     layout->addWidget(gd);
 
-    mu = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"frictionCoefficient");
+    mu = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(mu);
   }
 

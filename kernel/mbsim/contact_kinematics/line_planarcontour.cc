@@ -123,9 +123,10 @@ namespace MBSim {
     b(1) = -u2.T()*parnPart1-n1.T()*paruPart2;
     Vec zetad =  slvLU(A,b);
 
-    contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParEta2*zetad(1)-parWvCParEta1*zetad(0));
-    if (contact.getwb(false).size()>1)
-      contact.getwb(false)(1) += paruPart1.T()*(vC2-vC1)+u1.T()*(parWvCParEta2*zetad(1)-parWvCParEta1*zetad(0));
+    if(contact.isNormalForceLawSetValued())
+      contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParEta2*zetad(1)-parWvCParEta1*zetad(0));
+    if(contact.isTangentialForceLawSetValuedAndActive())
+      contact.getwb(false)(contact.isNormalForceLawSetValued()) += paruPart1.T()*(vC2-vC1)+u1.T()*(parWvCParEta2*zetad(1)-parWvCParEta1*zetad(0));
   }
 
 }

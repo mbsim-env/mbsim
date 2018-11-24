@@ -8,8 +8,9 @@
       <scalarParameter name="z1">15</scalarParameter>
       <scalarParameter name="z2">18</scalarParameter>
       <scalarParameter name="be">0</scalarParameter>
-      <scalarParameter name="a0">m*(z1+z2)/2*1.01</scalarParameter>
+      <scalarParameter name="a0">m*(z1+z2)/2</scalarParameter>
       <scalarParameter name="mass">3</scalarParameter>
+      <scalarParameter name="mu">0.05</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
@@ -26,7 +27,7 @@
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
-              <ele>a0</ele>
+              <ele>1.01*a0</ele>
               <ele>0</ele>
             </xmlVector>
           </relativePosition>
@@ -158,9 +159,11 @@
             </xmlMatrix>
           </momentDirection>
           <momentFunction>
-            <ConstantFunction>
-              <a0>0.1</a0>
-            </ConstantFunction>
+            <SinusoidalFunction>
+              <amplitude>0.1</amplitude>
+              <frequency>0.5</frequency>
+              <phase>pi/2</phase>
+            </SinusoidalFunction>
           </momentFunction>
           <enableOpenMBV/>
         </KineticExcitation>
@@ -174,6 +177,15 @@
               <restitutionCoefficient>0</restitutionCoefficient>
             </UnilateralNewtonImpact>
           </normalImpactLaw>
+          <tangentialForceLaw>
+            <RegularizedPlanarFriction>
+              <frictionForceFunction>
+                <LinearRegularizedCoulombFriction>
+                  <frictionCoefficient>mu</frictionCoefficient>
+                </LinearRegularizedCoulombFriction>
+              </frictionForceFunction>
+            </RegularizedPlanarFriction>
+          </tangentialForceLaw>
         </Contact>
       </links>
       <constraints/>
@@ -208,10 +220,10 @@
     </DynamicSystemSolver>
   </Embed>
 
-  <TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
-    <endTime unit="s">1</endTime>
+    <endTime unit="s">4</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
-  </TimeSteppingIntegrator>
+  </DOPRI5Integrator>
 
 </MBSimProject>

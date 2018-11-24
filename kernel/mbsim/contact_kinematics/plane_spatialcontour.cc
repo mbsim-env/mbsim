@@ -141,11 +141,12 @@ namespace MBSim {
     Vec zetad1 = zetad(0,1);
     Vec zetad2 = zetad(2,3);
 
-    contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
-    if (contact.getwb(false).size()>1) {
-      contact.getwb(false)(1) += paruPart1.T()*(vC2-vC1)+u1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
-      if (contact.getwb(false).size()>2)
-        contact.getwb(false)(2) += parvPart1.T()*(vC2-vC1)+v1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
+    if(contact.isNormalForceLawSetValued())
+      contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
+    if(contact.isTangentialForceLawSetValuedAndActive()) {
+      contact.getwb(false)(contact.isNormalForceLawSetValued()) += paruPart1.T()*(vC2-vC1)+u1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
+      if(contact.getFrictionDirections()>1)
+        contact.getwb(false)(contact.isNormalForceLawSetValued()+1) += parvPart1.T()*(vC2-vC1)+v1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
     }
   }
 

@@ -81,9 +81,9 @@ namespace MBSim {
 
     const Mat tOm1 = tilde(Om1);
 
-    contact.getwb(false)(0) += ((vC2-vC1).T()*N1-n1.T()*tOm1*R1)*zetad-n1.T()*tOm1*(vC2-vC1);
-    if (contact.getwb(false).size()>1)
-      contact.getwb(false)(1) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad-u1.T()*tOm1*(vC2-vC1);
+    if(contact.isNormalForceLawSetValued())
+      contact.getwb(false)(0) += ((vC2-vC1).T()*N1-n1.T()*tOm1*R1)*zetad-n1.T()*tOm1*(vC2-vC1);
+    if(contact.isTangentialForceLawSetValuedAndActive())
+      contact.getwb(false)(contact.isNormalForceLawSetValued()) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad-u1.T()*tOm1*(vC2-vC1);
   }
 }
-
