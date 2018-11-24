@@ -37,15 +37,6 @@ else:
   import urllib.request as myurllib
   import urllib.parse as myurllibp
 
-# MISSING a temporary hack to detect if we are running on the current build system 
-# or the experimental docker build.
-if os.path.isdir("/home/mbsim/build/buildSystem/scripts"):
-  buildSystemScriptDir="/home/mbsim/build/buildSystem/scripts"
-  buildSystemStateDir="/var/www/html/mbsim/buildsystemstate"
-else:
-  buildSystemScriptDir="/context"
-  buildSystemStateDir="/mbsim-state"
-
 # global variables
 scriptDir=os.path.dirname(os.path.realpath(__file__))
 mbsimBinDir=None
@@ -302,6 +293,14 @@ def main():
   if args.action.startswith("pushReference="):
     args.pushDIR=args.action[14:]
     args.action="pushReference"
+
+  if args.buildSystemRun:
+    sys.path.append("/context")
+    import buildSystemState
+    if args.coverage!=None:
+      buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-coverage.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
+    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrFailed.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
+    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrAll.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
 
   # fix arguments
   args.reportOutDir=os.path.abspath(args.reportOutDir)
@@ -1975,7 +1974,7 @@ def writeAtomFeed(currentID, nrFailed, nrTotal):
   if not args.buildSystemRun:
     return
   # load the add feed module
-  sys.path.append(buildSystemScriptDir)
+  sys.path.append("/context")
   import buildSystemState
   # add a new feed if examples have failed
   buildSystemState.update(args.buildType+"-examples", "Examples Failed: "+args.buildType,
@@ -2067,9 +2066,9 @@ def coverage(mainFD):
   # update build state (only if --buildSystemRun is used)
   if args.buildSystemRun:
     # load and add module
-    sys.path.append(buildSystemScriptDir)
+    sys.path.append("/context")
     import buildSystemState
-    buildSystemState.createStateSVGFile(buildSystemStateDir+"/"+args.buildType+"-coverage.svg", covRateStr,
+    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-coverage.svg", covRateStr,
       "#d9534f" if ret!=0 or covRate<70 else ("#f0ad4e" if covRate<90 else "#5cb85c"))
 
   if ret==0:
