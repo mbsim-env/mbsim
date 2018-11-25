@@ -215,7 +215,6 @@ namespace MBSimGUI {
       item->insertChildren(new TreeItem(new ConstraintItemData(group),item,1,Qt::gray),1);
       item->insertChildren(new TreeItem(new ObserverItemData(group),item,1,Qt::gray),1);
       endInsertRows();
-      i = rowCount(index);
 
       for(int i=0; i<group->getNumberOfFrames(); i++)
         createFrameItem(group->getFrame(i),index.child(0,0));
@@ -253,7 +252,6 @@ namespace MBSimGUI {
       item->insertChildren(new TreeItem(new FrameItemData(object),item,0,Qt::gray),1);
       item->insertChildren(new TreeItem(new ContourItemData(object),item,1,Qt::gray),1);
       endInsertRows();
-      i = rowCount(index);
 
       for(int i=0; i<object->getNumberOfFrames(); i++)
         createFrameItem(object->getFrame(i),index.child(0,0));
