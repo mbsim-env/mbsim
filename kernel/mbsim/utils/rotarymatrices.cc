@@ -145,4 +145,24 @@ namespace MBSim {
     return B*KomegaK;
   }
 
+  SqrMat3 RotationAboutAxis(const Vec3 &a, double phi) {
+    const double cosq=cos(phi);
+    const double sinq=sin(phi);
+    const double onemcosq=1-cosq;
+    const double a0a1=a.e(0)*a.e(1);
+    const double a0a2=a.e(0)*a.e(2);
+    const double a1a2=a.e(1)*a.e(2);
+    SqrMat3 A(NONINIT);
+    A.e(0,0) = cosq+onemcosq*a.e(0)*a.e(0);
+    A.e(1,0) = onemcosq*a0a1+a.e(2)*sinq;
+    A.e(2,0) = onemcosq*a0a2-a.e(1)*sinq;
+    A.e(0,1) = onemcosq*a0a1-a.e(2)*sinq;
+    A.e(1,1) = cosq+onemcosq*a.e(1)*a.e(1);
+    A.e(2,1) = onemcosq*a1a2+a.e(0)*sinq;
+    A.e(0,2) = onemcosq*a0a2+a.e(1)*sinq;
+    A.e(1,2) = onemcosq*a1a2-a.e(0)*sinq;
+    A.e(2,2) = cosq+onemcosq*a.e(2)*a.e(2);
+    return A;
+  }
+
 }

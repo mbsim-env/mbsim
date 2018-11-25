@@ -42,6 +42,7 @@ namespace MBSim {
       rb[i] = db[i]/2;
       sb[i] = db[i]*(s0/d0[i]+phi0);
       ga[i] = sb[i]/rb[i]/2;
+      beta[i] = static_cast<GearWheel*>(contour[i])->getHelixAngle();
     }
     a0 = (d0[0]+d0[1])/2;
     maxNumContacts = 2;
@@ -53,25 +54,7 @@ namespace MBSim {
     a = nrm2(rS1S2);
     al = acos(a0/a*cos(al0));
     Vec3 n1 = rS1S2/a;
-    Vec3 axis = gearwheel[0]->getFrame()->getOrientation().col(2);
-    double phi = signi*(M_PI/2-al);
-    const double cosq=cos(phi);
-    const double sinq=sin(phi);
-    const double onemcosq=1-cosq;
-    const double a0a1=axis.e(0)*axis.e(1);
-    const double a0a2=axis.e(0)*axis.e(2);
-    const double a1a2=axis.e(1)*axis.e(2);
-    SqrMat3 A(NONINIT);
-    A.e(0,0) = cosq+onemcosq*axis.e(0)*axis.e(0);
-    A.e(1,0) = onemcosq*a0a1+axis.e(2)*sinq;
-    A.e(2,0) = onemcosq*a0a2-axis.e(1)*sinq;
-    A.e(0,1) = onemcosq*a0a1-axis.e(2)*sinq;
-    A.e(1,1) = cosq+onemcosq*axis.e(1)*axis.e(1);
-    A.e(2,1) = onemcosq*a1a2+axis.e(0)*sinq;
-    A.e(0,2) = onemcosq*a0a2+axis.e(1)*sinq;
-    A.e(1,2) = onemcosq*a1a2-axis.e(0)*sinq;
-    A.e(2,2) = cosq+onemcosq*axis.e(2)*axis.e(2);
-    n1 = A*n1;
+    n1 = RotationAboutAxis(n1,beta[1])*RotationAboutAxis(gearwheel[0]->getFrame()->getOrientation().col(2),signi*(M_PI/2-al))*n1;
 
     contact.getContourFrame(igearwheel[0])->getOrientation(false).set(0,n1);
     contact.getContourFrame(igearwheel[0])->getOrientation(false).set(1,crossProduct(gearwheel[0]->getFrame()->getOrientation().col(2),n1));
@@ -103,7 +86,7 @@ namespace MBSim {
       rSP[j] = gearwheel[j]->getFrame()->getOrientation()*rSP[j];
       cdel[j] = signj*(rSP[j].T()*rS1S2/a);
       del[i][j] = signi*signj*(gearwheel[j]->getFrame()->getOrientation().col(2).T()*crossProduct(rS1S2,rSP[j])>=0?acos(cdel[j]):-acos(cdel[j]));
-      be[i][j] = ga[j] + del[i][j] + al;
+      be[i][j] = ga[j] + del[i][j] + atan(tan(al)/(cos(beta[0])));
       rSP[j](0) = signi*rb[j]*(sin(be[i][j])-cos(be[i][j])*be[i][j]);
       rSP[j](1) = rb[j]*(cos(be[i][j])+sin(be[i][j])*be[i][j]);
       rSP[j] = gearwheel[j]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[j]+k[i][j]*2*M_PI/z[j])*rSP[j];

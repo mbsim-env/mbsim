@@ -79,6 +79,11 @@ namespace MBSim {
    */
   inline fmatvec::SqrMat3 Euler2AIK(double psi, double theta, double phi) { return BasicRotAIKz(psi)*BasicRotAIKx(theta)*BasicRotAIKz(phi); }
 
+  /**
+   * \brief Rotation about an arbitrary axis
+   */
+  fmatvec::SqrMat3 RotationAboutAxis(const fmatvec::Vec3 &a, double phi);
+
 }
 
 #endif
