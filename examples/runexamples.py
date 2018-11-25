@@ -37,15 +37,6 @@ else:
   import urllib.request as myurllib
   import urllib.parse as myurllibp
 
-# MISSING a temporary hack to detect if we are running on the current build system 
-# or the experimental docker build.
-if os.path.isdir("/home/mbsim/build/buildSystem/scripts"):
-  buildSystemScriptDir="/home/mbsim/build/buildSystem/scripts"
-  buildSystemStateDir="/var/www/html/mbsim/buildsystemstate"
-else:
-  buildSystemScriptDir="/context"
-  buildSystemStateDir="/mbsim-state"
-
 # global variables
 scriptDir=os.path.dirname(os.path.realpath(__file__))
 mbsimBinDir=None
@@ -186,6 +177,9 @@ def killSubprocessCall(proc, f, killed, timeout):
     proc.kill()
 # subprocess call with MultiFile output
 def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
+  # remove core dumps from previous runs
+  for coreFile in glob.glob("core*"):
+    os.remove(coreFile)
   # start the program to execute
   proc=subprocess.Popen(args, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, bufsize=-1, env=env)
   # a guard for the maximal execution time for the starte program
@@ -219,6 +213,15 @@ def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
       return subprocessCall.timedOutErrorCode # return to indicate that the program was terminated/killed
     else:
       guard.cancel()
+  # check for core dump file
+  exeRE=re.compile("^.*, *execfn: '([^']*)' *,.*$")
+  for coreFile in glob.glob("core*"):
+    out=subprocess.check_output(["file", coreFile])
+    exe=exeRE.match(out).group(1)
+    out=subprocess.check_output(["gdb", "-q", "-n", "-ex", "bt", "-batch", exe, coreFile])
+    f.write("\n\n\n******************** START: CORE DUMP BACKTRACE OF "+exe+" ********************\n\n\n")
+    f.write(out)
+    f.write("\n\n\n******************** END: CORE DUMP BACKTRACE ********************\n\n\n")
   # return the return value ot the called programm
   return ret
 subprocessCall.timedOutErrorCode=1000000
@@ -302,6 +305,14 @@ def main():
   if args.action.startswith("pushReference="):
     args.pushDIR=args.action[14:]
     args.action="pushReference"
+
+  if args.buildSystemRun:
+    sys.path.append("/context")
+    import buildSystemState
+    if args.coverage!=None:
+      buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-coverage.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
+    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrFailed.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
+    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrAll.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
 
   # fix arguments
   args.reportOutDir=os.path.abspath(args.reportOutDir)
@@ -1975,7 +1986,7 @@ def writeAtomFeed(currentID, nrFailed, nrTotal):
   if not args.buildSystemRun:
     return
   # load the add feed module
-  sys.path.append(buildSystemScriptDir)
+  sys.path.append("/context")
   import buildSystemState
   # add a new feed if examples have failed
   buildSystemState.update(args.buildType+"-examples", "Examples Failed: "+args.buildType,
@@ -2067,9 +2078,9 @@ def coverage(mainFD):
   # update build state (only if --buildSystemRun is used)
   if args.buildSystemRun:
     # load and add module
-    sys.path.append(buildSystemScriptDir)
+    sys.path.append("/context")
     import buildSystemState
-    buildSystemState.createStateSVGFile(buildSystemStateDir+"/"+args.buildType+"-coverage.svg", covRateStr,
+    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-coverage.svg", covRateStr,
       "#d9534f" if ret!=0 or covRate<70 else ("#f0ad4e" if covRate<90 else "#5cb85c"))
 
   if ret==0:

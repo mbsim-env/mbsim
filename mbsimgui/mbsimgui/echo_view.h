@@ -24,6 +24,7 @@
 #include <QWebView>
 #include <QAction>
 #include <QMainWindow>
+#include <QMutex>
 
 namespace MBSimGUI {
 
@@ -33,13 +34,14 @@ namespace MBSimGUI {
       EchoView(QMainWindow *parent);
       void clearOutput();
       QSize sizeHint() const override;
-      void addOutputText(const QString &outText_) { outText += outText_; }
+      void addOutputText(const QString &outText_);
       bool debugEnabled() { return enableDebug->isChecked(); }
     public slots:
       void updateOutput(bool moveToErrorOrEnd=false);
     private:
       QWebView *out;
       QString outText;
+      QMutex outTextMutex;
       QAction *showSSE;
       QAction *showWarn;
       QAction *showInfo;

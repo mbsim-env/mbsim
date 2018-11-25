@@ -35,6 +35,7 @@
 #include <QTextStream>
 #include <QProcessEnvironment>
 #include <QUrlQuery>
+#include <boost/scope_exit.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -107,7 +108,11 @@ namespace MBSimGUI {
   }
 
   void EchoView::clearOutput() {
-    outText="";
+    {
+      outTextMutex.lock();
+      BOOST_SCOPE_EXIT((&outTextMutex)) { outTextMutex.unlock(); } BOOST_SCOPE_EXIT_END
+      outText="";
+    }
     out->setHtml("");
   }
 
@@ -131,7 +136,11 @@ namespace MBSimGUI {
     static const QColor blue("blue");
     static const QColor green("green");
     // set the text as html, prefix with a style element and sourounded by a pre element
-    QString html=QString(R"+(
+    QString html;
+    {
+      outTextMutex.lock();
+      BOOST_SCOPE_EXIT((&outTextMutex)) { outTextMutex.unlock(); } BOOST_SCOPE_EXIT_END
+      html=QString(R"+(
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -172,17 +181,18 @@ namespace MBSimGUI {
   <body>
     <pre>
 )+").
-     arg(fg.name()).arg(mergeColor(red, 0.3, bg).name()).arg(mergeColor(red, 0.1, bg).name()).
-     arg(mergeColor(yellow, 0.3, bg).name()).arg(mergeColor(blue, 0.3, bg).name()).
-     arg(showSSE->isChecked()?"inline":"none").arg(showWarn->isChecked()?"inline":"none").
-     arg(showInfo->isChecked()?"inline":"none").arg(showDebug->isChecked()?"inline":"none").
-     arg(mergeColor(green, 0.3, bg).name()).arg(showDepr->isChecked()?"inline":"none")+
-      outText+
+       arg(fg.name()).arg(mergeColor(red, 0.3, bg).name()).arg(mergeColor(red, 0.1, bg).name()).
+       arg(mergeColor(yellow, 0.3, bg).name()).arg(mergeColor(blue, 0.3, bg).name()).
+       arg(showSSE->isChecked()?"inline":"none").arg(showWarn->isChecked()?"inline":"none").
+       arg(showInfo->isChecked()?"inline":"none").arg(showDebug->isChecked()?"inline":"none").
+       arg(mergeColor(green, 0.3, bg).name()).arg(showDepr->isChecked()?"inline":"none")+
+        outText+
 R"+(
     </pre>
   </body>
 </html>
 )+";
+    }
     out->setHtml(html);
 
     if(moveToErrorOrEnd) {
@@ -262,6 +272,12 @@ else
       showDebug->setChecked(false);
       updateOutput();
     }
+  }
+
+  void EchoView::addOutputText(const QString &outText_) {
+    outTextMutex.lock();
+    BOOST_SCOPE_EXIT((&outTextMutex)) { outTextMutex.unlock(); } BOOST_SCOPE_EXIT_END
+    outText += outText_;
   }
 
 }
