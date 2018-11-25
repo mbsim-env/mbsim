@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
   //mainwindow->resize(1400, 900);
   //mainwindow->resize(1100, 700);
   if(arg.contains("--autoExit")) // auto exit after 2 sec
-    QTimer::singleShot(2000, &mainwindow, &MainWindow::close);
+    QTimer::singleShot(5000, &mainwindow, &MainWindow::close);
   int ret=app.exec();
   return ret;
 }
