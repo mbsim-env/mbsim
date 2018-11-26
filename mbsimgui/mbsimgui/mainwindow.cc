@@ -112,9 +112,10 @@ namespace MBSimGUI {
     QString program = QString::fromStdString((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string());
     QStringList arguments;
     arguments << "--onlyListSchemas";
-    process.start(program,arguments);
-    process.waitForFinished(-1);
-    QStringList line=QString(process.readAllStandardOutput().data()).split("\n");
+    QProcess processGetSchemas;
+    processGetSchemas.start(program,arguments);
+    processGetSchemas.waitForFinished(-1);
+    QStringList line=QString(processGetSchemas.readAllStandardOutput().data()).split("\n");
     set<bfs::path> schemas;
     for(int i=0; i<line.size(); ++i)
       if(!line.at(i).isEmpty())
@@ -378,15 +379,13 @@ namespace MBSimGUI {
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
     updateEchoView();
-    if(currentTask==1) {
-      if(bfs::exists(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml")) {
-        inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
-        QModelIndex index = elementView->selectionModel()->currentIndex();
-        auto *model = static_cast<ElementTreeModel*>(elementView->model());
-        auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-        if(element)
-          highlightObject(element->getID());
-      }
+    if(currentTask==1 && bfs::exists(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml") && process.state()==QProcess::NotRunning) {
+      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
+      QModelIndex index = elementView->selectionModel()->currentIndex();
+      auto *model = static_cast<ElementTreeModel*>(elementView->model());
+      auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+      if(element)
+        highlightObject(element->getID());
     }
     else {
       if(exitStatus == QProcess::NormalExit) {
