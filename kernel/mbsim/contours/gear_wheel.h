@@ -60,6 +60,8 @@ namespace MBSim {
       double getPressureAngle() { return al; }
       void setBacklash(double b_) { b = b_; }
       double getBacklash() { return b; }
+      void setSolid(bool solid_=true) { solid = solid_; }
+      bool getSolid() const { return solid; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
@@ -77,6 +79,7 @@ namespace MBSim {
       double m{16e-3};
       double al{0.349065850398866};
       double b{0};
+      bool solid{true};
   };
 
 }

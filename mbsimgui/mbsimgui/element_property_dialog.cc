@@ -685,6 +685,8 @@ namespace MBSimGUI {
     addToTab("General", pressureAngle);
     backlash = new ExtWidget("Backlash",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"backlash");
     addToTab("General", backlash);
+    solid = new ExtWidget("Solid",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"solid");
+    addToTab("General", solid);
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualisation", visu);
   }
@@ -698,6 +700,7 @@ namespace MBSimGUI {
     module->initializeUsingXML(item->getXMLElement());
     pressureAngle->initializeUsingXML(item->getXMLElement());
     backlash->initializeUsingXML(item->getXMLElement());
+    solid->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -711,6 +714,7 @@ namespace MBSimGUI {
     module->writeXMLFile(item->getXMLElement(),nullptr);
     pressureAngle->writeXMLFile(item->getXMLElement(),nullptr);
     backlash->writeXMLFile(item->getXMLElement(),nullptr);
+    solid->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }

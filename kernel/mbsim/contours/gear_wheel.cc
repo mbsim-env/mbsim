@@ -40,6 +40,7 @@ namespace MBSim {
         static_pointer_cast<OpenMBV::GearWheel>(openMBVRigidBody)->setModule(m);
         static_pointer_cast<OpenMBV::GearWheel>(openMBVRigidBody)->setPressureAngle(al);
         static_pointer_cast<OpenMBV::GearWheel>(openMBVRigidBody)->setBacklash(b);
+        static_pointer_cast<OpenMBV::GearWheel>(openMBVRigidBody)->setSolid(solid);
       }
     }
     RigidContour::init(stage, config);
@@ -62,6 +63,8 @@ namespace MBSim {
     if(e) setPressureAngle(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"backlash");
     if(e) setBacklash(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"solid");
+    if(e) setSolid(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVGearWheel ombv;

@@ -3285,6 +3285,13 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="solid" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob das Zahnrad außen oder innen verzahnt ist.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">

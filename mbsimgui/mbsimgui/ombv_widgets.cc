@@ -758,6 +758,9 @@ namespace MBSimGUI {
 
     backlash = new ExtWidget("Backlash",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"backlash");
     layout->addWidget(backlash);
+
+    solid = new ExtWidget("Solid",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true,false,OPENMBV%"solid");
+    layout->addWidget(solid);
   }
 
   DOMElement* GearWheelWidget::initializeUsingXML(DOMElement *element) {
@@ -769,6 +772,7 @@ namespace MBSimGUI {
     module->initializeUsingXML(element);
     pressureAngle->initializeUsingXML(element);
     backlash->initializeUsingXML(element);
+    solid->initializeUsingXML(element);
     return element;
   }
 
@@ -781,6 +785,7 @@ namespace MBSimGUI {
     module->writeXMLFile(e);
     pressureAngle->writeXMLFile(e);
     backlash->writeXMLFile(e);
+    solid->writeXMLFile(e);
     return e;
   }
 
