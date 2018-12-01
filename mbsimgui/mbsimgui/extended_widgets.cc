@@ -61,7 +61,7 @@ namespace MBSimGUI {
       active = dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(element);
     blockSignals(true);
     setActive(active);
-    widget->setVisible(active);
+    if(isCheckable()) widget->setVisible(active);
     blockSignals(false);
     return active?element:nullptr;
   }
