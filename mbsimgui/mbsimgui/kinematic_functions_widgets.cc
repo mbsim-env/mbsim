@@ -37,7 +37,7 @@ namespace MBSimGUI {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    a = new ExtWidget("Axis of translation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"axisOfTranslation");
+    a = new ExtWidget("Axis of translation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"axisOfTranslation");
     layout->addWidget(a);
   }
 
@@ -94,7 +94,7 @@ namespace MBSimGUI {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    a = new ExtWidget("Axis of rotation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"axisOfRotation");
+    a = new ExtWidget("Axis of rotation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"axisOfRotation");
     layout->addWidget(a);
   }
 
