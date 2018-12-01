@@ -40,7 +40,7 @@ namespace MBSim {
       icircle0 = 0;
       icircle1 = 1;
     }
-    rEff0 = circle0->getSign()*circle0->getRadius();
+    rEff0 = circle0->getRadius();
     rEff1 = circle1->getSign()*circle1->getRadius();
   }
 
@@ -48,7 +48,7 @@ namespace MBSim {
     Vec3 WrD = circle0->getFrame()->evalPosition() - circle1->getFrame()->evalPosition();
     contact.getContourFrame(icircle1)->getOrientation(false).set(0, circle1->getSign()*WrD/nrm2(WrD));
     contact.getContourFrame(icircle0)->getOrientation(false).set(0, -contact.getContourFrame(icircle1)->getOrientation(false).col(0));
-    contact.getContourFrame(icircle0)->getOrientation(false).set(2, circle0->getSign()*circle0->getFrame()->getOrientation(false).col(2));
+    contact.getContourFrame(icircle0)->getOrientation(false).set(2, circle0->getFrame()->getOrientation(false).col(2));
     contact.getContourFrame(icircle1)->getOrientation(false).set(2, circle1->getSign()*circle1->getFrame()->getOrientation(false).col(2));
     contact.getContourFrame(icircle0)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle0)->getOrientation(false).col(2),contact.getContourFrame(icircle0)->getOrientation(false).col(0)));
     contact.getContourFrame(icircle1)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle1)->getOrientation(false).col(2),contact.getContourFrame(icircle1)->getOrientation(false).col(0)));
