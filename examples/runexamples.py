@@ -887,7 +887,6 @@ def runExample(resultQueue, example):
       denv=os.environ
       denv["DISPLAY"]=":"+str(displayNR)
       denv["COIN_FULL_INDIRECT_RENDERING"]="1"
-      denv["LIBGL_ALWAYS_INDIRECT"]="1"
       denv["QT_X11_NO_MITSHM"]="1"
       def runGUI(files, tool):
         if len(files)==0:
@@ -895,7 +894,6 @@ def runExample(resultQueue, example):
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_"+tool+".txt"), "w", encoding="utf-8"), args.printToConsole)
         comm=prefixSimulation(example, tool)+exePrefix()+[pj(mbsimBinDir, tool+args.exeExt), "--autoExit"]+files
         print("Starting:\n"+str(comm)+"\n\n", file=outFD)
-        print(comm)
         ret=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(8 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
         outfiles=getOutFilesAndAdaptRet(example, ret)
         ret=ret[0]
