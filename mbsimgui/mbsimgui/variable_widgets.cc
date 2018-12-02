@@ -341,8 +341,7 @@ namespace MBSimGUI {
   }
 
   void VecWidget::setVec(const vector<QString> &x) {
-    if(x.size() != box.size())
-      resize_(x.size());
+    resize_(x.size());
     for(unsigned int i=0; i<box.size(); i++)
       box[i]->setText(x[i]==defaultValue?"":x[i]);
   }
@@ -462,10 +461,7 @@ namespace MBSimGUI {
   }
 
   void VecTableWidget::setVec(const vector<QString> &x) {
-    if(x.empty())
-      return resize_(0,1);
-    if(x.size() != size())
-      resize_(x.size());
+    resize_(x.size());
     for(unsigned int i=0; i<size(); i++)
       table->item(i,0)->setText(x[i]);
   }
@@ -578,10 +574,7 @@ namespace MBSimGUI {
   }
 
   void MatWidget::setMat(const vector<vector<QString> > &A) {
-    if(A.empty())
-      return resize_(0,0);
-    if(A.size() != box.size() || A[0].size()!=box[0].size())
-      resize_(A.size(),A[0].size());
+    resize_(A.size(),A.empty()?0:A[0].size());
     for(unsigned int i=0; i<box.size(); i++) 
       for(unsigned int j=0; j<box[i].size(); j++)
         box[i][j]->setText(A[i][j]=="0"?"":A[i][j]);
@@ -875,10 +868,7 @@ namespace MBSimGUI {
   }
 
   void SymMatWidget::setMat(const vector<vector<QString> > &A) {
-    if(A.empty() || A.size() != A[0].size())
-      return resize_(0);
-    if(A.size() != box.size())
-      resize_(A.size());
+    resize_(A.size());
     for(unsigned int i=0; i<box.size(); i++) {
       for(unsigned int j=0; j<box.size(); j++)
         box[i][j]->setText(A[i][j]=="0"?"":A[i][j]);
@@ -1019,10 +1009,7 @@ namespace MBSimGUI {
   }
 
   void MatTableWidget::setMat(const vector<vector<QString> > &A) {
-    if(A.empty())
-      return resize_(0,0);
-    if(A.size() != rows() || A[0].size()!=cols())
-      resize_(A.size(),A[0].size());
+    resize_(A.size(),A.empty()?0:A[0].size());
     for(unsigned int i=0; i<rows(); i++)
       for(unsigned int j=0; j<cols(); j++)
         table->item(i,j)->setText(A[i][j]);
