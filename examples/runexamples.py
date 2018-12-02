@@ -887,47 +887,22 @@ def runExample(resultQueue, example):
       denv=os.environ
       denv["DISPLAY"]=":"+str(displayNR)
       denv["COIN_FULL_INDIRECT_RENDERING"]="1"
-      denv["LIBGL_ALWAYS_INDIRECT"]="1"
-      tries=5 if exePrefix()==["wine"] else 1 # at least on Windows (wine) the DISPLAY is not found sometimes (unknown why). Hence, try this number of times before reporting an error
-      ombvRet=0
-      if len(ombvFiles)>0:
-        outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_ombv.txt"), "w", encoding="utf-8"), args.printToConsole)
-        comm=prefixSimulation(example, 'openmbv')+exePrefix()+[pj(mbsimBinDir, "openmbv"+args.exeExt), "--autoExit"]+ombvFiles
-        for t in range(0, tries):
-          print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          ombvRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(8 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
-          outfiles1=getOutFilesAndAdaptRet(example, ombvRet)
-          ombvRet=ombvRet[0]
-          print("\n\nReturned with "+str(ombvRet), file=outFD)
-          if ombvRet==0: break
-          if t+1<tries: time.sleep(60) # wait some time, a direct next test will likely also fail (see above)
+      denv["QT_X11_NO_MITSHM"]="1"
+      def runGUI(files, tool):
+        if len(files)==0:
+          return 0, []
+        outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_"+tool+".txt"), "w", encoding="utf-8"), args.printToConsole)
+        comm=prefixSimulation(example, tool)+exePrefix()+[pj(mbsimBinDir, tool+args.exeExt), "--autoExit"]+files
+        print("Starting:\n"+str(comm)+"\n\n", file=outFD)
+        ret=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(8 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
+        outfiles=getOutFilesAndAdaptRet(example, ret)
+        ret=ret[0]
+        print("\n\nReturned with "+str(ret), file=outFD)
         outFD.close()
-      h5pRet=0
-      if len(h5pFiles)>0:
-        outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_h5p.txt"), "w", encoding="utf-8"), args.printToConsole)
-        comm=prefixSimulation(example, 'h5plotserie')+exePrefix()+[pj(mbsimBinDir, "h5plotserie"+args.exeExt), "--autoExit"]+h5pFiles
-        for t in range(0, tries):
-          print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          h5pRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(8 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
-          outfiles2=getOutFilesAndAdaptRet(example, h5pRet)
-          h5pRet=h5pRet[0]
-          print("\n\nReturned with "+str(h5pRet), file=outFD)
-          if h5pRet==0: break
-          if t+1<tries: time.sleep(60) # wait some time, a direct next test will likely also fail (see above)
-        outFD.close()
-      guiRet=0
-      if guiFile!=None:
-        outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_gui.txt"), "w", encoding="utf-8"), args.printToConsole)
-        comm=prefixSimulation(example, 'mbsimgui')+exePrefix()+[pj(mbsimBinDir, "mbsimgui"+args.exeExt), "--autoExit"]+[guiFile]
-        for t in range(0, tries):
-          print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          guiRet=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(8 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
-          outfiles3=getOutFilesAndAdaptRet(example, guiRet)
-          guiRet=guiRet[0]
-          print("\n\nReturned with "+str(guiRet), file=outFD)
-          if guiRet==0: break
-          if t+1<tries: time.sleep(60) # wait some time, a direct next test will likely also fail (see above)
-        outFD.close()
+        return ret, outfiles
+      ombvRet, outfiles1=runGUI(ombvFiles, "openmbv")
+      h5pRet,  outfiles2=runGUI(h5pFiles, "h5plotserie")
+      guiRet,  outfiles3=runGUI([guiFile] if guiFile else [], "mbsimgui")
       outfiles=outfiles1+outfiles2+outfiles3
       # result
       resultStr+='<td data-order="%d%d%d%d">'%(0 if abs(ombvRet)+abs(h5pRet)+abs(guiRet)==0 else (1 if willFail else 2),
