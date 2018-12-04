@@ -1102,10 +1102,10 @@ namespace MBSimGUI {
   ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, const Qt::WindowFlags& f) : ElementPropertyDialog(object,parent,f) {
     addTab("Initial conditions",1);
 
-    q0 = new ExtWidget("Generalized initial position",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialPosition");
+    q0 = new ExtWidget("Generalized initial position",new ChoiceWidget2(new VecWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialPosition");
     addToTab("Initial conditions", q0);
 
-    u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
+    u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget2(new VecWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
     addToTab("Initial conditions", u0);
 
     connect(q0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
@@ -1244,11 +1244,13 @@ namespace MBSimGUI {
   void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
     int size =  static_cast<RigidBody*>(item)->isConstrained() ? 0 : getqRelSize();
     q0->resize_(size,1);
+    if(not size) q0->setActive(false);
   }
 
   void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
     int size =  static_cast<RigidBody*>(item)->isConstrained() ? 0 : getuRelSize();
     u0->resize_(size,1);
+    if(not size) u0->setActive(false);
   }
 
   FlexibleBodyFFRPropertyDialog::FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body, QWidget *parent, const Qt::WindowFlags& f) : BodyPropertyDialog(body,parent,f) {
