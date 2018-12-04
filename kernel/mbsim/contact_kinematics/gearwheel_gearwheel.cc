@@ -29,28 +29,38 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsGearWheelGearWheel::assignContours(const vector<Contour*> &contour) {
-    igearwheel[0] = 0; igearwheel[1] = 1;
+    if(not(static_cast<GearWheel*>(contour[0])->getSolid())) {
+      gearwheel[0] = static_cast<GearWheel*>(contour[1]);
+      gearwheel[1] = static_cast<GearWheel*>(contour[0]);
+      igearwheel[0] = 1;
+      igearwheel[1] = 0;
+    }
+    else {
+      gearwheel[0] = static_cast<GearWheel*>(contour[0]);
+      gearwheel[1] = static_cast<GearWheel*>(contour[1]);
+      igearwheel[0] = 0;
+      igearwheel[1] = 1;
+    }
     m = static_cast<GearWheel*>(contour[0])->getModule();
     al0 = static_cast<GearWheel*>(contour[0])->getPressureAngle();
     double phi0 = tan(al0)-al0;
     double s0 = m*M_PI/2;
     for(int i=0; i<2; i++) {
-      gearwheel[i] = static_cast<GearWheel*>(contour[i]);
       z[i] = gearwheel[i]->getNumberOfTeeth();
       d0[i] = m*z[i];
       db[i] = d0[i]*cos(al0);
       rb[i] = db[i]/2;
-      sb[i] = db[i]*(s0/d0[i]+phi0);
+      sb[i] = db[i]*(s0/d0[i]+phi0)-gearwheel[i]->getBacklash();
       ga[i] = sb[i]/rb[i]/2;
-      beta[i] = static_cast<GearWheel*>(contour[i])->getHelixAngle();
+      beta[i] = gearwheel[i]->getHelixAngle();
     }
-    a0 = (d0[0]+d0[1])/2;
+    a0 = ((gearwheel[1]->getSolid()?1:-1)*d0[0]+d0[1])/2;
     maxNumContacts = 2;
   }
 
   void ContactKinematicsGearWheelGearWheel::updateg(SingleContact &contact, int i) {
     int signi = i?-1:1;
-    Vec3 rS1S2 = gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition();
+    Vec3 rS1S2 = (gearwheel[1]->getSolid()?1.:-1.)*(gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition());
     a = nrm2(rS1S2);
     al = acos(a0/a*cos(al0));
     Vec3 n1 = rS1S2/a;
@@ -68,8 +78,8 @@ namespace MBSim {
     Vec3 rSP[2];
 
     for(int j=0; j<2; j++) {
-      Vec3 rP1S2 = rS1S2 - rSP[0];
-      int signj = j?-1:1;
+      Vec3 rP1S2 = rS1S2 - (gearwheel[1]->getSolid()?1.:-1.)*rSP[0];
+      int signj = j?(gearwheel[1]->getSolid()?-1:1):1;
       for(int k_=0; k_<z[j]; k_++) {
         double ep = k_*2*M_PI/z[j]+signi*ga[j];
         rSP[j](0) = -sin(ep);
