@@ -11,7 +11,7 @@
       <scalarParameter name="a0">m*(z1+z2)/2</scalarParameter>
       <scalarParameter name="mass">3</scalarParameter>
       <scalarParameter name="mu">0.05</scalarParameter>
-    </Parameter>
+      <scalarParameter name="b">0.5</scalarParameter></Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
@@ -27,7 +27,7 @@
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
-              <ele>1.01*a0</ele>
+              <ele>a0</ele>
               <ele>0</ele>
             </xmlVector>
           </relativePosition>
@@ -73,6 +73,7 @@
                 <helixAngle unit="degree">be</helixAngle>
                 <module unit="m">m</module>
                 <pressureAngle unit="degree">al</pressureAngle>
+                <backlash unit="mm">b</backlash>
                 <enableOpenMBV>
                   <transparency unit="-">0.3</transparency>
                 </enableOpenMBV>
@@ -125,6 +126,7 @@
                 <helixAngle unit="degree">-be</helixAngle>
                 <module unit="m">m</module>
                 <pressureAngle unit="degree">al</pressureAngle>
+                <backlash unit="mm">b</backlash>
                 <enableOpenMBV>
                   <diffuseColor>
                     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
