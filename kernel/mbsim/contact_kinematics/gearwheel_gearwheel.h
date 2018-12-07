@@ -61,7 +61,7 @@ namespace MBSim {
       double rb[2];
       double sb[2];
       double beta[2];
-      double a0, a;
+      double a0, a, alq;
       int side{-1};
       int k[2][2]{{0,0},{0,0}};
       double be[2][2], ga[2];

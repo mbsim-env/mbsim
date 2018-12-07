@@ -22,6 +22,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/gear_wheel.h"
 #include <mbsim/utils/rotarymatrices.h>
+#include <mbsim/utils/eps.h>
 
 using namespace fmatvec;
 using namespace std;
@@ -56,6 +57,8 @@ namespace MBSim {
     }
     a0 = ((gearwheel[1]->getSolid()?1:-1)*d0[0]+d0[1])/2;
     maxNumContacts = 2;
+    if(fabs(beta[0])>epsroot or fabs(beta[1])>epsroot)
+      throw runtime_error("Helical gears temporary disabled");
   }
 
   void ContactKinematicsGearWheelGearWheel::updateg(SingleContact &contact, int i) {
@@ -63,16 +66,7 @@ namespace MBSim {
     Vec3 rS1S2 = (gearwheel[1]->getSolid()?1.:-1.)*(gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition());
     a = nrm2(rS1S2);
     al = acos(a0/a*cos(al0));
-    Vec3 n1 = rS1S2/a;
-    n1 = RotationAboutAxis(n1,beta[1])*RotationAboutAxis(gearwheel[0]->getFrame()->getOrientation().col(2),signi*(M_PI/2-al))*n1;
-
-    contact.getContourFrame(igearwheel[0])->getOrientation(false).set(0,n1);
-    contact.getContourFrame(igearwheel[0])->getOrientation(false).set(1,crossProduct(gearwheel[0]->getFrame()->getOrientation().col(2),n1));
-    contact.getContourFrame(igearwheel[0])->getOrientation(false).set(2,crossProduct(n1,contact.getContourFrame(igearwheel[0])->getOrientation(false).col(1)));
-
-    contact.getContourFrame(igearwheel[1])->getOrientation(false).set(0, -contact.getContourFrame(igearwheel[0])->getOrientation(false).col(0));
-    contact.getContourFrame(igearwheel[1])->getOrientation(false).set(1, -contact.getContourFrame(igearwheel[0])->getOrientation(false).col(1));
-    contact.getContourFrame(igearwheel[1])->getOrientation(false).set(2, contact.getContourFrame(igearwheel[0])->getOrientation(false).col(2));
+//    alq = atan(tan(al)/cos(beta[0]));
 
     double del[2][2], cdel[2]{0,0};
     Vec3 rSP[2];
@@ -96,12 +90,25 @@ namespace MBSim {
       rSP[j] = gearwheel[j]->getFrame()->getOrientation()*rSP[j];
       cdel[j] = signj*(rSP[j].T()*rS1S2/a);
       del[i][j] = signi*signj*(gearwheel[j]->getFrame()->getOrientation().col(2).T()*crossProduct(rS1S2,rSP[j])>=0?acos(cdel[j]):-acos(cdel[j]));
-      be[i][j] = ga[j] + del[i][j] + atan(tan(al)/(cos(beta[0])));
+      be[i][j] = ga[j] + del[i][j] + al;
       rSP[j](0) = signi*rb[j]*(sin(be[i][j])-cos(be[i][j])*be[i][j]);
       rSP[j](1) = rb[j]*(cos(be[i][j])+sin(be[i][j])*be[i][j]);
       rSP[j] = gearwheel[j]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[j]+k[i][j]*2*M_PI/z[j])*rSP[j];
       contact.getContourFrame(igearwheel[j])->setPosition(gearwheel[j]->getFrame()->getPosition() + rSP[j]);
     }
+
+    Vec3 n1;
+    n1(0) = -signi*cos(be[i][0]);
+    n1(1) = sin(be[i][0]);
+    n1 = gearwheel[0]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[0]+k[i][0]*2*M_PI/z[0])*BasicRotAIKy(-beta[0])*n1;
+
+    contact.getContourFrame(igearwheel[0])->getOrientation(false).set(0,n1);
+    contact.getContourFrame(igearwheel[0])->getOrientation(false).set(1,crossProduct(gearwheel[0]->getFrame()->getOrientation().col(2),n1));
+    contact.getContourFrame(igearwheel[0])->getOrientation(false).set(2,crossProduct(n1,contact.getContourFrame(igearwheel[0])->getOrientation(false).col(1)));
+
+    contact.getContourFrame(igearwheel[1])->getOrientation(false).set(0, -contact.getContourFrame(igearwheel[0])->getOrientation(false).col(0));
+    contact.getContourFrame(igearwheel[1])->getOrientation(false).set(1, -contact.getContourFrame(igearwheel[0])->getOrientation(false).col(1));
+    contact.getContourFrame(igearwheel[1])->getOrientation(false).set(2, contact.getContourFrame(igearwheel[0])->getOrientation(false).col(2));
 
     contact.getGeneralizedRelativePosition(false)(0) = n1.T()*(contact.getContourFrame(igearwheel[1])->getPosition(false) - contact.getContourFrame(igearwheel[0])->getPosition(false));
   }
@@ -114,7 +121,9 @@ namespace MBSim {
     Vec3 rS1S2 = gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition();
     Vec3 vS1S2 = gearwheel[1]->getFrame()->evalVelocity() - gearwheel[0]->getFrame()->evalVelocity();
     double ad = (vS1S2.T()*rS1S2)/a;
+//    const Vec3 rDd = vS1S2/a - rS1S2*(ad/(a*a));
     double ald = a0*cos(al0)*ad/(a*a*sin(al));
+//    double alqd = pow(cos(alq)/cos(al),2)/cos(beta[0])*ald;
     double deld[2], bed[2];
 
     Vec3 vrel[2];
