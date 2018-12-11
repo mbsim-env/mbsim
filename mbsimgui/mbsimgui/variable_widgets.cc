@@ -316,6 +316,7 @@ namespace MBSimGUI {
         layout()->removeWidget(box[i]);
         buf[i] = box[i]->text();
         delete box[i];
+        box[i] = nullptr;
       }
       box.resize(size);
       for(int i=0; i<size; i++) {
@@ -326,8 +327,10 @@ namespace MBSimGUI {
         else
           static_cast<QGridLayout*>(layout())->addWidget(box[i], i, 0);
       }
-      for(int i=0; i<min((int)buf.size(),size); i++)
+      for(int i=0; i<min((int)buf.size(),size); i++) {
+        assert(box[i]);
         box[i]->setText(buf[i]);
+      }
     }
   }
 
