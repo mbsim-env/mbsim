@@ -113,18 +113,14 @@ namespace MBSim {
   }
 
   void ContactKinematicsGearWheelGearWheel::updatewb(SingleContact &contact, int i) {
-    if(fabs(beta[0])>epsroot or fabs(beta[1])>epsroot)
-      throw runtime_error("ContactKinematicsGearWheelGearWheel::updatewb not yet available for helical gears");
     int signi = i?-1:1;
     const Vec3 n1 = contact.getContourFrame(igearwheel[0])->evalOrientation().col(0);
-//    const Vec3 vC1 = contact.getContourFrame(igearwheel[0])->evalVelocity();
-//    const Vec3 vC2 = contact.getContourFrame(igearwheel[1])->evalVelocity();
+    const Vec3 vC1 = contact.getContourFrame(igearwheel[0])->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(igearwheel[1])->evalVelocity();
     Vec3 rS1S2 = gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition();
     Vec3 vS1S2 = gearwheel[1]->getFrame()->evalVelocity() - gearwheel[0]->getFrame()->evalVelocity();
     double ad = (vS1S2.T()*rS1S2)/a;
-//    const Vec3 rDd = vS1S2/a - rS1S2*(ad/(a*a));
     double ald = a0*cos(al0)*ad/(a*a*sin(al));
-//    double alqd = pow(cos(alq)/cos(al),2)/cos(beta[0])*ald;
     double deld[2], bed[2];
 
     Vec3 vrel[2];
@@ -135,8 +131,19 @@ namespace MBSim {
       vrel[j](1) = rb[j]*(-sin(be[i][j])*bed[j] + cos(be[i][j])*bed[j]*be[i][j] + sin(be[i][j])*bed[j]);
       vrel[j] = gearwheel[j]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[j]+k[i][j]*2*M_PI/z[j])*vrel[j];
     }
+    Vec3 n1q(NONINIT), n1qd(NONINIT);
+    n1q(0) = -signi*cos(be[i][0]);
+    n1q(1) = sin(be[i][0]);
+    n1q(2) = -signi*cos(al)*tan(beta[0]);
+    n1qd(0) = signi*sin(be[i][0])*bed[0];
+    n1qd(1) = cos(be[i][0])*bed[0];
+    n1qd(2) = signi*sin(al)*tan(beta[0])*ald;
+    Vec3 n1d = n1qd/sqrt(1+pow(cos(al)*tan(beta[0]),2)) + n1q*cos(al)*pow(tan(beta[0]),2)*sin(al)*ald/pow(sqrt(1+pow(cos(al)*tan(beta[0]),2)),3);
+
+    n1d = crossProduct(gearwheel[0]->getFrame()->getAngularVelocity(),n1) + gearwheel[0]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[0]+k[i][0]*2*M_PI/z[0])*n1d;
+
     if(contact.isNormalForceLawSetValued())
-      contact.getwb(false)(0) += /*parnPart1.T()*(vC2-vC1)+*/n1.T()*(crossProduct(contact.getContourFrame(igearwheel[1])->evalAngularVelocity(),vrel[1])-crossProduct(contact.getContourFrame(igearwheel[0])->evalAngularVelocity(),vrel[0]));
+      contact.getwb(false)(0) += n1d.T()*(vC2-vC1)+n1.T()*(crossProduct(contact.getContourFrame(igearwheel[1])->evalAngularVelocity(),vrel[1])-crossProduct(contact.getContourFrame(igearwheel[0])->evalAngularVelocity(),vrel[0]));
     if(contact.isTangentialForceLawSetValuedAndActive())
       throw runtime_error("Tangential force law must be single valued for gear wheel to gear wheel contacts");
   }
