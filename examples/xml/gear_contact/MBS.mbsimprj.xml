@@ -36,12 +36,7 @@
       <contours/>
       <groups/>
       <objects>
-        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-          <Parameter>
-            <scalarParameter name="rB">m*z1*cosd(al)/2</scalarParameter>
-            <scalarParameter name="dal">360/z1/180*pi</scalarParameter>
-          </Parameter>
-          <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="RigidBody1">
+        <RigidBody name="RigidBody1" xmlns="http://www.mbsim-env.de/MBSim">
             <mass unit="kg">mass</mass>
             <inertiaTensor unit="kg*m^2">
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -82,13 +77,7 @@
             <enableOpenMBVFrameC>
               <size unit="dm">1</size>
             </enableOpenMBVFrameC></RigidBody>
-        </Embed>
-        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-          <Parameter>
-            <scalarParameter name="rB">m*z2*cosd(al)/2</scalarParameter>
-            <scalarParameter name="dal">360/z2/180*pi</scalarParameter>
-          </Parameter>
-          <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="RigidBody2">
+        <RigidBody name="RigidBody2" xmlns="http://www.mbsim-env.de/MBSim">
             <generalizedInitialPosition>
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>pi/z2</ele>
@@ -142,7 +131,6 @@
             <enableOpenMBVFrameC>
               <size unit="dm">1</size>
             </enableOpenMBVFrameC></RigidBody>
-        </Embed>
       </objects>
       <links>
         <KineticExcitation name="KineticExcitation">
