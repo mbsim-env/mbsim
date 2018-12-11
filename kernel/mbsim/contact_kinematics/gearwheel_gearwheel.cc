@@ -51,17 +51,17 @@ namespace MBSim {
       d0[i] = m*z[i];
       db[i] = d0[i]*cos(al0);
       rb[i] = db[i]/2;
-      sb[i] = db[i]*(s0/d0[i]+phi0)-gearwheel[i]->getBacklash();
+      sb[i] = db[i]*(s0/d0[i]+phi0)-(gearwheel[1]->getSolid()?gearwheel[i]->getBacklash():-gearwheel[i]->getBacklash());
       ga[i] = sb[i]/rb[i]/2;
       beta[i] = gearwheel[i]->getHelixAngle();
     }
-    a0 = ((gearwheel[1]->getSolid()?1:-1)*d0[0]+d0[1])/2;
+    a0 = ((gearwheel[1]->getSolid()?d0[0]:-d0[0])+d0[1])/2;
     maxNumContacts = 2;
   }
 
   void ContactKinematicsGearWheelGearWheel::updateg(SingleContact &contact, int i) {
     int signi = i?-1:1;
-    Vec3 rS1S2 = (gearwheel[1]->getSolid()?1.:-1.)*(gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition());
+    Vec3 rS1S2 = gearwheel[1]->getSolid()?(gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition()):(gearwheel[0]->getFrame()->evalPosition() - gearwheel[1]->getFrame()->evalPosition());
     a = nrm2(rS1S2);
     al = acos(a0/a*cos(al0));
 
@@ -69,7 +69,7 @@ namespace MBSim {
     Vec3 rSP[2];
 
     for(int j=0; j<2; j++) {
-      Vec3 rP1S2 = rS1S2 - (gearwheel[1]->getSolid()?1.:-1.)*rSP[0];
+      Vec3 rP1S2 = rS1S2 - (gearwheel[1]->getSolid()?rSP[0]:-rSP[0]);
       int signj = j?(gearwheel[1]->getSolid()?-1:1):1;
       for(int k_=0; k_<z[j]; k_++) {
         double ep = k_*2*M_PI/z[j]+signi*ga[j];
