@@ -42,8 +42,8 @@ namespace MBSim {
       igearwheel[0] = 0;
       igearwheel[1] = 1;
     }
-    m = static_cast<GearWheel*>(contour[0])->getModule();
-    al0 = static_cast<GearWheel*>(contour[0])->getPressureAngle();
+    m = static_cast<GearWheel*>(contour[0])->getModule()/cos(static_cast<GearWheel*>(contour[0])->getHelixAngle());
+    al0 = atan(tan(static_cast<GearWheel*>(contour[0])->getPressureAngle())/cos(static_cast<GearWheel*>(contour[0])->getHelixAngle()));
     double phi0 = tan(al0)-al0;
     double s0 = m*M_PI/2;
     for(int i=0; i<2; i++) {
@@ -57,8 +57,6 @@ namespace MBSim {
     }
     a0 = ((gearwheel[1]->getSolid()?1:-1)*d0[0]+d0[1])/2;
     maxNumContacts = 2;
-    if(fabs(beta[0])>epsroot or fabs(beta[1])>epsroot)
-      throw runtime_error("Helical gears temporary disabled");
   }
 
   void ContactKinematicsGearWheelGearWheel::updateg(SingleContact &contact, int i) {
@@ -66,7 +64,6 @@ namespace MBSim {
     Vec3 rS1S2 = (gearwheel[1]->getSolid()?1.:-1.)*(gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition());
     a = nrm2(rS1S2);
     al = acos(a0/a*cos(al0));
-//    alq = atan(tan(al)/cos(beta[0]));
 
     double del[2][2], cdel[2]{0,0};
     Vec3 rSP[2];
@@ -97,10 +94,12 @@ namespace MBSim {
       contact.getContourFrame(igearwheel[j])->setPosition(gearwheel[j]->getFrame()->getPosition() + rSP[j]);
     }
 
-    Vec3 n1;
+    Vec3 n1(NONINIT);
     n1(0) = -signi*cos(be[i][0]);
     n1(1) = sin(be[i][0]);
-    n1 = gearwheel[0]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[0]+k[i][0]*2*M_PI/z[0])*BasicRotAIKy(-beta[0])*n1;
+    n1(2) = -signi*cos(al)*tan(beta[0]);
+    n1 /= sqrt(1+pow(cos(al)*tan(beta[0]),2));
+    n1 = gearwheel[0]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[0]+k[i][0]*2*M_PI/z[0])*n1;
 
     contact.getContourFrame(igearwheel[0])->getOrientation(false).set(0,n1);
     contact.getContourFrame(igearwheel[0])->getOrientation(false).set(1,crossProduct(gearwheel[0]->getFrame()->getOrientation().col(2),n1));
@@ -114,6 +113,8 @@ namespace MBSim {
   }
 
   void ContactKinematicsGearWheelGearWheel::updatewb(SingleContact &contact, int i) {
+    if(fabs(beta[0])>epsroot or fabs(beta[1])>epsroot)
+      throw runtime_error("ContactKinematicsGearWheelGearWheel::updatewb not yet available for helical gears");
     int signi = i?-1:1;
     const Vec3 n1 = contact.getContourFrame(igearwheel[0])->evalOrientation().col(0);
 //    const Vec3 vC1 = contact.getContourFrame(igearwheel[0])->evalVelocity();
