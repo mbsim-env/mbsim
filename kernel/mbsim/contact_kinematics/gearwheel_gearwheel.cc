@@ -51,7 +51,7 @@ namespace MBSim {
       d0[i] = m*z[i];
       db[i] = d0[i]*cos(al0);
       rb[i] = db[i]/2;
-      sb[i] = db[i]*(s0/d0[i]+phi0)-(gearwheel[1]->getSolid()?gearwheel[i]->getBacklash():-gearwheel[i]->getBacklash());
+      sb[i] = db[i]*(s0/d0[i]+phi0)-((i==1 and not gearwheel[1]->getSolid())?-gearwheel[i]->getBacklash():gearwheel[i]->getBacklash());
       ga[i] = sb[i]/rb[i]/2;
       beta[i] = gearwheel[i]->getHelixAngle();
     }
