@@ -62,9 +62,8 @@ namespace MBSim {
       double sb[2];
       double beta[2];
       double a0, a;
-      int side{-1};
       int k[2][2]{{0,0},{0,0}};
-      double be[2][2], ga[2];
+      double eta[2][2], ga[2];
 
       /**
        * \brief contour classes

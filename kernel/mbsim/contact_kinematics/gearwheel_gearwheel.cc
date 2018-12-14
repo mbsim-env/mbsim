@@ -87,22 +87,28 @@ namespace MBSim {
       rSP[j] = gearwheel[j]->getFrame()->getOrientation()*rSP[j];
       cdel[j] = signj*(rSP[j].T()*rS1S2/a);
       del[i][j] = signi*signj*(gearwheel[j]->getFrame()->getOrientation().col(2).T()*crossProduct(rS1S2,rSP[j])>=0?acos(cdel[j]):-acos(cdel[j]));
-      be[i][j] = ga[j] + del[i][j] + al;
-      rSP[j](0) = signi*rb[j]*(sin(be[i][j])-cos(be[i][j])*be[i][j]);
-      rSP[j](1) = rb[j]*(cos(be[i][j])+sin(be[i][j])*be[i][j]);
+      eta[i][j] = ga[j] + del[i][j] + al;
+      rSP[j](0) = signi*rb[j]*(sin(eta[i][j])-cos(eta[i][j])*eta[i][j]);
+      rSP[j](1) = rb[j]*(cos(eta[i][j])+sin(eta[i][j])*eta[i][j]);
       rSP[j] = gearwheel[j]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[j]+k[i][j]*2*M_PI/z[j])*rSP[j];
       contact.getContourFrame(igearwheel[j])->setPosition(gearwheel[j]->getFrame()->getPosition() + rSP[j]);
     }
 
     Vec3 n1(NONINIT);
-    n1(0) = -signi*cos(be[i][0]);
-    n1(1) = sin(be[i][0]);
+    n1(0) = -signi*cos(eta[i][0]);
+    n1(1) = sin(eta[i][0]);
     n1(2) = -signi*cos(al)*tan(beta[0]);
     n1 /= sqrt(1+pow(cos(al)*tan(beta[0]),2));
     n1 = gearwheel[0]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[0]+k[i][0]*2*M_PI/z[0])*n1;
 
+    Vec3 u1(NONINIT);
+    u1(0) = signi*sin(eta[i][0]);
+    u1(1) = cos(eta[i][0]);
+    u1(2) = 0;
+    u1 = gearwheel[0]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[0]+k[i][0]*2*M_PI/z[0])*u1;
+
     contact.getContourFrame(igearwheel[0])->getOrientation(false).set(0,n1);
-    contact.getContourFrame(igearwheel[0])->getOrientation(false).set(1,crossProduct(gearwheel[0]->getFrame()->getOrientation().col(2),n1));
+    contact.getContourFrame(igearwheel[0])->getOrientation(false).set(1,u1);
     contact.getContourFrame(igearwheel[0])->getOrientation(false).set(2,crossProduct(n1,contact.getContourFrame(igearwheel[0])->getOrientation(false).col(1)));
 
     contact.getContourFrame(igearwheel[1])->getOrientation(false).set(0, -contact.getContourFrame(igearwheel[0])->getOrientation(false).col(0));
@@ -117,33 +123,40 @@ namespace MBSim {
     const Vec3 n1 = contact.getContourFrame(igearwheel[0])->evalOrientation().col(0);
     const Vec3 vC1 = contact.getContourFrame(igearwheel[0])->evalVelocity();
     const Vec3 vC2 = contact.getContourFrame(igearwheel[1])->evalVelocity();
-    Vec3 rS1S2 = gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition();
-    Vec3 vS1S2 = gearwheel[1]->getFrame()->evalVelocity() - gearwheel[0]->getFrame()->evalVelocity();
-    double ad = (vS1S2.T()*rS1S2)/a;
-    double ald = a0*cos(al0)*ad/(a*a*sin(al));
-    double deld[2], bed[2];
+    const Vec3 u1 = contact.getContourFrame(igearwheel[0])->evalOrientation().col(1);
+    const Vec3 u2 = contact.getContourFrame(igearwheel[1])->evalOrientation().col(1);
+    Vec3 R[2], N1, U2;
 
-    Vec3 vrel[2];
     for(int j=0; j<2; j++) {
-      deld[j] = signi*(gearwheel[j]->getFrame()->getAngularVelocity().T()*gearwheel[j]->getFrame()->getOrientation().col(2));
-      bed[j] = deld[j] + ald;
-      vrel[j](0) = signi*rb[j]*(cos(be[i][j])*bed[j] + sin(be[i][j])*bed[j]*be[i][j] - cos(be[i][j])*bed[j]);
-      vrel[j](1) = rb[j]*(-sin(be[i][j])*bed[j] + cos(be[i][j])*bed[j]*be[i][j] + sin(be[i][j])*bed[j]);
-      vrel[j] = gearwheel[j]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[j]+k[i][j]*2*M_PI/z[j])*vrel[j];
+      R[j](0) = signi*rb[j]*sin(eta[i][j])*eta[i][j];
+      R[j](1) = rb[j]*cos(eta[i][j])*eta[i][j];
+      R[j] = gearwheel[j]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[j]+k[i][j]*2*M_PI/z[j])*R[j];
     }
-    Vec3 n1q(NONINIT), n1qd(NONINIT);
-    n1q(0) = -signi*cos(be[i][0]);
-    n1q(1) = sin(be[i][0]);
-    n1q(2) = -signi*cos(al)*tan(beta[0]);
-    n1qd(0) = signi*sin(be[i][0])*bed[0];
-    n1qd(1) = cos(be[i][0])*bed[0];
-    n1qd(2) = signi*sin(al)*tan(beta[0])*ald;
-    Vec3 n1d = n1qd/sqrt(1+pow(cos(al)*tan(beta[0]),2)) + n1q*cos(al)*pow(tan(beta[0]),2)*sin(al)*ald/pow(sqrt(1+pow(cos(al)*tan(beta[0]),2)),3);
+    N1(0) = signi*sin(eta[i][0])/sqrt(1+pow(cos(al)*tan(beta[0]),2));
+    N1(1) = cos(eta[i][0])/sqrt(1+pow(cos(al)*tan(beta[0]),2));
+    N1 = gearwheel[0]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[0]+k[i][0]*2*M_PI/z[0])*N1;
+    int sign2 = gearwheel[1]->getSolid()?1:-1;
+    U2(0) = signi*sign2*cos(eta[i][1]);
+    U2(1) = -sign2*sin(eta[i][1]);
+    U2 = gearwheel[1]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[1]+k[i][1]*2*M_PI/z[1])*U2;
+    const Vec3 parnPart1 = crossProduct(gearwheel[0]->getFrame()->evalAngularVelocity(),n1);
+    const Vec3 paruPart2 = crossProduct(gearwheel[1]->getFrame()->evalAngularVelocity(),u2);
+    const Vec3 parWvCParZeta1 = crossProduct(gearwheel[0]->getFrame()->evalAngularVelocity(),R[0]);
+    const Vec3 parWvCParZeta2 = crossProduct(gearwheel[1]->getFrame()->evalAngularVelocity(),R[1]);
 
-    n1d = crossProduct(gearwheel[0]->getFrame()->getAngularVelocity(),n1) + gearwheel[0]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[0]+k[i][0]*2*M_PI/z[0])*n1d;
+    SqrMat A(2,NONINIT);
+    A(0,0)=-u1.T()*R[0].col(0);
+    A(0,1)=u1.T()*R[1].col(0);
+    A(1,0)=u2.T()*N1.col(0);
+    A(1,1)=n1.T()*U2.col(0);
+    Vec b(2,NONINIT);
+    b(0)=-u1.T()*(vC2-vC1);
+    b(1)=-u2.T()*parnPart1-n1.T()*paruPart2;
+
+    Vec zetad = slvLU(A,b);
 
     if(contact.isNormalForceLawSetValued())
-      contact.getwb(false)(0) += n1d.T()*(vC2-vC1)+n1.T()*(crossProduct(contact.getContourFrame(igearwheel[1])->evalAngularVelocity(),vrel[1])-crossProduct(contact.getContourFrame(igearwheel[0])->evalAngularVelocity(),vrel[0]));
+      contact.getwb(false)(0) += (N1*zetad(0)+parnPart1).T()*(vC2-vC1)+n1.T()*(parWvCParZeta2*zetad(1)-parWvCParZeta1*zetad(0));
     if(contact.isTangentialForceLawSetValuedAndActive())
       throw runtime_error("Tangential force law must be single valued for gear wheel to gear wheel contacts");
   }
