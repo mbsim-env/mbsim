@@ -36,7 +36,7 @@ namespace MBSimInterface {
 
   /** \brief Dummy-Integrator InterfaceIntegrator
     This integrator is an interface for other integration tool. */
-  class InterfaceIntegrator : public MBSimIntegrator::Integrator {
+  class InterfaceIntegrator : public MBSim::Integrator {
 
     protected:
       std::ofstream integPlot;
