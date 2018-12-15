@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/element.h"
+#include "mbsim/namespace.h"
 #include "mbsim/utils/openmbv_utils.h"
 #include "mbsim/utils/index.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>

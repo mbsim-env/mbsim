@@ -22,7 +22,6 @@
 
 #include "fmatvec/fmatvec.h"
 #include "mbsim/functions/function.h"
-#include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/mbsim_event.h"

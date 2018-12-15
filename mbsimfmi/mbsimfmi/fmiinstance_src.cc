@@ -20,7 +20,7 @@ namespace MBSimFMI {
 
     // create DynamicSystemSolver
     DynamicSystemSolver *dssPtr;
-    MBSimIntegrator::Integrator *integratorPtr;
+    Integrator *integratorPtr;
     SharedLibrary::getSymbol<mbsimSrcFMIPtr>(canonical(mbsimsrclibfile).string(), "mbsimSrcFMI")(dssPtr, integratorPtr);
     dss.reset(dssPtr);
 

@@ -157,7 +157,7 @@
     <generalizedForceTolerance unit="-">1e-8</generalizedForceTolerance>
     <generalizedImpulseTolerance unit="-">1e-6</generalizedImpulseTolerance>
   </DynamicSystemSolver>
-  <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSim">
     <startTime>0</startTime>
     <endTime>5</endTime>
     <plotStepSize>1e-3</plotStepSize>

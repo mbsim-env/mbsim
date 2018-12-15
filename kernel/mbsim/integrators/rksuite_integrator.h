@@ -22,7 +22,7 @@
 
 #include "root_finding_integrator.h"
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   /** \brief ODE-Integrator RKSuite
    *

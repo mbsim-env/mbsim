@@ -36,9 +36,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, SEULEXIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SEULEXIntegrator)
 
   SEULEXIntegrator::Fzdot SEULEXIntegrator::fzdot[2];
   SEULEXIntegrator::Mass SEULEXIntegrator::mass[2];
@@ -334,30 +334,30 @@ namespace MBSimIntegrator {
   void SEULEXIntegrator::initializeUsingXML(DOMElement *element) {
     RootFindingIntegrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar");
     if(e) setAbsoluteTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeTolerance");
     if(e) setRelativeTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
     if(e) setRelativeTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"maximumStepSize");
     if(e) setMaximumStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"formalism");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"formalism");
     if(e) {
       string formalismStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(formalismStr=="ODE") formalism=ODE;
       else if(formalismStr=="DAE1") formalism=DAE1;
       else formalism=unknown;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"reducedForm");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"reducedForm");
     if(e) setReducedForm((E(e)->getText<bool>()));
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"autonomousSystem");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"autonomousSystem");
     if(e) setAutonomousSystem((E(e)->getText<bool>()));
   }
 

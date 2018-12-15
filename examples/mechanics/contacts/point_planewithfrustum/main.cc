@@ -2,7 +2,6 @@
 #include <mbsim/integrators/integrators.h>
 
 using namespace MBSim;
-using namespace MBSimIntegrator;
 
 int main (int argc, char* argv[]) {
 

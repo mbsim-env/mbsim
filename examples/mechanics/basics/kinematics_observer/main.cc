@@ -2,7 +2,6 @@
 #include <mbsim/integrators/integrators.h>
 
 using namespace MBSim;
-using namespace MBSimIntegrator;
 using namespace std;
 
 bool rigidJoints;

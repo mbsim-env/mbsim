@@ -33,9 +33,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, ThetaTimeSteppingIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, ThetaTimeSteppingIntegrator)
 
   void ThetaTimeSteppingIntegrator::preIntegrate() {
     debugInit();
@@ -159,11 +159,11 @@ namespace MBSimIntegrator {
   void ThetaTimeSteppingIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
-    e = E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"stepSize");
     if(e) setStepSize(E(e)->getText<double>());
-    e = E(element)->getFirstElementChildNamed(MBSIMINT%"theta");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"theta");
     if(e) setTheta(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
   }
 

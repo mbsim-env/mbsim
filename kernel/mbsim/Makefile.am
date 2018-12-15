@@ -30,7 +30,8 @@ libmbsim_la_LIBADD += -l@BOOST_SYSTEM_LIB@
 libmbsim_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 
 mbsimincludedir = $(includedir)/mbsim
-mbsiminclude_HEADERS = element.h\
+mbsiminclude_HEADERS = namespace.h\
+                       element.h\
 		       dynamic_system.h\
 		       dynamic_system_solver.h\
 		       environment.h\

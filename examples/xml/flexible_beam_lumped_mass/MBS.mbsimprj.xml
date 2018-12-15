@@ -188,7 +188,7 @@ ret = 0;</scalarParameter>
     </DynamicSystemSolver>
   </Embed>
 
-  <Eigenanalyzer xmlns="http://www.mbsim-env.de/MBSimAnalyzer">
+  <Eigenanalyzer xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
@@ -197,8 +197,5 @@ ret = 0;</scalarParameter>
     <modeAmplitudeTable>[2,10]</modeAmplitudeTable>
     <loops>1</loops>
   </Eigenanalyzer>
-
-
-
 
 </MBSimProject>

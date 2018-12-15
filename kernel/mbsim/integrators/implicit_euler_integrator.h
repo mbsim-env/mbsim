@@ -23,7 +23,7 @@
 #include "integrator.h"
 #include "mbsim/functions/function.h"
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   /** \brief Implicit Euler integrator. */
   class ImplicitEulerIntegrator : public Integrator {

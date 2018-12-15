@@ -31,9 +31,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, ExplicitEulerIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, ExplicitEulerIntegrator)
 
   void ExplicitEulerIntegrator::preIntegrate() {
     debugInit();
@@ -99,7 +99,7 @@ namespace MBSimIntegrator {
   void ExplicitEulerIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stepSize");
     if(e) setStepSize(E(e)->getText<double>());
   }
 

@@ -4,7 +4,6 @@
 
 using namespace std;
 using namespace MBSim;
-using namespace MBSimAnalyzer;
 using namespace fmatvec;
 
 int main (int argc, char* argv[]) {

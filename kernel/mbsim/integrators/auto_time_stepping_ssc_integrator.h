@@ -29,7 +29,7 @@ namespace MBSim {
   class Link;
 }
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   /** \brief Explicit and Implicit time-stepping integrator of first or higer order with StepSize Control (SSC)
    *  StepSizeControl, GapControl, Extrapolation und concept analogue to TimeSteppingSSCIntegrator

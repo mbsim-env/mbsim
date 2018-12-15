@@ -7,9 +7,7 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
-using namespace MBSimIntegrator;
 using namespace MBSimHydraulics;
-using namespace MBSimIntegrator;
 
 int main (int argc, char* argv[]) {
 

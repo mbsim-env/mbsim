@@ -36,9 +36,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, LSODAIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, LSODAIntegrator)
 
   void LSODAIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
     auto self=*reinterpret_cast<LSODAIntegrator**>(&neq[1]);
@@ -240,21 +240,21 @@ namespace MBSimIntegrator {
   void LSODAIntegrator::initializeUsingXML(DOMElement *element) {
     RootFindingIntegrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar");
     if(e) setAbsoluteTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeTolerance");
     if(e) setRelativeTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
     if(e) setRelativeTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"maximumStepSize");
     if(e) setMaximumStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimumStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"minimumStepSize");
     if(e) setMinimumStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
   }
 

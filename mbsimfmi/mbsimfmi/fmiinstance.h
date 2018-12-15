@@ -20,9 +20,6 @@ extern "C" {
 
 namespace MBSim {
   class DynamicSystemSolver;
-}
-
-namespace MBSimIntegrator {
   class Integrator;
 }
 
@@ -111,7 +108,7 @@ namespace MBSimFMI {
       // the system
       std::shared_ptr<MBSim::DynamicSystemSolver> dss;
       // the integrator
-      std::shared_ptr<MBSimIntegrator::Integrator> integrator;
+      std::shared_ptr<MBSim::Integrator> integrator;
 
       // system time
       double timeStore; // do not use this variable, use time

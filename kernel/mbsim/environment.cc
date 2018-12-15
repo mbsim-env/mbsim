@@ -19,8 +19,9 @@
 
 #include <config.h>
 #include "mbsim/environment.h"
-#include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/objectfactory.h"
+#include "mbsim/namespace.h"
 
 using namespace std;
 using namespace fmatvec;

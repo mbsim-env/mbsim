@@ -31,9 +31,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, TimeSteppingIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, TimeSteppingIntegrator)
 
   void TimeSteppingIntegrator::preIntegrate() {
     debugInit();
@@ -131,9 +131,9 @@ namespace MBSimIntegrator {
   void TimeSteppingIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stepSize");
     if(e) setStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
   }
 

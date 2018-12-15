@@ -1,12 +1,12 @@
 <!--
-   <TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+   <TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSim">
      <startTime>0</startTime>
      <endTime>120</endTime>
      <plotStepSize>1e-2</plotStepSize>
      <stepSize>1e-3</stepSize>
    </TimeSteppingIntegrator>
    -->
-<TimeSteppingSSCIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+<TimeSteppingSSCIntegrator xmlns="http://www.mbsim-env.de/MBSim">
   <startTime>0</startTime>
   <endTime>120</endTime>
   <plotStepSize>1e-2</plotStepSize>

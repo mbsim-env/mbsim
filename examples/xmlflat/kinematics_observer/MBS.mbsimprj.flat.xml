@@ -152,7 +152,7 @@
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>
-  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime>0</startTime>
     <endTime>10.1</endTime>
     <plotStepSize>1e-2</plotStepSize>

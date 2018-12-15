@@ -32,7 +32,7 @@ using namespace std;
 
 using namespace fmatvec;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   ThetaTimeSteppingSSCIntegrator::ThetaTimeSteppingSSCIntegrator() : dt(1e-3), theta(0.5), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 
@@ -168,14 +168,14 @@ namespace MBSimIntegrator {
   void ThetaTimeSteppingSSCIntegrator::initializeUsingXML(xercesc::DOMElement *element) {
     //Integrator::initializeUsingXML(element);
     //TiXmlElement *e;
-    //e=element->FirstChildElement(MBSIMINTNS"stepSize");
+    //e=element->FirstChildElement(MBSIMNS"stepSize");
     //setStepSize(E(e)->getText<double>());
-    //e=element->FirstChildElement(MBSIMINTNS"theta");
+    //e=element->FirstChildElement(MBSIMNS"theta");
     //const double theta=E(e)->getText<double>();
     //assert(theta>=0);
     //assert(theta<=1);
     //setTheta(theta);
-    //e=element->FirstChildElement(MBSIMINTNS"driftCompensation");
+    //e=element->FirstChildElement(MBSIMNS"driftCompensation");
     //setDriftCompensation(E(e)->getText<bool>());
   }
 

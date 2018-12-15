@@ -36,9 +36,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, DOPRI5Integrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DOPRI5Integrator)
 
   void DOPRI5Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<DOPRI5Integrator**>(&ipar[0]);
@@ -239,19 +239,19 @@ namespace MBSimIntegrator {
   void DOPRI5Integrator::initializeUsingXML(DOMElement *element) {
     RootFindingIntegrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar");
     if(e) setAbsoluteTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeTolerance");
     if(e) setRelativeTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
     if(e) setRelativeTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"maximumStepSize");
     if(e) setMaximumStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
   }
 

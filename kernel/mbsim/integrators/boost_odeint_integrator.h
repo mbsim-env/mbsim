@@ -44,7 +44,7 @@ namespace boost {
   }
 }
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   namespace BoostOdeintHelper {
 
@@ -417,13 +417,13 @@ namespace MBSimIntegrator {
       static void call(Self self, xercesc::DOMElement* element) {
         xercesc::DOMElement *e;
 
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar");
         if(e) self->setAbsoluteTolerance(MBXMLUtils::E(e)->getText<double>());
 
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
         if(e) self->setRelativeTolerance(MBXMLUtils::E(e)->getText<double>());
 
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"maximumStepSize");
         if(e) self->setMaximumStepSize(MBXMLUtils::E(e)->getText<double>());
       }
     };
@@ -436,13 +436,13 @@ namespace MBSimIntegrator {
 
         // we are not checking in the XML schema for isControlled -> do it here at runtime
 
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar");
         if(e) self->throwError("absoluteToleranceScalar element used for an fixed step-size stepper.");
 
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
         if(e) self->throwError("relativeToleranceScalar element used for an fixed step-size stepper.");
 
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"maximumStepSize");
         if(e) self->throwError("maximumStepSize element used for an fixed step-size stepper.");
       }
     };
@@ -455,7 +455,7 @@ namespace MBSimIntegrator {
 
     InitializeUsingXMLControlled<isControlled, decltype(this)>::call(this, element);
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"initialStepSize");
     if(e) setInitialStepSize(MBXMLUtils::E(e)->getText<double>());
   }
 

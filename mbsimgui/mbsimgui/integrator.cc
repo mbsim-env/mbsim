@@ -30,17 +30,17 @@ namespace MBSimGUI {
   DOMElement* Integrator::createXMLElement(DOMNode *parent) {
     DOMElement *element = Solver::createXMLElement(parent);
     DOMDocument *doc=element->getOwnerDocument();
-    DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"startTime" );
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"startTime" );
     E(ele1)->setAttribute("unit", "s");
     DOMText *text = doc->createTextNode(X()%"0");
     ele1->insertBefore(text, nullptr);
     element->insertBefore( ele1, nullptr );
-    ele1 = D(doc)->createElement( MBSIMINT%"endTime" );
+    ele1 = D(doc)->createElement( MBSIM%"endTime" );
     E(ele1)->setAttribute("unit", "s");
     text = doc->createTextNode(X()%"1");
     ele1->insertBefore(text, nullptr);
     element->insertBefore( ele1, nullptr );
-    ele1 = D(doc)->createElement( MBSIMINT%"plotStepSize" );
+    ele1 = D(doc)->createElement( MBSIM%"plotStepSize" );
     E(ele1)->setAttribute("unit", "s");
     text = doc->createTextNode(X()%"1e-2");
     ele1->insertBefore(text, nullptr);

@@ -22,14 +22,12 @@
 
 #include <fmatvec/fmatvec.h>
 #include <fmatvec/atom.h>
-#include <mbxmlutilshelper/dom.h>
+#include <mbsim/namespace.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/solver.h>
 #include <string>
 
-namespace MBSimIntegrator {
-
-  const MBXMLUtils::NamespaceURI MBSIMINT("http://www.mbsim-env.de/MBSimIntegrator");
+namespace MBSim {
 
   /**
    * \brief integrator-interface for dynamic systems

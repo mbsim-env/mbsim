@@ -33,9 +33,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RKSuiteIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RKSuiteIntegrator)
 
   RKSuiteIntegrator::~RKSuiteIntegrator() {
     if(work) {
@@ -256,7 +256,7 @@ namespace MBSimIntegrator {
   void RKSuiteIntegrator::initializeUsingXML(DOMElement *element) {
     RootFindingIntegrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"method");
     if(e) {
       string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(methodStr=="RK23") method=RK23;
@@ -264,13 +264,13 @@ namespace MBSimIntegrator {
       else if(methodStr=="RK78") method=RK78;
       else method=unknownMethod;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
     if(e) setRelativeTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"threshold");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"threshold");
     if(e) setThreshold(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"thresholdScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"thresholdScalar");
     if(e) setThreshold(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepsize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialStepsize");
     if(e) setInitialStepSize(E(e)->getText<double>());
   }
 

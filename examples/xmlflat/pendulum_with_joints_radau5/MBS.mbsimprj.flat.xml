@@ -135,7 +135,7 @@
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>
-  <RADAU5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <RADAU5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime>0</startTime>
     <endTime>10.1</endTime>
     <plotStepSize>1e-2</plotStepSize>

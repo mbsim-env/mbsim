@@ -20,7 +20,6 @@
 #include <config.h>
 #include <cstdlib>
 #include "integrator.h"
-#include "mbsim/element.h"
 #include "mbsim/objectfactory.h"
 
 using namespace std;
@@ -28,18 +27,18 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   void Integrator::initializeUsingXML(DOMElement *element) {
     Solver::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"startTime");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"startTime");
     setStartTime(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"endTime");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"endTime");
     setEndTime(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"plotStepSize");
     setPlotStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialState");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
     if(e) setInitialState(E(e)->getText<fmatvec::Vec>());
   }
 

@@ -21,14 +21,13 @@
 #define _SIGNALMBSIM_H_
 
 #include "mbsim/links/link.h"
+#include "mbsimControl/namespace.h"
 
 namespace MBSim {
   class DynamicSystem;
 }
 
 namespace MBSimControl {
-
-  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://www.mbsim-env.de/MBSimControl");
 
   extern const MBSim::PlotFeatureEnum signal;
 

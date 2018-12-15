@@ -3,7 +3,6 @@
 
 using namespace std;
 using namespace MBSim;
-using namespace MBSimIntegrator;
 
 int main (int argc, char* argv[]) {
   System *sys = new System("TS");

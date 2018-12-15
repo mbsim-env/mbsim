@@ -21,6 +21,7 @@ libmbsimControl_la_LIBADD = $(DEPS_LIBS)
 
 mbsimControlincludedir = $(includedir)/mbsimControl
 mbsimControlinclude_HEADERS = \
+  namespace.h\
   signal_.h\
   extern_signal_source.h\
   extern_signal_sink.h\

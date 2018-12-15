@@ -4,7 +4,6 @@
 
 using namespace std;
 using namespace MBSim;
-using namespace MBSimIntegrator;
 using namespace boost::numeric::odeint;
 
 int main (int argc, char* argv[]) {

@@ -22,7 +22,7 @@
 
 #include "integrator.h"
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   /** 
    * brief half-explicit time-stepping integrator of first order

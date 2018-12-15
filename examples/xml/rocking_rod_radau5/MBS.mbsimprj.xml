@@ -318,7 +318,7 @@
     </DynamicSystemSolver>
   </Embed>
 
-  <RADAU5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <RADAU5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">2.0</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>

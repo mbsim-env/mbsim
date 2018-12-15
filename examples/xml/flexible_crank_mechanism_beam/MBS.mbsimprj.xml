@@ -760,7 +760,7 @@
     </DynamicSystemSolver>
   </Embed>
 
-  <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>

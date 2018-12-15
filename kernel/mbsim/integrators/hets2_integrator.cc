@@ -31,9 +31,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, HETS2Integrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, HETS2Integrator)
 
   void HETS2Integrator::preIntegrate() {
     debugInit();
@@ -190,7 +190,7 @@ namespace MBSimIntegrator {
   void HETS2Integrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stepSize");
     if(e) setStepSize(E(e)->getText<double>());
   }
 

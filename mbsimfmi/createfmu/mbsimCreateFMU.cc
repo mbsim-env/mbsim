@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
 
     // note: the order of these variable definitions is importend for proper deallocation
     std::shared_ptr<DynamicSystemSolver> dss;
-    std::shared_ptr<MBSimIntegrator::Integrator> integrator;
+    std::shared_ptr<Integrator> integrator;
 
     vector<path> dependencies;
 
@@ -223,7 +223,7 @@ int main(int argc, char *argv[]) {
       dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(dssEle));
 
       // create object for Integrator (just to get the start/end time for DefaultExperiment)
-      integrator.reset(ObjectFactory::createAndInit<MBSimIntegrator::Integrator>(dssEle->getNextElementSibling()));
+      integrator.reset(ObjectFactory::createAndInit<Integrator>(dssEle->getNextElementSibling()));
     }
     // Create dss from shared library
     else {
@@ -236,7 +236,7 @@ int main(int argc, char *argv[]) {
       // load the shared library and call mbsimSrcFMI function to get the dss
       cout<<"Build up the model (by just getting it from the shared library)."<<endl;
       DynamicSystemSolver *dssPtr;
-      MBSimIntegrator::Integrator *integratorPtr;
+      Integrator *integratorPtr;
       SharedLibrary::getSymbol<mbsimSrcFMIPtr>(canonical(inputFilename).string(), "mbsimSrcFMI")(dssPtr, integratorPtr);
       dss.reset(dssPtr);
 

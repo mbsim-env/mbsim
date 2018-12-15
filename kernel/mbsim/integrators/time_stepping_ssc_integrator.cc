@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/element.h"
 #include "mbsim/links/link.h"
 #include "time_stepping_ssc_integrator.h"
 #include "mbsim/utils/eps.h"
@@ -39,9 +38,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, TimeSteppingSSCIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, TimeSteppingSSCIntegrator)
 
   TimeSteppingSSCIntegrator::~TimeSteppingSSCIntegrator() {
     SetValuedLinkListT1.clear();
@@ -1404,7 +1403,7 @@ namespace MBSimIntegrator {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"method");
     if (e) {
       string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if (methodStr=="extrapolation") setMethod(extrapolation);
@@ -1413,37 +1412,37 @@ namespace MBSimIntegrator {
       else setMethod(unknownMethod);
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSizeControl");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stepSizeControl");
     if (e) setStepSizeControl(E(e)->getText<bool>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
     if (e) setAbsoluteTolerance(E(e)->getText<Vec>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar");
     if (e) setAbsoluteTolerance(E(e)->getText<double>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeTolerance");
     if (e) setRelativeTolerance(E(e)->getText<Vec>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
     if (e) setRelativeTolerance(E(e)->getText<double>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialStepSize");
     if (e) setInitialStepSize(E(e)->getText<double>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"maximumStepSize");
     if (e) setMaximumStepSize(E(e)->getText<double>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimumStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"minimumStepSize");
     if (e) setMinimumStepSize(E(e)->getText<double>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumOrder");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"maximumOrder");
     if (e) setMaximumOrder(E(e)->getText<int>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"outputInterpolation");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"outputInterpolation");
     if (e) setOutputInterpolation(E(e)->getText<bool>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"gapControl");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"gapControl");
     if (e) {
       string gapControlStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if (gapControlStr=="noGapControl") setGapControl(noGapControl);
@@ -1454,10 +1453,10 @@ namespace MBSimIntegrator {
       else setGapControl(unknownGapControl);
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"gapTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"gapTolerance");
     if (e) setgapTolerance(E(e)->getText<double>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"errorTest");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"errorTest");
     if (e) {
       string errorTestStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if (errorTestStr=="all") setErrorTest(all);
@@ -1466,10 +1465,10 @@ namespace MBSimIntegrator {
       else setErrorTest(unknownErrorTest);
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumGain");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"maximumGain");
     if (e) setMaximumGain(E(e)->getText<double>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"safetyFactor");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"safetyFactor");
     if (e) setSafetyFactor(E(e)->getText<double>());
   }
 

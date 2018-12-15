@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsim/utils/xmlutils.h"
-#include "mbsim/element.h"
 #include "mbxmlutilshelper/dom.h"
 #include "mbsim/objectfactory.h"
 

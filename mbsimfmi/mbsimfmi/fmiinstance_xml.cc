@@ -32,7 +32,7 @@ namespace MBSimFMI {
     if(cosim) {
       msg(Debug)<<"Create Integrator."<<endl;
       auto eleDSS=MBXMLUtils::E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
-      integrator.reset(ObjectFactory::createAndInit<MBSimIntegrator::Integrator>(eleDSS->getNextElementSibling()));
+      integrator.reset(ObjectFactory::createAndInit<Integrator>(eleDSS->getNextElementSibling()));
     }
   }
 

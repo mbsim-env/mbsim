@@ -30,7 +30,7 @@
 // rosenbrock4<double>
 #include <boost/numeric/odeint/stepper/rosenbrock4_dense_output.hpp>
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   namespace BoostOdeintHelper {
 

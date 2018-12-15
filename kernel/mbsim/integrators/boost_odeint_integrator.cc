@@ -20,16 +20,16 @@
 
 using namespace fmatvec;
 using namespace boost::numeric::odeint;
-using namespace MBSimIntegrator::BoostOdeintHelper;
+using namespace MBSim::BoostOdeintHelper;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
 // explicit integrators
-MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIMINT, BoostOdeintDOS<RKDOPRI5     >, RKDOPRI5     )
-MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIMINT, BoostOdeintDOS<BulirschStoer>, BulirschStoer)
+MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIM, BoostOdeintDOS<RKDOPRI5     >, RKDOPRI5     )
+MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIM, BoostOdeintDOS<BulirschStoer>, BulirschStoer)
 // not working due to but in boost odeint, see https://github.com/boostorg/odeint/pull/27
-// MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIMINT, BoostOdeintDOS<Euler        >, Euler        )
+// MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIM, BoostOdeintDOS<Euler        >, Euler        )
 // implicit integrators
-MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIMINT, BoostOdeintDOS<Rosenbrock4  >, Rosenbrock4  )
+MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(MBSIM, BoostOdeintDOS<Rosenbrock4  >, Rosenbrock4  )
 
 }

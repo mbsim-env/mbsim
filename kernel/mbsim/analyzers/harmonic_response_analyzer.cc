@@ -22,7 +22,6 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
-#include <iostream>
 
 using namespace std;
 using namespace fmatvec;
@@ -30,9 +29,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimAnalyzer {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYZER, HarmonicResponseAnalyzer)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, HarmonicResponseAnalyzer)
 
   Vec HarmonicResponseAnalyzer::Residuum::operator()(const Vec &z) {
     Vec res;
@@ -164,24 +163,24 @@ namespace MBSimAnalyzer {
 
   void HarmonicResponseAnalyzer::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"startTime");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"startTime");
     if(e) setStartTime(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"excitationFrequencies");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"excitationFrequencies");
     if(e) setExcitationFrequencies(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"systemFrequencies");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"systemFrequencies");
     if(e) setSystemFrequencies(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"plotStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"plotStepSize");
     if(e) setPlotStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"initialState");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
     if(e) setInitialState(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"task");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"task");
     if(e) {
       string str=X()%E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
       if(str=="frequencyResponse") task=frequencyResponse;
       else task=unknown;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYZER%"determineEquilibriumState");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"determineEquilibriumState");
     if(e) setDetermineEquilibriumState(E(e)->getText<bool>());
   }
 

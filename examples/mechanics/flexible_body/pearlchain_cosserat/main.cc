@@ -3,7 +3,6 @@
 #include "mbsim/utils/stopwatch.h"
 
 using namespace MBSim;
-using namespace MBSimIntegrator;
 using namespace std;
 
 int main(int argc, char* argv[]) {

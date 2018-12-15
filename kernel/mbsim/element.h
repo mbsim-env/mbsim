@@ -25,11 +25,9 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/plotfeatureenum.h"
 #include "mbsim/utils/initconfigenum.h"
-#include <string>
+#include "mbsim/namespace.h"
+#include "mbsim/mbsim_event.h"
 #include <hdf5serie/vectorserie.h>
-#include <mbxmlutilshelper/dom.h>
-
-#include "mbsim_event.h"
 
 namespace OpenMBV {
   class Group;
@@ -43,10 +41,6 @@ namespace H5 {
  * \brief namespace MBSim
  */
 namespace MBSim {
-
-#ifndef SWIG
-  const MBXMLUtils::NamespaceURI MBSIM("http://www.mbsim-env.de/MBSim");
-#endif
 
   extern const PlotFeatureEnum plotRecursive, openMBV, debug, separateFilePerGroup, energy;
 

@@ -24,7 +24,7 @@
 #include "mbsim/functions/function.h"
 #include<mbsim/dynamic_system_solver.h>
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   /*!
    * \brief calculate h vector according the new q and system boundary conditions

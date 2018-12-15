@@ -142,7 +142,7 @@
     <generalizedImpulseTolerance>1e-6</generalizedImpulseTolerance>
   </DynamicSystemSolver>
 
-  <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">2</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>

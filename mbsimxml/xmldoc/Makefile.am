@@ -4,7 +4,6 @@ doc_DATA = mbsimxml.html
 # none mbsim modules xsd files
 XSDFILES = http___www_mbsim-env_de_MBXMLUtils/physicalvariable.xsd\
   http___www_mbsim-env_de_MBSim/mbsim.xsd\
-  http___www_mbsim-env_de_MBSimIntegrator/mbsimintegrator.xsd\
   http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd\
   http___www_mbsim-env_de_OpenMBV/openmbv.xsd
 

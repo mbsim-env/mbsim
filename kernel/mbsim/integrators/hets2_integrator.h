@@ -22,7 +22,7 @@
 
 #include "integrator.h"
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   /** 
    * \brief time integration scheme on velocity level for nonsmooth dynamical systems using half-explicit trapezoidal rule

@@ -32,7 +32,7 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   bool RootFindingIntegrator::signChangedWRTsvLast(const fmatvec::Vec &svStepEnd) const {
     for(int i=0; i<svStepEnd.size(); i++)
@@ -44,13 +44,13 @@ namespace MBSimIntegrator {
   void RootFindingIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"toleranceForPositionConstraints");
     if(e) setToleranceForPositionConstraints(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"toleranceForVelocityConstraints");
     if(e) setToleranceForVelocityConstraints(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"rootFindingAccuracy");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"rootFindingAccuracy");
     if(e) setRootFindingAccuracy(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"plotOnRoot");
     if(e) setPlotOnRoot(E(e)->getText<bool>());
   }
 

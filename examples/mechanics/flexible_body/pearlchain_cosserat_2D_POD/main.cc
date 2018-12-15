@@ -8,7 +8,6 @@
 #include <iostream>
 
 using namespace MBSim;
-using namespace MBSimIntegrator;
 using namespace std;
 using namespace fmatvec;
 using namespace H5;

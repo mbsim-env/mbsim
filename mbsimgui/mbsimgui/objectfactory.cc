@@ -322,53 +322,53 @@ namespace MBSimGUI {
 
   Solver* MBSimObjectFactory::createSolver(DOMElement *element) {
     if(element==nullptr) return nullptr;
-    if(E(element)->getTagName()==MBSIMINT%"DOPRI5Integrator")
+    if(E(element)->getTagName()==MBSIM%"DOPRI5Integrator")
       return new DOPRI5Integrator;
-    else if(E(element)->getTagName()==MBSIMINT%"DOP853Integrator")
+    else if(E(element)->getTagName()==MBSIM%"DOP853Integrator")
       return new DOP853Integrator;
-    else if(E(element)->getTagName()==MBSIMINT%"ODEXIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"ODEXIntegrator")
       return new ODEXIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"RADAU5Integrator")
+    else if(E(element)->getTagName()==MBSIM%"RADAU5Integrator")
       return new RADAU5Integrator;
-    else if(E(element)->getTagName()==MBSIMINT%"RADAUIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"RADAUIntegrator")
       return new RADAUIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"RODASIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"RODASIntegrator")
       return new RODASIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"SEULEXIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"SEULEXIntegrator")
       return new SEULEXIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"PHEM56Integrator")
+    else if(E(element)->getTagName()==MBSIM%"PHEM56Integrator")
       return new PHEM56Integrator;
-    else if(E(element)->getTagName()==MBSIMINT%"LSODEIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"LSODEIntegrator")
       return new LSODEIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"LSODAIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"LSODAIntegrator")
       return new LSODAIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"LSODIIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"LSODIIntegrator")
       return new LSODIIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"DASPKIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"DASPKIntegrator")
       return new DASPKIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"TimeSteppingIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"TimeSteppingIntegrator")
       return new TimeSteppingIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"ThetaTimeSteppingIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"ThetaTimeSteppingIntegrator")
       return new ThetaTimeSteppingIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"TimeSteppingSSCIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"TimeSteppingSSCIntegrator")
       return new TimeSteppingSSCIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"HETS2Integrator")
+    else if(E(element)->getTagName()==MBSIM%"HETS2Integrator")
       return new HETS2Integrator;
-    else if(E(element)->getTagName()==MBSIMINT%"ExplicitEulerIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"ExplicitEulerIntegrator")
       return new ExplicitEulerIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"ImplicitEulerIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"ImplicitEulerIntegrator")
       return new ImplicitEulerIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"RKSuiteIntegrator")
+    else if(E(element)->getTagName()==MBSIM%"RKSuiteIntegrator")
       return new RKSuiteIntegrator;
-    else if(E(element)->getTagName()==MBSIMINT%"BoostOdeintDOS_RKDOPRI5")
+    else if(E(element)->getTagName()==MBSIM%"BoostOdeintDOS_RKDOPRI5")
       return new BoostOdeintDOS_RKDOPRI5;
-    else if(E(element)->getTagName()==MBSIMINT%"BoostOdeintDOS_BulirschStoer")
+    else if(E(element)->getTagName()==MBSIM%"BoostOdeintDOS_BulirschStoer")
       return new BoostOdeintDOS_BulirschStoer;
-    else if(E(element)->getTagName()==MBSIMINT%"BoostOdeintDOS_Rosenbrock4")
+    else if(E(element)->getTagName()==MBSIM%"BoostOdeintDOS_Rosenbrock4")
       return new BoostOdeintDOS_Rosenbrock4;
-    else if(E(element)->getTagName()==MBSIMANALYZER%"Eigenanalyzer")
+    else if(E(element)->getTagName()==MBSIM%"Eigenanalyzer")
       return new Eigenanalyzer;
-    else if(E(element)->getTagName()==MBSIMANALYZER%"HarmonicResponseAnalyzer")
+    else if(E(element)->getTagName()==MBSIM%"HarmonicResponseAnalyzer")
       return new HarmonicResponseAnalyzer;
     return nullptr;
   }

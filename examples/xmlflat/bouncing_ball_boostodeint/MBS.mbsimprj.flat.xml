@@ -107,7 +107,7 @@
     </environments>
   </DynamicSystemSolver>
 
-  <BoostOdeintDOS_Rosenbrock4 xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <BoostOdeintDOS_Rosenbrock4 xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">0.01</plotStepSize>

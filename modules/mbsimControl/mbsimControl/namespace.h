@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2016 MBSim Development Team
+/* Copyright (C) 2004-2018 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,12 +17,12 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _MBSIM_FLEXIBLE_BODY_NAMESPACE_H_
-#define _MBSIM_FLEXIBLE_BODY_NAMESPACE_H_
+#ifndef _MBSIM_CONTROL_NAMESPACE_H_
+#define _MBSIM_CONTROL_NAMESPACE_H_
 
-namespace MBSimFlexibleBody {
+namespace MBSimControl {
 
-  const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");
+  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://www.mbsim-env.de/MBSimControl");
 
 }
 

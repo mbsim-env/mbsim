@@ -24,9 +24,7 @@
 #include "mbsim/functions/function.h"
 #include "mbsim/solver.h"
 
-namespace MBSimAnalyzer {
-
-  const MBXMLUtils::NamespaceURI MBSIMANALYZER("http://www.mbsim-env.de/MBSimAnalyzer");
+namespace MBSim {
 
   /**
    * \brief Eigenanalyzer for dynamic systems

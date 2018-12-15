@@ -165,7 +165,7 @@
     <generalizedImpulseTolerance>1e-6</generalizedImpulseTolerance>
   </DynamicSystemSolver>
 
-  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>

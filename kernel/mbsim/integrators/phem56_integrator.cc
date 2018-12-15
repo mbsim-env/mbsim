@@ -36,9 +36,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, PHEM56Integrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PHEM56Integrator)
 
   void PHEM56Integrator::fprob(int* ifcn, int* nq, int* nv, int* nu, int* nl, int* nzg, int* nzf, int* lrda, int* nblk, int* nmrc,  int* npgp, int* npfl, int* indgr, int* indgc, int* indflr, int* indflc,  double* t, double* q, double* v, double* u, double* xl, double* g_, double* gp, double* f, double* gpp_, double* gt, double* fl, double* qdot, double* udot, double* am) {
     auto self=*reinterpret_cast<PHEM56Integrator**>(&nq[1]);
@@ -379,34 +379,34 @@ namespace MBSimIntegrator {
   void PHEM56Integrator::initializeUsingXML(DOMElement *element) {
     RootFindingIntegrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar");
     if(e) setAbsoluteTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeTolerance");
     if(e) setRelativeTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
     if(e) setRelativeTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximumStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"maximumStepSize");
     if(e) setMaximumStepSize(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepLimit");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"linearAlgebra");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"linearAlgebra");
     if(e) {
       string linearAlgebraStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(linearAlgebraStr=="DEC") linearAlgebra=DEC;
       else if(linearAlgebraStr=="DGETRF") linearAlgebra=DGETRF;
       else linearAlgebra=unknown;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"generalVMatrix");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalVMatrix");
     if(e) setGeneralVMatrix(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialProjection");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialProjection");
     if(e) setInitialProjection(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"numberOfStepsBetweenProjections");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"numberOfStepsBetweenProjections");
     if(e) setNumberOfStepsBetweenProjections(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"projectOntoIndex1ConstraintManifold");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"projectOntoIndex1ConstraintManifold");
     if(e) setProjectOntoIndex1ConstraintManifold(E(e)->getText<bool>());
   }
 

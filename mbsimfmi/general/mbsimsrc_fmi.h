@@ -3,9 +3,6 @@
 
 namespace MBSim {
   class DynamicSystemSolver;
-}
-
-namespace MBSimIntegrator {
   class Integrator;
 }
 
@@ -17,11 +14,11 @@ namespace MBSimIntegrator {
  * (The DynamicSystemSolver::initialize() function is the first function which
  * is called by FMI during execution of the model.)
  */
-extern "C" void mbsimSrcFMI(MBSim::DynamicSystemSolver *&dss, MBSimIntegrator::Integrator *&integrator);
+extern "C" void mbsimSrcFMI(MBSim::DynamicSystemSolver *&dss, MBSim::Integrator *&integrator);
 
 namespace MBSimFMI {
   // just a function pointer typedef for the above function
-  typedef void (*mbsimSrcFMIPtr)(MBSim::DynamicSystemSolver *&, MBSimIntegrator::Integrator *&);
+  typedef void (*mbsimSrcFMIPtr)(MBSim::DynamicSystemSolver *&, MBSim::Integrator *&);
 }
 
 #endif

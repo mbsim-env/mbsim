@@ -433,7 +433,7 @@
       </DynamicSystemSolver>
     </Embed>
 
-    <HarmonicResponseAnalyzer xmlns="http://www.mbsim-env.de/MBSimAnalyzer">
+    <HarmonicResponseAnalyzer xmlns="http://www.mbsim-env.de/MBSim">
       <excitationFrequencies>[0.1:0.5:30]'</excitationFrequencies>
       <systemFrequencies>
         <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">

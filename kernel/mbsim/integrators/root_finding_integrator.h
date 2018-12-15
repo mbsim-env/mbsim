@@ -25,7 +25,7 @@
 
 #include "integrator.h"
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   /** \brief Integrator with root-finding
    */

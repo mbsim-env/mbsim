@@ -33,9 +33,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, QuasiStaticIntegrator)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, QuasiStaticIntegrator)
 
   QuasiStaticIntegrator::QuasiStaticIntegrator()  {
   }
@@ -200,7 +200,7 @@ namespace MBSimIntegrator {
   void QuasiStaticIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
-    e = E(element)->getFirstElementChildNamed(MBSIMINT % "stepSize");
+    e = E(element)->getFirstElementChildNamed(MBSIM % "stepSize");
     setStepSize(E(e)->getText<double>());
   }
 

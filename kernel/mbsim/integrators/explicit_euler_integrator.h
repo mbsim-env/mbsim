@@ -22,7 +22,7 @@
 
 #include "integrator.h"
 
-namespace MBSimIntegrator {
+namespace MBSim {
 
   /** \brief Explicit Euler integrator. */
   class ExplicitEulerIntegrator : public Integrator {
