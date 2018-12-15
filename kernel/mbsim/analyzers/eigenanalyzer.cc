@@ -21,7 +21,6 @@
 #include "eigenanalyzer.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "fmatvec/linear_algebra_complex.h"
-#include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
 
 using namespace std;
@@ -49,14 +48,6 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Eigenanalyzer)
 
-  Vec Eigenanalyzer::Residuum::operator()(const Vec &z) {
-    Vec res;
-    sys->setState(z);
-    sys->resetUpToDate();
-    res = sys->evalzd();
-    return res;
-  } 
-
   void Eigenanalyzer::execute() {
     if(task == eigenmodes) computeEigenmodes();
     else if(task == eigenmotion) computeEigenmotion();
@@ -78,19 +69,12 @@ namespace MBSim {
 
     system->setTime(tStart);
 
-    if(compEq) {
-      Residuum f(system);
-      MultiDimNewtonMethod newton(&f);
-      newton.setLinearAlgebra(1);
-      zEq = newton.solve(zEq);
-      if(newton.getInfo() != 0)
-        throwError("(Eigenanalyzer::computeEigenvalues): computation of equilibrium state failed!");
-    }
-
     SqrMat A(system->getzSize());
     Vec zd, zdOld;
     system->setState(zEq);
     system->resetUpToDate();
+    system->computeInitialCondition();
+    zEq = system->getState();
     zdOld = system->evalzd();
     for (int i=0; i<system->getzSize(); i++) {
       double ztmp = system->getState()(i);
@@ -232,8 +216,6 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"loops");
     if(e) setLoops(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"determineEquilibriumState");
-    if(e) setDetermineEquilibriumState(E(e)->getText<bool>());
   }
 
 }

@@ -1088,9 +1088,6 @@ namespace MBSimGUI {
 
     loops = new ExtWidget("Loops",new SpinBoxWidget(5),true,false,MBSIM%"loops");
     addToTab("General",loops);
-
-    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"determineEquilibriumState");
-    addToTab("General",determineEquilibriumState);
   }
 
   DOMElement* EigenanalyzerPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1104,7 +1101,6 @@ namespace MBSimGUI {
     amplitude->initializeUsingXML(item->getXMLElement());
     modeAmplitudeTable->initializeUsingXML(item->getXMLElement());
     loops->initializeUsingXML(item->getXMLElement());
-    determineEquilibriumState->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1119,7 +1115,6 @@ namespace MBSimGUI {
     amplitude->writeXMLFile(item->getXMLElement());
     modeAmplitudeTable->writeXMLFile(item->getXMLElement());
     loops->writeXMLFile(item->getXMLElement());
-    determineEquilibriumState->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -1146,9 +1141,6 @@ namespace MBSimGUI {
     list.emplace_back("\"frequencyResponse\"");
     task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIM%"task");
     addToTab("General",task);
-
-    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"determineEquilibriumState");
-    addToTab("General",determineEquilibriumState);
   }
 
   DOMElement* HarmonicResponseAnalyzerPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1159,7 +1151,6 @@ namespace MBSimGUI {
     plotStepSize->initializeUsingXML(item->getXMLElement());
     initialState->initializeUsingXML(item->getXMLElement());
     task->initializeUsingXML(item->getXMLElement());
-    determineEquilibriumState->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1171,7 +1162,6 @@ namespace MBSimGUI {
     plotStepSize->writeXMLFile(item->getXMLElement());
     initialState->writeXMLFile(item->getXMLElement());
     task->writeXMLFile(item->getXMLElement());
-    determineEquilibriumState->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 

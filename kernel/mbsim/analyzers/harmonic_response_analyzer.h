@@ -32,14 +32,6 @@ namespace MBSim {
    */
   class HarmonicResponseAnalyzer : public MBSim::Solver {
 
-    class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
-      public:
-        Residuum(MBSim::DynamicSystemSolver *sys_) : sys(sys_) { }
-        fmatvec::Vec operator()(const fmatvec::Vec &z);
-      private:
-        MBSim::DynamicSystemSolver *sys;
-    };
-
     public:
 
       enum Task { frequencyResponse, unknown };
@@ -75,13 +67,6 @@ namespace MBSim {
        * \param z0 The initital state
        */
       void setInitialState(const fmatvec::Vec &z0) { zEq = z0; }
-//      void setEquilibriumState(const fmatvec::Vec &zEq_) { zEq = zEq_; }
-
-      /**
-       * \brief Determine the equilibrium state for the analysis
-       * \param eq True, if the equilibrium state should be determined
-       */
-      void setDetermineEquilibriumState(bool eq) { compEq = eq; }
 
       void setTask(Task task_) { task = task_; }
 

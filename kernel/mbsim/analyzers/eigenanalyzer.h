@@ -32,14 +32,6 @@ namespace MBSim {
    */
   class Eigenanalyzer : public MBSim::Solver {
 
-    class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
-      public:
-        Residuum(MBSim::DynamicSystemSolver *sys_) : sys(sys_) { }
-        fmatvec::Vec operator()(const fmatvec::Vec &z);
-      private:
-        MBSim::DynamicSystemSolver *sys;
-    };
-
     public:
 
       enum Task { eigenmodes, eigenmotion, unknown };
@@ -47,7 +39,7 @@ namespace MBSim {
       /**
        * \brief Standard constructor 
        */
-      Eigenanalyzer() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), loops(5), plotsPerLoop(100), compEq(false), task(eigenmodes) { }
+      Eigenanalyzer() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), loops(5), plotsPerLoop(100), task(eigenmodes) { }
       
       /**
        * \brief Perform an eigenanalysis of the system
@@ -102,12 +94,6 @@ namespace MBSim {
        */
       void setInitialState(const fmatvec::Vec &z0) { zEq = z0; }
 
-      /**
-       * \brief Determine the equilibrium state for the analysis
-       * \param eq True, if the equilibrium state should be determined
-       */
-      void setDetermineEquilibriumState(bool eq) { compEq = eq; }
-
       void setTask(Task task_) { task = task_; }
 
       const fmatvec::Vec& getInitialState() const { return zEq; }
@@ -143,7 +129,6 @@ namespace MBSim {
       fmatvec::Vec zEq, deltaz0;
       double tStart, tEnd, dtPlot, A;
       int loops, plotsPerLoop;
-      bool compEq;
       Task task;
 
       fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> > V;

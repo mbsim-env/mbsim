@@ -1046,6 +1046,9 @@ namespace MBSimGUI {
     initialProjection = new ExtWidget("Initial projection",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialProjection");
     addToTab("Extra", initialProjection);
 
+    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"determineEquilibriumState");
+    addToTab("Extra",determineEquilibriumState);
+
     useConstraintSolverForSmoothMotion = new ExtWidget("Use constraint solver for smooth motion",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForSmoothMotion");
     addToTab("Extra", useConstraintSolverForSmoothMotion);
 
@@ -1071,6 +1074,7 @@ namespace MBSimGUI {
     gdCorr->initializeUsingXML(item->getXMLElement());
     inverseKinetics->initializeUsingXML(item->getXMLElement());
     initialProjection->initializeUsingXML(item->getXMLElement());
+    determineEquilibriumState->initializeUsingXML(item->getXMLElement());
     useConstraintSolverForSmoothMotion->initializeUsingXML(item->getXMLElement());
     useConstraintSolverForPlot->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -1094,6 +1098,7 @@ namespace MBSimGUI {
     gdCorr->writeXMLFile(item->getXMLElement());
     inverseKinetics->writeXMLFile(item->getXMLElement());
     initialProjection->writeXMLFile(item->getXMLElement());
+    determineEquilibriumState->writeXMLFile(item->getXMLElement());
     useConstraintSolverForSmoothMotion->writeXMLFile(item->getXMLElement());
     useConstraintSolverForPlot->writeXMLFile(item->getXMLElement());
     return nullptr;

@@ -10,6 +10,7 @@ int main (int argc, char* argv[]) {
 
   System *sys = new System("TS");
 
+  sys->setDetermineEquilibriumState(true);
   sys->initialize();
 
   Eigenanalyzer analyzer;
@@ -17,7 +18,6 @@ int main (int argc, char* argv[]) {
   Vec z0(sys->getzSize());
   z0(0) = 0.02;
   analyzer.setInitialDeviation(z0);
-  analyzer.setDetermineEquilibriumState(true);
   analyzer.setAmplitude(0);
   analyzer.setModeAmplitudeTable("[1,0.5]");
   analyzer.setLoops(1);

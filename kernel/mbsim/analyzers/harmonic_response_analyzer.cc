@@ -20,7 +20,6 @@
 #include <config.h>
 #include "harmonic_response_analyzer.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
 
 using namespace std;
@@ -32,14 +31,6 @@ using namespace xercesc;
 namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, HarmonicResponseAnalyzer)
-
-  Vec HarmonicResponseAnalyzer::Residuum::operator()(const Vec &z) {
-    Vec res;
-    sys->setState(z);
-    sys->resetUpToDate();
-    res = sys->evalzd();
-    return res;
-  } 
 
   void HarmonicResponseAnalyzer::execute() {
     if(task == frequencyResponse) computeFrequencyResponse();
@@ -54,16 +45,6 @@ namespace MBSim {
       zEq = system->evalz0();
     else if(zEq.size()!=system->getzSize())
       throwError(string("(HarmonicResponseAnalyzer::computeFrequencyResponse): size of z0 does not match, must be ") + to_string(system->getzSize()));
-
-    if(compEq) {
-      system->setTime(tStart);
-      Residuum f(system);
-      MultiDimNewtonMethod newton(&f);
-      newton.setLinearAlgebra(1);
-      zEq = newton.solve(zEq);
-      if(newton.getInfo() != 0)
-        throwError("In harmonic response analysis: computation of equilibrium state failed!");
-    }
 
     int n = system->getzSize();
     system->setState(zEq);
@@ -84,6 +65,8 @@ namespace MBSim {
     //bi(n/2,n-1) = (y1*cos(Om*tStart) - y0*cos(Om*(tStart+0.3*T)))/sin(0.3*Om*T);
     system->setTime(0);
     system->resetUpToDate();
+    system->computeInitialCondition();
+    zEq = system->getState();
     br(n/2,n-1) = system->evalzd()(n/2,n-1);
     system->setTime(0.25*T);
     system->resetUpToDate();
@@ -180,8 +163,6 @@ namespace MBSim {
       if(str=="frequencyResponse") task=frequencyResponse;
       else task=unknown;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"determineEquilibriumState");
-    if(e) setDetermineEquilibriumState(E(e)->getText<bool>());
   }
 
 }

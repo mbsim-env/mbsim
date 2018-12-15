@@ -22,6 +22,7 @@
 
 #include "mbsim/group.h"
 #include "fmatvec/sparse_matrix.h"
+#include "mbsim/functions/function.h"
 
 namespace MBSim {
 
@@ -43,6 +44,15 @@ namespace MBSim {
    * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
    */
   class DynamicSystemSolver : public Group {
+
+    class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
+      public:
+        Residuum(MBSim::DynamicSystemSolver *sys_) : sys(sys_) { }
+        fmatvec::Vec operator()(const fmatvec::Vec &z);
+      private:
+        MBSim::DynamicSystemSolver *sys;
+    };
+
     public:
 
       /**
@@ -466,6 +476,9 @@ namespace MBSim {
       void setInitialProjection(bool initialProjection_) { initialProjection = initialProjection_; }
       bool getInitialProjection() const { return initialProjection; }
 
+      void setDetermineEquilibriumState(bool determineEquilibriumState_) { determineEquilibriumState = determineEquilibriumState_; }
+      bool getDetermineEquilibriumState() const { return determineEquilibriumState; }
+
       void setUseConstraintSolverForSmoothMotion(bool useConstraintSolverForSmoothMotion_) { useConstraintSolverForSmoothMotion = useConstraintSolverForSmoothMotion_; }
       bool getUseConstraintSolverForSmoothMotion() const { return useConstraintSolverForSmoothMotion; }
 
@@ -802,6 +815,7 @@ namespace MBSim {
       bool alwaysConsiderContact;
       bool inverseKinetics;
       bool initialProjection;
+      bool determineEquilibriumState;
       bool useConstraintSolverForSmoothMotion;
       bool useConstraintSolverForPlot;
 

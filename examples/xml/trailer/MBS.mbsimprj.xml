@@ -417,19 +417,19 @@
       </observers>
         <enableOpenMBVFrameI>
           <size unit="dm">1</size>
-      </enableOpenMBVFrameI>
+        </enableOpenMBVFrameI>
         <environments>
           <MBSimEnvironment>
-          
             <accelerationOfGravity unit="m/s^2">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>0</ele>
                 <ele>-9.81</ele>
                 <ele>0</ele>
-            </xmlVector>
-          </accelerationOfGravity>
-        </MBSimEnvironment>
-      </environments>
+              </xmlVector>
+            </accelerationOfGravity>
+          </MBSimEnvironment>
+        </environments>
+        <determineEquilibriumState>1</determineEquilibriumState>
       </DynamicSystemSolver>
     </Embed>
 
@@ -440,7 +440,6 @@
           <ele>freq</ele>
       </xmlVector>
     </systemFrequencies>
-      <determineEquilibriumState>1</determineEquilibriumState>
   </HarmonicResponseAnalyzer>
 
   </MBSimProject>
