@@ -111,7 +111,6 @@ namespace MBSimGUI {
       virtual ElementPropertyDialog* createPropertyDialog() { return new ElementPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ElementContextMenu(this); }
       virtual QMenu* createFrameContextMenu() {return nullptr;}
-      Element* getRoot() {return parent?parent->getRoot():this;}
       const std::vector<MBXMLUtils::FQN>& getPlotFeatures() const { return plotFeatures; }
       virtual QString getPlotFeatureType() const { return ""; }
       bool getConfig() { return config; }
