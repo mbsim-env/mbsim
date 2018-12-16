@@ -23,6 +23,7 @@
 #include <iostream>
 #include <QApplication>
 #include <QFileInfo>
+#include <QSettings>
 #include "mainwindow.h"
 #include <QLocale>
 #ifdef _WIN32
@@ -82,15 +83,15 @@ int main(int argc, char *argv[]) {
 #endif
   QCoreApplication::setLibraryPaths(QStringList(QFileInfo(moduleName).absolutePath())); // do not load plugins from buildin defaults
   QApplication app(argc, argv);
-  app.setOrganizationName("MBSim-Env");
+  app.setOrganizationName("mbsim-env");
+  app.setApplicationName("mbsimgui");
+  app.setOrganizationDomain("www.mbsim-env.de");
+  QSettings::setDefaultFormat(QSettings::IniFormat);
   QLocale::setDefault(QLocale::C);
   setlocale(LC_ALL, "C");
   MainWindow mainwindow(arg);
   mainwindow.show();
   if(arg.contains("--fullscreen")) mainwindow.showFullScreen(); // must be done after mainwindow.show()
-  //mainwindow.showMaximized();
-  //mainwindow->resize(1400, 900);
-  //mainwindow->resize(1100, 700);
   int ret=app.exec();
   return ret;
 }
