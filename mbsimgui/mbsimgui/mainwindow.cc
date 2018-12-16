@@ -371,6 +371,19 @@ namespace MBSimGUI {
     statusTime.start();
 
     setWindowIcon(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"mbsimgui.svg").string())));
+
+    // auto exit if everything is finished
+    if(arg.contains("--autoExit")) {
+      auto timer=new QTimer(this);
+      connect(timer, &QTimer::timeout, [this, timer](){
+        if(process.state()==QProcess::NotRunning) {
+          timer->stop();
+          if(!close())
+            timer->start(100);
+        }
+      });
+      timer->start(100);
+    }
   }
 
   void MainWindow::autoSaveProject() {
