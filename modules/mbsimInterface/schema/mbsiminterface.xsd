@@ -3,7 +3,7 @@
   elementFormDefault="qualified"
   attributeFormDefault="unqualified"
   xmlns="http://www.mbsim-env.de/MBSimInterface"
-  xmlns:integrator="http://www.mbsim-env.de/MBSimIntegrator"
+  xmlns:mbsim="http://www.mbsim-env.de/MBSim"
   xmlns:control="http://www.mbsim-env.de/MBSimControl"
   xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
@@ -18,8 +18,6 @@
   <xs:import namespace="http://www.mbsim-env.de/MBSim"/>
 
   <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"/>
-
-  <xs:import namespace="http://www.mbsim-env.de/MBSimIntegrator"/>
 
   <xs:import namespace="http://www.mbsim-env.de/MBSimControl"/>
 
@@ -41,7 +39,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:element name="InterfaceIntegrator" substitutionGroup="integrator:Integrator" type="InterfaceIntegratorType">
+  <xs:element name="InterfaceIntegrator" substitutionGroup="mbsim:Integrator" type="InterfaceIntegratorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Der InterfaceIntegrator stellt eine Schnittstelle zur MKS-Berechnung von MBSim dar.
@@ -50,7 +48,7 @@
   </xs:element>
   <xs:complexType name="InterfaceIntegratorType">
     <xs:complexContent>
-      <xs:extension base="integrator:IntegratorType">
+      <xs:extension base="mbsim:IntegratorType">
         <xs:sequence>
           <xs:element name="outputSignals">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
