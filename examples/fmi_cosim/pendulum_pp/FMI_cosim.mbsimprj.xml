@@ -67,7 +67,7 @@
       </DynamicSystemSolver>
     </Embed>
   
-    <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+    <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSim">
       <startTime unit="s">0</startTime>
       <endTime unit="s">10</endTime>
       <plotStepSize unit="s">1e-2</plotStepSize>

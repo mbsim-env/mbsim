@@ -126,7 +126,12 @@ namespace MBSim {
         system->setState(zEq + fromComplex(deltaz));
         system->resetUpToDate();
         system->plot();
+        system->checkExitRequest();
+        if(system->getIntegratorExitRequest())
+          break;
       }
+      if(system->getIntegratorExitRequest())
+        break;
       t0 += T+dtPlot;
       c(f[j].second) = complex<double>(0,0);
       c(f[j].second+1) = complex<double>(0,0);

@@ -25,6 +25,7 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QStyle>
+#include <QSettings>
 
 using namespace std;
 
@@ -91,6 +92,18 @@ namespace MBSimGUI {
 
   bool PropertyDialog::getCancel() const {
     return buttonBox->button(QDialogButtonBox::Cancel)->isEnabled();
+  }
+
+  void PropertyDialog::closeEvent(QCloseEvent *event) {
+    QSettings settings;
+    settings.setValue("propertydialog/geometry", saveGeometry());
+    QDialog::closeEvent(event);
+  }
+  
+  void PropertyDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("propertydialog/geometry").toByteArray());
+    QDialog::showEvent(event);
   }
 
   EmbedItemPropertyDialog::EmbedItemPropertyDialog(EmbedItemData *item_, QWidget * parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), item(item_) {

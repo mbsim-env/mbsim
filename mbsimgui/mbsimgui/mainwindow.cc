@@ -371,6 +371,19 @@ namespace MBSimGUI {
     statusTime.start();
 
     setWindowIcon(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"mbsimgui.svg").string())));
+
+    // auto exit if everything is finished
+    if(arg.contains("--autoExit")) {
+      auto timer=new QTimer(this);
+      connect(timer, &QTimer::timeout, [this, timer](){
+        if(process.state()==QProcess::NotRunning) {
+          timer->stop();
+          if(!close())
+            timer->start(100);
+        }
+      });
+      timer->start(100);
+    }
   }
 
   void MainWindow::autoSaveProject() {
@@ -2068,6 +2081,17 @@ namespace MBSimGUI {
       event->accept();
     else
       event->ignore();
+
+    QSettings settings;
+    settings.setValue("mainwindow/geometry", saveGeometry());
+    settings.setValue("mainwindow/state", saveState());
+    QMainWindow::closeEvent(event);
+  }
+
+  void MainWindow::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("mainwindow/geometry").toByteArray());
+    restoreState(settings.value("mainwindow/state").toByteArray());
   }
 
   void MainWindow::openRecentProjectFile() {
@@ -2081,13 +2105,13 @@ namespace MBSimGUI {
   void MainWindow::setCurrentProjectFile(const QString &fileName) {
 
     QSettings settings;
-    QStringList files = settings.value("recentProjectFileList").toStringList();
+    QStringList files = settings.value("mainwindow/recentProjectFileList").toStringList();
     files.removeAll(fileName);
     files.prepend(fileName);
     while (files.size() > maxRecentFiles)
       files.removeLast();
 
-    settings.setValue("recentProjectFileList", files);
+    settings.setValue("mainwindow/recentProjectFileList", files);
 
     foreach (QWidget *widget, QApplication::topLevelWidgets()) {
       auto *mainWin = qobject_cast<MainWindow *>(widget);
@@ -2098,7 +2122,7 @@ namespace MBSimGUI {
 
   void MainWindow::updateRecentProjectFileActions() {
     QSettings settings;
-    QStringList files = settings.value("recentProjectFileList").toStringList();
+    QStringList files = settings.value("mainwindow/recentProjectFileList").toStringList();
 
     int numRecentFiles = qMin(files.size(), (int)maxRecentFiles);
 

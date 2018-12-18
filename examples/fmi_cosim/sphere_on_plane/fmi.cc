@@ -4,10 +4,9 @@
 
 using namespace std;
 using namespace MBSim;
-using namespace MBSimIntegrator;
 using namespace boost::numeric::odeint;
 
-void mbsimSrcFMI(DynamicSystemSolver *&dss, MBSimIntegrator::Integrator *&integrator) {
+void mbsimSrcFMI(DynamicSystemSolver *&dss, Integrator *&integrator) {
   dss = new System("TS");
   dss->setProjectionTolerance(1e-15);
   dss->setGeneralizedRelativePositionTolerance(1e-6);

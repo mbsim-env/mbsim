@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+<BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSim">
   <startTime>0</startTime>
   <endTime>Tend</endTime>
   <plotStepSize>1e-3</plotStepSize>
@@ -8,7 +8,7 @@
   <maximumStepSize>1e-1</maximumStepSize>
 </BoostOdeintDOS_RKDOPRI5>
 <!-- not working due to but in boost odeint, see https://github.com/boostorg/odeint/pull/27
-<BoostOdeintDOS_Euler xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+<BoostOdeintDOS_Euler xmlns="http://www.mbsim-env.de/MBSim">
   <startTime>0</startTime>
   <endTime>Tend</endTime>
   <plotStepSize>1e-3</plotStepSize>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-<TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+<TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSim">
   <startTime>0</startTime>
   <endTime>10</endTime>
   <plotStepSize>5e-3</plotStepSize>
@@ -8,7 +8,7 @@
 </TimeSteppingIntegrator>
 -->
 <!--
-<LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+<LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
   <startTime>0</startTime>
   <endTime>4</endTime>
   <plotStepSize>1e-3</plotStepSize>
@@ -21,7 +21,7 @@
 </LSODEIntegrator>
 -->
 <!--
-<LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+<LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSim">
   <startTime>0</startTime>
   <endTime>4</endTime>
   <plotStepSize>1e-3</plotStepSize>
@@ -34,9 +34,9 @@
 </LSODARIntegrator>
 -->
 <InterfaceIntegrator xmlns="http://www.mbsim-env.de/MBSimInterface">
-  <startTime xmlns="http://www.mbsim-env.de/MBSimIntegrator">0</startTime>
-  <endTime xmlns="http://www.mbsim-env.de/MBSimIntegrator">0</endTime>
-  <plotStepSize xmlns="http://www.mbsim-env.de/MBSimIntegrator">0</plotStepSize>
+  <startTime xmlns="http://www.mbsim-env.de/MBSim">0</startTime>
+  <endTime xmlns="http://www.mbsim-env.de/MBSim">0</endTime>
+  <plotStepSize xmlns="http://www.mbsim-env.de/MBSim">0</plotStepSize>
   <outputSignals>
     <signal ref="/Group[MBS]/Link[K1pxy]"/>
     <signal ref="/Group[MBS]/Link[K1vxy]"/>
