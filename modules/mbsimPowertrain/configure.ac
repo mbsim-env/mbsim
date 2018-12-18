@@ -6,11 +6,6 @@ AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimPowertrain/Makefile.am])
 LT_INIT([win32-dll])
 
-: ${CFLAGS=""}
-: ${CXXFLAGS=""}
-: ${FCFLAGS=""}
-: ${FFLAGS=""}
-
 AC_CHECK_FUNCS([pow])
 
 AC_PROG_CXX
@@ -28,21 +23,6 @@ AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
 PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0)
-
-dnl Enable debugging 
-AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
-
-if test "_$debug" = "_yes" ; then
-  CFLAGS="$CFLAGS -ggdb"
-  CXXFLAGS="$CXXFLAGS -ggdb"
-  FCFLAGS="$FCFLAGS -ggdb"
-  FFLAGS="$FFLAGS -ggdb"
-else
-  CFLAGS="$CFLAGS -g -O2"
-  CXXFLAGS="$CXXFLAGS -g -O2 -DNDEBUG"
-  FCFLAGS="$FCFLAGS -g -O2"
-  FFLAGS="$FFLAGS -g -O2"
-fi
 
 CPPFLAGS="$CPPFLAGS -Wall -Werror"
 if test "_$host_os" != "_mingw32"; then
