@@ -7,11 +7,6 @@ AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimInterface/Makefile.am])
 LT_INIT([win32-dll])
 
-: ${CFLAGS=""}
-: ${CXXFLAGS=""}
-: ${FCFLAGS=""}
-: ${FFLAGS=""}
-
 AC_CHECK_FUNCS([socket])
 AC_TYPE_SIZE_T
 
@@ -61,21 +56,6 @@ dnl    AC_SUBST([MKOCTFILE],[$mkoctfile])
     ], 
     [ ]
 )
-
-dnl Enable debugging 
-AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
-
-if test "_$debug" = "_yes" ; then
-  CFLAGS="$CFLAGS -ggdb"
-  CXXFLAGS="$CXXFLAGS -ggdb"
-  FCFLAGS="$FCFLAGS -ggdb"
-  FFLAGS="$FFLAGS -ggdb"
-else
-  CFLAGS="$CFLAGS -g -O2"
-  CXXFLAGS="$CXXFLAGS -g -O2 -DNDEBUG"
-  FCFLAGS="$FCFLAGS -g -O2"
-  FFLAGS="$FFLAGS -g -O2"
-fi
 
 dnl needed for XML
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])

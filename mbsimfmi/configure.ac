@@ -6,11 +6,6 @@ AM_INIT_AUTOMAKE([subdir-objects])
 AC_CONFIG_SRCDIR([mbsimfmi/fmiinstance.h])
 LT_INIT([win32-dll])
 
-: ${CFLAGS=""}
-: ${CXXFLAGS=""}
-: ${FCFLAGS=""}
-: ${FFLAGS=""}
-
 AC_CHECK_FUNCS([floor])
 AC_CHECK_HEADER_STDBOOL
 AC_C_INLINE
@@ -22,15 +17,6 @@ AC_LANG([C++])
 
 # enable C++11
 CXXFLAGS="$CXXFLAGS -std=c++11"
-
-AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
-if test "_$debug" = "_yes" ; then
-  CFLAGS="$CFLAGS -ggdb"
-  CXXFLAGS="$CXXFLAGS -ggdb"
-else
-  CFLAGS="$CFLAGS -g -O2"
-  CXXFLAGS="$CXXFLAGS -g -O2 -DNDEBUG"
-fi
 
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare"
 if test "_$host_os" != "_mingw32"; then

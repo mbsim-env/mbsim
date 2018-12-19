@@ -6,11 +6,6 @@ AM_INIT_AUTOMAKE([subdir-objects])
 AC_CONFIG_SRCDIR([mbsim/element.h])
 LT_INIT([win32-dll])
 
-: ${CFLAGS=""}
-: ${CXXFLAGS=""}
-: ${FCFLAGS=""}
-: ${FFLAGS=""}
-
 AC_CHECK_FUNCS([floor])
 AC_CHECK_FUNCS([gettimeofday])
 AC_CHECK_HEADERS([limits.h])
@@ -33,20 +28,7 @@ AC_C_CONST
 PKG_CHECK_MODULES(FMATVEC, fmatvec >= 1.0.1) # only fmatvec
 PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie mbxmlutilshelper) # all deps
 
-dnl Enable debugging 
-AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
-
-if test "_$debug" = "_yes" ; then
-  CFLAGS="$CFLAGS -ggdb"
-  CXXFLAGS="$CXXFLAGS -ggdb"
-  FCFLAGS="$FCFLAGS -ggdb"
-  FFLAGS="$FFLAGS -ggdb -cpp -ffixed-line-length-none"
-else
-  CFLAGS="$CFLAGS -g -O2"
-  CXXFLAGS="$CXXFLAGS -g -O2 -DNDEBUG"
-  FCFLAGS="$FCFLAGS -g -O2"
-  FFLAGS="$FFLAGS -g -O2 -cpp -ffixed-line-length-none"
-fi
+FFLAGS="$FFLAGS -cpp -ffixed-line-length-none"
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-unknown-pragmas"
 AC_SUBST([HOST_OS],[$host_os])
 if test "_$host_os" != "_mingw32"; then
