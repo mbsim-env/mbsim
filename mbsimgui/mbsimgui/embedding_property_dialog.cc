@@ -39,7 +39,7 @@ namespace MBSimGUI {
 
   extern DOMImplementation *impl;
 
-  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item, bool name_, QWidget *parent, const Qt::WindowFlags& f) : EmbedItemPropertyDialog(item,parent,f), name(nullptr), count(nullptr), counterName(nullptr) {
+  EmbeddingPropertyDialog::EmbeddingPropertyDialog(EmbedItemData *item, bool name_, QWidget *parent, const Qt::WindowFlags& f) : EmbedItemPropertyDialog(item), name(nullptr), count(nullptr), counterName(nullptr) {
     addTab("Embedding");
     if(name_) {
       name = new ExtWidget("Name",new TextWidget);

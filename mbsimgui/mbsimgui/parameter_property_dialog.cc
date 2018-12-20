@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, QWidget *parent, const Qt::WindowFlags& f, bool readOnly) : PropertyDialog(parent,f), parameter(parameter_) {
+  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, bool readOnly) : parameter(parameter_) {
     if((parameter->getParent()->getEmbedItemParent() and parameter->getParent()->getEmbedItemParent()->getEmbeded()) or parameter->getParent()->getEmbededParameters()) {
       buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
       buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
@@ -62,7 +62,7 @@ namespace MBSimGUI {
     writeXMLFile(parameter->getXMLElement());
   }
 
-  StringParameterPropertyDialog::StringParameterPropertyDialog(StringParameter *parameter, QWidget *parent, const Qt::WindowFlags& f) : ParameterPropertyDialog(parameter,parent,f) {
+  StringParameterPropertyDialog::StringParameterPropertyDialog(StringParameter *parameter) : ParameterPropertyDialog(parameter) {
     value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -80,7 +80,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, const Qt::WindowFlags& f) : ParameterPropertyDialog(parameter,parent,f) {
+  ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter) : ParameterPropertyDialog(parameter) {
     value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -98,7 +98,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  VectorParameterPropertyDialog::VectorParameterPropertyDialog(VectorParameter *parameter, QWidget *parent, const Qt::WindowFlags& f) : ParameterPropertyDialog(parameter,parent,f) {
+  VectorParameterPropertyDialog::VectorParameterPropertyDialog(VectorParameter *parameter) : ParameterPropertyDialog(parameter) {
     value = new ExtWidget("Value",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -116,7 +116,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(MatrixParameter *parameter,QWidget *parent, const Qt::WindowFlags& f) : ParameterPropertyDialog(parameter,parent,f) {
+  MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(MatrixParameter *parameter) : ParameterPropertyDialog(parameter) {
     value = new ExtWidget("Value",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -134,7 +134,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ImportParameterPropertyDialog::ImportParameterPropertyDialog(ImportParameter *parameter,QWidget *parent, const Qt::WindowFlags& f) : ParameterPropertyDialog(parameter,parent,f,true) {
+  ImportParameterPropertyDialog::ImportParameterPropertyDialog(ImportParameter *parameter) : ParameterPropertyDialog(parameter,true) {
     value = new ExtWidget("Value",new ExpressionWidget("0"));
     addToTab("General", value);
   }

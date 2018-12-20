@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ProjectPropertyDialog::ProjectPropertyDialog(Project *project, QWidget *parent, const Qt::WindowFlags& f) : EmbedItemPropertyDialog(project,parent,f) {
+  ProjectPropertyDialog::ProjectPropertyDialog(Project *project) : EmbedItemPropertyDialog(project) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(project->getName()));
     name->setToolTip("Set the name of the project");

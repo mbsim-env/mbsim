@@ -31,7 +31,7 @@ namespace MBSimGUI {
   class ProjectPropertyDialog : public EmbedItemPropertyDialog {
 
     public:
-      ProjectPropertyDialog(Project *project_, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      ProjectPropertyDialog(Project *project_);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:

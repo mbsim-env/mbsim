@@ -45,7 +45,7 @@ namespace MBSimGUI {
   class SolverPropertyDialog : public EmbedItemPropertyDialog {
 
     public:
-      SolverPropertyDialog(Solver *solver_, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      SolverPropertyDialog(Solver *solver_);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
   };
@@ -53,7 +53,7 @@ namespace MBSimGUI {
   class IntegratorPropertyDialog : public SolverPropertyDialog {
 
     public:
-      IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      IntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -64,7 +64,7 @@ namespace MBSimGUI {
   class RootFindingIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      RootFindingIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      RootFindingIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -74,7 +74,7 @@ namespace MBSimGUI {
   class DOPRI5IntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      DOPRI5IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      DOPRI5IntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -84,7 +84,7 @@ namespace MBSimGUI {
   class DOP853IntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      DOP853IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      DOP853IntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -94,7 +94,7 @@ namespace MBSimGUI {
   class ODEXIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      ODEXIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      ODEXIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -104,7 +104,7 @@ namespace MBSimGUI {
   class RADAU5IntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      RADAU5IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      RADAU5IntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -114,7 +114,7 @@ namespace MBSimGUI {
   class RADAUIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      RADAUIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      RADAUIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -124,7 +124,7 @@ namespace MBSimGUI {
   class RODASIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      RODASIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      RODASIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -134,7 +134,7 @@ namespace MBSimGUI {
   class SEULEXIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      SEULEXIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      SEULEXIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -144,7 +144,7 @@ namespace MBSimGUI {
   class PHEM56IntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      PHEM56IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      PHEM56IntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -154,7 +154,7 @@ namespace MBSimGUI {
   class LSODEIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      LSODEIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      LSODEIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -164,7 +164,7 @@ namespace MBSimGUI {
   class LSODAIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      LSODAIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      LSODAIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -174,7 +174,7 @@ namespace MBSimGUI {
   class LSODIIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      LSODIIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      LSODIIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -184,7 +184,7 @@ namespace MBSimGUI {
   class DASPKIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      DASPKIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      DASPKIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -194,7 +194,7 @@ namespace MBSimGUI {
   class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      TimeSteppingIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      TimeSteppingIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -204,7 +204,7 @@ namespace MBSimGUI {
   class ThetaTimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      ThetaTimeSteppingIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      ThetaTimeSteppingIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -214,7 +214,7 @@ namespace MBSimGUI {
   class TimeSteppingSSCIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      TimeSteppingSSCIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      TimeSteppingSSCIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -224,7 +224,7 @@ namespace MBSimGUI {
   class HETS2IntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      HETS2IntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      HETS2IntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -234,7 +234,7 @@ namespace MBSimGUI {
   class ExplicitEulerIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      ExplicitEulerIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      ExplicitEulerIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -244,7 +244,7 @@ namespace MBSimGUI {
   class ImplicitEulerIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      ImplicitEulerIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      ImplicitEulerIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -254,7 +254,7 @@ namespace MBSimGUI {
   class RKSuiteIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      RKSuiteIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      RKSuiteIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -264,7 +264,7 @@ namespace MBSimGUI {
   class BoostOdeintDOSPropertyDialog : public RootFindingIntegratorPropertyDialog {
 
     public:
-      BoostOdeintDOSPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      BoostOdeintDOSPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -274,25 +274,25 @@ namespace MBSimGUI {
   class BoostOdeintDOS_RKDOPRI5PropertyDialog : public BoostOdeintDOSPropertyDialog {
 
     public:
-      BoostOdeintDOS_RKDOPRI5PropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(solver,parent,f) { }
+      BoostOdeintDOS_RKDOPRI5PropertyDialog(Solver *solver) : BoostOdeintDOSPropertyDialog(solver) { }
   };
 
   class BoostOdeintDOS_BulirschStoerPropertyDialog : public BoostOdeintDOSPropertyDialog {
 
     public:
-      BoostOdeintDOS_BulirschStoerPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(solver,parent,f) { }
+      BoostOdeintDOS_BulirschStoerPropertyDialog(Solver *solver) : BoostOdeintDOSPropertyDialog(solver) { }
   };
 
   class BoostOdeintDOS_Rosenbrock4PropertyDialog : public BoostOdeintDOSPropertyDialog {
 
     public:
-      BoostOdeintDOS_Rosenbrock4PropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr) : BoostOdeintDOSPropertyDialog(solver,parent,f) { }
+      BoostOdeintDOS_Rosenbrock4PropertyDialog(Solver *solver) : BoostOdeintDOSPropertyDialog(solver) { }
   };
 
   class QuasiStaticIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
-      QuasiStaticIntegratorPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      QuasiStaticIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -302,7 +302,7 @@ namespace MBSimGUI {
   class EigenanalyzerPropertyDialog : public SolverPropertyDialog {
 
     public:
-      EigenanalyzerPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      EigenanalyzerPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -312,7 +312,7 @@ namespace MBSimGUI {
   class HarmonicResponseAnalyzerPropertyDialog : public SolverPropertyDialog {
 
     public:
-      HarmonicResponseAnalyzerPropertyDialog(Solver *solver, QWidget * parent = nullptr, const Qt::WindowFlags& f = nullptr);
+      HarmonicResponseAnalyzerPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:

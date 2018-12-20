@@ -21,6 +21,7 @@
 #include "property_dialog.h"
 #include "embeditemdata.h"
 #include "widget.h"
+#include "mainwindow.h"
 #include <QGridLayout>
 #include <QDialogButtonBox>
 #include <QPushButton>
@@ -31,7 +32,9 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  PropertyDialog::PropertyDialog(QWidget *parent, const Qt::WindowFlags& f) : QDialog(parent,f) {
+  extern MainWindow *mw;
+
+  PropertyDialog::PropertyDialog() : QDialog(mw) {
 
     auto *layout = new QGridLayout;
     setLayout(layout);
@@ -106,7 +109,7 @@ namespace MBSimGUI {
     QDialog::showEvent(event);
   }
 
-  EmbedItemPropertyDialog::EmbedItemPropertyDialog(EmbedItemData *item_, QWidget * parent, const Qt::WindowFlags& f) : PropertyDialog(parent,f), item(item_) {
+  EmbedItemPropertyDialog::EmbedItemPropertyDialog(EmbedItemData *item_) : item(item_) {
     if(item->getEmbeded()) {
       buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
       buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
