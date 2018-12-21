@@ -31,10 +31,6 @@ class QListWidget;
 
 namespace MBSimGUI {
 
-  class VariableWidget;
-  class PhysicalVariableWidget;
-  class EvalDialog;
-
   class ExtWidget : public QGroupBox, public WidgetInterface {
     Q_OBJECT
 

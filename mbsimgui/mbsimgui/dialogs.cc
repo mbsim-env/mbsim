@@ -66,7 +66,7 @@ namespace MBSimGUI {
     return QModelIndex();
   }
 
-  EvalDialog::EvalDialog(const vector<vector<QString> > &var_) {
+  EvalDialog::EvalDialog(const vector<vector<QString> > &var_, QWidget *parent) : QDialog(parent) {
     var.resize(var_.size());
     for(int i=0; i<var_.size(); i++) {
       var[i].resize(var_[i].size());
@@ -124,7 +124,7 @@ namespace MBSimGUI {
     }
   }
 
-  BasicElementBrowser::BasicElementBrowser(Element* selection_, const QString &name) : selection(selection_) {
+  BasicElementBrowser::BasicElementBrowser(Element* selection_, const QString &name, QWidget *parent) : QDialog(parent), selection(selection_) {
     auto* mainLayout=new QGridLayout;
     setLayout(mainLayout);
     eleList = new QTreeView;

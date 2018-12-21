@@ -136,7 +136,7 @@ namespace MBSimGUI {
   class PlanarStribeckFrictionWidget : public FrictionForceLawWidget {
 
     public:
-      PlanarStribeckFrictionWidget();
+      PlanarStribeckFrictionWidget(QWidget *parent);
       QString getType() const override { return "PlanarStribeckFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -147,7 +147,7 @@ namespace MBSimGUI {
   class SpatialStribeckFrictionWidget : public FrictionForceLawWidget {
 
     public:
-      SpatialStribeckFrictionWidget();
+      SpatialStribeckFrictionWidget(QWidget *parent);
       QString getType() const override { return "SpatialStribeckFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -202,7 +202,7 @@ namespace MBSimGUI {
   class PlanarStribeckImpactWidget : public FrictionImpactLawWidget {
 
     public:
-      PlanarStribeckImpactWidget();
+      PlanarStribeckImpactWidget(QWidget *parent);
       QString getType() const override { return "PlanarStribeckImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -213,7 +213,7 @@ namespace MBSimGUI {
   class SpatialStribeckImpactWidget : public FrictionImpactLawWidget {
 
     public:
-      SpatialStribeckImpactWidget();
+      SpatialStribeckImpactWidget(QWidget *parent);
       QString getType() const override { return "SpatialStribeckImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -236,7 +236,7 @@ namespace MBSimGUI {
 
   class FrictionForceLawWidgetFactory : public WidgetFactory {
     public:
-      FrictionForceLawWidgetFactory();
+      FrictionForceLawWidgetFactory(QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       static std::vector<QString> getNames();
       QString getName(int i=0) const override { return name[i]; }
@@ -245,6 +245,7 @@ namespace MBSimGUI {
     protected:
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
   };
 
   class GeneralizedImpactLawWidgetFactory : public WidgetFactory {
@@ -262,7 +263,7 @@ namespace MBSimGUI {
 
   class FrictionImpactLawWidgetFactory : public WidgetFactory {
     public:
-      FrictionImpactLawWidgetFactory();
+      FrictionImpactLawWidgetFactory(QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       static std::vector<QString> getNames();
       QString getName(int i=0) const override { return name[i]; }
@@ -271,6 +272,7 @@ namespace MBSimGUI {
     protected:
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
   };
 
   class RegularizedBilateralConstraintFunctionFactory : public WidgetFactory {

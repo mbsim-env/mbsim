@@ -39,18 +39,19 @@ namespace MBSimGUI {
 
   class LimitedFunctionWidgetFactory : public WidgetFactory {
     public:
-      LimitedFunctionWidgetFactory(Element *parent_) : parent(parent_) { }
+      LimitedFunctionWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) { }
       QString getName(int i=0) const override { return "Limited function"; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIM%"LimitedFunction"; }
       QWidget* createWidget(int i=0) override;
       int getSize() const override { return 1; }
     protected:
-      Element *parent;
+      Element *element;
+      QWidget *parent;
   };
 
   QWidget* LimitedFunctionWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new LimitedFunctionWidget(parent);
+      return new LimitedFunctionWidget(element,parent);
     return nullptr;
   }
 
@@ -238,15 +239,15 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  VectorValuedFunctionWidget::VectorValuedFunctionWidget(Element *parent, int m, bool fixedSize) {
+  VectorValuedFunctionWidget::VectorValuedFunctionWidget(Element *element, int m, bool fixedSize, QWidget *parent) {
 
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-    dummy->setParent(parent);
-    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(dummy),1),"Function",0,0),false,false,MBSIM%"components");
+    dummy->setParent(element);
+    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(dummy,true,parent),1),"Function",0,0),false,false,MBSIM%"components");
     layout->addWidget(functions);
   }
 
@@ -305,12 +306,12 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(Element *parent, int n) {
+  PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(Element *element, int n, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Limited functions",new ListWidget(new ChoiceWidgetFactory(new LimitedFunctionWidgetFactory(parent)),"Function",0,0),false,false,MBSIM%"limitedFunctions");
+    functions = new ExtWidget("Limited functions",new ListWidget(new ChoiceWidgetFactory(new LimitedFunctionWidgetFactory(element,parent)),"Function",0,0),false,false,MBSIM%"limitedFunctions");
     layout->addWidget(functions);
 
     shiftAbscissa = new ExtWidget("Shift abscissa",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftAbscissa");
@@ -339,12 +340,12 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  LimitedFunctionWidget::LimitedFunctionWidget(Element *parent) {
+  LimitedFunctionWidget::LimitedFunctionWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"function");
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(element,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"function");
     layout->addWidget(function);
 
     limit = new ExtWidget("Limit",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"limit");
@@ -668,15 +669,15 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  BidirectionalFunctionWidget::BidirectionalFunctionWidget() {
+  BidirectionalFunctionWidget::BidirectionalFunctionWidget(QWidget *parent) {
 
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    fn = new ExtWidget("Negative directional function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"negativeDirectionalFunction");
+    fn = new ExtWidget("Negative directional function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"negativeDirectionalFunction");
     layout->addWidget(fn);
-    fp = new ExtWidget("Positive directional function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"positiveDirectionalFunction");
+    fp = new ExtWidget("Positive directional function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"positiveDirectionalFunction");
     layout->addWidget(fp);
   }
 
@@ -754,15 +755,15 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  NonlinearSpringDamperForceWidget::NonlinearSpringDamperForceWidget(Element *parent) {
+  NonlinearSpringDamperForceWidget::NonlinearSpringDamperForceWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    s = new ExtWidget("Force deflection function",new ChoiceWidget2(new FunctionWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceDeflectionFunction");
+    s = new ExtWidget("Force deflection function",new ChoiceWidget2(new FunctionWidgetFactory2(element,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceDeflectionFunction");
     layout->addWidget(s);
 
-    sd = new ExtWidget("Force velocity function",new ChoiceWidget2(new FunctionWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceVelocityFunction");
+    sd = new ExtWidget("Force velocity function",new ChoiceWidget2(new FunctionWidgetFactory2(element,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceVelocityFunction");
     layout->addWidget(sd);
   }
 
@@ -918,13 +919,13 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  SignalFunctionWidget::SignalFunctionWidget(Element *element) {
+  SignalFunctionWidget::SignalFunctionWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
     dummy->setParent(element);
-    sRef = new ExtWidget("Return signal",new ElementOfReferenceWidget<Signal>(dummy,nullptr),false,false,MBSIMCONTROL%"returnSignal");
+    sRef = new ExtWidget("Return signal",new ElementOfReferenceWidget<Signal>(dummy,nullptr,parent),false,false,MBSIMCONTROL%"returnSignal");
     layout->addWidget(sRef);
   }
   
@@ -947,12 +948,12 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PolarContourFunctionWidget::PolarContourFunctionWidget() {
+  PolarContourFunctionWidget::PolarContourFunctionWidget(QWidget *parent) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"radiusFunction");
+    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"radiusFunction");
     layout->addWidget(radiusFunction);
   }
 

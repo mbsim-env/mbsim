@@ -50,7 +50,7 @@ namespace MBSimGUI {
     Q_OBJECT
     public:
       //EvalDialog(VariableWidget *widget);
-      EvalDialog(const std::vector<std::vector<QString> > &var_);
+      EvalDialog(const std::vector<std::vector<QString> > &var_, QWidget *parent);
     private:
       std::vector<std::vector<double> > var;
 //      VariableWidget *var;
@@ -65,7 +65,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      BasicElementBrowser(Element* selection_, const QString &name);
+      BasicElementBrowser(Element* selection_, const QString &name, QWidget *parent);
       ~BasicElementBrowser() override = default;
       void setSelection(Element *selection_) { selection = selection_; }
       virtual Element* getSelection() const { return nullptr; }
@@ -84,7 +84,7 @@ namespace MBSimGUI {
   template <class T>
   class ElementBrowser : public BasicElementBrowser {
     public:
-      ElementBrowser(Element* selection) : BasicElementBrowser(selection,T().getType()) { }
+      ElementBrowser(Element* selection, QWidget *parent) : BasicElementBrowser(selection,T().getType(),parent) { }
       Element* getSelection() const override { return dynamic_cast<T*>(selection); }
     protected:
       bool checkForElement(TreeItemData *element) override { return dynamic_cast<T*>(element); }
@@ -92,7 +92,7 @@ namespace MBSimGUI {
 
   class SaveDialog : public QDialog {
     public:
-      SaveDialog(QWidget *parent=0);
+      SaveDialog(QWidget *parent);
       bool includeParameter() const { return parameter->checkState()==Qt::Checked; }
     private:
       QCheckBox *parameter;
@@ -100,7 +100,7 @@ namespace MBSimGUI {
 
   class WebDialog : public QDialog {
     public:
-      WebDialog(QWidget *parent=0);
+      WebDialog(QWidget *parent);
       void load(const QUrl &url_);
     private:
       QWebView *webView;
@@ -110,7 +110,7 @@ namespace MBSimGUI {
   class EigenanalysisDialog : public QDialog {
     Q_OBJECT
     public:
-      EigenanalysisDialog(const QString &name, QWidget *parent=0);
+      EigenanalysisDialog(const QString &name, QWidget *parent);
     private:
       QTableWidget *table;
       DataPlot *plot;
@@ -121,20 +121,20 @@ namespace MBSimGUI {
 
   class HarmonicResponseDialog : public QDialog {
     public:
-      HarmonicResponseDialog(const QString &name, QWidget *parent=0);
+      HarmonicResponseDialog(const QString &name, QWidget *parent);
     private:
       DataPlot *plot;
   };
 
   class SourceDialog : public QDialog {
     public:
-      SourceDialog(Element *element, QWidget *parent=0);
+      SourceDialog(Element *element, QWidget *parent);
   };
 
   class ImportDialog : public QDialog {
     Q_OBJECT
     public:
-      ImportDialog(QWidget *parent=0);
+      ImportDialog(QWidget *parent);
       ImportWidget *getImportWidget() { return import; }
     private:
       ImportWidget *import;

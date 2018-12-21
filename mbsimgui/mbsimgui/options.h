@@ -33,7 +33,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      OptionsDialog(QWidget *widget=nullptr);
+      OptionsDialog(QWidget *parent);
       bool getSaveStateVector() const;
       void setSaveStateVector(bool flag);
       bool getAutoSave() const;

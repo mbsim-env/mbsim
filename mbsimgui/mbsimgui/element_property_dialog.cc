@@ -32,20 +32,10 @@
 #include "frame.h"
 #include "contour.h"
 #include "rigid_body.h"
-#include "flexible_body_ffr.h"
 #include "constraint.h"
-#include "kinetic_excitation.h"
-#include "spring_damper.h"
-#include "joint.h"
 #include "contact.h"
-#include "observer.h"
-#include "parameter.h"
-#include "integrator.h"
-#include "sensor.h"
+#include "signal_.h"
 #include "function_widget_factory.h"
-#include "friction.h"
-#include "gear.h"
-#include "connection.h"
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QFileInfo>
@@ -67,22 +57,23 @@ namespace MBSimGUI {
 
   class ConnectRigidBodiesWidgetFactory : public WidgetFactory {
     public:
-      ConnectRigidBodiesWidgetFactory(Element *parent_);
+      ConnectRigidBodiesWidgetFactory(Element *element_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
+      QWidget *parent;
   };
 
-  ConnectRigidBodiesWidgetFactory::ConnectRigidBodiesWidgetFactory(Element *parent_) : parent(parent_) {
+  ConnectRigidBodiesWidgetFactory::ConnectRigidBodiesWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
     name.emplace_back("1 rigid body");
     name.emplace_back("2 rigid bodies");
   }
 
   QWidget* ConnectRigidBodiesWidgetFactory::createWidget(int i) {
-    return new ConnectElementsWidget<RigidBody>(i+1,parent);
+    return new ConnectElementsWidget<RigidBody>(i+1,element,parent);
   }
 
   ElementPropertyDialog::ElementPropertyDialog(Element *element) : EmbedItemPropertyDialog(element) {
@@ -150,7 +141,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FramePropertyDialog::FramePropertyDialog(Frame *frame) : ElementPropertyDialog(frame) {
+  FramePropertyDialog::FramePropertyDialog(Element *frame) : ElementPropertyDialog(frame) {
     addTab("Visualisation",1);
     visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     visu->setToolTip("Set the visualisation parameters for the frame");
@@ -169,13 +160,13 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  InternalFramePropertyDialog::InternalFramePropertyDialog(InternalFrame *frame) : ElementPropertyDialog(frame) {
+  InternalFramePropertyDialog::InternalFramePropertyDialog(Element *frame) : ElementPropertyDialog(frame) {
     if(frame->getParent()->getEmbeded()) {
       buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
       buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
     }
     addTab("Visualisation",1);
-    visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget,true,true,frame->getXMLFrameName());
+    visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget,true,true,static_cast<InternalFrame*>(frame)->getXMLFrameName());
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
     setReadOnly(true);
@@ -196,10 +187,10 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame) : FramePropertyDialog(frame) {
+  FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(Element *frame) : FramePropertyDialog(frame) {
     addTab("Kinematics",1);
 
-    refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(frame,frame),true,false,MBSIM%"frameOfReference");
+    refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(frame,static_cast<Frame*>(frame)),true,false,MBSIM%"frameOfReference");
     addToTab("Kinematics", refFrame);
 
     position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativePosition");
@@ -225,7 +216,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  NodeFramePropertyDialog::NodeFramePropertyDialog(NodeFrame *frame) : FramePropertyDialog(frame) {
+  NodeFramePropertyDialog::NodeFramePropertyDialog(Element *frame) : FramePropertyDialog(frame) {
 
     nodeNumber = new ExtWidget("Node number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumber");
     addToTab("General", nodeNumber);
@@ -243,7 +234,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ContourPropertyDialog::ContourPropertyDialog(Contour *contour) : ElementPropertyDialog(contour) {
+  ContourPropertyDialog::ContourPropertyDialog(Element *contour) : ElementPropertyDialog(contour) {
     thickness = new ExtWidget("Thickness",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"thickness");
     addToTab("General", thickness);
   }
@@ -260,7 +251,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RigidContourPropertyDialog::RigidContourPropertyDialog(RigidContour *contour) : ContourPropertyDialog(contour) {
+  RigidContourPropertyDialog::RigidContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
     refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(contour,nullptr),true,false,MBSIM%"frameOfReference");
     addToTab("General", refFrame);
   }
@@ -277,7 +268,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  PointPropertyDialog::PointPropertyDialog(Point *point) : RigidContourPropertyDialog(point) {
+  PointPropertyDialog::PointPropertyDialog(Element *point) : RigidContourPropertyDialog(point) {
     addTab("Visualisation",1);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
@@ -296,7 +287,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  LinePropertyDialog::LinePropertyDialog(Line *line) : RigidContourPropertyDialog(line) {
+  LinePropertyDialog::LinePropertyDialog(Element *line) : RigidContourPropertyDialog(line) {
     addTab("Visualisation",1);
 
     visu = new ExtWidget("Enable openMBV",new LineMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
@@ -315,7 +306,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  PlanePropertyDialog::PlanePropertyDialog(Plane *plane) : RigidContourPropertyDialog(plane) {
+  PlanePropertyDialog::PlanePropertyDialog(Element *plane) : RigidContourPropertyDialog(plane) {
     addTab("Visualisation",1);
 
     visu = new ExtWidget("Enable openMBV",new PlaneMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
@@ -334,7 +325,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SpherePropertyDialog::SpherePropertyDialog(Sphere *sphere) : RigidContourPropertyDialog(sphere) {
+  SpherePropertyDialog::SpherePropertyDialog(Element *sphere) : RigidContourPropertyDialog(sphere) {
     addTab("Visualisation",1);
 
     radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
@@ -358,7 +349,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  CirclePropertyDialog::CirclePropertyDialog(Circle *circle) : RigidContourPropertyDialog(circle) {
+  CirclePropertyDialog::CirclePropertyDialog(Element *circle) : RigidContourPropertyDialog(circle) {
     addTab("Visualisation",1);
 
     radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
@@ -385,7 +376,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  CuboidPropertyDialog::CuboidPropertyDialog(Cuboid *circle) : RigidContourPropertyDialog(circle) {
+  CuboidPropertyDialog::CuboidPropertyDialog(Element *circle) : RigidContourPropertyDialog(circle) {
     addTab("Visualisation",1);
 
     length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
@@ -409,7 +400,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  LineSegmentPropertyDialog::LineSegmentPropertyDialog(LineSegment *line) : RigidContourPropertyDialog(line) {
+  LineSegmentPropertyDialog::LineSegmentPropertyDialog(Element *line) : RigidContourPropertyDialog(line) {
     addTab("Visualisation",1);
 
     length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"length");
@@ -433,13 +424,13 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  PlanarContourPropertyDialog::PlanarContourPropertyDialog(PlanarContour *contour) : RigidContourPropertyDialog(contour) {
+  PlanarContourPropertyDialog::PlanarContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
     addTab("Visualisation",1);
 
     nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nodes");
     addToTab("General", nodes);
 
-    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new PlanarContourFunctionWidgetFactory(contour),QBoxLayout::TopToBottom,0),false,false,MBSIM%"contourFunction");
+    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new PlanarContourFunctionWidgetFactory(contour,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"contourFunction");
     addToTab("General", contourFunction);
 
     open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"open");
@@ -467,7 +458,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  PlanarNurbsContourPropertyDialog::PlanarNurbsContourPropertyDialog(RigidContour *contour) : RigidContourPropertyDialog(contour) {
+  PlanarNurbsContourPropertyDialog::PlanarNurbsContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
     addTab("Visualisation",1);
 
     vector<QString> list;
@@ -520,7 +511,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SpatialContourPropertyDialog::SpatialContourPropertyDialog(SpatialContour *contour) : RigidContourPropertyDialog(contour) {
+  SpatialContourPropertyDialog::SpatialContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
     addTab("Visualisation",1);
 
     etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaNodes");
@@ -564,7 +555,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SpatialNurbsContourPropertyDialog::SpatialNurbsContourPropertyDialog(RigidContour *contour) : RigidContourPropertyDialog(contour) {
+  SpatialNurbsContourPropertyDialog::SpatialNurbsContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
     addTab("Visualisation",1);
 
     vector<QString> list;
@@ -637,7 +628,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  DiskPropertyDialog::DiskPropertyDialog(RigidContour *disk) : RigidContourPropertyDialog(disk) {
+  DiskPropertyDialog::DiskPropertyDialog(Element *disk) : RigidContourPropertyDialog(disk) {
     addTab("Visualisation",1);
 
     outerRadius = new ExtWidget("Outer radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"outerRadius");
@@ -668,7 +659,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GearWheelPropertyDialog::GearWheelPropertyDialog(RigidContour *disk) : RigidContourPropertyDialog(disk) {
+  GearWheelPropertyDialog::GearWheelPropertyDialog(Element *disk) : RigidContourPropertyDialog(disk) {
     addTab("Visualisation",1);
 
     numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget2(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfTeeth");
@@ -719,7 +710,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FlexiblePlanarNurbsContourPropertyDialog::FlexiblePlanarNurbsContourPropertyDialog(Contour *contour) : ContourPropertyDialog(contour) {
+  FlexiblePlanarNurbsContourPropertyDialog::FlexiblePlanarNurbsContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
     addTab("Visualisation",1);
 
     interpolation = new ExtWidget("Interpolation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
@@ -763,7 +754,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FlexibleSpatialNurbsContourPropertyDialog::FlexibleSpatialNurbsContourPropertyDialog(Contour *contour) : ContourPropertyDialog(contour) {
+  FlexibleSpatialNurbsContourPropertyDialog::FlexibleSpatialNurbsContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
     addTab("Visualisation",1);
 
     interpolation = new ExtWidget("Interpolation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
@@ -822,7 +813,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FCLContourPropertyDialog::FCLContourPropertyDialog(RigidContour *contour) : RigidContourPropertyDialog(contour) {
+  FCLContourPropertyDialog::FCLContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
     computeLocalAABB = new ExtWidget("Compute local AABB",new ChoiceWidget2(new BoolWidgetFactory("true"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"computeLocalAABB");
     addToTab("General", computeLocalAABB);
   }
@@ -839,7 +830,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FCLBoxPropertyDialog::FCLBoxPropertyDialog(RigidContour *contour) : FCLContourPropertyDialog(contour) {
+  FCLBoxPropertyDialog::FCLBoxPropertyDialog(Element *contour) : FCLContourPropertyDialog(contour) {
     addTab("Visualisation",1);
 
     length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
@@ -863,7 +854,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FCLSpherePropertyDialog::FCLSpherePropertyDialog(RigidContour *contour) : FCLContourPropertyDialog(contour) {
+  FCLSpherePropertyDialog::FCLSpherePropertyDialog(Element *contour) : FCLContourPropertyDialog(contour) {
     addTab("Visualisation",1);
 
     radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
@@ -887,7 +878,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FCLPlanePropertyDialog::FCLPlanePropertyDialog(RigidContour *contour) : FCLContourPropertyDialog(contour) {
+  FCLPlanePropertyDialog::FCLPlanePropertyDialog(Element *contour) : FCLContourPropertyDialog(contour) {
     addTab("Visualisation",1);
 
     vector<QString> n = getVec<QString>(3,"0");
@@ -918,7 +909,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FCLMeshPropertyDialog::FCLMeshPropertyDialog(RigidContour *contour) : FCLContourPropertyDialog(contour) {
+  FCLMeshPropertyDialog::FCLMeshPropertyDialog(Element *contour) : FCLContourPropertyDialog(contour) {
     addTab("Visualisation",1);
 
     vertices = new ExtWidget("Vertices",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"vertices");
@@ -961,7 +952,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GroupPropertyDialog::GroupPropertyDialog(Group *group, bool kinematics) : ElementPropertyDialog(group), frameOfReference(nullptr) {
+  GroupPropertyDialog::GroupPropertyDialog(Element *group, bool kinematics) : ElementPropertyDialog(group), frameOfReference(nullptr) {
     if(kinematics) {
       addTab("Kinematics",1);
 
@@ -984,7 +975,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  DynamicSystemSolverPropertyDialog::DynamicSystemSolverPropertyDialog(DynamicSystemSolver *solver) : GroupPropertyDialog(solver,false) {
+  DynamicSystemSolverPropertyDialog::DynamicSystemSolverPropertyDialog(Element *solver) : GroupPropertyDialog(solver,false) {
     addTab("Environment",1);
     addTab("Solver parameters",2);
     addTab("Extra");
@@ -1104,7 +1095,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ObjectPropertyDialog::ObjectPropertyDialog(Object *object) : ElementPropertyDialog(object) {
+  ObjectPropertyDialog::ObjectPropertyDialog(Element *object) : ElementPropertyDialog(object) {
     addTab("Initial conditions",1);
 
     q0 = new ExtWidget("Generalized initial position",new ChoiceWidget2(new VecWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialPosition");
@@ -1131,10 +1122,10 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  BodyPropertyDialog::BodyPropertyDialog(Body *body) : ObjectPropertyDialog(body) {
+  BodyPropertyDialog::BodyPropertyDialog(Element *body) : ObjectPropertyDialog(body) {
     addTab("Kinematics",1);
 
-    R = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(body,body->getParent()->getFrame(0)),true,false,MBSIM%"frameOfReference");
+    R = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(body,body->getParent()->getFrame(0),this),true,false,MBSIM%"frameOfReference");
     addToTab("Kinematics",R);
   }
 
@@ -1150,7 +1141,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body) : BodyPropertyDialog(body) {
+  RigidBodyPropertyDialog::RigidBodyPropertyDialog(Element *body) : BodyPropertyDialog(body) {
     addTab("Visualisation",3);
 
     K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,nullptr),true,false,MBSIM%"frameForKinematics");
@@ -1165,11 +1156,11 @@ namespace MBSimGUI {
     frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,nullptr),true,false,MBSIM%"frameForInertiaTensor");
     addToTab("General",frameForInertiaTensor);
 
-    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body),QBoxLayout::TopToBottom,3),true,false,"");
+    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body,MBSIM,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", translation);
     connect(translation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
-    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body),QBoxLayout::TopToBottom,3),true,false,"");
+    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body,MBSIM,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", rotation);
     connect(rotation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
@@ -1247,18 +1238,18 @@ namespace MBSimGUI {
   }
 
   void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
-    int size =  static_cast<RigidBody*>(item)->isConstrained() ? 0 : getqRelSize();
+    int size =  getqRelSize();
     q0->resize_(size,1);
     if(not size) q0->setActive(false);
   }
 
   void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
-    int size =  static_cast<RigidBody*>(item)->isConstrained() ? 0 : getuRelSize();
+    int size =  getuRelSize();
     u0->resize_(size,1);
     if(not size) u0->setActive(false);
   }
 
-  FlexibleBodyFFRPropertyDialog::FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body) : BodyPropertyDialog(body) {
+  FlexibleBodyFFRPropertyDialog::FlexibleBodyFFRPropertyDialog(Element *body) : BodyPropertyDialog(body) {
     addTab("Visualisation",3);
     addTab("Nodal data");
 
@@ -1337,11 +1328,11 @@ namespace MBSimGUI {
     K0M = new ExtWidget("Nodal geometric stiffness matrix due to moment",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToMoment"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", K0M);
 
-    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body,MBSIMFLEX),QBoxLayout::TopToBottom,3),true,false,"");
+    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body,MBSIMFLEX,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", translation);
     connect(translation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
-    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body,MBSIMFLEX),QBoxLayout::TopToBottom,3),true,false,"");
+    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body,MBSIMFLEX,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", rotation);
     connect(rotation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
@@ -1599,7 +1590,7 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyFFRPropertyDialog::import() {
-    if(not dialog) dialog = new ImportDialog;
+    if(not dialog) dialog = new ImportDialog(this);
     int status = dialog->exec();
     if(not status) return;
     ImportWidget *importWidget = dialog->getImportWidget();
@@ -1759,17 +1750,17 @@ namespace MBSimGUI {
     }
   }
 
-  ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint) : ElementPropertyDialog(constraint) {
+  ConstraintPropertyDialog::ConstraintPropertyDialog(Element *constraint) : ElementPropertyDialog(constraint) {
   }
 
-  MechanicalConstraintPropertyDialog::MechanicalConstraintPropertyDialog(MechanicalConstraint *constraint) : ConstraintPropertyDialog(constraint) {
+  MechanicalConstraintPropertyDialog::MechanicalConstraintPropertyDialog(Element *constraint) : ConstraintPropertyDialog(constraint) {
   }
 
-  GeneralizedConstraintPropertyDialog::GeneralizedConstraintPropertyDialog(GeneralizedConstraint *constraint) : MechanicalConstraintPropertyDialog(constraint) {
+  GeneralizedConstraintPropertyDialog::GeneralizedConstraintPropertyDialog(Element *constraint) : MechanicalConstraintPropertyDialog(constraint) {
 
     addTab("Visualisation",2);
 
-    support = new ExtWidget("Support frame",new ElementOfReferenceWidget<Frame>(constraint,nullptr),true,false,MBSIM%"supportFrame");
+    support = new ExtWidget("Support frame",new ElementOfReferenceWidget<Frame>(constraint,nullptr,this),true,false,MBSIM%"supportFrame");
     addToTab("General",support);
   }
 
@@ -1785,12 +1776,12 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedGearConstraintPropertyDialog::GeneralizedGearConstraintPropertyDialog(GeneralizedGearConstraint *constraint) : GeneralizedConstraintPropertyDialog(constraint) {
+  GeneralizedGearConstraintPropertyDialog::GeneralizedGearConstraintPropertyDialog(Element *constraint) : GeneralizedConstraintPropertyDialog(constraint) {
 
-    dependentBody = new ExtWidget("Dependent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr),false,false,MBSIM%"dependentRigidBody");
+    dependentBody = new ExtWidget("Dependent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr,this),false,false,MBSIM%"dependentRigidBody");
     addToTab("General", dependentBody);
 
-    independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"independentRigidBody",constraint,true),"Independent body",0,2),false,false,"");
+    independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"independentRigidBody",constraint,true,this),"Independent body",0,2),false,false,"");
     addToTab("General",independentBodies);
   }
 
@@ -1808,12 +1799,12 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedDualConstraintPropertyDialog::GeneralizedDualConstraintPropertyDialog(GeneralizedDualConstraint *constraint) : GeneralizedConstraintPropertyDialog(constraint) {
+  GeneralizedDualConstraintPropertyDialog::GeneralizedDualConstraintPropertyDialog(Element *constraint) : GeneralizedConstraintPropertyDialog(constraint) {
 
-    dependentBody = new ExtWidget("Dependent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr),false,false,MBSIM%"dependentRigidBody");
+    dependentBody = new ExtWidget("Dependent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr,this),false,false,MBSIM%"dependentRigidBody");
     addToTab("General", dependentBody);
 
-    independentBody = new ExtWidget("Independent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr),true,false,MBSIM%"independentRigidBody");
+    independentBody = new ExtWidget("Independent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr,this),true,false,MBSIM%"independentRigidBody");
     addToTab("General", independentBody);
   }
 
@@ -1831,9 +1822,9 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedPositionConstraintPropertyDialog::GeneralizedPositionConstraintPropertyDialog(GeneralizedPositionConstraint *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
+  GeneralizedPositionConstraintPropertyDialog::GeneralizedPositionConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new FunctionWidgetFactory2(constraint),QBoxLayout::TopToBottom,0),false,false,MBSIM%"constraintFunction");
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new FunctionWidgetFactory2(constraint,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"constraintFunction");
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
   }
@@ -1856,10 +1847,10 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
+  GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
     addTab("Initial conditions",1);
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint),QBoxLayout::TopToBottom,3),false,false,"");
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
@@ -1885,10 +1876,10 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
+  GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
     addTab("Initial conditions",1);
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint),QBoxLayout::TopToBottom,3),false,false,"");
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
@@ -1919,24 +1910,24 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *constraint) : MechanicalConstraintPropertyDialog(constraint) {
+  JointConstraintPropertyDialog::JointConstraintPropertyDialog(Element *constraint) : MechanicalConstraintPropertyDialog(constraint) {
 
     addTab("Kinetics",1);
     addTab("Visualisation",2);
     addTab("Initial conditions",2);
 
-    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnFirstSide",constraint),"Body",0,2),false,false,"");
+    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnFirstSide",constraint,this),"Body",0,2),false,false,"");
     addToTab("General",dependentBodiesFirstSide);
     connect(dependentBodiesFirstSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
-    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnSecondSide",constraint),"Body",0,2),false,false,"");
+    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnSecondSide",constraint,this),"Body",0,2),false,false,"");
     addToTab("General",dependentBodiesSecondSide);
     connect(dependentBodiesSecondSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
-    independentBody = new ExtWidget("Independent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr),false,false,MBSIM%"independentRigidBody");
+    independentBody = new ExtWidget("Independent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr,this),false,false,MBSIM%"independentRigidBody");
     addToTab("General", independentBody);
 
-    connections = new ExtWidget("Connections",new ConnectElementsWidget<Frame>(2,constraint),false,false,MBSIM%"connect");
+    connections = new ExtWidget("Connections",new ConnectElementsWidget<Frame>(2,constraint,this),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
 
     refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(1,1,2),true,false,MBSIM%"frameOfReferenceID");
@@ -1996,20 +1987,20 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedConnectionConstraintPropertyDialog::GeneralizedConnectionConstraintPropertyDialog(GeneralizedConnectionConstraint *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
+  GeneralizedConnectionConstraintPropertyDialog::GeneralizedConnectionConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
   }
 
-  LinkPropertyDialog::LinkPropertyDialog(Link *link) : ElementPropertyDialog(link) {
+  LinkPropertyDialog::LinkPropertyDialog(Element *link) : ElementPropertyDialog(link) {
   }
 
-  MechanicalLinkPropertyDialog::MechanicalLinkPropertyDialog(MechanicalLink *link) : LinkPropertyDialog(link) {
+  MechanicalLinkPropertyDialog::MechanicalLinkPropertyDialog(Element *link) : LinkPropertyDialog(link) {
   }
 
-  FrameLinkPropertyDialog::FrameLinkPropertyDialog(FrameLink *link) : MechanicalLinkPropertyDialog(link) {
+  FrameLinkPropertyDialog::FrameLinkPropertyDialog(Element *link) : MechanicalLinkPropertyDialog(link) {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
-    connections = new ExtWidget("Connections",new ConnectElementsWidget<Frame>(2,link),false,false,MBSIM%"connect");
+    connections = new ExtWidget("Connections",new ConnectElementsWidget<Frame>(2,link,this),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
   }
 
@@ -2025,10 +2016,10 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FixedFrameLinkPropertyDialog::FixedFrameLinkPropertyDialog(FixedFrameLink *link) : FrameLinkPropertyDialog(link) {
+  FixedFrameLinkPropertyDialog::FixedFrameLinkPropertyDialog(Element *link) : FrameLinkPropertyDialog(link) {
   }
 
-  FloatingFrameLinkPropertyDialog::FloatingFrameLinkPropertyDialog(FloatingFrameLink *link) : FrameLinkPropertyDialog(link) {
+  FloatingFrameLinkPropertyDialog::FloatingFrameLinkPropertyDialog(Element *link) : FrameLinkPropertyDialog(link) {
     refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(1,1,2),true,false,MBSIM%"frameOfReferenceID");
     addToTab("Kinetics", refFrameID);
   }
@@ -2045,10 +2036,10 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RigidBodyLinkPropertyDialog::RigidBodyLinkPropertyDialog(RigidBodyLink *link) : MechanicalLinkPropertyDialog(link) {
+  RigidBodyLinkPropertyDialog::RigidBodyLinkPropertyDialog(Element *link) : MechanicalLinkPropertyDialog(link) {
     addTab("Visualisation",2);
 
-    support = new ExtWidget("Support frame",new ElementOfReferenceWidget<Frame>(link,nullptr),true,false,MBSIM%"supportFrame");
+    support = new ExtWidget("Support frame",new ElementOfReferenceWidget<Frame>(link,nullptr,this),true,false,MBSIM%"supportFrame");
     addToTab("General",support);
   }
 
@@ -2064,10 +2055,10 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  DualRigidBodyLinkPropertyDialog::DualRigidBodyLinkPropertyDialog(DualRigidBodyLink *link) : RigidBodyLinkPropertyDialog(link) {
+  DualRigidBodyLinkPropertyDialog::DualRigidBodyLinkPropertyDialog(Element *link) : RigidBodyLinkPropertyDialog(link) {
     addTab("Kinetics",1);
 
-    connections = new ExtWidget("Connections",new ChoiceWidget2(new ConnectRigidBodiesWidgetFactory(link),QBoxLayout::RightToLeft,5),false,false,MBSIM%"connect");
+    connections = new ExtWidget("Connections",new ChoiceWidget2(new ConnectRigidBodiesWidgetFactory(link,this),QBoxLayout::RightToLeft,5),false,false,MBSIM%"connect");
     addToTab("Kinetics",connections);
   }
 
@@ -2083,20 +2074,20 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation) : FloatingFrameLinkPropertyDialog(kineticExcitation) {
+  KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(Element *kineticExcitation) : FloatingFrameLinkPropertyDialog(kineticExcitation) {
 
     static_cast<ConnectElementsWidget<Frame>*>(connections->getWidget())->setDefaultElement("../Frame[I]");
 
     forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation),QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceFunction");
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation,true,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceFunction");
     addToTab("Kinetics",forceFunction);
 
     momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
     addToTab("Kinetics",momentDirection);
 
-    momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentFunction");
+    momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation,true,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentFunction");
     addToTab("Kinetics",momentFunction);
 
     arrow = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
@@ -2139,9 +2130,9 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDamper) : FixedFrameLinkPropertyDialog(springDamper) {
+  SpringDamperPropertyDialog::SpringDamperPropertyDialog(Element *springDamper) : FixedFrameLinkPropertyDialog(springDamper) {
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
     addToTab("Kinetics", forceFunction);
 
     unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedLength");
@@ -2167,12 +2158,12 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  DirectionalSpringDamperPropertyDialog::DirectionalSpringDamperPropertyDialog(DirectionalSpringDamper *springDamper) : FloatingFrameLinkPropertyDialog(springDamper) {
+  DirectionalSpringDamperPropertyDialog::DirectionalSpringDamperPropertyDialog(Element *springDamper) : FloatingFrameLinkPropertyDialog(springDamper) {
 
     forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
     addToTab("Kinetics", forceFunction);
 
     unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedLength");
@@ -2200,12 +2191,12 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  IsotropicRotationalSpringDamperPropertyDialog::IsotropicRotationalSpringDamperPropertyDialog(IsotropicRotationalSpringDamper *springDamper) : FixedFrameLinkPropertyDialog(springDamper) {
+  IsotropicRotationalSpringDamperPropertyDialog::IsotropicRotationalSpringDamperPropertyDialog(Element *springDamper) : FixedFrameLinkPropertyDialog(springDamper) {
 
-    elasticMomentFunction = new ExtWidget("Elastic moment function",new ChoiceWidget2(new FunctionWidgetFactory2(springDamper),QBoxLayout::TopToBottom,0),false,false,MBSIM%"elasticMomentFunction");
+    elasticMomentFunction = new ExtWidget("Elastic moment function",new ChoiceWidget2(new FunctionWidgetFactory2(springDamper,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"elasticMomentFunction");
     addToTab("Kinetics", elasticMomentFunction);
 
-    dissipativeMomentFunction = new ExtWidget("Dissipative moment function",new ChoiceWidget2(new FunctionWidgetFactory2(springDamper),QBoxLayout::TopToBottom,0),false,false,MBSIM%"dissipativeMomentFunction");
+    dissipativeMomentFunction = new ExtWidget("Dissipative moment function",new ChoiceWidget2(new FunctionWidgetFactory2(springDamper,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"dissipativeMomentFunction");
     addToTab("Kinetics", dissipativeMomentFunction);
   }
 
@@ -2223,7 +2214,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  JointPropertyDialog::JointPropertyDialog(Joint *joint) : FloatingFrameLinkPropertyDialog(joint) {
+  JointPropertyDialog::JointPropertyDialog(Element *joint) : FloatingFrameLinkPropertyDialog(joint) {
 
     addTab("Extra");
 
@@ -2263,7 +2254,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ElasticJointPropertyDialog::ElasticJointPropertyDialog(ElasticJoint *joint) : FloatingFrameLinkPropertyDialog(joint) {
+  ElasticJointPropertyDialog::ElasticJointPropertyDialog(Element *joint) : FloatingFrameLinkPropertyDialog(joint) {
 
     addTab("Extra");
 
@@ -2273,7 +2264,7 @@ namespace MBSimGUI {
     momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
     addToTab("Kinetics", momentDirection);
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(joint),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceFunction");
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(joint,false,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
 
     integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
@@ -2311,9 +2302,9 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(DualRigidBodyLink *springDamper) : DualRigidBodyLinkPropertyDialog(springDamper) {
+  GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(Element *springDamper) : DualRigidBodyLinkPropertyDialog(springDamper) {
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
 
     unloadedLength = new ExtWidget("Generalized Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"generalizedUnloadedLength");
@@ -2334,15 +2325,15 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(DualRigidBodyLink *friction) : DualRigidBodyLinkPropertyDialog(friction) {
+  GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(Element *friction) : DualRigidBodyLinkPropertyDialog(friction) {
 
-    frictionForceLaw = new ExtWidget("Generalized friction force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedFrictionForceLaw");
+    frictionForceLaw = new ExtWidget("Generalized friction force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedFrictionForceLaw");
     addToTab("Kinetics", frictionForceLaw);
 
-    frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
+    frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
-    normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget2(new FunctionWidgetFactory2(friction),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
+    normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget2(new FunctionWidgetFactory2(friction,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
     addToTab("Kinetics",normalForceFunction);
   }
 
@@ -2363,14 +2354,14 @@ namespace MBSimGUI {
   }
 
 
-  GeneralizedGearPropertyDialog::GeneralizedGearPropertyDialog(RigidBodyLink *link) : RigidBodyLinkPropertyDialog(link) {
+  GeneralizedGearPropertyDialog::GeneralizedGearPropertyDialog(Element *link) : RigidBodyLinkPropertyDialog(link) {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
-    gearOutput = new ExtWidget("Gear output",new ElementOfReferenceWidget<RigidBody>(link,nullptr),false,false,MBSIM%"gearOutput");
+    gearOutput = new ExtWidget("Gear output",new ElementOfReferenceWidget<RigidBody>(link,nullptr,this),false,false,MBSIM%"gearOutput");
     addToTab("General",gearOutput);
 
-    gearInput = new ExtWidget("Gear inputs",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"gearInput",link,true),"Gear input",0,2),false,false,"");
+    gearInput = new ExtWidget("Gear inputs",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"gearInput",link,true,this),"Gear input",0,2),false,false,"");
     addToTab("General",gearInput);
 
     function = new ExtWidget("Generalized force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
@@ -2393,9 +2384,9 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedElasticConnectionPropertyDialog::GeneralizedElasticConnectionPropertyDialog(DualRigidBodyLink *connection) : DualRigidBodyLinkPropertyDialog(connection) {
+  GeneralizedElasticConnectionPropertyDialog::GeneralizedElasticConnectionPropertyDialog(Element *connection) : DualRigidBodyLinkPropertyDialog(connection) {
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(connection,true),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(connection,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
 
     connect(function,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
@@ -2417,13 +2408,13 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  GeneralizedElasticStructurePropertyDialog::GeneralizedElasticStructurePropertyDialog(RigidBodyLink *link) : RigidBodyLinkPropertyDialog(link) {
+  GeneralizedElasticStructurePropertyDialog::GeneralizedElasticStructurePropertyDialog(Element *link) : RigidBodyLinkPropertyDialog(link) {
     addTab("Kinetics",1);
 
-    rigidBody = new ExtWidget("Rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"rigidBody",link),"Rigid body",0,2),false,false,"");
+    rigidBody = new ExtWidget("Rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"rigidBody",link,this),"Rigid body",0,2),false,false,"");
     addToTab("General",rigidBody);
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(link,true),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(link,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
   }
 
@@ -2441,12 +2432,12 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ContactPropertyDialog::ContactPropertyDialog(Contact *contact) : LinkPropertyDialog(contact) {
+  ContactPropertyDialog::ContactPropertyDialog(Element *contact) : LinkPropertyDialog(contact) {
 
     addTab("Kinetics",1);
     addTab("Extra");
 
-    connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact),false,false,MBSIM%"connect");
+    connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact,this),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
 
     contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"normalForceLaw");
@@ -2455,10 +2446,10 @@ namespace MBSimGUI {
     contactImpactLaw = new ExtWidget("Normal impact law",new ChoiceWidget2(new GeneralizedImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalImpactLaw");
     addToTab("Kinetics", contactImpactLaw);
 
-    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialForceLaw");
+    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialForceLaw");
     addToTab("Kinetics", frictionForceLaw);
 
-    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
+    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
     searchAllContactPoints = new ExtWidget("Search all contact points",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"searchAllContactPoints");
@@ -2502,11 +2493,11 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  DiskContactPropertyDialog::DiskContactPropertyDialog(Link *contact) : LinkPropertyDialog(contact) {
+  DiskContactPropertyDialog::DiskContactPropertyDialog(Element *contact) : LinkPropertyDialog(contact) {
 
     addTab("Kinetics",1);
 
-    connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact),false,false,MBSIM%"connect");
+    connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact,this),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
 
     contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"normalForceLaw");
@@ -2515,10 +2506,10 @@ namespace MBSimGUI {
     contactImpactLaw = new ExtWidget("Normal impact law",new ChoiceWidget2(new GeneralizedImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalImpactLaw");
     addToTab("Kinetics", contactImpactLaw);
 
-    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"tangentialForceLaw");
+    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"tangentialForceLaw");
     addToTab("Kinetics", frictionForceLaw);
 
-    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
+    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
   }
 
@@ -2542,17 +2533,17 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ObserverPropertyDialog::ObserverPropertyDialog(Observer *observer) : ElementPropertyDialog(observer) {
+  ObserverPropertyDialog::ObserverPropertyDialog(Element *observer) : ElementPropertyDialog(observer) {
   }
 
-  KinematicCoordinatesObserverPropertyDialog::KinematicCoordinatesObserverPropertyDialog(KinematicCoordinatesObserver *observer) : ObserverPropertyDialog(observer) {
+  KinematicCoordinatesObserverPropertyDialog::KinematicCoordinatesObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
     addTab("Visualisation",1);
 
-    frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(observer,nullptr),false,false,MBSIM%"frame");
+    frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),false,false,MBSIM%"frame");
     addToTab("General", frame);
 
-    frameOfReference = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(observer,nullptr),true,false,MBSIM%"frameOfReference");
+    frameOfReference = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),true,false,MBSIM%"frameOfReference");
     addToTab("General", frameOfReference);
 
     position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVPosition");
@@ -2585,14 +2576,14 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RelativeKinematicsObserverPropertyDialog::RelativeKinematicsObserverPropertyDialog(RelativeKinematicsObserver *observer) : ObserverPropertyDialog(observer) {
+  RelativeKinematicsObserverPropertyDialog::RelativeKinematicsObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
     addTab("Visualisation",1);
 
-    frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(observer,nullptr),false,false,MBSIM%"frame");
+    frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),false,false,MBSIM%"frame");
     addToTab("General", frame);
 
-    refFrame = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(observer,nullptr),true,false,MBSIM%"frameOfReference");
+    refFrame = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),true,false,MBSIM%"frameOfReference");
     addToTab("General", refFrame);
 
     position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVPosition");
@@ -2635,11 +2626,11 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  MechanicalLinkObserverPropertyDialog::MechanicalLinkObserverPropertyDialog(MechanicalLinkObserver *observer) : ObserverPropertyDialog(observer) {
+  MechanicalLinkObserverPropertyDialog::MechanicalLinkObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
     addTab("Visualisation",1);
 
-    link = new ExtWidget("Mechanical link",new ElementOfReferenceWidget<Link>(observer,nullptr),false,false,MBSIM%"mechanicalLink");
+    link = new ExtWidget("Mechanical link",new ElementOfReferenceWidget<Link>(observer,nullptr,this),false,false,MBSIM%"mechanicalLink");
     addToTab("General", link);
 
     forceArrow = new ExtWidget("Enable openMBV force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVForce");
@@ -2665,11 +2656,11 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  MechanicalConstraintObserverPropertyDialog::MechanicalConstraintObserverPropertyDialog(MechanicalConstraintObserver *observer) : ObserverPropertyDialog(observer) {
+  MechanicalConstraintObserverPropertyDialog::MechanicalConstraintObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
     addTab("Visualisation",1);
 
-    constraint = new ExtWidget("Mechanical constraint",new ElementOfReferenceWidget<Constraint>(observer,nullptr),false,false,MBSIM%"mechanicalConstraint");
+    constraint = new ExtWidget("Mechanical constraint",new ElementOfReferenceWidget<Constraint>(observer,nullptr,this),false,false,MBSIM%"mechanicalConstraint");
     addToTab("General", constraint);
 
     forceArrow = new ExtWidget("Enable openMBV force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVForce");
@@ -2695,11 +2686,11 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ContactObserverPropertyDialog::ContactObserverPropertyDialog(ContactObserver *observer) : ObserverPropertyDialog(observer) {
+  ContactObserverPropertyDialog::ContactObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
     addTab("Visualisation",1);
 
-    link = new ExtWidget("Mechanical link",new ElementOfReferenceWidget<Link>(observer,nullptr),false,false,MBSIM%"contact");
+    link = new ExtWidget("Mechanical link",new ElementOfReferenceWidget<Link>(observer,nullptr,this),false,false,MBSIM%"contact");
     addToTab("General", link);
 
     forceArrow = new ExtWidget("Enable openMBV force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVForce");
@@ -2740,11 +2731,11 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FrameObserverPropertyDialog::FrameObserverPropertyDialog(FrameObserver *observer) : ObserverPropertyDialog(observer) {
+  FrameObserverPropertyDialog::FrameObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
     addTab("Visualisation",1);
 
-    frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(observer,nullptr),false,false,MBSIM%"frame");
+    frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),false,false,MBSIM%"frame");
     addToTab("General", frame);
 
     position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVPosition");
@@ -2785,14 +2776,14 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RigidBodyObserverPropertyDialog::RigidBodyObserverPropertyDialog(RigidBodyObserver *observer) : ObserverPropertyDialog(observer) {
+  RigidBodyObserverPropertyDialog::RigidBodyObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
     addTab("Visualisation",1);
 
-    body = new ExtWidget("Rigid body",new ElementOfReferenceWidget<RigidBody>(observer,nullptr),false,false,MBSIM%"rigidBody");
+    body = new ExtWidget("Rigid body",new ElementOfReferenceWidget<RigidBody>(observer,nullptr,this),false,false,MBSIM%"rigidBody");
     addToTab("General", body);
 
-    frameOfReference = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(observer,nullptr),true,false,MBSIM%"frameOfReference");
+    frameOfReference = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),true,false,MBSIM%"frameOfReference");
     addToTab("General", frameOfReference);
 
     weight = new ExtWidget("Enable openMBV weight",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVWeight");
@@ -2850,14 +2841,14 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RigidBodySystemObserverPropertyDialog::RigidBodySystemObserverPropertyDialog(RigidBodySystemObserver *observer) : ObserverPropertyDialog(observer) {
+  RigidBodySystemObserverPropertyDialog::RigidBodySystemObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
     addTab("Visualisation",1);
 
-    bodies = new ExtWidget("Rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"rigidBody",observer),"Rigid body",0,2),false,false,"");
+    bodies = new ExtWidget("Rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"rigidBody",observer,this),"Rigid body",0,2),false,false,"");
     addToTab("General", bodies);
 
-    frameOfReference = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(observer,nullptr),true,false,MBSIM%"frameOfReference");
+    frameOfReference = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),true,false,MBSIM%"frameOfReference");
     addToTab("General", frameOfReference);
 
     position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVPosition");
@@ -2916,14 +2907,14 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SignalPropertyDialog::SignalPropertyDialog(Signal *signal) : LinkPropertyDialog(signal) {
+  SignalPropertyDialog::SignalPropertyDialog(Element *signal) : LinkPropertyDialog(signal) {
   }
 
-  SensorPropertyDialog::SensorPropertyDialog(Sensor *sensor) : SignalPropertyDialog(sensor) {
+  SensorPropertyDialog::SensorPropertyDialog(Element *sensor) : SignalPropertyDialog(sensor) {
   }
 
-  ObjectSensorPropertyDialog::ObjectSensorPropertyDialog(ObjectSensor *sensor) : SensorPropertyDialog(sensor) {
-    object = new ExtWidget("Object of reference",new ElementOfReferenceWidget<Object>(sensor,nullptr),false,false,MBSIMCONTROL%"object");
+  ObjectSensorPropertyDialog::ObjectSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
+    object = new ExtWidget("Object of reference",new ElementOfReferenceWidget<Object>(sensor,nullptr,this),false,false,MBSIMCONTROL%"object");
     addToTab("General", object);
   }
 
@@ -2939,8 +2930,8 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  LinkSensorPropertyDialog::LinkSensorPropertyDialog(LinkSensor *sensor) : SensorPropertyDialog(sensor) {
-    link = new ExtWidget("Link of reference",new ElementOfReferenceWidget<Link>(sensor,nullptr),false,false,MBSIMCONTROL%"link");
+  LinkSensorPropertyDialog::LinkSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
+    link = new ExtWidget("Link of reference",new ElementOfReferenceWidget<Link>(sensor,nullptr,this),false,false,MBSIMCONTROL%"link");
     addToTab("General", link);
   }
 
@@ -2956,8 +2947,8 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FrameSensorPropertyDialog::FrameSensorPropertyDialog(FrameSensor *sensor) : SensorPropertyDialog(sensor) {
-    frame = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(sensor,nullptr),false,false,MBSIMCONTROL%"frame");
+  FrameSensorPropertyDialog::FrameSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
+    frame = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(sensor,nullptr,this),false,false,MBSIMCONTROL%"frame");
     addToTab("General", frame);
   }
 
@@ -2973,8 +2964,8 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor) : SensorPropertyDialog(sensor) {
-    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(sensor,false),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
+  FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(sensor,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
   }
 
@@ -2990,8 +2981,8 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ContactSensorPropertyDialog::ContactSensorPropertyDialog(ContactSensor *sensor) : SensorPropertyDialog(sensor) {
-    contact = new ExtWidget("Contact of reference",new ElementOfReferenceWidget<Contact>(sensor,nullptr),false,false,MBSIMCONTROL%"contact");
+  ContactSensorPropertyDialog::ContactSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
+    contact = new ExtWidget("Contact of reference",new ElementOfReferenceWidget<Contact>(sensor,nullptr,this),false,false,MBSIMCONTROL%"contact");
     addToTab("General", contact);
   }
 
@@ -3008,8 +2999,8 @@ namespace MBSimGUI {
   }
 
 
-  MultiplexerPropertyDialog::MultiplexerPropertyDialog(Multiplexer *signal) : SignalPropertyDialog(signal) {
-    inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal),"Signal",0,2),false,false,"");
+  MultiplexerPropertyDialog::MultiplexerPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+    inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",0,2),false,false,"");
     addToTab("General", inputSignal);
   }
 
@@ -3025,8 +3016,8 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  DemultiplexerPropertyDialog::DemultiplexerPropertyDialog(Demultiplexer *signal) : SignalPropertyDialog(signal) {
-    inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr),false,false,MBSIMCONTROL%"inputSignal");
+  DemultiplexerPropertyDialog::DemultiplexerPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+    inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
     indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"indices");
     addToTab("General", indices);
@@ -3046,8 +3037,8 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTransferSystem *signal) : SignalPropertyDialog(signal) {
-    inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr),false,false,MBSIMCONTROL%"inputSignal");
+  LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+    inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
 
     A = new ExtWidget("System matrix",new ChoiceWidget2(new SqrMatSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"systemMatrix");
@@ -3090,8 +3081,8 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SignalOperationPropertyDialog::SignalOperationPropertyDialog(SignalOperation *signal) : SignalPropertyDialog(signal) {
-    inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal),"Signal",1,2,false,1,2),false,false,"");
+  SignalOperationPropertyDialog::SignalOperationPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+    inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1,2),false,false,"");
     addToTab("General", inputSignal);
 
     function = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory3(signal,QStringList("x"),1,false),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
@@ -3128,7 +3119,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ExternSignalSourcePropertyDialog::ExternSignalSourcePropertyDialog(ExternSignalSource *signal) : SignalPropertyDialog(signal) {
+  ExternSignalSourcePropertyDialog::ExternSignalSourcePropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
     sourceSize = new ExtWidget("Length of input vector",new SpinBoxWidget(1,1,1000),false,false,MBSIMCONTROL%"sourceSize");
     addToTab("General", sourceSize);
   }
@@ -3145,8 +3136,8 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ExternSignalSinkPropertyDialog::ExternSignalSinkPropertyDialog(ExternSignalSink *signal) : SignalPropertyDialog(signal) {
-    inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr),false,false,MBSIMCONTROL%"inputSignal");
+  ExternSignalSinkPropertyDialog::ExternSignalSinkPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+    inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
   }
 

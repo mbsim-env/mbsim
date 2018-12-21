@@ -29,95 +29,101 @@ namespace MBSimGUI {
 
   class FunctionWidgetFactory2 : public WidgetFactory {
     public:
-      FunctionWidgetFactory2(Element *parent_, bool fixedSize_=true);
+      FunctionWidgetFactory2(Element *element_, bool fixedSize_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       bool fixedSize;
+      QWidget *parent;
   };
 
   class TranslationWidgetFactory2 : public WidgetFactory {
     public:
-      TranslationWidgetFactory2(Element *parent_);
+      TranslationWidgetFactory2(Element *element_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
   };
 
   class TranslationWidgetFactory3 : public WidgetFactory {
     public:
-      TranslationWidgetFactory3(Element *parent_);
+      TranslationWidgetFactory3(Element *element_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
   };
 
   class RotationWidgetFactory2 : public WidgetFactory {
     public:
-      RotationWidgetFactory2(Element *parent_);
+      RotationWidgetFactory2(Element *element_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
   };
 
   class RotationWidgetFactory3 : public WidgetFactory {
     public:
-      RotationWidgetFactory3(Element *parent_);
+      RotationWidgetFactory3(Element *element_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
   };
 
   class SymbolicFunctionWidgetFactory1 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory1(Element *parent_, const QStringList &var_, int m_=3, bool fixedSize_=true);
+      SymbolicFunctionWidgetFactory1(Element *element_, const QStringList &var_, int m_, bool fixedSize_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QStringList var;
       int m;
       bool fixedSize;
+      QWidget *parent;
   };
 
   class SymbolicFunctionWidgetFactory2 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory2(Element *parent_, const QStringList &var_, int m_=3, bool fixedSize_=true);
+      SymbolicFunctionWidgetFactory2(Element *element_, const QStringList &var_, int m_=3, bool fixedSize_=true);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QStringList var;
@@ -127,13 +133,13 @@ namespace MBSimGUI {
 
   class SymbolicFunctionWidgetFactory3 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory3(Element *parent_, const QStringList &var_, int m_=3, bool fixedSize_=true);
+      SymbolicFunctionWidgetFactory3(Element *element_, const QStringList &var_, int m_=3, bool fixedSize_=true);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QStringList var;
@@ -143,28 +149,30 @@ namespace MBSimGUI {
 
   class TranslationWidgetFactory4 : public WidgetFactory {
     public:
-      TranslationWidgetFactory4(Element *parent_, const MBXMLUtils::NamespaceURI &uri=MBSIM);
+      TranslationWidgetFactory4(Element *element_, const MBXMLUtils::NamespaceURI &uri, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
   };
 
   class RotationWidgetFactory4 : public WidgetFactory {
     public:
-      RotationWidgetFactory4(Element *parent_, const MBXMLUtils::NamespaceURI &uri=MBSIM);
+      RotationWidgetFactory4(Element *element_, const MBXMLUtils::NamespaceURI &uri, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
   };
 
   class TabularFunctionWidgetFactory : public WidgetFactory {
@@ -205,53 +213,56 @@ namespace MBSimGUI {
 
   class ConstraintWidgetFactory : public WidgetFactory {
     public:
-      ConstraintWidgetFactory(Element *parent_);
+      ConstraintWidgetFactory(Element *element_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
   };
 
   class SpringDamperWidgetFactory : public WidgetFactory {
     public:
-      SpringDamperWidgetFactory(Element *parent_, bool varSize_=false);
+      SpringDamperWidgetFactory(Element *element_, bool varSize_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       bool varSize;
+      QWidget *parent;
   };
 
   class PlanarContourFunctionWidgetFactory : public WidgetFactory {
     public:
-      PlanarContourFunctionWidgetFactory(Element *parent_);
+      PlanarContourFunctionWidgetFactory(Element *element_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
   };
 
   class SpatialContourFunctionWidgetFactory : public WidgetFactory {
     public:
-      SpatialContourFunctionWidgetFactory(Element *parent_);
+      SpatialContourFunctionWidgetFactory(Element *element_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *parent;
+      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
   };

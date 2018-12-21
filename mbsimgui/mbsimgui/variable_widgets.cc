@@ -1296,7 +1296,7 @@ namespace MBSimGUI {
 
   void PhysicalVariableWidget::openEvalDialog() {
     try {
-      EvalDialog evalDialog(widget->getEvalMat());
+      EvalDialog evalDialog(widget->getEvalMat(),this);
       evalDialog.exec();
     }
     catch(MBXMLUtils::DOMEvalException e) {

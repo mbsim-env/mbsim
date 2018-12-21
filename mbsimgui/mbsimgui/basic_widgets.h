@@ -140,8 +140,8 @@ namespace MBSimGUI {
   class ElementOfReferenceWidget : public BasicElementOfReferenceWidget {
 
     public:
-      ElementOfReferenceWidget(Element* element, Element* selectedElement, bool addRatio=false) : BasicElementOfReferenceWidget(element,selectedElement,new ElementBrowser<T>(selectedElement),addRatio) {
-      }
+      ElementOfReferenceWidget(Element* element, Element* selectedElement, QWidget *parent) : BasicElementOfReferenceWidget(element,selectedElement,new ElementBrowser<T>(selectedElement,parent),false) { }
+      ElementOfReferenceWidget(Element* element, Element* selectedElement, bool addRatio, QWidget *parent) : BasicElementOfReferenceWidget(element,selectedElement,new ElementBrowser<T>(selectedElement,parent),addRatio) { }
     protected:
       Element* findElement(const QString &str) override { return element->getByPath<T>(str); }
   };
@@ -264,11 +264,11 @@ namespace MBSimGUI {
   template <class T>
   class ConnectElementsWidget : public BasicConnectElementsWidget {
     public:
-      ConnectElementsWidget(int n, Element *element) : BasicConnectElementsWidget(create(n,element),T().getType()) { }
+      ConnectElementsWidget(int n, Element *element, QWidget *parent) : BasicConnectElementsWidget(create(n,element,parent),T().getType()) { }
     protected:
-      std::vector<BasicElementOfReferenceWidget*> create(int n, Element *element) {
+      std::vector<BasicElementOfReferenceWidget*> create(int n, Element *element, QWidget *parent) {
         std::vector<BasicElementOfReferenceWidget*> widget(n);
-        for(int i=0; i<n; i++) widget[i] = new ElementOfReferenceWidget<T>(element,nullptr);
+        for(int i=0; i<n; i++) widget[i] = new ElementOfReferenceWidget<T>(element,nullptr,parent);
         return widget;
       }
   };
@@ -332,13 +332,15 @@ namespace MBSimGUI {
   template <class T>
   class ElementOfReferenceWidgetFactory : public WidgetFactory {
     public:
-      ElementOfReferenceWidgetFactory(MBXMLUtils::FQN xmlName_, Element* element_, bool addRatio_=false) : xmlName(std::move(xmlName_)), element(element_), addRatio(addRatio_) { }
-      QWidget* createWidget(int i=0) override { return new ElementOfReferenceWidget<T>(element,nullptr,addRatio); }
+      ElementOfReferenceWidgetFactory(MBXMLUtils::FQN xmlName_, Element* element_, QWidget *parent_) : xmlName(std::move(xmlName_)), element(element_), addRatio(false), parent(parent_) { }
+      ElementOfReferenceWidgetFactory(MBXMLUtils::FQN xmlName_, Element* element_, bool addRatio_, QWidget *parent_) : xmlName(std::move(xmlName_)), element(element_), addRatio(addRatio_), parent(parent_) { }
+      QWidget* createWidget(int i=0) override { return new ElementOfReferenceWidget<T>(element,nullptr,addRatio,parent); }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName; }
     protected:
       MBXMLUtils::FQN xmlName;
       Element *element;
       bool addRatio;
+      QWidget *parent;
   };
 
 }

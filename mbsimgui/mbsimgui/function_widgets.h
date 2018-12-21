@@ -137,7 +137,7 @@ namespace MBSimGUI {
   class VectorValuedFunctionWidget : public FunctionWidget {
 
     public:
-      VectorValuedFunctionWidget(Element *parent, int m=0, bool fixedSize=false);
+      VectorValuedFunctionWidget(Element *element, int m, bool fixedSize, QWidget *parent);
       QString getType() const override { return "VectorValuedFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -165,7 +165,7 @@ namespace MBSimGUI {
   class LimitedFunctionWidget : public FunctionWidget {
 
     public:
-      LimitedFunctionWidget(Element *parent);
+      LimitedFunctionWidget(Element *element, QWidget *parent);
       QString getType() const override { return "LimitedFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -177,7 +177,7 @@ namespace MBSimGUI {
   class PiecewiseDefinedFunctionWidget : public FunctionWidget {
 
     public:
-      PiecewiseDefinedFunctionWidget(Element *parent, int n=0);
+      PiecewiseDefinedFunctionWidget(Element *element, int n, QWidget *parent);
       QString getType() const override { return "PiecewiseDefinedFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -284,7 +284,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      BidirectionalFunctionWidget();
+      BidirectionalFunctionWidget(QWidget *parent);
       QString getType() const override { return "BidirectionalFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -320,7 +320,7 @@ namespace MBSimGUI {
   class NonlinearSpringDamperForceWidget : public FunctionWidget {
 
     public:
-      NonlinearSpringDamperForceWidget(Element *parent);
+      NonlinearSpringDamperForceWidget(Element *element, QWidget *parent);
       QString getType() const override { return "NonlinearSpringDamperForce"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -390,7 +390,7 @@ namespace MBSimGUI {
   class SignalFunctionWidget: public FunctionWidget {
 
     public:
-      SignalFunctionWidget(Element *element);
+      SignalFunctionWidget(Element *element, QWidget *parent);
       ~SignalFunctionWidget() override;
       QString getType() const override { return "SignalFunction"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMCONTROL; }
@@ -405,7 +405,7 @@ namespace MBSimGUI {
   class PolarContourFunctionWidget : public FunctionWidget {
 
     public:
-      PolarContourFunctionWidget();
+      PolarContourFunctionWidget(QWidget *parent);
       QString getType() const override { return "PolarContourFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;

@@ -141,10 +141,10 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PlanarStribeckFrictionWidget::PlanarStribeckFrictionWidget() {
+  PlanarStribeckFrictionWidget::PlanarStribeckFrictionWidget(QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -160,10 +160,10 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  SpatialStribeckFrictionWidget::SpatialStribeckFrictionWidget() {
+  SpatialStribeckFrictionWidget::SpatialStribeckFrictionWidget(QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -242,10 +242,10 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PlanarStribeckImpactWidget::PlanarStribeckImpactWidget() {
+  PlanarStribeckImpactWidget::PlanarStribeckImpactWidget(QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -261,10 +261,10 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  SpatialStribeckImpactWidget::SpatialStribeckImpactWidget() {
+  SpatialStribeckImpactWidget::SpatialStribeckImpactWidget(QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -303,7 +303,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FrictionForceLawWidgetFactory::FrictionForceLawWidgetFactory() {
+  FrictionForceLawWidgetFactory::FrictionForceLawWidgetFactory(QWidget *parent_) : parent(parent_) {
     name.emplace_back("Planar Coulomb friction");
     name.emplace_back("Planar Stribeck friction");
     name.emplace_back("Regularized planar friction");
@@ -322,13 +322,13 @@ namespace MBSimGUI {
     if(i==0)
       return new PlanarCoulombFrictionWidget;
     if(i==1)
-      return new PlanarStribeckFrictionWidget;
+      return new PlanarStribeckFrictionWidget(parent);
     if(i==2)
       return new RegularizedPlanarFrictionWidget;
     if(i==3)
       return new SpatialCoulombFrictionWidget;
     if(i==4)
-      return new SpatialStribeckFrictionWidget;
+      return new SpatialStribeckFrictionWidget(parent);
     if(i==5)
       return new RegularizedSpatialFrictionWidget;
     return nullptr;
@@ -349,7 +349,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FrictionImpactLawWidgetFactory::FrictionImpactLawWidgetFactory() {
+  FrictionImpactLawWidgetFactory::FrictionImpactLawWidgetFactory(QWidget *parent_) : parent(parent_) {
     name.emplace_back("Planar Coulomb impact");
     name.emplace_back("Planar Stribeck impact");
     name.emplace_back("Spatial Coulomb impact");
@@ -364,11 +364,11 @@ namespace MBSimGUI {
     if(i==0)
       return new PlanarCoulombImpactWidget;
     if(i==1)
-      return new PlanarStribeckImpactWidget;
+      return new PlanarStribeckImpactWidget(parent);
     if(i==2)
       return new SpatialCoulombImpactWidget;
     if(i==3)
-      return new SpatialStribeckImpactWidget;
+      return new SpatialStribeckImpactWidget(parent);
     return nullptr;
   }
 

@@ -25,12 +25,6 @@
 namespace MBSimGUI {
 
   class Parameter;
-  class StringParameter;
-  class ScalarParameter;
-  class VectorParameter;
-  class MatrixParameter;
-  class ImportParameter;
-  class TextWidget;
   class ExtWidget;
 
   class ParameterPropertyDialog : public PropertyDialog {
@@ -49,7 +43,7 @@ namespace MBSimGUI {
   class StringParameterPropertyDialog : public ParameterPropertyDialog {
 
     public:
-      StringParameterPropertyDialog(StringParameter *parameter);
+      StringParameterPropertyDialog(Parameter *parameter);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -59,7 +53,7 @@ namespace MBSimGUI {
   class ScalarParameterPropertyDialog : public ParameterPropertyDialog {
 
     public:
-      ScalarParameterPropertyDialog(ScalarParameter *parameter);
+      ScalarParameterPropertyDialog(Parameter *parameter);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -69,7 +63,7 @@ namespace MBSimGUI {
   class VectorParameterPropertyDialog : public ParameterPropertyDialog {
 
     public:
-      VectorParameterPropertyDialog(VectorParameter *parameter);
+      VectorParameterPropertyDialog(Parameter *parameter);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -79,7 +73,7 @@ namespace MBSimGUI {
   class MatrixParameterPropertyDialog : public ParameterPropertyDialog {
 
     public:
-      MatrixParameterPropertyDialog(MatrixParameter *parameter);
+      MatrixParameterPropertyDialog(Parameter *parameter);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -89,7 +83,7 @@ namespace MBSimGUI {
   class ImportParameterPropertyDialog : public ParameterPropertyDialog {
 
     public:
-      ImportParameterPropertyDialog(ImportParameter *parameter);
+      ImportParameterPropertyDialog(Parameter *parameter);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:

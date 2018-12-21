@@ -62,7 +62,7 @@ namespace MBSimGUI {
     writeXMLFile(parameter->getXMLElement());
   }
 
-  StringParameterPropertyDialog::StringParameterPropertyDialog(StringParameter *parameter) : ParameterPropertyDialog(parameter) {
+  StringParameterPropertyDialog::StringParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
     value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -80,7 +80,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter) : ParameterPropertyDialog(parameter) {
+  ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
     value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -98,7 +98,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  VectorParameterPropertyDialog::VectorParameterPropertyDialog(VectorParameter *parameter) : ParameterPropertyDialog(parameter) {
+  VectorParameterPropertyDialog::VectorParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
     value = new ExtWidget("Value",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -116,7 +116,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(MatrixParameter *parameter) : ParameterPropertyDialog(parameter) {
+  MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
     value = new ExtWidget("Value",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
@@ -134,7 +134,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ImportParameterPropertyDialog::ImportParameterPropertyDialog(ImportParameter *parameter) : ParameterPropertyDialog(parameter,true) {
+  ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter,true) {
     value = new ExtWidget("Value",new ExpressionWidget("0"));
     addToTab("General", value);
   }

@@ -503,7 +503,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::openOptionsMenu() {
-    OptionsDialog menu;
+    OptionsDialog menu(this);
     menu.setAutoSave(autoSave);
     menu.setAutoSaveInterval(autoSaveInterval);
     menu.setAutoExport(autoExport);
@@ -1466,7 +1466,7 @@ namespace MBSimGUI {
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
     bool includeParameter = false;
     if(element->getEmbedXMLElement()) {
-      SaveDialog saveDialog;
+      SaveDialog saveDialog(this);
       saveDialog.exec();
       includeParameter = saveDialog.includeParameter();
     }
@@ -1483,7 +1483,7 @@ namespace MBSimGUI {
     Solver *solver = project->getSolver();
     bool includeParameter = false;
     if(solver->getEmbedXMLElement()) {
-      SaveDialog saveDialog;
+      SaveDialog saveDialog(this);
       saveDialog.exec();
       includeParameter = saveDialog.includeParameter();
     }
@@ -2054,7 +2054,7 @@ namespace MBSimGUI {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     auto *element = dynamic_cast<Element*>(model->getItem(index)->getItemData());
     if(element) {
-      SourceDialog dialog(element);
+      SourceDialog dialog(element,this);
       dialog.exec();
     }
   }

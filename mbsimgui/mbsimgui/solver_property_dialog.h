@@ -26,7 +26,6 @@
 namespace MBSimGUI {
 
   class Solver;
-  class VecWidget;
   class ExtWidget;
 
   class ToleranceWidgetFactory : public WidgetFactory {
@@ -57,7 +56,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      VecWidget *z0;
       ExtWidget *startTime, *endTime, *plotStepSize, *initialState;
   };
 

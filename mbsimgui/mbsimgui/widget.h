@@ -42,7 +42,7 @@ namespace MBSimGUI {
   class Widget : public QWidget, public WidgetInterface {
     Q_OBJECT
     public:
-      Widget() = default;
+      Widget(QWidget *parent=nullptr) : QWidget(parent) { }
     signals:
       void widgetChanged();
     public slots:

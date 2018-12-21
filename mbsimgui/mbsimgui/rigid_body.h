@@ -35,12 +35,9 @@ namespace MBSimGUI {
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       xercesc::DOMElement* processHref(xercesc::DOMElement* element) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      bool isConstrained() const {return constrained;}
-      void setConstrained(bool b) {constrained = b;}
       ElementPropertyDialog* createPropertyDialog() override {return new RigidBodyPropertyDialog(this);}
       QMenu* createFrameContextMenu() override {return new FixedRelativeFramesContextMenu(this);}
     protected:
-      bool constrained{false};
       xercesc::DOMElement *frames, *contours;
   };
 
