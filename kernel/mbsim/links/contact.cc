@@ -404,19 +404,17 @@ namespace MBSim {
 
   void Contact::setgInd(int gInd_) {
     Link::setgInd(gInd_);
-    int nextgInd = gInd_;
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      iter->setgInd(nextgInd);
-      nextgInd += iter->getgSize();
+      iter->setgInd(gInd_);
+      gInd_ += iter->getgSize();
     }
   }
 
   void Contact::setgdInd(int gdInd_) {
     Link::setgdInd(gdInd_);
-    int nextgdInd = gdInd_;
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      iter->setgdInd(nextgdInd);
-      nextgdInd += iter->getgdSize();
+      iter->setgdInd(gdInd_);
+      gdInd_ += iter->getgdSize();
     }
   }
 
@@ -430,46 +428,41 @@ namespace MBSim {
 
   void Contact::setlaInd(int laInd_) {
     Link::setlaInd(laInd_);
-    int nextlaInd = laInd_;
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      iter->setlaInd(nextlaInd);
-      nextlaInd += iter->getlaSize();
+      iter->setlaInd(laInd_);
+      laInd_ += iter->getlaSize();
     }
   }
 
   void Contact::setrFactorInd(int rFactorInd_) {
     Link::setrFactorInd(rFactorInd_);
-    int nextrFactorInd = rFactorInd_;
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      iter->setrFactorInd(nextrFactorInd);
-      nextrFactorInd += iter->getrFactorSize();
+      iter->setrFactorInd(rFactorInd_);
+      rFactorInd_ += iter->getrFactorSize();
     }
   }
 
   void Contact::setcorrInd(int corrInd_) {
     Link::setcorrInd(corrInd_);
-    int nextcorrInd = corrInd_;
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      iter->setcorrInd(nextcorrInd);
-      nextcorrInd += iter->getcorrSize();
+      iter->setcorrInd(corrInd_);
+      corrInd_ += iter->getcorrSize();
     }
   }
 
   void Contact::setLinkStatusInd(int LinkStatusInd_) {
     Link::setLinkStatusInd(LinkStatusInd_);
-    int nextLinkStatusInd = LinkStatusInd_;
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      iter->setLinkStatusInd(nextLinkStatusInd);
-      nextLinkStatusInd += iter->getLinkStatusSize();
+      iter->setLinkStatusInd(LinkStatusInd_);
+      LinkStatusInd_ += iter->getLinkStatusSize();
     }
   }
 
   void Contact::setLinkStatusRegInd(int LinkStatusRegInd_) {
     Link::setLinkStatusRegInd(LinkStatusRegInd_);
-    int nextLinkStatusRegInd = LinkStatusRegInd_;
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      iter->setLinkStatusRegInd(nextLinkStatusRegInd);
-      nextLinkStatusRegInd += iter->getLinkStatusRegSize();
+      iter->setLinkStatusRegInd(LinkStatusRegInd_);
+      LinkStatusRegInd_ += iter->getLinkStatusRegSize();
     }
   }
 
