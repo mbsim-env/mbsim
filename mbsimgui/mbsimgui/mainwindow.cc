@@ -58,6 +58,7 @@
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include <QSettings>
+#include <QHeaderView>
 #include <QtWidgets/QDesktopWidget>
 #include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
@@ -84,7 +85,8 @@ namespace MBSimGUI {
 
   WebDialog* MainWindow::xmlHelpDialog = nullptr;
 
-  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), autoSave(false), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), maxUndo(10), autoExportDir("./"), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
+  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
+    QSettings settings;
 
     impl=DOMImplementation::getImplementation();
     parser=impl->createLSParser(DOMImplementation::MODE_SYNCHRONOUS, nullptr);
@@ -165,17 +167,11 @@ namespace MBSimGUI {
 
     GUIMenu->addSeparator();
 
-    OpenMBVGUI::AbstractViewFilter *elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
+    elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
     elementViewFilter->hide();
 
-    OpenMBVGUI::AbstractViewFilter *embeddingViewFilter = new OpenMBVGUI::AbstractViewFilter(embeddingView, 0, -2);
+    embeddingViewFilter = new OpenMBVGUI::AbstractViewFilter(embeddingView, 0, -2);
     embeddingViewFilter->hide();
-
-    action = GUIMenu->addAction("Show filter");
-    action->setCheckable(true);
-    connect(action,SIGNAL(toggled(bool)), elementViewFilter, SLOT(setVisible(bool)));
-    connect(action,SIGNAL(toggled(bool)), embeddingViewFilter, SLOT(setVisible(bool)));
-    action->setStatusTip(tr("Show filter"));
 
     GUIMenu->addSeparator();
 
@@ -367,7 +363,7 @@ namespace MBSimGUI {
     setAcceptDrops(true);
 
     connect(&autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSaveProject()));
-    autoSaveTimer.start(autoSaveInterval*60000);
+    autoSaveTimer.start(settings.value("mainwindow/options/autosaveinterval", 5).toInt()*60000);
     statusTime.start();
 
     setWindowIcon(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"mbsimgui.svg").string())));
@@ -384,6 +380,8 @@ namespace MBSimGUI {
       });
       timer->start(100);
     }
+
+    openOptionsMenu(true);
   }
 
   void MainWindow::autoSaveProject() {
@@ -402,7 +400,10 @@ namespace MBSimGUI {
     }
     else {
       if(exitStatus == QProcess::NormalExit) {
-        if(autoExport) {
+        QSettings settings;
+        bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
+        if(settings.value("mainwindow/options/autoexport", false).toBool()) {
+          QString autoExportDir = settings.value("mainwindow/options/autoexportdir", "./").toString();
           saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
           saveOpenMBVXMLData(autoExportDir+"/MBS.ombv.xml");
           saveOpenMBVH5Data(autoExportDir+"/MBS.ombv.h5");
@@ -469,6 +470,7 @@ namespace MBSimGUI {
   void MainWindow::setProjectChanged(bool changed) { 
     setWindowModified(changed);
     if(changed) {
+      QSettings settings;
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       actionEigenanalysis->setDisabled(true);
@@ -476,7 +478,7 @@ namespace MBSimGUI {
       xercesc::DOMDocument* oldDoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
       oldDoc->setDocumentURI(doc->getDocumentURI());
       undos.push_back(oldDoc);
-      if(undos.size() > maxUndo)
+      if(undos.size() > settings.value("mainwindow/options/maxundo", 10).toInt())
         undos.pop_front();
       redos.clear();
       if(allowUndo) actionUndo->setEnabled(true);
@@ -502,28 +504,38 @@ namespace MBSimGUI {
     return true;
   }
 
-  void MainWindow::openOptionsMenu() {
+  void MainWindow::openOptionsMenu(bool justSetOptions) {
+    QSettings settings;
     OptionsDialog menu(this);
-    menu.setAutoSave(autoSave);
-    menu.setAutoSaveInterval(autoSaveInterval);
-    menu.setAutoExport(autoExport);
-    menu.setAutoExportDir(autoExportDir);
-    menu.setSaveStateVector(saveFinalStateVector);
-    menu.setMaxUndo(maxUndo);
-    int res = menu.exec();
+    menu.setAutoSave(settings.value("mainwindow/options/autosave", false).toBool());
+    menu.setAutoSaveInterval(settings.value("mainwindow/options/autosaveinterval", 5).toInt());
+    menu.setAutoExport(settings.value("mainwindow/options/autoexport", false).toBool());
+    menu.setAutoExportDir(settings.value("mainwindow/options/autoexportdir", "./").toString());
+    menu.setSaveStateVector(settings.value("mainwindow/options/savestatevector", false).toBool());
+    menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
+    menu.setShowFilters(settings.value("mainwindow/options/showfilters", false).toBool());
+    int res = 1;
+    if(!justSetOptions)
+      res = menu.exec();
     if(res == 1) {
-      autoSave = menu.getAutoSave();
-      autoSaveInterval = menu.getAutoSaveInterval();
-      autoExport = menu.getAutoExport();
-      autoExportDir = menu.getAutoExportDir();
-      saveFinalStateVector = menu.getSaveStateVector();
-      if(not(saveFinalStateVector)) 
+      bool autoSave = menu.getAutoSave();
+      int autoSaveInterval = menu.getAutoSaveInterval();
+      if(not(menu.getSaveStateVector())) 
         actionSaveStateVectorAs->setDisabled(true);
       if(autoSave)
         autoSaveTimer.start(autoSaveInterval*60000);
       else
         autoSaveTimer.stop();
-      maxUndo = menu.getMaxUndo();
+      settings.setValue("mainwindow/options/autosave",         menu.getAutoSave());
+      settings.setValue("mainwindow/options/autosaveinterval", menu.getAutoSaveInterval());
+      settings.setValue("mainwindow/options/autoexport",       menu.getAutoExport());
+      settings.setValue("mainwindow/options/autoexportdir",    menu.getAutoExportDir());
+      settings.setValue("mainwindow/options/savestatevector",  menu.getSaveStateVector());
+      settings.setValue("mainwindow/options/maxundo",          menu.getMaxUndo());
+      settings.setValue("mainwindow/options/showfilters",      menu.getShowFilters());
+      bool showFilters = menu.getShowFilters();
+      elementViewFilter->setVisible(showFilters);
+      embeddingViewFilter->setVisible(showFilters);
     }
   }
 
@@ -814,11 +826,12 @@ namespace MBSimGUI {
       if(directory.count()>2)
         ret = QMessageBox::warning(this, tr("Application"), tr("Directory not empty. Overwrite existing files?"), QMessageBox::Ok | QMessageBox::Cancel);
       if(ret == QMessageBox::Ok) {
+        QSettings settings;
         saveMBSimH5Data(dir+"/MBS.mbsim.h5");
         saveOpenMBVXMLData(dir+"/MBS.ombv.xml");
         saveOpenMBVH5Data(dir+"/MBS.ombv.h5");
         saveEigenanalysis(dir+"/MBS.eigenanalysis.mat");
-        if(saveFinalStateVector)
+        if(settings.value("mainwindow/options/savestatevector", false).toBool())
           saveStateVector(dir+"/statevector.asc");
       }
     }
@@ -946,9 +959,10 @@ namespace MBSimGUI {
     E(root)->setOriginalFilename();
     basicSerializer->writeToURI(doc.get(), X()%projectFile.toStdString());
     QStringList arg;
+    QSettings settings;
     if(currentTask==1)
       arg.append("--stopafterfirststep");
-    else if(saveFinalStateVector)
+    else if(settings.value("mainwindow/options/savestatevector", false).toBool())
       arg.append("--savefinalstatevector");
 
     // we print everything except status messages to stdout
@@ -2081,10 +2095,6 @@ namespace MBSimGUI {
       event->accept();
     else
       event->ignore();
-
-    QSettings settings;
-    settings.setValue("mainwindow/geometry", saveGeometry());
-    settings.setValue("mainwindow/state", saveState());
     QMainWindow::closeEvent(event);
   }
 
@@ -2092,6 +2102,17 @@ namespace MBSimGUI {
     QSettings settings;
     restoreGeometry(settings.value("mainwindow/geometry").toByteArray());
     restoreState(settings.value("mainwindow/state").toByteArray());
+    elementView->header()->restoreState(settings.value("mainwindow/elementview/state").toByteArray());
+    embeddingView->header()->restoreState(settings.value("mainwindow/embeddingview/state").toByteArray());
+    QMainWindow::showEvent(event);
+  }
+
+  void MainWindow::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("mainwindow/geometry", saveGeometry());
+    settings.setValue("mainwindow/state", saveState());
+    settings.setValue("mainwindow/embeddingview/state", embeddingView->header()->saveState());
+    QMainWindow::hideEvent(event);
   }
 
   void MainWindow::openRecentProjectFile() {

@@ -44,6 +44,7 @@
 #include <QWebView>
 #include <QMessageBox>
 #include <QFileInfo>
+#include <QSettings>
 #include <qwt_plot.h>
 #include <boost/math/constants/constants.hpp>
 
@@ -149,6 +150,8 @@ namespace MBSimGUI {
   }
 
   void BasicElementBrowser::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("basicelementbrowser/geometry").toByteArray());
     QDialog::showEvent(event);
     oldID = mw->getHighlightedObject();
     QModelIndex index1 = findTreeItemData(eleList->model()->index(0,0),selection);
@@ -158,6 +161,8 @@ namespace MBSimGUI {
   }
 
   void BasicElementBrowser::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("basicelementbrowser/geometry", saveGeometry());
     QDialog::hideEvent(event);
     mw->highlightObject(oldID);
   }

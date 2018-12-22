@@ -73,6 +73,9 @@ namespace MBSimGUI {
     maxUndo->setMinimum(1);
     sublayout->addWidget(maxUndo);
 
+    showFilters = new QCheckBox("Show list filters");
+    layout->addWidget(showFilters);
+
     layout->addWidget(buttonBox);
     setWindowTitle("GUI options");
   }
@@ -140,6 +143,14 @@ namespace MBSimGUI {
 
   void OptionsDialog::setMaxUndo(int num) {
     maxUndo->setValue(num);
+  }
+
+  bool OptionsDialog::getShowFilters() const {
+    return (showFilters->checkState()==Qt::Checked);
+  }
+
+  void OptionsDialog::setShowFilters(bool flag) {
+    showFilters->setCheckState(flag?Qt::Checked:Qt::Unchecked);
   }
 
 }
