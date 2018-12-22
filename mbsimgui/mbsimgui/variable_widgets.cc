@@ -177,7 +177,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* BoolWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
     parent->insertBefore(text, ref);
     return nullptr;
@@ -211,7 +211,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* ExpressionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
     parent->insertBefore(text, ref);
     return nullptr;
@@ -252,7 +252,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* ScalarWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
     parent->insertBefore(text, ref);
     return nullptr;
@@ -281,7 +281,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* BasicVecWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"xmlVector");
     for(int i=0; i<rows(); i++) {
       DOMElement *elei = D(doc)->createElement(PV%"ele");
@@ -505,7 +505,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* BasicMatWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"xmlMatrix");
     for(int i=0; i<rows(); i++) {
       DOMElement *elei = D(doc)->createElement(PV%"row");
@@ -1097,7 +1097,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* CardanWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"cardan");
     DOMElement *elei = D(doc)->createElement(PV%"alpha");
     vector<QString> angles = getAngles();
@@ -1160,7 +1160,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* AboutXWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"aboutX");
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
     ele->insertBefore(text, nullptr);
@@ -1212,7 +1212,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* AboutYWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"aboutY");
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
     ele->insertBefore(text, nullptr);
@@ -1264,7 +1264,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* AboutZWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"aboutZ");
     DOMText *text = doc->createTextNode(X()%getValue().toStdString());
     ele->insertBefore(text, nullptr);
@@ -1381,7 +1381,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* FromFileWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"fromFile");
     E(ele)->setAttribute("href",getFile().toStdString());
     parent->insertBefore(ele, nullptr);
