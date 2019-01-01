@@ -29,6 +29,7 @@
 #include <xercesc/util/XercesDefs.hpp>
 #include <deque>
 #include <sstream>
+#include <openmbv/mainwindow.h>
 
 class QAction;
 class QModelIndex;
@@ -36,6 +37,7 @@ class QWebView;
 
 namespace OpenMBVGUI {
   class MainWindow;
+  class AbstractViewFilter;
 }
 
 namespace MBXMLUtils {
@@ -91,14 +93,12 @@ namespace MBSimGUI {
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
       QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionFrequencyResponse, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs, *actionUndo, *actionRedo;
+      OpenMBVGUI::AbstractViewFilter *elementViewFilter, *embeddingViewFilter;
       QTimer autoSaveTimer;
       QTime statusTime;
       QString currentID;
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
-      bool autoSave, autoExport, saveFinalStateVector;
-      int autoSaveInterval, maxUndo;
-      QString autoExportDir;
       static WebDialog *xmlHelpDialog;
       bool allowUndo;
       xercesc::DOMDocument *doc;
@@ -110,6 +110,7 @@ namespace MBSimGUI {
       void dropEvent(QDropEvent *event) override;
       void closeEvent(QCloseEvent *event) override;
       void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       bool maybeSave();
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
@@ -237,7 +238,7 @@ namespace MBSimGUI {
 
     private slots:
       void selectElement(const std::string& ID);
-      void openOptionsMenu();
+      void openOptionsMenu(bool justSetOptions=false);
       void selectionChanged(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void openRecentProjectFile();

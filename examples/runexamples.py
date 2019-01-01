@@ -540,7 +540,7 @@ def main():
     # start vnc server on a free display
     global displayNR
     displayNR=3
-    while subprocess.call(["vncserver", ":"+str(displayNR), "-SecurityTypes", "None"], stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
+    while subprocess.call(["vncserver", ":"+str(displayNR), "-noxstartup", "-SecurityTypes", "None"], stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
       displayNR=displayNR+1
       if displayNR>100:
         raise RuntimeError("Cannot find a free DISPLAY for vnc server.")
@@ -907,13 +907,13 @@ def runExample(resultQueue, example):
       # result
       resultStr+='<td data-order="%d%d%d%d">'%(0 if abs(ombvRet)+abs(h5pRet)+abs(guiRet)==0 else (1 if willFail else 2),
                                                int(len(ombvFiles)>0), int(len(h5pFiles)>0), int(guiFile!=None))+\
-        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_ombv.txt")),
+        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_openmbv.txt")),
           "visible" if len(ombvFiles)>0 else "hidden", "success" if ombvRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="/mbsim/html/openmbv.svg" alt="ombv"/></a>'+\
-        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_h5p.txt")),
+        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_h5plotserie.txt")),
           "visible" if len(h5pFiles)>0 else "hidden", "success" if h5pRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="/mbsim/html/h5plotserie.svg" alt="h5p"/></a>'+\
-        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_gui.txt")),
+        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_mbsimgui.txt")),
           "visible" if guiFile!=None else "hidden", "success" if guiRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="/mbsim/html/mbsimgui.svg" alt="gui"/></a>'
       # add all additional output files

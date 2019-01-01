@@ -50,7 +50,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* Project::createXMLElement(DOMNode *parent) {
-    auto *doc=static_cast<DOMDocument*>(parent);
+    auto *doc=static_cast<xercesc::DOMDocument*>(parent);
     element=D(doc)->createElement(getNameSpace()%getType().toStdString());
     E(element)->setAttribute("name","Project");
     parent->insertBefore(element, nullptr);
@@ -107,7 +107,7 @@ namespace MBSimGUI {
 
   DOMElement* Project::createEmbedXMLElement() {
     if(not getEmbedXMLElement()) {
-      DOMDocument *doc=element->getOwnerDocument();
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
       setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       doc->removeChild(getXMLElement());
       doc->insertBefore(getEmbedXMLElement(),nullptr);
@@ -132,7 +132,7 @@ namespace MBSimGUI {
         embed->removeChild(param);
       }
       if(not E(embed)->hasAttribute("count") and not E(embed)->hasAttribute("counterName") and not E(embed)->hasAttribute("href") and not E(embed)->hasAttribute("parameterHref")) {
-        DOMDocument *doc=element->getOwnerDocument();
+        xercesc::DOMDocument *doc=element->getOwnerDocument();
         doc->removeChild(embed);
         doc->insertBefore(element,nullptr);
         embed = nullptr;

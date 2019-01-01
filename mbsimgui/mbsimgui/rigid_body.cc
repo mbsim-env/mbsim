@@ -49,7 +49,7 @@ namespace MBSimGUI {
 
   DOMElement* RigidBody::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
-    DOMDocument *doc=ele0->getOwnerDocument();
+    xercesc::DOMDocument *doc=ele0->getOwnerDocument();
     frames = D(doc)->createElement( MBSIM%"frames" );
     ele0->insertBefore( frames, nullptr );
     contours = D(doc)->createElement( MBSIM%"contours" );
@@ -84,7 +84,7 @@ namespace MBSimGUI {
     if(ELE) {
       ELE = ELE->getFirstElementChild();
       if(ELE) {
-        DOMDocument *doc=element->getOwnerDocument();
+        xercesc::DOMDocument *doc=element->getOwnerDocument();
         DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
         ELE->insertBefore(id, nullptr);
       }
@@ -92,7 +92,7 @@ namespace MBSimGUI {
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
     if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID().toStdString());
       ELE->insertBefore(id, nullptr);
     }

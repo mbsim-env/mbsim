@@ -96,17 +96,17 @@ namespace MBSimGUI {
   bool PropertyDialog::getCancel() const {
     return buttonBox->button(QDialogButtonBox::Cancel)->isEnabled();
   }
-
-  void PropertyDialog::closeEvent(QCloseEvent *event) {
-    QSettings settings;
-    settings.setValue("propertydialog/geometry", saveGeometry());
-    QDialog::closeEvent(event);
-  }
   
   void PropertyDialog::showEvent(QShowEvent *event) {
     QSettings settings;
     restoreGeometry(settings.value("propertydialog/geometry").toByteArray());
     QDialog::showEvent(event);
+  }
+
+  void PropertyDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("propertydialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
   }
 
   EmbedItemPropertyDialog::EmbedItemPropertyDialog(EmbedItemData *item_) : item(item_) {
