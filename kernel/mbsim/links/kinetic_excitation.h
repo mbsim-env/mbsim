@@ -108,9 +108,6 @@ namespace MBSim {
       double evalNone() { return 1; }
       double evalAboluteForce() { return nrm2(evalForce()); }
       double evalAboluteMoment() { return nrm2(evalMoment()); }
-
-    private:
-      std::string saved_ref;
   };
 
 }
