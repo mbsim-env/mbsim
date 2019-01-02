@@ -1,0 +1,45 @@
+#Inventor V2.1 ascii   
+
+
+Material {
+  ambientColor 0 0 0
+  diffuseColor 0.80000001 0.80000001 0.40000001
+  shininess 0
+
+}
+
+Separator {
+
+  RotationXYZ {
+    angle 1.5707999
+    axis X
+
+  }
+  Translation {
+    translation 0 0 0
+
+  }
+  Cylinder {
+    radius 0.2
+    height 0.1
+
+  }
+}
+
+Separator {
+
+  RotationXYZ {
+    angle 1.5707999
+    axis X
+
+  }
+  Translation {
+    translation 0 -0.2 0
+
+  }
+  Cylinder {
+    radius 0.1
+    height 0.40000001
+
+  }
+}
