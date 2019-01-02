@@ -90,7 +90,7 @@ namespace MBSim {
         throwError("No dependent rigid bodies given!");
       if(!saved_ref1.empty() && !saved_ref2.empty())
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      if(frame1==nullptr or frame2==nullptr)
+      if(not frame1 or not frame2)
         throwError("Not all connections are given!");
       if(!bd1.empty()) {
         for(unsigned int i=0; i<bd1.size()-1; i++) 
@@ -152,7 +152,7 @@ namespace MBSim {
       JT.resize(3,nu);
       JR.resize(3,nu);
 
-      if(q0() == nullptr)
+      if(not q0())
         q.init(0);
       else if(q0.size() == q.size())
         q = q0;

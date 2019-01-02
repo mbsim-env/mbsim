@@ -57,7 +57,7 @@ namespace MBSimControl {
 
   void LinearTransferSystem::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(inputSignalString!="")
+      if(not inputSignalString.empty())
         setInputSignal(getByPath<Signal>(inputSignalString));
       if(not inputSignal)
         throwError("(LinearTransferSystem::init): input signal must be given");

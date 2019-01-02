@@ -82,7 +82,7 @@ namespace MBSimControl {
 
   void Demultiplexer::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(signalString!="")
+      if(not signalString.empty())
         setInputSignal(getByPath<Signal>(signalString));
     }
     else if(stage==preInit)
@@ -109,7 +109,7 @@ namespace MBSimControl {
 
   void SignalTimeDiscretization::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveStringRef) {
-      if (signalString!="")
+      if (not signalString.empty())
         setInputSignal(getByPath<Signal>(signalString));
       Signal::init(stage, config);
     }

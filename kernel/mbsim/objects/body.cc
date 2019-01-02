@@ -79,9 +79,9 @@ namespace MBSim {
 
   void Body::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(saved_frameOfReference!="")
+      if(not saved_frameOfReference.empty())
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      if(!R)
+      if(not R)
         R = static_cast<DynamicSystem*>(parent)->getFrameI();
       else if(R->getParent()==this)
         throwError("(Body::init): frame of reference must not be part of " + name);

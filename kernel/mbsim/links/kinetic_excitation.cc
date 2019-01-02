@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/objectfactory.h"
-#include <mbsim/dynamic_system.h>
 #include <openmbvcppinterface/group.h>
 
 using namespace std;
@@ -46,10 +45,7 @@ namespace MBSim {
   }
 
   void KineticExcitation::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveStringRef) {
-      if(frame[0]==nullptr) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
-    }
-    else if(stage==plotting) {
+    if(stage==plotting) {
       if(plotFeature[openMBV] and ombvArrow) {
         if(forceDir.cols()) {
           openMBVForce.resize(ombvArrow->getSideOfInteraction()==2?getNumberOfLinks():getNumberOfLinks()/2);

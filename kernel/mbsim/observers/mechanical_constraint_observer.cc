@@ -43,7 +43,7 @@ namespace MBSim {
 
   void MechanicalConstraintObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(saved_constraint!="")
+      if(not saved_constraint.empty())
         setMechanicalConstraint(getByPath<MechanicalConstraint>(saved_constraint));
       Observer::init(stage, config);
     }

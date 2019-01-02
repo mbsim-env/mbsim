@@ -319,7 +319,7 @@ namespace MBSim {
 
       //connect all contours given in xml file
       for (size_t i = 0; i < saved_ref.size(); i++) {
-        if (saved_ref[i].name1 != "" && saved_ref[i].name2 != "")
+        if (not saved_ref[i].name1.empty() and not saved_ref[i].name2.empty())
           connect(getByPath<Contour>(saved_ref[i].name1), getByPath<Contour>(saved_ref[i].name2), 0, saved_ref[i].contourPairingName);
         //TODO: add option to specifiy contact_kinematics
       }

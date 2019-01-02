@@ -37,7 +37,7 @@ namespace MBSimControl {
 
   void ObjectSensor::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveStringRef) {
-      if (objectString!="")
+      if (not objectString.empty())
         setObject(getByPath<Object>(objectString));
     }
     Sensor::init(stage, config);

@@ -39,7 +39,7 @@ namespace MBSim {
 
   void MaxwellContactObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(saved_link!="")
+      if(not saved_link.empty())
         setMaxwellContact(getByPath<MaxwellContact>(saved_link));
       Observer::init(stage, config);
     }
