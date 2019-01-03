@@ -61,11 +61,6 @@ namespace MBSim {
       enum Solver { fixedpoint, GaussSeidel, direct, rootfinding, unknownSolver };
 
       /**
-       * \brief linear algebra for Newton scheme in solution of contact equations
-       */
-      enum LinearAlgebra { LUDecomposition, LevenbergMarquardt, pseudoinverse, unknownLinearAlgebra };
-
-      /**
        * \brief constructor
        * \param name of dynamic system
        */
@@ -187,7 +182,6 @@ namespace MBSim {
       void setMaximumIterations(int iter) { maxIter = iter; }
       void setHighIterations(int iter) { highIter = iter; }
       void setNumericalJacobian(bool numJac_) { numJac = numJac_; }
-      void setLinearAlgebra(LinearAlgebra linAlg_) { linAlg = linAlg_; }
       void setMaximumDampingSteps(int maxDSteps) { maxDampingSteps = maxDSteps; }
       void setLevenbergMarquardtParamater(double lmParm_) { lmParm = lmParm_; }
 
@@ -733,11 +727,6 @@ namespace MBSim {
        * \brief solver for contact equations and impact equations
        */
       Solver contactSolver, impactSolver;
-
-      /**
-       * \brief linear system solver used for Newton scheme in contact equations
-       */
-      LinearAlgebra linAlg;
 
       /**
        * \brief flag if the contact equations should be stopped if there is no convergence

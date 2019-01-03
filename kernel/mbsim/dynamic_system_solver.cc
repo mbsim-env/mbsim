@@ -68,7 +68,7 @@ namespace MBSim {
     return res;
   }
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -380,8 +380,6 @@ namespace MBSim {
         throwError("(DynamicSystemSolver::init): constraint solver unknown");
       if(impactSolver==unknownSolver)
         throwError("(DynamicSystemSolver::init): impact solver unknown");
-      if(linAlg==unknownLinearAlgebra)
-        throwError("(DynamicSystemSolver::init): linear algebra unknown");
       if (inverseKinetics)
         setUpInverseKinetics();
       Group::init(stage, config);
@@ -539,17 +537,8 @@ namespace MBSim {
       }
       else
         jacobianConstraints();
-      Vec dx;
-      if (linAlg == LUDecomposition)
-        dx >> slvLU(Jprox, res0);
-      else if (linAlg == LevenbergMarquardt) {
-        SymMat J = SymMat(JTJ(Jprox) + lmParm * I);
-        dx >> slvLL(J, Jprox.T() * res0);
-      }
-      else if (linAlg == pseudoinverse)
-        dx >> slvLS(Jprox, res0);
-      else
-        throwError("Internal error");
+
+      Vec dx = slvLS(Jprox, res0);
 
       Vec La_old = la.copy();
       double alpha = 1;
@@ -592,7 +581,6 @@ namespace MBSim {
     if (term)
       return 0;
 
-    DiagMat I(La.size(), INIT, 1);
     for (iter = 1; iter < maxIter; iter++) {
 
       if (Jprox.size() != La.size())
@@ -615,17 +603,8 @@ namespace MBSim {
       }
       else
         jacobianImpacts();
-      Vec dx;
-      if (linAlg == LUDecomposition)
-        dx >> slvLU(Jprox, res0);
-      else if (linAlg == LevenbergMarquardt) {
-        SymMat J = SymMat(JTJ(Jprox) + lmParm * I);
-        dx >> slvLL(J, Jprox.T() * res0);
-      }
-      else if (linAlg == pseudoinverse)
-        dx >> slvLS(Jprox, res0);
-      else
-        throwError("Internal error");
+
+      Vec dx = slvLS(Jprox, res0);
 
       Vec La_old = La.copy();
       double alpha = 1.;
@@ -1191,22 +1170,6 @@ namespace MBSim {
     else if (impactSolver == rootfinding)
       info << "rootfinding";
 
-    // Gauss-Seidel & solveLL do not depend on the following ...
-    if (impactSolver != GaussSeidel && impactSolver != direct) {
-      info << "(";
-
-      // linear algebra for RootFinding only
-      if (impactSolver == rootfinding) {
-        info << ",";
-        if (linAlg == LUDecomposition)
-          info << "LU";
-        else if (linAlg == LevenbergMarquardt)
-          info << "LM";
-        else if (linAlg == pseudoinverse)
-          info << "PI";
-      }
-      info << ")";
-    }
     return info.str();
   }
 
@@ -1373,15 +1336,6 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
     if (e)
       setNumericalJacobian(E(e)->getText<bool>());
-    e = E(element)->getFirstElementChildNamed(MBSIM%"linearAlgebra");
-    if (e) {
-      std::string str=X()%E(e)->getFirstTextChild()->getData();
-      str=str.substr(1,str.length()-2);
-      if(str=="LUDecomposition") linAlg=LUDecomposition;
-      else if(str=="LevenbergMarquardt") linAlg=LevenbergMarquardt;
-      else if(str=="pseudoinverse") linAlg=pseudoinverse;
-      else linAlg=unknownLinearAlgebra;
-    }
     e = E(element)->getFirstElementChildNamed(MBSIM%"projectionTolerance");
     if (e)
       setProjectionTolerance(E(e)->getText<double>());

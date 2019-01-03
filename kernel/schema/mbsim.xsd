@@ -746,18 +746,6 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="linearAlgebra" minOccurs="0" type="pv:stringFullEval">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                <p>Lineare Algebra beim Lösungsverfahren "rootFinding".</p>
-                <dl>
-                  <dt>"LUDecomposition"</dt> <dd>.</dd>
-                  <dt>"LevenbergMarquardt"</dt> <dd>.</dd>
-                  <dt>"pseudoinverse"</dt> <dd>.</dd>
-                </dl>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
           <xs:element name="projectionTolerance" type="pv:nounitScalar" minOccurs="0">
           </xs:element>
           <xs:element name="generalizedRelativePositionTolerance" type="pv:nounitScalar" minOccurs="0">
