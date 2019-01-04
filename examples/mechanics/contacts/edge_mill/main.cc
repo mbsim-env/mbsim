@@ -8,7 +8,6 @@ int main (int argc, char* argv[]) {
   System *sys = new System("TS");
   sys->setImpactSolver(DynamicSystemSolver::rootfinding);
   sys->setConstraintSolver(DynamicSystemSolver::rootfinding);
-  sys->setLinearAlgebra(DynamicSystemSolver::pseudoinverse);
   sys->initialize();
 
   TimeSteppingIntegrator integrator;

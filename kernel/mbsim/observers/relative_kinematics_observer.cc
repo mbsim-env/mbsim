@@ -37,9 +37,9 @@ namespace MBSim {
 
   void RelativeKinematicsObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(saved_frame!="")
+      if(not saved_frame.empty())
         setFrame(getByPath<Frame>(saved_frame));
-      if(saved_frameOfReference!="")
+      if(not saved_frameOfReference.empty())
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       if(not refFrame)
         setFrameOfReference(static_cast<DynamicSystem*>(parent)->getFrameI());

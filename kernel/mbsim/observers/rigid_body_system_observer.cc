@@ -42,7 +42,7 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       for(const auto & i : saved_body)
         body.push_back(getByPath<RigidBody>(i));
-      if(saved_frameOfReference!="")
+      if(not saved_frameOfReference.empty())
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       Observer::init(stage, config);
     }

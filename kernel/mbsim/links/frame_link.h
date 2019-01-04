@@ -39,7 +39,7 @@ namespace MBSim {
       void init(InitStage stage, const InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void connect(Frame *frame0, Frame* frame1);
+      void connect(Frame *frame0, Frame *frame1);
 
       Frame* getFrame(int i) { return frame[i]; }
 

@@ -230,13 +230,13 @@ namespace MBSim {
   }
 
   void Object::initz() {
-    if(q0() == NULL)
+    if(not q0())
       q.init(0);
     else if(q0.size() == q.size())
       q = q0;
     else
       throwError("(Object::initz): size of q0 does not match, must be " + to_string(q.size()));
-    if(u0() == NULL)
+    if(not u0())
       u.init(0);
     else if(u0.size() == u.size())
       u = u0;

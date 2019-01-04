@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/links/frame_link.h"
+#include <mbsim/dynamic_system.h>
 #include "mbsim/frames/frame.h"
 
 using namespace std;
@@ -51,9 +52,13 @@ namespace MBSim {
 
   void FrameLink::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(saved_ref1!="" && saved_ref2!="")
+      if(not saved_ref1.empty() and not saved_ref2.empty())
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      if(frame[0]==nullptr or frame[1]==nullptr)
+      else if(not saved_ref2.empty())
+        connect(nullptr, getByPath<Frame>(saved_ref2));
+      if(not frame[0])
+        frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
+      if(not frame[1])
         throwError("Not all connections are given!");
     }
     else if(stage==preInit) {

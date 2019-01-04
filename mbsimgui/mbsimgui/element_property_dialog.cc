@@ -1000,13 +1000,6 @@ namespace MBSimGUI {
     numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget2(new BoolWidgetFactory("false"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
     addToTab("Solver parameters", numericalJacobian);
 
-    list.clear();
-    list.emplace_back("\"LUDecomposition\"");
-    list.emplace_back("\"LevenbergMarquardt\"");
-    list.emplace_back("\"pseudoinverse\"");
-    linearAlgebra = new ExtWidget("Linear algebra",new TextChoiceWidget(list,0,true),true,false,MBSIM%"linearAlgebra");
-    addToTab("Solver parameters", linearAlgebra);
-
     projection = new ExtWidget("Projection tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");
     addToTab("Solver parameters", projection);
 
@@ -1054,7 +1047,6 @@ namespace MBSimGUI {
     impactSolver->initializeUsingXML(item->getXMLElement());
     maxIter->initializeUsingXML(item->getXMLElement());
     numericalJacobian->initializeUsingXML(item->getXMLElement());
-    linearAlgebra->initializeUsingXML(item->getXMLElement());
     projection->initializeUsingXML(item->getXMLElement());
     gTol->initializeUsingXML(item->getXMLElement());
     gdTol->initializeUsingXML(item->getXMLElement());
@@ -1078,7 +1070,6 @@ namespace MBSimGUI {
     impactSolver->writeXMLFile(item->getXMLElement());
     maxIter->writeXMLFile(item->getXMLElement());
     numericalJacobian->writeXMLFile(item->getXMLElement());
-    linearAlgebra->writeXMLFile(item->getXMLElement());
     projection->writeXMLFile(item->getXMLElement());
     gTol->writeXMLFile(item->getXMLElement());
     gdTol->writeXMLFile(item->getXMLElement());
@@ -2001,6 +1992,7 @@ namespace MBSimGUI {
     addTab("Visualisation",2);
 
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Frame>(2,link,this),false,false,MBSIM%"connect");
+    static_cast<ConnectElementsWidget<Frame>*>(connections->getWidget())->setDefaultElement("../Frame[I]");
     addToTab("Kinetics", connections);
   }
 
@@ -2075,8 +2067,6 @@ namespace MBSimGUI {
   }
 
   KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(Element *kineticExcitation) : FloatingFrameLinkPropertyDialog(kineticExcitation) {
-
-    static_cast<ConnectElementsWidget<Frame>*>(connections->getWidget())->setDefaultElement("../Frame[I]");
 
     forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);

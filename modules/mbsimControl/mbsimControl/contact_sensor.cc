@@ -40,7 +40,7 @@ namespace MBSimControl {
 
   void ContactSensor::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveStringRef) {
-      if (contactString!="")
+      if (not contactString.empty())
         setContact(getByPath<Contact>(contactString));
       Sensor::init(stage, config);
     }

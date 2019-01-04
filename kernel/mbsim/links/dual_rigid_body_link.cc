@@ -30,10 +30,9 @@ namespace MBSim {
 
   void DualRigidBodyLink::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(saved_ref!="")
+      if(not saved_ref.empty())
         connect(getByPath<RigidBody>(saved_ref));
-      else
-      if(saved_ref1!="" and saved_ref2!="")
+      else if(not saved_ref1.empty() and not saved_ref2.empty())
         connect(getByPath<RigidBody>(saved_ref1),getByPath<RigidBody>(saved_ref2));
       if(not body.size())
         throwError("No connection given!");

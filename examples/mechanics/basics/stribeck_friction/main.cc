@@ -29,7 +29,6 @@ int main (int argc, char* argv[]) {
   } 
   else {
     sys->setImpactSolver(DynamicSystemSolver::rootfinding);
-    sys->setLinearAlgebra(DynamicSystemSolver::pseudoinverse);
     sys->setStopIfNoConvergence(true,true);
     sys->initialize();
 

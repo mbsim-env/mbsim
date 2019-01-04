@@ -41,7 +41,7 @@ namespace MBSim {
 
   void MechanicalLinkObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(saved_link!="")
+      if(not saved_link.empty())
         setMechanicalLink(getByPath<MechanicalLink>(saved_link));
       Observer::init(stage, config);
     }

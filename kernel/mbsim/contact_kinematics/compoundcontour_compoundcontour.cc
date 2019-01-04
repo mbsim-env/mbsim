@@ -42,7 +42,7 @@ namespace MBSim {
     for(unsigned int i=0; i<contour0->getNumberOfElements(); i++) {
       for(unsigned int j=0; j<contour1->getNumberOfElements(); j++) {
         ContactKinematics *tmp = findContactPairingRigidRigid(typeid(*contour0->getContourElement(i)), typeid(*contour1->getContourElement(j)));
-        if (tmp == nullptr)
+        if (not tmp)
           tmp = findContactPairingRigidRigid(typeid(*contour1->getContourElement(j)), typeid(*contour0->getContourElement(i)));
         if(tmp) {
           contactKinematics.push_back(tmp); 
