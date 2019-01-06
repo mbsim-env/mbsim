@@ -32,12 +32,12 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  FlexibleBodyFFR::FlexibleBodyFFR() {
+  GenericFlexibleBodyFFR::GenericFlexibleBodyFFR() {
     InternalFrame *K = new InternalFrame("K",MBSIMFLEX%"enableOpenMBVFrameK","plotFeatureFrameK");
     addFrame(K);
   }
 
-  void FlexibleBodyFFR::removeXMLElements() {
+  void GenericFlexibleBodyFFR::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     while(e) {
       DOMNode *en=e->getNextSibling();
@@ -47,7 +47,7 @@ namespace MBSimGUI {
     }
   }
 
-  DOMElement* FlexibleBodyFFR::createXMLElement(DOMNode *parent) {
+  DOMElement* GenericFlexibleBodyFFR::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
     xercesc::DOMDocument *doc=ele0->getOwnerDocument();
     frames = D(doc)->createElement( MBSIMFLEX%"frames" );
@@ -65,7 +65,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  DOMElement* FlexibleBodyFFR::processIDAndHref(DOMElement *element) {
+  DOMElement* GenericFlexibleBodyFFR::processIDAndHref(DOMElement *element) {
     element = Body::processIDAndHref(element);
 
     // frames
@@ -82,13 +82,6 @@ namespace MBSimGUI {
       ELE=ELE->getNextElementSibling();
     }
 
-    ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
-    if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
-      ELE->insertBefore(id, nullptr);
-    }
-
     ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");
     if(ELE) {
       xercesc::DOMDocument *doc=element->getOwnerDocument();
@@ -99,7 +92,7 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* FlexibleBodyFFR::initializeUsingXML(DOMElement *element) {
+  DOMElement* GenericFlexibleBodyFFR::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Body::initializeUsingXML(element);
 
@@ -119,6 +112,35 @@ namespace MBSimGUI {
       c = Embed<Contour>::createAndInit(e,this);
       if(c) addContour(c);
       e=e->getNextElementSibling();
+    }
+
+    return element;
+  }
+
+  DOMElement* FlexibleBodyFFR::processIDAndHref(DOMElement *element) {
+    element = GenericFlexibleBodyFFR::processIDAndHref(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVFlexibleBody");
+    if(ELE) {
+      ELE = ELE->getFirstElementChild();
+      if(ELE) {
+        xercesc::DOMDocument *doc=element->getOwnerDocument();
+        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+        ELE->insertBefore(id, nullptr);
+      }
+    }
+
+    return element;
+  }
+
+  DOMElement* CalculixBody::processIDAndHref(DOMElement *element) {
+    element = GenericFlexibleBodyFFR::processIDAndHref(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
+    if(ELE) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, nullptr);
     }
 
     return element;

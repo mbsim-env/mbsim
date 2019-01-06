@@ -1,7 +1,9 @@
 SUBDIRS = finite_elements .
 
 noinst_LTLIBRARIES = libflexiblebody.la
-libflexiblebody_la_SOURCES = flexible_body_ffr.cc\
+libflexiblebody_la_SOURCES = generic_flexible_body_ffr.cc\
+                             flexible_body_ffr.cc\
+                             calculix_body.cc\
 			     flexible_body_1s.cc\
 			     flexible_body_1s_21_rcm.cc\
 			     flexible_body_1s_21_ancf.cc\
@@ -23,7 +25,9 @@ libflexiblebody_la_LIBADD += $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LI
 
 flexiblebodyincludedir = $(includedir)/mbsimFlexibleBody/flexible_body
 
-flexiblebodyinclude_HEADERS = flexible_body_ffr.h\
+flexiblebodyinclude_HEADERS = generic_flexible_body_ffr.h\
+			      flexible_body_ffr.h\
+			      calculix_body.h\
 			      flexible_body_1s.h\
 			      flexible_body_1s_21_rcm.h\
 			      flexible_body_1s_21_ancf.h\

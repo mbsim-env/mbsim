@@ -31,6 +31,28 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
+  OpenMBVFlexibleBody::OpenMBVFlexibleBody(unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp,ps,lw) {
+    cRL.resize(12);
+    cRL[0]="none";
+    cRL[1]="xDisplacement";
+    cRL[2]="yDisplacement";
+    cRL[3]="zDisplacement";
+    cRL[4]="totalDisplacement";
+    cRL[5]="xxStress";
+    cRL[6]="yyStress";
+    cRL[7]="zzStress";
+    cRL[8]="xyStress";
+    cRL[9]="yzStress";
+    cRL[10]="zxStress";
+    cRL[11]="equivalentStress";
+  }
+
+  shared_ptr<OpenMBV::DynamicIndexedFaceSet> OpenMBVCalculixBody::createOpenMBV() {
+    shared_ptr<OpenMBV::DynamicIndexedFaceSet> object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicIndexedFaceSet>();
+    initializeObject(object);
+    return object;
+  }
+
   shared_ptr<OpenMBV::DynamicNurbsCurve> OpenMBVDynamicNurbsCurve::createOpenMBV() {
     shared_ptr<OpenMBV::DynamicNurbsCurve> object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicNurbsCurve>();
     initializeObject(object);

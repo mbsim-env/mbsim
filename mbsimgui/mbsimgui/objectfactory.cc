@@ -177,6 +177,8 @@ namespace MBSimGUI {
       return new RigidBody;
     if(E(element)->getTagName()==MBSIMFLEX%"FlexibleBodyFFR")
       return new FlexibleBodyFFR;
+    if(E(element)->getTagName()==MBSIMFLEX%"CalculixBody")
+      return new CalculixBody;
     else
       return new UnknownObject;
     return nullptr;

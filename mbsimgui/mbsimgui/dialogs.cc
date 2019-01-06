@@ -27,7 +27,6 @@
 #include "constraint.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
-#include "import_widgets.h"
 #include "mainwindow.h"
 #include "octave_utils.h"
 #include "data_plot.h"
@@ -326,27 +325,6 @@ namespace MBSimGUI {
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox);
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-  }
-
-  ImportDialog::ImportDialog(QWidget *parent) : QDialog(parent) {
-    setWindowTitle(QString("Import dialog"));
-    auto *layout = new QVBoxLayout;
-    setLayout(layout);
-    import = new ImportWidget;
-    layout->addWidget(import);
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
-    buttonBox->addButton(QDialogButtonBox::Cancel);
-    buttonBox->addButton(QDialogButtonBox::Ok);
-    layout->addWidget(buttonBox);
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(checkFile()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-  }
-
-  void ImportDialog::checkFile() {
-    if(not QFileInfo(mw->getProjectDir().absoluteFilePath(import->getResultFile())).isFile())
-      QMessageBox::warning(nullptr, "Import error", "File does not exist.");
-    else
-      accept();
   }
 
 }

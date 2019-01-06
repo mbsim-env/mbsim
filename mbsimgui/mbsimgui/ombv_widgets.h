@@ -175,6 +175,13 @@ namespace MBSimGUI {
       ExtWidget *size, *offset;
   };
 
+  class FlexibleBodyMBSOMBVWidget : public MBSOMBVDynamicColoreBodyWidget {
+
+    public:
+      FlexibleBodyMBSOMBVWidget(const std::vector<QString> &cRL=getColorRepresentation()) : MBSOMBVDynamicColoreBodyWidget(cRL) { }
+      static std::vector<QString> getColorRepresentation();
+  };
+
   class OMBVObjectWidget : public Widget {
 
     public:

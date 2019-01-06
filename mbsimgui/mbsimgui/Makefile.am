@@ -42,7 +42,6 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   ombv_widgets.cc \
 		   extended_widgets.cc \
 		   special_widgets.cc \
-		   import_widgets.cc \
 		   property_dialog.cc \
 		   element_property_dialog.cc \
 		   solver_property_dialog.cc \
@@ -59,7 +58,6 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   echo_view.cc \
 		   dialogs.cc  \
 		   utils.cc \
-		   import.cc \
 		   main.cc \
 		   embed.cc \
 		   solver.cc \
@@ -80,7 +78,6 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   function_widgets.moc.cc \
 		   extended_widgets.moc.cc \
 		   special_widgets.moc.cc \
-		   import_widgets.moc.cc \
 		   property_dialog.moc.cc  \
 		   element_property_dialog.moc.cc \
 		   element_context_menu.moc.cc \

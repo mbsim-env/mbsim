@@ -451,6 +451,9 @@ namespace MBSimGUI {
     action = new QAction("Add flexible body ffr", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleBodyFFR()));
     addAction(action);
+    action = new QAction("Add calculix body", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addCalculixBody()));
+    addAction(action);
   }
 
   void BodiesContextMenu::addRigidBody() {
@@ -459,6 +462,10 @@ namespace MBSimGUI {
 
   void BodiesContextMenu::addFlexibleBodyFFR() {
     mw->addObject(new FlexibleBodyFFR, element);
+  }
+
+  void BodiesContextMenu::addCalculixBody() {
+    mw->addObject(new CalculixBody, element);
   }
 
   LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : BasicElementMenu(element,title,parent) {

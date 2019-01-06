@@ -180,6 +180,7 @@ namespace MBSimGUI {
     protected slots:
       void addRigidBody();
       void addFlexibleBodyFFR();
+      void addCalculixBody();
   };
 
   class LinksContextMenu : public BasicElementMenu {

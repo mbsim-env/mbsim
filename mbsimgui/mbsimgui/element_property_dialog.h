@@ -26,7 +26,6 @@ namespace MBSimGUI {
 
   class Element;
   class ExtWidget;
-  class ImportDialog;
 
   class ElementPropertyDialog : public EmbedItemPropertyDialog {
 
@@ -361,29 +360,49 @@ namespace MBSimGUI {
       void resizeGeneralizedPosition() override;
       void resizeGeneralizedVelocity() override;
       int getqRelSize() const; 
-      int getuRelSize() const; 
+      int getuRelSize() const { return getqRelSize(); }
     protected:
       ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *bodyFixedRepresentationOfAngularVelocity, *ombv, *ombvFrameRef, *weightArrow, *jointForceArrow, *jointMomentArrow;
   };
 
-  class FlexibleBodyFFRPropertyDialog : public BodyPropertyDialog {
-    Q_OBJECT
+  class GenericFlexibleBodyFFRPropertyDialog : public BodyPropertyDialog {
 
     public:
-      FlexibleBodyFFRPropertyDialog(Element *body_);
-      ~FlexibleBodyFFRPropertyDialog();
+      GenericFlexibleBodyFFRPropertyDialog(Element *body_);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       void resizeGeneralizedPosition() override;
       void resizeGeneralizedVelocity() override;
       int getqRelSize() const;
-      int getuRelSize() const;
+      int getuRelSize() const { return getqRelSize(); }
+      virtual int getqERelSize() const { return 0; }
     protected:
-      ExtWidget *mass, *rdm, *rrdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombv, *ombvNodes, *ombvColorRepresentation;
-      ImportDialog *dialog{0};
+      ExtWidget *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation;
+  };
+
+  class FlexibleBodyFFRPropertyDialog : public GenericFlexibleBodyFFRPropertyDialog {
+    Q_OBJECT
+
+    public:
+      FlexibleBodyFFRPropertyDialog(Element *body_);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      int getqERelSize() const override;
+    protected:
+      ExtWidget *mass, *rdm, *rrdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *ombv, *ombvNodes, *ombvColorRepresentation;
       void updateWidget() override;
-    protected slots:
-      void import();
+  };
+
+  class CalculixBodyPropertyDialog : public GenericFlexibleBodyFFRPropertyDialog {
+    Q_OBJECT
+
+    public:
+      CalculixBodyPropertyDialog(Element *body_);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      int getqERelSize() const override;
+    protected:
+      ExtWidget *resultFileName, *ombv;
   };
 
   class ConstraintPropertyDialog : public ElementPropertyDialog {

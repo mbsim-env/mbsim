@@ -36,7 +36,6 @@ namespace MBSimGUI {
   class TreeItemData;
   class Element;
   class DataPlot;
-  class ImportWidget;
 
   class ElementItem : public QTreeWidgetItem {
     private:
@@ -129,17 +128,6 @@ namespace MBSimGUI {
   class SourceDialog : public QDialog {
     public:
       SourceDialog(Element *element, QWidget *parent);
-  };
-
-  class ImportDialog : public QDialog {
-    Q_OBJECT
-    public:
-      ImportDialog(QWidget *parent);
-      ImportWidget *getImportWidget() { return import; }
-    private:
-      ImportWidget *import;
-    private slots:
-      void checkFile();
   };
 
 }

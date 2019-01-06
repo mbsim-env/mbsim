@@ -393,6 +393,23 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  vector<QString> FlexibleBodyMBSOMBVWidget::getColorRepresentation() {
+    vector<QString> cRL;
+    cRL.emplace_back("\"none\"");
+    cRL.emplace_back("\"xDisplacement\"");
+    cRL.emplace_back("\"yDisplacement\"");
+    cRL.emplace_back("\"zDisplacement\"");
+    cRL.emplace_back("\"totalDisplacement\"");
+    cRL.emplace_back("\"xxStress\"");
+    cRL.emplace_back("\"yyStress\"");
+    cRL.emplace_back("\"zzStress\"");
+    cRL.emplace_back("\"xyStress\"");
+    cRL.emplace_back("\"yzStress\"");
+    cRL.emplace_back("\"zxStress\"");
+    cRL.emplace_back("\"equivalentStress\"");
+    return cRL;
+  }
+
   DOMElement* OMBVObjectWidget::initializeUsingXML(DOMElement *element) {
     return element;
   }

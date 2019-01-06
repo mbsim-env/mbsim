@@ -24,11 +24,9 @@
 
 namespace MBSimGUI {
 
-  class FlexibleBodyFFR : public Body {
-    friend class FlexibleBodyFFRPropertyDialog;
+  class GenericFlexibleBodyFFR : public Body {
     public:
-      FlexibleBodyFFR();
-      QString getType() const override { return "FlexibleBodyFFR"; }
+      GenericFlexibleBodyFFR();
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
       xercesc::DOMElement* getXMLFrames() override { return frames; }
       xercesc::DOMElement* getXMLContours() override { return contours; }
@@ -36,10 +34,25 @@ namespace MBSimGUI {
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      ElementPropertyDialog* createPropertyDialog() override { return new FlexibleBodyFFRPropertyDialog(this); }
       QMenu* createFrameContextMenu() override { return new NodeFramesContextMenu(this); }
     protected:
       xercesc::DOMElement *frames, *contours;
+  };
+
+  class FlexibleBodyFFR : public GenericFlexibleBodyFFR {
+    friend class FlexibleBodyFFRPropertyDialog;
+    public:
+      QString getType() const override { return "FlexibleBodyFFR"; }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      ElementPropertyDialog* createPropertyDialog() override { return new FlexibleBodyFFRPropertyDialog(this); }
+  };
+
+  class CalculixBody : public GenericFlexibleBodyFFR {
+    friend class CalculixBodyPropertyDialog;
+    public:
+      QString getType() const override { return "CalculixBody"; }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      ElementPropertyDialog* createPropertyDialog() override { return new CalculixBodyPropertyDialog(this); }
   };
 
 }
