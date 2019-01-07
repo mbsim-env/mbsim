@@ -26,15 +26,15 @@
 namespace MBSim {
 
   /**
-   * \brief FCLContour
+   * \brief FclContour
    */
-  class FCLContour : public RigidContour {
+  class FclContour : public RigidContour {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      FCLContour(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
+      FclContour(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
 
       void init(InitStage stage, const InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;

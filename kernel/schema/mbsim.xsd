@@ -3299,14 +3299,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="FCLContour" substitutionGroup="RigidContour" type="FCLContourType">
+  <xs:element name="FclContour" substitutionGroup="RigidContour" type="FclContourType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         FCL-Kontur.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="FCLContourType">
+  <xs:complexType name="FclContourType">
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
@@ -3316,16 +3316,16 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="FCLBox" substitutionGroup="FCLContour" type="FCLBoxType">
+  <xs:element name="FclBox" substitutionGroup="FclContour" type="FclBoxType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         FCL-Box.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="FCLBoxType">
+  <xs:complexType name="FclBoxType">
     <xs:complexContent>
-      <xs:extension base="FCLContourType">
+      <xs:extension base="FclContourType">
         <xs:sequence>
           <xs:element name="length" type="pv:lengthVector"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
@@ -3338,16 +3338,16 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="FCLSphere" substitutionGroup="FCLContour" type="FCLSphereType">
+  <xs:element name="FclSphere" substitutionGroup="FclContour" type="FclSphereType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         FCL-Sphere.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="FCLSphereType">
+  <xs:complexType name="FclSphereType">
     <xs:complexContent>
-      <xs:extension base="FCLContourType">
+      <xs:extension base="FclContourType">
         <xs:sequence>
           <xs:element name="radius" type="pv:lengthScalar">
             <xs:annotation>
@@ -3371,16 +3371,16 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="FCLPlane" substitutionGroup="FCLContour" type="FCLPlaneType">
+  <xs:element name="FclPlane" substitutionGroup="FclContour" type="FclPlaneType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         FCL-Plane.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="FCLPlaneType">
+  <xs:complexType name="FclPlaneType">
     <xs:complexContent>
-      <xs:extension base="FCLContourType">
+      <xs:extension base="FclContourType">
         <xs:sequence>
           <xs:element name="normal" type="pv:nounitVector"/>
           <xs:element name="offset" type="pv:lengthScalar"/>
@@ -3394,16 +3394,16 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="FCLMesh" substitutionGroup="FCLContour" type="FCLMeshType">
+  <xs:element name="FclMesh" substitutionGroup="FclContour" type="FclMeshType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         FCL-Mesh.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="FCLMeshType">
+  <xs:complexType name="FclMeshType">
     <xs:complexContent>
-      <xs:extension base="FCLContourType">
+      <xs:extension base="FclContourType">
         <xs:sequence>
           <xs:element name="vertices" type="pv:lengthMatrix"/>
           <xs:element name="triangles" type="pv:indexMatrix"/>

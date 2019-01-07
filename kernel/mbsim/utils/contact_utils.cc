@@ -233,26 +233,26 @@ namespace MBSim {
       return new ContactKinematicsGearWheelGearWheel;
 
 #ifdef HAVE_FCL
-    else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLBox) )
-      return new ContactKinematicsFCLContourFCLContour(4);
+    else if ( contour0==typeid(FclBox) && contour1==typeid(FclBox) )
+      return new ContactKinematicsFclContourFclContour(4);
 
-    else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLSphere) )
-      return new ContactKinematicsFCLContourFCLContour(1);
+    else if ( contour0==typeid(FclBox) && contour1==typeid(FclSphere) )
+      return new ContactKinematicsFclContourFclContour(1);
 
-//    else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLPlane) )
-//      return new ContactKinematicsFCLContourFCLContour(4);
+//    else if ( contour0==typeid(FclBox) && contour1==typeid(FclPlane) )
+//      return new ContactKinematicsFclContourFclContour(4);
 
-    else if ( contour0==typeid(FCLSphere) && contour1==typeid(FCLPlane) )
-      return new ContactKinematicsFCLContourFCLContour(1);
+    else if ( contour0==typeid(FclSphere) && contour1==typeid(FclPlane) )
+      return new ContactKinematicsFclContourFclContour(1);
 
-//    else if ( contour0==typeid(FCLBox) && contour1==typeid(FCLMesh) )
-//      return new ContactKinematicsFCLContourFCLContour(1);
+//    else if ( contour0==typeid(FclBox) && contour1==typeid(FclMesh) )
+//      return new ContactKinematicsFclContourFclContour(1);
 
-    else if ( contour0==typeid(FCLMesh) && contour1==typeid(FCLMesh) )
-      return new ContactKinematicsFCLContourFCLContour(1);
+    else if ( contour0==typeid(FclMesh) && contour1==typeid(FclMesh) )
+      return new ContactKinematicsFclContourFclContour(1);
 
-//    else if ( dynamic_cast<FCLContour*>(c0) && dynamic_cast<FCLContour*>(c1) )
-//      return new ContactKinematicsFCLContourFCLContour(1);
+//    else if ( dynamic_cast<FclContour*>(c0) && dynamic_cast<FclContour*>(c1) )
+//      return new ContactKinematicsFclContourFclContour(1);
 #endif
 
     else

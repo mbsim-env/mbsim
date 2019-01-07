@@ -28,9 +28,9 @@
 namespace MBSim {
 
   /**
-   * \brief FCLMesh
+   * \brief FclMesh
    */
-  class FCLMesh : public FCLContour {
+  class FclMesh : public FclContour {
     public:
       /**
        * \brief possible collision structures
@@ -53,7 +53,7 @@ namespace MBSim {
        * \param length of box
        * \param R frame of reference
        */
-      FCLMesh(const std::string &name="", Frame *R=nullptr) : FCLContour(name,R) { }
+      FclMesh(const std::string &name="", Frame *R=nullptr) : FclContour(name,R) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/

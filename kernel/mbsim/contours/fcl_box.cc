@@ -31,20 +31,20 @@ using namespace fcl;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FCLBox)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FclBox)
 
-  void FCLBox::init(InitStage stage, const InitConfigSet &config) {
+  void FclBox::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
       cg = shared_ptr<CollisionGeometry<double> >(new Box<double>(lx,ly,lz));
     else if (stage == plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(lx,ly,lz);
     }
-    FCLContour::init(stage, config);
+    FclContour::init(stage, config);
   }
 
-  void FCLBox::initializeUsingXML(DOMElement *element) {
-    FCLContour::initializeUsingXML(element);
+  void FclBox::initializeUsingXML(DOMElement *element) {
+    FclContour::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"length");
     setLength(E(e)->getText<Vec3>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");

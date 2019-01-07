@@ -27,16 +27,16 @@
 namespace MBSim {
 
   /**
-   * \brief FCLPlane
+   * \brief FclPlane
    */
-  class FCLPlane : public FCLContour {
+  class FclPlane : public FclContour {
     public:
       /**
        * \brief constructor
        * \param name of plane
        * \param R frame of reference
        */
-      FCLPlane(const std::string &name="", Frame *R=nullptr) : FCLContour(name,R) { normal(0) = 1; }
+      FclPlane(const std::string &name="", Frame *R=nullptr) : FclContour(name,R) { normal(0) = 1; }
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/

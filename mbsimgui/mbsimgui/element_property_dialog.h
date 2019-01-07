@@ -262,49 +262,49 @@ namespace MBSimGUI {
       ExtWidget *interpolation, *indices, *etaKnotVector, *xiKnotVector, *etaDegree, *xiDegree, *openEta, *openXi, *visu;
   };
 
-  class FCLContourPropertyDialog : public RigidContourPropertyDialog {
+  class FclContourPropertyDialog : public RigidContourPropertyDialog {
     public:
-      FCLContourPropertyDialog(Element *contour);
+      FclContourPropertyDialog(Element *contour);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *computeLocalAABB;
   };
 
-  class FCLBoxPropertyDialog : public FCLContourPropertyDialog {
+  class FclBoxPropertyDialog : public FclContourPropertyDialog {
 
     public:
-      FCLBoxPropertyDialog(Element *contour);
+      FclBoxPropertyDialog(Element *contour);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *length, *visu;
   };
 
-  class FCLSpherePropertyDialog : public FCLContourPropertyDialog {
+  class FclSpherePropertyDialog : public FclContourPropertyDialog {
 
     public:
-      FCLSpherePropertyDialog(Element *contour);
+      FclSpherePropertyDialog(Element *contour);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *radius, *visu;
   };
 
-  class FCLPlanePropertyDialog : public FCLContourPropertyDialog {
+  class FclPlanePropertyDialog : public FclContourPropertyDialog {
 
     public:
-      FCLPlanePropertyDialog(Element *contour);
+      FclPlanePropertyDialog(Element *contour);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *normal, *offset, *visu;
   };
 
-  class FCLMeshPropertyDialog : public FCLContourPropertyDialog {
+  class FclMeshPropertyDialog : public FclContourPropertyDialog {
 
     public:
-      FCLMeshPropertyDialog(Element *contour);
+      FclMeshPropertyDialog(Element *contour);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
