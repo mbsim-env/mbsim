@@ -395,7 +395,7 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
     addSeparator();
-    action = new QAction("Add", this);
+    action = new QAction("Add group", this);
     connect(action,SIGNAL(triggered()),this,SLOT(add()));
     addAction(action);
   }
