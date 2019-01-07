@@ -25,16 +25,16 @@
 
 namespace MBSim {
 
-  class FCLContour;
+  class FclContour;
 
   /** 
    * \brief pairing contour to contour using FCL
    * \author Martin Foerg
    */
-  class ContactKinematicsFCLContourFCLContour : public ContactKinematics {
+  class ContactKinematicsFclContourFclContour : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
-      ContactKinematicsFCLContourFCLContour(int maxNumContacts=1) : ContactKinematics(maxNumContacts) { }
+      ContactKinematicsFclContourFclContour(int maxNumContacts=1) : ContactKinematics(maxNumContacts) { }
       void assignContours(const std::vector<Contour*> &contour) override;
       void updateg(std::vector<SingleContact> &contact) override;
       /***************************************************/
@@ -48,7 +48,7 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      FCLContour *contour0, *contour1;
+      FclContour *contour0, *contour1;
 
       std::shared_ptr<fcl::CollisionObject<double> > obj0, obj1;
   };

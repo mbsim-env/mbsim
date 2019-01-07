@@ -31,20 +31,20 @@ using namespace fcl;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FCLSphere)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FclSphere)
 
-  void FCLSphere::init(InitStage stage, const InitConfigSet &config) {
+  void FclSphere::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
       cg = shared_ptr<CollisionGeometry<double> >(new Sphere<double>(r));
     else if (stage == plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Sphere>(openMBVRigidBody)->setRadius(r);
     }
-    FCLContour::init(stage, config);
+    FclContour::init(stage, config);
   }
 
-  void FCLSphere::initializeUsingXML(DOMElement *element) {
-    FCLContour::initializeUsingXML(element);
+  void FclSphere::initializeUsingXML(DOMElement *element) {
+    FclContour::initializeUsingXML(element);
     DOMElement* e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"radius");
     setRadius(E(e)->getText<double>());

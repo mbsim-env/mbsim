@@ -32,9 +32,9 @@ using namespace fcl;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FCLMesh)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FclMesh)
 
-  void FCLMesh::init(InitStage stage, const InitConfigSet &config) {
+  void FclMesh::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       vector<Vector3d> vertices(vertex.rows());
       vector<Triangle> triangles(triangle.rows());
@@ -93,7 +93,7 @@ namespace MBSim {
         static_cast<BVHModel<fcl::RSS<double> >*>(cg.get())->endModel();
       }
       else if(collisionStructure==unknown)
-        throwError("(FCLMesh::init): unknown collision structure");
+        throwError("(FclMesh::init): unknown collision structure");
     }
     else if (stage == plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
@@ -108,11 +108,11 @@ namespace MBSim {
         static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setIndices(indices);
       }
     }
-    FCLContour::init(stage, config);
+    FclContour::init(stage, config);
   }
 
-  void FCLMesh::initializeUsingXML(DOMElement *element) {
-    FCLContour::initializeUsingXML(element);
+  void FclMesh::initializeUsingXML(DOMElement *element) {
+    FclContour::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"vertices");
     vertex = E(e)->getText<MatVx3>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"triangles");

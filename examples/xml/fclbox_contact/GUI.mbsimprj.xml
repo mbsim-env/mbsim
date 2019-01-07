@@ -9,7 +9,7 @@
     <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
     <frames/>
     <contours>
-      <FCLBox name="FCLBox">
+      <FclBox name="FclBox">
         <length unit="m">
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <ele>4</ele>
@@ -20,7 +20,7 @@
         <enableOpenMBV>
           <transparency unit="-">0.3</transparency>
         </enableOpenMBV>
-      </FCLBox>
+      </FclBox>
     </contours>
     <groups/>
     <objects>
@@ -73,7 +73,7 @@
         </stateDependentRotation>
         <frames/>
         <contours>
-          <FCLBox name="FCLBox">
+          <FclBox name="FclBox">
             <length unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>0.3</ele>
@@ -91,7 +91,7 @@
               </diffuseColor>
               <transparency unit="-">0.3</transparency>
             </enableOpenMBV>
-          </FCLBox>
+          </FclBox>
         </contours>
         <enableOpenMBVFrameC>
           <size unit="dm">1</size>
@@ -99,7 +99,7 @@
     </objects>
     <links>
       <Contact name="Contact">
-        <connect ref1="../Contour[FCLBox]" ref2="../Object[RigidBody]/Contour[FCLBox]"/>
+        <connect ref1="../Contour[FclBox]" ref2="../Object[RigidBody]/Contour[FclBox]"/>
         <normalForceLaw>
           <UnilateralConstraint/>
         </normalForceLaw>

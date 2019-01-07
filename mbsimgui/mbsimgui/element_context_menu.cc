@@ -274,16 +274,16 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialNurbsContourFFR()));
     addAction(action);
     action = new QAction("Add fcl box", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFCLBox()));
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclBox()));
     addAction(action);
     action = new QAction("Add fcl sphere", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFCLSphere()));
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclSphere()));
     addAction(action);
     action = new QAction("Add fcl plane", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFCLPlane()));
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclPlane()));
     addAction(action);
     action = new QAction("Add fcl mesh", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFCLMesh()));
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclMesh()));
     addAction(action);
   }
 
@@ -367,20 +367,20 @@ namespace MBSimGUI {
     mw->addContour(new FlexibleSpatialNurbsContourFFR, element);
   }
 
-  void ContoursContextMenu::addFCLBox() {
-    mw->addContour(new FCLBox, element);
+  void ContoursContextMenu::addFclBox() {
+    mw->addContour(new FclBox, element);
   }
 
-  void ContoursContextMenu::addFCLSphere() {
-    mw->addContour(new FCLSphere, element);
+  void ContoursContextMenu::addFclSphere() {
+    mw->addContour(new FclSphere, element);
   }
 
-  void ContoursContextMenu::addFCLPlane() {
-    mw->addContour(new FCLPlane, element);
+  void ContoursContextMenu::addFclPlane() {
+    mw->addContour(new FclPlane, element);
   }
 
-  void ContoursContextMenu::addFCLMesh() {
-    mw->addContour(new FCLMesh, element);
+  void ContoursContextMenu::addFclMesh() {
+    mw->addContour(new FclMesh, element);
   }
 
   GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
@@ -395,7 +395,7 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
     addSeparator();
-    action = new QAction("Add", this);
+    action = new QAction("Add group", this);
     connect(action,SIGNAL(triggered()),this,SLOT(add()));
     addAction(action);
   }

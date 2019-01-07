@@ -13,7 +13,7 @@
     <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
     <frames/>
     <contours>
-      <FCLMesh name="FCLMesh">
+      <FclMesh name="FclMesh">
         <vertices unit="m">
           <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <row>
@@ -54,7 +54,7 @@
         </triangles>
         <collisionStructure>cs</collisionStructure>
         <enableOpenMBV/>
-      </FCLMesh>
+      </FclMesh>
     </contours>
     <groups/>
     <objects>
@@ -107,7 +107,7 @@
         </stateDependentRotation>
         <frames/>
         <contours>
-          <FCLMesh name="FCLMesh">
+          <FclMesh name="FclMesh">
             <vertices unit="dm">[ 1 0 0,
                           -1 0 0,
                           0 1 0,
@@ -126,7 +126,7 @@
             </triangles>
             <collisionStructure>cs</collisionStructure>
             <enableOpenMBV/>
-          </FCLMesh>
+          </FclMesh>
         </contours>
         <enableOpenMBVFrameC>
           <size unit="dm">1</size>
@@ -134,7 +134,7 @@
     </objects>
     <links>
       <Contact name="Contact">
-        <connect ref1="../Contour[FCLMesh]" ref2="../Object[RigidBody]/Contour[FCLMesh]"/>
+        <connect ref1="../Contour[FclMesh]" ref2="../Object[RigidBody]/Contour[FclMesh]"/>
         <normalForceLaw>
           <UnilateralConstraint/>
         </normalForceLaw>

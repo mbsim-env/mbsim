@@ -32,15 +32,15 @@ using namespace fcl;
 
 namespace MBSim {
 
-  void ContactKinematicsFCLContourFCLContour::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsFclContourFclContour::assignContours(const vector<Contour*> &contour) {
     icontour0 = 0; icontour1 = 1;
-    contour0 = static_cast<FCLContour*>(contour[0]);
-    contour1 = static_cast<FCLContour*>(contour[1]);
+    contour0 = static_cast<FclContour*>(contour[0]);
+    contour1 = static_cast<FclContour*>(contour[1]);
     obj0 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(contour0->getCollisionGeometry()));
     obj1 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(contour1->getCollisionGeometry()));
   }
 
-  void ContactKinematicsFCLContourFCLContour::updateg(vector<SingleContact> &contact) {
+  void ContactKinematicsFclContourFclContour::updateg(vector<SingleContact> &contact) {
     obj0->setTranslation(Vec3ToVector3d(contour0->getFrame()->evalPosition()));
     obj0->setRotation(SqrMat3ToMatrix3d(contour0->getFrame()->getOrientation()));
     obj1->setTranslation(Vec3ToVector3d(contour1->getFrame()->evalPosition()));

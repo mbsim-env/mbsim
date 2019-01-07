@@ -27,9 +27,9 @@
 namespace MBSim {
 
   /**
-   * \brief FCLBox
+   * \brief FclBox
    */
-  class FCLBox : public FCLContour {
+  class FclBox : public FclContour {
     public:
       /**
        * \brief constructor
@@ -37,7 +37,7 @@ namespace MBSim {
        * \param length of box
        * \param R frame of reference
        */
-      FCLBox(const std::string &name="", const fmatvec::Vec3 &length=fmatvec::Vec3(fmatvec::INIT,1), Frame *R=nullptr) : FCLContour(name,R), lx(length(0)), ly(length(1)), lz(length(2)) { }
+      FclBox(const std::string &name="", const fmatvec::Vec3 &length=fmatvec::Vec3(fmatvec::INIT,1), Frame *R=nullptr) : FclContour(name,R), lx(length(0)), ly(length(1)), lz(length(2)) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/

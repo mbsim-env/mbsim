@@ -32,9 +32,9 @@ using namespace fcl;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FCLPlane)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FclPlane)
 
-  void FCLPlane::init(InitStage stage, const InitConfigSet &config) {
+  void FclPlane::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
       cg = shared_ptr<CollisionGeometry<double> >(new Plane<double>(Vec3ToVector3d(normal),offset));
     else if(stage==plotting) {
@@ -53,11 +53,11 @@ namespace MBSim {
         openMBVRigidBody->setInitialRotation(al,be,ga);
       }
     }
-    FCLContour::init(stage, config);
+    FclContour::init(stage, config);
   }
 
-  void FCLPlane::initializeUsingXML(DOMElement *element) {
-    FCLContour::initializeUsingXML(element);
+  void FclPlane::initializeUsingXML(DOMElement *element) {
+    FclContour::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"normal");
     setNormal(E(e)->getText<Vec3>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"offset");

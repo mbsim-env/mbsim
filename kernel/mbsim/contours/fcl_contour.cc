@@ -29,13 +29,13 @@ using namespace fcl;
 
 namespace MBSim {
 
-  void FCLContour::init(InitStage stage, const InitConfigSet &config) {
+  void FclContour::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
       if(computeLocalAABB) cg->computeLocalAABB();
     RigidContour::init(stage, config);
   }
 
-  void FCLContour::initializeUsingXML(DOMElement *element) {
+  void FclContour::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"computeLocalAABB");
     if(e) setComputeLocalAABB(E(e)->getText<bool>());

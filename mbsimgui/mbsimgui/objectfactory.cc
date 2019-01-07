@@ -134,14 +134,14 @@ namespace MBSimGUI {
       return new FlexibleSpatialNurbsContour;
     else if(E(element)->getTagName()==MBSIMFLEX%"FlexibleSpatialNurbsContourFFR")
       return new FlexibleSpatialNurbsContourFFR;
-    else if(E(element)->getTagName()==MBSIM%"FCLBox")
-      return new FCLBox;
-    else if(E(element)->getTagName()==MBSIM%"FCLSphere")
-      return new FCLSphere;
-    else if(E(element)->getTagName()==MBSIM%"FCLPlane")
-      return new FCLPlane;
-    else if(E(element)->getTagName()==MBSIM%"FCLMesh")
-      return new FCLMesh;
+    else if(E(element)->getTagName()==MBSIM%"FclBox")
+      return new FclBox;
+    else if(E(element)->getTagName()==MBSIM%"FclSphere")
+      return new FclSphere;
+    else if(E(element)->getTagName()==MBSIM%"FclPlane")
+      return new FclPlane;
+    else if(E(element)->getTagName()==MBSIM%"FclMesh")
+      return new FclMesh;
     else
       return new UnknownContour;
     return nullptr;
