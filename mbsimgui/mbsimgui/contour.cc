@@ -30,7 +30,7 @@ namespace MBSimGUI {
 
   DOMElement* Contour::processIDAndHref(DOMElement *element) {
     element = Element::processIDAndHref(element);
-    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(getNameSpace()%"enableOpenMBV");
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
