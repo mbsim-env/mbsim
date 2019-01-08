@@ -261,30 +261,13 @@ namespace MBSimGUI {
     action = new QAction("Add gear wheel", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGearWheel()));
     addAction(action);
-    action = new QAction("Add flexible planar nurbs contour", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarNurbsContour()));
-    addAction(action);
-    action = new QAction("Add flexible planar nurbs contour ffr", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarNurbsContourFFR()));
-    addAction(action);
-    action = new QAction("Add flexible spatial nurbs contour", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialNurbsContour()));
-    addAction(action);
-    action = new QAction("Add flexible spatial nurbs contour ffr", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialNurbsContourFFR()));
-    addAction(action);
-    action = new QAction("Add fcl box", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFclBox()));
-    addAction(action);
-    action = new QAction("Add fcl sphere", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFclSphere()));
-    addAction(action);
-    action = new QAction("Add fcl plane", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFclPlane()));
-    addAction(action);
-    action = new QAction("Add fcl mesh", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFclMesh()));
-    addAction(action);
+
+    QMenu *menu = new FlexibleContoursContextMenu(element, "Add flexible contour");
+    addMenu(menu);
+
+    menu = new FclContoursContextMenu(element, "Add fcl contour");
+    addMenu(menu);
+
   }
 
   void ContoursContextMenu::paste() {
@@ -351,35 +334,65 @@ namespace MBSimGUI {
     mw->addContour(new GearWheel, element);
   }
 
-  void ContoursContextMenu::addFlexiblePlanarNurbsContour() {
+  FlexibleContoursContextMenu::FlexibleContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+    QAction *action = new QAction("Add flexible planar nurbs contour", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarNurbsContour()));
+    addAction(action);
+    action = new QAction("Add flexible planar nurbs contour ffr", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarNurbsContourFFR()));
+    addAction(action);
+    action = new QAction("Add flexible spatial nurbs contour", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialNurbsContour()));
+    addAction(action);
+    action = new QAction("Add flexible spatial nurbs contour ffr", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialNurbsContourFFR()));
+    addAction(action);
+  }
+
+  void FlexibleContoursContextMenu::addFlexiblePlanarNurbsContour() {
     mw->addContour(new FlexiblePlanarNurbsContour, element);
   }
 
-  void ContoursContextMenu::addFlexiblePlanarNurbsContourFFR() {
+  void FlexibleContoursContextMenu::addFlexiblePlanarNurbsContourFFR() {
     mw->addContour(new FlexiblePlanarNurbsContourFFR, element);
   }
 
-  void ContoursContextMenu::addFlexibleSpatialNurbsContour() {
+  void FlexibleContoursContextMenu::addFlexibleSpatialNurbsContour() {
     mw->addContour(new FlexibleSpatialNurbsContour, element);
   }
 
-  void ContoursContextMenu::addFlexibleSpatialNurbsContourFFR() {
+  void FlexibleContoursContextMenu::addFlexibleSpatialNurbsContourFFR() {
     mw->addContour(new FlexibleSpatialNurbsContourFFR, element);
   }
 
-  void ContoursContextMenu::addFclBox() {
+  FclContoursContextMenu::FclContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+    QAction *action = new QAction("Add fcl box", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclBox()));
+    addAction(action);
+    action = new QAction("Add fcl sphere", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclSphere()));
+    addAction(action);
+    action = new QAction("Add fcl plane", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclPlane()));
+    addAction(action);
+    action = new QAction("Add fcl mesh", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclMesh()));
+    addAction(action);
+  }
+
+  void FclContoursContextMenu::addFclBox() {
     mw->addContour(new FclBox, element);
   }
 
-  void ContoursContextMenu::addFclSphere() {
+  void FclContoursContextMenu::addFclSphere() {
     mw->addContour(new FclSphere, element);
   }
 
-  void ContoursContextMenu::addFclPlane() {
+  void FclContoursContextMenu::addFclPlane() {
     mw->addContour(new FclPlane, element);
   }
 
-  void ContoursContextMenu::addFclMesh() {
+  void FclContoursContextMenu::addFclMesh() {
     mw->addContour(new FclMesh, element);
   }
 
@@ -558,11 +571,6 @@ namespace MBSimGUI {
 
   void LinksContextMenu::addDiskContact() {
     mw->addLink(new DiskContact, element);
-  }
-
-  void LinksContextMenu::addSignal() {
-    SignalsContextMenu menu(element);
-    menu.exec(QCursor::pos());
   }
 
   void LinksContextMenu::addGeneralizedSpringDamper() {
@@ -756,11 +764,6 @@ namespace MBSimGUI {
     action = new QAction("Add extern signal sink", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addExternSignalSink()));
     addAction(action);
-  }
-
-  void SignalsContextMenu::addSensor() {
-    SensorsContextMenu menu(element);
-    menu.exec(QCursor::pos());
   }
 
   void SignalsContextMenu::addMultiplexer() {
