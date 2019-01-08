@@ -1233,7 +1233,7 @@ namespace MBSimGUI {
     if(not size) u0->setActive(false);
   }
 
-  GenericFlexibleBodyFFRPropertyDialog::GenericFlexibleBodyFFRPropertyDialog(Element *body) : BodyPropertyDialog(body) {
+  GenericFlexibleFfrBodyPropertyDialog::GenericFlexibleFfrBodyPropertyDialog(Element *body) : BodyPropertyDialog(body) {
     addTab("Visualisation",3);
     addTab("Nodal data");
 
@@ -1252,7 +1252,7 @@ namespace MBSimGUI {
     addToTab("Kinematics", coordinateTransformationForRotation);
   }
 
-  int GenericFlexibleBodyFFRPropertyDialog::getqRelSize() const {
+  int GenericFlexibleFfrBodyPropertyDialog::getqRelSize() const {
     int nqT=0, nqR=0;
     if(translation->isActive()) {
       if(static_cast<ChoiceWidget2*>(translation->getWidget())->getIndex()!=1) {
@@ -1271,19 +1271,19 @@ namespace MBSimGUI {
     return nqT + nqR + getqERelSize();
   }
 
-  void GenericFlexibleBodyFFRPropertyDialog::resizeGeneralizedPosition() {
+  void GenericFlexibleFfrBodyPropertyDialog::resizeGeneralizedPosition() {
     int size =  getqRelSize();
     q0->resize_(size,1);
     if(not size) q0->setActive(false);
   }
 
-  void GenericFlexibleBodyFFRPropertyDialog::resizeGeneralizedVelocity() {
+  void GenericFlexibleFfrBodyPropertyDialog::resizeGeneralizedVelocity() {
     int size =  getuRelSize();
     u0->resize_(size,1);
     if(not size) u0->setActive(false);
   }
 
-  DOMElement* GenericFlexibleBodyFFRPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
     BodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     translation->initializeUsingXML(item->getXMLElement());
     rotation->initializeUsingXML(item->getXMLElement());
@@ -1292,12 +1292,12 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* GenericFlexibleBodyFFRPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     BodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     return nullptr;
   }
 
-  FlexibleBodyFFRPropertyDialog::FlexibleBodyFFRPropertyDialog(Element *body) : GenericFlexibleBodyFFRPropertyDialog(body) {
+  FlexibleFfrBodyPropertyDialog::FlexibleFfrBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
 
     mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"mass");
     addToTab("General",mass);
@@ -1400,7 +1400,7 @@ namespace MBSimGUI {
 //    connect(Knl1,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
   }
 
-  void FlexibleBodyFFRPropertyDialog::updateWidget() {
+  void FlexibleFfrBodyPropertyDialog::updateWidget() {
     BodyPropertyDialog::updateWidget();
     int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
     if(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getIndex()==0)
@@ -1502,15 +1502,15 @@ namespace MBSimGUI {
     }
   }
 
-  int FlexibleBodyFFRPropertyDialog::getqERelSize() const {
+  int FlexibleFfrBodyPropertyDialog::getqERelSize() const {
     int nqE=0;
     if(Pdm->isActive())
       nqE = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
     return nqE;
   }
 
-  DOMElement* FlexibleBodyFFRPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    GenericFlexibleBodyFFRPropertyDialog::initializeUsingXML(item->getXMLElement());
+  DOMElement* FlexibleFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     mass->initializeUsingXML(item->getXMLElement());
     rdm->initializeUsingXML(item->getXMLElement());
     rrdm->initializeUsingXML(item->getXMLElement());
@@ -1546,8 +1546,8 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* FlexibleBodyFFRPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GenericFlexibleBodyFFRPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+  DOMElement* FlexibleFfrBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     mass->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rrdm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
@@ -1584,7 +1584,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  CalculixBodyPropertyDialog::CalculixBodyPropertyDialog(Element *body) : GenericFlexibleBodyFFRPropertyDialog(body) {
+  CalculixBodyPropertyDialog::CalculixBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
     resultFileName = new ExtWidget("Result file name",new FileWidget("", "Calculix result files", "frd files (*.frd)", 0, true),false,false,MBSIMFLEX%"resultFileName");
     addToTab("General",resultFileName);
 
@@ -1599,7 +1599,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* CalculixBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    GenericFlexibleBodyFFRPropertyDialog::initializeUsingXML(item->getXMLElement());
+    GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     translation->initializeUsingXML(item->getXMLElement());
     rotation->initializeUsingXML(item->getXMLElement());
     translationDependentRotation->initializeUsingXML(item->getXMLElement());
@@ -1610,7 +1610,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* CalculixBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    GenericFlexibleBodyFFRPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     resultFileName->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());

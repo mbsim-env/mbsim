@@ -24,7 +24,7 @@
 #include "dynamic_system_solver.h"
 #include "group.h"
 #include "rigid_body.h"
-#include "flexible_body_ffr.h"
+#include "flexible_ffr_body.h"
 #include "constraint.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
@@ -175,8 +175,8 @@ namespace MBSimGUI {
     if(element==nullptr) return nullptr;
     if(E(element)->getTagName()==MBSIM%"RigidBody")
       return new RigidBody;
-    if(E(element)->getTagName()==MBSIMFLEX%"FlexibleBodyFFR")
-      return new FlexibleBodyFFR;
+    if(E(element)->getTagName()==MBSIMFLEX%"FlexibleFfrBody")
+      return new FlexibleFfrBody;
     if(E(element)->getTagName()==MBSIMFLEX%"CalculixBody")
       return new CalculixBody;
     else

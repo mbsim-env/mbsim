@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsimFlexibleBody/contours/flexible_planar_ffr_nurbs_contour.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_ffr.h"
+#include "mbsimFlexibleBody/flexible_body/generic_flexible_ffr_body.h"
 #include "mbsim/frames/floating_contour_frame.h"
 #include "mbsim/utils/utils.h"
 #include <openmbvcppinterface/group.h>
@@ -54,7 +54,7 @@ namespace MBSimFlexibleBody {
   void FlexiblePlanarFfrNurbsContour::updateGlobalRelativePosition(double eta) {
     Vec3 KrPS = evalHessianMatrixPos(eta).row(0).T()(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<crvPhi.size(); i++)
-      KrPS += hessPhi[i].row(0).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
+      KrPS += hessPhi[i].row(0).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<GenericFlexibleFfrBody*>(parent)->evalqERel()(i);
     WrPS = R->evalOrientation()*KrPS;
     updPos = false;
   }
@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
     if(fabs(eta-etaOld)>1e-13) updateHessianMatrix(eta);
     Vec3 Kvrel;
     for(size_t i=0; i<crvPhi.size(); i++)
-      Kvrel += hessPhi[i].row(0).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqdERel()(i);
+      Kvrel += hessPhi[i].row(0).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<GenericFlexibleFfrBody*>(parent)->evalqdERel()(i);
     Wvrel = R->evalOrientation()*Kvrel;
     updVel = false;
   }
@@ -72,7 +72,7 @@ namespace MBSimFlexibleBody {
     if(fabs(zeta(0)-etaOld)>1e-13) updateHessianMatrix(zeta(0));
     Vec3 s_t;
     for(size_t i=0; i<crvPhi.size(); i++)
-      s_t += hessPhi[i].row(1).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqdERel()(i);
+      s_t += hessPhi[i].row(1).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<GenericFlexibleFfrBody*>(parent)->evalqdERel()(i);
     return s_t;
   }
 
@@ -85,14 +85,14 @@ namespace MBSimFlexibleBody {
   Vec3 FlexiblePlanarFfrNurbsContour::evalKrPS(const Vec2 &zeta) {
     Vec3 KrPS = evalHessianMatrixPos(zeta(0)).row(0).T()(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<crvPhi.size(); i++)
-      KrPS += hessPhi[i].row(0).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
+      KrPS += hessPhi[i].row(0).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<GenericFlexibleFfrBody*>(parent)->evalqERel()(i);
     return KrPS;
   }
 
   Vec3 FlexiblePlanarFfrNurbsContour::evalKs(const Vec2 &zeta) {
     Vec3 s = evalHessianMatrixPos(zeta(0)).row(1).T()(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<crvPhi.size(); i++)
-      s += hessPhi[i].row(1).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
+      s += hessPhi[i].row(1).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<GenericFlexibleFfrBody*>(parent)->evalqERel()(i);
     return s;
   }
 
@@ -104,7 +104,7 @@ namespace MBSimFlexibleBody {
   Vec3 FlexiblePlanarFfrNurbsContour::evalParDer1Ks(const Vec2 &zeta) {
     Vec3 ds = evalHessianMatrixPos(zeta(0)).row(2).T()(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<crvPhi.size(); i++)
-      ds += hessPhi[i].row(2).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
+      ds += hessPhi[i].row(2).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<GenericFlexibleFfrBody*>(parent)->evalqERel()(i);
     return ds;
   }
 
@@ -178,13 +178,13 @@ namespace MBSimFlexibleBody {
 
   void FlexiblePlanarFfrNurbsContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
-      R = static_cast<FlexibleBodyFFR*>(parent)->getFrameK();
+      R = static_cast<GenericFlexibleFfrBody*>(parent)->getFrameK();
       crvPos.resize(index.size(),knot.size()-index.size()-1);
       crvPos.setDegree(knot.size()-index.size()-1);
       crvPos.setKnot(knot);
       MatVx4 cp(index.size());
       for(int i=0; i<index.size(); i++) {
-        const Vec3 &x = static_cast<FlexibleBodyFFR*>(parent)->getNodalRelativePosition(index(i));
+        const Vec3 &x = static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(index(i));
         for(int j=0; j<3; j++)
           cp(i,j) = x(j);
         cp(i,3) = 1;
@@ -197,14 +197,14 @@ namespace MBSimFlexibleBody {
         else
           crvPos.globalInterpClosedH(cp,degree,NurbsCurve::Method(NurbsCurve::equallySpaced));
       }
-      crvPhi.resize(static_cast<FlexibleBodyFFR*>(parent)->getNumberOfModeShapes());
+      crvPhi.resize(static_cast<GenericFlexibleFfrBody*>(parent)->getNumberOfModeShapes());
       hessPhi.resize(crvPhi.size());
       for(size_t k=0; k<crvPhi.size(); k++) {
         crvPhi[k].resize(index.size(),knot.size()-index.size()-1);
         crvPhi[k].setDegree(knot.size()-index.size()-1);
         crvPhi[k].setKnot(knot);
         for(int i=0; i<index.size(); i++) {
-          const Vec3 &x = static_cast<FlexibleBodyFFR*>(parent)->getNodalShapeMatrixOfTranslation(index(i)).col(k);
+          const Vec3 &x = static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(index(i)).col(k);
           for(int j=0; j<3; j++)
             cp(i,j) = x(j);
           cp(i,3) = 1;
@@ -253,7 +253,7 @@ namespace MBSimFlexibleBody {
       for(int i=0; i<crvPos.ctrlPnts().rows(); i++) {
         Vec3 KrPS = crvPos.ctrlPnts().row(i).T()(Range<Fixed<0>,Fixed<2> >());
         for(size_t k=0; k<crvPhi.size(); k++)
-          KrPS += crvPhi[k].ctrlPnts().row(i).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(k);
+          KrPS += crvPhi[k].ctrlPnts().row(i).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<GenericFlexibleFfrBody*>(parent)->evalqERel()(k);
         Vec3 r = R->evalPosition() + R->evalOrientation()*KrPS;
         for(int j=0; j<3; j++)
           data.push_back(r(j));

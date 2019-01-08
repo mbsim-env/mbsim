@@ -21,7 +21,7 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   dynamic_system_solver.cc \
 		   body.cc \
 		   rigid_body.cc \
-		   flexible_body_ffr.cc \
+		   flexible_ffr_body.cc \
 		   observer.cc \
 		   kinetic_excitation.cc \
 		   spring_damper.cc \

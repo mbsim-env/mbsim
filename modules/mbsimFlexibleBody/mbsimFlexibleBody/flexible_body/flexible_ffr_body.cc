@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "flexible_body_ffr.h"
+#include "flexible_ffr_body.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -28,10 +28,10 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleBodyFFR)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleFfrBody)
 
-  void FlexibleBodyFFR::initializeUsingXML(DOMElement *element) {
-    GenericFlexibleBodyFFR::initializeUsingXML(element);
+  void FlexibleFfrBody::initializeUsingXML(DOMElement *element) {
+    GenericFlexibleFfrBody::initializeUsingXML(element);
 
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"mass");
     setMass(E(e)->getText<double>());
@@ -203,7 +203,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBodyFFR::setOpenMBVFlexibleBody(const std::shared_ptr<OpenMBV::FlexibleBody> &body) {
+  void FlexibleFfrBody::setOpenMBVFlexibleBody(const std::shared_ptr<OpenMBV::FlexibleBody> &body) {
     openMBVBody = body;
   }
 

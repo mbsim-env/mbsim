@@ -238,7 +238,7 @@ ret = 0;
 %end
 </scalarParameter>
           </Parameter>
-          <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR2">
+          <FlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleFfrBody2">
             <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
             <mass unit="kg">load('data.asc','m').m</mass>
             <positionIntegral>load('data.asc','rdm').rdm</positionIntegral>
@@ -294,7 +294,7 @@ ret = 0;
             <enableOpenMBVFrameK>
               <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
             </enableOpenMBVFrameK>
-          </FlexibleBodyFFR>
+          </FlexibleFfrBody>
         </Embed>
         <RigidBody name="RigidBody3">
           <generalizedInitialPosition>
@@ -368,7 +368,7 @@ ret = 0;
       </objects>
       <links>
         <Joint name="Joint1">
-          <connect ref1="../Object[RigidBody3]/Frame[C]" ref2="../Object[FlexibleBodyFFR2]/Frame[Q]"/>
+          <connect ref1="../Object[RigidBody3]/Frame[C]" ref2="../Object[FlexibleFfrBody2]/Frame[Q]"/>
           <forceDirection unit="-">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>

@@ -21,7 +21,7 @@
 #include "element_context_menu.h"
 #include "mainwindow.h"
 #include "rigid_body.h"
-#include "flexible_body_ffr.h"
+#include "flexible_ffr_body.h"
 #include "constraint.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
@@ -338,13 +338,13 @@ namespace MBSimGUI {
     QAction *action = new QAction("Add flexible planar nurbs contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarNurbsContour()));
     addAction(action);
-    action = new QAction("Add flexible planar nurbs contour ffr", this);
+    action = new QAction("Add flexible planar ffr nurbs contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarFfrNurbsContour()));
     addAction(action);
     action = new QAction("Add flexible spatial nurbs contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialNurbsContour()));
     addAction(action);
-    action = new QAction("Add flexible spatial nurbs contour ffr", this);
+    action = new QAction("Add flexible spatial ffr nurbs contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialFfrNurbsContour()));
     addAction(action);
   }
@@ -461,8 +461,8 @@ namespace MBSimGUI {
     QAction *action = new QAction("Add rigid body", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
     addAction(action);
-    action = new QAction("Add flexible body ffr", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleBodyFFR()));
+    action = new QAction("Add flexible ffr body", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleFfrBody()));
     addAction(action);
     action = new QAction("Add calculix body", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addCalculixBody()));
@@ -473,8 +473,8 @@ namespace MBSimGUI {
     mw->addObject(new RigidBody, element);
   }
 
-  void BodiesContextMenu::addFlexibleBodyFFR() {
-    mw->addObject(new FlexibleBodyFFR, element);
+  void BodiesContextMenu::addFlexibleFfrBody() {
+    mw->addObject(new FlexibleFfrBody, element);
   }
 
   void BodiesContextMenu::addCalculixBody() {

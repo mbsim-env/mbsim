@@ -18,7 +18,7 @@
    */
 
 #include <config.h>
-#include "flexible_body_ffr.h"
+#include "flexible_ffr_body.h"
 #include "objectfactory.h"
 #include "frame.h"
 #include "contour.h"
@@ -32,12 +32,12 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  GenericFlexibleBodyFFR::GenericFlexibleBodyFFR() {
+  GenericFlexibleFfrBody::GenericFlexibleFfrBody() {
     InternalFrame *K = new InternalFrame("K",MBSIMFLEX%"enableOpenMBVFrameK","plotFeatureFrameK");
     addFrame(K);
   }
 
-  void GenericFlexibleBodyFFR::removeXMLElements() {
+  void GenericFlexibleFfrBody::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     while(e) {
       DOMNode *en=e->getNextSibling();
@@ -47,7 +47,7 @@ namespace MBSimGUI {
     }
   }
 
-  DOMElement* GenericFlexibleBodyFFR::createXMLElement(DOMNode *parent) {
+  DOMElement* GenericFlexibleFfrBody::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
     xercesc::DOMDocument *doc=ele0->getOwnerDocument();
     frames = D(doc)->createElement( MBSIMFLEX%"frames" );
@@ -65,7 +65,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  DOMElement* GenericFlexibleBodyFFR::processIDAndHref(DOMElement *element) {
+  DOMElement* GenericFlexibleFfrBody::processIDAndHref(DOMElement *element) {
     element = Body::processIDAndHref(element);
 
     // frames
@@ -92,7 +92,7 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* GenericFlexibleBodyFFR::initializeUsingXML(DOMElement *element) {
+  DOMElement* GenericFlexibleFfrBody::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Body::initializeUsingXML(element);
 
@@ -117,8 +117,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* FlexibleBodyFFR::processIDAndHref(DOMElement *element) {
-    element = GenericFlexibleBodyFFR::processIDAndHref(element);
+  DOMElement* FlexibleFfrBody::processIDAndHref(DOMElement *element) {
+    element = GenericFlexibleFfrBody::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVFlexibleBody");
     if(ELE) {
@@ -134,7 +134,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* CalculixBody::processIDAndHref(DOMElement *element) {
-    element = GenericFlexibleBodyFFR::processIDAndHref(element);
+    element = GenericFlexibleFfrBody::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(ELE) {

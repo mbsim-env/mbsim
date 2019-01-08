@@ -94,7 +94,7 @@ fclose(id)
 end
 ret = 0;</scalarParameter>
           </Parameter>
-          <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Body">
+          <FlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Body">
             <generalizedInitialPosition xmlns="http://www.mbsim-env.de/MBSim">[-1.22786;0]</generalizedInitialPosition>
             <mass unit="kg">load('data.asc','m').m</mass>
             <positionIntegral>load('data.asc','rdm').rdm</positionIntegral>
@@ -161,7 +161,7 @@ ret = 0;</scalarParameter>
                 <transparency unit="-">0.3</transparency>
               </DynamicPointSet>
             </openMBVFlexibleBody>
-          </FlexibleBodyFFR>
+          </FlexibleFfrBody>
         </Embed>
         <RigidBody name="RigidBody">
           <generalizedInitialPosition>

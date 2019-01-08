@@ -298,11 +298,11 @@ namespace MBSimFlexibleBody {
         ombvColorRepresentation = static_cast<OpenMBVFlexibleBody::ColorRepresentation>(ombvBody->getColorRepresentation());
       }
     }
-    GenericFlexibleBodyFFR::init(stage, config);
+    GenericFlexibleFfrBody::init(stage, config);
   }
 
   void CalculixBody::initializeUsingXML(DOMElement *element) {
-    GenericFlexibleBodyFFR::initializeUsingXML(element);
+    GenericFlexibleFfrBody::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"resultFileName");
     string str = X()%E(e)->getFirstTextChild()->getData();
     setResultFileName(E(e)->convertPath(str.substr(1,str.length()-2)).string());

@@ -48,7 +48,7 @@
     </xs:sequence>
   </xs:group>
 
-  <xs:group name="CommonFlexibleBodyFFR">
+  <xs:group name="CommonFlexibleFfrBody">
     <xs:sequence>
       <xs:choice minOccurs="0">
         <xs:element name="generalTranslation">
@@ -488,14 +488,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="FlexibleBodyFFR" substitutionGroup="mbsim:Body" type="FlexibleBodyFFRType">
+  <xs:element name="FlexibleFfrBody" substitutionGroup="mbsim:Body" type="FlexibleFfrBodyType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Definiert einen elatsichen Körper mit einer Frame Of Reference Formulierung.<br/>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="FlexibleBodyFFRType">
+  <xs:complexType name="FlexibleFfrBodyType">
     <xs:complexContent>
       <xs:extension base="mbsim:BodyType">
         <xs:sequence>
@@ -928,7 +928,7 @@
               </xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:group ref="CommonFlexibleBodyFFR"/>
+          <xs:group ref="CommonFlexibleFfrBody"/>
           <xs:sequence minOccurs="0">
             <xs:element name="openMBVFlexibleBody">
               <xs:annotation>
@@ -987,7 +987,7 @@
       <xs:extension base="mbsim:BodyType">
         <xs:sequence>
           <xs:element name="resultFileName" type="pv:filenameFullEval"/>
-          <xs:group ref="CommonFlexibleBodyFFR"/>
+          <xs:group ref="CommonFlexibleFfrBody"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">

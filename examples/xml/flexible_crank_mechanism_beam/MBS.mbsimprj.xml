@@ -119,7 +119,7 @@
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
-        <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR2">
+        <FlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleFfrBody2">
           <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="derivativeOfGeneralizedPosition">true</plotFeature>
           <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="generalizedAcceleration">true</plotFeature>
           <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
@@ -644,7 +644,7 @@
           <enableOpenMBVFrameK>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
           </enableOpenMBVFrameK>
-        </FlexibleBodyFFR>
+        </FlexibleFfrBody>
         <RigidBody name="RigidBody3">
           <plotFeature value="derivativeOfGeneralizedPosition">true</plotFeature>
           <plotFeature value="generalizedAcceleration">true</plotFeature>
@@ -719,7 +719,7 @@
       </objects>
       <links>
         <Joint name="Joint1">
-          <connect ref1="../Object[RigidBody3]/Frame[C]" ref2="../Object[FlexibleBodyFFR2]/Frame[Q]"/>
+          <connect ref1="../Object[RigidBody3]/Frame[C]" ref2="../Object[FlexibleFfrBody2]/Frame[Q]"/>
           <forceDirection unit="-">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>

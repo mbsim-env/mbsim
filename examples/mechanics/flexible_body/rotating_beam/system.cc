@@ -1,5 +1,5 @@
 #include "system.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_ffr.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_ffr_body.h"
 #include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/environment.h"
@@ -64,7 +64,7 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   Vec  Kr(3);   
   SymMat Theta(3);
 
-  FlexibleBodyFFR* body = new FlexibleBodyFFR("body");
+  FlexibleFfrBody* body = new FlexibleFfrBody("body");
   addObject(body);
   Kr(0) = l/2;
   Mat3xV T(2), P(2);

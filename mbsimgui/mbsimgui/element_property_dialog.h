@@ -365,10 +365,10 @@ namespace MBSimGUI {
       ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *bodyFixedRepresentationOfAngularVelocity, *ombv, *ombvFrameRef, *weightArrow, *jointForceArrow, *jointMomentArrow;
   };
 
-  class GenericFlexibleBodyFFRPropertyDialog : public BodyPropertyDialog {
+  class GenericFlexibleFfrBodyPropertyDialog : public BodyPropertyDialog {
 
     public:
-      GenericFlexibleBodyFFRPropertyDialog(Element *body_);
+      GenericFlexibleFfrBodyPropertyDialog(Element *body_);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       void resizeGeneralizedPosition() override;
@@ -380,11 +380,11 @@ namespace MBSimGUI {
       ExtWidget *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation;
   };
 
-  class FlexibleBodyFFRPropertyDialog : public GenericFlexibleBodyFFRPropertyDialog {
+  class FlexibleFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
     Q_OBJECT
 
     public:
-      FlexibleBodyFFRPropertyDialog(Element *body_);
+      FlexibleFfrBodyPropertyDialog(Element *body_);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       int getqERelSize() const override;
@@ -393,7 +393,7 @@ namespace MBSimGUI {
       void updateWidget() override;
   };
 
-  class CalculixBodyPropertyDialog : public GenericFlexibleBodyFFRPropertyDialog {
+  class CalculixBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
     Q_OBJECT
 
     public:

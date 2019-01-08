@@ -17,10 +17,10 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FLEXIBLE_BODY_FFR_H_
-#define _FLEXIBLE_BODY_FFR_H_
+#ifndef _FLEXIBLE_FFR_BODY_H_
+#define _FLEXIBLE_FFR_BODY_H_
 
-#include "mbsimFlexibleBody/flexible_body/generic_flexible_body_ffr.h"
+#include "mbsimFlexibleBody/flexible_body/generic_flexible_ffr_body.h"
 #include <openmbvcppinterface/flexiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
 #include <openmbvcppinterface/group.h>
@@ -35,10 +35,10 @@ namespace MBSimFlexibleBody {
    *  \brief Flexible body using a floating frame of reference formulation
    *
    * */
-  class FlexibleBodyFFR : public GenericFlexibleBodyFFR {
+  class FlexibleFfrBody : public GenericFlexibleFfrBody {
 
     public:
-      FlexibleBodyFFR(const std::string &name="") : GenericFlexibleBodyFFR(name) { }
+      FlexibleFfrBody(const std::string &name="") : GenericFlexibleFfrBody(name) { }
 
       // Interface for basic data
       /*! \brief Set mass

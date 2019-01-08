@@ -48,7 +48,7 @@
       <contours/>
       <groups/>
       <objects>
-        <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR1">
+        <FlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleFfrBody1">
           <mass unit="kg">m</mass>
           <positionIntegral>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -356,8 +356,8 @@
           <contours/>
           <enableOpenMBVFrameK>
           </enableOpenMBVFrameK>
-        </FlexibleBodyFFR>
-        <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR2">
+        </FlexibleFfrBody>
+        <FlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleFfrBody2">
           <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Frame[P]"/>
           <mass unit="kg">m</mass>
           <positionIntegral>
@@ -704,8 +704,8 @@
           <contours/>
           <enableOpenMBVFrameK>
           </enableOpenMBVFrameK>
-        </FlexibleBodyFFR>
-        <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR3">
+        </FlexibleFfrBody>
+        <FlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleFfrBody3">
           <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Frame[Q]"/>
           <mass unit="kg">m</mass>
           <positionIntegral>
@@ -1094,7 +1094,7 @@
           <contours/>
           <enableOpenMBVFrameK>
           </enableOpenMBVFrameK>
-        </FlexibleBodyFFR>
+        </FlexibleFfrBody>
       </objects>
       <links/>
       <constraints/>

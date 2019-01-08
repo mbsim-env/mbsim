@@ -24,7 +24,7 @@
       <contours/>
       <groups/>
       <objects>
-        <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR">
+        <FlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleFfrBody">
           <mass unit="kg">rho*A*l</mass>
           <positionIntegral>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -293,7 +293,7 @@
               <open>true</open>
               <enableOpenMBV/>
             </FlexiblePlanarNurbsContour>
-          </contours></FlexibleBodyFFR>
+          </contours></FlexibleFfrBody>
         <RigidBody name="RigidBody">
           <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -341,7 +341,7 @@
       </objects>
       <links>
         <Contact name="Contact">
-          <connect ref1="../Object[FlexibleBodyFFR]/Contour[FlexiblePlanarNurbsContour]" ref2="../Object[RigidBody]/Contour[Point]"/>
+          <connect ref1="../Object[FlexibleFfrBody]/Contour[FlexiblePlanarNurbsContour]" ref2="../Object[RigidBody]/Contour[Point]"/>
           <normalForceLaw>
             <UnilateralConstraint/>
           </normalForceLaw>
@@ -359,7 +359,7 @@
           </initialGuess>
         </Contact>
         <KineticExcitation name="KineticExcitation1">
-          <connect ref2="../Object[FlexibleBodyFFR]/Frame[K]"/>
+          <connect ref2="../Object[FlexibleFfrBody]/Frame[K]"/>
           <forceDirection unit="-">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
@@ -394,7 +394,7 @@
           </enableOpenMBV>
         </KineticExcitation>
         <KineticExcitation name="KineticExcitation2">
-          <connect ref2="../Object[FlexibleBodyFFR]/Frame[NodeFrame]"/>
+          <connect ref2="../Object[FlexibleFfrBody]/Frame[NodeFrame]"/>
           <forceDirection unit="-">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>

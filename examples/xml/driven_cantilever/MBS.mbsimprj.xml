@@ -23,7 +23,7 @@
       <contours/>
       <groups/>
       <objects>
-        <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Cantilever">
+        <FlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Cantilever">
           <mass unit="kg">rho*A*l</mass>
           <positionIntegral>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -392,7 +392,7 @@
           <enableOpenMBVFrameK>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
           </enableOpenMBVFrameK>
-        </FlexibleBodyFFR>
+        </FlexibleFfrBody>
       </objects>
       <links>
       </links>

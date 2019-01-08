@@ -1,5 +1,5 @@
 #include "system.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_ffr.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_ffr_body.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/objects/rigid_body.h"
@@ -72,7 +72,7 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   body1->setFrameForInertiaTensor(body1->getFrame("K"));
   body1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
-  FlexibleBodyFFR* body2 = new FlexibleBodyFFR("body2");
+  FlexibleFfrBody* body2 = new FlexibleFfrBody("body2");
   addObject(body2);
   Kr(0) = l2/2;
   Mat3xV T(2*n), P(2*n);

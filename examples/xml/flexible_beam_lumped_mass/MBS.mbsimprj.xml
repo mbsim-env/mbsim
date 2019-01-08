@@ -94,7 +94,7 @@ fclose(id)
 end
 ret = 0;</scalarParameter>
             <scalarParameter name="ps">3</scalarParameter></Parameter>
-          <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Body">
+          <FlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Body">
             <mass unit="kg">load('data.asc','m').m</mass>
             <positionIntegral>load('data.asc','rdm').rdm</positionIntegral>
             <positionPositionIntegral unit="kg*m^2">load('data.asc','rrdm').rrdm</positionPositionIntegral>
@@ -141,7 +141,7 @@ ret = 0;</scalarParameter>
               </DynamicPointSet>
             </openMBVFlexibleBody>
             <enableOpenMBVFrameK>
-            </enableOpenMBVFrameK></FlexibleBodyFFR>
+            </enableOpenMBVFrameK></FlexibleFfrBody>
         </Embed>
       </objects>
       <links>

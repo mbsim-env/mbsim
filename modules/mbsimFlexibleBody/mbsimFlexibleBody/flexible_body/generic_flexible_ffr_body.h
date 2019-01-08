@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _GENERIC_FLEXIBLE_BODY_FFR_H_
-#define _GENERIC_FLEXIBLE_BODY_FFR_H_
+#ifndef _GENERIC_FLEXIBLE_FFR_BODY_H_
+#define _GENERIC_FLEXIBLE_FFR_BODY_H_
 
 #include "mbsimFlexibleBody/node_based_body.h"
 #include "mbsimFlexibleBody/utils/openmbv_utils.h"
@@ -59,14 +59,14 @@ namespace MBSimFlexibleBody {
    *  \brief Flexible body using a floating frame of reference formulation
    *
    * */
-  class GenericFlexibleBodyFFR : public NodeBasedBody {
+  class GenericFlexibleFfrBody : public NodeBasedBody {
 
     public:
-      GenericFlexibleBodyFFR(const std::string &name=""); 
+      GenericFlexibleFfrBody(const std::string &name="");
       /**
        * \brief destructor
        */
-      ~GenericFlexibleBodyFFR() override;
+      ~GenericFlexibleFfrBody() override;
 
       void updateqd() override;
       void updateT() override;
@@ -93,7 +93,7 @@ namespace MBSimFlexibleBody {
       void updateKJ(int j=0) { (this->*updateKJ_[j])(); }
       void updateKJ0();
       void updateKJ1();
-      void (GenericFlexibleBodyFFR::*updateKJ_[2])();
+      void (GenericFlexibleFfrBody::*updateKJ_[2])();
       void calcSize() override;
       void calcqSize() override;
       void calcuSize(int j=0) override;
@@ -381,7 +381,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief function pointer to update mass matrix
        */
-      void (GenericFlexibleBodyFFR::*updateM_)();
+      void (GenericFlexibleFfrBody::*updateM_)();
 
       /**
        * \brief update constant mass matrix
@@ -396,7 +396,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief function pointer for Cholesky decomposition of mass matrix
        */
-      void (GenericFlexibleBodyFFR::*updateLLM_)();
+      void (GenericFlexibleFfrBody::*updateLLM_)();
 
       /**
        * \brief Cholesky decomposition of constant mass matrix
@@ -408,7 +408,7 @@ namespace MBSimFlexibleBody {
        */
       void updateLLMNotConst() { Object::updateLLM(); }
 
-      void (GenericFlexibleBodyFFR::*updateJacobians_[2])(MBSim::Frame *frame);
+      void (GenericFlexibleFfrBody::*updateJacobians_[2])(MBSim::Frame *frame);
 
       fmatvec::Vec aT, aR;
 
@@ -437,7 +437,7 @@ namespace MBSimFlexibleBody {
       OpenMBVFlexibleBody::ColorRepresentation ombvColorRepresentation{OpenMBVFlexibleBody::none};
 
     private:
-      double (GenericFlexibleBodyFFR::*evalOMBVColorRepresentation[12])(int i);
+      double (GenericFlexibleFfrBody::*evalOMBVColorRepresentation[12])(int i);
       double evalNone(int i) { return 0; }
       double evalXDisplacement(int i) { return evalNodalDisplacement(i)(0); }
       double evalYDisplacement(int i) { return evalNodalDisplacement(i)(1); }

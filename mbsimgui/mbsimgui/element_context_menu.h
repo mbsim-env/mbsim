@@ -197,7 +197,7 @@ namespace MBSimGUI {
 
     protected slots:
       void addRigidBody();
-      void addFlexibleBodyFFR();
+      void addFlexibleFfrBody();
       void addCalculixBody();
   };
 

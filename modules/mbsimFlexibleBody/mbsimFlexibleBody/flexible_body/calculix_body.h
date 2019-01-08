@@ -20,7 +20,7 @@
 #ifndef _CALCULIX_BODY_H_
 #define _CALCULIX_BODY_H_
 
-#include "mbsimFlexibleBody/flexible_body/generic_flexible_body_ffr.h"
+#include "mbsimFlexibleBody/flexible_body/generic_flexible_ffr_body.h"
 #include "mbsim/utils/boost_parameters.h"
 
 namespace MBSimFlexibleBody {
@@ -29,10 +29,10 @@ namespace MBSimFlexibleBody {
    *  \brief Flexible body using a floating frame of reference formulation
    *
    * */
-  class CalculixBody : public GenericFlexibleBodyFFR {
+  class CalculixBody : public GenericFlexibleFfrBody {
 
     public:
-      CalculixBody(const std::string &name="") : GenericFlexibleBodyFFR(name) { } 
+      CalculixBody(const std::string &name="") : GenericFlexibleFfrBody(name) { }
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void setResultFileName(const std::string &resultFileName_) { resultFileName = resultFileName_; }
