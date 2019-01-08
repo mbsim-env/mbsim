@@ -13,7 +13,7 @@
     <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
     <frames/>
     <contours>
-      <FclMesh name="FclMesh">
+      <FclMesh name="FclMesh" xmlns="http://www.mbsim-env.de/MBSimFcl">
         <vertices unit="m">
           <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <row>
@@ -107,7 +107,7 @@
         </stateDependentRotation>
         <frames/>
         <contours>
-          <FclMesh name="FclMesh">
+          <FclMesh name="FclMesh" xmlns="http://www.mbsim-env.de/MBSimFcl">
             <vertices unit="dm">[ 1 0 0,
                           -1 0 0,
                           0 1 0,

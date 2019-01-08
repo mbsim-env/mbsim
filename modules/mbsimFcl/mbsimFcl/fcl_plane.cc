@@ -18,21 +18,22 @@
  */
 
 #include <config.h>
-#ifdef HAVE_FCL
-#include "mbsim/contours/fcl_plane.h"
-#include "mbsim/utils/fcl_utils.h"
+#include "fcl_plane.h"
+#include "mbsimFcl/namespace.h"
+#include "mbsimFcl/fcl_utils.h"
 #include "fcl/geometry/shape/plane.h"
 #include <openmbvcppinterface/grid.h>
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace fcl;
 
-namespace MBSim {
+namespace MBSimFcl {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FclPlane)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFCL, FclPlane)
 
   void FclPlane::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
@@ -58,11 +59,11 @@ namespace MBSim {
 
   void FclPlane::initializeUsingXML(DOMElement *element) {
     FclContour::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"normal");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFCL%"normal");
     setNormal(E(e)->getText<Vec3>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"offset");
+    e=E(element)->getFirstElementChildNamed(MBSIMFCL%"offset");
     setOffset(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    e=E(element)->getFirstElementChildNamed(MBSIMFCL%"enableOpenMBV");
     if(e) {
       OpenMBVPlane ombv;
       ombv.initializeUsingXML(e);
@@ -71,4 +72,3 @@ namespace MBSim {
   }
 
 }
-#endif

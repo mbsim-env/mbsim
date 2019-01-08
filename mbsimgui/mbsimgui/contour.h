@@ -148,25 +148,30 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new FlexibleSpatialNurbsContourPropertyDialog(this);}
   };
 
-  class FclBox : public RigidContour {
+  class FclContour : public RigidContour {
+    public:
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFCL; }
+  };
+
+  class FclBox : public FclContour {
     public:
       QString getType() const override { return "FclBox"; }
       ElementPropertyDialog* createPropertyDialog() override {return new FclBoxPropertyDialog(this);}
   };
 
-  class FclSphere : public RigidContour {
+  class FclSphere : public FclContour {
     public:
       QString getType() const override { return "FclSphere"; }
       ElementPropertyDialog* createPropertyDialog() override {return new FclSpherePropertyDialog(this);}
   };
 
-  class FclPlane : public RigidContour {
+  class FclPlane : public FclContour {
     public:
       QString getType() const override { return "FclPlane"; }
       ElementPropertyDialog* createPropertyDialog() override {return new FclPlanePropertyDialog(this);}
   };
 
-  class FclMesh : public RigidContour {
+  class FclMesh : public FclContour {
     public:
       QString getType() const override { return "FclMesh"; }
       ElementPropertyDialog* createPropertyDialog() override {return new FclMeshPropertyDialog(this);}

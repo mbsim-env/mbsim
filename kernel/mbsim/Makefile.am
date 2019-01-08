@@ -23,7 +23,7 @@ libmbsim_la_LIBADD += constraints/libconstraint.la
 libmbsim_la_LIBADD += numerics/libnumerics.la
 libmbsim_la_LIBADD += functions/libfunction.la
 libmbsim_la_LIBADD += observers/libobserver.la
-libmbsim_la_LIBADD += -lgfortran $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(CCD_LIBS) $(FCL_LIBS)
+libmbsim_la_LIBADD += -lgfortran $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 libmbsim_la_LIBADD += -l@BOOST_SYSTEM_LIB@
 

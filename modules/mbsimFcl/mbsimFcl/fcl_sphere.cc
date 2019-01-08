@@ -18,42 +18,43 @@
  */
 
 #include <config.h>
-#ifdef HAVE_FCL
-#include "mbsim/contours/fcl_box.h"
-#include "fcl/geometry/shape/box.h"
-#include <openmbvcppinterface/cuboid.h>
+#include "fcl_sphere.h"
+#include "mbsimFcl/namespace.h"
+#include "fcl/geometry/shape/sphere.h"
+#include <openmbvcppinterface/sphere.h>
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace fcl;
 
-namespace MBSim {
+namespace MBSimFcl {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FclBox)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFCL, FclSphere)
 
-  void FclBox::init(InitStage stage, const InitConfigSet &config) {
+  void FclSphere::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
-      cg = shared_ptr<CollisionGeometry<double> >(new Box<double>(lx,ly,lz));
+      cg = shared_ptr<CollisionGeometry<double> >(new Sphere<double>(r));
     else if (stage == plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody)
-        static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(lx,ly,lz);
+        static_pointer_cast<OpenMBV::Sphere>(openMBVRigidBody)->setRadius(r);
     }
     FclContour::init(stage, config);
   }
 
-  void FclBox::initializeUsingXML(DOMElement *element) {
+  void FclSphere::initializeUsingXML(DOMElement *element) {
     FclContour::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"length");
-    setLength(E(e)->getText<Vec3>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    DOMElement* e;
+    e=E(element)->getFirstElementChildNamed(MBSIMFCL%"radius");
+    setRadius(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMFCL%"enableOpenMBV");
     if(e) {
-      OpenMBVCuboid ombv;
+      OpenMBVSphere ombv;
       ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV();
+      openMBVRigidBody=ombv.createOpenMBV(); 
     }
   }
 
 }
-#endif

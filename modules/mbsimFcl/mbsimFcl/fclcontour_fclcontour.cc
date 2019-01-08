@@ -18,21 +18,21 @@
  */
 
 #include <config.h> 
-#ifdef HAVE_FCL
 #include "fclcontour_fclcontour.h"
-#include "mbsim/frames/contour_frame.h"
-#include "mbsim/contours/fcl_contour.h"
+#include "mbsimFcl/fcl_contour.h"
+#include "mbsimFcl/fcl_utils.h"
 #include "mbsim/utils/contact_utils.h"
-#include "mbsim/utils/fcl_utils.h"
+#include "mbsim/frames/contour_frame.h"
 #include "fcl/narrowphase/distance.h"
 
-using namespace fmatvec;
 using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
 using namespace fcl;
 
-namespace MBSim {
+namespace MBSimFcl {
 
-  void ContactKinematicsFclContourFclContour::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsContourContour::assignContours(const vector<MBSim::Contour*> &contour) {
     icontour0 = 0; icontour1 = 1;
     contour0 = static_cast<FclContour*>(contour[0]);
     contour1 = static_cast<FclContour*>(contour[1]);
@@ -40,7 +40,7 @@ namespace MBSim {
     obj1 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(contour1->getCollisionGeometry()));
   }
 
-  void ContactKinematicsFclContourFclContour::updateg(vector<SingleContact> &contact) {
+  void ContactKinematicsContourContour::updateg(vector<SingleContact> &contact) {
     obj0->setTranslation(Vec3ToVector3d(contour0->getFrame()->evalPosition()));
     obj0->setRotation(SqrMat3ToMatrix3d(contour0->getFrame()->getOrientation()));
     obj1->setTranslation(Vec3ToVector3d(contour1->getFrame()->evalPosition()));
@@ -93,4 +93,3 @@ namespace MBSim {
   }
 
 }
-#endif

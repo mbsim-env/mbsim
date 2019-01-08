@@ -17,15 +17,15 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FCL_MESH_H_
-#define _FCL_MESH_H_
+#ifndef _MBSIMFCL_FCL_MESH_H_
+#define _MBSIMFCL_FCL_MESH_H_
 
-#include "mbsim/contours/fcl_contour.h"
+#include "mbsimFcl/fcl_contour.h"
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
 #include "mbsim/utils/index.h"
 
-namespace MBSim {
+namespace MBSimFcl {
 
   /**
    * \brief FclMesh
@@ -53,22 +53,22 @@ namespace MBSim {
        * \param length of box
        * \param R frame of reference
        */
-      FclMesh(const std::string &name="", Frame *R=nullptr) : FclContour(name,R) { }
+      FclMesh(const std::string &name="", MBSim::Frame *R=nullptr) : FclContour(name,R) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
-      void init(InitStage stage, const InitConfigSet &config) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */
       void setVertices(const fmatvec::MatVx3 &vertex_) { vertex = vertex_; }
-      void setTriangles(const fmatvec::Matrix<fmatvec::General, fmatvec::Var, fmatvec::Fixed<3>, Index> &triangle_) { triangle = triangle_; }
+      void setTriangles(const fmatvec::Matrix<fmatvec::General, fmatvec::Var, fmatvec::Fixed<3>, MBSim::Index> &triangle_) { triangle = triangle_; }
       void setCollisionStructure(CollisionStructure collisionStructure_) { collisionStructure = collisionStructure_; }
       /***************************************************/
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
-        OpenMBVIndexedFaceSet ombv(diffuseColor,transparency,pointSize,lineWidth);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
+        MBSim::OpenMBVIndexedFaceSet ombv(diffuseColor,transparency,pointSize,lineWidth);
         openMBVRigidBody=ombv.createOpenMBV();
       }
 
@@ -81,7 +81,7 @@ namespace MBSim {
       /**
        * \brief triangles
        */
-      fmatvec::Matrix<fmatvec::General, fmatvec::Var, fmatvec::Fixed<3>, Index> triangle;
+      fmatvec::Matrix<fmatvec::General, fmatvec::Var, fmatvec::Fixed<3>, MBSim::Index> triangle;
 
       /**
        * \brief collision structure

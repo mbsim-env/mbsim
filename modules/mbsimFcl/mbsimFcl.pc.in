@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: mbsimFcl
+Description: mbsimFcl
+Requires: mbsim
+Version: @VERSION@
+Libs: -L${libdir} -lmbsimFcl
+Cflags: -I${includedir}
+
+

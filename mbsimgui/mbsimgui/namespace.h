@@ -29,6 +29,7 @@ namespace MBSimGUI {
   const MBXMLUtils::NamespaceURI OPENMBV("http://www.mbsim-env.de/OpenMBV");
   const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://www.mbsim-env.de/MBSimControl");
   const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");
+  const MBXMLUtils::NamespaceURI MBSIMFCL("http://www.mbsim-env.de/MBSimFcl");
   const MBXMLUtils::NamespaceURI MBSIMXML("http://www.mbsim-env.de/MBSimXML");
 
 }

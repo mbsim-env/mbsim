@@ -43,12 +43,6 @@
 #include <mbsim/contours/planar_nurbs_contour.h>
 #include <mbsim/contours/spatial_nurbs_contour.h>
 #include <mbsim/contours/gear_wheel.h>
-#ifdef HAVE_FCL
-#include <mbsim/contours/fcl_box.h>
-#include <mbsim/contours/fcl_sphere.h>
-#include <mbsim/contours/fcl_plane.h>
-#include <mbsim/contours/fcl_mesh.h>
-#endif
 // --- List of contact implementations - END ---
 
 // --- List of contact kinematic implementations - BEGIN ---
@@ -83,9 +77,6 @@
 #include <mbsim/contact_kinematics/point_spatialcontour.h>
 #include <mbsim/contact_kinematics/plane_spatialcontour.h>
 #include <mbsim/contact_kinematics/gearwheel_gearwheel.h>
-#ifdef HAVE_FCL
-#include <mbsim/contact_kinematics/fclcontour_fclcontour.h>
-#endif
 // --- List of contact kinematic implementations - END ---
 
 using namespace std;
@@ -231,30 +222,6 @@ namespace MBSim {
 
     else if ( contour0==typeid(GearWheel) && contour1==typeid(GearWheel) )
       return new ContactKinematicsGearWheelGearWheel;
-
-#ifdef HAVE_FCL
-    else if ( contour0==typeid(FclBox) && contour1==typeid(FclBox) )
-      return new ContactKinematicsFclContourFclContour(4);
-
-    else if ( contour0==typeid(FclBox) && contour1==typeid(FclSphere) )
-      return new ContactKinematicsFclContourFclContour(1);
-
-//    else if ( contour0==typeid(FclBox) && contour1==typeid(FclPlane) )
-//      return new ContactKinematicsFclContourFclContour(4);
-
-    else if ( contour0==typeid(FclSphere) && contour1==typeid(FclPlane) )
-      return new ContactKinematicsFclContourFclContour(1);
-
-//    else if ( contour0==typeid(FclBox) && contour1==typeid(FclMesh) )
-//      return new ContactKinematicsFclContourFclContour(1);
-
-    else if ( contour0==typeid(FclMesh) && contour1==typeid(FclMesh) )
-      return new ContactKinematicsFclContourFclContour(1);
-
-//    else if ( dynamic_cast<FclContour*>(c0) && dynamic_cast<FclContour*>(c1) )
-//      return new ContactKinematicsFclContourFclContour(1);
-#endif
-
     else
       return nullptr;
   }

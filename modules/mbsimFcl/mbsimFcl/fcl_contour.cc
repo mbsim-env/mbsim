@@ -18,43 +18,28 @@
  */
 
 #include <config.h>
-#ifdef HAVE_FCL
-#include "mbsim/contours/fcl_sphere.h"
-#include "fcl/geometry/shape/sphere.h"
-#include <openmbvcppinterface/sphere.h>
+#include "fcl_contour.h"
+#include "mbsimFcl/namespace.h"
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace fcl;
 
-namespace MBSim {
+namespace MBSimFcl {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FclSphere)
-
-  void FclSphere::init(InitStage stage, const InitConfigSet &config) {
+  void FclContour::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
-      cg = shared_ptr<CollisionGeometry<double> >(new Sphere<double>(r));
-    else if (stage == plotting) {
-      if(plotFeature[openMBV] && openMBVRigidBody)
-        static_pointer_cast<OpenMBV::Sphere>(openMBVRigidBody)->setRadius(r);
-    }
-    FclContour::init(stage, config);
+      if(computeLocalAABB) cg->computeLocalAABB();
+    RigidContour::init(stage, config);
   }
 
-  void FclSphere::initializeUsingXML(DOMElement *element) {
-    FclContour::initializeUsingXML(element);
-    DOMElement* e;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"radius");
-    setRadius(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
-    if(e) {
-      OpenMBVSphere ombv;
-      ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV(); 
-    }
+  void FclContour::initializeUsingXML(DOMElement *element) {
+    RigidContour::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFCL%"computeLocalAABB");
+    if(e) setComputeLocalAABB(E(e)->getText<bool>());
   }
 
 }
-#endif

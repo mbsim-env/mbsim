@@ -17,13 +17,13 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_FCLCONTOUR_FCLCONTOUR_H_
-#define _CONTACT_KINEMATICS_FCLCONTOUR_FCLCONTOUR_H_
+#ifndef _MBSIMFCL_CONTACT_KINEMATICS_FCLCONTOUR_FCLCONTOUR_H_
+#define _MBSIMFCL_CONTACT_KINEMATICS_FCLCONTOUR_FCLCONTOUR_H_
 
-#include "contact_kinematics.h"
+#include "mbsim/contact_kinematics/contact_kinematics.h"
 #include "fcl/narrowphase/collision_object.h"
 
-namespace MBSim {
+namespace MBSimFcl {
 
   class FclContour;
 
@@ -31,12 +31,12 @@ namespace MBSim {
    * \brief pairing contour to contour using FCL
    * \author Martin Foerg
    */
-  class ContactKinematicsFclContourFclContour : public ContactKinematics {
+  class ContactKinematicsContourContour : public MBSim::ContactKinematics {
     public:
       /* INHERITED INTERFACE */
-      ContactKinematicsFclContourFclContour(int maxNumContacts=1) : ContactKinematics(maxNumContacts) { }
-      void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(std::vector<SingleContact> &contact) override;
+      ContactKinematicsContourContour(int maxNumContacts=1) : MBSim::ContactKinematics(maxNumContacts) { }
+      void assignContours(const std::vector<MBSim::Contour*> &contour) override;
+      void updateg(std::vector<MBSim::SingleContact> &contact) override;
       /***************************************************/
 
     protected:
